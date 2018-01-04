@@ -5,15 +5,18 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.model.KPContainerType;
 import com.indracompany.sofia2.config.model.RoleType;
+import com.indracompany.sofia2.config.model.Template;
 import com.indracompany.sofia2.config.model.UserCDB;
 import com.indracompany.sofia2.config.repository.KPContainerTypeRepository;
 import com.indracompany.sofia2.config.repository.RoleTypeRepository;
 import com.indracompany.sofia2.config.repository.UserCDBRepository;
+import com.indracompany.sofia2.config.repository.TemplateRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +34,8 @@ public class InitConfigDB {
 	RoleTypeRepository roleTypeRepository;
 	@Autowired
 	UserCDBRepository userCDBRepository;
+	@Autowired
+	TemplateRepository templateRepository;
 
 
 	@PostConstruct
@@ -212,5 +217,40 @@ public class InitConfigDB {
 		}
 	}
 	
+	@Test
+	public void init_Template() {
+		log.info("init template");
+		List<Template> templates= this.templateRepository.findAll();
+		
+		if (templates.isEmpty()) {
+			try {
+
+				log.info("No templates Adding...");
+				Template template= new Template();
+				template.setIdentification("GSMA-Weather Forecast");
+				template.setType("0");
+				template.setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}");
+				template.setDescription("This contains a harmonised description of a Weather Forecast.");
+				template.setCategory("plantilla_categoriaGSMA");
+				template.setIsrelational(false);
+				templateRepository.save(template);
+				///
+				template=new Template();
+				template.setIdentification("TagsProjectBrandwatch");
+				template.setType("1");
+				template.setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}");
+				template.setDescription("Plantilla para almacenar los TAG definidos en un PROJECT Brandwatch");
+				template.setCategory("plantilla_categoriaSocial");
+				template.setIsrelational(false);
+				templateRepository.save(template);
+				
+				
+				
+			} catch (Exception e) {
+				templateRepository.deleteAll();
+			}
+			
+		}
+	}
 
 }
