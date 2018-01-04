@@ -24,7 +24,7 @@ import lombok.Setter;
 @Table(name = "TEMPLATE")
 @Configurable
 @SuppressWarnings("deprecation")
-public class Template extends AuditableEntityWithUUID {
+public class DataModel extends AuditableEntityWithUUID {
 	
 	 @Column(name = "JSONSCHEMA",nullable = false)
 	 @NotNull
