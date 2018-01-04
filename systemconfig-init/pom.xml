@@ -28,7 +28,7 @@
 	
         <dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>config-model</artifactId>
+			<artifactId>sofia2-config-model</artifactId>
             <version>${project.version}</version>
         </dependency>
 		
