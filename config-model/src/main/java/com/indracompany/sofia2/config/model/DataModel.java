@@ -30,11 +30,11 @@ public class DataModel extends AuditableEntityWithUUID {
 	 @NotNull
 	 @Lob
 	 @Type(type = "org.hibernate.type.TextType")
-	 @Setter private String jsonschema;
+	 @Setter private String jsonSchema;
 
 	 @Column(name = "ISRELATIONAL",nullable = false)
 	 @NotNull
-	 @Setter @Getter private boolean isrelational;
+	 @Setter @Getter private boolean isRelational;
 
 	 @Column(name = "IDENTIFICATION", length = 45, unique = true,nullable = false)
 	 @NotNull
@@ -51,8 +51,8 @@ public class DataModel extends AuditableEntityWithUUID {
 	 @Setter @Getter private String category;
 	 
 	 
-	 public String getschema() {
-		 String schema = this.jsonschema.toString();
+	 public String getSchema() {
+		 String schema = this.jsonSchema.toString();
 		 if (schema != null && schema.length() > 0) {
 			 schema = schema.replaceAll("\\<.*?>", "");
 			 schema = schema.replaceAll("&nbsp;", "");
@@ -64,7 +64,7 @@ public class DataModel extends AuditableEntityWithUUID {
 		 return schema;
 	 }
 
-	 private String prepareschema(String jsonschema) {
+	 private String prepareSchema(String jsonschema) {
 		 String myjsonschema = jsonschema;
 		 if (myjsonschema != null) {
 			 myjsonschema = myjsonschema.replace("\t", "");

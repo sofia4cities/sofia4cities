@@ -15,10 +15,11 @@ import java.util.List;
 
 public interface DataModelRepository extends JpaRepository<DataModel, String> {
 	
+	DataModel findById(String id);
 	List<DataModel> findByTypeAndIdentificationAndDescription(String type, String identification, String description);
 	List<DataModel> findByIdentification(String identification);
-	List<DataModel> findByIsrelationalTrue();
-	List<DataModel> findByIsrelationalFalse();
+	List<DataModel> findByIsRelationalTrue();
+	List<DataModel> findByIsRelationalFalse();
 	List<DataModel> findByType(String type);
 	List<DataModel> findByCategory(String category);
 	long countByIdentification(String identification);

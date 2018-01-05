@@ -6,32 +6,21 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityManager;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
@@ -45,12 +34,9 @@ import lombok.Setter;
 public class ClientPlatform extends AuditableEntityWithUUID  {
 	
 	/* Se deja comentado hasta migración
-	@OneToMany(mappedBy = "kpId", fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_KP_INSTANCIAKP")
-    private Set<Instanciakp> instanciakps;
 
-    @OneToMany(mappedBy = "kpId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
     @ForeignKey(name = "FK_KPO_KP")
     private Set<Kpontologia> kpontologias;
@@ -61,7 +47,7 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
     private Set<Kpontologiagrupo> kpontologiagrupoes;
     
     
-	@OneToMany(mappedBy = "kpId", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.REMOVE)
 	@OnDelete(action = OnDeleteAction.CASCADE)
     @ForeignKey(name = "FK_KPID")
     private Set<Token> tokens;
@@ -75,13 +61,7 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
         this.tokens = tokens;
     }
     
-    public Set<Instanciakp> getInstanciakps() {
-        return this.instanciakps;
-    }
-
-	public void setInstanciakps(Set<Instanciakp> instanciakps) {
-        this.instanciakps = instanciakps;
-    }
+    
 
 	public Set<Kpontologia> getKpontologias() {
         return this.kpontologias;
@@ -100,11 +80,16 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
     }
 
     */
+	
+	@OneToMany(mappedBy = "clientPlatformId", fetch = FetchType.LAZY)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter @Setter private Set<ClientConnection> clientConnections;
+	
 	@Column(name = "ENCRYPTIONKEY",nullable = false)
     @NotNull
     @Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String encryptionkey;
+    @Getter @Setter private String encryptionKey;
 	
     @Column(name = "METADATA")
     @Lob

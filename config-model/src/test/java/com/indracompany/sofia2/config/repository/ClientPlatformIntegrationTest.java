@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+
 import com.indracompany.sofia2.config.model.ClientPlatform;
 
 
@@ -41,13 +42,13 @@ public class ClientPlatformIntegrationTest {
 			ClientPlatform client= new ClientPlatform();
 			client.setUserId("1");
 			client.setIdentification("ScadaTags_Alarms_kp");
-			client.setEncryptionkey("b37bf11c-631e-4bc4-ae44-910e58525952");
+			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
 			client.setDescription("Kp para la insercion de alarmas de scada");
 			repository.save(client);			
 			client= new ClientPlatform();
 			client.setUserId("6");
 			client.setIdentification("GTKP-fjgcornejo");
-			client.setEncryptionkey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
+			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
 			repository.save(client);
 			
 		}
@@ -58,5 +59,5 @@ public class ClientPlatformIntegrationTest {
 		List<ClientPlatform> client=this.repository.findByIdentificationAndDescription("GTKP-fjgcornejo", null);
 		Assert.assertTrue(client!=null);		
 	}
-	
+
 }

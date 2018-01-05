@@ -12,6 +12,7 @@ import java.util.List;
 
 public interface ClientPlatformRepository extends JpaRepository<ClientPlatform, String>{
 	
+	ClientPlatform findById(String id);
 	List<ClientPlatform> findByIdentificationAndDescription(String identification, String description);
 	List<ClientPlatform> findByUserIdAndIdentificationAndDescription(String userId, String identification, String description);
 	long countByIdentification(String identification);
