@@ -8,5 +8,7 @@ public enum SSAPMessageTypes {
 	
 	INSERT,
 	UPDATE,
-	DELETE
+	DELETE,
+	
+	QUERY
 }

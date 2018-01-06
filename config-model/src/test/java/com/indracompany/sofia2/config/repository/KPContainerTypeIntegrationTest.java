@@ -44,20 +44,20 @@ public class KPContainerTypeIntegrationTest {
 	public void setUp() {
 		List<KPContainerType> types = this.repository.findAll();
 		if (types.isEmpty()) {
-			log.info("No types en tabla.Adding...");
-			noData=true;
-			KPContainerType type=new KPContainerType();
-			type.setId(1);
-			type.setType("Python");
-			repository.save(type);
-			type=new KPContainerType();
-			type.setId(2);
-			type.setType("Java");
-			repository.save(type);
-			type=new KPContainerType();
-			type.setId(3);
-			type.setType("URL");
-			repository.save(type);		
+//			log.info("No types en tabla.Adding...");
+//			noData=true;
+//			KPContainerType type=new KPContainerType();
+//			type.setId(1);
+//			type.setType("Python");
+//			repository.save(type);
+//			type=new KPContainerType();
+//			type.setId(2);
+//			type.setType("Java");
+//			repository.save(type);
+//			type=new KPContainerType();
+//			type.setId(3);
+//			type.setType("URL");
+//			repository.save(type);		
 		}
 	}
 	

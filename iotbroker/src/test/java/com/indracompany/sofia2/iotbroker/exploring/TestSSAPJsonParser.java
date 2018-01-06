@@ -7,6 +7,7 @@ import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
+import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
@@ -15,7 +16,7 @@ public class TestSSAPJsonParser {
 	
 	SSAPJsonParser parser = SSAPJsonParser.getInstance();
 	@Test
-	public void test() throws BaseException {
+	public void test() throws BaseException, SSAPParseException {
 		SSAPMessage<SSAPBodyJoinMessage> message = SSAPMessageGenerator.generateJoinMessage();
 		String strMessage = parser.serialize(message);
 		

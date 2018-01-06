@@ -6,6 +6,7 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public class SSAPBodyOperationMessage extends SSAPBodyMessage {
 
+	private String query;
 	private SSAPQueryType queryType;
 	private SSAPQueryResultFormat resultFormat;
 
@@ -38,6 +39,19 @@ public class SSAPBodyOperationMessage extends SSAPBodyMessage {
 	@Override
 	public boolean isAutorizationMandatory() {
 		return true;
+	}
+
+	@Override
+	public boolean isOntologyMandatory() {
+		return true;
+	}
+
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
 	}
 
 }

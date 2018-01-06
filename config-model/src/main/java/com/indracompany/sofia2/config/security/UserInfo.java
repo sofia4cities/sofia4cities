@@ -100,6 +100,12 @@ public class UserInfo implements UserDetails, Serializable {
 	public boolean isEnabled() {
 		return enabled;
 	}
+
+	@Override
+	public String getPassword() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }

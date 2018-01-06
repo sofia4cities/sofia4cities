@@ -6,24 +6,13 @@
  ******************************************************************************/
 package com.indracompany.sofia2.persistence.interfaces;
 
+import com.indracompany.sofia2.persistence.enums.AccessMode;
+
 import lombok.Getter;
 import lombok.Setter;
 
 public class Table4Ontology {
 
-	public enum AccessMode {
-		
-		SELECT,
-		UPDATE,
-		DELETE,
-		INSERT,
-		CREATE,
-		DELETEINDEX,
-		GETINDEXES,
-		INVALIDATE,
-		ALTER
-	}
-	
 	@Getter @Setter private String tableName;
 	@Getter @Setter private AccessMode accessMode;
 	

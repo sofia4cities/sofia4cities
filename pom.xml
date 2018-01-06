@@ -19,6 +19,7 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<javafaker.version>0.14</javafaker.version>
+		<jsqlparser.version>0.9</jsqlparser.version>
 		<spring-boot.version>1.5.9.RELEASE</spring-boot.version>
 	</properties>
 	
@@ -32,6 +33,13 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
+			<dependency>
+			    <groupId>com.github.jsqlparser</groupId>
+			    <artifactId>jsqlparser</artifactId>
+			    <version>${jsqlparser.version}</version>
+			</dependency>
+            
 			<dependency>
 		    	<groupId>com.github.javafaker</groupId>
 		    	<artifactId>javafaker</artifactId>
@@ -44,6 +52,9 @@
 	<modules>
 		<module>sofia2-springboot-autoconfigure-starter</module>
 		<module>iotbroker</module>
+		<module>sofia2-config-model</module>
+		<module>sofia2-persistence-rtdb-ri</module>
+		<module>ssap</module>		
 	</modules>
 	
 	<build>

@@ -2,18 +2,8 @@ package com.indracompany.sofia2.ssap.body;
 
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
-public class SSAPBodyJoinMessage extends SSAPBodyMessage {
-	
-	private String token;
-	
-	public String getToken() {
-		return token;
-	}
+public class SSAPBodyEmptyMessage extends SSAPBodyMessage {
 
-	public void setToken(String token) {
-		this.token = token;
-	}
-	
 	@Override
 	public boolean isThinKpMandatory() {
 		return false;
@@ -28,5 +18,9 @@ public class SSAPBodyJoinMessage extends SSAPBodyMessage {
 	public boolean isAutorizationMandatory() {
 		return false;
 	}
-	
+
+	@Override
+	public boolean isOntologyMandatory() {
+		return false;
+	}
 }

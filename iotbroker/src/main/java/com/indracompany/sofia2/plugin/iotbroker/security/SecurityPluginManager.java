@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 @Component
@@ -38,6 +39,13 @@ public class SecurityPluginManager {
 	public void checkSessionKeyActive(String sessionKey) throws AuthorizationException {
 		for(SecurityPlugin p : plugins) {
 			p.checkSessionKeyActive(sessionKey);
+		}
+		
+	}
+
+	public void checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) throws AuthorizationException {
+		for(SecurityPlugin p : plugins) {
+			p.checkAuthorization(messageType, ontology, sessionKey);
 		}
 		
 	}

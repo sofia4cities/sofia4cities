@@ -83,7 +83,7 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
 	
 	@OneToMany(mappedBy = "clientPlatformId", fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter @Setter private Set<ClientConnection> clientConnections;
+//	@Getter @Setter private Set<ClientConnection> clientConnections;
 	
 	@Column(name = "ENCRYPTIONKEY",nullable = false)
     @NotNull

@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.util.VersionUtil;
 import com.fasterxml.jackson.databind.Module.SetupContext;
+import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.json.version.one.OneSSAPBodyMessageMixin;
+import com.indracompany.sofia2.ssap.json.version.one.OneSSAPMessageMixin;
 
 public class SSAPJsonModule extends Module{
 	private static final String NAME = "JACKSON_MODULE";
@@ -28,6 +30,7 @@ public class SSAPJsonModule extends Module{
 	@Override
 	public void setupModule(SetupContext context) {
 		context.setMixInAnnotations(SSAPBodyMessage.class, OneSSAPBodyMessageMixin.class);
+		context.setMixInAnnotations(SSAPMessage.class, OneSSAPMessageMixin.class);
 	}
 
 }

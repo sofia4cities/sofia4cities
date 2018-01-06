@@ -48,4 +48,9 @@ public class SSAPBodyReturnMessage extends SSAPBodyMessage{
 		return false;
 	}
 
+	@Override
+	public boolean isOntologyMandatory() {
+		return false;
+	}
+
 }

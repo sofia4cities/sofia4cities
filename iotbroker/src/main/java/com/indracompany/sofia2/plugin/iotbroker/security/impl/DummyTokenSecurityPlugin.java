@@ -9,6 +9,7 @@ import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPlugin;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 //TODO: Delete this class
@@ -28,6 +29,12 @@ public class DummyTokenSecurityPlugin implements SecurityPlugin {
 
 	@Override
 	public void checkSessionKeyActive(String sessionKey) throws AuthorizationException {
+		
+	}
+
+	@Override
+	public void checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey)
+			throws AuthorizationException {
 		
 	}
 

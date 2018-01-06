@@ -2,8 +2,18 @@ package com.indracompany.sofia2.ssap.body;
 
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
-public class SSAPBodyLeaveMessage extends SSAPBodyMessage {
+public class SSAPBodyJoinMessage extends SSAPBodyMessage {
+	
+	private String token;
+	
+	public String getToken() {
+		return token;
+	}
 
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 	@Override
 	public boolean isThinKpMandatory() {
 		return false;
@@ -19,4 +29,9 @@ public class SSAPBodyLeaveMessage extends SSAPBodyMessage {
 		return false;
 	}
 
+	@Override
+	public boolean isOntologyMandatory() {
+		return false;
+	}
+	
 }

@@ -2,7 +2,7 @@ package com.indracompany.sofia2.ssap.body;
 
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
-public class SSAPBodyEmptyMessage extends SSAPBodyMessage {
+public class SSAPBodyLeaveMessage extends SSAPBodyMessage {
 
 	@Override
 	public boolean isThinKpMandatory() {
@@ -18,4 +18,10 @@ public class SSAPBodyEmptyMessage extends SSAPBodyMessage {
 	public boolean isAutorizationMandatory() {
 		return false;
 	}
+
+	@Override
+	public boolean isOntologyMandatory() {
+		return false;
+	}
+
 }

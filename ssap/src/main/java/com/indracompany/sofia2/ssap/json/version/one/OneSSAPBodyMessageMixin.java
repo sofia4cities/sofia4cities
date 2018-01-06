@@ -18,4 +18,5 @@ public abstract class OneSSAPBodyMessageMixin {
 	@JsonIgnore public abstract boolean isThinKpMandatory();
 	@JsonIgnore public abstract boolean isSessionKeyMandatory();	
 	@JsonIgnore public abstract boolean isAutorizationMandatory();
+	@JsonIgnore public abstract boolean isOntologyMandatory();
 }

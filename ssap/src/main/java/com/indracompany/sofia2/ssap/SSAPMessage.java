@@ -14,7 +14,6 @@ public final class SSAPMessage<T extends SSAPBodyMessage>implements Serializable
 	protected String ontology;
 	protected SSAPMessageDirection direction;
 	protected SSAPMessageTypes messageType;
-//	protected SSAPBodyJoinMessage body;
 	protected T body = (T) new SSAPBodyEmptyMessage();
 	
 	public String getMessageId() {
