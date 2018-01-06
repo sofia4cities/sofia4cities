@@ -1,4 +1,4 @@
-package com.indracompany.sofia2.persistence.enums;
+package com.indracompany.sofia2.persistence.common;
 
 public enum AccessMode {
 		SELECT,

@@ -6,7 +6,7 @@
  ******************************************************************************/
 package com.indracompany.sofia2.persistence.interfaces;
 
-import com.indracompany.sofia2.persistence.enums.AccessMode;
+import com.indracompany.sofia2.persistence.common.AccessMode;
 
 import lombok.Getter;
 import lombok.Setter;

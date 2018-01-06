@@ -28,6 +28,7 @@ import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
+import com.indracompany.sofia2.ssap.SSAPQueryType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.util.JSON;
@@ -331,5 +332,4 @@ public class MongoNativeBasicOpsDBRepository implements BasicOpsDBRepository {
 			throw new DBPersistenceException(e);
 		}
 	}
-
 }

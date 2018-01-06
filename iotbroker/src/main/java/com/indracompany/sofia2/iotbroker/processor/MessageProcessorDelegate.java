@@ -17,7 +17,8 @@ import com.indracompany.sofia2.iotbroker.common.util.SSAP2PersintenceUtil;
 import com.indracompany.sofia2.iotbroker.processor.impl.InsertProcessor;
 import com.indracompany.sofia2.iotbroker.processor.impl.JoinProcessor;
 import com.indracompany.sofia2.iotbroker.processor.impl.LeaveProcessor;
-import com.indracompany.sofia2.persistence.enums.AccessMode;
+import com.indracompany.sofia2.persistence.common.AccessMode;
+import com.indracompany.sofia2.persistence.exceptions.NotSupportedStatementException;
 import com.indracompany.sofia2.persistence.interfaces.DBStatementParser;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPErrorCode;
@@ -34,6 +35,9 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	
 	@Autowired
 	SecurityPluginManager securityPluginManager;
+	
+	@Autowired
+	List<DBStatementParser> dbStatementParsers;
 	
 	@Autowired
 	JoinProcessor joinProcessor;
@@ -152,14 +156,21 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	
 	private void validateOperation(SSAPMessageTypes messageType, SSAPQueryType queryType, String query, String sessionKey) throws AuthorizationException {
 		
-		DBStatementParser parser = context.getBean(queryType.name(), DBStatementParser.class);
-		Optional<AccessMode> accesType = SSAP2PersintenceUtil.formSSAPMessageType2TableAccesMode(messageType);
-		
-		if(accesType.isPresent()) {
-			List<String> collections = parser.getCollectionList(query, accesType.get());
-			for(String col : collections) {
-				securityPluginManager.checkAuthorization(messageType, col, sessionKey);
+		for(DBStatementParser parser : dbStatementParsers) {
+			if(queryType.equals(parser.getSSAPQueryTypeSupported())) 
+			{
+				Optional<AccessMode> accesType = SSAP2PersintenceUtil.formSSAPMessageType2TableAccesMode(messageType);
+				List<String> collections = parser.getCollectionList(query, accesType.get());
+				for(String col : collections) 
+				{
+					securityPluginManager.checkAuthorization(messageType, col, sessionKey);
+				}
+				
+				return;
 			}
+			
+			throw new NotSupportedStatementException(String.format(MessageException.ERR_BD_QUERY_TYPE_NOT_SUPPORTED, queryType.name()));
+			
 		}
 	}
 

@@ -2,7 +2,7 @@ package com.indracompany.sofia2.iotbroker.common.util;
 
 import java.util.Optional;
 
-import com.indracompany.sofia2.persistence.enums.AccessMode;
+import com.indracompany.sofia2.persistence.common.AccessMode;
 import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 
 public class SSAP2PersintenceUtil {

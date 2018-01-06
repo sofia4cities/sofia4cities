@@ -8,12 +8,10 @@ package com.indracompany.sofia2.persistence.interfaces;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
-
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
-public interface BasicOpsDBRepository{
+public interface BasicOpsDBRepository {
 		
 	public String insert(String ontology, String instance) throws DBPersistenceException;
 	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)	throws DBPersistenceException;
@@ -37,6 +35,5 @@ public interface BasicOpsDBRepository{
 	public List<String> findAll(String ontology,int limit) throws DBPersistenceException;
 	
 	public long count(String ontology)  throws DBPersistenceException;
-
 
 }

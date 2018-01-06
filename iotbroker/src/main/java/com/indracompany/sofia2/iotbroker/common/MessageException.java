@@ -7,6 +7,7 @@ public class MessageException {
 	public final static String ERR_SSAP_MESSAGETYPE_MANDATORY_NOT_NULL = "SSAP MessageType is mandatory must not bu null";
 	public final static String ERR_SESSIONKEY_IS_MANDATORY = "SessionKey field is mandatory for %s messages";
 	public static final String ERR_SESSIONKEY_NOT_ASSINGED = "No SessionKey granted";
+	public static final String ERR_BD_QUERY_TYPE_NOT_SUPPORTED = "QueryType %s not supported";
 	
 
 }
