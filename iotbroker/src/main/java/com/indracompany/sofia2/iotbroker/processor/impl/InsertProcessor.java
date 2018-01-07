@@ -22,7 +22,8 @@ public class InsertProcessor implements MessageTypeProcessor {
 	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message) {
 		@SuppressWarnings("unchecked")
 		SSAPMessage<SSAPBodyOperationMessage> insertMessage = (SSAPMessage<SSAPBodyOperationMessage>) message;
-								
+		
+		//TODO: Dont forget ContextData
 		repository.insert(insertMessage.getOntology(), insertMessage.getBody().getData().toString());				
 		return null;		
 	}

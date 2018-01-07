@@ -25,9 +25,9 @@ spring:
    ## GENERAL CONFIG
    application.name: sofia2-persistence-ri
    ## Spring Data Config for MongoDB
-   #data.mongodb:
+   data.mongodb:
       #authentication-database: admin # Authentication database name.
-      #database: sofia # Database name.
+      database: sofia # Database name.
       #field-naming-strategy: # Fully qualified name of the FieldNamingStrategy to use.
       #grid-fs-database: # GridFS database name.
       #host: localhost # Mongo server host. Cannot be set with uri.
