@@ -18,7 +18,7 @@ public class LeaveProcessor implements MessageTypeProcessor {
 	@Autowired
 	SecurityPluginManager securityManager;
 	@Override
-	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message)
+	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws BaseException {
 		String sessionKey=message.getSessionKey();
 		

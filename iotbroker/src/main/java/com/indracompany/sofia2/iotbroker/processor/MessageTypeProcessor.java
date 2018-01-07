@@ -6,6 +6,5 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public interface MessageTypeProcessor {
-	<T extends SSAPBodyMessage>SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message) throws BaseException;
-
+	SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) throws BaseException, Exception;
 }

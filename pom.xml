@@ -33,19 +33,24 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.jsqlparser/jsqlparser -->
-			<dependency>
-			    <groupId>com.github.jsqlparser</groupId>
-			    <artifactId>jsqlparser</artifactId>
-			    <version>${jsqlparser.version}</version>
-			</dependency>
-            
-			<dependency>
+            <dependency>
 		    	<groupId>com.github.javafaker</groupId>
 		    	<artifactId>javafaker</artifactId>
 		    	<version>${javafaker.version}</version>
 		    	<scope>test</scope>
 			</dependency>
+			<dependency>
+	            <groupId>de.flapdoodle.embed</groupId>
+	            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+	            <version>2.0.0</version>
+	            <scope>test</scope>
+	        </dependency>
+	        <dependency>
+	            <groupId>cz.jirutka.spring</groupId>
+	            <artifactId>embedmongo-spring</artifactId>
+	            <version>RELEASE</version>
+	            <scope>test</scope>
+	         </dependency> 
 		</dependencies>
 	</dependencyManagement>
 	

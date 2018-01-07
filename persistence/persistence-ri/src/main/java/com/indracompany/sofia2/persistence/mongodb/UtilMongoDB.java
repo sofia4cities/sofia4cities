@@ -226,12 +226,14 @@ public class UtilMongoDB {
 	
 	public String getObjectIdString(ObjectId id) {
 		String strId;
-		if(ThreadLocalProperties.jsonMode.get() == true) {
-			strId = "{\"_id\":{ \"$oid\":\""  +id.toString() + "\"}}";
-		}
-		else {
-			strId = "{\"_id\":ObjectId(\"" + id.toString() + "\")}";
-		}
+		
+		strId = "{\"_id\":{ \"$oid\":\""  +id.toString() + "\"}}";
+//		if(ThreadLocalProperties.jsonMode.get() == true) {
+//			strId = "{\"_id\":{ \"$oid\":\""  +id.toString() + "\"}}";
+//		}
+//		else {
+//			strId = "{\"_id\":ObjectId(\"" + id.toString() + "\")}";
+//		}
 		
 		return strId;
 	}

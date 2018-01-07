@@ -49,10 +49,26 @@
 			<version>${version}</version>
 		</dependency>	
 		<dependency>
-		    	<groupId>com.github.javafaker</groupId>
-		    	<artifactId>javafaker</artifactId>
-		    	<scope>test</scope>
-			</dependency>
+	    	<groupId>com.github.javafaker</groupId>
+	    	<artifactId>javafaker</artifactId>
+	    	<scope>test</scope>
+		</dependency>
+		<dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>cz.jirutka.spring</groupId>
+            <artifactId>embedmongo-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
 	</dependencies>	
 	<build>
 		<plugins>

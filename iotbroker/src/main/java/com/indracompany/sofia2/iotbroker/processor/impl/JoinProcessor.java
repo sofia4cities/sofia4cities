@@ -30,7 +30,7 @@ public class JoinProcessor implements MessageTypeProcessor {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message) throws SSAPComplianceException, AuthenticationException {
+	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) throws SSAPComplianceException, AuthenticationException {
 		SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
 		SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
 		

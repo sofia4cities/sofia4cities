@@ -6,4 +6,4 @@ server:
 spring:
   profiles: 
     active: common
-    include: dummy-dev
+    include: dummy-dev, localtest, embeddedmongo

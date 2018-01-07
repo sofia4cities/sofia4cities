@@ -35,16 +35,12 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	
 	@Autowired
 	SecurityPluginManager securityPluginManager;
-	
 	@Autowired
 	List<DBStatementParser> dbStatementParsers;
-	
 	@Autowired
-	JoinProcessor joinProcessor;
-	
+	JoinProcessor joinProcessor;	
 	@Autowired
-	LeaveProcessor leaveProcessor;
-	
+	LeaveProcessor leaveProcessor;	
 	@Autowired
 	InsertProcessor insertProcessor;
 	
@@ -123,6 +119,10 @@ public class MessageProcessorDelegate implements MessageProcessor {
 					String.format(e.getMessage(), message.getMessageType().name()));
 		}
 		catch (BaseException e) {
+			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
+					SSAPErrorCode.PROCESSOR, 
+					String.format(e.getMessage(), message.getMessageType().name()));
+		} catch (Exception e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
 					SSAPErrorCode.PROCESSOR, 
 					String.format(e.getMessage(), message.getMessageType().name()));

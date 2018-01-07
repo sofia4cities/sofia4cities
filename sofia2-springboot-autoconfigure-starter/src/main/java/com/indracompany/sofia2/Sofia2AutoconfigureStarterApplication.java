@@ -9,4 +9,6 @@ public class Sofia2AutoconfigureStarterApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(Sofia2AutoconfigureStarterApplication.class, args);
 	}
+	
+	
 }
