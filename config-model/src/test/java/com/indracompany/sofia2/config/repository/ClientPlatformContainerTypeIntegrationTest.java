@@ -19,9 +19,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.indracompany.sofia2.config.model.KPContainerType;
+import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
 import com.indracompany.sofia2.config.model.Note;
-import com.indracompany.sofia2.config.repository.KPContainerTypeRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformContainerTypeRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,31 +33,31 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class KPContainerTypeIntegrationTest {
+public class ClientPlatformContainerTypeIntegrationTest {
 	
 	@Autowired
-	KPContainerTypeRepository repository;
+	ClientPlatformContainerTypeRepository repository;
 	
 	private boolean noData=false;
 	
 	@Before
 	public void setUp() {
-		List<KPContainerType> types = this.repository.findAll();
+		List<ClientPlatformContainerType> types = this.repository.findAll();
 		if (types.isEmpty()) {
-//			log.info("No types en tabla.Adding...");
-//			noData=true;
-//			KPContainerType type=new KPContainerType();
-//			type.setId(1);
-//			type.setType("Python");
-//			repository.save(type);
-//			type=new KPContainerType();
-//			type.setId(2);
-//			type.setType("Java");
-//			repository.save(type);
-//			type=new KPContainerType();
-//			type.setId(3);
-//			type.setType("URL");
-//			repository.save(type);		
+			log.info("No types en tabla.Adding...");
+			noData=true;
+			ClientPlatformContainerType type=new ClientPlatformContainerType();
+			type.setId(1);
+			type.setType("Python");
+			repository.save(type);
+			type=new ClientPlatformContainerType();
+			type.setId(2);
+			type.setType("Java");
+			repository.save(type);
+			type=new ClientPlatformContainerType();
+			type.setId(3);
+			type.setType("URL");
+			repository.save(type);		
 		}
 	}
 	

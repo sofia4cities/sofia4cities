@@ -18,7 +18,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "KPCONTAINER_TYPE")
-public class KPContainerType extends AuditableEntity {
+public class ClientPlatformContainerType extends AuditableEntity {
 
     @Id
     @Column(name = "ID")

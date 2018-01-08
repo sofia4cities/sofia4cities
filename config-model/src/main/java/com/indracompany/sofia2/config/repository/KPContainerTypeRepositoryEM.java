@@ -14,7 +14,7 @@ import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
 
-import com.indracompany.sofia2.config.model.KPContainerType;
+import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
 
 @Repository
 public class KPContainerTypeRepositoryEM  {
@@ -26,17 +26,17 @@ public class KPContainerTypeRepositoryEM  {
         return entityManager.createQuery("SELECT COUNT(o) FROM KPCONTAINER_TYPE o", Long.class).getSingleResult();
     }
     
-	public List<KPContainerType> findAll() {
-        return entityManager.createQuery("SELECT o FROM KPCONTAINER_TYPE o", KPContainerType.class).getResultList();
+	public List<ClientPlatformContainerType> findAll() {
+        return entityManager.createQuery("SELECT o FROM KPCONTAINER_TYPE o", ClientPlatformContainerType.class).getResultList();
     }
 
-	public KPContainerType findById(String id) {
+	public ClientPlatformContainerType findById(String id) {
         if (id == null || id.length() == 0) return null;
-        return entityManager.find(KPContainerType.class, id);
+        return entityManager.find(ClientPlatformContainerType.class, id);
     }
 
-	public List<KPContainerType> findPage(int firstResult, int maxResults) {
-        return entityManager.createQuery("SELECT o FROM KPCONTAINER_TYPE o", KPContainerType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+	public List<ClientPlatformContainerType> findPage(int firstResult, int maxResults) {
+        return entityManager.createQuery("SELECT o FROM KPCONTAINER_TYPE o", ClientPlatformContainerType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
 
 }
