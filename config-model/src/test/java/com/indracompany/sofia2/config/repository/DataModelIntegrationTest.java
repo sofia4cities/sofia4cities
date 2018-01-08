@@ -38,8 +38,8 @@ public class DataModelIntegrationTest {
 	
 	@Before
 	public void setUp() {
-		List<DataModel> DataModels= this.repository.findAll();
-		if (DataModels.isEmpty()) {
+		List<DataModel> dataModels= this.repository.findAll();
+		if (dataModels.isEmpty()) {
 //			log.info("No DataModels ...");
 //			DataModel dataModel= new DataModel();
 //			dataModel.setIdentification("GSMA-Weather Forecast");
@@ -64,7 +64,7 @@ public class DataModelIntegrationTest {
 	
 	@Test
 	public void test1_Count() { 
-		Assert.assertTrue(this.repository.count()==2);		
+		Assert.assertTrue(this.repository.count()>0);		
 	}
 
 	@Test

@@ -67,26 +67,26 @@ public class ClientConnection extends AuditableEntityWithUUID{
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "CLIENTPLATFORM_ID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
     @Getter @Setter private ClientPlatform clientPlatformId;
 	
 	@Column(name = "IDENTIFICATION", length = 255, unique = true,nullable = false)
     @NotNull
     @Getter @Setter private String identification;
 
-	@Column(name = "LASTIP", length = 39)
+	@Column(name = "LAST_IP", length = 39)
 	@Getter @Setter private String lastIp;
 
-	@Column(name = "IPSTRICT",nullable = false,columnDefinition = "boolean default false")
+	@Column(name = "IP_STRICT",nullable = false,columnDefinition = "boolean default false")
     @NotNull
     @Getter @Setter private boolean ipStrict;
 
-	@Column(name = "LASTCONNECTION")
+	@Column(name = "LAST_CONNECTION")
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "MM")
 	@Getter @Setter private Calendar lastConnection;
 
-	@Column(name = "STATICIP",nullable = false,columnDefinition = "boolean default false")
+	@Column(name = "STATIC_IP",nullable = false,columnDefinition = "boolean default false")
     @NotNull
     @Getter @Setter private boolean staticIp;
 

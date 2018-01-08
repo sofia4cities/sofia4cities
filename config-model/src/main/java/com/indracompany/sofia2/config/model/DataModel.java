@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "TEMPLATE")
+@Table(name = "DATA_MODEL")
 @Configurable
 @SuppressWarnings("deprecation")
 public class DataModel extends AuditableEntityWithUUID {
@@ -32,7 +32,7 @@ public class DataModel extends AuditableEntityWithUUID {
 	 @Type(type = "org.hibernate.type.TextType")
 	 @Setter private String jsonSchema;
 
-	 @Column(name = "ISRELATIONAL",nullable = false)
+	 @Column(name = "IS_RELATIONAL",nullable = false)
 	 @NotNull
 	 @Setter @Getter private boolean isRelational;
 

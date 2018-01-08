@@ -1,10 +1,13 @@
 /*******************************************************************************
+
  * © Indra Sistemas, S.A.
- * 2013 - 2018  SPAIN
+ * 2013 - 2014  SPAIN
  *
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
+
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Assert;
@@ -17,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.Gadget;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,33 +34,34 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class ClientPlatformIntegrationTest {
-	@Autowired 
-	ClientPlatformRepository repository;
+
+public class GadgetIntegrationTest {
+	
+	@Autowired
+	GadgetRepository repository;
+	
 	@Before
 	public void setUp() {
-		List<ClientPlatform> clients= this.repository.findAll();
-		if (clients.isEmpty()) {
+		List<Gadget> gadgets= this.repository.findAll();
+		if (gadgets.isEmpty()) {
 			log.info("No clients ...");
-			ClientPlatform client= new ClientPlatform();
-			client.setUserId("1");
-			client.setIdentification("ScadaTags_Alarms_kp");
-			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
-			client.setDescription("Kp para la insercion de alarmas de scada");
-			repository.save(client);			
-			client= new ClientPlatform();
-			client.setUserId("6");
-			client.setIdentification("GTKP-fjgcornejo");
-			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
-			repository.save(client);
+			Gadget gadget=new Gadget();
+			gadget.setDbType("DBC");
+			gadget.setUserId("6");
+			gadget.setPublic(true);
+			gadget.setName("Gadget1");
+			gadget.setType("Tipo 1");
 			
+			repository.save(gadget);
 		}
 	}
-	
 	@Test
-	public void test1_FindByType() { 
-		List<ClientPlatform> client=this.repository.findByIdentificationAndDescription("GTKP-fjgcornejo", null);
-		Assert.assertTrue(client!=null);		
+	public void test_findByUserIdAndType() { 
+		Gadget gadget=this.repository.findAll().get(0);
+		
+		Assert.assertTrue(this.repository.findByUserIdAndType(gadget.getUserId(),gadget.getType()).size()>0);
 	}
+	
+	
 
 }

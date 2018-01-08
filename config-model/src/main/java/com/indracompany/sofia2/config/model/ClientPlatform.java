@@ -8,6 +8,7 @@ package com.indracompany.sofia2.config.model;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -45,22 +46,6 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
     @ForeignKey(name = "FK_KP_ONTOLOGIAGRUPO")
     private Set<Kpontologiagrupo> kpontologiagrupoes;
     
-    
-	@OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.REMOVE)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_KPID")
-    private Set<Token> tokens;
-	
-
-	public Set<Token> getTokens() {
-        return tokens;
-    }
-
-	public void setTokens(Set<Token> tokens) {
-        this.tokens = tokens;
-    }
-    
-    
 
 	public Set<Kpontologia> getKpontologias() {
         return this.kpontologias;
@@ -79,12 +64,17 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
     }
 
     */
+    
+    
+	@OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.REMOVE)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+    @Getter @Setter private Set<Token> tokens;
 	
 	@OneToMany(mappedBy = "clientPlatformId", fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter @Setter private Set<ClientConnection> clientConnections;
 	
-	@Column(name = "ENCRYPTIONKEY",nullable = false)
+	@Column(name = "ENCRYPTION_KEY",nullable = false)
     @NotNull
     @Lob
 	@Type(type = "org.hibernate.type.TextType")
