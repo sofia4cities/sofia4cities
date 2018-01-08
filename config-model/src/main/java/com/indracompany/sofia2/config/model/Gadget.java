@@ -6,12 +6,18 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -37,26 +43,14 @@ public class Gadget extends AuditableEntityWithUUID{
 	@Getter @Setter private String gCode2;
 
 
-	@Column(name = "IS_PUBLIC",nullable = false)
+	@Column(name = "PUBLIC",nullable = false)
 	@NotNull
 	@Getter @Setter private boolean isPublic;
 
 
-
-
-
-
 	/*
 	 * 
-		@OneToMany(mappedBy = "gadgetId", cascade = CascadeType.REMOVE)
-		@OnDelete(action = OnDeleteAction.CASCADE)
-	    @ForeignKey(name = "FK_GADGET_QUERY_GADGET")
-	    private Set<GadgetQuery> gadgetQueries;
-
-		@OneToMany(mappedBy = "gadgetId", cascade = CascadeType.REMOVE)
-		@OnDelete(action = OnDeleteAction.CASCADE)
-	    @ForeignKey(name = "FK_GADGET_MEASURE_GADGET")
-	    private Set<GadgetMeasure> gadgetMeasures;
+		
 
 	    @OneToMany(mappedBy = "gadgetId", cascade = CascadeType.REMOVE)
 		@OnDelete(action = OnDeleteAction.CASCADE)
@@ -104,7 +98,13 @@ public class Gadget extends AuditableEntityWithUUID{
 
 
 	 */
+	@OneToMany(mappedBy = "gadgetId", cascade = CascadeType.REMOVE)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter @Setter private Set<GadgetQuery> gadgetQueries;
 
+	@OneToMany(mappedBy = "gadgetId", cascade = CascadeType.REMOVE)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter @Setter private Set<GadgetMeasure> gadgetMeasures;
 
 	@Column(name = "USER_ID", length = 50,nullable = false)
 	@NotNull

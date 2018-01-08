@@ -15,7 +15,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.DataModel;
 
 public interface ClientConnectionRepository extends JpaRepository<ClientConnection, String>{
 

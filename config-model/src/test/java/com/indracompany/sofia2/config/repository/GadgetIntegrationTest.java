@@ -44,7 +44,7 @@ public class GadgetIntegrationTest {
 	public void setUp() {
 		List<Gadget> gadgets= this.repository.findAll();
 		if (gadgets.isEmpty()) {
-			log.info("No clients ...");
+			log.info("No gadgets ...");
 			Gadget gadget=new Gadget();
 			gadget.setDbType("DBC");
 			gadget.setUserId("6");

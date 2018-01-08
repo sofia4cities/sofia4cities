@@ -32,7 +32,7 @@ public class DataModel extends AuditableEntityWithUUID {
 	 @Type(type = "org.hibernate.type.TextType")
 	 @Setter private String jsonSchema;
 
-	 @Column(name = "IS_RELATIONAL",nullable = false)
+	 @Column(name = "RELATIONAL",nullable = false)
 	 @NotNull
 	 @Setter @Getter private boolean isRelational;
 
