@@ -23,24 +23,24 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class ConsoleMenuOptions extends AuditableEntity{
-	
-	  @Id
-	  @Column(name = "ID", length = 50)
-	  @Getter @Setter private String id;
 
-	  @ManyToOne
-	  @OnDelete(action = OnDeleteAction.CASCADE)
-	  @JoinColumn(name = "CONSOLE_MENU_ID", referencedColumnName = "id", nullable = false)
-	  @Getter @Setter private ConsoleMenu consoleMenuId;
+	@Id
+	@Column(name = "ID", length = 50)
+	@Getter @Setter private String id;
 
-	  @Column(name = "OPTION", length = 75,nullable = false)
-	  @NotNull
-	  @Getter @Setter private String option;
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "CONSOLE_MENU_ID", referencedColumnName = "id", nullable = false)
+	@Getter @Setter private ConsoleMenu consoleMenuId;
 
-	  @Column(name = "PERMITTED")
-	  @NotNull
-	  @Getter @Setter private boolean permitted;
-	    
-	  
-	  
+	@Column(name = "OPTION", length = 75,nullable = false)
+	@NotNull
+	@Getter @Setter private String option;
+
+	@Column(name = "PERMITTED")
+	@NotNull
+	@Getter @Setter private boolean permitted;
+
+
+
 }

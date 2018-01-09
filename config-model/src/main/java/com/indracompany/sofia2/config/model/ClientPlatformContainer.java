@@ -28,22 +28,22 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 
 public class ClientPlatformContainer extends AuditableEntityWithUUID{
-	
+
 	@ManyToOne
-    @JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter @Setter private ClientPlatform clientPlatformId;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
-    @JoinColumn(name = "AUTHENTICATION_TOKEN_ID", referencedColumnName = "id", nullable = false)
+	@JoinColumn(name = "AUTHENTICATION_TOKEN_ID", referencedColumnName = "id", nullable = false)
 	@Getter @Setter private Token authenticationTokenId;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
-    @JoinColumn(name = "CLIENT_PLATFORM_CONTAINER_TYPE_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "CLIENT_PLATFORM_CONTAINER_TYPE_ID", referencedColumnName = "ID", nullable = false)
 	@Getter @Setter private ClientPlatformContainerType clientPlatformContainerTypeId;
-/*
+	/*
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
     @ForeignKey(name = "FK_KPCONTENEDOR_LENGUAJERUNTIME")
@@ -67,8 +67,8 @@ public class ClientPlatformContainer extends AuditableEntityWithUUID{
     @ForeignKey(name = "FK_KPCONTMONIT")
     @JoinColumn(name = "IDMONITORIZACION", referencedColumnName = "ID", nullable = false)
     private Monitorizacionkpcontenedor idmonitorizacion;
-    
-    
+
+
 	public Lenguajeruntime getIdlenguaje() {
         return idlenguaje;
     }
@@ -100,38 +100,36 @@ public class ClientPlatformContainer extends AuditableEntityWithUUID{
 	public void setIdmonitorizacion(Monitorizacionkpcontenedor idmonitorizacion) {
         this.idmonitorizacion = idmonitorizacion;
     }
-*/
+	 */
 	@Column(name = "CLIENT_CONNECTION", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String clientConnection;
+	@NotNull
+	@Getter @Setter private String clientConnection;
 
 	@Column(name = "ENCODING", length = 50)
 	@Getter @Setter private String encoding;
 
 	@Column(name = "PROGRAM_NAME", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String programName;
+	@NotNull
+	@Getter @Setter private String programName;
 
 	@Column(name = "MAX_EXECUTION_TIME",nullable = false)
-    @NotNull
-    @Getter @Setter private Integer maxExecutionTime;
+	@NotNull
+	@Getter @Setter private Integer maxExecutionTime;
 
 	@Column(name = "MESSAGE_FILES_PREFIX", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String messageFilesPrefix;
+	@NotNull
+	@Getter @Setter private String messageFilesPrefix;
 
 	@Column(name = "LOG_FILES_PREFIX", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String logFilesPrefix;
+	@NotNull
+	@Getter @Setter private String logFilesPrefix;
 
 	@Column(name = "DESCRIPTION", length = 512)
 	@Getter @Setter private String description;
 
 	@Column(name = "STATE", length = 30,nullable = false)
-    @NotNull
-    @Getter @Setter private String state;
-
-	
+	@NotNull
+	@Getter @Setter private String state;
 
 
 
@@ -140,7 +138,9 @@ public class ClientPlatformContainer extends AuditableEntityWithUUID{
 
 
 
-	
+
+
+
 
 
 }

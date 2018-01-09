@@ -27,15 +27,15 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 public class ConsoleMenu extends AuditableEntity{
 
-    @Id
-    @Column(name = "ID", length = 50)
-    @Getter @Setter private String id;
-    
-    @Column(name = "NAME", length = 75,nullable = false)
-    @NotNull
-    @Getter @Setter private String name;
-    
-    
-	
+	@Id
+	@Column(name = "ID", length = 50)
+	@Getter @Setter private String id;
+
+	@Column(name = "NAME", length = 75,nullable = false)
+	@NotNull
+	@Getter @Setter private String name;
+
+
+
 
 }

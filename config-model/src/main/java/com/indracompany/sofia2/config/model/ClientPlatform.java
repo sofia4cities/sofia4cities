@@ -32,7 +32,7 @@ import lombok.Setter;
 @Configurable
 @SuppressWarnings("deprecation")
 public class ClientPlatform extends AuditableEntityWithUUID  {
-	
+
 	/* Se deja comentado hasta migración
 
 
@@ -45,7 +45,7 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
 	@OnDelete(action = OnDeleteAction.CASCADE)
     @ForeignKey(name = "FK_KP_ONTOLOGIAGRUPO")
     private Set<Kpontologiagrupo> kpontologiagrupoes;
-    
+
 
 	public Set<Kpontologia> getKpontologias() {
         return this.kpontologias;
@@ -63,27 +63,27 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
         this.kpontologiagrupoes = kpontologiagrupoes;
     }
 
-    */
-    
-    
+	 */
+
+
 	@OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.REMOVE)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @Getter @Setter private Set<Token> tokens;
-	
+	@Getter @Setter private Set<Token> tokens;
+
 	@OneToMany(mappedBy = "clientPlatformId", fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter @Setter private Set<ClientConnection> clientConnections;
-	
+
 	@Column(name = "ENCRYPTION_KEY",nullable = false)
-    @NotNull
-    @Lob
+	@NotNull
+	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String encryptionKey;
-	
-    @Column(name = "METADATA")
-    @Lob
+	@Getter @Setter private String encryptionKey;
+
+	@Column(name = "METADATA")
+	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String metadata;
+	@Getter @Setter private String metadata;
 
 
 
@@ -92,14 +92,14 @@ public class ClientPlatform extends AuditableEntityWithUUID  {
 	@Getter @Setter private String userId;
 
 	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String identification;
+	@NotNull
+	@Getter @Setter private String identification;
 
 	@Column(name = "DESCRIPTION", length = 256)
 	@Getter @Setter private String description;
 
 
-	
-	
+
+
 
 }

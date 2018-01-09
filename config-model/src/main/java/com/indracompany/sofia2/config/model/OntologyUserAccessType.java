@@ -33,20 +33,20 @@ import lombok.Setter;
 
 public class OntologyUserAccessType extends AuditableEntity{
 
-    @Id
-    @Column(name = "ID")
-    @Getter @Setter private Integer id;
-    
+	@Id
+	@Column(name = "ID")
+	@Getter @Setter private Integer id;
 
-    @OneToMany(mappedBy = "ontologyUserAccessTypeId",fetch = FetchType.LAZY)
+
+	@OneToMany(mappedBy = "ontologyUserAccessTypeId",fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @Getter @Setter private Set<OntologyUserAccess> ontologyUserAccess;
-    
-    @Column(name = "NAME", length = 24, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String name;
+	@Getter @Setter private Set<OntologyUserAccess> ontologyUserAccess;
+
+	@Column(name = "NAME", length = 24, unique = true,nullable = false)
+	@NotNull
+	@Getter @Setter private String name;
 
 	@Column(name = "DESCRIPCTION", length = 255)
 	@Getter @Setter private String description;
-    
+
 }

@@ -31,18 +31,18 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 public class RoleType extends AuditableEntity {
 
-    @Id
-    @Column(name = "ID")
-    @Getter @Setter private Integer id;    
-	
-    @OneToOne(cascade = CascadeType.ALL)
+	@Id
+	@Column(name = "ID")
+	@Getter @Setter private Integer id;    
+
+	@OneToOne(cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ROLE_PARENT", unique = false, nullable = true, insertable = true, updatable = true)
-    @Getter @Setter private RoleType roleparent;
-    
+	@JoinColumn(name = "ROLE_PARENT", unique = false, nullable = true, insertable = true, updatable = true)
+	@Getter @Setter private RoleType roleparent;
+
 	@Column(name = "NAME", length = 24, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String name;
+	@NotNull
+	@Getter @Setter private String name;
 
 	@Column(name = "DESCRIPTION", length = 255)
 	@Getter @Setter private String description;

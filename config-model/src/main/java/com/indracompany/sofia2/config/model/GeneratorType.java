@@ -25,21 +25,21 @@ import lombok.Setter;
 @Table(name = "GENERATOR_TYPES")
 
 public class GeneratorType extends AuditableEntity{
-	
 
-    @Id
-    @Column(name = "ID")
-    @Getter @Setter private Integer id;
-    
-    @Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String identification;
+
+	@Id
+	@Column(name = "ID")
+	@Getter @Setter private Integer id;
+
+	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
+	@NotNull
+	@Getter @Setter private String identification;
 
 	@Column(name = "KEY_TYPE", length = 512,nullable = false)
-    @NotNull
-    @Getter @Setter private String keyType;
+	@NotNull
+	@Getter @Setter private String keyType;
 
 	@Column(name = "KEY_VALUE_DEF", length = 512,nullable = false)
-    @NotNull
-    @Getter @Setter private String keyValueDef;
+	@NotNull
+	@Getter @Setter private String keyValueDef;
 }

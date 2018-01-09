@@ -20,13 +20,13 @@ import lombok.Setter;
 @Table(name = "KPCONTAINER_TYPE")
 public class KPContainerType extends AuditableEntity {
 
-    @Id
-    @Column(name = "ID")
-    @Getter @Setter private Integer id;
-    
+	@Id
+	@Column(name = "ID")
+	@Getter @Setter private Integer id;
+
 	private static final long serialVersionUID = 1L;
 	@Column(name = "TYPE", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String type;
-	
+	@NotNull
+	@Getter @Setter private String type;
+
 }

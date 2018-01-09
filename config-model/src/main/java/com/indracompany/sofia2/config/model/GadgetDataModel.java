@@ -27,7 +27,7 @@ import lombok.Setter;
 @Configurable
 @SuppressWarnings("deprecation")
 public class GadgetDataModel extends AuditableEntityWithUUID{
-	
+
 
 
 	@Column(name = "IDENTIFICATION", length = 50, unique = true)
@@ -52,8 +52,8 @@ public class GadgetDataModel extends AuditableEntityWithUUID{
 	@Column(name = "PUBLIC")
 	@NotNull
 	@Getter @Setter private boolean isPublic;
-	
-    @Column(name = "DESCRIPTION", length = 512)
-    @Getter @Setter private String description;
+
+	@Column(name = "DESCRIPTION", length = 512)
+	@Getter @Setter private String description;
 
 }

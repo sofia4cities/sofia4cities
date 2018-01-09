@@ -32,26 +32,26 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 
 public class InstanceGenerator extends AuditableEntity{
-	
 
-    @Id
-    @Column(name = "ID")
-    @Getter @Setter private Integer id;
 
-    @Column(name = "VALUES_G",nullable = false)
-    @NotNull
-    @Lob
+	@Id
+	@Column(name = "ID")
+	@Getter @Setter private Integer id;
+
+	@Column(name = "VALUES_G",nullable = false)
+	@NotNull
+	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String valuesG;
-    
-    @ManyToOne
+	@Getter @Setter private String valuesG;
+
+	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "GENERATOR_TYPE_ID", referencedColumnName = "ID", nullable = false)
-    @Getter @Setter private GeneratorType generatorTypeId;
+	@JoinColumn(name = "GENERATOR_TYPE_ID", referencedColumnName = "ID", nullable = false)
+	@Getter @Setter private GeneratorType generatorTypeId;
 
 	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String identification;
+	@NotNull
+	@Getter @Setter private String identification;
 
 	@Column(name = "USER", length = 50)
 	@Getter @Setter private String user;

@@ -30,11 +30,11 @@ import lombok.Setter;
 
 public class GadgetMeasure extends AuditableEntityWithUUID {
 
-	
+
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "GADGET_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "GADGET_ID", referencedColumnName = "ID", nullable = false)
 	@Getter @Setter private Gadget gadgetId;
 	/*
 	@ManyToOne
@@ -42,7 +42,7 @@ public class GadgetMeasure extends AuditableEntityWithUUID {
 	@OnDelete(action = OnDeleteAction.CASCADE)
     @ForeignKey(name = "FK_GADGET_MEASURE_ONTOLOGIA")
     private Ontologia ontologiaId;
-    
+
 	public Ontologia getOntologiaId() {
         return ontologiaId;
     }
@@ -50,11 +50,11 @@ public class GadgetMeasure extends AuditableEntityWithUUID {
 	public void setOntologiaId(Ontologia ontologiaId) {
         this.ontologiaId = ontologiaId;
     }
-    */
+	 */
 
 	@Column(name = "ATTRIBUTE", length = 200,nullable = false)
-    @NotNull
-    @Getter @Setter private String attribute;
+	@NotNull
+	@Getter @Setter private String attribute;
 
 	@Column(name = "ATTRIBUTE2", length = 200)
 	@Getter @Setter private String attribute2;
@@ -92,7 +92,7 @@ public class GadgetMeasure extends AuditableEntityWithUUID {
 	@Column(name = "QUERY_ID", length = 50)
 	@Getter @Setter private String queryId;
 
-	
+
 
 
 }

@@ -27,23 +27,23 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 
 public class Token extends AuditableEntityWithUUID{
-	
+
 	@ManyToOne
-    @JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID")
+	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @Getter @Setter private ClientPlatform clientPlatformId;
+	@Getter @Setter private ClientPlatform clientPlatformId;
 
 	@Column(name = "token", length = 32, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String token;
+	@NotNull
+	@Getter @Setter private String token;
 
 	@Column(name = "LAST_CONNECTION")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(style = "MM")
 	@Getter @Setter private Calendar lastConnection;
 
 	@Column(name = "ACTIVE",nullable = false)
-    @NotNull
-    @Getter @Setter private Integer active;
+	@NotNull
+	@Getter @Setter private Integer active;
 
 }

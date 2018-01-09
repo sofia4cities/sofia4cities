@@ -27,39 +27,39 @@ import lombok.Setter;
 @Configurable
 @SuppressWarnings("deprecation")
 public class DashboardType extends AuditableEntity{
-	
+
 	@Id
-    @Column(name = "ID")
-    @Getter @Setter private Integer id;   
-	
-    @Column(name = "MODEL",nullable = false)
-    @NotNull
-    @Lob
+	@Column(name = "ID")
+	@Getter @Setter private Integer id;   
+
+	@Column(name = "MODEL",nullable = false)
+	@NotNull
+	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String model;
-	
+	@Getter @Setter private String model;
 
 
-    @Column(name = "JSONI18N")
-    @Lob
-    @Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String jsonI18n;
 
-    @Column(name = "CUSTOMCSS")
-    @Lob
-    @Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String customCss;
+	@Column(name = "JSONI18N")
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	@Getter @Setter private String jsonI18n;
 
-    @Column(name = "CUSTOMJS")
-    @Lob
-    @Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String customJs;
+	@Column(name = "CUSTOMCSS")
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	@Getter @Setter private String customCss;
+
+	@Column(name = "CUSTOMJS")
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
+	@Getter @Setter private String customJs;
 
 	/*
     @OneToMany(mappedBy = "dashboardtipoId", cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Gruposdashboardtipo> gruposdashboardtipoes;
-    
+
     public Set<Gruposdashboardtipo> getGruposdashboardtipoes() {
         return gruposdashboardtipoes;
     }
@@ -68,20 +68,20 @@ public class DashboardType extends AuditableEntity{
         this.gruposdashboardtipoes = gruposdashboardtipoes;
     }
 
-    */
+	 */
 
 	@Column(name = "USER_ID", length = 50, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String userId;
+	@NotNull
+	@Getter @Setter private String userId;
 
 	@Column(name = "TYPE", length = 50, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String type;
+	@NotNull
+	@Getter @Setter private String type;
 
 	@Column(name = "PUBLIC",nullable = false)
-    @NotNull
-    @Getter @Setter private boolean isPublic;
+	@NotNull
+	@Getter @Setter private boolean isPublic;
 
-	
+
 
 }
