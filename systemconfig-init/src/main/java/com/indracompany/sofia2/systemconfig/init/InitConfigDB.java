@@ -5,18 +5,16 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.model.KPContainerType;
 import com.indracompany.sofia2.config.model.RoleType;
-import com.indracompany.sofia2.config.model.Template;
 import com.indracompany.sofia2.config.model.UserCDB;
 import com.indracompany.sofia2.config.repository.KPContainerTypeRepository;
 import com.indracompany.sofia2.config.repository.RoleTypeRepository;
 import com.indracompany.sofia2.config.repository.UserCDBRepository;
-import com.indracompany.sofia2.config.repository.TemplateRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,21 +26,31 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class InitConfigDB {
 	
+
+	@Value("${sofia2.init.configdb:false}")
+	private boolean initConfigDB;
 	@Autowired
 	KPContainerTypeRepository kpContainerTypeRepository;	
 	@Autowired
 	RoleTypeRepository roleTypeRepository;
 	@Autowired
 	UserCDBRepository userCDBRepository;
-	@Autowired
-	TemplateRepository templateRepository;
+	
+	//@Autowired
+	//TemplateRepository templateRepository;
 
 
 	@PostConstruct
 	public void init() {
-		init_KPContainerType();
-		init_RoleUser();
-		init_UserCDB();
+		if (initConfigDB==true) {
+			log.info("Start initConfigDB...");
+			init_KPContainerType();
+			init_RoleUser();
+			init_UserCDB();
+		}
+		else {
+			log.info("Disable Start initConfigDB...");
+		}
 	}
 	
 	public void init_KPContainerType() {
@@ -217,7 +225,7 @@ public class InitConfigDB {
 		}
 	}
 	
-	@Test
+	/*	
 	public void init_Template() {
 		log.info("init template");
 		List<Template> templates= this.templateRepository.findAll();
@@ -252,5 +260,6 @@ public class InitConfigDB {
 			
 		}
 	}
+	*/
 
 }

@@ -18,7 +18,8 @@ public interface UserCDBRepository extends JpaRepository<UserCDB, String> {
 
           
     List<UserCDB> findByEmail(String email);
-    List<UserCDB> findByUserId(String userId);
+    UserCDB findByUserId(String userId);
+    UserCDB findByUserIdAndPassword(String userId,String password);
     
     @Query("SELECT o FROM UserCDB AS o WHERE o.role !='1'")
     List<UserCDB> findUsersNoAdmin();

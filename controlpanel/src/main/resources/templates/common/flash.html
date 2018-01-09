@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <title/>
+    </head>
+    <body th:fragment="flash">
+        <div th:if="${globalMsg}">
+            <div th:text="${globalMsg}" class="alert-box success radius"/>
+        </div>
+    </body>
+</html>

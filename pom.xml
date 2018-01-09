@@ -5,14 +5,14 @@
 	
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-parent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${sofia2.version}</version>
 	<packaging>pom</packaging>
 
 	<name>sofia2-parent</name>
 	<description>sofia2-parent</description>
 	
 	<properties>
-		<sofia2.version>0.0.1-SNAPSHOT</sofia2.version>
+		<sofia2.version>5.0.0-SNAPSHOT</sofia2.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -25,7 +25,6 @@
 	
 	<dependencyManagement>
 		<dependencies>
-
            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-parent</artifactId>
@@ -56,11 +55,13 @@
 	
 	<modules>
 		<module>sofia2-springboot-autoconfigure-starter</module>
-		<module>iotbroker</module>
 		<module>ssap</module>
 		<module>config-model</module>
-		<module>persistence/persistence-ri</module>
-				
+		<module>persistence-ri</module>
+        <module>systemconfig-init</module>	
+		<module>iotbroker</module>		
+		<module>controlpanel</module>		
+        <module>sofia2-monitoring-ui</module>				
 	</modules>
 	
 	<build>

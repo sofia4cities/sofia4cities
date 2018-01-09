@@ -6,13 +6,14 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>${sofia2.version}</version>
+		<relativePath>..</relativePath>
 	</parent>
 	
 	
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-springboot-autoconfigure-starter</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${sofia2.version}</version>
 	<packaging>jar</packaging>
 
 	<name>sofia2-springboot-autoconfigure-starter</name>
