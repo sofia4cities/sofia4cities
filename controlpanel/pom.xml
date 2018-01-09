@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-	
+    <modelVersion>4.0.0</modelVersion>	
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
@@ -12,32 +11,21 @@
 	
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-controlpanel</artifactId>
-    <version>${sofia2.version}</version>
 	<packaging>jar</packaging>
 
 	<name>sofia2-systemconfig-init</name>
 	<description>Init the Config of the System </description>
 
-    <properties>	
-    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<spring-boot-admin-starter-client.version>1.5.4</spring-boot-admin-starter-client.version>
-	</properties>
-
-
-	<dependencies>	
-	
+	<dependencies>		
 	    <dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-ri</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-	
+            <version>${sofia2.version}</version>
+        </dependency>	
         <dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-config-model</artifactId>
-            <version>${project.version}</version>
+            <version>${sofia2.version}</version>
         </dependency>		
 						
 		<dependency>

@@ -8,31 +8,19 @@
 		<version>${sofia2.version}</version>
 		<relativePath>..</relativePath>
 	</parent>
-	
+
+	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-persistence-ri</artifactId>
 	<packaging>jar</packaging>
 
-	<name>sofia2-persistence-ri</name>
-	<description>Persistence for the RI (Reference Implementation) of the Platform (MongoDB)</description>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-	</properties>
-
 	<dependencies>
-	
-<!-- 	    <dependency> -->
-<!-- 			<groupId>com.indracompany.sofia2</groupId> -->
-<!-- 			<artifactId>sofia2-config-model</artifactId> -->
-<!-- 			<version>${version}</version> -->
-<!--         </dependency> -->
-	        <dependency>
-				<groupId>com.indracompany.sofia2</groupId>
-				<artifactId>sofia2-ssap</artifactId>
-				<version>${version}</version>
-	        </dependency>			
+
+	    <dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-ssap</artifactId>
+			<version>${sofia2.version}</version>
+        </dependency>
+					
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -44,15 +32,15 @@
 		    <version>1.0.2</version>
 		</dependency>
 		<dependency>
-	            <groupId>de.flapdoodle.embed</groupId>
-	            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-	            <scope>test</scope>
-	        </dependency>
-	        <dependency>
-	            <groupId>cz.jirutka.spring</groupId>
-	            <artifactId>embedmongo-spring</artifactId>
-	            <scope>test</scope>
-	        </dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cz.jirutka.spring</groupId>
+			<artifactId>embedmongo-spring</artifactId>
+			<scope>test</scope>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -78,6 +66,15 @@
 	</dependencies>
 
   <build> 
+  		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<classifier>exec</classifier>
+				</configuration>
+			</plugin>
+		</plugins>
 	<resources>
 		  <resource>
 			<directory>src/test/resources</directory>
@@ -94,6 +91,7 @@
 			</includes>
 		  </resource>	  
 		</resources>
+
   </build> 
 <!-- 		<plugins> -->
 <!-- 			<plugin> -->
