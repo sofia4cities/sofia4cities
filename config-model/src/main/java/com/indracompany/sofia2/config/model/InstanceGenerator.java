@@ -4,10 +4,12 @@
  *
  * All rights reserved
  ******************************************************************************/
+
 package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -19,45 +21,39 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
+import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name = "ONTOLOGY_EMULATOR")
 @Configurable
+@Entity
+@Table(name = "INSTANCE_GENERATOR")
 @SuppressWarnings("deprecation")
 
-public class OntologyEmulator extends AuditableEntityWithUUID{
+public class InstanceGenerator extends AuditableEntity{
 	
 
-	
-    @Column(name = "MEASURES",nullable = false)
+    @Id
+    @Column(name = "ID")
+    @Getter @Setter private Integer id;
+
+    @Column(name = "VALUES_G",nullable = false)
     @NotNull
     @Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String measures;
-
-
-
-	@ManyToOne
+    @Getter @Setter private String valuesG;
+    
+    @ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private Ontology ontologyId;
+    @JoinColumn(name = "GENERATOR_TYPE_ID", referencedColumnName = "ID", nullable = false)
+    @Getter @Setter private GeneratorType generatorTypeId;
 
 	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
     @NotNull
     @Getter @Setter private String identification;
 
-	@Column(name = "USER_ID", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String userId;
-
-	@Column(name = "INSERT_EVERY",nullable = false)
-    @NotNull
-    @Getter @Setter private Integer insertEvery;
-
-	
+	@Column(name = "USER", length = 50)
+	@Getter @Setter private String user;
 
 }

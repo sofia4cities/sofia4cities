@@ -34,7 +34,7 @@ public class DataModel extends AuditableEntityWithUUID {
 
 	 @Column(name = "RELATIONAL",nullable = false)
 	 @NotNull
-	 @Setter @Getter private boolean isRelational;
+	 @Setter @Getter private boolean relational;
 
 	 @Column(name = "IDENTIFICATION", length = 45, unique = true,nullable = false)
 	 @NotNull
