@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+    <head>
+        <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE" th:text="#{'app.name'}">Page Title</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <!--/* common css */-->
+        <link rel="stylesheet" href="/static/vendor/foundation/css/foundation.min.css" type="text/css" th:href="@{/static/vendor/foundation/css/foundation.min.css}"/>
+    </head>
+    <body>
+        <!--/* common menu */-->
+        <th:block th:include="common/menu :: menu"/>
+        <!--/* grid */-->
+        <main class="large-12 columns">
+            <!--/* global messages */-->
+            <th:block th:include="common/flash :: flash"/>
+            <!--/* main content */-->
+            <div layout:fragment="content"/>
+        </main>
+        <!--/* common scripts */-->
+        <th:block th:include="common/script :: script"/>
+    </body>
+</html>

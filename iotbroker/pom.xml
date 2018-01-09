@@ -6,15 +6,15 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>${sofia2.version}</version>
 		<relativePath>..</relativePath>
 	</parent>
 	
-	<artifactId>iotbroker</artifactId>
+	<artifactId>sofia2-iotbroker</artifactId>
 	<packaging>jar</packaging>
 
-	<name>iotbroker</name>
-	<description>IoTbroker</description>
+	<name>sofia2-iotbroker</name>
+	<description>Sofia2 IoTbroker</description>
 
 
 	<properties>
@@ -42,33 +42,33 @@
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-ri</artifactId>
-			<version>${version}</version>
-		</dependency><dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>ssap</artifactId>
-			<version>${version}</version>
-		</dependency>	
-		<dependency>
-	    	<groupId>com.github.javafaker</groupId>
-	    	<artifactId>javafaker</artifactId>
-	    	<scope>test</scope>
+			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>de.flapdoodle.embed</groupId>
-            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>cz.jirutka.spring</groupId>
-            <artifactId>embedmongo-spring</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-ssap</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>	
+		<dependency>
+	    		<groupId>com.github.javafaker</groupId>
+	    		<artifactId>javafaker</artifactId>
+	    		<scope>test</scope>
+		</dependency>
+		<dependency>
+	            <groupId>de.flapdoodle.embed</groupId>
+	            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+	            <scope>test</scope>
+	        </dependency>
+	        <dependency>
+	            <groupId>cz.jirutka.spring</groupId>
+	            <artifactId>embedmongo-spring</artifactId>
+	            <scope>test</scope>
+	        </dependency>
+        	<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>
-		
+		</dependency>		
 	</dependencies>	
 	<build>
 		<plugins>

@@ -1,0 +1,40 @@
+##--spring.config.name=controlpanel
+##security.require_ssl: true
+server: ## Config Web Server
+   port: 18090
+   contextPath: /
+   tomcat:
+      access_log_enabled: true
+      basedir: target/tomcat
+
+##Security Config
+security:
+   user:
+      name: admin
+      password: admin
+   
+spring: ## General Config  
+   application.name: sofia2-monitoring-ui
+   boot.admin: #Spring Boot Admin Config    
+      url: http://localhost:18090
+      username: ${security.user.name}
+      password: ${security.user.password}
+      client.metadata.user.name: ${security.user.name}
+      client.metadata.user.password: ${security.user.password}      
+   mail: ##Mail configuration
+      host: smtp.gmail.com
+      username: sofia2oncloud@gmail.com
+      password: Indra2013!
+      port: 587
+      properties.mail.smtp.auth: true
+      properties.mail.smtp.starttls.enable: true
+          
+## LOGGING CONF
+logging:
+   level:
+      org.springframework: INFO
+      de.codecentric: DEBUG
+      com.example.boot.thymeleaf: INFO
+      com.indra: DEBUG
+      org.hibernate: INFO
+ 

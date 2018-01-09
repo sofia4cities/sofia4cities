@@ -3,27 +3,26 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>com.indracompany.sofia2</groupId>
+		<artifactId>sofia2-parent</artifactId>
+		<version>${sofia2.version}</version>
+		<relativePath>..</relativePath>
+	</parent>
+	
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-systemconfig-init</artifactId>
-	<version>4.3.0</version>
+	<version>${sofia2.version}</version>
 	<packaging>jar</packaging>
 
 	<name>sofia2-systemconfig-init</name>
 	<description>Init the Config of the System </description>
-
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.9.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 	</properties>
-
 	<dependencies>
 	
         <dependency>
@@ -32,7 +31,16 @@
             <version>${project.version}</version>
         </dependency>
 		
-		<!--por defecto usará Tomcat-pool-->
+	    <dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-persistence-ri</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -67,12 +75,27 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>
-		
+		</dependency>	
 		
 	</dependencies>
 
 	<build>
+		<resources>
+		  <resource>
+			<directory>src/test/resources</directory>
+			<includes>
+			  <include>**/*.properties</include>
+			  <include>**/*.yml</include>
+			</includes>
+		  </resource>	  
+		  <resource>
+			<directory>src/main/resources</directory>
+			<includes>
+			  <include>**/*.properties</include>
+			  <include>**/*.yml</include>
+			</includes>
+		  </resource>	  
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
