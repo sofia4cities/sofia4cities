@@ -13,5 +13,5 @@ public enum UserRole {
 	ROLE_COLLABORATOR,
 	ROLE_ANALYTICS,
 	ROLE_SYS_ADMIN
-	
+
 }

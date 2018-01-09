@@ -24,19 +24,19 @@ import com.indracompany.sofia2.config.model.Ontology;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
 public class OntologyIntegrationTest {
-	
+
 	@Autowired 
 	OntologyRepository repository;
-	
+
 	@Before
 	public void setUp() {
 		List<Ontology> ontologies=this.repository.findAll();
@@ -68,15 +68,15 @@ public class OntologyIntegrationTest {
 		Ontology o=this.repository.findAll().get(0);
 		o.isActive();
 		Assert.assertTrue(this.repository.findByIdentificationLikeAndDescriptionLike(o.getIdentification(), o.getDescription()).size()>0);
-		
-		
+
+
 	}
-	
+
 	public void countByIsActiveTrueAndIsPublicTrue()
 	{
 		Assert.assertTrue(this.repository.countByActiveTrueAndIsPublicTrue()==1L);
 
-		
-		
+
+
 	}
 }

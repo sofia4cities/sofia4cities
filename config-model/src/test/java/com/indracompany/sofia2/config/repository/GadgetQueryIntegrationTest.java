@@ -26,16 +26,16 @@ import com.indracompany.sofia2.config.model.GadgetQuery;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
 public class GadgetQueryIntegrationTest {
-	
+
 	@Autowired
 	GadgetQueryRepository repository;
 	@Autowired
@@ -57,7 +57,7 @@ public class GadgetQueryIntegrationTest {
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
-				
+
 				grepository.save(gadget);
 			}else{
 				gadget=grepository.findAll().get(0);
@@ -66,12 +66,12 @@ public class GadgetQueryIntegrationTest {
 			repository.save(gadgetQuery);
 		}
 	}
-	
+
 	@Test
 	public void test_findByGadgetId() { 
 		GadgetQuery gadgetQuery=this.repository.findAll().get(0);
 		log.info("Loaded gadget query with gadget id: "+gadgetQuery.getGadgetId().getId());
 		Assert.assertTrue(this.repository.findByGadgetId(gadgetQuery.getGadgetId()).size()>0);
 	}
-	
+
 }

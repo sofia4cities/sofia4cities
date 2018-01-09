@@ -15,7 +15,7 @@ import com.indracompany.sofia2.config.model.GadgetQuery;
 import com.indracompany.sofia2.config.model.Ontology;
 
 public interface OntologyRepository extends JpaRepository<Ontology,String> {
-	
+
 	List<Ontology> findByIdentificationIgnoreCase(String identification);
 	List<Ontology> findByIdentification(String identification);
 	List<Ontology> findByUserId(String userId);

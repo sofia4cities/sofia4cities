@@ -31,15 +31,15 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 public class UserCDBIntegrationTest {
-	
+
 	@Autowired
 	UserCDBRepository repository;
-		
+
 	@Before
 	public void setUp() {
 		List<UserCDB> types = this.repository.findAll();
 		if (types.isEmpty()) {
-//			log.info("No types en tabla.Adding...");
+			//			log.info("No types en tabla.Adding...");
 			throw new RuntimeException("No types en tabla.Adding...");
 		}
 	}

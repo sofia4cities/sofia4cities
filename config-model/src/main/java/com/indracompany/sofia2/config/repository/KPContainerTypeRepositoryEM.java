@@ -19,24 +19,24 @@ import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
 @Repository
 public class KPContainerTypeRepositoryEM  {
 
-    @PersistenceContext
-    protected EntityManager entityManager; 
-    
+	@PersistenceContext
+	protected EntityManager entityManager; 
+
 	public long count() {
-        return entityManager.createQuery("SELECT COUNT(o) FROM KPCONTAINER_TYPE o", Long.class).getSingleResult();
-    }
-    
+		return entityManager.createQuery("SELECT COUNT(o) FROM KPCONTAINER_TYPE o", Long.class).getSingleResult();
+	}
+
 	public List<ClientPlatformContainerType> findAll() {
-        return entityManager.createQuery("SELECT o FROM KPCONTAINER_TYPE o", ClientPlatformContainerType.class).getResultList();
-    }
+		return entityManager.createQuery("SELECT o FROM KPCONTAINER_TYPE o", ClientPlatformContainerType.class).getResultList();
+	}
 
 	public ClientPlatformContainerType findById(String id) {
-        if (id == null || id.length() == 0) return null;
-        return entityManager.find(ClientPlatformContainerType.class, id);
-    }
+		if (id == null || id.length() == 0) return null;
+		return entityManager.find(ClientPlatformContainerType.class, id);
+	}
 
 	public List<ClientPlatformContainerType> findPage(int firstResult, int maxResults) {
-        return entityManager.createQuery("SELECT o FROM KPCONTAINER_TYPE o", ClientPlatformContainerType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
-    }
+		return entityManager.createQuery("SELECT o FROM KPCONTAINER_TYPE o", ClientPlatformContainerType.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+	}
 
 }

@@ -23,19 +23,19 @@ import com.indracompany.sofia2.config.model.Dashboard;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
 public class DashboardIntegrationTest {
-	
+
 	@Autowired
 	DashboardRepository repository;
-	
+
 	@Before
 	public void setUp() {
 		List<Dashboard> dashboards=this.repository.findAll();
@@ -48,25 +48,25 @@ public class DashboardIntegrationTest {
 			dashboard.setName("Nombre del modelo 1");
 			dashboard.setDashboardTypeId("9");
 			repository.save(dashboard);
-			
-		
+
+
 		}
-	
+
 	}
 	@Test
 	public void test_countByName(){
-		
+
 		Dashboard d=this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository.countByName(d.getName())==1L);
-		
-		
+
+
 	}
 	@Test
 	public void test_findByNameAndDashboardTypeId(){
 		Dashboard d=this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository.findByNameAndDashboardTypeId(d.getName(), d.getDashboardTypeId()).size()>0);
-		
+
 	}
-	
+
 
 }

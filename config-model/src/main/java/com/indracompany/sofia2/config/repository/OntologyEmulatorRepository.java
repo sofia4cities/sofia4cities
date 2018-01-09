@@ -13,7 +13,7 @@ import java.util.List;
 import com.indracompany.sofia2.config.model.OntologyEmulator;
 
 public interface OntologyEmulatorRepository extends JpaRepository<OntologyEmulator, String>{
-	
+
 	List<OntologyEmulator> findByIdentification(String identification);
 	List<OntologyEmulator> findByIdentificationAndUserId(String identification, String userId);
 	List<OntologyEmulator> findByUserId(String userId);

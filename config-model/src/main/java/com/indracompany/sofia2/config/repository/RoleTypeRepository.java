@@ -18,5 +18,5 @@ public interface RoleTypeRepository extends JpaRepository<RoleType, Integer> {
 
 	long countByName(String name);
 	List<RoleType> findByName(String name);
-		
+
 }

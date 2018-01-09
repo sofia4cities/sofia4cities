@@ -15,10 +15,10 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Token;
 
 public interface TokenRepository extends JpaRepository<Token, String>{
-	
+
 	List<Token> findByClientPlatformId(ClientPlatform clientPlatformId);
 	List<Token> findByToken(String token);
-	
-	
+
+
 
 }

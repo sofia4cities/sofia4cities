@@ -21,22 +21,22 @@ import lombok.ToString;
 
 @MappedSuperclass
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-        allowGetters = true)
+allowGetters = true)
 @EntityListeners(AuditingEntityListener.class)
 @ToString
 public abstract class AuditableEntity implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
-	
-	@Column(nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @CreatedDate
-    @Getter @Setter private Date createdAt;
 
-    @Column(nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    @LastModifiedDate
-    @Getter @Setter  private Date updatedAt;
-       
+	private static final long serialVersionUID = 1L;
+
+	@Column(nullable = false, updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@CreatedDate
+	@Getter @Setter private Date createdAt;
+
+	@Column(nullable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@LastModifiedDate
+	@Getter @Setter  private Date updatedAt;
+
 
 }

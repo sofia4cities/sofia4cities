@@ -26,18 +26,18 @@ import com.indracompany.sofia2.config.model.GadgetDataModel;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 public class GadgetDataModelIntegrationTest {
-	
+
 	@Autowired 
 	GadgetDataModelRepository repository;
-	
+
 	@Before
 	public void setUp() {
 		List<GadgetDataModel> gadgetDataModels= this.repository.findAll();
@@ -64,14 +64,14 @@ public class GadgetDataModelIntegrationTest {
 		if(gadgetDM.isPublic()){
 			log.info("Identification: "+identification+" userId: 000 (harcoded) should return true (size of list>0) because is public" );
 			Assert.assertTrue(this.repository.findByIdentificationAndUserIdOrIsPublicTrue(identification,"000").size()>0);
-			
+
 		}else{
 			log.info("Identification: "+identification+" userId: 000 (harcoded) should return false (size of list=0) because is not public" );
 			Assert.assertTrue(this.repository.findByIdentificationAndUserIdOrIsPublicTrue(identification,"000").size()>0);
-			
+
 		}
 		Assert.assertTrue(this.repository.findByIdentificationAndUserIdOrIsPublicTrue(identification,"000").size()>0);
-		
+
 	}
 
 }

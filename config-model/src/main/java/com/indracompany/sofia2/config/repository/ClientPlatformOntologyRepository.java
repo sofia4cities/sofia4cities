@@ -14,10 +14,10 @@ import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Ontology;
 
 public interface ClientPlatformOntologyRepository extends JpaRepository<ClientPlatformOntology, String>{
-	
+
 	List<ClientPlatformOntology> findByOntologyIdAndClientPlatformId(Ontology ontologyId,ClientPlatform clientPlatformId);
 	List<ClientPlatformOntology> findByClientPlatformId(ClientPlatform clientPlatformId);
 	List<ClientPlatformOntology> findById(String id);
 	List<ClientPlatformOntology> findByOntologyId(Ontology ontologyId);
-	
+
 }

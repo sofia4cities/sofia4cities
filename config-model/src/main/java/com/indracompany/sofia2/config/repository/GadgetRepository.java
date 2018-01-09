@@ -13,12 +13,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.indracompany.sofia2.config.model.Gadget;
 
 public interface GadgetRepository extends JpaRepository<Gadget,String>{
-	
+
 	List<Gadget> findByUserId(String userId);
 	List<Gadget> findByUserIdAndType(String userId, String type);
 	List<Gadget> findByNameLike(String name);
 	List<Gadget> findByType(String type);
-	
-	
+
+
 
 }
