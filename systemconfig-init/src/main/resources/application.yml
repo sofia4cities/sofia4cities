@@ -11,7 +11,7 @@ sofia2: #Config Sofia2 specific
       configdb: true
       mongodb: false
    database.mongodb:
-      database: sofia
+      database: sofia2_s4c
       authenticationDatabase:  #admin
       servers: localhost:27017
       autoConnectRetry: true
