@@ -56,7 +56,9 @@
 	</dependencyManagement>
 	
 	<modules>
+	<!--
 		<module>sofia2-springboot-autoconfigure-starter</module>
+		-->
 		<module>ssap</module>
 		<module>config-model</module>
 		<module>persistence-ri</module>
