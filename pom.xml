@@ -5,7 +5,7 @@
 	
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-parent</artifactId>
-	<version>${sofia2.version}</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>sofia2-parent</name>
@@ -20,12 +20,13 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<javafaker.version>0.14</javafaker.version>
 		<jsqlparser.version>0.9</jsqlparser.version>
-		<spring-boot.version>1.5.9.RELEASE</spring-boot.version>		
-		<spring-boot-admin-starter-client.version>1.5.4</spring-boot-admin-starter-client.version>
+		<spring-boot.version>1.5.9.RELEASE</spring-boot.version>	
+        <spring-boot-admin-server.version>1.5.4</spring-boot-admin-server.version>
+        <spring-boot-admin-starter-client.version>1.5.4</spring-boot-admin-starter-client.version>	
 	</properties>
 	
 	<dependencyManagement>
-		<dependencies>
+		<dependencies>		
            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-parent</artifactId>
@@ -72,6 +73,23 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<resources>
+		  <resource>
+			<directory>src/test/resources</directory>
+			<includes>
+			  <include>**/*.properties</include>
+			  <include>**/*.yml</include>
+			</includes>
+		  </resource>	  
+		  <resource>
+			<directory>src/main/resources</directory>
+			<includes>
+			  <include>**/*.properties</include>
+			  <include>**/*.yml</include>
+			  <include>**/*.*</include>
+			</includes>
+		  </resource>	  
+		</resources>
 	</build>
 	
 </project>

@@ -6,25 +6,18 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>${sofia2.version}</version>
+		<version>5.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-systemconfig-init</artifactId>
-	<version>${sofia2.version}</version>
 	<packaging>jar</packaging>
 
 	<name>sofia2-systemconfig-init</name>
 	<description>Init the Config of the System </description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-	</properties>
 	<dependencies>
-	
         <dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-config-model</artifactId>
@@ -78,31 +71,5 @@
 		</dependency>	
 		
 	</dependencies>
-
-	<build>
-		<resources>
-		  <resource>
-			<directory>src/test/resources</directory>
-			<includes>
-			  <include>**/*.properties</include>
-			  <include>**/*.yml</include>
-			</includes>
-		  </resource>	  
-		  <resource>
-			<directory>src/main/resources</directory>
-			<includes>
-			  <include>**/*.properties</include>
-			  <include>**/*.yml</include>
-			</includes>
-		  </resource>	  
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 
 </project>

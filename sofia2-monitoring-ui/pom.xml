@@ -2,31 +2,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>sofia2-monitoring-ui</artifactId>	
-    <groupId>com.indracompany.sofia2</groupId>
-    <version>${sofia2.version}</version>
-    <packaging>jar</packaging>
-
-    <name>spring-boot-admin-server</name>
-    <description>Spring Boot Admin Server</description>
-
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.9.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<parent>
+		<groupId>com.indracompany.sofia2</groupId>
+		<artifactId>sofia2-parent</artifactId>
+		<version>5.0.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
 	</parent>
+
+    <groupId>com.indracompany.sofia2</groupId>
+    <artifactId>sofia2-monitoring-ui</artifactId>	
+	<version>${sofia2.version}</version>
+    <packaging>jar</packaging>
 	
-    <properties>
-        <sofia2.version>5.0.0</sofia2.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
+    <name>sofia2-monitoring-ui</name>
+    <description>Sofia2 Spring Boot Admin Server</description>
+		
+	<properties>
+		<spring-boot.version>1.5.9.RELEASE</spring-boot.version>		
         <spring-boot-admin-server.version>1.5.4</spring-boot-admin-server.version>
         <spring-boot-admin-starter-client.version>1.5.4</spring-boot-admin-starter-client.version>
-    </properties>
-
+	</properties>
+	
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -66,10 +62,10 @@
             <version>${spring-boot-admin-starter-client.version}</version>
         </dependency>
         <!--mail notifications-->
-        <!--<dependency>-->
-            <!--<groupId>org.springframework.boot</groupId>-->
-            <!--<artifactId>spring-boot-starter-mail</artifactId>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -83,14 +79,6 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 
 </project>

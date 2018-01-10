@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>${sofia2.version}</version>
+		<version>5.0.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	
@@ -13,8 +13,8 @@
 	<artifactId>sofia2-controlpanel</artifactId>
 	<packaging>jar</packaging>
 
-	<name>sofia2-systemconfig-init</name>
-	<description>Init the Config of the System </description>
+	<name>sofia2-controlpanel</name>
+	<description>ControlPanel of the Platform </description>
 
 	<dependencies>		
 	    <dependency>
@@ -115,32 +115,6 @@
 		
 	</dependencies>
 
-	<build>
-		<resources>
-		  <resource>
-			<directory>src/test/resources</directory>
-			<includes>
-			  <include>**/*.properties</include>
-			  <include>**/*.yml</include>
-			</includes>
-		  </resource>	  
-		  <resource>
-			<directory>src/main/resources</directory>
-			<includes>
-			  <include>**/*.properties</include>
-			  <include>**/*.yml</include>
-			  <include>**/*.html</include>
-			  <include>**/*.*</include>
-			</includes>
-		  </resource>	  
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-	
+
 
 </project>
