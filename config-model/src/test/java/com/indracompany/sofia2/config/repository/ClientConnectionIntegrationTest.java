@@ -27,19 +27,19 @@ import lombok.extern.slf4j.Slf4j;
 
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
 public class ClientConnectionIntegrationTest {
-	
+
 	@Autowired 
 	ClientConnectionRepository repository;
-	
+
 	@Before
 	public void setUp() {
 		List<ClientConnection> clients= this.repository.findAll();
@@ -58,36 +58,36 @@ public class ClientConnectionIntegrationTest {
 			repository.save(con);
 		}
 	}
-		@Test
-		public void test_CountByClientPlatformId() { 
-			ClientConnection con=this.repository.findAll().get(0);
-			
-			Assert.assertTrue(this.repository.countByClientPlatformId(con.getClientPlatformId())>0);
-		}
-		
-		@Test
-		public void test_FindByUserId(){ 
-			
-			ClientConnection con=this.repository.findAll().get(0);
-			
-			Assert.assertTrue(this.repository.findByUserId(con.getClientPlatformId().getUserId()).size()>0);
-		}
-		
-		@Test
-		public void test_FindByClientPlatformId(){ 
-			ClientConnection con=this.repository.findAll().get(0);
-			
-			Assert.assertTrue(this.repository.findByClientPlatformId(con.getClientPlatformId()).size()>0);
-		}
-		
-		@Test
-		public void test_FindByClientPlatformIdAndIdentification(){ 
-			ClientConnection con=this.repository.findAll().get(0);
-			Assert.assertTrue(this.repository.findByClientPlatformIdAndIdentification(con.getClientPlatformId(),con.getIdentification()).size()>0);
-		}
-		
+	@Test
+	public void test_CountByClientPlatformId() { 
+		ClientConnection con=this.repository.findAll().get(0);
+
+		Assert.assertTrue(this.repository.countByClientPlatformId(con.getClientPlatformId())>0);
 	}
-	
-	
+
+	@Test
+	public void test_FindByUserId(){ 
+
+		ClientConnection con=this.repository.findAll().get(0);
+
+		Assert.assertTrue(this.repository.findByUserId(con.getClientPlatformId().getUserId()).size()>0);
+	}
+
+	@Test
+	public void test_FindByClientPlatformId(){ 
+		ClientConnection con=this.repository.findAll().get(0);
+
+		Assert.assertTrue(this.repository.findByClientPlatformId(con.getClientPlatformId()).size()>0);
+	}
+
+	@Test
+	public void test_FindByClientPlatformIdAndIdentification(){ 
+		ClientConnection con=this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findByClientPlatformIdAndIdentification(con.getClientPlatformId(),con.getIdentification()).size()>0);
+	}
+
+}
+
+
 
 

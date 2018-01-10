@@ -26,16 +26,16 @@ import com.indracompany.sofia2.config.model.Token;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
 public class ClientPlatformComtainerIntegrationTest {
-	
+
 	@Autowired
 	ClientPlatformContainerRepository repository;
 	@Autowired
@@ -44,13 +44,13 @@ public class ClientPlatformComtainerIntegrationTest {
 	ClientPlatformContainerTypeRepository cpctrepository;
 	@Autowired
 	TokenRepository trepository;
-	
+
 	@Before
 	public void setUp() {
 		List<ClientPlatformContainer> pcs= this.repository.findAll();
 		if(pcs.isEmpty())
 		{
-			
+
 			ClientPlatformContainer cpc=new ClientPlatformContainer();
 			cpc.setClientConnection("6930722a-a9fa-4206-a3cf-1441a0318b39");
 			cpc.setProgramName("Program 1");
@@ -68,7 +68,7 @@ public class ClientPlatformComtainerIntegrationTest {
 				cp.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
 				cp.setDescription("Kp para la insercion de alarmas de scada");
 				cprepository.save(cp);
-				
+
 			}
 			cpc.setClientPlatformId(cp);
 			Token token;
@@ -79,11 +79,11 @@ public class ClientPlatformComtainerIntegrationTest {
 				token.setClientPlatformId(cp);
 				token.setToken("Token 1");
 				token.setActive(new Integer(4));
-				
+
 			}
 			cpc.setAuthenticationTokenId(token);
 			ClientPlatformContainerType type;
-			
+
 			if(!this.cpctrepository.findAll().isEmpty()){
 				type=this.cpctrepository.findAll().get(0);
 			}else{
@@ -91,19 +91,19 @@ public class ClientPlatformComtainerIntegrationTest {
 				type.setId(1);
 				type.setType("Python");
 				cpctrepository.save(type);
-				
-				
+
+
 			}
 			cpc.setClientPlatformContainerTypeId(type);
 			this.repository.save(cpc);
 		}
-		
-		
+
+
 	}
 	@Test
 	public void test_findByIdentificationLikeAndClientConnectionLike()
 	{
-		
+
 		ClientPlatformContainer cpc=this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository.findByIdentificationLikeAndClientConnectionLike(cpc.getClientPlatformId().getIdentification(), cpc.getClientConnection()).size()>0);
 	}

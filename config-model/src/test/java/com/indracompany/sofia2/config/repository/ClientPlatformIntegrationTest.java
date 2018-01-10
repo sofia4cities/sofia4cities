@@ -22,9 +22,9 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -48,10 +48,10 @@ public class ClientPlatformIntegrationTest {
 			client.setIdentification("GTKP-fjgcornejo");
 			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
 			repository.save(client);
-			
+
 		}
 	}
-	
+
 	@Test
 	public void test1_FindByType() { 
 		List<ClientPlatform> client=this.repository.findByIdentificationAndDescription("GTKP-fjgcornejo", null);

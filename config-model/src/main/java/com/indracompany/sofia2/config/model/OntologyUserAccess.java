@@ -25,24 +25,24 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "ONTOLOGY_USER", uniqueConstraints = {
-@UniqueConstraint(columnNames = { "ONTOLOGY_ID", "USER_ID" }) })
+		@UniqueConstraint(columnNames = { "ONTOLOGY_ID", "USER_ID" }) })
 @Configurable
 @SuppressWarnings("deprecation")
 
 public class OntologyUserAccess extends AuditableEntityWithUUID{
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ONTOLOGY_USER_ACCESS_TYPE_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "ONTOLOGY_USER_ACCESS_TYPE_ID", referencedColumnName = "ID", nullable = false)
 	@Getter @Setter private OntologyUserAccessType ontologyUserAccessTypeId;
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
 	@Getter @Setter private Ontology ontologyId;
-	
+
 	@Column(name = "USER_ID", length = 50)
 	@Getter @Setter private String userId;
-	
-	
+
+
 }

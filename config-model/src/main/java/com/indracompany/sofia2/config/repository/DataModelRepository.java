@@ -14,7 +14,7 @@ import java.util.List;
 
 
 public interface DataModelRepository extends JpaRepository<DataModel, String> {
-	
+
 	DataModel findById(String id);
 	List<DataModel> findByTypeAndIdentificationAndDescription(String type, String identification, String description);
 	List<DataModel> findByIdentification(String identification);

@@ -34,12 +34,12 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 public class ClientPlatformContainerTypeIntegrationTest {
-	
+
 	@Autowired
 	ClientPlatformContainerTypeRepository repository;
-	
+
 	private boolean noData=false;
-	
+
 	@Before
 	public void setUp() {
 		List<ClientPlatformContainerType> types = this.repository.findAll();
@@ -60,7 +60,7 @@ public class ClientPlatformContainerTypeIntegrationTest {
 			repository.save(type);		
 		}
 	}
-	
+
 	@Test
 	public void test1_Count() { 
 		Assert.assertTrue(this.repository.count()==3);		

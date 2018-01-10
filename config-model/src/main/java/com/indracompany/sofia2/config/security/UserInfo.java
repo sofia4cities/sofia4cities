@@ -24,34 +24,34 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 public class UserInfo implements UserDetails, Serializable {
-	
+
 	private static final long serialVersionUID = 1L;
 
 	@Getter @Setter private String id;
 	@Getter @Setter private String username;
-	
+
 	@Getter @Setter private String email;
 	@Getter @Setter private String password;
 	@Getter @Setter  Date creationDate;
 	@Setter private boolean enabled;
 	@Getter @Setter private Date deleteDate;
 	@Getter @Setter private UserRole role;
-	
+
 	@Getter @Setter private String signInProvider;
 	@Getter @Setter private String firstName;
 	@Getter @Setter  String lastName;
 	@Getter @Setter private String fullName;
-	
-	@Getter @Setter private List<String> groups;
-	
 
-    //TODO:REVISAR QUE ES CORRECTO
+	@Getter @Setter private List<String> groups;
+
+
+	//TODO:REVISAR QUE ES CORRECTO
 	public boolean isRole(UserRole role) {
 		if (this.role==null || role==null) return false;
 		if (this.role.equals(role)) return true;
 		return false;
 	}
-    		
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		//TODO:Implementar: ver cómo hacerlo, ROLES en BDC?
@@ -65,7 +65,7 @@ public class UserInfo implements UserDetails, Serializable {
 			}
 		}
 		return AUTHORITIES;	
-		*/
+		 */
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class UserInfo implements UserDetails, Serializable {
 	public String getUsername() {
 		return username;
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
 		return enabled;
@@ -106,6 +106,6 @@ public class UserInfo implements UserDetails, Serializable {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
+
+
 }

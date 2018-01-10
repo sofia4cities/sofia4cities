@@ -17,7 +17,7 @@ import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
 
 
 public interface ClientPlatformContainerRepository extends JpaRepository<ClientPlatformContainer, String> {
-	
+
 	@Query("SELECT o FROM ClientPlatformContainer o WHERE o.clientPlatformId.userId = ?1 AND o.clientPlatformId.identification LIKE ?2 AND o.clientConnection LIKE ?3")
 	List<ClientPlatformContainer> findByUserIdAndIdentificationLikeAndClientConnectionLike(String userId,String identification,String clientConnection);
 	@Query("SELECT o FROM ClientPlatformContainer o WHERE o.clientPlatformId.identification LIKE ?1 AND o.clientConnection LIKE ?2")

@@ -24,24 +24,24 @@ import com.indracompany.sofia2.config.model.OntologyEmulator;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
 public class OntologyEmulatorIntegrationTest {
-	
+
 	@Autowired 
 	OntologyRepository orepository;
 	@Autowired
 	OntologyEmulatorRepository repository;
-	
+
 	@Before
 	public void setUp() {
-		
+
 		List<OntologyEmulator> oes=this.repository.findAll();
 		if(oes.isEmpty())
 		{
@@ -62,28 +62,28 @@ public class OntologyEmulatorIntegrationTest {
 				o.setRtdbClean(true);
 				o.setPublic(true);
 				orepository.save(o);
-				
+
 			}
 			oe.setOntologyId(o);
 			this.repository.save(oe);
-			
-			
-			
+
+
+
 		}
-		
-	
+
+
 	}
 	@Test
 	public void test_findByIdentificationAndUserId()
 	{
 		OntologyEmulator oe= this.repository.findAll().get(0);
-		
+
 		Assert.assertTrue(this.repository.findByIdentificationAndUserId(oe.getIdentification(), oe.getUserId()).size()>0);
-		
-		
-		
+
+
+
 	}
-	
-	
+
+
 
 }

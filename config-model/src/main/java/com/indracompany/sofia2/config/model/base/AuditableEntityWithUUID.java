@@ -22,17 +22,17 @@ import lombok.Setter;
 
 @MappedSuperclass
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
-        allowGetters = true)
+allowGetters = true)
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AuditableEntityWithUUID extends AuditableEntity {
-	
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Column(name = "ID", length = 50)
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
+	@Column(name = "ID", length = 50)
 	@Getter @Setter private String id;
- 
-	   
+
+
 }

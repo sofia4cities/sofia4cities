@@ -28,10 +28,10 @@ import com.indracompany.sofia2.config.repository.NoteRepository;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class NoteRepositoryIntegrationTest {
-	
+
 	@Autowired
 	NoteRepository repository;
-		
+
 	@Test
 	public void test1_Insert() {
 		Note note = new Note();
@@ -39,7 +39,7 @@ public class NoteRepositoryIntegrationTest {
 		note.setTitle("Nota 1");
 		this.repository.save(note);
 		Assert.assertTrue(this.repository.count()==1L);
-		
+
 	}
 
 	@Test
@@ -47,17 +47,17 @@ public class NoteRepositoryIntegrationTest {
 		List<Note> notes = this.repository.findAll();
 		Assert.assertTrue(notes.size()==1);
 	}
-	
+
 
 	@Test
 	public void test3_Delete() {
 		List<Note> notes = this.repository.findAll();
 		Assert.assertTrue(notes.size()==1);
-        repository.delete(notes.get(0));
+		repository.delete(notes.get(0));
 		notes = this.repository.findAll();
 		Assert.assertTrue(notes==null || notes.isEmpty());
 	}
-	
-	
+
+
 
 }

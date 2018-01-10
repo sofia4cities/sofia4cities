@@ -22,14 +22,14 @@ public interface ClientConnectionRepository extends JpaRepository<ClientConnecti
 	List<ClientConnection> findByClientPlatformIdAndStaticIpTrue(ClientPlatform clientPlatform);
 	List<ClientConnection> findByClientPlatformIdAndStaticIpFalse(ClientPlatform clientPlatform);
 	List<ClientConnection> findByClientPlatformIdAndIdentification(ClientPlatform clientPlatform,String indentification);
-	
+
 	@Query("SELECT o FROM ClientConnection o WHERE o.clientPlatformId.userId= :#{#userId}")
 	List<ClientConnection> findByUserId(@Param("userId") String userId);
-	
+
 	ClientConnection findById(String id);
 	List<ClientConnection> findByIdentification(String identification);
 	long countByIdentification(String identification);
 	long countByClientPlatformId(ClientPlatform clientPlatform);
-	
-	
+
+
 }

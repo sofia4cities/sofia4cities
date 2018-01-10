@@ -42,52 +42,52 @@ public class Ontology extends AuditableEntityWithUUID{
 
 
 
-    @Column(name = "JSON_SCHEMA",nullable = false)
-    @NotNull
-    @Lob
+	@Column(name = "JSON_SCHEMA",nullable = false)
+	@NotNull
+	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String jsonSchema;
+	@Getter @Setter private String jsonSchema;
 
-    @Column(name = "XML_Diagram")
-    @Lob
+	@Column(name = "XML_Diagram")
+	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String xmlDiagram;
+	@Getter @Setter private String xmlDiagram;
 
 
-    @Column(name = "ONTOLOGY_CLASS", length = 50)
-    @Getter @Setter private String ontologyClass;
-    
-    
-    
+	@Column(name = "ONTOLOGY_CLASS", length = 50)
+	@Getter @Setter private String ontologyClass;
+
+
+
 	public String getJsonSchema() {
-        String schema = "";
-        schema = this.jsonSchema;
-        
-        if (schema != null && schema.length() > 0) {
-        	schema= schema.replaceAll("\\<.*?>", "");
-        	schema = schema.replaceAll("&nbsp;", "");
-        	schema = schema.replaceAll("&amp;", "");
-        	schema = schema.replaceAll("&quot;", "\"");
-        	schema = schema.replaceAll("\"", "'");
-        	schema = schema.replaceAll("\n", "");
-        }
-        return schema;
-    }
+		String schema = "";
+		schema = this.jsonSchema;
 
-   
-
-    private String prepareJsonSchema(String jsonSchema) {
-        String myJsonSchema = jsonSchema;
-        if (myJsonSchema != null) {
-        	myJsonSchema = myJsonSchema.replace("\t", "");
-        	myJsonSchema = myJsonSchema.replace("\r", "");
-        	myJsonSchema = myJsonSchema.replace("\n", "");
-        }
-        return myJsonSchema;
-    }
+		if (schema != null && schema.length() > 0) {
+			schema= schema.replaceAll("\\<.*?>", "");
+			schema = schema.replaceAll("&nbsp;", "");
+			schema = schema.replaceAll("&amp;", "");
+			schema = schema.replaceAll("&quot;", "\"");
+			schema = schema.replaceAll("\"", "'");
+			schema = schema.replaceAll("\n", "");
+		}
+		return schema;
+	}
 
 
-    
+
+	private String prepareJsonSchema(String jsonSchema) {
+		String myJsonSchema = jsonSchema;
+		if (myJsonSchema != null) {
+			myJsonSchema = myJsonSchema.replace("\t", "");
+			myJsonSchema = myJsonSchema.replace("\r", "");
+			myJsonSchema = myJsonSchema.replace("\n", "");
+		}
+		return myJsonSchema;
+	}
+
+
+
 	@OneToMany(mappedBy = "ontologyId", cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter @Setter private Set<ClientPlatformOntology> clientPlatformOntologyId;
@@ -104,31 +104,31 @@ public class Ontology extends AuditableEntityWithUUID{
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "DATA_MODEL_ID", referencedColumnName = "ID")
+	@JoinColumn(name = "DATA_MODEL_ID", referencedColumnName = "ID")
 	@Getter @Setter private DataModel dataModelId;
 
 	@Column(name = "USER_ID", length = 50)
 	@Getter @Setter private String userId;
 
 	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String identification;
+	@NotNull
+	@Getter @Setter private String identification;
 
 	@Column(name = "ACTIVE",nullable = false)
-    @NotNull
-    @Getter @Setter private boolean active;
+	@NotNull
+	@Getter @Setter private boolean active;
 
 	@Column(name = "RTDBCLEAN",nullable = false)
-    @NotNull
-    @Getter @Setter private boolean rtdbClean;
+	@NotNull
+	@Getter @Setter private boolean rtdbClean;
 
 	@Column(name = "RTDBHDB", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String rtdbToHdb;
+	@NotNull
+	@Getter @Setter private String rtdbToHdb;
 
 	@Column(name = "PUBLIC",nullable = false)
-    @NotNull
-    @Getter @Setter private boolean isPublic;
+	@NotNull
+	@Getter @Setter private boolean isPublic;
 
 	@Column(name = "DESCRIPTION", length = 512)
 	@Getter @Setter private String description;
@@ -140,9 +140,9 @@ public class Ontology extends AuditableEntityWithUUID{
 	@Getter @Setter private String dataModelVersion;
 
 
-	
 
 
 
-	
+
+
 }

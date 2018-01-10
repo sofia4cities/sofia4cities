@@ -24,9 +24,9 @@ import com.indracompany.sofia2.config.model.DashboardType;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -37,7 +37,7 @@ public class DashboardTypeIntegrationTest {
 
 	@Autowired
 	DashboardTypeRepository repository;
-	
+
 	@Before
 	public void setUp() {
 		List<DashboardType> dashboardTypes=this.repository.findAll();
@@ -51,19 +51,19 @@ public class DashboardTypeIntegrationTest {
 			dashboardType.setPublic(true);
 			dashboardType.setType("Tipo de modelo 1");
 			repository.save(dashboardType);
-			
-		
+
+
 		}
-	
+
 	}
-	
+
 	@Test
 	public void test_countByDashboardType(){
-		
+
 		DashboardType dt=this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository.countByType(dt.getType())==1L);
-		
-		
+
+
 	}
-	
+
 }

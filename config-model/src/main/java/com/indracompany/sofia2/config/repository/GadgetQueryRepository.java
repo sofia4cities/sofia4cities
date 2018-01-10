@@ -14,9 +14,9 @@ import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetQuery;
 
 public interface GadgetQueryRepository extends JpaRepository<GadgetQuery,String>{
-	
+
 	List<GadgetQuery> findByGadgetId(Gadget gadgetId);
 	List<GadgetQuery> findById(String id);
-	
+
 
 }

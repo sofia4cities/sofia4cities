@@ -11,5 +11,5 @@ public enum AccessGranted {
 	ALL,
 	QUERY,
 	INSERT
-	
+
 }

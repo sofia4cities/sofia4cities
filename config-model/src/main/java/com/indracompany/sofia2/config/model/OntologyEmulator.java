@@ -30,34 +30,34 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 
 public class OntologyEmulator extends AuditableEntityWithUUID{
-	
 
-	
-    @Column(name = "MEASURES",nullable = false)
-    @NotNull
-    @Lob
+
+
+	@Column(name = "MEASURES",nullable = false)
+	@NotNull
+	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-    @Getter @Setter private String measures;
+	@Getter @Setter private String measures;
 
 
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
 	@Getter @Setter private Ontology ontologyId;
 
 	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String identification;
+	@NotNull
+	@Getter @Setter private String identification;
 
 	@Column(name = "USER_ID", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String userId;
+	@NotNull
+	@Getter @Setter private String userId;
 
 	@Column(name = "INSERT_EVERY",nullable = false)
-    @NotNull
-    @Getter @Setter private Integer insertEvery;
+	@NotNull
+	@Getter @Setter private Integer insertEvery;
 
-	
+
 
 }

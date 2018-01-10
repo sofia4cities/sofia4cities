@@ -24,16 +24,16 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
 public class ClientPlatformOntologyIntegrationTest {
-	
+
 
 	@Autowired 
 	ClientPlatformOntologyRepository repository;
@@ -41,10 +41,10 @@ public class ClientPlatformOntologyIntegrationTest {
 	ClientPlatformRepository cprepository;
 	@Autowired 
 	OntologyRepository orepository;
-	
+
 	@Before
 	public void setUp() {
-		
+
 		List<ClientPlatformOntology> cpos=this.repository.findAll();
 		if(cpos.isEmpty())
 		{
@@ -75,18 +75,18 @@ public class ClientPlatformOntologyIntegrationTest {
 			cpo.setClientPlatformId(cp);
 			cpo.setOntologyId(o);
 			this.repository.save(cpo);
-		
+
 		}
 	}
-	
+
 	@Test
 	public void test_findByOntologyIdAndClientPlatformId()
 	{
 		ClientPlatformOntology cpo=this.repository.findAll().get(0);
-		
+
 		Assert.assertTrue(this.repository.findByOntologyIdAndClientPlatformId(cpo.getOntologyId(), cpo.getClientPlatformId()).size()>0);
-		
+
 	}
-	
+
 
 }

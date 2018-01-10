@@ -26,14 +26,14 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 public class ClientPlatformOntology extends AuditableEntityWithUUID{
 
-	
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
-    @Getter @Setter private ClientPlatform clientPlatformId;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
+	@Getter @Setter private ClientPlatform clientPlatformId;
+
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
 	@Getter @Setter private Ontology ontologyId;
 }

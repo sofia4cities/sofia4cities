@@ -25,20 +25,20 @@ import lombok.Setter;
 @Table(name = "ONTOLOGY_CATEGORY")
 @SuppressWarnings("deprecation")
 public class OntologyCategory extends AuditableEntity {
-	
 
-    @Id
-    @Column(name = "ID")
-    @Getter @Setter private Integer id;
-    
-	
+
+	@Id
+	@Column(name = "ID")
+	@Getter @Setter private Integer id;
+
+
 	@Column(name = "IDENTIFICATOR", length = 512,nullable = false)
-    @NotNull
-    @Getter @Setter private String identificator;
+	@NotNull
+	@Getter @Setter private String identificator;
 
 	@Column(name = "DESCRIPTION", length = 1024,nullable = false)
-    @NotNull
-    @Getter @Setter private String description;
+	@NotNull
+	@Getter @Setter private String description;
 
 
 }

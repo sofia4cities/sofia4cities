@@ -50,7 +50,7 @@ public class Gadget extends AuditableEntityWithUUID{
 
 	/*
 	 * 
-		
+
 
 	    @OneToMany(mappedBy = "gadgetId", cascade = CascadeType.REMOVE)
 		@OnDelete(action = OnDeleteAction.CASCADE)

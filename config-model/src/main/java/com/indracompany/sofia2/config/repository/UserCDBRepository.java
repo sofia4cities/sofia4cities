@@ -16,11 +16,11 @@ import com.indracompany.sofia2.config.model.UserCDB;
 
 public interface UserCDBRepository extends JpaRepository<UserCDB, String> {
 
-          
-    List<UserCDB> findByEmail(String email);
-    UserCDB findByUserId(String userId);
-    UserCDB findByUserIdAndPassword(String userId,String password);
-    
-    @Query("SELECT o FROM UserCDB AS o WHERE o.role !='1'")
-    List<UserCDB> findUsersNoAdmin();
+
+	List<UserCDB> findByEmail(String email);
+	UserCDB findByUserId(String userId);
+	UserCDB findByUserIdAndPassword(String userId,String password);
+
+	@Query("SELECT o FROM UserCDB AS o WHERE o.role !='1'")
+	List<UserCDB> findUsersNoAdmin();
 }

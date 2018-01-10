@@ -27,19 +27,19 @@ import com.indracompany.sofia2.config.model.Gadget;
 import lombok.extern.slf4j.Slf4j;
 
 /**
-*
-* @author Javier Gomez-Cornejo
-*/
+ *
+ * @author Javier Gomez-Cornejo
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
 public class GadgetIntegrationTest {
-	
+
 	@Autowired
 	GadgetRepository repository;
-	
+
 	@Before
 	public void setUp() {
 		List<Gadget> gadgets= this.repository.findAll();
@@ -51,17 +51,17 @@ public class GadgetIntegrationTest {
 			gadget.setPublic(true);
 			gadget.setName("Gadget1");
 			gadget.setType("Tipo 1");
-			
+
 			repository.save(gadget);
 		}
 	}
 	@Test
 	public void test_findByUserIdAndType() { 
 		Gadget gadget=this.repository.findAll().get(0);
-		
+
 		Assert.assertTrue(this.repository.findByUserIdAndType(gadget.getUserId(),gadget.getType()).size()>0);
 	}
-	
-	
+
+
 
 }
