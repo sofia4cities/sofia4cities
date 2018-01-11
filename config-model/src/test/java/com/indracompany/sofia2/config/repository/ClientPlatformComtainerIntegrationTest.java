@@ -77,8 +77,8 @@ public class ClientPlatformComtainerIntegrationTest {
 			}else{
 				token=new Token();
 				token.setClientPlatformId(cp);
-				token.setToken("Token 1");
-				token.setActive(new Integer(4));
+				token.setToken("Token1");
+				token.setActive(true);
 
 			}
 			cpc.setAuthenticationTokenId(token);

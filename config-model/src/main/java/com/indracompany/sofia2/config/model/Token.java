@@ -44,6 +44,6 @@ public class Token extends AuditableEntityWithUUID{
 
 	@Column(name = "ACTIVE",nullable = false)
 	@NotNull
-	@Getter @Setter private Integer active;
+	@Getter @Setter private boolean active;
 
 }

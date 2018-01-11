@@ -122,9 +122,9 @@ public class Ontology extends AuditableEntityWithUUID{
 	@NotNull
 	@Getter @Setter private boolean rtdbClean;
 
-	@Column(name = "RTDBHDB", length = 50,nullable = false)
+	@Column(name = "RTDBHDB", nullable = false)
 	@NotNull
-	@Getter @Setter private String rtdbToHdb;
+	@Getter @Setter private boolean rtdbToHdb;
 
 	@Column(name = "PUBLIC",nullable = false)
 	@NotNull

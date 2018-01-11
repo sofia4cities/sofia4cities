@@ -11,8 +11,54 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.config.model.*;
-import com.indracompany.sofia2.config.repository.*;
+import com.indracompany.sofia2.config.model.ClientConnection;
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.ClientPlatformContainer;
+import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
+import com.indracompany.sofia2.config.model.ClientPlatformOntology;
+import com.indracompany.sofia2.config.model.ConsoleMenu;
+import com.indracompany.sofia2.config.model.ConsoleMenuOption;
+import com.indracompany.sofia2.config.model.Dashboard;
+import com.indracompany.sofia2.config.model.DashboardType;
+import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.Gadget;
+import com.indracompany.sofia2.config.model.GadgetDataModel;
+import com.indracompany.sofia2.config.model.GadgetMeasure;
+import com.indracompany.sofia2.config.model.GadgetQuery;
+import com.indracompany.sofia2.config.model.GeneratorType;
+import com.indracompany.sofia2.config.model.InstanceGenerator;
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyCategory;
+import com.indracompany.sofia2.config.model.OntologyEmulator;
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.OntologyUserAccessType;
+import com.indracompany.sofia2.config.model.RoleType;
+import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.model.UserCDB;
+import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformContainerRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformContainerTypeRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
+import com.indracompany.sofia2.config.repository.ConsoleMenuOptionRepository;
+import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
+import com.indracompany.sofia2.config.repository.DashboardRepository;
+import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
+import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.GadgetDataModelRepository;
+import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
+import com.indracompany.sofia2.config.repository.GadgetQueryRepository;
+import com.indracompany.sofia2.config.repository.GadgetRepository;
+import com.indracompany.sofia2.config.repository.GeneratorTypeRepository;
+import com.indracompany.sofia2.config.repository.InstanceGeneratorRepository;
+import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
+import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
+import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
+import com.indracompany.sofia2.config.repository.RoleTypeRepository;
+import com.indracompany.sofia2.config.repository.TokenRepository;
+import com.indracompany.sofia2.config.repository.UserCDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,44 +129,54 @@ public class InitConfigDB {
 	public void init() {
 		if (initConfigDB==true) {
 			log.info("Start initConfigDB...");
-			init_ClientConnection();
+			init_RoleUser();
+			init_UserCDB();
+			//
+			init_DataModel();
+			init_OntologyCategory();
+			init_Ontology();
+			init_OntologyUserAccess();
+			init_OntologyUserAccessType();
+			init_OntologyEmulator();
+			//
 			init_ClientPlatformContainer();
 			init_ClientPlatformContainerType();
 			init_ClientPlatformOntology();
 			init_ClientPlatform();
-			init_ConsoleMenu();
-			init_ConsoleMenuOption();
+			init_ClientConnection();
+			//
+
+			init_Token();
+			//
 			init_Dashboard();
 			init_DashboardType();
-			init_DataModel();
 			init_GadgetDataModel();
 			init_GadgetMeasure();
 			init_GadgetQuery();
 			init_Gadget();
 			init_GeneratorType();
 			init_InstanceGenerator();
-			init_OntologyCategory();
-			init_OntologyEmulator();
-			init_Ontology();
-			init_OntologyUserAccess();
-			init_OntologyUserAccessType();
-			init_RoleUser();
-			init_Token();
-			init_UserCDB();
+
+			//
+			init_ConsoleMenu();
+			init_ConsoleMenuOption();
+			//
 		}
 		else {
 			log.info("Disable Start initConfigDB...");
 		}
 	}
 	public void init_ClientConnection() {
-
 		log.info("init ClientConnection");
 		List<ClientConnection> clients= this.clientConnectionRepository.findAll();
+		ClientPlatform cp = this.clientPlatformRepository.findAll().get(0);
 		if (clients.isEmpty()) {
 			log.info("No clients ...");
 			ClientConnection con= new ClientConnection();
+			//
 			ClientPlatform client= new ClientPlatform();
 			client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
+			//			
 			con.setClientPlatformId(client);			
 			con.setIdentification("1");
 			con.setIpStrict(true);
@@ -128,11 +184,11 @@ public class InitConfigDB {
 			con.setLastIp("192.168.1.89");
 			Calendar date = Calendar.getInstance();
 			con.setLastConnection(date);
+			con.setClientPlatformId(cp);
 			clientConnectionRepository.save(con);
 		}
-
-
 	}
+	
 	public void init_ClientPlatformContainer() {
 
 		log.info("init ClientPlatformContainer");
@@ -163,32 +219,34 @@ public class InitConfigDB {
 			Token token;
 			if(!this.tokenRepository.findAll().isEmpty()){
 				token=this.tokenRepository.findAll().get(0);
-			}else{
+			}
+			else{
 				token=new Token();
 				token.setClientPlatformId(cp);
 				token.setToken("Token 1");
-				token.setActive(new Integer(4));
-
+				token.setActive(true);
+				tokenRepository.save(token);
+				
 			}
 			cpc.setAuthenticationTokenId(token);
+			/*
+			*/
+			//			
 			ClientPlatformContainerType type;
-
 			if(!this.clientPlatformContainerTypeRepository.findAll().isEmpty()){
 				type=this.clientPlatformContainerTypeRepository.findAll().get(0);
-			}else{
+			}
+			else{
 				type=new ClientPlatformContainerType();
 				type.setId(1);
 				type.setType("Python");
 				clientPlatformContainerTypeRepository.save(type);
-
-
 			}
 			cpc.setClientPlatformContainerTypeId(type);
 			this.clientPlatformContainerRepository.save(cpc);
 		}
-
-
 	}
+	
 	public void init_ClientPlatformContainerType() {
 		log.info("init ClientPlatformContainerType");
 		List<ClientPlatformContainerType> types = this.clientPlatformContainerTypeRepository.findAll();
@@ -235,8 +293,7 @@ public class InitConfigDB {
 				cp.setDescription("Kp para la insercion de alarmas de scada");
 				clientPlatformRepository.save(cp);			
 			}
-			if(o==null)
-			{
+			if(o==null) {
 				o=new Ontology();
 				o.setJsonSchema("{}");
 				o.setIdentification("Id 1");
@@ -249,13 +306,9 @@ public class InitConfigDB {
 			cpo.setClientPlatformId(cp);
 			cpo.setOntologyId(o);
 			this.clientPlatformOntologyRepository.save(cpo);
-
 		}
-
-
 	}
 	public void init_ClientPlatform() {
-
 		log.info("init ClientPlatform");
 		List<ClientPlatform> clients= this.clientPlatformRepository.findAll();
 		if (clients.isEmpty()) {
@@ -528,8 +581,7 @@ public class InitConfigDB {
 
 		log.info("init OntologyCategory");
 		List<OntologyCategory> categories=this.ontologyCategoryRepository.findAll();
-		if(categories.isEmpty())
-		{
+		if(categories.isEmpty()) {
 			log.info("No ontology categories found..adding");
 			OntologyCategory category=new OntologyCategory();
 			category.setId(1);
@@ -587,14 +639,17 @@ public class InitConfigDB {
 			ontology.setDescription("Description");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
 			ontologyRepository.save(ontology);
+			
 			ontology=new Ontology();
 			ontology.setJsonSchema("{Data:,Temperature:}");
 			ontology.setDescription("Description");
 			ontology.setIdentification("Id 2");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
 			ontologyRepository.save(ontology);
 
@@ -602,24 +657,23 @@ public class InitConfigDB {
 
 
 	}
+	
 	public void init_OntologyUserAccess() {
-
 		log.info("init OntologyUserAccess");
+		/*
 		List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
 		if(users.isEmpty())
 		{
 			log.info("No users found...adding");
 			OntologyUserAccess user=new OntologyUserAccess();
 			user.setUserId("6");
+			user.setOntologyId(ontologyRepository.findAll().get(0));
+			user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
 			this.ontologyUserAccessRepository.save(user);
-
-
-
-
 		}
-
-
+		*/
 	}
+	
 	public void init_OntologyUserAccessType() {
 
 		log.info("init OntologyUserAccessType");
@@ -684,6 +738,12 @@ public class InitConfigDB {
 				type.setDescription("System Administradot of the Platform");
 				roleTypeRepository.save(type);
 				//
+				type=new RoleType();
+				type.setId(7);
+				type.setName("ROLE_OPERATIONS");
+				type.setDescription("Operations for the Platform");
+				roleTypeRepository.save(type);
+				//
 				//UPDATE of the ROLE_ANALYTICS
 				RoleType typeSon=roleTypeRepository.findOne(4);
 				RoleType typeParent=roleTypeRepository.findOne(2);
@@ -710,14 +770,11 @@ public class InitConfigDB {
 
 			Token token=new Token();
 			token.setClientPlatformId(client);
-			token.setToken("Token 1");
-			token.setActive(new Integer(4));
+			token.setToken("Token1");
+			token.setActive(true);
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
-
-
 			tokenRepository.save(token);
-
 		}
 
 
@@ -798,8 +855,18 @@ public class InitConfigDB {
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//	
-
-			} catch (Exception e) {
+				type=new UserCDB();
+				type.setId("7");
+				type.setUserId("operations");
+				type.setPassword("changeIt!");
+				type.setFullName("Operations of the Platform");
+				type.setEmail("operations@sofia2.com");
+				type.setActive(true);
+				type.setRole(roleTypeRepository.findOne(7));
+				type.setDateCreated(Calendar.getInstance().getTime());
+				userCDBRepository.save(type);
+			} 
+			catch (Exception e) {
 				log.error("Error UserCDB:"+e.getMessage());
 				userCDBRepository.deleteAll();
 			}

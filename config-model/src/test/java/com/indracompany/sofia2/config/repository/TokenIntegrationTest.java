@@ -57,14 +57,11 @@ public class TokenIntegrationTest {
 
 			Token token=new Token();
 			token.setClientPlatformId(client);
-			token.setToken("Token 1");
-			token.setActive(new Integer(4));
+			token.setToken("Token1");
+			token.setActive(true);
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
-
-
 			repository.save(token);
-
 		}
 	}
 

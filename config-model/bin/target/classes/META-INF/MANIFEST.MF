@@ -1,11 +1,5 @@
 Manifest-Version: 1.0
-Implementation-Title: sofia2-config-model
-Implementation-Version: 4.3.0
-Built-By: fjgcornejo
-Implementation-Vendor-Id: com.indracompany.sofia2
+Built-By: lmgracia
 Build-Jdk: 1.8.0_121
-Implementation-URL: http://projects.spring.io/spring-boot/sofia2-confi
- g-model/
 Created-By: Maven Integration for Eclipse
-Implementation-Vendor: Pivotal Software, Inc.
 
