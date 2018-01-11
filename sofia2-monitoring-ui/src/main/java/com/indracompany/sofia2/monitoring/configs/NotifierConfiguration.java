@@ -1,4 +1,4 @@
-package com.baeldung.springbootadminserver.configs;
+package com.indracompany.sofia2.monitoring.configs;
 
 import de.codecentric.boot.admin.notify.LoggingNotifier;
 import de.codecentric.boot.admin.notify.RemindingNotifier;

@@ -8,19 +8,35 @@ server: ## Config Web Server
       basedir: target/tomcat
 
 ##Security Config
-security:
-   user:
-      name: admin
-      password: admin
+#security:
+#   user:
+#      name: admin
+#      password: admin
    
 spring: ## General Config  
    application.name: sofia2-monitoring-ui
    boot.admin: #Spring Boot Admin Config    
       url: http://localhost:18090
-      username: ${security.user.name}
-      password: ${security.user.password}
-      client.metadata.user.name: ${security.user.name}
-      client.metadata.user.password: ${security.user.password}      
+      username: operations
+      password: changeIt!
+      client.metadata.user.name: ${spring.boot.admin.username}
+      client.metadata.user.password: $spring.boot.admin.password} 
+   datasource: ## JPA Config
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      username: root
+      password:  
+      # Number of ms to wait before throwing an exception if no connection is available.
+      tomcat.max-wait: 10000
+      # Maximum number of active connections that can be allocated from this pool at the same time.
+      tomcat.max-active: 50
+      # Validate the connection before borrowing it from the pool.
+      tomcat.test-on-borrow: true
+   jpa:
+      ## Hibernate Properties
+      # The SQL dialect makes Hibernate generate better SQL for the chosen database
+      properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+      # Hibernate ddl auto (create, create-drop, validate, update)
+      hibernate.ddl-auto: update 
    mail: ##Mail configuration
       host: smtp.gmail.com
       username: sofia2oncloud@gmail.com

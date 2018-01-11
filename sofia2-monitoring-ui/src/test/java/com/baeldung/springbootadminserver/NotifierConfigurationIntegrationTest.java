@@ -1,6 +1,5 @@
 package com.baeldung.springbootadminserver;
 
-import com.baeldung.springbootadminserver.configs.NotifierConfiguration;
 import de.codecentric.boot.admin.notify.Notifier;
 import de.codecentric.boot.admin.notify.RemindingNotifier;
 import de.codecentric.boot.admin.notify.filter.FilteringNotifier;
@@ -10,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.indracompany.sofia2.monitoring.configs.NotifierConfiguration;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;

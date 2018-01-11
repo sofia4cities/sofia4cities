@@ -1,4 +1,4 @@
-package com.baeldung.springbootadminserver.configs;
+package com.indracompany.sofia2.monitoring.configs;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
