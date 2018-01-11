@@ -48,6 +48,10 @@ public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvi
 			log.info("authenticate: User or password incorrect: " + name);
             throw new BadCredentialsException("Authentication failed for " + name);
         }
+        if (!user.getRole().getName().equalsIgnoreCase("ROLE_OPERATIONS")) {
+			log.info("authenticate: Role of user "+user.getUserId()+" is not ROLE_OPERATIONS: ");
+            throw new BadCredentialsException("Authentication failed for user "+user.getUserId()+"User has not ROLE_OPERATIONS: ");        	
+        }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
