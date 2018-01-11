@@ -1,20 +1,11 @@
 package com.indracompany.sofia2.systemconfig.init;
 
-import java.util.Calendar;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.config.model.KPContainerType;
-import com.indracompany.sofia2.config.model.RoleType;
-import com.indracompany.sofia2.config.model.UserCDB;
-import com.indracompany.sofia2.config.repository.KPContainerTypeRepository;
-import com.indracompany.sofia2.config.repository.RoleTypeRepository;
-import com.indracompany.sofia2.config.repository.UserCDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 
