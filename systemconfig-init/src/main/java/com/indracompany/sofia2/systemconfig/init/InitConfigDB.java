@@ -83,9 +83,10 @@ public class InitConfigDB {
 	public void init() {
 		if (initConfigDB==true) {
 			log.info("Start initConfigDB...");
-			init_ClientConnection();
+			init_Ontology();
 			init_ClientPlatformContainer();
 			init_ClientPlatformContainerType();
+			init_ClientConnection();
 			init_ClientPlatformOntology();
 			init_ClientPlatform();
 			init_ConsoleMenu();
@@ -101,7 +102,7 @@ public class InitConfigDB {
 			init_InstanceGenerator();
 			init_OntologyCategory();
 			init_OntologyEmulator();
-			init_Ontology();
+			
 			init_OntologyUserAccess();
 			init_OntologyUserAccessType();
 			init_RoleUser();
@@ -115,21 +116,22 @@ public class InitConfigDB {
 	public void init_ClientConnection() {
 
 		log.info("init ClientConnection");
-		List<ClientConnection> clients= this.clientConnectionRepository.findAll();
-		if (clients.isEmpty()) {
-			log.info("No clients ...");
-			ClientConnection con= new ClientConnection();
-			ClientPlatform client= new ClientPlatform();
-			client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
-			con.setClientPlatformId(client);			
-			con.setIdentification("1");
-			con.setIpStrict(true);
-			con.setStaticIp(false);
-			con.setLastIp("192.168.1.89");
-			Calendar date = Calendar.getInstance();
-			con.setLastConnection(date);
-			clientConnectionRepository.save(con);
-		}
+//		List<ClientConnection> clients= this.clientConnectionRepository.findAll();
+//		if (clients.isEmpty()) {
+//			log.info("No clients ...");
+//			ClientConnection con= new ClientConnection();
+//			ClientPlatform client= new ClientPlatform();
+//			client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
+//			clientPlatformRepository.save(client);
+//			con.setClientPlatformId(client);			
+//			con.setIdentification("1");
+//			con.setIpStrict(true);
+//			con.setStaticIp(false);
+//			con.setLastIp("192.168.1.89");
+//			Calendar date = Calendar.getInstance();
+//			con.setLastConnection(date);
+//			clientConnectionRepository.save(con);
+//		}
 
 
 	}
@@ -168,8 +170,11 @@ public class InitConfigDB {
 				token.setClientPlatformId(cp);
 				token.setToken("Token 1");
 				token.setActive(new Integer(4));
+				this.tokenRepository.save(token);
+				
 
 			}
+			
 			cpc.setAuthenticationTokenId(token);
 			ClientPlatformContainerType type;
 
@@ -183,7 +188,9 @@ public class InitConfigDB {
 
 
 			}
+			
 			cpc.setClientPlatformContainerTypeId(type);
+			
 			this.clientPlatformContainerRepository.save(cpc);
 		}
 
@@ -224,8 +231,14 @@ public class InitConfigDB {
 		{
 			log.info("No Client Platform Ontologies");
 			ClientPlatformOntology cpo=new ClientPlatformOntology();
-			ClientPlatform cp=this.clientPlatformRepository.findAll().get(0);
-			Ontology o=this.ontologyRepository.findAll().get(0);
+			ClientPlatform cp = null;
+			Ontology o=null;
+			if(!this.clientPlatformRepository.findAll().isEmpty()){
+				cp=this.clientPlatformRepository.findAll().get(0);
+			}
+			if(!this.ontologyRepository.findAll().isEmpty()){
+				o=this.ontologyRepository.findAll().get(0);
+			}
 			if(cp==null)
 			{
 				cp=new ClientPlatform();
@@ -235,6 +248,7 @@ public class InitConfigDB {
 				cp.setDescription("Kp para la insercion de alarmas de scada");
 				clientPlatformRepository.save(cp);			
 			}
+			
 			if(o==null)
 			{
 				o=new Ontology();
@@ -246,6 +260,7 @@ public class InitConfigDB {
 				o.setPublic(true);
 				ontologyRepository.save(o);
 			}
+			
 			cpo.setClientPlatformId(cp);
 			cpo.setOntologyId(o);
 			this.clientPlatformOntologyRepository.save(cpo);
@@ -587,6 +602,7 @@ public class InitConfigDB {
 			ontology.setDescription("Description");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb("1");
 			ontology.setPublic(true);
 			ontologyRepository.save(ontology);
 			ontology=new Ontology();
@@ -595,6 +611,7 @@ public class InitConfigDB {
 			ontology.setIdentification("Id 2");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb("1");
 			ontology.setPublic(true);
 			ontologyRepository.save(ontology);
 
@@ -605,18 +622,8 @@ public class InitConfigDB {
 	public void init_OntologyUserAccess() {
 
 		log.info("init OntologyUserAccess");
-		List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
-		if(users.isEmpty())
-		{
-			log.info("No users found...adding");
-			OntologyUserAccess user=new OntologyUserAccess();
-			user.setUserId("6");
-			this.ontologyUserAccessRepository.save(user);
-
-
-
-
-		}
+		
+		
 
 
 	}
@@ -629,6 +636,16 @@ public class InitConfigDB {
 			OntologyUserAccessType type=new OntologyUserAccessType();
 			type.setId(1);
 			type.setName("ALL");
+			type.setDescription("Todos los permisos");
+			this.ontologyUserAccessTypeRepository.save(type);
+			type=new OntologyUserAccessType();
+			type.setId(2);
+			type.setName("QUERY");
+			type.setDescription("Todos los permisos");
+			this.ontologyUserAccessTypeRepository.save(type);
+			type=new OntologyUserAccessType();
+			type.setId(3);
+			type.setName("INSERT");
 			type.setDescription("Todos los permisos");
 			this.ontologyUserAccessTypeRepository.save(type);
 		}
