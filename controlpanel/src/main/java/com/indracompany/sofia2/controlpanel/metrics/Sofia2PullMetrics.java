@@ -20,7 +20,7 @@ class Sofia2PullMetrics implements PublicMetrics {
     @Override
     public Collection<Metric<?>> metrics() {
     	final List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
-        Metric<?> metric1 = new Metric<Integer>("_sofia2.:controlpanel.userslogged.size", allPrincipals.size(), new Date());
+        Metric<?> metric1 = new Metric<Integer>("_sofia2.:controlpanel.userslogged", allPrincipals.size(), new Date());
         Metric<?> metric2 = new Metric<Integer>("_sofia2:controlpanel.other", 1, new Date());
         //Metric<?> metric2 = new Metric<String>("com.indracompany.sofia2.controlpanel.metric.userslogged.names", allPrincipals.get(0).toString(),new Date());
         HashSet<Metric<?>> set = new HashSet<Metric<?>>();
