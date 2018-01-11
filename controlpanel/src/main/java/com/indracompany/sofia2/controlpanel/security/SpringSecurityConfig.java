@@ -46,6 +46,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .permitAll()
                 .and()
+                .sessionManagement()
+                .invalidSessionUrl("/login")
+                .maximumSessions(1).sessionRegistry(sessionRegistry()).and()
+                .sessionFixation().none()  
+                .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
     }
 
@@ -54,6 +59,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception {
     	builder.authenticationProvider(authenticationProvider);
     }
+    
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }  
 
     
     //Spring Boot configured this already.
