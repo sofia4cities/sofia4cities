@@ -38,11 +38,11 @@ public class InstanceGenerator extends AuditableEntity{
 	@Column(name = "ID")
 	@Getter @Setter private Integer id;
 
-	@Column(name = "VALUES_G",nullable = false)
+	@Column(name = "VALUES_GEN",nullable = false)
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String valuesG;
+	@Getter @Setter private String values;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)

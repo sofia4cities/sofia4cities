@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
-import com.indracompany.sofia2.config.model.Note;
+
 import com.indracompany.sofia2.config.repository.ClientPlatformContainerTypeRepository;
 
 import lombok.extern.slf4j.Slf4j;

@@ -11,12 +11,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.ConsoleMenu;
-import com.indracompany.sofia2.config.model.ConsoleMenuOptions;
+import com.indracompany.sofia2.config.model.ConsoleMenuOption;
 
-public interface ConsoleMenuOptionsRepository extends JpaRepository<ConsoleMenuOptions,String>{
+public interface ConsoleMenuOptionRepository extends JpaRepository<ConsoleMenuOption,String>{
 
-	ConsoleMenuOptions findById(String id);
-	List<ConsoleMenuOptions> findByConsoleMenuId(ConsoleMenu consoleMenuId);
-	List<ConsoleMenuOptions> findByOption(String option);
-	List<ConsoleMenuOptions> findByOptionAndConsoleMenuId(String option,ConsoleMenu consoleMenuId);
+	ConsoleMenuOption findById(String id);
+	List<ConsoleMenuOption> findByConsoleMenuId(ConsoleMenu consoleMenuId);
+	List<ConsoleMenuOption> findByOption(String option);
+	List<ConsoleMenuOption> findByOptionAndConsoleMenuId(String option,ConsoleMenu consoleMenuId);
 }
