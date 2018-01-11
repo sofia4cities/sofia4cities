@@ -32,6 +32,14 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
+    
+    /**
+     * Exports the all endpoint metrics like those implementing {@link PublicMetrics}.
+     */
+    @Bean
+    public MetricsEndpointMetricReader metricsEndpointMetricReader(MetricsEndpoint metricsEndpoint) {
+        return new MetricsEndpointMetricReader(metricsEndpoint);
+    }
 
 
 }
