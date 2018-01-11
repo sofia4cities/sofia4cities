@@ -24,7 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "ONTOLOGY_USER", uniqueConstraints = {
+@Table(name = "ONTOLOGY_USER_ACCESS", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "ONTOLOGY_ID", "USER_ID" }) })
 @Configurable
 @SuppressWarnings("deprecation")
