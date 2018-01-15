@@ -1,0 +1,1100 @@
+<!-- SMART4CITIES CONTROL PANEL MENU -->
+<div th:fragment="menuFragment" id="menuFragment">
+<!-- BEGIN SIDEBAR -->
+	<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+	<!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+	<div th:if="${(session != null) and (session.menuAllowedOptions != null)}" class="page-sidebar navbar-collapse collapse">
+		<!-- BEGIN SIDEBAR MENU -->
+		<!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+		<!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+		<!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+		<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+		<!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+		<!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+		
+		<ul class="page-sidebar-menu page-header-fixed page-sidebar-menu-closed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+			<!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+			<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+			<li class="sidebar-toggler-wrapper hide">
+				<div class="sidebar-toggler">
+					<span></span>
+				</div>
+			</li>
+			<!-- END SIDEBAR TOGGLER BUTTON -->
+			<!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
+			<li class="sidebar-search-wrapper">
+				<!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
+				<!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
+				<!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered and solid search box -->
+				<!-- DOC: searchDocs() está actualmente en header ,debe quedar en el controlador del header: headerController.js -->
+				<form class="sidebar-search  sidebar-search-bordered " id="search-form" action="javascript:searchDocs();" method="get">
+					<a href="javascript:;" class="remove">
+						<i class="icon-close"></i>
+					</a>
+					<div class="input-group">
+						<input type="text" class="form-control" id="search-query" placeholder="Search..."/>
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn submit">
+								<i class="icon-magnifier"></i>
+							</a>
+						</span>
+					</div>
+				</form>
+				<!-- END RESPONSIVE QUICK SEARCH FORM -->
+			</li>
+			<!-- HOME -->
+			<li class="nav-item start active open">
+				<a th:href="@{/}" href="index.html" class="nav-link nav-toggle">
+					<i class="flaticon-layers"></i>
+					<span class="title" th:text="#{menu_home}">Consola</span>
+				</a>							
+			</li>
+			<!-- PROYECTOS -->
+			<li class="nav-item  ">
+				<a href="javascript:;" class="nav-link nav-toggle" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_proyectos_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_proyectos_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<i class="flaticon-folder"></i>
+					<span th:text="#{menu_category_proyectos_label}" class="title">Proyectos</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu">
+					<li class="nav-item  ">
+						<a href="list.html" th:href="@{/proyectos/list}"  class="nav-link " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_proyectos_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptions,'menu_item_proyectos_listar_label')>=0)}">
+							<span th:text="#{menu_item_proyectos_listar_label}" class="title">Mis Proyectos</span>
+						</a>
+					</li>								
+				</ul>
+			</li>
+			<!-- ONTOLOGIAS -->
+			<li class="nav-item  ">
+				<a href="javascript:;" class="nav-link nav-toggle" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_ontologias_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_ontologias_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<i class="flaticon-network"></i>
+					<span th:text="#{menu_category_ontologias_label}" class="title">Ontologías</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu">
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_crear_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_crear_label')>=0)}">
+						<a href="create.html" th:href="@{/ontologias/create}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_crear_label}" class="title">Crear Ontologia</span>
+						</a>
+						<span class="external-link pull-right" data-link="/console/proyectos/list"><i class="fa fa-external-link " style="position: absolute;right: 6px;top: 12px;color: #868aa8;font-size: 11px;cursor: pointer;"></i></span>
+					</li>
+					<li class="nav-item  " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${@contexto.getPropiedad('bdtr.type') != 'relationalOracle' and #strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologiasopendata_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologiasopendata_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/ontologiasopendata/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologiasopendata_listar_label}" class="title">Estado de Cargas</span>
+							<!-- <span class="badge badge-danger">2</span> -->
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_listar_label')>=0)}">
+						<a th:href="@{/ontologias/list}"  class="nav-link ">
+							<span th:text="#{menu_item_ontologias_listar_label}" class="title">Mis Ontologías</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_crud_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_crud_label')>=0)}">
+						<a href="list.html" th:href="@{/crudontologias/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_crud_label}" class="title">Gestión CRUD de Instancias</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_generadorinstancias_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_generadorinstancias_label')>=0)}">
+						<a href="list.html" th:href="@{/generadorinstancias/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_generadorinstancias_label}" class="title"> Simulador de instancias de ontologías</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_USUARIO') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_suscripcion_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_suscripcion_label')>=0)}">
+						<a href="list.html" th:href="@{/suscripciones/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_suscripcion_label}" class="title">Subscripciones de ontologías</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_autorizaciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_autorizaciones_label')>=0)}">
+						<a href="list.html"  th:href="@{/ontologias/authorize/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_autorizaciones_label}" class="title">Autorizaciones de Ontología</span>
+						</a>
+					</li>						
+				</ul>
+			</li>
+			<!-- THINKPs -->						
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_KPS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_KPS_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-share"></i>
+					<span class="title">THINKPS SOFIA2</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_KPS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_KPS_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item  " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_KPS_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_KPS_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/kps/list}" class="nav-link ">
+							<span th:text="#{menu_item_KPS_listar_label}" class="title">Mis THINKPs</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_KPS_estado_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_KPS_estado_label')>=0)}">
+						<a href="list.html" th:href="@{/gestiondispositivos/list}" class="nav-link ">
+							<span th:text="#{menu_item_KPS_estado_label}" class="title">Estado THINKPs</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_kpsactivos_gestion_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_kpsactivos_gestion_label')>=0)}">
+						<a href="list.html" th:href="@{/kpsactivos/list}" class="nav-link ">
+							<span th:text="#{menu_item_kpsactivos_gestion_label}" class="title">THINKPs Conectados</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_contenedor_KPS_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_contenedor_KPS_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/contenedorkps/list}" class="nav-link ">
+							<span th:text="#{menu_item_contenedor_KPS_listar_label}" class="title">Contenedor THINKPs</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_APPSW_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_APPSW_listar_label')>=0)}">
+						<a href="list.html"  th:href="@{/appsw/list}" class="nav-link ">
+							<span th:text="#{menu_item_APPSW_listar_label}" class="title">Config y SW en THINKPs</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR')">
+						<a href="springBootAdminFrame.html"  th:href="@{/sba}" class="nav-link ">
+							<span th:text="#{springbootadmin.menu_text}" class="title">Administración de SpringBoot</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- REGLAS -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_REGLAS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_REGLAS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="?p=" class="nav-link nav-toggle">
+					<i class="la la-filter "></i>
+					<span th:text="#{menu_category_REGLAS_label}" class="title">REGLAS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_REGLAS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_REGLAS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CEP_crear_regla_wizard')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CEP_crear_regla_wizard')>=0)}">
+						<a href="init.html" th:href="@{/wizardreglas/init}" class="nav-link ">
+							<span th:text="#{menu_item_CEP_crear_regla_wizard}" class="title">Wizard creación de reglas</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_SCRIPTS_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_SCRIPTS_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/scripts/list}" class="nav-link ">
+							<span th:text="#{menu_item_SCRIPTS_listar_label}" class="title">Mis reglas Scripts</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CEP_listar_reglas_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CEP_listar_reglas_label')>=0)}">
+						<a  href="list.html" th:href="@{/reglacep/list}" class="nav-link ">
+							<span th:text="#{menu_item_CEP_listar_reglas_label}" class="title">Mis Reglas CEP</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CEP_listar_evento_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CEP_listar_evento_label')>=0)}">
+						<a href="list.html" th:href="@{/eventodefinicion/list}" class="nav-link ">
+							<span th:text="#{menu_item_CEP_listar_evento_label}" class="title">Mis Eventos CEP</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_MOTORFLUJOS_activos')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_MOTORFLUJOS_activos')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html" th:href="@{/motorFlujos/list}" class="nav-link ">
+							<span th:text="#{menu_item_MOTORFLUJOS_activos}" class="title">Mis Flujos</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- ASSETS -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_ASSETS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_ASSETS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle">
+					<i class="flaticon-laptop"></i>
+					<span th:text="#{menu_category_ASSETS_label}" class="title">Assets</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_ASSETS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_ASSETS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ASSETS_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ASSETS_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/assets/list}" class="nav-link ">
+							<span th:text="#{menu_item_ASSETS_listar_label}" class="title">Mis Assets</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ASSETS_visualizar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ASSETS_visualizar_label')>=0)}">
+						<a href="visualize.html" th:href="@{/assets/visualize}" class="nav-link ">
+							<span th:text="#{menu_item_ASSETS_visualizar_label}" class="title">Visor Geográfico Assets</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ASSETS_listar_tipo_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ASSETS_listar_tipo_label')>=0)}">
+						<a href="list.html" th:href="@{/tiposasset/list}" class="nav-link ">
+							<span th:text="#{menu_item_ASSETS_listar_tipo_label}" class="title">Tipo de Asset</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ASSETS_listar_nodo_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ASSETS_listar_nodo_label')>=0)}">
+						<a href="list.html" th:href="@{/nodos/list}" class="nav-link ">
+							<span th:text="#{menu_item_ASSETS_listar_nodo_label}" class="title">Gestión de Nodos</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			
+			<!--<li class="heading"><h3 class="uppercase">Layouts</h3></li> -->
+			
+			<!-- VISUALIZACION -->
+			<li class="nav-item" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_visualizaciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_visualizaciones_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle">
+					<i class="flaticon-dashboard "></i>
+					<span  th:text="#{menu_category_visualizaciones_label}" class="title">VISUALIZACIÓN</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_visualizaciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_visualizaciones_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_gadget_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_gadget_listar_label')>=0)}">
+						<a href="list.html"  th:href="@{/gadget/list}" class="nav-link ">
+							<span th:text="#{menu_item_gadget_listar_label}" class="title">Mis Gadgets</span>										
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_dashboard_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_dashboard_listar_label')>=0)}">
+						<a href="list.html"  th:href="@{/dashboard/listgroup}" class="nav-link ">
+							<span th:text="#{menu_item_dashboard_listar_label}" class="title">Mis Dashboards </span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_scada_start_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_scada_start_label')>=0)}">
+						<a href="list.html"  th:href="@{/scada/start/list}" class="nav-link ">
+							<span th:text="#{menu_item_scada_start_label}" class="title">Sinópticos Sofia2</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- ESCRITORIOS -->						
+			<li class="nav-item" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_DESKTOP_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_DESKTOP_label')>=0)}"  sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+				<a href="javascript:;" class="nav-link nav-toggle">
+					<i class="flaticon-squares-2"></i>
+					<span  th:text="#{menu_category_DESKTOP_label}" class="title">ESCRITORIOS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_DESKTOP_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_DESKTOP_label')>=0)}">
+					<li class="nav-item" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_DESKTOP_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_DESKTOP_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html"  th:href="@{/desktop/list}" class="nav-link ">
+							<span th:text="#{menu_item_DESKTOP_label}" class="title">Mis Escritorios</span>										
+						</a>
+					</li>								
+				</ul>
+			</li>
+			
+			<!-- HERRAMIENTAS -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_herramientas_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_herramientas_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-open-box "></i>
+					<span th:text="#{menu_category_herramientas_label}" class="title">HERRAMIENTAS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_herramientas_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_herramientas_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item  " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_herramientas_consulta_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_herramientas_consulta_label')>=0)}">
+						<a href="show.html"  th:href="@{/databases/show}" class="nav-link ">
+							<span th:text="#{menu_item_herramientas_consulta_label}" class="title">Consola DBTR y BDH</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_consultas_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_consultas_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR')">
+						<a href="show.html" th:href="@{/consultas/show}" class="nav-link ">
+							<span  th:text="#{menu_item_consultas_label}" class="title">Consultas BDTR, BRH y BDC</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CONSULTARBDTR_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CONSULTARBDTR_listar_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html" th:href="@{/consultaspredefinidas/list}" class="nav-link ">
+							<span th:text="#{menu_item_CONSULTARBDTR_listar_label}" class="title">Consultas Predefinidas</span>
+						</a>
+					</li>
+					
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_herramientas_enviar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_herramientas_enviar_label')>=0)}">
+						<a href="show.html"  th:href="@{/query/show}" class="nav-link ">
+							<span th:text="#{menu_item_herramientas_enviar_label}" class="title">Envío mensajes SSAP</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_herramientas_valjson_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_herramientas_valjson_label')>=0)}">
+						<a href="show.html"  th:href="@{/valjson/show}" class="nav-link ">
+							<span th:text="#{menu_item_herramientas_valjson_label}" class="title">Validar Instancia Ontología</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_procesos_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_procesos_listar_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html" th:href="@{/visualizacionprocesos/list}" class="nav-link ">
+							<span th:text="#{menu_item_procesos_listar_label}" class="title">Visualización estado procesos</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_imporexport_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and  #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_imporexport_label')>=0)}" sec:authorize="hasRole('ROL_COLABORADOR')">
+						<a th:href="@{/importexport/principal}" class="nav-link ">
+							<span th:text="#{menu_item_IMPORTAREXPORTAR_label}" class="title">Importar/Exportar</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- ADMINISTRACIÓN -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_PETICIONES_label')>=0 or ((#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') or #authorization.expression('hasRole(''ROL_SYS_ADMIN'')')) and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_PETICIONES_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-cogwheel-2"></i>
+					<span th:text="#{menu_category_PETICIONES_label}" class="title">ADMINISTRACIÓN</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_PETICIONES_label')>=0 or ((#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') or #authorization.expression('hasRole(''ROL_SYS_ADMIN'')')) and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_PETICIONES_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_plantillas_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_plantillas_listar_label')>=0)}"  sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="list.html" th:href="@{/plantillas/list}"  class="nav-link ">
+							<span th:text="#{menu_item_plantillas_listar_label}" class="title">Gestión Plantillas Ontologías</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_gestionjarscript')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_gestionjarscript')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a  href="list.html" th:href="@{/gestionjar/list}"  class="nav-link ">
+							<span th:text="#{menu_item_gestionjarscript}" class="title">Gestión de librerías motor Scripting</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_OPERACIONES_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_OPERACIONES_listar_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="list.html" th:href="@{/operaciones/list}"  class="nav-link ">
+							<span th:text="#{menu_item_OPERACIONES_listar_label}" class="title">Gestión APIs motor Scripting</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_usuarios_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_usuarios_listar_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="list.html" th:href="@{/usuarioses/list}"  class="nav-link ">
+							<span th:text="#{menu_item_usuarios_listar_label}" class="title">Gestión de Usuarios</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_gestionconexiones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_gestionconexiones_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="show.html" th:href="@{/gestionconexiones/show}"  class="nav-link ">
+							<span th:text="#{menu_item_gestionconexiones_label}" class="title">Gestión de conexiones</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_admin_opciones')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_admin_opciones')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="#" th:href="@{/admin/options}"  class="nav-link ">
+							<span th:text="#{menu_item_admin_opciones}" class="title">Opciones de Administración</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_plantillas_brandwatch_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_plantillas_brandwatch_listar_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')"  >
+						<a href="list.html" th:href="@{/plantillasbrandwatch/list}" class="nav-link ">
+							<span th:text="#{menu_item_plantillas_brandwatch_listar_label}" class="title">Gestión plantillas Brandwatch</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_monitorizacion_sofia_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_monitorizacion_sofia_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') and !hasRole('ROL_SYS_ADMIN')" >
+						<a  href="authorize.html" th:href="@{/monitorizacion/list}" class="nav-link ">
+							<span th:text="#{menu_item_monitorizacion_sofia_label}" class="title">Monitorización</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_configuracion_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_configuracion_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') and !hasRole('ROL_SYS_ADMIN')" >
+						<a th:href="@{/configuracionmenu/principal}"  class="nav-link ">
+							<span th:text="#{menu_item_configuracion_label}" class="title">Configuración Menú</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_configuracion_label')>=0 or (#authorization.expression('hasRole(''ROL_SYS_ADMIN'')'))}" sec:authorize="hasRole('ROL_SYS_ADMIN')" >
+						<a th:href="@{/bdtr/list}"  class="nav-link ">
+							<span th:text="#{menu_item_admin_bdtr_label}" class="title">Configuración BDTR</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_repositoriogit_label')>=0}" sec:authorize="hasRole('ROL_ADMINISTRADOR')" >
+						<a href="list.html" th:href="@{/repositoriogit/list}"  class="nav-link ">
+							<span th:text="#{menu_item_repositoriogit_label}" class="title">Repositorio GIT</span>
+						</a>
+					</li>								
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_admin_bdtr_label')>=0 or (#authorization.expression('hasRole(''SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_admin_bdtr_label')>=0)}" sec:authorize="hasRole('SYS_ADMIN')" >
+						<a th:href="@{/bdtr/list}" class="nav-link ">
+							<span th:text="#{menu_item_admin_bdtr_label}" class="title">Admin BDTR</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- API MANAGER -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_APIMANAGER_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_APIMANAGER_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="la la-code "></i>
+					<span th:text="#{menu_category_APIMANAGER_label}" class="title">API MANAGER</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_APIMANAGER_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_APIMANAGER_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_APIMANAGER_mis_apis_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_APIMANAGER_mis_apis_label')>=0)}">
+						<a href="list.html"  th:href="@{/apimanager/apis}"  class="nav-link ">
+							<span th:text="#{menu_item_APIMANAGER_mis_apis_label}" class="title">APIs</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_APIMANAGER_suscripciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_APIMANAGER_suscripciones_label')>=0)}" sec:authorize="!hasRole('ROL_ADMINISTRADOR')">
+						<a href="list.html"  th:href="@{/suscripcionesapi/list}" class="nav-link " >
+							<span th:text="#{menu_item_APIMANAGER_suscripciones_label}" class="title">Mis grupos de APIs</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_proyectossm_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_proyectossm_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/proyectosSM/list}"  class="nav-link " >
+							<span th:text="#{menu_item_proyectossm_listar_label}" class="title">Proyectos APIs</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- SOCIAL MEDIA -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_RRSS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_RRSS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="la la-globe"></i>
+					<span th:text="#{menu_category_RRSS_label}" class="title">SOCIAL MEDIA</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_RRSS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_RRSS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_RSS_social_media')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_RSS_social_media')>=0)}">
+						<a href="usuario.html" th:href="@{/socialMedia/socialMedia}" class="nav-link ">
+							<span th:text="#{menu_item_RSS_social_media}" class="title">Social Media</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_RSS_escucha_tendencia_twitter_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_RSS_escucha_tendencia_twitter_label')>=0)}">
+						<a href="listEscucha.html" th:href="@{/usuariosTwitter/scheduledSearch}"  class="nav-link " >
+							<span th:text="#{menu_item_RSS_escucha_tendencia_twitter_label}" class="title">Streaming Twitter</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_proyectossm_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_proyectossm_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/proyectosSM/list}"  class="nav-link ">
+							<span th:text="#{menu_item_proyectossm_listar_label}" class="title">Mis grupos de APIs</span>
+						</a>
+					</li>								
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_RSS_wizard_brandwatch_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_RSS_wizard_brandwatch_label')>=0)}">
+						<a href="list.html" th:href="@{/wizardbrandwatch/init}"  class="nav-link " >
+							<span th:text="#{menu_item_RSS_wizard_brandwatch_label}" class="title">Wizard Brandwatch</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_RSS_listar_configuracion_acceso_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_RSS_listar_configuracion_acceso_label')>=0)}">
+						<a href="list.html" th:href="@{/configuracionRRSS/list}" class="nav-link " >
+							<span th:text="#{menu_item_RSS_listar_configuracion_acceso_label}" class="title">Configuraciones de Acceso</span>
+						</a>
+					</li>								
+				</ul>
+			</li>						
+			<!-- INFORMES -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_INFORMES_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_INFORMES_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-attachment "></i>
+					<span th:text="#{menu_category_INFORMES_label}" class="title">INFORMES</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_INFORMES_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_INFORMES_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_INFORMES_generacioninformes_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_INFORMES_generacioninformes_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="generacioninformes.html"  th:href="@{/informes/generacioninformes}" class="nav-link ">
+							<span th:text="#{menu_item_INFORMES_generacioninformes_label}" class="title">Mis plantillas Jasper Reports</span>
+						</a>
+					</li>								
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_INFORMES_mis_informes')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_INFORMES_mis_informes')>=0)}">
+						<a href="list.html"  th:href="@{/informes/list}"  class="nav-link " >
+							<span th:text="#{menu_item_INFORMES_mis_informes}" class="title">Informes Almacenados</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_INFORMES_autorizaciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_INFORMES_autorizaciones_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="authorize.html" th:href="@{/informes/authorize/list}"  class="nav-link " >
+							<span th:text="#{menu_item_INFORMES_autorizaciones_label}" class="title">Autorizaciones</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- ANALYTICS -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_analytics_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_analytics_label')>=0)}"  sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-analytics "></i>
+					<span th:text="#{menu_category_analytics_label}" class="title">ANALYTICS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_analytics_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_analytics_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_notebook_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_notebook_listar_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')" >
+						<a href="list.html"  th:href="@{/notebook/list}"  class="nav-link ">
+							<span th:text="#{menu_item_notebook_listar_label}" class="title">Mis Notebooks</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_datalink_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_datalink_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')">
+						<a th:href="@{/drill/create}" class="nav-link ">
+							<span th:text="#{menu_item_datalink_label}" class="title">Acceso DataLink</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_category_ETL_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_category_ETL_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')">
+						<a th:href="@{/datacollector/list}" class="nav-link ">
+							<span th:text="#{menu_category_ETL_label}" class="title">Mis Pipelines</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_subir_fichero_hadoop_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_subir_fichero_hadoop_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')">
+						<a th:href="@{/hadoop/uploadFile}" class="nav-link ">
+							<span th:text="#{menu_item_subir_fichero_hadoop_label}" class="title">Utilidad Subida HDFS</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_bdh_table2ontologia')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_bdh_table2ontologia')>=0)}" >
+						<a th:href="@{/hdfs2ontologia/createCollectionFromTable}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_bdh_table2ontologia_label}" class="title">HIVE to Ontology</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_bdh_hdfs2table')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_bdh_hdfs2table')>=0)}" >
+						<a th:href="@{/hdfs2ontologia/createTableFromHDFS}"  class="nav-link ">
+							<span th:text="#{menu_item_ontologias_bdh_hdfs2table_label}" class="title">HDFS to HIVE</span>
+						</a>
+					</li>
+				</ul>
+			</li>						
+			<!-- MARKETPLACE -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_PARTNER_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_PARTNER_label')>=0)}"  sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_PARTNER')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="la la-shopping-cart "></i>
+					<span th:text="#{menu_category_PARTNER_label}" class="title">MARKETPLACE</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_PARTNER_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_PARTNER_label')>=0)}">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_PARTNER_activos')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_PARTNER_activos')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_PARTNER')">
+						<a href="list.html"  th:href="@{/partner/principal}" class="nav-link ">
+							<span th:text="#{menu_item_PARTNER_activos}" class="title">Programa de Partners</span>
+						</a>
+					</li>								
+				</ul>
+			</li>
+			<!-- MOTOR DE FLUJOS -->
+			                      
+			<li class="nav-item "   sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-attachment "></i>
+					<span th:text="#{menu_category_MOTORFLUJOS_label}" class="title">MOTOR DE FLUJOS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_MOTORFLUJOS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_MOTORFLUJOS_label')>=0)}" >
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_MOTORFLUJOS_activos')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_MOTORFLUJOS_activos')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a th:href="@{/motorFlujos/list}" class="nav-link ">
+							<span th:text="#{menu_category_FLUJOS_label}" class="title">Mis Flujos</span>
+						</a>
+					</li>								
+				</ul>
+			</li>
+			<!-- OPENDATA -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_OPENDATA_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_OPENDATA_label')>=0)}"  sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-tabs "></i>
+					<span th:text="#{menu_category_OPENDATA_label}" class="title">OPENDATA</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_OPENDATA_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_OPENDATA_label')>=0)}">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CKAN_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CKAN_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html"  th:href="@{/ckan/list}"  class="nav-link ">
+							<span th:text="#{menu_item_CKAN_label}" class="title">Repositorios</span>
+						</a>
+					</li>								
+				</ul>
+			</li>						
+		</ul>
+		<!-- END SIDEBAR MENU -->					
+	</div>
+	<!-- END PAGE-SIDEBAR -->
+	<!-- PAGE-SIDEBAR IF NO LOGGER CONTROL -->
+	<div sec:authorize="!hasRole('ROL_PARTNER')"  class="page-sidebar navbar-collapse collapse">
+			  
+			<ul class="page-sidebar-menu page-header-fixed page-sidebar-menu-closed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+			<!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+			<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+			<li class="sidebar-toggler-wrapper hide">
+				<div class="sidebar-toggler">
+					<span></span>
+				</div>
+			</li>
+			<!-- END SIDEBAR TOGGLER BUTTON -->
+			<!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
+			<li class="sidebar-search-wrapper">
+				<!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
+				<!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
+				<!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered and solid search box -->
+				<!-- DOC: searchDocs() está actualmente en header ,debe quedar en el controlador del header: headerController.js -->
+				<form class="sidebar-search  sidebar-search-bordered " id="search-form" action="javascript:searchDocs();" method="get">
+					<a href="javascript:;" class="remove">
+						<i class="icon-close"></i>
+					</a>
+					<div class="input-group">
+						<input type="text" class="form-control" id="search-query" placeholder="Search..."/>
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn submit">
+								<i class="icon-magnifier"></i>
+							</a>
+						</span>
+					</div>
+				</form>
+				<!-- END RESPONSIVE QUICK SEARCH FORM -->
+			</li>
+			<!-- HOME -->
+			<li class="nav-item start active open">
+				<a th:href="@{/}" href="index.html" class="nav-link nav-toggle">
+					<i class="flaticon-layers"></i>
+					<span class="title" th:text="#{menu_home}">Consola</span>
+				</a>							
+			</li>
+			<!-- PROYECTOS -->
+			<li class="nav-item  ">
+				<a href="javascript:;" class="nav-link nav-toggle" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_proyectos_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_proyectos_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<i class="flaticon-folder"></i>
+					<span th:text="#{menu_category_proyectos_label}" class="title">Proyectos</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu">
+					<li class="nav-item  ">
+						<a href="list.html" th:href="@{/proyectos/list}"  class="nav-link " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_proyectos_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptions,'menu_item_proyectos_listar_label')>=0)}">
+							<span th:text="#{menu_item_proyectos_listar_label}" class="title">Mis Proyectos</span>
+						</a>
+					</li>								
+				</ul>
+			</li>
+			<!-- ONTOLOGIAS -->
+			<li class="nav-item  ">
+				<a href="javascript:;" class="nav-link nav-toggle" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_ontologias_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_ontologias_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<i class="flaticon-network"></i>
+					<span th:text="#{menu_category_ontologias_label}" class="title">Ontologías</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu">
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_crear_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_crear_label')>=0)}">
+						<a href="create.html" th:href="@{/ontologias/create}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_crear_label}" class="title">Crear Ontologia</span>
+						</a>
+						<span class="external-link pull-right" data-link="/console/proyectos/list"><i class="fa fa-external-link " style="position: absolute;right: 6px;top: 12px;color: #868aa8;font-size: 11px;cursor: pointer;"></i></span>
+					</li>
+					<li class="nav-item  " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${@contexto.getPropiedad('bdtr.type') != 'relationalOracle' and #strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologiasopendata_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologiasopendata_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/ontologiasopendata/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologiasopendata_listar_label}" class="title">Estado de Cargas</span>
+							<!-- <span class="badge badge-danger">2</span> -->
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_listar_label')>=0)}">
+						<a th:href="@{/ontologias/list}"  class="nav-link ">
+							<span th:text="#{menu_item_ontologias_listar_label}" class="title">Mis Ontologías</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_crud_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_crud_label')>=0)}">
+						<a href="list.html" th:href="@{/crudontologias/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_crud_label}" class="title">Gestión CRUD de Instancias</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_generadorinstancias_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_generadorinstancias_label')>=0)}">
+						<a href="list.html" th:href="@{/generadorinstancias/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_generadorinstancias_label}" class="title"> Simulador de instancias de ontologías</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_USUARIO') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_suscripcion_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_suscripcion_label')>=0)}">
+						<a href="list.html" th:href="@{/suscripciones/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_suscripcion_label}" class="title">Subscripciones de ontologías</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_autorizaciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_autorizaciones_label')>=0)}">
+						<a href="list.html"  th:href="@{/ontologias/authorize/list}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_autorizaciones_label}" class="title">Autorizaciones de Ontología</span>
+						</a>
+					</li>						
+				</ul>
+			</li>
+			<!-- THINKPs -->						
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_KPS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_KPS_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-share"></i>
+					<span class="title">THINKPS SOFIA2</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_KPS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_KPS_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item  " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_KPS_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_KPS_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/kps/list}" class="nav-link ">
+							<span th:text="#{menu_item_KPS_listar_label}" class="title">Mis THINKPs</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_KPS_estado_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_KPS_estado_label')>=0)}">
+						<a href="list.html" th:href="@{/gestiondispositivos/list}" class="nav-link ">
+							<span th:text="#{menu_item_KPS_estado_label}" class="title">Estado THINKPs</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_kpsactivos_gestion_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_kpsactivos_gestion_label')>=0)}">
+						<a href="list.html" th:href="@{/kpsactivos/list}" class="nav-link ">
+							<span th:text="#{menu_item_kpsactivos_gestion_label}" class="title">THINKPs Conectados</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_contenedor_KPS_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_contenedor_KPS_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/contenedorkps/list}" class="nav-link ">
+							<span th:text="#{menu_item_contenedor_KPS_listar_label}" class="title">Contenedor THINKPs</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_APPSW_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_APPSW_listar_label')>=0)}">
+						<a href="list.html"  th:href="@{/appsw/list}" class="nav-link ">
+							<span th:text="#{menu_item_APPSW_listar_label}" class="title">Config y SW en THINKPs</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR')">
+						<a href="springBootAdminFrame.html"  th:href="@{/sba}" class="nav-link ">
+							<span th:text="#{springbootadmin.menu_text}" class="title">Administración de SpringBoot</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- REGLAS -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_REGLAS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_REGLAS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="?p=" class="nav-link nav-toggle">
+					<i class="la la-filter "></i>
+					<span th:text="#{menu_category_REGLAS_label}" class="title">REGLAS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_REGLAS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_REGLAS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CEP_crear_regla_wizard')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CEP_crear_regla_wizard')>=0)}">
+						<a href="init.html" th:href="@{/wizardreglas/init}" class="nav-link ">
+							<span th:text="#{menu_item_CEP_crear_regla_wizard}" class="title">Wizard creación de reglas</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_SCRIPTS_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_SCRIPTS_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/scripts/list}" class="nav-link ">
+							<span th:text="#{menu_item_SCRIPTS_listar_label}" class="title">Mis reglas Scripts</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CEP_listar_reglas_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CEP_listar_reglas_label')>=0)}">
+						<a  href="list.html" th:href="@{/reglacep/list}" class="nav-link ">
+							<span th:text="#{menu_item_CEP_listar_reglas_label}" class="title">Mis Reglas CEP</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CEP_listar_evento_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CEP_listar_evento_label')>=0)}">
+						<a href="list.html" th:href="@{/eventodefinicion/list}" class="nav-link ">
+							<span th:text="#{menu_item_CEP_listar_evento_label}" class="title">Mis Eventos CEP</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_MOTORFLUJOS_activos')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_MOTORFLUJOS_activos')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html" th:href="@{/motorFlujos/list}" class="nav-link ">
+							<span th:text="#{menu_item_MOTORFLUJOS_activos}" class="title">Mis Flujos</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- ASSETS -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_ASSETS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_ASSETS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle">
+					<i class="flaticon-laptop"></i>
+					<span th:text="#{menu_category_ASSETS_label}" class="title">Assets</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_ASSETS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_ASSETS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ASSETS_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ASSETS_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/assets/list}" class="nav-link ">
+							<span th:text="#{menu_item_ASSETS_listar_label}" class="title">Mis Assets</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ASSETS_visualizar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ASSETS_visualizar_label')>=0)}">
+						<a href="visualize.html" th:href="@{/assets/visualize}" class="nav-link ">
+							<span th:text="#{menu_item_ASSETS_visualizar_label}" class="title">Visor Geográfico Assets</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ASSETS_listar_tipo_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ASSETS_listar_tipo_label')>=0)}">
+						<a href="list.html" th:href="@{/tiposasset/list}" class="nav-link ">
+							<span th:text="#{menu_item_ASSETS_listar_tipo_label}" class="title">Tipo de Asset</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ASSETS_listar_nodo_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ASSETS_listar_nodo_label')>=0)}">
+						<a href="list.html" th:href="@{/nodos/list}" class="nav-link ">
+							<span th:text="#{menu_item_ASSETS_listar_nodo_label}" class="title">Gestión de Nodos</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			
+			<!--<li class="heading"><h3 class="uppercase">Layouts</h3></li> -->
+			
+			<!-- VISUALIZACION -->
+			<li class="nav-item" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_visualizaciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_visualizaciones_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle">
+					<i class="flaticon-dashboard "></i>
+					<span  th:text="#{menu_category_visualizaciones_label}" class="title">VISUALIZACIÓN</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_visualizaciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_visualizaciones_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_gadget_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_gadget_listar_label')>=0)}">
+						<a href="list.html"  th:href="@{/gadget/list}" class="nav-link ">
+							<span th:text="#{menu_item_gadget_listar_label}" class="title">Mis Gadgets</span>										
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_dashboard_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_dashboard_listar_label')>=0)}">
+						<a href="list.html"  th:href="@{/dashboard/listgroup}" class="nav-link ">
+							<span th:text="#{menu_item_dashboard_listar_label}" class="title">Mis Dashboards </span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_scada_start_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_scada_start_label')>=0)}">
+						<a href="list.html"  th:href="@{/scada/start/list}" class="nav-link ">
+							<span th:text="#{menu_item_scada_start_label}" class="title">Sinópticos Sofia2</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- ESCRITORIOS -->						
+			<li class="nav-item" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_DESKTOP_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_DESKTOP_label')>=0)}"  sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+				<a href="javascript:;" class="nav-link nav-toggle">
+					<i class="flaticon-squares-2"></i>
+					<span  th:text="#{menu_category_DESKTOP_label}" class="title">ESCRITORIOS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_DESKTOP_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_DESKTOP_label')>=0)}">
+					<li class="nav-item" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_DESKTOP_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_DESKTOP_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html"  th:href="@{/desktop/list}" class="nav-link ">
+							<span th:text="#{menu_item_DESKTOP_label}" class="title">Mis Escritorios</span>										
+						</a>
+					</li>								
+				</ul>
+			</li>
+			
+			<!-- HERRAMIENTAS -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_herramientas_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_herramientas_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-open-box "></i>
+					<span th:text="#{menu_category_herramientas_label}" class="title">HERRAMIENTAS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_herramientas_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_herramientas_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item  " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_herramientas_consulta_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_herramientas_consulta_label')>=0)}">
+						<a href="show.html"  th:href="@{/databases/show}" class="nav-link ">
+							<span th:text="#{menu_item_herramientas_consulta_label}" class="title">Consola DBTR y BDH</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_consultas_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_consultas_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR')">
+						<a href="show.html" th:href="@{/consultas/show}" class="nav-link ">
+							<span  th:text="#{menu_item_consultas_label}" class="title">Consultas BDTR, BRH y BDC</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CONSULTARBDTR_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CONSULTARBDTR_listar_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html" th:href="@{/consultaspredefinidas/list}" class="nav-link ">
+							<span th:text="#{menu_item_CONSULTARBDTR_listar_label}" class="title">Consultas Predefinidas</span>
+						</a>
+					</li>
+					
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_herramientas_enviar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_herramientas_enviar_label')>=0)}">
+						<a href="show.html"  th:href="@{/query/show}" class="nav-link ">
+							<span th:text="#{menu_item_herramientas_enviar_label}" class="title">Envío mensajes SSAP</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_herramientas_valjson_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_herramientas_valjson_label')>=0)}">
+						<a href="show.html"  th:href="@{/valjson/show}" class="nav-link ">
+							<span th:text="#{menu_item_herramientas_valjson_label}" class="title">Validar Instancia Ontología</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_procesos_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_procesos_listar_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html" th:href="@{/visualizacionprocesos/list}" class="nav-link ">
+							<span th:text="#{menu_item_procesos_listar_label}" class="title">Visualización estado procesos</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_imporexport_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and  #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_imporexport_label')>=0)}" sec:authorize="hasRole('ROL_COLABORADOR')">
+						<a th:href="@{/importexport/principal}" class="nav-link ">
+							<span th:text="#{menu_item_IMPORTAREXPORTAR_label}" class="title">Importar/Exportar</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- ADMINISTRACIÓN -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_PETICIONES_label')>=0 or ((#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') or #authorization.expression('hasRole(''ROL_SYS_ADMIN'')')) and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_PETICIONES_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-cogwheel-2"></i>
+					<span th:text="#{menu_category_PETICIONES_label}" class="title">ADMINISTRACIÓN</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_PETICIONES_label')>=0 or ((#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') or #authorization.expression('hasRole(''ROL_SYS_ADMIN'')')) and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_PETICIONES_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_plantillas_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_plantillas_listar_label')>=0)}"  sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="list.html" th:href="@{/plantillas/list}"  class="nav-link ">
+							<span th:text="#{menu_item_plantillas_listar_label}" class="title">Gestión Plantillas Ontologías</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_gestionjarscript')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_gestionjarscript')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a  href="list.html" th:href="@{/gestionjar/list}"  class="nav-link ">
+							<span th:text="#{menu_item_gestionjarscript}" class="title">Gestión de librerías motor Scripting</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_OPERACIONES_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_OPERACIONES_listar_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="list.html" th:href="@{/operaciones/list}"  class="nav-link ">
+							<span th:text="#{menu_item_OPERACIONES_listar_label}" class="title">Gestión APIs motor Scripting</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_usuarios_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_usuarios_listar_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="list.html" th:href="@{/usuarioses/list}"  class="nav-link ">
+							<span th:text="#{menu_item_usuarios_listar_label}" class="title">Gestión de Usuarios</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_gestionconexiones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_gestionconexiones_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="show.html" th:href="@{/gestionconexiones/show}"  class="nav-link ">
+							<span th:text="#{menu_item_gestionconexiones_label}" class="title">Gestión de conexiones</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_admin_opciones')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_admin_opciones')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')" >
+						<a href="#" th:href="@{/admin/options}"  class="nav-link ">
+							<span th:text="#{menu_item_admin_opciones}" class="title">Opciones de Administración</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_plantillas_brandwatch_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_plantillas_brandwatch_listar_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')"  >
+						<a href="list.html" th:href="@{/plantillasbrandwatch/list}" class="nav-link ">
+							<span th:text="#{menu_item_plantillas_brandwatch_listar_label}" class="title">Gestión plantillas Brandwatch</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_monitorizacion_sofia_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #authorization.expression('!hasRole(''ROL_SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_monitorizacion_sofia_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') and !hasRole('ROL_SYS_ADMIN')" >
+						<a  href="authorize.html" th:href="@{/monitorizacion/list}" class="nav-link ">
+							<span th:text="#{menu_item_monitorizacion_sofia_label}" class="title">Monitorización</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_configuracion_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_configuracion_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') and !hasRole('ROL_SYS_ADMIN')" >
+						<a th:href="@{/configuracionmenu/principal}"  class="nav-link ">
+							<span th:text="#{menu_item_configuracion_label}" class="title">Configuración Menú</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_configuracion_label')>=0 or (#authorization.expression('hasRole(''ROL_SYS_ADMIN'')'))}" sec:authorize="hasRole('ROL_SYS_ADMIN')" >
+						<a th:href="@{/bdtr/list}"  class="nav-link ">
+							<span th:text="#{menu_item_admin_bdtr_label}" class="title">Configuración BDTR</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_repositoriogit_label')>=0}" sec:authorize="hasRole('ROL_ADMINISTRADOR')" >
+						<a href="list.html" th:href="@{/repositoriogit/list}"  class="nav-link ">
+							<span th:text="#{menu_item_repositoriogit_label}" class="title">Repositorio GIT</span>
+						</a>
+					</li>								
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_admin_bdtr_label')>=0 or (#authorization.expression('hasRole(''SYS_ADMIN'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_admin_bdtr_label')>=0)}" sec:authorize="hasRole('SYS_ADMIN')" >
+						<a th:href="@{/bdtr/list}" class="nav-link ">
+							<span th:text="#{menu_item_admin_bdtr_label}" class="title">Admin BDTR</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- API MANAGER -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_APIMANAGER_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_APIMANAGER_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="la la-code "></i>
+					<span th:text="#{menu_category_APIMANAGER_label}" class="title">API MANAGER</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_APIMANAGER_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_APIMANAGER_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_APIMANAGER_mis_apis_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_APIMANAGER_mis_apis_label')>=0)}">
+						<a href="list.html"  th:href="@{/apimanager/apis}"  class="nav-link ">
+							<span th:text="#{menu_item_APIMANAGER_mis_apis_label}" class="title">APIs</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_APIMANAGER_suscripciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_APIMANAGER_suscripciones_label')>=0)}" sec:authorize="!hasRole('ROL_ADMINISTRADOR')">
+						<a href="list.html"  th:href="@{/suscripcionesapi/list}" class="nav-link " >
+							<span th:text="#{menu_item_APIMANAGER_suscripciones_label}" class="title">Mis grupos de APIs</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_proyectossm_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_proyectossm_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/proyectosSM/list}"  class="nav-link " >
+							<span th:text="#{menu_item_proyectossm_listar_label}" class="title">Proyectos APIs</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- SOCIAL MEDIA -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_RRSS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_RRSS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="la la-globe"></i>
+					<span th:text="#{menu_category_RRSS_label}" class="title">SOCIAL MEDIA</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_RRSS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_RRSS_label')>=0)}" sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')) and !hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_RSS_social_media')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_RSS_social_media')>=0)}">
+						<a href="usuario.html" th:href="@{/socialMedia/socialMedia}" class="nav-link ">
+							<span th:text="#{menu_item_RSS_social_media}" class="title">Social Media</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_RSS_escucha_tendencia_twitter_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_RSS_escucha_tendencia_twitter_label')>=0)}">
+						<a href="listEscucha.html" th:href="@{/usuariosTwitter/scheduledSearch}"  class="nav-link " >
+							<span th:text="#{menu_item_RSS_escucha_tendencia_twitter_label}" class="title">Streaming Twitter</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_proyectossm_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_proyectossm_listar_label')>=0)}">
+						<a href="list.html" th:href="@{/proyectosSM/list}"  class="nav-link ">
+							<span th:text="#{menu_item_proyectossm_listar_label}" class="title">Mis grupos de APIs</span>
+						</a>
+					</li>								
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_RSS_wizard_brandwatch_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_RSS_wizard_brandwatch_label')>=0)}">
+						<a href="list.html" th:href="@{/wizardbrandwatch/init}"  class="nav-link " >
+							<span th:text="#{menu_item_RSS_wizard_brandwatch_label}" class="title">Wizard Brandwatch</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_RSS_listar_configuracion_acceso_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_RSS_listar_configuracion_acceso_label')>=0)}">
+						<a href="list.html" th:href="@{/configuracionRRSS/list}" class="nav-link " >
+							<span th:text="#{menu_item_RSS_listar_configuracion_acceso_label}" class="title">Configuraciones de Acceso</span>
+						</a>
+					</li>								
+				</ul>
+			</li>						
+			<!-- INFORMES -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_INFORMES_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_INFORMES_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-attachment "></i>
+					<span th:text="#{menu_category_INFORMES_label}" class="title">INFORMES</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_INFORMES_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_INFORMES_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_INFORMES_generacioninformes_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_INFORMES_generacioninformes_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="generacioninformes.html"  th:href="@{/informes/generacioninformes}" class="nav-link ">
+							<span th:text="#{menu_item_INFORMES_generacioninformes_label}" class="title">Mis plantillas Jasper Reports</span>
+						</a>
+					</li>								
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_INFORMES_mis_informes')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_INFORMES_mis_informes')>=0)}">
+						<a href="list.html"  th:href="@{/informes/list}"  class="nav-link " >
+							<span th:text="#{menu_item_INFORMES_mis_informes}" class="title">Informes Almacenados</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_INFORMES_autorizaciones_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_INFORMES_autorizaciones_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="authorize.html" th:href="@{/informes/authorize/list}"  class="nav-link " >
+							<span th:text="#{menu_item_INFORMES_autorizaciones_label}" class="title">Autorizaciones</span>
+						</a>
+					</li>
+				</ul>
+			</li>
+			<!-- ANALYTICS -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_analytics_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_analytics_label')>=0)}"  sec:authorize="(hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')) and !hasRole('ROL_SYS_ADMIN')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-analytics "></i>
+					<span th:text="#{menu_category_analytics_label}" class="title">ANALYTICS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_analytics_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_analytics_label')>=0)}" sec:authorize="!hasRole('ROL_SYS_ADMIN')">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_notebook_listar_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_notebook_listar_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')" >
+						<a href="list.html"  th:href="@{/notebook/list}"  class="nav-link ">
+							<span th:text="#{menu_item_notebook_listar_label}" class="title">Mis Notebooks</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_datalink_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_datalink_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')">
+						<a th:href="@{/drill/create}" class="nav-link ">
+							<span th:text="#{menu_item_datalink_label}" class="title">Acceso DataLink</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_category_ETL_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_category_ETL_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')">
+						<a th:href="@{/datacollector/list}" class="nav-link ">
+							<span th:text="#{menu_category_ETL_label}" class="title">Mis Pipelines</span>
+						</a>
+					</li>
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_subir_fichero_hadoop_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_subir_fichero_hadoop_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')">
+						<a th:href="@{/hadoop/uploadFile}" class="nav-link ">
+							<span th:text="#{menu_item_subir_fichero_hadoop_label}" class="title">Utilidad Subida HDFS</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_bdh_table2ontologia')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_bdh_table2ontologia')>=0)}" >
+						<a th:href="@{/hdfs2ontologia/createCollectionFromTable}" class="nav-link ">
+							<span th:text="#{menu_item_ontologias_bdh_table2ontologia_label}" class="title">HIVE to Ontology</span>
+						</a>
+					</li>
+					<li class="nav-item " sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_ANALYTICS')" th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_ontologias_bdh_hdfs2table')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_ontologias_bdh_hdfs2table')>=0)}" >
+						<a th:href="@{/hdfs2ontologia/createTableFromHDFS}"  class="nav-link ">
+							<span th:text="#{menu_item_ontologias_bdh_hdfs2table_label}" class="title">HDFS to HIVE</span>
+						</a>
+					</li>
+				</ul>
+			</li>						
+			<!-- MARKETPLACE -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_PARTNER_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_PARTNER_label')>=0)}"  sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_PARTNER')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="la la-shopping-cart "></i>
+					<span th:text="#{menu_category_PARTNER_label}" class="title">MARKETPLACE</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_PARTNER_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_PARTNER_label')>=0)}">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_PARTNER_activos')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_PARTNER_activos')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_PARTNER')">
+						<a href="list.html"  th:href="@{/partner/principal}" class="nav-link ">
+							<span th:text="#{menu_item_PARTNER_activos}" class="title">Programa de Partners</span>
+						</a>
+					</li>								
+				</ul>
+			</li>
+			<!-- MOTOR DE FLUJOS -->
+			                      
+			<li class="nav-item "   sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-attachment "></i>
+					<span th:text="#{menu_category_MOTORFLUJOS_label}" class="title">MOTOR DE FLUJOS</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_MOTORFLUJOS_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_MOTORFLUJOS_label')>=0)}" >
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_MOTORFLUJOS_activos')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_MOTORFLUJOS_activos')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a th:href="@{/motorFlujos/list}" class="nav-link ">
+							<span th:text="#{menu_category_FLUJOS_label}" class="title">Mis Flujos</span>
+						</a>
+					</li>								
+				</ul>
+			</li>
+			<!-- OPENDATA -->
+			<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_OPENDATA_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_OPENDATA_label')>=0)}"  sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+				<a href="javascript:;" class="nav-link nav-toggle" >
+					<i class="flaticon-tabs "></i>
+					<span th:text="#{menu_category_OPENDATA_label}" class="title">OPENDATA</span>
+					<span class="arrow"></span>
+				</a>
+				<ul class="sub-menu" th:if="${#strings.indexOf(session.menuAllowedOptions,'menu_category_OPENDATA_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedOptionsAdmin,'menu_category_OPENDATA_label')>=0)}">
+					<li class="nav-item " th:if="${#strings.indexOf(session.menuAllowedModuleOptions,'menu_item_CKAN_label')>=0 or (#authorization.expression('hasRole(''ROL_ADMINISTRADOR'')') and #strings.indexOf(session.menuAllowedModuleOptionsAdmin,'menu_item_CKAN_label')>=0)}" sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')">
+						<a href="list.html"  th:href="@{/ckan/list}"  class="nav-link ">
+							<span th:text="#{menu_item_CKAN_label}" class="title">Repositorios</span>
+						</a>
+					</li>								
+				</ul>
+			</li>						
+		</ul>
+			  
+	</div>	
+
+	<div class="sidebar-menu container" th:if="${(session == null) or (session.menuAllowedOptions == null) or (session.menuAllowedOptionsAdmin == null)}">	
+		<script>window.location = "/console/login";</script>
+	</div>
+</div>
+<!-- END SOFIA2 CONTROL PANEL MENU -->
