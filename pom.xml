@@ -66,13 +66,13 @@
 		<module>sofia2-springboot-autoconfigure-starter</module>
 		-->
 		<module>ssap</module>
-		<!--
 		<module>config-model</module>
 		<module>persistence-ri</module>
         <module>systemconfig-init</module>	
 		<module>iotbroker</module>		
 		<module>controlpanel</module>		
         <module>sofia2-monitoring-ui</module>
+		<!--
 -->		
 	</modules>
 	
