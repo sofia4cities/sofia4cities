@@ -1,27 +1,142 @@
-<!DOCTYPE HTML>
+<!-- SMART4CITIES SOFIA2 CONTROL PANEL © Indra Sistemas, S.A. 2018  Spain. All rights reserved -->
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <div th:replace="fragments/header :: header-css"/>
-</head>
-<body>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<title th:text="#{consola_web_name}"/>
+		
+		<!-- BEGIN WEB FONT -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
 
-<div th:replace="fragments/header :: header"/>
+		<!-- HOJAS DE ESTILO -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components-rounded.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/themes/darkblue.css}"/>
+		
+		<!-- COMPONENTES Y PLUGINS CSS -->
+		
+	</head>
+	
+	
+	<!-- page-sidebar-closed para inicial página con menu cerrado -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
 
-<div class="container">
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper marketPlaceC">
+	
+		<!-- BEGIN HEADER -->
+		<div th:include="fragments/header::#cabeceraFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>
+		<!-- END HEADER AND CONTENT DIVIDER -->
 
-    <div class="starter-template">
-        <h1>Main page (Spring Security protected)</h1>
+			
+		<!-- BEGIN SIDEBAR -->
+		<!--<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>-->
+		<!-- END SIDEBAR -->
+			
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE HEADER-->
+				
+				<!-- BEGIN PAGE BAR -->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>							
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{index_welcome}"> Bienvenido a la Consola Web de SOFIA2</span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">						
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-home font-grey-gallery"></i>
+									<span class="caption-subject bold font-grey-gallery uppercase"> Smart4Cities </span>
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>
+									<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>										
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>									
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone">
+										<!-- ZONA DE ALERTAS PARA FORMS -->
+										<div class="alert alert-warning alert-dismissable">
+											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+											<strong>Alerta!</strong> Zona de alertas/información...Nuevo Diseño 
+										</div>								
+									</div>
+									<div class="col-md-12">
+										<p class="lead" th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</p>										 
+										<form th:action="@{/logout}" method="post">
+											<input class="btn btn-sm btn-danger " type="submit" value="Sign Out"/>
+										</form>
+									</div>									
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC  -->						
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
+	
+	<!-- CORE -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	
 
-        <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
-        <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Sign Out"/>
-        </form>
 
-    </div>
-
-</div>
-<!-- /.container -->
-<div th:replace="fragments/footer :: footer"/>
-
+	<script  th:inline="javascript">
+	var showLog = 1; // console.log toggle
+    //<![CDATA[ 
+	
+		
+	// READY
+	$( document ).ready(function() {
+		// init when Document is ready
+		showLog ? console.log('INDEX ready()...') : '';		
+	});
+	 
+	// LOAD
+	$(window).load(function(){  
+		// init on load.		
+		showLog ? console.log('INDEX load()...') : '';
+	});
+	
+	//]]>
+	</script>	
 </body>
 </html>
