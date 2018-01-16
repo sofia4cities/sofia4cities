@@ -71,7 +71,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
         ObjectMapper mapper = new ObjectMapper();
         refOid = repository.insert(COL_NAME, mapper.writeValueAsString(data));
         int init = 17;
-        int end = refOid.indexOf("\")}");
+        int end = refOid.indexOf("\"}}");
         refOid = refOid.substring(init, end);
   
 	}
