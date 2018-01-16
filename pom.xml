@@ -11,7 +11,7 @@
 	<name>sofia2-parent</name>
 	<description>sofia2-parent</description>
 	
-	<properties>
+	<properties>	
 		<sofia2.version>5.0.0-SNAPSHOT</sofia2.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -23,6 +23,12 @@
 		<spring-boot.version>1.5.9.RELEASE</spring-boot.version>	
         <spring-boot-admin-server.version>1.5.4</spring-boot-admin-server.version>
         <spring-boot-admin-starter-client.version>1.5.4</spring-boot-admin-starter-client.version>	
+		<!--LICENSE INFO -->
+        <license.dir>${basedir}</license.dir>
+        <project.name>Sofia4Cities by Sofia2</project.name>
+        <project.year>2013-2018</project.year>
+        <project.organization.name>Indra Sistemas S.A. SPAIN</project.organization.name>
+        <project.website>https://sofia2.com}</project.website>
 	</properties>
 	
 	<dependencyManagement>
@@ -65,7 +71,9 @@
         <module>systemconfig-init</module>	
 		<module>iotbroker</module>		
 		<module>controlpanel</module>		
-        <module>sofia2-monitoring-ui</module>				
+        <module>sofia2-monitoring-ui</module>
+		<!--
+-->		
 	</modules>
 	
 	<build>
@@ -74,6 +82,44 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			
+			<plugin>
+			 <groupId>com.mycila.maven-license-plugin</groupId>
+			 <artifactId>maven-license-plugin</artifactId>
+			 <version>1.10.b1</version>
+			 <configuration>
+			  <header>${license.dir}/LICENSE</header>
+			  <properties>
+			   <project>
+				${project.name}
+			   </project>
+			   <founder>${project.organization.name}</founder>
+			   <year>${project.year}</year>
+			   <website>${project.website}</website>
+			  </properties>		
+			  <includes>
+			   <include>src/main/java/**</include>
+			   <include>src/test/java/**</include>
+			  </includes>
+			 </configuration>
+			 <executions>
+			  <execution>
+			   <goals>
+				<goal>format</goal>
+			   </goals>
+			   <phase>process-sources</phase>
+			  </execution>
+			 </executions>
+			 <dependencies>
+			  <dependency>
+			   <groupId>com.mycila</groupId>
+			   <artifactId>licenses</artifactId>
+			   <version>1</version>
+			  </dependency>
+			 </dependencies>
+			</plugin>
+	
+			
 		</plugins>
 		<resources>
 		  <resource>
@@ -93,6 +139,7 @@
 		  </resource>	  
 		</resources>
 	</build>
+	
 	
 </project>
 	
