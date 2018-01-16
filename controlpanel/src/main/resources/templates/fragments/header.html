@@ -20,7 +20,7 @@
 		<div class="page-logo">
 			<a th:href="@{/}">
 				<img alt="logo" class="logo-default" th:src="@{/static/images/logo_sofia2_bk_sm.png}"/>
-				<span class="text-logo">Sofia2 Control Panel</span>
+				<span class="text-logo">Sofia4Cities</span>
 			</a>
 			<div class="menu-toggler sidebar-toggler">
 				<span></span>
@@ -51,19 +51,19 @@
 			<ul class="nav navbar-nav pull-right">
 			
 				<!-- BEGIN WIZARD -->						
-				<li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-wizard-toggler">
+				<!-- <li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-wizard-toggler">
 					<a th:href="@{/wizardMaster/principal}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Asistente" style="padding-right:8px !important;">
 						<i class="flaticon-light"></i> <span class="hidden-sm hidden-xs">Wizard</span>
 					</a>
-				</li>
+				</li> -->
 				<!-- END WIZARD -->
 				
 				<!-- BEGIN {REST} -->						
-				<li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-rest-toggler">
+				<!-- <li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-rest-toggler">
 					<a id="span_hipervinculos" th:href="@{/rest.jsp}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="API {REST}" style="padding-right:8px !important;">
 						<i class="icon-frame"></i> <span th:text="#{header_REST}" class="hidden-sm hidden-xs">REST</span>
 					</a>
-				</li>
+				</li> -->
 				<!-- END {REST} -->
 				
 				<!-- BEGIN USUARIO NO-PARTNER -->						
@@ -114,11 +114,11 @@
 				<!-- END IDIOMA -->
 				
 				<!-- BEGIN COMUNICACIONES -->			
-				<li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
+				<!-- <li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
 					<a id="messages-bell" th:href="@{/comunicaciones/comunicaciones}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Comunicaciones" >
 						<i class="flaticon-bell"></i>  <span class="hidden-sm hidden-xs">Comunicaciones</span>
 					</a>
-				</li>
+				</li> -->
 				<!-- END COMUNICACIONES -->
 				
 				<!-- BEGIN LOG-OUT -->			
@@ -130,11 +130,11 @@
 				<!-- END LOG-OUT -->
 				
 				<!-- BEGIN QUICK SIDEBAR TOGGLER -->						
-				<li class="dropdown dropdown-quick-sidebar-toggler">
+				<!-- <li class="dropdown dropdown-quick-sidebar-toggler">
 					<a href="javascript:;" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Administración">
 						<i class="icon-logout"></i> <span class="hidden-sm hidden-xs" style="position: relative;top: -2px;">Admin.</span>
 					</a>
-				</li>
+				</li> -->
 				<!-- END QUICK SIDEBAR TOGGLER -->						
 			</ul>
 		</div>
