@@ -272,13 +272,13 @@ var HeaderController = function() {
 		
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER.
 		load: function(Data) { 
-			logControl ? console.log(LIB_TITLE + ': Función load()') : '';
+			logControl ? console.log(LIB_TITLE + ': load()') : '';
 			return headerReg = Data;
 		},
 		
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
-			logControl ? console.log(LIB_TITLE + ': Función init()') : '';
+			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
 			// CALL ERRORS
 			errores();			
@@ -288,7 +288,7 @@ var HeaderController = function() {
 		
 		// SEARCH
 		search: function(){
-			logControl ? console.log(LIB_TITLE + ': Función search()') : '';
+			logControl ? console.log(LIB_TITLE + ': search()') : '';
 			searchDocs();			
 		},
 		
@@ -297,11 +297,24 @@ var HeaderController = function() {
 			logControl ? console.log('showErrorDialog()...') : '';
 			var Close = headerReg.btnCancelar;
 		
-			$( "#dialog-error" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 160], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					Close: function() { $( this ).dialog( "close" ); }
+			// jquery-confirm DIALOG SYSTEM.
+			$.confirm({
+				icon: 'fa fa-bug',
+				title: 'ERROR',
+				theme: 'dark',
+				content: 'to-do',
+				draggable: true,
+				dragWindowGap: 100,
+				backgroundDismiss: true,
+				closeIcon: true,
+				buttons: {				
+					close: {
+						text: Close,
+						btnClass: 'btn-sm btn-danger btn-outline',
+						action: function (){} //GENERIC CLOSE.		
+					}
 				}
-			});		
+			});			
 		},
 		
 		// GENERIC-CONFIRM-DIALOG

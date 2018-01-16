@@ -29,13 +29,13 @@ var MenuController = function() {
 		
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
 		load: function(Data) { 
-			logControl ? console.log(LIB_TITLE + ': Función load()') : '';
+			logControl ? console.log(LIB_TITLE + ': load()') : '';
 			return menuReg = Data;
 		},
 		
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
-			logControl ? console.log(LIB_TITLE + ': Función init()') : '';
+			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			// load menu (role)
 			consoleMenu();			
 		}		
