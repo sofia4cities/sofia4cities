@@ -35,25 +35,22 @@
 		<div class="cd-user-modal-container"> <!-- this is the container wrapper -->
 			<ul class="cd-switcher">
 				<li><a href="#0">Login</a></li>
-				<li><a href="#0">Nueva Cuenta</a></li>
+				<li><a href="#0">New Account</a></li>
 			</ul>
 
-			<div id="cd-login"> <!-- log in form -->
-			<div th:if="${param.error}">
-                        <div class="alert alert-danger">
-                            Invalid username and password.
-                        </div>
-                    </div>
-                    <div th:if="${param.logout}">
-                        <div class="alert alert-info">
-                            You have been logged out.
-                        </div>
-                    </div>
+			<div id="cd-login"> <!-- log in form -->			
 					
-				<div class="alert alert-warning alert-dismissable">
+				<div th:if="${param.error}" class="alert alert-warning alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-					<strong>Warning!</strong> Something went wrong. Please check.
+					<strong>Alert!</strong>  Invalid username and password.
 				</div>
+				
+				<div th:if="${param.logout}" class="alert alert-info alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+					<strong>Info.</strong> You have been logged out.
+				</div>
+				
+				
 				<form class="cd-form" th:action="@{/login}" method="post" >
 					<!-- <p class="fieldset">
 						<label class="image-replace cd-email" for="signin-email">E-mail</label>
@@ -63,14 +60,14 @@
 					<p class="fieldset">
 						<label class="image-replace cd-username" for="signup-username">Username</label>
 						<input class="full-width has-padding has-border" id="username" name="username" type="text" placeholder="Username"/>
-						<span class="cd-error-message">Error message here!</span>
+						<span class="cd-error-message">Invalid username</span>
 					</p>
 
 					<p class="fieldset">
 						<label class="image-replace cd-password" for="signin-password">Password</label>
 						<input class="full-width has-padding has-border" id="password" name="password" type="text"  placeholder="Password"/>
 						<a href="#0" class="hide-password">Hide</a>
-						<span class="cd-error-message">Error message here!</span>
+						<span class="cd-error-message">Invalid password</span>
 					</p>
 
 					<p class="fieldset">
@@ -143,15 +140,20 @@
 	</div> <!-- cd-user-modal -->
 	
 	<!-- LEGAL INFO -->
-	<div id="legal" style="z-index: 12;color: #FFF; margin: 1em auto; position: absolute; bottom:5%;vertical-align: middle;text-align: center;width: 100%;" class="">Smart4Cities Minsait © 2018 Indra Company</div>
+	<div id="legal" style="z-index: 12;color: #FFF; margin: 1em auto; position: absolute; bottom:5%;vertical-align: middle;text-align: center;width: 100%;" class="">Sofia4Cities Minsait © 2018 Indra Company</div>
 	
 	<canvas class="background"></canvas>
 	
-<!-- MAIN SCRIPTS  -->
-	<script th:src="@{/static/vendor/jquery/jquery.min.js}"></script>
+	<!-- MAIN SCRIPTS  -->
+	<script th:src="@{/static/vendor/jquery/jquery.min.js}"></script>	
+	<script th:src="@{/static/vendor/bootstrap/bootstrap.js}"/>
 	<script th:src="@{/static/js/pages/login.js}"></script>
 	<script th:src="@{/static/vendor/modernizr.js}"></script> <!-- Modernizr -->
 	<script th:src="@{/static/vendor/particles.js}"></script>
+	
+	<!-- CORE -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
 
 	
 	<script>
