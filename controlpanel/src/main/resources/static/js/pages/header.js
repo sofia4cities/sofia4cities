@@ -111,8 +111,7 @@ var HeaderController = function() {
 	}
 
 	// DIALOGO DE CONFIRMACIÓN GENÉRICO
-	var showConfirmDialog = function(formId){		
-		logControl ? console.log('showConfirmDialog()...') : '';
+	var showConfirmDialog = function(formId){
 		
 		var Remove = headerReg.btnEliminar;
 		var Close = headerReg.btnCancelar;		
@@ -178,8 +177,7 @@ var HeaderController = function() {
 	}
 	
 	// DIALOGO CONFIRMACIÓN USUARIO
-	var showConfirmDialogUsuario = function(formId){		
-		logControl ? console.log('showConfirmDialogUsuario()...') : '';
+	var showConfirmDialogUsuario = function(formId){	
 		
 		var Close = headerReg.btnCancelar;
 		var Remove = headerReg.btnEliminar;
@@ -233,7 +231,7 @@ var HeaderController = function() {
 					}
 				}
 			});			
-		} else { logControl ? console.log('errores() -> NO ERROR.') : ''; }		
+		} else { logControl ? console.log('|---> errores() -> NO ERROR.') : ''; }		
 	}
 	
 	// INFORMACION DEL SERVIDOR (ERRORES)
@@ -260,8 +258,24 @@ var HeaderController = function() {
 				}
 			});
 		}
-		else { logControl ? console.log('informacion() -> SIN INFO ERRORES.') : ''; }		
+		else { logControl ? console.log('|---> informacion() -> SIN INFO ERRORES.') : ''; }		
 	}	
+	
+	
+	// LOAD MENU INFORMATION FROM USER-ROLE (TO-DO: cuando esté lo pasamos a menu-js que será el controller del menu así queda encapsulado.
+	// get JSON from header.html -> headerReg.menu 
+	var consoleMenu = function(){
+		
+		logControl ? console.log('|---> consoleMenu() -> Creating HTML Console Menu') : '';
+		
+		// no data no Fun!
+		if (!headerReg.menu){ $.alert({title: 'MENU ERROR!',content: 'No Menu Data!'}); return false; }
+		
+		// get menu data and make HTML 
+		//var menuJson = JSON.parse(headerReg.menu);
+		//console.log('menu: ' + JSON.stringify(headerReg.menu));
+		
+	}
 	
 	// ZONA DE FUNCIONES PUBLICAS ENTRE ELLAS INIT.
 	return{
@@ -275,7 +289,8 @@ var HeaderController = function() {
 		// INIT() INICIALIZACION DE LA LIB , EJECUCIÓN DE TODAS LAS FUNCIONES QUE SE DEBEN LANZAR AL ENTRAR EN LA PÁGINA.
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': Función init()') : '';
-			
+			// load menu (role)
+			consoleMenu();
 			// control de errores de servidor.
 			errores();			
 			// control de informacion cuando hay errores.

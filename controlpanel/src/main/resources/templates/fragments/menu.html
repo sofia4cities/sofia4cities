@@ -1,6 +1,10 @@
 <!-- SMART4CITIES CONTROL PANEL MENU -->
 <div th:fragment="menuFragment" id="menuFragment">
-<!-- BEGIN SIDEBAR -->
+
+	<!-- MENU CONTROLLER JS -->
+	<script th:src="@{/static/js/pages/menu.js}"/>	
+
+	<!-- BEGIN SIDEBAR -->
 	<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
 	<!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
 	<div  class="page-sidebar navbar-collapse collapse">
@@ -48,7 +52,8 @@
 					<i class="flaticon-layers"></i>
 					<span class="title" th:text="#{menu_home}">Consola</span>
 				</a>							
-			</li>			
+			</li>		
+			<!-- CARGA DINAMICA DE MENUS POR ROL -->
 			<!-- ONTOLOGIAS -->
 			<li class="nav-item  ">
 				<a href="javascript:;" class="nav-link nav-toggle"  sec:authorize="!hasAuthority('ROLE_SYS_ADMIN')">
@@ -225,5 +230,19 @@
 		<!-- END SIDEBAR MENU -->		 			
 	</div>
 	<!-- END PAGE-SIDEBAR -->
+	
+	<!-- CONFIGURACION DE HEADER PARA EL CONTROLADOR -->
+	<script type="text/javascript" th:inline="javascript"> 
+		
+		var menuJson = { 			
+			"menu": [[${menu}]]
+		};
+		// CARGAMOS AL CONTROLADOR MENSAJES Y CONSTANTES DE SERVIDOR PARA USARLAS
+		// el PROPIO MenuController los carga haciendo un Load y un init 
+	</script>
+	
+	
 </div>
 <!-- END SOFIA2 CONTROL PANEL MENU -->
+
+
