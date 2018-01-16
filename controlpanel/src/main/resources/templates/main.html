@@ -24,25 +24,22 @@
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>		
 		
-	</head>
+	</head>	
 	
-	
-	<!-- page-sidebar-closed para inicial página con menu cerrado -->
+	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
 
 	<!-- MAIN PAGE WRAPPER -->
 	<div class="page-wrapper marketPlaceC">
 	
-		<!-- BEGIN HEADER -->
+		<!-- BEGIN HEADER INCLUDE -->
 		<div th:include="fragments/header::#cabeceraFragment" class="page-header navbar navbar-fixed-top"></div>
 		<!-- END HEADER -->
 		
-		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<!-- HEADER AND CONTENT DIVIDER -->
 		<div class="clearfix"> </div>
-		<!-- END HEADER AND CONTENT DIVIDER -->
-
 			
-		<!-- BEGIN SIDEBAR -->
+		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
 		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
 		<!-- END SIDEBAR -->
 			
@@ -52,10 +49,10 @@
 			<!-- BEGIN CONTENT BODY -->
 			<div class="page-content">
 				
-				<!-- BEGIN PAGE HEADER-->
-				
+				<!-- BEGIN PAGE HEADER-->				
 				<!-- BEGIN PAGE BAR -->
 				<div class="page-bar margin-bottom-20">
+					<!-- BREADCRUMS -->
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>							
 					</ul>						
@@ -63,7 +60,7 @@
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{index_welcome}"> Bienvenido a la Consola Web de SOFIA2</span></h1>
+				<h1 class="page-title hide "><span th:text="#{index_welcome}"> Wellcome to Sofia4Cities Control Panel</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -88,7 +85,7 @@
 										<!-- ALERTS ZONE -->
 										<div class="alert alert-warning alert-dismissable">
 											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-											<i class="fa fa-warning"></i> <strong>Alerta!</strong> Zona de alertas/información...
+											<i class="fa fa-warning"></i> <strong>Warning!</strong> system information alert.
 										</div>								
 									</div>
 									<div class="col-md-12">	
@@ -106,29 +103,27 @@
 	</div>
 	<!-- END MAIN PAGE WRAPPER -->
 	
-	<!-- FOOTER-INCLUDE -->
+	<!-- FOOTER INCLUDE -->
 	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
 	
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 	
-	<!-- PLUGINS -->
 	
-
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	var showLog = 0; // console.log toggle
     //<![CDATA[ 
 	
 		
-	// READY
+	// MAIN WHEN READY
 	$( document ).ready(function() {
 		// init when Document is ready
 		showLog ? console.log('INDEX ready()...') : '';
 	});
 	 
-	// LOAD
+	// MAIN WHEN LOAD
 	$(window).load(function(){  
 		// init on load.		
 		showLog ? console.log('INDEX load()...') : '';

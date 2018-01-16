@@ -1,51 +1,49 @@
 <!-- BEGIN FOOTER -->
-	<div th:fragment="footerFragment" id="footerFragment">
-		<div class="row">
-			<div class="col-md-8 col-sm-12 col-xs-12 ">
-				<div>  
-					<span class="m-link m-link--metal">Sofia4Cities Control Panel © 2018 </span>
-					<span class="sep">|</span>
-					<a target="_blank" href="www.indracompany.com" class="m-link m-link--metal">Indra Company</a>
-					<span class="sep">|</span>
-					<a target="_blank" href="www.minsait.com" class="m-link m-link--metal">Minsait</a>					
-					<span class="sep">|</span>
-					<a href="#" class="m-link m-link--metal"  th:text="#{footer_avisoLegal}" data-toggle="modal" data-target="#termsConditionsPartner" >Condiciones Legales</a>					
-					<span class="sep">|</span>
-					<img th:src="@{/static/images/logo_sofia2_invert.png}"/>
-				</div>
-			</div>
-			<div class="col-md-4 col-sm-12 col-xs-12">
-				<ul class="social-icons pull-right">
-					<li><a href="javascript:;" data-original-title="jolicloud" class="jolicloud"> </a></li>
-					<li><a href="javascript:;" data-original-title="youtube" class="youtube"> </a></li>
-					<li><a href="javascript:;" data-original-title="wordpress" class="wordpress"> </a></li>
-					<li><a href="javascript:;" data-original-title="twitter" class="twitter"> </a></li>
-				</ul>				
+<div th:fragment="footerFragment" id="footerFragment">
+	<div class="row">
+		<div class="col-md-8 col-sm-12 col-xs-12 ">
+			<div>  
+				<span class="m-link m-link--metal">Sofia4Cities Control Panel © 2018 </span>
+				<span class="sep">|</span>
+				<a target="_blank" href="www.indracompany.com" class="m-link m-link--metal">Indra Company</a>
+				<span class="sep">|</span>
+				<a target="_blank" href="www.minsait.com" class="m-link m-link--metal">Minsait</a>					
+				<span class="sep">|</span>
+				<a href="#" class="m-link m-link--metal"  th:text="#{footer_avisoLegal}" data-toggle="modal" data-target="#termsConditionsPartner" >Condiciones Legales</a>					
+				<span class="sep">|</span>
+				<img th:src="@{/static/images/logo_sofia2_invert.png}"/>
 			</div>
 		</div>
-		<div class="scroll-to-top" style="display: none;">
-			<i class="la la-arrow-circle-o-up"></i>
+		<div class="col-md-4 col-sm-12 col-xs-12">
+			<ul class="social-icons pull-right">
+				<li><a href="javascript:;" data-original-title="jolicloud" class="jolicloud"> </a></li>
+				<li><a href="javascript:;" data-original-title="youtube" class="youtube"> </a></li>
+				<li><a href="javascript:;" data-original-title="wordpress" class="wordpress"> </a></li>
+				<li><a href="javascript:;" data-original-title="twitter" class="twitter"> </a></li>
+			</ul>				
 		</div>
-		
-		<!-- MODAL TERMS AND CONDITIONS -->
-		<div id="termsConditionsPartner" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content" >
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title" id="gridSystemModalLabel" th:text="#{footer_avisoLegal}">Términos y condiciones</h4>
-					</div>
-					<div class="modal-body"><!-- falta th:include="fragments/condicionesPartner::#contenido" -->
-						Contenido de la capa modal
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal" th:title="#{footer_cerrar}" th:text="#{footer_cerrar}"></button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- END MODAL TERMS AND CONDITIONS -->
-
-		
 	</div>
+	<div class="scroll-to-top" style="display: none;">
+		<i class="la la-arrow-circle-o-up"></i>
+	</div>
+	
+	<!-- MODAL TERMS AND CONDITIONS -->
+	<div id="termsConditionsPartner" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content" >
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="gridSystemModalLabel" th:text="#{footer_avisoLegal}">Terms and Conditions</h4>
+				</div>
+				<div class="modal-body"><!-- falta th:include="fragments/condicionesPartner::#contenido" -->
+					Terms and conditions (to-do)
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" th:title="#{footer_cerrar}" th:text="#{footer_cerrar}"></button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END MODAL TERMS AND CONDITIONS -->
+</div>
 <!-- END FOOTER -->

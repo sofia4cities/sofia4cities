@@ -3,14 +3,13 @@ var MenuController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Menu Controller';	
-    var logControl = 1;
-    var alertContainer = '.alert-zone';         
+    var logControl = 1;            
 	
-	// PRIVATE FUNCTIONS 	
+	// CONTROLLER PRIVATE FUNCTIONS 	
 	
 	
 	// LOAD MENU INFORMATION FROM USER-ROLE 
-	// get JSON from header.html -> headerReg.menu 
+	// get SERVER-JSON from header.html -> headerReg.menu and CREATE HTML MENU.
 	var consoleMenu = function(){
 		
 		logControl ? console.log('|---> consoleMenu() -> Creating HTML Console Menu') : '';
@@ -18,23 +17,23 @@ var MenuController = function() {
 		// no data no Fun!
 		if (!menuReg.menu){ $.alert({title: 'MENU ERROR!',content: 'No Menu Data!'}); return false; }
 		
-		// get menu data and make HTML 
+		// get menu data and make HTML menu.
 		//var menuJson = JSON.parse(menuReg.menu);
 		//console.log('menu: ' + JSON.stringify(menuReg.menu));
-		// debemos agregar el conjunto con un append al $('.page-sidebar-menu')
+		// Append to $('.page-sidebar-menu')
 		
 	}
 	
-	// ZONA DE FUNCIONES PUBLICAS ENTRE ELLAS INIT.
+	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
 		
-		// LOAD() CARGA UN JSON DE PARAMETROS DE LA PLANTILLA A LA LIB.
+		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
 		load: function(Data) { 
 			logControl ? console.log(LIB_TITLE + ': Función load()') : '';
 			return menuReg = Data;
 		},
 		
-		// INIT() INICIALIZACION DE LA LIB , EJECUCIÓN DE TODAS LAS FUNCIONES QUE SE DEBEN LANZAR AL ENTRAR EN LA PÁGINA.
+		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': Función init()') : '';
 			// load menu (role)
@@ -43,12 +42,12 @@ var MenuController = function() {
 	};
 }();
 
-// INICIALIZACIÓN AUTOMÁTICA DEL CONTROLADOR
+// AUTO INIT CONTROLLER WHEN READY
 jQuery(document).ready(function() {
 	
-	// LLAMAMOS AL JSON DE ETIQUETAS DE LENGUAJE y DATOS
+	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
 	MenuController.load(menuJson);
 	
-	// LLAMAMOS AL INIT
+	// AUTO INIT CONTROLLER.
 	MenuController.init();
 });

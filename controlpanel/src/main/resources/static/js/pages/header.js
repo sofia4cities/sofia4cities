@@ -3,12 +3,11 @@ var HeaderController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Smart4Cities Control Panel'; 
 	var LIB_TITLE = 'Header Controller';	
-    var logControl = 1;
-    var alertContainer = '.alert-zone';    
+    var logControl = 1;    
 	
-	// PRIVATE FUNCTIONS 	
+	// CONTROLLER PRIVATE FUNCTIONS 	
 	
-	// BUSCADOR DE BLOGS Y DOCUMENTOS DEL HEADER Y MENU.
+	// GENERIC HEADER SEARCH
 	var searchDocs = function(){		
 		logControl ? console.log('searchDocs() Buscar --> '+ $("#search-query").val()) : '';
 		
@@ -91,7 +90,7 @@ var HeaderController = function() {
 		});
 	}
 		
-	// CREA UN IFRAME PARA LOS DOCS.
+	// SHOW SEARCH DOCS
 	var showDocPost = function(url){		
 		logControl ? console.log('showDocPost()...') : '';
 		
@@ -101,7 +100,7 @@ var HeaderController = function() {
 		$("#modalDocs-content").hide();		
 	}
 	
-	// OCULTA LOS ELEMENTOS DE DOCS.
+	// HIDE SEARCH DOCS
 	var hideDocPost = function(){
 		logControl ? console.log('hideDocPost()...') : '';
 
@@ -110,18 +109,20 @@ var HeaderController = function() {
 		$("#modalDocs-content").show();				
 	}
 
-	// DIALOGO DE CONFIRMACIÓN GENÉRICO
+	// GENERIC-CONFIRM-DIALOG
 	var showConfirmDialog = function(formId){
 		
+		// i18 labels
 		var Remove = headerReg.btnEliminar;
-		var Close = headerReg.btnCancelar;		
+		var Close = headerReg.btnCancelar;
+		var	Content = headerReg.genericConfirm;
 		
 		// jquery-confirm DIALOG SYSTEM.
 		$.confirm({
 			icon: 'fa fa-warning',
-			title: 'CONFIRMACIÓN',
+			title: 'CONFIRM:',
 			theme: 'dark',
-			content: 'Contenido del dialogo de confirmación genérico',
+			content: Content,
 			draggable: true,
 			dragWindowGap: 100,
 			backgroundDismiss: true,
@@ -142,19 +143,21 @@ var HeaderController = function() {
 		});		
 	}
 
-	// DIALOGO CONFIRMACIÓN ONTOLOGÍA
+	// ONTOLOGY-CONFIRM-DIALOG
 	var showConfirmDialogOntologia = function(formId){		
 		logControl ? console.log('showConfirmDialogOntologia()...') : '';
 		
+		// i18 labels
 		var Remove = headerReg.btnEliminar;
-		var Close = headerReg.btnCancelar;	
+		var Close = headerReg.btnCancelar;
+		var Content = headerReg.ontologyConfirm;		
 		
 		// jquery-confirm DIALOG SYSTEM.
 		$.confirm({
 			icon: 'fa fa-warning',
 			title: 'CONFIRM:',
 			theme: 'dark',
-			content: 'Contenido del dialogo de confirmación genérico',
+			content: Content,
 			draggable: true,
 			dragWindowGap: 100,
 			backgroundDismiss: true,
@@ -176,18 +179,20 @@ var HeaderController = function() {
 		
 	}
 	
-	// DIALOGO CONFIRMACIÓN USUARIO
+	// USER-CONFIRM-DIALOG
 	var showConfirmDialogUsuario = function(formId){	
 		
+		//i18 labels
 		var Close = headerReg.btnCancelar;
 		var Remove = headerReg.btnEliminar;
+		var Content = headerReg.userConfirm;
 		
 		// jquery-confirm DIALOG SYSTEM.
 		$.confirm({
 			icon: 'fa fa-bug',
 			title: 'USER CONFIRM:',
 			theme: 'dark',
-			content: 'contenido pendiente de colocar.',
+			content: Content,
 			draggable: true,
 			dragWindowGap: 100,
 			backgroundDismiss: true,
@@ -209,7 +214,7 @@ var HeaderController = function() {
 		});
 	}	
 	
-	// ERRORES de SERVIDOR
+	// SERVER ERRORS-DIALOG
 	var errores = function(){		
 		var Close = headerReg.btnCancelar;
 		if ( headerReg.errores !== null ){			
@@ -234,7 +239,7 @@ var HeaderController = function() {
 		} else { logControl ? console.log('|---> errores() -> NO ERROR.') : ''; }		
 	}
 	
-	// INFORMACION DEL SERVIDOR (ERRORES)
+	// SERVER INFORMATION-DIALOG (ERRORS)
 	var informacion = function(){		
 		var Close = headerReg.btnCancelar;
 		
@@ -262,38 +267,22 @@ var HeaderController = function() {
 	}	
 	
 	
-	// LOAD MENU INFORMATION FROM USER-ROLE (TO-DO: cuando esté lo pasamos a menu-js que será el controller del menu así queda encapsulado.
-	// get JSON from header.html -> headerReg.menu 
-	var consoleMenu = function(){
-		
-		logControl ? console.log('|---> consoleMenu() -> Creating HTML Console Menu') : '';
-		
-		// no data no Fun!
-		if (!headerReg.menu){ $.alert({title: 'MENU ERROR!',content: 'No Menu Data!'}); return false; }
-		
-		// get menu data and make HTML 
-		//var menuJson = JSON.parse(headerReg.menu);
-		//console.log('menu: ' + JSON.stringify(headerReg.menu));
-		
-	}
-	
-	// ZONA DE FUNCIONES PUBLICAS ENTRE ELLAS INIT.
+	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
 		
-		// LOAD() CARGA UN JSON DE PARAMETROS DE LA PLANTILLA A LA LIB.
+		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER.
 		load: function(Data) { 
 			logControl ? console.log(LIB_TITLE + ': Función load()') : '';
 			return headerReg = Data;
 		},
 		
-		// INIT() INICIALIZACION DE LA LIB , EJECUCIÓN DE TODAS LAS FUNCIONES QUE SE DEBEN LANZAR AL ENTRAR EN LA PÁGINA.
+		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': Función init()') : '';
-			// load menu (role)
-			consoleMenu();
-			// control de errores de servidor.
+			
+			// CALL ERRORS
 			errores();			
-			// control de informacion cuando hay errores.
+			// CALL INFO
 			informacion();
 		},
 		
@@ -303,7 +292,7 @@ var HeaderController = function() {
 			searchDocs();			
 		},
 		
-		// CONTROL DE ERRORES LAS PLANTILLAS LLAMAN A ESTAS FUNCIONES CUANDO FALLAN CMAPOS, O VALIDACIONES ETC...
+		// SERVER-ERROR CONTROL-DIALOG
 		showErrorDialog: function(){		
 			logControl ? console.log('showErrorDialog()...') : '';
 			var Close = headerReg.btnCancelar;
@@ -315,19 +304,19 @@ var HeaderController = function() {
 			});		
 		},
 		
-		// DIALOGO DE CONFIRMACIÓN GENÉRICO
+		// GENERIC-CONFIRM-DIALOG
 		showConfirmDialog : function(formId){		
 			logControl ? console.log('showConfirmDialog()...') : '';
 			showConfirmDialog(formId);
 		},
 
-		// DIALOGO CONFIRMACIÓN ONTOLOGÍA
+		// ONTOLOGY-CONFIRM-DIALOG
 		showConfirmDialogOntologia : function(formId){		
 			logControl ? console.log('showConfirmDialogOntologia()...') : '';
 			showConfirmDialogOntologia(formId);
 		},
 	
-		// DIALOGO CONFIRMACIÓN USUARIO
+		// USER-CONFIRM-DIALOG
 		showConfirmDialogUsuario : function(formId){		
 			logControl ? console.log('showConfirmDialogUsuario()...') : '';
 			showConfirmDialogUsuario();
@@ -335,12 +324,12 @@ var HeaderController = function() {
 	};
 }();
 
-// INICIALIZACIÓN AUTOMÁTICA DEL CONTROLADOR
+// AUTO INIT CONTROLLER WHEN READY
 jQuery(document).ready(function() {
 	
-	// LLAMAMOS AL JSON DE ETIQUETAS DE LENGUAJE
+	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
 	HeaderController.load(headerJson);
 	
-	// LLAMAMOS AL INIT
+	// AUTO INIT CONTROLLER.
 	HeaderController.init();
 });

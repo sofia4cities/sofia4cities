@@ -1,5 +1,6 @@
 <!-- BEGIN HEADER -->
 <div th:fragment="cabeceraFragment" id="cabeceraFragment">
+	
 	<!-- MAIN DIALOGS CSS -->	
 	<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/jquery-confirm/jquery-confirm.css}"/>
 	
@@ -11,11 +12,6 @@
 	<!-- HEADER CONTROLLER JS -->
 	<script th:src="@{/static/js/pages/header.js}"/>	
 	 
-	<!-- BEGIN DYNAMICAL STYLE CSC -->
-	<!-- <input id="basededatosseleccionada" type="hidden" th:value="${@contexto.getPropiedad('bdtr.type')}"/> -->
-		
-	<!-- END DYNAMICAL STYLE CSC -->	
-	
 	<!-- BEGIN HEADER INNER -->
 	<div class="page-header-inner ">
 		<!-- BEGIN LOGO -->
@@ -31,7 +27,7 @@
 		<!-- END LOGO -->
 		
 		<!-- BEGIN SEARCH FORM -->
-		<form sec:authorize="!hasRole('ROLE_PARTNER')" class="search-form search-docs-form " action="javascript:HeaderController.search();" method="get" >
+		<form sec:authorize="!hasAuthority('ROLE_PARTNER')" class="search-form search-docs-form " action="javascript:HeaderController.search();" method="get" >
 			<div class="input-group">
 				<input class="form-control"  placeholder="Search" id="search-query" type="text"/>
 				<span class="input-group-btn">
@@ -53,7 +49,7 @@
 			<ul class="nav navbar-nav pull-right">
 			
 				<!-- BEGIN WIZARD -->						
-				<!-- <li sec:authorize="!hasRole('ROLE_PARTNER')" class="dropdown dropdown-wizard-toggler">
+				<!-- <li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-wizard-toggler">
 					<a th:href="@{/wizardMaster/principal}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Asistente" style="padding-right:8px !important;">
 						<i class="flaticon-light"></i> <span class="hidden-sm hidden-xs">Wizard</span>
 					</a>
@@ -61,30 +57,30 @@
 				<!-- END WIZARD -->
 				
 				<!-- BEGIN {REST} -->						
-				<!-- <li sec:authorize="!hasRole('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler">
+				<!-- <li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler">
 					<a id="span_hipervinculos" th:href="@{/rest.jsp}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="API {REST}" style="padding-right:8px !important;">
 						<i class="icon-frame"></i> <span th:text="#{header_REST}" class="hidden-sm hidden-xs">REST</span>
 					</a>
 				</li> -->
 				<!-- END {REST} -->
 				
-				<!-- BEGIN USUARIO NO-PARTNER -->						
+				<!-- BEGIN USER NO-PARTNER -->						
 				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
-					<a th:href="@{'/usuarioses/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Usuario" style="padding-right:8px !important;">
+					<a th:href="@{'/USERses/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Usuario" style="padding-right:8px !important;">
 						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"> user</span> <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span>
 					</a>
 				</li>
-				<!-- END USUARIO NO-PARTNER -->
+				<!-- END USER NO-PARTNER -->
 				
-				<!-- BEGIN USUARIO PARTNER -->						
+				<!-- BEGIN USER PARTNER -->						
 				<li  sec:authorize="hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
 					<a th:href="@{'/usuarioses/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Usuario" style="padding-right:8px !important;">
 						<i class="flaticon-user"></i> <span th:text="${#authentication.name}"></span>  <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span> 
 					</a>
 				</li>
-				<!-- END USUARIO PARTNER -->
+				<!-- END USER PARTNER -->
 				
-				<!-- BEGIN IDIOMA -->
+				<!-- BEGIN LANGUAGE -->
 				<li class="dropdown dropdown-idioma">
 					<a href="javascript:;" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Idioma" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding-right:8px !important;">								
 						<span th:text="#{header_idioma}" class="username username-hide-on-mobile"> Idioma </span>
@@ -113,18 +109,18 @@
 						</li>								
 					</ul>
 				</li>
-				<!-- END IDIOMA -->
+				<!-- END LANGUAGE -->
 				
-				<!-- BEGIN COMUNICACIONES -->			
-				<!-- <li sec:authorize="!hasRole('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
+				<!-- BEGIN COMMUNICATIONS -->			
+				<!-- <li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
 					<a id="messages-bell" th:href="@{/comunicaciones/comunicaciones}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Comunicaciones" >
 						<i class="flaticon-bell"></i>  <span class="hidden-sm hidden-xs">Comunicaciones</span>
 					</a>
 				</li> -->
-				<!-- END COMUNICACIONES -->
+				<!-- END COMMUNICATIONS -->
 				
 				<!-- BEGIN LOG-OUT -->			
-				<li sec:authorize="!hasRole('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler" style="padding-right:8px !important;">
+				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler" style="padding-right:8px !important;">
 					<a id="close-session" href="login.html" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Salir" th:href="@{/logout}">
 						<i class="icon-share-alt"></i> <span class="hidden-sm hidden-xs">Salir</span>
 					</a>
@@ -144,21 +140,7 @@
 	</div>
 	<!-- END HEADER INNER -->
 	
-	<!-- MODALS , DIALOGS AND ERROR LOGS -->
-	<div id="dialog-confirm" title="Confirmación" th:title="#{dialogo_confirm_delete_title}" style="display: none;">
-		<div th:text="#{dialogo_confirm_delete_text}">¿Desea continuar con la eliminación?</div>
-	</div>
-	
-	<div id="dialog-confirm-ontologia" title="Confirmación" th:title="#{dialogo_confirm_delete_title}" style="display: none;">
-		<div th:text="#{ontologias_listado_button_eliminacion_confirm}">¿Desea continuar? Una vez dada de baja, no se permitira crear otra ontologia con el mismo identificador</div>
-	</div>
-	
-	<div id="dialog-confirm-usuario" title="Confirmación" th:title="#{dialogo_confirm_delete_title}" style="display: none;">
-		<div th:text="#{usuarios_listado_button_eliminacion_confirm}">¿Desea continuar? Una vez dado de baja, no se permitira crear otro usuario con el mismo identificador</div>
-	</div>   
-
-
-	<!-- MODAL DE RESULTADOS SEARCH -->
+	<!-- MODAL SEARCH -->
 	<div class="modal fade bs-example-modal-lg"  id="modalDocs" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 		<div class="modal-dialog modal-lg" role="document" style="width:90%">
 			<div class="modal-content" >
@@ -198,22 +180,8 @@
 			</div>
 		</div>
 	</div>
-	<!-- END MODALS , DIALOGS AND ERROR LOGS -->
-	
-	<!-- TO-DO: REVISAR ERROR LOG -->
-	<div id="dialog-error" title="Error" th:title="#{dialogo_error_title}" style="display: none;">
-		<div th:text="${Error}"></div>
-	</div>
-	
-	<div id="dialog-errors" title="Errors" th:title="#{dialogo_error_title}" style="display: none;">
-		<div th:text="${errors}"></div>
-	</div>
-	
-	<div id="dialog-info" title="Info" th:title="#{dialogo_info_title}" style="display: none;">
-		<div th:text="${info}"></div>
-	</div>
-	
-	<!-- CONFIGURACION DE HEADER PARA EL CONTROLADOR -->
+			
+	<!-- HEADER DATA TO SEND TO HEADER CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
 		var errores = [[${errors}]];
 		var informacion = [[${info}]];		
@@ -223,13 +191,13 @@
 			"btnEliminar": [[#{dialogo_confirm_delete_button_eliminar}]],
 			"btnCancelar": [[#{dialogo_confirm_delete_button_cancelar}]],
 			"btnClose": [[#{dialogo_error_button_ok}]],
+			"userConfirm":[[#{usuarios_listado_button_eliminacion_confirm}]],
+			"ontologyConfirm":[[#{ontologias_listado_button_eliminacion_confirm}]],
+			"genericConfirm":[[#{dialogo_confirm_delete_text}]],			
 			"menu": [[${menu}]]
 		};
-		// CARGAMOS AL CONTROLADOR MENSAJES Y CONSTANTES DE SERVIDOR PARA USARLAS
-		// el PROPIO HeaderController los carga haciendo un Load y un init 
+		// LOAD DATA TO USE IN HEADERCONTROLLER
+		// HEADER CONTROLLER LOAD AND INIT ITSELF
 	</script>
-	
-	
 </div>
 <!-- END HEADER -->
-
