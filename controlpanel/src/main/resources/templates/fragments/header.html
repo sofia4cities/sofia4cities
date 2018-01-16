@@ -31,7 +31,7 @@
 		<!-- END LOGO -->
 		
 		<!-- BEGIN SEARCH FORM -->
-		<form sec:authorize="!hasRole('ROL_PARTNER')" class="search-form search-docs-form " action="javascript:HeaderController.search();" method="get" >
+		<form sec:authorize="!hasRole('ROLE_PARTNER')" class="search-form search-docs-form " action="javascript:HeaderController.search();" method="get" >
 			<div class="input-group">
 				<input class="form-control"  placeholder="Search" id="search-query" type="text"/>
 				<span class="input-group-btn">
@@ -53,7 +53,7 @@
 			<ul class="nav navbar-nav pull-right">
 			
 				<!-- BEGIN WIZARD -->						
-				<!-- <li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-wizard-toggler">
+				<!-- <li sec:authorize="!hasRole('ROLE_PARTNER')" class="dropdown dropdown-wizard-toggler">
 					<a th:href="@{/wizardMaster/principal}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Asistente" style="padding-right:8px !important;">
 						<i class="flaticon-light"></i> <span class="hidden-sm hidden-xs">Wizard</span>
 					</a>
@@ -61,7 +61,7 @@
 				<!-- END WIZARD -->
 				
 				<!-- BEGIN {REST} -->						
-				<!-- <li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-rest-toggler">
+				<!-- <li sec:authorize="!hasRole('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler">
 					<a id="span_hipervinculos" th:href="@{/rest.jsp}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="API {REST}" style="padding-right:8px !important;">
 						<i class="icon-frame"></i> <span th:text="#{header_REST}" class="hidden-sm hidden-xs">REST</span>
 					</a>
@@ -69,17 +69,17 @@
 				<!-- END {REST} -->
 				
 				<!-- BEGIN USUARIO NO-PARTNER -->						
-				<li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-user-toggler">
+				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
 					<a th:href="@{'/usuarioses/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Usuario" style="padding-right:8px !important;">
-						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"></span>
+						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"> user</span> <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span>
 					</a>
 				</li>
 				<!-- END USUARIO NO-PARTNER -->
 				
 				<!-- BEGIN USUARIO PARTNER -->						
-				<li  sec:authorize="hasRole('ROL_PARTNER')" class="dropdown dropdown-user-toggler">
+				<li  sec:authorize="hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
 					<a th:href="@{'/usuarioses/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Usuario" style="padding-right:8px !important;">
-						<i class="flaticon-user"></i> <span th:text="${#authentication.name}"></span> 
+						<i class="flaticon-user"></i> <span th:text="${#authentication.name}"></span>  <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span> 
 					</a>
 				</li>
 				<!-- END USUARIO PARTNER -->
@@ -116,7 +116,7 @@
 				<!-- END IDIOMA -->
 				
 				<!-- BEGIN COMUNICACIONES -->			
-				<!-- <li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
+				<!-- <li sec:authorize="!hasRole('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
 					<a id="messages-bell" th:href="@{/comunicaciones/comunicaciones}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Comunicaciones" >
 						<i class="flaticon-bell"></i>  <span class="hidden-sm hidden-xs">Comunicaciones</span>
 					</a>
@@ -124,7 +124,7 @@
 				<!-- END COMUNICACIONES -->
 				
 				<!-- BEGIN LOG-OUT -->			
-				<li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-rest-toggler" style="padding-right:8px !important;">
+				<li sec:authorize="!hasRole('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler" style="padding-right:8px !important;">
 					<a id="close-session" href="login.html" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Salir" th:href="@{/logout}">
 						<i class="icon-share-alt"></i> <span class="hidden-sm hidden-xs">Salir</span>
 					</a>
@@ -219,7 +219,7 @@
 		var informacion = [[${info}]];		
 		var headerJson = { 
 			"errores": errores,
-			"informacion": informacion,
+			"informacion": 'mucha informacion',
 			"btnEliminar": [[#{dialogo_confirm_delete_button_eliminar}]],
 			"btnCancelar": [[#{dialogo_confirm_delete_button_cancelar}]],
 			"btnClose": [[#{dialogo_error_button_ok}]],

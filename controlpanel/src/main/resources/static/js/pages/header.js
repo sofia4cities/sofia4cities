@@ -113,16 +113,11 @@ var HeaderController = function() {
 	// DIALOGO DE CONFIRMACIÓN GENÉRICO
 	var showConfirmDialog = function(formId){		
 		logControl ? console.log('showConfirmDialog()...') : '';
-		var Remove = headerReg.btnEliminar;
-		var Close = headerReg.btnCancelar;
-		/* $( "#dialog-confirm" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-			buttons: {
-				Remove: function() { document.forms[formId].submit(); },
-				Close: function() { $( this ).dialog( "close" ); }
-			}
-		}); */
 		
-		// NEW DIALOG SYSTEM.
+		var Remove = headerReg.btnEliminar;
+		var Close = headerReg.btnCancelar;		
+		
+		// jquery-confirm DIALOG SYSTEM.
 		$.confirm({
 			icon: 'fa fa-warning',
 			title: 'CONFIRMACIÓN',
@@ -133,7 +128,7 @@ var HeaderController = function() {
 			backgroundDismiss: true,
 			closeIcon: true,
 			buttons: {
-				Remove: {
+				remove: {
 					text: Remove,
 					btnClass: 'btn-sm btn-danger btn-outline',
 					action: function(){ 
@@ -142,7 +137,7 @@ var HeaderController = function() {
 				},
 				close: {
 					text: Close,
-					action: function () {}				
+					action: function (){} //GENERIC CLOSE.		
 				}
 			}
 		});		
@@ -151,25 +146,67 @@ var HeaderController = function() {
 	// DIALOGO CONFIRMACIÓN ONTOLOGÍA
 	var showConfirmDialogOntologia = function(formId){		
 		logControl ? console.log('showConfirmDialogOntologia()...') : '';
+		
 		var Remove = headerReg.btnEliminar;
-		var Close = headerReg.btnCancelar;
-		$( "#dialog-confirm-ontologia" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
+		var Close = headerReg.btnCancelar;	
+		
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: 'CONFIRM:',
+			theme: 'dark',
+			content: 'Contenido del dialogo de confirmación genérico',
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
 			buttons: {
-				Remove: function() { document.forms[formId].submit(); },
-				Close: function() { $( this ).dialog( "close" ); }
+				remove: {
+					text: Remove,
+					btnClass: 'btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}
+				},
+				close: {
+					text: Close,
+					action: function (){} //GENERIC CLOSE.		
+				}
 			}
 		});
+		
 	}
 	
 	// DIALOGO CONFIRMACIÓN USUARIO
 	var showConfirmDialogUsuario = function(formId){		
 		logControl ? console.log('showConfirmDialogUsuario()...') : '';
+		
 		var Close = headerReg.btnCancelar;
 		var Remove = headerReg.btnEliminar;
-		$( "#dialog-confirm-usuario" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
+		
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-bug',
+			title: 'USER CONFIRM:',
+			theme: 'dark',
+			content: 'contenido pendiente de colocar.',
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
 			buttons: {
-				Remove: function() { document.forms[formId].submit(); },
-				Close: function() { $( this ).dialog( "close" ); }
+				remove: {
+					text: Remove,
+					btnClass: 'btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn-sm btn-danger btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
 			}
 		});
 	}	
@@ -177,13 +214,25 @@ var HeaderController = function() {
 	// ERRORES de SERVIDOR
 	var errores = function(){		
 		var Close = headerReg.btnCancelar;
-		if ( headerReg.errores !== null ){
-			document.getElementById("dialog-errors").innerHTML = headerReg.errores;
-			$( "#dialog-errors" ).dialog({resizable: true, height:200, width:400, modal: true, position: [($(window).width() / 2) - 200, 160], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					Close: function() { $( this ).dialog( "close" ); }
+		if ( headerReg.errores !== null ){			
+			// jquery-confirm DIALOG SYSTEM.
+			$.confirm({
+				icon: 'fa fa-bug',
+				title: 'ERROR',
+				theme: 'dark',
+				content: headerReg.errores,
+				draggable: true,
+				dragWindowGap: 100,
+				backgroundDismiss: true,
+				closeIcon: true,
+				buttons: {				
+					close: {
+						text: Close,
+						btnClass: 'btn-sm btn-danger btn-outline',
+						action: function (){} //GENERIC CLOSE.		
+					}
 				}
-			});
+			});			
 		} else { logControl ? console.log('errores() -> NO ERROR.') : ''; }		
 	}
 	
@@ -191,14 +240,27 @@ var HeaderController = function() {
 	var informacion = function(){		
 		var Close = headerReg.btnCancelar;
 		
-		if (headerReg.informacion !== null ){
-			document.getElementById("dialog-info").innerHTML = headerReg.informacion;
-			$( "#dialog-info" ).dialog({resizable: true, height:200, width:400, modal: true, position: [($(window).width() / 2) - 200, 160], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					Close: function() { $( this ).dialog( "close" ); }
+		if (headerReg.informacion !== null ){			
+			// jquery-confirm DIALOG SYSTEM.
+			$.confirm({
+				icon: 'fa fa-info-circle',
+				title: 'INFO',
+				theme: 'dark',
+				content: headerReg.informacion,
+				draggable: true,
+				dragWindowGap: 100,
+				backgroundDismiss: true,
+				closeIcon: true,
+				buttons: {				
+					close: {
+						text: Close,
+						btnClass: 'btn-sm btn-danger btn-outline',
+						action: function (){} //GENERIC CLOSE.		
+					}
 				}
 			});
-		} else { logControl ? console.log('informacion() -> SIN INFO ERRORES.') : ''; }		
+		}
+		else { logControl ? console.log('informacion() -> SIN INFO ERRORES.') : ''; }		
 	}	
 	
 	// ZONA DE FUNCIONES PUBLICAS ENTRE ELLAS INIT.
@@ -215,19 +277,15 @@ var HeaderController = function() {
 			logControl ? console.log(LIB_TITLE + ': Función init()') : '';
 			
 			// control de errores de servidor.
-			errores();
-			
+			errores();			
 			// control de informacion cuando hay errores.
 			informacion();
-			
-			
 		},
 		
 		// SEARCH
 		search: function(){
 			logControl ? console.log(LIB_TITLE + ': Función search()') : '';
-			searchDocs();
-			
+			searchDocs();			
 		},
 		
 		// CONTROL DE ERRORES LAS PLANTILLAS LLAMAN A ESTAS FUNCIONES CUANDO FALLAN CMAPOS, O VALIDACIONES ETC...
@@ -251,27 +309,13 @@ var HeaderController = function() {
 		// DIALOGO CONFIRMACIÓN ONTOLOGÍA
 		showConfirmDialogOntologia : function(formId){		
 			logControl ? console.log('showConfirmDialogOntologia()...') : '';
-			var Remove = headerReg.btnEliminar;
-			var Close = headerReg.btnCancelar;
-			$( "#dialog-confirm-ontologia" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					Remove: function() { document.forms[formId].submit(); },
-					Close: function() { $( this ).dialog( "close" ); }
-				}
-			});
+			showConfirmDialogOntologia(formId);
 		},
 	
 		// DIALOGO CONFIRMACIÓN USUARIO
 		showConfirmDialogUsuario : function(formId){		
 			logControl ? console.log('showConfirmDialogUsuario()...') : '';
-			var Close = headerReg.btnCancelar;
-			var Remove = headerReg.btnEliminar;
-			$( "#dialog-confirm-usuario" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					Remove: function() { document.forms[formId].submit(); },
-					Close: function() { $( this ).dialog( "close" ); }
-				}
-			});
+			showConfirmDialogUsuario();
 		}		
 	};
 }();
