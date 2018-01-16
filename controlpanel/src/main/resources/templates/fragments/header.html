@@ -1,9 +1,11 @@
 <!-- BEGIN HEADER -->
 <div th:fragment="cabeceraFragment" id="cabeceraFragment">
-
+	<!-- MAIN DIALOGS CSS -->	
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/jquery-confirm/jquery-confirm.css}"/>
+	
 	<!-- MAIN SCRIPTS  -->
 	<script th:src="@{/static/vendor/jquery/jquery.min.js}"/>
-	<!-- <script th:src="@{/static/js/jquery/js/jquery-ui-1.10.3.custom.min.js}"/> -->
+	<script th:src="@{/static/vendor/jquery-confirm/jquery-confirm.js}"/>
 	<script th:src="@{/static/vendor/bootstrap/bootstrap.js}"/>
 	
 	<!-- HEADER CONTROLLER JS -->
@@ -69,7 +71,7 @@
 				<!-- BEGIN USUARIO NO-PARTNER -->						
 				<li sec:authorize="!hasRole('ROL_PARTNER')" class="dropdown dropdown-user-toggler">
 					<a th:href="@{'/usuarioses/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Usuario" style="padding-right:8px !important;">
-						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}">ss</span>
+						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"></span>
 					</a>
 				</li>
 				<!-- END USUARIO NO-PARTNER -->

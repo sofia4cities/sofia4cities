@@ -115,12 +115,37 @@ var HeaderController = function() {
 		logControl ? console.log('showConfirmDialog()...') : '';
 		var Remove = headerReg.btnEliminar;
 		var Close = headerReg.btnCancelar;
-		$( "#dialog-confirm" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
+		/* $( "#dialog-confirm" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
 			buttons: {
 				Remove: function() { document.forms[formId].submit(); },
 				Close: function() { $( this ).dialog( "close" ); }
 			}
-		});
+		}); */
+		
+		// NEW DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: 'CONFIRMACIÓN',
+			theme: 'dark',
+			content: 'Contenido del dialogo de confirmación genérico',
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				Remove: {
+					text: Remove,
+					btnClass: 'btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}
+				},
+				close: {
+					text: Close,
+					action: function () {}				
+				}
+			}
+		});		
 	}
 
 	// DIALOGO CONFIRMACIÓN ONTOLOGÍA
@@ -220,14 +245,7 @@ var HeaderController = function() {
 		// DIALOGO DE CONFIRMACIÓN GENÉRICO
 		showConfirmDialog : function(formId){		
 			logControl ? console.log('showConfirmDialog()...') : '';
-			var Remove = headerReg.btnEliminar;
-			var Close = headerReg.btnCancelar;
-			$( "#dialog-confirm" ).dialog({resizable: false, height:160, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					Remove: function() { document.forms[formId].submit(); },
-					Close: function() { $( this ).dialog( "close" ); }
-				}
-			});
+			showConfirmDialog(formId);
 		},
 
 		// DIALOGO CONFIRMACIÓN ONTOLOGÍA
