@@ -12,9 +12,14 @@
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-ssap</artifactId>
 	<packaging>jar</packaging>
-
+		
 	<name>sofia2-ssap</name>
 	<description>SSAP protocol implementation</description>
+	
+	<properties>
+    <license.dir>${project.parent.basedir}</license.dir>
+	</properties>
+
 	
 	<dependencies>
 		<dependency>
