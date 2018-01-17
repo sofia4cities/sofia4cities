@@ -28,7 +28,7 @@
         <project.name>Sofia4Cities by Sofia2</project.name>
         <project.year>2013-2018</project.year>
         <project.organization.name>Indra Sistemas S.A. SPAIN</project.organization.name>
-        <project.website>https://sofia2.com}</project.website>
+        <project.website>https://sofia2.com</project.website>
 	</properties>
 	
 	<dependencyManagement>

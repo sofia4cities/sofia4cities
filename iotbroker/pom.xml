@@ -15,6 +15,10 @@
 
 	<name>sofia2-iotbroker</name>
 	<description>Sofia2 IoTbroker</description>
+		
+	<properties>
+    <license.dir>${project.parent.basedir}</license.dir>
+	</properties>
 
 	<dependencies>
 		<dependency>
