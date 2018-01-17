@@ -21,7 +21,7 @@ var MenuController = function() {
 		,menu_LANG 		= ''
 		,submenus 		= false;
 		
-		// no data no Fun!
+		// NO-DATA NO-FUN!
 		if (!menuReg){ $.alert({title: 'MENU ERROR!',content: 'No Menu Data!'}); return false; }
 		
 		// GET JSON FROM CONTROLLER LOAD()
@@ -29,15 +29,12 @@ var MenuController = function() {
 		menu_LANG = menuJson.language || LANGUAGE;
 		logControl ? console.log('     |---> menu: ' + menuJson.menu + ' NoSession Path: ' + menuJson.noSession + ' Rol: ' + menuJson.rol + ' Navigation Objects: ' + menuJson.navigation.length + ' Language: ' + menu_LANG ) : '';
 		
-		// MENU NAV-ITEMS ARRAY
-		var navItemsArr = menuJson.navigation;
-		
 		// NAV-ITEM MAIN LOOP
+		var navItemsArr = menuJson.navigation;
 		navItemsArr.map(function(item, index){
 			
 			// CLEAN VARS FOR EACH LOOP.
-			markUp_HTML = menu_HTML = submenu_HTML = '';
-			
+			markUp_HTML = menu_HTML = submenu_HTML = '';			
 			logControl ? console.log('     |---> navItem-' + index + 'Item: ' + item.title.ES + ';  Submenus: ' + item.submenu.length + ' ' + submenus ) : '';
 			
 			if ( hasSubmenus(item) ){
@@ -83,7 +80,9 @@ var MenuController = function() {
 				// ADD AND APPENTO MENU (.page-sidebar-menu) 
 				$(menu_HTML).appendTo($('.page-sidebar-menu'));				
 			}			
-		});			
+		});
+		// SET ACTIVE NAV.
+		setActiveNavItem();
 	}
 	
 	// AUX. CHECK IF A NAV-ITEM HAD SUBMENU ITEMS
@@ -92,7 +91,32 @@ var MenuController = function() {
 	// AUX. GET CURRENT PAGE URL AND DETECT ACTIVE NAV-ITEM 
 	var setActiveNavItem = function(){
 		
+		logControl ? console.log('|---> setActiveNavItem() -> Setting current nav-item Active') : '';
 		
+		var currentPath = window.location.pathname;		
+		console.log('|---> CURRENT PATH: ' +  currentPath);
+		
+		// CHECK FIRST NAV (HOME) EXCEP.
+		firstMenu = $('.page-sidebar-menu > li.nav-item.start > a.nav-link.nav-toggle');
+		if ( currentPath === firstMenu[0].pathname ){ firstMenu.closest('li.nav-item').addClass('open active'); return false;}
+		
+		// GET ALL NAVS, THEN CHECK URL vs. CURRENT PATH --> ACTIVE.
+		var allMenus = $('.page-sidebar-menu > li.nav-item > ul.sub-menu  > li.nav-item > a.nav-link.nav-toggle');
+		allMenus.each(function(ilink,navlink){
+				
+			console.log('|---> nav-link-' + ilink + ' URL: ' + navlink + ' PATH: ' + $(this)[0].pathname);
+			if ( currentPath === $(this)[0].pathname ){	
+				console.log('|---> nav-link-' + ilink + ' URL: ' + navlink + ' MATCH');
+				currentLi = $(this).closest('li.nav-item');
+				currentNav = currentLi.parents('.nav-item');
+				
+				// APPLY ACTIVE CLASSES
+				currentLi.addClass('active open');							
+				currentNav.addClass('active open');
+				currentNav.find('.arrow').addClass('open');
+				return false;				
+			}			
+		});		
 	}
 	
 	

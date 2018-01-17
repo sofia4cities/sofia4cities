@@ -11,6 +11,9 @@ var HeaderController = function() {
 	var searchDocs = function(){		
 		logControl ? console.log('searchDocs() Buscar --> '+ $("#search-query").val()) : '';
 		
+		// NOT-AVAILABLE 
+		$.alert({title: 'Sofia4Cities Search:', type: 'red' ,content: 'FUNCTIONALITY NOT-AVAILABLE!'}); return false;
+		
 		var search = $("#search-query").val();
 		var url = "/console/api/rest/searchDocs/"+search;
 		var settings = {"async": true, "url": url, "method": "GET", "headers": {"cache-control": "no-cache"} };
