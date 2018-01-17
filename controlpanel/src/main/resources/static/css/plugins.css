@@ -2434,3 +2434,32 @@ pre[class*="language-"] {
 
 .socicon-persona:before {
   content: ")"; }
+
+  
+/* VIs */
+#infoporlet			{
+position: absolute;
+top: 15px;
+left: calc(100% - 385px);
+box-shadow: 0px 0px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.19);	
+	
+}
+#TableInfoNetwork 	{width: 350px; min-width: 350px; margin-bottom:0px; }  
+.vis-network-tooltip{
+    box-shadow: inset 2px -2px 4px 0px #e2e2e2;
+    background: white !important;
+    border-bottom-left-radius: 3px;
+    padding:  5px !important;
+    color: white;
+    border-top-left-radius: 2px;
+    line-height: 1.35;
+    overflow: hidden;
+    border: 1px black solid !important;
+    width: 300px; 
+    white-space: normal !important;
+    /*opacity: 0.8;*/
+    font-weight: normal;
+    font-family: "Neo Sans Regular", Helvetica, arial, sans-serif !important;
+    font-size: 12px !important;
+    z-index:900;
+}

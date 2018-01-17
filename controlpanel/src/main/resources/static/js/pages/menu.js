@@ -3,10 +3,10 @@ var MenuController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Menu Controller';	
-    var logControl = 1;
+    var logControl = 0;
 	var LANGUAGE = 'ES'
 	
-	// CONTROLLER PRIVATE FUNCTIONS 	
+	// CONTROLLER PRIVATE FUNCTIONS
 	
 	
 	// LOAD MENU INFORMATION FROM USER-ROLE 
@@ -94,7 +94,7 @@ var MenuController = function() {
 		logControl ? console.log('|---> setActiveNavItem() -> Setting current nav-item Active') : '';
 		
 		var currentPath = window.location.pathname;		
-		console.log('|---> CURRENT PATH: ' +  currentPath);
+		logControl ? console.log('|---> CURRENT PATH: ' +  currentPath) : '';
 		
 		// CHECK FIRST NAV (HOME) EXCEP.
 		firstMenu = $('.page-sidebar-menu > li.nav-item.start > a.nav-link.nav-toggle');
@@ -104,9 +104,9 @@ var MenuController = function() {
 		var allMenus = $('.page-sidebar-menu > li.nav-item > ul.sub-menu  > li.nav-item > a.nav-link.nav-toggle');
 		allMenus.each(function(ilink,navlink){
 				
-			console.log('|---> nav-link-' + ilink + ' URL: ' + navlink + ' PATH: ' + $(this)[0].pathname);
-			if ( currentPath === $(this)[0].pathname ){	
-				console.log('|---> nav-link-' + ilink + ' URL: ' + navlink + ' MATCH');
+			logControl ? console.log('|---> nav-link-' + ilink + ' URL: ' + navlink + ' PATH: ' + $(this)[0].pathname) : '';
+			
+			if ( currentPath === $(this)[0].pathname ){					
 				currentLi = $(this).closest('li.nav-item');
 				currentNav = currentLi.parents('.nav-item');
 				

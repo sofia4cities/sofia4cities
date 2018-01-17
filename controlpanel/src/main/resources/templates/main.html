@@ -64,9 +64,9 @@
 				<!-- END PAGE TITLE-->			
 				
 				
-				<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
-				<div th:include="fragments/graph::#graphFragment" class="margin-bottom-20 "></div>
-				<!-- END SIDEBAR -->
+				<!-- BEGIN GRAPH INCLUDE -->
+				<div sec:authorize="hasAnyAuthority('ROLE_COLLABORATOR','ROLE_ANALYTICS','ROLE_ADMINISTRATOR')" th:include="fragments/graph::#graphFragment" class="margin-bottom-10"></div>
+				<!-- END GRAPH -->
 				
 				<!-- MAIN ROW -->
 				<div class="row">
