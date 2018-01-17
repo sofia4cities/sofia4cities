@@ -83,12 +83,7 @@
 						<a href="list.html" th:href="@{/generadorinstancias/list}" class="nav-link ">
 							<span th:text="#{menu_item_ontologias_generadorinstancias_label}" class="title"> Simulador de instancias de ontologías</span>
 						</a>
-					</li>
-					<li class="nav-item " sec:authorize="hasAuthority('ROL_USUARIO') or hasAuthority('ROLE_COLLABORATOR')" >
-						<a href="list.html" th:href="@{/suscripciones/list}" class="nav-link ">
-							<span th:text="#{menu_item_ontologias_suscripcion_label}" class="title">Subscripciones de ontologías</span>
-						</a>
-					</li>
+					</li>					
 					<li class="nav-item " sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" >
 						<a href="list.html"  th:href="@{/ontologias/authorize/list}" class="nav-link ">
 							<span th:text="#{menu_item_ontologias_autorizaciones_label}" class="title">Autorizaciones de Ontología</span>
@@ -193,17 +188,17 @@
 						<a href="usuario.html" th:href="@{/socialMedia/socialMedia}" class="nav-link ">
 							<span th:text="#{menu_item_RSS_social_media}" class="title">Social Media</span>
 						</a>
-					</li>					
-					<li class="nav-item " >
-						<a href="list.html" th:href="@{/proyectosSM/list}"  class="nav-link ">
-							<span th:text="#{menu_item_proyectossm_listar_label}" class="title">Mis grupos de APIs</span>
-						</a>
-					</li>			
+					</li>							
 					<li class="nav-item " >
 						<a href="list.html" th:href="@{/configuracionRRSS/list}" class="nav-link " >
 							<span th:text="#{menu_item_RSS_listar_configuracion_acceso_label}" class="title">Configuraciones de Acceso</span>
 						</a>
-					</li>								
+					</li>
+					<li class="nav-item " >
+						<a href="listEscucha.html" th:href="@{/usuariosTwitter/scheduledSearch}"  class="nav-link ">
+							<span th:text="#{menu_item_RSS_escucha_tendencia_twitter_label}" class="title">Programación Streaming Twitter</span>
+						</a>
+					</li>						
 				</ul>
 			</li>	
 			<!-- BOTS -->
@@ -234,9 +229,62 @@
 	<!-- MENU DATA TO SEND TO MENU CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
 		
-		var menuJson = { 			
-			"menu": [[${menu}]]
-		};
+		var menuJson = {
+				"menu":"Sofia4Cities",
+				"rol":"ROL_ADMINISTRADOR",
+				"noSession":"/console/login",
+				"navigation":[
+					{"title":{"EN":"Home","ES":"Inicio"}, "icon": "fa fa-home", "url": "/console", "submenu": []},
+					{"title":{"EN":"Ontologies","ES":"Ontologías"}, "icon": "flaticon-network", "url": "",
+						"submenu": [
+							{"title":{"EN":"Create Ontology","ES":"Crear Ontología"}, "icon": "", "url": "/ontologias/create"},
+							{"title":{"EN":"Ontologies Status","ES":"Estado de Cargas"}, "icon": "", "url": "/ontologiasopendata/list"},
+							{"title":{"EN":"My Ontologies","ES":"Mis Ontologías"}, "icon": "", "url": "/ontologias/list"},
+							{"title":{"EN":"Real-Time Instance Generator","ES":"Simulador Tiempo-Real Ontologías"}, "icon": "", "url": "/generadorinstancias/list"},
+							{"title":{"EN":"Ontologies Authorization","ES":"Autorizaciones de Ontología"}, "icon": "", "url": "/ontologias/authorize/list"}
+						]
+					},
+					{"title":{"EN":"Sofia2 THINKPs","ES":"THINKPs Sofia2"}, "icon": "flaticon-share", "url": "",
+						"submenu": [
+							{"title":{"EN":"My THINKPs","ES":"Mis THINKPs"}, "icon": "", "url": "/kps/list"},
+							{"title":{"EN":"THINKPs Status","ES":"Estado de THINKPs"}, "icon": "", "url": "/gestiondispositivos/list"},
+							{"title":{"EN":"THINKPs Container","ES":"Contenedor de THINKPs"}, "icon": "", "url": "/contenedorkps/list"}
+						]
+					},
+					{"title":{"EN":"Visualization","ES":"Visualización"}, "icon": "flaticon-dashboard", "url": "",
+						"submenu": [
+							{"title":{"EN":"My Gadgets","ES":"Mis Gadgets"}, "icon": "", "url": "/gadget/list"},
+							{"title":{"EN":"My Dashboards","ES":"Mis Dashboards"}, "icon": "", "url": "/dashboard/listgroup"}
+						]
+					},
+					{"title":{"EN":"Tools","ES":"Herramientas"}, "icon": "flaticon-open-box", "url": "",
+						"submenu": [
+							{"title":{"EN":"RTDB and HDB Console","ES":"Consola DBTR y BDH"}, "icon": "", "url": "/databases/show"}
+						]
+					},
+					{"title":{"EN":"Administration","ES":"Administración"}, "icon": "flaticon-cogwheel-2", "url": "",
+						"submenu": [
+							{"title":{"EN":"Ontology Templates","ES":"Plantillas de Ontologías"}, "icon": "", "url": "/plantillas/list"},
+							{"title":{"EN":"Users","ES":"Usuarios"}, "icon": "", "url": "/usuarioses/list"},
+							{"title":{"EN":"Connections","ES":"Conexiones"}, "icon": "", "url": "/gestionconexiones/show"}
+						]
+					},
+					{"title":{"EN":"Social Media","ES":"Social Media"}, "icon": "la la-globe", "url": "",
+						"submenu": [
+							{"title":{"EN":"Social Media","ES":"Social Media"}, "icon": "", "url": "/socialMedia/socialMedia"},
+							{"title":{"EN":"Access Settings","ES":"Configuración de Acceso"}, "icon": "", "url": "/configuracionRRSS/list"},
+							{"title":{"EN":"Schedule Twitter Streaming Search","ES":"Programación Streaming Twitter"}, "icon": "", "url": "/usuariosTwitter/scheduledSearch"}
+						]
+					},
+					{"title":{"EN":"BOTs","ES":"BOTs"}, "icon": "la la-cubes", "url": "",
+						"submenu": [
+							{"title":{"EN":"My Bots","ES":"Mis Bots"}, "icon": "", "url": "/bots/list"},
+							{"title":{"EN":"My Knowledge Bases","ES":"Bots Scripts"}, "icon": "", "url": "/bots/scripts/list"}
+						]
+					}
+				]
+			};
+		
 		// LOAD DATA TO USE IN MENUCONTROLLER
 		// MENU CONTROLLER LOAD AND INIT ITSELF
 	</script>

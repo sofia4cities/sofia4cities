@@ -14,15 +14,33 @@ var MenuController = function() {
 		
 		logControl ? console.log('|---> consoleMenu() -> Creating HTML Console Menu') : '';
 		
+		var menu_HTML , submenu_HTML , markUp_HTML = '';
+		
 		// no data no Fun!
-		if (!menuReg.menu){ $.alert({title: 'MENU ERROR!',content: 'No Menu Data!'}); return false; }
+		if (!menuReg){ $.alert({title: 'MENU ERROR!',content: 'No Menu Data!'}); return false; }
 		
 		// get menu data and make HTML menu.
-		//var menuJson = JSON.parse(menuReg.menu);
-		//console.log('menu: ' + JSON.stringify(menuReg.menu));
-		// Append to $('.page-sidebar-menu')
+		var menuJson = menuReg;
+		logControl ? console.log('menu: ' + menuJson.menu + ' NoSession Path: ' + menuJson.noSession + ' Rol: ' + menuJson.rol + ' Navigation Objects: ' + menuJson.navigation.length + ' Language: ES') : '';
 		
+		// MENU NAV-ITEMS ARRAY
+		var navItemsArr = menuJson.navigation;
+		// NAV-ITEM LOOP
+		navItemsArr.map(function(item, index){
+			if ( hasSubmenus(item) ){ submenus = '(sub-menus)'} else { submenus = '(NO sub-menus)'; }
+			console.log('navItem-' + index + 'Item: ' + item.title.ES + ';  Submenus: ' + item.submenu.length + ' ' + submenus );
+			
+			// SUB-NAV-ITEM LOOP
+			if ( hasSubmenus(item) ){ 
+				item.submenu.map(function(subitem, subindex){					
+					console.log('|---> sub navItem-'+ subindex + '; SubItem: ' + subitem.title.ES + '.');					
+				});			
+			}
+		});		
 	}
+	
+	// CHECK IF A NAV-ITEM HAD SUBMENU ITEMS
+	var hasSubmenus = function(item){ var checkSubmenus = item.submenu.length > 0 ? true : false; return checkSubmenus;  }
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{

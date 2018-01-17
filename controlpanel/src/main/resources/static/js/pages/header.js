@@ -130,13 +130,14 @@ var HeaderController = function() {
 			buttons: {
 				remove: {
 					text: Remove,
-					btnClass: 'btn-sm btn-danger btn-outline',
+					btnClass: 'btn btn-sm btn-danger btn-outline',
 					action: function(){ 
 						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
 					}
 				},
 				close: {
 					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
 					action: function (){} //GENERIC CLOSE.		
 				}
 			}
@@ -172,6 +173,7 @@ var HeaderController = function() {
 				},
 				close: {
 					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
 					action: function (){} //GENERIC CLOSE.		
 				}
 			}
@@ -200,14 +202,14 @@ var HeaderController = function() {
 			buttons: {
 				remove: {
 					text: Remove,
-					btnClass: 'btn-sm btn-danger btn-outline',
+					btnClass: 'btn btn-sm btn-danger btn-outline',
 					action: function(){ 
 						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
 					}											
 				},
 				close: {
 					text: Close,
-					btnClass: 'btn-sm btn-danger btn-outline',
+					btnClass: 'btn btn-sm btn-default btn-outline',
 					action: function (){} //GENERIC CLOSE.		
 				}
 			}
@@ -215,7 +217,7 @@ var HeaderController = function() {
 	}	
 	
 	// SERVER ERRORS-DIALOG
-	var errores = function(){		
+	var errors = function(){		
 		var Close = headerReg.btnCancelar;
 		if ( headerReg.errores !== null ){			
 			// jquery-confirm DIALOG SYSTEM.
@@ -231,16 +233,16 @@ var HeaderController = function() {
 				buttons: {				
 					close: {
 						text: Close,
-						btnClass: 'btn-sm btn-danger btn-outline',
+						btnClass: 'btn btn-sm btn-default btn-outline',
 						action: function (){} //GENERIC CLOSE.		
 					}
 				}
 			});			
-		} else { logControl ? console.log('|---> errores() -> NO ERROR.') : ''; }		
+		} else { logControl ? console.log('|---> errors() -> NO ERRORS FROM SERVER.') : ''; }		
 	}
 	
 	// SERVER INFORMATION-DIALOG (ERRORS)
-	var informacion = function(){		
+	var information = function(){		
 		var Close = headerReg.btnCancelar;
 		
 		if (headerReg.informacion !== null ){			
@@ -257,13 +259,13 @@ var HeaderController = function() {
 				buttons: {				
 					close: {
 						text: Close,
-						btnClass: 'btn-sm btn-danger btn-outline',
+						btnClass: 'btn btn-sm btn-default btn-outline',
 						action: function (){} //GENERIC CLOSE.		
 					}
 				}
 			});
 		}
-		else { logControl ? console.log('|---> informacion() -> SIN INFO ERRORES.') : ''; }		
+		else { logControl ? console.log('|---> information() -> NO ERROR INFO.') : ''; }		
 	}	
 	
 	
@@ -281,9 +283,9 @@ var HeaderController = function() {
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
 			// CALL ERRORS
-			errores();			
+			errors();			
 			// CALL INFO
-			informacion();
+			information();
 		},
 		
 		// SEARCH
@@ -310,7 +312,7 @@ var HeaderController = function() {
 				buttons: {				
 					close: {
 						text: Close,
-						btnClass: 'btn-sm btn-danger btn-outline',
+						btnClass: 'btn btn-sm btn-default btn-outline',
 						action: function (){} //GENERIC CLOSE.		
 					}
 				}
