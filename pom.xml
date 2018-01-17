@@ -21,14 +21,14 @@
 		<javafaker.version>0.14</javafaker.version>
 		<jsqlparser.version>0.9</jsqlparser.version>
 		<spring-boot.version>1.5.9.RELEASE</spring-boot.version>	
-        <spring-boot-admin-server.version>1.5.4</spring-boot-admin-server.version>
-        <spring-boot-admin-starter-client.version>1.5.4</spring-boot-admin-starter-client.version>	
+        <spring-boot-admin-server.version>1.5.6</spring-boot-admin-server.version>
+        <spring-boot-admin-starter-client.version>1.5.6</spring-boot-admin-starter-client.version>	
 		<!--LICENSE INFO -->
         <license.dir>${basedir}</license.dir>
         <project.name>Sofia4Cities by Sofia2</project.name>
         <project.year>2013-2018</project.year>
         <project.organization.name>Indra Sistemas S.A. SPAIN</project.organization.name>
-        <project.website>https://sofia2.com}</project.website>
+        <project.website>https://sofia2.com</project.website>
 	</properties>
 	
 	<dependencyManagement>

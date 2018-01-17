@@ -16,6 +16,10 @@
 	<name>sofia2-controlpanel</name>
 	<description>ControlPanel of the Platform </description>
 
+	<properties>
+    <license.dir>${project.parent.basedir}</license.dir>
+	</properties>
+	
 	<dependencies>		
 	    <dependency>
 			<groupId>com.indracompany.sofia2</groupId>

@@ -13,6 +13,10 @@
 	<artifactId>sofia2-persistence-ri</artifactId>
 	<packaging>jar</packaging>
 
+	<properties>
+    <license.dir>${project.parent.basedir}</license.dir>
+	</properties>
+	
 	<dependencies>		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -16,6 +16,11 @@
 
 	<name>sofia2-systemconfig-init</name>
 	<description>Init the Config of the System </description>
+	
+	<properties>
+    <license.dir>${project.parent.basedir}</license.dir>
+	</properties>
+	
 
 	<dependencies>
         <dependency>
