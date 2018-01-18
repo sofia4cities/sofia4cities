@@ -1,0 +1,376 @@
+<!-- © Indra Sistemas, S.A. 2018  Spain. All rights reserved -->
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<title th:text="#{consola_web_name}"/>
+		
+		<!-- BEGIN WEB FONT -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLESHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+		
+		<!-- PLUGINS STYLESHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/js/datatable/datatables.bootstrap.css}"/>
+
+		
+		
+		<!-- END STYLESHEETS -->
+
+	</head>
+	
+	
+	<!-- page-sidebar-closed para inicial página con menu cerrado -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper marketPlaceC">
+	
+		<!-- BEGIN HEADER -->
+		<div th:include="header::#cabeceraFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>
+		<!-- END HEADER AND CONTENT DIVIDER -->
+
+			
+			<!-- BEGIN SIDEBAR -->
+			<div th:include="menu::#menuFragment" class="page-sidebar-wrapper"></div>
+			<!-- END SIDEBAR -->
+			
+			<!-- BEGIN CONTENT -->
+			<div class="page-content-wrapper">
+				
+				<!-- BEGIN CONTENT BODY -->
+				<div class="page-content">
+					
+					<!-- BEGIN PAGE HEADER-->
+					
+					<!-- BEGIN PAGE BAR -->
+					<div class="page-bar margin-bottom-20">
+						<ul class="page-breadcrumb">
+							<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+							<li><a th:href="@{/ontologias/list}" > <span th:text="#{ontologias_breadcrumb}">Ontologías</span></a><i class="fa fa-circle"></i></li>
+							<li><span th:text="#{ontologias_breadcrumb_listar}">Listar Ontologías</span></li>
+						</ul>						
+					</div>
+					<!-- END PAGE BAR -->
+					
+					<!-- BEGIN PAGE TITLE-->
+					<h1 class="page-title hide "><span th:text="#{ontologias_breadcrumb_listar}"> Mis Ontologias</span> <small> ver que ponemos aquí</small></h1>
+					<!-- END PAGE TITLE-->			
+					
+					<!-- MAIN ROW -->
+					<div class="row">
+						<div class="col-md-12">
+						
+							<div class="portlet light bordered">
+								<div class="portlet-title">
+									<div class="caption">
+										<i class="icon-list font-grey-gallery"></i>
+										<span class="caption-subject bold font-grey-gallery uppercase"> Listado de Ontologías </span>
+										<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+									</div>									
+									<div class="tools">
+										<a href="" class="collapse" data-original-title="" title=""> </a>
+										<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>
+										<!-- <a href="" class="reload" data-original-title="" title=""> </a> -->
+										<a href="" class="fullscreen" data-original-title="" title=""> </a>
+										<!-- <a href="" class="remove" data-original-title="" title=""> </a> -->
+									</div>
+									<div class="actions margin-right-20">
+										<div class="btn-group">												
+											<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
+												<i class="flaticon-add"></i> <span th:text="#{ontologias_formulario_button_crear_ontologia}"> Ontología</span> <i class="fa fa-angle-down"></i>
+											</a>												
+											<ul class="dropdown-menu" role="menu">
+												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologias/createWizard'" th:text="#{crearontologias_titulo_paso_a_paso}" > Paso a Paso </a></li>
+												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologias/createJsonSchema'" th:text="#{crearontologias_boton_json}" > JSON-Schema</a></li>
+												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{crearontologias_boton_excel}" > CSV/EXCEL </a></li>
+												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{crearontologias_boton_xml}" > JSON/XML </a></li>
+												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologias/createKPI'" th:text="#{crearontologias_boton_kpi}"> Creación KPI </a></li>
+												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologias/createTimeSeries'" th:text="#{crearontologias_boton_time_serie}" > Time Series </a></li>
+												<li sec:authorize="hasRole('ROL_ADMINISTRADOR')"><a onclick="location.href='../ontologias/bdtrSelect'" th:text="#{crearontologias_boton_mongodb}" > Ontología desde MongoDB </a></li>
+												<li class="divider"> </li>
+												<li><a  onclick="location.href='../ontologias/create'" th:text="#{ontologias_formulario_button_crear_ontologia}"> Wizard Ontologías </a></li>
+											</ul>
+										</div>										
+									</div>
+								</div>
+								<div class="portlet-body" style="display: block; height: auto;">
+									
+									<div class="row">
+										<div class="col-md-12 alert-zone">
+											<!-- ZONA DE ALERTAS PARA FORMS -->
+											<div class="alert alert-warning alert-dismissable hide ">
+												<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+												<strong>Alerta!</strong> Montaje provisonal con nuevo estilo. 
+											</div>								
+										</div>
+										<div class="col-md-12 margin-bottom-20">
+										<!-- FORMULARIO INTERNO -->
+											<form id="form_crear_ontologia" class="" role="form" method="get">												
+												<div class="col-md-12 no-space">
+													<h4 data-toggle="collapse" data-target="#buscaFiltro" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" data-content="Búsqueda de Ontologías, haga click para desplegar/colapsar el forumulario y Buscar." data-original-title="Filtro de Ontologías" th:text="#{kps_title_filtrar_busqueda}">Filtrar Búsqueda</span></h4>
+												</div>
+												<div id="buscaFiltro" class="form-body collapse">
+													<div class="row">
+														<div class="col-md-4 col-xs-12">
+															<div class="form-group">															
+																<div class="input-group">
+																	<span class="input-group-addon">
+																		<i class="fa fa-tag font-grey-mint"></i>
+																	</span>															
+																	<input id="identificacion" th:placeholder="#{ontologias_formulario_nombre}" name="identificacion" class="form-control" type="text" maxlength="50" value=""/>
+																</div>
+															</div>
+														</div>
+														<div class="col-md-4 col-xs-12">
+															<div class="form-group">															
+																<div class="input-group">
+																	<span class="input-group-addon">
+																		<i class="fa fa-tag font-grey-mint"></i>
+																	</span>
+																	<input id="descripcion" th:placeholder="#{ontologias_formulario_descripcion}" name="descripcion" class="form-control" type="text" maxlength="100" value=""/>
+																</div>
+															</div>
+														</div>
+														<div class="col-md-4 col-xs-12">
+															<div class="btn-group">
+																<button type="submit" id="buscar_ontologia" name="buscar_usuario" th:title="#{ontologias_formulario_button_buscar}" th:value="#{ontologias_formulario_button_buscar}" value="Buscar" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Buscar</button>
+																<button type="button" id="reset_ontologia" name="reset_usuario" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
+															</div>
+															
+															
+														</div>
+													</div>
+												</div>												
+											</form>								
+										</div>
+										<!-- LISTADO ONTOLOGIAS -->
+										<div class="col-md-12">											
+											<div id="contenedor-tabla-outside" class="contiene">
+																						
+												<div id="recuadro-tabla" class = "recuadro-tabla" style="visibility:hidden;">													
+													<table id="ontologias" class="table table-hover table-striped " dt:table="true" dt:displaylength="10" dt:paginationtype="full_numbers">
+														<thead>
+															<tr class="cabecera-tabla">
+																<th class="titulo-columnas" th:text="#{ontologias_listado_header_nombre}">Nombre</th>
+																<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{ontologias_listado_header_propietario}" >Propietario</span></th>
+																<th class="titulo-columnas" th:text="#{ontologias_listado_header_descripcion}">Descripcion</th>
+																<th class="titulo-columnas text-center" th:text="#{ontologias_listado_header_activa}">Activa</th>
+																<th class="titulo-columnas text-center" th:text="#{ontologias_listado_header_publica}">Publica</th>
+																<th class="titulo-columnas text-center" th:text="#{ontologias_listado_header_particionada}">Particionada</th>
+																<th class="titulo-columnas text-center" th:text="#{crearontologias_titulo_kpi}">KPI</th>
+																<th class="titulo-columnas text-center" th:text="#{ontologias_listado_header_herencia}">Herencia</th>
+																<th class="titulo-columnas" ><i class="la la-calendar"></i> <span th:text="#{usuarios_listado_header_fechaalta}"> Fecha Alta</span></th>
+																<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{ontologias_listado_header_opciones}"> Opciones</span></th>
+															</tr>
+														</thead>
+														<tbody th:remove="all-but-first">
+															<tr th:each="ontologia : ${ontologias}" pages:paginate="10">
+																<!-- IDENTIFICACION/NOMBRE -->
+																<td class="text-left bold" th:text="${ontologia.identificacion}"></td>
+																<!-- USUARIO -->
+																<td class="text-center bold" th:text="${ontologia.usuarioId}"></td>
+																<!-- DESCRIPCION -->
+																<td class="text-left text-truncate-sm" th:title="${ontologia.descripcion}" th:text="${ontologia.descripcion}"></td>
+																<!-- ACTIVA -->
+																<td class="text-center" th:if="${ontologia.activa}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
+																<td class="text-center" th:if="${!ontologia.activa}"></td>
+																
+																<!-- PUBLICA -->
+																<td class="text-center" th:if="${ontologia.publico}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
+																<td class="text-center" th:if="${!ontologia.publico}"></td>
+																
+																<!-- PARTICIONADA -->
+																<td class="text-center" th:if="${ontologia.particionada}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
+																<td class="text-center" th:if="${!ontologia.particionada}"></td>
+																
+																<!-- KPI -->
+																<td class="text-center" th:if="${ontologia.kpi}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
+																<td class="text-center" th:if="${!ontologia.kpi}"></td>
+																
+																<!-- PADRE -->
+																<td class="text-center" th:if="${ontologia.padre}"><img th:title="#{ontologias_listado_padre}" th:src="@{/resources/images/ico_parent.png}"/></td>
+																<td class="text-center" th:if="${!ontologia.padre and ontologia.padreId!=null}"><img th:title="#{ontologias_listado_hija}" th:src="@{/resources/images/ico_child.png}"/></td>
+																<td class="text-center" th:if="${!ontologia.padre and ontologia.padreId==null}"></td>
+																
+																<!-- FECHA ALTA -->
+																<td class="text-center" th:if="${ontologia.fechaalta!=null}" th:text="${#dates.format(ontologia.fechaalta,'dd/MM/YYYY')}"></td>
+																<td class="text-center" th:if="${ontologia.fechaalta==null}" th:text="${ontologia.fechaalta}"></td>
+																
+																<!-- OPCIONES -->
+																<td class="icon" style="white-space: nowrap">
+																	<div class="grupo-iconos">
+																		<!-- VER -->															
+																		<span th:if="${!ontologia.kpi}" th:title="#{plantillas_listado_button_ver}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_ver}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologias/${ontologia.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																		<span th:if="${ontologia.kpi}" th:title="#{plantillas_listado_button_ver}"  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_ver}" th:alt="#{plantillas_listado_button_ver}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologias/KPI/${ontologia.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																																			
+																		<!-- EDITAR -->
+																		<span th:if="${!ontologia.kpi}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{plantillas_listado_button_editar}" th:data-original-title="#{plantillas_listado_button_editar}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologias/${ontologia.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																		<span th:if="${ontologia.kpi}"  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{plantillas_listado_button_editar}" th:data-original-title="#{plantillas_listado_button_editar}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologias/updateKPI/${ontologia.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+												
+																		<!-- PARTICIONAR -->
+																		<span th:if="${((user.rolId.nombre == 'ROL_ADMINISTRADOR' or user.rolId.nombre == 'ROL_ANALYTICS') and !ontologia.enparticionado)}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{plantillas_listado_button_particionar}" th:data-original-title="#{plantillas_listado_button_particionar}" th:onclick="'javascript:navigateUrl(\'' + @{|/particionado/${ontologia.id}|} + '\');'"><i class="fa fa-clone"></i></span>
+																		
+																		<!-- INDEXAR -->
+																		<span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontologia.id}|} + '\');'"><i class="fa fa-database"></i></span>
+																	</div>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+													
+													<!-- CONTENEDOR DE COLUMNAS SHOW/HIDE se clona despues del buscador.  -->
+													<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
+														<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
+															<i class="fa fa-eye"></i> Columnas <i class="fa fa-angle-down"></i>
+														</a>
+														<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
+															<label class="toggle-vis" data-column="0" > Nombre</label>
+															<label class="toggle-vis" data-column="1" > Propietario</label>
+															<label class="toggle-vis" data-column="2" > Descripción</label>
+															<label class="toggle-vis" data-column="3" > Activa</label>
+															<label class="toggle-vis" data-column="4" > Pública</label>
+															<label class="toggle-vis" data-column="5" > Particionada</label>
+															<label class="toggle-vis" data-column="6" > KPI</label>
+															<label class="toggle-vis" data-column="7" > Herencia</label>
+															<label class="toggle-vis" data-column="8" > Fecha de Alta</label>
+															<label class="toggle-vis" data-column="9" > Opciones</label>															
+														</div>
+													</div>
+											
+												</div>
+											</div>											
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- END PORTLET BASIC LIGHT -->							
+						</div>
+						<!-- END COL-12 -->						
+					</div>
+					<!-- END MAIN ROW -->				
+				</div>
+				<!-- END CONTENT BODY -->
+			</div>
+			<!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="footer::#footerFragment" class="page-footer"> </footer>	
+	
+	<!-- CORE -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	
+	
+	<script th:inline="javascript">	
+	var busqueda = new Array();
+	var busqueda = [[${param.identificacion}]] || [];
+	var descripcion = [[${param.descripcion}]] || '';
+	
+	busqueda[0] ? $('#identificacion').val(busqueda[0]) : busqueda[0] = '';
+	descripcion ? $('#descripcion').val(descripcion) : descripcion = '';
+	console.log('SEARCH FORM:  [ identificación: ' + busqueda[0] + ' descripcion: ' + descripcion + ']');
+	if (( busqueda[0] != '') || (descripcion != '')) { $('.search-toggle').trigger('click'); }
+	
+	// DATATABLES LANGUAJE FROM PROPERTIES.
+	datatable_lang = [[#{datatables_lang}]];	
+	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){
+		$.extend( true, $.fn.dataTable.defaults, {
+			language: languageJson
+		});	
+	}
+
+	</script>
+	
+	<script type="text/javascript">	
+	var optionName = 'ONTOLOGIAS';
+	
+	//<![CDATA[
+	function navigateUrl(url){  window.location.href = url;	}
+
+	$( document ).ready(function() {
+		document.getElementById("recuadro-tabla").style.visibility = "visible";
+		// Load Nombre then initialize plugin:
+		$.ajax({
+			url: "getNamesForAutocomplete",
+			type: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			mimeType: 'application/json',
+			success: function (source) {			 
+				var namesArray = new Array();
+				for(var i = 0; i < source.length; i++){
+				 namesArray[i] = { value: source[i] , data: source[i]};
+				}
+				// Initialize ajax autocomplete:
+				$('#identificacion').autocomplete({
+				 // serviceUrl: '/autosuggest/service/url',
+				 lookup: namesArray,
+				 lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
+					 var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
+					 return re.test(suggestion.value);
+					}	
+				});
+			}
+		});
+		
+		//SHOW/HIDE COLUMNS 
+		$('label.toggle-vis').on( 'click', function (e) {
+			e.preventDefault(); 
+			// Get the column API object
+			var column = $('#ontologias').DataTable().column( $(this).attr('data-column') ); 
+			// Toggle the visibility
+			column.visible( ! column.visible() );			
+			// toggle Text
+			$(this).toggleClass('text-muted line-through');			
+		});	
+		
+		// RESET DE FORMULARIO DE BUSQUEDA.
+		$('#reset_ontologia').on('click',function(){
+			$('#form_crear_ontologia')[0].reset();
+			$('#form_crear_ontologia')[0].submit();
+		});
+	});
+	 
+	
+	$(window).load(function(){  
+		//initialize after datatables are loaded 		
+		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
+		$('#dataTable-vis-toggle').removeClass('hide');
+	});
+	
+	
+
+	//]]>
+	</script>
+	
+
+	</body>
+</html>
+  
