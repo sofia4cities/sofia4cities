@@ -30,10 +30,10 @@
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
 
 	<!-- MAIN PAGE WRAPPER -->
-	<div class="page-wrapper marketPlaceC">
+	<div class="page-wrapper">
 	
 		<!-- BEGIN HEADER INCLUDE -->
-		<div th:include="fragments/header::#cabeceraFragment" class="page-header navbar navbar-fixed-top"></div>
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
 		<!-- END HEADER -->
 		
 		<!-- HEADER AND CONTENT DIVIDER -->
@@ -74,12 +74,11 @@
 						<div class="portlet light bordered">
 							<div class="portlet-title">
 								<div class="caption">
-									<i class="icon-home font-grey-gallery"></i>
+									<i class="flaticon-layers font-grey-gallery"></i>
 									<span class="caption-subject bold font-grey-gallery uppercase"> Smart4Cities </span>
 								</div>									
 								<div class="tools">
-									<a href="" class="collapse" data-original-title="" title=""> </a>
-									<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>										
+									<a href="" class="collapse" data-original-title="" title=""> </a>																			
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
 								</div>									
 							</div>
@@ -88,9 +87,9 @@
 								<div class="row">
 									<div class="col-md-12 alert-zone">
 										<!-- ALERTS ZONE -->
-										<div class="alert alert-warning alert-dismissable">
+										<div class="alert alert-info alert-dismissable">
 											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-											<i class="fa fa-warning"></i> <strong>Warning!</strong> system information alert.
+											<i class="fa fa-info-circle"></i> <strong>Info!</strong> Sofia4Cities System information alert.
 										</div>								
 									</div>
 									<div class="col-md-12">	
@@ -115,7 +114,7 @@
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 	
-	
+		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	var showLog = 0; // console.log toggle

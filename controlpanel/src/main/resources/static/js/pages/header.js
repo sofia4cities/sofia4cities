@@ -3,13 +3,13 @@ var HeaderController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Smart4Cities Control Panel'; 
 	var LIB_TITLE = 'Header Controller';	
-    var logControl = 1;    
+    var logControl = 0;    
 	
 	// CONTROLLER PRIVATE FUNCTIONS 	
 	
 	// GENERIC HEADER SEARCH
 	var searchDocs = function(){		
-		logControl ? console.log('searchDocs() Buscar --> '+ $("#search-query").val()) : '';
+		logControl ? console.log('searchDocs() Search --> '+ $("#search-query").val()) : '';
 		
 		// NOT-AVAILABLE 
 		$.alert({title: 'Sofia4Cities Search:', type: 'red' ,content: 'FUNCTIONALITY NOT-AVAILABLE!'}); return false;
@@ -59,11 +59,11 @@ var HeaderController = function() {
 				}
 			}
 			else{
-				// NO HAY BLOGS
+				// NO BLOGS
 				$("#blog-content-title").hide();
 			}
 		
-			// AGREGAMOS EL HTML RESULTANTE. 		
+			// ADD HTML RESULT. 		
 			$('#blog-content').html(html);
 			
 			// DOCS.
@@ -81,11 +81,11 @@ var HeaderController = function() {
 				}
 			}
 			else{
-				// NO HAY DOCS
+				// NO DOCS
 				$("#docs-content-title").hide();
 			}
 			
-			// AGREGAMOS EL HTML RESULTANTE.
+			// ADD HTML RESULT.
 			html += "</ul>";
 			$('#docs-content').html(html);
 			$('#modalDocs').modal();
