@@ -1,4 +1,4 @@
-<!--  IndraCompany © 2018  All rights reserved. Spain -->
+<!--SOFIA4CITIES CONTROL PANEL © Indra Sistemas, S.A. 2018  Spain. All rights reserved -->
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -16,7 +16,7 @@
           });
 		</script>
 
-		<!-- STYLESHEETS -->
+		<!-- STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
@@ -24,10 +24,9 @@
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 		
-		<!-- PLUGINS STYLESHEETS -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/js/datatable/datatables.bootstrap.css}"/>
+		<!-- PLUGINS STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/js/datatable/datatables.bootstrap.css}"/>		
 		
-		<!-- END STYLESHEETS -->
 	</head>	
 	
 	<!-- page-sidebar-closed to start page with collapsed menu -->
@@ -57,11 +56,11 @@
 					
 					<!-- BEGIN PAGE HEADER-->
 					
-					<!-- BEGIN PAGE BAR -->
+					<!-- BEGIN PAGE BAR AND BREADCRUM -->
 					<div class="page-bar margin-bottom-20">
 						<ul class="page-breadcrumb">
 							<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-							<li><a th:href="@{/ontologies/list}" > <span th:text="#{ontologias_breadcrumb}">Ontologies</span></a><i class="fa fa-circle"></i></li>
+							<li><a th:href="@{/ontologies/list}"> <span th:text="#{ontologias_breadcrumb}">Ontologies</span></a><i class="fa fa-circle"></i></li>
 							<li><span th:text="#{ontologias_breadcrumb_listar}">My Ontologies</span></li>
 						</ul>						
 					</div>
