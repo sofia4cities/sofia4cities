@@ -42,18 +42,29 @@ public class OntologyController {
 	public String listOntologies(Model uiModel,HttpServletRequest request)
 	{
 		
+		String identification = request.getParameter("identification");
+		String description = request.getParameter("description");
 		List<Ontology> ontologies;
 		Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
 		String userRole=authentication.getAuthorities().toArray()[0].toString();
 		if(userRole.equals("ROLE_ADMINISTRATOR"))
 		{
-			ontologies=this.ontologyRepository.findAll();
+			if(description!=null && identification!=null){
+				ontologies=this.ontologyRepository.findByIdentificationLikeAndDescriptionLike(identification, description);
+			}else{
+				ontologies=this.ontologyRepository.findAll();
+			}
 		}else
 		{
-			ontologies=this.ontologyRepository.findByUserId(authentication.getName());
+			if(description!=null && identification!=null){
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationLikeAndDescriptionLike(authentication.getName(), identification, description);
+			}else{
+				ontologies=this.ontologyRepository.findByUserId(authentication.getName());
+		
+			}
 		}
 		uiModel.addAttribute("ontologies",ontologies);
-		return "/ontologies/list";
+		return "ontologies/list";
 	}
 	
 	
