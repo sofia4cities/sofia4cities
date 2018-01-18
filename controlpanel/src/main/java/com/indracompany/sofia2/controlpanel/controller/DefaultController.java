@@ -25,15 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Controller
 public class DefaultController {
 
-<<<<<<< HEAD
-    
-=======
-    @GetMapping("/")
-    public String home1(Model model) {
-        return "/home";
-    }
 
->>>>>>> df74e2c4b8ba10905e2f5ba52bb4bac133dca659
     @GetMapping("/home")
     public String home() {
         return "/home";

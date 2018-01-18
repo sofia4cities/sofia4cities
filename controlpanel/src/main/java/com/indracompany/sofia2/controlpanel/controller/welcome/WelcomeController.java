@@ -1,3 +1,16 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.controlpanel.controller.welcome;
 
 import java.util.LinkedList;
@@ -22,6 +35,7 @@ import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.UserCDB;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.repository.UserCDBRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
@@ -45,6 +59,9 @@ public class WelcomeController {
 
 	@Autowired
 	private GadgetRepository gadgetRepository;
+	
+	@Autowired
+	private UserCDBRepository userCDBRepository;
 
 	@Autowired
 	private DashboardTypeRepository dashboardTypeRepository;
@@ -59,7 +76,8 @@ public class WelcomeController {
 
 	@GetMapping("/")
 	public String home1(Model model) {
-		//Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+		Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+		user=userCDBRepository.findByUserId(authentication.getName());
 		//rol de usuario
 		//authentication.getAuthorities().toArray();
 
@@ -69,23 +87,23 @@ public class WelcomeController {
 		this.urlDashboard=this.url+ "/console/dashboard/";
 		this.urlOntology=this.url+"/console/ontologias/";
 
-		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-
-		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName,null,genericUserName,user.getUserId()));
-
-
-		arrayLinks.addAll(constructGraphWithOntologies());
-
-
-		arrayLinks.addAll(constructGraphWithClientPlatforms());
-
-
-		arrayLinks.addAll(constructGraphWithVisualization());
-
-
-
-
-		System.out.println(arrayLinks);
+//		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
+//
+//		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName,null,genericUserName,user.getUserId()));
+//
+//
+//		arrayLinks.addAll(constructGraphWithOntologies());
+//
+//
+//		arrayLinks.addAll(constructGraphWithClientPlatforms());
+//
+//
+//		arrayLinks.addAll(constructGraphWithVisualization());
+//
+//
+//
+//
+//		System.out.println(arrayLinks);
 		return "/main";
 	}
 
