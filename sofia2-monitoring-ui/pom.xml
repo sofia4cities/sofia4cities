@@ -50,8 +50,8 @@
             <version>${spring-boot-admin-server.version}</version>
         </dependency>
         <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-server-ui</artifactId>
+            <groupId>com.indracompany.sofia2</groupId>
+            <artifactId>spring-boot-admin-server-ui-sofia2</artifactId>
             <version>${spring-boot-admin-server.version}</version>
         </dependency>
 
