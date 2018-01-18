@@ -11,15 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.interfaces;
+package com.indracompany.sofia2.persistence.quasar.formatter;
 
-import com.indracompany.sofia2.persistence.quasar.connector.dto.QuasarResponseDTO;
-import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-public interface BasicOpsQuasarDBRepository {
+@Slf4j
+public class FormatResult {
 	
-	public static final String ACCEPT_TEXT_CSV="text/csv";
-	public static final String ACCEPT_APPLICATION_JSON="application/json";
-	
-	public QuasarResponseDTO executeQuery(String query, int offset, SSAPQueryResultFormat resultType/*, UserCDB user*/, String formatter) throws Exception;
+	@Getter @Setter private String data;
+	@Getter @Setter private String contentType;
+
 }

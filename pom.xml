@@ -23,6 +23,7 @@
 		<spring-boot.version>1.5.9.RELEASE</spring-boot.version>	
         <spring-boot-admin-server.version>1.5.6</spring-boot-admin-server.version>
         <spring-boot-admin-starter-client.version>1.5.6</spring-boot-admin-starter-client.version>	
+		<httpclient.version>4.5.2</httpclient.version>
 		<!--LICENSE INFO -->
         <license.dir>${basedir}</license.dir>
         <project.name>Sofia4Cities by Sofia2</project.name>
