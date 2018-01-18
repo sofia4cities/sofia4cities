@@ -168,7 +168,7 @@ public class InitConfigDB {
 			init_GadgetQuery();
 			init_Gadget();
 			init_GeneratorType();
-			init_InstanceGenerator();
+			//init_InstanceGenerator();
 			//
 			init_ConsoleMenu();
 			init_ConsoleMenuOption();

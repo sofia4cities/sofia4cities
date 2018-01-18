@@ -28,7 +28,10 @@ sofia2: #Config Sofia2 specific
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
-  
+   urls:
+    iotbroker: http://localhost:18080
+    
+    
 management.security.enabled: false
  
 spring: ## General Config  
