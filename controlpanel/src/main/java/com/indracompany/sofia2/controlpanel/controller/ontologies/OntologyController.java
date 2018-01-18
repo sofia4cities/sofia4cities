@@ -64,7 +64,7 @@ public class OntologyController {
 			}
 		}
 		uiModel.addAttribute("ontologies",ontologies);
-		return "ontologies/list";
+		return "/ontologies/list";
 	}
 	
 	

@@ -18,12 +18,18 @@ import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
 import org.springframework.boot.actuate.endpoint.MetricsEndpointMetricReader;
 import org.springframework.boot.actuate.endpoint.PublicMetrics;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import com.github.dandelion.core.web.DandelionFilter;
+import com.github.dandelion.core.web.DandelionServlet;
+import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
+import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 
 
 @SpringBootApplication
@@ -55,6 +61,25 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
     @Bean
     public MetricsEndpointMetricReader metricsEndpointMetricReader(MetricsEndpoint metricsEndpoint) {
         return new MetricsEndpointMetricReader(metricsEndpoint);
+    }
+    @Bean
+    public DandelionDialect dandelionDialect() {
+        return new DandelionDialect();
+    }
+
+    @Bean
+    public DataTablesDialect dataTablesDialect(){
+        return new DataTablesDialect();
+    }
+
+    @Bean
+    public DandelionFilter dandelionFilter() {
+        return new DandelionFilter();
+    }
+
+    @Bean
+    public ServletRegistrationBean dandelionServletRegistrationBean() {
+        return new ServletRegistrationBean(new DandelionServlet(), "/dandelion-assets/*");
     }
 
 
