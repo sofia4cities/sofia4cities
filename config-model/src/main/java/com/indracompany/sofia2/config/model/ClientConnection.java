@@ -43,7 +43,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "CLIENT_CONNECTION")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ClientConnection extends AuditableEntityWithUUID{
 
 	/* Comentado para posterior implementacion

@@ -39,8 +39,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "GADGET_QUERY")
 @Configurable
-@SuppressWarnings("deprecation")
-
 public class GadgetQuery extends AuditableEntityWithUUID{
 
 

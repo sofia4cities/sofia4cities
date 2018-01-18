@@ -14,17 +14,12 @@
 package com.indracompany.sofia2.persistence.mongodb;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import com.indracompany.sofia2.persistence.ContextData;
-import com.mongodb.CommandResult;
-import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 
 import cz.jirutka.spring.embedmongo.EmbeddedMongoFactoryBean;

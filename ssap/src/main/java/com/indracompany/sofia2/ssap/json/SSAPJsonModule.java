@@ -13,10 +13,9 @@
  */
 package com.indracompany.sofia2.ssap.json;
 
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.util.VersionUtil;
-import com.fasterxml.jackson.databind.Module.SetupContext;
+import com.fasterxml.jackson.databind.Module;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.json.version.one.OneSSAPBodyMessageMixin;

@@ -13,9 +13,6 @@
  */
 package com.indracompany.sofia2.persistence.mongodb;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -25,9 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
-import com.mongodb.client.MongoDatabase;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -46,7 +46,6 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-
 public class ClientPlatformComtainerIntegrationTest {
 
 	@Autowired

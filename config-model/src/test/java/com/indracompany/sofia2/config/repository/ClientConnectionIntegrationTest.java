@@ -21,7 +21,6 @@
 package com.indracompany.sofia2.config.repository;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -36,6 +35,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
+
 import lombok.extern.slf4j.Slf4j;
 
 

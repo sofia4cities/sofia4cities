@@ -36,7 +36,6 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "ONTOLOGY_CATEGORY")
-@SuppressWarnings("deprecation")
 public class OntologyCategory extends AuditableEntity {
 
 

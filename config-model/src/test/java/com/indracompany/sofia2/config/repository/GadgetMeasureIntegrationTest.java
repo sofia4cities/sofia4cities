@@ -35,7 +35,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
-import com.indracompany.sofia2.config.model.GadgetMeasure;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -22,12 +22,10 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntity;
@@ -37,7 +35,6 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "CONSOLE_MENU")
-@SuppressWarnings("deprecation")
 public class ConsoleMenu extends AuditableEntity{
 
 	@Id

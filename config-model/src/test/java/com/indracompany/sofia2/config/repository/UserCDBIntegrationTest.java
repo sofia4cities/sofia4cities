@@ -60,12 +60,12 @@ public class UserCDBIntegrationTest {
 
 	@Test
 	public void test1_Count() { 
-		Assert.assertTrue(this.repository.count()==6);		
+		Assert.assertTrue(this.repository.count()==7);		
 	}
 
 	@Test
 	public void test3_FindUserNoAdmin() { 
-		Assert.assertTrue(this.repository.findUsersNoAdmin().size()==5L);		
+		Assert.assertTrue(this.repository.findUsersNoAdmin().size()==6L);		
 	}
 
 	@Test

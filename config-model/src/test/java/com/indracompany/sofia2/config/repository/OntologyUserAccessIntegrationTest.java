@@ -47,35 +47,29 @@ import lombok.extern.slf4j.Slf4j;
 public class OntologyUserAccessIntegrationTest {
 
 	@Autowired
-	OntologyUserAccessTypeRepository ouatrepository;
+	OntologyUserAccessTypeRepository ouatRep;
 	@Autowired
 	OntologyUserAccessRepository repository;
+	@Autowired
+	OntologyRepository ontRep;
 
 	@Before
-	public void setUp()
-	{
-		List<OntologyUserAccess> users=this.repository.findAll();
-		if(users.isEmpty())
-		{
-			log.info("No users found...adding");
-			OntologyUserAccess user=new OntologyUserAccess();
+	public void setUp() {
+		List<OntologyUserAccess> users = this.repository.findAll();
+		if (users.isEmpty()) {
+			log.info("No OntologyUserAccess found...adding");
+			OntologyUserAccess user = new OntologyUserAccess();
 			user.setUserId("6");
+			user.setOntologyId(ontRep.findAll().get(0));
+			user.setOntologyUserAccessTypeId(ouatRep.findAll().get(0));
 			this.repository.save(user);
-
-
-
-
 		}
-
-
 	}
 
 	@Test
-	public void findByUserId()
-	{
-
-		OntologyUserAccess user=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByUserId(user.getUserId()).size()>0);
+	public void findByUserId() {
+		OntologyUserAccess user = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findByUserId(user.getUserId()).size() > 0);
 
 	}
 }

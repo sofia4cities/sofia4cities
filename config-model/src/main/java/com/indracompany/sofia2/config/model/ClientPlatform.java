@@ -43,19 +43,11 @@ import lombok.Setter;
 @Entity
 @Table(name = "CLIENT_PLATFORM")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ClientPlatform extends AuditableEntityWithUUID  {
-
-
-
 
     @OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
     @Getter @Setter private Set<ClientPlatformOntology> clientPlatformOntologies;
-
-
-
-
 
 	@OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.REMOVE)
 	@OnDelete(action = OnDeleteAction.CASCADE)
