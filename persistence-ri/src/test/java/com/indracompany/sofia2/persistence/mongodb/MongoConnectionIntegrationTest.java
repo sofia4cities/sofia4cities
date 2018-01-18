@@ -51,7 +51,7 @@ public class MongoConnectionIntegrationTest {
 	@Autowired
 	MongoTemplate nativeTemplate;
 	static final String COL_NAME = "jjcollection";
-	static final String DATABASE = "sofia";
+	static final String DATABASE = "sofia2_s4c";
 			
 	@Test
 	public void test1_MongoDbCredentials() {
