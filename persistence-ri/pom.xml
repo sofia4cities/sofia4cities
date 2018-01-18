@@ -24,6 +24,11 @@
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
         </dependency>
+        <dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-config-model</artifactId>
+            <version>${sofia2.version}</version>
+        </dependency>
 					
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -35,7 +40,7 @@
 		  <artifactId>hibernate-jpa-2.1-api</artifactId>
 		  <version>1.0.0.Final</version>
 		</dependency>
-		<dependency>
+		<!-- dependency>
 			<groupId>de.flapdoodle.embed</groupId>
 			<artifactId>de.flapdoodle.embed.mongo</artifactId>
 			<scope>test</scope>
@@ -44,7 +49,7 @@
 			<groupId>cz.jirutka.spring</groupId>
 			<artifactId>embedmongo-spring</artifactId>
 			<scope>test</scope>
-		</dependency>
+		</dependency-->
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
