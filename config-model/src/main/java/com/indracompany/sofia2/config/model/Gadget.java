@@ -24,7 +24,9 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -42,7 +44,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "GADGET")
 @Configurable
-@SuppressWarnings("deprecation")
 public class Gadget extends AuditableEntityWithUUID{
 
 	@Column(name = "GCODE")
@@ -61,56 +62,11 @@ public class Gadget extends AuditableEntityWithUUID{
 	@Getter @Setter private boolean isPublic;
 
 
-	/*
-	 * 
+	@ManyToOne
+	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "id")
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@Getter @Setter private Token tokenId;
 
-
-	    @OneToMany(mappedBy = "gadgetId", cascade = CascadeType.REMOVE)
-		@OnDelete(action = OnDeleteAction.CASCADE)
-	    @ForeignKey(name = "FK_GRUPOSGADGET_GADGETID")
-	    private Set<Gruposgadget> gruposgadgets;
-
-
-		@ManyToOne
-	    @JoinColumn(name = "TOKEN_ID", referencedColumnName = "id")
-		@OnDelete(action = OnDeleteAction.NO_ACTION)
-	    @ForeignKey(name = "FK_GADGET_TOKEN")
-	    private Token tokenId;ç
-
-	   	 public Set<GadgetQuery> getGadgetQueries() {
-		 return gadgetQueries;
-	 }
-
-	 public void setGadgetQueries(Set<GadgetQuery> gadgetQueries) {
-		 this.gadgetQueries = gadgetQueries;
-	 }
-
-	 public Set<GadgetMeasure> getGadgetMeasures() {
-		 return gadgetMeasures;
-	 }
-
-	 public void setGadgetMeasures(Set<GadgetMeasure> gadgetMeasures) {
-		 this.gadgetMeasures = gadgetMeasures;
-	 }
-
-	 public Set<Gruposgadget> getGruposgadgets() {
-		 return gruposgadgets;
-	 }
-
-	 public void setGruposgadgets(Set<Gruposgadget> gruposgadgets) {
-		 this.gruposgadgets = gruposgadgets;
-	 }
-
-	 public Token getTokenId() {
-		 return tokenId;
-	 }
-
-	 public void setTokenId(Token tokenId) {
-		 this.tokenId = tokenId;
-	 }
-
-
-	 */
 	@OneToMany(mappedBy = "gadgetId", cascade = CascadeType.REMOVE)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter @Setter private Set<GadgetQuery> gadgetQueries;

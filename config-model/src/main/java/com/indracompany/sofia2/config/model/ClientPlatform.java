@@ -43,41 +43,11 @@ import lombok.Setter;
 @Entity
 @Table(name = "CLIENT_PLATFORM")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ClientPlatform extends AuditableEntityWithUUID  {
-
-	/* Se deja comentado hasta migración
-
 
     @OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_KPO_KP")
-    private Set<Kpontologia> kpontologias;
-
-    @OneToMany(mappedBy = "kpId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_KP_ONTOLOGIAGRUPO")
-    private Set<Kpontologiagrupo> kpontologiagrupoes;
-
-
-	public Set<Kpontologia> getKpontologias() {
-        return this.kpontologias;
-    }
-
-	public void setKpontologias(Set<Kpontologia> kpontologias) {
-        this.kpontologias = kpontologias;
-    }
-
-	public Set<Kpontologiagrupo> getKpontologiagrupoes() {
-        return this.kpontologiagrupoes;
-    }
-
-	public void setKpontologiagrupoes(Set<Kpontologiagrupo> kpontologiagrupoes) {
-        this.kpontologiagrupoes = kpontologiagrupoes;
-    }
-
-	 */
-
+    @Getter @Setter private Set<ClientPlatformOntology> clientPlatformOntologies;
 
 	@OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.REMOVE)
 	@OnDelete(action = OnDeleteAction.CASCADE)

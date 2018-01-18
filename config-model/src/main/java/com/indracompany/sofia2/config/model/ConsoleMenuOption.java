@@ -41,8 +41,6 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "CONSOLE_MENU_OPTION")
-@SuppressWarnings("deprecation")
-
 public class ConsoleMenuOption extends AuditableEntity{
 
 	@Id

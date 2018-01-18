@@ -42,8 +42,6 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "INSTANCE_GENERATOR")
-@SuppressWarnings("deprecation")
-
 public class InstanceGenerator extends AuditableEntity{
 
 

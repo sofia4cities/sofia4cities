@@ -20,7 +20,6 @@ import java.util.UUID;
 import javax.persistence.PersistenceException;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

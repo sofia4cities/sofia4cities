@@ -37,8 +37,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "TOKEN")
 @Configurable
-@SuppressWarnings("deprecation")
-
 public class Token extends AuditableEntityWithUUID{
 
 	@ManyToOne

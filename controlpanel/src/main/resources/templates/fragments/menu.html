@@ -1,0 +1,127 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<!-- CONTROL PANEL MENU -->
+<div th:fragment="menuFragment" id="menuFragment">
+
+	<!-- MENU CONTROLLER JS -->
+	<script th:src="@{/static/js/pages/menu.js}"/>
+
+	<!-- BEGIN SIDEBAR -->
+	<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+	<!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+	<div  class="page-sidebar navbar-collapse collapse">
+		<!-- BEGIN SIDEBAR MENU -->
+		<!-- DOC: Apply "page-sidebar-menu-light" class right after "page-sidebar-menu" to enable light sidebar menu style(without borders) -->
+		<!-- DOC: Apply "page-sidebar-menu-hover-submenu" class right after "page-sidebar-menu" to enable hoverable(hover vs accordion) sub menu mode -->
+		<!-- DOC: Apply "page-sidebar-menu-closed" class right after "page-sidebar-menu" to collapse("page-sidebar-closed" class must be applied to the body element) the sidebar sub menu mode -->
+		<!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+		<!-- DOC: Set data-keep-expand="true" to keep the submenues expanded -->
+		<!-- DOC: Set data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+		
+		<ul class="page-sidebar-menu page-header-fixed page-sidebar-menu-closed" data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+			<!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+			<!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+			<li class="sidebar-toggler-wrapper hide">
+				<div class="sidebar-toggler">
+					<span></span>
+				</div>
+			</li>
+			<!-- END SIDEBAR TOGGLER BUTTON -->
+			<!-- DOC: To remove the search box from the sidebar you just need to completely remove the below "sidebar-search-wrapper" LI element -->
+			<li class="sidebar-search-wrapper">
+				<!-- BEGIN RESPONSIVE QUICK SEARCH FORM -->
+				<!-- DOC: Apply "sidebar-search-bordered" class the below search form to have bordered search box -->
+				<!-- DOC: Apply "sidebar-search-bordered sidebar-search-solid" class the below search form to have bordered and solid search box -->
+				<!-- DOC: searchDocs()  header.js -->
+				<form class="sidebar-search  sidebar-search-bordered " id="search-form" action="javascript:HeaderController.search();" method="get">
+					<a href="javascript:;" class="remove">
+						<i class="icon-close"></i>
+					</a>
+					<div class="input-group">
+						<input type="text" class="form-control" id="search-query" placeholder="Search..."/>
+						<span class="input-group-btn">
+							<a href="javascript:;" class="btn submit">
+								<i class="icon-magnifier"></i>
+							</a>
+						</span>
+					</div>
+				</form>
+				<!-- END RESPONSIVE QUICK SEARCH FORM -->
+			</li>
+			<!-- HOME -->
+			<li class="nav-item start">
+				<a th:href="@{/}" href="index.html" class="nav-link nav-toggle">
+					<i class="flaticon-layers"></i>
+					<span class="title" th:text="#{menu_home}">Consola</span>
+				</a>							
+			</li>		
+			<!-- CARGA DINAMICA DE MENUS POR ROL -->
+			
+		</ul>
+		<!-- END SIDEBAR MENU -->		 			
+	</div>
+	<!-- END PAGE-SIDEBAR -->
+	
+	<!-- MENU DATA TO SEND TO MENU CONTROLLER  --> 
+	<script type="text/javascript" th:inline="javascript"> 
+		
+		// TO-DO: GET REAL-DATA FROM SERVER.
+		var menuJson = {
+				"menu":"Sofia4Cities",
+				"rol":"ROL_ADMINISTRADOR",
+				"noSession":"/console/login",				
+				"navigation":[					
+					{"title":{"EN":"Ontologies","ES":"Ontologías"}, "icon": "flaticon-network", "url": "",
+						"submenu": [
+							{"title":{"EN":"Create Ontology","ES":"Crear Ontología"}, "icon": "", "url": "/controlpanel/ontologies/create"},
+							{"title":{"EN":"Ontologies Status","ES":"Estado de Cargas"}, "icon": "", "url": "/controlpanel/ontologies/list"},
+							{"title":{"EN":"My Ontologies","ES":"Mis Ontologías"}, "icon": "", "url": "/controlpanel/ontologies/list"},
+							{"title":{"EN":"Real-Time Instance Generator","ES":"Simulador Tiempo-Real Ontologías"}, "icon": "", "url": "/controlpanel/generadorinstancias/list"},
+							{"title":{"EN":"Ontologies Authorization","ES":"Autorizaciones de Ontología"}, "icon": "", "url": "/controlpanel/ontologies/authorize/list"}
+						]
+					},
+					{"title":{"EN":"Sofia2 THINKPs","ES":"THINKPs Sofia2"}, "icon": "flaticon-share", "url": "",
+						"submenu": [
+							{"title":{"EN":"My THINKPs","ES":"Mis THINKPs"}, "icon": "", "url": "/kps/list"},
+							{"title":{"EN":"THINKPs Status","ES":"Estado de THINKPs"}, "icon": "", "url": "/gestiondispositivos/list"},
+							{"title":{"EN":"THINKPs Container","ES":"Contenedor de THINKPs"}, "icon": "", "url": "/contenedorkps/list"}
+						]
+					},
+					{"title":{"EN":"Visualization","ES":"Visualización"}, "icon": "flaticon-dashboard", "url": "",
+						"submenu": [
+							{"title":{"EN":"My Gadgets","ES":"Mis Gadgets"}, "icon": "", "url": "/gadget/list"},
+							{"title":{"EN":"My Dashboards","ES":"Mis Dashboards"}, "icon": "", "url": "/dashboard/listgroup"}
+						]
+					},
+					{"title":{"EN":"Tools","ES":"Herramientas"}, "icon": "flaticon-open-box", "url": "",
+						"submenu": [
+							{"title":{"EN":"RTDB and HDB Console","ES":"Consola DBTR y BDH"}, "icon": "", "url": "/databases/show"}
+						]
+					},
+					{"title":{"EN":"Administration","ES":"Administración"}, "icon": "flaticon-cogwheel-2", "url": "",
+						"submenu": [
+							{"title":{"EN":"Ontology Templates","ES":"Plantillas de Ontologías"}, "icon": "", "url": "/plantillas/list"},
+							{"title":{"EN":"Users","ES":"Usuarios"}, "icon": "", "url": "/usuarioses/list"},
+							{"title":{"EN":"Connections","ES":"Conexiones"}, "icon": "", "url": "/gestionconexiones/show"}
+						]
+					},
+					{"title":{"EN":"Social Media","ES":"Social Media"}, "icon": "la la-globe", "url": "",
+						"submenu": [
+							{"title":{"EN":"Social Media","ES":"Social Media"}, "icon": "", "url": "/socialMedia/socialMedia"},
+							{"title":{"EN":"Access Settings","ES":"Configuración de Acceso"}, "icon": "", "url": "/configuracionRRSS/list"},
+							{"title":{"EN":"Schedule Twitter Streaming Search","ES":"Programación Streaming Twitter"}, "icon": "", "url": "/usuariosTwitter/scheduledSearch"}
+						]
+					},
+					{"title":{"EN":"BOTs","ES":"BOTs"}, "icon": "la la-cubes", "url": "",
+						"submenu": [
+							{"title":{"EN":"My Bots","ES":"Mis Bots"}, "icon": "", "url": "/bots/list"},
+							{"title":{"EN":"My Knowledge Bases","ES":"Bots Scripts"}, "icon": "", "url": "/bots/scripts/list"}
+						]
+					}
+				]
+			};
+		
+		// LOAD DATA TO USE IN MENUCONTROLLER
+		// MENU CONTROLLER LOAD AND INIT ITSELF
+	</script>
+</div>
+<!-- END SOFIA2 CONTROL PANEL MENU -->

@@ -20,20 +20,16 @@
 package com.indracompany.sofia2.config.security;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Getter;
 import lombok.Setter;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 public class UserInfo implements UserDetails, Serializable {
@@ -104,21 +100,10 @@ public class UserInfo implements UserDetails, Serializable {
 		}
 	}
 
-	@Override
-	public String getUsername() {
-		return username;
-	}
-
+	
 	@Override
 	public boolean isEnabled() {
 		return enabled;
 	}
-
-	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 }

@@ -43,7 +43,6 @@ import com.indracompany.sofia2.config.model.InstanceGenerator;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
 import com.indracompany.sofia2.config.model.OntologyEmulator;
-import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.RoleType;
 import com.indracompany.sofia2.config.model.Token;
@@ -168,7 +167,7 @@ public class InitConfigDB {
 			init_GadgetQuery();
 			init_Gadget();
 			init_GeneratorType();
-			init_InstanceGenerator();
+			//init_InstanceGenerator();
 			//
 			init_ConsoleMenu();
 			init_ConsoleMenuOption();

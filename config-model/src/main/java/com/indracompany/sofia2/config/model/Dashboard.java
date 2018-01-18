@@ -37,9 +37,7 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "DASHBOARD")
-@SuppressWarnings("deprecation")
 public class Dashboard extends AuditableEntityWithUUID{
-
 
 	@Column(name = "MODEL",nullable = false)
 	@NotNull

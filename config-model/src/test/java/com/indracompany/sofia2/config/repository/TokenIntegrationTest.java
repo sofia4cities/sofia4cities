@@ -24,7 +24,6 @@ package com.indracompany.sofia2.config.repository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,7 +36,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Token;
 
 import lombok.extern.slf4j.Slf4j;

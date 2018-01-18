@@ -20,9 +20,6 @@
 
 package com.indracompany.sofia2.config.model;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -33,14 +30,12 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
@@ -50,7 +45,6 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "ONTOLOGY")
-@SuppressWarnings("deprecation")
 public class Ontology extends AuditableEntityWithUUID{
 
 
@@ -59,7 +53,7 @@ public class Ontology extends AuditableEntityWithUUID{
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String jsonSchema;
+	@Setter private String jsonSchema;
 
 	@Column(name = "XML_Diagram")
 	@Lob
@@ -83,22 +77,11 @@ public class Ontology extends AuditableEntityWithUUID{
 			schema = schema.replaceAll("&quot;", "\"");
 			schema = schema.replaceAll("\"", "'");
 			schema = schema.replaceAll("\n", "");
+			schema = schema.replaceAll("\t", "");
+			schema = schema.replaceAll("\r", "");
 		}
 		return schema;
 	}
-
-
-
-	private String prepareJsonSchema(String jsonSchema) {
-		String myJsonSchema = jsonSchema;
-		if (myJsonSchema != null) {
-			myJsonSchema = myJsonSchema.replace("\t", "");
-			myJsonSchema = myJsonSchema.replace("\r", "");
-			myJsonSchema = myJsonSchema.replace("\n", "");
-		}
-		return myJsonSchema;
-	}
-
 
 
 	@OneToMany(mappedBy = "ontologyId", cascade = CascadeType.ALL)

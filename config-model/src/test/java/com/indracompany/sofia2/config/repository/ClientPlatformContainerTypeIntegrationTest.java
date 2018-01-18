@@ -30,11 +30,8 @@ import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
-
-import com.indracompany.sofia2.config.repository.ClientPlatformContainerTypeRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,7 +68,7 @@ public class ClientPlatformContainerTypeIntegrationTest {
 			type.setId(3);
 			type.setType("URL");
 			repository.save(type);		
-		}
+		}	
 	}
 
 	@Test

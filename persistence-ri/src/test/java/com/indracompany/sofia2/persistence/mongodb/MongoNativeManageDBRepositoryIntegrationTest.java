@@ -13,9 +13,6 @@
  */
 package com.indracompany.sofia2.persistence.mongodb;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -25,9 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
-import com.mongodb.client.MongoDatabase;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,24 +52,17 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	*/
 	
 	@Test
-	public void test_getStatusDatabase() {
+	public void test1_getStatusDatabase() {
 		try {
-			Assert.assertEquals(repository.getStatusDatabase().get("sofia"),Boolean.TRUE);			
+			Assert.assertEquals(repository.getStatusDatabase().get("sofia2_s4c"),Boolean.TRUE);			
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB");
 		}
 	}	
-	@Test
-	public void test_getListOfTables() {
-		try {
-			Assert.assertTrue(repository.getListOfTables().size()>0);			
-		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB");
-		}
-	}	
+	
 
 	@Test
-	public void test_getListOfTables4Ontology() {
+	public void test3_getListOfTables4Ontology() {
 		try {
 			Assert.assertEquals(repository.getListOfTables4Ontology("MensajesPlataforma").size(),1);			
 		} catch (Exception e) {
@@ -83,7 +71,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	}	
 	
 	@Test
-	public void test_createCollection() {
+	public void test1_createCollection() {
 		try {
 			int size1= repository.getListOfTables().size();
 			repository.createTable4Ontology("ONT_TODELETE_1", 
