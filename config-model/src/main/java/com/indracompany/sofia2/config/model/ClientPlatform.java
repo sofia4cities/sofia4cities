@@ -1,3 +1,16 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 /*******************************************************************************
  * © Indra Sistemas, S.A.
  * 2013 - 2018  SPAIN
@@ -33,37 +46,15 @@ import lombok.Setter;
 @SuppressWarnings("deprecation")
 public class ClientPlatform extends AuditableEntityWithUUID  {
 
-	/* Se deja comentado hasta migración
+
 
 
     @OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_KPO_KP")
-    private Set<Kpontologia> kpontologias;
-
-    @OneToMany(mappedBy = "kpId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_KP_ONTOLOGIAGRUPO")
-    private Set<Kpontologiagrupo> kpontologiagrupoes;
+    @Getter @Setter private Set<ClientPlatformOntology> clientPlatformOntologies;
 
 
-	public Set<Kpontologia> getKpontologias() {
-        return this.kpontologias;
-    }
 
-	public void setKpontologias(Set<Kpontologia> kpontologias) {
-        this.kpontologias = kpontologias;
-    }
-
-	public Set<Kpontologiagrupo> getKpontologiagrupoes() {
-        return this.kpontologiagrupoes;
-    }
-
-	public void setKpontologiagrupoes(Set<Kpontologiagrupo> kpontologiagrupoes) {
-        this.kpontologiagrupoes = kpontologiagrupoes;
-    }
-
-	 */
 
 
 	@OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.REMOVE)

@@ -5,7 +5,7 @@ server: #Tomcat Configuration
    tomcat: 
       access_log_enabled: true
       basedir: target/tomcat
-      
+
 sofia2: #Config Sofia2 specific
    init:
       configdb: true

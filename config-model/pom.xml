@@ -15,6 +15,10 @@
 
 	<name>sofia2-config-model</name>
 	<description>Config Model</description>
+		
+	<properties>
+    <license.dir>${project.parent.basedir}</license.dir>
+	</properties>
 	
 	<dependencies>
 		<!--por defecto usará Tomcat-pool-->
