@@ -16,12 +16,11 @@ package com.indracompany.sofia2.controlpanel.controller.welcome;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.annotation.JsonValue;
 
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.*;
-
-public class GraphDTO {
+public class GraphDTO implements Serializable {
 
 
 

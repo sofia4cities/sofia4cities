@@ -40,8 +40,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "ONTOLOGY_EMULATOR")
 @Configurable
-@SuppressWarnings("deprecation")
-
 public class OntologyEmulator extends AuditableEntityWithUUID{
 
 

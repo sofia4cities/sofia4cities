@@ -44,7 +44,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "GADGET")
 @Configurable
-@SuppressWarnings("deprecation")
 public class Gadget extends AuditableEntityWithUUID{
 
 	@Column(name = "GCODE")

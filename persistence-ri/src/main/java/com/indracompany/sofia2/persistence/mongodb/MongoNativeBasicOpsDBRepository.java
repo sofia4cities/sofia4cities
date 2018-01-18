@@ -41,7 +41,6 @@ import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
-import com.indracompany.sofia2.ssap.SSAPQueryType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.util.JSON;
@@ -176,7 +175,7 @@ public class MongoNativeBasicOpsDBRepository implements BasicOpsDBRepository {
 		String data = "";
 		String query = "";
 		try {
-			if (statementAux == null && statementAux.length() == 0)
+			if (statementAux == null || statementAux.length() == 0)
 				throw new DBPersistenceException("Statement null: " + statement);
 
 			if (statementAux.startsWith("{")) {
@@ -279,7 +278,7 @@ public class MongoNativeBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public List<String> find(String collection, String query, int limit) throws DBPersistenceException {
 		log.debug("find", query, collection);
-		List<String> result = new ArrayList();
+		List<String> result = new ArrayList<>();
 		try {
 			query = util.convertObjectIdV1toVLegacy(query);
 			MongoIterable<BasicDBObject> cursor = mongoDbConnector.find(database, collection, util.prepareQuotes(query),
@@ -324,7 +323,7 @@ public class MongoNativeBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public List<String> findAll(String collection, int limit) throws DBPersistenceException {
 		try {
-			List<String> result = new ArrayList();
+			List<String> result = new ArrayList<>();
 			log.debug("findAll", collection, limit);
 			for (BasicDBObject obj : mongoDbConnector.find(database, collection, "{}", limit)) {
 				result.add(obj.toJson());

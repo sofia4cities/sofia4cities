@@ -180,7 +180,7 @@ public class MongoNativeManageDBRepository implements ManageDBRepository{
 
 	@Override
 	public Map<String, Boolean> getStatusDatabase() {
-		Map<String,Boolean> map = new HashMap();
+		Map<String,Boolean> map = new HashMap<>();
 		map.put(database, mongoDbConnector.testConnection());		
 		return map;
 	}

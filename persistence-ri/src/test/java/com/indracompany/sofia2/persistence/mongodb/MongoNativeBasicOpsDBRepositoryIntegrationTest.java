@@ -19,7 +19,6 @@ import java.util.UUID;
 
 import javax.persistence.PersistenceException;
 
-import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,16 +31,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoIterable;
 
 import lombok.extern.slf4j.Slf4j;
 

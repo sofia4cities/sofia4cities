@@ -40,8 +40,6 @@ import lombok.Setter;
 @Table(name = "ONTOLOGY_USER_ACCESS", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "ONTOLOGY_ID", "USER_ID" }) })
 @Configurable
-@SuppressWarnings("deprecation")
-
 public class OntologyUserAccess extends AuditableEntityWithUUID{
 
 	@ManyToOne

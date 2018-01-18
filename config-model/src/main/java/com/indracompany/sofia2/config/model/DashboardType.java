@@ -38,7 +38,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "DASHBOARD_TYPE")
 @Configurable
-@SuppressWarnings("deprecation")
 public class DashboardType extends AuditableEntity{
 
 	@Id

@@ -28,7 +28,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -41,7 +40,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "ROLE_TYPE")
 @Configurable
-@SuppressWarnings("deprecation")
 public class RoleType extends AuditableEntity {
 
 	@Id

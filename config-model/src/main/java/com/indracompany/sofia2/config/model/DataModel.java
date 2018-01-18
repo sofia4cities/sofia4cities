@@ -36,7 +36,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "DATA_MODEL")
 @Configurable
-@SuppressWarnings("deprecation")
 public class DataModel extends AuditableEntityWithUUID {
 
 	@Column(name = "JSONSCHEMA",nullable = false)
@@ -77,7 +76,7 @@ public class DataModel extends AuditableEntityWithUUID {
 		return schema;
 	}
 
-	private String prepareSchema(String jsonschema) {
+	public String prepareSchema(String jsonschema) {
 		String myjsonschema = jsonschema;
 		if (myjsonschema != null) {
 			myjsonschema = myjsonschema.replace("\t", "");

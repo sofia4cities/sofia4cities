@@ -36,9 +36,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "CLIENT_PLATFORM_ONTOLOGY")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ClientPlatformOntology extends AuditableEntityWithUUID{
-
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)

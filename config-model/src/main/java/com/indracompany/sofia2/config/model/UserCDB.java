@@ -44,7 +44,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "USER")
 @Configurable
-@SuppressWarnings("deprecation")
 public class UserCDB extends AuditableEntityWithUUID{
 
 	@Column(name = "EMAIL", length = 255,nullable = false)

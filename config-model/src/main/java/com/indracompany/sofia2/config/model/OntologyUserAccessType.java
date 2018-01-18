@@ -42,8 +42,6 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "ONTOLOGY_USER_ACCES_TYPE")
-@SuppressWarnings("deprecation")
-
 public class OntologyUserAccessType extends AuditableEntity{
 
 	@Id

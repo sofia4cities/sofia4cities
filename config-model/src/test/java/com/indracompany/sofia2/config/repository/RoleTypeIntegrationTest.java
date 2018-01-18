@@ -62,12 +62,12 @@ public class RoleTypeIntegrationTest {
 
 	@Test
 	public void test1_Count() { 
-		Assert.assertTrue(this.repository.count()==6);		
+		Assert.assertTrue(this.repository.count()==7);		
 	}
 
 	@Test
 	public void test2_GetAll() {
-		Assert.assertTrue(this.repository.findAll().size()==6);
+		Assert.assertTrue(this.repository.findAll().size()==7);
 	}
 
 	@Test

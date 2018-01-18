@@ -38,8 +38,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "CLIENT_PLATFORM_CONTAINER")
 @Configurable
-@SuppressWarnings("deprecation")
-
 public class ClientPlatformContainer extends AuditableEntityWithUUID{
 
 	@ManyToOne
