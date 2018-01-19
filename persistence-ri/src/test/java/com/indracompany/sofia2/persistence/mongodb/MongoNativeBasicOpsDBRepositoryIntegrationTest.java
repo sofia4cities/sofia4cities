@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import javax.persistence.PersistenceException;
 
+import org.json.JSONArray;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,7 +35,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.interfaces.BasicOpsQuasarDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
+import com.indracompany.sofia2.persistence.quasar.connector.dto.QuasarResponseDTO;
+import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,12 +56,15 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	MongoDbTemplateImpl connect;
 	
 	@Autowired
-	BasicOpsDBRepository repository;	
+	BasicOpsDBRepository repository;
+	
+	@Autowired
+	BasicOpsQuasarDBRepository quasarRepository;
 
 	@Autowired
 	MongoTemplate nativeTemplate;
 	static final String COL_NAME = "contextData";
-	static final String DATABASE = "sofia";
+	static final String DATABASE = "sofia2_s4c";
 	
 	String refOid = "";
 	
@@ -114,5 +121,19 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB");
 		}
-	}	
+	}
+	
+	@Test
+	public void test_getAllByQuasar() {
+		try{
+			String query = "select * from " + COL_NAME;
+			QuasarResponseDTO result = quasarRepository.executeQuery(query, 0, SSAPQueryResultFormat.JSON, "CONSOLE");
+			String data = result.getData();
+			JSONArray jsonResult =new JSONArray(data);
+			Assert.assertTrue(jsonResult.length()>0);
+		}catch(Exception e){
+			Assert.fail("No connection with MongoDB by Quasar. " + e);
+		}
+		
+	}
 }
