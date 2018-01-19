@@ -13,9 +13,12 @@
  */
 package com.indracompany.sofia2.persistence.interfaces;
 
-import com.indracompany.sofia2.persistence.quasar.connector.dto.QuasarResponseDTO;
+import org.springframework.stereotype.Service;
+
+import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
 import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
 
+@Service
 public interface BasicOpsQuasarDBRepository {
 	
 	public static final String ACCEPT_TEXT_CSV="text/csv";

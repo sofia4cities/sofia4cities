@@ -14,25 +14,27 @@
 package com.indracompany.sofia2.persistence.mongodb;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsQuasarDBRepository;
-import com.indracompany.sofia2.persistence.quasar.connector.QuasarDbHttpConnector;
-import com.indracompany.sofia2.persistence.quasar.connector.dto.QuasarResponseDTO;
+import com.indracompany.sofia2.persistence.mongodb.quasar.connector.QuasarDbHttpConnector;
+import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
 import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component("MongoQuasarBasicOpsDBRepository")
+@Component("mongoQuasarBasicOpsDBRepository")
 @Scope("prototype")
 @Lazy
 @Slf4j
 public class MongoQuasarBasicOpsDBRepository implements BasicOpsQuasarDBRepository{
 	
 	@Autowired
+	@Qualifier("quasarDbHttpConnectorImpl")
 	private QuasarDbHttpConnector connector;
 	
 	@Value("${sofia2.database.mongodb.quasar.queries.defaultLimit:100}")

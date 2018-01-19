@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -36,8 +37,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsQuasarDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
-import com.indracompany.sofia2.persistence.quasar.connector.dto.QuasarResponseDTO;
 import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +60,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	BasicOpsDBRepository repository;
 	
 	@Autowired
+	@Qualifier("mongoQuasarBasicOpsDBRepository")
 	BasicOpsQuasarDBRepository quasarRepository;
 
 	@Autowired

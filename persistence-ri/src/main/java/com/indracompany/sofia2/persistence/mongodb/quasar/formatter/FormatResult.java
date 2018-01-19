@@ -11,10 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.quasar.formatter;
+package com.indracompany.sofia2.persistence.mongodb.quasar.formatter;
 
-public interface IQuasarFormatterRegistry {
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public class FormatResult {
 	
-	public void addFormatter(String key, IQuasarTableFormatter formatter);
+	@Getter @Setter private String data;
+	@Getter @Setter private String contentType;
 
 }
