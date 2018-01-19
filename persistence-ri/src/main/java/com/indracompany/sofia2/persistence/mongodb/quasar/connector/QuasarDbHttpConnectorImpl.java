@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.quasar.connector;
+package com.indracompany.sofia2.persistence.mongodb.quasar.connector;
 
 
 import java.io.UnsupportedEncodingException;
@@ -39,14 +39,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.persistence.quasar.connector.dto.QuasarResponseDTO;
-import com.indracompany.sofia2.persistence.quasar.formatter.FormatResult;
-import com.indracompany.sofia2.persistence.quasar.formatter.IQuasarFormatterRegistry;
-import com.indracompany.sofia2.persistence.quasar.formatter.IQuasarTableFormatter;
+import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
+import com.indracompany.sofia2.persistence.mongodb.quasar.formatter.FormatResult;
+import com.indracompany.sofia2.persistence.mongodb.quasar.formatter.IQuasarFormatterRegistry;
+import com.indracompany.sofia2.persistence.mongodb.quasar.formatter.IQuasarTableFormatter;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Component("quasarDbHttpConnectorImpl")
 @Lazy
 @Slf4j
 public class QuasarDbHttpConnectorImpl  implements QuasarDbHttpConnector, IQuasarFormatterRegistry{

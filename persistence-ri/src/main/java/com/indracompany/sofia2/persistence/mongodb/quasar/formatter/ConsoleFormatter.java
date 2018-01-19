@@ -11,8 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.quasar.formatter;
+package com.indracompany.sofia2.persistence.mongodb.quasar.formatter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,10 +25,13 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("htmlFormatter")
-public class HtmlFormatter implements IQuasarTableFormatter{
+import lombok.extern.slf4j.Slf4j;
+
+@Component("matrixFormatter")
+@Slf4j
+public class ConsoleFormatter implements IQuasarTableFormatter{
 	
-	private final static String KEY="HTML";
+	private final static String KEY="CONSOLE";
 	
 	@Autowired
 	private IQuasarFormatterRegistry registry;
@@ -43,18 +50,7 @@ public class HtmlFormatter implements IQuasarTableFormatter{
 		
 		FormatResult result=new FormatResult();
 		
-		result.setContentType("text/html");
-		result.setData(buildHtml(input, columnDelimiter, rowDelimiter, quoteChar, escapeChar, charset));
-		
-		return result;
-	}
-	
-	private String buildHtml(String input, String columnDelimiter,
-			String rowDelimiter, String quoteChar, String escapeChar,
-			String charset){
-		
 		List<List<String>> list=new LinkedList<List<String>>(); 
-		String html = "<html><body><table><tr>";
 		
 		//Obtenemos las filas
 		String rows[] = input.split(rowDelimiter.replace("\\\\", "\\"));
@@ -71,31 +67,38 @@ public class HtmlFormatter implements IQuasarTableFormatter{
 			list.add(fila);
 		}
 		
-		//Metemos la cabecera de la tabla
-		List<String> cabecera = list.get(0);
-		
-		for (String string : cabecera) {
-			html +="<th>" + string + "</th>";
+		try {
+			result.setData(serialize((Serializable) list));
+		} catch (IOException e) {
+			log.error("Serialization error.", e);
 		}
-		//Cerramos la cabecera
-		html += "</tr>";
-		
-		//Metemos elementos de la tabla
-		
-		for (int i=1; i< list.size(); i++) {
-			html += "<tr>";
-			List<String> subList = list.get(i);
-			for (String string : subList) {
-				html +="<td>" + string + "</td>";
-			}
-			html += "</tr>";
-		}
-		
-		html += "</table></body></html>";
-		return html;
+
+		return result;
 	}
 
+	private static String serialize(Serializable obj) throws IOException {
+        if (obj == null) return "";
+        try {
+            ByteArrayOutputStream serialObj = new ByteArrayOutputStream();
+            ObjectOutputStream objStream = new ObjectOutputStream(serialObj);
+            objStream.writeObject(obj);
+            objStream.close();
+            return encodeBytes(serialObj.toByteArray());
+        } catch (Exception e) {
+           log.error("Serialization error: " + e.getMessage(), e);
+           return null;
+        }
+    }
 	
-	
+	private static String encodeBytes(byte[] bytes) {
+        StringBuffer strBuf = new StringBuffer();
+    
+        for (int i = 0; i < bytes.length; i++) {
+            strBuf.append((char) (((bytes[i] >> 4) & 0xF) + ((int) 'a')));
+            strBuf.append((char) (((bytes[i]) & 0xF) + ((int) 'a')));
+        }
+        
+        return strBuf.toString();
+    }
 
 }

@@ -11,12 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.quasar.connector;
+package com.indracompany.sofia2.persistence.mongodb.quasar.formatter;
 
-import com.indracompany.sofia2.persistence.quasar.connector.dto.QuasarResponseDTO;
-
-public interface QuasarDbHttpConnector {
+public interface IQuasarFormatterRegistry {
 	
-	public QuasarResponseDTO query(String query, int offset, int limit, String accept, String formatter) throws Exception;
+	public void addFormatter(String key, IQuasarTableFormatter formatter);
 
 }
