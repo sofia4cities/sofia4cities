@@ -53,8 +53,8 @@ public class UserCDB extends AuditableEntityWithUUID{
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private RoleType role;
+	@JoinColumn(name = "ROLE_TYPE_ID", referencedColumnName = "ID", nullable = false)
+	@Getter @Setter private RoleType roleTypeId;
 
 	@Column(name = "USER_ID", length = 50, unique = true,nullable = false)
 	@NotNull

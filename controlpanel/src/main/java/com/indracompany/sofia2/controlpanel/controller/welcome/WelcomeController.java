@@ -85,25 +85,25 @@ public class WelcomeController {
 		this.urlClientPlatform=this.url+"/console/clientPlatforms/";
 		this.urlGadget=this.url+"/console/gadget/";
 		this.urlDashboard=this.url+ "/console/dashboard/";
-		this.urlOntology=this.url+"/console/ontologias/";
+		this.urlOntology=this.url+"/console/ontologies/";
 
-//		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-//
-//		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName,null,genericUserName,user.getUserId()));
-//
-//
-//		arrayLinks.addAll(constructGraphWithOntologies());
-//
-//
-//		arrayLinks.addAll(constructGraphWithClientPlatforms());
-//
-//
-//		arrayLinks.addAll(constructGraphWithVisualization());
-//
-//
-//
-//
-//		System.out.println(arrayLinks);
+		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
+
+		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName,null,genericUserName,user.getUserId()));
+
+
+		arrayLinks.addAll(constructGraphWithOntologies());
+
+
+		arrayLinks.addAll(constructGraphWithClientPlatforms());
+
+
+		arrayLinks.addAll(constructGraphWithVisualization());
+
+
+
+
+		System.out.println(arrayLinks);
 		return "/main";
 	}
 

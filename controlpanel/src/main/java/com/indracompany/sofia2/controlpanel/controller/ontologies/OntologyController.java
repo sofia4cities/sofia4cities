@@ -39,7 +39,7 @@ public class OntologyController {
 	
 	
 	@RequestMapping(value = "/list" , produces = "text/html")
-	public String listOntologies(Model uiModel,HttpServletRequest request)
+	public String list(Model uiModel,HttpServletRequest request)
 	{
 		
 		String identification = request.getParameter("identification");

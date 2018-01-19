@@ -30,7 +30,6 @@ import com.indracompany.sofia2.config.model.ClientPlatformContainer;
 import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
-import com.indracompany.sofia2.config.model.ConsoleMenuOption;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DashboardType;
 import com.indracompany.sofia2.config.model.DataModel;
@@ -52,7 +51,6 @@ import com.indracompany.sofia2.config.repository.ClientPlatformContainerReposito
 import com.indracompany.sofia2.config.repository.ClientPlatformContainerTypeRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
-import com.indracompany.sofia2.config.repository.ConsoleMenuOptionRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
@@ -97,8 +95,6 @@ public class InitConfigDB {
 	ClientPlatformOntologyRepository clientPlatformOntologyRepository;	
 	@Autowired
 	ConsoleMenuRepository consoleMenuRepository;
-	@Autowired
-	ConsoleMenuOptionRepository consoleMenuOptionRepository;
 	@Autowired
 	DashboardRepository dashboardRepository;
 	@Autowired
@@ -170,7 +166,7 @@ public class InitConfigDB {
 			//init_InstanceGenerator();
 			//
 			init_ConsoleMenu();
-			init_ConsoleMenuOption();
+			
 			//
 			init_Token();
 			
@@ -375,38 +371,16 @@ public class InitConfigDB {
 		{
 			log.info("No menu elements found...adding");
 			ConsoleMenu menu=new ConsoleMenu();
-			menu.setId("menu_category_ontologias_label");
-			menu.setName("menu_category_ontologias_label");
+			menu.setId("1");
+			menu.setJsonSchema("{'menu':'Sofia4Cities','rol':'ROL_ADMINISTRADOR','noSession':'/console/login','navigation':[{'title':{'EN':'Ontologies','ES':'Ontologías'},'icon':'flaticon-network','url':'','submenu':[{'title':{'EN':'Create Ontology','ES':'Crear Ontología'},'icon':'','url':'/controlpanel/ontologies/create'},{'title':{'EN':'Ontologies Status','ES':'Estado de Cargas'},'icon':'','url':'/controlpanel/ontologies/list'},{'title':{'EN':'My Ontologies','ES':'Mis Ontologías'},'icon':'','url':'/controlpanel/ontologies/list'},{'title':{'EN':'Real-Time Instance Generator','ES':'Simulador Tiempo-Real Ontologías'},'icon':'','url':'/controlpanel/generadorinstancias/list'},{'title':{'EN':'Ontologies Authorization','ES':'Autorizaciones de Ontología'},'icon':'','url':'/controlpanel/ontologies/authorize/list'}]},{'title':{'EN':'Sofia2 THINKPs','ES':'THINKPs Sofia2'},'icon':'flaticon-share','url':'','submenu':[{'title':{'EN':'My THINKPs','ES':'Mis THINKPs'},'icon':'','url':'/kps/list'},{'title':{'EN':'THINKPs Status','ES':'Estado de THINKPs'},'icon':'','url':'/gestiondispositivos/list'},{'title':{'EN':'THINKPs Container','ES':'Contenedor de THINKPs'},'icon':'','url':'/contenedorkps/list'}]},{'title':{'EN':'Visualization','ES':'Visualización'},'icon':'flaticon-dashboard','url':'','submenu':[{'title':{'EN':'My Gadgets','ES':'Mis Gadgets'},'icon':'','url':'/gadget/list'},{'title':{'EN':'My Dashboards','ES':'Mis Dashboards'},'icon':'','url':'/dashboard/listgroup'}]},{'title':{'EN':'Tools','ES':'Herramientas'},'icon':'flaticon-open-box','url':'','submenu':[{'title':{'EN':'RTDB and HDB Console','ES':'Consola DBTR y BDH'},'icon':'','url':'/databases/show'}]},{'title':{'EN':'Administration','ES':'Administración'},'icon':'flaticon-cogwheel-2','url':'','submenu':[{'title':{'EN':'Ontology Templates','ES':'Plantillas de Ontologías'},'icon':'','url':'/plantillas/list'},{'title':{'EN':'Users','ES':'Usuarios'},'icon':'','url':'/usuarioses/list'},{'title':{'EN':'Connections','ES':'Conexiones'},'icon':'','url':'/gestionconexiones/show'}]},{'title':{'EN':'Social Media','ES':'Social Media'},'icon':'la la-globe','url':'','submenu':[{'title':{'EN':'Social Media','ES':'Social Media'},'icon':'','url':'/socialMedia/socialMedia'},{'title':{'EN':'Access Settings','ES':'Configuración de Acceso'},'icon':'','url':'/configuracionRRSS/list'},{'title':{'EN':'Schedule Twitter Streaming Search','ES':'Programación Streaming Twitter'},'icon':'','url':'/usuariosTwitter/scheduledSearch'}]},{'title':{'EN':'BOTs','ES':'BOTs'},'icon':'la la-cubes','url':'','submenu':[{'title':{'EN':'My Bots','ES':'Mis Bots'},'icon':'','url':'/bots/list'},{'title':{'EN':'My Knowledge Bases','ES':'Bots Scripts'},'icon':'','url':'/bots/scripts/list'}]}]}");
+			menu.setRoleTypeId(roleTypeRepository.findOne(1));
 			this.consoleMenuRepository.save(menu);
 
 		}
 
 
 	}
-	public void init_ConsoleMenuOption() {
 
-		List<ConsoleMenuOption> options=this.consoleMenuOptionRepository.findAll();
-		if(options.isEmpty())
-		{
-			log.info("No menu options found...adding");
-			ConsoleMenuOption option=new ConsoleMenuOption();
-			option.setId("menu_item_ontologias_listar_label");
-			option.setOption("menu_item_ontologias_listar_label");
-			ConsoleMenu menu=this.consoleMenuRepository.findById("menu_category_ontologias_label");
-			if(menu==null){
-				menu=new ConsoleMenu();
-				menu.setId("menu_category_ontologias_label");
-				menu.setName("menu_category_ontologias_label");
-				this.consoleMenuRepository.save(menu);
-			}
-			option.setConsoleMenuId(menu);
-			this.consoleMenuOptionRepository.save(option);
-
-
-
-		}
-
-	}
 	public void init_Dashboard() {
 
 		log.info("init Dashboard");
@@ -842,7 +816,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Administrator of the Platform");
 				type.setEmail("administrator@sofia2.com");
 				type.setActive(true);
-				type.setRole(role);
+				type.setRoleTypeId(role);
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//	
@@ -853,7 +827,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Advanced User of the Platform");
 				type.setEmail("collaborator@sofia2.com");
 				type.setActive(true);
-				type.setRole(roleTypeRepository.findOne(2));
+				type.setRoleTypeId(roleTypeRepository.findOne(2));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//	
@@ -864,7 +838,7 @@ public class InitConfigDB {
 				type.setFullName("Generic User of the Platform");
 				type.setEmail("user@sofia2.com");
 				type.setActive(true);
-				type.setRole(roleTypeRepository.findOne(3));
+				type.setRoleTypeId(roleTypeRepository.findOne(3));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//	
@@ -875,7 +849,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Analytics User of the Platform");
 				type.setEmail("analytics@sofia2.com");
 				type.setActive(true);
-				type.setRole(roleTypeRepository.findOne(4));
+				type.setRoleTypeId(roleTypeRepository.findOne(4));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//	
@@ -886,7 +860,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Partner of the Platform");
 				type.setEmail("partner@sofia2.com");
 				type.setActive(true);
-				type.setRole(roleTypeRepository.findOne(5));
+				type.setRoleTypeId(roleTypeRepository.findOne(5));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//	
@@ -897,7 +871,7 @@ public class InitConfigDB {
 				type.setFullName("Generic SysAdmin of the Platform");
 				type.setEmail("sysadmin@sofia2.com");
 				type.setActive(true);
-				type.setRole(roleTypeRepository.findOne(6));
+				type.setRoleTypeId(roleTypeRepository.findOne(6));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//	
@@ -908,7 +882,7 @@ public class InitConfigDB {
 				type.setFullName("Operations of the Platform");
 				type.setEmail("operations@sofia2.com");
 				type.setActive(true);
-				type.setRole(roleTypeRepository.findOne(7));
+				type.setRoleTypeId(roleTypeRepository.findOne(7));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 			} 
