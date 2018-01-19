@@ -41,26 +41,51 @@ public class OntologyController {
 	@RequestMapping(value = "/list" , produces = "text/html")
 	public String list(Model uiModel,HttpServletRequest request)
 	{
-		
+		//Get params
 		String identification = request.getParameter("identification");
 		String description = request.getParameter("description");
+		//Scaping "" string values for parameters 
+		if(identification!=null){if(identification.equals("")) identification=null;}
+		if(description!=null){if(description.equals("")) description=null;}
+		
 		List<Ontology> ontologies;
 		Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
 		String userRole=authentication.getAuthorities().toArray()[0].toString();
 		if(userRole.equals("ROLE_ADMINISTRATOR"))
 		{
 			if(description!=null && identification!=null){
-				ontologies=this.ontologyRepository.findByIdentificationLikeAndDescriptionLike(identification, description);
+				
+				ontologies=this.ontologyRepository.findByIdentificationContainingAndDescriptionContaining(identification, description);
+			
+			}else if(description==null && identification!=null){
+				
+				ontologies=this.ontologyRepository.findByIdentificationContaining(identification);
+				
+			}else if(description!=null && identification==null){	
+				
+				ontologies=this.ontologyRepository.findByDescriptionContaining(description);
+				
 			}else{
+				
 				ontologies=this.ontologyRepository.findAll();
 			}
 		}else
 		{
 			if(description!=null && identification!=null){
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationLikeAndDescriptionLike(authentication.getName(), identification, description);
+				
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(authentication.getName(),identification, description);
+			
+			}else if(description==null && identification!=null){
+				
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(authentication.getName(),identification);
+				
+			}else if(description!=null && identification==null){	
+				
+				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(authentication.getName(),description);
+				
 			}else{
-				ontologies=this.ontologyRepository.findByUserId(authentication.getName());
-		
+				
+				ontologies=this.ontologyRepository.findAll();
 			}
 		}
 		uiModel.addAttribute("ontologies",ontologies);
