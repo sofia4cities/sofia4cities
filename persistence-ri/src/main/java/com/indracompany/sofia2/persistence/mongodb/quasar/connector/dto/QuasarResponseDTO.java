@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.quasar.connector.dto;
+package com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto;
 
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
