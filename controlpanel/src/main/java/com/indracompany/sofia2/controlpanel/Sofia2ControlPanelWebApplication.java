@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.controlpanel;
 
+import java.util.Locale;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
 import org.springframework.boot.actuate.endpoint.MetricsEndpointMetricReader;
@@ -23,11 +25,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import com.github.dandelion.core.web.DandelionFilter;
 import com.github.dandelion.core.web.DandelionServlet;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 
@@ -62,6 +69,10 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
     public MetricsEndpointMetricReader metricsEndpointMetricReader(MetricsEndpoint metricsEndpoint) {
         return new MetricsEndpointMetricReader(metricsEndpoint);
     }
+    
+    /**
+     * Dandelion Config Beans
+     */
     @Bean
     public DandelionDialect dandelionDialect() {
         return new DandelionDialect();
@@ -82,5 +93,28 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
         return new ServletRegistrationBean(new DandelionServlet(), "/dandelion-assets/*");
     }
 
+    /**
+     * Locale Context Beans
+     */
+    @Bean
+    public LocaleResolver localeResolver() {
+        SessionLocaleResolver slr = new SessionLocaleResolver();
+        Locale spanish= new Locale("es","ES");
+        slr.setDefaultLocale(spanish);
+        return slr;
+    }
+    
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+        lci.setParamName("lang");
+        return lci;
+    }
+    
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(localeChangeInterceptor());
+    }
+    
 
 }
