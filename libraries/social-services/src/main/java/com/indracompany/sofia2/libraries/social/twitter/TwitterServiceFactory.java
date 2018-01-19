@@ -13,11 +13,10 @@
  */
 package com.indracompany.sofia2.libraries.social.twitter;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.impl.TwitterTemplate;
-import org.springframework.stereotype.Component;
 
-@Component
 public class TwitterServiceFactory {
 
 	/**
@@ -29,6 +28,7 @@ public class TwitterServiceFactory {
 	 * @param accessTokenSecret
 	 * @return
 	 */
+	@Bean
 	public static TwitterServiceSpringSocialImpl getSpringSocialImpl(String consumerKey,String consumerSecret,String accessToken,String accessTokenSecret) {
 		Twitter twitter = new TwitterTemplate(consumerKey,consumerSecret,accessToken,accessTokenSecret);
 		TwitterServiceSpringSocialImpl twitterService = new TwitterServiceSpringSocialImpl(twitter);
