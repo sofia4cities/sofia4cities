@@ -48,7 +48,7 @@ public class Sofia2ConfigDBDetailsService implements UserDetailsService {
 	private UserDetails toUserDetails(UserCDB userObject) {
         return User.withUsername(userObject.getUserId())
                    .password(userObject.getPassword())
-                   .roles(userObject.getRole().getName()).build();
+                   .roles(userObject.getRoleTypeId().getName()).build();
     }
 
 }

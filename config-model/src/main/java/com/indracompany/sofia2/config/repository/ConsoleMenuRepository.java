@@ -22,9 +22,11 @@ package com.indracompany.sofia2.config.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.ConsoleMenu;
+import com.indracompany.sofia2.config.model.RoleType;
 
 public interface ConsoleMenuRepository extends JpaRepository<ConsoleMenu,String>{
 
 	ConsoleMenu findById(String id);
+	ConsoleMenu findByRoleTypeId(RoleType roleType);
 
 }
