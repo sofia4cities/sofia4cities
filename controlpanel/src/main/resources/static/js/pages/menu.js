@@ -4,7 +4,7 @@ var MenuController = function() {
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Menu Controller';	
     var logControl = 0;
-	var LANGUAGE = 'ES'
+	var LANGUAGE = ['es'];
 	
 	// CONTROLLER PRIVATE FUNCTIONS
 	
@@ -18,6 +18,7 @@ var MenuController = function() {
 		var menu_HTML	= ''
 		,submenu_HTML	= ''
 		,markUp_HTML	= ''
+		,page_LANG 		= ''
 		,menu_LANG 		= ''
 		,submenus 		= false;
 		
@@ -26,7 +27,11 @@ var MenuController = function() {
 		
 		// GET JSON FROM CONTROLLER LOAD()
 		var menuJson = menuReg;
-		menu_LANG = menuJson.language || LANGUAGE;
+		
+		// GET CURRENT LANGUAGE OR 'ES'.
+		page_LANG = menuJson.language || LANGUAGE;
+		menu_LANG = page_LANG.toString().toUpperCase();
+		
 		logControl ? console.log('     |---> menu: ' + menuJson.menu + ' NoSession Path: ' + menuJson.noSession + ' Rol: ' + menuJson.rol + ' Navigation Objects: ' + menuJson.navigation.length + ' Language: ' + menu_LANG ) : '';
 		
 		// NAV-ITEM MAIN LOOP

@@ -67,7 +67,7 @@
 				
 				<!-- BEGIN USER NO-PARTNER -->						
 				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
-					<a th:href="@{'/USERses/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Usuario" style="padding-right:8px !important;">
+					<a th:href="@{'/USERses/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=${#authentication.name}" style="padding-right:8px !important;">
 						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"> user</span> <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span>
 					</a>
 				</li>
@@ -83,7 +83,7 @@
 				
 				<!-- BEGIN LANGUAGE -->
 				<li class="dropdown dropdown-idioma">
-					<a href="javascript:;" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Idioma" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding-right:8px !important;">								
+					<a href="javascript:;" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=#{header_idioma}" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding-right:8px !important;">								
 						<span th:text="#{header_idioma}" class="username username-hide-on-mobile"> Idioma </span>
 						<i class="fa fa-angle-down"></i>
 					</a>
@@ -122,8 +122,8 @@
 				
 				<!-- BEGIN LOG-OUT -->			
 				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler" style="padding-right:8px !important;">
-					<a id="close-session" href="login.html" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Salir" th:href="@{/logout}">
-						<i class="icon-share-alt"></i> <span class="hidden-sm hidden-xs">Salir</span>
+					<a id="close-session" href="login.html" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=#{sign_out}" th:href="@{/logout}">
+						<i class="icon-share-alt"></i> <span class="hidden-sm hidden-xs" th:text="#{sign_out}">Salir</span>
 					</a>
 				</li>
 				<!-- END LOG-OUT -->
