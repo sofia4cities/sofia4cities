@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.welcome;
+package com.indracompany.sofia2.controlpanel.controller.main;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-public class WelcomeController {
+public class MainPageController {
 
 	private String urlClientPlatform;
 	private String urlDashboard;

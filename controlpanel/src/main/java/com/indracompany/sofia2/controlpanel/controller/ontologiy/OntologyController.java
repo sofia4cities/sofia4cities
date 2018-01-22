@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.ontologies;
+package com.indracompany.sofia2.controlpanel.controller.ontologiy;
 
 import java.util.List;
 
