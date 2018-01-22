@@ -1,0 +1,27 @@
+Sofia4Cities Structure:
+
+ROOT
+-base (tengo dudas con este nombre, tb podría ser core o apps)
+	-controlpanel-ui
+	-iot-broker
+	-api-manager
+	-monitoring-ui
+	-autoconfiguration
+-config (lo referente a la ConfigDB)
+	-config-model
+	-config-services
+	-config-init
+-persistence (lo referente a RTDB y HDB)
+	-persistence-ri
+	-persistence-services
+	-persistence-init
+-libraries
+	-social-services
+	-ssap (quiero quitarme lo de ssap, algo como sofia2-protocol o sofia2-dtos
+	-java-client-api
+	-python-client-api
+	-…
+-contributions
+	-spring-boot-admin-server-ui-sofia2
+	-zeppelin
+	-…

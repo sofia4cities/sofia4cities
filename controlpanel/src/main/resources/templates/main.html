@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-		<title th:text="#{consola_web_name}"/>
+		<title th:text="#{name.app}"/>
 		
 		<!-- WEB FONTs -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -58,7 +58,7 @@
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{index_welcome}"> Wellcome to Sofia4Cities Control Panel</span></h1>
+				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				
@@ -73,7 +73,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="flaticon-layers font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase"> Smart4Cities </span>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{name.sofia2}"> Sofia4Cities </span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			

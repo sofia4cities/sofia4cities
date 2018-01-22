@@ -25,48 +25,45 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.indracompany.sofia2.config.model.Ontology;
-
 import com.indracompany.sofia2.config.repository.OntologyRepository;
-
-
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 @RequestMapping("/ontologies")
 @Controller
 public class OntologyController {
-	
+
 	@Autowired
 	private OntologyRepository ontologyRepository;
-	
-	
-	@RequestMapping(value = "/list" , produces = "text/html")
-	public String list(Model uiModel,HttpServletRequest request)
-	{
-		
+
+	@Autowired
+	private AppWebUtils utils;
+
+	@RequestMapping(value = "/list", produces = "text/html")
+	public String list(Model uiModel, HttpServletRequest request) {
+
 		String identification = request.getParameter("identification");
 		String description = request.getParameter("description");
 		List<Ontology> ontologies;
-		Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-		String userRole=authentication.getAuthorities().toArray()[0].toString();
-		if(userRole.equals("ROLE_ADMINISTRATOR"))
-		{
-			if(description!=null && identification!=null){
-				ontologies=this.ontologyRepository.findByIdentificationLikeAndDescriptionLike(identification, description);
-			}else{
-				ontologies=this.ontologyRepository.findAll();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String userRole = utils.getRole();
+		if (userRole.equals("ROLE_ADMINISTRATOR")) {
+			if (description != null && identification != null) {
+				ontologies = this.ontologyRepository.findByIdentificationLikeAndDescriptionLike(identification,
+						description);
+			} else {
+				ontologies = this.ontologyRepository.findAll();
 			}
-		}else
-		{
-			if(description!=null && identification!=null){
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationLikeAndDescriptionLike(authentication.getName(), identification, description);
-			}else{
-				ontologies=this.ontologyRepository.findByUserId(authentication.getName());
-		
+		} else {
+			if (description != null && identification != null) {
+				ontologies = this.ontologyRepository.findByUserIdAndIdentificationLikeAndDescriptionLike(
+						authentication.getName(), identification, description);
+			} else {
+				ontologies = this.ontologyRepository.findByUserId(authentication.getName());
+
 			}
 		}
-		uiModel.addAttribute("ontologies",ontologies);
+		uiModel.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
 	}
-	
-	
 
 }

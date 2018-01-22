@@ -13,32 +13,29 @@
  */
 package com.indracompany.sofia2.controlpanel.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 
 @Controller
 public class DefaultController {
 
-
+	@Autowired 
+	private AppWebUtils utils;
+	
+    
+	@GetMapping("/")
+    public String base() {
+    	if (utils.getAuthentication()!=null) return "/main";
+        return "/login";
+    }
+    
     @GetMapping("/home")
     public String home() {
         return "/home";
-    }
-
-    @GetMapping("/main")
-    public String user() {
-        return "/main";
-    }
-
-    @GetMapping("/admin")
-    public String admin() {
-        return "/admin";
-    }
-    
-    @GetMapping("/about")
-    public String about() {
-        return "/about";
     }
 
     @GetMapping("/login")

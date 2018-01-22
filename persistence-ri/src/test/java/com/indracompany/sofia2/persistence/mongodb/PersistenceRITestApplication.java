@@ -13,18 +13,8 @@
  */
 package com.indracompany.sofia2.persistence.mongodb;
 
-import java.io.IOException;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.core.MongoTemplate;
-
-import com.mongodb.MongoClient;
-
-import cz.jirutka.spring.embedmongo.EmbeddedMongoFactoryBean;
-
-//import cz.jirutka.spring.embedmongo.EmbeddedMongoFactoryBean;
 
 @SpringBootApplication
 //@EnableJpaAuditing
@@ -36,10 +26,9 @@ public class PersistenceRITestApplication {
 	}
 	
 	private static final String MONGO_DB_URL = "localhost";
-    private static final String MONGO_DB_NAME = "sofia";
+    private static final String MONGO_DB_NAME = "sofia2_s4c";
     
-
-	
+    /*
 	@Bean
     public MongoTemplate mongoTemplate() throws IOException {
         EmbeddedMongoFactoryBean mongo = new EmbeddedMongoFactoryBean();
@@ -67,4 +56,5 @@ public class PersistenceRITestApplication {
         //mongoTemplate.inse
         return mongoTemplate;
     }
+    */
 }
