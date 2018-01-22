@@ -1,0 +1,9 @@
+app:
+  name: apimanager
+server:
+  port: 8088
+  
+spring:
+  profiles: 
+    active: common
+    include: dummy-dev, localtest, embeddedmongo
