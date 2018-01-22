@@ -37,33 +37,23 @@ public class OntologyController {
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
-<<<<<<< HEAD:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/controller/ontologies/OntologyController.java
-	
-	
-	@RequestMapping(value = "/list" , produces = "text/html")
-	public String list(Model uiModel,HttpServletRequest request)
-	{
-		//Get params
-=======
 
 	@Autowired
 	private AppWebUtils utils;
 
 	@RequestMapping(value = "/list", produces = "text/html")
 	public String list(Model uiModel, HttpServletRequest request) {
-
->>>>>>> 500e6e403ce773fe23bb9a23b01a8b4dbcdd56c8:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/controller/ontology/OntologyController.java
+		//Get params
 		String identification = request.getParameter("identification");
 		String description = request.getParameter("description");
+		
 		//Scaping "" string values for parameters 
 		if(identification!=null){if(identification.equals("")) identification=null;}
 		if(description!=null){if(description.equals("")) description=null;}
 		
 		List<Ontology> ontologies;
-<<<<<<< HEAD:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/controller/ontologies/OntologyController.java
-		Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-		String userRole=authentication.getAuthorities().toArray()[0].toString();
-		if(userRole.equals("ROLE_ADMINISTRATOR"))
+
+		if(utils.getRole().equals("ROLE_ADMINISTRATOR"))
 		{
 			if(description!=null && identification!=null){
 				
@@ -85,37 +75,19 @@ public class OntologyController {
 		{
 			if(description!=null && identification!=null){
 				
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(authentication.getName(),identification, description);
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(utils.getAuthentication().getName(),identification, description);
 			
 			}else if(description==null && identification!=null){
 				
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(authentication.getName(),identification);
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(utils.getAuthentication().getName(),identification);
 				
 			}else if(description!=null && identification==null){	
 				
-				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(authentication.getName(),description);
+				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(utils.getAuthentication().getName(),description);
 				
 			}else{
 				
 				ontologies=this.ontologyRepository.findAll();
-=======
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String userRole = utils.getRole();
-		if (userRole.equals("ROLE_ADMINISTRATOR")) {
-			if (description != null && identification != null) {
-				ontologies = this.ontologyRepository.findByIdentificationLikeAndDescriptionLike(identification,
-						description);
-			} else {
-				ontologies = this.ontologyRepository.findAll();
-			}
-		} else {
-			if (description != null && identification != null) {
-				ontologies = this.ontologyRepository.findByUserIdAndIdentificationLikeAndDescriptionLike(
-						authentication.getName(), identification, description);
-			} else {
-				ontologies = this.ontologyRepository.findByUserId(authentication.getName());
-
->>>>>>> 500e6e403ce773fe23bb9a23b01a8b4dbcdd56c8:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/controller/ontology/OntologyController.java
 			}
 		}
 		uiModel.addAttribute("ontologies", ontologies);
