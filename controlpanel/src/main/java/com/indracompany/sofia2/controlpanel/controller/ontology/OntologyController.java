@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.ontologiy;
+package com.indracompany.sofia2.controlpanel.controller.ontology;
 
 import java.util.List;
 
@@ -28,8 +28,11 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RequestMapping("/ontologies")
 @Controller
+@Slf4j
 public class OntologyController {
 
 	@Autowired
