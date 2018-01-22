@@ -44,6 +44,13 @@
 			<version>${sofia2.version}</version>
 		</dependency>	
 		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-iotbroker</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>	
+		
+		
+		<dependency>
 	    		<groupId>com.github.javafaker</groupId>
 	    		<artifactId>javafaker</artifactId>
 	    		<scope>test</scope>

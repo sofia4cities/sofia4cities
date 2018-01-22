@@ -11,21 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config;
+package com.indracompany.sofia2.api.servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+public class Api extends HttpServlet {
 
-import com.indracompany.sofia2.api.servlet.Api;
-
-@Configuration
-public class ServletApiConfig {
-
-    @Bean
-    public ServletRegistrationBean genericCustomServlet() {
-        ServletRegistrationBean bean = new ServletRegistrationBean(new Api(), "/api/*");
-        bean.setLoadOnStartup(1);
-        return bean;
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+        out.println("<p>Hello World</p>");
     }
 }
