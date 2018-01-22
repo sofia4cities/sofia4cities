@@ -39,16 +39,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationProvider authenticationProvider;
     
-
-    // roles admin allow to access /admin/**
-    // roles user allow to access /user/**
-    // custom 403 access denied handler
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/about").permitAll()
+                .antMatchers("/", "/home").permitAll()
                 .antMatchers("/api/applications","/api/applications/").permitAll()
                 .antMatchers("/health","/info","/metrics","/trace","/api").permitAll()
                 .antMatchers("/admin").hasAnyRole("ROLE_ADMINISTRATOR")
@@ -82,7 +78,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }  
 
     
-    //Spring Boot configured this already.
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.

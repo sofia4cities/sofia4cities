@@ -19,7 +19,7 @@
 				<div class="portlet-title">
 					<div class="caption">
 						<i class="flaticon-network font-grey-gallery"></i>
-						<span class="caption-subject bold font-grey-gallery uppercase"> <span th:text="#{grafo_titulo_universo}"> Mi Universo Sofia4Cities </span></span>
+						<span class="caption-subject bold font-grey-gallery uppercase"> <span th:text="#{main.title}">My Sofia2 Universe</span></span>
 					</div>									
 					<div class="tools">
 						<a href="" class="collapse" data-original-title="" title=""> </a>
@@ -34,15 +34,15 @@
 								<div id="id_panel_botones" class="btn-group  pull-right">
 									<div class="btn-group">
 										<button type="button" data-toggle="dropdown" aria-expanded="false" class="btn btn-primary btn-sm dropdown-toggle button_text">
-											<i class="fa fa-ellipsis-horizontal"></i> <span th:text="#{grafo_clusterizacion}"></span>
+											<i class="fa fa-ellipsis-horizontal"></i> <span th:text="#{graph.cluster}"></span>
 											<i class="fa fa-angle-down"></i>
 										</button>
 										<ul id="clusterOptions" class="dropdown-menu">
 											<li>
-												<a href="javascript:;" data-action="source" th:text="#{grafo_fuente}"></a>
+												<a href="javascript:;" data-action="source" th:text="#{graph.source}"></a>
 											</li>
 											<li>
-												<a href="javascript:;" data-action="type" th:text="#{grafo_tipo}"></a>
+												<a href="javascript:;" data-action="type" th:text="#{graph.type}"></a>
 											</li>
 										</ul>
 									</div>
@@ -51,28 +51,28 @@
 										<button id="btn-remH" class="btn btn-primary btn-sm button_text"><i class="la la-minus"></i>&nbsp;</button>
 										<button id="btn-resH" class="btn btn-primary btn-sm button_text"><i class="la la-refresh"></i>&nbsp;</button>
 										<button type="button" data-toggle="dropdown" aria-expanded="false" class="btn btn-primary btn-sm dropdown-toggle button_text">
-											<i class="fa fa-ellipsis-horizontal"></i> <span class="lang" th:text="#{grafo_jerarquia}" data-lang="btn-jerarquia"></span>
+											<i class="fa fa-ellipsis-horizontal"></i> <span class="lang" th:text="#{graph.hierarchy}" data-lang="btn-jerarquia"></span>
 											<i class="fa fa-angle-down"></i>
 										</button>
 										<ul id="hierarchicalOptions" class="dropdown-menu">
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-arr-aba">
-												<a data-action="UD" href="javascript:;"> <i class="fa fa-arrow-up"></i> <span class="lang" th:text="#{grafo_arriba_abajo}" data-lang="mnu-arr-aba" ></span></a>
+												<a data-action="UD" href="javascript:;"> <i class="fa fa-arrow-up"></i> <span class="lang" th:text="#{graph.up_down}" data-lang="mnu-arr-aba" ></span></a>
 											</li>
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-aba-arr">
-												<a data-action="DU" href="javascript:;"> <i class="fa fa-arrow-down"></i> <span class="lang" th:text="#{grafo_abajo_arriba}" data-lang="mnu-aba-arr"></span></a>
+												<a data-action="DU" href="javascript:;"> <i class="fa fa-arrow-down"></i> <span class="lang" th:text="#{graph.down_up}" data-lang="mnu-aba-arr"></span></a>
 											</li>
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-izq-der">
-												<a data-action="LR" href="javascript:;"> <i class="fa fa-arrow-left"></i> <span class="lang" th:text="#{grafo_izquierda_derecha}" data-lang="mnu-izq-der"></span></a>
+												<a data-action="LR" href="javascript:;"> <i class="fa fa-arrow-left"></i> <span class="lang" th:text="#{graph.left_right}" data-lang="mnu-izq-der"></span></a>
 											</li>
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-der-izq">
-												<a data-action="RL" href="javascript:;"> <i class="fa fa-arrow-right"></i> <span class="lang" th:text="#{grafo_derecha_izquierda}" data-lang="mnu-der-izq"></span></a>
+												<a data-action="RL" href="javascript:;"> <i class="fa fa-arrow-right"></i> <span class="lang" th:text="#{graph.right_left}" data-lang="mnu-der-izq"></span></a>
 											</li>
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-recarga">
-												<a data-action="default" href="javascript:;"> <i class="fa fa-refresh"></i> <span class="lang" th:text="#{grafo_recargar}" data-lang="mnu-recarga"></span></a>
+												<a data-action="default" href="javascript:;"> <i class="fa fa-refresh"></i> <span class="lang" th:text="#{graph.reload}" data-lang="mnu-recarga"></span></a>
 											</li>
 										</ul>
 									</div>
-									<button id="btn-graphInfo" th:text="#{grafo_informacion}" th:title="#{grafo_descripcion}" class="btn btn-primary btn-sm button_text"></button>
+									<button id="btn-graphInfo" th:text="#{graph.information}" th:title="#{graph.description}" class="btn btn-primary btn-sm button_text"></button>
 								</div>
 							</div>
 							<div id="graphporlet" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel margin-bottom-20">				
@@ -116,10 +116,10 @@
 				"linkTarget": "https://s4cities-sf2.northeurope.cloudapp.azure.com/console/ontologias/list",
 				"classSource": "USUARIO",
 				"classTarget": "ONTOLOGIAS",
-				"title": "Una Ontología (Ontología en terminología Sofia2) representa el Modelo de Dominio que maneja una ThinKP. Las Ontologías se representan en JSON y pueden representar un modelo básico (como si fuera una Tabla) o un modelo complejo con relaciones (como si tuviésemos un conjunto de tablas relacionadas). Cuando un Dispositivo (ThinKP) envía una medida hablamos de Instance (Instancia de Ontología). Las Ontologías pueden crearse de diversas formas: visualmente en un diagrama de clases UML, a través de un esquema JSON o XML, campo a campo o a partir de un CSV/XLS.",
+				"title": "Una OntologÃ­a (OntologÃ­a en terminologÃ­a Sofia2) representa el Modelo de Dominio que maneja una ThinKP. Las OntologÃ­as se representan en JSON y pueden representar un modelo bÃ¡sico (como si fuera una Tabla) o un modelo complejo con relaciones (como si tuviÃ©semos un conjunto de tablas relacionadas). Cuando un Dispositivo (ThinKP) envÃ­a una medida hablamos de Instance (Instancia de OntologÃ­a). Las OntologÃ­as pueden crearse de diversas formas: visualmente en un diagrama de clases UML, a travÃ©s de un esquema JSON o XML, campo a campo o a partir de un CSV/XLS.",
 				"linkCreate": "https://s4cities-sf2.northeurope.cloudapp.azure.com/console/ontologias/create",
 				"nameSource": "colaborador",
-				"nameTarget": "ONTOLOGÍAS",
+				"nameTarget": "ONTOLOGÃ�AS",
 				"type": "suit"
 				},
 				{
@@ -128,7 +128,7 @@
 				"linkTarget": "https://s4cities-sf2.northeurope.cloudapp.azure.com/console/kps/list",
 				"classSource": "USUARIO",
 				"classTarget": "KPS",
-				"title": "Un Dispositivo (en terminología Sofia2 hablamos de KP: Knowledge Processor o de ThinKP) representa a cada uno de los elementos que interactúan con la plataforma, bien publicando, o bien consumiendo información. Un ThinKP puede representar desde un dispositivo sencillo (un Arduino o un iBeacon) a un Gateway (una Raspberry) o un Sistema Empresarial (Backend Java). Un ThinKP puede manejar una o varias Ontologías.",
+				"title": "Un Dispositivo (en terminologÃ­a Sofia2 hablamos de KP: Knowledge Processor o de ThinKP) representa a cada uno de los elementos que interactÃºan con la plataforma, bien publicando, o bien consumiendo informaciÃ³n. Un ThinKP puede representar desde un dispositivo sencillo (un Arduino o un iBeacon) a un Gateway (una Raspberry) o un Sistema Empresarial (Backend Java). Un ThinKP puede manejar una o varias OntologÃ­as.",
 				"linkCreate": "https://s4cities-sf2.northeurope.cloudapp.azure.com/console/kps/create",
 				"nameSource": "colaborador",
 				"nameTarget": "THINKPS",
@@ -150,7 +150,7 @@
 				"target": "VISUALIZACION",
 				"classSource": "USUARIO",
 				"classTarget": "VISUALIZACION",
-				"title": "Las Herramientas de Visualización me permiten explotar de forma sencilla y gráfica la información almacenada dentro de la Plataforma (Ontologías). Puedo crear elementos de visualización unitaria (Gadgets), unirlos en una página web (Dashboard) o incluso crear complejos sinópticos al estilo SCADA representando la evolución de las señales (Instances).",
+				"title": "Las Herramientas de VisualizaciÃ³n me permiten explotar de forma sencilla y grÃ¡fica la informaciÃ³n almacenada dentro de la Plataforma (OntologÃ­as). Puedo crear elementos de visualizaciÃ³n unitaria (Gadgets), unirlos en una pÃ¡gina web (Dashboard) o incluso crear complejos sinÃ³pticos al estilo SCADA representando la evoluciÃ³n de las seÃ±ales (Instances).",
 				"nameSource": "colaborador",
 				"nameTarget": "VISUALIZACIONES",
 				"type": "suit"

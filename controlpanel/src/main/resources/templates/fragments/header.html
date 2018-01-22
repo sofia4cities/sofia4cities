@@ -84,30 +84,18 @@
 				<!-- BEGIN LANGUAGE -->
 				<li class="dropdown dropdown-idioma">
 					<a href="javascript:;" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Idioma" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding-right:8px !important;">								
-						<span th:text="#{header_idioma}" class="username username-hide-on-mobile"> Idioma </span>
+						<span th:text="#{head.lang}" class="username username-hide-on-mobile"> Language </span>
 						<i class="fa fa-angle-down"></i>
 					</a>
 					<ul class="dropdown-menu dropdown-menu-default">
 						<li>
 							<spring:message code="global_language_switch" arguments="English" var="lang_label" htmlEscape="false" />
-							<img class="dropdown-flag hide" src="../images/flags/gb.png" title="English" alt="English" /> <a th:text="#{header_idioma_en}" href='?lang=en'><span>EN</span></a>
-						</li>
-						<li>
-							<spring:message code="global_language_switch" arguments="Portuguese" var="lang_label" htmlEscape="false" />
-							<img class="dropdown-flag hide" src="../images/flags/pt.png" title="Portuguese" alt="Portuguese" /> <a th:text="#{header_idioma_pt}" href='?lang=pt'><span>PT</span></a>
-						</li>
-						<li>
-							<spring:message code="global_language_switch" arguments="Italian" var="lang_label" htmlEscape="false" />
-							<img class="dropdown-flag hide " src="../images/flags/it.png" title="Italian" alt="Italian" /> <a th:text="#{header_idioma_it}" href='?lang=it'><span>IT</span></a>
+							<img class="dropdown-flag hide" src="../images/flags/gb.png" title="English" alt="English" /> <a th:text="#{head.lang.en}" href='?lang=en'><span>EN</span></a>
 						</li>
 						<li>
 							<spring:message code="global_language_switch" arguments="Espanol" var="lang_label" htmlEscape="false" />
-							<img class="dropdown-flag hide" src="../images/flags/es.png" title="Espa&ntilde;ol" alt="Espa&ntilde;ol" /> <a th:text="#{header_idioma_es}" href='?lang=es'><span>ES</span></a>
-						</li>								
-						<li>
-							<spring:message code="global_language_switch" arguments="Catalan" var="lang_label" htmlEscape="false" /> 
-							<img class="dropdown-flag hide" src="../images/flags/catalonia.png" title="Catalan" alt="Catalan"/> <a th:text="#{header_idioma_ca}" href='?lang=ca'><span>CA</span></a>
-						</li>								
+							<img class="dropdown-flag hide" src="../images/flags/es.png" title="Espa&ntilde;ol" alt="Espa&ntilde;ol" /> <a th:text="#{head.lang.es}" href='?lang=es'><span>ES</span></a>
+						</li>									
 					</ul>
 				</li>
 				<!-- END LANGUAGE -->
@@ -123,7 +111,7 @@
 				<!-- BEGIN LOG-OUT -->			
 				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler" style="padding-right:8px !important;">
 					<a id="close-session" href="login.html" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Salir" th:href="@{/logout}">
-						<i class="icon-share-alt"></i> <span class="hidden-sm hidden-xs">Salir</span>
+						<i class="icon-share-alt"></i> <span class="hidden-sm hidden-xs" th:text="#{head.logout}">Log out</span>
 					</a>
 				</li>
 				<!-- END LOG-OUT -->

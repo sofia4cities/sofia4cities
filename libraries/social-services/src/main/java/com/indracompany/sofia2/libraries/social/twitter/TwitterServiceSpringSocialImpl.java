@@ -1,10 +1,13 @@
 package com.indracompany.sofia2.libraries.social.twitter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.social.twitter.api.DirectMessage;
 import org.springframework.social.twitter.api.SearchParameters;
 import org.springframework.social.twitter.api.SearchResults;
+import org.springframework.social.twitter.api.Stream;
+import org.springframework.social.twitter.api.StreamListener;
 import org.springframework.social.twitter.api.Tweet;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.social.twitter.api.TwitterProfile;
@@ -64,6 +67,12 @@ public class TwitterServiceSpringSocialImpl {
 	}
 	public List<DirectMessage> getDirectMessages() {
 		return twitter.directMessageOperations().getDirectMessagesReceived();	
+	}
+	public Stream createFilterStreaming(String keywords,StreamListener listener) {
+		List<StreamListener> listeners = new ArrayList<>();
+		listeners.add(listener);
+		return twitter.streamingOperations().filter(keywords, listeners);
+		//return twitter.streamingOperations().sample(listeners);
 	}
 	
 }

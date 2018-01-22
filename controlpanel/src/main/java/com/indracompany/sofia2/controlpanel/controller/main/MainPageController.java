@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.welcome;
+package com.indracompany.sofia2.controlpanel.controller.main;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,9 +40,13 @@ import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserCDBRepository;
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
-public class WelcomeController {
+@Slf4j
+public class MainPageController {
 
 	private String urlClientPlatform;
 	private String urlDashboard;
@@ -68,13 +72,13 @@ public class WelcomeController {
 	@Autowired
 	private DashboardRepository dashboardRepository;
 
-	@Autowired
-	private MessageSource messageSource;
+	@Autowired 
+	private AppWebUtils utils;
 
 	@Value("${sofia2.urls.iotbroker}")
 	String url;
 
-	@GetMapping("/")
+	@GetMapping("/main")
 	public String home1(Model model) {
 		Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
 		user=userCDBRepository.findByUserId(authentication.getName());
@@ -94,14 +98,9 @@ public class WelcomeController {
 
 		arrayLinks.addAll(constructGraphWithOntologies());
 
-
 		arrayLinks.addAll(constructGraphWithClientPlatforms());
 
-
 		arrayLinks.addAll(constructGraphWithVisualization());
-
-
-
 
 		System.out.println(arrayLinks);
 		return "/main";
@@ -110,36 +109,32 @@ public class WelcomeController {
 	private List<GraphDTO> constructGraphWithOntologies(){
 
 		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String idOntology="ONTOLOGIES";
-		//Tener en cuenta mas adelante para internacionalizacion(LOCALE)
-		String name=getParamInter("menu_category_ontologias_label",idOntology);
-		String description=getParamInter("tooltip_ontologias",null);
+		String name=utils.getMessage("name.ontologies","ONTOLOGIES");
+		String description=utils.getMessage("tooltip.ontologies",null);
 		//carga de nodo ontologia con link a crear y con titulo
-		arrayLinks.add(new GraphDTO(genericUserName,idOntology, null, urlOntology+"list",genericUserName,idOntology,user.getUserId(),name, "suit",description,urlOntology+"create"));
+		arrayLinks.add(new GraphDTO(genericUserName,name, null, urlOntology+"list",genericUserName,name,user.getUserId(),name, "suit",description,urlOntology+"create"));
 
 		List<Ontology> ontologies=ontologyRepository.findByUserId(user.getUserId());
 		for (Ontology ont: ontologies){
-			arrayLinks.add(new GraphDTO(idOntology, ont.getId(), urlOntology+"list", urlOntology+ont.getId(),idOntology,"ontology",name, ont.getIdentification(), "licensing"));
+			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology+"list", urlOntology+ont.getId(),name,"ontology",name, ont.getIdentification(), "licensing"));
 		}
 		return arrayLinks;
-
-
 	}
+	
 	private List<GraphDTO> constructGraphWithClientPlatforms(){
 
 		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String idClientPlatforms="Platform Clients";
-		String name=getParamInter("menu_category_KPS_label2",idClientPlatforms);
-		String description=getParamInter("tooltip_clientPlatforms",null);
+		String name=utils.getMessage("name.clients","PLATFORM CLIENTS");
+		String description=utils.getMessage("tooltip.clients",null);
 
 		// carga de nodo clientPlatform
-		arrayLinks.add(new GraphDTO(genericUserName,idClientPlatforms, null, urlClientPlatform+"list",genericUserName,idClientPlatforms,user.getUserId(),name, "suit",description,urlClientPlatform+"create"));
+		arrayLinks.add(new GraphDTO(genericUserName,name, null, urlClientPlatform+"list",genericUserName,name,user.getUserId(),name, "suit",description,urlClientPlatform+"create"));
 
 		List<ClientPlatform> clientPlatforms=clientPlatformRepository.findByUserId(user.getUserId());
 
 		for (ClientPlatform clientPlatform:clientPlatforms){
 			//Creación de enlaces
-			arrayLinks.add(new GraphDTO(idClientPlatforms, clientPlatform.getId(), urlClientPlatform+"list", urlClientPlatform+clientPlatform.getId(), idClientPlatforms, "clientplatform", name, clientPlatform.getIdentification(), "licensing"));
+			arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), urlClientPlatform+"list", urlClientPlatform+clientPlatform.getId(), name, "clientplatform", name, clientPlatform.getIdentification(), "licensing"));
 
 			if (clientPlatform.getClientPlatformOntologies()!=null){
 				List<ClientPlatformOntology> clientPlatformOntologies= new LinkedList<ClientPlatformOntology>(clientPlatform.getClientPlatformOntologies());
@@ -157,18 +152,17 @@ public class WelcomeController {
 	private List<GraphDTO> constructGraphWithGadgets(String visualizationId,String visualizationName){
 
 		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String gadgetId="GADGETS";
-		String name=getParamInter("gadgets_breadcrumb",gadgetId);
+		String name=utils.getMessage("name.gadgets","GADGETS");
 
 		// carga de nodo gadget dependiente de visualizacion
-		arrayLinks.add(new GraphDTO(visualizationId,gadgetId, null, urlGadget+"list",visualizationId,gadgetId,visualizationName,name, "suit",null,urlGadget+"selectWizard"));
+		arrayLinks.add(new GraphDTO(visualizationId,name, null, urlGadget+"list",visualizationId,name,visualizationName,name, "suit",null,urlGadget+"selectWizard"));
 
 		List<Gadget> gadgets=gadgetRepository.findByUserId(user.getUserId());
 
 		if (gadgets!=null){
 			for (Gadget gadget:gadgets){
 				//Creación de enlaces
-				arrayLinks.add(new GraphDTO(gadgetId, gadget.getId(), urlGadget+"list", urlDashboard+gadget.getId(), gadgetId, "gadget", name,gadget.getName(),"licensing"));						
+				arrayLinks.add(new GraphDTO(name, gadget.getId(), urlGadget+"list", urlDashboard+gadget.getId(), name, "gadget", name,gadget.getName(),"licensing"));						
 				if(gadget.getTokenId()!=null){
 					//si tiene token , tiene kp
 					arrayLinks.add(new GraphDTO(gadget.getTokenId().getClientPlatformId().getId(),gadget.getId(),urlClientPlatform+gadget.getTokenId().getClientPlatformId().getId(), 
@@ -183,17 +177,16 @@ public class WelcomeController {
 	private List<GraphDTO> constructGraphWithDashboard(String visualizationId,String visualizationName){
 
 		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String dashboardId="DASHBOARDS";
-		String name=getParamInter("dashboards_breadcrumb",dashboardId);
+		String name=utils.getMessage("name.dashboards","DASHBOARDS");
 
-		arrayLinks.add(new GraphDTO(visualizationId,dashboardId,null,urlDashboard+"list",visualizationId,dashboardId,visualizationName,name, "suit",null,urlDashboard+"creategroup?"));
+		arrayLinks.add(new GraphDTO(visualizationId,name,null,urlDashboard+"list",visualizationId,name,visualizationName,name, "suit",null,urlDashboard+"creategroup?"));
 
 		// dashboardTipo---> son los dashboard
 		List<DashboardType> dashboardTypes=dashboardTypeRepository.findByUserId(user.getUserId());
 		for (DashboardType dashboardType:dashboardTypes){
 			//Ahora hay que buscar la relacion entre dashboard y gadget. Eso nos lo da el dashboard
 			List<Dashboard> dashboards=dashboardRepository.findByDashboardTypeId(Integer.toString(dashboardType.getId()));
-			arrayLinks.add(new GraphDTO(dashboardId,Integer.toString(dashboardType.getId()),urlDashboard+"list",urlDashboard+Integer.toString(dashboardType.getId()),dashboardId,"dashboard", null,dashboardType.getType(),"licensing"));
+			arrayLinks.add(new GraphDTO(name,Integer.toString(dashboardType.getId()),urlDashboard+"list",urlDashboard+Integer.toString(dashboardType.getId()),name,"dashboard", null,dashboardType.getType(),"licensing"));
 			//
 			//			for (Dashboard dashboard:dashboards){
 			//				try{
@@ -212,31 +205,21 @@ public class WelcomeController {
 	}
 	private List<GraphDTO> constructGraphWithVisualization(){
 
-		String visualizationId="VISUALIZACION";
 		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String visualizationName=getParamInter("visualizaciones_breadcrumb",visualizationId);
-		String description=getParamInter("tooltip_visualizacion",null);
+		String name=utils.getMessage("name_visualization","VISUALIZATION");
+		String description=utils.getMessage("tooltip_visualization",null);
 		// carga de nodo gadget
-		arrayLinks.add(new GraphDTO(genericUserName,visualizationId,null,null,genericUserName,visualizationId,user.getUserId(),visualizationName, "suit",description,null));
+		arrayLinks.add(new GraphDTO(genericUserName,name,null,null,genericUserName,name,user.getUserId(),name, "suit",description,null));
 
-		arrayLinks.addAll(constructGraphWithGadgets(visualizationId,visualizationName));
+		arrayLinks.addAll(constructGraphWithGadgets(name,name));
 
 
-		arrayLinks.addAll(constructGraphWithDashboard(visualizationId,visualizationName));
+		arrayLinks.addAll(constructGraphWithDashboard(name,name));
 		
 
 		return arrayLinks;
 	}
 
-	private String getParamInter(String reference,String valueDefault){
-
-		try{
-			Locale locale = LocaleContextHolder.getLocale();
-			return messageSource.getMessage(reference, null, locale);
-		}catch (Exception e){
-			return valueDefault;
-		}
-	}
 
 
 	//	private List<ClientPlatform> getClientPlatformList()

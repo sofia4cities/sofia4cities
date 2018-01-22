@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.ontologies;
+package com.indracompany.sofia2.controlpanel.controller.ontology;
 
 import java.util.List;
 
@@ -25,23 +25,34 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.indracompany.sofia2.config.model.Ontology;
-
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
-
+import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/ontologies")
 @Controller
+@Slf4j
 public class OntologyController {
-	
+
 	@Autowired
 	private OntologyRepository ontologyRepository;
+<<<<<<< HEAD:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/controller/ontologies/OntologyController.java
 	
 	
 	@RequestMapping(value = "/list" , produces = "text/html")
 	public String list(Model uiModel,HttpServletRequest request)
 	{
 		//Get params
+=======
+
+	@Autowired
+	private AppWebUtils utils;
+
+	@RequestMapping(value = "/list", produces = "text/html")
+	public String list(Model uiModel, HttpServletRequest request) {
+
+>>>>>>> 500e6e403ce773fe23bb9a23b01a8b4dbcdd56c8:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/controller/ontology/OntologyController.java
 		String identification = request.getParameter("identification");
 		String description = request.getParameter("description");
 		//Scaping "" string values for parameters 
@@ -49,6 +60,7 @@ public class OntologyController {
 		if(description!=null){if(description.equals("")) description=null;}
 		
 		List<Ontology> ontologies;
+<<<<<<< HEAD:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/controller/ontologies/OntologyController.java
 		Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
 		String userRole=authentication.getAuthorities().toArray()[0].toString();
 		if(userRole.equals("ROLE_ADMINISTRATOR"))
@@ -86,12 +98,28 @@ public class OntologyController {
 			}else{
 				
 				ontologies=this.ontologyRepository.findAll();
+=======
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String userRole = utils.getRole();
+		if (userRole.equals("ROLE_ADMINISTRATOR")) {
+			if (description != null && identification != null) {
+				ontologies = this.ontologyRepository.findByIdentificationLikeAndDescriptionLike(identification,
+						description);
+			} else {
+				ontologies = this.ontologyRepository.findAll();
+			}
+		} else {
+			if (description != null && identification != null) {
+				ontologies = this.ontologyRepository.findByUserIdAndIdentificationLikeAndDescriptionLike(
+						authentication.getName(), identification, description);
+			} else {
+				ontologies = this.ontologyRepository.findByUserId(authentication.getName());
+
+>>>>>>> 500e6e403ce773fe23bb9a23b01a8b4dbcdd56c8:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/controller/ontology/OntologyController.java
 			}
 		}
-		uiModel.addAttribute("ontologies",ontologies);
+		uiModel.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
 	}
-	
-	
 
 }

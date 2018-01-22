@@ -10,7 +10,7 @@
 	<link rel="stylesheet" th:href="@{/static/webjars/sofia2_theme/css/login.css}"/> <!-- sofia2_theme login style -->
 	
   	
-	<title>Sofia4Cities Login</title>
+	<title th:text="#{login.title}">Control Panel Login</title>
 </head>
 <body>
 	<header role="banner">
@@ -22,7 +22,7 @@
 			<ul>
 				<!-- inser more links here -->
 				<li><a class="cd-signin" href="#0">Login</a></li>
-				<li><a class="cd-signup" href="#0">New Account</a></li>
+				<li><a class="cd-signup" href="#0" th:text="#{login.new}">New Account</a></li>
 			</ul>
 		</nav>
 	</header>
@@ -35,19 +35,19 @@
 		<div class="cd-user-modal-container"> <!-- this is the container wrapper -->
 			<ul class="cd-switcher">
 				<li><a href="#0">Login</a></li>
-				<li><a href="#0">New Account</a></li>
+				<li><a href="#0" th:text="#{login.new}">New Account</a></li>
 			</ul>
 
 			<div id="cd-login"> <!-- log in form -->			
 					
 				<div th:if="${param.error}" class="alert alert-warning alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-					<strong>Alert!</strong>  Invalid username and password.
+					<p th:text="#{login.error}"><strong>Alert!</strong>  Invalid username and password.</p>
 				</div>
 				
 				<div th:if="${param.logout}" class="alert alert-info alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-					<strong>Info.</strong> You have been logged out.
+					<p th:text="#{login.logout}"><strong>Info.</strong> You have been logged out.</p>
 				</div>
 				
 				
