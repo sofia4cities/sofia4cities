@@ -1,9 +1,58 @@
-app:
-  name: apimanager
-server:
-  port: 8088
-  
-spring:
-  profiles: 
-    active: common
-    include: dummy-dev, localtest, embeddedmongo
+##--spring.config.name=apimanager
+##security.require_ssl: true
+server: ## Config Web Server
+   port: 19090
+   contextPath: /
+   tomcat:
+      access_log_enabled: true
+      basedir: target/tomcat
+
+#Security Config
+security:
+    user:
+       name: admin
+       password: admin
+   
+spring: ## General Config  
+   application.name: sofia2-api-manager
+   boot.admin: #Spring Boot Admin Config    
+      # url: http://localhost:18090
+      routes.endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
+      #Not autoregister as Spring Boot Admin client
+      # username: operations
+      # password: changeIt!
+      # client.metadata.user.name: ${spring.boot.admin.username}
+      # client.metadata.user.password: $spring.boot.admin.password} 
+   datasource: ## JPA Config
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      username: root
+      password:  
+      # Number of ms to wait before throwing an exception if no connection is available.
+      tomcat.max-wait: 10000
+      # Maximum number of active connections that can be allocated from this pool at the same time.
+      tomcat.max-active: 50
+      # Validate the connection before borrowing it from the pool.
+      tomcat.test-on-borrow: true
+   jpa:
+      ## Hibernate Properties
+      # The SQL dialect makes Hibernate generate better SQL for the chosen database
+      properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+      # Hibernate ddl auto (create, create-drop, validate, update)
+      hibernate.ddl-auto: update 
+   mail: ##Mail configuration
+      host: smtp.gmail.com
+      username: sofia2oncloud@gmail.com
+      password: Indra2013!
+      port: 587
+      properties.mail.smtp.auth: true
+      properties.mail.smtp.starttls.enable: true
+          
+## LOGGING CONF
+logging:
+   level:
+      org.springframework: INFO
+      de.codecentric: DEBUG
+      com.example.boot.thymeleaf: INFO
+      com.indra: DEBUG
+      org.hibernate: INFO
+ 
