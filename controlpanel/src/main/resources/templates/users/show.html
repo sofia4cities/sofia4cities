@@ -71,7 +71,7 @@
 						<div class="portlet light bordered">
 							<div class="portlet-title">
 								<div class="caption">
-									<i class="flaticon-layers font-grey-gallery"></i>
+									<i class="flaticon-users font-grey-gallery"></i>
 									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{name.sofia2}"> Sofia4Cities </span>
 								</div>									
 								<div class="tools">
@@ -92,6 +92,66 @@
 									<div class="col-md-12 form">										
 										<form role="form">
 											<div class="form-body">
+												<!-- user, name and email -->
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{usuarios_formulario_usuario}">User</label>
+															<p class="form-control-static bold" th:text="*{identificacion}"> User Identification </p>
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{usuarios_formulario_nombre}">Name</label>
+															<p class="form-control-static bold" th:text="*{nombrecompleto}"> User Name </p>
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{usuarios_formulario_email}">eMail</label>
+															<p class="form-control-static bold" th:text="*{email}"> User eMail </p>
+														</div>
+													</div>													
+												</div>
+												<!-- Role, created-at, removed-at -->
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+														<div class="form-group">
+															<label class="control-label" th:text="#{usuarios_formulario_rol}">Role</label>
+															<p class="form-control-static bold" th:text="*{rolId.nombre}"> User Role </p>
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+														<div class="form-group">
+															<label class="control-label" th:text="#{usuarios_formulario_fechaalta}">Created At</label>
+															<p class="form-control-static bold" th:text="*{fechaalta}"> User creation date </p>
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{usuarios_formulario_fechabaja}">Deleted At</label>
+															<p class="form-control-static bold" th:text="*{fechabaja}"> User deleting date </p>
+														</div>
+													</div>													
+												</div>
+												<!-- Active user, token -->
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+														<div class="form-group">
+															<label class="control-label" th:text="#{usuarios_formulario_activo}">Active</label>
+															<p class="form-control-static bold" th:text="*{activo}"> User Active </p>
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+														<div class="form-group">
+															<label class="control-label" th:text="#{usuarios_formulario_fechaalta}">Created At</label>
+															<p class="form-control-static bold" th:text="*{fechaalta}"> User creation date </p>
+														</div>
+													</div>																										
+												</div>												
+												<!-- additional fields: phone, adress, category -->
+											
+											
 											</div>
 										</form>
 									</div>									
