@@ -1,0 +1,11 @@
+{
+  "Watorimetro": {
+    "identificador":"ST-TA3231-1",
+    "timestamp":1357930309163,
+     "coordenadaGps":{
+        "altitud":0.0,
+        "latitud":40.512967,
+        "longitud":-3.67495
+     }
+  }
+}

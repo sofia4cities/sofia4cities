@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  © Indra Sistemas, S.A.
+  2013 - 2014  SPAIN
+  
+  All rights reserved
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="emailTemplateResolver" class="org.thymeleaf.templateresolver.ClassLoaderTemplateResolver">
+	  <property name="prefix" value="email-templates/" />
+	  <property name="templateMode" value="XHTML" />
+	  <property name="characterEncoding" value="UTF-8" />
+	  <property name="order" value="1" />
+	</bean>
+ 
+	<bean id="emailTemplateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+	  <property name="templateResolvers">
+	    <set>
+	      <ref bean="emailTemplateResolver" />
+	    </set>
+	  </property>
+	</bean>
+</beans>

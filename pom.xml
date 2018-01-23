@@ -47,6 +47,7 @@
 		    	<version>${javafaker.version}</version>
 		    	<scope>test</scope>
 			</dependency>
+			
 			<dependency>
 	            <groupId>de.flapdoodle.embed</groupId>
 	            <artifactId>de.flapdoodle.embed.mongo</artifactId>
@@ -75,7 +76,10 @@
 		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
         <module>sofia2-monitoring-ui</module>
         <module>services</module>
+        <module>libraries/social-services</module>
+		<!--
         <module>api-manager</module>
+		-->
 
 		<!--
 -->		

@@ -84,6 +84,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class InitConfigDB {
 
+	private static int ID_USER_COLLABORATOR=2;
 
 	@Value("${sofia2.init.configdb:false}")
 	private boolean initConfigDB;
