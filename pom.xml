@@ -47,6 +47,7 @@
 		    	<version>${javafaker.version}</version>
 		    	<scope>test</scope>
 			</dependency>
+			
 			<dependency>
 	            <groupId>de.flapdoodle.embed</groupId>
 	            <artifactId>de.flapdoodle.embed.mongo</artifactId>
@@ -76,7 +77,9 @@
         <module>sofia2-monitoring-ui</module>
         <module>services</module>
         <module>libraries</module>
+		<!--
         <module>api-manager</module>
+		-->
 
 		<!--
 -->		
