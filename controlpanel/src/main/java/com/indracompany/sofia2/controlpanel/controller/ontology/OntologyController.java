@@ -13,14 +13,11 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.ontology;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.service.ontology.OntologyService;
 
@@ -52,15 +48,8 @@ public class OntologyController {
 		if(identification!=null){if(identification.equals("")) identification=null;}
 		if(description!=null){if(description.equals("")) description=null;}
 
-		List<Ontology> ontologies=new ArrayList<Ontology>();
-
-		if(utils.getRole().equals("ROLE_ADMINISTRATOR"))
-		{
-			ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(null, identification, description);
-		}else
-		{
-			ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
-		}
+		List<Ontology> ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
+		
 		uiModel.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
 	}

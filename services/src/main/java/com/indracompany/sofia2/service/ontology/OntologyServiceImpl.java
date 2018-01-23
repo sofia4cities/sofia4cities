@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.UserCDB;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.repository.UserCDBRepository;
 
 
 @Service
@@ -27,7 +29,10 @@ public class OntologyServiceImpl implements OntologyService{
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
-
+	@Autowired
+	private UserCDBRepository userRepository;
+	
+	public static final String ADMINISTRATOR="ROLE_ADMINISTRATOR";
 
 	public List<Ontology> findAllOntologies()
 	{
@@ -39,8 +44,9 @@ public class OntologyServiceImpl implements OntologyService{
 	public List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description)
 	{
 		List<Ontology> ontologies;
-		//If user is null, Is ROLE_ADMINISTRATOR
-		if(userId==null)
+		UserCDB user= this.userRepository.findByUserId(userId);
+		
+		if(user.getRoleTypeId().getName().equals(this.ADMINISTRATOR))
 		{
 			if(description!=null && identification!=null){
 
