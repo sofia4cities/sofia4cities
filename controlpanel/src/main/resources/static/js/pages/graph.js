@@ -503,10 +503,10 @@ var GraphController = function() {
 		destroyNetwork();
 		
 	    // AJAX CALL - get GRAPH data
-		/* $.ajax({ url:"getgraph", type: 'GET', dataType: 'json', contentType: 'text/html',
+		$.ajax({ url:"/getgraph", type: 'GET', dataType: 'json', contentType: 'text/html',
 			success: function(data) {
 
-	        	links 		= data; // MOCK-UP: graphJson.data
+	        	links 		= data; 
 				graphData	= getDataGraph();
 				
 				if( graphData.nodes.length > 0 ){
@@ -530,12 +530,12 @@ var GraphController = function() {
 				}
 			},
 			error:function(data, status, er) { 
-					$.alert({title: 'GRAPH ERROR!',content: data });       
+					$.alert({title: 'GRAPH ERROR!',content: 'ERror loading graph info on graph Controller.' });       
 	        }
-		}); */
+		}); 
 		
 		// ############## MOCKUP ###################### 
-		links 		= graphJson.data
+		/* links 		= graphJson.data		
 		graphData	= getDataGraph();
 		
 		if( graphData.nodes.length > 0 ){
@@ -556,7 +556,7 @@ var GraphController = function() {
 					}
 				}
 			});
-		}
+		} */
 		// ############## MOCKUP ######################
 		
 		
