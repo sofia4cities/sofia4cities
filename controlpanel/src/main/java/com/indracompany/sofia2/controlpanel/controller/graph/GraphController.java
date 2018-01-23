@@ -11,50 +11,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.main;
+package com.indracompany.sofia2.controlpanel.controller.graph;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
-import com.indracompany.sofia2.service.menu.MenuService;
-import com.indracompany.sofia2.service.user.UserService;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
-@Slf4j
-public class MainPageController {
-
+public class GraphController {
+	
+	private String genericUserName="USER";
+	@Autowired
+	private GraphUtil graphUtil;
 
 	@Autowired 
 	private AppWebUtils utils;
-	@Autowired
-	private MenuService menuService;
-	@Autowired
-	private UserService userService;
+	
+	@GetMapping("/getgraph")
+	public @ResponseBody String getGraph(Model model)
+	{
+		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
 
-
-	@Value("${sofia2.urls.iotbroker}")
-	String url;
-
-	@GetMapping("/main")
-	private String main(Model model, HttpServletRequest request) {
-		//Load menu by role in session
-		String jsonMenu=this.menuService.loadMenuByRole(this.userService.findUser(utils.getUserId()));
-		//Remove PrettyPrinted
-		String menu= utils.jsonStringToString(jsonMenu);
-		
-		utils.setSessionAttribute(request, "menu", menu);
-		return "/main";
+		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName,null,genericUserName,utils.getUserId()));
+		arrayLinks.addAll(graphUtil.constructGraphWithOntologies());
+		arrayLinks.addAll(graphUtil.constructGraphWithClientPlatforms());
+		arrayLinks.addAll(graphUtil.constructGraphWithVisualization());		
+		System.out.println(arrayLinks.toString());
+		return arrayLinks.toString();
 	}
-	
-	
-	
 
 }
