@@ -32,25 +32,24 @@ import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DashboardType;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.UserCDB;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.config.repository.UserCDBRepository;
+import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 @Component
 public class GraphUtil {
-	
 
 	private String urlClientPlatform;
 	private String urlDashboard;
 	private String urlGadget;
 	private String urlOntology;
-	private String genericUserName="USER";
-	private UserCDB user;
+	private String genericUserName = "USER";
+	private User user;
 	@Autowired
 	private OntologyRepository ontologyRepository;
 	@Autowired
@@ -61,83 +60,94 @@ public class GraphUtil {
 	private DashboardTypeRepository dashboardTypeRepository;
 	@Autowired
 	private DashboardRepository dashboardRepository;
-	@Autowired 
+	@Autowired
 	private AppWebUtils utils;
 	@Value("${sofia2.urls.iotbroker}")
 	String url;
-	
+
 	@PostConstruct
-	public void init()
-	{
-		//initialize URLS
-		this.urlClientPlatform=this.url+"/console/clientPlatforms/";
-		this.urlGadget=this.url+"/console/gadget/";
-		this.urlDashboard=this.url+ "/console/dashboard/";
-		this.urlOntology=this.url+"/console/ontologies/";
-		
+	public void init() {
+		// initialize URLS
+		this.urlClientPlatform = this.url + "/console/clientPlatforms/";
+		this.urlGadget = this.url + "/console/gadget/";
+		this.urlDashboard = this.url + "/console/dashboard/";
+		this.urlOntology = this.url + "/console/ontologies/";
+
 	}
-	
-	public List<GraphDTO> constructGraphWithOntologies(){
 
-		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String name=utils.getMessage("name.ontologies","ONTOLOGIES");
-		String description=utils.getMessage("tooltip_ontologies",null);
-		//carga de nodo ontologia con link a crear y con titulo
-		arrayLinks.add(new GraphDTO(genericUserName,name, null, urlOntology+"list",genericUserName,name,utils.getUserId(),name, "suit",description,urlOntology+"create"));
+	public List<GraphDTO> constructGraphWithOntologies() {
 
-		List<Ontology> ontologies=ontologyRepository.findByUserId(utils.getUserId());
-		for (Ontology ont: ontologies){
-			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology+"list", urlOntology+ont.getId(),name,"ontology",name, ont.getIdentification(), "licensing"));
+		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		String name = utils.getMessage("name.ontologies", "ONTOLOGIES");
+		String description = utils.getMessage("tooltip_ontologies", null);
+		// carga de nodo ontologia con link a crear y con titulo
+		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlOntology + "list", genericUserName, name,
+				utils.getUserId(), name, "suit", description, urlOntology + "create"));
+
+		List<Ontology> ontologies = ontologyRepository.findByUserId(utils.getUserId());
+		for (Ontology ont : ontologies) {
+			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology + "list", urlOntology + ont.getId(), name,
+					"ontology", name, ont.getIdentification(), "licensing"));
 		}
 		return arrayLinks;
 	}
-	
-	public List<GraphDTO> constructGraphWithClientPlatforms(){
 
-		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String name=utils.getMessage("name.clients","PLATFORM CLIENTS");
-		String description=utils.getMessage("tooltip_clients",null);
+	public List<GraphDTO> constructGraphWithClientPlatforms() {
+
+		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		String name = utils.getMessage("name.clients", "PLATFORM CLIENTS");
+		String description = utils.getMessage("tooltip_clients", null);
 
 		// carga de nodo clientPlatform
-		arrayLinks.add(new GraphDTO(genericUserName,name, null, urlClientPlatform+"list",genericUserName,name,utils.getUserId(),name, "suit",description,urlClientPlatform+"create"));
+		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlClientPlatform + "list", genericUserName, name,
+				utils.getUserId(), name, "suit", description, urlClientPlatform + "create"));
 
-		List<ClientPlatform> clientPlatforms=clientPlatformRepository.findByUserId(utils.getUserId());
+		List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUserId(utils.getUserId());
 
-		for (ClientPlatform clientPlatform:clientPlatforms){
-			//Creación de enlaces
-			arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), urlClientPlatform+"list", urlClientPlatform+clientPlatform.getId(), name, "clientplatform", name, clientPlatform.getIdentification(), "licensing"));
+		for (ClientPlatform clientPlatform : clientPlatforms) {
+			// Creación de enlaces
+			arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), urlClientPlatform + "list",
+					urlClientPlatform + clientPlatform.getId(), name, "clientplatform", name,
+					clientPlatform.getIdentification(), "licensing"));
 
-			if (clientPlatform.getClientPlatformOntologies()!=null){
-				List<ClientPlatformOntology> clientPlatformOntologies= new LinkedList<ClientPlatformOntology>(clientPlatform.getClientPlatformOntologies());
-				for (ClientPlatformOntology clientPlatformOntology: clientPlatformOntologies){
-					Ontology ontology=clientPlatformOntology.getOntologyId();
-					//Crea link entre ontologia y clientPlatform
-					arrayLinks.add(new GraphDTO(ontology.getId(),clientPlatform.getId(),urlOntology+ontology.getId(), urlClientPlatform+clientPlatform.getId(),"ontology","clientplatform", 
-							ontology.getIdentification(), clientPlatform.getIdentification(),"licensing"));
+			if (clientPlatform.getClientPlatformOntologies() != null) {
+				List<ClientPlatformOntology> clientPlatformOntologies = new LinkedList<ClientPlatformOntology>(
+						clientPlatform.getClientPlatformOntologies());
+				for (ClientPlatformOntology clientPlatformOntology : clientPlatformOntologies) {
+					Ontology ontology = clientPlatformOntology.getOntologyId();
+					// Crea link entre ontologia y clientPlatform
+					arrayLinks
+							.add(new GraphDTO(ontology.getId(), clientPlatform.getId(), urlOntology + ontology.getId(),
+									urlClientPlatform + clientPlatform.getId(), "ontology", "clientplatform",
+									ontology.getIdentification(), clientPlatform.getIdentification(), "licensing"));
 				}
 			}
 		}
 		return arrayLinks;
 	}
 
-	private List<GraphDTO> constructGraphWithGadgets(String visualizationId,String visualizationName){
+	private List<GraphDTO> constructGraphWithGadgets(String visualizationId, String visualizationName) {
 
-		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String name=utils.getMessage("name.gadgets","GADGETS");
+		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		String name = utils.getMessage("name.gadgets", "GADGETS");
 
 		// carga de nodo gadget dependiente de visualizacion
-		arrayLinks.add(new GraphDTO(visualizationId,name, null, urlGadget+"list",visualizationId,name,visualizationName,name, "suit",null,urlGadget+"selectWizard"));
+		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlGadget + "list", visualizationId, name,
+				visualizationName, name, "suit", null, urlGadget + "selectWizard"));
 
-		List<Gadget> gadgets=gadgetRepository.findByUserId(utils.getUserId());
+		List<Gadget> gadgets = gadgetRepository.findByUserId(utils.getUserId());
 
-		if (gadgets!=null){
-			for (Gadget gadget:gadgets){
-				//Creación de enlaces
-				arrayLinks.add(new GraphDTO(name, gadget.getId(), urlGadget+"list", urlDashboard+gadget.getId(), name, "gadget", name,gadget.getName(),"licensing"));						
-				if(gadget.getTokenId()!=null){
-					//si tiene token , tiene kp
-					arrayLinks.add(new GraphDTO(gadget.getTokenId().getClientPlatformId().getId(),gadget.getId(),urlClientPlatform+gadget.getTokenId().getClientPlatformId().getId(), 
-							urlDashboard+gadget.getId(),"clientplatform","gadget",gadget.getTokenId().getClientPlatformId().getIdentification(), gadget.getName(),"suit"));
+		if (gadgets != null) {
+			for (Gadget gadget : gadgets) {
+				// Creación de enlaces
+				arrayLinks.add(new GraphDTO(name, gadget.getId(), urlGadget + "list", urlDashboard + gadget.getId(),
+						name, "gadget", name, gadget.getName(), "licensing"));
+				if (gadget.getTokenId() != null) {
+					// si tiene token , tiene kp
+					arrayLinks.add(new GraphDTO(gadget.getTokenId().getClientPlatformId().getId(), gadget.getId(),
+							urlClientPlatform + gadget.getTokenId().getClientPlatformId().getId(),
+							urlDashboard + gadget.getId(), "clientplatform", "gadget",
+							gadget.getTokenId().getClientPlatformId().getIdentification(), gadget.getName(), "suit"));
 				}
 			}
 			gadgets.clear();
@@ -145,28 +155,35 @@ public class GraphUtil {
 		return arrayLinks;
 	}
 
-	private List<GraphDTO> constructGraphWithDashboard(String visualizationId,String visualizationName){
+	private List<GraphDTO> constructGraphWithDashboard(String visualizationId, String visualizationName) {
 
-		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String name=utils.getMessage("name.dashboards","DASHBOARDS");
+		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		String name = utils.getMessage("name.dashboards", "DASHBOARDS");
 
-		arrayLinks.add(new GraphDTO(visualizationId,name,null,urlDashboard+"list",visualizationId,name,visualizationName,name, "suit",null,urlDashboard+"creategroup?"));
+		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlDashboard + "list", visualizationId, name,
+				visualizationName, name, "suit", null, urlDashboard + "creategroup?"));
 
 		// dashboardTipo---> son los dashboard
-		List<DashboardType> dashboardTypes=dashboardTypeRepository.findByUserId(utils.getUserId());
-		for (DashboardType dashboardType:dashboardTypes){
-			//Ahora hay que buscar la relacion entre dashboard y gadget. Eso nos lo da el dashboard
-			List<Dashboard> dashboards=dashboardRepository.findByDashboardTypeId(Integer.toString(dashboardType.getId()));
-			arrayLinks.add(new GraphDTO(name,Integer.toString(dashboardType.getId()),urlDashboard+"list",urlDashboard+Integer.toString(dashboardType.getId()),name,"dashboard", null,dashboardType.getType(),"licensing"));
-			
-			for (Dashboard dashboard:dashboards){
-				try{
-					List<String> gadgetIds=this.getGadgetIdsFromModel(dashboard.getModel());
-					for (String gadget:gadgetIds){
-						arrayLinks.add(new GraphDTO(gadget,Integer.toString(dashboardType.getId()),urlDashboard+gadget,urlDashboard+dashboardType.getId(),"gadget","dashboard", null,dashboardType.getType(),"licensing"));
+		List<DashboardType> dashboardTypes = dashboardTypeRepository.findByUserId(utils.getUserId());
+		for (DashboardType dashboardType : dashboardTypes) {
+			// Ahora hay que buscar la relacion entre dashboard y gadget. Eso nos lo da el
+			// dashboard
+			List<Dashboard> dashboards = dashboardRepository
+					.findByDashboardTypeId(Integer.toString(dashboardType.getId()));
+			arrayLinks.add(new GraphDTO(name, Integer.toString(dashboardType.getId()), urlDashboard + "list",
+					urlDashboard + Integer.toString(dashboardType.getId()), name, "dashboard", null,
+					dashboardType.getType(), "licensing"));
+
+			for (Dashboard dashboard : dashboards) {
+				try {
+					List<String> gadgetIds = this.getGadgetIdsFromModel(dashboard.getModel());
+					for (String gadget : gadgetIds) {
+						arrayLinks.add(new GraphDTO(gadget, Integer.toString(dashboardType.getId()),
+								urlDashboard + gadget, urlDashboard + dashboardType.getId(), "gadget", "dashboard",
+								null, dashboardType.getType(), "licensing"));
 					}
-				}catch(Exception e){
-					
+				} catch (Exception e) {
+
 				}
 			}
 			dashboards.clear();
@@ -174,47 +191,43 @@ public class GraphUtil {
 
 		return arrayLinks;
 	}
-	public List<GraphDTO> constructGraphWithVisualization(){
 
-		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String name=utils.getMessage("name_visualization","VISUALIZATION");
-		String description=utils.getMessage("tooltip_visualization",null);
+	public List<GraphDTO> constructGraphWithVisualization() {
+
+		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		String name = utils.getMessage("name_visualization", "VISUALIZATION");
+		String description = utils.getMessage("tooltip_visualization", null);
 		// carga de nodo gadget
-		arrayLinks.add(new GraphDTO(genericUserName,name,null,null,genericUserName,name,utils.getUserId(),name, "suit",description,null));
+		arrayLinks.add(new GraphDTO(genericUserName, name, null, null, genericUserName, name, utils.getUserId(), name,
+				"suit", description, null));
 
-		arrayLinks.addAll(constructGraphWithGadgets(name,name));
+		arrayLinks.addAll(constructGraphWithGadgets(name, name));
 
-
-		arrayLinks.addAll(constructGraphWithDashboard(name,name));
-		
+		arrayLinks.addAll(constructGraphWithDashboard(name, name));
 
 		return arrayLinks;
 	}
 
-
-	public List<String> getGadgetIdsFromModel(String modelJson) throws JsonProcessingException, IOException
-	{
-		List<String> gadgetIds=new LinkedList<String>();
+	public List<String> getGadgetIdsFromModel(String modelJson) throws JsonProcessingException, IOException {
+		List<String> gadgetIds = new LinkedList<String>();
 		ObjectMapper objectMapper = new ObjectMapper();
 		JsonNode jsonNode = objectMapper.readTree(modelJson);
-		int rows=jsonNode.path("rows").size();
-		for(int i=0;i<rows;i++)
-		{
-			int columns=jsonNode.path("rows").path(i).path("columns").size();
-			for(int j=0;j<columns;j++)
-			{
-				int widgets=jsonNode.path("rows").path(i).path("columns").path(j).path("widgets").size();
-				for(int k=0;k<widgets;k++)
-				{
-					String gadgetId=jsonNode.path("rows").path(i).path("columns").path(j).path("widgets").path(k).path("config").get("gadgetId").asText();
-					gadgetId=gadgetId.split("_")[0];
+		int rows = jsonNode.path("rows").size();
+		for (int i = 0; i < rows; i++) {
+			int columns = jsonNode.path("rows").path(i).path("columns").size();
+			for (int j = 0; j < columns; j++) {
+				int widgets = jsonNode.path("rows").path(i).path("columns").path(j).path("widgets").size();
+				for (int k = 0; k < widgets; k++) {
+					String gadgetId = jsonNode.path("rows").path(i).path("columns").path(j).path("widgets").path(k)
+							.path("config").get("gadgetId").asText();
+					gadgetId = gadgetId.split("_")[0];
 					gadgetIds.add(gadgetId);
 				}
 			}
-			
+
 		}
 		return gadgetIds;
-		
+
 	}
 
 }

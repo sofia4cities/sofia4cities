@@ -25,9 +25,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.indracompany.sofia2.config.model.UserCDB;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
-import com.indracompany.sofia2.config.repository.UserCDBRepository;
+import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +37,10 @@ import lombok.extern.slf4j.Slf4j;
 public class MainPageController {
 
 	private String genericUserName="USER";
-	private UserCDB user;
 	@Autowired
 	private ConsoleMenuRepository consoleMenuRepository;
 	@Autowired
-	private UserCDBRepository userCDBRepository;
+	private UserRepository userRepository;
 	@Autowired
 	private GraphUtil graphUtil;
 	@Autowired 
@@ -53,7 +52,7 @@ public class MainPageController {
 	@GetMapping("/main")
 	private String home1(Model model, HttpServletRequest request) {
 
-		user=userCDBRepository.findByUserId(utils.getUserId());
+		User user=userRepository.findByUserId(utils.getUserId());
 		utils.setSessionAttribute(request, "menu", this.loadMenu(user));
 		return "/main";
 	}
@@ -71,11 +70,10 @@ public class MainPageController {
 		return arrayLinks.toString();
 	}
 	
-	private String loadMenu(UserCDB user)
-	{
+	private String loadMenu(User user)	{
 		String menu=this.consoleMenuRepository.findByRoleTypeId(user.getRoleTypeId()).getJsonSchema();
 	
-		return menu;	
+		return menu;
 		
 	}
 
