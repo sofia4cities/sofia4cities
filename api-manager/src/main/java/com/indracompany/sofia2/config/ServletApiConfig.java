@@ -17,14 +17,14 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.indracompany.sofia2.api.servlet.Api;
+import com.indracompany.sofia2.api.servlet.ApiServlet;
 
 @Configuration
 public class ServletApiConfig {
 
     @Bean
-    public ServletRegistrationBean genericCustomServlet() {
-        ServletRegistrationBean bean = new ServletRegistrationBean(new Api(), "/api/*");
+    public ServletRegistrationBean ApiServletEntryPointBean() {
+        ServletRegistrationBean bean = new ServletRegistrationBean(new ApiServlet(), "/api/*");
         bean.setLoadOnStartup(1);
         return bean;
     }

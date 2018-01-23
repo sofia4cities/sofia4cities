@@ -75,6 +75,7 @@
 		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
         <module>sofia2-monitoring-ui</module>
         <module>services</module>
+        <module>libraries</module>
         <module>api-manager</module>
 
 		<!--
