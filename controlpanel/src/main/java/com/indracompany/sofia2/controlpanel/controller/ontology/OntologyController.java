@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,7 +42,7 @@ public class OntologyController {
 	@Autowired
 	private AppWebUtils utils;
 
-	@RequestMapping(value = "/list", method = RequestMethod.GET,produces = "text/html")
+	@GetMapping(value = "/list",produces = "text/html")
 	public String list(Model uiModel, HttpServletRequest request, @RequestParam(required=false, name="identification")String identification,@RequestParam(required=false, name="description")String description) {
 		
 		//Scaping "" string values for parameters 
