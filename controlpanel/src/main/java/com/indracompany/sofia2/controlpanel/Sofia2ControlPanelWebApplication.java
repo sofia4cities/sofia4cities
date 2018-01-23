@@ -34,7 +34,6 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import com.github.dandelion.core.web.DandelionFilter;
 import com.github.dandelion.core.web.DandelionServlet;
-import com.github.dandelion.core.Context;
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 

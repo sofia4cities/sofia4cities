@@ -6,42 +6,223 @@
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
 	</parent>
 
 	<groupId>com.indracompany.sofia2</groupId>
-	<artifactId>sofia2-social-services</artifactId>
-	<packaging>jar</packaging>
+	<artifactId>libraries</artifactId>
+	<name>libraries</name>
+	<packaging>pom</packaging>
 
 	<properties>
-    <license.dir>${project.parent.basedir}</license.dir>
+		<license.dir>${project.parent.basedir}</license.dir>
+		<aspectj.version>1.8.1</aspectj.version>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<slf4j.version>1.7.5</slf4j.version>
+		<spring.version>3.2.17.RELEASE</spring.version>
+		<spring.security.version>3.2.9.RELEASE</spring.security.version>
+		<spring.social.version>1.1.4.RELEASE</spring.social.version>
+		<spring.social.facebook.version>2.0.3.RELEASE</spring.social.facebook.version>
+		<spring.social.twitter.version>1.1.2.RELEASE</spring.social.twitter.version>
+		<spring.social.linkedin.version>1.0.2.RELEASE</spring.social.linkedin.version>
+		<cxf-rt-rs-extension-search.version>2.6.10</cxf-rt-rs-extension-search.version>
+		<cxf.version>2.6.10</cxf.version>
+		<commons-io.version>2.4</commons-io.version>
+		<!-- <cxf.version>3.1.8</cxf.version> -->
+		<thymeleaf.version>2.1.0.RELEASE</thymeleaf.version>
+		<dandelion.version>0.9.3</dandelion.version>
+		<mongo-db-driver.version>3.4.2</mongo-db-driver.version>
+		<ojdbc6.version>11.2.0.4</ojdbc6.version>
+		<postgresql.version>9.4.1212.jre7</postgresql.version>
+		<disruptor.version>2.7.1</disruptor.version>
+		<mina-core.version>2.0.4</mina-core.version>
+		<flexjson.version>2.1</flexjson.version>
+		<jackson1.version>1.9.13</jackson1.version>
+		<jackson2.version>2.8.5</jackson2.version>
+		<joda-time.version>2.9.9</joda-time.version>
+		<hazelcast.version>3.6.7</hazelcast.version>
+		<groovy.version>2.4.4</groovy.version>
+		<jersey-core.version>1.9</jersey-core.version>
+		<mqtt-client.version>1.10</mqtt-client.version>
+		<hawtdb.version>1.6</hawtdb.version>
+		<hawtbuf.version>1.11</hawtbuf.version>
+		<jsondoc-core.version>1.0.2.2.sofia</jsondoc-core.version>
+		<atmosphere-client.version>2.0.0</atmosphere-client.version>
+		<atmosphere-runtime.version>2.0.0</atmosphere-runtime.version>
+		<drill.version>1.5.0</drill.version>
+		<quartz.version>2.2.1</quartz.version>
+		<dwr.version>3.0</dwr.version>
+		<json-schema-validator.version>2.2.6</json-schema-validator.version>
+		<json-schema-core.version>1.2.5</json-schema-core.version>
+
+		<json-schema-jackson-coreutils.version>1.8</json-schema-jackson-coreutils.version>
+		<libphonenumber.version>5.2</libphonenumber.version>
+		<mail.version>1.4.7</mail.version>
+		<hystrix-core.version>1.4.7</hystrix-core.version>
+		<reactivex.version>1.0.10</reactivex.version>
+		<signpost.version>1.2.1.2</signpost.version>
+		<activemq.version>5.9.1</activemq.version>
+		<jaxb.version>2.2.5.1</jaxb.version>
+		<jaxb-xjc.version>2.1.6</jaxb-xjc.version>
+		<jaxb-api.version>2.2.2</jaxb-api.version>
+		<siddhi.version>2.0.0-wso2v4</siddhi.version>
+		<twitter4j.version>4.0.3</twitter4j.version>
+		<httpclient.version>4.5.2</httpclient.version>
+		<httpcore.version>4.4.5</httpcore.version>
+		<moquette.version>0.9.4.sofia</moquette.version>
+		<apache-poi.version>3.10-FINAL</apache-poi.version>
+		<opencsv.version>2.3</opencsv.version>
+		<bytecode-opencsv.version>2.4</bytecode-opencsv.version>
+		<jaxb-xjc.version>2.1.6</jaxb-xjc.version>
+		<json.version>20090211</json.version>
+		<jongo.version>1.3.0</jongo.version>
+		<facebook4j.version>2.2.2</facebook4j.version>
+		<jinstagram.version>1.0.10</jinstagram.version>
+		<jasperreports.version>5.0.0</jasperreports.version>
+		<itext.version>2.1.7</itext.version>
+		<js-mongodb-datasource.version>1.0.0a</js-mongodb-datasource.version>
+		<hapi.version>2.2</hapi.version>
+		<lmax-disruptor.version>3.2.1</lmax-disruptor.version>
+		<hsqldb.version>2.3.2</hsqldb.version>
+		<jfree.version>1.0.15</jfree.version>
+		<contiperf.version>2.2.0</contiperf.version>
+		<xerces.version>2.8.1</xerces.version>
+		<javax.json-api.version>1.0</javax.json-api.version>
+		<javax.json-provider.version>1.0.4</javax.json-provider.version>
+		<javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
+		<maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss z</maven.build.timestamp.format>
+		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
+		<ssap.client.api.version>3.4.0</ssap.client.api.version>
+		<jsqlparser.version>0.9.6</jsqlparser.version>
+		<commons-exec.version>1.3</commons-exec.version>
+		<soa-model-core.version>1.6.0</soa-model-core.version>
+		<reflections.version>0.9.8</reflections.version>
+		<dockerplugin.version>0.4.13</dockerplugin.version>
+		<eclipse-jgit.version>3.5.0.201409260305-r</eclipse-jgit.version>
+		<servlet-api.version>3.1.0</servlet-api.version>
+		<jsonschema2pojo.version>0.4.34</jsonschema2pojo.version>
+		<parsql.version>4.1.0</parsql.version>
 	</properties>
-	
-	<dependencies>		
-			
+
+	<dependencies>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
-		<!--Spring Social Integration-->
+
+		<!--Spring Social Integration -->
 		<dependency>
-            <groupId>org.springframework.social</groupId>
-            <artifactId>spring-social-twitter</artifactId>
-        </dependency>		
-		<!--
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-twitter</artifactId>
+		</dependency>
+
+
 		<dependency>
-            <groupId>org.springframework.social</groupId>
-            <artifactId>spring-social-facebook</artifactId>
-        </dependency>
-		-->			
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-config</artifactId>
+
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-core</artifactId>
+
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-security</artifactId>
+
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.social</groupId>
+			<artifactId>spring-social-web</artifactId>
+
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-jpa</artifactId>
+
+		</dependency>
+		<!-- <dependency> <groupId>org.springframework.social</groupId> <artifactId>spring-social-facebook</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>	  
+		</dependency>
 	</dependencies>
+
+	<modules>
+
+		<module>social-services</module>
+		<module>util-core</module>
+
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.10.b1</version>
+				<configuration>
+					<header>${license.dir}/LICENSE</header>
+					<properties>
+						<project>
+							${project.name}
+						</project>
+						<founder>${project.organization.name}</founder>
+						<year>${project.year}</year>
+						<website>${project.website}</website>
+					</properties>
+					<includes>
+						<include>src/main/java/**</include>
+						<include>src/test/java/**</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>format</goal>
+						</goals>
+						<phase>process-sources</phase>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.mycila</groupId>
+						<artifactId>licenses</artifactId>
+						<version>1</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.yml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.yml</include>
+					<include>**/*.*</include>
+				</includes>
+			</resource>
+		</resources>
+	</build>
 
 
 

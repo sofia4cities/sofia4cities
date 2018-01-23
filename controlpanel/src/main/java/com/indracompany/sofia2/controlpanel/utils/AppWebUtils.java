@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.controlpanel.utils;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.WebUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,5 +68,20 @@ public class AppWebUtils {
 		WebUtils.setSessionAttribute(request, name, o);
 	}
 	
+	public String jsonStringToString(String json)
+	{
+		System.out.println(json);
+		ObjectMapper objectMapper = new ObjectMapper();
+		String formattedJson=null;
+		
+		try {
+			JsonNode tree = objectMapper.readValue(json,JsonNode.class);
+			formattedJson = tree.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(formattedJson);
+		return formattedJson;
+	}
 
 }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+  © Indra Sistemas, S.A.
+  2013 - 2014  SPAIN
+  
+  All rights reserved
+-->
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+<persistence-unit name="persistenceUnitTest" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Appsw</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Appswconfiguracionsw</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Asignacionsw</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Asset</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Comentario</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Configuracionasset</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Configuracionsw</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Consultaspredefinidas</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Instanciakp</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Instanciaontgront</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Instanciaontologiagrupo</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Kp</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Kpontologia</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Kpontologiagrupo</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Ontologia</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Ontologiagrupo</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Ontologiagrupoontologia</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Plantilla</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Propiedadconfigurabletipoasset</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Propiedadconfiguracion</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Propiedadtipoasset</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Rol</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Script</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Scriptmetodo</class>
+         <class>com.indra.sofia2.support.entity.gestion.dominio.CepEvento </class>
+           <class>com.indra.sofia2.support.entity.gestion.dominio.Scriptontologia</class>
+           <class>com.indra.sofia2.support.entity.gestion.dominio.Scriptcep</class>
+            <class>  com.indra.sofia2.support.entity.gestion.dominio.CepQuery</class>
+       
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Scriptoperacion</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Scripttipo</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Tipoasset</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Tipopermiso</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Token</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Usuario</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Usuariontologiagrupo</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Usuarioontologia</class>
+        <class>com.indra.sofia2.support.entity.gestion.dominio.Nodo</class>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+            <!-- value="create" to build a new database on each run; value="update" to modify an existing database; value="create-drop" means the same as "create" but also drops tables when Hibernate closes; value="validate" makes no changes to the database -->
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.DefaultNamingStrategy"/>
+            <property name="hibernate.connection.charSet" value="UTF-8"/>
+            <!-- Uncomment the following two properties for JBoss only -->
+            <!-- property name="hibernate.validator.apply_to_ddl" value="false" /-->
+            <!-- property name="hibernate.validator.autoregister_listeners" value="false" /-->
+        </properties>
+    </persistence-unit>
+</persistence>
