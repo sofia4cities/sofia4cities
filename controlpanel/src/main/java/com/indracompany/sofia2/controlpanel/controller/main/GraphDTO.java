@@ -11,19 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.welcome;
+package com.indracompany.sofia2.controlpanel.controller.main;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public class GraphDTO implements Serializable {
-
-
-
 
 	@Getter @Setter private String source;
 	@Getter @Setter private String target;
@@ -82,9 +82,17 @@ public class GraphDTO implements Serializable {
 	
 	@Override
 	@JsonRawValue
+	@JsonIgnore
 	public String toString()
 	{
-		return super.toString();
+		ObjectMapper mapper = new ObjectMapper();
+		String result=null;
+		try {
+			result=mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return result;
 		
 	}
 }

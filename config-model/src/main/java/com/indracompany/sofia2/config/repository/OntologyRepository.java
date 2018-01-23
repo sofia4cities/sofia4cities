@@ -29,11 +29,18 @@ import com.indracompany.sofia2.config.model.Ontology;
 public interface OntologyRepository extends JpaRepository<Ontology,String> {
 
 	List<Ontology> findByIdentificationIgnoreCase(String identification);
+	List<Ontology> findByDescription(String description);
 	List<Ontology> findByIdentification(String identification);
+	List<Ontology> findByDescriptionContaining(String description);
+	List<Ontology> findByIdentificationContaining(String identification);
 	List<Ontology> findByUserId(String userId);
 	List<Ontology> findByUserIdAndActiveTrue(String userId);
 	List<Ontology> findByIdentificationLikeAndDescriptionLike(String identification, String description);
 	List<Ontology> findByUserIdAndIdentificationLikeAndDescriptionLike(String userId,String identification,String description);
+	List<Ontology> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
+	List<Ontology> findByUserIdAndIdentificationContainingAndDescriptionContaining(String userId,String identification,String description);
+	List<Ontology> findByUserIdAndIdentificationContaining(String userId,String identification);
+	List<Ontology> findByUserIdAndDescriptionContaining(String userId,String description);
 	List<Ontology> findByActiveTrueAndIsPublicTrue();
 	List<Ontology> findByActiveTrue();
 	List<Ontology> findById(String id);

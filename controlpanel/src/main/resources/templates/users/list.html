@@ -1,11 +1,9 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
-
 		
 		<!-- BEGIN WEB FONT -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -59,14 +57,14 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/ontologies/list}"> <span th:text="#{name.ontologies}">Ontologies</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{ontology.my}">My Ontologies</span></li>
+						<li><a th:href="@{/ontologies/list}"> <span th:text="#{name.users}">Ontologies</span></a><i class="fa fa-circle"></i></li>
+						<li><span th:text="#{users.my}">Manage Users</span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{ontology.my}">My Ontologies </span></h1>
+				<h1 class="page-title hide "><span th:text="#{users.my}">Manage Users</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -77,7 +75,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase"> My Ontologies </span>
+									<span class="caption-subject bold font-grey-gallery uppercase"> Manage Users</span>
 									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
 								<div class="tools">
@@ -90,10 +88,7 @@
 											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
 										</a>												
 										<ul class="dropdown-menu" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../users/create'" th:text="#{gen.create}" >Create</a></li>
 											<li class="divider"> </li>
 										</ul>
 									</div>										
@@ -145,8 +140,8 @@
 									</div>
 									<!-- ONTOLOGY LIST -->
 									<div class="col-md-12">											
-										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
-											<div class ="">
+										<div id="contenedor-tabla-outside" class="contiene">																						
+											<div  class ="table-scrollable table-scrollable-borderless">
 												<!-- DATATABLE DANDELION CONF. -->												
 												<table id="ontologies" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
@@ -192,22 +187,23 @@
 															</td>
 														</tr>
 													</tbody>
-												</table>												
+												</table>
+												
 												<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
 												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
 													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
 														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
 													</a>
-													<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-														<label class="toggle-vis" data-column="0" th:text="#{ontologias_listado_header_nombre}"> identification </label>
-														<label class="toggle-vis" data-column="1" th:text="#{ontologias_listado_header_propietario}"> user </label>
-														<label class="toggle-vis" data-column="2" th:text="#{ontologias_listado_header_descripcion}"> Description</label>
-														<label class="toggle-vis" data-column="3" th:text="#{ontologias_listado_header_activa}"> Active</label>
-														<label class="toggle-vis" data-column="4" th:text="#{ontologias_listado_header_publica}"> Public</label>														
-														<label class="toggle-vis" data-column="5" th:text="#{usuarios_listado_header_fechaalta}"> Created At</label>
-														<label class="toggle-vis" data-column="6" th:text="#{ontologias_listado_header_opciones}" > Options</label>															
+													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
+														<label class="toggle-vis" data-column="0" > Name</label>
+														<label class="toggle-vis" data-column="1" > Owner</label>
+														<label class="toggle-vis" data-column="2" > Description</label>
+														<label class="toggle-vis" data-column="3" > Active</label>
+														<label class="toggle-vis" data-column="4" > Public</label>														
+														<label class="toggle-vis" data-column="5" > Created At</label>
+														<label class="toggle-vis" data-column="6" > Options</label>															
 													</div>
-												</div>												
+												</div>											
 											</div>
 										</div>											
 									</div>
@@ -295,7 +291,6 @@
 		
 		// SEARCH FORM RESET
 		$('#reset_ontology').on('click',function(){
-			console.log('reset form...');
 			$('#form_ontology')[0].reset();
 			$('#form_ontology')[0].submit();
 		});

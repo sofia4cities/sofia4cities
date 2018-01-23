@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 /*******************************************************************************
- * Â© Indra Sistemas, S.A.
+ * © Indra Sistemas, S.A.
  * 2013 - 2018  SPAIN
  *
  * All rights reserved
