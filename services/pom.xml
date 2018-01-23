@@ -16,11 +16,7 @@
 		<license.dir>${project.parent.basedir}</license.dir>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-persistence-ri</artifactId>
-			<version>${sofia2.version}</version>
-		</dependency>
+
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-config-model</artifactId>
@@ -42,78 +38,17 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Web: Thymeleaf and dependencies -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.thymeleaf.extras</groupId>
-			<artifactId>thymeleaf-extras-springsecurity4</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>bootstrap</artifactId>
-			<version>3.3.7</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-thymeleaf</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dandelion</groupId>
-			<artifactId>datatables-spring3</artifactId>
-			<version>0.10.1</version>
-		</dependency>
-		<!-- -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
+		
 		<!-- DECIDIR CUAL Y CUANDO USAR <dependency> <groupId>org.springframework.boot</groupId> 
 			<artifactId>spring-boot-starter-jersey</artifactId> </dependency> <dependency> 
 			<groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-websocket</artifactId> 
 			</dependency> -->
-		<!-- SPRING BOOT ADMIN-CLIENT -->
-		<dependency>
-			<groupId>de.codecentric</groupId>
-			<artifactId>spring-boot-admin-starter-client</artifactId>
-			<version>${spring-boot-admin-starter-client.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
+				<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.restdocs</groupId>
-			<artifactId>spring-restdocs-mockmvc</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+
 
 	</dependencies>
 

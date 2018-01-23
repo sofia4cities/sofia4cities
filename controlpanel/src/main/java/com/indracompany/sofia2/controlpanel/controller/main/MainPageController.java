@@ -63,7 +63,7 @@ public class MainPageController {
 	{
 		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
 
-		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName,null,genericUserName,user.getUserId()));
+		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName,null,genericUserName,utils.getUserId()));
 		arrayLinks.addAll(graphUtil.constructGraphWithOntologies());
 		arrayLinks.addAll(graphUtil.constructGraphWithClientPlatforms());
 		arrayLinks.addAll(graphUtil.constructGraphWithVisualization());		

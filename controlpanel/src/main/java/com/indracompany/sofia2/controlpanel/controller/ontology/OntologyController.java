@@ -46,7 +46,7 @@ public class OntologyController {
 	private AppWebUtils utils;
 
 	@RequestMapping(value = "/list", method = RequestMethod.GET,produces = "text/html")
-	public String list(Model uiModel, HttpServletRequest request, @RequestParam(name="identification")String identification,@RequestParam(name="description")String description) {
+	public String list(Model uiModel, HttpServletRequest request, @RequestParam(required=false, name="identification")String identification,@RequestParam(required=false, name="description")String description) {
 		
 		//Scaping "" string values for parameters 
 		if(identification!=null){if(identification.equals("")) identification=null;}
@@ -56,10 +56,10 @@ public class OntologyController {
 
 		if(utils.getRole().equals("ROLE_ADMINISTRATOR"))
 		{
-			this.ontologyService.findOntolgiesWithDescriptionAndIdentification(null, identification, description);
+			ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(null, identification, description);
 		}else
 		{
-			this.ontologyService.findOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
+			ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		}
 		uiModel.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";

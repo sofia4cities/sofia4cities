@@ -1,3 +1,16 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.service.ontology;
 
 import java.util.List;
@@ -7,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+
 
 @Service
 public class OntologyServiceImpl implements OntologyService{
@@ -15,8 +28,6 @@ public class OntologyServiceImpl implements OntologyService{
 	@Autowired
 	private OntologyRepository ontologyRepository;
 
-	@Autowired
-	private AppWebUtils utils;
 
 	public List<Ontology> findAllOntologies()
 	{
@@ -51,19 +62,19 @@ public class OntologyServiceImpl implements OntologyService{
 		{
 			if(description!=null && identification!=null){
 
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(utils.getUserId(),identification, description);
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(userId,identification, description);
 
 			}else if(description==null && identification!=null){
 
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(utils.getUserId(),identification);
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(userId,identification);
 
 			}else if(description!=null && identification==null){	
 
-				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(utils.getUserId(),description);
+				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(userId,description);
 
 			}else{
 
-				ontologies=this.ontologyRepository.findByUserId(utils.getUserId());
+				ontologies=this.ontologyRepository.findByUserId(userId);
 			}
 		}
 		return ontologies;
