@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.ontology;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +24,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.service.ontology.OntologyService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,59 +40,26 @@ import lombok.extern.slf4j.Slf4j;
 public class OntologyController {
 
 	@Autowired
-	private OntologyRepository ontologyRepository;
+	private OntologyService ontologyService;
 
 	@Autowired
 	private AppWebUtils utils;
 
-	@RequestMapping(value = "/list", produces = "text/html")
-	public String list(Model uiModel, HttpServletRequest request) {
-		//Get params
-		String identification = request.getParameter("identification");
-		String description = request.getParameter("description");
+	@RequestMapping(value = "/list", method = RequestMethod.GET,produces = "text/html")
+	public String list(Model uiModel, HttpServletRequest request, @RequestParam(required=false, name="identification")String identification,@RequestParam(required=false, name="description")String description) {
 		
 		//Scaping "" string values for parameters 
 		if(identification!=null){if(identification.equals("")) identification=null;}
 		if(description!=null){if(description.equals("")) description=null;}
-		
-		List<Ontology> ontologies;
+
+		List<Ontology> ontologies=new ArrayList<Ontology>();
 
 		if(utils.getRole().equals("ROLE_ADMINISTRATOR"))
 		{
-			if(description!=null && identification!=null){
-				
-				ontologies=this.ontologyRepository.findByIdentificationContainingAndDescriptionContaining(identification, description);
-			
-			}else if(description==null && identification!=null){
-				
-				ontologies=this.ontologyRepository.findByIdentificationContaining(identification);
-				
-			}else if(description!=null && identification==null){	
-				
-				ontologies=this.ontologyRepository.findByDescriptionContaining(description);
-				
-			}else{
-				
-				ontologies=this.ontologyRepository.findAll();
-			}
+			ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(null, identification, description);
 		}else
 		{
-			if(description!=null && identification!=null){
-				
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(utils.getAuthentication().getName(),identification, description);
-			
-			}else if(description==null && identification!=null){
-				
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(utils.getAuthentication().getName(),identification);
-				
-			}else if(description!=null && identification==null){	
-				
-				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(utils.getAuthentication().getName(),description);
-				
-			}else{
-				
-				ontologies=this.ontologyRepository.findAll();
-			}
+			ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		}
 		uiModel.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
