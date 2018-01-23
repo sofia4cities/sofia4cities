@@ -74,6 +74,7 @@
 		<module>controlpanel</module>		
 		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
         <module>sofia2-monitoring-ui</module>
+        <module>services</module>
 		<!--
 -->		
 	</modules>
