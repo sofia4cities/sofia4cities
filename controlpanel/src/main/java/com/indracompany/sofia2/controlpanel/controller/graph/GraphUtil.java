@@ -95,7 +95,7 @@ public class GraphUtil {
 	public List<GraphDTO> constructGraphWithClientPlatforms(){
 
 		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
-		String name=utils.getMessage("name.clients","PLATFORM CLIENTS");
+		String name=utils.getMessage("name.clients","PLATFORM_CLIENTS");
 		String description=utils.getMessage("tooltip_clients",null);
 
 		// carga de nodo clientPlatform
