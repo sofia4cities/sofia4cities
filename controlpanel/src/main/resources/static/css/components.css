@@ -6631,6 +6631,24 @@ Custom color buttons
 .form-control-static {
   display: inline-block;
   margin: 0; }
+  
+.form-control-static-block {
+	
+	display: block;
+    margin: 0;    
+    border: 1px dotted #ccc;
+    padding: 5px 15px;	
+}  
+
+.form-control-static-block:empty{
+	display: block;
+    margin: 0;    
+    border: none !important;
+    padding: 5px 15px;	
+	
+}
+
+.form-control-static-no-border { border: none !Important; }
 
 /* Form input sizing */
 .input-mini {
