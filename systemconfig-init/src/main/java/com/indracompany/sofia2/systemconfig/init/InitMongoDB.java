@@ -17,6 +17,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
@@ -30,11 +31,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "sofia2.init.mongodb")
 public class InitMongoDB {
 	
 
-	@Value("${sofia2.init.mongodb:false}")
-	private boolean initMongoDB;
 	
 	@Autowired
 	ManageDBRepository manageDb;
@@ -46,14 +46,7 @@ public class InitMongoDB {
 
 	@PostConstruct
 	public void init() {
-		if (initMongoDB==true) {
-			log.info("Start initMongoDB...");
-			init_AuditGeneral();
-		}
-		else {
-			log.info("Disable Start initMongoDB...");
-		}
-		//init_MensajesPlataforma();
+		init_AuditGeneral();
 	}
 	
 	public void init_AuditGeneral() {
