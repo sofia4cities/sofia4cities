@@ -91,19 +91,19 @@
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label"><i class="la la-credit-card"></i> <span th:text="#{user.id}">User</span></label>
+															<label class="control-label"><i class="la la-credit-card"></i> <span th:text="#{user.id} + ':'">User</span></label>
 															<p class="form-control-static-block bold" th:text="*{userId}"> User Identification </p>
 														</div>
 													</div>
 													<div class="col-md-5 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{user.name}">Name</label>
+															<label class="control-label" th:text="#{user.name} + ':'">Name</label>
 															<p class="form-control-static-block bold" th:text="*{fullName}"> User Name </p>
 														</div>
 													</div>
 													<div class="col-md-4 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label"><i class="la la-envelope-o"></i> <span th:text="#{user.email}">eMail</span></label>
+															<label class="control-label"><i class="la la-envelope-o"></i> <span th:text="#{user.email} + ':'">eMail</span></label>
 															<p class="form-control-static-block bold" th:text="*{email}"> User eMail </p>
 														</div>
 													</div>													
@@ -112,25 +112,25 @@
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label" th:text="#{user.rolTypeName}">Role</label>
+															<label class="control-label" th:text="#{user.rolTypeName} + ':'">Role</label>
 															<p class="form-control-static-block bold" th:text="*{roleTypeId.name}"> User Role </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label"><i class="la la-calendar"></i> <span th:text="#{user.dateCreated}">Created At</span></label>
+															<label class="control-label"><i class="la la-calendar"></i> <span th:text="#{user.dateCreated} + ':'">Created At</span></label>
 															<p class="form-control-static-block bold" th:text="${#dates.format(user.dateCreated, 'dd/MM/yyyy')}" > User creation date </p>
 														</div>
 													</div>
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label"><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted}">Deleted At</span></label>
+															<label class="control-label"><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
 															<p class="form-control-static-block bold" ><span th:if="*{dateDeleted}" th:text="*{dateDeleted}"> User deleting date </span></p>
 														</div>
 													</div>
 													<div class="col-md-4 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label" th:text="#{user.active}">Active</label>
+															<label class="control-label" th:text="#{user.active} + '?'">Active</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
 																<span th:if="*{active}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
 																<span th:if="!*{active}" class="label label-sm label-danger"><i class="fa fa-warning"></i></span>
