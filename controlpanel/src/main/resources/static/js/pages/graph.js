@@ -3,7 +3,7 @@ var GraphController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME  = 'Sofia4Cities Control Panel'
 	, LIB_TITLE  = 'Graph Controller'
-    , logControl = 0;
+    , logControl = 1;
 	
 	// GRAPH INITIALIZATION VARS AND CONST.
 	var links 			 = []
@@ -59,7 +59,7 @@ var GraphController = function() {
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf2d0', size: 30, color: '#c49f47' }
 			},
-			usuario:{
+			user:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf2be', size: 60, color: '#4B77BE' }
 			},
@@ -67,7 +67,7 @@ var GraphController = function() {
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf1e6',	size: 40, color: '#525e64' }
 			},
-			visualizacion:{
+			visualization:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf080',	size: 50, color: '#525e64' }
 			},
@@ -75,14 +75,10 @@ var GraphController = function() {
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf0c3',	size: 50, color: '#525e64' }
 			},
-			kps:{
+			platform_clients:{
 				shape: 'icon',
 				icon: {	face: 'FontAwesome', code: '\uf2db', size: 40, color: '#5e738b' }
-			},
-			ontologias:{
-				shape: 'icon',
-				icon:{ 	face: 'FontAwesome', code: '\uf0e8', size: 40, color: '#5e738b' }
-			},
+			},			
 			notebooks:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf02d', size: 40, color: '#5e738b' }
@@ -114,18 +110,14 @@ var GraphController = function() {
 			script:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome',	code: '\uf1c9',	size: 30, color: '#5e738b' }
-			},
-			pipeline:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome',	code: '\uf2d0', size: 30, color: '#c49f47' }
-			},
+			},			
 			dashboard:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf1fe', size: 30, color: '#c49f47' }
 			},
-			ontology:{
+			ontologies:{
 				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf1e0', size: 30, color: '#c49f47' }
+				icon:{ face: 'FontAwesome', code: '\uf0e8', size: 30, color: '#333333' }
 			},
 			kp:{
 				shape: 'icon',
@@ -457,8 +449,8 @@ var GraphController = function() {
 					if( Node.type === undefined ){ Node.type = "";}
 					idRef[ Node.target ] = Index;
 				
-					// node format
-					var dataJson = {'id':Index, 'label':Node.nameTarget, 'source':Node.source, 'type':Node.type, 'linkTarget':Node.linkTarget, 'nameSource':Node.nameSource, 'group':Node.classTarget, 'title':Node.title, 'linkCreate': Node.linkCreate };
+					// node format, adjust type to suit if no-type
+					var dataJson = {'id':Index, 'label':Node.nameTarget, 'source':Node.source, 'type':Node.type || 'suit', 'linkTarget':Node.linkTarget, 'nameSource':Node.nameSource, 'group':Node.classTarget, 'title':Node.title, 'linkCreate': Node.linkCreate };
 
 					group 	= dataJson.group.toLowerCase();
 					type	= dataJson.type.toLowerCase();
@@ -503,10 +495,10 @@ var GraphController = function() {
 		destroyNetwork();
 		
 	    // AJAX CALL - get GRAPH data
-		/* $.ajax({ url:"getgraph", type: 'GET', dataType: 'json', contentType: 'text/html',
+		$.ajax({ url:"/controlpanel/getgraph", type: 'GET', dataType: 'json', contentType: 'text/html',
 			success: function(data) {
 
-	        	links 		= data; // MOCK-UP: graphJson.data
+	        	links 		= data; 
 				graphData	= getDataGraph();
 				
 				if( graphData.nodes.length > 0 ){
@@ -530,12 +522,12 @@ var GraphController = function() {
 				}
 			},
 			error:function(data, status, er) { 
-					$.alert({title: 'GRAPH ERROR!',content: data });       
+					$.alert({title: 'GRAPH ERROR!',  theme: 'dark' , icon: 'fa fa-warning', type: 'red', content: 'Error loading graph info on graph Controller.' });       
 	        }
-		}); */
+		}); 
 		
 		// ############## MOCKUP ###################### 
-		links 		= graphJson.data
+		/* links 		= graphJson.data		
 		graphData	= getDataGraph();
 		
 		if( graphData.nodes.length > 0 ){
@@ -556,7 +548,7 @@ var GraphController = function() {
 					}
 				}
 			});
-		}
+		} */
 		// ############## MOCKUP ######################
 		
 		

@@ -1,9 +1,14 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
+		<meta name="description" content="Ontology list template">
+		<meta name="keywords" content="sofia2,smart,cities,platform,Indra">
+		<meta name="author" content="Indra Sistemas, S.A.">
 		
 		<!-- BEGIN WEB FONT -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -143,8 +148,8 @@
 									</div>
 									<!-- ONTOLOGY LIST -->
 									<div class="col-md-12">											
-										<div id="contenedor-tabla-outside" class="contiene">																						
-											<div  class ="table-scrollable table-scrollable-borderless">
+										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+											<div class ="">
 												<!-- DATATABLE DANDELION CONF. -->												
 												<table id="ontologies" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
@@ -190,23 +195,22 @@
 															</td>
 														</tr>
 													</tbody>
-												</table>
-												
+												</table>												
 												<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
 												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
 													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
 														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
 													</a>
-													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-														<label class="toggle-vis" data-column="0" > Name</label>
-														<label class="toggle-vis" data-column="1" > Owner</label>
-														<label class="toggle-vis" data-column="2" > Description</label>
-														<label class="toggle-vis" data-column="3" > Active</label>
-														<label class="toggle-vis" data-column="4" > Public</label>														
-														<label class="toggle-vis" data-column="5" > Created At</label>
-														<label class="toggle-vis" data-column="6" > Options</label>															
+													<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
+														<label class="toggle-vis" data-column="0" th:text="#{ontologias_listado_header_nombre}"> identification </label>
+														<label class="toggle-vis" data-column="1" th:text="#{ontologias_listado_header_propietario}"> user </label>
+														<label class="toggle-vis" data-column="2" th:text="#{ontologias_listado_header_descripcion}"> Description</label>
+														<label class="toggle-vis" data-column="3" th:text="#{ontologias_listado_header_activa}"> Active</label>
+														<label class="toggle-vis" data-column="4" th:text="#{ontologias_listado_header_publica}"> Public</label>														
+														<label class="toggle-vis" data-column="5" th:text="#{usuarios_listado_header_fechaalta}"> Created At</label>
+														<label class="toggle-vis" data-column="6" th:text="#{ontologias_listado_header_opciones}" > Options</label>															
 													</div>
-												</div>											
+												</div>												
 											</div>
 										</div>											
 									</div>
@@ -294,6 +298,7 @@
 		
 		// SEARCH FORM RESET
 		$('#reset_ontology').on('click',function(){
+			console.log('reset form...');
 			$('#form_ontology')[0].reset();
 			$('#form_ontology')[0].submit();
 		});

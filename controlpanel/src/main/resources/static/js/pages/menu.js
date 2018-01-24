@@ -4,11 +4,12 @@ var MenuController = function() {
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Menu Controller';	
     var logControl = 0;
-	var LANGUAGE = 'ES'
+	var LANGUAGE = ['es'];
+	var currentLanguage = ''; // loaded from template.
 	
 	// CONTROLLER PRIVATE FUNCTIONS
 	
-	
+		
 	// LOAD MENU INFORMATION FROM USER-ROLE 
 	// get SERVER-JSON from header.html -> headerReg.menu and CREATE HTML MENU.
 	var consoleMenu = function(){
@@ -18,6 +19,7 @@ var MenuController = function() {
 		var menu_HTML	= ''
 		,submenu_HTML	= ''
 		,markUp_HTML	= ''
+		,page_LANG 		= ''
 		,menu_LANG 		= ''
 		,submenus 		= false;
 		
@@ -26,7 +28,11 @@ var MenuController = function() {
 		
 		// GET JSON FROM CONTROLLER LOAD()
 		var menuJson = menuReg;
-		menu_LANG = menuJson.language || LANGUAGE;
+		
+		// GET CURRENT LANGUAGE OR 'ES'.
+		page_LANG = currentLanguage || LANGUAGE;
+		menu_LANG = page_LANG.toString().toUpperCase();
+		
 		logControl ? console.log('     |---> menu: ' + menuJson.menu + ' NoSession Path: ' + menuJson.noSession + ' Rol: ' + menuJson.rol + ' Navigation Objects: ' + menuJson.navigation.length + ' Language: ' + menu_LANG ) : '';
 		
 		// NAV-ITEM MAIN LOOP
@@ -129,9 +135,17 @@ var MenuController = function() {
 			return menuReg = Data;
 		},
 		
+		lang: function(lang){
+			logControl ? console.log(LIB_TITLE + ': lang()') : '';
+			logControl ? console.log('|---> lang() -> assign current Language to Console Menu: ' + lang) : '';
+			return currentLanguage = lang;
+			
+		},
+		
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
+			
 			// load menu (role)
 			consoleMenu();			
 		}		
@@ -143,7 +157,8 @@ jQuery(document).ready(function() {
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
 	MenuController.load(menuJson);
-	
+	// LOADING CURRENT LANGUAGE FROM THE TEMPLATE
+	MenuController.lang(currentLanguage);	
 	// AUTO INIT CONTROLLER.
 	MenuController.init();
 });
