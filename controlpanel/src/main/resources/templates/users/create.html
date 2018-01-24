@@ -24,7 +24,10 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
 		<!-- THEME -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>		
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+
+		<!-- PLUGINS STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/js/vendors/bootstrap-select/bootstrap-select.min.css}"/>
 		
 	</head>	
 	
@@ -56,7 +59,7 @@
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
 						<li><a th:href="@{/users/list}"> <span th:text="#{user.breadcrumb.prev}">Users List</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{user.breadcrumb.show}">Show User</span></li>
+						<li><span th:text="#{user.breadcrumb.create}">Show User</span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
@@ -72,7 +75,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="la la-users font-grey-gallery"></i>
-									<span class="caption-subject font-grey-gallery uppercase" th:object="${user}" th:text="#{user.template.show} + ' ' + ${user.fullName}"> User_fullName</span>
+									<span class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.create} + ':'"> New User</span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -85,26 +88,35 @@
 									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="user_view_form" action="view.html" th:action="@{|/controlpanel/users/${userId}|}" th:object="${user}" method="post" class="form">
+										<form role="form" id="user_view_form" action="create.html" th:object="${user}" th:action="@{/users}" onsubmit="return checkCreate()" method="post" class="form">
 											<div class="form-body">
 												<!-- user, name and email -->
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label"><i class="la la-credit-card"></i> <span th:text="#{user.id} + ':'">User</span></label>
-															<p class="form-control-static-block bold" th:text="*{userId}"> User Identification </p>
+															<label th:text="#{user.id} + ':'">Identification</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="userid" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"/>
+															</div>															
 														</div>
 													</div>
 													<div class="col-md-5 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{user.name} + ':'">Name</label>
-															<p class="form-control-static-block bold" th:text="*{fullName}"> User Name </p>
+															<label class="" th:text="#{user.name} + ':'">Name</label>
+															<div class="input-icon ">
+																<i class="fa fa-user"></i>
+																<input id="fullname" type="text"  th:required="true"  maxlength="50" th:field="*{fullName}" class="form-control " th:placeholder="#{user.name}"/>
+															</div>	
 														</div>
 													</div>
 													<div class="col-md-4 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label"><i class="la la-envelope-o"></i> <span th:text="#{user.email} + ':'">eMail</span></label>
-															<p class="form-control-static-block bold" th:text="*{email}"> User eMail </p>
+															<div class="input-icon ">
+																<i class="fa fa-envelope-o"></i>
+																<input id="email" type="text"  th:required="true"  maxlength="50" th:field="*{fullName}" class="form-control " th:placeholder="#{user.name}"/>
+															</div>
 														</div>
 													</div>													
 												</div>
@@ -112,29 +124,39 @@
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label" th:text="#{user.rolTypeName} + ':'">Role</label>
-															<p class="form-control-static-block bold" th:text="*{roleTypeId.name}"> User Role </p>
+															<label class="" th:text="#{user.rolTypeName} + ':'">Role</label>
+															<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" th:field="*{roleTypeId.name}" th:required="true">
+																<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>
+															</select>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label"><i class="la la-calendar"></i> <span th:text="#{user.dateCreated} + ':'">Created At</span></label>
-															<p class="form-control-static-block bold" th:text="${#dates.format(user.dateCreated, 'dd/MM/yyyy')}" > User creation date </p>
+															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateCreated} + ':'">Created At</span></label>
+															<div class="input-icon ">
+																<i class="fa fa-calendar-o"></i>
+																<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{dateCreated}" class="form-control " th:placeholder="#{user.dateCreated}"/>
+															</div>
 														</div>
 													</div>
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label"><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
-															<p class="form-control-static-block bold" ><span th:if="*{dateDeleted}" th:text="*{dateDeleted}"> User deleting date </span></p>
+															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
+															<div class="input-icon ">
+																<i class="fa fa-calendar-o"></i>
+																<input id="datedeleted" type="text"  th:required="true"  maxlength="50" th:field="*{dateDeleted}" class="form-control " th:placeholder="#{user.dateDeleted}"/>
+															</div>
 														</div>
 													</div>
 													<div class="col-md-4 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label" th:text="#{user.active} + '?'">Active</label>
-															<p class="form-control-static-block form-control-static-no-border bold">
-																<span th:if="*{active}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{active}" class="label label-sm label-danger"><i class="fa fa-warning"></i></span>
-															</p>
+															<label class="" th:text="#{user.active} + '?'">Active</label>
+															<div class="mt-checkbox-list">
+																<label class="mt-checkbox font-md" ><i class="la la-lightbulb-o" ></i> <div class="inline" th:text="#{user.active}">User Active?</div>
+																	<input id="checkboxactive" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
+																	<span></span><!-- needed by styles -->
+																</label>																													
+															</div>
 														</div>
 													</div>
 												</div>
@@ -146,8 +168,8 @@
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													
 													<!-- REMOVE TO-DO: caducado -->
@@ -184,6 +206,9 @@
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/boostrap-select/boostrap-select.min.js}"/>
 
 	<!-- TEMPLATE CONTROLLER  -->	
 		
@@ -211,17 +236,54 @@
 		HeaderController.showConfirmDialogUsuario('delete_user_form');	
 	}
 	
+	// CHECK DATES AND LET THE FORM SUBMMIT
+	function checkCreate(){
+        var fechaAlta = $("#id_campo_fecha_alta").val();
+        var fechaBaja = $("#id_campo_fecha_baja").val();
+        var alta = new Date(fechaAlta);
+        var baja = new Date(fechaBaja);              
+        if (fechaBaja==""){
+            
+        }else{
+            if (alta > baja){
+                showConfirmTableDialog([[#{usuario_dialog_message_fechabaja_anterioralta}]]); 
+                return false;
+            }else{
+                return true;    
+            }           
+        }       
+    }
+	
 	
 	// MAIN WHEN READY
 	$( document ).ready(function() {
 		// init when Document is ready
 		showLog ? console.log('SHOW USER ready()...') : '';
+		
+		if($(".datetime").length != 0) {           
+			$(".datetime").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true});
+        }
+        
+        $("#datecreated").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true});
+        $("#dateleted").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true,
+			onClose: function(e) {
+					var ev = window.event;
+					if (ev.srcElement.innerHTML == 'Clear')
+					this.value = "";    
+			},
+			closeText: 'Clear',
+			buttonText: ''   
+        });
+		
 	});
 	 
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
 		// init on load.		
 		showLog ? console.log('SHOW USER load()...') : '';
+		
+		var f = new Date();         
+        $('#id_campo_fecha_alta').val(('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear());
 	});
 	
 	//]]>

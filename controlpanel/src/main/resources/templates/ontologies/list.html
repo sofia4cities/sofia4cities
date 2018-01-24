@@ -159,14 +159,14 @@
 															<th class="titulo-columnas" th:text="#{gen.description}">Description</th>
 															<th class="titulo-columnas text-center" th:text="#{gen.active}">Active</th>
 															<th class="titulo-columnas text-center" th:text="#{gen.public}">Public</th>																
-															<th class="titulo-columnas" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
 													<tbody th:remove="all-but-first">
 														<tr th:each="ontology : ${ontologies}" pages:paginate="10">
 															<!-- IDENTIFICATION/NAME -->
-															<td class="text-left bold" th:text="${ontology.identification}"></td>
+															<td class="text-left no-wrap bold" th:text="${ontology.identification}"></td>
 															<!-- USER -->
 															<td class="text-center bold" th:text="${ontology.userId.userId}"></td>
 															<!-- DESCRIPTION -->

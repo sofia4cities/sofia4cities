@@ -58,14 +58,13 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/users/list}"> <span th:text="#{name.users}">users</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{users.my}">Manage Users</span></li>
+						<li><a th:href="@{/users/list}"> <span th:text="#{user.breadcrumb.prev}">users</span></a><i class="fa fa-circle"></i></li>						
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{users.my}">Manage Users</span></h1>
+				<h1 class="page-title hide "><span th:text="#{user.template.show}">Manage Users</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -76,7 +75,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase"> Manage Users</span>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{user.template.list}"> Manage Users</span>
 									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
 								<div class="tools">
@@ -149,8 +148,8 @@
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{user.id}">Identification</span></th>
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.name}" >Name</span></th>
-															<th class="titulo-columnas" ><i class="la la-enveloper-o"></i> <span th:text="#{user.email}" >eMail</span></th>
-															<th class="titulo-columnas text-center" th:text="#{user.rolTypeName}">Role</th>
+															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{user.email}" >eMail</span></th>
+															<th class="titulo-columnas text-left" th:text="#{user.rolTypeName}">Role</th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateCreated}">Created At</span></th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted}">Deleted At </span></th>																
 															<th class="titulo-columnas" th:text="#{user.active}">Active</th>
@@ -160,13 +159,13 @@
 													<tbody th:remove="all-but-first">
 														<tr th:each="user : ${users}" pages:paginate="10">
 															<!-- IDENTIFICATION -->
-															<td class="text-left bold" th:text="${user.userId}"></td>
+															<td class="text-left no-wrap bold" th:text="${user.userId}"></td>
 															<!-- NAME -->
-															<td class="text-left bold" th:text="${user.fullName}"></td>
+															<td class="text-left no-wrap bold" th:text="${user.fullName}"></td>
 															<!-- EMAIL -->
-															<td class="text-left " th:text="${user.email}"></td>
+															<td class="text-left no-wrap " th:text="${user.email}"></td>
 															<!-- ROLE -->
-															<td class="text-center bold" th:text="${user.roleTypeId.name}"></td>
+															<td class="text-left no-wrap bold" th:text="${user.roleTypeId.name}"></td>
 															<!-- DATE CREATED -->
 															<td class="text-center" th:if="${user.createdAt!=null}" th:text="${#dates.format(user.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${user.createdAt==null}" th:text="'---'"></td>

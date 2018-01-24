@@ -22800,6 +22800,27 @@ Custom color buttons
 #TableInfoNetwork 	{width: 350px; min-width: 350px; margin-bottom:0px; }
 
 
+/* CATALOGO TREE Y ELIPSIS ... */
+.long-text{
+	overflow: hidden;
+	padding-right: 10px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: auto;
+}
+
+/* DATATABLE ELIPSIS ... */
+.table-long-text{
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.no-wrap{
+	white-space: nowrap;
+}
+
 /*** efectos de shadow de paneles  ***/
 .effect-1
 {
