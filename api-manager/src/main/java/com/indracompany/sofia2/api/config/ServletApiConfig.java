@@ -11,27 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.rule;
+package com.indracompany.sofia2.api.config;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import org.jeasy.rules.api.Facts;
-import org.jeasy.rules.api.Rules;
+import com.indracompany.sofia2.api.servlet.ApiServletEntryPoint;
 
-public class RulesEngineListener implements org.jeasy.rules.api.RulesEngineListener {
+@Configuration
+public class ServletApiConfig {
 
-	@Override
-	public void beforeEvaluate(Rules rules, Facts facts) {
-		Map<String,Object> dataFact=new HashMap<String,Object>();
-		facts.put(RuleManager.FACTS, dataFact);
-
-	}
-
-	@Override
-	public void afterExecute(Rules rules, Facts facts) {
-		
-		
-	}
-
+    @Bean
+    public ServletRegistrationBean ApiServletEntryPointBean() {
+        ServletRegistrationBean bean = new ServletRegistrationBean(new ApiServletEntryPoint(), "/api/*");
+        bean.setLoadOnStartup(1);
+        return bean;
+    }
 }

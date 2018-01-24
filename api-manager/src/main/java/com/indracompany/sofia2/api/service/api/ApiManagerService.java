@@ -11,27 +11,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.rule;
+package com.indracompany.sofia2.api.service.api;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import org.jeasy.rules.api.Facts;
-import org.jeasy.rules.api.Rules;
+import com.indracompany.sofia2.config.repository.ApiRepository;
 
-public class RulesEngineListener implements org.jeasy.rules.api.RulesEngineListener {
+@Service
+public class ApiManagerService {
 
-	@Override
-	public void beforeEvaluate(Rules rules, Facts facts) {
-		Map<String,Object> dataFact=new HashMap<String,Object>();
-		facts.put(RuleManager.FACTS, dataFact);
+	@Autowired
+	private ApiRepository apiRepository;
 
+	public ApiRepository getApiRepository() {
+		return apiRepository;
 	}
 
-	@Override
-	public void afterExecute(Rules rules, Facts facts) {
-		
-		
+	public void setApiRepository(ApiRepository apiRepository) {
+		this.apiRepository = apiRepository;
 	}
-
+	
+	
+	
+	
 }
