@@ -28,7 +28,7 @@ public class ApiManagerServiceFacade {
 	@Autowired
 	protected UserService userService;
 	
-	@Autowired
+	@Autowired(required=false)
 	protected TokenService tokenService;
 	
 	@Autowired
