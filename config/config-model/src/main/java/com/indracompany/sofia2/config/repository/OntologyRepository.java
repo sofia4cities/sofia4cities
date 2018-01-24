@@ -25,6 +25,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.User;
 
 public interface OntologyRepository extends JpaRepository<Ontology,String> {
 
@@ -33,18 +34,18 @@ public interface OntologyRepository extends JpaRepository<Ontology,String> {
 	List<Ontology> findByIdentification(String identification);
 	List<Ontology> findByDescriptionContaining(String description);
 	List<Ontology> findByIdentificationContaining(String identification);
-	List<Ontology> findByUserId(String userId);
-	List<Ontology> findByUserIdAndActiveTrue(String userId);
+	List<Ontology> findByUserId(User userId);
+	List<Ontology> findByUserIdAndActiveTrue(User userId);
 	List<Ontology> findByIdentificationLikeAndDescriptionLike(String identification, String description);
-	List<Ontology> findByUserIdAndIdentificationLikeAndDescriptionLike(String userId,String identification,String description);
+	List<Ontology> findByUserIdAndIdentificationLikeAndDescriptionLike(User userId,String identification,String description);
 	List<Ontology> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
-	List<Ontology> findByUserIdAndIdentificationContainingAndDescriptionContaining(String userId,String identification,String description);
-	List<Ontology> findByUserIdAndIdentificationContaining(String userId,String identification);
-	List<Ontology> findByUserIdAndDescriptionContaining(String userId,String description);
+	List<Ontology> findByUserIdAndIdentificationContainingAndDescriptionContaining(User userId,String identification,String description);
+	List<Ontology> findByUserIdAndIdentificationContaining(User userId,String identification);
+	List<Ontology> findByUserIdAndDescriptionContaining(User userId,String description);
 	List<Ontology> findByActiveTrueAndIsPublicTrue();
 	List<Ontology> findByActiveTrue();
 	Ontology findById(String id);
-	List<Ontology> findByUserIdAndIsPublicTrue(String userId);
+	List<Ontology> findByUserIdAndIsPublicTrue(User userId);
 	long countByActiveTrueAndIsPublicTrue();
 	long countByIdentificationLikeOrDescriptionLikeOrMetainfLike(String identification, String description, String metainf);
 	long countByActiveTrueAndIsPublicTrueAndMetainfIsNull();

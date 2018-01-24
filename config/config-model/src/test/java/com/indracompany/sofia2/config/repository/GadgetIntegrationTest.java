@@ -75,7 +75,7 @@ public class GadgetIntegrationTest {
 	public void test_findByUserIdAndType() { 
 		Gadget gadget=this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository.findByUserIdAndType(gadget.getUserId().getUserId(),gadget.getType()).size()>0);
+		Assert.assertTrue(this.repository.findByUserIdAndType(gadget.getUserId(),gadget.getType()).size()>0);
 	}
 
 

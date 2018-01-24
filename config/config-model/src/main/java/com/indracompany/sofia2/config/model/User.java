@@ -80,7 +80,7 @@ public class User extends AuditableEntityWithUUID{
 	@Column(name = "DATE_DELETED")
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(style = "M-")
-	private Date dateDeleted;
+	@Getter @Setter private Date dateDeleted;
 
 
 }

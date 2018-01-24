@@ -13,14 +13,21 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.user;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.service.user.UserService;
 
@@ -50,8 +57,44 @@ public class UserController {
 			@RequestParam(required = false) String fullName, @RequestParam(required = false) String roleTypeId,
 			@RequestParam(required = false) String email, @RequestParam(required = false) Boolean active) {
 		this.populateFormData(model);
+		
 		return "/users/list";
 
+	}
+	@RequestMapping(value = "/show/{id}", produces = "text/html")
+	public String showUser(@PathVariable("id") String id, Model uiModel) {
+		User user = this.userService.findByUserId(utils.getUserId());
+		uiModel.addAttribute("user", user);
+		UserToken userToken = null;
+		try {
+			userToken = this.userService.getUserToken(user);
+		} catch (Exception e) {
+			log.debug("No token found for user: "+user);
+		}
+		
+		
+		
+		
+		uiModel.addAttribute("userToken", userToken);
+		//uiModel.addAttribute("log", user);
+		uiModel.addAttribute("itemId", user.getId());
+		//Comprobamos si tiene peticiones pendientes
+		
+		
+		Date today = new Date();
+		if (user.getDateDeleted()!=null){
+			if (user.getDateDeleted().before(today)){
+				uiModel.addAttribute("obsolete", true);
+			}
+			else{
+				uiModel.addAttribute("obsolete", false);
+			}
+		}else{
+			uiModel.addAttribute("obsolete", false);
+		}
+		
+		uiModel.addAttribute("userId", user.getId());
+		return "/users/show";
 	}
 
 	public void populateFormData(Model model) {

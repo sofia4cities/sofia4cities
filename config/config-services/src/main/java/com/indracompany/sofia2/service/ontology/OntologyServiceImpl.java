@@ -68,19 +68,19 @@ public class OntologyServiceImpl implements OntologyService{
 		{
 			if(description!=null && identification!=null){
 
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(userId,identification, description);
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(user,identification, description);
 
 			}else if(description==null && identification!=null){
 
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(userId,identification);
+				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(user,identification);
 
 			}else if(description!=null && identification==null){	
 
-				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(userId,description);
+				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(user,description);
 
 			}else{
 
-				ontologies=this.ontologyRepository.findByUserId(userId);
+				ontologies=this.ontologyRepository.findByUserId(user);
 			}
 		}
 		return ontologies;
