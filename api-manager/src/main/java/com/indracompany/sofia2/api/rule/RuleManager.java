@@ -1,0 +1,78 @@
+package com.indracompany.sofia2.api.rule;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.annotation.PostConstruct;
+
+import org.jeasy.rules.api.Facts;
+import org.jeasy.rules.api.Rules;
+import org.jeasy.rules.api.RulesEngine;
+import org.jeasy.rules.api.RulesEngineListener;
+import org.jeasy.rules.core.DefaultRulesEngine;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Service;
+
+
+@Service
+public class RuleManager implements ApplicationContextAware{
+
+	public static final String FACTS="facts";
+	public static final String REQUEST = "request";
+	public static final String ACTION = "action";
+	
+	@Autowired
+	private ApplicationContext applicationContext;
+
+	private Rules rules;
+	private RulesEngine rulesEngine;
+	
+	@Autowired(required=false)
+	private RulesEngineListener listener=null;
+	
+	
+	@PostConstruct
+	public void initIt() throws Exception {
+		register();
+	}
+	public Rules register() {
+		rulesEngine = new DefaultRulesEngine();
+		rules = new Rules();
+		
+		if (listener!=null) {
+			rulesEngine.getRulesEngineListeners().add(listener);
+		}
+
+		Map<String, Object> beansOfTypeRule = (Map<String, Object>) applicationContext.getBeansWithAnnotation(org.jeasy.rules.annotation.Rule.class);
+
+		Iterator<Entry<String, Object>> iterator = beansOfTypeRule.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Object> next = iterator.next();
+			Object objeto = next.getValue();
+			rules.register(objeto);
+		}
+		return rules;
+	}
+	
+	public void fire(Facts facts) {
+		rulesEngine.fire(rules, facts);
+		
+	}
+
+	
+	public RulesEngineListener getListener() {
+		return listener;
+	}
+	public void setListener(RulesEngineListener listener) {
+		this.listener = listener;
+	}
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+		
+	}
+
+}

@@ -57,7 +57,7 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/ontologies/list}"> <span th:text="#{name.users}">Ontologies</span></a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/users/list}"> <span th:text="#{name.users}">users</span></a><i class="fa fa-circle"></i></li>
 						<li><span th:text="#{users.my}">Manage Users</span></li>
 					</ul>						
 				</div>
@@ -102,7 +102,7 @@
 									</div>
 									<div class="col-md-12 margin-bottom-20">
 									<!-- SEARCH FORM -->
-										<form id="form_ontology" class="" role="form" method="get">												
+										<form id="form_user" class="" role="form" method="get">												
 											<div class="col-md-12 no-space">
 												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" data-content="Búsqueda de Ontologías, haga click para desplegar/colapsar el forumulario y Buscar." data-original-title="Filtro de Ontologías" th:text="#{gen.search}">Search</span></h4>
 											</div>
@@ -130,59 +130,60 @@
 													</div>
 													<div class="col-md-4 col-xs-12">
 														<div class="btn-group">
-															<button type="submit" id="search_ontology" name="search_ontology" th:title="#{gen.search}" th:value="#{ontologias_formulario_button_buscar}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
-															<button type="button" id="reset_ontology" name="reset_ontology" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
+															<button type="submit" id="search_user" name="search_user" th:title="#{gen.search}" th:value="#{ontologias_formulario_button_buscar}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="reset_user" name="reset_user" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
 														</div>
 													</div>
 												</div>
 											</div>												
 										</form>								
 									</div>
-									<!-- ONTOLOGY LIST -->
+									<!-- USER LIST -->
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene">																						
-											<div  class ="table-scrollable table-scrollable-borderless">
+											<div>
 												<!-- DATATABLE DANDELION CONF. -->												
-												<table id="ontologies" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+												<table id="users" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
 														<tr class="cabecera-tabla">
-															<th class="titulo-columnas" th:text="#{gen.name}">Name</th>
-															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
-															<th class="titulo-columnas" th:text="#{gen.description}">Description</th>
-															<th class="titulo-columnas text-center" th:text="#{gen.active}">Active</th>
-															<th class="titulo-columnas text-center" th:text="#{gen.public}">Public</th>																
-															<th class="titulo-columnas" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
+															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{user.id}">Identification</span></th>
+															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.name}" >Name</span></th>
+															<th class="titulo-columnas" ><i class="la la-enveloper-o"></i> <span th:text="#{user.email}" >eMail</span></th>
+															<th class="titulo-columnas text-center" th:text="#{user.rolTypeName}">Role</th>
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateCreated}">Created At</span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted}">Deleted At </span></th>																
+															<th class="titulo-columnas" th:text="#{user.active}">Active</th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
 													<tbody th:remove="all-but-first">
-														<tr th:each="ontology : ${ontologies}" pages:paginate="10">
-															<!-- IDENTIFICATION/NAME -->
-															<td class="text-left bold" th:text="${ontology.identification}"></td>
-															<!-- USER -->
-															<td class="text-center bold" th:text="${ontology.userId}"></td>
-															<!-- DESCRIPTION -->
-															<td class="text-left text-truncate-sm" th:title="${ontology.description}" th:text="${ontology.description}"></td>
+														<tr th:each="user : ${users}" pages:paginate="10">
+															<!-- IDENTIFICATION -->
+															<td class="text-left bold" th:text="${user.userId}"></td>
+															<!-- NAME -->
+															<td class="text-left bold" th:text="${user.fullName}"></td>
+															<!-- EMAIL -->
+															<td class="text-left " th:text="${user.email}"></td>
+															<!-- ROLE -->
+															<td class="text-center bold" th:text="${user.roleTypeId.name}"></td>
+															<!-- DATE CREATED -->
+															<td class="text-center" th:if="${user.createdAt!=null}" th:text="${#dates.format(user.createdAt,'dd/MM/YYYY')}"></td>
+															<td class="text-center" th:if="${user.createdAt==null}" th:text="'---'"></td>
+															<!-- DATE DELETED -->
+															<td class="text-center" th:if="${user.deletedAt!=null}" th:text="${#dates.format(user.deletedAt,'dd/MM/YYYY')}"></td>
+															<td class="text-center" th:if="${user.deletedAt==null}" th:text="'---'"></td>
 															<!-- ACTIVE -->
-															<td class="text-center" th:if="${ontology.active}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
-															<td class="text-center" th:if="${!ontology.active}"></td>
-															<!-- PUBLIC -->
-															<td class="text-center" th:if="${ontology.public}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
-															<td class="text-center" th:if="${!ontology.public}"></td>
-															<!-- DATE -->
-															<td class="text-center" th:if="${ontology.createdAt!=null}" th:text="${#dates.format(ontology.createdAt,'dd/MM/YYYY')}"></td>
-															<td class="text-center" th:if="${ontology.createdAt==null}" th:text="${ontology.createdAt}"></td>
+															<td class="text-center" th:if="${user.active}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
+															<td class="text-center" th:if="${!user.active}"></td>															
+															
 															<!-- OPTIONS -->
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
-																	
-																	<!-- INDEXES -->
-																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
+																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																</div>
 															</td>
 														</tr>
@@ -195,13 +196,14 @@
 														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-														<label class="toggle-vis" data-column="0" > Name</label>
-														<label class="toggle-vis" data-column="1" > Owner</label>
-														<label class="toggle-vis" data-column="2" > Description</label>
-														<label class="toggle-vis" data-column="3" > Active</label>
-														<label class="toggle-vis" data-column="4" > Public</label>														
-														<label class="toggle-vis" data-column="5" > Created At</label>
-														<label class="toggle-vis" data-column="6" > Options</label>															
+														<label class="toggle-vis" data-column="0" th:text="#{user.id}"> Identification</label>
+														<label class="toggle-vis" data-column="1" th:text="#{user.name}"> Name</label>
+														<label class="toggle-vis" data-column="2" th:text="#{user.email}"> email</label>
+														<label class="toggle-vis" data-column="3" th:text="#{user.rolTypeName}"> Rol</label>
+														<label class="toggle-vis" data-column="4" th:text="#{user.dateCreated}"> Created At</label>														
+														<label class="toggle-vis" data-column="5" th:text="#{user.dateDeleted}"> Deleted At</label>
+														<label class="toggle-vis" data-column="6" th:text="#{user.active}"> Active</label>															
+														<label class="toggle-vis" data-column="7" th:text="#{gen.options}"> Options</label>
 													</div>
 												</div>											
 											</div>
@@ -232,7 +234,7 @@
 	
 	<script th:inline="javascript">	
 	
-	// TEMPLATE SEARCH FORM.
+	// TEMPLATE SEARCH FORM. NEEDS: para filtrar usuarios, se necesitan los campos: userId, fullName, email, roleType, active
 	var search = new Array();
 	var search = [[${param.identification}]] || [];
 	var description = [[${param.description}]] || '';
@@ -250,7 +252,7 @@
 	</script>
 	
 	<script type="text/javascript">	
-	var optionName = 'ONTOLOGIES';
+	var optionName = 'USERS';
 	
 	//<![CDATA[
 	function navigateUrl(url){  window.location.href = url;	}
@@ -259,7 +261,7 @@
 	$( document ).ready(function() {
 	
 	
-		// AUTO COMPLETE ON ONTOLOGY IDENTIFICATION/NAME
+		// AUTO COMPLETE ON user IDENTIFICATION/NAME
 		$.ajax({ url: "getNamesForAutocomplete", type: 'POST', dataType: 'json', contentType: 'application/json', mimeType: 'application/json',
 			success: function (source) {			 
 						var namesArray = new Array();
@@ -282,7 +284,7 @@
 		$('label.toggle-vis').on( 'click', function (e) {
 			e.preventDefault(); 
 			// Get the column API object
-			var column = $('#ontologies').DataTable().column( $(this).attr('data-column') ); 
+			var column = $('#users').DataTable().column( $(this).attr('data-column') ); 
 			// Toggle the visibility
 			column.visible( ! column.visible() );			
 			// toggle Text
@@ -290,9 +292,9 @@
 		});	
 		
 		// SEARCH FORM RESET
-		$('#reset_ontology').on('click',function(){
-			$('#form_ontology')[0].reset();
-			$('#form_ontology')[0].submit();
+		$('#reset_user').on('click',function(){
+			$('#form_user')[0].reset();
+			$('#form_user')[0].submit();
 		});
 	});
 	 

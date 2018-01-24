@@ -3,12 +3,12 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
-		<meta name="description" content="Ontology list template">
-		<meta name="keywords" content="sofia2,smart,cities,platform,Indra">
-		<meta name="author" content="Indra Sistemas, S.A.">
+		<meta name="description" content="Ontology list template"/>
+		<meta name="keywords" content="sofia2,smart,cities,platform,Indra"/>
+		<meta name="author" content="Indra Sistemas, S.A."/>
 		
 		<!-- BEGIN WEB FONT -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -92,12 +92,12 @@
 										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
 											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
 										</a>												
-										<ul class="dropdown-menu" role="menu">
+										<ul class="dropdown-menu pull-right" role="menu">
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
-											<li class="divider"> </li>
+											<!-- <li class="divider"> </li> -->
 										</ul>
 									</div>										
 								</div>
@@ -149,13 +149,13 @@
 									<!-- ONTOLOGY LIST -->
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
-											<div class ="">
+											<div>
 												<!-- DATATABLE DANDELION CONF. -->												
 												<table id="ontologies" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas" th:text="#{gen.name}">Name</th>
-															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
 															<th class="titulo-columnas" th:text="#{gen.description}">Description</th>
 															<th class="titulo-columnas text-center" th:text="#{gen.active}">Active</th>
 															<th class="titulo-columnas text-center" th:text="#{gen.public}">Public</th>																
@@ -168,7 +168,7 @@
 															<!-- IDENTIFICATION/NAME -->
 															<td class="text-left bold" th:text="${ontology.identification}"></td>
 															<!-- USER -->
-															<td class="text-center bold" th:text="${ontology.userId}"></td>
+															<td class="text-center bold" th:text="${ontology.userId.userId}"></td>
 															<!-- DESCRIPTION -->
 															<td class="text-left text-truncate-sm" th:title="${ontology.description}" th:text="${ontology.description}"></td>
 															<!-- ACTIVE -->

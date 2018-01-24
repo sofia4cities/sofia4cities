@@ -24,6 +24,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.model.ClientConnection;
@@ -76,12 +77,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "sofia2.init.configdb")
 public class InitConfigDB {
 
 	private static User userCollaborator=null;
 	
-	@Value("${sofia2.init.configdb:false}")
-	private boolean initConfigDB;
 	@Autowired
 	ClientConnectionRepository clientConnectionRepository;
 	@Autowired
@@ -127,7 +127,6 @@ public class InitConfigDB {
 
 	@PostConstruct
 	public void init() {
-		if (initConfigDB == true) {
 			log.info("Start initConfigDB...");
 			// first we need to create users
 			init_RoleUser();
@@ -180,10 +179,6 @@ public class InitConfigDB {
 			//
 			init_ConsoleMenu();
 			log.info("OK init_ConsoleMenu");
-
-		} else {
-			log.info("Disable Start initConfigDB...");
-		}
 	}
 
 	public void init_ClientConnection() {
