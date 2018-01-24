@@ -5,7 +5,7 @@ var MenuController = function() {
 	var LIB_TITLE = 'Menu Controller';	
     var logControl = 1;
 	var LANGUAGE = ['es'];
-	var currentLanguage = ''; // loaded from template. 
+	var currentLanguage = ''; // loaded from template.
 	
 	// CONTROLLER PRIVATE FUNCTIONS
 	

@@ -5,7 +5,7 @@ var HeaderController = function() {
 	var LIB_TITLE = 'Header Controller';	
     var logControl = 1;     
 	
-	// CONTROLLER PRIVATE FUNCTIONS 	
+	// CONTROLLER PRIVATE FUNCTIONS
 	
 	// GENERIC HEADER SEARCH
 	var searchDocs = function(){		
