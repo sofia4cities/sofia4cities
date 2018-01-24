@@ -27,8 +27,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.config.model.UserCDB;
-import com.indracompany.sofia2.config.repository.UserCDBRepository;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +38,7 @@ public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvi
 
 
 	@Autowired 
-    private UserCDBRepository userRepository;
+    private UserRepository userRepository;
 	
 	 @Autowired
 	private CounterService counterService;
@@ -55,7 +55,7 @@ public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvi
         }
         String password = credentials.toString();
 	
-        UserCDB user = userRepository.findByUserIdAndPassword(name,password);
+        User user = userRepository.findByUserIdAndPassword(name,password);
 
         if (user==null) {
 			log.info("authenticate: User or password incorrect: " + name);

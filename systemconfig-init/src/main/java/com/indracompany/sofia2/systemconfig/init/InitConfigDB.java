@@ -13,8 +13,6 @@
  */
 package com.indracompany.sofia2.systemconfig.init;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
@@ -30,8 +28,6 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.ClientPlatformContainer;
-import com.indracompany.sofia2.config.model.ClientPlatformContainerType;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
@@ -49,10 +45,8 @@ import com.indracompany.sofia2.config.model.OntologyEmulator;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.RoleType;
 import com.indracompany.sofia2.config.model.Token;
-import com.indracompany.sofia2.config.model.UserCDB;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
-import com.indracompany.sofia2.config.repository.ClientPlatformContainerRepository;
-import com.indracompany.sofia2.config.repository.ClientPlatformContainerTypeRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
@@ -72,7 +66,7 @@ import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
 import com.indracompany.sofia2.config.repository.RoleTypeRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
-import com.indracompany.sofia2.config.repository.UserCDBRepository;
+import com.indracompany.sofia2.config.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -84,20 +78,16 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class InitConfigDB {
 
-	private static int ID_USER_COLLABORATOR=2;
-
+	private static User userCollaborator=null;
+	
 	@Value("${sofia2.init.configdb:false}")
 	private boolean initConfigDB;
 	@Autowired
-	ClientConnectionRepository clientConnectionRepository;	
-	@Autowired
-	ClientPlatformContainerRepository clientPlatformContainerRepository;
+	ClientConnectionRepository clientConnectionRepository;
 	@Autowired
 	ClientPlatformRepository clientPlatformRepository;
 	@Autowired
-	ClientPlatformContainerTypeRepository clientPlatformContainerTypeRepository;
-	@Autowired
-	ClientPlatformOntologyRepository clientPlatformOntologyRepository;	
+	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
 	ConsoleMenuRepository consoleMenuRepository;
 	@Autowired
@@ -131,64 +121,80 @@ public class InitConfigDB {
 	@Autowired
 	RoleTypeRepository roleTypeRepository;
 	@Autowired
-	TokenRepository tokenRepository;	
+	TokenRepository tokenRepository;
 	@Autowired
-	UserCDBRepository userCDBRepository;
-
-
-
+	UserRepository userCDBRepository;
 
 	@PostConstruct
 	public void init() {
-		if (initConfigDB==true) {
+		if (initConfigDB == true) {
 			log.info("Start initConfigDB...");
+			// first we need to create users
 			init_RoleUser();
+			log.info("OK init_RoleUser");
 			init_UserCDB();
+			log.info("OK init_UserCDB");
 			//
 			init_DataModel();
+			log.info("OK init_DataModel");
 			init_OntologyCategory();
+			log.info("OK init_OntologyCategory");
 			init_Ontology();
+			log.info("OK init_Ontology");
 			init_OntologyUserAccess();
+			log.info("OK init_OntologyUserAccess");
 			init_OntologyUserAccessType();
+			log.info("OK init_OntologyUserAccessType");
 			init_OntologyEmulator();
+			log.info("OK init_OntologyEmulator");
 			init_OntologyCategory();
+			log.info("OK init_OntologyCategory");
 			init_OntologyEmulator();
+			log.info("OK init_OntologyEmulator");
 			//
-			init_ClientPlatformContainer();
-			init_ClientPlatformContainerType();
-			init_ClientConnection();
-			init_ClientPlatformOntology();
 			init_ClientPlatform();
+			log.info("OK init_ClientPlatform");
+			init_ClientPlatformOntology();
+			log.info("OK init_ClientPlatformOntology");
 			init_ClientConnection();
-			//
-			init_Dashboard();
-			init_DashboardType();
-			init_GadgetDataModel();
-			init_GadgetMeasure();
-			init_GadgetQuery();
-			init_Gadget();
-			init_GeneratorType();
-			//init_InstanceGenerator();
-			//
-			init_ConsoleMenu();
-			
+			log.info("OK init_ClientConnection");
 			//
 			init_Token();
-			
-		}
-		else {
+			log.info("OK init_Token");
+			//
+			init_Dashboard();
+			log.info("OK init_Dashboard");
+			init_DashboardType();
+			log.info("OK init_DashboardType");
+			init_GadgetDataModel();
+			log.info("OK init_GadgetDataModel");
+			init_GadgetMeasure();
+			log.info("OK init_GadgetMeasure");
+			init_GadgetQuery();
+			log.info("OK init_GadgetQuery");
+			init_Gadget();
+			log.info("OK init_Gadget");
+			init_GeneratorType();
+			log.info("OK init_GeneratorType");
+			// init_InstanceGenerator();
+			//
+			init_ConsoleMenu();
+			log.info("OK init_ConsoleMenu");
+
+		} else {
 			log.info("Disable Start initConfigDB...");
 		}
 	}
+
 	public void init_ClientConnection() {
 		log.info("init ClientConnection");
-		List<ClientConnection> clients= this.clientConnectionRepository.findAll();
+		List<ClientConnection> clients = this.clientConnectionRepository.findAll();
 		ClientPlatform cp = this.clientPlatformRepository.findAll().get(0);
 		if (clients.isEmpty()) {
 			log.info("No clients ...");
-			ClientConnection con= new ClientConnection();
-			//			
-			con.setClientPlatformId(cp);			
+			ClientConnection con = new ClientConnection();
+			//
+			con.setClientPlatformId(cp);
 			con.setIdentification("1");
 			con.setIpStrict(true);
 			con.setStaticIp(false);
@@ -199,187 +205,74 @@ public class InitConfigDB {
 			clientConnectionRepository.save(con);
 		}
 	}
-//		List<ClientConnection> clients= this.clientConnectionRepository.findAll();
-//		if (clients.isEmpty()) {
-//			log.info("No clients ...");
-//			ClientConnection con= new ClientConnection();
-//			ClientPlatform client= new ClientPlatform();
-//			client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
-//			clientPlatformRepository.save(client);
-//			con.setClientPlatformId(client);			
-//			con.setIdentification("1");
-//			con.setIpStrict(true);
-//			con.setStaticIp(false);
-//			con.setLastIp("192.168.1.89");
-//			Calendar date = Calendar.getInstance();
-//			con.setLastConnection(date);
-//			clientConnectionRepository.save(con);
-//		}
-	
-	public void init_ClientPlatformContainer() {
+	// List<ClientConnection> clients= this.clientConnectionRepository.findAll();
+	// if (clients.isEmpty()) {
+	// log.info("No clients ...");
+	// ClientConnection con= new ClientConnection();
+	// ClientPlatform client= new ClientPlatform();
+	// client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
+	// clientPlatformRepository.save(client);
+	// con.setClientPlatformId(client);
+	// con.setIdentification("1");
+	// con.setIpStrict(true);
+	// con.setStaticIp(false);
+	// con.setLastIp("192.168.1.89");
+	// Calendar date = Calendar.getInstance();
+	// con.setLastConnection(date);
+	// clientConnectionRepository.save(con);
+	// }
 
-		log.info("init ClientPlatformContainer");
-		List<ClientPlatformContainer> pcs= this.clientPlatformContainerRepository.findAll();
-		if(pcs.isEmpty())
-		{
-
-			ClientPlatformContainer cpc=new ClientPlatformContainer();
-			cpc.setClientConnection("6930722a-a9fa-4206-a3cf-1441a0318b39");
-			cpc.setProgramName("Program 1");
-			cpc.setMaxExecutionTime(5);
-			cpc.setMessageFilesPrefix("msg_");
-			cpc.setLogFilesPrefix("log_");
-			cpc.setState("Up");
-			ClientPlatform cp;
-			if(!this.clientPlatformRepository.findAll().isEmpty()){
-				cp=this.clientPlatformRepository.findAll().get(0);
-			}else{			
-				cp=new ClientPlatform();
-				cp.setUserId("1");
-				cp.setIdentification("ScadaTags_Alarms_kp");
-				cp.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
-				cp.setDescription("Kp para la insercion de alarmas de scada");
-				clientPlatformRepository.save(cp);
-
-			}
-			cpc.setClientPlatformId(cp);
-			Token token;
-			if(!this.tokenRepository.findAll().isEmpty()){
-				token=this.tokenRepository.findAll().get(0);
-			}
-			else{
-				token=new Token();
-				token.setClientPlatformId(cp);
-				token.setToken("Token1");
-				token.setActive(true);
-				tokenRepository.save(token);
-				this.tokenRepository.save(token);
-			}
-			
-			cpc.setAuthenticationTokenId(token);
-			/*
-			*/
-			//			
-			ClientPlatformContainerType type;
-			if(!this.clientPlatformContainerTypeRepository.findAll().isEmpty()){
-				type=this.clientPlatformContainerTypeRepository.findAll().get(0);
-			}
-			else{
-				type=new ClientPlatformContainerType();
-				type.setId(1);
-				type.setType("Python");
-				clientPlatformContainerTypeRepository.save(type);
-			}
-			
-			cpc.setClientPlatformContainerTypeId(type);
-			
-			this.clientPlatformContainerRepository.save(cpc);
-		}
-	}
-	
-	public void init_ClientPlatformContainerType() {
-		log.info("init ClientPlatformContainerType");
-		List<ClientPlatformContainerType> types = this.clientPlatformContainerTypeRepository.findAll();
-		if (types.isEmpty()) {
-			try {
-				log.info("No types en tabla.Adding...");
-				ClientPlatformContainerType type=new ClientPlatformContainerType();
-				type.setId(1);
-				type.setType("Python");
-				clientPlatformContainerTypeRepository.save(type);
-				//
-				type=new ClientPlatformContainerType();
-				type.setId(2);
-				type.setType("Java");
-				clientPlatformContainerTypeRepository.save(type);
-				//
-				type=new ClientPlatformContainerType();
-				type.setId(3);
-				type.setType("URL");
-				clientPlatformContainerTypeRepository.save(type);		
-
-			} catch (Exception e) {
-				log.error("Error ClientPlatformContainerType:"+e.getMessage());
-				clientPlatformContainerTypeRepository.deleteAll();
-			}
-		}
-	}
 	public void init_ClientPlatformOntology() {
 
 		log.info("init ClientPlatformOntology");
-		List<ClientPlatformOntology> cpos=this.clientPlatformOntologyRepository.findAll();
-		if(cpos.isEmpty())
-		{
+		List<ClientPlatformOntology> cpos = this.clientPlatformOntologyRepository.findAll();
+		if (cpos.isEmpty()) {
+			if (this.clientPlatformRepository.findAll().isEmpty())
+				throw new RuntimeException("There must be at least a ClientPlatform with id=1 created");
+			if (this.ontologyRepository.findAll().isEmpty())
+				throw new RuntimeException("There must be at least a Ontology with id=1 created");
 			log.info("No Client Platform Ontologies");
-			ClientPlatformOntology cpo=new ClientPlatformOntology();
-			ClientPlatform cp = null;
-			Ontology o=null;
-			if(!this.clientPlatformRepository.findAll().isEmpty()){
-				cp=this.clientPlatformRepository.findAll().get(0);
-			}
-			if(!this.ontologyRepository.findAll().isEmpty()){
-				o=this.ontologyRepository.findAll().get(0);
-			}
-			if(cp==null)
-			{
-				cp=new ClientPlatform();
-				cp.setUserId("1");
-				cp.setIdentification("ScadaTags_Alarms_kp");
-				cp.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
-				cp.setDescription("Kp para la insercion de alarmas de scada");
-				clientPlatformRepository.save(cp);			
-			}
-			if(o==null) {
-				o=new Ontology();
-				o.setJsonSchema("{}");
-				o.setIdentification("Id 1");
-				o.setDescription("Description");
-				o.setActive(true);
-				o.setRtdbClean(true);
-				o.setPublic(true);
-				ontologyRepository.save(o);
-			}
-			
-			cpo.setClientPlatformId(cp);
-			cpo.setOntologyId(o);
+			ClientPlatformOntology cpo = new ClientPlatformOntology();
+			cpo.setClientPlatformId(this.clientPlatformRepository.findAll().get(0));
+			cpo.setOntologyId(this.ontologyRepository.findAll().get(0));
 			this.clientPlatformOntologyRepository.save(cpo);
 		}
 	}
+
 	public void init_ClientPlatform() {
 		log.info("init ClientPlatform");
-		List<ClientPlatform> clients= this.clientPlatformRepository.findAll();
+		List<ClientPlatform> clients = this.clientPlatformRepository.findAll();
 		if (clients.isEmpty()) {
 			log.info("No clients ...");
-			ClientPlatform client= new ClientPlatform();
-			client.setUserId("1");
-			client.setIdentification("ScadaTags_Alarms_kp");
+			ClientPlatform client = new ClientPlatform();
+			client.setId("1");
+			client.setUserId(getUserCollaborator());
+			client.setIdentification("Client-MasterData");
 			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
-			client.setDescription("Kp para la insercion de alarmas de scada");
-			clientPlatformRepository.save(client);			
-			client= new ClientPlatform();
-			client.setUserId("6");
-			client.setIdentification("GTKP-fjgcornejo");
+			client.setDescription("ClientPatform created as MasterData");
+			clientPlatformRepository.save(client);
+			client = new ClientPlatform();
+			client.setId("2");
+			client.setUserId(getUserCollaborator());
+			client.setIdentification("GTKP-Example");
 			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
+			client.setDescription("ClientPatform created as Example");
 			clientPlatformRepository.save(client);
 
 		}
 
-
 	}
+
 	public void init_ConsoleMenu() {
-
 		log.info("init ConsoleMenu");
+		List<ConsoleMenu> menus = this.consoleMenuRepository.findAll();
 
-		List<ConsoleMenu> menus=this.consoleMenuRepository.findAll();
-
-		if(menus.isEmpty())
-		{
+		if (menus.isEmpty()) {
 			log.info("No menu elements found...adding");
 			try {
 				log.info("Adding menu for role ADMIN");
-				ConsoleMenu menu=new ConsoleMenu();
+				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("1");
-				//menu.setJsonSchema("{'menu':'Sofia4Cities','rol':'ROL_ADMINISTRADOR','noSession':'/console/login','navigation':[{'title':{'EN':'Ontologies','ES':'Ontologías'},'icon':'flaticon-network','url':'','submenu':[{'title':{'EN':'Create Ontology','ES':'Crear Ontología'},'icon':'','url':'/controlpanel/ontologies/create'},{'title':{'EN':'Ontologies Status','ES':'Estado de Cargas'},'icon':'','url':'/controlpanel/ontologies/list'},{'title':{'EN':'My Ontologies','ES':'Mis Ontologías'},'icon':'','url':'/controlpanel/ontologies/list'},{'title':{'EN':'Real-Time Instance Generator','ES':'Simulador Tiempo-Real Ontologías'},'icon':'','url':'/controlpanel/generadorinstancias/list'},{'title':{'EN':'Ontologies Authorization','ES':'Autorizaciones de Ontología'},'icon':'','url':'/controlpanel/ontologies/authorize/list'}]},{'title':{'EN':'Sofia2 THINKPs','ES':'THINKPs Sofia2'},'icon':'flaticon-share','url':'','submenu':[{'title':{'EN':'My THINKPs','ES':'Mis THINKPs'},'icon':'','url':'/kps/list'},{'title':{'EN':'THINKPs Status','ES':'Estado de THINKPs'},'icon':'','url':'/gestiondispositivos/list'},{'title':{'EN':'THINKPs Container','ES':'Contenedor de THINKPs'},'icon':'','url':'/contenedorkps/list'}]},{'title':{'EN':'Visualization','ES':'Visualización'},'icon':'flaticon-dashboard','url':'','submenu':[{'title':{'EN':'My Gadgets','ES':'Mis Gadgets'},'icon':'','url':'/gadget/list'},{'title':{'EN':'My Dashboards','ES':'Mis Dashboards'},'icon':'','url':'/dashboard/listgroup'}]},{'title':{'EN':'Tools','ES':'Herramientas'},'icon':'flaticon-open-box','url':'','submenu':[{'title':{'EN':'RTDB and HDB Console','ES':'Consola DBTR y BDH'},'icon':'','url':'/databases/show'}]},{'title':{'EN':'Administration','ES':'Administración'},'icon':'flaticon-cogwheel-2','url':'','submenu':[{'title':{'EN':'Ontology Templates','ES':'Plantillas de Ontologías'},'icon':'','url':'/plantillas/list'},{'title':{'EN':'Users','ES':'Usuarios'},'icon':'','url':'/usuarioses/list'},{'title':{'EN':'Connections','ES':'Conexiones'},'icon':'','url':'/gestionconexiones/show'}]},{'title':{'EN':'Social Media','ES':'Social Media'},'icon':'la la-globe','url':'','submenu':[{'title':{'EN':'Social Media','ES':'Social Media'},'icon':'','url':'/socialMedia/socialMedia'},{'title':{'EN':'Access Settings','ES':'Configuración de Acceso'},'icon':'','url':'/configuracionRRSS/list'},{'title':{'EN':'Schedule Twitter Streaming Search','ES':'Programación Streaming Twitter'},'icon':'','url':'/usuariosTwitter/scheduledSearch'}]},{'title':{'EN':'BOTs','ES':'BOTs'},'icon':'la la-cubes','url':'','submenu':[{'title':{'EN':'My Bots','ES':'Mis Bots'},'icon':'','url':'/bots/list'},{'title':{'EN':'My Knowledge Bases','ES':'Bots Scripts'},'icon':'','url':'/bots/scripts/list'}]}]}");
 				menu.setJsonSchema(loadJSONMenuFromResources("menu_admin.json"));
 				menu.setRoleTypeId(roleTypeRepository.findOne(1));
 				this.consoleMenuRepository.save(menu);
@@ -388,9 +281,8 @@ public class InitConfigDB {
 			}
 			try {
 				log.info("Adding menu for role COLLABORATOR");
-				ConsoleMenu menu=new ConsoleMenu();
+				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("2");
-				//menu.setJsonSchema("{'menu':'Sofia4Cities','rol':'ROL_ADMINISTRADOR','noSession':'/console/login','navigation':[{'title':{'EN':'Ontologies','ES':'Ontologías'},'icon':'flaticon-network','url':'','submenu':[{'title':{'EN':'Create Ontology','ES':'Crear Ontología'},'icon':'','url':'/controlpanel/ontologies/create'},{'title':{'EN':'Ontologies Status','ES':'Estado de Cargas'},'icon':'','url':'/controlpanel/ontologies/list'},{'title':{'EN':'My Ontologies','ES':'Mis Ontologías'},'icon':'','url':'/controlpanel/ontologies/list'},{'title':{'EN':'Real-Time Instance Generator','ES':'Simulador Tiempo-Real Ontologías'},'icon':'','url':'/controlpanel/generadorinstancias/list'},{'title':{'EN':'Ontologies Authorization','ES':'Autorizaciones de Ontología'},'icon':'','url':'/controlpanel/ontologies/authorize/list'}]},{'title':{'EN':'Sofia2 THINKPs','ES':'THINKPs Sofia2'},'icon':'flaticon-share','url':'','submenu':[{'title':{'EN':'My THINKPs','ES':'Mis THINKPs'},'icon':'','url':'/kps/list'},{'title':{'EN':'THINKPs Status','ES':'Estado de THINKPs'},'icon':'','url':'/gestiondispositivos/list'},{'title':{'EN':'THINKPs Container','ES':'Contenedor de THINKPs'},'icon':'','url':'/contenedorkps/list'}]},{'title':{'EN':'Visualization','ES':'Visualización'},'icon':'flaticon-dashboard','url':'','submenu':[{'title':{'EN':'My Gadgets','ES':'Mis Gadgets'},'icon':'','url':'/gadget/list'},{'title':{'EN':'My Dashboards','ES':'Mis Dashboards'},'icon':'','url':'/dashboard/listgroup'}]},{'title':{'EN':'Tools','ES':'Herramientas'},'icon':'flaticon-open-box','url':'','submenu':[{'title':{'EN':'RTDB and HDB Console','ES':'Consola DBTR y BDH'},'icon':'','url':'/databases/show'}]},{'title':{'EN':'Administration','ES':'Administración'},'icon':'flaticon-cogwheel-2','url':'','submenu':[{'title':{'EN':'Ontology Templates','ES':'Plantillas de Ontologías'},'icon':'','url':'/plantillas/list'},{'title':{'EN':'Users','ES':'Usuarios'},'icon':'','url':'/usuarioses/list'},{'title':{'EN':'Connections','ES':'Conexiones'},'icon':'','url':'/gestionconexiones/show'}]},{'title':{'EN':'Social Media','ES':'Social Media'},'icon':'la la-globe','url':'','submenu':[{'title':{'EN':'Social Media','ES':'Social Media'},'icon':'','url':'/socialMedia/socialMedia'},{'title':{'EN':'Access Settings','ES':'Configuración de Acceso'},'icon':'','url':'/configuracionRRSS/list'},{'title':{'EN':'Schedule Twitter Streaming Search','ES':'Programación Streaming Twitter'},'icon':'','url':'/usuariosTwitter/scheduledSearch'}]},{'title':{'EN':'BOTs','ES':'BOTs'},'icon':'la la-cubes','url':'','submenu':[{'title':{'EN':'My Bots','ES':'Mis Bots'},'icon':'','url':'/bots/list'},{'title':{'EN':'My Knowledge Bases','ES':'Bots Scripts'},'icon':'','url':'/bots/scripts/list'}]}]}");
 				menu.setJsonSchema(loadJSONMenuFromResources("menu_collaborator.json"));
 				menu.setRoleTypeId(roleTypeRepository.findOne(2));
 				this.consoleMenuRepository.save(menu);
@@ -399,9 +291,8 @@ public class InitConfigDB {
 			}
 			try {
 				log.info("Adding menu for role USER");
-				ConsoleMenu menu=new ConsoleMenu();
+				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("3");
-				//menu.setJsonSchema("{'menu':'Sofia4Cities','rol':'ROL_ADMINISTRADOR','noSession':'/console/login','navigation':[{'title':{'EN':'Ontologies','ES':'Ontologías'},'icon':'flaticon-network','url':'','submenu':[{'title':{'EN':'Create Ontology','ES':'Crear Ontología'},'icon':'','url':'/controlpanel/ontologies/create'},{'title':{'EN':'Ontologies Status','ES':'Estado de Cargas'},'icon':'','url':'/controlpanel/ontologies/list'},{'title':{'EN':'My Ontologies','ES':'Mis Ontologías'},'icon':'','url':'/controlpanel/ontologies/list'},{'title':{'EN':'Real-Time Instance Generator','ES':'Simulador Tiempo-Real Ontologías'},'icon':'','url':'/controlpanel/generadorinstancias/list'},{'title':{'EN':'Ontologies Authorization','ES':'Autorizaciones de Ontología'},'icon':'','url':'/controlpanel/ontologies/authorize/list'}]},{'title':{'EN':'Sofia2 THINKPs','ES':'THINKPs Sofia2'},'icon':'flaticon-share','url':'','submenu':[{'title':{'EN':'My THINKPs','ES':'Mis THINKPs'},'icon':'','url':'/kps/list'},{'title':{'EN':'THINKPs Status','ES':'Estado de THINKPs'},'icon':'','url':'/gestiondispositivos/list'},{'title':{'EN':'THINKPs Container','ES':'Contenedor de THINKPs'},'icon':'','url':'/contenedorkps/list'}]},{'title':{'EN':'Visualization','ES':'Visualización'},'icon':'flaticon-dashboard','url':'','submenu':[{'title':{'EN':'My Gadgets','ES':'Mis Gadgets'},'icon':'','url':'/gadget/list'},{'title':{'EN':'My Dashboards','ES':'Mis Dashboards'},'icon':'','url':'/dashboard/listgroup'}]},{'title':{'EN':'Tools','ES':'Herramientas'},'icon':'flaticon-open-box','url':'','submenu':[{'title':{'EN':'RTDB and HDB Console','ES':'Consola DBTR y BDH'},'icon':'','url':'/databases/show'}]},{'title':{'EN':'Administration','ES':'Administración'},'icon':'flaticon-cogwheel-2','url':'','submenu':[{'title':{'EN':'Ontology Templates','ES':'Plantillas de Ontologías'},'icon':'','url':'/plantillas/list'},{'title':{'EN':'Users','ES':'Usuarios'},'icon':'','url':'/usuarioses/list'},{'title':{'EN':'Connections','ES':'Conexiones'},'icon':'','url':'/gestionconexiones/show'}]},{'title':{'EN':'Social Media','ES':'Social Media'},'icon':'la la-globe','url':'','submenu':[{'title':{'EN':'Social Media','ES':'Social Media'},'icon':'','url':'/socialMedia/socialMedia'},{'title':{'EN':'Access Settings','ES':'Configuración de Acceso'},'icon':'','url':'/configuracionRRSS/list'},{'title':{'EN':'Schedule Twitter Streaming Search','ES':'Programación Streaming Twitter'},'icon':'','url':'/usuariosTwitter/scheduledSearch'}]},{'title':{'EN':'BOTs','ES':'BOTs'},'icon':'la la-cubes','url':'','submenu':[{'title':{'EN':'My Bots','ES':'Mis Bots'},'icon':'','url':'/bots/list'},{'title':{'EN':'My Knowledge Bases','ES':'Bots Scripts'},'icon':'','url':'/bots/scripts/list'}]}]}");
 				menu.setJsonSchema(loadJSONMenuFromResources("menu_user.json"));
 				menu.setRoleTypeId(roleTypeRepository.findOne(3));
 				this.consoleMenuRepository.save(menu);
@@ -410,179 +301,181 @@ public class InitConfigDB {
 			}
 		}
 	}
-	
+
 	private String loadJSONMenuFromResources(String name) throws Exception {
 		return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())));
 	}
 
 	public void init_Dashboard() {
-
 		log.info("init Dashboard");
-		List<Dashboard> dashboards=this.dashboardRepository.findAll();
-		if(dashboards.isEmpty())
-		{
+		List<Dashboard> dashboards = this.dashboardRepository.findAll();
+		if (dashboards.isEmpty()) {
 			log.info("No dashboards...adding");
-			Dashboard dashboard= new Dashboard();
-			dashboard.setModel("Modelo 1");
-			dashboard.setUserId("1");
-			dashboard.setName("Nombre del modelo 1");
+			Dashboard dashboard = new Dashboard();
+			dashboard.setId("1");
+			dashboard.setModel("Model Dashboard Master");
+			dashboard.setUserId(getUserCollaborator());
+			dashboard.setName("Dashboard Master");
 			dashboard.setDashboardTypeId("9");
 			dashboardRepository.save(dashboard);
-
-
 		}
-
-
+	}	
+	
+	private User getUserCollaborator() {
+		if (userCollaborator==null) userCollaborator=this.userCDBRepository.findByUserId("collaborator");
+		return userCollaborator;
 	}
+
 	public void init_DashboardType() {
 
 		log.info("init DashboardType");
-		List<DashboardType> dashboardTypes=this.dashboardTypeRepository.findAll();
-		if(dashboardTypes.isEmpty())
-		{
+		List<DashboardType> dashboardTypes = this.dashboardTypeRepository.findAll();
+		if (dashboardTypes.isEmpty()) {
 			log.info("No dashboards...adding");
-			DashboardType dashboardType= new DashboardType();
+			DashboardType dashboardType = new DashboardType();
 			dashboardType.setId(1);
 			dashboardType.setModel("Modelo 1");
-			dashboardType.setUserId("1");
+			dashboardType.setUserId(getUserCollaborator());
 			dashboardType.setPublic(true);
 			dashboardType.setType("Tipo de modelo 1");
 			dashboardTypeRepository.save(dashboardType);
 
-
 		}
 
-
 	}
+
 	public void init_DataModel() {
 
 		log.info("init DataModel");
-		List<DataModel> dataModels= this.dataModelRepository.findAll();
+		List<DataModel> dataModels = this.dataModelRepository.findAll();
 		if (dataModels.isEmpty()) {
 			log.info("No DataModels ...");
-			DataModel dataModel= new DataModel();
+			DataModel dataModel = new DataModel();
 			dataModel.setIdentification("GSMA-Weather Forecast");
 			dataModel.setType("0");
-			dataModel.setJsonSchema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}");
+			dataModel.setJsonSchema(
+					"{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}");
 			dataModel.setDescription("This contains a harmonised description of a Weather Forecast.");
 			dataModel.setCategory("plantilla_categoriaGSMA");
 			dataModel.setRelational(false);
+			dataModel.setUserId(getUserCollaborator());
 			dataModelRepository.save(dataModel);
 			///
-			dataModel=new DataModel();
+			dataModel = new DataModel();
 			dataModel.setIdentification("TagsProjectBrandwatch");
 			dataModel.setType("1");
-			dataModel.setJsonSchema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}");
+			dataModel.setJsonSchema(
+					"{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}");
 			dataModel.setDescription("Plantilla para almacenar los TAG definidos en un PROJECT Brandwatch");
 			dataModel.setCategory("plantilla_categoriaSocial");
 			dataModel.setRelational(false);
+			dataModel.setUserId(getUserCollaborator());
 			dataModelRepository.save(dataModel);
 
 		}
 
-
 	}
+
 	public void init_GadgetDataModel() {
 
 		log.info("init GadgetDataModel");
-		List<GadgetDataModel> gadgetDataModels= this.gadgetDataModelRepository.findAll();
+		List<GadgetDataModel> gadgetDataModels = this.gadgetDataModelRepository.findAll();
 		if (gadgetDataModels.isEmpty()) {
 			log.info("No gadget data models ...");
-			GadgetDataModel gadgetDM=new GadgetDataModel();
+			GadgetDataModel gadgetDM = new GadgetDataModel();
 			gadgetDM.setIdentification("1");
 			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
-			gadgetDM.setUserId("1");
-			gadgetDM.setPublic(true);			
+			gadgetDM.setUserId(getUserCollaborator());
+			gadgetDM.setPublic(true);
 			gadgetDataModelRepository.save(gadgetDM);
 		}
 
-
 	}
+
 	public void init_GadgetMeasure() {
 
 		log.info("init GadgetMeasure");
-		List<GadgetMeasure> gadgetMeasures= this.gadgetMeasureRepository.findAll();
+		List<GadgetMeasure> gadgetMeasures = this.gadgetMeasureRepository.findAll();
 		if (gadgetMeasures.isEmpty()) {
 			log.info("No gadget measures ...");
-			GadgetMeasure gadgetMeasure=new GadgetMeasure();
+			GadgetMeasure gadgetMeasure = new GadgetMeasure();
 			gadgetMeasure.setAttribute("Attr1");
-			List<Gadget> gadgets= this.gadgetRepository.findAll();
+			List<Gadget> gadgets = this.gadgetRepository.findAll();
 			Gadget gadget;
-			if(gadgets.isEmpty()){
+			if (gadgets.isEmpty()) {
 				log.info("No gadgets ...");
-				gadget=new Gadget();
+				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUserId("6");
+				gadget.setUserId(getUserCollaborator());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
 
 				gadgetRepository.save(gadget);
-			}else{
-				gadget=gadgetRepository.findAll().get(0);
+			} else {
+				gadget = gadgetRepository.findAll().get(0);
 			}
 			gadgetMeasure.setGadgetId(gadget);
 			gadgetMeasureRepository.save(gadgetMeasure);
 		}
 
-
 	}
+
 	public void init_GadgetQuery() {
 
 		log.info("init GadgetQuery");
-		List<GadgetQuery> gadgetQuerys= this.gadgetQueryRepository.findAll();
+		List<GadgetQuery> gadgetQuerys = this.gadgetQueryRepository.findAll();
 		if (gadgetQuerys.isEmpty()) {
 			log.info("No gadget querys ...");
-			GadgetQuery gadgetQuery=new GadgetQuery();
+			GadgetQuery gadgetQuery = new GadgetQuery();
 			gadgetQuery.setQuery("Query1");
-			List<Gadget> gadgets= this.gadgetRepository.findAll();
+			List<Gadget> gadgets = this.gadgetRepository.findAll();
 			Gadget gadget;
-			if(gadgets.isEmpty()){
+			if (gadgets.isEmpty()) {
 				log.info("No gadgets ...");
-				gadget=new Gadget();
+				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUserId("6");
+				gadget.setUserId(getUserCollaborator());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
 
 				gadgetRepository.save(gadget);
-			}else{
-				gadget=gadgetRepository.findAll().get(0);
+			} else {
+				gadget = gadgetRepository.findAll().get(0);
 			}
 			gadgetQuery.setGadgetId(gadget);
 			gadgetQueryRepository.save(gadgetQuery);
 		}
 
-
 	}
+
 	public void init_Gadget() {
 
 		log.info("init Gadget");
-		List<Gadget> gadgets= this.gadgetRepository.findAll();
+		List<Gadget> gadgets = this.gadgetRepository.findAll();
 		if (gadgets.isEmpty()) {
 			log.info("No gadgets ...");
-			Gadget gadget=new Gadget();
-			gadget.setDbType("DBC");
-			gadget.setUserId("6");
+			Gadget gadget = new Gadget();
+			gadget.setDbType("RTDB");
+			gadget.setUserId(getUserCollaborator());
 			gadget.setPublic(true);
-			gadget.setName("Gadget1");
-			gadget.setType("Tipo 1");
+			gadget.setName("Gadget Example");
+			gadget.setType("Type 1");
 
 			gadgetRepository.save(gadget);
 		}
 
-
 	}
+
 	public void init_GeneratorType() {
 
 		log.info("init GeneratorType");
-		List<GeneratorType> types=this.generatorTypeRepository.findAll();
-		if(types.isEmpty())
-		{
+		List<GeneratorType> types = this.generatorTypeRepository.findAll();
+		if (types.isEmpty()) {
 
 			log.info("No generator types found..adding");
-			GeneratorType type=new GeneratorType();
+			GeneratorType type = new GeneratorType();
 			type.setId(1);
 			type.setIdentification("Random Number");
 			type.setKeyType("desde,number;hasta,number;numdecimal,number");
@@ -591,23 +484,21 @@ public class InitConfigDB {
 
 		}
 
-
 	}
+
 	public void init_InstanceGenerator() {
 
 		log.info("init InstanceGenerator");
-		List<InstanceGenerator> generators=this.instanceGeneratorRepository.findAll();
-		if(generators.isEmpty())
-		{
+		List<InstanceGenerator> generators = this.instanceGeneratorRepository.findAll();
+		if (generators.isEmpty()) {
 			log.info("No instance generators found...adding");
-			InstanceGenerator generator=new InstanceGenerator();
+			InstanceGenerator generator = new InstanceGenerator();
 			generator.setId(1);
 			generator.setValues("desde,0;hasta,400");
 			generator.setIdentification("Integer 0 a 400");
-			GeneratorType type=this.generatorTypeRepository.findById(4);
-			if(type==null)
-			{
-				type=new GeneratorType();
+			GeneratorType type = this.generatorTypeRepository.findById(4);
+			if (type == null) {
+				type = new GeneratorType();
 				type.setId(1);
 				type.setIdentification("Random Number");
 				type.setKeyType("desde,number;hasta,number;numdecimal,number");
@@ -619,39 +510,36 @@ public class InitConfigDB {
 
 		}
 
-
 	}
+
 	public void init_OntologyCategory() {
 
 		log.info("init OntologyCategory");
-		List<OntologyCategory> categories=this.ontologyCategoryRepository.findAll();
-		if(categories.isEmpty()) {
+		List<OntologyCategory> categories = this.ontologyCategoryRepository.findAll();
+		if (categories.isEmpty()) {
 			log.info("No ontology categories found..adding");
-			OntologyCategory category=new OntologyCategory();
+			OntologyCategory category = new OntologyCategory();
 			category.setId(1);
 			category.setIdentificator("ontologias_categoria_cultura");
 			category.setDescription("ontologias_categoria_cultura_desc");
 			this.ontologyCategoryRepository.save(category);
 		}
 
-
 	}
-	public void init_OntologyEmulator() {
 
+	public void init_OntologyEmulator() {
 		log.info("init OntologyEmulator");
-		List<OntologyEmulator> oes=this.ontologyEmulatorRepository.findAll();
-		if(oes.isEmpty())
-		{
+		List<OntologyEmulator> oes = this.ontologyEmulatorRepository.findAll();
+		if (oes.isEmpty()) {
 			log.info("No ontology emulators, adding...");
-			OntologyEmulator oe=new OntologyEmulator();
+			OntologyEmulator oe = new OntologyEmulator();
 			oe.setMeasures("2.5,3.4,4.5");
 			oe.setIdentification("Id 1");
-			oe.setUserId("1");
+			oe.setUserId(getUserCollaborator());
 			oe.setInsertEvery(5);
-			Ontology o=this.ontologyRepository.findAll().get(0);
-			if(o==null)
-			{
-				o=new Ontology();
+			Ontology o = this.ontologyRepository.findAll().get(0);
+			if (o == null) {
+				o = new Ontology();
 				o.setJsonSchema("{}");
 				o.setIdentification("Id 1");
 				o.setDescription("Description");
@@ -664,86 +552,80 @@ public class InitConfigDB {
 			oe.setOntologyId(o);
 			this.ontologyEmulatorRepository.save(oe);
 
-
-
 		}
 
-
 	}
+
 	public void init_Ontology() {
 
 		log.info("init Ontology");
-		List<Ontology> ontologies=this.ontologyRepository.findAll();
-		if(ontologies.isEmpty())
-		{
+		List<Ontology> ontologies = this.ontologyRepository.findAll();
+		if (ontologies.isEmpty()) {
 			log.info("No ontologies..adding");
-			Ontology ontology=new Ontology();
+			Ontology ontology = new Ontology();
+			ontology.setId("1");
 			ontology.setJsonSchema("{}");
-			ontology.setIdentification("Id 1");
-			ontology.setDescription("Description");
+			ontology.setIdentification("Ontology Master");
+			ontology.setDescription("Ontology created as Master Data");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
+			ontology.setUserId(getUserCollaborator());
 			ontologyRepository.save(ontology);
-			
-			ontology=new Ontology();
+
+			ontology = new Ontology();
+			ontology.setId("2");
 			ontology.setJsonSchema("{Data:,Temperature:}");
-			ontology.setDescription("Description");
-			ontology.setIdentification("Id 2");
+			ontology.setDescription("Ontology Example");
+			ontology.setIdentification("Ontology crated as example");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
+			ontology.setUserId(getUserCollaborator());
 			ontologyRepository.save(ontology);
 
 		}
 
-
 	}
-	
+
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
 		/*
-		List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
-		if(users.isEmpty())
-		{
-			log.info("No users found...adding");
-			OntologyUserAccess user=new OntologyUserAccess();
-			user.setUserId("6");
-			user.setOntologyId(ontologyRepository.findAll().get(0));
-			user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
-			this.ontologyUserAccessRepository.save(user);
-		}
-		*/
+		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
+		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
+		 * user=new OntologyUserAccess(); user.setUserId("6");
+		 * user.setOntologyId(ontologyRepository.findAll().get(0));
+		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
+		 * this.ontologyUserAccessRepository.save(user); }
+		 */
 	}
-	
+
 	public void init_OntologyUserAccessType() {
 
 		log.info("init OntologyUserAccessType");
-		List<OntologyUserAccessType> types=this.ontologyUserAccessTypeRepository.findAll();
-		if(types.isEmpty()){
+		List<OntologyUserAccessType> types = this.ontologyUserAccessTypeRepository.findAll();
+		if (types.isEmpty()) {
 			log.info("No user access types found...adding");
-			OntologyUserAccessType type=new OntologyUserAccessType();
+			OntologyUserAccessType type = new OntologyUserAccessType();
 			type.setId(1);
 			type.setName("ALL");
 			type.setDescription("Todos los permisos");
 			this.ontologyUserAccessTypeRepository.save(type);
-			type=new OntologyUserAccessType();
+			type = new OntologyUserAccessType();
 			type.setId(2);
 			type.setName("QUERY");
 			type.setDescription("Todos los permisos");
 			this.ontologyUserAccessTypeRepository.save(type);
-			type=new OntologyUserAccessType();
+			type = new OntologyUserAccessType();
 			type.setId(3);
 			type.setName("INSERT");
 			type.setDescription("Todos los permisos");
 			this.ontologyUserAccessTypeRepository.save(type);
 		}
-		
 
-
-	}	
+	}
 
 	public void init_RoleUser() {
 		log.info("init ClientPlatformContainerType");
@@ -752,98 +634,99 @@ public class InitConfigDB {
 			try {
 
 				log.info("No roles en tabla.Adding...");
-				RoleType type=new RoleType();
+				RoleType type = new RoleType();
 				type.setId(1);
 				type.setName("ROLE_ADMINISTRATOR");
 				type.setDescription("Administrator of the Platform");
 				roleTypeRepository.save(type);
 				//
-				type=new RoleType();
+				type = new RoleType();
 				type.setId(2);
 				type.setName("ROLE_COLLABORATOR");
 				type.setDescription("Advanced User of the Platform");
 				roleTypeRepository.save(type);
 				//
-				type=new RoleType();
+				type = new RoleType();
 				type.setId(3);
 				type.setName("ROLE_USER");
 				type.setDescription("Basic User of the Platform");
 				roleTypeRepository.save(type);
 				//
-				type=new RoleType();
+				type = new RoleType();
 				type.setId(4);
 				type.setName("ROLE_ANALYTICS");
 				type.setDescription("Analytics User of the Platform");
-				//RoleType typeParent=new RoleType();
-				//typeParent.setId(2);
-				//type.setRoleparent(typeParent);
+				// RoleType typeParent=new RoleType();
+				// typeParent.setId(2);
+				// type.setRoleparent(typeParent);
 				roleTypeRepository.save(type);
 				//
-				type=new RoleType();
+				type = new RoleType();
 				type.setId(5);
 				type.setName("ROLE_PARTNER");
 				type.setDescription("Partner in the Platform");
 				roleTypeRepository.save(type);
-				//	
 				//
-				type=new RoleType();
+				//
+				type = new RoleType();
 				type.setId(6);
 				type.setName("ROLE_SYS_ADMIN");
 				type.setDescription("System Administradot of the Platform");
 				roleTypeRepository.save(type);
 				//
-				type=new RoleType();
+				type = new RoleType();
 				type.setId(7);
 				type.setName("ROLE_OPERATIONS");
 				type.setDescription("Operations for the Platform");
 				roleTypeRepository.save(type);
 				//
-				//UPDATE of the ROLE_ANALYTICS
-				RoleType typeSon=roleTypeRepository.findOne(4);
-				RoleType typeParent=roleTypeRepository.findOne(2);
+				// UPDATE of the ROLE_ANALYTICS
+				RoleType typeSon = roleTypeRepository.findOne(4);
+				RoleType typeParent = roleTypeRepository.findOne(2);
 				typeSon.setRoleparent(typeParent);
 				roleTypeRepository.save(typeSon);
 
 			} catch (Exception e) {
-				log.error("Error initRoleType:"+e.getMessage());
+				log.error("Error initRoleType:" + e.getMessage());
 				roleTypeRepository.deleteAll();
 			}
 
 		}
 	}
+
 	public void init_Token() {
 
 		log.info("init token");
-		List<Token> tokens= this.tokenRepository.findAll();
+		List<Token> tokens = this.tokenRepository.findAll();
 		if (tokens.isEmpty()) {
 			log.info("No Tokens, adding ...");
+			if (this.clientPlatformRepository.findAll().isEmpty())
+				throw new RuntimeException("You need to create ClientPlatform before Token");
 
-			ClientPlatform client= new ClientPlatform();
-			client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
-			Set<Token> hashSetTokens=new HashSet<Token>();
+			ClientPlatform client = this.clientPlatformRepository.findAll().get(0);
+			Set<Token> hashSetTokens = new HashSet<Token>();
 
-			Token token=new Token();
+			Token token = new Token();
 			token.setClientPlatformId(client);
-			token.setToken("Token1");
+			token.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
 			token.setActive(true);
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
 			tokenRepository.save(token);
 		}
 
-
 	}
 
 	public void init_UserCDB() {
 		log.info("init UserCDB");
-		List<UserCDB> types = this.userCDBRepository.findAll();
+		List<User> types = this.userCDBRepository.findAll();
 		if (types.isEmpty()) {
 			try {
 				RoleType role = new RoleType();
 				role.setId(1);
 
 				log.info("No types en tabla.Adding...");
-				UserCDB type=new UserCDB();
+				User type = new User();
 				type.setId("1");
 				type.setUserId("administrator");
 				type.setPassword("changeIt!");
@@ -853,8 +736,8 @@ public class InitConfigDB {
 				type.setRoleTypeId(role);
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
-				//	
-				type=new UserCDB();
+				//
+				type = new User();
 				type.setId("2");
 				type.setUserId("collaborator");
 				type.setPassword("changeIt!");
@@ -864,8 +747,8 @@ public class InitConfigDB {
 				type.setRoleTypeId(roleTypeRepository.findOne(2));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
-				//	
-				type=new UserCDB();
+				//
+				type = new User();
 				type.setId("3");
 				type.setUserId("user");
 				type.setPassword("changeIt!");
@@ -875,8 +758,8 @@ public class InitConfigDB {
 				type.setRoleTypeId(roleTypeRepository.findOne(3));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
-				//	
-				type=new UserCDB();
+				//
+				type = new User();
 				type.setId("4");
 				type.setUserId("analytics");
 				type.setPassword("changeIt!");
@@ -886,8 +769,8 @@ public class InitConfigDB {
 				type.setRoleTypeId(roleTypeRepository.findOne(4));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
-				//	
-				type=new UserCDB();
+				//
+				type = new User();
 				type.setId("5");
 				type.setUserId("partner");
 				type.setPassword("changeIt!");
@@ -897,8 +780,8 @@ public class InitConfigDB {
 				type.setRoleTypeId(roleTypeRepository.findOne(5));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
-				//	
-				type=new UserCDB();
+				//
+				type = new User();
 				type.setId("6");
 				type.setUserId("sysadmin");
 				type.setPassword("changeIt!");
@@ -908,8 +791,8 @@ public class InitConfigDB {
 				type.setRoleTypeId(roleTypeRepository.findOne(6));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
-				//	
-				type=new UserCDB();
+				//
+				type = new User();
 				type.setId("7");
 				type.setUserId("operations");
 				type.setPassword("changeIt!");
@@ -919,49 +802,40 @@ public class InitConfigDB {
 				type.setRoleTypeId(roleTypeRepository.findOne(7));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
-			} 
-			catch (Exception e) {
-				log.error("Error UserCDB:"+e.getMessage());
+			} catch (Exception e) {
+				log.error("Error UserCDB:" + e.getMessage());
 				userCDBRepository.deleteAll();
 			}
 		}
 	}
 
-	/*	
-	public void init_Template() {
-		log.info("init template");
-		List<Template> templates= this.templateRepository.findAll();
-
-		if (templates.isEmpty()) {
-			try {
-
-				log.info("No templates Adding...");
-				Template template= new Template();
-				template.setIdentification("GSMA-Weather Forecast");
-				template.setType("0");
-				template.setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}");
-				template.setDescription("This contains a harmonised description of a Weather Forecast.");
-				template.setCategory("plantilla_categoriaGSMA");
-				template.setIsrelational(false);
-				templateRepository.save(template);
-				///
-				template=new Template();
-				template.setIdentification("TagsProjectBrandwatch");
-				template.setType("1");
-				template.setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}");
-				template.setDescription("Plantilla para almacenar los TAG definidos en un PROJECT Brandwatch");
-				template.setCategory("plantilla_categoriaSocial");
-				template.setIsrelational(false);
-				templateRepository.save(template);
-
-
-
-			} catch (Exception e) {
-				templateRepository.deleteAll();
-			}
-
-		}
-	}
+	/*
+	 * public void init_Template() { log.info("init template"); List<Template>
+	 * templates= this.templateRepository.findAll();
+	 * 
+	 * if (templates.isEmpty()) { try {
+	 * 
+	 * log.info("No templates Adding..."); Template template= new Template();
+	 * template.setIdentification("GSMA-Weather Forecast"); template.setType("0");
+	 * template.
+	 * setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}"
+	 * ); template.
+	 * setDescription("This contains a harmonised description of a Weather Forecast."
+	 * ); template.setCategory("plantilla_categoriaGSMA");
+	 * template.setIsrelational(false); templateRepository.save(template); ///
+	 * template=new Template(); template.setIdentification("TagsProjectBrandwatch");
+	 * template.setType("1"); template.
+	 * setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}"
+	 * ); template.
+	 * setDescription("Plantilla para almacenar los TAG definidos en un PROJECT Brandwatch"
+	 * ); template.setCategory("plantilla_categoriaSocial");
+	 * template.setIsrelational(false); templateRepository.save(template);
+	 * 
+	 * 
+	 * 
+	 * } catch (Exception e) { templateRepository.deleteAll(); }
+	 * 
+	 * } }
 	 */
 
 }
