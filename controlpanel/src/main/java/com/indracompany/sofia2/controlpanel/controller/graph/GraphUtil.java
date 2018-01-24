@@ -40,6 +40,7 @@ import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.service.user.UserService;
 
 @Component
 public class GraphUtil {
@@ -62,6 +63,8 @@ public class GraphUtil {
 	private DashboardRepository dashboardRepository;
 	@Autowired
 	private AppWebUtils utils;
+	@Autowired 
+	UserService userService;
 	@Value("${sofia2.urls.iotbroker}")
 	String url;
 
@@ -84,7 +87,7 @@ public class GraphUtil {
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlOntology + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlOntology + "create"));
 
-		List<Ontology> ontologies = ontologyRepository.findByUserId(utils.getUserId());
+		List<Ontology> ontologies = ontologyRepository.findByUserId(this.userService.findByUserId(utils.getUserId()));
 		for (Ontology ont : ontologies) {
 			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology + "list", urlOntology + ont.getId(), name,
 					"ontology", name, ont.getIdentification(), "licensing"));
@@ -102,7 +105,7 @@ public class GraphUtil {
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlClientPlatform + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlClientPlatform + "create"));
 
-		List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUserId(utils.getUserId());
+		List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUserId(this.userService.findByUserId(utils.getUserId()));
 
 		for (ClientPlatform clientPlatform : clientPlatforms) {
 			// Creación de enlaces
@@ -135,7 +138,7 @@ public class GraphUtil {
 		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlGadget + "list", visualizationId, name,
 				visualizationName, name, "suit", null, urlGadget + "selectWizard"));
 
-		List<Gadget> gadgets = gadgetRepository.findByUserId(utils.getUserId());
+		List<Gadget> gadgets = gadgetRepository.findByUserId(this.userService.findByUserId(utils.getUserId()));
 
 		if (gadgets != null) {
 			for (Gadget gadget : gadgets) {
@@ -164,7 +167,7 @@ public class GraphUtil {
 				visualizationName, name, "suit", null, urlDashboard + "creategroup?"));
 
 		// dashboardTipo---> son los dashboard
-		List<DashboardType> dashboardTypes = dashboardTypeRepository.findByUserId(utils.getUserId());
+		List<DashboardType> dashboardTypes = dashboardTypeRepository.findByUserId(this.userService.findByUserId(utils.getUserId()));
 		for (DashboardType dashboardType : dashboardTypes) {
 			// Ahora hay que buscar la relacion entre dashboard y gadget. Eso nos lo da el
 			// dashboard

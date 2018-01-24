@@ -17,10 +17,12 @@ import java.util.List;
 
 import com.indracompany.sofia2.config.model.RoleType;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserToken;
 
 public interface UserService {
 	public User findByUserId(String userId);
 	public List<RoleType> getAllRoles();
+	public UserToken getUserToken(User userId);
 	
 
 }

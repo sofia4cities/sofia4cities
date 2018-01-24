@@ -20,8 +20,10 @@ import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.RoleType;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.RoleTypeRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
+import com.indracompany.sofia2.config.repository.UserTokenRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,6 +32,8 @@ public class UserServiceImpl implements UserService {
 	UserRepository userRepository;
 	@Autowired
 	RoleTypeRepository roleTypeRepository;
+	@Autowired
+	UserTokenRepository userTokenRepository;
 
 	public User findByUserId(String userId) {
 		return userRepository.findByUserId(userId);
@@ -37,5 +41,8 @@ public class UserServiceImpl implements UserService {
 	public List<RoleType> getAllRoles() {
 		return roleTypeRepository.findAll();
 	}
-
+	public UserToken getUserToken(User userId)
+	{
+		return this.userTokenRepository.findByUserId(userId);
+	}
 }
