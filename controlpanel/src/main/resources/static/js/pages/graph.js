@@ -3,7 +3,7 @@ var GraphController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME  = 'Sofia4Cities Control Panel'
 	, LIB_TITLE  = 'Graph Controller'
-    , logControl = 0;
+    , logControl = 1;
 	
 	// GRAPH INITIALIZATION VARS AND CONST.
 	var links 			 = []

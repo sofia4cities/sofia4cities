@@ -72,7 +72,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="flaticon-users font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{name.sofia2}"> Sofia4Cities </span>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{user.template.title}"> Show User: <span class="bold" th:text="*{fullName}"> User_fullName </span></span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -82,33 +82,28 @@
 							<div class="portlet-body" style="display: block; height: auto;">
 								
 								<div class="row">
-									<div class="col-md-12 alert-zone">
-										<!-- ALERTS ZONE -->
-										<div class="alert alert-info alert-dismissable">
-											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-											<i class="fa fa-info-circle"></i> <strong>Info!</strong> Sofia4Cities System information alert.
-										</div>								
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
 									</div>
 									<div class="col-md-12 form">										
-										<form role="form">
+										<form role="form" id="user_view_form" action="view.html" th:action="@{|/controlpanel/users/${userId}|}" th:object="${user}" method="post" class="form">
 											<div class="form-body">
 												<!-- user, name and email -->
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{usuarios_formulario_usuario}">User</label>
-															<p class="form-control-static bold" th:text="*{identificacion}"> User Identification </p>
+															<label class="control-label" th:text="#{user.id}">User</label>
+															<p class="form-control-static bold" th:text="*{userId}"> User Identification </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{usuarios_formulario_nombre}">Name</label>
-															<p class="form-control-static bold" th:text="*{nombrecompleto}"> User Name </p>
+															<label class="control-label" th:text="#{user.name}">Name</label>
+															<p class="form-control-static bold" th:text="*{fullName}"> User Name </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{usuarios_formulario_email}">eMail</label>
+															<label class="control-label" th:text="#{user.email}">eMail</label>
 															<p class="form-control-static bold" th:text="*{email}"> User eMail </p>
 														</div>
 													</div>													
@@ -117,42 +112,57 @@
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label" th:text="#{usuarios_formulario_rol}">Role</label>
-															<p class="form-control-static bold" th:text="*{rolId.nombre}"> User Role </p>
+															<label class="control-label" th:text="#{user.rolTypeName}">Role</label>
+															<p class="form-control-static bold" th:text="*{roleTypeId.name}"> User Role </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label" th:text="#{usuarios_formulario_fechaalta}">Created At</label>
-															<p class="form-control-static bold" th:text="*{fechaalta}"> User creation date </p>
+															<label class="control-label" th:text="#{user.dateCreated}">Created At</label>
+															<p class="form-control-static bold" th:text="*{dateCreated}"> User creation date </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{usuarios_formulario_fechabaja}">Deleted At</label>
-															<p class="form-control-static bold" th:text="*{fechabaja}"> User deleting date </p>
-														</div>
-													</div>													
-												</div>
-												<!-- Active user, token -->
-												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
-														<div class="form-group">
-															<label class="control-label" th:text="#{usuarios_formulario_activo}">Active</label>
-															<p class="form-control-static bold" th:text="*{activo}"> User Active </p>
+															<label class="control-label" th:text="#{user.dateDeleted}">Deleted At</label>
+															<p class="form-control-static bold" th:text="*{dateDeleted}"> User deleting date </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="control-label" th:text="#{usuarios_formulario_fechaalta}">Created At</label>
-															<p class="form-control-static bold" th:text="*{fechaalta}"> User creation date </p>
+															<label class="control-label" th:text="#{user.active}">Active</label>
+															<p class="form-control-static bold" th:text="*{active}"> User Active </p>
 														</div>
-													</div>																										
-												</div>												
-												<!-- additional fields: phone, adress, category -->
-											
-											
+													</div>
+												</div>
 											</div>
+											<!-- FORM BUTTONS -->
+											<div class="form-actions">
+												<div class="pull-right">
+													<!-- CREATE -->
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${authentication.authorities == 'ROLE_ADMINISTRATOR'}" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:value="#{gen.createBtn}"> New</span></button>
+													
+													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${authentication.name != userId}" id="editBtn" type="button" class="btn btn-square btn-success" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-check"></i> <span th:value="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${authentication.name == userId}" id="editBtn" type="button" class="btn btn-square btn-success" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-check"></i> <span th:value="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-success" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-check"></i> <span th:value="#{gen.editBtn}"> Edit </span></button>
+													
+													<!-- REMOVE TO-DO: caducado -->
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-success" name="delete"  value="Remove" th:onclick="'deleteUserConfirmation('delete-user');'" ><i class="la la-check"></i> <span th:value="#{gen.deleteBtn}"> Delete </span></button>
+													
+													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+													
+													<!-- CANCEL TO-DO: authentication and control -->
+													<button th:if="${authentication.authorities == 'ROLE_ADMINISTRATOR'}" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateShow(\'' + @{/controlpanel/users/list} + '\');'"><i class="la la-times"></i><span th:value="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${authentication.authorities != 'ROLE_ADMINISTRATOR'}" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateShow(\'' + @{/controlpanel/} + '\');'"><i class="la la-times"></i><span th:value="#{gen.cancelBtn}"> Cancel </span></button>
+												</div>
+											</div>											
+										</form>
+										
+										<!-- AUXILIAR FORM TO DELETE USER -->
+										<form id="delete_user_form" class="delete-user hide"  action=""  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="userId" th:value="*{userId}"/>
 										</form>
 									</div>									
 								</div>
@@ -172,23 +182,43 @@
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 
-	<!-- TEMPLATE CONTROLLER -->	
+	<!-- TEMPLATE CONTROLLER  -->	
 		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
-	var showLog = 0; // console.log toggle
-    //<![CDATA[ 	
+	var showLog = 1; // console.log toggle
+    //<![CDATA[ 
+
+	// REDIRECT
+	function navigateUrl(url){  window.location.href = url;	}
+	
+	// DELETE USER
+	function deleteUserConfirmation(userId){
+		console.log('deleteUserConfirmation() -> formId: '+ formId);
 		
+		// no Id no fun!
+		if ( !userId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO USER-FORM SELECTED!'}); return false; }
+		
+		// set action and userId to the form
+		$('.delete-user').attr('userId',userId);
+		$('.delete-user').attr('action','/controlpanel/users/' + userId);
+		console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-user').attr('action') + ' ID: ' + $('.delete-user').attr('userId'));
+		
+		// call user Confirm at header.
+		HeaderController.showConfirmDialogUsuario('delete_user_form');	
+	}
+	
+	
 	// MAIN WHEN READY
 	$( document ).ready(function() {
 		// init when Document is ready
-		showLog ? console.log('INDEX ready()...') : '';
+		showLog ? console.log('SHOW USER ready()...') : '';
 	});
 	 
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
 		// init on load.		
-		showLog ? console.log('INDEX load()...') : '';
+		showLog ? console.log('SHOW USER load()...') : '';
 	});
 	
 	//]]>
