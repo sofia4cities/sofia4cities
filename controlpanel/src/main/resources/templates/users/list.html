@@ -171,8 +171,8 @@
 															<td class="text-center" th:if="${user.createdAt!=null}" th:text="${#dates.format(user.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${user.createdAt==null}" th:text="'---'"></td>
 															<!-- DATE DELETED -->
-															<td class="text-center" th:if="${user.deletedAt!=null}" th:text="${#dates.format(user.deletedAt,'dd/MM/YYYY')}"></td>
-															<td class="text-center" th:if="${user.deletedAt==null}" th:text="'---'"></td>
+															<td class="text-center" th:if="${user.dateDeleted!=null}" th:text="${#dates.format(user.dateDeleted,'dd/MM/YYYY')}"></td>
+															<td class="text-center" th:if="${user.dateDeleted==null}" th:text="'---'"></td>
 															<!-- ACTIVE -->
 															<td class="text-center" th:if="${user.active}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
 															<td class="text-center" th:if="${!user.active}"></td>															

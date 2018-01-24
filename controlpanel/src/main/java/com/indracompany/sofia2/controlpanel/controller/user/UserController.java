@@ -54,16 +54,32 @@ public class UserController {
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/list", produces = "text/html")
 	public String list(Model model, @RequestParam(required = false) String userId,
-			@RequestParam(required = false) String fullName, @RequestParam(required = false) String roleTypeId,
+			@RequestParam(required = false) String fullName, @RequestParam(required = false) String roleType,
 			@RequestParam(required = false) String email, @RequestParam(required = false) Boolean active) {
 		this.populateFormData(model);
+		if(userId!=null){if(userId.equals("")) userId=null;}
+		if(fullName!=null){if(fullName.equals("")) fullName=null;}
+		if(email!=null){if(email.equals("")) email=null;}
+		if(roleType!=null){if(roleType.equals("")) roleType=null;}
+
+		if((userId==null) && (email==null) && (fullName==null) && (active==null)
+				&& (roleType==null)){
+			log.debug("No params for filtering, loading all users");
+			model.addAttribute("users",this.userService.getAllUsers());
+			
+		}else
+		{
+			log.debug("Params detected, filtering users...");
+			model.addAttribute("users",this.userService.getAllUsersByCriteria(userId, fullName, email, roleType, active));
+		}
+		
 		
 		return "/users/list";
 
 	}
 	@RequestMapping(value = "/show/{id}", produces = "text/html")
 	public String showUser(@PathVariable("id") String id, Model uiModel) {
-		User user = this.userService.findByUserId(utils.getUserId());
+		User user = this.userService.getUser(utils.getUserId());
 		uiModel.addAttribute("user", user);
 		UserToken userToken = null;
 		try {
@@ -76,9 +92,7 @@ public class UserController {
 		
 		
 		uiModel.addAttribute("userToken", userToken);
-		//uiModel.addAttribute("log", user);
 		uiModel.addAttribute("itemId", user.getId());
-		//Comprobamos si tiene peticiones pendientes
 		
 		
 		Date today = new Date();

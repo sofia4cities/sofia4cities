@@ -20,9 +20,11 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 
 public interface UserService {
-	public User findByUserId(String userId);
+	public User getUser(String userId);
 	public List<RoleType> getAllRoles();
 	public UserToken getUserToken(User userId);
+	public List<User> getAllUsers();
+	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,Boolean active);
 	
 
 }
