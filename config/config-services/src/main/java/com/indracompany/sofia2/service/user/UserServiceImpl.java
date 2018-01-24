@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.service.user;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	UserTokenRepository userTokenRepository;
 
-	public User findByUserId(String userId) {
+	public User getUser(String userId) {
 		return userRepository.findByUserId(userId);
 	}
 	public List<RoleType> getAllRoles() {
@@ -44,5 +45,31 @@ public class UserServiceImpl implements UserService {
 	public UserToken getUserToken(User userId)
 	{
 		return this.userTokenRepository.findByUserId(userId);
+	}
+	public List<User> getAllUsers()
+	{
+		return this.userRepository.findAll();
+	}
+	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,Boolean active)
+	{
+		List<User> users= new ArrayList<User>();
+		RoleType role=null;
+		//convert role String to RoleType Object
+		if(roleType!=null){
+			role= new RoleType();
+			role.setName(roleType);
+		}
+		if(active!=null)
+		{
+			users=this.userRepository.findUsersByUserIdOrFullNameOrEmailOrRoleTypeIdAndActive(userId, fullName, email,role, active);
+			
+		}else{
+			
+			users=this.userRepository.findUsersByUserIdOrFullNameOrEmailOrRoleTypeId(userId, fullName, email, role);
+		}
+		
+		return users;
+		
+		
 	}
 }
