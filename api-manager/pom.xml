@@ -38,22 +38,23 @@
 			<artifactId>sofia2-persistence-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-ssap</artifactId>
-			<version>${sofia2.version}</version>
-		</dependency>
-		<dependency>
+		<!--  dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-iotbroker</artifactId>
 			<version>${sofia2.version}</version>
-		</dependency>
+		</dependency-->
 
 		<dependency>
+			<groupId>org.jeasy</groupId>
+			<artifactId>easy-rules-core</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
+		<!--  dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>util-core</artifactId>
 			<version>${sofia2.version}</version>
-		</dependency>
+		</dependency-->
 
 
 		<dependency>
