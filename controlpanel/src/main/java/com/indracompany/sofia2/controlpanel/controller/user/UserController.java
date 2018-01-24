@@ -88,9 +88,6 @@ public class UserController {
 			log.debug("No token found for user: "+user);
 		}
 		
-		
-		
-		
 		uiModel.addAttribute("userToken", userToken);
 		uiModel.addAttribute("itemId", user.getId());
 		
