@@ -1,8 +1,9 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
 		
 		<!-- BEGIN WEB FONT -->
@@ -87,9 +88,9 @@
 										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
 											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
 										</a>												
-										<ul class="dropdown-menu" role="menu">
+										<ul class="dropdown-menu pull-right" role="menu">
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../users/create'" th:text="#{gen.create}" >Create</a></li>
-											<li class="divider"> </li>
+											<!--<li class="divider"> </li> -->
 										</ul>
 									</div>										
 								</div>

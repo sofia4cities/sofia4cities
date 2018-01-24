@@ -3,7 +3,7 @@ var HeaderController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Smart4Cities Control Panel'; 
 	var LIB_TITLE = 'Header Controller';	
-    var logControl = 0;    
+    var logControl = 1;     
 	
 	// CONTROLLER PRIVATE FUNCTIONS 	
 	

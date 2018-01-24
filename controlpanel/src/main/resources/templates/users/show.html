@@ -143,12 +143,12 @@
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													
 													<!-- REMOVE TO-DO: caducado -->
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteUserConfirmation(\'' + 'delete-user' + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
@@ -156,7 +156,7 @@
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
