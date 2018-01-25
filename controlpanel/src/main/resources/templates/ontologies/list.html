@@ -138,7 +138,7 @@
 													</div>
 													<div class="col-md-4 col-xs-12">
 														<div class="btn-group">
-															<button type="submit" id="search_ontology" name="search_ontology" th:title="#{gen.search}" th:value="#{ontologias_formulario_button_buscar}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="search_ontology" name="search_ontology" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
 															<button type="button" id="reset_ontology" name="reset_ontology" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
 														</div>
 													</div>
@@ -302,6 +302,9 @@
 			$('#form_ontology')[0].reset();
 			$('#form_ontology')[0].submit();
 		});
+		
+		// SEARCH FORM
+		$('#search_ontology').on('click',function(){ $('#form_ontology')[0].submit(); });
 	});
 	 
 	// MAIN WHEN LOAD
