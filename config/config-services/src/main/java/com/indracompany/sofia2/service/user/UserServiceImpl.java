@@ -69,7 +69,10 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	public void createUser(User user){		
-		if(!this.userExists(user)) this.userRepository.save(user);
+		if(!this.userExists(user)){
+			user.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
+			this.userRepository.save(user);
+		}
 	}
 	public boolean userExists(User user)
 	{
