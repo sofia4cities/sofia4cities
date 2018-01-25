@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.service.ontology;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +86,17 @@ public class OntologyServiceImpl implements OntologyService{
 		}
 		return ontologies;
 	}
-
+	public List<String> getAllIdentifications()
+	{
+		List<Ontology> ontologies=this.ontologyRepository.findAllByOrderByIdentificationAsc();
+		List<String> identifications=new ArrayList<String>();
+		for(Ontology ontology:ontologies)
+		{
+			identifications.add(ontology.getIdentification());
+			
+		}
+		return identifications;
+	}
+	
 
 }

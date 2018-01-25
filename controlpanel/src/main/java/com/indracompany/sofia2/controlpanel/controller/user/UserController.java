@@ -47,6 +47,7 @@ public class UserController {
 	@GetMapping(value = "/create", produces = "text/html")
 	public String createForm(Model model) {
 		this.populateFormData(model);
+		model.addAttribute("user",new User());
 		return "/users/create";
 
 	}
