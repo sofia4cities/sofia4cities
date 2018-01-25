@@ -267,7 +267,7 @@
 	
 	
 		// AUTO COMPLETE ON ONTOLOGY IDENTIFICATION/NAME
-		$.ajax({ url: "getNamesForAutocomplete", type: 'POST', dataType: 'json', contentType: 'application/json', mimeType: 'application/json',
+		$.ajax({ url: "/controlpanel/ontologies/getNamesForAutocomplete", type: 'POST', dataType: 'json', contentType: 'text/html', mimeType: 'application/json',
 			success: function (source) {			 
 						var namesArray = new Array();
 						for( var i = 0; i < source.length; i++ ){

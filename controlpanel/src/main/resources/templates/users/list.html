@@ -146,7 +146,7 @@
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>
-																<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" name="roleTypeId">
+																<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" name="roleType">
 																	<option value=""></option>
 																	<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>
 																</select>
@@ -265,7 +265,7 @@
 	var userid = [[${param.userId}]] || '';
 	var fullname = [[${param.fullName}]] || '';
 	var email = [[${param.email}]] || '';
-	var roles = [[${param.roleTypeId}]] || '';
+	var roles = [[${param.roleType}]] || '';
 	
 	//GET SEARCH DATA
 	userid ? $('#userid').val(userid) : userid = '';
