@@ -39,8 +39,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 
 	@Query("SELECT o FROM User AS o WHERE o.roleTypeId !='1'")
 	List<User> findUsersNoAdmin();
-	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.roleTypeId LIKE %:roleTypeId%)")
-	List<User> findUsersByUserIdOrFullNameOrEmailOrRoleTypeId(@Param("userId")String userId, @Param("fullName")String fullName,@Param("email")String email, @Param("roleTypeId")RoleType roleTypeId);
-	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.roleTypeId LIKE %:roleTypeId%) AND (o.active=:#{#active})")
-	List<User> findUsersByUserIdOrFullNameOrEmailOrRoleTypeIdAndActive(@Param("userId")String userId, @Param("fullName")String fullName,@Param("email")String email, @Param("roleTypeId")RoleType roleTypeId,@Param("active")boolean active);
+	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.roleTypeId.name =:roleType)")
+	List<User> findByUserIdOrFullNameOrEmailOrRoleType(@Param("userId")String userId, @Param("fullName")String fullName,@Param("email")String email, @Param("roleType")String roleType);
+	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.roleTypeId.name =:roleType) AND (o.active=:#{#active})")
+	List<User> findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(@Param("userId")String userId, @Param("fullName")String fullName,@Param("email")String email, @Param("roleType")String roleType,@Param("active")boolean active);
 }
