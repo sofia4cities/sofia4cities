@@ -86,10 +86,16 @@
 							<div class="portlet-body" style="display: block; height: auto;">
 								
 								<div class="row">
-									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> You have some form errors. Please check below.
+										</div>
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> Your form validation is successful!
+										</div>									
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="user_view_form" action="create.html" th:object="${user}" th:action="@{/users/create}" onsubmit="return checkCreate()" method="post" class="form">
+										<form role="form" id="user_create_form" action="create.html" th:object="${user}" th:action="@{/users/create}"   method="post" class="form">
 											<div class="form-body">
 												<!-- user, name and email -->
 												<div class="row">
@@ -98,13 +104,13 @@
 															<label th:text="#{user.id} + ':'">Identification</label>
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
-																<input id="userid" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"/>
+																<input id="userId" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"/>
 															</div>															
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="" th:text="#{user.password} + ':'">Password</label>
+															<label class="popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.password.help},data-title=#{user.password}"><i class="la la-lightbulb-o"></i> <span th:text="#{user.password} + ':'">Password</span><span class="required">*</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-asterisk"></i>
 																<input id="password" type="password"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
@@ -116,7 +122,7 @@
 															<label class="" th:text="#{user.name} + ':'">Name</label>
 															<div class="input-icon ">
 																<i class="fa fa-user"></i>
-																<input id="fullname" type="text"  th:required="true"  maxlength="50" th:field="*{fullName}" class="form-control " th:placeholder="#{user.name}"/>
+																<input id="fullName" type="text"  th:required="true"  maxlength="50" th:field="*{fullName}" class="form-control " th:placeholder="#{user.name}"/>
 															</div>	
 														</div>
 													</div>
@@ -134,7 +140,7 @@
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
-															<label class="" th:text="#{user.rolTypeName} + ':'">Role</label>
+															<label class="control-label" th:text="#{user.rolTypeName} + ':'">Role</label>
 															<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" th:field="*{roleTypeId.name}" th:required="true">
 																<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>
 															</select>
@@ -145,7 +151,7 @@
 															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateCreated} + ':'">Created At</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-calendar-o"></i>
-																<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{dateCreated}" class="form-control datetime" th:placeholder="#{user.dateCreated}"/>
+																<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{dateCreated}" class="form-control datetime no-remove" th:placeholder="#{user.dateCreated}"/>
 															</div>
 														</div>
 													</div>
@@ -154,7 +160,7 @@
 															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-calendar-o"></i>
-																<input id="datedeleted" type="text"  maxlength="50" th:field="*{dateDeleted}" class="form-control datetime" th:placeholder="#{user.dateDeleted}"/>
+																<input id="datedeleted" type="text"  maxlength="50" th:field="*{dateDeleted}" class="form-control datetime" th:onblur="'checkCreate()'" th:placeholder="#{user.dateDeleted}"/>
 															</div>
 														</div>
 													</div>
@@ -176,11 +182,13 @@
 												<div class="pull-right">
 													<!-- CREATE -->
 													<button id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<!-- RESET -->
+													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
 													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
 										</form>
@@ -211,7 +219,14 @@
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
 	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	<!-- LOADING DEFAULT DATES IF NEEDED -->
+	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js}" type="text/javascript"></script>
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
+    <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
 	
+	<!-- LOADING DEFAULT LANG MESSAGES IF NEEDED -->
+	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}" type="text/javascript"></script>
+		
 
 	<!-- TEMPLATE CONTROLLER  -->	
 		
@@ -220,25 +235,29 @@
 	var showLog = 1; // console.log toggle
     //<![CDATA[ 
 	var lang = [[${lang}]];
+	var validation_dates_msg = [[#{user.valid.dateDeleted}]];
 	
 	// REDIRECT
 	function navigateUrl(url){  window.location.href = url;	}
 	
-	// DELETE USER
-	function deleteUserConfirmation(userId){
-		console.log('deleteUserConfirmation() -> formId: '+ userId);
 		
-		// no Id no fun!
-		if ( !userId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO USER-FORM SELECTED!'}); return false; }
-		
-		// set action and userId to the form
-		$('.delete-user').attr('userId',userId);
-		$('.delete-user').attr('action','/controlpanel/users/' + userId);
-		console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-user').attr('action') + ' ID: ' + $('.delete-user').attr('userId'));
-		
-		// call user Confirm at header.
-		HeaderController.showConfirmDialogUsuario('delete_user_form');	
-	}
+	// CLEAN FIELDS FORM
+		var cleanFields = function (formId) {
+			showLog ? console.log('cleanRegister') : '';
+			
+			//CLEAR OUT THE VALIDATION ERRORS
+			$('#'+formId).validate().resetForm(); 
+			$('#'+formId).find('input:text, input:password, input:file, select, textarea').each(function(){
+				//SE LIMPIAN TODOS LOS CAMPOS EXCEPTO LOS PERSISTENTES
+				if(!$(this).hasClass("no-remove")){$(this).val('');}
+			});
+			
+			//SE LIMPIAN LOS CAMPOS RELATION
+			$(".selectpicker").each(function(){
+				$(this).val( '' );
+				$(this).selectpicker('deselectAll').selectpicker('refresh');
+			});			
+		};
 	
 	// CHECK DATES AND LET THE FORM SUBMMIT
 	function checkCreate(){
@@ -246,18 +265,130 @@
         var fechaAlta = $("#datecreated").val();
         var fechaBaja = $("#dateleted").val();
         var alta = new Date(fechaAlta);
-        var baja = new Date(fechaBaja);              
+        var baja = new Date(fechaBaja);  
+		console.log('alta: ' + alta + '  baja: ' + baja);
         if (fechaBaja == ""){
             
         }else{
             if (alta > baja){
-                showConfirmTableDialog([[#{usuario_dialog_message_fechabaja_anterioralta}]]); 
+                $.confirm({
+					icon: 'fa fa-warning',
+					title: 'CONFIRM:',
+					theme: 'dark',
+					content: validation_dates_msg,
+					draggable: true,
+					dragWindowGap: 100,
+					backgroundDismiss: true,
+					closeIcon: true,
+					buttons: {				
+						close: {
+							text: Close,
+							btnClass: 'btn btn-sm btn-default btn-outline',
+							action: function (){} //GENERIC CLOSE.		
+						}
+					}
+				});
                 return false;
             }else{
                 return true;    
             }           
         }       
-    }
+    };
+	
+	// FORM VALIDATION
+	var handleValidation = function() {
+        // for more info visit the official plugin documentation: 
+        // http://docs.jquery.com/Plugins/Validation
+        var form1 = $('#user_create_form');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
+
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block help-block-error', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: ":hidden:not(.selectpicker)", // validate all fields including form hidden input
+			lang: lang,
+            messages: {
+                roles: {
+                    maxlength: jQuery.validator.format("Max {0} items allowed for selection"),
+                    minlength: jQuery.validator.format("At least {0} items must be selected")
+                }                
+            },
+            rules: {
+				userId: {
+                    minlength: 5,
+                    required: true
+                },
+                fullName: {
+                    minlength: 5,
+                    required: true
+                },
+                email: {
+					
+                    required: true,
+                    email: true
+                },
+                password: {
+                    required: true,
+					minlength: 7,
+					maxlength: 20				
+                },
+                roles: {                    
+                    required: true
+                },
+				datecreated:{
+					date: true
+				},
+				datedeleted:{
+					date: true
+				}
+            },
+
+            invalidHandler: function(event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+
+            errorPlacement: function(error, element) {
+                if (element.is(':checkbox')) {
+                    error.insertAfter(element.closest(".md-checkbox-list, .md-checkbox-inline, .checkbox-list, .checkbox-inline"));
+                } else if (element.is(':radio')) {
+                    error.insertAfter(element.closest(".md-radio-list, .md-radio-inline, .radio-list,.radio-inline"));
+                } else {
+                    error.insertAfter(element); // for other inputs, just perform default behavior
+                }
+            },
+
+            highlight: function(element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+
+            unhighlight: function(element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function(label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function(form) {
+                success1.show();
+                error1.hide();
+				form.submit();
+            }
+        });
+    };
+	
+	// selectpicker validate fix
+	$('.selectpicker').on('change', function () {
+		$(this).valid();
+	});
+	
 	
 	
 	// MAIN WHEN READY
@@ -266,8 +397,8 @@
 		showLog ? console.log('SHOW USER ready()...') : '';
 		
         
-        $("#datecreated").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true, todayBtn: "linked",clearBtn: true,language: lang});
-        $("#datedeleted").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true ,todayBtn: "linked",clearBtn: true,language: lang,
+        $("#datecreated").datepicker({dateFormat: "mm/dd/yy", showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: lang});
+        $("#datedeleted").datepicker({dateFormat: "mm/dd/yy", showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: lang,
 			onClose: function(e) {
 					var ev = window.event;
 					if (ev.srcElement.innerHTML == 'Clear')
@@ -276,6 +407,16 @@
 			closeText: 'Clear',
 			buttonText: ''   
         });
+		
+		// FORM VALIDATION SET-UP
+		handleValidation();
+		
+		// RESET FORM 
+		$('#resetBtn').on('click',function(){ 
+			cleanFields('user_create_form');
+		});
+		
+		
 		
 	});
 	 

@@ -73,12 +73,21 @@ Bootstrap Datepicker
 .datepicker table td {
   color: #000;
   font-weight: 300  !important;
-  font-family: 'Open Sans' !important; }
+  font-family: 'Open Sans' !important; font-size: 12px; }
 
 .datepicker table th {
   color: #333;
   font-family: 'Open Sans' !important;
-  font-weight: 400  !important; }
+  font-weight: 700  !important; font-size: 13px; }
+
+  .datepicker table tr td,
+.datepicker table tr th {
+  text-align: center;
+  width: 25px !important;
+  height: 25px !important;
+  border-radius: 4px;
+  border: none;
+}
 
 .datepicker.dropdown-menu {
   box-shadow: 5px 5px rgba(102, 102, 102, 0.1);
