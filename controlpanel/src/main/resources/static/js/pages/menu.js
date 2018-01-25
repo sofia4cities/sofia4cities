@@ -3,7 +3,7 @@ var MenuController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Menu Controller';	
-    var logControl = 1;
+    var logControl = 0;
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.
 	

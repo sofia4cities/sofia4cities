@@ -27,6 +27,8 @@
 		
 		<!-- PLUGINS STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+		
 	</head>	
 	
 	<!-- page-sidebar-closed to start page with collapsed menu -->
@@ -108,26 +110,49 @@
 											</div>
 											<div id="searchFilter" class="form-body collapse">
 												<div class="row">
-													<div class="col-md-4 col-xs-12">
+													<div class="col-md-3 col-md-6 col-xs-12">
 														<div class="form-group">															
 															<div class="input-group">
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>															
-																<input id="identification" th:placeholder="#{gen.name}" name="identification" class="form-control" type="text" maxlength="50" value=""/>
+																<input id="identification" th:placeholder="#{user.id}" name="userId" class="form-control" type="text" maxlength="70" value=""/>
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-xs-12">
+													<div class="col-md-3 col-md-6 col-xs-12">
 														<div class="form-group">															
 															<div class="input-group">
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>
-																<input id="description" th:placeholder="#{gen.description}" name="description" class="form-control" type="text" maxlength="100" value=""/>
+																<input id="description" th:placeholder="#{user.name}" name="fullName" class="form-control" type="text" maxlength="100" value=""/>
 															</div>
 														</div>
 													</div>
+													<div class="col-md-3 col-md-6 col-xs-12">
+														<div class="form-group">															
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="fa fa-tag font-grey-mint"></i>
+																</span>
+																<input id="description" th:placeholder="#{user.email}" name="email" class="form-control" type="text" maxlength="100" value=""/>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-3 col-md-6 col-xs-12">
+														<div class="form-group">															
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="fa fa-tag font-grey-mint"></i>
+																</span>
+																<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" name="roleTypeId" th:required="true">
+																	<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>
+																</select>
+															</div>
+														</div>
+													</div>
+													<div class="clearfix"></div>
 													<div class="col-md-4 col-xs-12">
 														<div class="btn-group">
 															<button type="submit" id="search_user" name="search_user" th:title="#{gen.search}" th:value="#{ontologias_formulario_button_buscar}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
@@ -230,6 +255,7 @@
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
 	
 	
 	<script th:inline="javascript">	
