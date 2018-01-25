@@ -32,6 +32,7 @@ public interface OntologyRepository extends JpaRepository<Ontology,String> {
 	List<Ontology> findByIdentificationIgnoreCase(String identification);
 	List<Ontology> findByDescription(String description);
 	List<Ontology> findByIdentification(String identification);
+	List<Ontology> findAllByOrderByIdentificationAsc();
 	List<Ontology> findByDescriptionContaining(String description);
 	List<Ontology> findByIdentificationContaining(String identification);
 	List<Ontology> findByUserId(User userId);

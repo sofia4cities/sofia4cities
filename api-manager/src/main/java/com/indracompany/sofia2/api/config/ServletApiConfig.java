@@ -11,15 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.repository;
+package com.indracompany.sofia2.api.config;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.api.servlet.ApiServletEntryPoint;
 
-public interface UserTokenRepository extends JpaRepository<UserToken, String>{
-	
-	public UserToken findByUserId(User userId);
+@Configuration
+public class ServletApiConfig {
 
+    @Bean
+    public ServletRegistrationBean ApiServletEntryPointBean() {
+        ServletRegistrationBean bean = new ServletRegistrationBean(new ApiServletEntryPoint(), "/api/*");
+        bean.setLoadOnStartup(1);
+        return bean;
+    }
 }

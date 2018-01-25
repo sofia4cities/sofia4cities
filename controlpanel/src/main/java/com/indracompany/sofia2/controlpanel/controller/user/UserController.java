@@ -47,6 +47,7 @@ public class UserController {
 	@GetMapping(value = "/create", produces = "text/html")
 	public String createForm(Model model) {
 		this.populateFormData(model);
+		model.addAttribute("user",new User());
 		return "/users/create";
 
 	}
@@ -87,9 +88,6 @@ public class UserController {
 		} catch (Exception e) {
 			log.debug("No token found for user: "+user);
 		}
-		
-		
-		
 		
 		uiModel.addAttribute("userToken", userToken);
 		uiModel.addAttribute("itemId", user.getId());
