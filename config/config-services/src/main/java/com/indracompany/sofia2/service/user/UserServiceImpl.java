@@ -53,23 +53,30 @@ public class UserServiceImpl implements UserService {
 	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,Boolean active)
 	{
 		List<User> users= new ArrayList<User>();
-		RoleType role=null;
-		//convert role String to RoleType Object
-		if(roleType!=null){
-			role= new RoleType();
-			role.setName(roleType);
-		}
+
 		if(active!=null)
 		{
-			users=this.userRepository.findUsersByUserIdOrFullNameOrEmailOrRoleTypeIdAndActive(userId, fullName, email,role, active);
+			users=this.userRepository.findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(userId, fullName, email,roleType, active);
 			
 		}else{
 			
-			users=this.userRepository.findUsersByUserIdOrFullNameOrEmailOrRoleTypeId(userId, fullName, email, role);
+			users=this.userRepository.findByUserIdOrFullNameOrEmailOrRoleType(userId, fullName, email, roleType);
 		}
 		
 		return users;
 		
 		
+	}
+	
+	public void createUser(User user){		
+		if(!this.userExists(user)){
+			user.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
+			this.userRepository.save(user);
+		}
+	}
+	public boolean userExists(User user)
+	{
+		if(this.userRepository.findByUserId(user.getUserId())!=null) return true;
+		else return false;
 	}
 }

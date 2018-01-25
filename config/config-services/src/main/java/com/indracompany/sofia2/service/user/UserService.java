@@ -25,6 +25,7 @@ public interface UserService {
 	public UserToken getUserToken(User userId);
 	public List<User> getAllUsers();
 	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,Boolean active);
-	
+	public void createUser(User user);
+	public boolean userExists(User user);
 
 }

@@ -20,8 +20,6 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.RoleType;
@@ -29,6 +27,6 @@ import com.indracompany.sofia2.config.model.RoleType;
 public interface RoleTypeRepository extends JpaRepository<RoleType, Integer> {
 
 	long countByName(String name);
-	List<RoleType> findByName(String name);
+	RoleType findByName(String name);
 
 }
