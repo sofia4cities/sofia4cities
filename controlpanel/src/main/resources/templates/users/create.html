@@ -26,8 +26,9 @@
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 
-		<!-- PLUGINS STYLE SHEETS -->
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND BOOSTRAP-TIMEPICKER  -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>
 		
 	</head>	
 	
@@ -88,7 +89,7 @@
 									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="user_view_form" action="create.html" th:object="${user}" th:action="@{/users}" onsubmit="return checkCreate()" method="post" class="form">
+										<form role="form" id="user_view_form" action="create.html" th:object="${user}" th:action="@{/controlpanel/users/create}" onsubmit="return checkCreate()" method="post" class="form">
 											<div class="form-body">
 												<!-- user, name and email -->
 												<div class="row">
@@ -101,7 +102,16 @@
 															</div>															
 														</div>
 													</div>
-													<div class="col-md-5 col-sm-6 col-xs-12">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="" th:text="#{user.password} + ':'">Password</label>
+															<div class="input-icon ">
+																<i class="fa fa-asterisk"></i>
+																<input id="password" type="password"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
+															</div>	
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="" th:text="#{user.name} + ':'">Name</label>
 															<div class="input-icon ">
@@ -110,12 +120,12 @@
 															</div>	
 														</div>
 													</div>
-													<div class="col-md-4 col-sm-6 col-xs-12">
+													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label"><i class="la la-envelope-o"></i> <span th:text="#{user.email} + ':'">eMail</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-envelope-o"></i>
-																<input id="email" type="text"  th:required="true"  maxlength="50" th:field="*{fullName}" class="form-control " th:placeholder="#{user.name}"/>
+																<input id="email" type="text"  th:required="true"  maxlength="50" th:field="*{email}" class="form-control " th:placeholder="#{user.email}"/>
 															</div>
 														</div>
 													</div>													
@@ -135,7 +145,7 @@
 															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateCreated} + ':'">Created At</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-calendar-o"></i>
-																<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{dateCreated}" class="form-control " th:placeholder="#{user.dateCreated}"/>
+																<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{dateCreated}" class="form-control datetime" th:placeholder="#{user.dateCreated}"/>
 															</div>
 														</div>
 													</div>
@@ -144,7 +154,7 @@
 															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-calendar-o"></i>
-																<input id="datedeleted" type="text"  th:required="true"  maxlength="50" th:field="*{dateDeleted}" class="form-control " th:placeholder="#{user.dateDeleted}"/>
+																<input id="datedeleted" type="text"  maxlength="50" th:field="*{dateDeleted}" class="form-control datetime" th:placeholder="#{user.dateDeleted}"/>
 															</div>
 														</div>
 													</div>
@@ -165,21 +175,12 @@
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
-													
-													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/users/} + ${userId} + '?form=' + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													
-													<!-- REMOVE TO-DO: caducado -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteUserConfirmation(\'' + 'delete-user' + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													<button id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/controlpanel/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
 										</form>
@@ -209,6 +210,8 @@
 	
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	
 
 	<!-- TEMPLATE CONTROLLER  -->	
 		
@@ -216,7 +219,8 @@
 	<script  th:inline="javascript">
 	var showLog = 1; // console.log toggle
     //<![CDATA[ 
-
+	var lang = [[${lang}]];
+	
 	// REDIRECT
 	function navigateUrl(url){  window.location.href = url;	}
 	
@@ -238,11 +242,11 @@
 	
 	// CHECK DATES AND LET THE FORM SUBMMIT
 	function checkCreate(){
-        var fechaAlta = $("#id_campo_fecha_alta").val();
-        var fechaBaja = $("#id_campo_fecha_baja").val();
+        var fechaAlta = $("#datecreated").val();
+        var fechaBaja = $("#dateleted").val();
         var alta = new Date(fechaAlta);
         var baja = new Date(fechaBaja);              
-        if (fechaBaja==""){
+        if (fechaBaja == ""){
             
         }else{
             if (alta > baja){
@@ -260,12 +264,9 @@
 		// init when Document is ready
 		showLog ? console.log('SHOW USER ready()...') : '';
 		
-		if($(".datetime").length != 0) {           
-			$(".datetime").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true});
-        }
         
-        $("#datecreated").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true});
-        $("#dateleted").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true,
+        $("#datecreated").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true, todayBtn: "linked",clearBtn: true,language: lang});
+        $("#datedeleted").datepicker({dateFormat: "mm/dd/yy",showButtonPanel: true ,todayBtn: "linked",clearBtn: true,language: lang,
 			onClose: function(e) {
 					var ev = window.event;
 					if (ev.srcElement.innerHTML == 'Clear')
@@ -283,7 +284,7 @@
 		showLog ? console.log('SHOW USER load()...') : '';
 		
 		var f = new Date();         
-        $('#id_campo_fecha_alta').val(('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear());
+        $('#datecreated').val(('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear());
 	});
 	
 	//]]>

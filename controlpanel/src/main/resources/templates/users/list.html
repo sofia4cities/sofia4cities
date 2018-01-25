@@ -106,7 +106,7 @@
 									<!-- SEARCH FORM -->
 										<form id="form_user" action="list.html" th:action="@{/users/list}" class="" role="form" method="get">												
 											<div class="col-md-12 no-space">
-												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" data-content="Búsqueda de Ontologías, haga click para desplegar/colapsar el forumulario y Buscar." data-original-title="Filtro de Ontologías" th:text="#{gen.search}">Search</span></h4>
+												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" th:attr="data-content=#{user.search.description},data-original-title=#{gen.search}" th:text="#{gen.search}">Search</span></h4>
 											</div>
 											<div id="searchFilter" class="form-body collapse">
 												<div class="row">
