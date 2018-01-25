@@ -67,4 +67,13 @@ public class UserServiceImpl implements UserService {
 		
 		
 	}
+	
+	public void createUser(User user){		
+		if(!this.userExists(user)) this.userRepository.save(user);
+	}
+	public boolean userExists(User user)
+	{
+		if(this.userRepository.findByUserId(user.getUserId())!=null) return true;
+		else return false;
+	}
 }

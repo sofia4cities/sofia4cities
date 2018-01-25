@@ -20,8 +20,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.indracompany.sofia2.config.model.Token;
@@ -51,7 +54,23 @@ public class UserController {
 		return "/users/create";
 
 	}
-
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@PostMapping(value="/create")
+	public String create(@ModelAttribute User user)
+	{
+		if(user!=null)
+		{
+			if(user.getPassword()!=null && user.getCreatedAt()!=null && user.getEmail()!=null
+					&& user.getRoleTypeId()!=null && user.getUserId()!=null)
+			{
+				this.userService.createUser(user);
+			}
+			log.debug("Some user properties missing");
+		}
+		
+		return "/users/create";
+		
+	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/list", produces = "text/html")
 	public String list(Model model, @RequestParam(required = false) String userId,
@@ -112,5 +131,7 @@ public class UserController {
 	public void populateFormData(Model model) {
 		model.addAttribute("roleTypes", this.userService.getAllRoles());
 	}
-
+	
+	
+	
 }
