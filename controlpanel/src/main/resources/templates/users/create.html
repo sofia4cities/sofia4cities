@@ -89,7 +89,7 @@
 									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="user_view_form" action="create.html" th:object="${user}" th:action="@{/controlpanel/users/create}" onsubmit="return checkCreate()" method="post" class="form">
+										<form role="form" id="user_view_form" action="create.html" th:object="${user}" th:action="@{/users/create}" onsubmit="return checkCreate()" method="post" class="form">
 											<div class="form-body">
 												<!-- user, name and email -->
 												<div class="row">
@@ -242,6 +242,7 @@
 	
 	// CHECK DATES AND LET THE FORM SUBMMIT
 	function checkCreate(){
+		console.log('checkCreate() -> ');
         var fechaAlta = $("#datecreated").val();
         var fechaBaja = $("#dateleted").val();
         var alta = new Date(fechaAlta);
