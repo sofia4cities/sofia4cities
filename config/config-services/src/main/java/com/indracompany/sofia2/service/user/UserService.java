@@ -16,10 +16,16 @@ package com.indracompany.sofia2.service.user;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.RoleType;
+import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 
 public interface UserService {
+	
+	public List<Token> getToken(String token) ;
+	public UserToken getUserToken(Token token);
+	public User getUser(UserToken token);
+	public User getUserByToken(String token);
 	public User getUser(String userId);
 	public List<RoleType> getAllRoles();
 	public UserToken getUserToken(User userId);
