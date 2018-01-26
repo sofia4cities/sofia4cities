@@ -35,57 +35,76 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 public class MongoNativeManageDBRepositoryIntegrationTest {
-	
+
 	@Autowired
-	ManageDBRepository repository;	
-		
+	ManageDBRepository repository;
+
 	/*
-	public void createIndex(String ontology, String attribute) throws DBPersistenceException;
+	 * public void createIndex(String ontology, String attribute) throws
+	 * DBPersistenceException;
+	 * 
+	 * public List<String> createIndex(String sentence) throws
+	 * DBPersistenceException;
+	 * 
+	 * public void dropIndex(String ontology, String indexName) throws
+	 * DBPersistenceException;
+	 * 
+	 * public List<String> getIndexes(String ontology) throws
+	 * DBPersistenceException;
+	 * 
+	 * public void validateIndexes(String ontology, String schema) throws
+	 * DBPersistenceException;
+	 */
 
-	public List<String> createIndex(String sentence) throws DBPersistenceException;
-
-	public void dropIndex(String ontology, String indexName) throws DBPersistenceException;
-
-	public List<String> getIndexes(String ontology) throws DBPersistenceException;
-	
-	public void validateIndexes(String ontology, String schema) throws DBPersistenceException;
-	*/
-	
 	@Test
 	public void test1_getStatusDatabase() {
 		try {
-			Assert.assertEquals(repository.getStatusDatabase().get("sofia2_s4c"),Boolean.TRUE);			
+			Assert.assertEquals(repository.getStatusDatabase().get("sofia2_s4c"), Boolean.TRUE);
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB");
 		}
-	}	
-	
+	}
 
 	@Test
 	public void test3_getListOfTables4Ontology() {
 		try {
-			Assert.assertEquals(repository.getListOfTables4Ontology("MensajesPlataforma").size(),1);			
+			Assert.assertEquals(repository.getListOfTables4Ontology("MensajesPlataforma").size(), 1);
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB");
 		}
-	}	
-	
+	}
+
 	@Test
 	public void test1_createCollection() {
 		try {
-			int size1= repository.getListOfTables().size();
-			repository.createTable4Ontology("ONT_TODELETE_1", 
-			"{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"title\": \"Test Schema\"}");
-			int size2=repository.getListOfTables().size();
-			Assert.assertEquals(size2,size1+1);
+			int size1 = repository.getListOfTables().size();
+			repository.createTable4Ontology("ONT_TODELETE_1",
+					"{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"title\": \"Test Schema\"}");
+			int size2 = repository.getListOfTables().size();
+			Assert.assertEquals(size2, size1 + 1);
 			repository.removeTable4Ontology("ONT_TODELETE_1");
-			size2=repository.getListOfTables().size();
-			Assert.assertEquals(size2,size1);
-			
-		} 
-		catch (Exception e) {
-			Assert.fail("test_createCollection:"+e.getMessage());
+			size2 = repository.getListOfTables().size();
+			Assert.assertEquals(size2, size1);
+
+		} catch (Exception e) {
+			Assert.fail("test_createCollection:" + e.getMessage());
 		}
-	}			
+	}
+
+	@Test
+	public void test1_createTestOntollogy() {
+		try {
+			int size1 = repository.getListOfTables().size();
+			if (repository.getListOfTables4Ontology("test_ontology").size() == 0) {
+				repository.createTable4Ontology("test_ontology",
+						"{\"$schema\": \"http://json-schema.org/draft-04/schema#\",\"title\": \"Test Schema\"}");
+				int size2 = repository.getListOfTables().size();
+				Assert.assertEquals(size2, size1 + 1);
+			}
+
+		} catch (Exception e) {
+			Assert.fail("test_createCollection:" + e.getMessage());
+		}
+	}
 
 }
