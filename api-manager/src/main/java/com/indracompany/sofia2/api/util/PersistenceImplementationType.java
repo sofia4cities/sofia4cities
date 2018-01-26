@@ -11,18 +11,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
-
-
-import java.util.List;
-
-import com.indracompany.sofia2.config.model.Ontology;
-
-
-public interface OntologyService {
-
-	List<Ontology> findAllOntologies();
-	List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
+package com.indracompany.sofia2.api.util;
+public enum PersistenceImplementationType {
+    MONGODB,
+    ORACLE,
+    POSTGRESQL,
+    KUDU;
+	public String getConsoleString() {
+		switch (this) {
+		case KUDU:
+			return "relationalKudu";
+		case ORACLE:
+			return "multibdtr";
+		case POSTGRESQL:
+			return "multibdtr";
+		default:
+			return "documentalMongo";
+		}
+	}
+	public String toString() {
+		switch(this) {
+		case KUDU:
+			return "Kudu";
+		case ORACLE:
+			return "Oracle";
+		case POSTGRESQL:
+			return "Postgresql";
+		default:
+			return "MongoDB";
+		}
+	}
 }

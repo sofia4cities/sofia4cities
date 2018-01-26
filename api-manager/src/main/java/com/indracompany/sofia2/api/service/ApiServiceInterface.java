@@ -29,6 +29,7 @@ public interface ApiServiceInterface {
 	public static final String PATH_INFO="PATH_INFO";
 
 	public static final String webServicePath = "/ws";
+	public static final String ISSQLLIKE = "ISSQLLIKE";
 
 	void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception;
 

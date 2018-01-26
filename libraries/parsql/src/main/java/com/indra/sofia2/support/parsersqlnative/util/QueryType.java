@@ -11,18 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+/*******************************************************************************
+ * © Indra Sistemas, S.A.
+ * 2013 - 2014  SPAIN
+ * 
+ * All rights reserved
+ ******************************************************************************/
+package com.indra.sofia2.support.parsersqlnative.util;
 
-
-import java.util.List;
-
-import com.indracompany.sofia2.config.model.Ontology;
-
-
-public interface OntologyService {
-
-	List<Ontology> findAllOntologies();
-	List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
+public enum QueryType {
+	INSERT,
+	DELETE,
+	UPDATE,
+	SELECT,
 }

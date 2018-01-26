@@ -11,18 +11,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+/*******************************************************************************
+ * © Indra Sistemas, S.A.
+ * 2013 - 2014  SPAIN
+ * 
+ * All rights reserved
+ ******************************************************************************/
+package com.indra.sofia2.support.parsersqlnative;
 
 
-import java.util.List;
+public class FromItem extends AliasedName {
 
-import com.indracompany.sofia2.config.model.Ontology;
+	
+	private static final long serialVersionUID = 1L;
 
+	
+	public FromItem() { 
+		super(); 
+		}
 
-public interface OntologyService {
+	public FromItem(String fullname) {
+		super(fullname, AliasedName.FORM_TABLE);
+	}
 
-	List<Ontology> findAllOntologies();
-	List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
 }
+

@@ -11,18 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+package com.indracompany.sofia2.api.rest.api;
+import org.springframework.stereotype.Service;
 
+import io.swagger.annotations.Api;
 
-import java.util.List;
+@Api("/sayHello")
+@Service
+public class HelloServiceImpl1 implements HelloService {
 
-import com.indracompany.sofia2.config.model.Ontology;
+    public String sayHello(String a) {
+        return "Hello " + a + ", Welcome to CXF RS Spring Boot World!!!";
+    }
 
-
-public interface OntologyService {
-
-	List<Ontology> findAllOntologies();
-	List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
 }

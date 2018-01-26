@@ -11,18 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+package com.indracompany.sofia2.api.service.api;
 
+import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.User;
 
-import java.util.List;
+public class apiSecurityService {
 
-import com.indracompany.sofia2.config.model.Ontology;
+	public static boolean checkApiAvailable(Api api, User user) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-
-public interface OntologyService {
-
-	List<Ontology> findAllOntologies();
-	List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
 }

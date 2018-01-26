@@ -11,18 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
-
-
-import java.util.List;
-
-import com.indracompany.sofia2.config.model.Ontology;
-
-
-public interface OntologyService {
-
-	List<Ontology> findAllOntologies();
-	List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
+package com.indracompany.sofia2.api.util;
+public enum TableAccessMode {
+	
+	SELECT,
+	UPDATE,
+	DELETE,
+	INSERT,
+	CREATE,
+	DELETEINDEX,
+	GETINDEXES,
+	INVALIDATE,
+	ALTER
 }

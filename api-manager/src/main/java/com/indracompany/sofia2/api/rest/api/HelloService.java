@@ -11,18 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+package com.indracompany.sofia2.api.rest.api;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+@Path("/sayHello")
+@Service
+public interface HelloService {
 
-import com.indracompany.sofia2.config.model.Ontology;
+    @GET
+    @Path("/{a}")
+    @Produces(MediaType.TEXT_PLAIN)
+    String sayHello(@PathParam("a") String a);
 
-
-public interface OntologyService {
-
-	List<Ontology> findAllOntologies();
-	List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
 }

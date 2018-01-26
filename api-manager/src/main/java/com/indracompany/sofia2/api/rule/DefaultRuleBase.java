@@ -11,18 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+package com.indracompany.sofia2.api.rule;
 
+import org.jeasy.rules.api.Facts;
 
-import java.util.List;
-
-import com.indracompany.sofia2.config.model.Ontology;
-
-
-public interface OntologyService {
-
-	List<Ontology> findAllOntologies();
-	List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
+public class DefaultRuleBase {
+		
+	protected void stopAllNextRules(Facts facts) {
+		facts.put(RuleManager.STOP_STATE, true);
+	}
+	
+	protected boolean canExecuteRule(Facts facts) {
+		Boolean bool = facts.get(RuleManager.STOP_STATE);
+		return !bool;
+	}
+	
 }
