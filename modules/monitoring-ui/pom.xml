@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+		<parent>
+		<groupId>com.indracompany.sofia2</groupId>
+		<artifactId>sofia2-parent</artifactId>
+		<version>5.0.0-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+    <groupId>com.indracompany.sofia2</groupId>
+    <artifactId>sofia2-monitoring-ui</artifactId>	
+	<version>${sofia2.version}</version>
+    <packaging>jar</packaging>
+	
+    <name>sofia2-monitoring-ui</name>
+    <description>Sofia2 Spring Boot Admin Server</description>
+		
+	<properties>
+    <license.dir>${project.parent.basedir}</license.dir>
+	</properties>
+		
+    <dependencies>
+        <dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-config-model</artifactId>
+            <version>${sofia2.version}</version>
+        </dependency>	
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>	
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<scope>runtime</scope>
+		</dependency>	
+	
+	
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- dependencies used to enable admin server and UI-->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-server</artifactId>
+            <version>${spring-boot-admin-server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.indracompany.sofia2</groupId>
+            <artifactId>spring-boot-admin-server-ui-sofia2</artifactId>
+            <version>${spring-boot-admin-server.version}</version>
+        </dependency>
+
+        <!--Add login page and logout feature-->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-server-ui-login</artifactId>
+            <version>${spring-boot-admin-server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast</artifactId>
+        </dependency>
+        <!--declare the admin server as a client, for self monitoring-->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>${spring-boot-admin-starter-client.version}</version>
+        </dependency>
+        <!--mail notifications-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>19.0</version>
+		</dependency>
+		
+    </dependencies>
+	
+	<build>
+		<plugins>
+		  <plugin>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-maven-plugin</artifactId>
+			<executions>
+			  <execution>
+				<goals>
+				  <goal>repackage</goal>
+				</goals>
+				<configuration>
+				  <classifier>exec</classifier>
+				</configuration>
+			  </execution>
+			</executions>
+		  </plugin>
+		</plugins>
+  </build>
+
+
+
+</project>
