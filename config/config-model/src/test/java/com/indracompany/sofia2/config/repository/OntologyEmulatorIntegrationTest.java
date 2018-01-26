@@ -93,7 +93,7 @@ public class OntologyEmulatorIntegrationTest {
 		OntologyEmulator oe = this.repository.findAll().get(0);
 
 		Assert.assertTrue(
-				this.repository.findByIdentificationAndUserId(oe.getIdentification(), oe.getUserId().getId()).size() > 0);
+				this.repository.findByIdentificationAndUserId(oe.getIdentification(), oe.getUserId().getUserId()).size() > 0);
 
 	}
 
