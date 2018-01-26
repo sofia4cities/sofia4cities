@@ -5828,7 +5828,8 @@ Form Layouts
 /* Help blocks */
 .help-block {
   margin-top: 5px;
-  margin-bottom: 5px; }
+  margin-bottom: 5px; 
+  font-size: 85%; }
 
 .help-inline {
   font-size: 13px;
