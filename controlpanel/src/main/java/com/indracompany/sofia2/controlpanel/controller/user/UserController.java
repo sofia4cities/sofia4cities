@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,6 +54,40 @@ public class UserController {
 		model.addAttribute("user",new User());
 		return "/users/create";
 
+	}
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@PutMapping(value="/update/{id}")
+	public String updateForm(Model model)
+	{
+		this.populateFormData(model);
+		model.addAttribute("user",this.userService.getUser(utils.getUserId()));
+		
+		return "/users/update";
+	}
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@PutMapping(value="/update/{id}")
+	public String update(@PathVariable("id") String id,@ModelAttribute User user)
+	{
+		if(user!=null)
+		{
+			if(user.getPassword()!=null && user.getEmail()!=null
+					&& user.getRoleTypeId()!=null && user.getUserId()!=null)
+			{
+				try{
+					this.userService.updateUser(user);
+				}catch(Exception e)
+				{
+					log.debug(e.getMessage());
+					return "/users/update";
+				}
+			}else {
+				log.debug("Some user properties missing");
+				return "/users/create";
+			}
+		}
+		
+		return "redirect:/users/show/"+id;
+		
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value="/create")
@@ -105,7 +140,7 @@ public class UserController {
 		return "/users/list";
 
 	}
-	@RequestMapping(value = "/show/{id}", produces = "text/html")
+	@GetMapping(value = "/show/{id}", produces = "text/html")
 	public String showUser(@PathVariable("id") String id, Model uiModel) {
 		User user = this.userService.getUser(utils.getUserId());
 		uiModel.addAttribute("user", user);

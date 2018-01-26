@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.service.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,5 +104,18 @@ public class UserServiceImpl implements UserService {
 	{
 		if(this.userRepository.findByUserId(user.getUserId())!=null) return true;
 		else return false;
+	}
+	public void updateUser(User user)
+	{
+		if(this.userExists(user))
+		{
+			User userDb=this.userRepository.findByUserId(user.getUserId());
+			userDb.setPassword(user.getPassword());
+			userDb.setEmail(user.getEmail());
+			userDb.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
+			userDb.setActive(user.isActive());
+			userDb.setUpdatedAt(new Date());
+			this.userRepository.save(userDb);
+		}
 	}
 }
