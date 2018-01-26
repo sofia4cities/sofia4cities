@@ -60,15 +60,20 @@ public class UserController {
 	{
 		if(user!=null)
 		{
-			if(user.getPassword()!=null && user.getCreatedAt()!=null && user.getEmail()!=null
+			if(user.getPassword()!=null && user.getDateCreated()!=null && user.getEmail()!=null
 					&& user.getRoleTypeId()!=null && user.getUserId()!=null)
 			{
-				this.userService.createUser(user);
-			}
-			log.debug("Some user properties missing");
+				try{
+					this.userService.createUser(user);
+				}catch(Exception e)
+				{
+					log.debug(e.getMessage());
+					return "redirect:/users/create";
+				}
+			}else log.debug("Some user properties missing");
 		}
 		
-		return "/users/create";
+		 return "redirect:/users/list";
 		
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")

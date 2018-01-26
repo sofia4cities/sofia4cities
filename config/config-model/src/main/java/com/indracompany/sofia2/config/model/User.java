@@ -67,7 +67,6 @@ public class User extends AuditableEntityWithUUID{
 	@Column(name = "DATE_CREATED",nullable = false)
 	@NotNull
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(style = "M-")
 	@Getter @Setter private Date dateCreated;
 
 	@Column(name = "ACTIVE",nullable = false)
