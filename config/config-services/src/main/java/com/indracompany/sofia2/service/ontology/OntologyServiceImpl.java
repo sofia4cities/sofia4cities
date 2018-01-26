@@ -98,5 +98,9 @@ public class OntologyServiceImpl implements OntologyService{
 		return identifications;
 	}
 	
+	public Ontology getOntologyById(String id) {
+		return ontologyRepository.findById(id);
+	}
+	
 
 }
