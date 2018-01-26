@@ -20,9 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.RoleType;
+import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.RoleTypeRepository;
+import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.repository.UserTokenRepository;
 
@@ -35,6 +37,29 @@ public class UserServiceImpl implements UserService {
 	RoleTypeRepository roleTypeRepository;
 	@Autowired
 	UserTokenRepository userTokenRepository;
+	@Autowired
+	TokenRepository tokenRepository;
+	
+	public List<Token> getToken(String token) {
+		return tokenRepository.findByToken(token);
+	}
+	
+	public UserToken getUserToken(Token token) {
+		return userTokenRepository.findByToken(token);
+	}
+	
+	public User getUser(UserToken token) {
+		return token.getUserId();
+	}
+	
+	public User getUserByToken(String token) {
+		List<Token> listToken = getToken(token);
+		Token theToken = listToken.get(0);
+		UserToken theUserToken  = getUserToken(theToken);
+		User user = getUser(theUserToken);
+		return user;
+	}
+
 
 	public User getUser(String userId) {
 		return userRepository.findByUserId(userId);
