@@ -38,6 +38,8 @@ public class RuleManager implements ApplicationContextAware{
 	public static final String REQUEST = "request";
 	public static final String ACTION = "action";
 	
+	public static final String STOP_STATE = "STOP_STATE";
+	
 	@Autowired
 	private ApplicationContext applicationContext;
 
