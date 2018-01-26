@@ -6,6 +6,7 @@ var UserCreateController = function() {
     var logControl = 1;
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.
+	var currentFormat = '' // date format depends on currentLanguage.
 	
 	// CONTROLLER PRIVATE FUNCTIONS
 	
@@ -30,20 +31,26 @@ var UserCreateController = function() {
 		$(".selectpicker").each(function(){
 			$(this).val( '' );
 			$(this).selectpicker('deselectAll').selectpicker('refresh');
-		});			
+		});
+		
+		// CLEAN ALERT MSG
+		$('.alert-danger').hide();
 	}
 	
 	// CHECK DATES AND LET THE FORM SUBMMIT
 	var checkCreate = function(){
 		logControl ? console.log('checkCreate() -> ') : '';
         
-		var dateCreated = $("#datecreated").val();
-        var dateDeleted = $("#dateleted").val();
-        var created = new Date(dateCreated);
-        var deleted = new Date(dateDeleted);  
-		logControl ?  console.log('created: ' + dateCreated + '  deleted: ' + dateDeleted): '';
+		var dateCreated = $("#datecreated").datepicker('getDate');
+        var dateDeleted = $("#datedeleted").datepicker('getDate');
+		
+		var diff = dateDeleted - dateCreated;
+		var days = diff / 1000 / 60 / 60 / 24;
+				
+		logControl ?  console.log('created: ' + dateCreated + '  deleted: ' + dateDeleted): '';		
+		
         if (dateDeleted != ""){
-            if (created > deleted){
+            if (dateCreated > dateDeleted){
                 $.confirm({icon: 'fa fa-warning', title: 'CONFIRM:', theme: 'dark',
 					content: userCreateReg.validation_dates,
 					draggable: true,
@@ -51,15 +58,15 @@ var UserCreateController = function() {
 					backgroundDismiss: true,
 					closeIcon: true,
 					buttons: {				
-						close: { text: Close, btnClass: 'btn btn-sm btn-default btn-outline', action: function (){} //GENERIC CLOSE.		
+						close: { text: userCreateReg.Close, btnClass: 'btn btn-sm btn-default btn-outline', action: function (){} //GENERIC CLOSE.		
 						}
 					}
 				});
-                return false;
-            }
-			else{ return true; }           
+                $("#datedeleted").datepicker('update','');
+            }			           
         }
-    }
+    } 
+	
 	
 	// FORM VALIDATION
 	var handleValidation = function() {
@@ -82,8 +89,8 @@ var UserCreateController = function() {
 			lang: currentLanguage,
 			// custom messages
             messages: {
-                       
-            },
+					datedeleted: { checkdates : userCreateReg.validation_dates }
+			},
 			// validation rules
             rules: {
 				userId:		{ minlength: 5, required: true },
@@ -91,7 +98,7 @@ var UserCreateController = function() {
                 email:		{ required: true, email: true },
                 password:	{ required: true, minlength: 7, maxlength: 20 },
                 roles:		{ required: true },
-				datecreated:{ date: true },
+				datecreated:{ date: true, required: true },
 				datedeleted:{ date: true }
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
@@ -125,36 +132,39 @@ var UserCreateController = function() {
 	
 	// INIT TEMPLATE ELEMENTS
 	var initTemplateElements = function(){
-		logControl ? console.log('initTemplateElements() -> selectpickers, datepickers, resetForm, today->dateCreated') : '';
+		logControl ? console.log('initTemplateElements() -> selectpickers, datepickers, resetForm, today->dateCreated currentLanguage: ' + currentLanguage) : '';
 		
 		// selectpicker validate fix when handleValidation()
 		$('.selectpicker').on('change', function () {
 			$(this).valid();
 		});
 		
-		// set current language
-		currentLanguage = userCreateReg.language || LANGUAGE;
+		// set current language and formats
+		currentLanguage = userCreateReg.language || LANGUAGE[0];
+		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';		
 		
-		// init datepickers dateCreated and dateDeleted
-		$("#datecreated").datepicker({dateFormat: "mm/dd/yy", showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
-        $("#datedeleted").datepicker({dateFormat: "mm/dd/yy", showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage,
-			onClose: function(e) {
-					var ev = window.event;
-					if (ev.srcElement.innerHTML == 'Clear')
-					this.value = "";    
-			},
-			closeText: 'Clear',
-			buttonText: ''   
-        });
+		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage) : '';
+		
+		// init datepickers dateCreated and dateDeleted		
+		$("#datecreated").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
+        var dd = $("#datedeleted").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
+		
+		// setting on changeDate to checkDates()
+		dd.on('changeDate', function(e){
+				//gets the full date formated
+				selectedDate = dd.data('datepicker').getFormattedDate(currentFormat);				
+				checkCreate();
+		});
 		
 		// Reset form
 		$('#resetBtn').on('click',function(){ 
 			cleanFields('user_create_form');
 		});
 		
-		// set TODAY to dateCreated
+		//set TODAY to dateCreated depends on language
 		var f = new Date();         
-        $('#datecreated').val(('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear());
+        today = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
+		$('#datecreated').datepicker('update',today);
 		
 	}
 
@@ -171,7 +181,8 @@ var UserCreateController = function() {
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';			
 			handleValidation();
-			initTemplateElements();
+			initTemplateElements();		
+			
 		},
 		checkDates: function(){
 			logControl ? console.log(LIB_TITLE + ': checkDates()') : '';	

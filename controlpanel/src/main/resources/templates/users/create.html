@@ -160,7 +160,7 @@
 															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-calendar-o"></i>
-																<input id="datedeleted" type="text"  maxlength="50" th:field="*{dateDeleted}" class="form-control datetime" th:onblur="'UserCreateController.checkDates()'" th:placeholder="#{user.dateDeleted}"/>
+																<input id="datedeleted" type="text"  maxlength="50" th:field="*{dateDeleted}" class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
 															</div>
 														</div>
 													</div>
@@ -238,6 +238,7 @@
 	
 	var userCreateJson = { 
 		"validation_dates" : [[#{user.valid.dateDeleted}]],
+		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage
 	};
 						
