@@ -47,7 +47,7 @@ public class OntologyServiceImpl implements OntologyService{
 		List<Ontology> ontologies;
 		User user= this.userRepository.findByUserId(userId);
 		
-		if(user.getRoleTypeId().getName().equals(this.ADMINISTRATOR))
+		if(user.getRoleTypeId().getName().equals(OntologyServiceImpl.ADMINISTRATOR))
 		{
 			if(description!=null && identification!=null){
 

@@ -3,6 +3,7 @@ package com.indracompany.sofia2.controlpanel.controller.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,6 +38,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.indracompany.sofia2.config.model.RoleType;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.controlpanel.Sofia2ControlPanelWebApplication;
 import com.indracompany.sofia2.service.user.UserService;
 
@@ -43,12 +46,13 @@ import com.indracompany.sofia2.service.user.UserService;
 @SpringBootTest(classes = Sofia2ControlPanelWebApplication.class)
 public class UserControllerTest {
 
-	private MvcResult mvcResult;
+
 	private MockMvc mockMvc;
 	@Autowired
 	WebApplicationContext context;
 	@Autowired
 	UserService userService;
+
 	
 	@Before
     public void initTests() {
@@ -57,33 +61,49 @@ public class UserControllerTest {
     }
 
 	@Test
-	public void testShowUser() throws Exception
+	public void testCreateUser() throws Exception
+	{
+		User user= this.mockUser();
+		//mock userService
+		userService= Mockito.mock(UserService.class);
+		
+//		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+//        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
+//        Authentication authentication = new
+//                UsernamePasswordAuthenticationToken("admin", "admin", grantedAuthorities);
+//		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+//		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+//		SecurityContextHolder.setContext(securityContext);
+		
+		SimpleDateFormat formatter=new SimpleDateFormat("dd/MM/yyyy");
+		
+		mockMvc.perform(post("/users/create")
+				.param("fullName",user.getFullName())
+				.param("active", "true")
+				.param("password",user.getPassword())
+				.param("userId", user.getUserId())
+				.param("email", user.getEmail())
+				.param("dateCreated", formatter.format(user.getDateCreated()))
+				.param("roleTypeId.name", user.getRoleTypeId().getName())).andDo(print())
+		.andExpect(status().is3xxRedirection());
+	
+	}
+	
+	public User mockUser()
 	{
 		User user=new User();
 		user.setActive(true);
 		user.setEmail("admin@gmail.com");
 		RoleType role= new RoleType();
 		role.setName("ROLE_ADMINISTRATOR");
+		user.setRoleTypeId(role);
 		user.setPassword("somePass");
-		user.setCreatedAt(new java.util.Date());
+		user.setDateCreated(new java.util.Date());
 		user.setRoleTypeId(role);
 		user.setUserId("admin");
 		user.setEmail("some@email.com");
 		user.setFullName("Admin s4c");
-		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMINISTRATOR"));
-        Authentication authentication = new
-                UsernamePasswordAuthenticationToken("admin", "admin", grantedAuthorities);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-		//Mockito.when(this.userService.getUser(Matchers.anyString())).thenReturn(user);
-		SecurityContextHolder.setContext(securityContext);
-		mockMvc.perform(post("/users/create").param("password", user.getFullName())
-				.param("fullName",user.getFullName())
-				.param("password",user.getPassword())
-				.param("userId", user.getUserId())
-				.param("email", user.getEmail()).param("createdAt", user.getCreatedAt().toString())
-				.param("roleTypeId", user.getRoleTypeId().getName())).andExpect(status().isOk());
-	
+		return user;
+		
 	}
 }

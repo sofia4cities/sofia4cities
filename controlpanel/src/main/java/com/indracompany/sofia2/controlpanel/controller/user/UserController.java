@@ -68,9 +68,12 @@ public class UserController {
 				}catch(Exception e)
 				{
 					log.debug(e.getMessage());
-					return "redirect:/users/create";
+					return "/users/create";
 				}
-			}else log.debug("Some user properties missing");
+			}else {
+				log.debug("Some user properties missing");
+				return "/users/create";
+			}
 		}
 		
 		 return "redirect:/users/list";
