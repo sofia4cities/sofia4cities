@@ -55,7 +55,7 @@ public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvi
         }
         String password = credentials.toString();
 	
-        User user = userRepository.findByUserIdAndPassword(name,password);
+        User user = userRepository.findByUserIdAndPasswordAndActiveTrue(name,password);
 
         if (user==null) {
 			log.info("authenticate: User or password incorrect: " + name);
