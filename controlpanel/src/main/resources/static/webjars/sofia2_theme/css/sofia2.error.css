@@ -1,0 +1,15 @@
+/* 404 page sofia2 theme */
+
+.page-404					{ background: #000 !important; }
+.page-404 .page-inner img 	{ right: 0; bottom: 0; z-index: -1; position:absolute;}
+.page-404 .error-404 		{ color: #fff; text-align: left; padding: 70px 20px 0;}
+.page-404 h1 				{ color: #fff;  font-size: 130px; line-height: 160px; }
+.page-404 h2				{ color: #fff;  font-size: 30px; margin-bottom: 30px; }
+.page-404 p 				{ color: #fff;  font-size: 16px;}
+
+@media (max-width: 480px) {
+  .page-404 .number, .page-404 .details { text-align: center;   margin-left: 0px; }
+  .page-404-full-page .page-404 		{ margin-top: 30px; }
+  .page-404 .error-404 					{ text-align: left; padding-top: 10px; }
+  .page-404 .page-inner img 			{ right: 0; bottom: 0; z-index: -1; position: fixed; }
+}
