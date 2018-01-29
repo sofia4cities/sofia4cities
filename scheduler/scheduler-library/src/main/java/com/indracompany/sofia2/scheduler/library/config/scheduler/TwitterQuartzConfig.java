@@ -15,7 +15,6 @@ package com.indracompany.sofia2.scheduler.library.config.scheduler;
 
 import static com.indracompany.sofia2.scheduler.library.PropertyNames.SCHEDULER_PROPERTIES_LOCATION;
 
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +28,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 public class TwitterQuartzConfig extends GenericQuartzConfig {
-	
-	private final String SCHEDULER_BEAN_NAME = "twitterScheduler";
+
 	private final String SCHEDULER_BEAN_FACTORY_NAME = "twitter-scheduler-factory";
-	private final String SCHEDULER_NAME = "twitter-scheduler";
+	private final String SCHEDULER_NAME = "twitterScheduler";
 	
 	@Bean(SCHEDULER_BEAN_FACTORY_NAME)
 	public SchedulerFactoryBean twitterSchedulerFactoryBean(JobFactory jobFactory, PlatformTransactionManager transactionManager) throws SchedulerException {
@@ -56,14 +54,14 @@ public class TwitterQuartzConfig extends GenericQuartzConfig {
 		return schedulerFactoryBean;
 	}
 	
-	@Bean(SCHEDULER_BEAN_NAME)
-	public Scheduler twitterScheduler (@Autowired @Qualifier(SCHEDULER_BEAN_FACTORY_NAME) SchedulerFactoryBean schedulerFactoryBean){
-		return schedulerFactoryBean.getScheduler();
+	@Bean(SCHEDULER_NAME)
+	public BatchScheduler twitterScheduler (@Autowired @Qualifier(SCHEDULER_BEAN_FACTORY_NAME) SchedulerFactoryBean schedulerFactoryBean){
+		return new GenericBatchScheduler(schedulerFactoryBean.getScheduler(), SCHEDULER_NAME);
 	}
 	
 	@Override
 	public String getSchedulerBeanName() {
-		return SCHEDULER_BEAN_NAME;
+		return SCHEDULER_NAME;
 	}
 	
 }

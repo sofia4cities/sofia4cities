@@ -14,10 +14,12 @@
 package com.indracompany.sofia2.scheduler.core.scheduler.service;
 
 import org.quartz.Job;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 
 public interface JobGenerator {
 	
-	JobDetail createJobDetail(String jobName, String groupName, Class<? extends Job > jobClass);
+	JobDetail createJobDetail(JobKey jobKey, JobDataMap jobDataMap, Class<? extends Job > jobClass, String jobDescription);
 
 }

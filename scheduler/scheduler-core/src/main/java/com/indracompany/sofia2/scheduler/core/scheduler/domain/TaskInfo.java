@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.scheduler.core.scheduler.domain;
 
+import java.util.Map;
+
 public class TaskInfo {
 
 	private String jobName;	
@@ -23,14 +25,17 @@ public class TaskInfo {
 	private String createTime;
 	private String nextFireTime;
 	private String previousFireTime;
+	private String schedulerType;
+	private Map data;
 	
 	
 	public TaskInfo () {
 		
 	}
-
+	
 	public TaskInfo(String jobName, String jobGroup, String jobDescription, String jobStatus,
-			String cronExpression, String createTime, String nextFireTime, String previousFireTime) {
+			 		String cronExpression, String createTime, 
+			 		String nextFireTime, String previousFireTime) {
 		super();
 		this.jobName = jobName;
 		this.jobGroup = jobGroup;
@@ -40,6 +45,22 @@ public class TaskInfo {
 		this.createTime = createTime;
 		this.nextFireTime = nextFireTime;
 		this.previousFireTime = previousFireTime;
+	}
+
+	public TaskInfo(String jobName, String jobGroup, String jobDescription, String jobStatus,
+					String schedulerType, String cronExpression, String createTime, 
+					String nextFireTime, String previousFireTime, Map data) {
+		super();
+		this.jobName = jobName;
+		this.jobGroup = jobGroup;
+		this.jobDescription = jobDescription;
+		this.jobStatus = jobStatus;
+		this.schedulerType = schedulerType;
+		this.cronExpression = cronExpression;
+		this.createTime = createTime;
+		this.nextFireTime = nextFireTime;
+		this.previousFireTime = previousFireTime;
+		this.data = data;
 	}
 
 	public String getNextFireTime() {
@@ -89,6 +110,14 @@ public class TaskInfo {
 	public void setJobStatus(String jobStatus) {
 		this.jobStatus = jobStatus;
 	}
+	
+	public String getSchedulerType() {
+		return schedulerType;
+	}
+
+	public void setSchedulerType(String schedulerType) {
+		this.schedulerType = schedulerType;
+	}
 
 	public String getCronExpression() {
 		return cronExpression;
@@ -104,6 +133,14 @@ public class TaskInfo {
 
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
+	}
+
+	public Map getData() {
+		return data;
+	}
+
+	public void setData(Map data) {
+		this.data = data;
 	}
 
 }

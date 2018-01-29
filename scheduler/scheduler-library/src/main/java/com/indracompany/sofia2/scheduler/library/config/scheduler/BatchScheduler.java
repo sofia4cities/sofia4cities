@@ -11,17 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.core.scheduler.service;
+package com.indracompany.sofia2.scheduler.library.config.scheduler;
 
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
+import org.quartz.Scheduler;
 
+public interface BatchScheduler extends Scheduler{
 
-public interface TriggerGenerator {
-
-	Trigger createTrigger(JobDetail jobDetail, TriggerKey triggerKey);
-	
-	Trigger createCronTrigger(String cronExpression, JobDetail jobDetail, TriggerKey triggerKey);
-		
+	String getName ();
 }

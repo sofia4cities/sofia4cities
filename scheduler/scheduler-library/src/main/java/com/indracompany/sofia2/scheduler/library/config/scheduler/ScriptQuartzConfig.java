@@ -16,7 +16,6 @@ package com.indracompany.sofia2.scheduler.library.config.scheduler;
 
 import static com.indracompany.sofia2.scheduler.library.PropertyNames.SCHEDULER_PROPERTIES_LOCATION;
 
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +30,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 public class ScriptQuartzConfig extends GenericQuartzConfig {
 	
-	private final String SCHEDULER_BEAN_NAME = "scriptScheduler";
 	private final String SCHEDULER_BEAN_FACTORY_NAME = "script-scheduler-factory";
-	private final String SCHEDULER_NAME = "script-scheduler";
+	private final String SCHEDULER_NAME = "scriptScheduler";
 	
 	@Bean(SCHEDULER_BEAN_FACTORY_NAME)
 	public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, PlatformTransactionManager transactionManager) throws SchedulerException {
@@ -57,14 +55,14 @@ public class ScriptQuartzConfig extends GenericQuartzConfig {
 		return schedulerFactoryBean;
 	}
 	
-	@Bean(SCHEDULER_BEAN_NAME)
-	public Scheduler scriptScheduler (@Autowired @Qualifier(SCHEDULER_BEAN_FACTORY_NAME) SchedulerFactoryBean schedulerFactoryBean){
-		return schedulerFactoryBean.getScheduler();
+	@Bean(SCHEDULER_NAME)
+	public BatchScheduler scriptScheduler (@Autowired @Qualifier(SCHEDULER_BEAN_FACTORY_NAME) SchedulerFactoryBean schedulerFactoryBean){
+		return new GenericBatchScheduler(schedulerFactoryBean.getScheduler(), SCHEDULER_NAME);
 	}
 
 	@Override
 	public String getSchedulerBeanName() {
-		return SCHEDULER_BEAN_NAME;
+		return SCHEDULER_NAME;
 	}
 	
 	

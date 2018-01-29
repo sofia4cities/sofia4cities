@@ -13,15 +13,17 @@
  */
 package com.indracompany.sofia2.scheduler.core.scheduler.service;
 
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
+import java.util.List;
 
+import com.indracompany.sofia2.scheduler.library.SchedulerType;
+import com.indracompany.sofia2.scheduler.library.config.scheduler.BatchScheduler;
 
-public interface TriggerGenerator {
-
-	Trigger createTrigger(JobDetail jobDetail, TriggerKey triggerKey);
+public interface BatchSchedulerFactory {
 	
-	Trigger createCronTrigger(String cronExpression, JobDetail jobDetail, TriggerKey triggerKey);
-		
+	BatchScheduler getScheduler (SchedulerType schedulerType);
+	
+	List<BatchScheduler> getSchedulers ();
+	
+	BatchScheduler getScheduler (String schedulerName);
+
 }

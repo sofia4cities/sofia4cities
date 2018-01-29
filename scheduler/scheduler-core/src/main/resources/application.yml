@@ -16,16 +16,16 @@ spring:
       password:
       autoStartupSchedulers:
          - scriptScheduler
-         #- twitterScheduler
+         - twitterScheduler
          
             
 ## LOGGING CONF
 logging:
    level:
-      org.springframework: debug
-      com.example.boot.thymeleaf: debug
-      com.indra: debug
-      org.hibernate: debug
+      org.springframework: INFO
+      com.example.boot.thymeleaf: INFO
+      com.indra: INFO
+      org.hibernate: INFO
 
 
  

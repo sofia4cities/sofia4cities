@@ -19,26 +19,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
-import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
-import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.Trigger.TriggerState;
-import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.scheduler.core.scheduler.domain.TaskInfo;
+import com.indracompany.sofia2.scheduler.core.scheduler.domain.TaskOperation;
+import com.indracompany.sofia2.scheduler.core.scheduler.service.BatchSchedulerFactory;
+import com.indracompany.sofia2.scheduler.core.scheduler.service.JobGenerator;
 import com.indracompany.sofia2.scheduler.core.scheduler.service.TaskService;
+import com.indracompany.sofia2.scheduler.core.scheduler.service.TriggerGenerator;
+import com.indracompany.sofia2.scheduler.library.config.scheduler.BatchScheduler;
 import com.indracompany.sofia2.scheduler.library.job.impl.ExecutionJob;
 
 @Service
@@ -47,44 +48,54 @@ public class TaskServiceImpl implements TaskService {
 	private final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
 	
 	@Autowired
-	@Qualifier("scriptScheduler")
-	private Scheduler scheduler;
+	private BatchSchedulerFactory batchSchedulerFactory;
+	
+	@Autowired
+	private TriggerGenerator triggerGenerator;
+	
+	@Autowired
+	private JobGenerator jobGenerator;
+	
 	
 	@Override
-	public List<TaskInfo> list() {
+	public List<TaskInfo> list(String username) {
 		
 		List<TaskInfo> list = new ArrayList<>();
 		
 		try {
 			
-			for(String groupJob: scheduler.getJobGroupNames()){
-				
-				for(JobKey jobKey: scheduler.getJobKeys(GroupMatcher.<JobKey>groupEquals(groupJob))){
+			for (BatchScheduler scheduler: batchSchedulerFactory.getSchedulers()) {
+							
+				for(String groupJob: scheduler.getJobGroupNames()){
 					
-					List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
-					
-					for (Trigger trigger: triggers) {
+					for(JobKey jobKey: scheduler.getJobKeys(GroupMatcher.<JobKey>groupEquals(groupJob))){
 						
-						TriggerState triggerState = scheduler.getTriggerState(trigger.getKey()); 
-						JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+						List<? extends Trigger> triggers = scheduler.getTriggersOfJob(jobKey);
 						
-						String cronExpression = "";
-						
-						if (trigger instanceof CronTrigger) {
-				            CronTrigger cronTrigger = (CronTrigger) trigger;
-				            cronExpression = cronTrigger.getCronExpression();
-				        }
-						
-						logger.info(triggerState.name() + " " +  triggerState.toString());
-						TaskInfo info = new TaskInfo(jobKey.getName(), jobKey.getGroup(), jobDetail.getDescription(), 
-													 triggerState.name(), cronExpression, trigger.getStartTime().toString(), 
-													 parseDate (trigger.getNextFireTime()), parseDate(trigger.getPreviousFireTime()));
-						
-						
-						list.add(info);
-					}					
-				}
-			}			
+						for (Trigger trigger: triggers) {
+							
+							TriggerState triggerState = scheduler.getTriggerState(trigger.getKey()); 
+							JobDetail jobDetail = scheduler.getJobDetail(jobKey);
+							
+							String cronExpression = "";
+							
+							if (trigger instanceof CronTrigger) {
+					            CronTrigger cronTrigger = (CronTrigger) trigger;
+					            cronExpression = cronTrigger.getCronExpression();
+					        }
+							
+							logger.info(triggerState.name() + " " +  triggerState.toString());
+							TaskInfo info = new TaskInfo(jobKey.getName(), jobKey.getGroup(), jobDetail.getDescription(), 
+														 triggerState.name(), scheduler.getSchedulerName(), cronExpression, parseDate (trigger.getStartTime()), 
+														 parseDate (trigger.getNextFireTime()), parseDate(trigger.getPreviousFireTime()), null);
+							
+							
+							list.add(info);
+						}					
+					}
+				}	
+			}
+			
 		} catch (SchedulerException e) {
 			logger.error("Error listing task", e);
 		}
@@ -114,35 +125,32 @@ public class TaskServiceImpl implements TaskService {
 		String cronExpression = info.getCronExpression();
 		String jobDescription = info.getJobDescription();
 		
+		BatchScheduler scheduler = batchSchedulerFactory.getScheduler(info.getSchedulerType());
+		
 		try {
 			
-			if (checkExists(jobName, jobGroup)) {
+			if (checkExists(new TaskOperation(jobName, jobGroup, info.getSchedulerType()))) {
 		        logger.info("AddJob fails, job already exist, jobGroup:{}, jobName:{}", jobGroup, jobName);
 		        //throw new ServiceException(String.format("Job, jobName:{%s},jobGroup:{%s}", jobName, jobGroup));
 		    }
 			
-			TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+			JobDataMap jobDataMap = new JobDataMap();
+			
+			if (info.getData() != null) {
+				jobDataMap.putAll(info.getData());
+			}
+			
 			JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
 			
-			CronScheduleBuilder schedBuilder = CronScheduleBuilder.cronSchedule(cronExpression).
-																   withMisfireHandlingInstructionDoNothing();
-			
-			//Class<? extends Job> clazz = (Class<? extends Job>)Class.forName(jobName);
-			
-			JobDetail jobDetail = JobBuilder.newJob(ExecutionJob.class)
-	                //.setJobData(getJobDataMapFrom(job.getDataToWrite()))
-	                .withDescription(jobDescription)
-	                .storeDurably(true)
-	                .withIdentity(jobKey)
-	                .build();
-			
-			Trigger trigger = TriggerBuilder.newTrigger()
-	                .forJob(jobDetail)
-	                .withSchedule(schedBuilder)
-	                .withIdentity(triggerKey)
-	                .build();
+			JobDetail jobDetail = jobGenerator.createJobDetail(jobKey, jobDataMap, ExecutionJob.class, jobDescription);
+
+			TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+			Trigger trigger = triggerGenerator.createCronTrigger(cronExpression, jobDetail, triggerKey);
 			
 			scheduler.scheduleJob(jobDetail, trigger);
+			
+			//add job to user list (username, jobname, groupname, schedulername)
+			
 		} catch (SchedulerException e) {
 			added = false;
 			logger.error("Error adding task", e);
@@ -152,14 +160,17 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public boolean unscheduled(String jobName, String jobGroup){
+	public boolean unscheduled(TaskOperation operation){
 		
 		boolean unscheduled = false;
-		logger.info("unschedule job [jobname: " + jobName + ", groupName: " + jobGroup+ "]");
+		logger.info("unschedule job [jobname: " + operation.getJobName() + ", groupName: " + operation.getJobGroup()+ "]");
 		
         try {
-			if (checkExists(jobName, jobGroup)) {
-				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+        	
+        	BatchScheduler scheduler = batchSchedulerFactory.getScheduler(operation.getSchedulerType());
+    		       	
+			if (checkExists(operation)) {
+				TriggerKey triggerKey = TriggerKey.triggerKey(operation.getJobName(), operation.getJobGroup());
 				scheduler.pauseTrigger(triggerKey);
 			    unscheduled = scheduler.unscheduleJob(triggerKey);
 			    logger.info("unschedule, triggerKey:{}", triggerKey);
@@ -172,15 +183,17 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public boolean pause(String jobName, String jobGroup){
+	public boolean pause(TaskOperation operation){
 		
 		boolean paused = false;
-		logger.info("pause job [jobname: " + jobName + ", groupName: " + jobGroup+ "]");
+		logger.info("pause job [jobname: " + operation.getJobName() + ", groupName: " + operation.getJobGroup()+ "]");
 		
 		try {
 			
-			if (checkExists(jobName, jobGroup)) {
-				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+			BatchScheduler scheduler = batchSchedulerFactory.getScheduler(operation.getSchedulerType());		
+			
+			if (checkExists(operation)) {
+				TriggerKey triggerKey = TriggerKey.triggerKey(operation.getJobName(), operation.getJobGroup());
 				scheduler.pauseTrigger(triggerKey);
 			    logger.info("Pause success, triggerKey:{}", triggerKey);
 			    paused = true;
@@ -194,15 +207,18 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public boolean resume(String jobName, String jobGroup){
+	public boolean resume(TaskOperation operation){
 		
 		boolean resumed = false;
-		logger.info("resume job [jobname: " + jobName + ", groupName: " + jobGroup+ "]");
+		logger.info("resume job [jobname: " + operation.getJobName() + ", groupName: " + operation.getJobGroup()+ "]");
 		
         try {
-			if (checkExists(jobName, jobGroup)) {
+        	
+        	BatchScheduler scheduler = batchSchedulerFactory.getScheduler(operation.getSchedulerType());
+    		       	
+			if (checkExists(operation)) {
 				
-				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);	        
+				TriggerKey triggerKey = TriggerKey.triggerKey(operation.getJobName(), operation.getJobGroup());	        
 				scheduler.resumeTrigger(triggerKey);
 			    logger.info("Resume success, triggerKey:{}", triggerKey);
 			    resumed = true;
@@ -216,14 +232,16 @@ public class TaskServiceImpl implements TaskService {
 	}
 	
 	@Override
-	public boolean checkExists(String jobName, String jobGroup) {
+	public boolean checkExists(TaskOperation operation) {
 		
 		boolean exists = false;
-		logger.info("check if exists job [jobname: " + jobName + ", groupName: " + jobGroup+ "]");
+		logger.info("check if exists job [jobname: " + operation.getJobName() + ", groupName: " + operation.getJobGroup()+ "]");
 		
 		try {
 			
-			TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
+			BatchScheduler scheduler = batchSchedulerFactory.getScheduler(operation.getSchedulerType());
+			
+			TriggerKey triggerKey = TriggerKey.triggerKey(operation.getJobName(), operation.getJobGroup());
 			exists = scheduler.checkExists(triggerKey);
 			
 		} catch (SchedulerException e) {

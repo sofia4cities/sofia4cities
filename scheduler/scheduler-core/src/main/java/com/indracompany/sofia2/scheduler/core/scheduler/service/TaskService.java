@@ -16,18 +16,20 @@ package com.indracompany.sofia2.scheduler.core.scheduler.service;
 import java.util.List;
 
 import com.indracompany.sofia2.scheduler.core.scheduler.domain.TaskInfo;
+import com.indracompany.sofia2.scheduler.core.scheduler.domain.TaskOperation;
+import com.indracompany.sofia2.scheduler.library.config.scheduler.BatchScheduler;
 
 public interface TaskService {
 	
-	List<TaskInfo> list();
+	List<TaskInfo> list(String username);
 	
 	boolean addJob(TaskInfo info);
 	
-	boolean unscheduled (String jobName, String jobGroup);
+	boolean unscheduled (TaskOperation operation);
 	
-	boolean pause(String jobName, String jobGroup);
+	boolean pause(TaskOperation operation);
 	
-	boolean resume(String jobName, String jobGroup);
+	boolean resume(TaskOperation operation);
 	
-	boolean checkExists(String jobName, String jobGroup);
+	boolean checkExists(TaskOperation operation);
 }

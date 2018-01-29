@@ -15,6 +15,7 @@ package com.indracompany.sofia2.scheduler.core.scheduler.service.impl;
 
 import org.quartz.Job;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,14 @@ import com.indracompany.sofia2.scheduler.core.scheduler.service.JobGenerator;
 public class JobGeneratorImpl implements JobGenerator {
 	
 	@Override
-	public JobDetail createJobDetail(String jobName, String groupName, Class<? extends Job > jobClass) {
+	public JobDetail createJobDetail(JobKey jobKey,JobDataMap jobDataMap, 
+									 Class<? extends Job > jobClass, String jobDescription) {
         
 		JobDetail jobDetail = JobBuilder.newJob(jobClass)
-                //.setJobData(getJobDataMapFrom(job.getDataToWrite()))
-                .withDescription("Job with data to write : ")
+                .setJobData(jobDataMap)
+                .withDescription(jobDescription)
                 .storeDurably(true)
-                .withIdentity(new JobKey(jobName, groupName))
+                .withIdentity(jobKey)
                 .build();
         
 		return jobDetail;
