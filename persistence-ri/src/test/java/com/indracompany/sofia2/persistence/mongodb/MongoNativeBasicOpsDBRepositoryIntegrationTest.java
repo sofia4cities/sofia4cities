@@ -59,22 +59,19 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	@Autowired
 	BasicOpsDBRepository repository;
 	
-	@Autowired
-	@Qualifier("mongoQuasarBasicOpsDBRepository")
-	BasicOpsQuasarDBRepository quasarRepository;
 
 	@Autowired
 	MongoTemplate nativeTemplate;
-	static final String COL_NAME = "contextData";
+	static final String ONT_NAME = "contextData";
 	static final String DATABASE = "sofia2_s4c";
 	
 	String refOid = "";
 	
 	@Before
 	public void setUp() throws PersistenceException, IOException {
-		if(!connect.collectionExists(DATABASE, COL_NAME));
+		if(!connect.collectionExists(DATABASE, ONT_NAME));
 		{
-			connect.createCollection(DATABASE, COL_NAME);
+			connect.createCollection(DATABASE, ONT_NAME);
 		}
 			
         ContextData data = new ContextData();
@@ -84,7 +81,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
         data.setTimezoneId(UUID.randomUUID().toString());
         data.setUser(UUID.randomUUID().toString());
         ObjectMapper mapper = new ObjectMapper();
-        refOid = repository.insert(COL_NAME, mapper.writeValueAsString(data));
+        refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
         int init = 17;
         int end = refOid.indexOf("\"}}");
         refOid = refOid.substring(init, end);
@@ -93,21 +90,32 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	
 	@After
 	public void tearDown() {
-		connect.dropCollection(DATABASE, COL_NAME);
+		connect.dropCollection(DATABASE, ONT_NAME);
 	}
 	
 	@Test
 	public void test_count() {
 		try {
-			Assert.assertTrue(repository.count(COL_NAME)>0);			
+			Assert.assertTrue(repository.count(ONT_NAME)>0);			
 		} catch (Exception e) {
 			Assert.fail("Error test_count"+e.getMessage());
 		}
 	}	
+	
+
+	@Test
+	public void test_count_movie() {
+		try {
+			Assert.assertTrue(repository.count("movie")>0);			
+		} catch (Exception e) {
+			Assert.fail("Error test_count"+e.getMessage());
+		}
+	}	
+	
 	@Test
 	public void test_getById() {
 		try {
-			String data = repository.findById(COL_NAME,refOid);			
+			String data = repository.findById(ONT_NAME,refOid);			
 			Assert.assertTrue(data!=null && data.indexOf("user")!=-1);			
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB");
@@ -116,8 +124,8 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	@Test
 	public void test_getAll() {
 		try {
-			String data = repository.findAllAsOneJSON(COL_NAME);		
-			List<String> asList= repository.findAll(COL_NAME);
+			String data = repository.findAllAsOneJSON(ONT_NAME);		
+			List<String> asList= repository.findAll(ONT_NAME);
 			Assert.assertTrue(asList.size() > 0);		
 			Assert.assertTrue(data.indexOf("clientSession")>0);				
 		} catch (Exception e) {
@@ -125,17 +133,4 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		}
 	}
 	
-	@Test
-	public void test_getAllByQuasar() {
-		try{
-			String query = "select * from " + COL_NAME;
-			QuasarResponseDTO result = quasarRepository.executeQuery(query, 0, SSAPQueryResultFormat.JSON, "CONSOLE");
-			String data = result.getData();
-			JSONArray jsonResult =new JSONArray(data);
-			Assert.assertTrue(jsonResult.length()>0);
-		}catch(Exception e){
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
-		}
-		
-	}
 }

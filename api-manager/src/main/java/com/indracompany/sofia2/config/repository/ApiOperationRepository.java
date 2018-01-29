@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
 
 public interface ApiOperationRepository extends JpaRepository<ApiOperation,String> {
@@ -29,6 +30,7 @@ public interface ApiOperationRepository extends JpaRepository<ApiOperation,Strin
 	List<ApiOperation> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
 
 	List<ApiOperation> findByApiIdOrderByOperationDesc(String identification);
+	List<ApiOperation> findByApiIdOrderByOperationDesc(Api api);
 	ApiOperation findById(String id);
 
 

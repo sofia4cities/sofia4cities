@@ -23,6 +23,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -36,7 +37,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
+import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -44,8 +45,13 @@ import lombok.Setter;
 @Entity
 @Table(name = "USER")
 @Configurable
-public class User extends AuditableEntityWithUUID{
-
+public class User extends AuditableEntity {
+	
+	@Id
+	@Column(name = "USER_ID", length = 50, unique = true,nullable = false)
+	@NotNull
+	@Getter @Setter private String userId;
+	
 	@Column(name = "EMAIL", length = 255,nullable = false)
 	@NotNull
 	@Pattern(regexp = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,3})$")
@@ -56,9 +62,6 @@ public class User extends AuditableEntityWithUUID{
 	@JoinColumn(name = "ROLE_TYPE_ID", referencedColumnName = "ID", nullable = false)
 	@Getter @Setter private RoleType roleTypeId;
 
-	@Column(name = "USER_ID", length = 50, unique = true,nullable = false)
-	@NotNull
-	@Getter @Setter private String userId;
 
 	@Column(name = "PASSWORD", length = 128,nullable = false)
 	@NotNull

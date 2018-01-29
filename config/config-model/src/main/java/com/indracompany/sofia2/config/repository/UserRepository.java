@@ -26,14 +26,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.indracompany.sofia2.config.model.RoleType;
 import com.indracompany.sofia2.config.model.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
 
 	List<User> findByEmail(String email);
-	User findById(String id);
 	User findByUserId(String userId);
 	User findByUserIdAndPassword(String userId,String password);
 

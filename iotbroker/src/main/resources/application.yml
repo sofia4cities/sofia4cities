@@ -1,9 +1,0 @@
-app:
-  name: iotbroker
-server:
-  port: 8081
-  
-spring:
-  profiles: 
-    active: common
-    include: dummy-dev, localtest, embeddedmongo

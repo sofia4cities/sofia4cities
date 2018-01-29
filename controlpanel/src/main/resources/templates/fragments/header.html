@@ -67,8 +67,8 @@
 				
 				<!-- BEGIN USER NO-PARTNER -->						
 				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-user-toggler">
-					<a th:href="@{'/users/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=${#authentication.name}" style="padding-right:8px !important;">
-						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"> user</span> <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span>
+					<a th:href="@{'/users/show/' + ${#authentication.name}}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=${#strings.concat(#authentication.name,' ',#strings.listJoin(#authentication.authorities,' '))}" style="padding-right:8px !important;">
+						<i class="flaticon-user"></i> <span class="user-rol" th:classappend="${#strings.toLowerCase(#strings.listJoin(#authentication.authorities,' '))}" th:text="${#authentication.name}"> user</span> <!--  <span class="hidden-xs" th:text="${#authentication.authorities}">rol</span>-->
 					</a>
 				</li>
 				<!-- END USER NO-PARTNER -->

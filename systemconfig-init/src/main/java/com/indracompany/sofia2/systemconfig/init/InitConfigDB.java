@@ -722,7 +722,6 @@ public class InitConfigDB {
 
 				log.info("No types en tabla.Adding...");
 				User type = new User();
-				type.setId("1");
 				type.setUserId("administrator");
 				type.setPassword("changeIt!");
 				type.setFullName("Generic Administrator of the Platform");
@@ -733,7 +732,6 @@ public class InitConfigDB {
 				userCDBRepository.save(type);
 				//
 				type = new User();
-				type.setId("2");
 				type.setUserId("collaborator");
 				type.setPassword("changeIt!");
 				type.setFullName("Generic Advanced User of the Platform");
@@ -744,7 +742,6 @@ public class InitConfigDB {
 				userCDBRepository.save(type);
 				//
 				type = new User();
-				type.setId("3");
 				type.setUserId("user");
 				type.setPassword("changeIt!");
 				type.setFullName("Generic User of the Platform");
@@ -755,7 +752,6 @@ public class InitConfigDB {
 				userCDBRepository.save(type);
 				//
 				type = new User();
-				type.setId("4");
 				type.setUserId("analytics");
 				type.setPassword("changeIt!");
 				type.setFullName("Generic Analytics User of the Platform");
@@ -766,7 +762,6 @@ public class InitConfigDB {
 				userCDBRepository.save(type);
 				//
 				type = new User();
-				type.setId("5");
 				type.setUserId("partner");
 				type.setPassword("changeIt!");
 				type.setFullName("Generic Partner of the Platform");
@@ -777,7 +772,6 @@ public class InitConfigDB {
 				userCDBRepository.save(type);
 				//
 				type = new User();
-				type.setId("6");
 				type.setUserId("sysadmin");
 				type.setPassword("changeIt!");
 				type.setFullName("Generic SysAdmin of the Platform");
@@ -788,7 +782,6 @@ public class InitConfigDB {
 				userCDBRepository.save(type);
 				//
 				type = new User();
-				type.setId("7");
 				type.setUserId("operations");
 				type.setPassword("changeIt!");
 				type.setFullName("Operations of the Platform");

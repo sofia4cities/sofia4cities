@@ -59,7 +59,7 @@ public class DashboardIntegrationTest {
 			log.info("No dashboards...adding");
 			Dashboard dashboard= new Dashboard();
 			dashboard.setModel("Modelo 1");
-			dashboard.setUserId(this.userRep.findById("1"));
+			dashboard.setUserId(this.userRep.findByUserId("collaborator"));
 			dashboard.setName("Nombre del modelo 1");
 			dashboard.setDashboardTypeId("9");
 			repository.save(dashboard);

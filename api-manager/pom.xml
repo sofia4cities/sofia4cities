@@ -33,36 +33,66 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
+
+		<!-- dependency> <groupId>com.holon-platform.jaxrs</groupId> <artifactId>holon-starter-jersey</artifactId> 
+			</dependency> <dependency> <groupId>com.holon-platform.jaxrs</groupId> <artifactId>holon-jaxrs-swagger</artifactId> 
+			</dependency -->
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-service-description-swagger</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-features-metrics</artifactId>
+			<version>3.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>swagger-ui</artifactId>
+			<version>3.6.1</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-config-services</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-		
-		
-		<!--  dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-iotbroker</artifactId>
-			<version>${sofia2.version}</version>
-		</dependency-->
+
+
+		<!-- dependency> <groupId>com.indracompany.sofia2</groupId> <artifactId>sofia2-iotbroker</artifactId> 
+			<version>${sofia2.version}</version> </dependency -->
 
 		<dependency>
 			<groupId>org.jeasy</groupId>
 			<artifactId>easy-rules-core</artifactId>
 			<version>3.1.0</version>
 		</dependency>
+		
 
-		<!--  dependency>
+
+		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>util-core</artifactId>
+			<artifactId>parsql</artifactId>
 			<version>${sofia2.version}</version>
-		</dependency-->
+		</dependency>
+
+
+
+		<!-- dependency> <groupId>com.indracompany.sofia2</groupId> <artifactId>util-core</artifactId> 
+			<version>${sofia2.version}</version> </dependency -->
 
 
 		<dependency>
@@ -86,6 +116,11 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
+
+	<!-- dependencyManagement> <dependencies> <dependency> <groupId>com.holon-platform</groupId> 
+		<artifactId>bom</artifactId> <version>5.0.2</version> <type>pom</type> <scope>import</scope> 
+		</dependency> </dependencies> </dependencyManagement -->
+
 
 	<build>
 		<plugins>

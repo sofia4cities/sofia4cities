@@ -25,13 +25,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
-import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.service.user.UserService;
 
@@ -153,7 +150,7 @@ public class UserController {
 		}
 		
 		uiModel.addAttribute("userToken", userToken);
-		uiModel.addAttribute("itemId", user.getId());
+		uiModel.addAttribute("itemId", user.getUserId());
 		
 		
 		Date today = new Date();
@@ -168,7 +165,7 @@ public class UserController {
 			uiModel.addAttribute("obsolete", false);
 		}
 		
-		uiModel.addAttribute("userId", user.getId());
+		uiModel.addAttribute("userId", user.getUserId());
 		return "/users/show";
 	}
 
