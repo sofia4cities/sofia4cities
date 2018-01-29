@@ -35,240 +35,231 @@
 	<!-- MAIN PAGE WRAPPER -->
 	<div class="page-wrapper">
 	
-		<!-- BEGIN HEADER -->
-		<div th:include="header::#cabeceraFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
 		<!-- END HEADER -->
 		
 		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
 		<div class="clearfix"> </div>
 		<!-- END HEADER AND CONTENT DIVIDER -->
 
+		
+		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
 			
-			<!-- BEGIN SIDEBAR -->
-			<div th:include="menu::#menuFragment" class="page-sidebar-wrapper"></div>
-			<!-- END SIDEBAR -->
-			
-			<!-- BEGIN CONTENT -->
-			<div class="page-content-wrapper">
-				
-				<!-- BEGIN CONTENT BODY -->
-				<div class="page-content">
-					
-					<!-- BEGIN PAGE HEADER-->
-					
-					<!-- BEGIN PAGE BAR -->
-					<div class="page-bar margin-bottom-20">
-						<ul class="page-breadcrumb">
-							<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-							<li><a th:href="@{/ontologies/list}" > <span th:text="#{ontologias_breadcrumb}">Ontologías</span></a><i class="fa fa-circle"></i></li>
-							<li><span th:text="#{ontologias_breadcrumb_crear}">Creación de Ontologías</span></li>
-						</ul>						
-					</div>
-					<!-- END PAGE BAR -->
-					
-					<!-- BEGIN PAGE TITLE-->
-					<h1 class="page-title hide "><span th:text="#{ontologias_breadcrumb_listar}"> Crear Ontologias</span> <small> SOFIA2 Control Panel </small></h1>
-					<!-- END PAGE TITLE-->			
-					
-					<!-- MAIN ROW -->
-					<div class="row">
-						<div class="col-md-12">
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">			
 						
-							<div class="portlet light bordered">
-								<div class="portlet-title">
-									<div class="caption">
-										<i class="icon-edit font-grey-gallery"></i>
-										<span  th:text="#{ontologias_breadcrumb_crear}" class="caption-subject bold font-grey-gallery uppercase"> Creación de Ontologías </span>										
-									</div>									
-									<div class="tools">
-										<a href="" class="collapse" data-original-title="" title=""> </a>
-										<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>										
-										<a href="" class="fullscreen" data-original-title="" title=""> </a>										
-									</div>
-									<div class="actions margin-right-20">
-										<div class="btn-group">												
-											<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
-												<i class="flaticon-add"></i> <span th:text="#{ontologias_formulario_button_crear_ontologia}"> Ontología</span> <i class="fa fa-angle-down"></i>
-											</a>												
-											<ul class="dropdown-menu" role="menu">
-												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{crearontologias_titulo_paso_a_paso}" > Paso a Paso </a></li>
-												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{crearontologias_boton_json}" > JSON-Schema</a></li>
-												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{crearontologias_boton_excel}" > CSV/EXCEL </a></li>
-												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{crearontologias_boton_xml}" > JSON/XML </a></li>
-												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createKPI'" th:text="#{crearontologias_boton_kpi}"> Creación KPI </a></li>
-												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createTimeSeries'" th:text="#{crearontologias_boton_time_serie}" > Time Series </a></li>
-												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../ontologies/bdtrSelect'" th:text="#{crearontologias_boton_mongodb}" > Ontología desde MongoDB </a></li>
-												<li class="divider"> </li>
-												<li><a  onclick="location.href='../ontologies/create'" th:text="#{ontologias_formulario_button_crear_ontologia}"> Wizard Ontologías </a></li>
-											</ul>
-										</div>										
-									</div>
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE HEADER-->
+				
+				<!-- BEGIN PAGE BAR -->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/ontologies/list}" > <span th:text="#{ontologias_breadcrumb}">Ontologías</span></a><i class="fa fa-circle"></i></li>
+						<li><span th:text="#{ontologias_breadcrumb_crear}">Creación de Ontologías</span></li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{ontologias_breadcrumb_listar}"> Crear Ontologias</span> <small> SOFIA2 Control Panel </small></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">
+					
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-edit font-grey-gallery"></i>
+									<span  th:text="#{ontologias_breadcrumb_crear}" class="caption-subject bold font-grey-gallery uppercase"> Creación de Ontologías </span>										
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>
+									<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>										
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
 								</div>
-								<div class="portlet-body" style="display: block; height: auto;">
-									
-									<div class="row">
-										<div class="col-md-12 alert-zone">
-											<!-- ZONA DE ALERTAS PARA FORMS -->
-											<div class="alert alert-warning alert-dismissable hide ">
-												<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-												<strong>Alerta!</strong> Montaje provisonal con nuevo estilo. 
-											</div>								
-										</div>
-										<!-- CONTENEDORES DE CREACION DE ONTOLOGIAS -->	
-										<div class="col-md-12 col-sm-12 col-xs-12">											
-											<div class="row">
-												<div class="col-md-12 col-sm-12 grid grid--effect-vega">																										
-													<!-- ontología tipo -->
-													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createWizard'" class="col-md-3 col-sm-6 col-xs-12 grid__item grid__item--c1">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/rocket.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title" th:text="#{crearontologias_titulo_paso_a_paso}" >Creación paso a paso</h3>																
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_paso_a_paso}" >Esta opción permite crear una ontología especificando sus atributos y tipos de forma sencilla y guiada.</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a  sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createJsonSchema'" class="col-md-3 col-sm-6  grid__item grid__item--c2">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/ontologia-json.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title" th:text="#{crearontologias_boton_json}">Creación mediante JSON-Schema</h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_json}">Esta opción permite crear una ontología a partir de una plantilla JSON o un fichero XSD.</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologiasopendata/create'"  class="col-md-3 col-sm-6  grid__item grid__item--c3">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/Excel2.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title" th:text="#{crearontologias_boton_excel}">Creación desde CSV/Excel</h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_excel}" >Esta opción permite crear una ontología a partir de un fichero en formato Excel/CSV.</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologiasopendata/createJSONXML'" class="col-md-3 col-sm-6  grid__item grid__item--c4">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/jsonxml-ontologia.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title" th:text="#{crearontologias_boton_xml}">Creación desde JSON/XML </h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_xml}" >Esta opción permite crear una ontología a partir de un fichero con contenido JSON o un XML.</span>
-															</div>
-														</div>
-													</a>															
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologies/createKPI'" class="col-md-3 col-sm-6  grid__item grid__item--c5">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/kpi-ontologia.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title" th:text="#{crearontologias_boton_kpi}">Creación KPI </h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_kpi}" >Esta opción permite crear una ontología de tipo KPI</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologies/createTimeSeries'"  class="col-md-3 col-sm-6  grid__item grid__item--c6">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/seriestemporales.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title" th:text="#{crearontologias_boton_time_serie}">Creación ontologia Time Series</h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_time_series}" >Esta opción permite crear una ontología de tipo Time Series.</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" href="#" onclick="location.href='../ontologies/bdtrSelect'" class="col-md-3 col-sm-6  grid__item grid__item--c7">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/mongo-ontologia.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title"  th:text="#{crearontologias_boton_mongodb}">Creación desde MongoDB</h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_mongodb}" >Esta opción permite crear una ontología a partir de una colección existente de MongoDB.</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
-												</div>
-											</div>												
-										</div>
-										
-										<!-- END CONTENEDORES -->
-																	
-									</div>
+								<div class="actions margin-right-20">
+									<div class="btn-group">												
+										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
+											<i class="flaticon-add"></i> <span th:text="#{ontologias_formulario_button_crear_ontologia}"> Ontología</span> <i class="fa fa-angle-down"></i>
+										</a>												
+										<ul class="dropdown-menu" role="menu">
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{crearontologias_titulo_paso_a_paso}" > Paso a Paso </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{crearontologias_boton_json}" > JSON-Schema</a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{crearontologias_boton_excel}" > CSV/EXCEL </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{crearontologias_boton_xml}" > JSON/XML </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createKPI'" th:text="#{crearontologias_boton_kpi}"> Creación KPI </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createTimeSeries'" th:text="#{crearontologias_boton_time_serie}" > Time Series </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../ontologies/bdtrSelect'" th:text="#{crearontologias_boton_mongodb}" > Ontología desde MongoDB </a></li>
+											<li class="divider"> </li>
+											<li><a  onclick="location.href='../ontologies/create'" th:text="#{ontologias_formulario_button_crear_ontologia}"> Wizard Ontologías </a></li>
+										</ul>
+									</div>										
 								</div>
 							</div>
-							<!-- END PORTLET BASIC LIGHT -->							
-						</div>
-						<!-- END COL-12 -->						
-					</div>
-					<!-- END MAIN ROW -->				
-				</div>
-				<!-- END CONTENT BODY -->
-			</div>
-			<!-- END CONTENT page-content-wrapper -->		
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone">
+										<!-- ZONA DE ALERTAS PARA FORMS -->
+										<div class="alert alert-warning alert-dismissable hide ">
+											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+											<strong>Alerta!</strong> Montaje provisonal con nuevo estilo. 
+										</div>								
+									</div>
+									<!-- CONTENEDORES DE CREACION DE ONTOLOGIAS -->	
+									<div class="col-md-12 col-sm-12 col-xs-12">											
+										<div class="row">
+											<div class="col-md-12 col-sm-12 grid grid--effect-vega">																										
+												<!-- ontología tipo -->
+												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createWizard'" class="col-md-3 col-sm-6 col-xs-12 grid__item grid__item--c1">
+													<div class="stack">
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__figure">
+															<img class="stack__img" th:src="@{/static/images/rocket.png}" alt="Image"/>
+														</div>
+													</div>
+													<div class=" col-md-12 grid__item-caption">
+														<h3 class="grid__item-title" th:text="#{crearontologias_titulo_paso_a_paso}" >Creación paso a paso</h3>																
+														<div class="col-md-12 column column--right">
+															<span class="column__text" th:text="#{crearontologias_descripcion_paso_a_paso}" >Esta opción permite crear una ontología especificando sus atributos y tipos de forma sencilla y guiada.</span>
+														</div>
+													</div>
+												</a>
+												<!-- end ontologia tipo -->
+												<!-- ontología tipo -->
+												<a  sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createJsonSchema'" class="col-md-3 col-sm-6  grid__item grid__item--c2">
+													<div class="stack">
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__figure">
+															<img class="stack__img" th:src="@{/static/images/ontologia-json.png}" alt="Image"/>
+														</div>
+													</div>
+													<div class=" col-md-12 grid__item-caption">
+														<h3 class="grid__item-title" th:text="#{crearontologias_boton_json}">Creación mediante JSON-Schema</h3>																	
+														<div class="col-md-12 column column--right">
+															<span class="column__text" th:text="#{crearontologias_descripcion_json}">Esta opción permite crear una ontología a partir de una plantilla JSON o un fichero XSD.</span>
+														</div>
+													</div>
+												</a>
+												<!-- end ontologia tipo -->
+												<!-- ontología tipo -->
+												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologiasopendata/create'"  class="col-md-3 col-sm-6  grid__item grid__item--c3">
+													<div class="stack">
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__figure">
+															<img class="stack__img" th:src="@{/static/images/Excel2.png}" alt="Image"/>
+														</div>
+													</div>
+													<div class=" col-md-12 grid__item-caption">
+														<h3 class="grid__item-title" th:text="#{crearontologias_boton_excel}">Creación desde CSV/Excel</h3>																	
+														<div class="col-md-12 column column--right">
+															<span class="column__text" th:text="#{crearontologias_descripcion_excel}" >Esta opción permite crear una ontología a partir de un fichero en formato Excel/CSV.</span>
+														</div>
+													</div>
+												</a>
+												<!-- end ontologia tipo -->
+												<!-- ontología tipo -->
+												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologiasopendata/createJSONXML'" class="col-md-3 col-sm-6  grid__item grid__item--c4">
+													<div class="stack">
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__figure">
+															<img class="stack__img" th:src="@{/static/images/jsonxml-ontologia.png}" alt="Image"/>
+														</div>
+													</div>
+													<div class=" col-md-12 grid__item-caption">
+														<h3 class="grid__item-title" th:text="#{crearontologias_boton_xml}">Creación desde JSON/XML </h3>																	
+														<div class="col-md-12 column column--right">
+															<span class="column__text" th:text="#{crearontologias_descripcion_xml}" >Esta opción permite crear una ontología a partir de un fichero con contenido JSON o un XML.</span>
+														</div>
+													</div>
+												</a>															
+												<!-- end ontologia tipo -->
+												<!-- ontología tipo -->
+												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologies/createKPI'" class="col-md-3 col-sm-6  grid__item grid__item--c5">
+													<div class="stack">
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__figure">
+															<img class="stack__img" th:src="@{/static/images/kpi-ontologia.png}" alt="Image"/>
+														</div>
+													</div>
+													<div class=" col-md-12 grid__item-caption">
+														<h3 class="grid__item-title" th:text="#{crearontologias_boton_kpi}">Creación KPI </h3>																	
+														<div class="col-md-12 column column--right">
+															<span class="column__text" th:text="#{crearontologias_descripcion_kpi}" >Esta opción permite crear una ontología de tipo KPI</span>
+														</div>
+													</div>
+												</a>
+												<!-- end ontologia tipo -->
+												<!-- ontología tipo -->
+												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologies/createTimeSeries'"  class="col-md-3 col-sm-6  grid__item grid__item--c6">
+													<div class="stack">
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__figure">
+															<img class="stack__img" th:src="@{/static/images/seriestemporales.png}" alt="Image"/>
+														</div>
+													</div>
+													<div class=" col-md-12 grid__item-caption">
+														<h3 class="grid__item-title" th:text="#{crearontologias_boton_time_serie}">Creación ontologia Time Series</h3>																	
+														<div class="col-md-12 column column--right">
+															<span class="column__text" th:text="#{crearontologias_descripcion_time_series}" >Esta opción permite crear una ontología de tipo Time Series.</span>
+														</div>
+													</div>
+												</a>
+												<!-- end ontologia tipo -->
+												<!-- ontología tipo -->
+												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" href="#" onclick="location.href='../ontologies/bdtrSelect'" class="col-md-3 col-sm-6  grid__item grid__item--c7">
+													<div class="stack">
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__deco"></div>
+														<div class="stack__figure">
+															<img class="stack__img" th:src="@{/static/images/mongo-ontologia.png}" alt="Image"/>
+														</div>
+													</div>
+													<div class=" col-md-12 grid__item-caption">
+														<h3 class="grid__item-title"  th:text="#{crearontologias_boton_mongodb}">Creación desde MongoDB</h3>																	
+														<div class="col-md-12 column column--right">
+															<span class="column__text" th:text="#{crearontologias_descripcion_mongodb}" >Esta opción permite crear una ontología a partir de una colección existente de MongoDB.</span>
+														</div>
+													</div>
+												</a>													
+											</div>
+										</div>												
+									</div><!-- END CONTENEDORES -->																	
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC LIGHT -->							
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->				
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
 	</div>
 	<!-- END MAIN PAGE WRAPPER -->
 	
