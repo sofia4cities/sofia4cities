@@ -16,8 +16,11 @@ package com.indracompany.sofia2.services.configuration;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.ConfigurationType;
 
 public interface ConfigurationService {
 
 	public List<Configuration> getAllConfigurations();
+	public List<ConfigurationType> getAllConfigurationTypes();
+	public void createConfiguration(Configuration configuration);
 }

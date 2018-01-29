@@ -56,7 +56,7 @@ public class UserController {
 		return "/users/create";
 
 	}
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	
 	@GetMapping(value="/update/{id}")
 	public String updateForm(@PathVariable("id") String id,Model model)
 	{
@@ -71,7 +71,7 @@ public class UserController {
 		
 		return "/users/create";
 	}
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	
 	@PutMapping(value="/update/{id}")
 	public String update(@PathVariable("id") String id,@ModelAttribute User user)
 	{
@@ -81,6 +81,7 @@ public class UserController {
 					&& user.getRoleTypeId()!=null && user.getUserId()!=null)
 			{
 				try{
+					if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
 					this.userService.updateUser(user);
 				}catch(Exception e)
 				{
