@@ -23,11 +23,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.service.user.UserService;
 
@@ -42,6 +46,7 @@ public class UserController {
 	UserService userService;
 	@Autowired
 	private AppWebUtils utils;
+	public static final String ROLE_ADMINISTRATOR="ROLE_ADMINISTRATOR";
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/create", produces = "text/html")
@@ -50,6 +55,47 @@ public class UserController {
 		model.addAttribute("user",new User());
 		return "/users/create";
 
+	}
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@GetMapping(value="/update/{id}")
+	public String updateForm(@PathVariable("id") String id,Model model)
+	{
+		//If non admin user tries to update any other user-->forbidden
+		if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
+		
+		this.populateFormData(model);
+		User user=this.userService.getUser(id);
+		//If user does not exist redirect to create
+		if(user==null) return "redirect:/users/create";
+		else model.addAttribute("user",user);
+		
+		return "/users/create";
+	}
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@PutMapping(value="/update/{id}")
+	public String update(@PathVariable("id") String id,@ModelAttribute User user)
+	{
+		if(user!=null)
+		{
+			if(user.getPassword()!=null && user.getEmail()!=null
+					&& user.getRoleTypeId()!=null && user.getUserId()!=null)
+			{
+				try{
+					this.userService.updateUser(user);
+				}catch(Exception e)
+				{
+					log.debug(e.getMessage());
+					return "/users/create";
+				}
+			}else {
+				log.debug("Some user properties missing");
+				return "/users/create";
+			}
+			return "redirect:/users/show/"+user.getUserId();
+		}
+		
+		return "redirect:/users/update/";
+		
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value="/create")
@@ -65,9 +111,12 @@ public class UserController {
 				}catch(Exception e)
 				{
 					log.debug(e.getMessage());
-					return "redirect:/users/create";
+					return "/users/create";
 				}
-			}else log.debug("Some user properties missing");
+			}else {
+				log.debug("Some user properties missing");
+				return "/users/create";
+			}
 		}
 		
 		 return "redirect:/users/list";
@@ -99,9 +148,17 @@ public class UserController {
 		return "/users/list";
 
 	}
-	@RequestMapping(value = "/show/{id}", produces = "text/html")
+	@GetMapping(value = "/show/{id}", produces = "text/html")
 	public String showUser(@PathVariable("id") String id, Model uiModel) {
-		User user = this.userService.getUser(utils.getUserId());
+		User user=null;
+		if(id!=null){
+			//If non admin user tries to update any other user-->forbidden
+			if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
+			user = this.userService.getUser(id);
+		}
+		
+		if(user==null) return "/error/404";
+
 		uiModel.addAttribute("user", user);
 		UserToken userToken = null;
 		try {
@@ -126,8 +183,11 @@ public class UserController {
 			uiModel.addAttribute("obsolete", false);
 		}
 		
-		uiModel.addAttribute("userId", user.getUserId());
+		//uiModel.addAttribute("userId", user.getUserId());
+
 		return "/users/show";
+	
+		
 	}
 
 	public void populateFormData(Model model) {
