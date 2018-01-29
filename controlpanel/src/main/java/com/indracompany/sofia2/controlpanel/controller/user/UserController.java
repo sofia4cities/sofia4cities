@@ -46,6 +46,7 @@ public class UserController {
 	UserService userService;
 	@Autowired
 	private AppWebUtils utils;
+	public static final String ROLE_ADMINISTRATOR="ROLE_ADMINISTRATOR";
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/create", produces = "text/html")
@@ -57,10 +58,16 @@ public class UserController {
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value="/update/{id}")
-	public String updateForm(Model model)
+	public String updateForm(@PathVariable("id") String id,Model model)
 	{
+		//If non admin user tries to update any other user-->forbidden
+		if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
+		
 		this.populateFormData(model);
-		model.addAttribute("user",this.userService.getUser(utils.getUserId()));
+		User user=this.userService.getUser(id);
+		//If user does not exist redirect to create
+		if(user==null) return "redirect:/users/create";
+		else model.addAttribute("user",user);
 		
 		return "/users/create";
 	}
@@ -143,7 +150,15 @@ public class UserController {
 	}
 	@GetMapping(value = "/show/{id}", produces = "text/html")
 	public String showUser(@PathVariable("id") String id, Model uiModel) {
-		User user = this.userService.getUser(utils.getUserId());
+		User user=null;
+		if(id!=null){
+			//If non admin user tries to update any other user-->forbidden
+			if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
+			user = this.userService.getUser(id);
+		}
+		
+		if(user==null) return "/error/404";
+
 		uiModel.addAttribute("user", user);
 		UserToken userToken = null;
 		try {
@@ -168,8 +183,11 @@ public class UserController {
 			uiModel.addAttribute("obsolete", false);
 		}
 		
-		uiModel.addAttribute("userId", user.getUserId());
+		//uiModel.addAttribute("userId", user.getUserId());
+
 		return "/users/show";
+	
+		
 	}
 
 	public void populateFormData(Model model) {
