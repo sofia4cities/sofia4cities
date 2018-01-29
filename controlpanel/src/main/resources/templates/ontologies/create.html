@@ -1,11 +1,13 @@
-<!-- © Indra Sistemas, S.A. 2017  Spain. All rights reserved -->
-<html xmlns:th="http://www.thymeleaf.org">
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
-		<title th:text="#{consola_web_name}"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+
 		
-		<!-- BEGIN WEB FONT -->
+		<!-- WEB FONTs -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
 		<script>
           WebFont.load({
@@ -16,155 +18,16 @@
           });
 		</script>
 
-		<!-- HOJAS DE ESTILO -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/js/bootstrap/css/bootstrap.min.css}"/>
-
-		<!-- COMPONENTES Y PLUGINS CSS -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/css/components-rounded.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/css/plugins.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/css/layout.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/css/themes/darkblue.css}"/>
-		<!-- FINAL HOJAS DE ESTILO -->
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>	
 
 	</head>
-	<style>
-	/* Grid */
-.grid {
-	position: relative;
-	display: flex;
-	flex-wrap: wrap;	
-	align-items: center;
-	width: 100%;
-	padding: 1em 3em;
-	perspective: 800px;
-	perspective-origin: 50% 100%;
-}
 
-.grid__item {
-	position: relative;
-	display: initial;
-	flex: none;		
-	cursor: default;
-	transform-style: preserve-3d;
-	min-height: 375px;
-}
-
-.grid__item:hover,.grid__item:focus { outline: none; }
-
-.grid__item--c1,.grid__item--c1:hover,.grid__item--c1:focus { color: #52649e; }
-.grid__item--c2,.grid__item--c2:hover,.grid__item--c2:focus { color: #1b1c1e; }
-.grid__item--c3,.grid__item--c3:hover,.grid__item--c3:focus { color: #02723b; }
-.grid__item--c4,.grid__item--c4:hover,.grid__item--c4:focus { color: #4b8183  }
-.grid__item--c5,.grid__item--c5:hover,.grid__item--c5:focus { color: #fd5d1e; }
-.grid__item--c6,.grid__item--c6:hover,.grid__item--c6:focus { color: #820202; }
-.grid__item--c7,.grid__item--c7:hover,.grid__item--c7:focus { color: #563e26; }
-.grid__item--c8,.grid__item--c8:hover,.grid__item--c8:focus { color: #f7f295; }
-
-.stack {
-	position: relative;
-	width: 100%;
-	height: 200px;
-	transform-style: preserve-3d;
-}
-
-.stack__deco {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: currentColor;
-	transform-origin: 50% 100%;
-}
-
-.stack__deco:first-child {
-	opacity: 0.2;
-}
-
-.stack__deco:nth-child(2) {
-	opacity: 0.4;
-}
-
-.stack__deco:nth-child(3) {
-	opacity: 0.6;
-}
-
-.stack__deco:nth-child(4) {
-	opacity: 0.8;
-}
-
-.stack__figure {
-	position: relative;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	overflow: hidden;
-	width: 100%;
-	height: 100%;
-	cursor: pointer;
-	transform-origin: 50% 100%;
-}
-
-.stack__img {
-	position: relative;
-	display: block;
-	flex: none;
-	transform: scale(0.5);
-}
-
-.grid__item-caption {
-	position: relative;
-	display: flex;
-	flex-wrap: wrap;
-	width: 100%;
-	transform-style: preserve-3d;
-}
-
-.grid__item-title {
-	font-size: 1.3em;
-	width: 100%;
-	margin: 1.1em 0;
-	text-align: left;
-	color: #555;
-	font-family: Poppins;
-	font-weight: 400;
-}
-
-.column {	
-	padding: 0 0.5em;
-	opacity: 0;
-}
-
-.column--left {
-	
-}
-
-.column--right {
-
-}
-
-.column__text {	
-	display: block;
-	
-}
-
-.column--left .column__text {
-	font-weight: bold;
-}
-
-.column--right .column__text {
-	color: #666;
-}
-
-/* Individual effects */
-
-/* Vega */
-.grid--effect-vega .column {
-	opacity: 1;
-}
-
-	
-	</style>
 	
 	<!-- page-sidebar-closed para inicial página con menu cerrado -->
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
@@ -197,7 +60,7 @@
 					<div class="page-bar margin-bottom-20">
 						<ul class="page-breadcrumb">
 							<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-							<li><a th:href="@{/ontologias/list}" > <span th:text="#{ontologias_breadcrumb}">Ontologías</span></a><i class="fa fa-circle"></i></li>
+							<li><a th:href="@{/ontologies/list}" > <span th:text="#{ontologias_breadcrumb}">Ontologías</span></a><i class="fa fa-circle"></i></li>
 							<li><span th:text="#{ontologias_breadcrumb_crear}">Creación de Ontologías</span></li>
 						</ul>						
 					</div>
@@ -228,15 +91,15 @@
 												<i class="flaticon-add"></i> <span th:text="#{ontologias_formulario_button_crear_ontologia}"> Ontología</span> <i class="fa fa-angle-down"></i>
 											</a>												
 											<ul class="dropdown-menu" role="menu">
-												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologias/createWizard'" th:text="#{crearontologias_titulo_paso_a_paso}" > Paso a Paso </a></li>
-												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologias/createJsonSchema'" th:text="#{crearontologias_boton_json}" > JSON-Schema</a></li>
-												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{crearontologias_boton_excel}" > CSV/EXCEL </a></li>
-												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{crearontologias_boton_xml}" > JSON/XML </a></li>
-												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologias/createKPI'" th:text="#{crearontologias_boton_kpi}"> Creación KPI </a></li>
-												<li sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')"><a onclick="location.href='../ontologias/createTimeSeries'" th:text="#{crearontologias_boton_time_serie}" > Time Series </a></li>
-												<li sec:authorize="hasRole('ROL_ADMINISTRADOR')"><a onclick="location.href='../ontologias/bdtrSelect'" th:text="#{crearontologias_boton_mongodb}" > Ontología desde MongoDB </a></li>
+												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{crearontologias_titulo_paso_a_paso}" > Paso a Paso </a></li>
+												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{crearontologias_boton_json}" > JSON-Schema</a></li>
+												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{crearontologias_boton_excel}" > CSV/EXCEL </a></li>
+												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{crearontologias_boton_xml}" > JSON/XML </a></li>
+												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createKPI'" th:text="#{crearontologias_boton_kpi}"> Creación KPI </a></li>
+												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createTimeSeries'" th:text="#{crearontologias_boton_time_serie}" > Time Series </a></li>
+												<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../ontologies/bdtrSelect'" th:text="#{crearontologias_boton_mongodb}" > Ontología desde MongoDB </a></li>
 												<li class="divider"> </li>
-												<li><a  onclick="location.href='../ontologias/create'" th:text="#{ontologias_formulario_button_crear_ontologia}"> Wizard Ontologías </a></li>
+												<li><a  onclick="location.href='../ontologies/create'" th:text="#{ontologias_formulario_button_crear_ontologia}"> Wizard Ontologías </a></li>
 											</ul>
 										</div>										
 									</div>
@@ -256,7 +119,7 @@
 											<div class="row">
 												<div class="col-md-12 col-sm-12 grid grid--effect-vega">																										
 													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" onclick="location.href='../ontologias/createWizard'" class="col-md-3 col-sm-6 col-xs-12 grid__item grid__item--c1">
+													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createWizard'" class="col-md-3 col-sm-6 col-xs-12 grid__item grid__item--c1">
 														<div class="stack">
 															<div class="stack__deco"></div>
 															<div class="stack__deco"></div>
@@ -275,7 +138,7 @@
 													</a>
 													<!-- end ontologia tipo -->
 													<!-- ontología tipo -->
-													<a  sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" onclick="location.href='../ontologias/createJsonSchema'" class="col-md-3 col-sm-6  grid__item grid__item--c2">
+													<a  sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createJsonSchema'" class="col-md-3 col-sm-6  grid__item grid__item--c2">
 														<div class="stack">
 															<div class="stack__deco"></div>
 															<div class="stack__deco"></div>
@@ -294,7 +157,7 @@
 													</a>
 													<!-- end ontologia tipo -->
 													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" href="#" onclick="location.href='../ontologiasopendata/create'"  class="col-md-3 col-sm-6  grid__item grid__item--c3">
+													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologiasopendata/create'"  class="col-md-3 col-sm-6  grid__item grid__item--c3">
 														<div class="stack">
 															<div class="stack__deco"></div>
 															<div class="stack__deco"></div>
@@ -313,7 +176,7 @@
 													</a>
 													<!-- end ontologia tipo -->
 													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" href="#" onclick="location.href='../ontologiasopendata/createJSONXML'" class="col-md-3 col-sm-6  grid__item grid__item--c4">
+													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologiasopendata/createJSONXML'" class="col-md-3 col-sm-6  grid__item grid__item--c4">
 														<div class="stack">
 															<div class="stack__deco"></div>
 															<div class="stack__deco"></div>
@@ -332,7 +195,7 @@
 													</a>															
 													<!-- end ontologia tipo -->
 													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" href="#" onclick="location.href='../ontologias/createKPI'" class="col-md-3 col-sm-6  grid__item grid__item--c5">
+													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologies/createKPI'" class="col-md-3 col-sm-6  grid__item grid__item--c5">
 														<div class="stack">
 															<div class="stack__deco"></div>
 															<div class="stack__deco"></div>
@@ -351,7 +214,7 @@
 													</a>
 													<!-- end ontologia tipo -->
 													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" href="#" onclick="location.href='../ontologias/createTimeSeries'"  class="col-md-3 col-sm-6  grid__item grid__item--c6">
+													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" href="#" onclick="location.href='../ontologies/createTimeSeries'"  class="col-md-3 col-sm-6  grid__item grid__item--c6">
 														<div class="stack">
 															<div class="stack__deco"></div>
 															<div class="stack__deco"></div>
@@ -370,7 +233,7 @@
 													</a>
 													<!-- end ontologia tipo -->
 													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR')" href="#" onclick="location.href='../ontologias/bdtrSelect'" class="col-md-3 col-sm-6  grid__item grid__item--c7">
+													<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" href="#" onclick="location.href='../ontologies/bdtrSelect'" class="col-md-3 col-sm-6  grid__item grid__item--c7">
 														<div class="stack">
 															<div class="stack__deco"></div>
 															<div class="stack__deco"></div>
@@ -409,16 +272,16 @@
 	</div>
 	<!-- END MAIN PAGE WRAPPER -->
 	
-	<!-- FOOTER-INCLUDE -->
-	<footer th:include="footer::#footerFragment" class="page-footer"> </footer>	
+	<!-- FOOTER INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
 	
-	<!-- CORE -->
-	<script th:src="@{/resources/js/app.js}"/>
-	<script th:src="@{/resources/js/layout.js}"/>	
+	<!-- CORE JS CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>	
 	
 	<!-- plugins -->
-	<script th:src="@{/resources/js/anime.min.js}"/>
-	<script th:src="@{/resources/js/animation.js}"/>
+	<script th:src="@{/static/vendor/anime.min.js}"/>
+	<script th:src="@{/static/vendor/animation.js}"/>
 	
 	<script type="text/javascript">	
 	var optionName = 'ONTOLOGIAS';
@@ -435,13 +298,7 @@
 		});
 		 
 	 });
-	
-
-	
-
-	
 	</script>
 	
-
 	</body>
 </html>

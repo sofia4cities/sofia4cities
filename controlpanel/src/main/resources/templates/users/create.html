@@ -75,13 +75,22 @@
 						<div class="portlet light bordered">
 							<div class="portlet-title">
 								<div class="caption">
-									<i class="la la-users font-grey-gallery"></i>
-									<span class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.create} + ':'"> New User</span>
+									<i class="la la-users font-grey-gallery"></i>						
+									
+									<!-- FORM TITLE -->
+									<span th:if="${user.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.create} + ':'"> New User</span>
+									<span th:if="${user.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.update} + ' ' + ${user.userId} + ':'"> Update User</span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
-								</div>									
+								</div>
+								<div class="actions">
+									<!-- ACTION INDICATORs -->									
+									<span th:if="${user.userId} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.createBtn}">Insert</span></span>
+									<span th:if="${user.userId} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.createBtn}">Update</span></span>
+								</div>
+								
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
