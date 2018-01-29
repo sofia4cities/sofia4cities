@@ -4,7 +4,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
 		<meta http-equiv="Content-Language" th:content="${lang}"/>
-		<title th:text="#{name.app}"/>
+		<title th:text="'404 ' + #{name.app}"/>
 		
 		<!-- BEGIN WEB FONT -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -38,9 +38,9 @@
         <div class="container error-404">
             <h1>404</h1>
             <h2>Houston, we have a problem.</h2>
-            <p th:text="${error}">Error Info</p>
+            <p  class="lead bold uppercase font-red-sunglo" th:text="${error}">Error Info</p>
 			<p> Actually, the page you are looking for does not exist. </p>
-            <p><a href="@{controlpanel/}" class="btn red btn-outline"> Return home </a><br/></p>
+            <p><a th:href="@{/}" class="btn red btn-outline"> Return home </a><br/></p>
         </div>       
         
 	<!-- CORE CONTROLLERS -->
