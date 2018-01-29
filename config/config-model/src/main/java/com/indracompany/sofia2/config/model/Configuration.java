@@ -51,7 +51,7 @@ public class Configuration extends AuditableEntityWithUUID {
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "CONFIGURATION_TYPE_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private RoleType configurationTypeId;
+	@Getter @Setter private ConfigurationType configurationTypeId;
 	
 	
 
