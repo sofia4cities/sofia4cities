@@ -25,10 +25,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.service.user.UserService;
 
@@ -59,7 +62,7 @@ public class UserController {
 		this.populateFormData(model);
 		model.addAttribute("user",this.userService.getUser(utils.getUserId()));
 		
-		return "/users/update";
+		return "/users/create";
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PutMapping(value="/update/{id}")
@@ -75,7 +78,7 @@ public class UserController {
 				}catch(Exception e)
 				{
 					log.debug(e.getMessage());
-					return "/users/update";
+					return "/users/create";
 				}
 			}else {
 				log.debug("Some user properties missing");

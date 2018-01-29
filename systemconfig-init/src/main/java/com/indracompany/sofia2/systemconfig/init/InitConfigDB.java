@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
+import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DashboardType;
@@ -50,6 +51,8 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
+import com.indracompany.sofia2.config.repository.ConfigurationRepository;
+import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
@@ -124,6 +127,12 @@ public class InitConfigDB {
 	TokenRepository tokenRepository;
 	@Autowired
 	UserRepository userCDBRepository;
+	@Autowired
+	ConfigurationRepository configurationRepository;
+	@Autowired
+	ConfigurationTypeRepository configurationTypeRepository;
+	
+	
 
 	@PostConstruct
 	public void init() {
@@ -179,6 +188,29 @@ public class InitConfigDB {
 			//
 			init_ConsoleMenu();
 			log.info("OK init_ConsoleMenu");
+			init_Configuration();
+			log.info("OK init_Configuration");
+	}
+
+	private void init_Configuration() {
+		log.info("init_Configuration");
+		ConfigurationType type= new ConfigurationType();
+		type.setId(1);
+		type.setName("CONFIG_TWITTER");
+		type.setDescription("Twitter configuration, Oauth");
+		this.configurationTypeRepository.save(type);
+		type= new ConfigurationType();
+		type.setId(2);
+		type.setName("CONFIG_MAIL");
+		type.setDescription("Mail configuration");
+		this.configurationTypeRepository.save(type);
+		type= new ConfigurationType();
+		type.setId(2);
+		type.setName("CONFIG_BDTR");
+		type.setDescription("Mail configuration");
+		this.configurationTypeRepository.save(type);
+		
+		
 	}
 
 	public void init_ClientConnection() {

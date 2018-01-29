@@ -60,13 +60,13 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/users/list}"> <span th:text="#{user.breadcrumb.prev}">users</span></a><i class="fa fa-circle"></i></li>						
+						<li><a th:href="@{/configurations/list}"> <span th:text="#{configurations.breadcrumb.prev}">configurations</span></a><i class="fa fa-circle"></i></li>						
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{user.template.show}">Manage Users</span></h1>
+				<h1 class="page-title hide "><span th:text="#{configurations.template.show}">Manage Users</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -77,7 +77,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{user.template.list}"> Manage Users</span>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{configurations.template.list}"> Manage Users</span>
 									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
 								<div class="tools">
@@ -90,7 +90,7 @@
 											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
 										</a>												
 										<ul class="dropdown-menu pull-right" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../users/create'" th:text="#{gen.create}" >Create</a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../configurations/create'" th:text="#{gen.create}" >Create</a></li>
 											<!--<li class="divider"> </li> -->
 										</ul>
 									</div>										
@@ -102,9 +102,10 @@
 									<div class="col-md-12 alert-zone">
 										<!-- ALERT ZONE -->																			
 									</div>
-									<div class="col-md-12 margin-bottom-20">
+									<!--<div class="col-md-12 margin-bottom-20">-->
+									
 									<!-- SEARCH FORM -->
-										<form id="form_user" action="list.html" th:action="@{/users/list}" class="" role="form" method="get">												
+									<!--<form id="form_configurations" action="list.html" th:action="@{/configurations/list}" class="" role="form" method="get">												
 											<div class="col-md-12 no-space">
 												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" th:attr="data-content=#{user.search.description},data-original-title=#{gen.search}" th:text="#{gen.search}">Search</span></h4>
 											</div>
@@ -116,7 +117,7 @@
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>															
-																<input id="userid" th:placeholder="#{user.userId}" name="userId" class="form-control" type="text" maxlength="70" value=""/>
+																<input id="userid" th:placeholder="#{user.id}" name="userId" class="form-control" type="text" maxlength="70" value=""/>
 															</div>
 														</div>
 													</div>
@@ -163,23 +164,20 @@
 												</div>
 											</div>												
 										</form>								
-									</div>
+									</div>-->
 									<!-- USER LIST -->
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene">																						
 											<div>
 												<!-- DATATABLE DANDELION CONF. -->												
-												<table id="users" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+												<table id="configurations" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
 														<tr class="cabecera-tabla">
-															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{user.userId}">Identification</span></th>
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.name}" >Name</span></th>
-															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{user.email}" >eMail</span></th>
-															<th class="titulo-columnas text-left" th:text="#{user.rolTypeName}">Role</th>
-															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateCreated}">Created At</span></th>
-															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted}">Deleted At </span></th>																
-															<th class="titulo-columnas text-center" th:text="#{user.active}">Active</th>
+															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.type}" >Configuration Type</span></th>
+															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.json}">Json</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
+												
 														</tr>
 													</thead>
 													<tbody th:remove="all-but-first">
@@ -206,10 +204,10 @@
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.userId}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.userId}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																</div>
 															</td>
 														</tr>
@@ -222,7 +220,7 @@
 														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-														<label class="toggle-vis" data-column="0" th:text="#{user.userId}"> Identification</label>
+														<label class="toggle-vis" data-column="0" th:text="#{user.id}"> Identification</label>
 														<label class="toggle-vis" data-column="1" th:text="#{user.name}"> Name</label>
 														<label class="toggle-vis" data-column="2" th:text="#{user.email}"> email</label>
 														<label class="toggle-vis" data-column="3" th:text="#{user.rolTypeName}"> Rol</label>
@@ -327,12 +325,12 @@
 		
 		// SEARCH FORM RESET
 		$('#reset_user').on('click',function(){
-			$('#form_user')[0].reset();
-			$('#form_user')[0].submit();
+			$('#form_configurations')[0].reset();
+			$('#form_configurations')[0].submit();
 		});
 		
 		// SEARCH FORM
-		$('#search_user').on('click',function(){ $('#form_user')[0].submit(); });
+		$('#search_user').on('click',function(){ $('#form_configurations')[0].submit(); });
 		
 	});
 	 
