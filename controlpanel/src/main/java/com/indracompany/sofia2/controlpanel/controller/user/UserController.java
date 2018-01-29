@@ -56,7 +56,7 @@ public class UserController {
 
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-	@PutMapping(value="/update/{id}")
+	@GetMapping(value="/update/{id}")
 	public String updateForm(Model model)
 	{
 		this.populateFormData(model);
@@ -84,9 +84,10 @@ public class UserController {
 				log.debug("Some user properties missing");
 				return "/users/create";
 			}
+			return "redirect:/users/show/"+user.getUserId();
 		}
 		
-		return "redirect:/users/show/"+id;
+		return "redirect:/users/update/";
 		
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
