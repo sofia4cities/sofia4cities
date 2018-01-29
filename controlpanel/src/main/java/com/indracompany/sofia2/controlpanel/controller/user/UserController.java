@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
@@ -37,8 +38,9 @@ import com.indracompany.sofia2.service.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RequestMapping("/users")
+
 @Controller
+@RequestMapping("/users")
 @Slf4j
 public class UserController {
 
@@ -72,8 +74,8 @@ public class UserController {
 		return "/users/create";
 	}
 	
-	@PutMapping(value="/update/{id}")
-	public String update(@PathVariable("id") String id,@ModelAttribute User user)
+	@PutMapping("/update/{id}")
+	public String update(@ModelAttribute User user)
 	{
 		if(user!=null)
 		{
@@ -81,7 +83,7 @@ public class UserController {
 					&& user.getRoleTypeId()!=null && user.getUserId()!=null)
 			{
 				try{
-					if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
+					//if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
 					this.userService.updateUser(user);
 				}catch(Exception e)
 				{
@@ -98,6 +100,7 @@ public class UserController {
 		return "redirect:/users/update/";
 		
 	}
+	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value="/create")
 	public String create(@ModelAttribute User user)

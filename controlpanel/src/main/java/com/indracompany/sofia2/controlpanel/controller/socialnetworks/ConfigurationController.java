@@ -32,8 +32,9 @@ import com.indracompany.sofia2.service.user.UserService;
 import com.indracompany.sofia2.services.configuration.ConfigurationService;
 
 import lombok.extern.slf4j.Slf4j;
-@RequestMapping("/configurations")
+
 @Controller
+@RequestMapping("/configurations")
 @Slf4j
 public class ConfigurationController {
 	
