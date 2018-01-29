@@ -3,10 +3,12 @@ var UserCreateController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Menu Controller';	
-    var logControl = 0;
+    var logControl = 1;
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.
 	var currentFormat = '' // date format depends on currentLanguage.
+	var internalFormat = 'yyyy/mm/dd';
+	var internalLanguage = 'en';
 	
 	// CONTROLLER PRIVATE FUNCTIONS
 	
@@ -68,6 +70,45 @@ var UserCreateController = function() {
     } 
 	
 	
+	// FORMATDATES: format date to DDBB standard 'yyyy/mm/dd';
+	var formatDates = function(dates){
+		
+		var dateUnformatted = '';
+		var dateFormatted	= '';
+		
+		// no dates no fun!
+		if (!dates) { return false;}
+		
+		// if current language is en , dates are in DDBB format so OK
+		if (currentLanguage == 'en') { return true; }
+		
+		// change all dates to internal format
+		logControl ? console.log('formatDates() -> ' + dates + ' with CurrentLanguage: ' + currentLanguage) : '';
+		
+		
+		$(dates).each(function( index, dateInput ) {		  
+			if ( $(dateInput).val() ){				
+				
+				// ES
+				if (currentLanguage === 'es'){
+					// change date es to en [ dd/mm/yyyy to yyyy/mm/dd ]
+					dateUnformatted = $(dateInput).val();
+					dateFormatted = dateUnformatted.split("/")[2] + '/' + dateUnformatted.split("/")[1] + '/' + dateUnformatted.split("/")[0];					
+					$(dateInput).val(dateFormatted);
+					logControl ? console.log('FormatDate -> ' + $(dateInput).attr('id') + ' current:' + dateUnformatted + ' formatted: ' + $(dateInput).val()) : '';
+					
+				}
+				// more languages to come...
+				
+			}			
+		  
+		});
+
+		// all formatted then true;
+		return true;
+		
+	}
+	
 	// FORM VALIDATION
 	var handleValidation = function() {
 		logControl ? console.log('handleValidation() -> ') : '';
@@ -124,7 +165,15 @@ var UserCreateController = function() {
             submitHandler: function(form) {
                 success1.show();
                 error1.hide();
-				form.submit();
+				// date conversion to DDBB format.
+				if ( formatDates('#datecreated,#datedeleted') ) { 					
+					form.submit();
+				} 
+				else { 
+					success1.hide();
+					error1.show();
+					App.scrollTo(error1, -200);
+				}				
             }
         });
     }
@@ -161,10 +210,21 @@ var UserCreateController = function() {
 			cleanFields('user_create_form');
 		});
 		
-		//set TODAY to dateCreated depends on language
-		var f = new Date();         
-        today = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
-		$('#datecreated').datepicker('update',today);
+		//set TODAY to dateCreated depends on language INSERT-MODE ONLY		
+		if ( userCreateReg.actionMode === null){
+			logControl ? console.log('action-mode: INSERT') : '';
+			var f = new Date();         
+			today = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
+			$('#datecreated').datepicker('update',today);
+		}
+		else {
+			// set DATE in EDIT MODE
+			logControl ? console.log('action-mode: UPDATE') : '';
+			var f = new Date(userCreateReg.dateCreated);
+			regDate = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
+			$('#datecreated').datepicker('update',regDate);
+			
+		}
 		
 	}
 
