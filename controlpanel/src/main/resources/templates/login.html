@@ -42,12 +42,12 @@
 					
 				<div th:if="${param.error}" class="alert alert-warning alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-					<p th:text="#{login.error}"><strong>Alert!</strong>  Invalid username and password.</p>
+					<p th:text="#{login.error}">Invalid username and password.</p>
 				</div>
 				
 				<div th:if="${param.logout}" class="alert alert-info alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-					<p th:text="#{login.logout}"><strong>Info.</strong> You have been logged out.</p>
+					<p th:text="#{login.logout}">You have been logged out.</p>
 				</div>
 				
 				

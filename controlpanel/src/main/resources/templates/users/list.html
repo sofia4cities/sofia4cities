@@ -206,10 +206,10 @@
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.userId}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${user.userId}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																</div>
 															</td>
 														</tr>
@@ -254,8 +254,7 @@
 	
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
-	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
-	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>
 	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
 	
 	
@@ -295,25 +294,6 @@
 	$( document ).ready(function() {
 	
 	
-		// AUTO COMPLETE ON user IDENTIFICATION/NAME
-		$.ajax({ url: "getNamesForAutocomplete", type: 'POST', dataType: 'json', contentType: 'application/json', mimeType: 'application/json',
-			success: function (source) {			 
-						var namesArray = new Array();
-						for( var i = 0; i < source.length; i++ ){
-							namesArray[i] = { value: source[i] , data: source[i]};
-						}
-						
-						// INIT AJAX AUTO COMPLETE
-				$('#identification').autocomplete({ 
-					lookup: namesArray,
-					lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
-						var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
-						return re.test(suggestion.value);
-					}	
-				});
-			}
-		});
-		
 		//SHOW/HIDE DATATABLE COLUMNS HANDLER
 		$('label.toggle-vis').on( 'click', function (e) {
 			e.preventDefault(); 

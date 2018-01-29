@@ -3,7 +3,7 @@ var UserCreateController = function() {
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
 	var LIB_TITLE = 'Menu Controller';	
-    var logControl = 1;
+    var logControl = 0;
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.
 	var currentFormat = '' // date format depends on currentLanguage.
@@ -169,8 +169,7 @@ var UserCreateController = function() {
 	}
 
 	// CONTROLLER PUBLIC FUNCTIONS 
-	return{
-		
+	return{		
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
 		load: function(Data) { 
 			logControl ? console.log(LIB_TITLE + ': load()') : '';
@@ -183,12 +182,7 @@ var UserCreateController = function() {
 			handleValidation();
 			initTemplateElements();		
 			
-		},
-		checkDates: function(){
-			logControl ? console.log(LIB_TITLE + ': checkDates()') : '';	
-			checkCreate();
-			
-		}
+		}		
 	};
 }();
 
