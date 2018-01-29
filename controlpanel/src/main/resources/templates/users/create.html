@@ -90,8 +90,8 @@
 								</div>
 								<div class="actions">
 									<!-- ACTION INDICATORs -->									
-									<span th:if="${user.userId} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.createBtn}">Insert</span></span>
-									<span th:if="${user.userId} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.editBtn}">Update</span></span>
+									<span th:if="${user.userId} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${user.userId} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>
 								
 							</div>
@@ -113,8 +113,7 @@
 											
 											<!-- FORM ACTIONS FOR UPDATE -->											
 											<input th:if="${user.userId} != null" type="hidden" name="action" th:value="@{/users/update}"/>
-											<input th:if="${user.userId} != null" type="hidden" name="_method" value="PUT"/>
-											<input th:if="${user.userId} != null" type="hidden" name="id" th:field="*{userId}"/>
+											<input th:if="${user.userId} != null" type="hidden" name="_method" value="PUT"/>											
 											
 											<div class="form-body">
 												<!-- user, name and email -->
@@ -124,7 +123,7 @@
 															<label th:text="#{user.id} + ':'">Identification</label>
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
-																<input id="userId" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"/>
+																<input id="userId" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"  th:readonly="*{userId}"  />
 															</div>															
 														</div>
 													</div>
@@ -133,7 +132,7 @@
 															<label class="popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.password.help},data-title=#{user.password}"><i class="la la-lightbulb-o"></i> <span th:text="#{user.password} + ':'">Password</span><span class="required">*</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-asterisk"></i>
-																<input id="password" type="password"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
+																<input id="password" type="text"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
 															</div>	
 														</div>
 													</div>
