@@ -25,7 +25,7 @@ var UserCreateController = function() {
 		//CLEAR OUT THE VALIDATION ERRORS
 		$('#'+formId).validate().resetForm(); 
 		$('#'+formId).find('input:text, input:password, input:file, select, textarea').each(function(){
-			// CLEAN ALL EXCEPTS cssClass "no-remote" persistent fields
+			// CLEAN ALL EXCEPTS cssClass "no-remove" persistent fields
 			if(!$(this).hasClass("no-remove")){$(this).val('');}
 		});
 		
