@@ -60,7 +60,10 @@
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
 						<li><a th:href="@{/users/list}"> <span th:text="#{user.breadcrumb.prev}">Users List</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{user.breadcrumb.create}">Show User</span></li>
+						<li>
+							<span th:if="${user.userId} == null" th:text="#{user.breadcrumb.create}">Show User</span>
+							<span th:if="${user.userId} != null" th:text="#{user.breadcrumb.update}">Update User</span>
+						</li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
