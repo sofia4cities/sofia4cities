@@ -156,7 +156,7 @@ public class UserController {
 			if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
 			user = this.userService.getUser(id);
 		}
-		
+		//If user does not exist
 		if(user==null) return "/error/404";
 
 		uiModel.addAttribute("user", user);
@@ -183,7 +183,7 @@ public class UserController {
 			uiModel.addAttribute("obsolete", false);
 		}
 		
-		//uiModel.addAttribute("userId", user.getUserId());
+
 
 		return "/users/show";
 	

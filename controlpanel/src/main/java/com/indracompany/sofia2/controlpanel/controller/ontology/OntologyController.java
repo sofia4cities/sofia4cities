@@ -59,5 +59,12 @@ public class OntologyController {
 	public @ResponseBody List<String> getNamesForAutocomplete(){
 		return this.ontologyService.getAllIdentifications();
 	}
+	@GetMapping(value = "/create",produces = "text/html")
+	public String create(Model model)
+	{
+		
+		model.addAttribute("ontology", new Ontology());
+		return "/ontologies/create";
+	}
 	
 }
