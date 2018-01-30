@@ -23,6 +23,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/codemirror.css}"/>
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 
@@ -200,10 +201,18 @@
 		
 	<!-- TEMPLATE CONTROLLER  -->	
 	<script th:src="@{/static/js/pages/configurationsCreate.js}"/>
+	<script th:src="@{/static/js/codemirror/codemirror.js}"/>
 		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
-	
+
+	var editor = CodeMirror.fromTextArea(document.getElementById('jsonSchema'), {
+		matchBrackets: true,
+        autoCloseBrackets: true,
+        mode: "application/ld+json",
+        lineWrapping: true
+	});
+
 	function navigateUrl(url){  window.location.href = url;	}
 	var currentLanguage = [[${lang}]];	
 	
