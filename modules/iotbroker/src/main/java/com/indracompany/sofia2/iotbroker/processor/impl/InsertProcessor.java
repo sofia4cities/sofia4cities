@@ -17,21 +17,29 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.common.exception.BaseException;
+import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
+import com.indracompany.sofia2.iotbroker.common.util.SSAP2PersintenceUtil;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.persistence.ContextData;
+import com.indracompany.sofia2.persistence.common.AccessMode;
+import com.indracompany.sofia2.persistence.exceptions.NotSupportedStatementException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.interfaces.DBStatementParser;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.SSAPQueryType;
 import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
@@ -46,6 +54,10 @@ public class InsertProcessor implements MessageTypeProcessor {
 	ObjectMapper objectMapper;
 	@Autowired
 	SecurityPluginManager securityPluginManager;
+	@Autowired
+	List<DBStatementParser> dbStatementParsers;
+	
+	
 	
 	@Override
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) throws BaseException {
@@ -92,7 +104,29 @@ public class InsertProcessor implements MessageTypeProcessor {
 	}
 
 	@Override
-	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws AuthorizationException {
+		SSAPMessage<SSAPBodyOperationMessage> operationMessage = (SSAPMessage<SSAPBodyOperationMessage>) message;
+		
+		List<String> collections = this.getOntologies(message.getMessageType(), operationMessage.getBody().getQueryType(), operationMessage.getBody().getQuery());
+	
+		for(String col: collections) {
+			securityPluginManager.checkAuthorization(message.getMessageType(), col, message.getSessionKey());
+		}
+		
+		
+	}
+	
+	private List<String> getOntologies(SSAPMessageTypes messageType, SSAPQueryType queryType, String query) throws AuthorizationException {
+		
+		for(DBStatementParser parser : dbStatementParsers) {
+			if(queryType.equals(parser.getSSAPQueryTypeSupported())) 
+			{
+				Optional<AccessMode> accesType = SSAP2PersintenceUtil.formSSAPMessageType2TableAccesMode(messageType);
+				List<String> collections = parser.getCollectionList(query, accesType.get());
+				return collections;
+			}
+		}
+		return Collections.emptyList();
 		
 	}
 

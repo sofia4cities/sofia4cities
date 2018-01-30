@@ -50,9 +50,6 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	@Autowired
 	SecurityPluginManager securityPluginManager;
 	@Autowired
-	List<DBStatementParser> dbStatementParsers;
-	
-	@Autowired
 	List<MessageTypeProcessor> processors;
 	
 	@Autowired
@@ -75,41 +72,13 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		
 		try {
 			
+			
+			Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = validateMessage(message);
+			if(validation.isPresent()) {
+				return validation.get();
+			}
+			
 			MessageTypeProcessor processor = proxyProcesor(message);
-			
-			//Check presence of Thinkp
-			if(message.getBody().isClientPlatformMandatory() 
-					&& (StringUtils.isEmpty(message.getBody().getClientPlatform()) 
-							|| StringUtils.isEmpty(message.getBody().getClientPlatformInstance()))) {
-				response = SSAPMessageGenerator.generateResponseErrorMessage(message,
-						SSAPErrorCode.PROCESSOR, 
-						String.format(MessageException.ERR_THINKP_IS_MANDATORY, message.getMessageType().name()));
-				
-				return response;
-			}
-			
-			//Check presence of sessionKey and authorization of sessionKey
-			if(message.getBody().isSessionKeyMandatory()
-					&& StringUtils.isEmpty(message.getSessionKey())) {
-				response = SSAPMessageGenerator.generateResponseErrorMessage(message,
-						SSAPErrorCode.PROCESSOR, 
-						String.format(MessageException.ERR_SESSIONKEY_IS_MANDATORY, message.getMessageType().name()));
-				
-				return response;
-			}
-			
-			if(message.getBody().isAutorizationMandatory()) {
-				securityPluginManager.checkSessionKeyActive(message.getSessionKey());
-			}
-			
-			//Check if ontology is present and autorization for ontology
-			//Also checks that queries are no referencing not authorized ontologies
-			if(message.getBody().isOntologyMandatory()) {
-				securityPluginManager.checkAuthorization(message.getMessageType(), message.getOntology(), message.getSessionKey());
-				
-				SSAPMessage<SSAPBodyOperationMessage> operationMessage = (SSAPMessage<SSAPBodyOperationMessage>) message;
-				validateOperation(message.getMessageType(), operationMessage.getBody().getQueryType(), operationMessage.getBody().getQuery(), message.getSessionKey());
-			}
 			
 			processor.validateMessage(message);
 			response = processor.process(message);
@@ -125,12 +94,12 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		} 
 		catch (AuthorizationException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
-					SSAPErrorCode.PROCESSOR, 
+					SSAPErrorCode.AUTHORIZATION, 
 					String.format(e.getMessage(), message.getMessageType().name()));
 		}
 		catch (AuthenticationException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
-					SSAPErrorCode.PROCESSOR, 
+					SSAPErrorCode.AUTENTICATION, 
 					String.format(e.getMessage(), message.getMessageType().name()));
 		}
 		catch (BaseException e) {
@@ -146,7 +115,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return response;
 	}
 	
-	public SSAPMessage<SSAPBodyReturnMessage> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+	public Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws AuthorizationException {
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 		
 		//Check presence of Thinkp
@@ -157,7 +126,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 					SSAPErrorCode.PROCESSOR, 
 					String.format(MessageException.ERR_THINKP_IS_MANDATORY, message.getMessageType().name()));
 			
-			return response;
+			return Optional.of(response);
 		}
 		
 		//Check presence of sessionKey and authorization of sessionKey
@@ -167,12 +136,19 @@ public class MessageProcessorDelegate implements MessageProcessor {
 					SSAPErrorCode.PROCESSOR, 
 					String.format(MessageException.ERR_SESSIONKEY_IS_MANDATORY, message.getMessageType().name()));
 			
-			return response;
+			return Optional.of(response);
 		}
 		
 		if(message.getBody().isAutorizationMandatory()) {
 			securityPluginManager.checkSessionKeyActive(message.getSessionKey());
 		}
+		
+		//Check if ontology is present and autorization for ontology
+		if(message.getBody().isOntologyMandatory()) {
+			securityPluginManager.checkAuthorization(message.getMessageType(), message.getOntology(), message.getSessionKey());
+		}
+		
+		return Optional.empty();
 		
 	}
 	
@@ -192,27 +168,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		
 		return filteredProcessors.get(0);
 		
-		
 	}
 	
-	private void validateOperation(SSAPMessageTypes messageType, SSAPQueryType queryType, String query, String sessionKey) throws AuthorizationException {
-		
-		for(DBStatementParser parser : dbStatementParsers) {
-			if(queryType.equals(parser.getSSAPQueryTypeSupported())) 
-			{
-				Optional<AccessMode> accesType = SSAP2PersintenceUtil.formSSAPMessageType2TableAccesMode(messageType);
-				List<String> collections = parser.getCollectionList(query, accesType.get());
-				for(String col : collections) 
-				{
-					securityPluginManager.checkAuthorization(messageType, col, sessionKey);
-				}
-				
-				return;
-			}
-			
-			throw new NotSupportedStatementException(String.format(MessageException.ERR_BD_QUERY_TYPE_NOT_SUPPORTED, queryType.name()));
-			
-		}
-	}
-
+	
 }

@@ -24,6 +24,6 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 public interface MessageTypeProcessor {
 	SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) throws BaseException, Exception;
 	List<SSAPMessageTypes> getMessageTypes();
-	void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message);
+	void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws BaseException, Exception;
 	
 }
