@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -39,33 +40,31 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Configurable
 @Entity
 @Table(name = "api_suscription")
-@SuppressWarnings("deprecation")
 public class ApiSuscription extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  
 	@ManyToOne
-    @JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Api apiId;
+	private Api apiId;
 
-	@Column(name = "USER_ID", length = 50,nullable = false)
-    @NotNull
-    private String userId;
+	@Column(name = "USER_ID", length = 50, nullable = false)
+	@NotNull
+	private String userId;
 
 	@Column(name = "INIT_DATE")
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(style = "M-")
-    private Date initDate;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(style = "M-")
+	private Date initDate;
 
 	@Column(name = "END_DATE")
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(style = "M-")
-    private Date endDate;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(style = "M-")
+	private Date endDate;
 
-	@Column(name = "ACTIVE",columnDefinition = "boolean default false")
-    private Boolean isActive;
+	@Column(name = "ACTIVE", columnDefinition = "boolean default false")
+	private Boolean isActive;
 
 	public Api getApiId() {
 		return apiId;
@@ -107,5 +106,4 @@ public class ApiSuscription extends AuditableEntityWithUUID {
 		this.isActive = isActive;
 	}
 
-	
 }

@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import java.util.Calendar;
 import java.util.Set;
 
@@ -42,44 +43,43 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Configurable
 @Entity
 @Table(name = "api_comment")
-@SuppressWarnings("deprecation")
-public class ApiComment extends AuditableEntityWithUUID{
+public class ApiComment extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@OneToMany(mappedBy = "replyId", cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiCommentReply> commentReplies;
+	private Set<ApiCommentReply> commentReplies;
 
 	@ManyToOne
-    @JoinColumn(name = "ontologyId", referencedColumnName = "ID")
+	@JoinColumn(name = "ontologyId", referencedColumnName = "ID")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Ontology ontologyId;
+	private Ontology ontologyId;
 
 	@ManyToOne
-    @JoinColumn(name = "apiId", referencedColumnName = "ID")
+	@JoinColumn(name = "apiId", referencedColumnName = "ID")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Api apiId;
+	private Api apiId;
 
-	@Column(name = "TITLE", length = 512,nullable = false)
-    @NotNull
-    private String title;
+	@Column(name = "TITLE", length = 512, nullable = false)
+	@NotNull
+	private String title;
 
-	@Column(name = "COMMENT", length = 1024,nullable = false)
-    @NotNull
-    private String comment;
+	@Column(name = "COMMENT", length = 1024, nullable = false)
+	@NotNull
+	private String comment;
 
-	@Column(name = "USER_ID", length = 50,nullable = false)
-    @NotNull
-    private String userId;
+	@Column(name = "USER_ID", length = 50, nullable = false)
+	@NotNull
+	private String userId;
 
 	@Column(name = "ASSESSMENT", precision = 10)
-    private Double assessment;
+	private Double assessment;
 
 	@Column(name = "COMMENT_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar date;
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(style = "MM")
+	private Calendar date;
 
 	public Set<ApiCommentReply> getCommentReplies() {
 		return commentReplies;
@@ -145,7 +145,4 @@ public class ApiComment extends AuditableEntityWithUUID{
 		this.date = date;
 	}
 
-	
-
-	
 }

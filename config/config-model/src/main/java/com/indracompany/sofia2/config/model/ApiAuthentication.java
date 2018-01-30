@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.model;
+
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -32,28 +33,26 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Entity
 @Table(name = "API_AUTHENTICATION")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ApiAuthentication extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 1L;
 
 	@OneToMany(mappedBy = "autId", cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiAuthenticationParameter> apiAuthenticationParameters;
+	private Set<ApiAuthenticationParameter> apiAuthenticationParameters;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
-    private Api apiId;
+	@JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
+	private Api apiId;
 
-	@Column(name = "TYPE", length = 50,nullable = false)
-    @NotNull
-    private String type;
-
-	@Column(name = "DESCRIPTION", length = 512,nullable = false)
+	@Column(name = "TYPE", length = 50, nullable = false)
 	@NotNull
-    private String description;
+	private String type;
+
+	@Column(name = "DESCRIPTION", length = 512, nullable = false)
+	@NotNull
+	private String description;
 
 	public Set<ApiAuthenticationParameter> getApiAuthenticationParameters() {
 		return apiAuthenticationParameters;
@@ -91,5 +90,4 @@ public class ApiAuthentication extends AuditableEntityWithUUID {
 		return serialVersionUID;
 	}
 
-	
 }

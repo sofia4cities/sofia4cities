@@ -16,7 +16,6 @@ package com.indracompany.sofia2.persistence.mongodb;
 import org.json.JSONArray;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -29,7 +28,6 @@ import com.indracompany.sofia2.persistence.interfaces.BasicOpsQuasarDBRepository
 import com.indracompany.sofia2.persistence.mongodb.quasar.connector.QuasarDbHttpConnector;
 import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
 import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
-import com.mongodb.client.MongoDatabase;
 
 import lombok.extern.slf4j.Slf4j;
 

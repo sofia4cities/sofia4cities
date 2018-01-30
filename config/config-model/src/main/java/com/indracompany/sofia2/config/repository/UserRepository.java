@@ -32,8 +32,13 @@ public interface UserRepository extends JpaRepository<User, String> {
 
 
 	List<User> findByEmail(String email);
+	
 	User findByUserId(String userId);
-	User findByUserIdAndPassword(String userId,String password);
+	
+	//@Query("SELECT o FROM User AS o WHERE (o.userId = :userId AND o.password = :password AND o.active = true")
+	//User authenticate(@Param("userId")String userId,@Param("password")String password);
+
+	User findByUserIdAndPasswordAndActiveTrue(String userId,String password);
 
 	@Query("SELECT o FROM User AS o WHERE o.roleTypeId !='1'")
 	List<User> findUsersNoAdmin();

@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -34,36 +35,31 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Entity
 @Table(name = "API_HEADER")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ApiHeader extends AuditableEntityWithUUID {
-	
-   private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "apioperationId", referencedColumnName = "ID", nullable = false)
-    private ApiOperation apioperationId;
+	@JoinColumn(name = "apioperationId", referencedColumnName = "ID", nullable = false)
+	private ApiOperation apioperationId;
 
-	@Column(name = "NAME", length = 50,nullable = false)
-    @NotNull
-    private String name;
+	@Column(name = "NAME", length = 50, nullable = false)
+	@NotNull
+	private String name;
 
-	@Column(name = "HEADER_TYPE", length = 50,nullable = false)
-    @NotNull
-    private String header_type;
+	@Column(name = "HEADER_TYPE", length = 50, nullable = false)
+	@NotNull
+	private String header_type;
 
-	@Column(name = "HEADER_DESCRIPTION", length = 512,nullable = false)
-    @NotNull
-    private String header_description;
+	@Column(name = "HEADER_DESCRIPTION", length = 512, nullable = false)
+	@NotNull
+	private String header_description;
 
 	@Column(name = "HEADER_VALUE", length = 512)
-    private String header_value;
+	private String header_value;
 
 	@Column(name = "HEADER_CONDITION", length = 50)
-    private String header_condition;
-
-	
-
-
+	private String header_condition;
 
 }

@@ -23,7 +23,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -83,8 +82,8 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnProperty(name = "sofia2.init.configdb")
 public class InitConfigDB {
 
-	private static User userCollaborator=null;
-	
+	private static User userCollaborator = null;
+
 	@Autowired
 	ClientConnectionRepository clientConnectionRepository;
 	@Autowired
@@ -131,86 +130,85 @@ public class InitConfigDB {
 	ConfigurationRepository configurationRepository;
 	@Autowired
 	ConfigurationTypeRepository configurationTypeRepository;
-	
-	
 
 	@PostConstruct
 	public void init() {
-			log.info("Start initConfigDB...");
-			// first we need to create users
-			init_RoleUser();
-			log.info("OK init_RoleUser");
-			init_UserCDB();
-			log.info("OK init_UserCDB");
-			//
-			init_DataModel();
-			log.info("OK init_DataModel");
-			init_OntologyCategory();
-			log.info("OK init_OntologyCategory");
-			init_Ontology();
-			log.info("OK init_Ontology");
-			init_OntologyUserAccess();
-			log.info("OK init_OntologyUserAccess");
-			init_OntologyUserAccessType();
-			log.info("OK init_OntologyUserAccessType");
-			init_OntologyEmulator();
-			log.info("OK init_OntologyEmulator");
-			init_OntologyCategory();
-			log.info("OK init_OntologyCategory");
-			init_OntologyEmulator();
-			log.info("OK init_OntologyEmulator");
-			//
-			init_ClientPlatform();
-			log.info("OK init_ClientPlatform");
-			init_ClientPlatformOntology();
-			log.info("OK init_ClientPlatformOntology");
-			init_ClientConnection();
-			log.info("OK init_ClientConnection");
-			//
-			init_Token();
-			log.info("OK init_Token");
-			//
-			init_Dashboard();
-			log.info("OK init_Dashboard");
-			init_DashboardType();
-			log.info("OK init_DashboardType");
-			init_GadgetDataModel();
-			log.info("OK init_GadgetDataModel");
-			init_GadgetMeasure();
-			log.info("OK init_GadgetMeasure");
-			init_GadgetQuery();
-			log.info("OK init_GadgetQuery");
-			init_Gadget();
-			log.info("OK init_Gadget");
-			init_GeneratorType();
-			log.info("OK init_GeneratorType");
-			// init_InstanceGenerator();
-			//
-			init_ConsoleMenu();
-			log.info("OK init_ConsoleMenu");
-			init_Configuration();
-			log.info("OK init_Configuration");
+		log.info("Start initConfigDB...");
+		// first we need to create users
+		init_RoleUser();
+		log.info("OK init_RoleUser");
+		init_UserCDB();
+		log.info("OK init_UserCDB");
+		//
+		init_DataModel();
+		log.info("OK init_DataModel");
+		init_OntologyCategory();
+		log.info("OK init_OntologyCategory");
+		init_Ontology();
+		log.info("OK init_Ontology");
+		init_OntologyUserAccess();
+		log.info("OK init_OntologyUserAccess");
+		init_OntologyUserAccessType();
+		log.info("OK init_OntologyUserAccessType");
+		init_OntologyEmulator();
+		log.info("OK init_OntologyEmulator");
+		init_OntologyCategory();
+		log.info("OK init_OntologyCategory");
+		init_OntologyEmulator();
+		log.info("OK init_OntologyEmulator");
+		//
+		init_ClientPlatform();
+		log.info("OK init_ClientPlatform");
+		init_ClientPlatformOntology();
+		log.info("OK init_ClientPlatformOntology");
+		init_ClientConnection();
+		log.info("OK init_ClientConnection");
+		//
+		init_Token();
+		log.info("OK init_Token");
+		//
+		init_Dashboard();
+		log.info("OK init_Dashboard");
+		init_DashboardType();
+		log.info("OK init_DashboardType");
+		init_GadgetDataModel();
+		log.info("OK init_GadgetDataModel");
+		init_GadgetMeasure();
+		log.info("OK init_GadgetMeasure");
+		init_GadgetQuery();
+		log.info("OK init_GadgetQuery");
+		init_Gadget();
+		log.info("OK init_Gadget");
+		init_GeneratorType();
+		log.info("OK init_GeneratorType");
+		// init_InstanceGenerator();
+		//
+		init_ConsoleMenu();
+		log.info("OK init_ConsoleMenu");
+		init_Configuration();
+		log.info("OK init_Configuration");
 	}
 
 	private void init_Configuration() {
 		log.info("init_Configuration");
-		ConfigurationType type= new ConfigurationType();
+		ConfigurationType type = new ConfigurationType();
 		type.setId(1);
 		type.setName("CONFIG_TWITTER");
 		type.setDescription("Twitter configuration, Oauth");
 		this.configurationTypeRepository.save(type);
-		type= new ConfigurationType();
+		type = new ConfigurationType();
 		type.setId(2);
 		type.setName("CONFIG_MAIL");
 		type.setDescription("Mail configuration");
 		this.configurationTypeRepository.save(type);
+
 		type= new ConfigurationType();
 		type.setId(3);
 		type.setName("CONFIG_RTDB");
 		type.setDescription("RTDB configuration");
+
 		this.configurationTypeRepository.save(type);
-		
-		
+
 	}
 
 	public void init_ClientConnection() {
@@ -346,10 +344,11 @@ public class InitConfigDB {
 			dashboard.setDashboardTypeId("9");
 			dashboardRepository.save(dashboard);
 		}
-	}	
-	
+	}
+
 	private User getUserCollaborator() {
-		if (userCollaborator==null) userCollaborator=this.userCDBRepository.findByUserId("collaborator");
+		if (userCollaborator == null)
+			userCollaborator = this.userCDBRepository.findByUserId("collaborator");
 		return userCollaborator;
 	}
 
