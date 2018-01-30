@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +43,8 @@ public class MainPageController {
 
 	@Value("${sofia2.urls.iotbroker}")
 	String url;
-
+	
+	@Secured({"ROLE_ADMINISTRATOR", "ROLE_COLLABORATOR", "ROLE_USER","ROLE_ANALYTICS","ROLE_PARTNER","ROLE_SYS_ADMIN","ROLE_OPERATIONS"})
 	@GetMapping("/main")
 	private String main(Model model, HttpServletRequest request) {
 		//Load menu by role in session
