@@ -109,5 +109,6 @@ public class ApiHeader extends AuditableEntityWithUUID {
 	public void setHeader_condition(String header_condition) {
 		this.header_condition = header_condition;
 	}
+}
 
 
