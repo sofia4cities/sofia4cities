@@ -64,10 +64,10 @@ spring: ## General Config
 ## LOGGING CONF
 logging:
    level:
-      root: INFO
       org.springframework: INFO
       com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
       org.hibernate: INFO
+
 
  

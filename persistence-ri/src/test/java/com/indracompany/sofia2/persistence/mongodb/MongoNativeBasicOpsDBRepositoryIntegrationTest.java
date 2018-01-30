@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import javax.persistence.PersistenceException;
 
+import org.json.JSONArray;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -34,7 +36,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.interfaces.BasicOpsQuasarDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
+import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,83 +52,85 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
-
+	
 	@Autowired
 	MongoDbTemplateImpl connect;
-
+	
 	@Autowired
 	BasicOpsDBRepository repository;
+	
 
 	@Autowired
 	MongoTemplate nativeTemplate;
 	static final String ONT_NAME = "contextData";
 	static final String DATABASE = "sofia2_s4c";
-
+	
 	String refOid = "";
-
+	
 	@Before
 	public void setUp() throws PersistenceException, IOException {
-		if (!connect.collectionExists(DATABASE, ONT_NAME)) {
+		if(!connect.collectionExists(DATABASE, ONT_NAME));
+		{
 			connect.createCollection(DATABASE, ONT_NAME);
 		}
-
-		ContextData data = new ContextData();
-		data.setClientConnection(UUID.randomUUID().toString());
-		data.setClientPatform(UUID.randomUUID().toString());
-		data.setClientSession(UUID.randomUUID().toString());
-		data.setTimezoneId(UUID.randomUUID().toString());
-		data.setUser(UUID.randomUUID().toString());
-		ObjectMapper mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
-		int init = 17;
-		int end = refOid.indexOf("\"}}");
-		refOid = refOid.substring(init, end);
-
+			
+        ContextData data = new ContextData();
+        data.setClientConnection(UUID.randomUUID().toString());
+        data.setClientPatform(UUID.randomUUID().toString());
+        data.setClientSession(UUID.randomUUID().toString());
+        data.setTimezoneId(UUID.randomUUID().toString());
+        data.setUser(UUID.randomUUID().toString());
+        ObjectMapper mapper = new ObjectMapper();
+        refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+        int init = 17;
+        int end = refOid.indexOf("\"}}");
+        refOid = refOid.substring(init, end);
+  
 	}
-
+	
 	@After
 	public void tearDown() {
 		connect.dropCollection(DATABASE, ONT_NAME);
 	}
-
+	
 	@Test
 	public void test_count() {
 		try {
-			Assert.assertTrue(repository.count(ONT_NAME) > 0);
+			Assert.assertTrue(repository.count(ONT_NAME)>0);			
 		} catch (Exception e) {
-			Assert.fail("Error test_count" + e.getMessage());
+			Assert.fail("Error test_count"+e.getMessage());
 		}
-	}
+	}	
+	
 
 	@Test
 	public void test_count_movie() {
 		try {
-			Assert.assertTrue(repository.count("movie") > 0);
+			Assert.assertTrue(repository.count("movie")>0);			
 		} catch (Exception e) {
-			Assert.fail("Error test_count" + e.getMessage());
+			Assert.fail("Error test_count"+e.getMessage());
 		}
-	}
-
+	}	
+	
 	@Test
 	public void test_getById() {
 		try {
-			String data = repository.findById(ONT_NAME, refOid);
-			Assert.assertTrue(data != null && data.indexOf("user") != -1);
+			String data = repository.findById(ONT_NAME,refOid);			
+			Assert.assertTrue(data!=null && data.indexOf("user")!=-1);			
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB");
 		}
-	}
-
+	}	
 	@Test
 	public void test_getAll() {
 		try {
-			String data = repository.findAllAsOneJSON(ONT_NAME);
-			List<String> asList = repository.findAll(ONT_NAME);
-			Assert.assertTrue(asList.size() > 0);
-			Assert.assertTrue(data.indexOf("clientSession") > 0);
+			String data = repository.findAllAsOneJSON(ONT_NAME);		
+			List<String> asList= repository.findAll(ONT_NAME);
+			Assert.assertTrue(asList.size() > 0);		
+			Assert.assertTrue(data.indexOf("clientSession")>0);				
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB");
 		}
 	}
-
+	
 }

@@ -39,43 +39,45 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Entity
 @Table(name = "API_OPERATION")
 @Configurable
+@SuppressWarnings("deprecation")
 public class ApiOperation extends AuditableEntityWithUUID {
+	
+   private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 1L;
-
-	@OneToMany(mappedBy = "apioperationId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	private Set<ApiHeader> apiheaders;
 
 	@OneToMany(mappedBy = "apioperationId", cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private Set<ApiQueryParameter> apiqueryparameters;
+    private Set<ApiHeader> apiheaders;
+
+	@OneToMany(mappedBy = "apioperationId", cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<ApiQueryParameter> apiqueryparameters;
 
 	@ManyToOne
-	@JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private Api apiId;
+    private Api apiId;
 
-	@Column(name = "IDENTIFICATION", length = 50, nullable = false)
-	@NotNull
-	private String identification;
+	@Column(name = "IDENTIFICATION", length = 50,nullable = false)
+    @NotNull
+    private String identification;
 
-	@Column(name = "DESCRIPTION", length = 512, nullable = false)
-	@NotNull
-	private String description;
+	@Column(name = "DESCRIPTION", length = 512,nullable = false)
+    @NotNull
+    private String description;
 
-	@Column(name = "OPERATION", length = 50, nullable = false)
-	@NotNull
-	private String operation;
+	@Column(name = "OPERATION", length = 50,nullable = false)
+    @NotNull
+    private String operation;
 
 	@Column(name = "ENDPOINT", length = 512)
-	private String endpoint;
+    private String endpoint;
 
 	@Column(name = "BASE_PATH", length = 512)
-	private String basePath;
+    private String basePath;
 
 	@Column(name = "PATH", length = 512)
-	private String path;
+    private String path;
 
 	public Set<ApiHeader> getApiheaders() {
 		return apiheaders;
@@ -149,4 +151,5 @@ public class ApiOperation extends AuditableEntityWithUUID {
 		this.path = path;
 	}
 
+	
 }

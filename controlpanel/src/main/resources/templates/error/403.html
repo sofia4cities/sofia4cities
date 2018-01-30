@@ -38,8 +38,8 @@
         <div class="container error-404">
             <h1>403 - Access is denied</h1>
             <h2>Houston, we have a problem.</h2>
-            <p  class="lead bold uppercase font-red-sunglo" th:text="${error}">Error Info: User </p>
-			<p th:text="${#authentication.name}"></p><p> do not have permission to access this page.</p>
+            <p  class="lead bold uppercase font-red-sunglo" th:text="${error}">Error Info</p>
+			<p th:inline="'[[${#httpServletRequest.remoteUser}]]', you do not have permission to access this page."> You do not have permission to access this page </p>
             <p><a th:href="@{/}" class="btn red btn-outline"> Return home </a><br/></p>
         </div>       
         

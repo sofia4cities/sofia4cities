@@ -19,7 +19,6 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -41,40 +40,41 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Configurable
 @Entity
 @Table(name = "api_user_assessment")
+@SuppressWarnings("deprecation")
 public class ApiUserAssessment extends AuditableEntityWithUUID {
-
+    
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-
-	@JoinColumn(name = "ontologyId", referencedColumnName = "ID")
-	private Ontology ontologyId;
-
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
-
-	@JoinColumn(name = "commentId", referencedColumnName = "ID")
-	private ApiComment commentId;
+   
+    @JoinColumn(name = "ontologyId", referencedColumnName = "ID")
+    private Ontology ontologyId;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
+   
+    @JoinColumn(name = "commentId", referencedColumnName = "ID")
+    private ApiComment commentId;
 
-	@JoinColumn(name = "apiId", referencedColumnName = "ID")
-	private Api apiId;
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
+   
+    @JoinColumn(name = "apiId", referencedColumnName = "ID")
+    private Api apiId;
 
-	@Column(name = "USER_ID", length = 50, nullable = false)
-	@NotNull
-	private String userId;
+	@Column(name = "USER_ID", length = 50,nullable = false)
+    @NotNull
+    private String userId;
 
-	@Column(name = "ASSESSMENT", precision = 10, nullable = false)
-	@NotNull
-	private Double assessment;
+	@Column(name = "ASSESSMENT", precision = 10,nullable = false)
+    @NotNull
+    private Double assessment;
 
 	@Column(name = "ASSESSMENT_DATE")
-	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(style = "M-")
-	private Date fecha;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(style = "M-")
+    private Date fecha;
 
 	public Ontology getOntologyId() {
 		return ontologyId;
@@ -124,4 +124,8 @@ public class ApiUserAssessment extends AuditableEntityWithUUID {
 		this.fecha = fecha;
 	}
 
+	
+
+
+	
 }

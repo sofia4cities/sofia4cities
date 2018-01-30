@@ -30,6 +30,7 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Entity
 @Table(name = "Api_Authentication_Parameter")
 @Configurable
+@SuppressWarnings("deprecation")
 public class ApiAuthenticationParameter extends AuditableEntityWithUUID {
 
     private static final long serialVersionUID = 1L;

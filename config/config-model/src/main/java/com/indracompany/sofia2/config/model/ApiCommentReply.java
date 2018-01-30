@@ -18,7 +18,6 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
-
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,19 +32,23 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Configurable
 @Entity
 @Table(name = "api_comment_reply")
-public class ApiCommentReply extends AuditableEntityWithUUID {
+@SuppressWarnings("deprecation")
+public class ApiCommentReply extends AuditableEntityWithUUID{
 
 	private static final long serialVersionUID = 1L;
+	
 
 	@ManyToOne
-	@JoinColumn(name = "COMMENT_ID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "COMMENT_ID", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private ApiComment commentId;
+    private ApiComment commentId;
 
 	@ManyToOne
-	@JoinColumn(name = "REPLY_ID", referencedColumnName = "ID", nullable = false)
+    @JoinColumn(name = "REPLY_ID", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private ApiComment replyId;
+
+	
 
 	public ApiComment getCommentId() {
 		return commentId;
@@ -63,4 +66,7 @@ public class ApiCommentReply extends AuditableEntityWithUUID {
 		this.replyId = replyId;
 	}
 
+	
+
+	
 }

@@ -15,8 +15,6 @@ package com.indracompany.sofia2.service.user;
 
 import java.util.List;
 
-import org.springframework.security.access.prepost.PreAuthorize;
-
 import com.indracompany.sofia2.config.model.RoleType;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
@@ -31,10 +29,7 @@ public interface UserService {
 	public User getUser(String userId);
 	public List<RoleType> getAllRoles();
 	public UserToken getUserToken(User userId);
-	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	public List<User> getAllUsers();
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,Boolean active);
 	public void createUser(User user);
 	public boolean userExists(User user);
