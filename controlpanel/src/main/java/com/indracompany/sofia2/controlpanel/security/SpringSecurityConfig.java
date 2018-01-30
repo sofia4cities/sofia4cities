@@ -18,8 +18,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
@@ -30,7 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 // http://docs.spring.io/spring-boot/docs/current/reference/html/howto-security.html
 // Switch off the Spring Boot security configuration
-//@EnableWebSecurity
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled=true, prePostEnabled=true)
 @Slf4j
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 

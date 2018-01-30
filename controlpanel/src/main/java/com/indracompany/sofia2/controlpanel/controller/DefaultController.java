@@ -28,7 +28,6 @@ public class DefaultController {
 	private AppWebUtils utils;
 	
 	
-	@Secured({"ROLE_ADMINISTRATOR", "ROLE_COLLABORATOR", "ROLE_USER","ROLE_ANALYTICS","ROLE_PARTNER","ROLE_SYS_ADMIN","ROLE_OPERATIONS"})
 	@GetMapping("/")
     public String base() {
     	if (utils.getAuthentication()!=null) return "redirect:/main";
