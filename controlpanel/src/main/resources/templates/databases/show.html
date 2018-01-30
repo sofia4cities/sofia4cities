@@ -1,0 +1,2004 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org"  xmlns:dt="http://www.thymeleaf.org/dandelion/datatables"  th:with="lang=${#locale.language}" th:lang="${lang}">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+
+		
+		<!-- WEB FONTs -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND DATATABLES  -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>		
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css}"/>	
+		
+	</head>	
+	
+	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>
+			
+		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+			
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM-->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/users/list}"> <span th:text="#{user.breadcrumb.prev}">Users List</span></a><i class="fa fa-circle"></i></li>
+						<li>
+							<span  th:text="#{user.breadcrumb.create}">Show User</span>							
+						</li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">						
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="la la-users font-grey-gallery"></i>						
+									
+									<!-- FORM TITLE -->
+									<span  class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.create} + ':'"> New User</span>
+									
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>							
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>									
+									</div>
+									
+									<!-- SELECTOR PRINCIPAL DE ONTOLOGIAS -->
+									<div class="col-md-12 margin-bottom-20">								
+										<div class="form-group">										
+											<div class="input-group input-group-sm">
+												<span class="input-group-addon"> ONTOLOGÍAS</span>
+												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" title="Seleccione una Ontología...">
+												  <optgroup label="Genéricas">
+													<option th:each="ontology : ${ontologies}" th:id="${ontology.userId.userId}" th:data-description="${ontology.description}" data-type="general" th:value="${ontology.identification}" th:text="${ontology.identification}"  ></option>
+												  </optgroup>
+												 <!--  <optgroup label="Grupo">
+													<option th:each="ontologiagrupo:${ontologiasGrupo}" th:id="${ontologiagrupo.id}" data-type="grupo" th:value="${ontologiagrupo.identificacion}" th:text="${ontologiagrupo.identificacion}" ></option>
+												  </optgroup> -->
+												</select>
+											</div>
+											<span class="help-block hidden-xs"> Seleccione Ontologías Genéricas o de Grupo </span>										
+										</div>
+									</div>									
+									
+									<!-- CREACIÓN DE CONSULTA -->
+									<div id="query-panel" class="col-md-12 hide">									
+										<div class="panel panel-default">
+											<div class="panel-heading panel-sofia2">
+												<h3 class="panel-title uppercase"><i class="fa fa-sitemap"></i> Consultas sobre <span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
+											</div>
+											<div class="panel-body no-space">											
+												<!-- OPCIONES DE CONSULTA -->
+												<div class="col-md-6 col-sm-12 panel-tools">
+													<fieldset class="col-sm-3">												
+														<select class="element select small form-control" id="targetDatabase" name="targetDatabase" onChange="cambioConsulta();">
+															<option name="bdtr" value="bdtr"> BDTR </option>
+															<option name="bdh" value="bdh"> BDH </option>
+															<option name="bdc" value="bdc"> BDC </option>
+														</select>
+													</fieldset>
+													<fieldset class="col-md-3">							
+														<select  class="element select small form-control" id="typeQuery" name="typeQuery" onChange="cambioConsulta()">
+															<option name="sql2" value="sql2"> SQL </option>
+															<option name="sql" value="sql"> SQL-LIKE (deprecated) </option>
+															<option name="native" value="native"> NATIVE </option>
+														</select>
+													</fieldset>
+													<fieldset class="col-md-3">							
+														<select  class="element select small form-control" id="resultFormat" name="typeQuery" disabled="disabled">
+															<option name="json" value="json"> JSON </option>
+															<option name="table" value="table"> TABLE </option>
+															<option id="json_deprecated" name="json_deprecated" value="json_deprecated"> JSON_DEPRECATED </option>
+														</select>
+													</fieldset>	
+													<fieldset id="fieldset_offset" class="col-md-3">
+														<label id="label_offset" class="description labelSmallText" for="offset">Offset </label>
+														<input id="offset" disabled="disabled"/>
+													</fieldset>
+													<input type="hidden" id="time_serie" value="time_serie" />
+												</div>
+												<!-- TOOLBAR DE CONSULTA -->
+												<div class="col-md-6 col-sm-12 panel-tools">
+													<div class="btn-group pull-right">
+														<button type="button" class="btn btn-sm btn-primary" onclick="addSelect()"><i class="fa fa-table"></i> SELECT</button>
+														<button type="button" class="btn btn-sm btn-primary" onclick="addCondition()"><i class="fa fa-filter"></i> WHERE</button>
+														<button type="button" class="btn btn-sm btn-primary" disabled="true"><i class="fa fa-object-group"></i> GROUP BY</button>
+														<button type="button" class="btn btn-sm btn-primary" onclick="addOrderBy()"><i class="fa fa-sort"></i> ORDER</button>
+														<button type="button" class="btn btn-sm btn-danger" onclick="cambioConsulta()"><i class="fa fa-times"></i> RESET</button>
+													</div>
+													<div class="clearfix"></div>
+												</div>
+												<div class="clearfix"></div>
+												
+												<!-- MONTAJE DE CONSULTA. -->
+												<div id="crear-query">
+													<div class="col-md-12 no-space">
+													  <div id="create_query">
+															<ul id="tree_menu" style="padding:20px">
+															  
+																<!-- SELECT PANEL -->
+																<li type="none" class="columnMine">
+																	<ul id="select_ul" class="list-group ">
+																		<!-- LI principal , agrega elementos, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
+																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-table"></i> SELECT<span onclick="addSelect()" class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campos al SELECT"><i class="fa fa-plus"></i></span></li>																													
+																	</ul>
+																</li>
+																<!-- END SELECT PANEL -->
+																<!-- FROM PANEL -->
+																<li type="none" class="columnMine">
+																	<ul id="from_ul" class="list-group ">
+																		<!-- LI principal tiene el from de la query -->
+																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-database"></i> FROM </li>																													
+																	</ul>
+																</li>
+																<!-- END FROM PANEL -->
+																<!-- WHERE PANEL -->
+																<li type="none" class="columnMine">
+																	<ul id="where_ul" class="list-group ">
+																		<!-- LI principal , agrega elementos de condición al where, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
+																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-filter"></i> WHERE<span onclick="addCondition()" class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campos al WHERE"><i class="fa fa-plus"></i></span></li>																													
+																	</ul>
+																</li>
+																<!-- END WHERE PANEL -->
+																
+																<!-- GROUPBY PANEL -->
+																<li type="none" class="columnMine">
+																	<ul id="groupBy_ul" class="list-group" style="height: 100px">
+																		<!-- LI principal , agrega groupby, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
+																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-object-group"></i> GROUP BY<span class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar condiciones al GROUPBY"><input type="checkbox" id="groupby_check" style="display:none; margin:0px"/> </span></li>																													
+																	</ul>
+																	<!-- ELEMENTOS TEMPORALES DE GROUPBY -->
+																	<div id="groupBy_time_ul" class="col-md-12" style="display:none;">
+																		<div><input type="radio" id="groupby_dia"  name="gBy"/><p value="dia" th:text="#{ontologias_formulario_dia}" style="display:inline;  padding-left: 10px">dia</p></div>
+																		<div><input type="radio" id="groupby_horas"  name="gBy"/><p value="horas" th:text="#{ontologias_formulario_horas}" style="display:inline;  padding-left: 10px">horas</p></div>
+																		<div><input type="radio" id="groupby_minutos"  name="gBy"/><p value="minutos" th:text="#{ontologias_formulario_minutos}" style="display:inline;  padding-left: 10px">minutos  </p></div>
+																		<div><input type="radio" id="groupby_segundos"  name="gBy"/><p value="segundos" th:text="#{ontologias_formulario_segundos}" style="display:inline;  padding-left: 10px">segundos </p></div>
+																	</div>															
+																</li>
+																<!-- END GROUPBY PANEL -->
+																
+																<!-- ORDERBY PANEL -->
+																<li type="none" class="columnMine">
+																	<ul id="orderby_ul" class="list-group list-orderby">
+																		<!-- LI principal , agrega orderby, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
+																		<li class="list-group-item panel-sofia2 bold uppercase"><i class="fa fa-sort"></i> ORDER BY<span onclick="addOrderBy()" class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campo al ORDER BY"><i class="fa fa-plus"></i></span></li>																													
+																	</ul>
+																</li>
+																<!-- END ORDERBY PANEL -->
+															</ul>
+														</div>
+													</div>
+														
+													<!-- TO-DO: no se que es -->	
+													<div class="col-sm-12 col-md-12" style="display:none"> 
+													  <!-- TABLA dt:table="true" dt:paginate="false" dt:sort="false" -->
+													  <table id="camposConsultaSuscripcion" >
+														
+														  <tbody th:remove="all-but-first" >
+															<tr pages:paginate="10" class="odd">
+															  <td>
+																  <div id="checks" ></div>    
+															  </td>
+														   </tr>
+														 </tbody>
+													  </table>
+													  <!-- FINAL TABLA -->
+													</div>
+												</div>								
+											<!-- FIN CREACION DE CONSULTA -->											
+											</div>
+											<div class="panel-footer bg-white"> 
+												<div class="pull-left col-md-10 col-sm-8 col-xs-12">
+													<textarea id="querySql" class="element textarea extra-small form-control"></textarea>
+												</div>											
+												<div class="pull-right col-md-2 col-sm-4 col-xs-12">
+													<div class="btn-group">
+														<!-- <button type="button" class="btn btn-sm btn-primary" onClick="createQuery()"><i class="fa fa-edit"></i> Generar Query</button> no hace falta cuando todo haga refresh -->
+														<button type="button" class="btn btn-sm btn-primary" onClick="enviarSql()"><i class="fa fa-play"></i> Ejecutar Query </button>
+													</div>											
+												</div>
+												<div class="clearfix"></div>
+											</div>
+										</div>								
+									</div>
+									
+									<!-- RESULTADOS DE CONSULTA -->
+									<div id="result-panel" class="col-md-12 hide">
+									
+										<!-- PANEL DE RESULTADOS -->
+										<div class="panel panel-default">
+											<div class="panel-heading panel-sofia2">
+												<h3 class="panel-title uppercase"><i class="fa fa-database"></i> Resultados  sobre <span id="query-ontologia-result" class="bold uppercase">ontología</span></h3>											
+											</div>
+											<div class="panel-body no-space">
+											<!-- CONTENEDOR DE RESULTADOS , AQUI SE CREAN LOS DIVS PARA LA SALIDA DE LA CONSULTA A HTML,TABLE O JSON. -->
+												
+												<!-- QUERY TOOLBAR -->
+												<div class="col-md-12 col-sm-12 panel-tools">
+													<span><i class="fa fa-info-circle"></i> <small th:text="#{herramientas_nota}"></small></span>
+													<div id="botones_descarga" class="btn-group pull-right">
+														<button type="button" class="btn btn-sm btn-default" id="btnContextToggle" onclick="toggleContext()"><i class="fa fa-eye"></i> Contexto</button>												
+														<button type="button" class="btn btn-sm btn-info" onclick="descargarFichero('CSV')"><i class="fa fa-file-text-o"></i> CSV</button>
+														<button type="button" class="btn btn-sm btn-info" onclick="descargarFichero('XML')"><i class="fa fa-file-code-o"></i> XML</button>
+														<button type="button" class="btn btn-sm btn-info" onclick="descargarFichero('XLS')"><i class="fa fa-file-excel-o"></i> XLS</button>													
+													</div>
+													<div class="clearfix"></div>
+												</div>
+												<div class="clearfix"></div>
+												
+												<!-- RESPUESTA DE CONSULTA -->
+												<div class="col-md-12 margin-top-10 margin-bottom-20">
+													<div id="Canvasrespuesta">														
+													
+													</div>												
+												</div>
+												<div id="example" class="col-md-12">
+													
+												</div>											
+											</div>
+										</div>	
+									</div>	
+									
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC  -->						
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
+	
+	<!-- CORE JS CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- DATABASE PLUGINS TO-DO: pendiente de ubicación -->
+	<script type='text/javascript' th:src="@{/js/sib/dwr/engine.js}"/>
+	<script type='text/javascript' th:src="@{/js/sib/drw/util.js}"/>
+	<script th:src="@{/js/dwr/interface/BdtrDWR.js}"/>
+	<script th:src="@{/js/dwr/interface/ImpalaDWR.js}"/>
+	<script th:src="@{/js/dwr/interface/BdcDWR.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js}"/>
+	
+	
+		
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/databaseShow.js}"/>
+	
+
+	<script th:inline="javascript"> 
+	//<![CDATA[
+		
+		
+		var showLog = 1; // VARIABLE GLOBAL PARA CONTROLAR LOS MENSAJES A LA CONSOLA.
+		var bdtrType, bdtrDWR, haspermission; 
+		
+		// DOCUMENT READY 
+		$( document ).ready(function() {	
+		
+			// HANDLE UTILITIES 
+			
+			//	SPINNER OFFSET INIT
+			//spinnerEach = $( "#offset" ).spinner({'min': 0,'max':999});
+			spinnerEach = $( "#offset" ).TouchSpin({
+                min: 0,
+                max: 999,
+                stepinterval: 1,
+                maxboostedstep: 999,
+                verticalbuttons: true
+            });			
+			
+			($( "#offset" ).val() == "") ? $( "#offset" ).val(0) : null;		
+			spinnerEach.bind("keydown", function (event) { event.preventDefault(); });
+			
+			// INIT QUERY STRING		
+			var combo = document.getElementById('selector_ontologias');
+			if(combo.length > 0){	       
+				$('#querySql').val("select * from "+ combo.value +" limit 3");        	
+				showLog ? console.log('init combo ontologias: ' + combo.length) : '';
+			}
+
+			// INIT QUERY PANELS [ SELECT, WHERE, GROUP AND ORDERBY ]
+			cambioConsulta();
+	  
+		 });
+		 
+		
+		
+		// UN A-HREF
+		function navigateUrl(url){  window.location.href = url; }
+	   
+	   //	FUNCION QUE INICIALIZA LOS PANELES DE MONTAJE DE LA CONSULTA [ SELECT, WHERE, GROUP, ORDERBY ]
+	   function cambioConsulta(){
+			
+			var ontologia_base = 'SensorTemperatura';
+			
+			// Se borran todos los paneles con el cambio de consulta.
+			var queryPanels = $("#where_ul,#select_ul,#from_ul,#groupBy_ul,#checks,#campos,#orderby_ul");
+			queryPanels.each(function(){ $(this).children().not('.panel-sofia2').remove(); });
+			
+			// SI YA TENEMOS SELECCIONADO UN WHERE , NO LO QUITAMOS SIMPLEMENTE LO BORRAMOS TODO, PARA MONTAR LA NUEVA CONSULTA, PERO 
+			// DEJAMOS EL WHERE.
+			var ontologia = $('#selector_ontologias').val();
+			console.log('cambioConsulta() -> tiene ontologia seleccionada? ' + ontologia);
+			if (ontologia !== '') {
+				var from =  '<li id="from" name="'+ ontologia +'" id="'+ ontologia +'" class="list-group-item bold uppercase"> '+ ontologia +' </li>';
+				$("#from_ul").append(from);
+			}
+			
+			<!-- $("#where_ul").empty(); -->
+			<!-- $("#select_ul").empty(); -->
+			<!-- $("#from_ul").empty(); -->
+			<!-- $("#groupBy_ul").empty(); -->
+			<!-- $("#checks").empty(); -->
+			<!-- $("#campos").empty(); -->
+			<!-- $("#orderby_ul").empty(); -->
+
+			var queryKp = "[[${QUERY}]]";
+			console.log('cambioconsulta() -> queryKp -> '+ queryKp);
+			  
+			// TIPO DE QUERY  
+			var combo = document.getElementById('typeQuery');       
+			var opcion = combo.options[combo.selectedIndex].value;
+			
+			// TIPO DE BBDD
+			var combodb = document.getElementById('targetDatabase');
+			var targetdb = combodb.options[combodb.selectedIndex].value;
+		   
+			// SQL2 ó NATIVE
+			if( opcion == "sql2" || opcion == "native"){    	   
+				if (opcion == "sql2"){ $('#fieldset_offset').css('display','');  $("#resultFormat").prop("disabled", false);} else { $('#fieldset_offset').css('display','none');  $("#resultFormat").prop("disabled", true);}    	      	 
+			}
+			else{
+			   $('#fieldset_offset').css('display','none');  
+			   $("#offset").prop("disabled", true);
+			   $("#resultFormat").prop("disabled", true);  
+			}     
+
+			// BBDD: BDTR
+		   if( targetdb == "bdtr"){
+		   
+			   $('#json_deprecated').css('display','none'); 
+			   var comboBDTR = document.getElementById('selector_ontologias');
+			   showLog ? console.log('cambioConsulta() -> comboBDTR -> ' +comboBDTR.value+ ' length: ' + comboBDTR.length) : '';
+			   
+			   if(comboBDTR.length > 0){  	   
+				   $('#querySql').val('select * from '+ comboBDTR.value +' limit 3;');           	  
+				   showLog ?  console.log('INICIAL  cambioConsulta() -> querySql -> ' + $('#querySql').val()) : '';		   
+			   }
+
+			   $('#contenedor-tabla-outside1').addClass('in');
+			   $('#contenedor-tabla-outside1').css('height','auto');
+			   $('#contenedor-tabla-outside2').removeClass('in');
+			   combo.disabled = false;
+			   
+			   // CONSULTAS POR DEFECTO, HAY QUE AJUSTARLAS
+			   // SI TENEMOS UNA YA SELECCIONADA , HACEMOS QUE LA QUERY BASE SEA CON LA QUE TENEMOS
+			   if ( $('#selector_ontologias').val() != '' ){ ontologia_base = $('#selector_ontologias').val(); }
+			   
+			   if 	   ((opcion == "sql")     && ( queryKp != "null")) { $('#querySql').innerHTML =  queryKp;  $('#querySql').val(queryKp); }
+			   else if (( opcion == "native") && ( queryKp  != "null")){ $('#querySql').innerHTML =  "" ; $('#querySql').val(""); }
+			   else if (( opcion == "native") && ( bdtrType != "relationalOracle") && (queryKp == "null")){ $('#querySql').innerHTML =  "db." + ontologia_base +".find().limit(3);";  $('#querySql').val("db." + ontologia_base +".find().limit(3);"); }
+			   else if (( opcion == "native") && ( bdtrType == "relationalOracle") && (queryKp == "null")){ $('#querySql').innerHTML =  "select * from " + ontologia_base +" where ROWNUM <= 3;"; $('#querySql').val("select * from " + ontologia_base +" where ROWNUM <= 3;"); }
+			   else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType != "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3;"; $('#querySql').val("select * from " + ontologia_base +" limit 3;"); }
+			   else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType == "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +""; $('#querySql').val("select * from " + ontologia_base +""); }
+			   else if (( opcion == "sql2")   && (queryKp == "null") && (bdtrType != "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3"; $('#querySql').val("select * from " + ontologia_base +" limit 3"); }
+			   else if (( opcion == "sql2")   && (queryKp == "null") && (bdtrType == "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +""; $('#querySql').val("select * from " + ontologia_base + ""); }
+		  
+			   if( document.getElementById("enviar_consulta_descarga") ){ document.getElementById("enviar_consulta_descarga").style.display = ''; }
+		   }
+		   
+			// BBDD: BDH
+			else if( targetdb == "bdh"){
+		   
+			   $('#fieldset_offset').css('display','none'); 
+			   $('#json_deprecated').css('display',''); 
+			   $("#resultFormat").prop("disabled", false);
+			   
+			   var comboBDH = document.getElementById('ontologia');
+			   
+			   if( comboBDH.length > 0){	           
+				   $('#querySql').val("select * from "+ comboBDH.value +" limit 3;"); 
+			   }
+			   
+			   <!-- divListaTablasBDC.style.display='none'; -->
+			   <!-- divListaOntologias.style.display = 'block'; -->
+			   <!-- divListaOntologiasGrupo.style.display = 'block'; -->
+
+			   $('#contenedor-tabla-outside1').addClass('in');
+			   $('#contenedor-tabla-outside1').css('height','auto');
+			   $('#contenedor-tabla-outside2').removeClass('in');
+
+			   $("#crear-query").css('display','block'); 
+			   $("#crear-query-label").css('display','block');           
+			   $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3;";
+			   
+			   combo.value = "sql";
+			   combo.disabled = true;
+			   if( document.getElementById("enviar_consulta_descarga") ){
+				   document.getElementById("enviar_consulta_descarga").style.display = '';
+			   }
+			}
+			// BBDD: BDC
+			else if( targetdb == "bdc"){
+			
+				document.getElementById('json_deprecated').style.display='none';
+				$('#fieldset_offset').css('display','none'); 
+				var comboTablaBDC = document.getElementById('tablaBDC');
+
+				if(comboTablaBDC.length > 0){ comboTablaBDC[0].selected=true;	}
+
+				document.getElementById("crear-query").style.display = 'none';
+				document.getElementById("crear-query-label").style.display = 'none';
+				document.getElementById("boton-crear-query").style.display = 'none';
+
+				$('#querySql').val("select * from "+ comboTablaBDC.value +" limit 3;");
+				combo.value = "sql";
+				combo.disabled = true; 
+				
+				//Cambia los contenidos del cuadrado
+				<!-- divListaOntologias.style.display = 'none'; -->
+				<!-- divListaOntologiasGrupo.style.display = 'none'; -->
+				<!-- divListaTablasBDC.style.display='block'; -->
+
+				if( document.getElementById("enviar_consulta_descarga") ){
+				   document.getElementById("enviar_consulta_descarga").style.display = 'none';
+				}
+			}
+		}  
+		//]]>             
+	</script> 
+
+	<script type="text/javascript" th:inline="javascript">
+
+	//<![CDATA[           
+	// we need tabs as spaces and not CSS magin-left 
+	// in order to ratain format when coping and pasing the code
+
+		window.SINGLE_TAB = "  ";
+		window.ImgCollapsed = [[@{/resources/images/Collapsed.gif}]];   
+		window.ImgExpanded = [[@{/resources/images/Expanded.gif}]];   
+		window.QuoteKeys = true;
+		window._dateObj = new Date();
+		window._regexpObj = new RegExp();
+		
+		// RETURN ID
+		function $id(id){ return document.getElementById(id); }
+		
+		// RETURN IS AN ARRAY
+		function IsArray(obj) {  return obj && typeof obj === 'object' && typeof obj.length === 'number' && !(obj.propertyIsEnumerable('length')); }
+		
+		
+		// PROCESO DE RESPUESTA DE CONSULTA  
+		function Process(id, json){
+			SetTab();
+			window.IsCollapsible = true;	
+			var html = "";
+			try {
+				if(json == "" || json == null) { json = "\"\""; }
+				var obj = eval("["+json+"]");
+				html = ProcessObject(obj[0], 0, false, false, false);			
+				$id("Canvas"+ id).innerHTML = "<PRE class='CodeContainer'>"+ html +"</PRE>";
+			}
+			catch(e){	
+				$id("Canvas" + id).innerHTML = json;
+			}
+			// mostramos el panel de resultado de consultas. 
+			if ($('#result-panel').hasClass('hide')){ $('#result-panel').toggleClass('hide'); } 
+			$('#query-ontologia-result').text('' + $('#selector_ontologias').val());	
+		}
+		
+		
+		// PROCESADO DEL OBJETO QUE CONTIENE LOS RESULTADOS DE LA CONSULTA
+		function ProcessObject(obj, indent, addComma, isArray, isPropertyContent){
+			var html = "";
+			var comma = (addComma) ? "<span class='Comma'>,</span> " : ""; 
+			var type = typeof obj;
+			var clpsHtml = "";
+			
+			// PROCESADO DE ARRAY
+			if( IsArray(obj) ){
+				if(obj.length == 0){
+					html += GetRow(indent, "<span class='ArrayBrace'>[ ]</span>"+comma, isPropertyContent);
+				}
+				else{
+					clpsHtml = window.IsCollapsible ? "<span><img src=\""+window.ImgExpanded+"\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
+					html += GetRow(indent, "<span class='ArrayBrace'>[</span>"+clpsHtml, isPropertyContent);
+					for(var i = 0; i < obj.length; i++){
+						html += ProcessObject(obj[i], indent + 1, i < (obj.length - 1), true, false);
+					}
+					
+					clpsHtml = window.IsCollapsible ? "</span>" : "";
+					html += GetRow(indent, clpsHtml+"<span class='ArrayBrace'>]</span>"+comma);
+				}
+			}
+			// PROCESADO SI ES UN OBJETO
+			else if( type == 'object'){
+				if (obj == null){
+					html += FormatLiteral("null", "", comma, indent, isArray, "Null");
+				}
+				else if (obj.constructor == window._dateObj.constructor)  { html += FormatLiteral("new Date(" + obj.getTime() + ") /*" + obj.toLocaleString()+"*/", "", comma, indent, isArray, "Date"); }
+				else if (obj.constructor == window._regexpObj.constructor){	html += FormatLiteral("new RegExp(" + obj + ")", "", comma, indent, isArray, "RegExp"); }
+				else{
+					var numProps = 0;
+					for(var prop in obj) { numProps++; }
+					if(numProps == 0){
+						html += GetRow(indent, "<span class='ObjectBrace'>{ }</span>"+comma, isPropertyContent);
+					}
+					else{
+						clpsHtml = window.IsCollapsible ? "<span><img src=\""+window.ImgExpanded+"\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
+						html += GetRow(indent, "<span class='ObjectBrace'>{</span>"+clpsHtml, isPropertyContent);
+						var j = 0;
+						for(var prop in obj){
+							var quote = window.QuoteKeys ? "\"" : "";
+							html += GetRow(indent + 1, "<span class='PropertyName'>"+quote+prop+quote+"</span>: "+ProcessObject(obj[prop], indent + 1, ++j < numProps, false, true));
+						}					
+						clpsHtml = window.IsCollapsible ? "</span>" : "";
+						html += GetRow(indent, clpsHtml+"<span class='ObjectBrace'>}</span>"+comma);
+					}
+				}
+			}
+			// PROCESADO SI ES UN NUMERO
+			else if( type == 'number' ){ html += FormatLiteral(obj, "", comma, indent, isArray, "Number"); }
+			// PROCESADO SI ES BOOLEAN
+			else if( type == 'boolean'){ html += FormatLiteral(obj, "", comma, indent, isArray, "Boolean"); }
+			// PROCESADO SI ES UNA FUNCTION
+			else if(type == 'function'){ if (obj.constructor == window._regexpObj.constructor) { html += FormatLiteral("new RegExp(" + obj + ")", "", comma, indent, isArray, "RegExp"); } else{ obj = FormatFunction(indent, obj); html += FormatLiteral(obj, "", comma, indent, isArray, "Function"); }}
+			// PROCESADO DE UNDEFINED
+			else if(type == 'undefined'){ html += FormatLiteral("undefined", "", comma, indent, isArray, "Null");}
+			// PROCESADO GENÉRICO
+			else{
+				html += FormatLiteral(obj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, indent, isArray, "String");
+			}
+			
+			// RETORNO DEL DATO.
+			return html;
+		}
+
+		
+		// PROCESADO DE FORMA LITERALES
+		function FormatLiteral(literal, quote, comma, indent, isArray, style){
+		  if(typeof literal == 'string')
+			literal = literal.split("<").join("&lt;").split(">").join("&gt;");
+		  var str = "<span class='"+style+"'>"+quote+literal+quote+comma+"</span>";
+		  if(isArray) str = GetRow(indent, str);
+		  return str;
+		}
+		
+		
+		// FUNCION AUXILIAR DE FORMATEO
+		function FormatFunction(indent, obj){
+		  var tabs = "";
+		  for(var i = 0; i < indent; i++) tabs += window.TAB;
+		  var funcStrArray = obj.toString().split("\n");
+		  var str = "";
+		  for(var i = 0; i < funcStrArray.length; i++){
+			str += ((i==0)?"":tabs) + funcStrArray[i] + "\n";
+		  }
+		  return str;
+		}
+		
+		// FUNCION PARA DEVOLVER LOS DATOS DE UNA LINEA
+		function GetRow(indent, data, isPropertyContent){
+		  var tabs = "";
+		  for(var i = 0; i < indent && !isPropertyContent; i++) tabs += window.TAB;
+		  if(data != null && data.length > 0 && data.charAt(data.length-1) != "\n")
+			data = data+"\n";
+		  return tabs+data;                       
+		}
+
+		// FUNCION AUXILIAR PARA REALIZAR TRAVERSE
+		function TraverseChildren(element, func, depth){
+		  for(var i = 0; i < element.childNodes.length; i++){
+			TraverseChildren(element.childNodes[i], func, depth + 1);
+		  }
+		  func(element, depth);
+		}
+		
+		// COLLAPSE EN IMAGEN PARA EL TREE 
+		function ExpImgClicked(img){
+		  var container = img.parentNode.nextSibling;
+		  if(!container) return;
+		  var disp = "none";
+		  var src = window.ImgCollapsed;
+		  if(container.style.display == "none"){
+			  disp = "inline";
+			  src = window.ImgExpanded;
+		  }
+		  container.style.display = disp;
+		  img.src = src;
+		}
+		
+		function SetTab(){
+		  window.TAB = MultiplyString(1, window.SINGLE_TAB);
+		}
+		
+		function EnsureIsPopulated(){
+		  if(!$id("Canvas").innerHTML && !!$id("respuesta").value) Process();
+		}
+
+		
+		function MultiplyString(num, str){
+		  var sb =[];
+		  for(var i = 0; i < num; i++){
+			sb.push(str);
+		  }
+		  return sb.join("");
+		}
+
+		function LinkToJson(){
+		  var val = $id("respuesta").value;
+		  val = escape(val.split('/n').join(' ').split('/r').join(' '));
+		  $id("InvisibleLinkUrl").value = val;
+		  $id("InvisibleLink").submit();
+		}
+	//]]>
+
+
+	</script>
+	<script th:inline="javascript">
+
+	//<![CDATA[
+	  
+		var busServer = pathToDwrServletAdmin; // Adaptacion WAS +'/';
+
+		$(function(){
+		  dwr.engine.setActiveReverseAjax(true);
+		  dwr.engine.setErrorHandler(errorHandler);
+		  dwr.engine.setTimeout(0);
+		});
+
+		function errorHandler(message, ex){
+		//dwr.util.setValue("error", "No se ha podido conectar con el SIB. Inicializando lógica de reintento.", {escapeHtml:false});
+		//setTimeout(function() { dwr.util.setValue("error", ""); }, 5000)
+		}
+		  
+		function enviar() { 
+			$("#respuesta").val("");
+			$("#Canvasrespuesta").empty();
+			bdtrDWR.query(dwr.util.getValue("query"), function(data) {
+				bdtrDWR._path =  busServer;          
+				Process("respuesta", data);
+			});
+		}
+		
+		var data_consulta;
+		function descargarFichero (tipoFichero) { 
+			
+			mostrarCapaLoading();
+			$(".boton").css("display", "none");
+			var combodb=document.getElementById('targetDatabase');
+			var targetdb= combodb.options[combodb.selectedIndex].value;
+			
+			if (bdtrType=="relationalKudu"){
+				bdtrDWR.transfToFichero(dwr.util.getValue("querySql"),data_consulta,tipoFichero, {callback:function(data){
+					esconderCapaLoading();
+					if (data!=null){
+					  dwr.engine.openInDownload(data); 
+					  checkdisplayDownload();
+					} else {
+						document.getElementById("dialog-error").innerHTML=[[#{herramientas_descarga_alerta}]];
+						showErrorDialog();
+					}
+				  }});  
+			} else if(targetdb == "bdh"){
+				 bdtrDWR.transfBDHResultToFichero(dwr.util.getValue("querySql"),data_consulta,dwr.util.getValue("resultFormat").toUpperCase(),tipoFichero, {callback:function(data){
+					 esconderCapaLoading();
+					 if (data!=null){
+					   dwr.engine.openInDownload(data); 
+					   checkdisplayDownload();
+					   }
+					 else
+						 alert([[#{herramientas_descarga_alerta}]]);
+					 }
+								});             
+			} else {
+				 bdtrDWR.transfToFichero(dwr.util.getValue("querySql"),data_consulta,tipoFichero, {callback:function(data){
+					 
+					 esconderCapaLoading();
+					 if (data!=null){
+					   dwr.engine.openInDownload(data); 
+					   checkdisplayDownload();
+					 } else {
+						 document.getElementById("dialog-error").innerHTML=[[#{herramientas_descarga_alerta}]];
+						 showErrorDialog();
+					 }
+				   }});     
+			}
+			
+				 
+		}	
+		
+		
+		// FUNCION AUXILIAR PARA CREAR LA CABECERA DE LAS TABLAS QUASAR A PARTIR DE LOS DATOS DEVUELTOS.
+		// recibe el data[0] de la consulta , y a partir de eso monta el sistema de columnas, retorna un campo tableHeader con en HTML resultante
+		function createColumns(data_columns){
+		
+			// variable de retorno
+			var tableHeader = '';
+			
+			// inicialización de las columnas de la tabla.
+			var columnsHTML = '<tr><th rowspan="2" class="quasar-first">#</th><th colspan="5" class="quasar context">Context</th>';
+			
+			// inicialización de la fila de columnas de contexto y campos que extiende las columnas de la tabla.
+			var contextDataHTML = '<tr><th class="context">session_key</th><th class="context">user</th><th class="context">kp</th><th class="context">kp_instancia</th><th class="context">timestamp</th>';
+		
+			showLog ? console.log('crear_tabla_quasar() -> createColumns() -> creando tabla...') : '';
+			if (!data_columns instanceof Array) { console.log('ERROR, el array de columnas no es correcto'); return false; }
+			
+			
+			// inicialización de varibles. 
+			var arrColumns = data_columns;
+			var checkCol = '';
+			var actualColText, actualColAtrr = '';
+			var attrCounter = 0;
+			var hayAttrib = false;
+					
+			// ITERAMOS EL ARRAY DE COLUMNAS 
+			arrColumns.map(function( column, index ){
+				
+				var actualCol = column;						
+				// CONTROL PARA LOS CONTEXTDATA (VALORES INTERNOS DE SISTEMA)
+				var col = column; 
+				if( col.indexOf('contextData.') != -1 ){
+					showLog ? console.log('CONTEXT: ' + col) : '';
+				}
+				else {
+					// CONTROL PARA CAMPOS QUE TIENEN 1 MÁS ATRIBUTOS Y NO SON DE CONTEXTO.		
+					// COLUMNA UNICA
+					if(col.indexOf('[') == -1){
+						showLog ? console.log('ÚNICO: ' + col) : '';
+						if ( hayAttrib ){ columnsHTML += '<th colspan="'+ attrCounter +'" class="quasar" >'+ actualColText +'</th><th rowspan="2" class="quasar" >'+ col +'</th>'; hayAttrib = false; attrCounter = 0;  } else { columnsHTML += '<th rowspan="2" class="quasar" >'+ col +'</th>'; }
+					}
+					else {
+					// COLUMNA UNICA O CON ATRIBUTOS
+						
+						hayAttrib = true;
+						attrCounter++;
+						actualColText = actualCol.split("[")[0];
+						actualColAtrr = actualCol.split("[")[1].replace(']','');
+						showLog ? console.log('COL: ' + actualColText + 'ATTRIB:  ' + actualColAtrr) : '';
+						
+						// MIENTRAS HAY CAMPOS SEGUIMOS AGREGANDOLOS AL HTML						
+						contextDataHTML += '<th class="attrib">'+ actualColAtrr +'</th>';						
+					}				
+				}			
+			});
+			
+			// MONTAJE FINAL DE COLUMNADO:
+			tableHeader = '<thead>' +columnsHTML + '</tr>' + contextDataHTML + '</tr></thead>';
+			return tableHeader;
+			
+		};
+		
+		// MOSTRAR/OCULTAR LOS DATOS DE CONTEXTO INTERNO DE LOS REGISTROS EN LA TABLA.
+		function toggleContext(){
+				icon = $('#btnContextToggle').children('i');
+				if (icon.hasClass('fa fa-eye-slash')) { icon.removeClass('fa fa-eye-slash').addClass('fa fa-eye'); } else { icon.removeClass('fa fa-eye').addClass('fa fa-eye-slash'); }
+				$('.context').toggle('hide');
+		
+		}
+		
+		
+		// FUNCION PARA DEVOLVER LA SALIDA DE CONSULTA EN FORMATO TABLE.
+		function crear_tabla_quasar(data){
+			
+			showLog ? console.log('crear_tabla_quasar() -> data: '+ JSON.stringify(data)) : '';		
+			
+			// TRATAMIENTO PARA UN ARRAY
+			if ( data instanceof Array) {
+				if ($('#result-panel').hasClass('hide')){ $('#result-panel').toggleClass('hide'); }
+				$('#query-ontologia-result').text($('#selector_ontologias').val());
+				$("#Canvasrespuesta").append('<div class="table-scrollable" style="overflow: auto;" ><table id="quasarTable"  class="datatable no-footer table table-hover table-striped table-condensed" ></table></div>');
+							
+				
+				// MONTAMOS LA SALIDA DE COLUMNAS DE LA TABLA DATA[0], 1 CAMPO TH ROWSPAN = 2 PARA CAMPOS SIN CAMPOS ADICIONALES, Y UN TH COLSPAN = Nº ATRIBUTOS QUE TIENE.
+				var cabecera = data.shift(); 
+				var tableColumns = createColumns(cabecera);
+				$('#quasarTable').append(tableColumns);
+							
+				var tableRows = '<tbody>';
+				var tableRow = '';			
+				// ITERAMOS EL ARRAY DE COLUMNAS 
+				data.map(function( row, rowindex ){				
+					tableRows += '<tr><td class="quasar-first">'+ rowindex + '</td>';
+					for (var i = 0; i < row.length; i++){ if (i<5){ cssContext = 'context'} else { cssContext='' } tableRow += '<td class="'+ cssContext +'">' + row[i] + '</td>'; }
+					tableRows += tableRow + '</tr>';
+					tableRow = '';
+					
+				});
+				tableRows += '</tbody>';
+				
+				// agregamos las filas de datos
+				$('#quasarTable').append(tableRows);			
+			}
+			else {
+				// LANZAMOS EL PROCESO DE SALIDA HABITUAL EN JSON.
+				Process("respuesta", data);
+				return;
+			}
+		}
+		
+		
+		
+		function crear_tabla(data){
+			showLog ? console.log('crear_tabla() -> a crear_tabla_quasar() -> son iguales. '): '';
+			crear_tabla_quasar(data);        
+		}
+
+		function descarga_completa() {
+			
+			$("#respuesta").val("");        
+			$("#Canvasrespuesta").empty(); 
+			mostrarCapaLoading();
+			var combodb=document.getElementById('targetDatabase');
+			var targetdb= combodb.options[combodb.selectedIndex].value;
+
+			if(targetdb == "bdtr" || bdtrType=="relationalKudu"){
+				bdtrDWR.downloadAllDataInCSV(dwr.util.getValue("querySql"), dwr.util.getValue("typeQuery"),{callback:function(data){
+					esconderCapaLoading();
+					if (data!=null){
+						dwr.engine.openInDownload(data); 
+					  } else {
+						  document.getElementById("dialog-error").innerHTML=[[#{herramientas_descarga_alerta}]];
+						  showErrorDialog();
+					  }
+				}});
+			} else if (targetdb == "bdh"){
+				ImpalaDWR.downloadAllDataInCSVFromBDH(dwr.util.getValue("querySql"),{callback:function(data){
+					esconderCapaLoading();
+					if (data!=null){
+						dwr.engine.openInDownload(data); 
+					  } else {
+						  document.getElementById("dialog-error").innerHTML=[[#{herramientas_descarga_alerta}]];
+						  showErrorDialog();
+					  }
+				}});
+			} else {
+				esconderCapaLoading();
+				document.getElementById("dialog-error").innerHTML="Service unavailable";
+				showErrorDialog();
+			}
+			
+		}
+
+		function checkdisplayDownload(){
+			if(dwr.util.getValue("resultFormat").toLowerCase() == "table"){
+				$(".boton").css("display", "none"); //formato tabla no se puede exportar
+			}else {
+				$(".boton").css("display", "");
+			}
+		}
+		
+		
+		// FUNCIÓN QUE EJECUTA LA CONSULTA DEFINIDA ACORDE A LOS PARAMETROS ENVIADOS.
+		function enviarSql() {
+			
+			$("#respuesta").val("");        
+			$("#Canvasrespuesta").empty(); 
+			$("#colapsable").click();
+			$('html,body').scrollTop(0);
+					
+			var isTimeSerie = $("#isTimeSerie").val();
+			var combodb = document.getElementById('targetDatabase')
+			var targetdb = combodb.options[combodb.selectedIndex].value;                
+			var combo = document.getElementById('typeQuery');
+			var opcion = combo.options[combo.selectedIndex].value;
+			
+			showLog ? console.log('enviarSql(): timeSerie? ' + isTimeSerie + ' DDBB: ' + targetdb + ' type: ' + opcion ) : '';
+			
+			// BBDD BDTR
+			if( targetdb == "bdtr"){
+				
+				$(".boton").css("display", "none");             
+				
+				// BBDD relationalKudu
+				if (bdtrType == "relationalKudu"){
+					bdtrDWR.querySql(dwr.util.getValue("querySql"),dwr.util.getValue("resultFormat"), {callback:function(data) {
+						
+						// FORMATO DE SALIDA TABLE 
+						if (dwr.util.getValue("resultFormat") == "table"){
+							if(data[0] != ""){
+								crear_tabla_quasar(data);
+							}
+							else{
+								$("#Canvasrespuesta").append("<p>Error: no data available</p>");
+							}
+							
+							// agregamos la query al histórico.
+							addQueryToHistory();
+						}
+						else {
+							// FORMATO JSON
+							Process("respuesta", data);
+							if  (data != null && data != ''){
+								checkdisplayDownload(); 
+							}
+						}
+					},
+					timeout:0});				
+				}
+				else {
+					
+					// SERIES DE TIEMPO
+					if(isTimeSerie == "true"){
+						bdtrDWR.querySql(dwr.util.getValue("querySql"), dwr.util.getValue("time_serie"), {callback:function(data) {
+							
+							bdtrDWR._path =  busServer;
+							Process("respuesta", data);
+							if  (data != null && data != ''){
+								checkdisplayDownload(); 
+							}
+							data_consulta = data;
+							addQueryToHistory();
+						},
+						timeout:0});
+						
+					}
+					else{
+						if( opcion != "sql2"){
+							bdtrDWR.querySql(dwr.util.getValue("querySql"), dwr.util.getValue("typeQuery"), {callback:function(data) {
+								
+								bdtrDWR._path = busServer;
+								Process("respuesta", data);
+								if  (data != null && data != ''){
+									checkdisplayDownload(); 
+								}
+								data_consulta = data;
+								addQueryToHistory();
+							},
+							timeout:0});
+						}
+						else{
+							
+							bdtrDWR.querySql2(dwr.util.getValue("querySql"), dwr.util.getValue("typeQuery"),dwr.util.getValue("resultFormat"), dwr.util.getValue("offset"), {callback:function(data) {                            
+								bdtrDWR._path =  busServer;
+								if(dwr.util.getValue("resultFormat") != "table"){
+									Process("respuesta", data);
+									if  (data != null && data != ''){
+										checkdisplayDownload(); 
+									}
+								}else{
+									if(data[0] != ""){
+										crear_tabla_quasar(data);
+									}
+									else{
+										$("#Canvasrespuesta").append("<p>Error: no data available</p>");
+									}                            	
+								}
+								data_consulta=data;
+								addQueryToHistory();
+							},
+							timeout:0});
+						}
+					}               
+				}
+			}
+			// BBDD BDH
+			else if(targetdb == "bdh"){
+			
+				$(".boton").css("display", "none");             
+				ImpalaDWR.querySql(dwr.util.getValue("querySql"),dwr.util.getValue("resultFormat"), {callback:function(data) {
+					bdtrDWR._path =  busServer;
+					if (dwr.util.getValue("resultFormat").toLowerCase() == "table"){
+						try{
+							var dataList = JSON.parse(data);
+							if( dataList[0] != ""){ crear_tabla_quasar(dataList); } else { $("#Canvasrespuesta").append("<p>Error: no data available</p>"); }
+					   }
+					   catch(Err){ crear_tabla_quasar(data); }
+						addQueryToHistory();					
+					}
+					// PROCESADO DE CONSULTA SEGUN PARAMETROS OBTENIDOS EN DWR.
+					else if( data == "herramientas_operacionnosoportada"){  Process("respuesta", [[#{herramientas_operacionnosoportada}]]); } 
+					else if( data == "herramientas_sentencianosoportada"){  Process("respuesta", [[#{herramientas_operacionnosoportada}]]); }
+					else if( data == "herramientas_sentencianoparseable"){  Process("respuesta", [[#{herramientas_sentencianoparseable}]]); }
+					else if( data == "herramientas_noresultados")		 {  Process("respuesta", [[#{herramientas_noresultados}]]); }
+					else if( data.substring(0, "herramientas_errorpersistencia".length ) === "herramientas_errorpersistencia"){ Process("respuesta", [[#{herramientas_errorpersistencia}]]+": "+data.substring("herramientas_errorpersistencia".length, data.length)); }
+					else if( data == "herramientas_errorautorizacion")	 {  Process("respuesta", [[#{herramientas_errorautorizacion}]]); }
+					else if( data.substring(0, "herramientas_errorgenerico".length ) === "herramientas_errorgenerico"){ Process("respuesta", [[#{herramientas_errorgenerico}]]+": "+data.substring("herramientas_errorgenerico".length, data.length)); }
+					else{
+						// PROCESADOR GENERICO?
+						Process("respuesta", data);
+						if(data != null && data != ''){ 					  
+							checkdisplayDownload();
+						}					
+						// RETORNO DE DATOS.
+						data_consulta = data;
+						addQueryToHistory();
+					}
+				},
+				timeout:0});
+				
+			}		
+			// BBDD BDC
+			else if( targetdb == "bdc" ){
+				
+				BdcDWR.querySql(dwr.util.getValue("querySql"), {callback:function(data) {                
+					bdtrDWR._path =  busServer;
+					data_consulta = data;
+					if( data.substring(0, "herramientas_sentencianosoportada".length ) === "herramientas_sentencianosoportada"){ Process("respuesta", [[#{herramientas_sentencianosoportada}]]+": "+data.substring("herramientas_sentencianosoportada".length, data.length)); }
+					else if( data == "herramientas_sentencianoparseable")	{ Process("respuesta", [[#{herramientas_sentencianoparseable}]]); }
+					else if( data == "herramientas_noresultados")		 	{ Process("respuesta", [[#{herramientas_noresultados}]]); }
+					else if( data == "herramientas_errorautorizaciontabla")	{ Process("respuesta", [[#{herramientas_errorautorizaciontabla}]]); }
+					else if( data.substring(0, "herramientas_errorgenerico".length ) === "herramientas_errorgenerico"){ Process("respuesta", [[#{herramientas_errorgenerico}]]+": "+data.substring("herramientas_errorgenerico".length, data.length)); }
+					else if( data.substring(0, "herramientas_errorautorizacion_atributo".length ) === "herramientas_errorautorizacion_atributo"){ Process("respuesta", [[#{herramientas_errorautorizacion_atributo}]]+": "+data.substring("herramientas_errorautorizacion_atributo".length, data.length)); }
+					else{
+						Process("respuesta", data);            
+						addQueryToHistory();
+					  }
+				},
+				timeout:0});
+			}
+
+		};
+		
+		
+		function addQueryToHistory(){
+			var queryHistory=document.getElementById("queryHistory");
+			if (queryHistory.options[0].value == 'queries' ){
+				queryHistory.remove(0);
+			}
+			var option=document.createElement("option");
+			option.text = $('#querySql').val();
+			option.className = "QueryOption";
+			try {
+				  queryHistory.add(option,queryHistory.options[null]);
+			} catch (e) {
+				  x.add(option,null);
+			}
+		}
+		
+		function cargaConsulta(){
+			var combo = document.getElementById('queryHistory');
+			var queryCombo = combo.options[combo.selectedIndex].value;
+			$('#querySql').val("");
+			$('#querySql').val(queryCombo);
+	   }  
+		
+		function esconderCapaLoading() {
+			$('.capa-loading').hide();
+		}
+		
+		function mostrarCapaLoading() {
+			$('.capa-loading').show();
+		}
+		
+		// SELECCIÓN DE ONTOLOGÍA
+		function seleccionarOntologia(idOntologia){
+			
+			// ACCESO Y CONTROL DE CARGA DE ONTOLOGIA
+			console.log('seleccionarOntologia(): ' + idOntologia);
+			if ( idOntologia === '' ) { alert([[#{herramientas_seleccione_ontologia}]]); return; }       
+			
+			bdtrDWR.isPostgreSQL(idOntologia, {callback:function(data) {
+				bdtrDWR._path =  busServer;
+				isPostgreSQL  = data;
+				if(isPostgreSQL == "true"){
+					$("#typeQuery").val("sql").attr("selected", "selected");
+					$("#typeQuery").attr("disabled", "disabled");
+				}else{
+					$("#typeQuery").removeAttr("disabled");
+				}
+			 },
+			 timeout:0});
+			
+		   
+			if( idOntologia === ''){
+			  alert([[#{herramientas_seleccione_ontologia}]]);
+			}
+			else{
+			
+				ontologia = idOntologia;              
+				var comboTypeQuery = document.getElementById('typeQuery');
+				if(comboTypeQuery.selectedIndex == -1){
+					alert([[#{herramientas_seleccione_tipoquery}]]);
+				}
+				else{
+					var opcion = comboTypeQuery.options[comboTypeQuery.selectedIndex].value;
+					if(opcion == "sql"){ $('#querySql').val("select * from "+ ontologia +" limit 3;"); }
+					else if( opcion == "native" && bdtrType != "relationalOracle" && bdtrType != "relationalKudu"){ $('#querySql').val("db."+ ontologia +".find().limit(3);"); }
+					else if( opcion == "native" && bdtrType == "relationalOracle"){ $('#querySql').val("select * from "+ ontologia +" where ROWNUM <= 50;"); }
+					else if( opcion == "native" && bdtrType == "relationalKudu")  { $('#querySql').val("select * from "+ ontologia +" limit 3"); }
+					else if( opcion == "sql2"){ $('#querySql').val("select * from "+ ontologia +" limit 3"); }
+				}
+				$("#groupBy_time_ul").hide();
+				$( "#from_ul" ).children().not('.panel-sofia2').remove();
+				$( "#select_ul" ).children().not('.panel-sofia2').remove();
+				from =  '<li id="from" name="'+ ontologia +'" id="'+ ontologia +'" class="list-group-item bold uppercase"> '+ ontologia +' </li>';
+
+				$("#from_ul").append(from);
+			}
+			
+			bdtrDWR.isTimeSerie(idOntologia, {callback:function(data) {
+				bdtrDWR._path =  busServer;
+				isTimeSerie=data;
+				$("#create_query").append('<input type="hidden" id="isTimeSerie" value="'+ isTimeSerie +'" />');
+				if(isTimeSerie){ mostrarDialogoTimeSerie();}
+			},
+			timeout:0});
+					 
+			// mostramos el panel de consultas. 
+			if ($('#query-panel').hasClass('hide')){ $('#query-panel').toggleClass('hide'); } 
+			$('#query-ontologia').text('' + idOntologia);		
+		}
+		
+		
+		function seleccionarTablaBDC(){
+			var comboTablaBdc = document.getElementById('tablaBDC');
+			
+			if(comboTablaBdc.selectedIndex==-1){
+			  alert([[#{herramientas_seleccione_tablaBdc}]]);
+			}else{
+				  var tabla = comboTablaBdc.options[comboTablaBdc.selectedIndex].value;
+				  $('#querySql').val("select * from "+ tabla +";");
+			}
+		}
+		
+		
+		function seleccionarOntologiaGrupo(){        
+			
+			 var comboOnt = document.getElementById('ontologia');
+			 if(comboOnt.selectedIndex!=-1){
+				 comboOnt.options[comboOnt.selectedIndex].selected = false;
+			 }
+			
+			 var comboOntologia = document.getElementById('ontologiagrupo');
+			 if(comboOntologia.selectedIndex==-1){
+			   alert([[#{herramientas_seleccione_ontologia}]]);
+			 }else{
+				   var ontologia = comboOntologia.options[comboOntologia.selectedIndex].value;
+				   
+				   var comboTypeQuery = document.getElementById('typeQuery');
+				   if(comboTypeQuery.selectedIndex==-1){
+					   alert([[#{herramientas_seleccione_tipoquery}]]);
+				   }else{
+					   var opcion = comboTypeQuery.options[comboTypeQuery.selectedIndex].value;
+					   if(opcion=="sql"){
+							 $('#querySql').val("select * from "+ontologia+" limit 3;");
+					   }else if(opcion=="native"){
+						   $('#querySql').value = "db."+ontologia+".find().limit(3);";
+					   }
+				   }
+				   $( "#from_ul" ).children().not('.panel-sofia2').remove();
+					$( "#select_ul" ).children().not('.panel-sofia2').remove();
+					from = '<li id="from" name="'+ontologia+'" type="none" style="list-style:none;padding-left: 3px;word-wrap: break-word;"><td th:text="'+ontologia+'" th:id="'+ontologia+'">'+ontologia+'</td></li>';
+					$("#from_ul").append(from);  
+			 }
+		} 
+		
+	   
+		
+		var nextinput = 0;
+		// ARRAY DE CAMPOS DE CADA ONTOLOGIA, SE CARGA CON CADA ONTOLOGIA MEDIANTE OBTENERCAMPOS()
+		var campos = [];
+		
+		// OBTIENE LOS CAMPOS DE UNA ONTOLOGIA DADA.
+		function obtenerCampos(idOntologia){
+
+			var combo		= document.getElementById('typeQuery');
+			var opcion		= combo.options[combo.selectedIndex].value;
+			var combodb		= document.getElementById('targetDatabase');
+			var targetdb	= combodb.options[combodb.selectedIndex].value;
+			
+			showLog ? console.log('obtenerCampos('+idOntologia+')...') : '';
+
+			$( "#checkselect" ).empty();
+			$( "#campos" ).empty();		
+			$("#where_ul").children().not('.panel-sofia2').remove();
+			$("#groupBy_ul").children().not('.panel-sofia2').remove();
+			$("#orderby_ul").children().not('.panel-sofia2').remove();		
+
+			// BDTR - SQL
+			if( targetdb == "bdtr" && opcion == "sql"){
+				showLog ? console.log('obtenerCampos... BDTR - SQL ') : '';                 
+				//$('.bootstrap-switch-id-groupby_check').css("display","none"); TO-DO: DESHABILITAR GROUPBY
+				//document.getElementById('groupby_label').style.display = "none";
+			}
+			// BDTR - ( NATIVE || SQL2 )
+			else if(( targetdb == "bdtr" && opcion == "native") || (targetdb == "bdtr" && opcion == "sql2" )){			
+				showLog ? console.log('obtenerCampos... BDTR -NATIVE-SQL2 ') : '';
+			}
+			// BDH
+			else if(targetdb == "bdh"){			
+				showLog ?  console.log('obtenerCampos... BDH') : '';
+			}		
+			
+			campos.splice(0,campos.length);
+			
+			// inicialización del select de campos para el SELECT
+			check = '<option id="seleccione" th:value="seleccione" selected="selected">Seleccione los campos...</option>';
+			$("#checkselect").append(check);
+			check = '<option th:id="Todos" th:value="Todos">Todos los campos</option>';
+			$("#checkselect").append(check);
+			
+			bdtrDWR.getOntologyFields(idOntologia, {callback:function(data) {
+				bdtrDWR._path =  busServer;
+				campos = data;
+				for (i=0;i<campos.length;i++) {
+					nextinput++;
+					if( campos[i] == "error"){				 
+					  mostrarDialogo([[#{consultas_formulario_campos_error}]]);
+					}
+					else{
+						// se agregan los campos de la ontología seleccionada al select de campos 
+						check = '<option th:id="check'+ nextinput +'" th:value="'+ campos[i] +'">'+ campos[i] +'</option>';					
+						$("#checkselect").append(check);
+					}
+				} 
+			},timeout:0});     
+			 
+		};
+		
+		
+		//var indexCampo = 0;
+		
+		// FUNCION PARA AGREGAR CAMPOS AL SELECT DE LA CONSULTA 
+		function addRemoveCampoToSelect(campos){
+			var isTimeSerie = $("#isTimeSerie").val();
+			var repetido = false;
+			var campoSelected = document.getElementById("checkselect").value;
+			 
+			// SERIES DE TIEMPO
+			if( isTimeSerie == "true" ){
+				$("#select_ul").children().not('.panel-sofia2').remove();
+				if( campoSelected == "Todos los campos"){ $("#groupby_label,#groupBy_time_ul").hide(); } else { $("#groupby_label,#groupBy_time_ul").show(); }
+				
+				// creamos el nuevo li con el campo a agregar
+				select = '<li id="'+campoSelected+'" name="'+campoSelected+'" class="list-group-item bold even">'+campoSelected+'<div class="btn btn-xs pull-right" onclick="deleteCondition(\''+campoSelected+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
+				$("#select_ul").append(select); 
+				$('#dialog-execution-select').dialog("close");
+				console.log('regenerando query tras agregar o quitar: ' + campoSelected);
+				createQuery();
+			}
+			else{
+			// SERIES NORMALES
+				if( campoSelected !== "Seleccione los campos..." ){
+					
+					// seleccionamos el id del campo seleccionado.
+					for(var i = 0; i < campos.length; i++){ if( campos[i].value == campoSelected ){ var campoId=campos[i].getAttribute("th:id"); break; }}
+					
+					// si es Todos, se vacia la lista.
+					if( campoId == "Todos" ){ 
+						$("#select_ul").children().not('.panel-sofia2').remove();
+					}
+					else{
+					
+						var listaSelect = $("#select_ul").children().not('.panel-sofia');
+						if( listaSelect.length == 0){}
+						else{
+							for(var i=0; i<listaSelect.length; i++){
+								var li_id = listaSelect[i].getAttribute("id");
+								if( li_id == "Todos"){ $("#select_ul").children().not('.panel-sofia2').remove(); }
+								else{
+									if( li_id == campoId ){ repetido = true; }
+								}
+							}	  
+						}
+					}
+					if( repetido == false ){
+						
+						// creamos el nuevo li con el campo a agregar					
+						select = '<li id="'+campoId+'" name="'+campoSelected+'" class="list-group-item bold even">'+campoSelected+'<div class="btn btn-xs pull-right" onclick="deleteCondition(\''+campoId+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
+						$("#select_ul").append(select);
+						console.log('regenerando query tras agregar o quitar: ' + campoSelected);
+						createQuery();
+					}
+					// cerramos el dialogo.
+					$('#dialog-execution-select').dialog("close");
+					document.getElementById("seleccione").selected = true;
+				} 
+			}
+		};
+		
+			
+		
+		// FUNCIONES PARA LANZAR LOS DIALOGOS DE LOS PANELES DE CONSULTA 
+		function addSelect()	{ mostrarDialogoSelect(); }
+		function addCondition()	{ mostrarDialogoCondicion(); }    
+		function addOrderBy()	{ mostrarDialogoOrderBy(); }
+
+		function mostrarDialogoSelect(){
+			 var combodb=document.getElementById('targetDatabase');
+			 var targetdb= combodb.options[combodb.selectedIndex].value;
+			 document.getElementById("checkselect").style.display="block";      
+
+			 $( "#dialog-execution-select" ).dialog({resizable: false,height:220,modal: true,position: [($(window).width() / 2) - 150, 300],dialogClass: 'DeleteConfirmDialog'});
+		};
+		
+		// TO-DO: falta chquear con alguna ontolgia de time
+		function mostrarDialogoTimeSerie(){
+			document.getElementById("dialog-execution-time-serie").innerHTML=[[#{consultar_formulario_dialog_time_serie}]];
+		   $( "#dialog-execution-time-serie" ).dialog({
+			   resizable: false,
+			   height:200,
+			   modal: true,
+			   position: [($(window).width() / 2) - 150, 300],
+			   dialogClass: 'DeleteConfirmDialog',
+			   buttons: {                                 
+				   [[#{dialogo_confirm_delete_button_cancelar}]]: function() {
+					   $("#typeQuery").removeAttr("disabled");
+					   $("#resultFormat").removeAttr("disabled");
+					   $("#isTimeSerie").val(false);
+					   $( this ).dialog("close");
+				   },
+				   [[#{dialogo_confirm_table_button_continuar}]]: function() {
+					   $("#checkselect")
+							.empty()
+							.append('<option id="seleccione" th:value="seleccione" selected="selected">Seleccione los campos...</option>')
+							.append('<option value="Todos los campos">Todos los campos</option>')
+							.append('<option value="MAX">MAX(*)</option>')
+							.append('<option value="MIN">MIN(*)</option>')
+							.append('<option value="SUM">SUM(*)</option>')
+							.append('<option value="AVG">AVG(*)</option>')
+							.append('<option value="COUNT">COUNT(*)</option>');
+					   
+					   $("#typeQuery").attr("disabled", "disabled");
+					   $("#resultFormat").attr("disabled", "disabled");
+					   $("#orderby_label").hide();
+					   $("#img_add_order").hide();
+					   $('.bootstrap-switch-id-groupby_check').hide();
+					   $("#isTimeSerie").val(true);
+					   $( this ).dialog("close");
+				   }
+			   }
+		   });
+		}
+		
+		
+		// MODAL DE CONDICIONES DEL WHERE 
+		var indexCondition = 0;
+		function mostrarDialogoCondicion(){
+			var combodb = document.getElementById('targetDatabase');
+			var targetdb = combodb.options[combodb.selectedIndex].value;
+			$( "#dialog-execution-condition" ).dialog({ resizable: false, height:200, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
+				buttons: {
+					[[#{dialogo_confirm_delete_button_cancelar}]]: function() {
+						$("#form_condicion").val('');
+						$( this ).dialog("close");
+					},
+					[[#{dialogo_confirm_table_button_continuar}]]: function() {
+						if( $("#form_condicion").val() == ""){
+							mostrarDialogo([[#{consultas_formulario_error}]]);
+						}
+						else{
+							var campo = $("#form_campos").val();
+							var operador = $("#form_operador option:selected").text();
+							var condicion = $("#form_condicion").val();						
+							var c = Number(condicion);						
+							if( c.toString() == "NaN"){ condicion = '&#34;'+condicion+'&#34;'; }
+							if( operador == " < "){ operador=" &#60; "; }else if( operador == "<="){operador=" &#60;= "; }						
+							queryCondition = campo + operador + condicion;
+							var add = comprobarCondicion(queryCondition);
+							if( add ){							
+								where = '<li  id="condicion'+indexCondition+'" condition="'+queryCondition+'"  class="list-group-item bold">'+ queryCondition +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'condicion'+indexCondition+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
+								indexCondition++;
+								$("#where_ul").append(where);							
+							}
+							$("#form_condicion").val('');
+							$( this ).dialog("close");
+							showLog ? console.log('regenerando query tras agregar o quitar condición: ' + queryCondition) : '';
+							createQuery();
+						}
+					}
+				}
+			});
+			$( "#form_campos" ).empty();
+			for( i=0; i < campos.length; i++){
+				 $('#form_campos').append($('<option>', {value: campos[i],text : campos[i]}));
+			}
+		};
+		
+		// COMPROBAR LAS CONDICIONES ANTES DE INYECTARLAS
+		function comprobarCondicion(queryCondicion){
+			var condiciones = document.getElementById('where_ul').getElementsByTagName("li");
+			var add=true;
+			
+			if(condiciones.length > 0){
+				for( var i=0; i < condiciones.length; i++){
+					if( condiciones[i].getAttribute("name") == queryCondicion ){
+						add = false;
+					}
+				}
+			}
+			return add;
+		}
+		
+		// COMPROBAR CONDICIONES GROUPBY ANTES DE INYECTAR, TO-DO: probar con una ontologia que pueda hacer groupby
+		function comprobarGroupby(queryGroupby){
+		
+			var groups = document.getElementById('groupBy_ul').getElementsByTagName("li");
+			var add = true;
+			
+			if( groups.length > 0){
+				for(var i=0; i <groups.length; i++){
+					if(groups[i].getAttribute("name") == queryGroupby){
+						add=false;
+					}
+				}
+			}
+			return add;
+		}
+		
+		// COMPROBAR LAS CONDICIONES DE ORDERBY ANTES DE INYECTAR
+		function comprobarOrderby(queryOrderby){
+			var orders = $('#orderby_ul li:not(".panel-sofia2")');
+			var add = true;
+			
+			if( orders.length > 0){
+				for(var i=0; i < orders.length; i++){
+					if( orders[i].getAttribute("name") == queryOrderby){
+						add = false;
+					}
+				}
+			}
+			return add;
+		}
+		
+		// CONFIRMACION GENERICA 
+		function mostrarDialogo(texto){
+			document.getElementById("dialog-confirm-generic").innerHTML = texto;
+			$( "#dialog-confirm-generic" ).dialog({resizable: false, height:160, modal: true,  position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
+				buttons: {                                 
+				   [[#{dialogo_confirm_table_button_continuar}]]: function() { $( this ).dialog("close"); }
+				}               
+			});
+		}
+		
+		// QUITAR CONDICION, REGENERA LA QUERY AUTOMATICAMENTE PARA NO TENER QUE HACERLO MANUAL COMO ANTES.
+		function deleteCondition(elemento){
+			$('#'+ elemento +'').remove();
+			// regeneramos la query automaticamente.
+			createQuery();
+		}
+		
+		var indexOrderby = 0;
+		// DIALOGO DE CONFIGURACION DEL ORDERBY
+		function mostrarDialogoOrderBy(){
+			$( "#dialog-execution-orderby" ).dialog({resizable: false, height:160,  modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
+				buttons: {
+					[[#{dialogo_confirm_delete_button_cancelar}]]: function() {
+						$( this ).dialog("close");
+					},
+					[[#{dialogo_confirm_table_button_continuar}]]: function() {
+						$("#orderby_ul").children().not('.panel-sofia2').remove();
+						var campo = $("#form_orderby_campos").val();
+						var orden = $("#form_orden").val();
+						var add = comprobarOrderby(campo);
+						if(add){                        
+							var orderby = '<li id="orderby'+indexOrderby+'" name="'+campo+' '+orden+'" class="list-group-item bold">'+ campo +' '+ orden +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'orderby'+indexOrderby+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
+							$("#orderby_ul").append(orderby);
+							showLog ? console.log('regenerando query tras agregar o quitar orderby: ' + campo) : '';
+							createQuery();
+						}
+						indexOrderby++;
+						$( this ).dialog("close");
+					}
+				}
+			});
+			
+			$( "#form_orderby_campos" ).empty();
+			for( i=0; i < campos.length; i++){
+				 $('#form_orderby_campos').append($('<option>', { value: campos[i], text : campos[i]}));
+			}
+		}
+
+		
+		// DISPATCHER PARA LLAMAR A LA FUNCION CORRESPONDIENTE QUE MONTA EL QUERY STRING DEPENDIENDO DE LA BBDD Y DEL TIPO DE CONSULTA, Y SALIDA.
+		function createQuery(){
+			
+			var isTimeSerie = $("#isTimeSerie").val();
+			
+			// CHECK DE ONTOLOGIA
+			ontologia = $('#selector_ontologias').selectpicker('val');	
+			showLog ? console.log('createQuery() -> ontologia seleccionada: ' + ontologia) : '';
+			
+			if ( ontologia === ''){ 			
+				mostrarDialogo([[#{herramientas_seleccione_ontologia}]]); 			
+			}
+			else {
+			
+				var comboTypeQuery = document.getElementById('typeQuery');		
+				var opcion = comboTypeQuery.options[comboTypeQuery.selectedIndex].value;			
+				// TIME-SERIE
+				if( isTimeSerie == "true"){$('#querySql').val(createQueryTimeSerie()); }			
+				// SQL NO-RELATIONALORACLE
+				else if(opcion=="sql" && bdtrType!="relationalOracle"){ console.log('createQuery()->createQuerySqlNo');  $('#querySql').val(createQuerySql()); }			
+				// SQL-RELATIONALORACLE
+				else if(opcion=="sql" && bdtrType=="relationalOracle"){ console.log('createQuery()->createQuerySql'); $('#querySql').val(createQuerySql()); }			
+				// NATIVE NO-RELATIONALORACLE
+				else if(opcion=="native" && bdtrType!="relationalOracle"){ console.log('createQuery()->createQueryNativeNo'); $('#querySql').val(createQueryNative()); }			
+				// NATIVE RELATIONALORACLE
+				else if(opcion=="native" && bdtrType=="relationalOracle"){ console.log('createQuery()->createQueryNative'); $('#querySql').val(createQueryNative()); }			
+				// SQL2 NO-RELATIONALORACLE
+				else if(opcion=="sql2" && bdtrType!="relationalOracle"){ console.log('createQuery()->createQuerySql2No'); $('#querySql').val(createQuerySql2()); }			
+				// SQL2 RELATIONALORACLE
+				else if(opcion=="sql1" && bdtrType=="relationalOracle"){ console.log('createQuery()->createQuerySql2'); $('#querySql').val(createQuerySql2()); } 		
+			}
+		};
+		
+		// GENERACION DEL QUERY STRING SQL NO-RELATIONALORACLE Y RELATIONALORACLE CON SQL
+		function createQuerySql(){
+			
+			// Inicialización de elementos y strings de la query.        
+			var todosCampos = false;
+			var query 		= "select ";
+			var queryCampos = "";
+			var ontologia 	= document.getElementById("from").getAttribute("name");
+			var condiciones = $('#where_ul li:not(".panel-sofia2")');
+			var groupby 	= document.getElementById('groupby_check');
+			var orderby 	= $('#orderby_ul li:not(".panel-sofia2")');
+			var campos 		= $('#select_ul li:not(".panel-sofia2")');
+			var condicion, queryGroupBy, queryOrderBy = "";
+					
+			// controles de elementos de la query
+			hayCondicion 	= false;
+			hayGroupBy	 	= false;
+			hayOrderBy 		= false;
+			
+			
+			// CONDICIONES WHERE
+			if( condiciones.length == 1){
+				hayCondicion = true;
+				condicion = condiciones.attr('condition');
+				condicion = obtainCondition(condicion);
+				condicion= "c." + condicion;
+			}
+			else if( condiciones.length > 0){
+				hayCondicion = true;
+				condiciones.each(function(index){		
+					showLog ? console.log('condición auxiliar en EACH-'+ index +' es: ' + $(this).attr('condition')) : '';
+					var condicionAux = obtainCondition($(this).attr('condition'));				
+					if( index == 0){ condicion = "c." + condicionAux; } else {  condicion = condicion + " AND " + condicionAux; }			
+				});           
+			}		
+
+			// ORDERBY 
+			if( orderby.length == 1){ hayOrderBy = true; queryOrderBy = orderby[0].getAttribute("name"); }
+			
+			// CAMPOS (SELECT)		
+			if( campos.length == 1 ){ queryCampos = campos[0].getAttribute("name");	if( queryCampos == "Todos los campos"){ todosCampos = true;	}}
+			else if( campos.length == 0){ 
+				todosCampos = true; 
+			}
+			else{			
+				for( i=0; i < campos.length; i++){
+					if( campos[i].getAttribute("name") == "Todos los campos"){ 
+						todosCampos = true; 
+					}
+					else{					
+						queryCampos = queryCampos + campos[i].getAttribute("name");					
+						if( i <campos.length-1){ queryCampos = queryCampos + ", "; } // último campo.
+					}
+				}
+			}
+
+			// SELECT ALL.
+			if( todosCampos ){ queryCampos = "*"; }
+			
+			// GROUPBY
+			if( groupby.checked == true && queryCampos != "*"){ hayGroupBy = true; queryGroupBy = queryCampos;	}
+			else if( groupby.checked == true && queryCampos == "*"){ hayGroupBy = false; mostrarDialogo([[#{consultas_formulario_error_groupby}]]); }
+			
+			// MONTAJE DE CONSULTA
+			if(		 hayCondicion && hayGroupBy && hayOrderBy )  { query = query + queryCampos + " from " + ontologia + " where " + condicion + " group by " + queryGroupBy + " order by "+ queyrOrderBy;}
+			else if( !hayCondicion && !hayGroupBy && !hayOrderBy){ query = query + queryCampos + " from " + ontologia; }
+			else if( hayCondicion  && !hayGroupBy && !hayOrderBy){ query = query + queryCampos + " from " + ontologia + " where " + condicion; }
+			else if( !hayCondicion && hayGroupBy  && !hayOrderBy){ query = query + queryCampos + " from " + ontologia + " group by " + queryGroupBy; }
+			else if( hayCondicion  && !hayGroupBy && hayOrderBy) { query = query + queryCampos + " from " + ontologia + " where " + condicion + " order by "+ queryOrderBy;}
+			else if( !hayCondicion && hayGroupBy  && hayOrderBy) { query = query + queryCampos + " from " + ontologia + " group by " + queryGroupBy + " order by "+ queryOrderBy; }
+			else if( hayCondicion  && hayGroupBy  && !hayOrderBy){ query = query + queryCampos + " from " + ontologia + " where " + condicion + " group by " + queryGroupBy;}
+			else if( !hayCondicion && !hayGroupBy && hayOrderBy) { query = query + queryCampos + " from " + ontologia + " order by " + queryOrderBy; }
+			
+			// CONTROL RELATIONALORACLE O NO-RELATIONALORACLE
+			if( bdtrType == "relationalOracle"){ query = query + ";"; } else if( bdtrType != "relationalOracle"){ query = query + " limit 3;"; }
+			
+			// RETORNA EL STRING QUERY COMPLETADO.
+			return query;
+		}
+		
+		// GENERACIÓN DE CONSULTAS SQL1 O SQL2 RELATIONALORACLE O NO-RELATIONALORACLE ES EXACTAMENTE IGUAL QUE createQuerySql, PERO AGREGA EL STRING C. TO-DO: UNIFICARLAS.
+		function createQuerySql2(){
+			
+			// Inicialización de elementos y strings de la query.        
+			var todosCampos = false;
+			var query 		= "select ";
+			var queryCampos = "";
+			var ontologia 	= document.getElementById("from").getAttribute("name");
+			var condiciones = $('#where_ul li:not(".panel-sofia2")');
+			var groupby 	= document.getElementById('groupby_check');
+			var orderby 	= $('#orderby_ul li:not(".panel-sofia2")');
+			var campos 		= $('#select_ul li:not(".panel-sofia2")');
+			var condicion, queryGroupBy, queryOrderBy = "";
+					
+			// controles de elementos de la query
+			hayCondicion 	= false;
+			hayGroupBy	 	= false;
+			hayOrderBy 		= false;
+			
+			
+			// CONDICIONES WHERE
+			if( condiciones.length == 1){
+				hayCondicion = true;
+				condicion = condiciones.attr('condition');
+				condicion = obtainCondition(condicion);
+				condicion= "c." + condicion;
+			}
+			else if( condiciones.length > 0){
+				hayCondicion = true;
+				condiciones.each(function(index){		
+					showLog ? console.log('condición auxiliar en EACH-'+ index +' es: ' + $(this).attr('condition')) : '';
+					var condicionAux = obtainCondition($(this).attr('condition'));				
+					 if( index == 0){ condicion = "c." + condicionAux; } else {  condicion = condicion + " AND " + "c." + condicionAux; }			
+				});           
+			}
+			
+			// ORDER BY
+			if( orderby.length == 1){ hayOrderBy = true; queryOrderBy = orderby[0].getAttribute("name"); }
+			
+			// CONTROL SELECT ALL
+			if(campos.length == 1){
+				if( campos[0].getAttribute("name") == "Todos los campos"){
+					todosCampos = true;
+				}else{
+					 queryCampos = "c." + campos[0].getAttribute("name");
+				}
+			}
+			else if( campos.length == 0){
+				todosCampos = true;
+			}
+			// CONTROL SELECTS
+			else{
+				for(i=0; i < campos.length; i++){
+					if( campos[i].getAttribute("name") == "Todos los campos"){
+						todosCampos = true;
+					}
+					else{
+						queryCampos =  queryCampos + "c." +campos[i].getAttribute("name");
+						if( i < campos.length-1){
+							queryCampos = queryCampos + ", ";
+						}
+					}
+				}
+			}
+			
+			if( todosCampos ){ queryCampos = "*"; }
+			
+			if( groupby.checked == true && queryCampos != "*"){ hayGroupBy = true; queryGroupBy = queryCampos; }
+			else if(groupby.checked==true && queryCampos=="*"){  hayGroupBy = false; mostrarDialogo([[#{consultas_formulario_error_groupby}]]); }
+			
+			// MONTAJE DE CONSULTA
+			if( hayCondicion && hayGroupBy && hayOrderBy )		  { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " group by " + queryGroupBy + " order by "+ queryOrderBy;}
+			else if( !hayCondicion && !hayGroupBy && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c"; }
+			else if( hayCondicion  && !hayGroupBy && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion; }
+			else if( !hayCondicion && hayGroupBy  && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c group by " + queryGroupBy; }
+			else if( hayCondicion  && !hayGroupBy && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " order by "+ queryOrderBy;}
+			else if( !hayCondicion && hayGroupBy  && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c group by " + queryGroupBy + " order by "+ queryOrderBy; }
+			else if( hayCondicion  && hayGroupBy  && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " group by " + queryGroupBy; }
+			else if( !hayCondicion && !hayGroupBy && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c order by " + queryOrderBy;}
+			
+			if( bdtrType != "relationalOracle"){ query = query + " limit 3"; }
+			// RETORNO DEL QUERY_STRING
+			return query;
+		}
+		
+		// GENERACIÓN DE CONSULTAS DE TIME-SERIE TO-DO: probar con una ontologia que me permita verlo.
+		function createQueryTimeSerie(){
+				
+			// Inicialización de elementos y strings de la query.      
+			var query 		= "select ";
+			var queryCampos = "";
+			var ontologia 	= document.getElementById("from").getAttribute("name");
+			var condiciones = $('#where_ul li:not(".panel-sofia2")');
+			var groupby 	= document.getElementById('groupby_check');       
+			var campos 		= $('#select_ul li:not(".panel-sofia2")');
+			var condicion, queryGroupBy = "";
+			
+			hayCondicion = false;
+			hayGroupBy	 = false;
+			
+				
+			// CONDICIONES WHERE
+			if( condiciones.length == 1){
+				hayCondicion = true;
+				condicion = condiciones.attr('condition');
+				condicion = obtainCondition(condicion);
+				condicion= "c." + condicion;
+			}
+			else if( condiciones.length > 0){
+				hayCondicion = true;
+				condiciones.each(function(index){		
+					showLog ? console.log('condición auxiliar en EACH-'+ index +' es: ' + $(this).attr('condition')) : '';
+					var condicionAux = obtainCondition($(this).attr('condition'));				
+					 if( index == 0){ condicion = condicionAux; } else {  condicion = condicion + " AND " + condicionAux; }			
+				});           
+			}	
+					
+			// GROUPBY
+			if( groupby.length != 0){ groupby = groupby.attr("id").split("groupby_")[1]; hayGroupBy = true; } else { hayGroupBy = false; }
+			
+			// CAMPOS 
+			if( campos.length == 0){ queryCampos = "*"; } else { queryCampos = campos[0].getAttribute("name");if( queryCampos == "Todos los campos"){ queryCampos = "*"; } else { queryCampos += "(*)";}}
+			
+			// MONTAJE DE CONSULTA 
+			if	   ( hayCondicion  && hayGroupBy ){ query = query + queryCampos + " from " + ontologia + " where " + condicion + " group by " + groupby; }
+			else if( !hayCondicion && !hayGroupBy){ query = query + queryCampos + " from " + ontologia; }
+			else if( hayCondicion  && !hayGroupBy){ query = query + queryCampos + " from " + ontologia + " where " + condicion;}
+			else if( !hayCondicion && hayGroupBy) { query = query + queryCampos + " from " + ontologia + " group by " + groupby; }
+			
+			// RETORNO DEL STRING QUERY
+			return query;
+		}
+		
+		// OBTIENE LA CONDICIÓN DEL WHERE HACIENDO UN ESCAPE DE CARACTERES PARA EL QUERY STRING
+		function obtainCondition(condicion){
+			if( condicion.includes("&eq"))		{ condicion = condicion.replace("&eq;", "=");  }
+			else if( condicion.includes("&lt"))	{ condicion = condicion.replace("&lt;", "<");  }
+			else if( condicion.includes("&lte")){ condicion = condicion.replace("&lte;", "<=");}
+			else if( condicion.includes("&gt"))	{ condicion = condicion.replace("&gt;", ">");  }
+			else if( condicion.includes("&gte")){ condicion = condicion.replace("&gte;", ">=");}
+			else if( condicion.includes("&ne"))	{ condicion = condicion.replace("&ne;", "!="); }
+			//console.log('obtainCondition() -> condition replaced: ' + condicion);
+			return condicion;
+		}
+		
+		
+		// MONTAJE DE LA CONSULTA CUANDO ES QUERY NATIVE , TO-DO: chequear su funcionamiento
+		function createQueryNative(){
+					
+			// Inicialización de elementos y strings de la query.        
+			var todosCampos = false;       
+			var queryCampos = "";
+			var queryGroup	= "$group:";
+			var ontologia 	= document.getElementById("from").getAttribute("name");
+			var condiciones = $('#where_ul li:not(".panel-sofia2")');
+			var groupby 	= $('groupby_check');
+			var orderby 	= $('#orderby_ul li:not(".panel-sofia2")');
+			var campos 		= $('#select_ul li:not(".panel-sofia2")');
+			var condicion	= "";
+					
+			// controles de elementos de la query
+			hayCondicion 	= false;
+			hayGroupBy	 	= false;
+			hayOrderBy 		= false;
+			
+			showLog ? console.log('createQueryNative() -> inicialización de campos') : '';
+
+			
+			// SELECT  
+			if(campos.length == 1){
+				queryCampos= "'" + campos[0].getAttribute("name") + "'" + ": 1";
+				if( queryCampos == "Todos los campos"){ todosCampos = true; } 
+			}
+			else if(campos.length == 0){
+				todosCampos = true; 
+			}
+			else{
+				for( i=0; i < campos.length; i++){
+					if( campos[i].getAttribute("name") == "Todos los campos"){
+						todosCampos=true;
+					}
+					else { 
+						queryCampos = queryCampos + "'" + campos[i].getAttribute("name") +"'" +": 1";
+						if( i < campos.length-1){ queryCampos = queryCampos + ", "; }
+					}		
+				}
+			}
+			
+			// WHERE
+			if( condiciones.length == 1){
+				hayCondicion = true;
+				condicion = condiciones.attr('condition');
+				condicion = obtainCondition(condicion);
+				var splitCondicion = condicion.split(" ");
+				var operador = splitCondicion[1];
+				var comando = "";
+				for( var a = 2; a <= splitCondicion.length ; a++){
+					if( splitCondicion[a] != "undefined" && splitCondicion[a] != null){
+						comando += splitCondicion[a];
+						if( a < splitCondicion.length ){ comando += " "; }
+					}
+				}
+				var comando = comando.split("\n").join("");
+				if	   ( operador == "=") { operador="$eq";}
+				else if( operador == "<") { operador="$lt";}
+				else if( operador == "<="){ operador="$lte";}
+				else if( operador == ">") { operador="$gt";}
+				else if( operador == ">="){ operador="$gte";}
+				else if( operador == "!="){ operador="$ne";}
+
+				condicion = "'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}";
+
+			}
+			else if(condiciones.length > 0){
+				hayCondicion = true;
+				
+				condiciones.each(function(index){		
+					showLog ? console.log('condición auxiliar en EACH-'+ index +' es: ' + $(this).attr('condition')) : '';
+					//var condicionAux = obtainCondition($(this).attr('condition'));
+					
+					var condicionSQL = obtainCondition($(this).attr('condition'));
+					var splitCondicion = condicionSQL.split(" ");
+					var operador = splitCondicion[1];
+
+					var comando = "";
+					for(var a = 2;  a <= splitCondicion.length ; a++){
+						if( splitCondicion[a] != "undefined" && splitCondicion[a] != null && i < splitCondicion.length){
+							comando += splitCondicion[a];
+							if( a < splitCondicion.length){ comando += " ";}
+						}
+					}
+				  
+					if	   ( operador == "=") { operador="$eq";}
+					else if( operador == "<") { operador="$lt";}
+					else if( operador == "<="){ operador="$lte";}
+					else if( operador == ">") { operador="$gt";}
+					else if( operador == ">="){ operador="$gte";}
+					else if( operador == "!="){ operador="$ne";}
+						
+					if( index == 0){ condicion="'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}"; } else if( index < condiciones.length) { condicion = condicion +",'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}"; }			
+				});           
+			}
+
+			// ORDERBY
+			if( orderby.length > 0){
+				hayOrderBy = true;
+				var queryOrder = "";
+				for( var i = 0; i < orderby.length;i++){
+					order = orderby[i].getAttribute("name");
+					var orderSplit = order.split(" ");
+					var orden = -1;
+					if( orderSplit[1] == "ASC"){ orden = 1; }
+					queryOrder = queryOrder + "'" + orderSplit[0] + "'" + ":" + orden;
+				}
+			}
+			
+			// GROUPBY
+			if( groupby.checked == true && !todosCampos){
+				hayGroupBy = true;
+				for(i = 0; i < campos.length; i++){
+					if(campos[i].getAttribute("name") == "Todos los campos"){ 
+						todosCampos = true; 
+					}
+					else{
+						campo = campos[i].getAttribute("name");
+						if( i == 0){ queryGroup = queryGroup + "{_id:{'" + campo + "':'$" + campo + "'"; }
+						else if( i <campos.length){ queryGroup = queryGroup + ",'" + campo + "':'$" + campo + "'"; }
+						if( i == campos.length-1){  queryGroup = queryGroup + "}}"; }
+					}
+				}
+			}
+			else if( groupby.checked == true && todosCampos){ mostrarDialogo([[#{consultas_formulario_error_groupby}]]); }
+
+			
+			if( !hayGroupBy ){
+				if(		hayCondicion  && todosCampos  && !hayOrderBy){ query = "db."+ ontologia + ".find({" + condicion + "})"; }
+				else if(hayCondicion  && todosCampos  && hayOrderBy) { query = "db."+ ontologia + ".find({" + condicion + "}).sort({" + queryOrder + "})"; }
+				else if(!hayCondicion && todosCampos  && !hayOrderBy){ query = "db."+ ontologia + ".find()"; }
+				else if(!hayCondicion && !todosCampos && !hayOrderBy){ query = "db."+ ontologia + ".find({},{"+queryCampos+"})";}
+				else if(hayCondicion  && !todosCampos && !hayOrderBy){ query = "db."+ ontologia + ".find({" + condicion + "},{" + queryCampos + "})"; }
+				else if(!hayCondicion && todosCampos  && hayOrderBy) { query = "db."+ ontologia + ".find().sort({" + queryOrder + "})";}
+				else if(!hayCondicion && !todosCampos && hayOrderBy) { query = "db."+ ontologia + ".find({},{"+queryCampos+"}).sort({" + queryOrder + "})";}
+				else if(hayCondicion  && !todosCampos && hayOrderBy) { query = "db."+ ontologia + ".find({" + condicion + "},{" + queryCampos + "}).sort({" + queryOrder + "})"; } 
+			}
+			else{
+				if( 	hayCondicion  && !hayOrderBy){ query = "db."+ ontologia + ".aggregate([{$match:{" + condicion + "}},{" + queryGroup + "}])"; }
+				else if(!hayCondicion && !hayOrderBy){ query = "db."+ ontologia + ".aggregate([{" + queryGroup + "}])";}
+				else if(!hayCondicion && hayOrderBy) { query = "db."+ ontologia + ".aggregate([{" + queryGroup + "},{$sort:{" + queryOrder + "}}])"; }
+				else if(hayCondicion  && hayOrderBy) { query = "db."+ ontologia + ".aggregate([{$match:{" + condicion + "}},{" + queryGroup + "},{$sort:{" + queryOrder + "}}])"; } 
+			}
+			
+			if( bdtrType == "relationalOracle"){ query = query + ";"; } else if( bdtrType != "relationalOracle"){ query = query +".limit(3);"; }
+			
+			// RETORNA EL STRING QUERY NATIVE
+			return query;
+		}
+		
+		//]]>     
+			  
+	</script> 
+
+	<!-- MAIN INIT -->
+	<script  th:inline="javascript">
+	
+	
+	var currentLanguage = [[${lang}]];	
+	
+	var userCreateJson = { 
+		"validation_dates" : [[#{user.valid.dateDeleted}]],
+		"close" : [[#{gen.closeBtn}]],		
+		"language" : currentLanguage		
+	};
+						
+	// LOAD DATA TO USE IN BDTRCONTROLLER
+	// BDTR CONTROLLER LOAD AND INIT ITSELF
+	
+	
+	<!-- CARGA DE SCRIPTS DE LA PAGINA -->
+	$(document).ready(function(){
+		
+		console.log(' INICIANDO BDTR...');			
+		// INIT SELECT-PICKERS ONTOLOGIA
+		$('.selectpicker').on('changed.bs.select', function (e, clickedIndex, newValue, oldValue) {
+			var selected = $(e.currentTarget).val();
+			var grupo = $('option:selected',this).attr('data-type');
+			var ontologiaID = $('option:selected',this).attr('id');
+			console.log('ontologia seleccionada: ' + selected);
+			console.log('Cargando ontologia: ' + selected + ' del grupo: ' + grupo + 'con ID: '+ ontologiaID);
+			
+			// selección de ontología y carga.				
+			if ( grupo === 'general') { seleccionarOntologia(selected); obtenerCampos(ontologiaID) } else { seleccionarOntologiaGrupo(); }			
+			
+	
+		});		
+	});		
+	</script>	
+</body>
+</html>

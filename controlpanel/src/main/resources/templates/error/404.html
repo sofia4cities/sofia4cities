@@ -24,29 +24,62 @@
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 		
-		<!-- PAGE STYLES -->
-        <link th:href="@{/static/webjars/sofia2_theme/css/sofia2.error.css}" rel="stylesheet" type="text/css" />
+		<!-- PAGE STYLES -->       
+		<link rel="stylesheet" th:href="@{/static/webjars/sofia2_theme/css/login.css}"/> 
+		<link th:href="@{/static/webjars/sofia2_theme/css/sofia2.error.css}" rel="stylesheet" type="text/css" />
 		
 	</head>	
     <!-- END HEAD -->
 
-    <body class=" page-404">
-        <div class="page-inner">            
-			<img th:src="@{/static/images/globe.jpg}" class="img-responsive"/>
+<body class="page-404">
+	<header role="banner">
+		<div id="cd-logo">
+		<a th:href="@{/}" style="color: #FFF; font-size: 30px; font-family: 'Poppins';font-weight: 400;text-shadow: 0px 4px 3px rgba(0,0,0,0.4), 0px 8px 13px rgba(0,0,0,0.1), 0px 18px 23px rgba(0,0,0,0.1);"><span style="font-weight: 700">Sofia</span>4<span style="font-weight: 700">Cities</span> <span style="font-size: 15px;font-weight: 400; letter-spacing: 2px">Control Panel</span></a>
 		</div>
-			
-        <div class="container error-404">
-            <h1>404</h1>
-            <h2>Houston, we have a problem.</h2>
-            <p  class="lead bold uppercase font-red-sunglo" th:text="${error}">Error Info</p>
-			<p> Actually, the page you are looking for does not exist. </p>
-            <p><a th:href="@{/}" class="btn red btn-outline"> Return home </a><br/></p>
-        </div>       
-        
-	<!-- CORE CONTROLLERS -->
-	<script th:src="@{/static/js/app.js}"/>
-	<script th:src="@{/static/js/layout.js}"/>
-       
+		<nav class="main-nav">
+			<ul>
+				<!-- inser more links here -->
+				<li><a class="cd-signin" href="#0">Error</a></li>				
+			</ul>
+		</nav>
+	</header>
+	<style>
+	.background {  display: block;  top: 0;  left: 0;  z-index: 1; } 
+	</style>
+	
+	<div class="cd-user-modal"> <!-- this is the entire modal form, including the background -->
 
-    </body>
+		<div class="container error-404">  
+			<h1>404</h1>						
+			<h2>ControlPanel, we have a problem.</h2>
+			<h3 class="bold"><i class="fa fa-warning"></i> 404 Not Found </h3>			
+			<p class="bold margin-top-10"> Actually, the page you are looking for does not exist. <br/></p>
+			<p class="margin-top-30"><a th:href="@{/}" class="btn white btn-outline"> Return home </a><br/></p>
+		</div>
+	
+	</div> <!-- cd-user-modal -->
+	<canvas class="background"></canvas>
+	
+	<!-- LEGAL INFO -->
+	<div id="legal" class="legal">Sofia4Cities Minsait © 2018 Indra Company</div>
+	
+	<!-- MAIN SCRIPTS  -->
+	<script th:src="@{/static/vendor/jquery/jquery.min.js}"></script>	
+	<script th:src="@{/static/vendor/bootstrap/bootstrap.js}"/>
+	<script th:src="@{/static/js/pages/login.js}"></script>
+	<script th:src="@{/static/vendor/modernizr.js}"></script> <!-- Modernizr -->
+	<script th:src="@{/static/vendor/particles.js}"></script>
+	
+	<script>
+	var timer = 0;
+	window.onload = function() {
+		Particles.init({
+		selector: '.background',
+		connectParticles: true,
+		color: "#FFFFFF"
+		});
+		timer = setTimeout(function(){ $('.cd-signin').trigger('click'); }, 300);
+	};
+	</script>
+</body>
 </html>

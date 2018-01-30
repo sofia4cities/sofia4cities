@@ -81,11 +81,11 @@ public class UserController {
 	@PutMapping(value = "/update/{id}")
 	public String update(@PathVariable("id") String id, @ModelAttribute User user) {
 		if (user != null) {
-			if (user.getPassword() != null && user.getEmail() != null && user.getRoleTypeId() != null
-					&& user.getUserId() != null) {
+			if (user.getPassword() != null && user.getEmail() != null && user.getUserId() != null) {
 				try {
 					if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
-
+					//If the user is not admin, the RoleType is not in the request  by default
+					if(!this.utils.getRole().equals(ROLE_ADMINISTRATOR)) user.setRoleTypeId(this.userService.getUserRole(this.utils.getRole()));
 					this.userService.updateUser(user);
 				}catch(Exception e)
 				{
@@ -154,7 +154,7 @@ public class UserController {
 
 	}
 	@GetMapping(value = "/show/{id}", produces = "text/html")
-	public String showUser(@PathVariable("id") String id, Model uiModel) {
+	public String showUser(@PathVariable("id") String id, Model model) {
 		User user=null;
 		if(id!=null){
 			//If non admin user tries to update any other user-->forbidden
@@ -164,7 +164,7 @@ public class UserController {
 		//If user does not exist
 		if(user==null) return "/error/404";
 
-		uiModel.addAttribute("user", user);
+		model.addAttribute("user", user);
 		UserToken userToken = null;
 		try {
 			userToken = this.userService.getUserToken(user);
@@ -172,20 +172,20 @@ public class UserController {
 			log.debug("No token found for user: "+user);
 		}
 		
-		uiModel.addAttribute("userToken", userToken);
-		uiModel.addAttribute("itemId", user.getUserId());
+		model.addAttribute("userToken", userToken);
+		model.addAttribute("itemId", user.getUserId());
 		
 		
 		Date today = new Date();
 		if (user.getDateDeleted()!=null){
 			if (user.getDateDeleted().before(today)){
-				uiModel.addAttribute("obsolete", true);
+				model.addAttribute("obsolete", true);
 			}
 			else{
-				uiModel.addAttribute("obsolete", false);
+				model.addAttribute("obsolete", false);
 			}
 		}else{
-			uiModel.addAttribute("obsolete", false);
+			model.addAttribute("obsolete", false);
 		}
 		
 

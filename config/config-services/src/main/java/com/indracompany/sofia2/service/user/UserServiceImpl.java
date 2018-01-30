@@ -119,4 +119,8 @@ public class UserServiceImpl implements UserService {
 			this.userRepository.save(userDb);
 		}
 	}
+	public RoleType getUserRole(String role)
+	{
+		return this.roleTypeRepository.findByName(role);
+	}
 }

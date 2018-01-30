@@ -23,6 +23,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/codemirror.css}"/>
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 
@@ -59,8 +60,8 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/configurations/list}"> <span th:text="#{configurations.breadcrumb.prev}">Users List</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{configurations.breadcrumb.create}">Show Configuration</span></li>
+						<li><a th:href="@{/configurations/list}"> <span th:text="#{configurations.breadcrumb.prev}">Configuration List</span></a><i class="fa fa-circle"></i></li>
+						<li><span th:text="#{configurations.breadcrumb.create}">Create Configuration</span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
@@ -76,11 +77,18 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="la la-users font-grey-gallery"></i>
-									<span class="caption-subject font-grey-gallery uppercase" th:text="#{configurations.template.create} + ':'"> New Configuration</span>
+									<!-- FORM TITLE -->
+									<span th:if="${configuration.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{configurations.template.create} + ':'"> New Configuration</span>
+									<span th:if="${configuration.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{configurations.template.update}"> Update Configuration</span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>
+								<div class="actions">
+									<!-- ACTION INDICATORs -->									
+									<span th:if="${configuration.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${configuration.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>									
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
@@ -95,14 +103,21 @@
 										</div>									
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="configurations_create_form" action="create.html" th:object="${configuration}" th:action="@{/configurations/create}"   method="post" class="form">
+										<form role="form" id="configurations_create_form" th:object="${configuration}"  method="post" class="form">
+											<!-- FORM ACTIONS FOR INSERT-->
+											<input th:if="${configuration.id} == null" type="hidden" name="action" th:value="@{/configurations/create}"/>
+											
+											<!-- FORM ACTIONS FOR UPDATE -->											
+											<input th:if="${configuration.id} != null" type="hidden" name="action" th:value="@{/configurations/update}"/>
+											<input th:if="${configuration.id} != null" type="hidden" name="_method" value="PUT"/>											
+											
 											<div class="form-body">
 												<!-- type, userid -->
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{configurations.type} + ':'">Configuration Type</label>
-															<select id="configurationTypes" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{configurationTypeId.name}" th:required="true">
+															<select id="configurationTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{configurationTypeId.name}" th:required="true">
 																<option th:each="configurationTypeId :${configurationTypes}" th:value="${configurationTypeId.name}" th:text="${configurationTypeId.name}" ></option>
 																<th:block if="${configuration.configurationTypeId !=null}">
 																	<option th:text="${configuration.configurationTypeId.name}" th:value="${configuration.configurationTypeId.name}"></option>
@@ -126,7 +141,7 @@
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label th:text="#{configurations.json}">JSON</label>														
-															<textarea id="jsonSchema" name="jsonSchema"  th:required="true" th:field="*{jsonSchema}" class="form-control autoExpand" rows="3" ata-min-rows='3'></textarea>
+															<textarea id="jsonSchema" name="jsonSchema"  th:required="true" th:field="*{jsonSchema}" class="form-control autoExpand" rows="3" data-min-rows='3'></textarea>
 														</div>
 													</div>																					
 												</div>
@@ -135,7 +150,10 @@
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-													<button id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<button th:if="${configuration.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<!-- UPDATE -->
+													<button th:if="${configuration.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													
 													<!-- RESET -->
 													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
 													
@@ -183,11 +201,19 @@
 		
 	<!-- TEMPLATE CONTROLLER  -->	
 	<script th:src="@{/static/js/pages/configurationsCreate.js}"/>
+	<script th:src="@{/static/js/codemirror/codemirror.js}"/>
 		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
-	
-	
+
+	var editor = CodeMirror.fromTextArea(document.getElementById('jsonSchema'), {
+		matchBrackets: true,
+        autoCloseBrackets: true,
+        mode: "application/ld+json",
+        lineWrapping: true
+	});
+
+	function navigateUrl(url){  window.location.href = url;	}
 	var currentLanguage = [[${lang}]];	
 	
 	var configurationsCreateJson = { 

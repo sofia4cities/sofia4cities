@@ -162,6 +162,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/manageconnections/show"
+				},
+				{
+					"title": {
+						"EN": "Configurations",
+						"ES": "Configuraciones"
+					},
+					"icon": "",
+					"url": "/controlpanel/configurations/list"
 				}
 			]
 		},
