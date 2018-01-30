@@ -60,7 +60,7 @@ public class UserController {
 	}
 
 
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+
 	@GetMapping(value = "/update/{id}")
 	public String updateForm(@PathVariable("id") String id, Model model) {
 		// If non admin user tries to update any other user-->forbidden
@@ -78,7 +78,6 @@ public class UserController {
 		return "/users/create";
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PutMapping(value = "/update/{id}")
 	public String update(@PathVariable("id") String id, @ModelAttribute User user) {
 		if (user != null) {
