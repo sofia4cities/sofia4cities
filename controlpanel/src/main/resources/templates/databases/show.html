@@ -108,11 +108,11 @@
 												<span class="input-group-addon"> ONTOLOGÍAS</span>
 												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" title="Seleccione una Ontología...">
 												  <optgroup label="Genéricas">
-													<option th:each="ontologia:${ontologias}" th:id="${ontologia.id}" th:data-description="${ontologia.description}" data-type="general" th:value="${ontologia.identificacion}" th:text="${ontologia.identificacion}"  ></option>
+													<option th:each="ontology : ${ontologies}" th:id="${ontology.userId.userId}" th:data-description="${ontology.description}" data-type="general" th:value="${ontology.identification}" th:text="${ontology.identification}"  ></option>
 												  </optgroup>
-												  <optgroup label="Grupo">
+												 <!--  <optgroup label="Grupo">
 													<option th:each="ontologiagrupo:${ontologiasGrupo}" th:id="${ontologiagrupo.id}" data-type="grupo" th:value="${ontologiagrupo.identificacion}" th:text="${ontologiagrupo.identificacion}" ></option>
-												  </optgroup>
+												  </optgroup> -->
 												</select>
 											</div>
 											<span class="help-block hidden-xs"> Seleccione Ontologías Genéricas o de Grupo </span>										
@@ -314,9 +314,9 @@
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 	
-	<!-- DATABASE PLUGINS -->
-	<script type='text/javascript' th:src="@{/js/sib/dwr/engine.js'}"/>
-	<script type='text/javascript' th:src="@{/js/sib/drw/util.js'}"/>
+	<!-- DATABASE PLUGINS TO-DO: pendiente de ubicación -->
+	<script type='text/javascript' th:src="@{/js/sib/dwr/engine.js}"/>
+	<script type='text/javascript' th:src="@{/js/sib/drw/util.js}"/>
 	<script th:src="@{/js/dwr/interface/BdtrDWR.js}"/>
 	<script th:src="@{/js/dwr/interface/ImpalaDWR.js}"/>
 	<script th:src="@{/js/dwr/interface/BdcDWR.js}"/>
