@@ -10,8 +10,7 @@ var UserCreateController = function() {
 	var internalFormat = 'yyyy/mm/dd';
 	var internalLanguage = 'en';
 	
-	// CONTROLLER PRIVATE FUNCTIONS
-	
+	// CONTROLLER PRIVATE FUNCTIONS	
 
 	
 	// REDIRECT URL
@@ -25,7 +24,7 @@ var UserCreateController = function() {
 		//CLEAR OUT THE VALIDATION ERRORS
 		$('#'+formId).validate().resetForm(); 
 		$('#'+formId).find('input:text, input:password, input:file, select, textarea').each(function(){
-			// CLEAN ALL EXCEPTS cssClass "no-remove" persistent fields
+			// CLEAN ALL EXCEPTS cssClass "no-remote" persistent fields
 			if(!$(this).hasClass("no-remove")){$(this).val('');}
 		});
 		
@@ -95,13 +94,10 @@ var UserCreateController = function() {
 					dateUnformatted = $(dateInput).val();
 					dateFormatted = dateUnformatted.split("/")[2] + '/' + dateUnformatted.split("/")[1] + '/' + dateUnformatted.split("/")[0];					
 					$(dateInput).val(dateFormatted);
-					logControl ? console.log('FormatDate -> ' + $(dateInput).attr('id') + ' current:' + dateUnformatted + ' formatted: ' + $(dateInput).val()) : '';
-					
+					logControl ? console.log('FormatDate -> ' + $(dateInput).attr('id') + ' current:' + dateUnformatted + ' formatted: ' + $(dateInput).val()) : '';					
 				}
-				// more languages to come...
-				
-			}			
-		  
+				// more languages to come...				
+			}		  
 		});
 
 		// all formatted then true;
