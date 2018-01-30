@@ -25,28 +25,44 @@ import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 public interface BasicOpsDBRepository {
-		
+
 	public String insert(String ontology, String instance) throws DBPersistenceException;
-	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)	throws DBPersistenceException;
 
-	public List<String> remove(String ontology, String idInstance) throws DBPersistenceException;
-	
-	public List<String> update(String ontology, String updateStmt) throws DBPersistenceException;
-	public List<String> update(String collection, String query, String data) throws DBPersistenceException;
+	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)
+			throws DBPersistenceException;
 
-	public List<String> find(String ontology, String query) throws DBPersistenceException;		
-	public List<String> find(String ontology, String query, int limit) throws DBPersistenceException;
-	
-	public String findAsOneJSON(String ontology, String query) throws DBPersistenceException;		
-	public String findAsOneJSON(String ontology, String query, int limit) throws DBPersistenceException;
-	
+	public List<String> updateNative(String ontology, String updateStmt) throws DBPersistenceException;
+
+	public List<String> updateNative(String collection, String query, String data) throws DBPersistenceException;
+
+	public List<String> deleteNative(String collection, String query) throws DBPersistenceException;
+
+	public List<String> queryNative(String ontology, String query) throws DBPersistenceException;
+
+	public List<String> queryNative(String ontology, String query, int offset, int limit) throws DBPersistenceException;
+
+	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException;
+
+	public String queryNativeAsJson(String ontology, String query, int offset, int limit) throws DBPersistenceException;
+
 	public String findById(String ontology, String objectId) throws DBPersistenceException;
-	
-	public String findAllAsOneJSON(String ontology) throws DBPersistenceException;
-	public String findAllAsOneJSON(String ontology,int limit) throws DBPersistenceException;
+
+	public String querySQLAsJson(String ontology, String query) throws DBPersistenceException;
+
+	public String querySQLAsTable(String ontology, String query) throws DBPersistenceException;
+
+	public String querySQLAsJson(String ontology, String query, int offset) throws DBPersistenceException;
+
+	public String querySQLAsTable(String ontology, String query, int offset) throws DBPersistenceException;
+
+	public String findAllAsJson(String ontology) throws DBPersistenceException;
+
+	public String findAllAsJson(String ontology, int limit) throws DBPersistenceException;
+
 	public List<String> findAll(String ontology) throws DBPersistenceException;
-	public List<String> findAll(String ontology,int limit) throws DBPersistenceException;
-	
-	public long count(String ontology)  throws DBPersistenceException;
+
+	public List<String> findAll(String ontology, int limit) throws DBPersistenceException;
+
+	public long count(String ontology) throws DBPersistenceException;
 
 }
