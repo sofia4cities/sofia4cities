@@ -23,7 +23,6 @@ import com.indracompany.sofia2.scheduler.library.common.ResponseInfo;
 import com.indracompany.sofia2.scheduler.library.scheduler.domain.TaskInfo;
 import com.indracompany.sofia2.scheduler.library.scheduler.domain.TaskOperation;
 import com.indracompany.sofia2.scheduler.library.scheduler.service.TaskService;
-import com.indracompany.sofia2.scheduler.library.scheduler.service.impl.TaskServiceTwitter;
 
 import java.util.List;
 
@@ -37,9 +36,6 @@ public class DefaultController {
 	@Autowired
 	private TaskService taskService;
 	
-
-	@Autowired
-	TaskServiceTwitter taskServiceTwitter;
 	
 	@RequestMapping (method = RequestMethod.GET, value="/list/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public List<TaskInfo> list( @PathVariable String username) {			

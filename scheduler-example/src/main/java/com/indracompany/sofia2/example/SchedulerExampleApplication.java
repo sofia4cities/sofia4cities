@@ -11,8 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.job.impl;
+package com.indracompany.sofia2.example;
 
-public class TwitterJob {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+
+
+@SpringBootApplication
+public class SchedulerExampleApplication {
+	
+	public static void main(String[] args) {
+		SpringApplication.run(SchedulerExampleApplication.class, args);
+	}
 
 }

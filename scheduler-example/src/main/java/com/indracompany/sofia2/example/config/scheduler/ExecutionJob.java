@@ -11,28 +11,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.job.impl;
+package com.indracompany.sofia2.example.config.scheduler;
 
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.quartz.JobExecutionContext;
 
-@Service
-public class ExecutionJob implements Job {
+import com.indracompany.sofia2.scheduler.library.job.BatchGenericExecutor;
+
+@Service("batchExecutor")
+public class ExecutionJob implements BatchGenericExecutor{
 	
 	@Autowired
-	private TestJob testJob;
-	
-	private final Logger logger = LoggerFactory.getLogger(ExecutionJob.class);
+	private AnotherExampleJob anotherExampleJob;
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.info("executing job test");
-		testJob.execute(context);
+		
+		anotherExampleJob.execute(context);
 		
 	}
 

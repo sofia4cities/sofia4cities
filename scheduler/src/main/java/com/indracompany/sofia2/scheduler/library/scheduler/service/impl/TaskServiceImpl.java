@@ -34,7 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.scheduler.library.config.scheduler.BatchScheduler;
-import com.indracompany.sofia2.scheduler.library.job.impl.ExecutionJob;
+import com.indracompany.sofia2.scheduler.library.job.BatchGenericExecutor;
+import com.indracompany.sofia2.scheduler.library.job.BatchGenericJob;
 import com.indracompany.sofia2.scheduler.library.scheduler.domain.TaskInfo;
 import com.indracompany.sofia2.scheduler.library.scheduler.domain.TaskOperation;
 import com.indracompany.sofia2.scheduler.library.scheduler.service.BatchSchedulerFactory;
@@ -142,7 +143,7 @@ public class TaskServiceImpl implements TaskService {
 			
 			JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
 			
-			JobDetail jobDetail = jobGenerator.createJobDetail(jobKey, jobDataMap, ExecutionJob.class, jobDescription);
+			JobDetail jobDetail = jobGenerator.createJobDetail(jobKey, jobDataMap, BatchGenericJob.class, jobDescription);
 
 			TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
 			Trigger trigger = triggerGenerator.createCronTrigger(cronExpression, jobDetail, triggerKey);
