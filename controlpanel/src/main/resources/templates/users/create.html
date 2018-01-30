@@ -157,7 +157,7 @@
 												</div>
 												<!-- Role, created-at, removed-at -->
 												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')">
 														<div class="form-group">
 															<label class="control-label" th:text="#{user.rolTypeName} + ':'">Role</label>
 															<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" th:field="*{roleTypeId.name}" th:required="true">
@@ -256,7 +256,7 @@
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	
-	function navigateUrl(url){  window.location.href = url;	}
+	
 	var currentLanguage = [[${lang}]];	
 	
 	var userCreateJson = { 

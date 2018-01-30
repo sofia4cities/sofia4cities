@@ -147,5 +147,21 @@ public class ConfigurationController {
 	{
 		model.addAttribute("configurationTypes", this.configurationService.getAllConfigurationTypes());
 	}
+	
+	@GetMapping(value = "/show/{id}", produces = "text/html")
+	public String show(@PathVariable("id") String id, Model model)
+	{
+		Configuration configuration=null;
+		if(id!=null)
+		{
+			configuration=this.configurationService.getConfiguration(id);
+		}
+		if(configuration==null) return "/error/404";
+		if(!this.utils.getUserId().equals(configuration.getUserId().getUserId()) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
+		model.addAttribute("configuration", configuration);
+		return "/configurations/show";
+		
+		
+	}
 
 }

@@ -14,40 +14,37 @@
 package com.indracompany.sofia2.controlpanel.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
-
 @Controller
 public class DefaultController {
 
-	@Autowired 
+	@Autowired
 	private AppWebUtils utils;
-	
-	
-	@Secured({"ROLE_ADMINISTRATOR", "ROLE_COLLABORATOR", "ROLE_USER","ROLE_ANALYTICS","ROLE_PARTNER","ROLE_SYS_ADMIN","ROLE_OPERATIONS"})
-	@GetMapping("/")
-    public String base() {
-    	if (utils.getAuthentication()!=null) return "redirect:/main";
-        return "/login";
-    }
-    
-    @GetMapping("/home")
-    public String home() {
-        return "/home";
-    }
 
-    @GetMapping("/login")
-    public String login() {
-        return "/login";
-    }
-        
-    @GetMapping("/403")
-    public String error403() {
-        return "/error/403";
-    }    
+	@GetMapping("/")
+	public String base() {
+		if (utils.getAuthentication() != null)
+			return "redirect:/main";
+		return "/login";
+	}
+
+	@GetMapping("/home")
+	public String home() {
+		return "/home";
+	}
+
+	@GetMapping("/login")
+	public String login() {
+		return "/login";
+	}
+
+	@GetMapping("/403")
+	public String error403() {
+		return "/error/403";
+	}
 
 }
