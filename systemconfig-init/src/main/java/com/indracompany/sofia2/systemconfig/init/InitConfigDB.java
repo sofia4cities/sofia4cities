@@ -205,9 +205,9 @@ public class InitConfigDB {
 		type.setDescription("Mail configuration");
 		this.configurationTypeRepository.save(type);
 		type= new ConfigurationType();
-		type.setId(2);
-		type.setName("CONFIG_BDTR");
-		type.setDescription("Mail configuration");
+		type.setId(3);
+		type.setName("CONFIG_RTDB");
+		type.setDescription("RTDB configuration");
 		this.configurationTypeRepository.save(type);
 		
 		

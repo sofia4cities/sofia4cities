@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
@@ -37,8 +38,9 @@ import com.indracompany.sofia2.service.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RequestMapping("/users")
+
 @Controller
+@RequestMapping("/users")
 @Slf4j
 public class UserController {
 
@@ -56,13 +58,16 @@ public class UserController {
 		return "/users/create";
 
 	}
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-	@GetMapping(value="/update/{id}")
-	public String updateForm(@PathVariable("id") String id,Model model)
-	{
-		//If non admin user tries to update any other user-->forbidden
-		if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
-		
+
+
+
+
+	@GetMapping(value = "/update/{id}")
+	public String updateForm(@PathVariable("id") String id, Model model) {
+		// If non admin user tries to update any other user-->forbidden
+		if (!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR))
+			return "/error/403";
+
 		this.populateFormData(model);
 		User user=this.userService.getUser(id);
 		//If user does not exist redirect to create
@@ -71,16 +76,16 @@ public class UserController {
 		
 		return "/users/create";
 	}
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-	@PutMapping(value="/update/{id}")
-	public String update(@PathVariable("id") String id,@ModelAttribute User user)
-	{
-		if(user!=null)
-		{
-			if(user.getPassword()!=null && user.getEmail()!=null
-					&& user.getRoleTypeId()!=null && user.getUserId()!=null)
-			{
-				try{
+
+
+	@PutMapping(value = "/update/{id}")
+	public String update(@PathVariable("id") String id, @ModelAttribute User user) {
+		if (user != null) {
+			if (user.getPassword() != null && user.getEmail() != null && user.getRoleTypeId() != null
+					&& user.getUserId() != null) {
+				try {
+					if(!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
+
 					this.userService.updateUser(user);
 				}catch(Exception e)
 				{

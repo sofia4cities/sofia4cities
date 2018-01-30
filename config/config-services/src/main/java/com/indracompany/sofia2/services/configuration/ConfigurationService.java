@@ -15,9 +15,16 @@ package com.indracompany.sofia2.services.configuration;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.ConfigurationType;
 
 public interface ConfigurationService {
 
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	public List<Configuration> getAllConfigurations();
+	public Configuration getConfiguration(String id);
+	public List<ConfigurationType> getAllConfigurationTypes();
+	public void createConfiguration(Configuration configuration);
 }

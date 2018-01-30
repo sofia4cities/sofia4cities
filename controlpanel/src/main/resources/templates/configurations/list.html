@@ -127,7 +127,7 @@
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>
-																<input id="fullname" th:placeholder="#{user.name}" name="fullName" class="form-control" type="text" maxlength="100" value=""/>
+																<input id="fullname" th:placeholder="#{user.id}" name="fullName" class="form-control" type="text" maxlength="100" value=""/>
 															</div>
 														</div>
 													</div>
@@ -173,7 +173,7 @@
 												<table id="configurations" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
 														<tr class="cabecera-tabla">
-															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.name}" >Name</span></th>
+															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.id}" >Name</span></th>
 															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.type}" >Configuration Type</span></th>
 															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.json}">Json</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
@@ -196,7 +196,7 @@
 																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/configurations/${configuration.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/users/${configuration.id}|} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/configurations/update/${configuration.id}|} + '\');'"><i class="fa fa-edit"></i></span>
 																</div>
 															</td>
 														</tr>
@@ -209,10 +209,10 @@
 														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-														<label class="toggle-vis" data-column="1" th:text="#{user.name}"> Name</label>
-														<label class="toggle-vis" data-column="2" th:text="#{configurations.type}">Configuration Type</label>
-														<label class="toggle-vis" data-column="3" th:text="#{configurations.json}">Json</label>		
-														<label class="toggle-vis" data-column="4" th:text="#{gen.options}"> Options</label>
+														<label class="toggle-vis" data-column="0" th:text="#{user.name}"> Name</label>
+														<label class="toggle-vis" data-column="1" th:text="#{configurations.type}">Configuration Type</label>
+														<label class="toggle-vis" data-column="2" th:text="#{configurations.json}">Json</label>		
+														<label class="toggle-vis" data-column="3" th:text="#{gen.options}"> Options</label>
 													</div>
 												</div>											
 											</div>
@@ -301,7 +301,7 @@
 		$('label.toggle-vis').on( 'click', function (e) {
 			e.preventDefault(); 
 			// Get the column API object
-			var column = $('#users').DataTable().column( $(this).attr('data-column') ); 
+			var column = $('#configurations').DataTable().column( $(this).attr('data-column') ); 
 			// Toggle the visibility
 			column.visible( ! column.visible() );			
 			// toggle Text

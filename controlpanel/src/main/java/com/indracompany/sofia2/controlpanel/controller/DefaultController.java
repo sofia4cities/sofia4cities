@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.controlpanel.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -26,10 +27,11 @@ public class DefaultController {
 	@Autowired 
 	private AppWebUtils utils;
 	
-    
+	
+	@Secured({"ROLE_ADMINISTRATOR", "ROLE_COLLABORATOR", "ROLE_USER","ROLE_ANALYTICS","ROLE_PARTNER","ROLE_SYS_ADMIN","ROLE_OPERATIONS"})
 	@GetMapping("/")
     public String base() {
-    	if (utils.getAuthentication()!=null) return "/main";
+    	if (utils.getAuthentication()!=null) return "redirect:/main";
         return "/login";
     }
     

@@ -115,6 +115,7 @@ public class UserServiceImpl implements UserService {
 			userDb.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
 			userDb.setActive(user.isActive());
 			userDb.setUpdatedAt(new Date());
+			userDb.setFullName(user.getFullName());
 			this.userRepository.save(userDb);
 		}
 	}
