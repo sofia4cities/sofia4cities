@@ -104,6 +104,9 @@
 															<label class="control-label" th:text="#{configurations.type} + ':'">Configuration Type</label>
 															<select id="configurationTypes" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{configurationTypeId.name}" th:required="true">
 																<option th:each="configurationTypeId :${configurationTypes}" th:value="${configurationTypeId.name}" th:text="${configurationTypeId.name}" ></option>
+																<th:block if="${configuration.configurationTypeId !=null}">
+																	<option th:text="${configuration.configurationTypeId.name}" th:value="${configuration.configurationTypeId.name}"></option>
+																</th:block>
 															</select>													
 														</div>
 													</div>													
@@ -123,7 +126,7 @@
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label th:text="#{configurations.json}">JSON</label>														
-															<textarea id="jsonSchema" name="jsonSchema"  th:required="true" th:field="*{jsonSchema}" class="form-control" rows="3"></textarea>
+															<textarea id="jsonSchema" name="jsonSchema"  th:required="true" th:field="*{jsonSchema}" class="form-control autoExpand" rows="3" ata-min-rows='3'></textarea>
 														</div>
 													</div>																					
 												</div>

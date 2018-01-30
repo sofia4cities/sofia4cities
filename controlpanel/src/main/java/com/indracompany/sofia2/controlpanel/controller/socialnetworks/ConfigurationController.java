@@ -70,6 +70,7 @@ public class ConfigurationController {
 	{
 		this.populateFormData(model);
 		Configuration configuration=new Configuration();
+		//Logged user is going to be the creator of the new config
 		configuration.setUserId(this.userService.getUser(this.utils.getUserId()));;
 		model.addAttribute("configuration", configuration);
 		return "/configurations/create";
@@ -102,8 +103,12 @@ public class ConfigurationController {
 	public String update(@PathVariable String id,Model model)
 	{
 		
-		List<Configuration> configurations=this.configurationService.getAllConfigurations();
-		model.addAttribute("configurations",configurations);
+		Configuration configuration= this.configurationService.getConfiguration(id);
+		if(configuration==null){
+			configuration=new Configuration();
+			configuration.setUserId(this.userService.getUser(this.utils.getUserId()));
+		}
+		model.addAttribute("configuration", configuration);
 		return "/configurations/create";
 		
 	}

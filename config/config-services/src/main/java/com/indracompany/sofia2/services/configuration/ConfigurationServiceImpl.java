@@ -53,6 +53,10 @@ public class ConfigurationServiceImpl implements ConfigurationService{
 		return types;
 
 	}
+	public Configuration getConfiguration(String id)
+	{
+		return this.configurationRepository.findById(id);
+	}
 	public void createConfiguration(Configuration configuration)
 	{
 		ConfigurationType configurationType=this.configurationTypeRepository.findByName(configuration.getConfigurationTypeId().getName());

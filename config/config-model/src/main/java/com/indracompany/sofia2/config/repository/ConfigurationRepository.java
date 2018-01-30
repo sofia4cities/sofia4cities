@@ -24,6 +24,7 @@ import com.indracompany.sofia2.config.model.User;
 public interface ConfigurationRepository extends JpaRepository<Configuration, String>{
 	
 	List<Configuration> findByUserId(User userId);
+	Configuration findById(String id);
 	List<Configuration> findByConfigurationTypeId(ConfigurationType configurationTypeId);
 	List<Configuration> findByUserIdAndConfigurationTypeId(User userId, ConfigurationType configurationTypeId);
 
