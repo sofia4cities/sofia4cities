@@ -65,7 +65,7 @@ public class AppWebUtils {
 	
 	public String jsonStringToString(String json)
 	{
-		System.out.println(json);
+		
 		ObjectMapper objectMapper = new ObjectMapper();
 		String formattedJson=null;
 		
@@ -75,7 +75,7 @@ public class AppWebUtils {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(formattedJson);
+		
 		return formattedJson;
 	}
 	
