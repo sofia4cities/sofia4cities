@@ -55,6 +55,7 @@ public class MainPageController {
 		utils.setSessionAttribute(request, "menu", menu);
 		return "/main";
 	}
+
 	
 	
 	
