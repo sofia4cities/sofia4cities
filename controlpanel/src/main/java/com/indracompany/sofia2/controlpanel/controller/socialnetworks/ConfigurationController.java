@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.indracompany.sofia2.config.model.Configuration;
@@ -44,6 +45,7 @@ public class ConfigurationController {
 	private AppWebUtils utils;
 	@Autowired
 	UserService userService;
+	public static final String ROLE_ADMINISTRATOR="ROLE_ADMINISTRATOR";
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping
@@ -98,18 +100,46 @@ public class ConfigurationController {
 		return "redirect:/configurations/list";
 		
 	}
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+
 	@GetMapping("/update/{id}")
-	public String update(@PathVariable String id,Model model)
+	public String updateForm(@PathVariable String id,Model model)
 	{
 		
 		Configuration configuration= this.configurationService.getConfiguration(id);
+		
 		if(configuration==null){
 			configuration=new Configuration();
 			configuration.setUserId(this.userService.getUser(this.utils.getUserId()));
+		}else{
+			//User trying to modify another's config
+			if(!this.utils.getUserId().equals(configuration.getUserId().getUserId()) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
 		}
 		model.addAttribute("configuration", configuration);
 		return "/configurations/create";
+		
+	}
+
+	@PutMapping("/update/{id}")
+	public String update(@PathVariable String id,Model model, @ModelAttribute Configuration configuration)
+	{
+		
+		if(configuration!=null)
+		{
+			if(!this.utils.getUserId().equals(configuration.getUserId().getUserId()) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR)) return "/error/403";
+			try{
+				this.configurationService.updateConfiguration(configuration);
+			}catch(Exception e)
+			{
+				log.debug(e.getMessage());
+				return "/configurations/create";
+			}
+		}else
+		{
+			return "redirect:/update/"+id;
+		}
+
+		model.addAttribute("configuration", configuration);
+		return "redirect:/configurations/show/"+id;
 		
 	}
 	

@@ -74,8 +74,26 @@ public class ConfigurationServiceImpl implements ConfigurationService{
 			}
 		}
 	}
+	public void updateConfiguration(Configuration configuration)
+	{
+		if(this.existsConfiguration(configuration))
+		{
+			if(configuration.getUserId()!=null && configuration.getJsonSchema()!=null && configuration.getConfigurationTypeId()!=null)
+			{
+				Configuration newConfiguration=this.configurationRepository.findById(configuration.getId());
+				newConfiguration.setConfigurationTypeId(this.configurationTypeRepository.findByName(configuration.getConfigurationTypeId().getName()));
+				if(isValidJSON(configuration.getJsonSchema())) newConfiguration.setJsonSchema(configuration.getJsonSchema());
+				this.configurationRepository.save(newConfiguration);
+			}
+		}
+	}
+	public boolean existsConfiguration(Configuration configuration)
+	{
+		if(this.configurationRepository.findById(configuration.getId())==null) return false;
+		else return true;
+		
+	}
 	public boolean isValidJSON(final String json){
-		boolean valid = true;
 		try{
 
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -90,7 +108,7 @@ public class ConfigurationServiceImpl implements ConfigurationService{
 			return false;
 		}
 
-		return valid;
+		return true;
 	}
 
 }
