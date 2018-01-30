@@ -18,6 +18,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +33,9 @@ import com.indracompany.sofia2.service.ontology.OntologyService;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RequestMapping("/ontologies")
+
 @Controller
+@RequestMapping("/ontologies")
 @Slf4j
 public class OntologyController {
 
@@ -42,9 +44,9 @@ public class OntologyController {
 
 	@Autowired
 	private AppWebUtils utils;
-
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/list",produces = "text/html")
-	public String list(Model uiModel, HttpServletRequest request, @RequestParam(required=false, name="identification")String identification,@RequestParam(required=false, name="description")String description) {
+	public String list(Model model, HttpServletRequest request, @RequestParam(required=false, name="identification")String identification,@RequestParam(required=false, name="description")String description) {
 		
 		//Scaping "" string values for parameters 
 		if(identification!=null){if(identification.equals("")) identification=null;}
@@ -52,7 +54,7 @@ public class OntologyController {
 
 		List<Ontology> ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		
-		uiModel.addAttribute("ontologies", ontologies);
+		model.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
 	}
 	@RequestMapping(method = RequestMethod.POST, value="getNamesForAutocomplete")
