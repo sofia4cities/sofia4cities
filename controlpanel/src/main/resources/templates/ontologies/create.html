@@ -172,18 +172,15 @@
 	<!-- MAIN PAGE WRAPPER -->
 	<div class="page-wrapper">
 	
-		<!-- BEGIN HEADER -->
-		<div th:include="header::#cabeceraFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
 		<!-- END HEADER -->
 		
-		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<!-- HEADER AND CONTENT DIVIDER -->
 		<div class="clearfix"> </div>
-		<!-- END HEADER AND CONTENT DIVIDER -->
-
 			
-			<!-- BEGIN SIDEBAR -->
-			<div th:include="menu::#menuFragment" class="page-sidebar-wrapper"></div>
-			<!-- END SIDEBAR -->
+		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
 			
 			<!-- BEGIN CONTENT -->
 			<div class="page-content-wrapper">
@@ -330,118 +327,43 @@
 															</div>
 														</div>
 													</a>															
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" href="#" onclick="location.href='../ontologias/createKPI'" class="col-md-3 col-sm-6  grid__item grid__item--c5">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/kpi-ontologia.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title" th:text="#{crearontologias_boton_kpi}">Creación KPI </h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_kpi}" >Esta opción permite crear una ontología de tipo KPI</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR') or hasRole('ROL_COLABORADOR')" href="#" onclick="location.href='../ontologias/createTimeSeries'"  class="col-md-3 col-sm-6  grid__item grid__item--c6">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/seriestemporales.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title" th:text="#{crearontologias_boton_time_serie}">Creación ontologia Time Series</h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_time_series}" >Esta opción permite crear una ontología de tipo Time Series.</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
-													<!-- ontología tipo -->
-													<a sec:authorize="hasRole('ROL_ADMINISTRADOR')" href="#" onclick="location.href='../ontologias/bdtrSelect'" class="col-md-3 col-sm-6  grid__item grid__item--c7">
-														<div class="stack">
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__deco"></div>
-															<div class="stack__figure">
-																<img class="stack__img" th:src="@{/resources/images/mongo-ontologia.png}" alt="Image"/>
-															</div>
-														</div>
-														<div class=" col-md-12 grid__item-caption">
-															<h3 class="grid__item-title"  th:text="#{crearontologias_boton_mongodb}">Creación desde MongoDB</h3>																	
-															<div class="col-md-12 column column--right">
-																<span class="column__text" th:text="#{crearontologias_descripcion_mongodb}" >Esta opción permite crear una ontología a partir de una colección existente de MongoDB.</span>
-															</div>
-														</div>
-													</a>
-													<!-- end ontologia tipo -->
+																									
 												</div>
 											</div>												
-										</div>
-										
-										<!-- END CONTENEDORES -->
-																	
+										</div>								
 									</div>
 								</div>
-							</div>
-							<!-- END PORTLET BASIC LIGHT -->							
-						</div>
-						<!-- END COL-12 -->						
-					</div>
-					<!-- END MAIN ROW -->				
-				</div>
-				<!-- END CONTENT BODY -->
-			</div>
-			<!-- END CONTENT page-content-wrapper -->		
+							</div><!-- END PORTLET BASIC LIGHT -->							
+						</div><!-- END COL-12 -->						
+					</div><!-- END MAIN ROW -->				
+				</div><!-- END CONTENT BODY -->
+			</div><!-- END CONTENT page-content-wrapper -->		
 	</div>
 	<!-- END MAIN PAGE WRAPPER -->
 	
-	<!-- FOOTER-INCLUDE -->
-	<footer th:include="footer::#footerFragment" class="page-footer"> </footer>	
+	<!-- FOOTER INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
 	
-	<!-- CORE -->
-	<script th:src="@{/resources/js/app.js}"/>
-	<script th:src="@{/resources/js/layout.js}"/>	
+	<!-- CORE JS CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
 	
 	<!-- plugins -->
-	<script th:src="@{/resources/js/anime.min.js}"/>
-	<script th:src="@{/resources/js/animation.js}"/>
+	<script th:src="@{/static/vendor/anime.min.js}"/>
+	<script th:src="@{/static/vendor/animation.js}"/>
 	
 	<script type="text/javascript">	
 	var optionName = 'ONTOLOGIAS';
 	
-	 $( document ).ready(function() {
-		 
-		 var hayBdtrRelacional = $("#hayBdtrRelacional").val();
-		 if(hayBdtrRelacional == "true"){
-			$("#ontologia_relacional").show(); 
-		 }
-		 
+	 $( document ).ready(function() {		 
+		 		 
 		[].slice.call(document.querySelectorAll('.grid--effect-vega > .grid__item')).forEach(function(stackEl) {
 			new VegaFx(stackEl);
 		});
 		 
 	 });
 	
-
-	
-
-	
 	</script>
-	
 
 	</body>
 </html>
