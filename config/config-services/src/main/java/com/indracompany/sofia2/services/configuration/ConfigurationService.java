@@ -27,4 +27,6 @@ public interface ConfigurationService {
 	public Configuration getConfiguration(String id);
 	public List<ConfigurationType> getAllConfigurationTypes();
 	public void createConfiguration(Configuration configuration);
+	public boolean existsConfiguration(Configuration configuration);
+	public void updateConfiguration(Configuration configuration);
 }
