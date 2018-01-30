@@ -47,7 +47,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 		
 		//TODO: Dont forget ContextData
 		String repositoryResponse = repository.insert(insertMessage.getOntology(), insertMessage.getBody().getData().toString());
-		
+				
 		//TODO: SSAP Copy methods
 		responseMessage.setDirection(SSAPMessageDirection.RESPONSE);
 		responseMessage.setMessageId(insertMessage.getMessageId());
