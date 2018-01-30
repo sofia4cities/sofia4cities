@@ -56,8 +56,8 @@ public class UserServiceImpl implements UserService {
 	public User getUserByToken(String token) {
 		List<Token> listToken = getToken(token);
 		Token theToken = listToken.get(0);
-		UserToken theUserToken  = getUserToken(theToken);
-		User user = getUser(theUserToken);
+		String  userId  = userTokenRepository.findUserIdByTokenValue(theToken.getToken());
+		User user = getUser(userId);
 		return user;
 	}
 

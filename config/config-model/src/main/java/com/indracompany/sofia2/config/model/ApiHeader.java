@@ -62,6 +62,54 @@ public class ApiHeader extends AuditableEntityWithUUID {
 	@Column(name = "HEADER_CONDITION", length = 50)
     private String header_condition;
 
+	public ApiOperation getApioperationId() {
+		return apioperationId;
+	}
+
+	public void setApioperationId(ApiOperation apioperationId) {
+		this.apioperationId = apioperationId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getHeader_type() {
+		return header_type;
+	}
+
+	public void setHeader_type(String header_type) {
+		this.header_type = header_type;
+	}
+
+	public String getHeader_description() {
+		return header_description;
+	}
+
+	public void setHeader_description(String header_description) {
+		this.header_description = header_description;
+	}
+
+	public String getHeader_value() {
+		return header_value;
+	}
+
+	public void setHeader_value(String header_value) {
+		this.header_value = header_value;
+	}
+
+	public String getHeader_condition() {
+		return header_condition;
+	}
+
+	public void setHeader_condition(String header_condition) {
+		this.header_condition = header_condition;
+	}
+
 	
 
 

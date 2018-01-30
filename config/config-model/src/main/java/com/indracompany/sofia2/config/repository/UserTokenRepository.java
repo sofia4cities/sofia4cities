@@ -14,6 +14,8 @@
 package com.indracompany.sofia2.config.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
@@ -23,5 +25,9 @@ public interface UserTokenRepository extends JpaRepository<UserToken, String>{
 	
 	public UserToken findByUserId(User userId);
 	public UserToken findByToken(Token token);
+	
+	 @Query(value = "SELECT user_id FROM user_token WHERE token = :tokenValue", nativeQuery = true)
+	//@Query("select u from user_token u where u.token = ?1")
+	public String findUserIdByTokenValue(@Param("tokenValue") String tokenValue);
 
 }
