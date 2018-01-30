@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.model;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -28,24 +29,23 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Configurable
 @Entity
 @Table(name = "Api_Authentication_Attribute")
-@SuppressWarnings("deprecation")
 public class ApiAuthenticationAttribute extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-   
-    @JoinColumn(name = "autparamId", referencedColumnName = "ID", nullable = false)
-    private ApiAuthenticationParameter autparamId;
+
+	@JoinColumn(name = "autparamId", referencedColumnName = "ID", nullable = false)
+	private ApiAuthenticationParameter autparamId;
 
 	@Column(name = "NAME", length = 50, nullable = false)
-    @NotNull
-    private String name;
+	@NotNull
+	private String name;
 
-	@Column(name = "VALUE", length = 512,nullable = false)
-    @NotNull
-    private String value;
+	@Column(name = "VALUE", length = 512, nullable = false)
+	@NotNull
+	private String value;
 
 	public ApiAuthenticationParameter getAutparamId() {
 		return autparamId;
@@ -75,5 +75,4 @@ public class ApiAuthenticationAttribute extends AuditableEntityWithUUID {
 		return serialVersionUID;
 	}
 
-	
 }

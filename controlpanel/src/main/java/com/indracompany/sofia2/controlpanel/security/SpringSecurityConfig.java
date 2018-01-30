@@ -30,63 +30,42 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
-// http://docs.spring.io/spring-boot/docs/current/reference/html/howto-security.html
-// Switch off the Spring Boot security configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled=true, prePostEnabled=true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Slf4j
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private AccessDeniedHandler accessDeniedHandler;
-    @Autowired
-    private AuthenticationProvider authenticationProvider;
-    
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+	@Autowired
+	private AccessDeniedHandler accessDeniedHandler;
+	@Autowired
+	private AuthenticationProvider authenticationProvider;
 
-        http.csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/", "/home","/favicon.ico").permitAll()
-                .antMatchers("/api/applications","/api/applications/").permitAll()
-                .antMatchers("/health","/info","/metrics","/trace","/api").permitAll()
-                .antMatchers("/admin").hasAnyRole("ROLE_ADMINISTRATOR")
-                .antMatchers("/admin/**").hasAnyRole("ROLE_ADMINISTRATOR")
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/main")
-                .permitAll()
-                .and()
-                .logout()
-                .permitAll()
-                .and()
-                .sessionManagement()
-                .invalidSessionUrl("/login")
-                .maximumSessions(1).sessionRegistry(sessionRegistry()).and()
-                .sessionFixation().none()  
-                .and()
-                .exceptionHandling().accessDeniedHandler(accessDeniedHandler);
-    }
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
 
+		http.csrf().disable().authorizeRequests().antMatchers("/", "/home", "/favicon.ico").permitAll()
+				.antMatchers("/api/applications", "/api/applications/").permitAll()
+				.antMatchers("/health", "/info", "/metrics", "/trace", "/api").permitAll().antMatchers("/admin")
+				.hasAnyRole("ROLE_ADMINISTRATOR").antMatchers("/admin/**").hasAnyRole("ROLE_ADMINISTRATOR").anyRequest()
+				.authenticated().and().formLogin().loginPage("/login").defaultSuccessUrl("/main").permitAll().and()
+				.logout().permitAll().and().sessionManagement().invalidSessionUrl("/login").maximumSessions(1)
+				.sessionRegistry(sessionRegistry()).and().sessionFixation().none().and().exceptionHandling()
+				.accessDeniedHandler(accessDeniedHandler);
+	}
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception {
-    	builder.authenticationProvider(authenticationProvider);
-    }
-    
-    @Bean
-    public SessionRegistry sessionRegistry() {
-        return new SessionRegistryImpl();
-    }  
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception {
+		builder.authenticationProvider(authenticationProvider);
+	}
 
-    
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.
-        ignoring()
-        .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
-    }
+	@Bean
+	public SessionRegistry sessionRegistry() {
+		return new SessionRegistryImpl();
+	}
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
+	}
 
 }

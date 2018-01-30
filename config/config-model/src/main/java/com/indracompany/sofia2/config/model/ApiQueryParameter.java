@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -34,36 +35,32 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Configurable
 @Entity
 @Table(name = "api_query_parameter")
-@SuppressWarnings("deprecation")
 public class ApiQueryParameter extends AuditableEntityWithUUID {
-	
-   private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
-    @JoinColumn(name = "apioperationId", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "apioperationId", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private ApiOperation apioperationId;
+	private ApiOperation apioperationId;
 
-	@Column(name = "NAME", length = 50,nullable = false)
-    @NotNull
-    private String name;
+	@Column(name = "NAME", length = 50, nullable = false)
+	@NotNull
+	private String name;
 
-	@Column(name = "QUERY_TYPE", length = 50,nullable = false)
-    @NotNull
-    private String tipo;
+	@Column(name = "QUERY_TYPE", length = 50, nullable = false)
+	@NotNull
+	private String tipo;
 
-	@Column(name = "QUERY_DESCRIPTION", length = 512,nullable = false)
-    @NotNull
-    private String description;
+	@Column(name = "QUERY_DESCRIPTION", length = 512, nullable = false)
+	@NotNull
+	private String description;
 
 	@Column(name = "QUERY_VALUE", length = 512)
-    private String value;
+	private String value;
 
 	@Column(name = "QUERY_CONDITION", length = 50)
-    private String condition;
-
-
-
+	private String condition;
 
 	public ApiOperation getApioperationId() {
 		return apioperationId;
@@ -113,5 +110,4 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 		this.condition = condition;
 	}
 
-	
 }

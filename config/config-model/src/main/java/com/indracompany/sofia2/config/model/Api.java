@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -42,89 +43,82 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 @Configurable
 @Entity
 @Table(name = "API")
-@SuppressWarnings("deprecation")
 public class Api extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-   
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "IMAGE")
+	@Lob
+	@Type(type = "org.hibernate.type.BinaryType")
+	private byte[] image;
 
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "IMAGE")
-    @Lob
-    @Type(type="org.hibernate.type.BinaryType")
-    private byte[] image;
-    
-    @Column(name = "SSL_CERTIFICATE")
-    @NotNull
-    private boolean ssl_certificate;
-
-	
+	@Column(name = "SSL_CERTIFICATE")
+	@NotNull
+	private boolean ssl_certificate;
 
 	@OneToMany(mappedBy = "apiId", cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiComment> comments;
+	private Set<ApiComment> comments;
 
 	@OneToMany(mappedBy = "apiId", cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiUserAssessment> userAssessments;
+	private Set<ApiUserAssessment> userAssessments;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ontologyId", referencedColumnName = "ID")
-    private Ontology ontologyId;
+	@JoinColumn(name = "ontologyId", referencedColumnName = "ID")
+	private Ontology ontologyId;
 
-	@Column(name = "IDENTIFICATION", length = 50,nullable = false)
-    @NotNull
-    private String identification;
+	@Column(name = "IDENTIFICATION", length = 50, nullable = false)
+	@NotNull
+	private String identification;
 
 	@Column(name = "NUM_VERSION")
-    private Integer numversion;
+	private Integer numversion;
 
-	@Column(name = "DESCRIPTION", length = 512,nullable = false)
-    @NotNull
-    private String description;
+	@Column(name = "DESCRIPTION", length = 512, nullable = false)
+	@NotNull
+	private String description;
 
 	@Column(name = "CATEGORY", length = 50)
-    private String category;
+	private String category;
 
 	@Column(name = "ENDPOINT", length = 512)
-    private String endpoint;
+	private String endpoint;
 
 	@Column(name = "ENDPOINT_EXT", length = 512)
-    private String endpointExt;
+	private String endpointExt;
 
-	@Column(name = "STATE", length = 10,nullable = false)
-    @NotNull
-    private String state;
+	@Column(name = "STATE", length = 10, nullable = false)
+	@NotNull
+	private String state;
 
 	@Column(name = "META_INF", length = 512)
-    private String metaInf;
+	private String metaInf;
 
 	@Column(name = "IMAGE_TYPE", length = 20)
-    private String imageType;
+	private String imageType;
 
-	
-
-	@Column(name = "USER_ID", length = 50,nullable = false)
+	@Column(name = "USER_ID", length = 50, nullable = false)
 	@NotNull
-    private String userId;
+	private String userId;
 
-	@Column(name = "IS_PUBLIC",nullable = false)
-    @NotNull
-    private boolean isPublic;
+	@Column(name = "IS_PUBLIC", nullable = false)
+	@NotNull
+	private boolean isPublic;
 
 	@Column(name = "CACHE_TIMEOUT")
-    private Integer cachetimeout;
+	private Integer cachetimeout;
 
 	@Column(name = "API_LIMIT")
-    private Integer apilimit;
+	private Integer apilimit;
 
 	@Column(name = "API_TYPE", length = 50)
-    private String apiType;
+	private String apiType;
 
 	@Column(name = "ASSESSMENT", precision = 10)
-    private Double assessment;
+	private Double assessment;
 
 	public byte[] getImage() {
 		return image;
@@ -149,8 +143,6 @@ public class Api extends AuditableEntityWithUUID {
 	public void setComments(Set<ApiComment> comments) {
 		this.comments = comments;
 	}
-
-	
 
 	public Ontology getOntologyId() {
 		return ontologyId;
@@ -291,7 +283,5 @@ public class Api extends AuditableEntityWithUUID {
 	public void setUserAssessments(Set<ApiUserAssessment> userAssessments) {
 		this.userAssessments = userAssessments;
 	}
-	
-	
 
 }

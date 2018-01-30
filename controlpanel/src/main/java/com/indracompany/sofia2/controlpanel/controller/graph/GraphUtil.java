@@ -38,7 +38,6 @@ import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.service.user.UserService;
 
@@ -63,7 +62,7 @@ public class GraphUtil {
 	private DashboardRepository dashboardRepository;
 	@Autowired
 	private AppWebUtils utils;
-	@Autowired 
+	@Autowired
 	UserService userService;
 	@Value("${sofia2.urls.iotbroker}")
 	String url;
@@ -105,7 +104,8 @@ public class GraphUtil {
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlClientPlatform + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlClientPlatform + "create"));
 
-		List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUserId(this.userService.getUser(utils.getUserId()));
+		List<ClientPlatform> clientPlatforms = clientPlatformRepository
+				.findByUserId(this.userService.getUser(utils.getUserId()));
 
 		for (ClientPlatform clientPlatform : clientPlatforms) {
 			// Creación de enlaces
@@ -167,7 +167,8 @@ public class GraphUtil {
 				visualizationName, name, "suit", null, urlDashboard + "creategroup?"));
 
 		// dashboardTipo---> son los dashboard
-		List<DashboardType> dashboardTypes = dashboardTypeRepository.findByUserId(this.userService.getUser(utils.getUserId()));
+		List<DashboardType> dashboardTypes = dashboardTypeRepository
+				.findByUserId(this.userService.getUser(utils.getUserId()));
 		for (DashboardType dashboardType : dashboardTypes) {
 			// Ahora hay que buscar la relacion entre dashboard y gadget. Eso nos lo da el
 			// dashboard
