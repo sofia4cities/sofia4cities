@@ -69,6 +69,8 @@ The first time you use the Environment you have to follow these steps:
 		1. show databases; 
 		2. If it is not listed >use sofia2_s4c
 )
+4. Start **REST Interface 4 RealTime Database (Quasar)** with S:\scripts\RTDB_HTTPServer_start.bat
+(if all is OK you´ll have a command line opened indicating "Server started listening on port 18200")
 
 
 WHEN WE INTEGRATE KEYCLOAK:

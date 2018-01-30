@@ -16,20 +16,14 @@ package com.indracompany.sofia2.persistence.mongodb;
 import org.json.JSONArray;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsQuasarDBRepository;
-import com.indracompany.sofia2.persistence.mongodb.quasar.connector.QuasarDbHttpConnector;
-import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
-import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
-import com.mongodb.client.MongoDatabase;
+import com.indracompany.sofia2.persistence.mongodb.quasar.connector.QuasarMongoDBbHttpConnector;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,29 +35,34 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-//@ContextConfiguration(classes = EmbeddedMongoConfiguration.class)
+// @ContextConfiguration(classes = EmbeddedMongoConfiguration.class)
 public class MongoByQuasarIntegrationTest {
-	
-	@Autowired	
-	QuasarDbHttpConnector connector;
 
 	@Autowired
-	@Qualifier("mongoQuasarBasicOpsDBRepository")
-	BasicOpsQuasarDBRepository quasarRepository;
-	
+	QuasarMongoDBbHttpConnector connector;
 
 	@Test
-	public void test_getAllByQuasar() {
-		try{
+	public void testQueryAsJson() {
+		try {
 			String query = "select * from movie";
-			QuasarResponseDTO result = quasarRepository.executeQuery(query, 0, SSAPQueryResultFormat.JSON, "CONSOLE");
-			String data = result.getData();
-			JSONArray jsonResult =new JSONArray(data);
-			Assert.assertTrue(jsonResult.length()>0);
-		}catch(Exception e){
+			String result = connector.queryAsJson(query, 0, 100);
+			JSONArray jsonResult = new JSONArray(result);
+			Assert.assertTrue(jsonResult.length() > 0);
+		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB by Quasar. " + e);
 		}
-		
+	}
+
+	@Test
+	public void testQueryAsTable() {
+		try {
+			String query = "select * from movie";
+			String result = connector.queryAsTable(query, 0, 100);
+
+			Assert.assertTrue(result.indexOf("|") != -1);
+		} catch (Exception e) {
+			Assert.fail("No connection with MongoDB by Quasar. " + e);
+		}
 	}
 
 }
