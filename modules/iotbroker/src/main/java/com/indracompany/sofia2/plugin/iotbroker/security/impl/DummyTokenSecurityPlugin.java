@@ -51,4 +51,9 @@ public class DummyTokenSecurityPlugin implements SecurityPlugin {
 		
 	}
 
+	@Override
+	public String getUserIdFromSessionKey(String sessionKey) {
+		return UUID.randomUUID().toString();
+	}
+
 }

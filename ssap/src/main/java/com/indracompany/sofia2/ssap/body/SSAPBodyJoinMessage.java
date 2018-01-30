@@ -28,7 +28,7 @@ public class SSAPBodyJoinMessage extends SSAPBodyMessage {
 	}
 	
 	@Override
-	public boolean isThinKpMandatory() {
+	public boolean isClientPlatformMandatory() {
 		return false;
 	}
 

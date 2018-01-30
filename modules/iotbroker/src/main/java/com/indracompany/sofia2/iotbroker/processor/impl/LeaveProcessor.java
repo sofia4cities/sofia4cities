@@ -13,6 +13,9 @@
  */
 package com.indracompany.sofia2.iotbroker.processor.impl;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -21,6 +24,7 @@ import com.indracompany.sofia2.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
@@ -40,5 +44,11 @@ public class LeaveProcessor implements MessageTypeProcessor {
 //		return sessionKey;
 		return null;
 	}
+	@Override
+	public List<SSAPMessageTypes> getMessageTypes() {
+		return Collections.singletonList(SSAPMessageTypes.LEAVE);
+	}
+	@Override
+	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {}
 
 }

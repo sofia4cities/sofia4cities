@@ -35,6 +35,7 @@ public class ContextData implements Serializable {
 	
 	@Getter @Setter private String user;
 	@Getter @Setter private String clientPatform;
+	@Getter @Setter private String clientPatformInstance;
 	@Getter @Setter private String clientConnection;
 	@Getter @Setter private String clientSession;
 	@Getter @Setter private String timezoneId;
@@ -45,12 +46,14 @@ public class ContextData implements Serializable {
 		try {
 			this.user = node.findValue("user").asText();
 			this.clientPatform = node.findValue("clientPatform").asText();
+			this.clientPatformInstance = node.findValue("clientPatformInstance").asText();
 			this.clientConnection = node.findValue("clientConnection").asText();
 			this.clientSession = node.findValue("clientSession").asText();
 		} catch (Exception e) {
 			// We are processing a minimal context data
 			this.user = "";
 			this.clientPatform= "";
+			this.clientPatformInstance= "";
 			this.clientConnection = "";
 			this.clientSession = "";
 		}
@@ -66,6 +69,7 @@ public class ContextData implements Serializable {
 	public ContextData(ContextData other) {
 		this.user = other.user;
 		this.clientPatform = other.clientPatform;
+		this.clientPatformInstance = other.clientPatformInstance;
 		this.clientConnection = other.clientConnection;
 		this.clientSession = other.clientSession;
 		this.timezoneId = other.timezoneId;
@@ -78,7 +82,7 @@ public class ContextData implements Serializable {
 			return false;
 		}
 		ContextData contextData = (ContextData) other;
-		return this.clientPatform.equals(contextData.clientPatform) && this.clientConnection.equals(contextData.clientConnection)
+		return this.clientPatformInstance.equals(contextData.clientPatformInstance) && this.clientPatform.equals(contextData.clientPatform) && this.clientConnection.equals(contextData.clientConnection)
 				&& this.clientSession.equals(contextData.clientSession) && this.timezoneId.equals(contextData.timezoneId)
 				&& this.user.equals(contextData.user);
 	}

@@ -36,8 +36,8 @@ public final class SSAPMessageGenerator {
 		ssapMessage.setMessageId(UUID.randomUUID().toString());
 		ssapMessage.setMessageType(SSAPMessageTypes.JOIN);
 //		ssapMessage.setOntology(ontology);
-		body.setThinKp(faker.name().firstName());
-		body.setThinkpInstance(UUID.randomUUID().toString());
+		body.setClientPlatform(faker.name().firstName());
+		body.setClientPlatformInstance(UUID.randomUUID().toString());
 		body.setToken(UUID.randomUUID().toString());
 		
 		ssapMessage.setBody(body);

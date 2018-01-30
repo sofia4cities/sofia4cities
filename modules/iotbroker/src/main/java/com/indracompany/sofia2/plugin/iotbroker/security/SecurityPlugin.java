@@ -27,4 +27,6 @@ public interface SecurityPlugin {
 	public void checkSessionKeyActive(String sessionKey) throws AuthorizationException;
 
 	public void checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) throws AuthorizationException;
+
+	public String getUserIdFromSessionKey(String sessionKey);
 }

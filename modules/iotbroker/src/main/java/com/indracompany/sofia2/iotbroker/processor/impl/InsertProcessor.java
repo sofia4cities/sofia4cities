@@ -14,6 +14,9 @@
 package com.indracompany.sofia2.iotbroker.processor.impl;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -23,9 +26,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
+import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.SSAPMessageDirection;
+import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
@@ -38,6 +44,8 @@ public class InsertProcessor implements MessageTypeProcessor {
 	BasicOpsDBRepository repository;
 	@Autowired
 	ObjectMapper objectMapper;
+	@Autowired
+	SecurityPluginManager securityPluginManager;
 	
 	@Override
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) throws BaseException {
@@ -47,7 +55,16 @@ public class InsertProcessor implements MessageTypeProcessor {
 		
 		//TODO: Dont forget ContextData
 		String repositoryResponse = repository.insert(insertMessage.getOntology(), insertMessage.getBody().getData().toString());
-				
+		ContextData contextData = new ContextData();
+		
+		//TODO: Client Connection in contextData
+		contextData.setClientConnection("");
+		contextData.setClientPatform(insertMessage.getBody().getClientPlatform());
+		contextData.setClientPatformInstance(insertMessage.getBody().getClientPlatformInstance());
+		contextData.setClientSession(insertMessage.getSessionKey());
+		contextData.setTimezoneId(ZoneId.systemDefault().toString());
+		contextData.setUser(securityPluginManager.getUserIdFromSessionKey(insertMessage.getSessionKey()));
+		
 		//TODO: SSAP Copy methods
 		responseMessage.setDirection(SSAPMessageDirection.RESPONSE);
 		responseMessage.setMessageId(insertMessage.getMessageId());
@@ -56,8 +73,8 @@ public class InsertProcessor implements MessageTypeProcessor {
 		responseMessage.setSessionKey(insertMessage.getSessionKey());
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);		
-		responseMessage.getBody().setThinKp(insertMessage.getBody().getThinKp());
-		responseMessage.getBody().setThinkpInstance(insertMessage.getBody().getThinkpInstance());
+		responseMessage.getBody().setClientPlatform(insertMessage.getBody().getClientPlatform());
+		responseMessage.getBody().setClientPlatformInstance(insertMessage.getBody().getClientPlatformInstance());
 		
 		try {
 			responseMessage.getBody().setData(objectMapper.readTree(repositoryResponse));
@@ -67,6 +84,16 @@ public class InsertProcessor implements MessageTypeProcessor {
 		}
 		
 		return responseMessage;		
+	}
+
+	@Override
+	public List<SSAPMessageTypes> getMessageTypes() {
+		return Collections.singletonList(SSAPMessageTypes.INSERT);
+	}
+
+	@Override
+	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+		
 	}
 
 }

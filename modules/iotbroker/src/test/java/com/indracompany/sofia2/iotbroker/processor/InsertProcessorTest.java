@@ -23,14 +23,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.indracompany.sofia2.iotbroker.processor.impl.InsertProcessor;
 import com.indracompany.sofia2.iotbroker.ssap.generator.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.ssap.generator.pojo.Person;
+import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -40,14 +41,28 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 public class InsertProcessorTest {
 	
 	@Autowired
-	InsertProcessor insertProcessor;
+	MessageProcessorDelegate insertProcessor;
 	
 	@Autowired
 	MongoTemplate springDataMongoTemplate;
 	
+	@MockBean
+	SecurityPluginManager securityPluginManager;
+	
+	Person subject = PojoGenerator.generatePerson();
+	SSAPMessage<SSAPBodyOperationMessage> ssapInsertOperation;
+	
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException, Exception {
+		if(springDataMongoTemplate.collectionExists(Person.class)) {
+			springDataMongoTemplate.createCollection(Person.class);
+		}
 		springDataMongoTemplate.createCollection(Person.class);
+		
+		subject = PojoGenerator.generatePerson();
+		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(
+						Person.class.getSimpleName(), 
+						subject);
 	}
 	
 	@After

@@ -22,5 +22,6 @@ public class MessageException {
 	public static final String ERR_SESSIONKEY_NOT_ASSINGED = "No SessionKey granted";
 	public static final String ERR_BD_QUERY_TYPE_NOT_SUPPORTED = "QueryType %s not supported";
 	
+	
 
 }

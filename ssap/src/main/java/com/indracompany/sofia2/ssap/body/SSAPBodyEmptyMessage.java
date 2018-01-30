@@ -18,7 +18,7 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 public class SSAPBodyEmptyMessage extends SSAPBodyMessage {
 
 	@Override
-	public boolean isThinKpMandatory() {
+	public boolean isClientPlatformMandatory() {
 		return false;
 	}
 

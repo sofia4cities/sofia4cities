@@ -40,7 +40,7 @@ public class SSAPBodyOperationMessage extends SSAPBodyMessage {
 	}
 
 	@Override
-	public boolean isThinKpMandatory() {
+	public boolean isClientPlatformMandatory() {
 		return true;
 	}
 

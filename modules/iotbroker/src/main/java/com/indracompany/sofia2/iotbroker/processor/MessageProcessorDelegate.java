@@ -15,6 +15,7 @@ package com.indracompany.sofia2.iotbroker.processor;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -50,12 +51,9 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	SecurityPluginManager securityPluginManager;
 	@Autowired
 	List<DBStatementParser> dbStatementParsers;
+	
 	@Autowired
-	JoinProcessor joinProcessor;	
-	@Autowired
-	LeaveProcessor leaveProcessor;	
-	@Autowired
-	InsertProcessor insertProcessor;
+	List<MessageTypeProcessor> processors;
 	
 	@Autowired
 	private ApplicationContext context;
@@ -77,10 +75,12 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		
 		try {
 			
+			MessageTypeProcessor processor = proxyProcesor(message);
+			
 			//Check presence of Thinkp
-			if(message.getBody().isThinKpMandatory() 
-					&& (StringUtils.isEmpty(message.getBody().getThinKp()) 
-							|| StringUtils.isEmpty(message.getBody().getThinkpInstance()))) {
+			if(message.getBody().isClientPlatformMandatory() 
+					&& (StringUtils.isEmpty(message.getBody().getClientPlatform()) 
+							|| StringUtils.isEmpty(message.getBody().getClientPlatformInstance()))) {
 				response = SSAPMessageGenerator.generateResponseErrorMessage(message,
 						SSAPErrorCode.PROCESSOR, 
 						String.format(MessageException.ERR_THINKP_IS_MANDATORY, message.getMessageType().name()));
@@ -111,15 +111,17 @@ public class MessageProcessorDelegate implements MessageProcessor {
 				validateOperation(message.getMessageType(), operationMessage.getBody().getQueryType(), operationMessage.getBody().getQuery(), message.getSessionKey());
 			}
 			
-			response = proxyProcesor(message).process(message);
+			processor.validateMessage(message);
+			response = processor.process(message);
 			
 			response.setMessageId(message.getMessageId());
 			response.setMessageType(message.getMessageType());
 			response.setOntology(message.getOntology());
 			
 		} catch (SSAPProcessorException e) {
-			// TODO GENERATE SSAPErrorMessage
-			e.printStackTrace();
+			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
+					SSAPErrorCode.PROCESSOR, 
+					String.format(e.getMessage(), message.getMessageType().name()));
 		} 
 		catch (AuthorizationException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
@@ -144,6 +146,36 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return response;
 	}
 	
+	public SSAPMessage<SSAPBodyReturnMessage> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+		SSAPMessage<SSAPBodyReturnMessage> response = null;
+		
+		//Check presence of Thinkp
+		if(message.getBody().isClientPlatformMandatory() 
+				&& (StringUtils.isEmpty(message.getBody().getClientPlatform()) 
+						|| StringUtils.isEmpty(message.getBody().getClientPlatformInstance()))) {
+			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
+					SSAPErrorCode.PROCESSOR, 
+					String.format(MessageException.ERR_THINKP_IS_MANDATORY, message.getMessageType().name()));
+			
+			return response;
+		}
+		
+		//Check presence of sessionKey and authorization of sessionKey
+		if(message.getBody().isSessionKeyMandatory()
+				&& StringUtils.isEmpty(message.getSessionKey())) {
+			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
+					SSAPErrorCode.PROCESSOR, 
+					String.format(MessageException.ERR_SESSIONKEY_IS_MANDATORY, message.getMessageType().name()));
+			
+			return response;
+		}
+		
+		if(message.getBody().isAutorizationMandatory()) {
+			securityPluginManager.checkSessionKeyActive(message.getSessionKey());
+		}
+		
+	}
+	
 	public MessageTypeProcessor proxyProcesor(SSAPMessage<? extends SSAPBodyMessage> message) throws SSAPProcessorException {
 		
 		if(null == message.getMessageType()) {
@@ -152,19 +184,15 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		
 		SSAPMessageTypes type = message.getMessageType();
 		
-		switch(type) {
-			case JOIN:
-				return joinProcessor;
-			case LEAVE:
-				return leaveProcessor;
-			case INSERT:
-				return insertProcessor;
-			case NONE:
-				throw new SSAPProcessorException(MessageException.ERR_SSAP_MESSAGETYPE_MANDATORY_NOT_NULL);	
-			default:
-				throw new SSAPProcessorException(String.format(MessageException.ERR_PROCESSOR_NOT_FOUND, message.getMessageType()));
-			
+		List<MessageTypeProcessor> filteredProcessors = processors.stream().filter(p -> p.getMessageTypes().contains(type)).collect(Collectors.toList());
+		
+		if(filteredProcessors.isEmpty()) {
+			throw new SSAPProcessorException(String.format(MessageException.ERR_PROCESSOR_NOT_FOUND, message.getMessageType()));
 		}
+		
+		return filteredProcessors.get(0);
+		
+		
 	}
 	
 	private void validateOperation(SSAPMessageTypes messageType, SSAPQueryType queryType, String query, String sessionKey) throws AuthorizationException {
