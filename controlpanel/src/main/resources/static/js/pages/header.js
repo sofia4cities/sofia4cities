@@ -343,7 +343,7 @@ var HeaderController = function() {
 		// USER-CONFIRM-DIALOG
 		showConfirmDialogUsuario : function(formId){		
 			logControl ? console.log('showConfirmDialogUsuario()...') : '';
-			showConfirmDialogUsuario();
+			showConfirmDialogUsuario(formId);
 		}		
 	};
 }();

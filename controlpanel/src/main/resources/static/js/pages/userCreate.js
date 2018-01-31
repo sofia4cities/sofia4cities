@@ -220,6 +220,12 @@ var UserCreateController = function() {
 			regDate = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
 			$('#datecreated').datepicker('update',regDate);
 			
+			// if user deleted (active=false, and dateDeleted=date) active=true -> set datadeleted to null.
+			$('#active').on('click', function(){					
+					if (( $('#datedeleted').val() != '' )&&( $(this).is(":checked") )) { $('#datecreated').datepicker('update',null);}
+					console.log('checked in update with datedeleted: ' + $('#datedeleted').val());				
+			});
+			
 		}
 		
 	}	
@@ -231,9 +237,9 @@ var UserCreateController = function() {
 		// no Id no fun!
 		if ( !userId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO USER-FORM SELECTED!'}); return false; }
 		
-		// set action and userId to the form
-		$('.delete-user').attr('userId',userId);
-		$('.delete-user').attr('action','/controlpanel/users/' + userId);
+		// No dateDeleted no fun!
+		if ( !$('#datedeleted').val() ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: userCreateReg.validation_dates}); return false; }
+		
 		console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-user').attr('action') + ' ID: ' + $('.delete-user').attr('userId'));
 		
 		// call user Confirm at header.
