@@ -85,14 +85,8 @@
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
 								</div>
 								<div class="actions margin-right-20">
-									<div class="btn-group">												
-										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
-											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
-										</a>												
-										<ul class="dropdown-menu pull-right" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../configurations/create'" th:text="#{gen.create}" >Create</a></li>
-											<!--<li class="divider"> </li> -->
-										</ul>
+									<div class="btn-group">
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../configurations/create'" ><i class="flaticon-cogwheel-2"></i> <span th:text="#{gen.create}">New </span></button>
 									</div>										
 								</div>
 							</div>
