@@ -11,22 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.scheduler.domain;
+package com.indracompany.sofia2.scheduler.library.scheduler.bean;
+
+import com.indracompany.sofia2.scheduler.library.SchedulerType;
 
 public class TaskOperation {
 	
 	private String jobName;	
-	private String jobGroup;
-	private String schedulerType;
+	private SchedulerType schedulerType;
 	
 	public TaskOperation () {
 		super();
 	}
 	
-	public TaskOperation(String jobName, String jobGroup, String schedulerType) {
+	public TaskOperation(String jobName, SchedulerType schedulerType) {
 		super();
 		this.jobName = jobName;
-		this.jobGroup = jobGroup;
 		this.schedulerType = schedulerType;
 	}
 
@@ -38,19 +38,11 @@ public class TaskOperation {
 		this.jobName = jobName;
 	}
 	
-	public String getJobGroup() {
-		return jobGroup;
-	}
-	
-	public void setJobGroup(String jobGroup) {
-		this.jobGroup = jobGroup;
-	}
-	
-	public String getSchedulerType() {
+	public SchedulerType getSchedulerType() {
 		return schedulerType;
 	}
 	
-	public void setSchedulerType(String schedulerType) {
+	public void setSchedulerType(SchedulerType schedulerType) {
 		this.schedulerType = schedulerType;
 	}
 	

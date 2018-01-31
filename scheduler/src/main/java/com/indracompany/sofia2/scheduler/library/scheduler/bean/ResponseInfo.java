@@ -11,15 +11,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.scheduler.service;
+package com.indracompany.sofia2.scheduler.library.scheduler.bean;
 
-import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
+public class ResponseInfo {
 
-public interface JobGenerator {
+	private boolean success;
+	private String text;
 	
-	JobDetail createJobDetail(JobKey jobKey, JobDataMap jobDataMap, Class<? extends Job > jobClass, String jobDescription);
+	public ResponseInfo() {
+		super();
+	}
+	
+	public ResponseInfo(boolean success, String text) {
+		super();
+		this.success = success;
+		this.text = text;
+	}
 
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+	public String getText() {
+		return text;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
+	}
+	
 }

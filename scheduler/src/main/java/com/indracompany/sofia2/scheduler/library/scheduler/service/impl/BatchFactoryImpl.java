@@ -21,9 +21,8 @@ import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.scheduler.library.BasicSchedulerType;
 import com.indracompany.sofia2.scheduler.library.SchedulerType;
-import com.indracompany.sofia2.scheduler.library.config.scheduler.BatchScheduler;
+import com.indracompany.sofia2.scheduler.library.scheduler.BatchScheduler;
 import com.indracompany.sofia2.scheduler.library.scheduler.service.BatchSchedulerFactory;
 
 @Service
@@ -65,7 +64,7 @@ public class BatchFactoryImpl implements BatchSchedulerFactory{
 
 	@Override
 	public BatchScheduler getScheduler(String schedulerName) {		
-		return getScheduler(BasicSchedulerType.schedulerTypeFor(schedulerName));
+		return getScheduler(SchedulerType.valueOf(schedulerName));
 	}
 
 }

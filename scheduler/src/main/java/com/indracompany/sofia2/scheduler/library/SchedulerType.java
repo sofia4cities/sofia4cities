@@ -13,8 +13,31 @@
  */
 package com.indracompany.sofia2.scheduler.library;
 
-public interface SchedulerType {
-	
-	String getSchedulerName();
+import com.indracompany.sofia2.scheduler.library.scheduler.instance.SchedulerNames;
 
+public enum SchedulerType {
+	
+	Twitter(SchedulerNames.TWITTER_SCHEDULER_NAME), Script (SchedulerNames.SCRIPT_SCHEDULER_NAME);
+	
+	private String schedulerName;
+	
+	private SchedulerType (String schedulerName) {
+		this.schedulerName = schedulerName;
+	}
+	
+	public String getSchedulerName() {
+		
+		return schedulerName;
+	}
+	
+	//Add fromString method to convert string to enum 
+    public static SchedulerType fromString(String input) {
+        for (SchedulerType schedulerType : SchedulerType.values()) {
+          if (schedulerType.schedulerName.equals(input)) {
+            return schedulerType;
+          }
+        }
+        return null;
+     }
+	
 }

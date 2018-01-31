@@ -11,26 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.example.config.scheduler;
+package com.indracompany.sofia2.scheduler.library.scheduler.instance;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+public class SchedulerNames {
 
-import com.indracompany.sofia2.scheduler.library.job.BatchGenericExecutor;
-
-@Service
-public class ExecutionJob implements BatchGenericExecutor{
+	public static final String SCRIPT_SCHEDULER_NAME = "scriptScheduler";
+	public static final String TWITTER_SCHEDULER_NAME = "twitterScheduler";
 	
-	@Autowired
-	private AnotherExampleJob anotherExampleJob;
-
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		
-		anotherExampleJob.execute(context);
-		
-	}
-
+	private SchedulerNames () {}
 }

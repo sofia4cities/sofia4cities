@@ -13,15 +13,27 @@
  */
 package com.indracompany.sofia2.scheduler.library;
 
+import java.util.List;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import com.indracompany.sofia2.scheduler.library.resolver.SchedulerTypeArgumentResolver;
 
 
 @SpringBootApplication
-public class SchedulerApplication {
+public class SchedulerApplication extends WebMvcConfigurerAdapter {
 	
 	public static void main(String[] args) {
 		SpringApplication.run(SchedulerApplication.class, args);
 	}
+	
+	@Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        //add the new resolver
+        argumentResolvers.add(new SchedulerTypeArgumentResolver());
+    }
 
 }

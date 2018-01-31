@@ -11,16 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.config.scheduler;
+package com.indracompany.sofia2.scheduler.library.scheduler;
 
 import java.util.List;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import com.indracompany.sofia2.scheduler.library.config.QuartzDataSourceConfig;
 
@@ -44,5 +46,26 @@ public abstract class GenericQuartzConfig {
 	}
 	
 	public abstract String getSchedulerBeanName ();
+	
+	public SchedulerFactoryBean getSchedulerFactoryBean (JobFactory jobFactory, PlatformTransactionManager transactionManager) {
+		
+		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
+		
+		schedulerFactoryBean.setTransactionManager(transactionManager);
+		schedulerFactoryBean.setOverwriteExistingJobs(true);
+		schedulerFactoryBean.setSchedulerName(getSchedulerBeanName());
+		schedulerFactoryBean.setBeanName(getSchedulerBeanName());
+
+		// custom job factory of spring with DI support for @Autowired!
+		schedulerFactoryBean.setOverwriteExistingJobs(true);
+		schedulerFactoryBean.setAutoStartup(checksIfAutoStartup());
+		
+		schedulerFactoryBean.setDataSource(dataSource);
+		
+		schedulerFactoryBean.setJobFactory(jobFactory);
+		schedulerFactoryBean.setQuartzProperties(quartzProperties);
+		
+		return schedulerFactoryBean;
+	}
 
 }

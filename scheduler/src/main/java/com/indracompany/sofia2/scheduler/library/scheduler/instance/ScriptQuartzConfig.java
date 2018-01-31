@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.config.scheduler;
+package com.indracompany.sofia2.scheduler.library.scheduler.instance;
 
 
 import static com.indracompany.sofia2.scheduler.library.PropertyNames.SCHEDULER_PROPERTIES_LOCATION;
@@ -26,43 +26,29 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.indracompany.sofia2.scheduler.library.scheduler.BatchScheduler;
+import com.indracompany.sofia2.scheduler.library.scheduler.GenericBatchScheduler;
+import com.indracompany.sofia2.scheduler.library.scheduler.GenericQuartzConfig;
+
 @Configuration
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 public class ScriptQuartzConfig extends GenericQuartzConfig {
 	
-	private final String SCHEDULER_BEAN_FACTORY_NAME = "script-scheduler-factory";
-	private final String SCHEDULER_NAME = "scriptScheduler";
+	private static final String SCHEDULER_BEAN_FACTORY_NAME = "script-scheduler-factory";
 	
 	@Bean(SCHEDULER_BEAN_FACTORY_NAME)
-	public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, PlatformTransactionManager transactionManager) throws SchedulerException {
-						
-		SchedulerFactoryBean schedulerFactoryBean = new SchedulerFactoryBean();
-		
-		schedulerFactoryBean.setTransactionManager(transactionManager);
-		schedulerFactoryBean.setOverwriteExistingJobs(true);
-		schedulerFactoryBean.setSchedulerName(SCHEDULER_NAME);
-		schedulerFactoryBean.setBeanName(SCHEDULER_NAME);
-
-		// custom job factory of spring with DI support for @Autowired!
-		schedulerFactoryBean.setOverwriteExistingJobs(true);
-		schedulerFactoryBean.setAutoStartup(checksIfAutoStartup());
-		
-		schedulerFactoryBean.setDataSource(dataSource);
-		
-		schedulerFactoryBean.setJobFactory(jobFactory);
-		schedulerFactoryBean.setQuartzProperties(quartzProperties);
-		
-		return schedulerFactoryBean;
+	public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, PlatformTransactionManager transactionManager) throws SchedulerException {						
+		return getSchedulerFactoryBean(jobFactory, transactionManager);
 	}
 	
-	@Bean(SCHEDULER_NAME)
+	@Bean(SchedulerNames.SCRIPT_SCHEDULER_NAME)
 	public BatchScheduler scriptScheduler (@Autowired @Qualifier(SCHEDULER_BEAN_FACTORY_NAME) SchedulerFactoryBean schedulerFactoryBean){
-		return new GenericBatchScheduler(schedulerFactoryBean.getScheduler(), SCHEDULER_NAME);
+		return new GenericBatchScheduler(schedulerFactoryBean.getScheduler(), getSchedulerBeanName());
 	}
 
 	@Override
 	public String getSchedulerBeanName() {
-		return SCHEDULER_NAME;
+		return SchedulerNames.SCRIPT_SCHEDULER_NAME;
 	}
 	
 	

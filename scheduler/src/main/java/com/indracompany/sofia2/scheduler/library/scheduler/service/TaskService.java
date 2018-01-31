@@ -15,15 +15,19 @@ package com.indracompany.sofia2.scheduler.library.scheduler.service;
 
 import java.util.List;
 
-import com.indracompany.sofia2.scheduler.library.config.scheduler.BatchScheduler;
-import com.indracompany.sofia2.scheduler.library.scheduler.domain.TaskInfo;
-import com.indracompany.sofia2.scheduler.library.scheduler.domain.TaskOperation;
+import org.quartz.JobDataMap;
+
+import com.indracompany.sofia2.scheduler.library.scheduler.bean.ListTaskInfo;
+import com.indracompany.sofia2.scheduler.library.scheduler.bean.TaskInfo;
+import com.indracompany.sofia2.scheduler.library.scheduler.bean.TaskOperation;
 
 public interface TaskService {
 	
-	List<TaskInfo> list(String username);
+	List<ListTaskInfo> list(String username);
 	
 	boolean addJob(TaskInfo info);
+	
+	JobDataMap initTaskDataMap (TaskInfo info);
 	
 	boolean unscheduled (TaskOperation operation);
 	

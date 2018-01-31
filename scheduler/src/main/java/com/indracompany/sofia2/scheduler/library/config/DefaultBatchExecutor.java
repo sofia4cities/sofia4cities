@@ -28,8 +28,8 @@ import com.indracompany.sofia2.scheduler.library.job.BatchGenericExecutor;
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 public class DefaultBatchExecutor {
 	
-	@Bean(name="batchExecutor")
-	@ConditionalOnMissingBean
+	@Bean
+	@ConditionalOnMissingBean(BatchGenericExecutor.class)
 	public BatchGenericExecutor batchExecutor() {
 		
 		return null;

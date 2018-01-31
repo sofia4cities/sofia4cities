@@ -14,18 +14,25 @@
 package com.indracompany.sofia2.example.config.scheduler;
 
 
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.scheduler.library.JobParamNames;
+import com.indracompany.sofia2.scheduler.library.SchedulerType;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class AnotherExampleJob {
 	
-	private final Logger logger = LoggerFactory.getLogger(AnotherExampleJob.class);
-	
 	public void execute (JobExecutionContext context) {
-		logger.info("executing job test");
+		
+		JobDataMap data = context.getMergedJobDataMap();
+		String username = data.getString(JobParamNames.USERNAME);
+		SchedulerType schedulerName = (SchedulerType)data.get(JobParamNames.SCHEDULER_TYPE);
+		log.info("executing job test" + username + " " + schedulerName);
 	}
 	
 

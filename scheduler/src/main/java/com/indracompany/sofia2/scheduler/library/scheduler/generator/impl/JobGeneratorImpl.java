@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.scheduler.service.impl;
+package com.indracompany.sofia2.scheduler.library.scheduler.generator.impl;
 
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -20,7 +20,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.scheduler.library.scheduler.service.JobGenerator;
+import com.indracompany.sofia2.scheduler.library.scheduler.generator.JobGenerator;
 
 @Service
 public class JobGeneratorImpl implements JobGenerator {

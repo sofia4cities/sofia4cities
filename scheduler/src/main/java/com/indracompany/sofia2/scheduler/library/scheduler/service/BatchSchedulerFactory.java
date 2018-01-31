@@ -16,7 +16,7 @@ package com.indracompany.sofia2.scheduler.library.scheduler.service;
 import java.util.List;
 
 import com.indracompany.sofia2.scheduler.library.SchedulerType;
-import com.indracompany.sofia2.scheduler.library.config.scheduler.BatchScheduler;
+import com.indracompany.sofia2.scheduler.library.scheduler.BatchScheduler;
 
 public interface BatchSchedulerFactory {
 	

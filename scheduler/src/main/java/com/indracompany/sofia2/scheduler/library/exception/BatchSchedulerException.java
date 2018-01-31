@@ -13,6 +13,24 @@
  */
 package com.indracompany.sofia2.scheduler.library.exception;
 
-public class BatchSchedulerException {
+public class BatchSchedulerException extends Exception {
+	
+	private static final long serialVersionUID = 3112245268165362693L;
+
+	public BatchSchedulerException() {
+    	super();
+    }
+
+    public BatchSchedulerException(String message) {
+       super(message);
+    }
+    
+    public BatchSchedulerException (Throwable cause) {
+        super (cause);
+    }
+    
+    public BatchSchedulerException (String message, Throwable cause){
+    	super(message, cause);
+    }
 
 }

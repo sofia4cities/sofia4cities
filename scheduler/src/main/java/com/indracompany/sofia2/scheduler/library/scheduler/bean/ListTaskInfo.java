@@ -11,56 +11,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.scheduler.domain;
+package com.indracompany.sofia2.scheduler.library.scheduler.bean;
 
-import java.util.Map;
-
-public class TaskInfo {
-
+public class ListTaskInfo {
+	
 	private String jobName;	
 	private String jobGroup;	
 	private String jobDescription;	
-	private String jobStatus;	
-	private String cronExpression;	
+	private String jobStatus;
+	private String cronExpression;
 	private String createTime;
 	private String nextFireTime;
 	private String previousFireTime;
-	private String schedulerType;
-	private Map data;
+	private String schedulerName;
 	
 	
-	public TaskInfo () {
+	public ListTaskInfo () {
+		super();
+	}
+	
+	public ListTaskInfo(String jobName, String jobGroup, String jobDescription, String jobStatus, String cronExpression, 
+						String schedulerName, String createTime, String nextFireTime, String previousFireTime) {
 		
-	}
-	
-	public TaskInfo(String jobName, String jobGroup, String jobDescription, String jobStatus,
-			 		String cronExpression, String createTime, 
-			 		String nextFireTime, String previousFireTime) {
 		super();
 		this.jobName = jobName;
 		this.jobGroup = jobGroup;
 		this.jobDescription = jobDescription;
+		this.schedulerName = schedulerName;
 		this.jobStatus = jobStatus;
 		this.cronExpression = cronExpression;
 		this.createTime = createTime;
 		this.nextFireTime = nextFireTime;
 		this.previousFireTime = previousFireTime;
-	}
-
-	public TaskInfo(String jobName, String jobGroup, String jobDescription, String jobStatus,
-					String schedulerType, String cronExpression, String createTime, 
-					String nextFireTime, String previousFireTime, Map data) {
-		super();
-		this.jobName = jobName;
-		this.jobGroup = jobGroup;
-		this.jobDescription = jobDescription;
-		this.jobStatus = jobStatus;
-		this.schedulerType = schedulerType;
-		this.cronExpression = cronExpression;
-		this.createTime = createTime;
-		this.nextFireTime = nextFireTime;
-		this.previousFireTime = previousFireTime;
-		this.data = data;
 	}
 
 	public String getNextFireTime() {
@@ -111,14 +93,6 @@ public class TaskInfo {
 		this.jobStatus = jobStatus;
 	}
 	
-	public String getSchedulerType() {
-		return schedulerType;
-	}
-
-	public void setSchedulerType(String schedulerType) {
-		this.schedulerType = schedulerType;
-	}
-
 	public String getCronExpression() {
 		return cronExpression;
 	}
@@ -127,20 +101,20 @@ public class TaskInfo {
 		this.cronExpression = cronExpression;
 	}
 
+	public String getSchedulerName() {
+		return schedulerName;
+	}
+
+	public void setSchedulerName(String schedulerName) {
+		this.schedulerName = schedulerName;
+	}
+
 	public String getCreateTime() {
 		return createTime;
 	}
 
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
-	}
-
-	public Map getData() {
-		return data;
-	}
-
-	public void setData(Map data) {
-		this.data = data;
 	}
 
 }

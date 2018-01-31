@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.scheduler.library.common.ResponseInfo;
-import com.indracompany.sofia2.scheduler.library.scheduler.domain.TaskInfo;
-import com.indracompany.sofia2.scheduler.library.scheduler.domain.TaskOperation;
+import com.indracompany.sofia2.scheduler.library.SchedulerType;
+import com.indracompany.sofia2.scheduler.library.scheduler.bean.ListTaskInfo;
+import com.indracompany.sofia2.scheduler.library.scheduler.bean.ResponseInfo;
+import com.indracompany.sofia2.scheduler.library.scheduler.bean.TaskInfo;
+import com.indracompany.sofia2.scheduler.library.scheduler.bean.TaskOperation;
 import com.indracompany.sofia2.scheduler.library.scheduler.service.TaskService;
 
 import java.util.List;
@@ -38,7 +40,7 @@ public class DefaultController {
 	
 	
 	@RequestMapping (method = RequestMethod.GET, value="/list/{username}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public List<TaskInfo> list( @PathVariable String username) {			
+	public List<ListTaskInfo> list( @PathVariable String username) {			
 		return taskService.list(username);
 	}
 		
@@ -49,24 +51,24 @@ public class DefaultController {
 		return new ResponseInfo(scheduled, "");
 	}
 	
-	@RequestMapping (method = RequestMethod.GET, value="/unschedule/{jobName}/{jobGroup}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseInfo unschedule(@PathVariable String jobName, @PathVariable String jobGroup, @PathVariable String schedulerType) {
+	@RequestMapping (method = RequestMethod.GET, value="/unschedule/{jobName}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseInfo unschedule(@PathVariable String jobName, @PathVariable String schedulerType) {
 		
-		boolean unscheduled = taskService.unscheduled(new TaskOperation(jobName, jobGroup,schedulerType));
+		boolean unscheduled = taskService.unscheduled(new TaskOperation(jobName, SchedulerType.valueOf(schedulerType)));
 		return new ResponseInfo(unscheduled, "");
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value="/pause/{jobName}/{jobGroup}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseInfo pause(@PathVariable String jobName, @PathVariable String jobGroup, @PathVariable String schedulerType){
+	@RequestMapping(method = RequestMethod.GET, value="/pause/{jobName}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseInfo pause(@PathVariable String jobName, @PathVariable String schedulerType){
 		
-		boolean resumed = taskService.pause(new TaskOperation(jobName, jobGroup,schedulerType));		
+		boolean resumed = taskService.pause(new TaskOperation(jobName, SchedulerType.valueOf(schedulerType)));		
 		return new ResponseInfo(resumed, "");
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value="/resume/{jobName}/{jobGroup}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseInfo resume(@PathVariable String jobName, @PathVariable String jobGroup, @PathVariable String schedulerType){
+	@RequestMapping(method = RequestMethod.GET, value="/resume/{jobName}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseInfo resume(@PathVariable String jobName, @PathVariable String schedulerType){
 		
-		boolean resumed = taskService.resume(new TaskOperation(jobName, jobGroup, schedulerType));		
+		boolean resumed = taskService.resume(new TaskOperation(jobName, SchedulerType.valueOf(schedulerType)));		
 		return new ResponseInfo(resumed, "");
 	}
 	

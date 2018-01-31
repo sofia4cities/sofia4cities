@@ -11,37 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.common;
+package com.indracompany.sofia2.scheduler.library;
 
-public class ResponseInfo {
-
-	private boolean success;
-	private String text;
+public class JobParamNames {
 	
-	public ResponseInfo() {
-		super();
-	}
+	public static String USERNAME = "username";
+	public static String SCHEDULER_TYPE = "schedulerType";
 	
-	public ResponseInfo(boolean success, String text) {
-		super();
-		this.success = success;
-		this.text = text;
-	}
+	private JobParamNames () { }
 
-	public boolean isSuccess() {
-		return success;
-	}
-
-	public void setSuccess(boolean success) {
-		this.success = success;
-	}
-
-	public String getText() {
-		return text;
-	}
-	
-	public void setText(String text) {
-		this.text = text;
-	}
-	
 }

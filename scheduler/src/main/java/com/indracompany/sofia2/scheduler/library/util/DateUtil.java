@@ -11,17 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.library.scheduler.service;
+package com.indracompany.sofia2.scheduler.library.util;
 
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-
-public interface TriggerGenerator {
-
-	Trigger createTrigger(JobDetail jobDetail, TriggerKey triggerKey);
+public class DateUtil {
 	
-	Trigger createCronTrigger(String cronExpression, JobDetail jobDetail, TriggerKey triggerKey);
+	private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	public static String parseDate (Date date) {
+		String parsedDate = "";
 		
+		if (date != null) {			
+			parsedDate = format.format(date);
+		}
+		
+		return parsedDate;
+	}
+
 }
