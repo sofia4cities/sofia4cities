@@ -34,10 +34,9 @@
 		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
 		<!-- END HEADER -->
 		
-		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<!-- HEADER AND CONTENT DIVIDER -->
 		<div class="clearfix"> </div>
-		<!-- END HEADER AND CONTENT DIVIDER -->
-		
+
 		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
 		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
 		<!-- END SIDEBAR -->
@@ -197,7 +196,7 @@
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->				
 			</div><!-- END CONTENT BODY -->
-		</div><!-- END CONTENT page-content-wrapper -->		
+		</div><!-- END CONTENT page-content-wrapper -->	
 	</div>
 	<!-- END MAIN PAGE WRAPPER -->
 	
@@ -207,7 +206,7 @@
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>	
-	
+
 	<!-- plugins -->
 	<script th:src="@{/static/vendor/anime.min.js}"/>
 	<script th:src="@{/static/vendor/animation.js}"/>
@@ -215,19 +214,15 @@
 	<script type="text/javascript">	
 	var optionName = 'ONTOLOGIAS';
 	
-	 $( document ).ready(function() {
-		 
-		 var hayBdtrRelacional = $("#hayBdtrRelacional").val();
-		 if(hayBdtrRelacional == "true"){
-			$("#ontologia_relacional").show(); 
-		 }
-		 
+	 $( document ).ready(function() {		 
+		 		 
 		[].slice.call(document.querySelectorAll('.grid--effect-vega > .grid__item')).forEach(function(stackEl) {
 			new VegaFx(stackEl);
 		});
 		 
 	 });
-	</script>
-	
+
+	</script>	
+
 	</body>
 </html>

@@ -2,8 +2,8 @@ var ConfigurationsCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
-	var LIB_TITLE = 'Menu Controller';	
-    var logControl = 0;
+	var LIB_TITLE = 'Configurations Controller';	
+    var logControl = 1;
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.
 	var currentFormat = '' // date format depends on currentLanguage.
@@ -62,10 +62,10 @@ var ConfigurationsCreateController = function() {
 
 			// validation rules
             rules: {
-				userId:		{ minlength: 5, required: true },             
+				userId:					{ minlength: 5, required: true },             
 				configurationTypes:		{ required: true },
-				jsonSchema: {required:true},
-				createdAt:{ date: true, required: true },
+				jsonSchema: 			{required:true},
+				createdAt:				{ date: true, required: true },
 
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
@@ -99,34 +99,28 @@ var ConfigurationsCreateController = function() {
 	
 	// INIT TEMPLATE ELEMENTS
 	var initTemplateElements = function(){
-		logControl ? console.log('initTemplateElements() -> selectpickers, datepickers, resetForm, today->dateCreated currentLanguage: ' + currentLanguage) : '';
-		
-		// selectpicker validate fix when handleValidation()
-		$('.selectpicker').on('change', function () {
-			$(this).valid();
-		});
-		
-		// set current language and formats
-		currentLanguage = userCreateReg.language || LANGUAGE[0];
-		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';		
-		
-		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage) : '';
-		
-		// init datepickers dateCreated and dateDeleted		
-		$("#createdAt").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
-        
-		
+		logControl ? console.log('initTemplateElements() -> resetForm') : '';		
+				
 		// Reset form
 		$('#resetBtn').on('click',function(){ 
 			cleanFields('configurations_create_form');
-		});
-		
-		//set TODAY to dateCreated depends on language
-		var f = new Date();         
-        today = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
-		$('#createdAt').datepicker('update',today);
-		
+		});	
 	}
+	
+	// INIT CODEMIRROR
+	var handleCodeMirror = function () {
+		logControl ? console.log('handleCodeMirror() on -> jsonSchema') : '';	
+		
+        var myTextArea = document.getElementById('jsonSchema');
+        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+            lineNumbers: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"neat",
+            mode: {name: "javascript", json: true}
+        });
+		myCodeMirror.setSize("100%", 350);
+    }
 
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{		
@@ -140,7 +134,8 @@ var ConfigurationsCreateController = function() {
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';			
 			handleValidation();
-			initTemplateElements();		
+			initTemplateElements();
+			handleCodeMirror();
 			
 		}		
 	};

@@ -84,7 +84,7 @@
 				<!-- BEGIN LANGUAGE -->
 				<li class="dropdown dropdown-idioma">
 
-					<a href="javascript:;" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Idioma" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding-right:8px !important;">								
+					<a href="javascript:;" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" th:attr="data-original-title=#{head.lang} + ': ' + ${lang}" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="padding-right:8px !important;">								
 						<span th:text="#{head.lang}" class="username username-hide-on-mobile"> Language </span>
 						<i class="fa fa-angle-down"></i>
 					</a>
