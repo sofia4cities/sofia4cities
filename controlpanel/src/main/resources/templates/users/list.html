@@ -27,7 +27,7 @@
 		
 		<!-- PLUGINS STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/yadcf/jquery.dataTables.yadcf.css}"/>		
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.css}"/>		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
 		
 	</head>	
@@ -163,19 +163,35 @@
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene">																						
 											<div>
-												<!-- DATATABLE DANDELION CONF. -->												
-												<table id="users" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+												<!-- DATATABLE DANDELION CONF. -->											
+												<!-- dt:filterPlaceholder="header" -->
+												<table id="users" class="table table-hover table-striped" dt:table="true"  dt:paginationtype="full_numbers">
+												
 													<thead>
 														<tr class="cabecera-tabla">
-															<th dt:filterable="true" class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{user.id}">Identification</span></th>
+															<!-- dt:filterable="true" -->
+															<th  class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{user.id}">Identification</span></th>
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.name}" >Name</span></th>
 															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{user.email}" >eMail</span></th>
-															<th dt:filterable="true" class="titulo-columnas text-left" th:text="#{user.rolTypeName}">Role</th>
+															<!-- id="roleType" dt:filterable="true" dt:filterType="select" dt:selector="roleType"-->
+															<th class="titulo-columnas text-left" th:text="#{user.rolTypeName}">Role</th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateCreated}">Created At</span></th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted}">Deleted At </span></th>																
 															<th class="titulo-columnas text-center" th:text="#{user.active}">Active</th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
+														<!-- filters Row -->
+														<!-- <tr>
+															<th></th>
+															<th></th>
+															<th></th>
+															<th></th>
+															<th></th>
+															<th></th>
+															<th></th>
+															<th></th>															
+														</tr> -->
+															
 													</thead>
 													<tbody th:remove="all-but-first">
 														<tr th:each="user : ${users}" pages:paginate="10">
@@ -186,7 +202,7 @@
 															<!-- EMAIL -->
 															<td class="text-left no-wrap " th:text="${user.email}"></td>
 															<!-- ROLE -->
-															<td class="text-left no-wrap bold" th:text="${user.roleTypeId.name}"></td>
+															<td  class="text-left no-wrap bold" th:text="${user.roleTypeId.name}"></td>
 															<!-- DATE CREATED -->
 															<td class="text-center" th:if="${user.createdAt!=null}" th:text="${#dates.format(user.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${user.createdAt==null}" th:text="'---'"></td>
@@ -250,7 +266,7 @@
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>
-	<script th:src="@{/static/vendor/datatable/yadcf/jquery.dataTables.yadcf.js}"/>
+	<script th:src="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.js}"/>
 	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
 	
 	
@@ -301,6 +317,7 @@
 			$(this).toggleClass('text-muted line-through');			
 		});	
 		
+					
 		// SEARCH FORM RESET
 		$('#reset_user').on('click',function(){
 			$('#form_user')[0].reset();
@@ -318,6 +335,9 @@
 		// SHOW/HIDE DATATABLES COLUMN INIT 		
 		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
 		$('#dataTable-vis-toggle').removeClass('hide');
+		
+		//var dt = $('#users').DataTable();		
+		//yadcf.init(dt,[{column_number : 0}, {column_number: 3}],{ filters_tr_index: 1});
 		
 	});
 	
