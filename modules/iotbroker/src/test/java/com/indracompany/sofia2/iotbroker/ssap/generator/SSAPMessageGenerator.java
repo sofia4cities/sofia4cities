@@ -22,6 +22,7 @@ import com.github.javafaker.Faker;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.SSAPQueryType;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
 
@@ -36,8 +37,8 @@ public final class SSAPMessageGenerator {
 		ssapMessage.setMessageId(UUID.randomUUID().toString());
 		ssapMessage.setMessageType(SSAPMessageTypes.JOIN);
 //		ssapMessage.setOntology(ontology);
-		body.setThinKp(faker.name().firstName());
-		body.setThinkpInstance(UUID.randomUUID().toString());
+		body.setClientPlatform(faker.name().firstName());
+		body.setClientPlatformInstance(UUID.randomUUID().toString());
 		body.setToken(UUID.randomUUID().toString());
 		
 		ssapMessage.setBody(body);
@@ -53,6 +54,7 @@ public final class SSAPMessageGenerator {
 		SSAPBodyOperationMessage body = new SSAPBodyOperationMessage();
 		JsonNode jsonValue = mapper.readTree(mapper.writeValueAsBytes(value));
 		body.setData(jsonValue);
+		body.setQueryType(SSAPQueryType.NATIVE);
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.INSERT);

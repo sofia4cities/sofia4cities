@@ -11,11 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.mongodb.quasar.formatter;
+package com.indracompany.sofia2.config.repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface IQuasarTableFormatter {
-	
-	public FormatResult format(String input, String columnDelimiter, String rowDelimiter,
-			String quoteChar, String escapeChar, String charset);
+import com.indracompany.sofia2.config.model.ApiHeader;
+
+public interface ApiHeaderRepository extends JpaRepository<ApiHeader,String> {
+
+
+	ApiHeader findById(String id);
+
+
 
 }

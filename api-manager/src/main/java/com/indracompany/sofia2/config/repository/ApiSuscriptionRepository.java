@@ -11,18 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.interfaces;
+package com.indracompany.sofia2.config.repository;
+import java.util.List;
 
-import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
-import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
+import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.ApiSuscription;
+import com.indracompany.sofia2.config.model.User;
 
-@Service
-public interface BasicOpsQuasarDBRepository {
-	
-	public static final String ACCEPT_TEXT_CSV="text/csv";
-	public static final String ACCEPT_APPLICATION_JSON="application/json";
-	
-	public QuasarResponseDTO executeQuery(String query, int offset, SSAPQueryResultFormat resultType/*, UserCDB user*/, String formatter) throws Exception;
+public interface ApiSuscriptionRepository extends JpaRepository<ApiSuscription,String> {
+
+
+	ApiSuscription findById(String id);
+	List<ApiSuscription> findAllByApiIdAndUserId(Api api, User user);
+
+
 }

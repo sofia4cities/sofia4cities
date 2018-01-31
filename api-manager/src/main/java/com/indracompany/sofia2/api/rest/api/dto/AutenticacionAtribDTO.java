@@ -19,13 +19,12 @@
  ******************************************************************************/
 package com.indracompany.sofia2.api.rest.api.dto;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "autenticacionAtrib")
-public class AutenticacionAtribDTO {
+
+public class AutenticacionAtribDTO implements Cloneable, Serializable{
 	
 	@ApiModelProperty(value = "Nombre del atributo")
     private String nombre;
@@ -41,12 +40,12 @@ public class AutenticacionAtribDTO {
 		return valor;
 	}
 
-	@XmlElement(required=true)
+	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
 
-	@XmlElement(required=true)
+	
 	public void setValor(String valor) {
 		this.valor = valor;
 	}

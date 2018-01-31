@@ -11,13 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.mongodb.quasar.connector;
+package com.indracompany.sofia2.config.repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.indracompany.sofia2.config.model.ApiAuthenticationParameter;
+
+public interface ApiAuthenticationParameterRepository extends JpaRepository<ApiAuthenticationParameter,String> {
 
 
-import com.indracompany.sofia2.persistence.mongodb.quasar.connector.dto.QuasarResponseDTO;
+	ApiAuthenticationParameter findById(String id);
 
-public interface QuasarDbHttpConnector {
-	
-	public QuasarResponseDTO query(String query, int offset, int limit, String accept, String formatter) throws Exception;
 
 }

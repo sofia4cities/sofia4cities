@@ -11,16 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.mongodb.quasar.formatter;
+package com.indracompany.sofia2.iotbroker.common.exception;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import com.indracompany.sofia2.common.exception.BaseException;
 
-@Slf4j
-public class FormatResult {
-	
-	@Getter @Setter private String data;
-	@Getter @Setter private String contentType;
+public class OntologySchemaException extends BaseException {
+	private static final long serialVersionUID = 1L;
+
+	public OntologySchemaException(String message) {
+		super(message);
+	}
 
 }

@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.iotbroker.processor.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,6 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
-@Profile({"dummy-dev"})
 @Component
 public class JoinProcessor implements MessageTypeProcessor {
 
@@ -49,13 +49,13 @@ public class JoinProcessor implements MessageTypeProcessor {
 			throw new SSAPComplianceException(MessageException.ERR_TOKEN_IS_MANDATORY);
 		}
 		
-		List<String> sessionKeys = securityManager.authenticate(message);
+		String sessionKey = securityManager.authenticate(message);
 		
-		if(sessionKeys.size() > 0) {
+		if(StringUtils.isEmpty(sessionKey)) {
 			response.setDirection(SSAPMessageDirection.RESPONSE);
 			response.setMessageId(join.getMessageId());
 			response.setMessageType(SSAPMessageTypes.JOIN);
-			response.setSessionKey(sessionKeys.get(0));
+			response.setSessionKey(sessionKey);
 		}
 		else {
 			throw new AuthenticationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED);
@@ -63,5 +63,13 @@ public class JoinProcessor implements MessageTypeProcessor {
 		
 		return response;
 	}
+
+	@Override
+	public List<SSAPMessageTypes> getMessageTypes() {
+		return Collections.singletonList(SSAPMessageTypes.JOIN);
+	}
+
+	@Override
+	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {}
 
 }

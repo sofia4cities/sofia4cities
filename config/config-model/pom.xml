@@ -6,7 +6,7 @@
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
-		<relativePath>../../</relativePath>
+		<relativePath>../..</relativePath>
 	</parent>
 	
 	<groupId>com.indracompany.sofia2</groupId>

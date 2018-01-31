@@ -46,19 +46,7 @@
 		    	<artifactId>javafaker</artifactId>
 		    	<version>${javafaker.version}</version>
 		    	<scope>test</scope>
-			</dependency>			
-			<dependency>
-	            <groupId>de.flapdoodle.embed</groupId>
-	            <artifactId>de.flapdoodle.embed.mongo</artifactId>
-	            <version>2.0.0</version>
-	            <scope>test</scope>
-	        </dependency>
-	        <dependency>
-	            <groupId>cz.jirutka.spring</groupId>
-	            <artifactId>embedmongo-spring</artifactId>
-	            <version>RELEASE</version>
-	            <scope>test</scope>
-	         </dependency> 
+			</dependency>			 
 		</dependencies>
 	</dependencyManagement>
 	
@@ -80,6 +68,7 @@
 		<module>controlpanel</module>		
         <module>modules/monitoring-ui</module>
         <module>libraries/social-services</module>
+         <module>api-manager</module>
 		<!--
         <module>api-manager</module>
 		-->

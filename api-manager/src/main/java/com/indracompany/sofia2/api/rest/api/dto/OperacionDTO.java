@@ -19,16 +19,14 @@
  ******************************************************************************/
 package com.indracompany.sofia2.api.rest.api.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.annotations.ApiModelProperty;
 
 
-@XmlRootElement(name = "operacion")
-public class OperacionDTO {
+
+public class OperacionDTO implements Cloneable, Serializable{
 	
 	@ApiModelProperty(value = "Identificación de la Operacion")  
     private String identificacion;
@@ -79,7 +77,7 @@ public class OperacionDTO {
 		return queryParams;
 	}
 
-	@XmlElement(required=true)
+
 	public void setIdentificacion(String identificacion) {
 		this.identificacion = identificacion;
 	}
@@ -88,7 +86,7 @@ public class OperacionDTO {
 		this.descripcion = descripcion;
 	}
 
-	@XmlElement(required=true)
+
 	public void setOperacion(String operacion) {
 		this.operacion = operacion;
 	}

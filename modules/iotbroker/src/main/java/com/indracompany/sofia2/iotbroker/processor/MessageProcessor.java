@@ -13,7 +13,11 @@
  */
 package com.indracompany.sofia2.iotbroker.processor;
 
+import java.util.List;
+
+import com.indracompany.sofia2.persistence.interfaces.DBStatementParser;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 

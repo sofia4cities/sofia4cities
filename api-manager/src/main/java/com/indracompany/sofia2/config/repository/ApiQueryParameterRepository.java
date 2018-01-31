@@ -11,34 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.util;
-public enum PersistenceImplementationType {
-    MONGODB,
-    ORACLE,
-    POSTGRESQL,
-    KUDU;
-	public String getConsoleString() {
-		switch (this) {
-		case KUDU:
-			return "relationalKudu";
-		case ORACLE:
-			return "multibdtr";
-		case POSTGRESQL:
-			return "multibdtr";
-		default:
-			return "documentalMongo";
-		}
-	}
-	public String toString() {
-		switch(this) {
-		case KUDU:
-			return "Kudu";
-		case ORACLE:
-			return "Oracle";
-		case POSTGRESQL:
-			return "Postgresql";
-		default:
-			return "MongoDB";
-		}
-	}
+package com.indracompany.sofia2.config.repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.indracompany.sofia2.config.model.ApiQueryParameter;
+
+public interface ApiQueryParameterRepository extends JpaRepository<ApiQueryParameter,String> {
+
+
+	ApiQueryParameter findById(String id);
+
+
+
 }
