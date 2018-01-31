@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 public abstract class SSAPBodyMessage {
 	
 	protected JsonNode data;
-	protected String thinKp;
-	protected String thinkpInstance;
+	protected String clientPlatform;
+	protected String clientPlatformInstance;
 	
 	public JsonNode getData() {
 		return data;
@@ -27,20 +27,20 @@ public abstract class SSAPBodyMessage {
 	public void setData(JsonNode data) {
 		this.data = data;
 	}
-	public String getThinKp() {
-		return thinKp;
+	public String getClientPlatform() {
+		return clientPlatform;
 	}
-	public void setThinKp(String thinKp) {
-		this.thinKp = thinKp;
+	public void setClientPlatform(String clientPlatform) {
+		this.clientPlatform = clientPlatform;
 	}
-	public String getThinkpInstance() {
-		return thinkpInstance;
+	public String getClientPlatformInstance() {
+		return clientPlatformInstance;
 	}
-	public void setThinkpInstance(String thinkpInstance) {
-		this.thinkpInstance = thinkpInstance;
+	public void setClientPlatformInstance(String clientPlatformInstance) {
+		this.clientPlatformInstance = clientPlatformInstance;
 	}
 	
-	public abstract boolean isThinKpMandatory();
+	public abstract boolean isClientPlatformMandatory();
 
 	public abstract boolean isSessionKeyMandatory();
 	

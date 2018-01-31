@@ -28,7 +28,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
 	@JsonSubTypes.Type(value=SSAPBodyLeaveMessage.class),
 })
 public abstract class OneSSAPBodyMessageMixin {
-	@JsonIgnore public abstract boolean isThinKpMandatory();
+	@JsonIgnore public abstract boolean isClientPlatformMandatory();
 	@JsonIgnore public abstract boolean isSessionKeyMandatory();	
 	@JsonIgnore public abstract boolean isAutorizationMandatory();
 	@JsonIgnore public abstract boolean isOntologyMandatory();

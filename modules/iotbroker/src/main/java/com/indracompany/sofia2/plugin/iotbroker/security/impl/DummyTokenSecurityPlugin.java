@@ -26,7 +26,6 @@ import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 //TODO: Delete this class
-@Profile({"dummy-dev"})
 @Component
 public class DummyTokenSecurityPlugin implements SecurityPlugin {
 	
@@ -49,6 +48,11 @@ public class DummyTokenSecurityPlugin implements SecurityPlugin {
 	public void checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey)
 			throws AuthorizationException {
 		
+	}
+
+	@Override
+	public String getUserIdFromSessionKey(String sessionKey) {
+		return UUID.randomUUID().toString();
 	}
 
 }

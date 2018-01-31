@@ -11,30 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.ssap.body;
+package com.indracompany.sofia2.iotbroker.common.exception;
 
-import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.common.exception.BaseException;
 
-public class SSAPBodyLeaveMessage extends SSAPBodyMessage {
+public class OntologySchemaException extends BaseException {
+	private static final long serialVersionUID = 1L;
 
-	@Override
-	public boolean isClientPlatformMandatory() {
-		return false;
-	}
-
-	@Override
-	public boolean isSessionKeyMandatory() {
-		return false;
-	}
-
-	@Override
-	public boolean isAutorizationMandatory() {
-		return false;
-	}
-
-	@Override
-	public boolean isOntologyMandatory() {
-		return false;
+	public OntologySchemaException(String message) {
+		super(message);
 	}
 
 }

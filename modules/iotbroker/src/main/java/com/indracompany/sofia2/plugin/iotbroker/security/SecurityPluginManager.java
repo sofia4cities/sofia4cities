@@ -21,27 +21,33 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
+import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 @Component
-public class SecurityPluginManager {
+public class SecurityPluginManager implements SecurityPlugin {
 
 	
 	@Autowired
 	private List<SecurityPlugin> plugins;
 	
 	//TODO: Calls with hystrix ... or camel ...
-	public List<String> authenticate(SSAPMessage<? extends SSAPBodyMessage> message) throws AuthenticationException {
+	@Override
+	public String authenticate(SSAPMessage<? extends SSAPBodyMessage> message) throws AuthenticationException {
 		List<String> ks = new ArrayList<>();
 		for(SecurityPlugin p : plugins) {
 			ks.add(p.authenticate(message));
 		}
 		
-		return ks;
+		if(!ks.isEmpty())
+			return ks.get(0);
+		else 
+			throw new AuthenticationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED);
 	}
 
+	@Override
 	public void closeSession(String sessionKey) throws AuthorizationException {
 		for(SecurityPlugin p : plugins) {
 			p.closeSession(sessionKey);
@@ -49,6 +55,7 @@ public class SecurityPluginManager {
 		
 	}
 
+	@Override
 	public void checkSessionKeyActive(String sessionKey) throws AuthorizationException {
 		for(SecurityPlugin p : plugins) {
 			p.checkSessionKeyActive(sessionKey);
@@ -56,11 +63,25 @@ public class SecurityPluginManager {
 		
 	}
 
+	@Override
 	public void checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) throws AuthorizationException {
 		for(SecurityPlugin p : plugins) {
 			p.checkAuthorization(messageType, ontology, sessionKey);
 		}
 		
+	}
+
+	@Override
+	public String getUserIdFromSessionKey(String sessionKey) {
+		List<String> ks = new ArrayList<>();
+		for(SecurityPlugin p : plugins) {
+			ks.add(p.getUserIdFromSessionKey(sessionKey));
+		}
+		
+		if(!ks.isEmpty())
+			return ks.get(0);
+		else 
+			return "";
 	}
 	
 	
