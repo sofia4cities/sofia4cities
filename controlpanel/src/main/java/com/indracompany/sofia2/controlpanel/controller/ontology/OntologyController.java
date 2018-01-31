@@ -52,7 +52,7 @@ public class OntologyController {
 		if(identification!=null){if(identification.equals("")) identification=null;}
 		if(description!=null){if(description.equals("")) description=null;}
 
-		List<Ontology> ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
+		List<Ontology> ontologies=this.ontologyService.getOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		
 		model.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";

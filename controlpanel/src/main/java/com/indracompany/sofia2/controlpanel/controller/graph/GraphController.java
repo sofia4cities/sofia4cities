@@ -43,7 +43,6 @@ public class GraphController {
 		arrayLinks.addAll(graphUtil.constructGraphWithOntologies());
 		arrayLinks.addAll(graphUtil.constructGraphWithClientPlatforms());
 		arrayLinks.addAll(graphUtil.constructGraphWithVisualization());		
-		System.out.println(arrayLinks.toString());
 		return arrayLinks.toString();
 	}
 

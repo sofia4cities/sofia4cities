@@ -23,6 +23,7 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
@@ -50,4 +51,6 @@ public interface OntologyRepository extends JpaRepository<Ontology,String> {
 	long countByActiveTrueAndIsPublicTrue();
 	long countByIdentificationLikeOrDescriptionLikeOrMetainfLike(String identification, String description, String metainf);
 	long countByActiveTrueAndIsPublicTrueAndMetainfIsNull();
+	@Query("SELECT o FROM Ontology AS o WHERE o.userId=:userId OR o.id IN (SELECT uo.ontologyId.id FROM OntologyUserAccess AS uo WHERE uo.userId=:userId) AND o.active=true")
+	List<Ontology> findByUserIdAndOntologyUserAccessAndAllPermissions(User userId);
 }
