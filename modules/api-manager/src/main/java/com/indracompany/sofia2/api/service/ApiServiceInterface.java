@@ -25,6 +25,7 @@ public interface ApiServiceInterface {
 	public static final String FORMAT_RESULT="$formatResult";
 	public static final String QUERY_TYPE="$queryType";
 	public static final String QUERY="$query";
+	public static final String DUMP="DUMP";
 	
 	public static final String PATH_INFO="PATH_INFO";
 

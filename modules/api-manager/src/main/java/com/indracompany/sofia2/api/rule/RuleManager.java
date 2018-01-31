@@ -58,9 +58,9 @@ public class RuleManager implements ApplicationContextAware{
 		rulesEngine = new DefaultRulesEngine();
 		rules = new Rules();
 		
-		if (listener!=null) {
+		/*if (listener!=null) {
 			rulesEngine.getRulesEngineListeners().add(listener);
-		}
+		}*/
 
 		Map<String, Object> beansOfTypeRule = (Map<String, Object>) applicationContext.getBeansWithAnnotation(org.jeasy.rules.annotation.Rule.class);
 

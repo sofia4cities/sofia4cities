@@ -23,7 +23,10 @@ public class DefaultRuleBase {
 	
 	protected boolean canExecuteRule(Facts facts) {
 		Boolean bool = facts.get(RuleManager.STOP_STATE);
-		return !bool;
+		if (bool==null) return true;
+		if (bool=true) return false;
+		else return true;
+		
 	}
 	
 }

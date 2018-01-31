@@ -65,7 +65,7 @@ public class RestSwaggerReader {
 	public static String XSOFIAEXTENSION = "x-sofia2-extension";
 	
 	static List<String> PRODUCES = new ArrayList<String>(
-		    Arrays.asList(MediaType.APPLICATION_JSON));	
+		    Arrays.asList(MediaType.APPLICATION_JSON,MediaType.APPLICATION_ATOM_XML,MediaType.TEXT_PLAIN));	
 	static List<String> CONSUMES = new ArrayList<String>(
 		    Arrays.asList(MediaType.APPLICATION_JSON));	
 	
@@ -89,6 +89,10 @@ public class RestSwaggerReader {
 		Response r4 = new Response();
 		r4.setDescription("Internal Server Error");
 		responses.put("501",r4 );
+		
+		Response r5 = new Response();
+		r5.setDescription("OK");
+		responses.put("200",r5 );
 		
 		schemes.add(Scheme.HTTP);
 		
