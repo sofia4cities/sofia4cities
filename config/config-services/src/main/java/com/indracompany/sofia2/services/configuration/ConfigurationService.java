@@ -24,6 +24,8 @@ public interface ConfigurationService {
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	public List<Configuration> getAllConfigurations();
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	public void deleteConfiguration(String id);
 	public Configuration getConfiguration(String id);
 	public List<ConfigurationType> getAllConfigurationTypes();
 	public void createConfiguration(Configuration configuration);

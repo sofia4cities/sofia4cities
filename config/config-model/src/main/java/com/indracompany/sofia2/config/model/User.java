@@ -81,7 +81,6 @@ public class User extends AuditableEntity {
 
 	@Column(name = "DATE_DELETED")
 	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(style = "M-")
 	@Getter @Setter private Date dateDeleted;
 
 

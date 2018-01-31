@@ -16,11 +16,10 @@ package com.indracompany.sofia2.services.configuration;
 import java.io.IOException;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +45,11 @@ public class ConfigurationServiceImpl implements ConfigurationService{
 
 		return this.configurationRepository.findAll();
 
+	}
+	@Transactional
+	public void deleteConfiguration(String id)
+	{
+		this.configurationRepository.deleteById(id);
 	}
 	public List<ConfigurationType> getAllConfigurationTypes()
 	{
