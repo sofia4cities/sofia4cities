@@ -26,6 +26,7 @@ public class DefaultController {
 	private AppWebUtils utils;
 
 	@GetMapping("/")
+
 	public String base() {
 		if (utils.getAuthentication() != null)
 			return "redirect:/main";
@@ -46,5 +47,6 @@ public class DefaultController {
 	public String error403() {
 		return "/error/403";
 	}
+
 
 }

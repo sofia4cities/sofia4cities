@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,7 +59,13 @@ public class UserController {
 		return "/users/create";
 
 	}
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@DeleteMapping("/{id}")
+	public String delete(Model model, @PathVariable("id") String id){
 
+		this.userService.deleteUser(id);		
+		return "redirect:/users/list";
+	}
 
 
 
@@ -73,7 +80,7 @@ public class UserController {
 		//If user does not exist redirect to create
 		if(user==null) return "redirect:/users/create";
 		else model.addAttribute("user",user);
-		
+
 		return "/users/create";
 	}
 
@@ -98,9 +105,9 @@ public class UserController {
 			}
 			return "redirect:/users/show/"+user.getUserId();
 		}
-		
+
 		return "redirect:/users/update/";
-		
+
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value="/create")
@@ -123,9 +130,9 @@ public class UserController {
 				return "/users/create";
 			}
 		}
-		
-		 return "redirect:/users/list";
-		
+
+		return "redirect:/users/list";
+
 	}
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/list", produces = "text/html")
@@ -142,14 +149,14 @@ public class UserController {
 				&& (roleType==null)){
 			log.debug("No params for filtering, loading all users");
 			model.addAttribute("users",this.userService.getAllUsers());
-			
+
 		}else
 		{
 			log.debug("Params detected, filtering users...");
 			model.addAttribute("users",this.userService.getAllUsersByCriteria(userId, fullName, email, roleType, active));
 		}
-		
-		
+
+
 		return "/users/list";
 
 	}
@@ -171,11 +178,11 @@ public class UserController {
 		} catch (Exception e) {
 			log.debug("No token found for user: "+user);
 		}
-		
+
 		model.addAttribute("userToken", userToken);
 		model.addAttribute("itemId", user.getUserId());
-		
-		
+
+
 		Date today = new Date();
 		if (user.getDateDeleted()!=null){
 			if (user.getDateDeleted().before(today)){
@@ -187,18 +194,18 @@ public class UserController {
 		}else{
 			model.addAttribute("obsolete", false);
 		}
-		
+
 
 
 		return "/users/show";
-	
-		
+
+
 	}
 
 	public void populateFormData(Model model) {
 		model.addAttribute("roleTypes", this.userService.getAllRoles());
 	}
-	
-	
-	
+
+
+
 }

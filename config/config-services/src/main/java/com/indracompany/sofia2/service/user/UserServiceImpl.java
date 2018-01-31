@@ -113,8 +113,11 @@ public class UserServiceImpl implements UserService {
 			userDb.setPassword(user.getPassword());
 			userDb.setEmail(user.getEmail());
 			userDb.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
+			//If user was deleted and now is going to be active
+			if(!userDb.isActive() && user.isActive()) userDb.setDateDeleted(null);
 			userDb.setActive(user.isActive());
 			userDb.setUpdatedAt(new Date());
+			//if(user.getDateDeleted()!=null) userDb.setDateDeleted(user.getDateDeleted());
 			userDb.setFullName(user.getFullName());
 			this.userRepository.save(userDb);
 		}
@@ -122,5 +125,15 @@ public class UserServiceImpl implements UserService {
 	public RoleType getUserRole(String role)
 	{
 		return this.roleTypeRepository.findByName(role);
+	}
+	public void deleteUser(String userId)
+	{
+		User user=this.userRepository.findByUserId(userId);
+		if(user!=null){
+			user.setDateDeleted(new Date());
+			user.setActive(false);
+			this.userRepository.save(user);
+		}
+		
 	}
 }

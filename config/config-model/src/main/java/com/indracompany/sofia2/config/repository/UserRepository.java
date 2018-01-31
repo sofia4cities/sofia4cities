@@ -34,7 +34,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 	List<User> findByEmail(String email);
 	User findByUserId(String userId);
 	User findByUserIdAndPassword(String userId,String password);
-
+	void deleteByUserId(String userId);
 	@Query("SELECT o FROM User AS o WHERE o.roleTypeId !='1'")
 	List<User> findUsersNoAdmin();
 	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.roleTypeId.name =:roleType)")

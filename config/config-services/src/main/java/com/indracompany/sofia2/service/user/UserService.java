@@ -35,5 +35,6 @@ public interface UserService {
 	public boolean userExists(User user);
 	public void updateUser(User user);
 	public RoleType getUserRole(String role);
+	public void deleteUser(String userId);
 
 }
