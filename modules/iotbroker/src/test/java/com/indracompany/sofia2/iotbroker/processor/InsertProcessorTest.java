@@ -14,7 +14,9 @@
 package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -63,7 +65,7 @@ public class InsertProcessorTest {
 	@Before
 	public void setUp() throws IOException, Exception {
 		if(springDataMongoTemplate.collectionExists(Person.class)) {
-			springDataMongoTemplate.createCollection(Person.class);
+			springDataMongoTemplate.dropCollection(Person.class);
 		}
 		springDataMongoTemplate.createCollection(Person.class);
 		
@@ -145,10 +147,7 @@ public class InsertProcessorTest {
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
 			Assert.assertEquals(SSAPErrorCode.PROCESSOR, responseMessage.getBody().getErrorCode());			
-		}
-		
-		
-		
+		}		
 	}
 	
 	@Test
@@ -157,11 +156,10 @@ public class InsertProcessorTest {
 		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
 		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());		
 		
-		doThrow(new AuthorizationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED))
+		doThrow(new AuthenticationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED))
 			.when(securityPluginManager)
 			.authenticate(any());
 		
-		ssapInsertOperation.getBody().setClientPlatformInstance(null);
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 		
 		Assert.assertNotNull(responseMessage);
@@ -196,6 +194,8 @@ public class InsertProcessorTest {
 		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
 		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
 		
+		when(securityPluginManager.getUserIdFromSessionKey(anyString())).thenReturn("valid_user_id");
+		
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 		
 		Assert.assertNotNull(responseMessage);
@@ -207,6 +207,11 @@ public class InsertProcessorTest {
 		Person savedPerson = springDataMongoTemplate.findById(oid, Person.class);
 		Assert.assertNotNull(savedPerson);
 		Assert.assertEquals(subject.getTelephone(), savedPerson.getTelephone());
+		Assert.assertEquals("valid_user_id", subject.getContextData().getUser());
+		Assert.assertNotNull(subject.getContextData().getClientPatform());
+		Assert.assertNotNull(subject.getContextData().getClientPatformInstance());
+		Assert.assertNotNull(subject.getContextData().getClientSession());
+		Assert.assertNotNull(subject.getContextData().getTimezoneId());
 		
 		
 		

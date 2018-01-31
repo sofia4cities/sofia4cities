@@ -4,10 +4,10 @@ server:
   port: 8081
   
 spring:
-  profiles: 
-    active: common
-    include: dummy-dev, localtest
-
+  data.mongodb:
+    database: sofia2_s4c # Database name.
+  
+    
 sofia2: #Config Sofia2 specific
    database.mongodb:
       database: sofia2_s4c

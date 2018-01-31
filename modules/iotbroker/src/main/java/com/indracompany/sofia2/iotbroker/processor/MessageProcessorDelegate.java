@@ -26,6 +26,7 @@ import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
+import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.common.util.SSAP2PersintenceUtil;
 import com.indracompany.sofia2.iotbroker.processor.impl.InsertProcessor;
@@ -49,6 +50,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	
 	@Autowired
 	SecurityPluginManager securityPluginManager;
+	
 	@Autowired
 	List<MessageTypeProcessor> processors;
 	
@@ -101,8 +103,11 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
 					SSAPErrorCode.AUTENTICATION, 
 					String.format(e.getMessage(), message.getMessageType().name()));
-		}
-		catch (BaseException e) {
+		} catch (OntologySchemaException e) {
+			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
+					SSAPErrorCode.PROCESSOR, 
+					String.format(e.getMessage(), message.getMessageType().name()));
+		} catch (BaseException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message,
 					SSAPErrorCode.PROCESSOR, 
 					String.format(e.getMessage(), message.getMessageType().name()));
@@ -111,6 +116,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 					SSAPErrorCode.PROCESSOR, 
 					String.format(e.getMessage(), message.getMessageType().name()));
 		} 
+		
 		
 		return response;
 	}

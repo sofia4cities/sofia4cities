@@ -26,7 +26,6 @@ import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 //TODO: Delete this class
-@Profile({"dummy-dev"})
 @Component
 public class DummyTokenSecurityPlugin implements SecurityPlugin {
 	

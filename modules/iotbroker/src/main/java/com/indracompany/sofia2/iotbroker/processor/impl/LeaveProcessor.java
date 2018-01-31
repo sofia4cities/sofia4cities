@@ -28,7 +28,6 @@ import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
-@Profile({"dummy-dev"})
 @Component
 public class LeaveProcessor implements MessageTypeProcessor {
 

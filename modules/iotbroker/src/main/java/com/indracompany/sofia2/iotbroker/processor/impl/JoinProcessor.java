@@ -33,7 +33,6 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
-@Profile({"dummy-dev"})
 @Component
 public class JoinProcessor implements MessageTypeProcessor {
 
