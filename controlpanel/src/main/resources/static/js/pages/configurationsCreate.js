@@ -116,7 +116,7 @@ var ConfigurationsCreateController = function() {
             lineNumbers: true,
             matchBrackets: true,
             styleActiveLine: true,
-            theme:"neat",
+            theme:"material",
             mode: {name: "javascript", json: true}
         });
 		myCodeMirror.setSize("100%", 350);
