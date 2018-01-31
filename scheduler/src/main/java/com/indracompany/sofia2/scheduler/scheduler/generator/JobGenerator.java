@@ -11,26 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.example.config.scheduler;
+package com.indracompany.sofia2.scheduler.scheduler.generator;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.quartz.Job;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
 
-import com.indracompany.sofia2.scheduler.job.BatchGenericExecutor;
-
-@Service
-public class ExecutionJob implements BatchGenericExecutor{
+public interface JobGenerator {
 	
-	@Autowired
-	private AnotherExampleJob anotherExampleJob;
-
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		
-		anotherExampleJob.execute(context);
-		
-	}
+	JobDetail createJobDetail(JobKey jobKey, JobDataMap jobDataMap, Class<? extends Job > jobClass, String jobDescription);
 
 }

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.indracompany.sofia2.scheduler.library.SchedulerStarterAutoConfig
+com.indracompany.sofia2.scheduler.SchedulerStarterAutoConfig

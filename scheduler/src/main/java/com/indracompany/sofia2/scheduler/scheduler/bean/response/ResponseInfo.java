@@ -11,26 +11,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.example.config.scheduler;
+package com.indracompany.sofia2.scheduler.scheduler.bean.response;
 
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+public class ResponseInfo {
 
-import com.indracompany.sofia2.scheduler.job.BatchGenericExecutor;
-
-@Service
-public class ExecutionJob implements BatchGenericExecutor{
+	private boolean success;
+	private String text;
 	
-	@Autowired
-	private AnotherExampleJob anotherExampleJob;
-
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		
-		anotherExampleJob.execute(context);
-		
+	public ResponseInfo() {
+		super();
+	}
+	
+	public ResponseInfo(boolean success, String text) {
+		super();
+		this.success = success;
+		this.text = text;
 	}
 
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public void setSuccess(boolean success) {
+		this.success = success;
+	}
+
+	public String getText() {
+		return text;
+	}
+	
+	public void setText(String text) {
+		this.text = text;
+	}
+	
 }

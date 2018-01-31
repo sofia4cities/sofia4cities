@@ -11,29 +11,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.example.config.scheduler;
+package com.indracompany.sofia2.scheduler.scheduler.bean;
 
-
-import org.quartz.JobDataMap;
-import org.quartz.JobExecutionContext;
-import org.springframework.stereotype.Service;
-
-import com.indracompany.sofia2.scheduler.JobParamNames;
 import com.indracompany.sofia2.scheduler.SchedulerType;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Service
-@Slf4j
-public class AnotherExampleJob {
+public class TaskOperation {
 	
-	public void execute (JobExecutionContext context) {
-		
-		JobDataMap data = context.getMergedJobDataMap();
-		String username = data.getString(JobParamNames.USERNAME);
-		SchedulerType schedulerName = (SchedulerType)data.get(JobParamNames.SCHEDULER_TYPE);
-		log.info("executing job test" + username + " " + schedulerName);
+	private String jobName;	
+	private SchedulerType schedulerType;
+	
+	public TaskOperation () {
+		super();
 	}
+	
+	public TaskOperation(String jobName, SchedulerType schedulerType) {
+		super();
+		this.jobName = jobName;
+		this.schedulerType = schedulerType;
+	}
+
+	public String getJobName() {
+		return jobName;
+	}
+	
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
+	}
+	
+	public SchedulerType getSchedulerType() {
+		return schedulerType;
+	}
+	
+	public void setSchedulerType(SchedulerType schedulerType) {
+		this.schedulerType = schedulerType;
+	}
+	
 	
 
 }
