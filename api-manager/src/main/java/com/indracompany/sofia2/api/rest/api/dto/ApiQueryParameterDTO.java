@@ -19,14 +19,13 @@
  ******************************************************************************/
 package com.indracompany.sofia2.api.rest.api.dto;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
 
 
-@XmlRootElement(name = "queryParameter")
-public class ApiQueryParameterDTO {
+
+public class ApiQueryParameterDTO implements Cloneable, Serializable{
 	
 	
 	@ApiModelProperty(value = "Nombre del Header")
@@ -64,12 +63,12 @@ public class ApiQueryParameterDTO {
 		return condicion;
 	}
 
-	@XmlElement(required=true)
+
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
 
-	@XmlElement(required=true)
+
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
@@ -82,7 +81,7 @@ public class ApiQueryParameterDTO {
 		this.valor = valor;
 	}
 
-	@XmlElement(required=true)
+
 	public void setCondicion(String condicion) {
 		this.condicion = condicion;
 	}    

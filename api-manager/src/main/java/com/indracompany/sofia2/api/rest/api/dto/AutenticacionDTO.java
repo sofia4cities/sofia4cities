@@ -19,45 +19,44 @@
  ******************************************************************************/
 package com.indracompany.sofia2.api.rest.api.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.annotations.ApiModelProperty;
 
 
-@XmlRootElement(name = "autenticacion")
-public class AutenticacionDTO {
+public class AutenticacionDTO implements Cloneable, Serializable{
 	
 	@ApiModelProperty(value = "Tipo de Autenticación utilizada en la API")
-    private String tipo;
+    private String type;
 	
 	@ApiModelProperty(value = "Descripción de la autenticación")
-    private String descripcion;
+    private String description;
 
     private ArrayList<ArrayList<AutenticacionAtribDTO>> autParametros;
 	
-	public String getTipo() {
-		return tipo;
+	
+	
+	public String getType() {
+		return type;
 	}
 
-	public String getDescripcion() {
-		return descripcion;
+	public String getDescription() {
+		return description;
 	}
-	
+
 	public ArrayList<ArrayList<AutenticacionAtribDTO>> getAutParametros() {
 		return autParametros;
 	}
 
-	@XmlElement(required=true)
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
+
+	public void setType(String tipo) {
+		this.type = tipo;
 	}
 
-	@XmlElement(required=true)
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+
+	public void setDescription(String descripcion) {
+		this.description = descripcion;
 	}
 	
 	public void setAutParametros(ArrayList<ArrayList<AutenticacionAtribDTO>> autParametros) {

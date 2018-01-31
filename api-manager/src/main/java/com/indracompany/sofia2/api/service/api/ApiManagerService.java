@@ -32,8 +32,7 @@ import com.indra.sofia2.ssap.ssap.SSAPQueryType;
 import com.indracompany.sofia2.api.service.Constants;
 import com.indracompany.sofia2.api.service.exception.BadRequestException;
 import com.indracompany.sofia2.api.service.exception.ForbiddenException;
-import com.indracompany.sofia2.api.util.ApiStatementsParser;
-import com.indracompany.sofia2.api.util.TableResult;
+
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.ApiQueryParameter;
@@ -298,27 +297,6 @@ public class ApiManagerService {
 		
 	}
 	
-	/**
-	 * MongoDB es case sensitive, ajusta el nombre de la ontologia indicado en la sentencia a nombre correcto de la ontologia
-	 * @return
-	 */
-	private String prepareOntologiaQuery(String ontologiaRecurso, String sqlQuery){
-		try{
-			List<TableResult> lTablesUsage = ApiStatementsParser.getTableNamesFromSQLStatement(sqlQuery);
-			
-			if (lTablesUsage.size() == 1) {
-				String tableNameInStatement=lTablesUsage.get(0).getTableName();
-				
-				if (tableNameInStatement.equalsIgnoreCase(ontologiaRecurso)) {
-					return sqlQuery.replace(tableNameInStatement, ontologiaRecurso);
-				}
-			}
-		} catch(Exception e){
-			
-		}
-		
-		return sqlQuery;
-	}
 	
 	public boolean isSQLLIKE(String query, String queryType) {
 		if (query!=null && query.length()>0 && queryType!=null && queryType.length()>0){
