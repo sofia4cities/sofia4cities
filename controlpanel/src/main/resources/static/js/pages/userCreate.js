@@ -222,6 +222,22 @@ var UserCreateController = function() {
 			
 		}
 		
+	}	
+	
+	// DELETE USER
+	var deleteUserConfirmation = function(userId){
+		console.log('deleteUserConfirmation() -> formId: '+ userId);
+		
+		// no Id no fun!
+		if ( !userId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO USER-FORM SELECTED!'}); return false; }
+		
+		// set action and userId to the form
+		$('.delete-user').attr('userId',userId);
+		$('.delete-user').attr('action','/controlpanel/users/' + userId);
+		console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-user').attr('action') + ' ID: ' + $('.delete-user').attr('userId'));
+		
+		// call user Confirm at header.
+		HeaderController.showConfirmDialogUsuario('delete_user_form');	
 	}
 
 	// CONTROLLER PUBLIC FUNCTIONS 
@@ -238,7 +254,18 @@ var UserCreateController = function() {
 			handleValidation();
 			initTemplateElements();		
 			
-		}		
+		},
+		// REDIRECT
+		go: function(url){
+			logControl ? console.log(LIB_TITLE + ': go()') : '';	
+			navigateUrl(url); 
+		},
+		// DELETE USER 
+		deleteUser: function(userId){
+			logControl ? console.log(LIB_TITLE + ': deleteUser()') : '';	
+			deleteUserConfirmation(userId);			
+		}
+		
 	};
 }();
 

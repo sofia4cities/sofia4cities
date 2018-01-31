@@ -35,6 +35,13 @@ var ConfigurationsCreateController = function() {
 		
 		// CLEAN ALERT MSG
 		$('.alert-danger').hide();
+		
+		// CLEANING CODEMIRROR
+		if ($('.CodeMirror')[0].CodeMirror){
+			var editor = $('.CodeMirror')[0].CodeMirror;
+			editor.setValue('');
+			
+		}
 	}
 	
 	
@@ -116,7 +123,7 @@ var ConfigurationsCreateController = function() {
             lineNumbers: true,
             matchBrackets: true,
             styleActiveLine: true,
-            theme:"neat",
+            theme:"material",
             mode: {name: "javascript", json: true}
         });
 		myCodeMirror.setSize("100%", 350);
@@ -149,18 +156,6 @@ jQuery(document).ready(function() {
 		
 	// AUTO INIT CONTROLLER.
 	ConfigurationsCreateController.init();
-	$(document)
-    .one('focus.autoExpand', 'textarea.autoExpand', function(){
-        var savedValue = this.value;
-        this.value = '';
-        this.baseScrollHeight = this.scrollHeight;
-        this.value = savedValue;
-    })
-    .on('input.autoExpand', 'textarea.autoExpand', function(){
-        var minRows = this.getAttribute('data-min-rows')|0, rows;
-        this.rows = minRows;
-        rows = Math.ceil((this.scrollHeight - this.baseScrollHeight) / 16);
-        this.rows = minRows + rows;
-    });
+	
 });
 

@@ -119,12 +119,14 @@ var HeaderController = function() {
 		var Remove = headerReg.btnEliminar;
 		var Close = headerReg.btnCancelar;
 		var	Content = headerReg.genericConfirm;
+		var Title = headerReg.titleConfirm + ':';
 		
 		// jquery-confirm DIALOG SYSTEM.
 		$.confirm({
 			icon: 'fa fa-warning',
-			title: 'CONFIRM:',
+			title: Title,
 			theme: 'dark',
+			columnClass: 'medium',
 			content: Content,
 			draggable: true,
 			dragWindowGap: 100,
@@ -154,13 +156,15 @@ var HeaderController = function() {
 		// i18 labels
 		var Remove = headerReg.btnEliminar;
 		var Close = headerReg.btnCancelar;
-		var Content = headerReg.ontologyConfirm;		
+		var Content = headerReg.ontologyConfirm;
+		var Title = headerReg.titleConfirm + ':';		
 		
 		// jquery-confirm DIALOG SYSTEM.
 		$.confirm({
 			icon: 'fa fa-warning',
-			title: 'CONFIRM:',
+			title: Title,
 			theme: 'dark',
+			columnClass: 'medium',
 			content: Content,
 			draggable: true,
 			dragWindowGap: 100,
@@ -191,12 +195,14 @@ var HeaderController = function() {
 		var Close = headerReg.btnCancelar;
 		var Remove = headerReg.btnEliminar;
 		var Content = headerReg.userConfirm;
+		var Title = headerReg.titleConfirm + ':';
 		
 		// jquery-confirm DIALOG SYSTEM.
 		$.confirm({
-			icon: 'fa fa-bug',
-			title: 'USER CONFIRM:',
+			icon: 'fa fa-warning',
+			title: Title,
 			theme: 'dark',
+			columnClass: 'medium',
 			content: Content,
 			draggable: true,
 			dragWindowGap: 100,
