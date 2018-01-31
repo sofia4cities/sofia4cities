@@ -19,15 +19,12 @@
  ******************************************************************************/
 package com.indracompany.sofia2.api.rest.api.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.annotations.ApiModelProperty;
 
-@XmlRootElement(name = "api")
-public class ApiDTO {
+public class ApiDTO implements Cloneable, Serializable{
 	
 	@ApiModelProperty(value = "Identificación de la Api")
     private String identificacion;
@@ -77,6 +74,10 @@ public class ApiDTO {
 	@ApiModelProperty(value = "Autenticación aplicable a la Api")
     private AutenticacionDTO autenticacion;	
 
+	protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+	
 	public String getIdentificacion() {
 		return identificacion;
 	}
@@ -141,17 +142,17 @@ public class ApiDTO {
 		return operaciones;
 	}
 
-	@XmlElement(required=true)
+
 	public void setIdentificacion(String identificacion) {
 		this.identificacion = identificacion;
 	}
 
-	@XmlElement(required=true)
+
 	public void setNumversion(Integer numversion) {
 		this.numversion = numversion;
 	}
 
-	@XmlElement(required=true)
+
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
@@ -160,7 +161,7 @@ public class ApiDTO {
 		this.categoria = categoria;
 	}
 
-	@XmlElement(required=true)
+
 	public void setApiexterna(Boolean apiexterna) {
 		this.apiexterna = apiexterna;
 	}
@@ -169,7 +170,7 @@ public class ApiDTO {
 		this.ontologiaId = ontologiaId;
 	}
 
-	@XmlElement(required=true)
+
 	public void setEndpoint(String endpoint) {
 		this.endpoint = endpoint;
 	}
@@ -178,12 +179,12 @@ public class ApiDTO {
 		this.endpointExt = endpointExt;
 	}
 
-	@XmlElement(required=true)
+
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
 
-	@XmlElement(required=true)
+
 	public void setMetainf(String metainf) {
 		this.metainf = metainf;
 	}
@@ -192,17 +193,17 @@ public class ApiDTO {
 		this.tipoimagen = tipoimagen;
 	}
 
-	@XmlElement(required=true)
+
 	public void setEstado(String estado) {
 		this.estado = estado;
 	}
 
-	@XmlElement(required=true)
+
 	public void setFechaalta(String fechaalta) {
 		this.fechaalta = fechaalta;
 	}
 
-	@XmlElement(required=true)
+
 	public void setUsuarioId(String usuarioId) {
 		this.usuarioId = usuarioId;
 	}

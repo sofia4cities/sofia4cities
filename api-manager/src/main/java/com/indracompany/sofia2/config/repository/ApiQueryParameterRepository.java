@@ -11,16 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.util;
-public enum TableAccessMode {
-	
-	SELECT,
-	UPDATE,
-	DELETE,
-	INSERT,
-	CREATE,
-	DELETEINDEX,
-	GETINDEXES,
-	INVALIDATE,
-	ALTER
+package com.indracompany.sofia2.config.repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.indracompany.sofia2.config.model.ApiQueryParameter;
+
+public interface ApiQueryParameterRepository extends JpaRepository<ApiQueryParameter,String> {
+
+
+	ApiQueryParameter findById(String id);
+
+
+
 }

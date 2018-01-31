@@ -30,6 +30,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+
 @Configuration
 public class JaxRSConfig {
 
@@ -55,6 +57,11 @@ public class JaxRSConfig {
 			 lista.add(iterator.next().getValue());
 		 }
 		 
+		 List<Object> providers = new ArrayList<Object>();
+		 providers.add(new JacksonJaxbJsonProvider());
+		// providers.add(new JacksonJaxbXMLProvider());
+		 
+		 endpoint.setProviders(providers);
 		 endpoint.setServiceBeans(lista);
 		 endpoint.setAddress("/");
 		 endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), loggingFeature()));
