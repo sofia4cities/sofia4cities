@@ -214,15 +214,23 @@ var UserCreateController = function() {
 			$('#datecreated').datepicker('update',today);
 		}
 		else {
-			// set DATE in EDIT MODE
+			// set DATE created in EDIT MODE
 			logControl ? console.log('action-mode: UPDATE') : '';
 			var f = new Date(userCreateReg.dateCreated);
 			regDate = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
 			$('#datecreated').datepicker('update',regDate);
 			
+			// set DATE deleted in EDIT MODE if exists
+			if ( userCreateReg.dateDeleted !== null ) {
+				console.log('entra?');
+				var d = new Date(userCreateReg.dateDeleted);
+				regDateDel = (currentLanguage == 'es') ? ('0' + (d.getDate())).slice(-2) + "/" + ('0' + (d.getMonth()+1)).slice(-2) + "/" + d.getFullYear() : ('0' + (d.getMonth()+1)).slice(-2) + "/" + ('0' + (d.getDate())).slice(-2) + "/" + d.getFullYear();
+				$('#datedeleted').datepicker('update',regDateDel);
+			}			
+			
 			// if user deleted (active=false, and dateDeleted=date) active=true -> set datadeleted to null.
-			$('#active').on('click', function(){					
-					if (( $('#datedeleted').val() != '' )&&( $(this).is(":checked") )) { $('#datecreated').datepicker('update',null);}
+			$('#checkboxactive').on('click', function(){					
+					if (( $('#datedeleted').val() != '' )&&( $(this).is(":checked") )) { $('#datedeleted').datepicker('update',null); $('#datedeleted').prop('disabled',true); }
 					console.log('checked in update with datedeleted: ' + $('#datedeleted').val());				
 			});
 			
@@ -240,7 +248,7 @@ var UserCreateController = function() {
 		// No dateDeleted no fun!
 		if ( !$('#datedeleted').val() ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: userCreateReg.validation_dates}); return false; }
 		
-		console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-user').attr('action') + ' ID: ' + $('.delete-user').attr('userId'));
+		logControl ? console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-user').attr('action') + ' ID: ' + $('.delete-user').attr('userId')) : '';
 		
 		// call user Confirm at header.
 		HeaderController.showConfirmDialogUsuario('delete_user_form');	

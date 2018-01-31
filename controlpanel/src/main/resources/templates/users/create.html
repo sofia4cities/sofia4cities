@@ -259,7 +259,7 @@
 		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
-	function navigateUrl(url){  window.location.href = url;	}
+	
 	
 	var currentLanguage = [[${lang}]];	
 	
@@ -269,6 +269,7 @@
 		"language" : currentLanguage,
 		"actionMode" : [[${user.userId}]],
 		"dateCreated" : [[${user.dateCreated}]],				
+		"dateDeleted" : [[${user.dateDeleted}]],
 	};
 						
 	// LOAD DATA TO USE IN MENUCONTROLLER
