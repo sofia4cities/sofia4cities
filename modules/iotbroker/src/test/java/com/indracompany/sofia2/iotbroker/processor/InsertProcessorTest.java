@@ -151,20 +151,20 @@ public class InsertProcessorTest {
 	}
 	
 	@Test
-	public void test_insert_sessionkey_invalid() throws AuthenticationException {
+	public void test_insert_sessionkey_invalid() throws  AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
 		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());		
 		
-		doThrow(new AuthenticationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED))
+		doThrow(new AuthorizationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED))
 			.when(securityPluginManager)
-			.authenticate(any());
+			.checkSessionKeyActive(any());
 		
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 		
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
-		Assert.assertEquals(SSAPErrorCode.AUTENTICATION, responseMessage.getBody().getErrorCode());	
+		Assert.assertEquals(SSAPErrorCode.AUTHORIZATION, responseMessage.getBody().getErrorCode());	
 		
 	}
 	
@@ -207,11 +207,11 @@ public class InsertProcessorTest {
 		Person savedPerson = springDataMongoTemplate.findById(oid, Person.class);
 		Assert.assertNotNull(savedPerson);
 		Assert.assertEquals(subject.getTelephone(), savedPerson.getTelephone());
-		Assert.assertEquals("valid_user_id", subject.getContextData().getUser());
-		Assert.assertNotNull(subject.getContextData().getClientPatform());
-		Assert.assertNotNull(subject.getContextData().getClientPatformInstance());
-		Assert.assertNotNull(subject.getContextData().getClientSession());
-		Assert.assertNotNull(subject.getContextData().getTimezoneId());
+		Assert.assertEquals("valid_user_id", savedPerson.getContextData().getUser());
+		Assert.assertNotNull(savedPerson.getContextData().getClientPatform());
+		Assert.assertNotNull(savedPerson.getContextData().getClientPatformInstance());
+		Assert.assertNotNull(savedPerson.getContextData().getClientSession());
+		Assert.assertNotNull(savedPerson.getContextData().getTimezoneId());
 		
 		
 		
