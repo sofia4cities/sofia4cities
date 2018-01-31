@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.api.service.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,11 +39,15 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		Facts facts = new Facts();
 		facts.put(RuleManager.REQUEST, request);
 		facts.put(RuleManager.ACTION, "GET");
+		Map<String,Object> dataFact=new HashMap<String,Object>();
+		facts.put(RuleManager.FACTS, dataFact);
 		ruleManager.fire(facts);
 
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
 		
 		System.out.println((String)data.get(ApiServiceInterface.QUERY));
+		
+		
 
 	}
 

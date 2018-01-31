@@ -6,9 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
-		<meta name="description" content="Ontology list template"/>
-		<meta name="keywords" content="sofia2,smart,cities,platform,Indra"/>
-		<meta name="author" content="Indra Sistemas, S.A."/>
+		
 		
 		<!-- BEGIN WEB FONT -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -62,14 +60,13 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/ontologies/list}"> <span th:text="#{name.ontologies}">Ontologies</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{ontology.my}">My Ontologies</span></li>
+						<li><a th:href="@{/ontologies/list}"> <span th:text="#{ontology.breadcrumb.list}">Ontologies</span></a><i class="fa fa-circle"></i></li>						
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{ontology.my}">My Ontologies </span></h1>
+				<h1 class="page-title hide "><span th:text="#{ontology.template.list}">My Ontologies </span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -80,7 +77,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase"> My Ontologies </span>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{ontology.template.list}"> My Ontologies </span>
 									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
 								<div class="tools">
@@ -97,7 +94,8 @@
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
-											<!-- <li class="divider"> </li> -->
+											<li class="divider"> </li>
+											<li><a  onclick="location.href='../ontologies/create'" th:text="#{gen.createBtn}"> New </a></li>
 										</ul>
 									</div>										
 								</div>
@@ -122,7 +120,7 @@
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>															
-																<input id="identification" th:placeholder="#{gen.name}" name="identification" class="form-control" type="text" maxlength="50" value=""/>
+																<input id="identification" th:placeholder="#{ontology.identification}" name="identification" class="form-control" type="text" maxlength="50" value=""/>
 															</div>
 														</div>
 													</div>
@@ -138,7 +136,7 @@
 													</div>
 													<div class="col-md-4 col-xs-12">
 														<div class="btn-group">
-															<button type="button" id="search_ontology" name="search_ontology" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="search_ontology" name="search_ontology" th:title="#{gen.search}" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> <em th:text="#{gen.search}">Search</em></button>
 															<button type="button" id="reset_ontology" name="reset_ontology" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
 														</div>
 													</div>
@@ -154,12 +152,12 @@
 												<table id="ontologies" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
 														<tr class="cabecera-tabla">
-															<th class="titulo-columnas" th:text="#{gen.name}">Name</th>
-															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
-															<th class="titulo-columnas" th:text="#{gen.description}">Description</th>
-															<th class="titulo-columnas text-center" th:text="#{gen.active}">Active</th>
-															<th class="titulo-columnas text-center" th:text="#{gen.public}">Public</th>																
-															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
+															<th class="titulo-columnas" th:text="#{ontology.identification}">Identification</th>
+															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{ontology.userId}" >Owner</span></th>
+															<th class="titulo-columnas" th:text="#{ontology.description}">Description</th>
+															<th class="titulo-columnas text-center" th:text="#{ontology.active}">Active</th>
+															<th class="titulo-columnas text-center" th:text="#{ontology.public}">Public</th>																
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{ontology.createdAt}"> Created At </span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
@@ -187,7 +185,7 @@
 																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  th:if="(${#authentication.name} == ${ontology.userId.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																	
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
@@ -199,16 +197,16 @@
 												<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
 												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
 													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
-														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
+														<i class="fa fa-eye"></i> <em th:text="#{gen.columns}">Columns</em> <i class="fa fa-angle-down"></i>
 													</a>
 													<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-														<label class="toggle-vis" data-column="0" th:text="#{ontologias_listado_header_nombre}"> identification </label>
-														<label class="toggle-vis" data-column="1" th:text="#{ontologias_listado_header_propietario}"> user </label>
-														<label class="toggle-vis" data-column="2" th:text="#{ontologias_listado_header_descripcion}"> Description</label>
-														<label class="toggle-vis" data-column="3" th:text="#{ontologias_listado_header_activa}"> Active</label>
-														<label class="toggle-vis" data-column="4" th:text="#{ontologias_listado_header_publica}"> Public</label>														
-														<label class="toggle-vis" data-column="5" th:text="#{usuarios_listado_header_fechaalta}"> Created At</label>
-														<label class="toggle-vis" data-column="6" th:text="#{ontologias_listado_header_opciones}" > Options</label>															
+														<label class="toggle-vis" data-column="0" th:text="#{ontology.identification}"> identification </label>
+														<label class="toggle-vis" data-column="1" th:text="#{ontology.userId}"> Owner </label>
+														<label class="toggle-vis" data-column="2" th:text="#{ontology.description}"> Description</label>
+														<label class="toggle-vis" data-column="3" th:text="#{ontology.active}"> Active</label>
+														<label class="toggle-vis" data-column="4" th:text="#{ontology.public}"> Public</label>														
+														<label class="toggle-vis" data-column="5" th:text="#{ontology.createdAt}"> Created At</label>
+														<label class="toggle-vis" data-column="6" th:text="#{gen.options}" > Options</label>															
 													</div>
 												</div>												
 											</div>

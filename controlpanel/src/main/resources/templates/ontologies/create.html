@@ -53,14 +53,14 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/ontologies/list}" > <span th:text="#{ontologias_breadcrumb}">Ontologías</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{ontologias_breadcrumb_crear}">Creación de Ontologías</span></li>
+						<li><a th:href="@{/ontologies/list}" > <span th:text="#{ontology.breadcrumb.list}">Ontologies</span></a><i class="fa fa-circle"></i></li>
+						<li><span th:text="#{ontology.wizard}">Ontology Wizard</span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{ontologias_breadcrumb_listar}"> Crear Ontologias</span> <small> SOFIA2 Control Panel </small></h1>
+				<h1 class="page-title hide "><span th:text="#{ontology.wizard}"> Ontology Wizard</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -71,7 +71,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="icon-edit font-grey-gallery"></i>
-									<span  th:text="#{ontologias_breadcrumb_crear}" class="caption-subject bold font-grey-gallery uppercase"> Creación de Ontologías </span>										
+									<span  th:text="#{ontology.wizard}" class="caption-subject bold font-grey-gallery uppercase"> Ontology Wizard </span>										
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
@@ -81,18 +81,13 @@
 								<div class="actions margin-right-20">
 									<div class="btn-group">												
 										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
-											<i class="flaticon-add"></i> <span th:text="#{ontologias_formulario_button_crear_ontologia}"> Ontología</span> <i class="fa fa-angle-down"></i>
+											<i class="flaticon-add"></i> <span th:text="#{gen.createBtn}"> New</span> <i class="fa fa-angle-down"></i>
 										</a>												
 										<ul class="dropdown-menu" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{crearontologias_titulo_paso_a_paso}" > Paso a Paso </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{crearontologias_boton_json}" > JSON-Schema</a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{crearontologias_boton_excel}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{crearontologias_boton_xml}" > JSON/XML </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createKPI'" th:text="#{crearontologias_boton_kpi}"> Creación KPI </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createTimeSeries'" th:text="#{crearontologias_boton_time_serie}" > Time Series </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')"><a onclick="location.href='../ontologies/bdtrSelect'" th:text="#{crearontologias_boton_mongodb}" > Ontología desde MongoDB </a></li>
-											<li class="divider"> </li>
-											<li><a  onclick="location.href='../ontologies/create'" th:text="#{ontologias_formulario_button_crear_ontologia}"> Wizard Ontologías </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../opendataontologies/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../opendataontologies/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
 										</ul>
 									</div>										
 								</div>
@@ -101,11 +96,8 @@
 								
 								<div class="row">
 									<div class="col-md-12 alert-zone">
-										<!-- ZONA DE ALERTAS PARA FORMS -->
-										<div class="alert alert-warning alert-dismissable hide ">
-											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-											<strong>Alerta!</strong> Montaje provisonal con nuevo estilo. 
-										</div>								
+										<!-- ALERTS -->
+																
 									</div>
 									<!-- CONTENEDORES DE CREACION DE ONTOLOGIAS -->	
 									<div class="col-md-12 col-sm-12 col-xs-12">											
@@ -123,9 +115,9 @@
 														</div>
 													</div>
 													<div class=" col-md-12 grid__item-caption">
-														<h3 class="grid__item-title" th:text="#{crearontologias_titulo_paso_a_paso}" >Creación paso a paso</h3>																
+														<h3 class="grid__item-title" th:text="#{ontology.wizard}" >Wizard</h3>																
 														<div class="col-md-12 column column--right">
-															<span class="column__text" th:text="#{crearontologias_descripcion_paso_a_paso}" >Esta opción permite crear una ontología especificando sus atributos y tipos de forma sencilla y guiada.</span>
+															<span class="column__text" th:text="#{ontology.wizard.desc}" >Wizard Description</span>
 														</div>
 													</div>
 												</a>
@@ -142,9 +134,9 @@
 														</div>
 													</div>
 													<div class=" col-md-12 grid__item-caption">
-														<h3 class="grid__item-title" th:text="#{crearontologias_boton_json}">Creación mediante JSON-Schema</h3>																	
+														<h3 class="grid__item-title" th:text="#{ontology.jsonSchema}"> JSON-Schema</h3>																	
 														<div class="col-md-12 column column--right">
-															<span class="column__text" th:text="#{crearontologias_descripcion_json}">Esta opción permite crear una ontología a partir de una plantilla JSON o un fichero XSD.</span>
+															<span class="column__text" th:text="#{ontology.jsonSchema.desc}">JSON-Schema Description</span>
 														</div>
 													</div>
 												</a>
@@ -161,9 +153,9 @@
 														</div>
 													</div>
 													<div class=" col-md-12 grid__item-caption">
-														<h3 class="grid__item-title" th:text="#{crearontologias_boton_excel}">Creación desde CSV/Excel</h3>																	
+														<h3 class="grid__item-title" th:text="#{ontology.csv}">CSV/Excel</h3>																	
 														<div class="col-md-12 column column--right">
-															<span class="column__text" th:text="#{crearontologias_descripcion_excel}" >Esta opción permite crear una ontología a partir de un fichero en formato Excel/CSV.</span>
+															<span class="column__text" th:text="#{ontology.csv.desc}" >Excel/CSV description</span>
 														</div>
 													</div>
 												</a>
@@ -180,9 +172,9 @@
 														</div>
 													</div>
 													<div class=" col-md-12 grid__item-caption">
-														<h3 class="grid__item-title" th:text="#{crearontologias_boton_xml}">Creación desde JSON/XML </h3>																	
+														<h3 class="grid__item-title" th:text="#{ontology.json_xml}">JSON/XML </h3>																	
 														<div class="col-md-12 column column--right">
-															<span class="column__text" th:text="#{crearontologias_descripcion_xml}" >Esta opción permite crear una ontología a partir de un fichero con contenido JSON o un XML.</span>
+															<span class="column__text" th:text="#{ontology.json_xml.desc}" >JSON/XML Descripcion</span>
 														</div>
 													</div>
 												</a>															

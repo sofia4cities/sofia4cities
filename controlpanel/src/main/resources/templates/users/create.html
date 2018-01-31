@@ -205,22 +205,26 @@
 													<!-- UPDATE -->
 													<button th:if="${user.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 													
+													<!-- REMOVE -->
+													<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'UserCreateController.deleteUser(\'' + ${user.userId} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+																										
 													<!-- RESET -->
 													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
 													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
 										</form>
 										
 										<!-- AUXILIAR FORM TO DELETE USER -->
-										<form id="delete_user_form" class="delete-user hide"  action=""  method="post">
+										<form id="delete_user_form" class="delete-user hide"  th:action="@{'/users/'+${user.userId}}"  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
-											<input type="hidden" name="userId" th:value="*{userId}"/>
-										</form>
+											<input type="hidden" name="userId" th:value="${user.userId}"/>
+										</form>										
 									</div>									
 								</div>
 							</div>
@@ -255,7 +259,7 @@
 		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
-	function navigateUrl(url){  window.location.href = url;	}
+	
 	
 	var currentLanguage = [[${lang}]];	
 	
@@ -264,8 +268,8 @@
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"actionMode" : [[${user.userId}]],
-		"dateCreated" : [[${user.dateCreated}]]
-		
+		"dateCreated" : [[${user.dateCreated}]],				
+		"dateDeleted" : [[${user.dateDeleted}]],
 	};
 						
 	// LOAD DATA TO USE IN MENUCONTROLLER
