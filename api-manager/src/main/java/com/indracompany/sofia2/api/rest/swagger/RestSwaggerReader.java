@@ -211,6 +211,7 @@ public class RestSwaggerReader {
          op.addParameter(sofia2Api);
          op.setConsumes(CONSUMES);
          op.setProduces(PRODUCES);
+         op.setResponses(responses);
          
          swaggerPath = swaggerPath.set(method, op);
       

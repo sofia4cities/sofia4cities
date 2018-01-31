@@ -58,7 +58,7 @@ logging:
       org.hibernate: INFO
       
 cxf:
-  path: /services/helloservice
+  path: /services/management
   servlet.init: 
     component-scan: true
     classes-scan-packages: com.indracompany.sofia2.api.rest

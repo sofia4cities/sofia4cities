@@ -46,6 +46,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
 		
 		System.out.println((String)data.get(ApiServiceInterface.QUERY));
+		
+		
 
 	}
 
