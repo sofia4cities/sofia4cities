@@ -48,7 +48,6 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
 public class InsertProcessorTest {
 
 	@Autowired
