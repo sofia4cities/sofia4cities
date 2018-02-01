@@ -33,6 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.GeneratorType;
 import com.indracompany.sofia2.config.model.InstanceGenerator;
+import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,21 +52,25 @@ public class InstanceGeneratorIntegrationTest {
 	@Autowired
 	GeneratorTypeRepository gtrepository;
 
+	@Autowired
+	UserRepository userRepository;
+
+	private User getUserCollaborator() {
+		return this.userRepository.findByUserId("collaborator");
+	}
+
 	@Before
-	public void setUp()
-	{
-		List<InstanceGenerator> generators=this.repository.findAll();
-		if(generators.isEmpty())
-		{
+	public void setUp() {
+		List<InstanceGenerator> generators = this.repository.findAll();
+		if (generators.isEmpty()) {
 			log.info("No instance generators found...adding");
-			InstanceGenerator generator=new InstanceGenerator();
+			InstanceGenerator generator = new InstanceGenerator();
 			generator.setId(1);
 			generator.setValues("desde,0;hasta,400");
 			generator.setIdentification("Integer 0 a 400");
-			GeneratorType type=this.gtrepository.findById(4);
-			if(type==null)
-			{
-				type=new GeneratorType();
+			GeneratorType type = this.gtrepository.findById(4);
+			if (type == null) {
+				type = new GeneratorType();
 				type.setId(1);
 				type.setIdentification("Random Number");
 				type.setKeyType("desde,number;hasta,number;numdecimal,number");
@@ -73,16 +78,16 @@ public class InstanceGeneratorIntegrationTest {
 				this.gtrepository.save(type);
 			}
 			generator.setGeneratorTypeId(type);
+			generator.setUserId(getUserCollaborator());
 			this.repository.save(generator);
 
 		}
 	}
 
 	@Test
-	public void test_findById()
-	{
-		InstanceGenerator generator=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findById(generator.getId())!=null);
+	public void test_findById() {
+		InstanceGenerator generator = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findById(generator.getId()) != null);
 
 	}
 

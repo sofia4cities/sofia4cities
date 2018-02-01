@@ -53,7 +53,7 @@ public class MongoByQuasarIntegrationTest {
 		}
 	}
 
-	@Test
+	// @Test
 	public void testQueryAsTable() {
 		try {
 			String query = "select * from movie";

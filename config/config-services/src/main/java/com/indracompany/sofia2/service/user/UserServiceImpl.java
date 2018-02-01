@@ -40,100 +40,114 @@ public class UserServiceImpl implements UserService {
 	UserTokenRepository userTokenRepository;
 	@Autowired
 	TokenRepository tokenRepository;
-	
+
+	@Override
 	public List<Token> getToken(String token) {
 		return tokenRepository.findByToken(token);
 	}
-	
+
+	@Override
 	public UserToken getUserToken(Token token) {
 		return userTokenRepository.findByToken(token);
 	}
-	
+
+	@Override
 	public User getUser(UserToken token) {
 		return token.getUserId();
 	}
-	
+
+	@Override
 	public User getUserByToken(String token) {
 		List<Token> listToken = getToken(token);
 		Token theToken = listToken.get(0);
-		String  userId  = userTokenRepository.findUserIdByTokenValue(theToken.getToken());
+		String userId = userTokenRepository.findUserIdByTokenValue(theToken.getToken());
 		User user = getUser(userId);
 		return user;
 	}
 
-
+	@Override
 	public User getUser(String userId) {
 		return userRepository.findByUserId(userId);
 	}
+
+	@Override
 	public List<RoleType> getAllRoles() {
 		return roleTypeRepository.findAll();
 	}
-	public UserToken getUserToken(User userId)
-	{
+
+	@Override
+	public UserToken getUserToken(User userId) {
 		return this.userTokenRepository.findByUserId(userId);
 	}
-	public List<User> getAllUsers()
-	{
+
+	@Override
+	public List<User> getAllUsers() {
 		return this.userRepository.findAll();
 	}
-	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,Boolean active)
-	{
-		List<User> users= new ArrayList<User>();
 
-		if(active!=null)
-		{
-			users=this.userRepository.findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(userId, fullName, email,roleType, active);
-			
-		}else{
-			
-			users=this.userRepository.findByUserIdOrFullNameOrEmailOrRoleType(userId, fullName, email, roleType);
+	@Override
+	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,
+			Boolean active) {
+		List<User> users = new ArrayList<User>();
+
+		if (active != null) {
+			users = this.userRepository.findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(userId, fullName, email,
+					roleType, active);
+		} else {
+			users = this.userRepository.findByUserIdOrFullNameOrEmailOrRoleType(userId, fullName, email, roleType);
 		}
-		
+
 		return users;
-		
-		
+
 	}
-	
-	public void createUser(User user){		
-		if(!this.userExists(user)){
+
+	@Override
+	public void createUser(User user) {
+		if (!this.userExists(user)) {
 			user.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
 			this.userRepository.save(user);
 		}
 	}
-	public boolean userExists(User user)
-	{
-		if(this.userRepository.findByUserId(user.getUserId())!=null) return true;
-		else return false;
+
+	@Override
+	public boolean userExists(User user) {
+		if (this.userRepository.findByUserId(user.getUserId()) != null)
+			return true;
+		else
+			return false;
 	}
-	public void updateUser(User user)
-	{
-		if(this.userExists(user))
-		{
-			User userDb=this.userRepository.findByUserId(user.getUserId());
+
+	@Override
+	public void updateUser(User user) {
+		if (this.userExists(user)) {
+			User userDb = this.userRepository.findByUserId(user.getUserId());
 			userDb.setPassword(user.getPassword());
 			userDb.setEmail(user.getEmail());
 			userDb.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
-			//If user was deleted and now is going to be active
-			if(!userDb.isActive() && user.isActive()) userDb.setDateDeleted(null);
+			// If user was deleted and now is going to be active
+			if (!userDb.isActive() && user.isActive())
+				userDb.setDateDeleted(null);
 			userDb.setActive(user.isActive());
 			userDb.setUpdatedAt(new Date());
-			//if(user.getDateDeleted()!=null) userDb.setDateDeleted(user.getDateDeleted());
+			// if(user.getDateDeleted()!=null) userDb.setDateDeleted(user.getDateDeleted());
 			userDb.setFullName(user.getFullName());
 			this.userRepository.save(userDb);
 		}
 	}
-	public RoleType getUserRole(String role)
-	{
+
+	@Override
+	public RoleType getUserRole(String role) {
 		return this.roleTypeRepository.findByName(role);
 	}
-	public void deleteUser(String userId)
-	{
-		User user=this.userRepository.findByUserId(userId);
-		if(user!=null){
+
+	@Override
+	public void deleteUser(String userId) {
+		User user = this.userRepository.findByUserId(userId);
+		if (user != null) {
 			user.setDateDeleted(new Date());
 			user.setActive(false);
 			this.userRepository.save(user);
 		}
-		
+
 	}
 }

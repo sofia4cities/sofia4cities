@@ -20,15 +20,20 @@
 
 package com.indracompany.sofia2.config.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
-import com.indracompany.sofia2.config.model.OntologyEmulator;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OntologyEmulatorRepository extends JpaRepository<OntologyEmulator, String>{
+import com.indracompany.sofia2.config.model.OntologyEmulator;
+import com.indracompany.sofia2.config.model.User;
+
+public interface OntologyEmulatorRepository extends JpaRepository<OntologyEmulator, String> {
 
 	List<OntologyEmulator> findByIdentification(String identification);
-	List<OntologyEmulator> findByIdentificationAndUserId(String identification, String userId);
+
+	List<OntologyEmulator> findByIdentificationAndUserId(String identification, User userId);
+
 	List<OntologyEmulator> findByUserId(String userId);
+
 	List<OntologyEmulator> findById(String id);
 }

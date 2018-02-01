@@ -38,7 +38,6 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 /**
  *
  * @author Javier Gomez-Cornejo
@@ -50,20 +49,20 @@ import lombok.extern.slf4j.Slf4j;
 
 public class ClientConnectionIntegrationTest {
 
-	@Autowired 
+	@Autowired
 	ClientConnectionRepository repository;
-	@Autowired 
+	@Autowired
 	ClientPlatformRepository clientRep;
 
 	@Before
 	public void setUp() {
-		List<ClientConnection> clients= this.repository.findAll();
+		List<ClientConnection> clients = this.repository.findAll();
 		if (clients.isEmpty()) {
 			log.info("No clients ...");
-			ClientConnection con= new ClientConnection();
-			ClientPlatform client= clientRep.findById("1");
-			con.setClientPlatformId(clientRep.findById("1"));			
-			con.setIdentification(client.getIdentification()+"-1");
+			ClientConnection con = new ClientConnection();
+			ClientPlatform client = clientRep.findAll().get(0);
+			con.setClientPlatformId(client);
+			con.setIdentification(client.getIdentification() + "-1");
 			con.setIpStrict(true);
 			con.setStaticIp(false);
 			con.setLastIp("192.168.1.89");
@@ -72,36 +71,35 @@ public class ClientConnectionIntegrationTest {
 			repository.save(con);
 		}
 	}
-	@Test
-	public void test_CountByClientPlatformId() { 
-		ClientConnection con=this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository.countByClientPlatformId(con.getClientPlatformId())>0);
+	@Test
+	public void test_CountByClientPlatformId() {
+		ClientConnection con = this.repository.findAll().get(0);
+
+		Assert.assertTrue(this.repository.countByClientPlatformId(con.getClientPlatformId()) > 0);
 	}
 
 	@Test
-	public void test_FindByUserId(){ 
+	public void test_FindByUserId() {
 
-		ClientConnection con=this.repository.findAll().get(0);
+		ClientConnection con = this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository.findByUserId(con.getClientPlatformId().getUserId().getUserId()).size()>0);
+		Assert.assertTrue(this.repository.findByUserId(con.getClientPlatformId().getUserId()).size() > 0);
 	}
 
 	@Test
-	public void test_FindByClientPlatformId(){ 
-		ClientConnection con=this.repository.findAll().get(0);
+	public void test_FindByClientPlatformId() {
+		ClientConnection con = this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository.findByClientPlatformId(con.getClientPlatformId()).size()>0);
+		Assert.assertTrue(this.repository.findByClientPlatformId(con.getClientPlatformId()).size() > 0);
 	}
 
 	@Test
-	public void test_FindByClientPlatformIdAndIdentification(){ 
-		ClientConnection con=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByClientPlatformIdAndIdentification(con.getClientPlatformId(),con.getIdentification()).size()>0);
+	public void test_FindByClientPlatformIdAndIdentification() {
+		ClientConnection con = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository
+				.findByClientPlatformIdAndIdentification(con.getClientPlatformId(), con.getIdentification())
+				.size() > 0);
 	}
 
 }
-
-
-
-
