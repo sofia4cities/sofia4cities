@@ -28,21 +28,28 @@ import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.User;
 
-public interface ClientConnectionRepository extends JpaRepository<ClientConnection, String>{
+public interface ClientConnectionRepository extends JpaRepository<ClientConnection, String> {
 
 	List<ClientConnection> findByClientPlatformId(ClientPlatform clientPlatform);
+
 	List<ClientConnection> findByClientPlatformIdAndStaticIpTrue(ClientPlatform clientPlatform);
+
 	List<ClientConnection> findByClientPlatformIdAndStaticIpFalse(ClientPlatform clientPlatform);
-	List<ClientConnection> findByClientPlatformIdAndIdentification(ClientPlatform clientPlatform,String indentification);
+
+	List<ClientConnection> findByClientPlatformIdAndIdentification(ClientPlatform clientPlatform,
+			String indentification);
 
 	@Query("SELECT o FROM ClientConnection o WHERE o.clientPlatformId.userId= :#{#userId}")
-	List<ClientConnection> findByUserId(@Param("userId") String userId);
+	List<ClientConnection> findByUserId(@Param("userId") User userId);
 
 	ClientConnection findById(String id);
-	List<ClientConnection> findByIdentification(String identification);
-	long countByIdentification(String identification);
-	long countByClientPlatformId(ClientPlatform clientPlatform);
 
+	List<ClientConnection> findByIdentification(String identification);
+
+	long countByIdentification(String identification);
+
+	long countByClientPlatformId(ClientPlatform clientPlatform);
 
 }

@@ -68,7 +68,7 @@
 		<module>controlpanel</module>		
         <module>modules/monitoring-ui</module>
         <module>libraries/social-services</module>
-         <module>api-manager</module>
+         <module>modules/api-manager</module>
 		<!--
         <module>api-manager</module>
 		-->

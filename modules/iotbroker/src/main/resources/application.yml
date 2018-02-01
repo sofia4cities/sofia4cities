@@ -1,7 +1,12 @@
 app:
   name: iotbroker
-server:
-  port: 8081
+  
+server: ## Config Web Server
+   port: 8081
+   contextPath: /iotbroker
+   tomcat:
+      access_log_enabled: true
+      basedir: target/tomcat
   
 spring:
   data.mongodb:
