@@ -4,20 +4,30 @@ spring:
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
       password:  
+      driver-class-name: com.mysql.jdbc.Driver
    jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
-      hibernate.ddl-auto: create
-   quartz:
+      properties.hibernate.hbm2ddl.auto: create
+
+quartz:      
+   datasource:
       url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
       password:
-      autoStartupSchedulers:
-         - scriptScheduler
-         - twitterScheduler
-         
+      driver-class-name: com.mysql.jdbc.Driver
+   jpa:
+      ## Hibernate Properties
+      # The SQL dialect makes Hibernate generate better SQL for the chosen database
+      properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+      # Hibernate ddl auto (create, create-drop, validate, update)
+      properties.hibernate.hbm2ddl.auto: create
+   autoStartupSchedulers:
+      - scriptScheduler
+      #- twitterScheduler
+              
             
 ## LOGGING CONF
 logging:

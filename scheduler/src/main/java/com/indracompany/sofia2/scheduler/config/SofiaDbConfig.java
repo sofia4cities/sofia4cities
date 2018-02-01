@@ -12,14 +12,10 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.scheduler.config;
-
-
 import static com.indracompany.sofia2.scheduler.PropertyNames.SCHEDULER_PREFIX;
 import static com.indracompany.sofia2.scheduler.PropertyNames.SCHEDULER_PROPERTIES_LOCATION;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -32,9 +28,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -46,42 +40,45 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 @EnableTransactionManagement
 @EnableJpaRepositories(
-  entityManagerFactoryRef = "quartzEntityManagerFactory",
-  transactionManagerRef = "quartzTransactionManager",
-  basePackages = { "com.indracompany.sofia2.scheduler" }
+  entityManagerFactoryRef = "entityManagerFactory",
+  transactionManagerRef = "transactionManager",
+  basePackages = { "com.indracompany.sofia2.config" }//,
+  //excludeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {"com.indracompany.sofia2.scheduler.*"})}
 )
-public class QuartzDataSource {
-	
+public class SofiaDbConfig {
 	
 	@Bean
-	@ConfigurationProperties("quartz.jpa")
-	public JpaProperties quartzJpaProperties() {
+	@Primary
+	@ConfigurationProperties("spring.jpa")
+	public JpaProperties jpaProperties() {
 	    return new JpaProperties();
 	}
 	
-	@Bean("quartzDatasource")
-	@ConfigurationProperties("quartz.datasource")
-	public DataSource quartzDatasource() {
-	    return  DataSourceBuilder.create().build();
+	@Primary
+	@Bean(name = "dataSource")
+	@ConfigurationProperties(prefix = "spring.datasource")
+	public DataSource dataSource() {
+	    return DataSourceBuilder.create().build();
 	}
-	
-	@Bean("quartzEntityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean quartzEntityManagerFactory(EntityManagerFactoryBuilder builder,
-																	   @Qualifier("quartzDatasource") DataSource dataSource) {
-			
-		Map<String,String> prop = quartzJpaProperties().getProperties();
+	  
+	@Primary
+	@Bean(name = "entityManagerFactory")
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+																	   @Qualifier("dataSource") DataSource dataSource) {
 		
-		return builder
-		      .dataSource(dataSource)
-		      .packages("com.indracompany.sofia2.scheduler")
-		      .persistenceUnit("quartz").properties(quartzJpaProperties().getProperties())
-		      .build();
+		Map<String,String> prop = jpaProperties().getProperties();
+		
+	return builder
+	      .dataSource(dataSource)
+	      .packages("com.indracompany.sofia2")
+	      .persistenceUnit("sofia").properties(jpaProperties().getProperties())
+	      .build();
 	}
-	
-	@Bean(name = "quartzTransactionManager")
-	public PlatformTransactionManager quartzTransactionManager(@Qualifier("quartzEntityManagerFactory") 
+	    
+	@Primary
+	@Bean(name = "transactionManager")
+	public PlatformTransactionManager transactionManager(@Qualifier("entityManagerFactory") 
 														 EntityManagerFactory  entityManagerFactory) {
 	    return new JpaTransactionManager(entityManagerFactory);
 	}
-
 }

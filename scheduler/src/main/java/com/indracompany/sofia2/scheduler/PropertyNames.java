@@ -17,7 +17,7 @@ public final class PropertyNames {
 	
 	public static final String SCHEDULER_PROPERTIES = "quartz.properties";
 	public static final String SCHEDULER_PROPERTIES_LOCATION = "classpath:" + SCHEDULER_PROPERTIES;
-	public static final String SCHEDULER_PREFIX = "spring.quartz";
+	public static final String SCHEDULER_PREFIX = "quartz";
 	
 	
 	private PropertyNames () {}
