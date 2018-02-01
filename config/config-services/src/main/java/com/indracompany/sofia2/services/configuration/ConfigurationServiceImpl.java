@@ -85,6 +85,7 @@ public class ConfigurationServiceImpl implements ConfigurationService{
 			if(configuration.getUserId()!=null && configuration.getJsonSchema()!=null && configuration.getConfigurationTypeId()!=null)
 			{
 				Configuration newConfiguration=this.configurationRepository.findById(configuration.getId());
+				newConfiguration.setIdentification(configuration.getIdentification());
 				newConfiguration.setConfigurationTypeId(this.configurationTypeRepository.findByName(configuration.getConfigurationTypeId().getName()));
 				if(isValidJSON(configuration.getJsonSchema())) newConfiguration.setJsonSchema(configuration.getJsonSchema());
 				this.configurationRepository.save(newConfiguration);

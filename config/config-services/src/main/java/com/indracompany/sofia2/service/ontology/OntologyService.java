@@ -26,4 +26,5 @@ public interface OntologyService {
 	List<Ontology> getOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
 	List<String> getAllIdentifications();
 	Ontology getOntologyById(String id);
+	Ontology getOntologyByIdentification(String identification);
 }

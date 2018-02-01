@@ -18,6 +18,8 @@
           });
 		</script>
 
+		
+
 		<!-- STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
@@ -65,11 +67,8 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/configurations/list}"> <span th:text="#{configurations.breadcrumb.prev}">Configuration List</span></a><i class="fa fa-circle"></i></li>
-						<li>
-							<span th:if="${configuration.id} == null" th:text="#{configurations.breadcrumb.create}">Create Configuration</span>
-							<span th:if="${configuration.id} != null" th:text="#{configurations.breadcrumb.update}">Update Configuration</span>
-						</li>
+						<li><a th:href="@{/twitter/scheduledsearch/list}"> <span th:text="#{scheduledsearch.breadcrumb.prev}">Scheduled Search List</span></a><i class="fa fa-circle"></i></li>
+						<li><span th:text="#{scheduledsearch.breadcrumb.create}">Create Configuration</span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
@@ -86,8 +85,8 @@
 								<div class="caption">
 									<i class="la la-users font-grey-gallery"></i>
 									<!-- FORM TITLE -->
-									<span th:if="${configuration.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{configurations.template.create} + ':'"> New Configuration</span>
-									<span th:if="${configuration.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{configurations.template.update}"> Update Configuration</span>
+									<span th:if="${twitterListen.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{scheduledsearch.template.create} + ':'"> New Scheduled Search</span>
+									<span th:if="${twitterListen.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{scheduledsearch.template.update}"> Update Configuration</span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -95,8 +94,8 @@
 								</div>
 								<div class="actions">
 									<!-- ACTION INDICATORs -->									
-									<span th:if="${configuration.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
-									<span th:if="${configuration.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
+									<span th:if="${twitterListen.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${twitterListen.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>									
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
@@ -108,67 +107,110 @@
 										</div>
                                         <div class="alert alert-success display-hide">
 											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>		
+										<div class="alert alert-generic display-hide">
+											<button class="close" data-close="alert"></button><span class="alert-exists-text"></span>
 										</div>								
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="configurations_create_form" th:object="${configuration}"  method="post" class="form">
+										<form role="form" id="scheduledsearch_create_form" th:object="${twitterListen}"  method="post" class="form">
 											<!-- FORM ACTIONS FOR INSERT-->
-											<input th:if="${configuration.id} == null" type="hidden" name="action" th:value="@{/configurations/create}"/>
+											<input th:if="${twitterListen.id} == null" type="hidden" name="action" th:value="@{/twitter/scheduledsearch/create}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->											
-											<input th:if="${configuration.id} != null" type="hidden" name="action" th:value="@{/configurations/update}"/>
-											<input th:if="${configuration.id} != null" type="hidden" name="_method" value="PUT"/>											
+											<input th:if="${twitterListen.id} != null" type="hidden" name="action" th:value="@{/twitter/scheduledsearch}"/>
+											<input th:if="${twitterListen.id} != null" type="hidden" name="_method" value="PUT"/>											
 											
 											<div class="form-body">
-												<!-- type, userid -->
+												<!-- ID,CONFIG,TOPICS -->
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{configurations.type} + ':'">Configuration Type</label>
-															<select id="configurationTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{configurationTypeId.name}" th:required="true">
-																<option th:each="configurationTypeId :${configurationTypes}" th:value="${configurationTypeId.name}" th:text="${configurationTypeId.name}" ></option>
-																<th:block if="${configuration.configurationTypeId !=null}">
-																	<option th:text="${configuration.configurationTypeId.name}" th:value="${configuration.configurationTypeId.name}"></option>
-																</th:block>
+															<label class="" th:text="#{scheduledsearch.identification} + ':'">Identification</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="identificator" type="text"  th:required="true"  maxlength="100" th:field="*{identificator}" class="form-control no-remove" th:placeholder="#{user.id}"/>
+															</div>	
+														</div>
+													</div>	
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{scheduledsearch.configuration} + ':'">Configuration </label>
+															<select id="configuration" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{scheduledsearch.configuration}" th:field="*{configurationId.identification}" th:required="true">
+																<option th:each="configuration :${configurations}" th:value="${configuration.identification}" th:text="${configuration.identification}" ></option>										
 															</select>													
 														</div>
 													</div>													
-													<div class="col-md-3 col-sm-6 col-xs-12">
+													<div class="col-md-5 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="" th:text="#{configuration.userid} + ':'">User ID</label>
+															<label class="control-label" th:text="#{scheduledsearch.topics} + ':'">Topics</label>
 															<div class="input-icon ">
-																<i class="fa fa-user"></i>
-																<input readOnly="true" id="userId" type="text"  th:required="true"  maxlength="50" th:field="*{userId.userId}" class="form-control no-remove" th:placeholder="#{user.id}"/>
-															</div>	
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label" th:text="#{configuration.id} + ':'">Configuration ID</label>
-															<div class="input-icon ">
-																<i class="fa fa-credit-card"></i>
-																<input id="id" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control no-remove" th:placeholder="#{configuration.id}"/>
+																<i class="fa"></i>
+																<input  id="userId" type="text"  th:required="true"  maxlength="100" th:field="*{topics}" class="form-control" th:placeholder="#{scheduledsearch.topics.rules}" th:value="${topics}"/>
 															</div>	
 														</div>
 													</div>												
 												</div>
-												<!-- Json-->
+												<!-- FROM,TO-->
 												<div class="row">
-													<div class="col-md-12 col-sm-12 col-xs-12">
+													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label th:text="#{configurations.json}">JSON</label>														
-															<textarea id="jsonSchema" name="jsonSchema"  th:required="true" th:field="*{jsonSchema}" class="form-control autoExpand" rows="3" data-min-rows='3'></textarea>
+															<label class="control-label"><i class="la la-calendar"></i> <span th:text="#{scheduledsearch.from} + ':'">Schedule from</span></label>
+															<div class="input-icon ">
+																<i class="fa fa-calendar-o"></i>
+																<input id="dateFrom" type="text"  th:required="true"  maxlength="50" th:field="*{dateFrom}" class="form-control datetime no-remove" th:placeholder="#{scheduledsearch.from}"/>
+															</div>
 														</div>
-													</div>																					
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label"><i class="la la-calendar"></i> <span th:text="#{scheduledsearch.to} + ':'">Schedule to</span></label>
+															<div class="input-icon ">
+																<i class="fa fa-calendar-o"></i>
+																<input id="dateTo" type="text"  th:required="true"  maxlength="50" th:field="*{dateTo}" class="form-control datetime no-remove"  th:placeholder="#{scheduledsearch.to}"/>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- Ontologies,ClientPlatform,Tokens-->
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{scheduledsearch.ontologies.target} + ':'">Ontologies</label>
+															<select id="ontologies" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{scheduledsearch.ontologies}" th:field="*{ontologyId.identification}" th:required="true" onchange="getClients()">
+															<option th:each="ontology :${ontologies}" th:value="${ontology.identification}" th:text="${ontology.identification}"></option>										
+															</select>													
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{scheduledsearch.clientplatform} + ':'">Platform Clients</label>
+															<select  id="clientplatforms" th:required="true"  data-width="100%" th:field="*{tokenId.clientPlatformId.identification}" class="select-picker form-control" data-live-search="true" th:value="${tokenId?.clientPlatformId?.identification}" onchange="getTokens()" >
+																<option th:if="${twitterListen.tokenId?.clientPlatformId?.identification} != null" th:value="${twitterListen.tokenId.clientPlatformId.identification}" th:text="${twitterListen.tokenId.clientPlatformId.identification}"/>
+															</select>
+
+																							
+																											
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{scheduledsearch.token} + ':'">Tokens</label>
+															<select  id="tokens" th:required="true"   th:field="*{tokenId.token}" data-width="100%" data-live-search="true" class="select-picker form-control" th:value="${tokenId?.token}" >
+															<option th:if="${twitterListen.tokenId?.token} != null" th:value="${twitterListen.tokenId.token}" th:text="${twitterListen.tokenId.token}"/>
+															</select>									
+																											
+														</div>
+													</div>
 												</div>
 											</div>
 											<!-- FORM BUTTONS -->
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-													<button th:if="${configuration.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<button th:if="${twitterListen.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													<!-- UPDATE -->
-													<button th:if="${configuration.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													<button th:if="${twitterListen.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 													
 													<!-- RESET -->
 													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
@@ -176,7 +218,7 @@
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/configurations/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/twitter/scheduledsearch/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
 										</form>
@@ -184,7 +226,7 @@
 										<!-- AUXILIAR FORM TO DELETE USER -->
 										<form id="delete_user_form" class="delete-user hide"  action=""  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
-											<input type="hidden" name="userId" th:value="*{configuration.id}"/>
+											<input type="hidden" name="userId" th:value="*{twitterListen.id}"/>
 										</form>
 									</div>									
 								</div>
@@ -218,7 +260,7 @@
 	
 		
 	<!-- TEMPLATE CONTROLLER  -->	
-	<script th:src="@{/static/js/pages/configurationsCreate.js}"/>
+	<script th:src="@{/static/js/pages/scheduledsearchCreate.js}"/>
 	
 		
 	<!-- MAIN INIT -->
@@ -228,17 +270,24 @@
 
 	function navigateUrl(url){  window.location.href = url;	}
 	var currentLanguage = [[${lang}]];	
+		
 	
-	var configurationsCreateJson = { 
+	var ScheduledSearchCreateJson = { 
 		"close" : [[#{gen.closeBtn}]],		
-		"language" : currentLanguage
+		"language" : currentLanguage,
+		"dateTo" : [[#{twitterListen.dateTo}]],
+		"dateFrom" : [[#{twitterListen.dateFrom}]]
+
 	};
 	
-		
+	
+
+
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
 	
    
 	</script>	
+
 </body>
 </html>

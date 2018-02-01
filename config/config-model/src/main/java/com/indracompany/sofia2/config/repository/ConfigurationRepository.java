@@ -28,5 +28,6 @@ public interface ConfigurationRepository extends JpaRepository<Configuration, St
 	List<Configuration> findByConfigurationTypeId(ConfigurationType configurationTypeId);
 	List<Configuration> findByUserIdAndConfigurationTypeId(User userId, ConfigurationType configurationTypeId);
 	void deleteById(String id);
+	Configuration findByIdentification(String identification);
 
 }

@@ -44,7 +44,7 @@ public class OntologyServiceImpl implements OntologyService{
 	}
 	public List<Ontology> getOntologiesByUserId(String userId)
 	{
-		return this.ontologyRepository.findByUserId(this.userService.getUser(userId));
+		return this.ontologyRepository.findByUserIdAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
 	}
 	public List<Ontology> getOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description)
 	{
@@ -103,7 +103,11 @@ public class OntologyServiceImpl implements OntologyService{
 	}
 	
 	public Ontology getOntologyById(String id) {
-		return ontologyRepository.findById(id);
+		return this.ontologyRepository.findById(id);
+	}
+	public Ontology getOntologyByIdentification(String identification)
+	{
+		return this.ontologyRepository.findByIdentification(identification);
 	}
 	
 

@@ -25,7 +25,9 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>		
-		
+		<!-- CODEMIRROR -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
 	</head>	
 	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
@@ -95,10 +97,16 @@
 															<p class="form-control-static-block bold" th:text="*{configurationTypeId.name}"> Configuration Type </p>
 														</div>
 													</div>
-													<div class="col-md-5 col-sm-6 col-xs-12">
+													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{configuration.userid} + ':'">User Id</label>
 															<p class="form-control-static-block bold" th:text="*{userId.userId}"> User Name </p>
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{configuration.id} + ':'">Identification</label>
+															<p class="form-control-static-block bold" th:text="*{identification}"> Identification </p>
 														</div>
 													</div>											
 												</div>
@@ -157,6 +165,7 @@
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
+	<script th:src="@{/static/vendor/codemirror/lib/codemirror.js}"/>
 
 	<!-- TEMPLATE CONTROLLER  -->	
 		
@@ -195,7 +204,25 @@
 		showLog ? console.log('SHOW USER load()...') : '';
 	});
 	
-	//]]>
+	
+	
+		var myTextArea = document.getElementById('jsonSchema');
+		var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+			lineNumbers : true,
+			matchBrackets : true,
+			styleActiveLine : true,
+			theme : "material",
+			mode : {
+				name : "javascript",
+				json : true
+			}
+		});
+		myCodeMirror.setSize("100%", 350);
+	
+		//]]>
 	</script>	
+	
+	
+	
 </body>
 </html>

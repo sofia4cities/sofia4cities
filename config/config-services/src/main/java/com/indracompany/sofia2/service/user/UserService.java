@@ -22,7 +22,7 @@ import com.indracompany.sofia2.config.model.UserToken;
 
 public interface UserService {
 	
-	public List<Token> getToken(String token) ;
+	public Token getToken(String token) ;
 	public UserToken getUserToken(Token token);
 	public User getUser(UserToken token);
 	public User getUserByToken(String token);

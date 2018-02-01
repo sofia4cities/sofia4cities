@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 	TokenRepository tokenRepository;
 
 	@Override
-	public List<Token> getToken(String token) {
+	public Token getToken(String token) {
 		return tokenRepository.findByToken(token);
 	}
 
@@ -58,8 +58,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByToken(String token) {
-		List<Token> listToken = getToken(token);
-		Token theToken = listToken.get(0);
+		Token theToken =  getToken(token);
 		String userId = userTokenRepository.findUserIdByTokenValue(theToken.getToken());
 		User user = getUser(userId);
 		return user;

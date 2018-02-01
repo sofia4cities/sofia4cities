@@ -15,6 +15,7 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -52,6 +53,9 @@ public class Configuration extends AuditableEntityWithUUID {
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "CONFIGURATION_TYPE_ID", referencedColumnName = "ID", nullable = false)
 	@Getter @Setter private ConfigurationType configurationTypeId;
+	
+	@Column(name = "IDENTIFICATION")
+	@Getter @Setter private String identification;    
 	
 	
 
