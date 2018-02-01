@@ -26,7 +26,8 @@ The first time you use the Environment you have to follow these steps:
 1. Download last version of Sofia2Open_Env.zip from https://sofia2.com/downloads/Sofia2Open_env_v0.1.zip
 2. Unzip into a directory (in Windows we recommend to use C:\S2_ENV\ or D:\S2_ENV\)
 (UPDATE)
-	1. Download 
+	1. Download patch 0.1.1 from https://sofia2.com/downloads/Sofia2Open_env_update_v0.1.1.zip
+	2. Unzip into the same directory of the step 2.
 
 3. Go to the directory when you decompress the ZIP and execute start.bat, this create virtual unit S:
 4. Go to **S:\scripts\setenv.bat** and config proxy values (if you are not behind a proxy you can delete these variables)
