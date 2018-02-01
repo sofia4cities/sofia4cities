@@ -48,47 +48,57 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GadgetDataModelIntegrationTest {
 
-	@Autowired 
+	@Autowired
 	GadgetDataModelRepository repository;
 	@Autowired
-	UserRepository userRepository;	
+	UserRepository userRepository;
+
 	private User getUserCollaborator() {
 		return this.userRepository.findByUserId("collaborator");
 	}
 
 	@Before
 	public void setUp() {
-		List<GadgetDataModel> gadgetDataModels= this.repository.findAll();
+		List<GadgetDataModel> gadgetDataModels = this.repository.findAll();
 		if (gadgetDataModels.isEmpty()) {
 			log.info("No gadget data models ...");
-			GadgetDataModel gadgetDM=new GadgetDataModel();
+			GadgetDataModel gadgetDM = new GadgetDataModel();
 			gadgetDM.setIdentification("1");
 			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
 			gadgetDM.setUserId(getUserCollaborator());
-			gadgetDM.setPublic(true);			
+			gadgetDM.setPublic(true);
 			repository.save(gadgetDM);
 		}
 	}
-	@Test
-	public void test_findByIdentificationIsAndUserIdIsOrIdentificationIsAndPublicTrue() { 
-		GadgetDataModel gadgetDM=this.repository.findAll().get(0);
-		String identification= gadgetDM.getIdentification();
-		String userId=getUserCollaborator().getUserId();
-		log.info("GadgetDataModel with identification: "+identification+" ,userId: "+userId+" public: "+gadgetDM.isPublic());
-		log.info("Identification: "+identification+" userId: "+userId+" should return true (size of list>0)" );
-		Assert.assertTrue(this.repository.findByIdentificationAndUserIdOrIsPublicTrue(identification,userId).size()>0);
-		log.info("Identification: 000 (harcoded) userId: "+userId+" should return false (size of list=0)" );
-		Assert.assertTrue(this.repository.findByIdentificationAndUserIdOrIsPublicTrue("000",userId).size()==0);
-		if(gadgetDM.isPublic()){
-			log.info("Identification: "+identification+" userId: 000 (harcoded) should return true (size of list>0) because is public" );
-			Assert.assertTrue(this.repository.findByIdentificationAndUserIdOrIsPublicTrue(identification,"000").size()>0);
 
-		}else{
-			log.info("Identification: "+identification+" userId: 000 (harcoded) should return false (size of list=0) because is not public" );
-			Assert.assertTrue(this.repository.findByIdentificationAndUserIdOrIsPublicTrue(identification,"000").size()>0);
+	@Test
+	public void test_findByIdentificationIsAndUserIdIsOrIdentificationIsAndPublicTrue() {
+		GadgetDataModel gadgetDM = this.repository.findAll().get(0);
+		String identification = gadgetDM.getIdentification();
+		String userId = getUserCollaborator().getUserId();
+		log.info("GadgetDataModel with identification: " + identification + " ,userId: " + userId + " public: "
+				+ gadgetDM.isPublic());
+		log.info("Identification: " + identification + " userId: " + userId + " should return true (size of list>0)");
+		Assert.assertTrue(this.repository
+				.findByIdentificationAndUserIdOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+		log.info("Identification: 000 (harcoded) userId: " + userId + " should return false (size of list=0)");
+		Assert.assertTrue(
+				this.repository.findByIdentificationAndUserIdOrIsPublicTrue("000", getUserCollaborator()).size() == 0);
+		if (gadgetDM.isPublic()) {
+			log.info("Identification: " + identification
+					+ " userId: 000 (harcoded) should return true (size of list>0) because is public");
+			Assert.assertTrue(this.repository
+					.findByIdentificationAndUserIdOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+
+		} else {
+			log.info("Identification: " + identification
+					+ " userId: 000 (harcoded) should return false (size of list=0) because is not public");
+			Assert.assertTrue(this.repository
+					.findByIdentificationAndUserIdOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
 
 		}
-		Assert.assertTrue(this.repository.findByIdentificationAndUserIdOrIsPublicTrue(identification,"000").size()>0);
+		Assert.assertTrue(this.repository
+				.findByIdentificationAndUserIdOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
 
 	}
 

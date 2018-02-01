@@ -54,11 +54,12 @@ public class OntologyEmulatorIntegrationTest {
 	OntologyEmulatorRepository repository;
 
 	@Autowired
-	UserRepository userRepository;	
+	UserRepository userRepository;
+
 	private User getUserCollaborator() {
 		return this.userRepository.findByUserId("collaborator");
 	}
-	
+
 	@Before
 	public void setUp() {
 		List<OntologyEmulator> oes = this.repository.findAll();
@@ -93,7 +94,7 @@ public class OntologyEmulatorIntegrationTest {
 		OntologyEmulator oe = this.repository.findAll().get(0);
 
 		Assert.assertTrue(
-				this.repository.findByIdentificationAndUserId(oe.getIdentification(), oe.getUserId().getUserId()).size() > 0);
+				this.repository.findByIdentificationAndUserId(oe.getIdentification(), oe.getUserId()).size() > 0);
 
 	}
 

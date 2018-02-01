@@ -33,7 +33,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
 import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
-@Component
+//@Component
 public class SimpleSocket extends Gateway {
 	ServerSocket serverSocket;
 	ExecutorService executor;

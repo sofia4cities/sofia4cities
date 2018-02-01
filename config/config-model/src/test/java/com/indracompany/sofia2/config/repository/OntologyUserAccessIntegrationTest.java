@@ -53,9 +53,10 @@ public class OntologyUserAccessIntegrationTest {
 	OntologyUserAccessRepository repository;
 	@Autowired
 	OntologyRepository ontRep;
-	
+
 	@Autowired
-	UserRepository userRepository;	
+	UserRepository userRepository;
+
 	private User getUserCollaborator() {
 		return this.userRepository.findByUserId("collaborator");
 	}
@@ -76,7 +77,7 @@ public class OntologyUserAccessIntegrationTest {
 	@Test
 	public void findByUserId() {
 		OntologyUserAccess user = this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByUserId(user.getUserId().getUserId()).size() > 0);
+		Assert.assertTrue(this.repository.findByUserId(user.getUserId()).size() > 0);
 
 	}
 }

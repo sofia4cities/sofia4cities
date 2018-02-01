@@ -53,7 +53,7 @@
 			<h1>403</h1>						
 			<h2>ControlPanel, we have a problem.</h2>
 			<h3 class="bold"><i class="fa fa-warning"></i> 403 - Access is denied</h3>
-			<p class="bold margin-top-10"> You do not have permission to access this page <br/></p>
+			<p th:text="${#authentication.name}"></p><p class="bold margin-top-10">.You do not have permission to access this page <br/></p>
 			<p class="margin-top-30"><a th:href="@{/}" class="btn white btn-outline"> Return home </a><br/></p>
 		</div>
 	

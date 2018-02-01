@@ -20,14 +20,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
+import com.indracompany.sofia2.config.model.User;
 
-public interface OntologyUserAccessRepository extends JpaRepository<OntologyUserAccess, String>{
+public interface OntologyUserAccessRepository extends JpaRepository<OntologyUserAccess, String> {
 
-	List<OntologyUserAccess> findByOntologyIdAndUserId(Ontology ontologyId, String userId );
-	List<OntologyUserAccess> findByUserId(String userId);
-	List<OntologyUserAccess> findByUserIdAndOntologyUserAccessTypeId(String userId, OntologyUserAccessType ontologyUserAccessTypeId);
+	List<OntologyUserAccess> findByOntologyIdAndUserId(Ontology ontologyId, User userId);
+
+	List<OntologyUserAccess> findByUserId(User userId);
+
+	List<OntologyUserAccess> findByUserIdAndOntologyUserAccessTypeId(User userId,
+			OntologyUserAccessType ontologyUserAccessTypeId);
+
 	OntologyUserAccess findById(String id);
+
 	List<OntologyUserAccess> findByOntologyUserAccessTypeId(OntologyUserAccessType ontologyUserAccessTypeId);
+
 	List<OntologyUserAccess> findByOntologyId(Ontology ontologyId);
 
 }
