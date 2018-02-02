@@ -42,34 +42,47 @@ import lombok.Setter;
 @Entity
 @Table(name = "GADGET_DATA_MODEL")
 @Configurable
-public class GadgetDataModel extends AuditableEntityWithUUID{
+public class GadgetDataModel extends AuditableEntityWithUUID {
 
 	@Column(name = "IDENTIFICATION", length = 50, unique = true)
 	@NotNull
-	@Getter @Setter private String identification;
+	@Getter
+	@Setter
+	private String identification;
 
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "IMAGE", columnDefinition = "BLOB")
-	@Getter @Setter private byte[] image;
+	@Getter
+	@Setter
+	private byte[] image;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-	@Getter @Setter private User userId;
-
+	@Getter
+	@Setter
+	private User user;
 
 	@Column(name = "GCODE")
 	@Lob
-	@Getter @Setter private String gCode;
+	@Getter
+	@Setter
+	private String gCode;
 
 	@Column(name = "IMAGE_TYPE", length = 20)
-	@Getter @Setter private String imageType;
+	@Getter
+	@Setter
+	private String imageType;
 
 	@Column(name = "PUBLIC")
 	@NotNull
-	@Getter @Setter private boolean isPublic;
+	@Getter
+	@Setter
+	private boolean isPublic;
 
 	@Column(name = "DESCRIPTION", length = 512)
-	@Getter @Setter private String description;
+	@Getter
+	@Setter
+	private String description;
 
 }

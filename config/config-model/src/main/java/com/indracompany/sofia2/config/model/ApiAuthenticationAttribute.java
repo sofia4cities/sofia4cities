@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.model;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -25,55 +26,33 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Configurable
 @Entity
-@Table(name = "Api_Authentication_Attribute")
-@SuppressWarnings("deprecation")
+@Table(name = "API_AUTHENTICATION_ATTRIBUTE")
 public class ApiAuthenticationAttribute extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-   
-    @JoinColumn(name = "autparamId", referencedColumnName = "ID", nullable = false)
-    private ApiAuthenticationParameter autparamId;
+	@JoinColumn(name = "API_AUT_PARAM_ID", referencedColumnName = "ID", nullable = false)
+	@Getter
+	@Setter
+	private ApiAuthenticationParameter apiAuthenticationParameter;
 
 	@Column(name = "NAME", length = 50, nullable = false)
-    @NotNull
-    private String name;
+	@NotNull
+	@Getter
+	@Setter
+	private String name;
 
-	@Column(name = "VALUE", length = 512,nullable = false)
-    @NotNull
-    private String value;
+	@Column(name = "VALUE", length = 512, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String value;
 
-	public ApiAuthenticationParameter getAutparamId() {
-		return autparamId;
-	}
-
-	public void setAutparamId(ApiAuthenticationParameter autparamId) {
-		this.autparamId = autparamId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	
 }

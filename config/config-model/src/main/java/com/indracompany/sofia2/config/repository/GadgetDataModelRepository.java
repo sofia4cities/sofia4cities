@@ -33,10 +33,10 @@ public interface GadgetDataModelRepository extends JpaRepository<GadgetDataModel
 
 	List<GadgetDataModel> findByIdentification(String identification);
 
-	List<GadgetDataModel> findByUserIdOrIsPublicTrue(String userId);
+	List<GadgetDataModel> findByUserOrIsPublicTrue(User user);
 
-	@Query("SELECT o FROM GadgetDataModel AS o WHERE o.identification = :#{#identification} and (o.userId = :#{#userId} OR o.isPublic=true)")
-	List<GadgetDataModel> findByIdentificationAndUserIdOrIsPublicTrue(@Param("identification") String identification,
-			@Param("userId") User userId);
+	@Query("SELECT o FROM GadgetDataModel AS o WHERE o.identification = :#{#identification} and (o.user = :#{#user} OR o.isPublic=true)")
+	List<GadgetDataModel> findByIdentificationAndUserOrIsPublicTrue(@Param("identification") String identification,
+			@Param("user") User user);
 
 }

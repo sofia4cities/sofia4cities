@@ -38,10 +38,6 @@ import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -65,7 +61,7 @@ public class GadgetDataModelIntegrationTest {
 			GadgetDataModel gadgetDM = new GadgetDataModel();
 			gadgetDM.setIdentification("1");
 			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
-			gadgetDM.setUserId(getUserCollaborator());
+			gadgetDM.setUser(getUserCollaborator());
 			gadgetDM.setPublic(true);
 			repository.save(gadgetDM);
 		}
@@ -80,25 +76,25 @@ public class GadgetDataModelIntegrationTest {
 				+ gadgetDM.isPublic());
 		log.info("Identification: " + identification + " userId: " + userId + " should return true (size of list>0)");
 		Assert.assertTrue(this.repository
-				.findByIdentificationAndUserIdOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+				.findByIdentificationAndUserOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
 		log.info("Identification: 000 (harcoded) userId: " + userId + " should return false (size of list=0)");
 		Assert.assertTrue(
-				this.repository.findByIdentificationAndUserIdOrIsPublicTrue("000", getUserCollaborator()).size() == 0);
+				this.repository.findByIdentificationAndUserOrIsPublicTrue("000", getUserCollaborator()).size() == 0);
 		if (gadgetDM.isPublic()) {
 			log.info("Identification: " + identification
 					+ " userId: 000 (harcoded) should return true (size of list>0) because is public");
 			Assert.assertTrue(this.repository
-					.findByIdentificationAndUserIdOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+					.findByIdentificationAndUserOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
 
 		} else {
 			log.info("Identification: " + identification
 					+ " userId: 000 (harcoded) should return false (size of list=0) because is not public");
 			Assert.assertTrue(this.repository
-					.findByIdentificationAndUserIdOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+					.findByIdentificationAndUserOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
 
 		}
 		Assert.assertTrue(this.repository
-				.findByIdentificationAndUserIdOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+				.findByIdentificationAndUserOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
 
 	}
 

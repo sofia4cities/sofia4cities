@@ -24,15 +24,17 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-
 import com.indracompany.sofia2.config.model.DashboardType;
 import com.indracompany.sofia2.config.model.User;
 
-public interface DashboardTypeRepository extends JpaRepository<DashboardType, Integer>{
+public interface DashboardTypeRepository extends JpaRepository<DashboardType, Integer> {
 
-	List<DashboardType> findByUserId(User userId);
+	List<DashboardType> findByUser(User user);
+
 	List<DashboardType> findByType(String type);
+
 	List<DashboardType> findById(Integer id);
+
 	long countByType(String type);
 
 }

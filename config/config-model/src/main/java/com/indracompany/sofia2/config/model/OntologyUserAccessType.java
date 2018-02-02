@@ -42,21 +42,29 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "ONTOLOGY_USER_ACCES_TYPE")
-public class OntologyUserAccessType extends AuditableEntity{
+public class OntologyUserAccessType extends AuditableEntity {
 
 	@Id
 	@Column(name = "ID")
-	@Getter @Setter private Integer id;
+	@Getter
+	@Setter
+	private Integer id;
 
-	@OneToMany(mappedBy = "ontologyUserAccessTypeId",fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "ontologyUserAccessType", fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter @Setter private Set<OntologyUserAccess> ontologyUserAccess;
+	@Getter
+	@Setter
+	private Set<OntologyUserAccess> ontologyUserAccess;
 
-	@Column(name = "NAME", length = 24, unique = true,nullable = false)
+	@Column(name = "NAME", length = 24, unique = true, nullable = false)
 	@NotNull
-	@Getter @Setter private String name;
+	@Getter
+	@Setter
+	private String name;
 
-	@Column(name = "DESCRIPCTION", length = 255)
-	@Getter @Setter private String description;
+	@Column(name = "DESCRIPTION", length = 255)
+	@Getter
+	@Setter
+	private String description;
 
 }

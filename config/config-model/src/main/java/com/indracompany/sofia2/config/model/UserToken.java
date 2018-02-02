@@ -31,13 +31,17 @@ import lombok.Setter;;
 @Table(name = "USER_TOKEN")
 public class UserToken extends AuditableEntityWithUUID {
 
-	@JoinColumn(name = "TOKEN", referencedColumnName = "TOKEN", nullable = false)
+	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID", nullable = false)
 	@NotNull
-	@Getter @Setter private Token token;
+	@Getter
+	@Setter
+	private Token token;
 
 	@OneToOne
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
 	@NotNull
-	@Getter @Setter private User userId;
+	@Getter
+	@Setter
+	private User user;
 
 }

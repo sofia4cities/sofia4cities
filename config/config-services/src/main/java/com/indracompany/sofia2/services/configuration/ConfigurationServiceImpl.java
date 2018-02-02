@@ -13,25 +13,22 @@
  */
 package com.indracompany.sofia2.services.configuration;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
-import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.service.user.UserService;
 
 @Service
-public class ConfigurationServiceImpl implements ConfigurationService{
+public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	ConfigurationRepository configurationRepository;
 	@Autowired
@@ -39,81 +36,81 @@ public class ConfigurationServiceImpl implements ConfigurationService{
 	@Autowired
 	UserService userService;
 
-
-	public List<Configuration> getAllConfigurations()
-	{
+	@Override
+	public List<Configuration> getAllConfigurations() {
 
 		return this.configurationRepository.findAll();
 
 	}
+
+	@Override
 	@Transactional
-	public void deleteConfiguration(String id)
-	{
+	public void deleteConfiguration(String id) {
 		this.configurationRepository.deleteById(id);
 	}
-	public List<ConfigurationType> getAllConfigurationTypes()
-	{
-		List<ConfigurationType> types= this.configurationTypeRepository.findAll();
+
+	@Override
+	public List<ConfigurationType> getAllConfigurationTypes() {
+		List<ConfigurationType> types = this.configurationTypeRepository.findAll();
 		return types;
 
 	}
-	public Configuration getConfiguration(String id)
-	{
+
+	@Override
+	public Configuration getConfiguration(String id) {
 		return this.configurationRepository.findById(id);
 	}
-	public void createConfiguration(Configuration configuration)
-	{
-		ConfigurationType configurationType=this.configurationTypeRepository.findByName(configuration.getConfigurationTypeId().getName());
-		if(configurationType!=null)
-		{
-			User user= this.userService.getUser(configuration.getUserId().getUserId());
-			if(user!=null)
-			{
-				configuration.setUserId(user);
-				configuration.setConfigurationTypeId(configurationType);
-				if(isValidJSON(configuration.getJsonSchema()))
-				{
-					this.configurationRepository.save(configuration);
-				}
-			}
+
+	@Override
+	public void createConfiguration(Configuration configuration) {
+		Configuration oldConfiguration = this.configurationRepository.findById(configuration.getId());
+		if (oldConfiguration == null) {
+			oldConfiguration = new Configuration();
+			oldConfiguration.setYmlConfig(configuration.getYmlConfig());
+			oldConfiguration.setDescription(configuration.getDescription());
+			oldConfiguration.setSuffix(configuration.getSuffix());
+			oldConfiguration.setEnvironment(configuration.getEnvironment());
+			this.configurationRepository.save(oldConfiguration);
+
+		} else {
+			throw new RuntimeException("You cann´t create a Configuration that exists:" + configuration.toString());
 		}
 	}
-	public void updateConfiguration(Configuration configuration)
-	{
-		if(this.existsConfiguration(configuration))
-		{
-			if(configuration.getUserId()!=null && configuration.getJsonSchema()!=null && configuration.getConfigurationTypeId()!=null)
-			{
-				Configuration newConfiguration=this.configurationRepository.findById(configuration.getId());
-				newConfiguration.setIdentification(configuration.getIdentification());
-				newConfiguration.setConfigurationTypeId(this.configurationTypeRepository.findByName(configuration.getConfigurationTypeId().getName()));
-				if(isValidJSON(configuration.getJsonSchema())) newConfiguration.setJsonSchema(configuration.getJsonSchema());
-				this.configurationRepository.save(newConfiguration);
-			}
+
+	@Override
+	// FIXME: Check Exception
+	public void updateConfiguration(Configuration configuration) {
+		Configuration oldConfiguration = this.configurationRepository.findById(configuration.getId());
+		if (oldConfiguration != null) {
+			oldConfiguration.setYmlConfig(configuration.getYmlConfig());
+			oldConfiguration.setDescription(configuration.getDescription());
+			oldConfiguration.setSuffix(configuration.getSuffix());
+			oldConfiguration.setEnvironment(configuration.getEnvironment());
+			this.configurationRepository.save(oldConfiguration);
+
+		} else {
+			throw new RuntimeException("You cann´t update a Configuration:" + configuration.toString());
 		}
 	}
-	public boolean existsConfiguration(Configuration configuration)
-	{
-		if(this.configurationRepository.findById(configuration.getId())==null) return false;
-		else return true;
-		
-	}
-	public boolean isValidJSON(final String json){
-		try{
 
-			ObjectMapper objectMapper = new ObjectMapper();
-			JsonNode jsonNode = objectMapper.readTree(json);
-
-		} catch(JsonProcessingException e)
-		{
-			e.printStackTrace();
+	@Override
+	public boolean existsConfiguration(Configuration configuration) {
+		if (this.configurationRepository.findById(configuration.getId()) == null)
 			return false;
-		} catch (IOException e) {
-			e.printStackTrace();
+		else
+			return true;
+	}
+
+	@Override
+	public boolean isValidYML(final String yml) {
+		try {
+			// ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.readTree(yml);
+			return true;
+		} catch (Exception e) {
 			return false;
 		}
-
-		return true;
 	}
 
 }

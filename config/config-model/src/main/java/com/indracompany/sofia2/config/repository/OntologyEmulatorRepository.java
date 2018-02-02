@@ -31,9 +31,9 @@ public interface OntologyEmulatorRepository extends JpaRepository<OntologyEmulat
 
 	List<OntologyEmulator> findByIdentification(String identification);
 
-	List<OntologyEmulator> findByIdentificationAndUserId(String identification, User userId);
+	List<OntologyEmulator> findByIdentificationAndUser(String identification, User user);
 
-	List<OntologyEmulator> findByUserId(String userId);
+	List<OntologyEmulator> findByUser(User user);
 
 	List<OntologyEmulator> findById(String id);
 }

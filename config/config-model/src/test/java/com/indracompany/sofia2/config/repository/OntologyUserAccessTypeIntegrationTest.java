@@ -36,10 +36,6 @@ import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -50,12 +46,11 @@ public class OntologyUserAccessTypeIntegrationTest {
 	OntologyUserAccessTypeRepository repository;
 
 	@Before
-	public void setUp()
-	{
-		List<OntologyUserAccessType> types=this.repository.findAll();
-		if(types.isEmpty()){
+	public void setUp() {
+		List<OntologyUserAccessType> types = this.repository.findAll();
+		if (types.isEmpty()) {
 			log.info("No user access types found...adding");
-			OntologyUserAccessType type=new OntologyUserAccessType();
+			OntologyUserAccessType type = new OntologyUserAccessType();
 			type.setId(1);
 			type.setName("ALL");
 			type.setDescription("Todos los permisos");
@@ -64,11 +59,9 @@ public class OntologyUserAccessTypeIntegrationTest {
 	}
 
 	@Test
-	public void test_findById()
-	{
-		OntologyUserAccessType type=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findById(type.getId())!=null);
+	public void test_findById() {
+		OntologyUserAccessType type = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findById(type.getId()) != null);
 	}
-
 
 }

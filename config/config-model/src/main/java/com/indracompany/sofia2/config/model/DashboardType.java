@@ -42,63 +42,75 @@ import lombok.Setter;
 @Entity
 @Table(name = "DASHBOARD_TYPE")
 @Configurable
-public class DashboardType extends AuditableEntity{
+public class DashboardType extends AuditableEntity {
 
 	@Id
 	@Column(name = "ID")
-	@Getter @Setter private Integer id;   
+	@Getter
+	@Setter
+	private Integer id;
 
-	@Column(name = "MODEL",nullable = false)
+	@Column(name = "MODEL", nullable = false)
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String model;
-
-
+	@Getter
+	@Setter
+	private String model;
 
 	@Column(name = "JSONI18N")
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String jsonI18n;
+	@Getter
+	@Setter
+	private String jsonI18n;
 
 	@Column(name = "CUSTOMCSS")
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String customCss;
+	@Getter
+	@Setter
+	private String customCss;
 
 	@Column(name = "CUSTOMJS")
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String customJs;
+	@Getter
+	@Setter
+	private String customJs;
 
 	/*
-    @OneToMany(mappedBy = "dashboardtipoId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<Gruposdashboardtipo> gruposdashboardtipoes;
-
-    public Set<Gruposdashboardtipo> getGruposdashboardtipoes() {
-        return gruposdashboardtipoes;
-    }
-
-	public void setGruposdashboardtipoes(Set<Gruposdashboardtipo> gruposdashboardtipoes) {
-        this.gruposdashboardtipoes = gruposdashboardtipoes;
-    }
-
+	 * @OneToMany(mappedBy = "dashboardtipoId", cascade = CascadeType.ALL)
+	 * 
+	 * @OnDelete(action = OnDeleteAction.CASCADE) private Set<Gruposdashboardtipo>
+	 * gruposdashboardtipoes;
+	 * 
+	 * public Set<Gruposdashboardtipo> getGruposdashboardtipoes() { return
+	 * gruposdashboardtipoes; }
+	 * 
+	 * public void setGruposdashboardtipoes(Set<Gruposdashboardtipo>
+	 * gruposdashboardtipoes) { this.gruposdashboardtipoes = gruposdashboardtipoes;
+	 * }
+	 * 
 	 */
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-	@Getter @Setter private User userId;
+	@Getter
+	@Setter
+	private User user;
 
-	@Column(name = "TYPE", length = 50, unique = true,nullable = false)
+	@Column(name = "TYPE", length = 50, unique = true, nullable = false)
 	@NotNull
-	@Getter @Setter private String type;
+	@Getter
+	@Setter
+	private String type;
 
-	@Column(name = "PUBLIC",nullable = false)
+	@Column(name = "PUBLIC", nullable = false)
 	@NotNull
-	@Getter @Setter private boolean isPublic;
-
-
+	@Getter
+	@Setter
+	private boolean isPublic;
 
 }

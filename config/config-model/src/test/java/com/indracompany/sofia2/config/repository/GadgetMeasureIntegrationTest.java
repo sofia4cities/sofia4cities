@@ -39,10 +39,6 @@ import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -56,44 +52,44 @@ public class GadgetMeasureIntegrationTest {
 	GadgetRepository grepository;
 
 	@Autowired
-	UserRepository userRepository;	
+	UserRepository userRepository;
+
 	private User getUserCollaborator() {
 		return this.userRepository.findByUserId("collaborator");
 	}
-	
+
 	@Before
 	public void setUp() {
-		List<GadgetMeasure> gadgetMeasures= this.repository.findAll();
+		List<GadgetMeasure> gadgetMeasures = this.repository.findAll();
 		if (gadgetMeasures.isEmpty()) {
 			log.info("No gadget measures ...");
-			GadgetMeasure gadgetMeasure=new GadgetMeasure();
+			GadgetMeasure gadgetMeasure = new GadgetMeasure();
 			gadgetMeasure.setAttribute("Attr1");
-			List<Gadget> gadgets= this.grepository.findAll();
+			List<Gadget> gadgets = this.grepository.findAll();
 			Gadget gadget;
-			if(gadgets.isEmpty()){
+			if (gadgets.isEmpty()) {
 				log.info("No gadgets ...");
-				gadget=new Gadget();
+				gadget = new Gadget();
 				gadget.setDbType("RTDB");
-				gadget.setUserId(getUserCollaborator());
+				gadget.setUser(getUserCollaborator());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
 
 				grepository.save(gadget);
-			}else{
-				gadget=grepository.findAll().get(0);
+			} else {
+				gadget = grepository.findAll().get(0);
 			}
-			gadgetMeasure.setGadgetId(gadget);
+			gadgetMeasure.setGadget(gadget);
 			repository.save(gadgetMeasure);
 		}
 	}
 
 	@Test
-	public void test_findByGadgetId() { 
-		GadgetMeasure gadgetMeasure=this.repository.findAll().get(0);
-		log.info("Loaded gadget measure with gadget id: "+gadgetMeasure.getGadgetId().getId());
-		Assert.assertTrue(this.repository.findByGadgetId(gadgetMeasure.getGadgetId()).size()>0);
+	public void test_findByGadgetId() {
+		GadgetMeasure gadgetMeasure = this.repository.findAll().get(0);
+		log.info("Loaded gadget measure with gadget id: " + gadgetMeasure.getGadget().getId());
+		Assert.assertTrue(this.repository.findByGadget(gadgetMeasure.getGadget()).size() > 0);
 	}
-
 
 }

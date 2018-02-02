@@ -37,10 +37,6 @@ import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -52,18 +48,19 @@ public class GadgetIntegrationTest {
 	GadgetRepository repository;
 	@Autowired
 	UserRepository userRepository;
-	
+
 	private User getUserCollaborator() {
 		return this.userRepository.findByUserId("collaborator");
 	}
+
 	@Before
 	public void setUp() {
-		List<Gadget> gadgets= this.repository.findAll();
+		List<Gadget> gadgets = this.repository.findAll();
 		if (gadgets.isEmpty()) {
 			log.info("No gadgets ...");
-			Gadget gadget=new Gadget();
+			Gadget gadget = new Gadget();
 			gadget.setDbType("DBC");
-			gadget.setUserId(getUserCollaborator());
+			gadget.setUser(getUserCollaborator());
 			gadget.setPublic(true);
 			gadget.setName("Gadget1");
 			gadget.setType("Tipo 1");
@@ -71,13 +68,12 @@ public class GadgetIntegrationTest {
 			repository.save(gadget);
 		}
 	}
+
 	@Test
-	public void test_findByUserIdAndType() { 
-		Gadget gadget=this.repository.findAll().get(0);
+	public void test_findByUserIdAndType() {
+		Gadget gadget = this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository.findByUserIdAndType(gadget.getUserId(),gadget.getType()).size()>0);
+		Assert.assertTrue(this.repository.findByUserAndType(gadget.getUser(), gadget.getType()).size() > 0);
 	}
-
-
 
 }

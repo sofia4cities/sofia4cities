@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.model;
+
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -27,43 +28,27 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
-@Table(name = "Api_Authentication_Parameter")
+@Table(name = "API_AUTHENTICATION_PARAMETER")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ApiAuthenticationParameter extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
-    
-	@OneToMany(mappedBy = "autparamId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiAuthenticationAttribute> apiautenticacionattribs;
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-   
-    @JoinColumn(name = "autId", referencedColumnName = "ID", nullable = false)
-    private ApiAuthentication autId;
+	@JoinColumn(name = "API_AUTH_ID", referencedColumnName = "ID", nullable = false)
+	@Getter
+	@Setter
+	private ApiAuthentication apiAuthentication;
 
-	public Set<ApiAuthenticationAttribute> getApiautenticacionattribs() {
-		return apiautenticacionattribs;
-	}
+	@OneToMany(mappedBy = "apiAuthenticationParameter", cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter
+	@Setter
+	private Set<ApiAuthenticationAttribute> apiautenticacionattribs;
 
-	public void setApiautenticacionattribs(Set<ApiAuthenticationAttribute> apiautenticacionattribs) {
-		this.apiautenticacionattribs = apiautenticacionattribs;
-	}
-
-	public ApiAuthentication getAutId() {
-		return autId;
-	}
-
-	public void setAutId(ApiAuthentication autId) {
-		this.autId = autId;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	
 }

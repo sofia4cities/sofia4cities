@@ -30,14 +30,20 @@ import lombok.Setter;
 @Table(name = "CONFIGURATION_TYPE")
 @Configurable
 public class ConfigurationType extends AuditableEntity {
-	@Id
-	@Column(name = "ID")
-	@Getter @Setter private Integer id;    
 
-	@Column(name = "NAME", length = 24, unique = true,nullable = false)
+	public static enum Types {
+		EndpointModulesConfiguration, TwitterConfiguration, MailConfiguration, RTDBConfiguration, MonitoringConfiguration, SchedulingConfiguration
+	}
+
+	@Id
+	@Column(name = "ID", length = 50, unique = true, nullable = false)
 	@NotNull
-	@Getter @Setter private String name;
+	@Getter
+	@Setter
+	private String id;
 
 	@Column(name = "DESCRIPTION", length = 255)
-	@Getter @Setter private String description;
+	@Getter
+	@Setter
+	private String description;
 }

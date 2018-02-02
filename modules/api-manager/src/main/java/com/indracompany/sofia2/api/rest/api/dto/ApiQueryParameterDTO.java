@@ -22,67 +22,34 @@ package com.indracompany.sofia2.api.rest.api.dto;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+public class ApiQueryParameterDTO implements Cloneable, Serializable {
 
-
-public class ApiQueryParameterDTO implements Cloneable, Serializable{
-	
-	
 	@ApiModelProperty(value = "Nombre del Header")
-    private String nombre;
+	@Getter
+	@Setter
+	private String nombre;
 
 	@ApiModelProperty(value = "Tipo de Header")
-    private String tipo;
-	
+	@Getter
+	@Setter
+	private String tipo;
+
 	@ApiModelProperty(value = "Descripción del Header")
-    private String descripcion;
-    
+	@Getter
+	@Setter
+	private String descripcion;
+
 	@ApiModelProperty(value = "Valor del Header")
-    private String valor;
+	@Getter
+	@Setter
+	private String valor;
 
 	@ApiModelProperty(value = "Condición del Header")
-    private String condicion;
+	@Getter
+	@Setter
+	private String condicion;
 
-	public String getNombre() {
-		return nombre;
-	}
-
-	public String getTipo() {
-		return tipo;
-	}
-
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public String getValor() {
-		return valor;
-	}
-
-	public String getCondicion() {
-		return condicion;
-	}
-
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-
-	public void setValor(String valor) {
-		this.valor = valor;
-	}
-
-
-	public void setCondicion(String condicion) {
-		this.condicion = condicion;
-	}    
 }

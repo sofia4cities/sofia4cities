@@ -22,14 +22,18 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
+import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
@@ -45,7 +49,7 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
 import com.indracompany.sofia2.config.model.OntologyEmulator;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
-import com.indracompany.sofia2.config.model.RoleType;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
@@ -68,23 +72,22 @@ import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
-import com.indracompany.sofia2.config.repository.RoleTypeRepository;
+import com.indracompany.sofia2.config.repository.RoleRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Luis Miguel Gracia
- */
 @Slf4j
 @Component
 @ConditionalOnProperty(name = "sofia2.init.configdb")
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class InitConfigDB {
 
-	private static User userCollaborator=null;
-	
+	private static User userCollaborator = null;
+	private static User userAdministrator = null;
+
 	@Autowired
 	ClientConnectionRepository clientConnectionRepository;
 	@Autowired
@@ -122,7 +125,7 @@ public class InitConfigDB {
 	@Autowired
 	OntologyUserAccessTypeRepository ontologyUserAccessTypeRepository;
 	@Autowired
-	RoleTypeRepository roleTypeRepository;
+	RoleRepository roleRepository;
 	@Autowired
 	TokenRepository tokenRepository;
 	@Autowired
@@ -131,86 +134,124 @@ public class InitConfigDB {
 	ConfigurationRepository configurationRepository;
 	@Autowired
 	ConfigurationTypeRepository configurationTypeRepository;
-	
-	
 
 	@PostConstruct
+	@Test
 	public void init() {
-			log.info("Start initConfigDB...");
-			// first we need to create users
-			init_RoleUser();
-			log.info("OK init_RoleUser");
-			init_UserCDB();
-			log.info("OK init_UserCDB");
-			//
-			init_DataModel();
-			log.info("OK init_DataModel");
-			init_OntologyCategory();
-			log.info("OK init_OntologyCategory");
-			init_Ontology();
-			log.info("OK init_Ontology");
-			init_OntologyUserAccess();
-			log.info("OK init_OntologyUserAccess");
-			init_OntologyUserAccessType();
-			log.info("OK init_OntologyUserAccessType");
-			init_OntologyEmulator();
-			log.info("OK init_OntologyEmulator");
-			init_OntologyCategory();
-			log.info("OK init_OntologyCategory");
-			init_OntologyEmulator();
-			log.info("OK init_OntologyEmulator");
-			//
-			init_ClientPlatform();
-			log.info("OK init_ClientPlatform");
-			init_ClientPlatformOntology();
-			log.info("OK init_ClientPlatformOntology");
-			init_ClientConnection();
-			log.info("OK init_ClientConnection");
-			//
-			init_Token();
-			log.info("OK init_Token");
-			//
-			init_Dashboard();
-			log.info("OK init_Dashboard");
-			init_DashboardType();
-			log.info("OK init_DashboardType");
-			init_GadgetDataModel();
-			log.info("OK init_GadgetDataModel");
-			init_GadgetMeasure();
-			log.info("OK init_GadgetMeasure");
-			init_GadgetQuery();
-			log.info("OK init_GadgetQuery");
-			init_Gadget();
-			log.info("OK init_Gadget");
-			init_GeneratorType();
-			log.info("OK init_GeneratorType");
-			// init_InstanceGenerator();
-			//
-			init_ConsoleMenu();
-			log.info("OK init_ConsoleMenu");
-			init_Configuration();
-			log.info("OK init_Configuration");
+		log.info("Start initConfigDB...");
+		// first we need to create users
+		init_RoleUser();
+		log.info("OK init_RoleUser");
+		init_UserCDB();
+		log.info("OK init_UserCDB");
+		//
+		init_DataModel();
+		log.info("OK init_DataModel");
+		init_OntologyCategory();
+		log.info("OK init_OntologyCategory");
+		init_Ontology();
+		log.info("OK init_Ontology");
+		init_OntologyUserAccess();
+		log.info("OK init_OntologyUserAccess");
+		init_OntologyUserAccessType();
+		log.info("OK init_OntologyUserAccessType");
+		init_OntologyEmulator();
+		log.info("OK init_OntologyEmulator");
+		init_OntologyCategory();
+		log.info("OK init_OntologyCategory");
+		init_OntologyEmulator();
+		log.info("OK init_OntologyEmulator");
+		//
+		init_ClientPlatform();
+		log.info("OK init_ClientPlatform");
+		init_ClientPlatformOntology();
+		log.info("OK init_ClientPlatformOntology");
+		init_ClientConnection();
+		log.info("OK init_ClientConnection");
+		//
+		init_Token();
+		log.info("OK init_Token");
+		//
+		init_DashboardType();
+		log.info("OK init_DashboardType");
+		init_Dashboard();
+		log.info("OK init_Dashboard");
+		init_GadgetDataModel();
+		log.info("OK init_GadgetDataModel");
+		init_GadgetMeasure();
+		log.info("OK init_GadgetMeasure");
+		init_GadgetQuery();
+		log.info("OK init_GadgetQuery");
+		init_Gadget();
+		log.info("OK init_Gadget");
+		init_GeneratorType();
+		log.info("OK init_GeneratorType");
+		// init_InstanceGenerator();
+		//
+		init_ConsoleMenu();
+		log.info("OK init_ConsoleMenu");
+		init_Configuration();
+		log.info("OK init_Configuration");
 	}
 
 	private void init_Configuration() {
 		log.info("init_Configuration");
-		ConfigurationType type= new ConfigurationType();
-		type.setId(1);
-		type.setName("CONFIG_TWITTER");
-		type.setDescription("Twitter configuration, Oauth");
+		ConfigurationType type = new ConfigurationType();
+		Configuration config = new Configuration();
+		type.setId(ConfigurationType.Types.TwitterConfiguration.toString());
+		type.setDescription("Configuration for access Twitter account (Token and Key)");
 		this.configurationTypeRepository.save(type);
-		type= new ConfigurationType();
-		type.setId(2);
-		type.setName("CONFIG_MAIL");
-		type.setDescription("Mail configuration");
+		config = new Configuration();
+		config.setConfigurationType(type);
+		config.setUser(getUserAdministrator());
+		config.setEnvironment(Configuration.Environment.ALL.toString());
+		config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
+		this.configurationRepository.save(config);
+		//
+		type = new ConfigurationType();
+		type.setId(ConfigurationType.Types.EndpointModulesConfiguration.toString());
+		type.setDescription("Endpoints of Sofia2 Modules Configuration p");
 		this.configurationTypeRepository.save(type);
-		type= new ConfigurationType();
-		type.setId(3);
-		type.setName("CONFIG_RTDB");
-		type.setDescription("RTDB configuration");
+		config = new Configuration();
+		config.setConfigurationType(type);
+		config.setUser(getUserAdministrator());
+		config.setEnvironment(Configuration.Environment.DEV.toString());
+		config.setYmlConfig(loadFromResources("EndpointModulesConfiguration.yml"));
+		this.configurationRepository.save(config);
+		//
+		type = new ConfigurationType();
+		type.setId(ConfigurationType.Types.MailConfiguration.toString());
+		type.setDescription("Mail Configuration por mail sending");
 		this.configurationTypeRepository.save(type);
-		
-		
+		config = new Configuration();
+		config.setConfigurationType(type);
+		config.setUser(getUserAdministrator());
+		config.setEnvironment(Configuration.Environment.ALL.toString());
+		config.setYmlConfig(loadFromResources("MailConfiguration.yml"));
+		this.configurationRepository.save(config);
+		//
+		type = new ConfigurationType();
+		type.setId(ConfigurationType.Types.RTDBConfiguration.toString());
+		type.setDescription("Configuration for the default RealTime DB (MongoDB)");
+		this.configurationTypeRepository.save(type);
+		config = new Configuration();
+		config.setConfigurationType(type);
+		config.setUser(getUserAdministrator());
+		config.setEnvironment(Configuration.Environment.LOCAL.toString());
+		config.setYmlConfig(loadFromResources("RTDBConfiguration.yml"));
+		this.configurationRepository.save(config);
+		//
+		type = new ConfigurationType();
+		type.setId(ConfigurationType.Types.MonitoringConfiguration.toString());
+		type.setDescription("Configuration for report to Monitoring UI");
+		this.configurationTypeRepository.save(type);
+		config = new Configuration();
+		config.setConfigurationType(type);
+		config.setUser(getUserAdministrator());
+		config.setEnvironment(Configuration.Environment.LOCAL.toString());
+		config.setYmlConfig(loadFromResources("MonitoringConfiguration.yml"));
+		this.configurationRepository.save(config);
+
 	}
 
 	public void init_ClientConnection() {
@@ -221,14 +262,14 @@ public class InitConfigDB {
 			log.info("No clients ...");
 			ClientConnection con = new ClientConnection();
 			//
-			con.setClientPlatformId(cp);
+			con.setClientPlatform(cp);
 			con.setIdentification("1");
 			con.setIpStrict(true);
 			con.setStaticIp(false);
 			con.setLastIp("192.168.1.89");
 			Calendar date = Calendar.getInstance();
 			con.setLastConnection(date);
-			con.setClientPlatformId(cp);
+			con.setClientPlatform(cp);
 			clientConnectionRepository.save(con);
 		}
 	}
@@ -260,8 +301,8 @@ public class InitConfigDB {
 				throw new RuntimeException("There must be at least a Ontology with id=1 created");
 			log.info("No Client Platform Ontologies");
 			ClientPlatformOntology cpo = new ClientPlatformOntology();
-			cpo.setClientPlatformId(this.clientPlatformRepository.findAll().get(0));
-			cpo.setOntologyId(this.ontologyRepository.findAll().get(0));
+			cpo.setClientPlatform(this.clientPlatformRepository.findAll().get(0));
+			cpo.setOntology(this.ontologyRepository.findAll().get(0));
 			this.clientPlatformOntologyRepository.save(cpo);
 		}
 	}
@@ -273,14 +314,14 @@ public class InitConfigDB {
 			log.info("No clients ...");
 			ClientPlatform client = new ClientPlatform();
 			client.setId("1");
-			client.setUserId(getUserCollaborator());
+			client.setUser(getUserCollaborator());
 			client.setIdentification("Client-MasterData");
 			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
 			client.setDescription("ClientPatform created as MasterData");
 			clientPlatformRepository.save(client);
 			client = new ClientPlatform();
 			client.setId("2");
-			client.setUserId(getUserCollaborator());
+			client.setUser(getUserCollaborator());
 			client.setIdentification("GTKP-Example");
 			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
 			client.setDescription("ClientPatform created as Example");
@@ -300,8 +341,8 @@ public class InitConfigDB {
 				log.info("Adding menu for role ADMIN");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("1");
-				menu.setJsonSchema(loadJSONMenuFromResources("menu_admin.json"));
-				menu.setRoleTypeId(roleTypeRepository.findOne(1));
+				menu.setJsonSchema(loadFromResources("menu_admin.json"));
+				menu.setRoleType(roleRepository.findOne(1));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role ADMIN");
@@ -310,8 +351,8 @@ public class InitConfigDB {
 				log.info("Adding menu for role COLLABORATOR");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("2");
-				menu.setJsonSchema(loadJSONMenuFromResources("menu_collaborator.json"));
-				menu.setRoleTypeId(roleTypeRepository.findOne(2));
+				menu.setJsonSchema(loadFromResources("menu_collaborator.json"));
+				menu.setRoleType(roleRepository.findOne(2));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role COLLABORATOR");
@@ -320,8 +361,8 @@ public class InitConfigDB {
 				log.info("Adding menu for role USER");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("3");
-				menu.setJsonSchema(loadJSONMenuFromResources("menu_user.json"));
-				menu.setRoleTypeId(roleTypeRepository.findOne(3));
+				menu.setJsonSchema(loadFromResources("menu_user.json"));
+				menu.setRoleType(roleRepository.findOne(3));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role USER");
@@ -329,8 +370,16 @@ public class InitConfigDB {
 		}
 	}
 
-	private String loadJSONMenuFromResources(String name) throws Exception {
-		return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())));
+	private String loadFromResources(String name) {
+		try {
+			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())));
+
+		} catch (Exception e) {
+			log.error("**********************************************");
+			log.error("Error loading resource: " + name + ".Please check if this error affect your database");
+			log.error(e.getMessage());
+			return null;
+		}
 	}
 
 	public void init_Dashboard() {
@@ -341,16 +390,23 @@ public class InitConfigDB {
 			Dashboard dashboard = new Dashboard();
 			dashboard.setId("1");
 			dashboard.setModel("Model Dashboard Master");
-			dashboard.setUserId(getUserCollaborator());
+			dashboard.setUser(getUserCollaborator());
 			dashboard.setName("Dashboard Master");
-			dashboard.setDashboardTypeId("9");
+			dashboard.setDashboardType(this.dashboardTypeRepository.findAll().get(0));
 			dashboardRepository.save(dashboard);
 		}
-	}	
-	
+	}
+
 	private User getUserCollaborator() {
-		if (userCollaborator==null) userCollaborator=this.userCDBRepository.findByUserId("collaborator");
+		if (userCollaborator == null)
+			userCollaborator = this.userCDBRepository.findByUserId("collaborator");
 		return userCollaborator;
+	}
+
+	private User getUserAdministrator() {
+		if (userAdministrator == null)
+			userAdministrator = this.userCDBRepository.findByUserId("administrator");
+		return userAdministrator;
 	}
 
 	public void init_DashboardType() {
@@ -362,7 +418,7 @@ public class InitConfigDB {
 			DashboardType dashboardType = new DashboardType();
 			dashboardType.setId(1);
 			dashboardType.setModel("Modelo 1");
-			dashboardType.setUserId(getUserCollaborator());
+			dashboardType.setUser(getUserCollaborator());
 			dashboardType.setPublic(true);
 			dashboardType.setType("Tipo de modelo 1");
 			dashboardTypeRepository.save(dashboardType);
@@ -385,7 +441,7 @@ public class InitConfigDB {
 			dataModel.setDescription("This contains a harmonised description of a Weather Forecast.");
 			dataModel.setCategory("plantilla_categoriaGSMA");
 			dataModel.setRelational(false);
-			dataModel.setUserId(getUserCollaborator());
+			dataModel.setUser(getUserCollaborator());
 			dataModelRepository.save(dataModel);
 			///
 			dataModel = new DataModel();
@@ -396,7 +452,7 @@ public class InitConfigDB {
 			dataModel.setDescription("Plantilla para almacenar los TAG definidos en un PROJECT Brandwatch");
 			dataModel.setCategory("plantilla_categoriaSocial");
 			dataModel.setRelational(false);
-			dataModel.setUserId(getUserCollaborator());
+			dataModel.setUser(getUserCollaborator());
 			dataModelRepository.save(dataModel);
 
 		}
@@ -412,7 +468,7 @@ public class InitConfigDB {
 			GadgetDataModel gadgetDM = new GadgetDataModel();
 			gadgetDM.setIdentification("1");
 			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
-			gadgetDM.setUserId(getUserCollaborator());
+			gadgetDM.setUser(getUserCollaborator());
 			gadgetDM.setPublic(true);
 			gadgetDataModelRepository.save(gadgetDM);
 		}
@@ -433,7 +489,7 @@ public class InitConfigDB {
 				log.info("No gadgets ...");
 				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUserId(getUserCollaborator());
+				gadget.setUser(getUserCollaborator());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
@@ -442,7 +498,7 @@ public class InitConfigDB {
 			} else {
 				gadget = gadgetRepository.findAll().get(0);
 			}
-			gadgetMeasure.setGadgetId(gadget);
+			gadgetMeasure.setGadget(gadget);
 			gadgetMeasureRepository.save(gadgetMeasure);
 		}
 
@@ -462,7 +518,7 @@ public class InitConfigDB {
 				log.info("No gadgets ...");
 				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUserId(getUserCollaborator());
+				gadget.setUser(getUserCollaborator());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
@@ -471,7 +527,7 @@ public class InitConfigDB {
 			} else {
 				gadget = gadgetRepository.findAll().get(0);
 			}
-			gadgetQuery.setGadgetId(gadget);
+			gadgetQuery.setGadget(gadget);
 			gadgetQueryRepository.save(gadgetQuery);
 		}
 
@@ -485,7 +541,7 @@ public class InitConfigDB {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
 			gadget.setDbType("RTDB");
-			gadget.setUserId(getUserCollaborator());
+			gadget.setUser(getUserCollaborator());
 			gadget.setPublic(true);
 			gadget.setName("Gadget Example");
 			gadget.setType("Type 1");
@@ -532,7 +588,7 @@ public class InitConfigDB {
 				type.setKeyValueDef("desde,100;hasta,10000;numdecimal,0");
 				this.generatorTypeRepository.save(type);
 			}
-			generator.setGeneratorTypeId(type);
+			generator.setGeneratorType(type);
 			this.instanceGeneratorRepository.save(generator);
 
 		}
@@ -562,7 +618,7 @@ public class InitConfigDB {
 			OntologyEmulator oe = new OntologyEmulator();
 			oe.setMeasures("2.5,3.4,4.5");
 			oe.setIdentification("Id 1");
-			oe.setUserId(getUserCollaborator());
+			oe.setUser(getUserCollaborator());
 			oe.setInsertEvery(5);
 			Ontology o = this.ontologyRepository.findAll().get(0);
 			if (o == null) {
@@ -576,7 +632,7 @@ public class InitConfigDB {
 				ontologyRepository.save(o);
 
 			}
-			oe.setOntologyId(o);
+			oe.setOntology(o);
 			this.ontologyEmulatorRepository.save(oe);
 
 		}
@@ -598,7 +654,7 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
-			ontology.setUserId(getUserCollaborator());
+			ontology.setUser(getUserCollaborator());
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -610,7 +666,7 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
-			ontology.setUserId(getUserCollaborator());
+			ontology.setUser(getUserCollaborator());
 			ontologyRepository.save(ontology);
 
 		}
@@ -622,8 +678,8 @@ public class InitConfigDB {
 		/*
 		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
 		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
-		 * user=new OntologyUserAccess(); user.setUserId("6");
-		 * user.setOntologyId(ontologyRepository.findAll().get(0));
+		 * user=new OntologyUserAccess(); user.setUser("6");
+		 * user.setOntology(ontologyRepository.findAll().get(0));
 		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
 		 * this.ontologyUserAccessRepository.save(user); }
 		 */
@@ -656,66 +712,72 @@ public class InitConfigDB {
 
 	public void init_RoleUser() {
 		log.info("init ClientPlatformContainerType");
-		List<RoleType> types = this.roleTypeRepository.findAll();
+		List<Role> types = this.roleRepository.findAll();
 		if (types.isEmpty()) {
 			try {
 
 				log.info("No roles en tabla.Adding...");
-				RoleType type = new RoleType();
-				type.setId(1);
+				Role type = new Role();
+				type.setId(Role.Type.ADMINISTRATOR.toString());
 				type.setName("ROLE_ADMINISTRATOR");
 				type.setDescription("Administrator of the Platform");
-				roleTypeRepository.save(type);
+				roleRepository.save(type);
 				//
-				type = new RoleType();
-				type.setId(2);
+				type = new Role();
+				type.setId(Role.Type.COLLABORATOR.toString());
 				type.setName("ROLE_COLLABORATOR");
 				type.setDescription("Advanced User of the Platform");
-				roleTypeRepository.save(type);
+				roleRepository.save(type);
 				//
-				type = new RoleType();
-				type.setId(3);
+				type = new Role();
+				type.setId(Role.Type.USER.toString());
 				type.setName("ROLE_USER");
 				type.setDescription("Basic User of the Platform");
-				roleTypeRepository.save(type);
+				roleRepository.save(type);
 				//
-				type = new RoleType();
-				type.setId(4);
+				type = new Role();
+				type.setId(Role.Type.ANALYTICS.toString());
 				type.setName("ROLE_ANALYTICS");
 				type.setDescription("Analytics User of the Platform");
 				// RoleType typeParent=new RoleType();
 				// typeParent.setId(2);
 				// type.setRoleparent(typeParent);
-				roleTypeRepository.save(type);
+				roleRepository.save(type);
 				//
-				type = new RoleType();
-				type.setId(5);
+				type = new Role();
+				type.setId(Role.Type.PARTNER.toString());
 				type.setName("ROLE_PARTNER");
 				type.setDescription("Partner in the Platform");
-				roleTypeRepository.save(type);
+				roleRepository.save(type);
 				//
 				//
-				type = new RoleType();
-				type.setId(6);
+				type = new Role();
+				type.setId(Role.Type.SYS_ADMIN.toString());
 				type.setName("ROLE_SYS_ADMIN");
 				type.setDescription("System Administradot of the Platform");
-				roleTypeRepository.save(type);
+				roleRepository.save(type);
 				//
-				type = new RoleType();
-				type.setId(7);
+				type = new Role();
+				type.setId(Role.Type.OPERATIONS.toString());
 				type.setName("ROLE_OPERATIONS");
 				type.setDescription("Operations for the Platform");
-				roleTypeRepository.save(type);
+				roleRepository.save(type);
+				//
+				type = new Role();
+				type.setId(Role.Type.DEVOPS.toString());
+				type.setName("ROLE_DEVOPS");
+				type.setDescription("DevOps for the Platform");
+				roleRepository.save(type);
 				//
 				// UPDATE of the ROLE_ANALYTICS
-				RoleType typeSon = roleTypeRepository.findOne(4);
-				RoleType typeParent = roleTypeRepository.findOne(2);
-				typeSon.setRoleparent(typeParent);
-				roleTypeRepository.save(typeSon);
+				Role typeSon = roleRepository.findById(Role.Type.ANALYTICS.toString());
+				Role typeParent = roleRepository.findById(Role.Type.COLLABORATOR.toString());
+				typeSon.setRoleParent(typeParent);
+				roleRepository.save(typeSon);
 
 			} catch (Exception e) {
 				log.error("Error initRoleType:" + e.getMessage());
-				roleTypeRepository.deleteAll();
+				roleRepository.deleteAll();
 			}
 
 		}
@@ -734,7 +796,7 @@ public class InitConfigDB {
 			Set<Token> hashSetTokens = new HashSet<Token>();
 
 			Token token = new Token();
-			token.setClientPlatformId(client);
+			token.setClientPlatform(client);
 			token.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
 			token.setActive(true);
 			hashSetTokens.add(token);
@@ -749,9 +811,6 @@ public class InitConfigDB {
 		List<User> types = this.userCDBRepository.findAll();
 		if (types.isEmpty()) {
 			try {
-				RoleType role = new RoleType();
-				role.setId(1);
-
 				log.info("No types en tabla.Adding...");
 				User type = new User();
 				type.setUserId("administrator");
@@ -759,7 +818,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Administrator of the Platform");
 				type.setEmail("administrator@sofia2.com");
 				type.setActive(true);
-				type.setRoleTypeId(role);
+				type.setRole(this.roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -769,7 +828,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Advanced User of the Platform");
 				type.setEmail("collaborator@sofia2.com");
 				type.setActive(true);
-				type.setRoleTypeId(roleTypeRepository.findOne(2));
+				type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -779,7 +838,7 @@ public class InitConfigDB {
 				type.setFullName("Generic User of the Platform");
 				type.setEmail("user@sofia2.com");
 				type.setActive(true);
-				type.setRoleTypeId(roleTypeRepository.findOne(3));
+				type.setRole(this.roleRepository.findById(Role.Type.USER.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -789,7 +848,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Analytics User of the Platform");
 				type.setEmail("analytics@sofia2.com");
 				type.setActive(true);
-				type.setRoleTypeId(roleTypeRepository.findOne(4));
+				type.setRole(this.roleRepository.findById(Role.Type.ANALYTICS.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -799,7 +858,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Partner of the Platform");
 				type.setEmail("partner@sofia2.com");
 				type.setActive(true);
-				type.setRoleTypeId(roleTypeRepository.findOne(5));
+				type.setRole(this.roleRepository.findById(Role.Type.PARTNER.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -809,7 +868,7 @@ public class InitConfigDB {
 				type.setFullName("Generic SysAdmin of the Platform");
 				type.setEmail("sysadmin@sofia2.com");
 				type.setActive(true);
-				type.setRoleTypeId(roleTypeRepository.findOne(6));
+				type.setRole(this.roleRepository.findById(Role.Type.SYS_ADMIN.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -819,7 +878,7 @@ public class InitConfigDB {
 				type.setFullName("Operations of the Platform");
 				type.setEmail("operations@sofia2.com");
 				type.setActive(true);
-				type.setRoleTypeId(roleTypeRepository.findOne(7));
+				type.setRole(this.roleRepository.findById(Role.Type.OPERATIONS.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 			} catch (Exception e) {

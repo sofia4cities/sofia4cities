@@ -61,7 +61,7 @@ public class ClientConnectionIntegrationTest {
 			log.info("No clients ...");
 			ClientConnection con = new ClientConnection();
 			ClientPlatform client = clientRep.findAll().get(0);
-			con.setClientPlatformId(client);
+			con.setClientPlatform(client);
 			con.setIdentification(client.getIdentification() + "-1");
 			con.setIpStrict(true);
 			con.setStaticIp(false);
@@ -76,7 +76,7 @@ public class ClientConnectionIntegrationTest {
 	public void test_CountByClientPlatformId() {
 		ClientConnection con = this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository.countByClientPlatformId(con.getClientPlatformId()) > 0);
+		Assert.assertTrue(this.repository.countByClientPlatform(con.getClientPlatform()) > 0);
 	}
 
 	@Test
@@ -84,22 +84,21 @@ public class ClientConnectionIntegrationTest {
 
 		ClientConnection con = this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository.findByUserId(con.getClientPlatformId().getUserId()).size() > 0);
+		Assert.assertTrue(this.repository.findByUser(con.getClientPlatform().getUser()).size() > 0);
 	}
 
 	@Test
 	public void test_FindByClientPlatformId() {
 		ClientConnection con = this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository.findByClientPlatformId(con.getClientPlatformId()).size() > 0);
+		Assert.assertTrue(this.repository.findByClientPlatform(con.getClientPlatform()).size() > 0);
 	}
 
 	@Test
 	public void test_FindByClientPlatformIdAndIdentification() {
 		ClientConnection con = this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository
-				.findByClientPlatformIdAndIdentification(con.getClientPlatformId(), con.getIdentification())
-				.size() > 0);
+				.findByClientPlatformAndIdentification(con.getClientPlatform(), con.getIdentification()).size() > 0);
 	}
 
 }

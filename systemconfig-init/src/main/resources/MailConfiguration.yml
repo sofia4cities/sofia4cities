@@ -11,4 +11,3 @@ spring:
       properties.mail.smtp.timeout: 5000
       properties.mail.smtp.connectiontimeout: 5000
       properties.mail.smtp.writetimeout: 5000
-      

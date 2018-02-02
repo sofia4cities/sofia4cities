@@ -40,32 +40,40 @@ import lombok.Setter;
 @Entity
 @Table(name = "ONTOLOGY_EMULATOR")
 @Configurable
-public class OntologyEmulator extends AuditableEntityWithUUID{
+public class OntologyEmulator extends AuditableEntityWithUUID {
 
-	@Column(name = "MEASURES",nullable = false)
+	@Column(name = "MEASURES", nullable = false)
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String measures;
+	@Getter
+	@Setter
+	private String measures;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private Ontology ontologyId;
+	@Getter
+	@Setter
+	private Ontology ontology;
 
-	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
+	@Column(name = "IDENTIFICATION", length = 50, unique = true, nullable = false)
 	@NotNull
-	@Getter @Setter private String identification;
+	@Getter
+	@Setter
+	private String identification;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-	@Getter @Setter private User userId;
+	@Getter
+	@Setter
+	private User user;
 
-	@Column(name = "INSERT_EVERY",nullable = false)
+	@Column(name = "INSERT_EVERY", nullable = false)
 	@NotNull
-	@Getter @Setter private Integer insertEvery;
-
-
+	@Getter
+	@Setter
+	private Integer insertEvery;
 
 }

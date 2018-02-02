@@ -20,11 +20,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.config.model.RoleType;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
-import com.indracompany.sofia2.config.repository.RoleTypeRepository;
+import com.indracompany.sofia2.config.repository.RoleRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.repository.UserTokenRepository;
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
-	RoleTypeRepository roleTypeRepository;
+	RoleRepository roleTypeRepository;
 	@Autowired
 	UserTokenRepository userTokenRepository;
 	@Autowired
@@ -53,14 +53,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUser(UserToken token) {
-		return token.getUserId();
+		return token.getUser();
 	}
 
 	@Override
 	public User getUserByToken(String token) {
-		Token theToken =  getToken(token);
-		String userId = userTokenRepository.findUserIdByTokenValue(theToken.getToken());
-		User user = getUser(userId);
+		Token theToken = getToken(token);
+		User user = getUser(userTokenRepository.findByToken(theToken).getId());
 		return user;
 	}
 
@@ -70,13 +69,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<RoleType> getAllRoles() {
+	public List<Role> getAllRoles() {
 		return roleTypeRepository.findAll();
 	}
 
 	@Override
 	public UserToken getUserToken(User userId) {
-		return this.userTokenRepository.findByUserId(userId);
+		return this.userTokenRepository.findByUser(userId);
 	}
 
 	@Override
@@ -103,7 +102,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void createUser(User user) {
 		if (!this.userExists(user)) {
-			user.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
+			user.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
 			this.userRepository.save(user);
 		}
 	}
@@ -122,7 +121,7 @@ public class UserServiceImpl implements UserService {
 			User userDb = this.userRepository.findByUserId(user.getUserId());
 			userDb.setPassword(user.getPassword());
 			userDb.setEmail(user.getEmail());
-			userDb.setRoleTypeId(this.roleTypeRepository.findByName(user.getRoleTypeId().getName()));
+			userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
 			// If user was deleted and now is going to be active
 			if (!userDb.isActive() && user.isActive())
 				userDb.setDateDeleted(null);
@@ -135,7 +134,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public RoleType getUserRole(String role) {
+	public Role getUserRole(String role) {
 		return this.roleTypeRepository.findByName(role);
 	}
 

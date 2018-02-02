@@ -12,15 +12,13 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.repository;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.ApiHeader;
 
-public interface ApiHeaderRepository extends JpaRepository<ApiHeader,String> {
-
+public interface ApiHeaderRepository extends JpaRepository<ApiHeader, String> {
 
 	ApiHeader findById(String id);
-
-
 
 }

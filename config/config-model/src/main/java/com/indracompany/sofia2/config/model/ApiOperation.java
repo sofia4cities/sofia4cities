@@ -36,120 +36,66 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name = "API_OPERATION")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ApiOperation extends AuditableEntityWithUUID {
-	
-   private static final long serialVersionUID = 1L;
 
-
-	@OneToMany(mappedBy = "apioperationId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiHeader> apiheaders;
-
-	@OneToMany(mappedBy = "apioperationId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiQueryParameter> apiqueryparameters;
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
-    @JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Api apiId;
+	@Getter
+	@Setter
+	private Api api;
 
-	@Column(name = "IDENTIFICATION", length = 50,nullable = false)
-    @NotNull
-    private String identification;
+	@OneToMany(mappedBy = "apiOperation", cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter
+	@Setter
+	private Set<ApiHeader> apiheaders;
 
-	@Column(name = "DESCRIPTION", length = 512,nullable = false)
-    @NotNull
-    private String description;
+	@OneToMany(mappedBy = "apiOperation", cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter
+	@Setter
+	private Set<ApiQueryParameter> apiqueryparameters;
 
-	@Column(name = "OPERATION", length = 50,nullable = false)
-    @NotNull
-    private String operation;
+	@Column(name = "IDENTIFICATION", length = 50, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String identification;
+
+	@Column(name = "DESCRIPTION", length = 512, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String description;
+
+	@Column(name = "OPERATION", length = 50, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String operation;
 
 	@Column(name = "ENDPOINT", length = 512)
-    private String endpoint;
+	@Getter
+	@Setter
+	private String endpoint;
 
 	@Column(name = "BASE_PATH", length = 512)
-    private String basePath;
+	@Getter
+	@Setter
+	private String basePath;
 
 	@Column(name = "PATH", length = 512)
-    private String path;
+	@Getter
+	@Setter
+	private String path;
 
-	public Set<ApiHeader> getApiheaders() {
-		return apiheaders;
-	}
-
-	public void setApiheaders(Set<ApiHeader> apiheaders) {
-		this.apiheaders = apiheaders;
-	}
-
-	public Set<ApiQueryParameter> getApiqueryparameters() {
-		return apiqueryparameters;
-	}
-
-	public void setApiqueryparameters(Set<ApiQueryParameter> apiqueryparameters) {
-		this.apiqueryparameters = apiqueryparameters;
-	}
-
-	public Api getApiId() {
-		return apiId;
-	}
-
-	public void setApiId(Api apiId) {
-		this.apiId = apiId;
-	}
-
-	public String getIdentification() {
-		return identification;
-	}
-
-	public void setIdentification(String identification) {
-		this.identification = identification;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getOperation() {
-		return operation;
-	}
-
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
-
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-
-	public String getBasePath() {
-		return basePath;
-	}
-
-	public void setBasePath(String basePath) {
-		this.basePath = basePath;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	
 }

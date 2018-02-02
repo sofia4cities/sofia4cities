@@ -36,15 +36,10 @@ import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-
 
 public class DashboardTypeIntegrationTest {
 
@@ -52,35 +47,34 @@ public class DashboardTypeIntegrationTest {
 	DashboardTypeRepository repository;
 
 	@Autowired
-	UserRepository userRepository;	
+	UserRepository userRepository;
+
 	private User getUserCollaborator() {
 		return this.userRepository.findByUserId("collaborator");
 	}
+
 	@Before
 	public void setUp() {
-		List<DashboardType> dashboardTypes=this.repository.findAll();
-		if(dashboardTypes.isEmpty())
-		{
+		List<DashboardType> dashboardTypes = this.repository.findAll();
+		if (dashboardTypes.isEmpty()) {
 			log.info("No dashboards...adding");
-			DashboardType dashboardType= new DashboardType();
+			DashboardType dashboardType = new DashboardType();
 			dashboardType.setId(1);
 			dashboardType.setModel("Model Example");
-			dashboardType.setUserId(getUserCollaborator());
+			dashboardType.setUser(getUserCollaborator());
 			dashboardType.setPublic(true);
 			dashboardType.setType("Model Type Example");
 			repository.save(dashboardType);
-
 
 		}
 
 	}
 
 	@Test
-	public void test_countByDashboardType(){
+	public void test_countByDashboardType() {
 
-		DashboardType dt=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.countByType(dt.getType())==1L);
-
+		DashboardType dt = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.countByType(dt.getType()) == 1L);
 
 	}
 
