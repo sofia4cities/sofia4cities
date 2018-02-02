@@ -38,7 +38,7 @@ public class RTDBConsoleController {
 	@GetMapping("show")
 	public String show(Model model)
 	{
-		List<Ontology> ontologies=this.ontologyService.findAllOntologies();
+		List<Ontology> ontologies=this.ontologyService.getAllOntologies();
 		model.addAttribute("ontologies", ontologies);
 		return "/databases/show";
 		

@@ -17,17 +17,12 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
+import com.indracompany.sofia2.config.model.TwitterListener;
 import com.indracompany.sofia2.config.model.User;
 
-public interface ConfigurationRepository extends JpaRepository<Configuration, String>{
+public interface TwitterListenerRepository extends JpaRepository<TwitterListener,String>{
 	
-	List<Configuration> findByUserId(User userId);
-	Configuration findById(String id);
-	List<Configuration> findByConfigurationTypeId(ConfigurationType configurationTypeId);
-	List<Configuration> findByUserIdAndConfigurationTypeId(User userId, ConfigurationType configurationTypeId);
-	void deleteById(String id);
-	Configuration findByIdentification(String identification);
+	TwitterListener findById(String id);
+	
 
 }

@@ -11,23 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.repository;
+package com.indracompany.sofia2.service.twitter;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
-import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.TwitterListener;
 
-public interface ConfigurationRepository extends JpaRepository<Configuration, String>{
+
+public interface TwitterService {
 	
-	List<Configuration> findByUserId(User userId);
-	Configuration findById(String id);
-	List<Configuration> findByConfigurationTypeId(ConfigurationType configurationTypeId);
-	List<Configuration> findByUserIdAndConfigurationTypeId(User userId, ConfigurationType configurationTypeId);
-	void deleteById(String id);
-	Configuration findByIdentification(String identification);
+	List<TwitterListener> getAllListens();
+	List<TwitterListener> getAllListensByUserId(String userId);
+	TwitterListener getListenById(String id);
+	List<Configuration> getAllConfigurations();
+	List<Configuration> getConfigurationsByUserId(String userId);
+	List<String> getClientsFromOntology(String ontologyId);
+	List<String> getTokensFromClient(String clientPlatformId);
+	void createListen(TwitterListener twitterListener);
 
 }

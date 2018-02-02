@@ -21,13 +21,15 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.indracompany.sofia2.config.model.base.AuditableEntity;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name = "CONFIGURATION_TYPE")
 @Configurable
-public class ConfigurationType {
+public class ConfigurationType extends AuditableEntity {
 	@Id
 	@Column(name = "ID")
 	@Getter @Setter private Integer id;    

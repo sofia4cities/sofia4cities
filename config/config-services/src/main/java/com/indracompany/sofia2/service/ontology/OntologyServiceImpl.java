@@ -23,29 +23,33 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
+import com.indracompany.sofia2.service.user.UserService;
 
 
 @Service
 public class OntologyServiceImpl implements OntologyService{
 
 	@Autowired
-	private OntologyRepository ontologyRepository;
+	OntologyRepository ontologyRepository;
 	@Autowired
-	private UserRepository userRepository;
+	UserService userService;
 	
 	public static final String ADMINISTRATOR="ROLE_ADMINISTRATOR";
 
-	public List<Ontology> findAllOntologies()
+	public List<Ontology> getAllOntologies()
 	{
 		List<Ontology> ontologies=this.ontologyRepository.findAll();
 
 		return ontologies;
 	}
-
-	public List<Ontology> findOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description)
+	public List<Ontology> getOntologiesByUserId(String userId)
+	{
+		return this.ontologyRepository.findByUserIdAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
+	}
+	public List<Ontology> getOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description)
 	{
 		List<Ontology> ontologies;
-		User user= this.userRepository.findByUserId(userId);
+		User user= this.userService.getUser(userId);
 		
 		if(user.getRoleTypeId().getName().equals(OntologyServiceImpl.ADMINISTRATOR))
 		{
@@ -99,7 +103,11 @@ public class OntologyServiceImpl implements OntologyService{
 	}
 	
 	public Ontology getOntologyById(String id) {
-		return ontologyRepository.findById(id);
+		return this.ontologyRepository.findById(id);
+	}
+	public Ontology getOntologyByIdentification(String identification)
+	{
+		return this.ontologyRepository.findByIdentification(identification);
 	}
 	
 

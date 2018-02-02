@@ -52,7 +52,7 @@ public class OntologyController {
 		if(identification!=null){if(identification.equals("")) identification=null;}
 		if(description!=null){if(description.equals("")) description=null;}
 
-		List<Ontology> ontologies=this.ontologyService.findOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
+		List<Ontology> ontologies=this.ontologyService.getOntolgiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		
 		model.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
@@ -63,10 +63,17 @@ public class OntologyController {
 	}
 	@GetMapping(value = "/create",produces = "text/html")
 	public String create(Model model)
-	{
-		
+	{		
 		model.addAttribute("ontology", new Ontology());
 		return "/ontologies/create";
 	}
+	
+	@GetMapping(value = "/createwizard",produces = "text/html")
+	public String createWizard(Model model)
+	{
+		model.addAttribute("ontology", new Ontology());
+		return "/ontologies/createwizard";
+	}
+	
 	
 }

@@ -66,7 +66,10 @@
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
 						<li><a th:href="@{/configurations/list}"> <span th:text="#{configurations.breadcrumb.prev}">Configuration List</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{configurations.breadcrumb.create}">Create Configuration</span></li>
+						<li>
+							<span th:if="${configuration.id} == null" th:text="#{configurations.breadcrumb.create}">Create Configuration</span>
+							<span th:if="${configuration.id} != null" th:text="#{configurations.breadcrumb.update}">Update Configuration</span>
+						</li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
@@ -105,7 +108,7 @@
 										</div>
                                         <div class="alert alert-success display-hide">
 											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
-										</div>									
+										</div>								
 									</div>
 									<div class="col-md-12">										
 										<form role="form" id="configurations_create_form" th:object="${configuration}"  method="post" class="form">
@@ -136,6 +139,15 @@
 															<div class="input-icon ">
 																<i class="fa fa-user"></i>
 																<input readOnly="true" id="userId" type="text"  th:required="true"  maxlength="50" th:field="*{userId.userId}" class="form-control no-remove" th:placeholder="#{user.id}"/>
+															</div>	
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{configuration.id} + ':'">Configuration ID</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="id" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control no-remove" th:placeholder="#{configuration.id}"/>
 															</div>	
 														</div>
 													</div>												

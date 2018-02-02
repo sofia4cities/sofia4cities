@@ -87,7 +87,7 @@
 								<div class="actions margin-right-20">
 									<div class="btn-group">
 										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../configurations/create'" ><i class="flaticon-cogwheel-2"></i> <span th:text="#{gen.create}">New </span></button>
-									</div>										
+									</div>
 								</div>
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
@@ -168,6 +168,7 @@
 													<thead>
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.id}" >Name</span></th>
+															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{configuration.id}" >Name</span></th>
 															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.type}" >Configuration Type</span></th>
 															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.json}">Json</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
@@ -176,8 +177,10 @@
 													</thead>
 													<tbody th:remove="all-but-first">
 														<tr th:each="configuration : ${configurations}" pages:paginate="10">
-															<!-- IDENTIFICATION -->
+															<!-- USERID -->
 															<td class="text-left no-wrap bold" th:text="${configuration.userId.userId}"></td>
+															<!-- IDENTIFICATION -->
+															<td class="text-left no-wrap bold" th:text="${configuration.identification}"></td>
 															<!-- CONFIGURATION TYPE -->														
 															<td class="text-left no-wrap bold" th:text="${configuration.configurationTypeId.name}"></td>
 															<!-- JSON CONFIG -->
@@ -204,9 +207,10 @@
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
 														<label class="toggle-vis" data-column="0" th:text="#{user.name}"> Name</label>
-														<label class="toggle-vis" data-column="1" th:text="#{configurations.type}">Configuration Type</label>
-														<label class="toggle-vis" data-column="2" th:text="#{configurations.json}">Json</label>		
-														<label class="toggle-vis" data-column="3" th:text="#{gen.options}"> Options</label>
+														<label class="toggle-vis" data-column="1" th:text="#{configuration.id}"> Identification</label>
+														<label class="toggle-vis" data-column="2" th:text="#{configurations.type}">Configuration Type</label>
+														<label class="toggle-vis" data-column="3" th:text="#{configurations.json}">Json</label>		
+														<label class="toggle-vis" data-column="4" th:text="#{gen.options}"> Options</label>
 													</div>
 												</div>											
 											</div>
