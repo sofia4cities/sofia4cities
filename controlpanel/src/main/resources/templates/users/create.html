@@ -183,11 +183,11 @@
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+													<div class="col-md-2 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
 															<label class="" th:text="#{user.active} + '?'">Active</label>
 															<div class="mt-checkbox-list">
-																<label class="mt-checkbox font-md" ><i class="la la-lightbulb-o" ></i> <div class="inline" th:text="#{user.active}">User Active?</div>
+																<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.active.help},data-title=#{user.active}"><i class="la la-lightbulb-o"></i> <div class="inline" th:text="#{user.active}">User Active?</div>
 																	<input id="checkboxactive" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
 																	<span></span><!-- needed by styles -->
 																</label>																													

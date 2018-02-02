@@ -83,7 +83,7 @@
 										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
 											<i class="flaticon-add"></i> <span th:text="#{gen.createBtn}"> New</span> <i class="fa fa-angle-down"></i>
 										</a>												
-										<ul class="dropdown-menu" role="menu">
+										<ul class="dropdown-menu pull-right" role="menu">
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../opendataontologies/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>

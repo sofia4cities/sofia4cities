@@ -184,6 +184,7 @@ var UserCreateController = function() {
 			$(this).valid();
 		});
 		
+				
 		// set current language and formats
 		currentLanguage = userCreateReg.language || LANGUAGE[0];
 		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';		
@@ -206,13 +207,20 @@ var UserCreateController = function() {
 			cleanFields('user_create_form');
 		});
 		
-		//set TODAY to dateCreated depends on language INSERT-MODE ONLY		
+		
+		// INSERT MODE ACTIONS  (userCreateReg.actionMode = NULL ) 
 		if ( userCreateReg.actionMode === null){
 			logControl ? console.log('action-mode: INSERT') : '';
+			
+			//set TODAY to dateCreated depends on language
 			var f = new Date();         
 			today = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
 			$('#datecreated').datepicker('update',today);
+			
+			// Set active 
+			$('#checkboxactive').trigger('click');
 		}
+		// EDIT MODE ACTION 
 		else {
 			// set DATE created in EDIT MODE
 			logControl ? console.log('action-mode: UPDATE') : '';
