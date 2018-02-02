@@ -13,11 +13,7 @@
 	<name>libraries</name>
 	<packaging>pom</packaging>
 
-	
-
 	<dependencies>
-
-
 		<!-- <dependency> <groupId>org.springframework.social</groupId> <artifactId>spring-social-facebook</artifactId> 
 			</dependency> -->
 		<dependency>
@@ -28,10 +24,8 @@
 	</dependencies>
 
 	<modules>
-
 		<module>social-services</module>
-		
-
+		<module>mail-service</module>
 	</modules>
 
 	<build>
@@ -97,8 +91,5 @@
 			</resource>
 		</resources>
 	</build>
-
-
-
 
 </project>
