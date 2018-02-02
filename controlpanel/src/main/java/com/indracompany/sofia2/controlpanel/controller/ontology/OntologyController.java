@@ -63,10 +63,17 @@ public class OntologyController {
 	}
 	@GetMapping(value = "/create",produces = "text/html")
 	public String create(Model model)
-	{
-		
+	{		
 		model.addAttribute("ontology", new Ontology());
 		return "/ontologies/create";
 	}
+	
+	@GetMapping(value = "/createwizard",produces = "text/html")
+	public String createWizard(Model model)
+	{
+		model.addAttribute("ontology", new Ontology());
+		return "/ontologies/createwizard";
+	}
+	
 	
 }

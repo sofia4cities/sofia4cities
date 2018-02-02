@@ -1,3 +1,14 @@
+function newOntology(){
+  if($('#row-new').is(':visible'))
+  {
+    $('#row-new').hide();
+    $('#row-not-new').show();
+  }else{
+    $('#row-new').show();
+    $('#row-not-new').hide();
+  }
+}
+
 function getClients(){
 	var ontologyId = $("#ontologies").find(":selected").val();
 	$("#clientplatforms").empty();
