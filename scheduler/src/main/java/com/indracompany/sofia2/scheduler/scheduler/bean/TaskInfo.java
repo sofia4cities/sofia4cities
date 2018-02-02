@@ -23,14 +23,14 @@ public class TaskInfo {
 	private String username;
 	private String cronExpression;	
 	private SchedulerType schedulerType;
-	private Map data;
+	private Map<String, Object> data;
 	private boolean isSingleton;
 	
 	public TaskInfo () {
 		
 	}
 	
-	public TaskInfo(String jobName, String username, String cronExpression, SchedulerType schedulerType, Map data,
+	public TaskInfo(String jobName, String username, String cronExpression, SchedulerType schedulerType, Map<String, Object> data,
 			boolean isSingleton) {
 		super();
 		this.jobName = jobName;
@@ -73,11 +73,11 @@ public class TaskInfo {
 		this.cronExpression = cronExpression;
 	}
 
-	public Map getData() {
+	public Map<String, Object> getData() {
 		return data;
 	}
 
-	public void setData(Map data) {
+	public void setData(Map<String, Object> data) {
 		this.data = data;
 	}
 

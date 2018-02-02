@@ -13,21 +13,18 @@
  */
 package com.indracompany.sofia2.scheduler.scheduler.bean;
 
-import com.indracompany.sofia2.scheduler.SchedulerType;
 
 public class TaskOperation {
 	
 	private String jobName;	
-	private SchedulerType schedulerType;
 	
 	public TaskOperation () {
 		super();
 	}
 	
-	public TaskOperation(String jobName, SchedulerType schedulerType) {
+	public TaskOperation(String jobName) {
 		super();
 		this.jobName = jobName;
-		this.schedulerType = schedulerType;
 	}
 
 	public String getJobName() {
@@ -36,16 +33,6 @@ public class TaskOperation {
 	
 	public void setJobName(String jobName) {
 		this.jobName = jobName;
-	}
-	
-	public SchedulerType getSchedulerType() {
-		return schedulerType;
-	}
-	
-	public void setSchedulerType(SchedulerType schedulerType) {
-		this.schedulerType = schedulerType;
-	}
-	
-	
+	}	
 
 }

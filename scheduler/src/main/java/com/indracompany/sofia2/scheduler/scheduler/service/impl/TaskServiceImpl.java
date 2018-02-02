@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
@@ -36,7 +37,6 @@ import com.indracompany.sofia2.scheduler.domain.ScheduledJob;
 import com.indracompany.sofia2.scheduler.exception.BatchSchedulerException;
 import com.indracompany.sofia2.scheduler.job.BatchGenericJob;
 import com.indracompany.sofia2.scheduler.job.JobParamNames;
-import com.indracompany.sofia2.scheduler.repository.FooRepository;
 import com.indracompany.sofia2.scheduler.scheduler.BatchScheduler;
 import com.indracompany.sofia2.scheduler.scheduler.bean.ListTaskInfo;
 import com.indracompany.sofia2.scheduler.scheduler.bean.TaskInfo;
@@ -45,6 +45,7 @@ import com.indracompany.sofia2.scheduler.scheduler.bean.response.ScheduleRespons
 import com.indracompany.sofia2.scheduler.scheduler.generator.JobGenerator;
 import com.indracompany.sofia2.scheduler.scheduler.generator.TriggerGenerator;
 import com.indracompany.sofia2.scheduler.scheduler.service.BatchSchedulerFactory;
+import com.indracompany.sofia2.scheduler.scheduler.service.ScheduledJobService;
 import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
 import com.indracompany.sofia2.scheduler.util.DateUtil;
 
@@ -64,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
 	private JobGenerator jobGenerator;
 	
 	@Autowired
-	private FooRepository fooRepository;
+	private ScheduledJobService scheduledJobService;
 	
 	
 	@Override
@@ -116,6 +117,11 @@ public class TaskServiceImpl implements TaskService {
 			log.error("Error listing task", e);
 		}
 		
+		List<ScheduledJob> userJobs = scheduledJobService.getScheduledJobsByUsername(username);
+		List<String> userJobsId = userJobs.stream().map(x -> x.getJobName()).collect(Collectors.toList());
+		
+		list = list.stream().filter(x -> userJobsId.contains(x.getJobName())).collect(Collectors.toList());
+		
 		return list;
 	}
 	
@@ -136,7 +142,7 @@ public class TaskServiceImpl implements TaskService {
 		
 		try {
 			
-			if (checkExists(new TaskOperation(jobName, info.getSchedulerType()))) {
+			if (checkExists(new TaskOperation(jobName))) {
 				log.info("AddJob fails, job already exist, jobGroup:{}, jobName:{}", jobGroup, jobName);
 		        throw new BatchSchedulerException(String.format("Job, jobName:{%s},jobGroup:{%s}", jobName, jobGroup));
 		    }
@@ -152,16 +158,11 @@ public class TaskServiceImpl implements TaskService {
 			
 			scheduler.scheduleJob(jobDetail, trigger);
 			
-			//add job to user list (username, jobname, groupname, schedulername)
+			ScheduledJob job = new ScheduledJob(info.getUsername(), jobName, jobGroup, 
+												info.getSchedulerType().toString(), 
+												info.isSingleton());
 			
-			ScheduledJob foo = new ScheduledJob();
-			foo.setGroupName(jobGroup);
-			foo.setJobName(jobName);
-			foo.setUserId(info.getUsername());
-			foo.setSingleton(info.isSingleton());
-			foo.setSchedulerId(info.getSchedulerType().toString());
-			
-			ScheduledJob createdFoo = fooRepository.save(foo);
+			scheduledJobService.createScheduledJob(job);
 			
 		} catch (SchedulerException | BatchSchedulerException e) {
 			added = false;
@@ -194,20 +195,36 @@ public class TaskServiceImpl implements TaskService {
 		boolean unscheduled = false;
 		
 		String jobName = operation.getJobName();
-		String groupName = generateGroupName(operation.getSchedulerType());
-				
-		log.info("unschedule job [jobname: " + jobName + ", groupName: " + groupName + "]");
 		
         try {
         	
-        	BatchScheduler scheduler = batchSchedulerFactory.getScheduler(operation.getSchedulerType());
-    		       	
-			if (checkExists(operation)) {
-				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, groupName);
-				scheduler.pauseTrigger(triggerKey);
-			    unscheduled = scheduler.unscheduleJob(triggerKey);
-			    log.info("unschedule, triggerKey:{}", triggerKey);
-			}
+        	log.info("unschedule job [jobname: " + jobName + "]");
+        	
+        	ScheduledJob job = scheduledJobService.findByJobName(jobName);
+        	
+        	if (job != null) {
+        		
+        		String groupName = job.getGroupName();
+            	
+            	log.info("unschedule job [" + " groupName: " + groupName + "]");
+            	      	
+    			if (checkExists(operation)) {
+    				
+    				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, groupName);
+    				
+    				BatchScheduler scheduler = batchSchedulerFactory.getScheduler(job.getSchedulerId());
+    				
+    				scheduler.pauseTrigger(triggerKey);
+    			    unscheduled = scheduler.unscheduleJob(triggerKey);
+    			    log.info("unschedule, triggerKey:{}", triggerKey);
+    			    
+    			} else {
+    				log.info("Job with name " + operation.getJobName() + " not found");  
+    			}
+    			
+        	}
+        	
+        	
 		} catch (SchedulerException e) {
 			log.error("Error unscheduled task", e);
 		}
@@ -221,21 +238,33 @@ public class TaskServiceImpl implements TaskService {
 		boolean paused = false;
 		
 		String jobName = operation.getJobName();
-		String groupName = generateGroupName(operation.getSchedulerType());
-		
-		log.info("pause job [jobname: " + jobName + ", groupName: " + groupName + "]");
 		
 		try {
 			
-			BatchScheduler scheduler = batchSchedulerFactory.getScheduler(operation.getSchedulerType());		
+			log.info("pause job [jobname: " + jobName + "]");
 			
-			if (checkExists(operation)) {
-				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, groupName);
-				scheduler.pauseTrigger(triggerKey);
-				log.info("Pause success, triggerKey:{}", triggerKey);
-			    paused = true;
+			ScheduledJob job = scheduledJobService.findByJobName(jobName);
+			
+			if (job != null) {
+				
+				String groupName = job.getGroupName();
+				
+				log.info("pause job ["  + "groupName: " + groupName + "]");
+				
+				if (checkExists(operation)) {
+					TriggerKey triggerKey = TriggerKey.triggerKey(jobName, groupName);
+					
+					BatchScheduler scheduler = batchSchedulerFactory.getScheduler(job.getSchedulerId());
+					
+					scheduler.pauseTrigger(triggerKey);
+					log.info("Pause success, triggerKey:{}", triggerKey);
+				    paused = true;
+				    
+				} else {
+    				log.info("Job with name " + operation.getJobName() + " not found");  
+    			}
 			}
-			
+		
 		} catch (SchedulerException e) {
 			log.error("Error pause task", e);
 		}
@@ -249,22 +278,32 @@ public class TaskServiceImpl implements TaskService {
 		boolean resumed = false;
 		
 		String jobName = operation.getJobName();
-		String groupName = generateGroupName(operation.getSchedulerType());
-		
-		log.info("resume job [jobname: " + jobName + ", groupName: " + groupName + "]");
 		
         try {
         	
-        	BatchScheduler scheduler = batchSchedulerFactory.getScheduler(operation.getSchedulerType());
-    		       	
-			if (checkExists(operation)) {
-				
-				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, groupName);	        
-				scheduler.resumeTrigger(triggerKey);
-				log.info("Resume success, triggerKey:{}", triggerKey);
-			    resumed = true;
-			}
-			
+        	log.info("resume job [jobname: " + jobName + "]");
+        	
+        	ScheduledJob job = scheduledJobService.findByJobName(jobName);
+        	
+        	if (job != null) {
+        		
+        		String groupName = job.getGroupName();
+        		
+        		log.info("resume job [" + "groupName: " + groupName + "]");
+            	
+            	BatchScheduler scheduler = batchSchedulerFactory.getScheduler(job.getSchedulerId());
+        		       	
+    			if (checkExists(operation)) {
+    				
+    				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, groupName);	        
+    				scheduler.resumeTrigger(triggerKey);
+    				log.info("Resume success, triggerKey:{}", triggerKey);
+    			    resumed = true;
+    			} else {
+    				log.info("Job with name " + operation.getJobName() + " not found");  
+    			}
+        	}
+  	
 		} catch (SchedulerException e) {
 			log.error("Error resume task", e);
 		}
@@ -277,16 +316,24 @@ public class TaskServiceImpl implements TaskService {
 		
 		boolean exists = false;
 		String jobName = operation.getJobName();
-		String groupName = generateGroupName(operation.getSchedulerType());
-		
-		log.info("check if exists job [jobname: " + jobName + ", groupName: " + groupName + "]");
 		
 		try {
+			log.info("check if exists job [jobname: " + jobName + "]");
+			ScheduledJob job = scheduledJobService.findByJobName(jobName);
 			
-			BatchScheduler scheduler = batchSchedulerFactory.getScheduler(operation.getSchedulerType());
+			if (job != null) {
 			
-			TriggerKey triggerKey = TriggerKey.triggerKey(jobName, groupName);
-			exists = scheduler.checkExists(triggerKey);
+				String groupName = job.getGroupName();
+				
+				log.info("check if exists job [" + "groupName: " + groupName + "]");
+				
+				BatchScheduler scheduler = batchSchedulerFactory.getScheduler(job.getSchedulerId());
+				
+				TriggerKey triggerKey = TriggerKey.triggerKey(jobName, groupName);
+				exists = scheduler.checkExists(triggerKey);
+			} else {
+				log.info("Job with name " + operation.getJobName() + " not found");  
+			}
 			
 		} catch (SchedulerException e) {
 			log.error("Error checking if a job exists ", e);

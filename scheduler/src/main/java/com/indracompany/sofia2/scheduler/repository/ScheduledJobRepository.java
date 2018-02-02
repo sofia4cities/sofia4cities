@@ -13,14 +13,21 @@
  */
 package com.indracompany.sofia2.scheduler.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.scheduler.domain.ScheduledJob;
 
 @Repository
-public interface FooRepository extends JpaRepository<ScheduledJob, Long> {
+public interface ScheduledJobRepository extends JpaRepository<ScheduledJob, Long> {
 	
 	ScheduledJob findById(Long id); 
+	
+	List<ScheduledJob> findAllByUserId (String userId);
+	
+	ScheduledJob findByJobName(String jobName);
+
 
 }

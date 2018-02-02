@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.scheduler.SchedulerType;
 import com.indracompany.sofia2.scheduler.scheduler.bean.ListTaskInfo;
 import com.indracompany.sofia2.scheduler.scheduler.bean.TaskInfo;
 import com.indracompany.sofia2.scheduler.scheduler.bean.TaskOperation;
@@ -50,24 +49,24 @@ public class DefaultController {
 		return taskService.addJob(taskInfo);
 	}
 	
-	@RequestMapping (method = RequestMethod.GET, value="/unschedule/{jobName}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseInfo unschedule(@PathVariable String jobName, @PathVariable String schedulerType) {
+	@RequestMapping (method = RequestMethod.GET, value="/unschedule/{jobName}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseInfo unschedule(@PathVariable String jobName) {
 		
-		boolean unscheduled = taskService.unscheduled(new TaskOperation(jobName, SchedulerType.valueOf(schedulerType)));
+		boolean unscheduled = taskService.unscheduled(new TaskOperation(jobName));
 		return new ResponseInfo(unscheduled, "");
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value="/pause/{jobName}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseInfo pause(@PathVariable String jobName, @PathVariable String schedulerType){
+	@RequestMapping(method = RequestMethod.GET, value="/pause/{jobName}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseInfo pause(@PathVariable String jobName){
 		
-		boolean resumed = taskService.pause(new TaskOperation(jobName, SchedulerType.valueOf(schedulerType)));		
+		boolean resumed = taskService.pause(new TaskOperation(jobName));		
 		return new ResponseInfo(resumed, "");
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value="/resume/{jobName}/{schedulerType}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseInfo resume(@PathVariable String jobName, @PathVariable String schedulerType){
+	@RequestMapping(method = RequestMethod.GET, value="/resume/{jobName}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseInfo resume(@PathVariable String jobName){
 		
-		boolean resumed = taskService.resume(new TaskOperation(jobName, SchedulerType.valueOf(schedulerType)));		
+		boolean resumed = taskService.resume(new TaskOperation(jobName));		
 		return new ResponseInfo(resumed, "");
 	}
 	

@@ -24,17 +24,59 @@ import com.indracompany.sofia2.scheduler.scheduler.bean.response.ScheduleRespons
 
 public interface TaskService {
 	
+	/**
+	 * 
+	 * @param username
+	 * @return
+	 */
+	
 	List<ListTaskInfo> list(String username);
+	
+	/**
+	 * Schedule a job
+	 * @param info
+	 * @return
+	 */
 	
 	ScheduleResponseInfo addJob(TaskInfo info);
 	
+	/**
+	 * Initialize the data map, adding the parameters user name and schedulerType 
+	 * @param info
+	 * @return
+	 */
+	
 	JobDataMap initTaskDataMap (TaskInfo info);
+	
+	/**
+	 * Unscheduled a job
+	 * @param operation
+	 * @return
+	 */
 	
 	boolean unscheduled (TaskOperation operation);
 	
+	/**
+	 * Pause a job
+	 * @param operation
+	 * @return
+	 */
+	
 	boolean pause(TaskOperation operation);
 	
+	/**
+	 * Resume a job
+	 * @param operation
+	 * @return
+	 */
+	
 	boolean resume(TaskOperation operation);
+	
+	/**
+	 * Checks if a job exists
+	 * @param operation
+	 * @return
+	 */
 	
 	boolean checkExists(TaskOperation operation);
 }
