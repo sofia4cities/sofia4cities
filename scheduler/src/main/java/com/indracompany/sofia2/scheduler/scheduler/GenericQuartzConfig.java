@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.indracompany.sofia2.scheduler.config.QuartzDataSourceConfig;
+import com.indracompany.sofia2.scheduler.config.SchedulerConfig;
 
 
 public abstract class GenericQuartzConfig {
@@ -38,7 +38,7 @@ public abstract class GenericQuartzConfig {
 	protected Properties quartzProperties;
 	
 	@Autowired
-    protected QuartzDataSourceConfig quartzDataSourceConfig;
+    protected SchedulerConfig quartzDataSourceConfig;
 	
 	public boolean checksIfAutoStartup () {
 		List<String> schedulersToStartup = quartzDataSourceConfig.getAutoStartupSchedulers();

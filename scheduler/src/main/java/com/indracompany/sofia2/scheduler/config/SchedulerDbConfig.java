@@ -13,13 +13,7 @@
  */
 package com.indracompany.sofia2.scheduler.config;
 
-
-import static com.indracompany.sofia2.scheduler.PropertyNames.SCHEDULER_PREFIX;
 import static com.indracompany.sofia2.scheduler.PropertyNames.SCHEDULER_PROPERTIES_LOCATION;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -27,59 +21,60 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SCHEDULER_BASE_PACKAGE;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SCHEDULER_JPA_PROPERTY;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SCHEDULER_DATASOURCE_PROPERTY;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SCHEDULER_DATASOURCE_NAME;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SCHEDULER_ENTITY_MANAGER_FACTORY_NAME;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SCHEDULER_TRANSACTION_MANAGER_NAME;
+
 @Configuration
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 @EnableTransactionManagement
 @EnableJpaRepositories(
-  entityManagerFactoryRef = "quartzEntityManagerFactory",
-  transactionManagerRef = "quartzTransactionManager",
-  basePackages = { "com.indracompany.sofia2.scheduler" }
+  entityManagerFactoryRef = SCHEDULER_ENTITY_MANAGER_FACTORY_NAME,
+  transactionManagerRef = SCHEDULER_TRANSACTION_MANAGER_NAME,
+  basePackages = { SCHEDULER_BASE_PACKAGE }
 )
-public class QuartzDataSource {
+public class SchedulerDbConfig {
 	
 	
 	@Bean
-	@ConfigurationProperties("quartz.jpa")
+	@ConfigurationProperties(SCHEDULER_JPA_PROPERTY)
 	public JpaProperties quartzJpaProperties() {
 	    return new JpaProperties();
 	}
 	
-	@Bean("quartzDatasource")
-	@ConfigurationProperties("quartz.datasource")
+	@Bean(SCHEDULER_DATASOURCE_NAME)
+	@ConfigurationProperties(SCHEDULER_DATASOURCE_PROPERTY)
 	public DataSource quartzDatasource() {
 	    return  DataSourceBuilder.create().build();
 	}
 	
-	@Bean("quartzEntityManagerFactory")
+	@Bean(SCHEDULER_ENTITY_MANAGER_FACTORY_NAME)
 	public LocalContainerEntityManagerFactoryBean quartzEntityManagerFactory(EntityManagerFactoryBuilder builder,
-																	   @Qualifier("quartzDatasource") DataSource dataSource) {
+																	   @Qualifier(SCHEDULER_DATASOURCE_NAME) DataSource dataSource) {
 			
-		Map<String,String> prop = quartzJpaProperties().getProperties();
-		
 		return builder
 		      .dataSource(dataSource)
-		      .packages("com.indracompany.sofia2.scheduler")
+		      .packages(SCHEDULER_BASE_PACKAGE)
 		      .persistenceUnit("quartz").properties(quartzJpaProperties().getProperties())
 		      .build();
 	}
 	
-	@Bean(name = "quartzTransactionManager")
-	public PlatformTransactionManager quartzTransactionManager(@Qualifier("quartzEntityManagerFactory") 
+	@Bean(SCHEDULER_TRANSACTION_MANAGER_NAME)
+	public PlatformTransactionManager quartzTransactionManager(@Qualifier(SCHEDULER_ENTITY_MANAGER_FACTORY_NAME) 
 														 EntityManagerFactory  entityManagerFactory) {
 	    return new JpaTransactionManager(entityManagerFactory);
 	}

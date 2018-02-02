@@ -31,10 +31,12 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.scheduler.JobParamNames;
 import com.indracompany.sofia2.scheduler.SchedulerType;
+import com.indracompany.sofia2.scheduler.domain.ScheduledJob;
 import com.indracompany.sofia2.scheduler.exception.BatchSchedulerException;
 import com.indracompany.sofia2.scheduler.job.BatchGenericJob;
+import com.indracompany.sofia2.scheduler.job.JobParamNames;
+import com.indracompany.sofia2.scheduler.repository.FooRepository;
 import com.indracompany.sofia2.scheduler.scheduler.BatchScheduler;
 import com.indracompany.sofia2.scheduler.scheduler.bean.ListTaskInfo;
 import com.indracompany.sofia2.scheduler.scheduler.bean.TaskInfo;
@@ -60,6 +62,9 @@ public class TaskServiceImpl implements TaskService {
 	
 	@Autowired
 	private JobGenerator jobGenerator;
+	
+	@Autowired
+	private FooRepository fooRepository;
 	
 	
 	@Override
@@ -149,6 +154,15 @@ public class TaskServiceImpl implements TaskService {
 			
 			//add job to user list (username, jobname, groupname, schedulername)
 			
+			ScheduledJob foo = new ScheduledJob();
+			foo.setGroupName(jobGroup);
+			foo.setJobName(jobName);
+			foo.setUserId(info.getUsername());
+			foo.setSingleton(info.isSingleton());
+			foo.setSchedulerId(info.getSchedulerType().toString());
+			
+			ScheduledJob createdFoo = fooRepository.save(foo);
+			
 		} catch (SchedulerException | BatchSchedulerException e) {
 			added = false;
 			log.error("Error adding task", e);
@@ -163,7 +177,7 @@ public class TaskServiceImpl implements TaskService {
 		
 		String jobName = info.getJobName() + "-" + info.getSchedulerType().toString();
 		
-		if (!info.isSinglenton()) {
+		if (!info.isSingleton()) {
 			jobName += "-" + format.format(Calendar.getInstance().getTime());
 		}
 		

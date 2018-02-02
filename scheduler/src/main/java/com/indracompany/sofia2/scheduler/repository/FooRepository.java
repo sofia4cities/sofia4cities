@@ -11,13 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler;
+package com.indracompany.sofia2.scheduler.repository;
 
-public class JobParamNames {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.indracompany.sofia2.scheduler.domain.ScheduledJob;
+
+@Repository
+public interface FooRepository extends JpaRepository<ScheduledJob, Long> {
 	
-	public static String USERNAME = "username";
-	public static String SCHEDULER_TYPE = "schedulerType";
-	
-	private JobParamNames () { }
+	ScheduledJob findById(Long id); 
 
 }

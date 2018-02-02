@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = SCHEDULER_PREFIX)
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
-public class QuartzDataSourceConfig {
+public class SchedulerConfig {
 		
 	private List<String> autoStartupSchedulers;
 

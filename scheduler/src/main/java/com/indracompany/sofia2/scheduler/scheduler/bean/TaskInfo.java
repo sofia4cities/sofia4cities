@@ -24,21 +24,21 @@ public class TaskInfo {
 	private String cronExpression;	
 	private SchedulerType schedulerType;
 	private Map data;
-	private boolean isSinglenton;
+	private boolean isSingleton;
 	
 	public TaskInfo () {
 		
 	}
 	
 	public TaskInfo(String jobName, String username, String cronExpression, SchedulerType schedulerType, Map data,
-			boolean isSinglenton) {
+			boolean isSingleton) {
 		super();
 		this.jobName = jobName;
 		this.username = username;
 		this.cronExpression = cronExpression;
 		this.schedulerType = schedulerType;
 		this.data = data;
-		this.isSinglenton = isSinglenton;
+		this.isSingleton = isSingleton;
 	}
 	
 	public String getJobName() {
@@ -81,12 +81,12 @@ public class TaskInfo {
 		this.data = data;
 	}
 
-	public boolean isSinglenton() {
-		return isSinglenton;
+	public boolean isSingleton() {
+		return isSingleton;
 	}
 
-	public void setSinglenton(boolean isSinglenton) {
-		this.isSinglenton = isSinglenton;
+	public void setSingleton(boolean isSingleton) {
+		this.isSingleton = isSingleton;
 	}
 
 }

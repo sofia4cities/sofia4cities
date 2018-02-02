@@ -18,8 +18,9 @@ import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.scheduler.JobParamNames;
+import com.indracompany.sofia2.scheduler.job.JobParamNames;
 import com.indracompany.sofia2.scheduler.SchedulerType;
+
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -12,10 +12,13 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.scheduler.config;
-import static com.indracompany.sofia2.scheduler.PropertyNames.SCHEDULER_PREFIX;
 import static com.indracompany.sofia2.scheduler.PropertyNames.SCHEDULER_PROPERTIES_LOCATION;
-
-import java.util.Map;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SOFIA_JPA_PROPERTY;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SOFIA_DATASOURCE_PROPERTY;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SOFIA_DATASOURCE_NAME;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SOFIA_ENTITY_MANAGER_FACTORY_NAME;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SOFIA_TRANSACTION_MANAGER_NAME;
+import static com.indracompany.sofia2.scheduler.config.DbConfigPropertyNames.SOFIA_BASE_PACKAGE;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -23,7 +26,6 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -40,44 +42,42 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 @EnableTransactionManagement
 @EnableJpaRepositories(
-  entityManagerFactoryRef = "entityManagerFactory",
-  transactionManagerRef = "transactionManager",
-  basePackages = { "com.indracompany.sofia2.config" }//,
+  entityManagerFactoryRef = SOFIA_ENTITY_MANAGER_FACTORY_NAME,
+  transactionManagerRef = SOFIA_TRANSACTION_MANAGER_NAME,
+  basePackages = { SOFIA_BASE_PACKAGE }//,
   //excludeFilters = {@ComponentScan.Filter(type = FilterType.REGEX, pattern = {"com.indracompany.sofia2.scheduler.*"})}
 )
 public class SofiaDbConfig {
 	
 	@Bean
 	@Primary
-	@ConfigurationProperties("spring.jpa")
+	@ConfigurationProperties(SOFIA_JPA_PROPERTY)
 	public JpaProperties jpaProperties() {
 	    return new JpaProperties();
 	}
 	
 	@Primary
-	@Bean(name = "dataSource")
-	@ConfigurationProperties(prefix = "spring.datasource")
+	@Bean(name = SOFIA_DATASOURCE_NAME)
+	@ConfigurationProperties(prefix = SOFIA_DATASOURCE_PROPERTY)
 	public DataSource dataSource() {
 	    return DataSourceBuilder.create().build();
 	}
 	  
 	@Primary
-	@Bean(name = "entityManagerFactory")
+	@Bean(name = SOFIA_ENTITY_MANAGER_FACTORY_NAME)
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
-																	   @Qualifier("dataSource") DataSource dataSource) {
-		
-		Map<String,String> prop = jpaProperties().getProperties();
+																	   @Qualifier(SOFIA_DATASOURCE_NAME) DataSource dataSource) {
 		
 	return builder
 	      .dataSource(dataSource)
-	      .packages("com.indracompany.sofia2")
+	      .packages(SOFIA_BASE_PACKAGE)
 	      .persistenceUnit("sofia").properties(jpaProperties().getProperties())
 	      .build();
 	}
 	    
 	@Primary
-	@Bean(name = "transactionManager")
-	public PlatformTransactionManager transactionManager(@Qualifier("entityManagerFactory") 
+	@Bean(name = SOFIA_TRANSACTION_MANAGER_NAME)
+	public PlatformTransactionManager transactionManager(@Qualifier(SOFIA_ENTITY_MANAGER_FACTORY_NAME) 
 														 EntityManagerFactory  entityManagerFactory) {
 	    return new JpaTransactionManager(entityManagerFactory);
 	}

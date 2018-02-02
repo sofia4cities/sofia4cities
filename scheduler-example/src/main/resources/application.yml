@@ -26,7 +26,7 @@ quartz:
       properties.hibernate.hbm2ddl.auto: create
    autoStartupSchedulers:
       - scriptScheduler
-      #- twitterScheduler
+      - twitterScheduler
               
             
 ## LOGGING CONF
