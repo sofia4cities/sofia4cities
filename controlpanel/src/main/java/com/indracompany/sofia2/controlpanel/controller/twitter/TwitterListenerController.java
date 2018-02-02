@@ -23,8 +23,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.indracompany.sofia2.config.model.Configuration;
@@ -33,6 +35,7 @@ import com.indracompany.sofia2.config.model.TwitterListener;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.service.ontology.OntologyService;
 import com.indracompany.sofia2.service.twitter.TwitterService;
+import com.indracompany.sofia2.service.user.UserService;
 
 @Controller
 @RequestMapping("/twitter")
@@ -44,6 +47,8 @@ public class TwitterListenerController {
 	TwitterService twitterService;
 	@Autowired
 	OntologyService ontologyService;
+	@Autowired
+	UserService userService;
 	public static final String ROLE_ADMINISTRATOR="ROLE_ADMINISTRATOR";
 	public static final String DATAMODEL_TWITTER="TWEET_DATAMODEL";
 	
@@ -72,14 +77,31 @@ public class TwitterListenerController {
 		this.loadOntologiesAndConfigurations(model);
 		return "/twitter/scheduledsearch/create";
 	}
+	@PutMapping("/scheduledsearch/update/{id}")
+	public String update(Model model,@PathVariable ("id") String id,@ModelAttribute TwitterListener twitterListener)
+	{
+		
+		if(twitterListener!=null) this.twitterService.updateListen(twitterListener);
+		return "redirect:/twitter/scheduledsearch/update/"+id;
+	}
 	@PostMapping("/scheduledsearch/create")
-	public String create(Model model,@ModelAttribute TwitterListener twitterListener)
+	public String create(Model model,@ModelAttribute TwitterListener twitterListener,
+			@RequestParam("_new") Boolean newOntology,
+			@RequestParam(value="ontologyId",required=false) String ontologyId,
+			@RequestParam(value="clientPlatformId",required=false) String clientPlatformId)
 	{
 		if(twitterListener!=null)
 		{
-			this.twitterService.createListen(twitterListener);
+			if(!newOntology)this.twitterService.createListen(twitterListener);
+			else
+			{
+				Ontology ontology=this.twitterService.createTwitterOntology(ontologyId, DATAMODEL_TWITTER);
+				ontology.setUserId(this.userService.getUser(this.utils.getUserId()));
+				ontology=this.ontologyService.saveOntology(ontology);
+				//TODO CREATE CLIENT & TOKEN-->THEN SAVE TWITTERLISTEN
+			}
 		}
-		return "redirec:/twitter/scheduledsearch/create";
+		return "redirect:/twitter/scheduledsearch/create";
 	}
 	
 	
@@ -120,5 +142,14 @@ public class TwitterListenerController {
 		model.addAttribute("ontologies",ontologies);
 		
 	}
-
+	@PostMapping("/scheduledsearch/existontology")
+	public @ResponseBody  boolean existOntology(@RequestBody String identification)
+	{
+		return this.twitterService.existOntology(identification);
+	}
+	@PostMapping("/scheduledsearch/existclient")
+	public @ResponseBody  boolean existClient(@RequestBody String identification)
+	{
+		return this.twitterService.existClientPlatform(identification);
+	}
 }

@@ -110,5 +110,9 @@ public class OntologyServiceImpl implements OntologyService{
 		return this.ontologyRepository.findByIdentification(identification);
 	}
 	
-
+	public Ontology saveOntology(Ontology ontology)
+	{
+		return this.ontologyRepository.save(ontology);
+		
+	}
 }

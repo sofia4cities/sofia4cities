@@ -22,12 +22,14 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListener;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
+import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.TwitterListenerRepository;
 import com.indracompany.sofia2.service.ontology.OntologyService;
@@ -45,11 +47,14 @@ public class TwitterServiceImpl implements TwitterService {
 	@Autowired
 	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
+	DataModelRepository dataModelRepository;
+	@Autowired
 	TokenRepository tokenRepository;
 	@Autowired
 	OntologyService ontologyService;
 	@Autowired
 	UserService userService;
+	public static final String DATAMODEL_TWITTER="TWEET_DATAMODEL";
 	
 	
 	public List<TwitterListener> getAllListens()
@@ -109,5 +114,43 @@ public class TwitterServiceImpl implements TwitterService {
 		if(twitterListener.getConfigurationId()!=null) twitterListener.setConfigurationId(this.configurationRepository.findByIdentification(twitterListener.getConfigurationId().getIdentification()));
 		twitterListener.setOntologyId(this.ontologyService.getOntologyByIdentification(twitterListener.getOntologyId().getIdentification()));
 		this.twitterListenerRepository.save(twitterListener);
+	}
+	public void updateListen(TwitterListener twitterListener)
+	{
+		TwitterListener newTwitterListener=this.twitterListenerRepository.findById(twitterListener.getId());
+		if(newTwitterListener!=null)
+		{
+			newTwitterListener.setIdentificator(twitterListener.getIdentificator());
+			newTwitterListener.setConfigurationId(this.configurationRepository.findByIdentification(twitterListener.getConfigurationId().getIdentification()));
+			newTwitterListener.setTopics(twitterListener.getTopics());
+			newTwitterListener.setDateFrom(twitterListener.getDateFrom());
+			newTwitterListener.setDateTo(twitterListener.getDateTo());
+			this.twitterListenerRepository.save(newTwitterListener);
+		}
+	
+	}
+	public boolean existOntology(String identification)
+	{
+		if(this.ontologyService.getOntologyByIdentification(identification)!=null) return true;
+		else return false;
+	}
+	public boolean existClientPlatform(String identification)
+	{
+		if(this.clientPlatformRepository.findByIdentification(identification)!=null) return true;
+		else return false;
+	}
+	public Ontology createTwitterOntology(String ontologyId, String dataModel)
+	{
+		DataModel dataModelTwitter= this.dataModelRepository.findByIdentification(dataModel);
+		Ontology ontology= new Ontology();
+		ontology.setIdentification(ontologyId);
+		if(dataModelTwitter.equals(DATAMODEL_TWITTER)) ontology.setDescription("Ontology created for tweet recollection");
+		ontology.setJsonSchema(dataModelTwitter.getSchema());
+		ontology.setActive(true);
+		ontology.setPublic(false);
+		ontology.setRtdbClean(false);
+		ontology.setRtdbToHdb(false);
+		return ontology;
+		
 	}
 }

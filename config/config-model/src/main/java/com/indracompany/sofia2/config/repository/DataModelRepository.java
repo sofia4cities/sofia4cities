@@ -30,7 +30,7 @@ public interface DataModelRepository extends JpaRepository<DataModel, String> {
 
 	DataModel findById(String id);
 	List<DataModel> findByTypeAndIdentificationAndDescription(String type, String identification, String description);
-	List<DataModel> findByIdentification(String identification);
+	DataModel findByIdentification(String identification);
 	List<DataModel> findByRelationalTrue();
 	List<DataModel> findByRelationalFalse();
 	List<DataModel> findByType(String type);

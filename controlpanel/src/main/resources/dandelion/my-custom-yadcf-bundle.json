@@ -1,0 +1,10 @@
+{
+   "assets" : [
+      {
+         "name" : "jquery.datatables.yadcf", 
+         "locations" : {
+            "webapp" : "/static/js/vendor/yadcf.js"   
+         }
+      }
+   ]
+}

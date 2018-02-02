@@ -27,4 +27,5 @@ public interface OntologyService {
 	List<String> getAllIdentifications();
 	Ontology getOntologyById(String id);
 	Ontology getOntologyByIdentification(String identification);
+	Ontology saveOntology(Ontology ontology);
 }
