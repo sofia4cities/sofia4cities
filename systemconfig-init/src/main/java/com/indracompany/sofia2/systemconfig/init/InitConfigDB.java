@@ -196,61 +196,65 @@ public class InitConfigDB {
 
 	private void init_Configuration() {
 		log.info("init_Configuration");
-		ConfigurationType type = new ConfigurationType();
-		Configuration config = new Configuration();
-		type.setId(ConfigurationType.Types.TwitterConfiguration.toString());
-		type.setDescription("Configuration for access Twitter account (Token and Key)");
-		this.configurationTypeRepository.save(type);
-		config = new Configuration();
-		config.setConfigurationType(type);
-		config.setUser(getUserAdministrator());
-		config.setEnvironment(Configuration.Environment.ALL.toString());
-		config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
-		this.configurationRepository.save(config);
-		//
-		type = new ConfigurationType();
-		type.setId(ConfigurationType.Types.EndpointModulesConfiguration.toString());
-		type.setDescription("Endpoints of Sofia2 Modules Configuration p");
-		this.configurationTypeRepository.save(type);
-		config = new Configuration();
-		config.setConfigurationType(type);
-		config.setUser(getUserAdministrator());
-		config.setEnvironment(Configuration.Environment.DEV.toString());
-		config.setYmlConfig(loadFromResources("EndpointModulesConfiguration.yml"));
-		this.configurationRepository.save(config);
-		//
-		type = new ConfigurationType();
-		type.setId(ConfigurationType.Types.MailConfiguration.toString());
-		type.setDescription("Mail Configuration por mail sending");
-		this.configurationTypeRepository.save(type);
-		config = new Configuration();
-		config.setConfigurationType(type);
-		config.setUser(getUserAdministrator());
-		config.setEnvironment(Configuration.Environment.ALL.toString());
-		config.setYmlConfig(loadFromResources("MailConfiguration.yml"));
-		this.configurationRepository.save(config);
-		//
-		type = new ConfigurationType();
-		type.setId(ConfigurationType.Types.RTDBConfiguration.toString());
-		type.setDescription("Configuration for the default RealTime DB (MongoDB)");
-		this.configurationTypeRepository.save(type);
-		config = new Configuration();
-		config.setConfigurationType(type);
-		config.setUser(getUserAdministrator());
-		config.setEnvironment(Configuration.Environment.LOCAL.toString());
-		config.setYmlConfig(loadFromResources("RTDBConfiguration.yml"));
-		this.configurationRepository.save(config);
-		//
-		type = new ConfigurationType();
-		type.setId(ConfigurationType.Types.MonitoringConfiguration.toString());
-		type.setDescription("Configuration for report to Monitoring UI");
-		this.configurationTypeRepository.save(type);
-		config = new Configuration();
-		config.setConfigurationType(type);
-		config.setUser(getUserAdministrator());
-		config.setEnvironment(Configuration.Environment.LOCAL.toString());
-		config.setYmlConfig(loadFromResources("MonitoringConfiguration.yml"));
-		this.configurationRepository.save(config);
+		if (this.configurationRepository.count() == 0) {
+
+			ConfigurationType type = new ConfigurationType();
+			Configuration config = new Configuration();
+			type.setId(ConfigurationType.Types.TwitterConfiguration.toString());
+			type.setDescription("Configuration for access Twitter account (Token and Key)");
+			this.configurationTypeRepository.save(type);
+			config = new Configuration();
+			config.setConfigurationType(type);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment(Configuration.Environment.ALL.toString());
+			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
+			type = new ConfigurationType();
+			type.setId(ConfigurationType.Types.EndpointModulesConfiguration.toString());
+			type.setDescription("Endpoints of Sofia2 Modules Configuration p");
+			this.configurationTypeRepository.save(type);
+			config = new Configuration();
+			config.setConfigurationType(type);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment(Configuration.Environment.DEV.toString());
+			config.setYmlConfig(loadFromResources("EndpointModulesConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
+			type = new ConfigurationType();
+			type.setId(ConfigurationType.Types.MailConfiguration.toString());
+			type.setDescription("Mail Configuration por mail sending");
+			this.configurationTypeRepository.save(type);
+			config = new Configuration();
+			config.setConfigurationType(type);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment(Configuration.Environment.ALL.toString());
+			config.setYmlConfig(loadFromResources("MailConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
+			type = new ConfigurationType();
+			type.setId(ConfigurationType.Types.RTDBConfiguration.toString());
+			type.setDescription("Configuration for the default RealTime DB (MongoDB)");
+			this.configurationTypeRepository.save(type);
+			config = new Configuration();
+			config.setConfigurationType(type);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment(Configuration.Environment.LOCAL.toString());
+			config.setYmlConfig(loadFromResources("RTDBConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
+			type = new ConfigurationType();
+			type.setId(ConfigurationType.Types.MonitoringConfiguration.toString());
+			type.setDescription("Configuration for report to Monitoring UI");
+			this.configurationTypeRepository.save(type);
+			config = new Configuration();
+			config.setConfigurationType(type);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment(Configuration.Environment.LOCAL.toString());
+			config.setYmlConfig(loadFromResources("MonitoringConfiguration.yml"));
+			this.configurationRepository.save(config);
+
+		}
 
 	}
 
@@ -342,7 +346,7 @@ public class InitConfigDB {
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("1");
 				menu.setJsonSchema(loadFromResources("menu_admin.json"));
-				menu.setRoleType(roleRepository.findOne(1));
+				menu.setRoleType(roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role ADMIN");
@@ -352,7 +356,7 @@ public class InitConfigDB {
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("2");
 				menu.setJsonSchema(loadFromResources("menu_collaborator.json"));
-				menu.setRoleType(roleRepository.findOne(2));
+				menu.setRoleType(roleRepository.findById(Role.Type.COLLABORATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role COLLABORATOR");
@@ -362,7 +366,7 @@ public class InitConfigDB {
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("3");
 				menu.setJsonSchema(loadFromResources("menu_user.json"));
-				menu.setRoleType(roleRepository.findOne(3));
+				menu.setRoleType(roleRepository.findById(Role.Type.USER.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role USER");
