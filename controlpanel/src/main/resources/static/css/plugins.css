@@ -974,11 +974,6 @@ table.dataTable.no-footer {
 table.dataTable tr.heading > th {
   background-color: #fbfcfd; }
 
-table.dataTable td.sorting_1, table.dataTable td.sorting_2, table.dataTable td.sorting_3,
-table.dataTable th.sorting_1,
-table.dataTable th.sorting_2,
-table.dataTable th.sorting_3 {
-  background: #fbfcfd !important; }
 
 /***
 Extended pagination
