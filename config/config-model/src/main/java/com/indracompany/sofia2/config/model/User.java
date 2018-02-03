@@ -23,7 +23,6 @@ package com.indracompany.sofia2.config.model;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -38,7 +37,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.indracompany.sofia2.config.converters.StringCryptoConverter;
 import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
 import lombok.Getter;
@@ -66,7 +64,7 @@ public class User extends AuditableEntity {
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID", nullable = false)
-	@Convert(converter = StringCryptoConverter.class)
+	// @Convert(converter = StringCryptoConverter.class)
 	@Getter
 	@Setter
 	private Role role;
