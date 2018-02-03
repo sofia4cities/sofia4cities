@@ -15,8 +15,6 @@ package com.indracompany.sofia2.controlpanel.controller.user;
 
 import java.util.Date;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -110,23 +108,29 @@ public class UserController {
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/create")
-	public String create(@Valid @ModelAttribute User user) {
+	public String create(@ModelAttribute User user) { // , RedirectAttributes redirect) {
 		// FIXME: Use Valid and send Errors to HTML
+		// if (bindingResult.hasErrors()) {
+		// return "/users/create";
+		// }
 		if (user != null) {
 			if (user.getPassword() != null && user.getDateCreated() != null && user.getEmail() != null
 					&& user.getRole() != null && user.getUserId() != null) {
 				try {
 					this.userService.createUser(user);
+					// redirect.addFlashAttribute("globalMessage", "Successfully created user " +
+					// user.getUserId());
 				} catch (Exception e) {
-					log.debug(e.getMessage());
-					return "/users/create";
+					log.error("Error creating user:" + e.getMessage());
+					// redirect.addFlashAttribute("globalMessage", "Error creating user " +
+					// user.getUserId());
+					return "redirect:/users/create";
 				}
 			} else {
 				log.debug("Some user properties missing");
 				return "/users/create";
 			}
 		}
-
 		return "redirect:/users/list";
 
 	}

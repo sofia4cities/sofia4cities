@@ -94,19 +94,19 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label"><i class="la la-credit-card"></i> <span th:text="#{configurations.type} + ':'">Configuration Type</span></label>
-															<p class="form-control-static-block bold" th:text="*{configurationTypeId.name}"> Configuration Type </p>
+															<p class="form-control-static-block bold" th:text="*{configurationType.id}"> Configuration Type </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{configuration.userid} + ':'">User Id</label>
-															<p class="form-control-static-block bold" th:text="*{userId.userId}"> User Name </p>
+															<p class="form-control-static-block bold" th:text="*{user.userId}"> User Name </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{configuration.id} + ':'">Identification</label>
-															<p class="form-control-static-block bold" th:text="*{identification}"> Identification </p>
+															<label class="control-label" th:text="#{configuration.environment} + ':'"> Environment </label>
+															<p class="form-control-static-block bold" th:text="environment"> Environment </p>
 														</div>
 													</div>											
 												</div>
@@ -114,8 +114,8 @@
 												<div class="row">
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{configurations.json}">JSON</label>														
-															<textarea readonly="true" id="jsonSchema" name="jsonSchema"  th:required="true" th:field="*{jsonSchema}" class="form-control bold autoExpand" rows="6" data-min-rows='5'></textarea>
+															<label class="control-label" th:text="#{configurations.yml}">YML Config</label>														
+															<textarea readonly="true" id="ymlConfig" name="ymlConfig"  th:required="true" th:field="*{ymlConfig}" class="form-control bold autoExpand" rows="6" data-min-rows='5'></textarea>
 														</div>
 													</div>																					
 												</div>
@@ -127,8 +127,8 @@
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/configurations/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${configuration.userId.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/configurations/update/} + ${configuration.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${configuration.userId.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/configurations/update/} + ${configuration.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${configuration.user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/configurations/update/} + ${configuration.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${configuration.user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/configurations/update/} + ${configuration.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													
 													
 													<!-- REMOVE TO-DO: caducado -->
@@ -206,15 +206,13 @@
 	
 	
 	
-		var myTextArea = document.getElementById('jsonSchema');
+		var myTextArea = document.getElementById('ymlConfig');
 		var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
 			lineNumbers : true,
 			matchBrackets : true,
 			styleActiveLine : true,
 			theme : "material",
-			mode : {
-				name : "javascript",
-				json : true
+			mode : "text/x-yaml"
 			}
 		});
 		myCodeMirror.setSize("100%", 350);

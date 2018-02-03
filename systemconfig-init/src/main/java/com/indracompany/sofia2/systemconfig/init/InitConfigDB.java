@@ -813,10 +813,23 @@ public class InitConfigDB {
 	public void init_UserCDB() {
 		log.info("init UserCDB");
 		List<User> types = this.userCDBRepository.findAll();
+
+		User type = null;
+
+		type = new User();
+		type.setUserId("lmgracia");
+		type.setPassword("changeIt!");
+		type.setFullName("Luis Miguel GRacia");
+		type.setEmail("lmgracia@sofia2.com");
+		type.setActive(true);
+		type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
+		type.setDateCreated(Calendar.getInstance().getTime());
+		userCDBRepository.save(type);
+
 		if (types.isEmpty()) {
 			try {
 				log.info("No types en tabla.Adding...");
-				User type = new User();
+				type = new User();
 				type.setUserId("administrator");
 				type.setPassword("changeIt!");
 				type.setFullName("Generic Administrator of the Platform");
@@ -885,6 +898,7 @@ public class InitConfigDB {
 				type.setRole(this.roleRepository.findById(Role.Type.OPERATIONS.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
+				//
 			} catch (Exception e) {
 				log.error("Error UserCDB:" + e.getMessage());
 				userCDBRepository.deleteAll();

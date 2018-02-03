@@ -50,6 +50,10 @@
 			
 			<!-- BEGIN CONTENT BODY -->
 			<div class="page-content">
+			
+                <div class="alert alert-success display-hide">
+					<span th:text="${globalMessage}"></span>
+				</div>		
 				
 				<!-- BEGIN PAGE BAR AND BREADCRUM-->
 				<div class="page-bar margin-bottom-20">
@@ -113,7 +117,7 @@
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
 															<label class="control-label" th:text="#{user.rolTypeName} + ':'">Role</label>
-															<p class="form-control-static-block bold" th:text="*{roleTypeId.name}"> User Role </p>
+															<p class="form-control-static-block bold" th:text="*{role.name}"> User Role </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
