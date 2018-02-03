@@ -1,3 +1,5 @@
+sofia2:
+   encription.key: sofia2
 spring:
    ## JPA Config
    datasource:
