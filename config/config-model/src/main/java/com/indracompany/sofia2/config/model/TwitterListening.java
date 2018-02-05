@@ -30,7 +30,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "TWITTER_LISTENER")
+@Table(name = "TWITTER_LISTENING")
 @Configurable
 public class TwitterListening extends AuditableEntityWithUUID {
 

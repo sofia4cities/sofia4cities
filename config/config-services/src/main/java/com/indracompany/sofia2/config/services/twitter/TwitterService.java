@@ -16,6 +16,7 @@ package com.indracompany.sofia2.config.services.twitter;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
 
 public interface TwitterService {
@@ -33,7 +34,16 @@ public interface TwitterService {
 	List<String> getClientsFromOntology(String ontologyId);
 
 	List<String> getTokensFromClient(String clientPlatformId);
+	
+	void updateListen(TwitterListening twitterListener);
+	
+	boolean existOntology(String identification);
+	
+	boolean existClientPlatform(String identification);
+	
+	Ontology createTwitterOntology(String ontologyId, String dataModel);	
 
 	void createListening(TwitterListening TwitterListening);
+
 
 }

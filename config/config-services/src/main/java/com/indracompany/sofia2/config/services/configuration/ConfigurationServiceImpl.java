@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.config.services.configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import org.yaml.snakeyaml.constructor.Constructor;
 import com.indracompany.sofia2.config.components.AllConfiguration;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.Configuration.Environment;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.ConfigurationType.Types;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
@@ -135,7 +138,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public boolean isValidYaml(final String yml) {
+	public boolean isValidYML(final String yml) {
 		try {
 			Yaml yamlParser = new Yaml();
 			yamlParser.load(yml);
@@ -144,6 +147,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			log.error("Error parsing file:" + e.getMessage());
 			return false;
 		}
+	}
+	
+	@Override
+	public List<Environment> getEnvironmentValues()
+	{
+		Environment[] environments= Configuration.Environment.values();
+		List<Environment> environmentsList=new ArrayList<Environment>(Arrays.asList(environments));
+		return environmentsList;
+	
 	}
 
 	@Override

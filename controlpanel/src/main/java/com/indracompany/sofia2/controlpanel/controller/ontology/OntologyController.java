@@ -22,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,9 +45,13 @@ public class OntologyController {
 
 	@Autowired
 	private AppWebUtils utils;
+	
+	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/list",produces = "text/html")
-	public String list(Model model, HttpServletRequest request, @RequestParam(required=false, name="identification")String identification,@RequestParam(required=false, name="description")String description) {
+	public String list(Model model, HttpServletRequest request,
+			@RequestParam(required=false, name="identification")String identification,
+			@RequestParam(required=false, name="description")String description) {
 		
 		//Scaping "" string values for parameters 
 		if(identification!=null){if(identification.equals("")) identification=null;}
@@ -57,10 +62,12 @@ public class OntologyController {
 		model.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
 	}
-	@RequestMapping(method = RequestMethod.POST, value="getNamesForAutocomplete")
+	
+	@PostMapping("/getNamesForAutocomplete")
 	public @ResponseBody List<String> getNamesForAutocomplete(){
 		return this.ontologyService.getAllIdentifications();
 	}
+	
 	@GetMapping(value = "/create",produces = "text/html")
 	public String create(Model model)
 	{		
@@ -72,6 +79,7 @@ public class OntologyController {
 	public String createWizard(Model model)
 	{
 		model.addAttribute("ontology", new Ontology());
+		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
 		return "/ontologies/createwizard";
 	}
 	
