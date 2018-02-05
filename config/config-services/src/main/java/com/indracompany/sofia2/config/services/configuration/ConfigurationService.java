@@ -52,4 +52,8 @@ public interface ConfigurationService {
 	boolean isValidYaml(final String yaml);
 
 	Map fromYaml(final String yaml);
+	
+	Configuration getConfigurationByDescription(String descrption);
+
+
 }

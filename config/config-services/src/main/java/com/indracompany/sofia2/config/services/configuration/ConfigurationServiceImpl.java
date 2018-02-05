@@ -82,6 +82,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 					"Exist a configuration of this type for the environment and suffix:" + configuration.toString());
 
 		oldConfiguration = new Configuration();
+		oldConfiguration.setUser(configuration.getUser());
+		oldConfiguration.setConfigurationType(configuration.getConfigurationType());
 		oldConfiguration.setYmlConfig(configuration.getYmlConfig());
 		oldConfiguration.setDescription(configuration.getDescription());
 		oldConfiguration.setSuffix(configuration.getSuffix());
@@ -159,6 +161,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
 		return this.configurationRepository.findByConfigurationTypeAndEnvironmentAndSuffix(confType, environment,
 				suffix);
+	}
+	
+	@Override
+	public Configuration getConfigurationByDescription(String description)
+	{
+		return this.configurationRepository.findByDescription(description);
 	}
 
 	@Override

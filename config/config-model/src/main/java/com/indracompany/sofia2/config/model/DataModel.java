@@ -57,6 +57,7 @@ public class DataModel extends AuditableEntityWithUUID {
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@Getter
 	@Setter
 	private String jsonSchema;
 
@@ -110,3 +111,4 @@ public class DataModel extends AuditableEntityWithUUID {
 	}
 
 }
+

@@ -127,9 +127,7 @@
 															<label class="control-label" th:text="#{configurations.type} + ':'">Configuration Type</label>
 															<select id="configurationTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{configurationType.id}" th:required="true">
 																<option th:each="configurationType :${configurationTypes}" th:value="${configurationType.id}" th:text="${configurationType.description}" ></option>
-																<th:block if="${configuration.configurationType !=null}">
-																	<option th:text="${configuration.configurationType.description}" th:value="${configuration.configurationType.id}"></option>
-																</th:block>
+																
 															</select>													
 														</div>
 													</div>													
@@ -149,26 +147,24 @@
 																<i class="fa"></i>
 																<select id="environments" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{configuration.environment}" th:field="*{environment}" th:required="true">
 																<option th:each="environment :${environments}" th:value="${environment}" th:text="${environment}" ></option>
-																<th:block if="${configuration.environment !=null}">
-																	<option th:text="${configuration.environment}" th:value="${configuration.environment}"></option>
-																</th:block>
+																
 															</select>
 															</div>	
 														</div>
 													</div>												
 												</div>
-												<!-- Json-->
+												<!-- Descrption-->
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="" th:text="#{configuration.description} + ':'">Configuration Description</label>
-															<div class="input-icon ">
-																<i class="fa"></i>
-																<input id="description" type="text"  th:required="true"  maxlength="50" th:field="*{description}" class="form-control no-remove" th:placeholder="#{configuration.description}"/>
-															</div>	
+																													
+															<input id="description" type="text"  th:required="true"  maxlength="50" th:field="*{description}" class="form-control no-remove" th:placeholder="#{configuration.description}"/>
+															
 														</div>
 													</div>
 												</div>
+												<!-- Json-->
 												<div class="row">
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">

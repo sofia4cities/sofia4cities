@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -33,6 +34,7 @@ import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.TwitterListeningRepository;
+import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 
@@ -42,7 +44,7 @@ public class TwitterServiceImpl implements TwitterService {
 	@Autowired
 	TwitterListeningRepository twitterListeningRepository;
 	@Autowired
-	ConfigurationRepository configurationRepository;
+	ConfigurationService configurationService;
 	@Autowired
 	ClientPlatformRepository clientPlatformRepository;
 	@Autowired
@@ -74,12 +76,18 @@ public class TwitterServiceImpl implements TwitterService {
 
 	@Override
 	public List<Configuration> getAllConfigurations() {
-		return this.configurationRepository.findAll();
+		return this.configurationService.getConfigurations(ConfigurationType.Type.TwitterConfiguration);
 	}
 
 	@Override
 	public List<Configuration> getConfigurationsByUserId(String userId) {
-		return this.configurationRepository.findByUser(this.userService.getUser(userId));
+		List<Configuration> configurationsByUser = new ArrayList<Configuration>();
+		for(Configuration configuration: this.getAllConfigurations())
+		{
+			if(configuration.getUser().getUserId().equals(userId)) configurationsByUser.add(configuration);
+		}
+		
+		return configurationsByUser;
 
 	}
 
@@ -105,19 +113,29 @@ public class TwitterServiceImpl implements TwitterService {
 
 	@Override
 	public void createListening(TwitterListening twitterListening) {
+		if(twitterListening.getOntology().getId()==null)
+			twitterListening.setOntology(this.ontologyService.getOntologyByIdentification(twitterListening.getOntology().getIdentification()));
+		if(twitterListening.getToken().getId()==null)
+			twitterListening.setToken(this.tokenRepository.findByToken(twitterListening.getToken().getToken()));
+		if(twitterListening.getConfiguration().getId()==null)
+			twitterListening.setConfiguration(this.configurationService.getConfigurationByDescription(twitterListening.getConfiguration().getDescription()));
 		this.twitterListeningRepository.save(twitterListening);
 	}
 
 	@Override
-	public void updateListen(TwitterListening twitterListener) {
-		TwitterListening newTwitterListening = this.twitterListeningRepository.findById(twitterListener.getId());
-		if (newTwitterListening != null) {
-			newTwitterListening.setIdentificator(twitterListener.getIdentificator());
-			newTwitterListening.setConfiguration(this.configurationRepository
-					.findByDescription(twitterListener.getConfiguration().getDescription()));
-			newTwitterListening.setTopics(twitterListener.getTopics());
-			newTwitterListening.setDateFrom(twitterListener.getDateFrom());
-			newTwitterListening.setDateTo(twitterListener.getDateTo());
+
+	public void updateListen(TwitterListening twitterListening)
+	{
+		TwitterListening newTwitterListening=this.twitterListeningRepository.findById(twitterListening.getId());
+		if(newTwitterListening!=null)
+		{
+			newTwitterListening.setIdentificator(twitterListening.getIdentificator());
+			newTwitterListening.setConfiguration(this.configurationService
+					.getConfigurationByDescription(twitterListening.getConfiguration().getDescription()));
+			newTwitterListening.setTopics(twitterListening.getTopics());
+			newTwitterListening.setDateFrom(twitterListening.getDateFrom());
+			newTwitterListening.setDateTo(twitterListening.getDateTo());
+
 			this.twitterListeningRepository.save(newTwitterListening);
 		}
 

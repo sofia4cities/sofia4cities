@@ -33,6 +33,7 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.twitter.TwitterService;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -48,6 +49,8 @@ public class TwitterListeningController {
 	TwitterService twitterService;
 	@Autowired
 	OntologyService ontologyService;
+	@Autowired
+	ConfigurationService configurationService;
 
 	@Autowired
 	UserService userService;
@@ -87,15 +90,21 @@ public class TwitterListeningController {
 	}
 
 	@PostMapping("/scheduledsearch/create")
-	public String create(Model model, @ModelAttribute TwitterListening twitterListener,
+	public String create(Model model,@ModelAttribute TwitterListening twitterListening,
 			@RequestParam("_new") Boolean newOntology,
-			@RequestParam(value = "ontologyId", required = false) String ontologyId,
-			@RequestParam(value = "clientPlatformId", required = false) String clientPlatformId) {
-		if (twitterListener != null) {
-			if (!newOntology)
-				this.twitterService.createListening(twitterListener);
-			else {
-				Ontology ontology = this.twitterService.createTwitterOntology(ontologyId, DATAMODEL_TWITTER);
+			@RequestParam(value="ontologyId",required=false) String ontologyId,
+			@RequestParam(value="clientPlatformId",required=false) String clientPlatformId)
+	{
+		if(twitterListening!=null)
+		{
+			if(!newOntology)
+			{
+				if(twitterListening.getUser()==null)twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
+				this.twitterService.createListening(twitterListening);
+			}
+			else
+			{
+				Ontology ontology=this.twitterService.createTwitterOntology(ontologyId, DATAMODEL_TWITTER);
 				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 				ontology = this.ontologyService.saveOntology(ontology);
 				// TODO CREATE CLIENT & TOKEN-->THEN SAVE TWITTERLISTEN
