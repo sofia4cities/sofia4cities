@@ -21,11 +21,11 @@ import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
-
 
 @Service
 public class OntologyServiceImpl implements OntologyService {
@@ -36,8 +36,6 @@ public class OntologyServiceImpl implements OntologyService {
 	DataModelRepository dataModelRepository;
 	@Autowired
 	UserService userService;
-
-	public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
 
 	@Override
 	public List<Ontology> getAllOntologies() {
@@ -53,14 +51,13 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public List<Ontology> getOntolgiesWithDescriptionAndIdentification(String userId, String identification,
+	public List<Ontology> getOntologiesWithDescriptionAndIdentification(String userId, String identification,
 			String description) {
 		List<Ontology> ontologies;
 		User user = this.userService.getUser(userId);
 
-		if (user.getRole().getName().equals(OntologyServiceImpl.ADMINISTRATOR)) {
+		if (user.getRole().getId().equals(Role.Type.ADMINISTRATOR)) {
 			if (description != null && identification != null) {
-
 				ontologies = this.ontologyRepository
 						.findByIdentificationContainingAndDescriptionContaining(identification, description);
 
@@ -120,15 +117,13 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public Ontology saveOntology(Ontology ontology)
-	{
+	public Ontology saveOntology(Ontology ontology) {
 		return this.ontologyRepository.save(ontology);
-		
+
 	}
-	
+
 	@Override
-	public List<DataModel> getAllDataModels()
-	{
+	public List<DataModel> getAllDataModels() {
 		return this.dataModelRepository.findAll();
 	}
 

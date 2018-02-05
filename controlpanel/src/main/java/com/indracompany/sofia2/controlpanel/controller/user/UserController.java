@@ -44,7 +44,6 @@ public class UserController {
 	UserService userService;
 	@Autowired
 	private AppWebUtils utils;
-	public static final String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/create", produces = "text/html")
@@ -66,7 +65,7 @@ public class UserController {
 	@GetMapping(value = "/update/{id}")
 	public String updateForm(@PathVariable("id") String id, Model model) {
 		// If non admin user tries to update any other user-->forbidden
-		if (!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR))
+		if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
 			return "/error/403";
 
 		this.populateFormData(model);
@@ -85,10 +84,10 @@ public class UserController {
 		if (user != null) {
 			if (user.getPassword() != null && user.getEmail() != null && user.getUserId() != null) {
 				try {
-					if (!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR))
+					if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
 						return "/error/403";
 					// If the user is not admin, the RoleType is not in the request by default
-					if (!this.utils.getRole().equals(ROLE_ADMINISTRATOR))
+					if (!utils.isAdministrator())
 						user.setRole(this.userService.getUserRole(this.utils.getRole()));
 					this.userService.updateUser(user);
 				} catch (Exception e) {
@@ -177,7 +176,7 @@ public class UserController {
 		User user = null;
 		if (id != null) {
 			// If non admin user tries to update any other user-->forbidden
-			if (!this.utils.getUserId().equals(id) && !this.utils.getRole().equals(ROLE_ADMINISTRATOR))
+			if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
 				return "/error/403";
 			user = this.userService.getUser(id);
 		}
