@@ -125,7 +125,7 @@
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label th:text="#{ontology.id} + ':'">Identification</label>
+															<label th:text="#{ontology.id} + ':'">Identification</label><span class="required"> (*)</span>
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
 																<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.id}"  th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
@@ -134,7 +134,7 @@
 													</div>													
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="" th:text="#{ontology.identification} + ':'">Name</label>
+															<label class="" th:text="#{ontology.identification} + ':'">Name</label><span class="required"> (*)</span>
 															<div class="input-icon ">
 																<i class="fa fa-user"></i>
 																<input id="identification" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{ontology.identification}"/>
@@ -143,7 +143,7 @@
 													</div>
 													<div class="col-md-6 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="metainf HELP" title="meta-Inf"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>																		
+															<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="metainf HELP" title="meta-Inf"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>
 															<input  id="metainf" data-role="tagsinput" class="form-control" type="text" th:field="*{metainf}" th:required="true" data-minlength="2" pattern=".{2,}" min="2"></input>
 															<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.metainf_min}"> min. 2 chars</small></span>
 														</div>

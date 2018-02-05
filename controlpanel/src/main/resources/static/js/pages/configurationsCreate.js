@@ -124,9 +124,8 @@ var ConfigurationsCreateController = function() {
             lineNumbers: false,
             foldGutter: true,
             //matchBrackets: true,
-            //styleActiveLine: true,
-            theme:"material",
-            //mode: {name: "javascript", json: true}
+            styleActiveLine: true,
+            theme:"material",          
         });
 		myCodeMirror.setSize("100%", 350);
     }

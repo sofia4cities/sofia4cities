@@ -60,10 +60,7 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/users/list}"> <span th:text="#{user.breadcrumb.prev}">Users List</span></a><i class="fa fa-circle"></i></li>
-						<li>
-							<span  th:text="#{user.breadcrumb.create}">Show User</span>							
-						</li>
+						<li><span  th:text="#{database.breadcrumb.show}">Database Console DBTR and BDH </span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
@@ -78,10 +75,10 @@
 						<div class="portlet light bordered">
 							<div class="portlet-title">
 								<div class="caption">
-									<i class="la la-users font-grey-gallery"></i>						
+									<i class="la la-table font-grey-gallery"></i>						
 									
 									<!-- FORM TITLE -->
-									<span  class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.create} + ':'"> New User</span>
+									<span  class="caption-subject font-grey-gallery uppercase" th:text="#{database.template.show} + ':'"> Database Console</span>
 									
 								</div>									
 								<div class="tools">
@@ -105,17 +102,17 @@
 									<div class="col-md-12 margin-bottom-20">								
 										<div class="form-group">										
 											<div class="input-group input-group-sm">
-												<span class="input-group-addon"> ONTOLOGÍAS</span>
-												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" title="Seleccione una Ontología...">
-												  <optgroup label="Genéricas">
-													<option th:each="ontology : ${ontologies}" th:id="${ontology.userId.userId}" th:data-description="${ontology.description}" data-type="general" th:value="${ontology.identification}" th:text="${ontology.identification}"  ></option>
+												<span class="input-group-addon" th:value="#{database.ontologies}" > ONTOLOGÍAS</span>
+												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" th:title="#{database.ontologies} +'...'">
+												  <optgroup th:label="#{database.generic}">
+													<option th:each="ontology : ${ontologies}" th:id="${ontology.user.userId}" th:data-description="${ontology.description}" data-type="general" th:value="${ontology.identification}" th:text="${ontology.identification}"  ></option>
 												  </optgroup>
 												 <!--  <optgroup label="Grupo">
 													<option th:each="ontologiagrupo:${ontologiasGrupo}" th:id="${ontologiagrupo.id}" data-type="grupo" th:value="${ontologiagrupo.identificacion}" th:text="${ontologiagrupo.identificacion}" ></option>
 												  </optgroup> -->
 												</select>
 											</div>
-											<span class="help-block hidden-xs"> Seleccione Ontologías Genéricas o de Grupo </span>										
+											<span class="help-block hidden-xs" th:text="#{database.ontologies.help}"> Seleccione Ontologías Genéricas o de Grupo </span>										
 										</div>
 									</div>									
 									

@@ -26,8 +26,9 @@
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>		
 		<!-- CODEMIRROR -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
+		
 	</head>	
 	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
@@ -166,6 +167,9 @@
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 	<script th:src="@{/static/vendor/codemirror/lib/codemirror.js}"/>
+	<script th:src="@{/static/vendor/codemirror/mode/yaml/yaml.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/matchbrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/selection/active-line.js}" />
 
 	<!-- TEMPLATE CONTROLLER  -->	
 		
@@ -197,15 +201,15 @@
 		// init when Document is ready
 		showLog ? console.log('SHOW USER ready()...') : '';
 		
+		
 		var myTextArea = document.getElementById('ymlConfig');
-		var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-			lineNumbers : true,
-			matchBrackets : true,
-			styleActiveLine : true,
-			theme : "material",
-			mode : "text/x-yaml"
-			}
-		});
+        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "text/x-yaml",
+            lineNumbers: false,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",          
+        });
 		myCodeMirror.setSize("100%", 350);
 		
 		
