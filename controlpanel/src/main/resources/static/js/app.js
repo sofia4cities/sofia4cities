@@ -11,13 +11,13 @@ var App = function() {
 
     var resizeHandlers = [];
 
-    var assetsPath = '../assets/';
+    var assetsPath = '../';
 
-    var globalImgPath = 'global/img/';
+    var globalImgPath = 'images/';
 
-    var globalPluginsPath = 'global/plugins/';
+    var globalPluginsPath = 'vendor/';
 
-    var globalCssPath = 'global/css/';
+    var globalCssPath = 'css/';
 
     // theme layout color set
 
@@ -460,27 +460,6 @@ var App = function() {
         App.initSlimScroll('.scroller');
     };
 
-    // Handles Image Preview using jQuery Fancybox plugin
-    var handleFancybox = function() {
-        if (!jQuery.fancybox) {
-            return;
-        }
-
-        if ($(".fancybox-button").size() > 0) {
-            $(".fancybox-button").fancybox({
-                groupAttr: 'data-rel',
-                prevEffect: 'none',
-                nextEffect: 'none',
-                closeBtn: true,
-                helpers: {
-                    title: {
-                        type: 'inside'
-                    }
-                }
-            });
-        }
-    };
-
     // Handles counterup plugin wrapper
     var handleCounterup = function() {
         if (!$().counterUp) {
@@ -531,7 +510,8 @@ var App = function() {
             });
         }
     };
-
+	
+	
     // handle group element heights
    var handleHeight = function() {
        $('[data-auto-height]').each(function() {
@@ -576,7 +556,7 @@ var App = function() {
 
         //main function to initiate the theme
         init: function() {
-            //IMPORTANT!!!: Do not modify the core handlers call order.
+           
 
             //Core handlers
             handleInit(); // initialize core variables
@@ -586,8 +566,7 @@ var App = function() {
             handleMaterialDesign(); // handle material design       
             handleiCheck(); // handles custom icheck radio and checkboxes
             handleBootstrapSwitch(); // handle bootstrap switch plugin
-            handleScrollers(); // handles slim scrolling contents 
-            handleFancybox(); // handle fancy box
+            handleScrollers(); // handles slim scrolling contents            
             handleSelect2(); // handle custom Select2 dropdowns
             handlePortletTools(); // handles portlet action bar functionality(refresh, configure, toggle, remove)
             handleAlerts(); //handle closabled alerts
@@ -1016,5 +995,5 @@ var App = function() {
 <!-- END THEME LAYOUT SCRIPTS -->
 
 jQuery(document).ready(function() {    
-   App.init(); // init sofia2 control panel  core componets
+   App.init(); // init control panel  core componets
 });

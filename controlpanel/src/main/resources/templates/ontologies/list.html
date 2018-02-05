@@ -90,8 +90,8 @@
 											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
 										</a>												
 										<ul class="dropdown-menu pull-right" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createwizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
 											<li class="divider"> </li>
@@ -185,7 +185,7 @@
 																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  th:if="(${#authentication.name} == ${ontology.userId.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  th:if="(${#authentication.name} == ${ontology.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																	
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->

@@ -1,15 +1,16 @@
-var ConfigurationsCreateController = function() {
+var OntologyCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
-	var LIB_TITLE = 'Configurations Controller';	
+	var LIB_TITLE = 'Ontology Create/Update/Remove Controller';	
     var logControl = 1;
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.
 	var currentFormat = '' // date format depends on currentLanguage.
+	var internalFormat = 'yyyy/mm/dd';
+	var internalLanguage = 'en';
 	
-	// CONTROLLER PRIVATE FUNCTIONS
-	
+	// CONTROLLER PRIVATE FUNCTIONS	
 
 	
 	// REDIRECT URL
@@ -35,30 +36,21 @@ var ConfigurationsCreateController = function() {
 		
 		// CLEAN ALERT MSG
 		$('.alert-danger').hide();
-		
-		// CLEANING CODEMIRROR
-		if ($('.CodeMirror')[0].CodeMirror){
-			var editor = $('.CodeMirror')[0].CodeMirror;
-			editor.setValue('');
-			
-		}
 	}
 	
-	
-	
-	
+			
 	// FORM VALIDATION
 	var handleValidation = function() {
 		logControl ? console.log('handleValidation() -> ') : '';
         // for more info visit the official plugin documentation: 
         // http://docs.jquery.com/Plugins/Validation
 		
-        var form1 = $('#configurations_create_form');
+        var form1 = $('#ontology_create_form');
         var error1 = $('.alert-danger');
         var success1 = $('.alert-success');
 		
 		// set current language
-		currentLanguage = userCreateReg.language || LANGUAGE;
+		currentLanguage = ontologyCreateReg.language || LANGUAGE;
 		
         form1.validate({
             errorElement: 'span', //default input error message container
@@ -66,14 +58,15 @@ var ConfigurationsCreateController = function() {
             focusInvalid: false, // do not focus the last invalid input
             ignore: ":hidden:not(.selectpicker)", // validate all fields including form hidden input but not selectpicker
 			lang: currentLanguage,
-
+			// custom messages
+            messages: {					
+			},
 			// validation rules
             rules: {
-				userId:					{ minlength: 5, required: true },             
-				configurationTypes:		{ required: true },
-				ymlConfig:   			{required:true},
-				createdAt:				{ date: true, required: true },
-
+				ontologyId:		{ minlength: 5, required: true },
+                identification:	{ minlength: 5, required: true },
+				metainf:		{ minlength: 5, required: true },
+				description:	{ minlength: 5, required: true }                
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
                 success1.hide();
@@ -99,54 +92,94 @@ var ConfigurationsCreateController = function() {
                 success1.show();
                 error1.hide();
 				form.submit();
-            }
+			}
         });
     }
 	
 	
 	// INIT TEMPLATE ELEMENTS
 	var initTemplateElements = function(){
-		logControl ? console.log('initTemplateElements() -> resetForm') : '';		
+		logControl ? console.log('initTemplateElements() -> selectpickers, datepickers, resetForm, today->dateCreated currentLanguage: ' + currentLanguage) : '';
+		
+		// selectpicker validate fix when handleValidation()
+		$('.selectpicker').on('change', function () {
+			$(this).valid();
+		});
+		
+				
+		// set current language and formats
+		currentLanguage = ontologyCreateReg.language || LANGUAGE[0];
+		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';		
+		
+		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage) : '';
+		
 				
 		// Reset form
 		$('#resetBtn').on('click',function(){ 
-			cleanFields('configurations_create_form');
-		});	
-	}
-	
-	// INIT CODEMIRROR
-	var handleCodeMirror = function () {
-		logControl ? console.log('handleCodeMirror() on -> ymlConfig') : '';	
+			cleanFields('ontology_create_form');
+		});
 		
-        var myTextArea = document.getElementById('ymlConfig');
-        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-        	mode: "text/x-yaml",
-            lineNumbers: false,
-            foldGutter: true,
-            matchBrackets: true,
-            styleActiveLine: true,
-            theme:"material",         
-
-        });
-		myCodeMirror.setSize("100%", 350);
-    }
+		
+		// INSERT MODE ACTIONS  (ontologyCreateReg.actionMode = NULL ) 
+		if ( ontologyCreateReg.actionMode === null){
+			logControl ? console.log('|---> Action-mode: INSERT') : '';
+			
+			// Set active 
+			$('#active').trigger('click');
+			
+			// Set Public 
+			$('#public').trigger('click');
+		}
+		// EDIT MODE ACTION 
+		else {	
+			logControl ? console.log('|---> Action-mode: UPDATE') : '';
+			
+		}
+		
+	}	
+	
+	// DELETE ONTOLOGY
+	var deleteOntologyConfirmation = function(ontologyId){
+		console.log('deleteOntologyConfirmation() -> formId: '+ ontologyId);
+		
+		// no Id no fun!
+		if ( !ontologyId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO ONTOLOGY-FORM SELECTED!'}); return false; }
+		
+		// No dateDeleted no fun!
+		if ( !$('#datedeleted').val() ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: ontologyCreateReg.validation_dates}); return false; }
+		
+		logControl ? console.log('deleteOntologyConfirmation() -> formAction: ' + $('.delete-ontology').attr('action') + ' ID: ' + $('.delete-ontology').attr('ontologyId')) : '';
+		
+		// call ontology Confirm at header. TO-DO: ver que show toca
+		HeaderController.showConfirmDialogUsuario('delete_ontology_form');	
+	}
 
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{		
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
 		load: function(Data) { 
 			logControl ? console.log(LIB_TITLE + ': load()') : '';
-			return userCreateReg = Data;
+			return ontologyCreateReg = Data;
 		},	
 		
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';			
 			handleValidation();
-			initTemplateElements();
-			handleCodeMirror();
+			initTemplateElements();		
 			
-		}		
+		},
+		// REDIRECT
+		go: function(url){
+			logControl ? console.log(LIB_TITLE + ': go()') : '';	
+			navigateUrl(url); 
+		},
+		// DELETE ONTOLOGY 
+		deleteOntology: function(ontologyId){
+			logControl ? console.log(LIB_TITLE + ': deleteOntology()') : '';	
+			deleteOntologyConfirmation(ontologyId);			
+		}
+		
 	};
 }();
 
@@ -154,10 +187,8 @@ var ConfigurationsCreateController = function() {
 jQuery(document).ready(function() {
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
-	ConfigurationsCreateController.load(configurationsCreateJson);	
+	OntologyCreateController.load(ontologyCreateJson);	
 		
 	// AUTO INIT CONTROLLER.
-	ConfigurationsCreateController.init();
-	
+	OntologyCreateController.init();
 });
-
