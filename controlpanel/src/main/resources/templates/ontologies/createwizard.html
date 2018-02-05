@@ -213,16 +213,16 @@
 																				<!-- columna de selector de plantillas -->
 																					<div class="mt-element-list">                                            
 																						<div class="mt-list-container list-default ext-1 group"  th:each="datamodel : ${dataModels}" style="padding:0;">																									
-																							<a data-toggle="collapse" href="#general" aria-expanded="true" class="list-toggle-container">
-																								<div class="list-toggle bg-grey-mint uppercase"> <span th:text="${datamodel.identification}">GENERAL</span><span class="badge badge-default pull-right bg-white font-purple bold">2</span></div>
+																							<a data-toggle="collapse" th:href="'#'+${datamodel.id}" aria-expanded="true" class="list-toggle-container">
+																								<div class="list-toggle bg-grey-mint uppercase"> <span th:text="${datamodel.name}">GENERAL</span><span class="badge badge-default pull-right bg-white font-purple bold">2</span></div>
 																							</a>
-																							<div class="panel-collapse collapse in" aria-expanded="true"  id="general">
-																								<ul th:id="${datamodel.identification}">
+																							<div class="panel-collapse collapse in" aria-expanded="true"  th:id="${datamodel.id}">
+																								<ul th:id="${datamodel.name}">
 																									<li class="mt-list-item" >
-																										<div class="list-item-content" style="padding: 0 15px 0 10px;" >
-																											<h3 class="uppercase"><a href="javascript:;" th:text="${datamodel.identification}"></a></h3>
+																										<div class="list-item-content" style="padding: 0 15px 0 10px;" th:attr="data-schema=${datamodel.jsonSchema}">
+																											<h3 class="uppercase"><a href="javascript:;" th:text="${datamodel.name}"></a></h3>
 																											<p th:text="${datamodel.description}"></p>
-																											<p th:text="${datamodel.jsonSchema}"></p>
+																											<p th:text="${datamodel.type}"></p>
 																										</div>
 																									</li>																									
 																								</ul>
