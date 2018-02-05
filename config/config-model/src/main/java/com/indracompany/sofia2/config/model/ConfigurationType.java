@@ -31,7 +31,7 @@ import lombok.Setter;
 @Configurable
 public class ConfigurationType extends AuditableEntity {
 
-	public static enum Types {
+	public static enum Type {
 		EndpointModulesConfiguration, TwitterConfiguration, MailConfiguration, RTDBConfiguration, MonitoringConfiguration, SchedulingConfiguration
 	}
 
@@ -41,6 +41,10 @@ public class ConfigurationType extends AuditableEntity {
 	@Getter
 	@Setter
 	private String id;
+
+	public void setIdEnum(ConfigurationType.Type type) {
+		this.id = type.toString();
+	}
 
 	@Column(name = "DESCRIPTION", length = 255)
 	@Getter

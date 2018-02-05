@@ -17,11 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.indracompany.sofia2.config.services.menu.MenuService;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -33,31 +31,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MainPageController {
 
-
-	@Autowired 
+	@Autowired
 	private AppWebUtils utils;
 	@Autowired
 	private MenuService menuService;
 	@Autowired
 	private UserService userService;
 
-
 	@Value("${sofia2.urls.iotbroker}")
 	String url;
-	
+
 	@GetMapping("/main")
 	private String main(Model model, HttpServletRequest request) {
-		//Load menu by role in session
-		String jsonMenu=this.menuService.loadMenuByRole(this.userService.getUser(utils.getUserId()));
-		//Remove PrettyPrinted
-		String menu= utils.jsonStringToString(jsonMenu);
-		
+		// Load menu by role in session
+		String jsonMenu = this.menuService.loadMenuByRole(this.userService.getUser(utils.getUserId()));
+		// Remove PrettyPrinted
+		String menu = utils.validateAndReturnJson(jsonMenu);
+
 		utils.setSessionAttribute(request, "menu", menu);
 		return "/main";
 	}
-
-	
-	
-	
 
 }

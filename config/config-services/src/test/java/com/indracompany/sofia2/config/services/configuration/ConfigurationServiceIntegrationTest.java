@@ -1,3 +1,16 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.config.services.configuration;
 
 import java.util.Map;
@@ -40,8 +53,7 @@ public class ConfigurationServiceIntegrationTest {
 
 	@Test
 	public void testGetConfigurationTwitter() {
-		Configuration config = service.getConfiguration(ConfigurationType.Types.TwitterConfiguration, "ALL",
-				"lmgracia");
+		Configuration config = service.getConfiguration(ConfigurationType.Type.TwitterConfiguration, "ALL", "lmgracia");
 		Map values = service.fromYaml(config.getYmlConfig());
 		Map value = (Map) values.get("twitter");
 		Assert.assertEquals(value.get("accessToken"), "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy");

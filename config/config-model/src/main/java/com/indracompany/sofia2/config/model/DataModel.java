@@ -42,6 +42,10 @@ import lombok.Setter;
 @Configurable
 public class DataModel extends AuditableEntityWithUUID {
 
+	public static enum MainType {
+		IoT, SmartCities, General, SocialMedia, Twitter, SmartHome, SmartEnergy, SmartRetail, SmartIndustry, GSMA, FiwareDataModel
+	}
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
@@ -49,24 +53,19 @@ public class DataModel extends AuditableEntityWithUUID {
 	@Setter
 	private User user;
 
-	@Column(name = "JSONSCHEMA", nullable = false)
+	@Column(name = "JSON_SCHEMA", nullable = false)
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@Getter
 	@Setter
 	private String jsonSchema;
 
-	@Column(name = "RELATIONAL", nullable = false)
+	@Column(name = "NAME", length = 45, unique = true, nullable = false)
 	@NotNull
 	@Setter
 	@Getter
-	private boolean relational;
-
-	@Column(name = "IDENTIFICATION", length = 45, unique = true, nullable = false)
-	@NotNull
-	@Setter
-	@Getter
-	private String identification;
+	private String name;
 
 	@Column(name = "TYPE", length = 45, nullable = false)
 	@NotNull
@@ -74,15 +73,19 @@ public class DataModel extends AuditableEntityWithUUID {
 	@Getter
 	private String type;
 
-	@Column(name = "DESCRIPTION", length = 512)
+	public void setTypeEnum(DataModel.MainType type) {
+		this.type = type.toString();
+	}
+
+	@Column(name = "DESCRIPTION", length = 255)
 	@Setter
 	@Getter
 	private String description;
 
-	@Column(name = "CATEGORY", length = 512)
+	@Column(name = "LABELS", length = 255)
 	@Setter
 	@Getter
-	private String category;
+	private String labels;
 
 	public String getSchema() {
 		String schema = this.jsonSchema.toString();
@@ -108,3 +111,4 @@ public class DataModel extends AuditableEntityWithUUID {
 	}
 
 }
+

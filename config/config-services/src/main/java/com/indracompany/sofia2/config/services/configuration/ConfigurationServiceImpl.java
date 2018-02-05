@@ -13,7 +13,6 @@
  */
 package com.indracompany.sofia2.config.services.configuration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,6 @@ import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Configuration.Environment;
 import com.indracompany.sofia2.config.model.ConfigurationType;
-import com.indracompany.sofia2.config.model.ConfigurationType.Types;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.config.services.exceptions.ConfigServiceException;
@@ -84,6 +82,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 					"Exist a configuration of this type for the environment and suffix:" + configuration.toString());
 
 		oldConfiguration = new Configuration();
+		oldConfiguration.setUser(configuration.getUser());
+		oldConfiguration.setConfigurationType(configuration.getConfigurationType());
 		oldConfiguration.setYmlConfig(configuration.getYmlConfig());
 		oldConfiguration.setDescription(configuration.getDescription());
 		oldConfiguration.setSuffix(configuration.getSuffix());
@@ -111,7 +111,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public TwitterConfiguration getTwitterConfiguration(String environment, String suffix) {
 		try {
-			Configuration config = this.getConfiguration(ConfigurationType.Types.TwitterConfiguration, environment,
+			Configuration config = this.getConfiguration(ConfigurationType.Type.TwitterConfiguration, environment,
 					suffix);
 			Constructor constructor = new Constructor(AllConfiguration.class);
 			Yaml yaml = new Yaml(constructor);
@@ -138,7 +138,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public boolean isValidYML(final String yml) {
+	public boolean isValidYaml(final String yml) {
 		try {
 			Yaml yamlParser = new Yaml();
 			yamlParser.load(yml);
@@ -148,27 +148,30 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			return false;
 		}
 	}
-	
-	@Override
-	public List<Environment> getEnvironmentValues()
-	{
-		Environment[] environments= Configuration.Environment.values();
-		List<Environment> environmentsList=new ArrayList<Environment>(Arrays.asList(environments));
-		return environmentsList;
-	
-	}
 
 	@Override
-	public List<Configuration> getConfigurations(Types configurationTypeId) {
+	public List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId) {
 		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
 		return this.configurationRepository.findByConfigurationType(confType);
 	}
 
 	@Override
-	public Configuration getConfiguration(Types configurationTypeId, String environment, String suffix) {
+	public Configuration getConfiguration(ConfigurationType.Type configurationTypeId, String environment,
+			String suffix) {
 		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
 		return this.configurationRepository.findByConfigurationTypeAndEnvironmentAndSuffix(confType, environment,
 				suffix);
+	}
+	
+	@Override
+	public Configuration getConfigurationByDescription(String description)
+	{
+		return this.configurationRepository.findByDescription(description);
+	}
+
+	@Override
+	public List<Environment> getEnvironmentValues() {
+		return Arrays.asList(Configuration.Environment.values());
 	}
 
 }

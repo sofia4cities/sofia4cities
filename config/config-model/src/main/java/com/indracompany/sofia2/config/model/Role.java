@@ -52,6 +52,10 @@ public class Role extends AuditableEntity {
 	@Setter
 	private String id;
 
+	public void setIdEnum(Role.Type role) {
+		this.id = role.toString();
+	}
+
 	@OneToOne(cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ROLE_PARENT", unique = false, nullable = true, insertable = true, updatable = true)

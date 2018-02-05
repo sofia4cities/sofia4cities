@@ -127,15 +127,13 @@
 												<div class="col-md-6 col-sm-12 panel-tools">
 													<fieldset class="col-sm-3">												
 														<select class="element select small form-control" id="targetDatabase" name="targetDatabase" onChange="cambioConsulta();">
-															<option name="bdtr" value="bdtr"> BDTR </option>
-															<option name="bdh" value="bdh"> BDH </option>
-															<option name="bdc" value="bdc"> BDC </option>
+															<option name="rtdb" value="rtdb"> RealTime DB</option>
+															<option name="hdb" value="hdb"> Historical DB </option>
 														</select>
 													</fieldset>
 													<fieldset class="col-md-3">							
 														<select  class="element select small form-control" id="typeQuery" name="typeQuery" onChange="cambioConsulta()">
-															<option name="sql2" value="sql2"> SQL </option>
-															<option name="sql" value="sql"> SQL-LIKE (deprecated) </option>
+															<option name="sql" value="sql2"> SQL </option>
 															<option name="native" value="native"> NATIVE </option>
 														</select>
 													</fieldset>
@@ -143,7 +141,6 @@
 														<select  class="element select small form-control" id="resultFormat" name="typeQuery" disabled="disabled">
 															<option name="json" value="json"> JSON </option>
 															<option name="table" value="table"> TABLE </option>
-															<option id="json_deprecated" name="json_deprecated" value="json_deprecated"> JSON_DEPRECATED </option>
 														</select>
 													</fieldset>	
 													<fieldset id="fieldset_offset" class="col-md-3">

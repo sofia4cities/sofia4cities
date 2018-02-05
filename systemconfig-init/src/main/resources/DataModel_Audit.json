@@ -1,0 +1,77 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Audits",
+    "type": "object",
+    "required": [
+        "Adt"
+    ],
+    "properties": {
+        "Adt": {
+            "type": "object",
+            "properties": {
+                "auditId": {
+                    "type": "string"
+                },
+                "auditSource": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "object",
+                    "required": [
+                        "$date"
+                    ],
+                    "properties": {
+                        "$date": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "assetId": {
+                    "type": "string"
+                },
+                "assetType": {
+                    "type": "string"
+                },
+                "assetSource": {
+                    "type": "string"
+                },
+                "assetName": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "object",
+                    "properties": {
+                        "source": {
+                            "type": "string"
+                        },
+                        "sender": {
+                            "type": "string"
+                        },
+                        "subject": {
+                            "type": "string"
+                        },
+                        "body": {
+                            "type": "string"
+                        },
+                        "level": {
+                            "type": "string",
+                            "enum": [
+                                "DEBUG",
+                                "INFO",
+                                "ERROR"
+                            ]
+                        }
+                    }
+                }
+            },
+            "required": [
+                "auditId",
+                "auditSource",
+                "timestamp",
+                "message"
+            ]
+        }
+    }
+}

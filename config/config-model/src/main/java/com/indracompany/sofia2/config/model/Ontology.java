@@ -47,6 +47,7 @@ public class Ontology extends AuditableEntityWithUUID {
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@Getter
 	@Setter
 	private String jsonSchema;
 
