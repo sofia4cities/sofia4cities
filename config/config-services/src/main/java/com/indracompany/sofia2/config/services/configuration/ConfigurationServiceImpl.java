@@ -74,17 +74,22 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Override
 	public void createConfiguration(Configuration configuration) {
 		Configuration oldConfiguration = this.configurationRepository.findById(configuration.getId());
-		if (oldConfiguration == null) {
-			oldConfiguration = new Configuration();
-			oldConfiguration.setYmlConfig(configuration.getYmlConfig());
-			oldConfiguration.setDescription(configuration.getDescription());
-			oldConfiguration.setSuffix(configuration.getSuffix());
-			oldConfiguration.setEnvironment(configuration.getEnvironment());
-			this.configurationRepository.save(oldConfiguration);
+		if (oldConfiguration != null)
+			throw new ConfigServiceException(
+					"You cann´t create a Configuration that exists:" + configuration.toString());
+		oldConfiguration = this.configurationRepository.findByConfigurationTypeAndEnvironmentAndSuffix(
+				configuration.getConfigurationType(), configuration.getEnvironment(), configuration.getSuffix());
+		if (oldConfiguration != null)
+			throw new ConfigServiceException(
+					"Exist a configuration of this type for the environment and suffix:" + configuration.toString());
 
-		} else {
-			throw new RuntimeException("You cann´t create a Configuration that exists:" + configuration.toString());
-		}
+		oldConfiguration = new Configuration();
+		oldConfiguration.setYmlConfig(configuration.getYmlConfig());
+		oldConfiguration.setDescription(configuration.getDescription());
+		oldConfiguration.setSuffix(configuration.getSuffix());
+		oldConfiguration.setEnvironment(configuration.getEnvironment());
+		this.configurationRepository.save(oldConfiguration);
+
 	}
 
 	@Override
