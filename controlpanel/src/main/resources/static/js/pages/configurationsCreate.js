@@ -120,12 +120,12 @@ var ConfigurationsCreateController = function() {
 		
         var myTextArea = document.getElementById('ymlConfig');
         var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-        	mode: "text/x-yaml"
+        	mode: "text/x-yaml",
             lineNumbers: false,
-            foldGutter: true
+            foldGutter: true,
             //matchBrackets: true,
-            styleActiveLine: true
-            //theme:"material",
+            //styleActiveLine: true,
+            theme:"material",
             //mode: {name: "javascript", json: true}
         });
 		myCodeMirror.setSize("100%", 350);

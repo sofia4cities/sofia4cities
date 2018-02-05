@@ -126,10 +126,10 @@ var OntologyCreateController = function() {
 			logControl ? console.log('|---> Action-mode: INSERT') : '';
 			
 			// Set active 
-			$('#checkboxactive').trigger('click');
+			$('#active').trigger('click');
 			
 			// Set Public 
-			$('#checkboxpublic').trigger('click');
+			$('#public').trigger('click');
 		}
 		// EDIT MODE ACTION 
 		else {	
@@ -188,8 +188,8 @@ var OntologyCreateController = function() {
 jQuery(document).ready(function() {
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
-	UserCreateController.load(userCreateJson);	
+	OntologyCreateController.load(ontologyCreateJson);	
 		
 	// AUTO INIT CONTROLLER.
-	UserCreateController.init();
+	OntologyCreateController.init();
 });

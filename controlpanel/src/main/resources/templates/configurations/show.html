@@ -196,16 +196,7 @@
 	$( document ).ready(function() {
 		// init when Document is ready
 		showLog ? console.log('SHOW USER ready()...') : '';
-	});
-	 
-	// MAIN WHEN LOAD
-	$(window).load(function(){  
-		// init on load.		
-		showLog ? console.log('SHOW USER load()...') : '';
-	});
-	
-	
-	
+		
 		var myTextArea = document.getElementById('ymlConfig');
 		var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
 			lineNumbers : true,
@@ -216,6 +207,19 @@
 			}
 		});
 		myCodeMirror.setSize("100%", 350);
+		
+		
+	});
+	 
+	// MAIN WHEN LOAD
+	$(window).load(function(){  
+		// init on load.		
+		showLog ? console.log('SHOW USER load()...') : '';		
+	});
+	
+	
+	
+		
 	
 		//]]>
 	</script>	

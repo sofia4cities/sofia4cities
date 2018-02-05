@@ -63,10 +63,10 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/ontologies/list}"> <span th:text="#{ontology.breadcrumb.prev}">Ontologies </span></a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/ontologies/list}"> <span th:text="#{ontology.breadcrumb.list}">Ontologies </span></a><i class="fa fa-circle"></i></li>
 						<li>
-							<span th:if="${ontology.user.userId} == null" th:text="#{ontology.breadcrumb.create}">Show Ontology</span>
-							<span th:if="${ontology.user.userId} != null" th:text="#{ontology.breadcrumb.update}">Update Ontology</span>
+							<span th:if="${ontology.user?.userId} == null" th:text="#{ontology.breadcrumb.create}">Show Ontology</span>
+							<span th:if="${ontology.user?.userId} != null" th:text="#{ontology.breadcrumb.update}">Update Ontology</span>
 						</li>
 					</ul>						
 				</div>
@@ -85,8 +85,8 @@
 									<i class="la la-users font-grey-gallery"></i>						
 									
 									<!-- FORM TITLE -->
-									<span th:if="${ontology.user.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.create} + ':'"> New Ontology</span>
-									<span th:if="${ontology.user.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.update} + ' ' + ${ontology.id} + ':'"> Update Ontology </span>
+									<span th:if="${ontology.user?.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.create} + ':'"> New Ontology</span>
+									<span th:if="${ontology.user?.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.update} + ' ' + ${ontology.id} + ':'"> Update Ontology </span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -94,8 +94,8 @@
 								</div>
 								<div class="actions">
 									<!-- ACTION INDICATORs -->									
-									<span th:if="${ontology.user.userId} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
-									<span th:if="${ontology.user.userId} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
+									<span th:if="${ontology.user?.userId} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${ontology.user?.userId} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>
 								
 							</div>
@@ -117,8 +117,8 @@
 											<input th:if="${ontology.id} == null" type="hidden" name="action" th:value="@{/ontologies/create}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->											
-											<input th:if="${ontology.user.userId} != null" type="hidden" name="action" th:value="@{/ontologies/update}"/>
-											<input th:if="${ontology.user.userId} != null" type="hidden" name="_method" value="PUT"/>											
+											<input th:if="${ontology.user?.userId} != null" type="hidden" name="action" th:value="@{/ontologies/update}"/>
+											<input th:if="${ontology.user?.userId} != null" type="hidden" name="_method" value="PUT"/>											
 											
 											<div class="form-body">
 												<!-- user, name and email -->
@@ -128,7 +128,7 @@
 															<label th:text="#{ontology.id} + ':'">Identification</label>
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
-																<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.id}"  th:readonly="*{user.userId}" th:classappend="${ontology.user.userId} ? no-remove : ''"  />
+																<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.id}"  th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
 															</div>															
 														</div>
 													</div>													
@@ -156,7 +156,7 @@
 															<label class="" th:text="#{ontology.active} + '?'">Active</label>
 															<div class="mt-checkbox-list">
 																<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline" th:text="#{ontology.active}">Active Ontology?</div>
-																	<input id="checkboxactive" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
+																	<input id="active" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
 																	<span></span><!-- needed by styles -->
 																</label>																													
 															</div>
@@ -164,10 +164,10 @@
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">													
 														<div class="form-group">
-															<label>&nbsp;</label>
+															<label class="" th:text="#{ontology.public} + '?'">Public</label>
 															<div class="mt-checkbox-list">
 																<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="Seleccione una ontolgía de la tabla, para agregrala seleccione en el selector de tipo de permiso, el permiso que le otorgará a esa ontología en el proyecto" data-original-title="Seleccionar Ontología" title="Seleccionar Ontología"><i class="la la-lightbulb-o font-md"></i> <div class="inline" th:text="#{ontology.ispublic}">Public?</div>
-																	<input id="checkboxPublica" class="form-control campo_publica"  name="checkboxPublica" type="checkbox" th:field="*{isPublic}" />																				
+																	<input id="public" class="form-control campo_publica"  name="public" type="checkbox" th:field="*{public}" />																				
 																	<span></span><!-- necesario por estilos. -->
 																</label>																													
 															</div>
@@ -181,18 +181,151 @@
 														<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.description.min}"></small></span>
 													</div>
 												</div>
+												
+												<!-- SECCIONE DE ONTOLOGIA -->
+												<div class="row" id="secciones" >
+													<div class="col-md-12">
+														<div class="portlet light ">
+															<div class="portlet-title tabbable-line">																																					
+																<div class="tools">
+																	<a href="javascript:;" class="collapse" data-original-title="" title=""> </a>																				
+																	<a href="" class="fullscreen" data-original-title="" title=""> </a>
+																</div>
+																<!-- SECCIONES DE LA ONTOLOGIA TABS -->
+																<ul class="nav nav-tabs pull-left">
+																	<li id="tab-plantilla" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> SELECCIONAR PLANTILLA</a></li>
+																	<li id="tab-propiedades" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><i class="la la-edit"></i> AÑADIR NUEVAS PROPIEDADES </a></li>
+																	<li id="tab-esquema" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> GENERADOR DE ESQUEMA E INSTANCIAS JSON</a></li>
+																</ul>
+															</div>
+															<div class="portlet-body">
+																<div class="col-md-12 margin-top-10 ">																				
+																	<div class="tab-content">
+																		<div class="tab-pane active" id="tab_1">
+																			<div class="alert alert-info alert-dismissable  ">
+																				<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+																				<strong>PLANTILLAS ONTOLOGIA</strong> Montaje provisonal con nuevo estilo. 
+																			</div>
+																			<div class="row">
+																				<div class="col-lg-3 col-md-4 col-xs-12">
+																				<!-- columna de selector de plantillas -->
+																					<div class="mt-element-list">                                            
+																						<div class="mt-list-container list-default ext-1 group" style="padding:0;">																									
+																							<a data-toggle="collapse" href="#general" aria-expanded="true" class="list-toggle-container">
+																								<div class="list-toggle bg-grey-mint uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaGeneral',true,'')" > <span th:text="#{plantilla_categoriaGeneral}">GENERAL</span><span class="badge badge-default pull-right bg-white font-purple bold">2</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" aria-expanded="true"  id="general">
+																								<ul id="plantilla_categoriaGeneral">
+																									
+																								</ul>
+																							</div>
+																							<a class="list-toggle-container" data-toggle="collapse" href="#smartcity" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_City',true,'')"><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaSmart_City}">SMART CITY</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="smartcity" aria-expanded="true" >
+																								<ul id="plantilla_categoriaSmart_City">																												
+																								</ul>
+																							</div>
+																							<a class="list-toggle-container" data-toggle="collapse" href="#enviroment" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaEnvironment',true,'')"><i class="fa fa-globe"></i> <span th:text="#{plantilla_categoriaEnvironment}">ENVIROMENT</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="enviroment" aria-expanded="true">
+																								<ul id="plantilla_categoriaEnvironment">																												
+																								</ul>
+																							</div>
+																							<a class="list-toggle-container" data-toggle="collapse" href="#smartindustry" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaIndustry',true,'')" ><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaIndustry}">SMART INDUSTRY</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="smartindustry" aria-expanded="true">
+																								<ul id="plantilla_categoriaIndustry">																												
+																								</ul>
+																							</div>
+																							<a class="list-toggle-container" data-toggle="collapse" href="#smartbuilding" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Building',true,'')" ><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaSmart_Building}">SMART BUILDING</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="smartbuilding" aria-expanded="true" >
+																								<ul id="plantilla_categoriaSmart_Building">																																																					
+																								</ul>
+																							</div>
+																							<a class="list-toggle-container" data-toggle="collapse" href="#smarthome" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Home',true,'')" ><i class="fa fa-home"></i> <span th:text="#{plantilla_categoriaSmart_Home}">SMART HOME</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="smarthome" aria-expanded="true" >
+																								<ul id="plantilla_categoriaSmart_Home">																																																						
+																								</ul>
+																							</div>
+																							<a class="list-toggle-container" data-toggle="collapse" href="#smartretail" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Retail',true,'')" ><i class="fa fa-th"></i> <span th:text="#{plantilla_categoriaSmart_Retail}">SMART RETAIL</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="smartretail" aria-expanded="true" style="">
+																								<ul id="plantilla_categoriaSmart_Retail">																																																					
+																								</ul>
+																							</div>																									
+																							<a class="list-toggle-container" data-toggle="collapse" href="#social" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSocial',true,'')"><i class="fa fa-thumb-up"></i> <span th:text="#{plantilla_categoriaSocial}">SOCIAL</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="social" aria-expanded="true" style="">
+																								<ul id="plantilla_categoriaSocial">																												
+																								</ul>
+																							</div>
+																							<a class="list-toggle-container" data-toggle="collapse" href="#iot" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaIoT',true,'')" ><i class="fa fa-code"></i> <span th:text="#{plantilla_categoriaIoT}">IoT</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="iot" aria-expanded="true" style="">
+																								<ul id="plantilla_categoriaIoT">
+																								</ul>
+																							</div>
+																							<a class="list-toggle-container" data-toggle="collapse" href="#gsma" aria-expanded="true">
+																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaGSMA',true,'')" ><i class="fa fa-chart"></i> <span th:text="#{plantilla_categoriaGSMA}">GSMA</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
+																							</a>
+																							<div class="panel-collapse collapse in" id="gsma" aria-expanded="true" style="">
+																								<ul id="plantilla_categoriaGSMA">																												
+																								</ul>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																				<div class="col-lg-9 col-md-8 col-xs-12">
+																				 <p> la tabla de atribs </p>																							
+																				</div>
+																			</div>																					
+																		</div>
+																		<div class="tab-pane" id="tab_2">
+																			<div class="alert alert-info alert-dismissable  ">
+																				<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+																				<strong>NUEVAS PROPIEDADES</strong> Montaje provisonal con nuevo estilo. 
+																			</div>
+																			<p> Howdy, I'm in Section 2. </p>	
+																			<input id="id_listaCamposOntologia" name="listaCamposPlantillas" type="hidden" th:value="[]"/>
+																			<input type="hidden" id="id_source_wizard" name="id_source_wizard" value="true" />																						
+																		</div>
+																		
+																		
+																		<div class="tab-pane" id="tab_3">
+																			<div class="alert alert-info alert-dismissable  ">
+																				<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+																				<strong>GENERAR ESQUEMA JSON</strong> Montaje provisonal con nuevo estilo. 
+																			</div>																			
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>																
+												</div><!-- SECTIONS -->
 											</div>
+											
 											<!-- FORM BUTTONS -->
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-													<button th:if="${ontology.user.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<button th:if="${ontology.user?.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<!-- UPDATE -->
-													<button th:if="${ontology.user.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													<button th:if="${ontology.user?.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 													
 													<!-- REMOVE -->
-													<button th:if="${ontology.user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.Id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													<button th:if="${ontology.user?.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.Id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 																										
 													<!-- RESET -->
 													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
@@ -252,7 +385,7 @@
 	var ontologyCreateJson = { 		
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
-		"actionMode" : [[${ontology.user.userId}]],		
+		"actionMode" : [[${ontology.user?.userId}]],		
 	};
 						
 	// LOAD DATA TO USE IN MENUCONTROLLER
