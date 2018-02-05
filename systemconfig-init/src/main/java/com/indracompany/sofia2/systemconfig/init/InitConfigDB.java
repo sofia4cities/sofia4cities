@@ -816,16 +816,6 @@ public class InitConfigDB {
 
 		User type = null;
 
-		type = new User();
-		type.setUserId("lmgracia");
-		type.setPassword("changeIt!");
-		type.setFullName("Luis Miguel GRacia");
-		type.setEmail("lmgracia@sofia2.com");
-		type.setActive(true);
-		type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
-		type.setDateCreated(Calendar.getInstance().getTime());
-		userCDBRepository.save(type);
-
 		if (types.isEmpty()) {
 			try {
 				log.info("No types en tabla.Adding...");

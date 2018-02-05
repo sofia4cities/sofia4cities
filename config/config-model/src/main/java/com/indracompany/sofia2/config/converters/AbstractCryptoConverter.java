@@ -1,7 +1,5 @@
 package com.indracompany.sofia2.config.converters;
 
-import static com.indracompany.sofia2.config.converters.KeyProperty.ENCRYPTION_KEY;
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -27,9 +25,9 @@ abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, Strin
 
 	@Override
 	public String convertToDatabaseColumn(T attribute) {
-		if (isNotEmpty(ENCRYPTION_KEY) && isNotNullOrEmpty(attribute)) {
+		if (isNotEmpty(EncryptionKey.KEY) && isNotNullOrEmpty(attribute)) {
 			try {
-				Cipher cipher = cipherInitializer.prepareAndInitCipher(Cipher.ENCRYPT_MODE, ENCRYPTION_KEY);
+				Cipher cipher = cipherInitializer.prepareAndInitCipher(Cipher.ENCRYPT_MODE, EncryptionKey.KEY);
 				return encrypt(cipher, attribute);
 			} catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException
 					| BadPaddingException | NoSuchPaddingException | IllegalBlockSizeException e) {
@@ -45,9 +43,9 @@ abstract class AbstractCryptoConverter<T> implements AttributeConverter<T, Strin
 
 	@Override
 	public T convertToEntityAttribute(String dbData) {
-		if (isNotEmpty(ENCRYPTION_KEY) && isNotEmpty(dbData)) {
+		if (isNotEmpty(EncryptionKey.KEY) && isNotEmpty(dbData)) {
 			try {
-				Cipher cipher = cipherInitializer.prepareAndInitCipher(Cipher.DECRYPT_MODE, ENCRYPTION_KEY);
+				Cipher cipher = cipherInitializer.prepareAndInitCipher(Cipher.DECRYPT_MODE, EncryptionKey.KEY);
 				return decrypt(cipher, dbData);
 			} catch (NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException
 					| BadPaddingException | NoSuchPaddingException | IllegalBlockSizeException e) {

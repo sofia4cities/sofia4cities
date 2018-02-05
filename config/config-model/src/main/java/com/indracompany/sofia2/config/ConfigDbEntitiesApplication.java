@@ -15,10 +15,12 @@ package com.indracompany.sofia2.config;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
+@ComponentScan("com.indracompany.sofia2.config")
 public class ConfigDbEntitiesApplication {
 
 	public static void main(String[] args) {
