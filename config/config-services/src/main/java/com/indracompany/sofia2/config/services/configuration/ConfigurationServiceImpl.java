@@ -131,6 +131,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			yamlParser.load(yml);
 			return true;
 		} catch (Exception e) {
+			log.error("Error parsing file:" + e.getMessage());
 			return false;
 		}
 	}
