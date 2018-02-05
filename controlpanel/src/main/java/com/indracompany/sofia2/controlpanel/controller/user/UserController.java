@@ -30,8 +30,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
-import com.indracompany.sofia2.service.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 

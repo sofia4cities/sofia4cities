@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+package com.indracompany.sofia2.config.services.ontology;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,8 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
-import com.indracompany.sofia2.service.user.UserService;
+import com.indracompany.sofia2.config.services.user.UserService;
+
 
 @Service
 public class OntologyServiceImpl implements OntologyService {

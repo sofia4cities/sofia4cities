@@ -210,6 +210,14 @@ public class InitConfigDB {
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
+			config = new Configuration();
+			config.setConfigurationType(type);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment(Configuration.Environment.ALL.toString());
+			config.setSuffix("lmgracia");
+			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
 			type = new ConfigurationType();
 			type.setId(ConfigurationType.Types.EndpointModulesConfiguration.toString());
 			type.setDescription("Endpoints of Sofia2 Modules Configuration p");
@@ -815,16 +823,6 @@ public class InitConfigDB {
 		List<User> types = this.userCDBRepository.findAll();
 
 		User type = null;
-
-		type = new User();
-		type.setUserId("lmgracia");
-		type.setPassword("changeIt!");
-		type.setFullName("Luis Miguel GRacia");
-		type.setEmail("lmgracia@sofia2.com");
-		type.setActive(true);
-		type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
-		type.setDateCreated(Calendar.getInstance().getTime());
-		userCDBRepository.save(type);
 
 		if (types.isEmpty()) {
 			try {

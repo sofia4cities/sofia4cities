@@ -19,6 +19,7 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Assert;
@@ -31,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,30 +50,47 @@ public class UserIntegrationTest {
 	@Autowired
 	UserRepository repository;
 
+	@Autowired
+	RoleRepository roleRepository;
+
 	@Before
 	public void setUp() {
 		List<User> types = this.repository.findAll();
 		if (types.isEmpty()) {
-			//			log.info("No types en tabla.Adding...");
+			// log.info("No types en tabla.Adding...");
 			throw new RuntimeException("No types en Users...");
 		}
 	}
 
-
 	@Test
-	public void test1_Count() { 
-		Assert.assertTrue(this.repository.count()==7);		
+	public void test1_Count() {
+		Assert.assertTrue(this.repository.count() == 7);
 	}
 
 	@Test
-	public void test3_FindUserNoAdmin() { 
-		Assert.assertTrue(this.repository.findUsersNoAdmin().size()==6L);		
+	public void test3_FindUserNoAdmin() {
+		Assert.assertTrue(this.repository.findUsersNoAdmin().size() == 6L);
 	}
 
 	@Test
-	public void test4_FindByEmail() { 
-		Assert.assertTrue(this.repository.findByEmail("administrator@sofia2.com").size()==1L);		
+	public void test4_FindByEmail() {
+		Assert.assertTrue(this.repository.findByEmail("administrator@sofia2.com").size() == 1L);
 	}
 
+	@Test
+	public void test5_createAndDeleteUser() {
+		Assert.assertTrue(this.repository.count() == 7);
+		User type = new User();
+		type.setUserId("lmgracia");
+		type.setPassword("changeIt!");
+		type.setFullName("Luis Miguel Gracia");
+		type.setEmail("lmgracia@sofia2.com");
+		type.setActive(true);
+		type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
+		type.setDateCreated(Calendar.getInstance().getTime());
+		repository.save(type);
+		Assert.assertTrue(this.repository.count() == 8);
+
+	}
 
 }

@@ -1,3 +1,4 @@
+package com.indracompany.sofia2.config.services;
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
@@ -11,20 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
 @EnableJpaAuditing
-// @ComponentScan("com.indracompany.sofia2.config")
-@EnableConfigurationProperties
-public class ConfigDbEntitiesApplication {
+@ComponentScan("com.indracompany.sofia2")
+public class SpringBootConfigServicesApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ConfigDbEntitiesApplication.class, args);
+		SpringApplication.run(SpringBootConfigServicesApplication.class, args);
 	}
 }

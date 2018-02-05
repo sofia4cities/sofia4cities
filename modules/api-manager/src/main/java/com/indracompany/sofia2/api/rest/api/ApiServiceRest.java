@@ -48,7 +48,7 @@ import com.indracompany.sofia2.config.repository.ApiHeaderRepository;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiQueryParameterRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
-import com.indracompany.sofia2.service.user.UserService;
+import com.indracompany.sofia2.config.services.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 

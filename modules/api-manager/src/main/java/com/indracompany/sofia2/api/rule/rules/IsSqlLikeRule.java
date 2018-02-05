@@ -14,7 +14,6 @@
 package com.indracompany.sofia2.api.rule.rules;
 
 import java.util.Map;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,7 +30,7 @@ import com.indracompany.sofia2.api.service.ApiServiceInterface;
 
 @Component
 @Rule
-public class IsSqlLikeRule extends DefaultRuleBase{
+public class IsSqlLikeRule extends DefaultRuleBase {
 
 	@Priority
 	public int getPriority() {
@@ -41,7 +40,7 @@ public class IsSqlLikeRule extends DefaultRuleBase{
 	@Condition
 	public boolean existsRequest(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
-		if ( (request != null) && canExecuteRule(facts)) 
+		if ((request != null) && canExecuteRule(facts))
 			return true;
 		else
 			return false;
@@ -52,19 +51,17 @@ public class IsSqlLikeRule extends DefaultRuleBase{
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
-		
-		String query = (String)data.get(ApiServiceInterface.QUERY);
-		String queryType = (String)data.get(ApiServiceInterface.QUERY_TYPE);
-		
+		String query = (String) data.get(ApiServiceInterface.QUERY);
+		String queryType = (String) data.get(ApiServiceInterface.QUERY_TYPE);
+
 		boolean isSQLLIKE = isSQLLIKE(query, queryType);
-		
+
 		data.put(ApiServiceInterface.ISSQLLIKE, isSQLLIKE);
-		
 
 	}
-	
+
 	private boolean isSQLLIKE(String query, String queryType) {
-		if (query!=null && query.length()>0 && queryType!=null && queryType.length()>0){
+		if (query != null && query.length() > 0 && queryType != null && queryType.length() > 0) {
 			return queryType.equals("SQLLIKE");
 		}
 		return false;

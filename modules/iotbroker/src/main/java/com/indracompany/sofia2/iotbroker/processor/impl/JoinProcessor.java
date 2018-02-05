@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -38,29 +37,29 @@ public class JoinProcessor implements MessageTypeProcessor {
 
 	@Autowired
 	SecurityPluginManager securityManager;
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) throws SSAPComplianceException, AuthenticationException {
+	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message)
+			throws SSAPComplianceException, AuthenticationException {
 		SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
 		SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
-		
-		if(StringUtils.isEmpty(join.getBody().getToken())) {
+
+		if (StringUtils.isEmpty(join.getBody().getToken())) {
 			throw new SSAPComplianceException(MessageException.ERR_TOKEN_IS_MANDATORY);
 		}
-		
+
 		String sessionKey = securityManager.authenticate(message);
-		
-		if(StringUtils.isEmpty(sessionKey)) {
+
+		if (StringUtils.isEmpty(sessionKey)) {
 			response.setDirection(SSAPMessageDirection.RESPONSE);
 			response.setMessageId(join.getMessageId());
 			response.setMessageType(SSAPMessageTypes.JOIN);
 			response.setSessionKey(sessionKey);
-		}
-		else {
+		} else {
 			throw new AuthenticationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED);
 		}
-		
+
 		return response;
 	}
 
@@ -70,6 +69,7 @@ public class JoinProcessor implements MessageTypeProcessor {
 	}
 
 	@Override
-	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {}
+	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+	}
 
 }

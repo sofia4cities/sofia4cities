@@ -21,7 +21,9 @@ public class TwitterServiceFactory {
 
 	/**
 	 * https://docs.spring.io/spring-social-twitter/docs/current/reference/htmlsingle/
-	 * TODO: Validate if it is necessary to check if there is a connection with this credentials and return it instead of creating
+	 * TODO: Validate if it is necessary to check if there is a connection with this
+	 * credentials and return it instead of creating
+	 * 
 	 * @param consumerKey
 	 * @param consumerSecret
 	 * @param accessToken
@@ -29,10 +31,11 @@ public class TwitterServiceFactory {
 	 * @return
 	 */
 	@Bean
-	public static TwitterServiceSpringSocialImpl getSpringSocialImpl(String consumerKey,String consumerSecret,String accessToken,String accessTokenSecret) {
-		Twitter twitter = new TwitterTemplate(consumerKey,consumerSecret,accessToken,accessTokenSecret);
+	public static TwitterServiceSpringSocialImpl getSpringSocialImpl(String consumerKey, String consumerSecret,
+			String accessToken, String accessTokenSecret) {
+		Twitter twitter = new TwitterTemplate(consumerKey, consumerSecret, accessToken, accessTokenSecret);
 		TwitterServiceSpringSocialImpl twitterService = new TwitterServiceSpringSocialImpl(twitter);
 		return twitterService;
-	}	
-	
+	}
+
 }

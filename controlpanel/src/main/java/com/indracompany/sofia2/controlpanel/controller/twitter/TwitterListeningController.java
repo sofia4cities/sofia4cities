@@ -34,10 +34,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.twitter.TwitterService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
-import com.indracompany.sofia2.service.ontology.OntologyService;
-import com.indracompany.sofia2.service.twitter.TwitterService;
-import com.indracompany.sofia2.service.user.UserService;
+
+
+import com.indracompany.sofia2.config.services.user.UserService;
+
 
 @Controller
 @RequestMapping("/twitter")
