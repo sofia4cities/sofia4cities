@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
+import com.indracompany.sofia2.config.components.AllConfiguration;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
@@ -104,10 +105,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		try {
 			Configuration config = this.getConfiguration(ConfigurationType.Types.TwitterConfiguration, environment,
 					suffix);
-			Constructor constructor = new Constructor(TwitterConfiguration.class);
+			Constructor constructor = new Constructor(AllConfiguration.class);
 			Yaml yaml = new Yaml(constructor);
-			TwitterConfiguration tConfig = yaml.loadAs(config.getYmlConfig(), TwitterConfiguration.class);
-			return tConfig;
+			AllConfiguration tConfig = yaml.loadAs(config.getYmlConfig(), AllConfiguration.class);
+			return tConfig.getTwitter();
 		} catch (Exception e) {
 			log.error("Error getting TwitterConfiguration", e);
 			throw new ConfigServiceException("Error getting TwitterConfiguration", e);
