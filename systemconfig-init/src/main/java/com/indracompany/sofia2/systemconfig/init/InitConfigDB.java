@@ -142,7 +142,7 @@ public class InitConfigDB {
 		// first we need to create users
 		init_RoleUser();
 		log.info("OK init_RoleUser");
-		init_UserCDB();
+		init_User();
 		log.info("OK init_UserCDB");
 		//
 		init_DataModel();
@@ -772,25 +772,25 @@ public class InitConfigDB {
 
 				log.info("No roles en tabla.Adding...");
 				Role type = new Role();
-				type.setId(Role.Type.ADMINISTRATOR);
+				type.setIdEnum(Role.Type.ADMINISTRATOR);
 				type.setName("ROLE_ADMINISTRATOR");
 				type.setDescription("Administrator of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.COLLABORATOR);
+				type.setIdEnum(Role.Type.COLLABORATOR);
 				type.setName("ROLE_COLLABORATOR");
 				type.setDescription("Advanced User of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.USER);
+				type.setIdEnum(Role.Type.USER);
 				type.setName("ROLE_USER");
 				type.setDescription("Basic User of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.ANALYTICS);
+				type.setIdEnum(Role.Type.ANALYTICS);
 				type.setName("ROLE_ANALYTICS");
 				type.setDescription("Analytics User of the Platform");
 				// RoleType typeParent=new RoleType();
@@ -799,26 +799,26 @@ public class InitConfigDB {
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.PARTNER);
+				type.setIdEnum(Role.Type.PARTNER);
 				type.setName("ROLE_PARTNER");
 				type.setDescription("Partner in the Platform");
 				roleRepository.save(type);
 				//
 				//
 				type = new Role();
-				type.setId(Role.Type.SYS_ADMIN);
+				type.setIdEnum(Role.Type.SYS_ADMIN);
 				type.setName("ROLE_SYS_ADMIN");
 				type.setDescription("System Administradot of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.OPERATIONS);
+				type.setIdEnum(Role.Type.OPERATIONS);
 				type.setName("ROLE_OPERATIONS");
 				type.setDescription("Operations for the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.DEVOPS);
+				type.setIdEnum(Role.Type.DEVOPS);
 				type.setName("ROLE_DEVOPS");
 				type.setDescription("DevOps for the Platform");
 				roleRepository.save(type);
@@ -860,7 +860,7 @@ public class InitConfigDB {
 
 	}
 
-	public void init_UserCDB() {
+	public void init_User() {
 		log.info("init UserCDB");
 		List<User> types = this.userCDBRepository.findAll();
 		User type = null;
