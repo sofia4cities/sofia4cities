@@ -16,7 +16,6 @@ package com.indracompany.sofia2.controlpanel.controller.querytool;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,12 +34,19 @@ public class QueryToolController {
 	@Autowired
 	private OntologyService ontologyService;
 
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@Autowired
+	private AppWebUtils utils;
+
 	@GetMapping("show")
 	public String show(Model model) {
-		List<Ontology> ontologies = this.ontologyService.getAllOntologies();
+		List<Ontology> ontologies = null;
+		if (utils.isAdministrator()) {
+			ontologies = this.ontologyService.getAllOntologies();
+		} else {
+			ontologies = this.ontologyService.getOntologiesByUserId(utils.getUserId());
+		}
 		model.addAttribute("ontologies", ontologies);
-		return "/databases/show";
+		return "/querytool/show";
 
 	}
 

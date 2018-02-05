@@ -54,8 +54,6 @@ public class TwitterListeningController {
 
 	@Autowired
 	UserService userService;
-	public static final String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
-	public static final String DATAMODEL_TWITTER = "TWEET_DATAMODEL";
 
 	@GetMapping("/scheduledsearch/list")
 	public String list(Model model) {
@@ -90,21 +88,18 @@ public class TwitterListeningController {
 	}
 
 	@PostMapping("/scheduledsearch/create")
-	public String create(Model model,@ModelAttribute TwitterListening twitterListening,
+	public String create(Model model, @ModelAttribute TwitterListening twitterListening,
 			@RequestParam("_new") Boolean newOntology,
-			@RequestParam(value="ontologyId",required=false) String ontologyId,
-			@RequestParam(value="clientPlatformId",required=false) String clientPlatformId)
-	{
-		if(twitterListening!=null)
-		{
-			if(!newOntology)
-			{
-				if(twitterListening.getUser()==null)twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
+			@RequestParam(value = "ontologyId", required = false) String ontologyId,
+			@RequestParam(value = "clientPlatformId", required = false) String clientPlatformId) {
+		if (twitterListening != null) {
+			if (!newOntology) {
+				if (twitterListening.getUser() == null)
+					twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
 				this.twitterService.createListening(twitterListening);
-			}
-			else
-			{
-				Ontology ontology=this.twitterService.createTwitterOntology(ontologyId, DATAMODEL_TWITTER);
+			} else {
+				Ontology ontology = this.twitterService.createTwitterOntology(ontologyId,
+						DataModel.MainType.Twitter.toString());
 				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 				ontology = this.ontologyService.saveOntology(ontology);
 				// TODO CREATE CLIENT & TOKEN-->THEN SAVE TWITTERLISTEN
@@ -126,7 +121,7 @@ public class TwitterListeningController {
 	public void loadOntologiesAndConfigurations(Model model) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		List<Ontology> ontologies = new ArrayList<Ontology>();
-		if (this.utils.getRole().equals(ROLE_ADMINISTRATOR)) {
+		if (utils.isAdministrator()) {
 			configurations = this.twitterService.getAllConfigurations();
 			ontologies = this.ontologyService.getAllOntologies();
 		} else {
@@ -136,9 +131,7 @@ public class TwitterListeningController {
 					ontologies.add(ontology);
 				}
 			}
-
 		}
-
 		model.addAttribute("configurations", configurations);
 		model.addAttribute("ontologies", ontologies);
 

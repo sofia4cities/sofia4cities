@@ -32,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AppWebUtils {
 
+	public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
+
 	@Autowired
 	private MessageSource messageSource;
 
@@ -51,6 +53,12 @@ public class AppWebUtils {
 		if (auth == null)
 			return null;
 		return auth.getAuthorities().toArray()[0].toString();
+	}
+
+	public boolean isAdministrator() {
+		if (getRole().equals(ADMINISTRATOR))
+			return true;
+		return false;
 	}
 
 	public String getMessage(String key, String valueDefault) {

@@ -48,7 +48,6 @@ public class ConfigurationController {
 	private AppWebUtils utils;
 	@Autowired
 	UserService userService;
-	public static final String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping
@@ -97,14 +96,13 @@ public class ConfigurationController {
 
 		this.populateFormData(model);
 		Configuration configuration = this.configurationService.getConfiguration(id);
-		
+
 		if (configuration == null) {
 			configuration = new Configuration();
 			configuration.setUser(this.userService.getUser(this.utils.getUserId()));
 		} else {
 			// User trying to modify another's config
-			if (!this.utils.getUserId().equals(configuration.getUser().getUserId())
-					&& !this.utils.getRole().equals(ROLE_ADMINISTRATOR))
+			if (!this.utils.getUserId().equals(configuration.getUser().getUserId()) && !utils.isAdministrator())
 				return "/error/403";
 		}
 		model.addAttribute("configuration", configuration);
@@ -116,8 +114,7 @@ public class ConfigurationController {
 	public String update(@PathVariable String id, Model model, @ModelAttribute Configuration configuration) {
 
 		if (configuration != null) {
-			if (!this.utils.getUserId().equals(configuration.getUser().getUserId())
-					&& !this.utils.getRole().equals(ROLE_ADMINISTRATOR))
+			if (!this.utils.getUserId().equals(configuration.getUser().getUserId()) && !utils.isAdministrator())
 				return "/error/403";
 			try {
 				this.configurationService.updateConfiguration(configuration);
@@ -147,8 +144,7 @@ public class ConfigurationController {
 		}
 		if (configuration == null)
 			return "/error/404";
-		if (!this.utils.getUserId().equals(configuration.getUser().getUserId())
-				&& !this.utils.getRole().equals(ROLE_ADMINISTRATOR))
+		if (!this.utils.getUserId().equals(configuration.getUser().getUserId()) && !utils.isAdministrator())
 			return "/error/403";
 		model.addAttribute("configuration", configuration);
 		return "/configurations/show";

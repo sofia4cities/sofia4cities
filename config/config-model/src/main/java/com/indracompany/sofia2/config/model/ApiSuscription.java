@@ -41,8 +41,7 @@ import lombok.Setter;
 
 @Configurable
 @Entity
-@Table(name = "api_suscription")
-@SuppressWarnings("deprecation")
+@Table(name = "API_SUSCRIPTION")
 public class ApiSuscription extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
