@@ -18,12 +18,14 @@ import java.util.List;
 import com.indracompany.sofia2.scheduler.SchedulerType;
 import com.indracompany.sofia2.scheduler.scheduler.BatchScheduler;
 
+import javassist.NotFoundException;
+
 public interface BatchSchedulerFactory {
 	
-	BatchScheduler getScheduler (SchedulerType schedulerType);
+	BatchScheduler getScheduler (SchedulerType schedulerType) throws NotFoundException;
 	
 	List<BatchScheduler> getSchedulers ();
 	
-	BatchScheduler getScheduler (String schedulerName);
+	BatchScheduler getScheduler (String schedulerName) throws NotFoundException;
 
 }

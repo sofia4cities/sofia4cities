@@ -49,6 +49,7 @@ import com.indracompany.sofia2.scheduler.scheduler.service.ScheduledJobService;
 import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
 import com.indracompany.sofia2.scheduler.util.DateUtil;
 
+import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -138,9 +139,9 @@ public class TaskServiceImpl implements TaskService {
 		
 		log.info("add job [jobname: " + jobName + ", groupName: " + jobGroup + "]");
 		
-		BatchScheduler scheduler = batchSchedulerFactory.getScheduler(info.getSchedulerType());
-		
 		try {
+			
+			BatchScheduler scheduler = batchSchedulerFactory.getScheduler(info.getSchedulerType());
 			
 			if (checkExists(new TaskOperation(jobName))) {
 				log.info("AddJob fails, job already exist, jobGroup:{}, jobName:{}", jobGroup, jobName);
@@ -164,7 +165,7 @@ public class TaskServiceImpl implements TaskService {
 			
 			scheduledJobService.createScheduledJob(job);
 			
-		} catch (SchedulerException | BatchSchedulerException e) {
+		} catch (SchedulerException | BatchSchedulerException| NotFoundException e) {
 			added = false;
 			log.error("Error adding task", e);
 		}
@@ -225,7 +226,7 @@ public class TaskServiceImpl implements TaskService {
         	}
         	
         	
-		} catch (SchedulerException e) {
+		} catch (SchedulerException| NotFoundException e) {
 			log.error("Error unscheduled task", e);
 		}
         
@@ -265,7 +266,7 @@ public class TaskServiceImpl implements TaskService {
     			}
 			}
 		
-		} catch (SchedulerException e) {
+		} catch (SchedulerException| NotFoundException e) {
 			log.error("Error pause task", e);
 		}
 		
@@ -304,7 +305,7 @@ public class TaskServiceImpl implements TaskService {
     			}
         	}
   	
-		} catch (SchedulerException e) {
+		} catch (SchedulerException | NotFoundException e) {
 			log.error("Error resume task", e);
 		}
         
@@ -335,7 +336,7 @@ public class TaskServiceImpl implements TaskService {
 				log.info("Job with name " + operation.getJobName() + " not found");  
 			}
 			
-		} catch (SchedulerException e) {
+		} catch (SchedulerException| NotFoundException e) {
 			log.error("Error checking if a job exists ", e);
 		}
 		

@@ -25,6 +25,8 @@ import com.indracompany.sofia2.scheduler.SchedulerType;
 import com.indracompany.sofia2.scheduler.scheduler.BatchScheduler;
 import com.indracompany.sofia2.scheduler.scheduler.service.BatchSchedulerFactory;
 
+import javassist.NotFoundException;
+
 @Service
 public class BatchFactoryImpl implements BatchSchedulerFactory{
 	
@@ -51,9 +53,14 @@ public class BatchFactoryImpl implements BatchSchedulerFactory{
 	}
 
 	@Override
-	public BatchScheduler getScheduler(SchedulerType schedulerType) {
-	
-		return schedulerMap.get(schedulerType.getSchedulerName());
+	public BatchScheduler getScheduler(SchedulerType schedulerType) throws NotFoundException {
+		BatchScheduler scheduler = schedulerMap.get(schedulerType.getSchedulerName());
+		
+		if (scheduler == null) {
+			throw new NotFoundException("Scheduler for type " + schedulerType + " not found");
+		}
+		
+		return scheduler;
 
 	}
 
@@ -63,7 +70,7 @@ public class BatchFactoryImpl implements BatchSchedulerFactory{
 	}
 
 	@Override
-	public BatchScheduler getScheduler(String schedulerName) {		
+	public BatchScheduler getScheduler(String schedulerName) throws NotFoundException {		
 		return getScheduler(SchedulerType.valueOf(schedulerName));
 	}
 
