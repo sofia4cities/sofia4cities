@@ -107,11 +107,19 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{configuration.environment} + ':'"> Environment </label>
-															<p class="form-control-static-block bold" th:text="environment"> Environment </p>
+															<p class="form-control-static-block bold" th:text="*{environment}"> Environment </p>
 														</div>
 													</div>											
 												</div>
 												<!-- Json-->
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{configuration.description} + ':'">Configuration Description</label>
+															<p class="form-control-static-block bold" th:text="*{description}"> Description </p>
+														</div>
+													</div>
+												</div>
 												<div class="row">
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
@@ -193,13 +201,13 @@
 		
 		// call configuration Confirm at header.
 		HeaderController.showConfirmDialogUsuario('delete_configuration_form');	
-	}
-	
+	}	
 	
 	// MAIN WHEN READY
 	$( document ).ready(function() {
+
 		// init when Document is ready
-		showLog ? console.log('SHOW USER ready()...') : '';
+		showLog ? console.log('SHOW Configuration ready()...') : '';
 		
 		
 		var myTextArea = document.getElementById('ymlConfig');
@@ -211,21 +219,17 @@
             theme:"material",          
         });
 		myCodeMirror.setSize("100%", 350);
-		
+
 		
 	});
 	 
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
 		// init on load.		
-		showLog ? console.log('SHOW USER load()...') : '';		
+		showLog ? console.log('SHOW Configuration load()...') : '';		
 	});
 	
-	
-	
-		
-	
-		//]]>
+	//]]>
 	</script>	
 	
 	

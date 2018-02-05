@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.api.rule.rules;
-import java.util.Enumeration;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,35 +32,35 @@ import com.indracompany.sofia2.api.util.RequestDumpUtil;
 @Rule
 public class DumpRequestRule {
 
-   
-    @Priority
-    public int getPriority() {
-    	return 1;
-    }
-    
-    @Condition
-    public boolean existsRequest(Facts facts) {
-    	HttpServletRequest request = (HttpServletRequest)facts.get(RuleManager.REQUEST);
-    	if (request!=null) return true;
-    	else return false;
-    }
-    
-    @Action
-    public void setFirstDerivedData(Facts facts) {
-    	HttpServletRequest request = (HttpServletRequest)facts.get(RuleManager.REQUEST);
-    	Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
-    	
-    	StringBuilder sb = new StringBuilder();
-    	
-    	RequestDumpUtil.dumpRequest(sb, request);
-    	RequestDumpUtil.dumpRequestHeader(sb, request);
-    	RequestDumpUtil.dumpRequestParameter(sb, request);
-    	RequestDumpUtil.dumpRequestSessionAttribute(sb, request);
-    	
-    	System.out.println(sb.toString());
-    	
-    	data.put(ApiServiceInterface.DUMP, sb.toString());
-    	
-    	
-    }
+	@Priority
+	public int getPriority() {
+		return 1;
+	}
+
+	@Condition
+	public boolean existsRequest(Facts facts) {
+		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
+		if (request != null)
+			return true;
+		else
+			return false;
+	}
+
+	@Action
+	public void setFirstDerivedData(Facts facts) {
+		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
+		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
+
+		StringBuilder sb = new StringBuilder();
+
+		RequestDumpUtil.dumpRequest(sb, request);
+		RequestDumpUtil.dumpRequestHeader(sb, request);
+		RequestDumpUtil.dumpRequestParameter(sb, request);
+		RequestDumpUtil.dumpRequestSessionAttribute(sb, request);
+
+		System.out.println(sb.toString());
+
+		data.put(ApiServiceInterface.DUMP, sb.toString());
+
+	}
 }

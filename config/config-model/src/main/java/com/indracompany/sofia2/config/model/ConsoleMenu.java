@@ -50,13 +50,13 @@ public class ConsoleMenu extends AuditableEntity {
 	@Setter
 	private String id;
 
-	@Column(name = "JSON_SCHEMA", nullable = false)
+	@Column(name = "JSON", nullable = false)
 	@NotNull
 	@Lob
 	@JsonRawValue
 	@Getter
 	@Setter
-	private String jsonSchema;
+	private String json;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)

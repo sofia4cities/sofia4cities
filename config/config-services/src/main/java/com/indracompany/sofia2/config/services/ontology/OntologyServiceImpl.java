@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+package com.indracompany.sofia2.config.services.ontology;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +19,21 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.service.user.UserService;
+import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.services.user.UserService;
+
 
 @Service
 public class OntologyServiceImpl implements OntologyService {
 
 	@Autowired
 	OntologyRepository ontologyRepository;
+	@Autowired
+	DataModelRepository dataModelRepository;
 	@Autowired
 	UserService userService;
 
@@ -112,6 +117,19 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public Ontology getOntologyByIdentification(String identification) {
 		return this.ontologyRepository.findByIdentification(identification);
+	}
+
+	@Override
+	public Ontology saveOntology(Ontology ontology)
+	{
+		return this.ontologyRepository.save(ontology);
+		
+	}
+	
+	@Override
+	public List<DataModel> getAllDataModels()
+	{
+		return this.dataModelRepository.findAll();
 	}
 
 }

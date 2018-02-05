@@ -64,7 +64,6 @@ public class User extends AuditableEntity {
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID", nullable = false)
-	// @Convert(converter = StringCryptoConverter.class)
 	@Getter
 	@Setter
 	private Role role;
@@ -73,6 +72,7 @@ public class User extends AuditableEntity {
 	@NotNull
 	@Getter
 	@Setter
+	// @Convert(converter = StringCryptoConverter.class)
 	private String password;
 
 	@Column(name = "DATE_CREATED", nullable = false)

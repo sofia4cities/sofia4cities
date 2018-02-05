@@ -11,13 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.token;
+package com.indracompany.sofia2.config.services.menu;
 
-import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 
-public interface TokenService {
+public interface MenuService {
 	
-	public Token getTokenUserId(User userId);
-
+	public String loadMenuByRole(User user);
 }

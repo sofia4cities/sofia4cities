@@ -210,6 +210,14 @@ public class InitConfigDB {
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
+			config = new Configuration();
+			config.setConfigurationType(type);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment(Configuration.Environment.ALL.toString());
+			config.setSuffix("lmgracia");
+			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
 			type = new ConfigurationType();
 			type.setId(ConfigurationType.Types.EndpointModulesConfiguration.toString());
 			type.setDescription("Endpoints of Sofia2 Modules Configuration p");
@@ -345,7 +353,7 @@ public class InitConfigDB {
 				log.info("Adding menu for role ADMIN");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("1");
-				menu.setJsonSchema(loadFromResources("menu_admin.json"));
+				menu.setJson(loadFromResources("menu_admin.json"));
 				menu.setRoleType(roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
@@ -355,7 +363,7 @@ public class InitConfigDB {
 				log.info("Adding menu for role COLLABORATOR");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("2");
-				menu.setJsonSchema(loadFromResources("menu_collaborator.json"));
+				menu.setJson(loadFromResources("menu_collaborator.json"));
 				menu.setRoleType(roleRepository.findById(Role.Type.COLLABORATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
@@ -365,7 +373,7 @@ public class InitConfigDB {
 				log.info("Adding menu for role USER");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("3");
-				menu.setJsonSchema(loadFromResources("menu_user.json"));
+				menu.setJson(loadFromResources("menu_user.json"));
 				menu.setRoleType(roleRepository.findById(Role.Type.USER.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
@@ -815,16 +823,6 @@ public class InitConfigDB {
 		List<User> types = this.userCDBRepository.findAll();
 
 		User type = null;
-
-		type = new User();
-		type.setUserId("lmgracia");
-		type.setPassword("changeIt!");
-		type.setFullName("Luis Miguel GRacia");
-		type.setEmail("lmgracia@sofia2.com");
-		type.setActive(true);
-		type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
-		type.setDateCreated(Calendar.getInstance().getTime());
-		userCDBRepository.save(type);
 
 		if (types.isEmpty()) {
 			try {

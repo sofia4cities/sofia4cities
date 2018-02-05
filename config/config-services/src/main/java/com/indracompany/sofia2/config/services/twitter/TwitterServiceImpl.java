@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.twitter;
+package com.indracompany.sofia2.config.services.twitter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
@@ -29,10 +30,11 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
+import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.TwitterListeningRepository;
-import com.indracompany.sofia2.service.ontology.OntologyService;
-import com.indracompany.sofia2.service.user.UserService;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.user.UserService;
 
 @Service
 public class TwitterServiceImpl implements TwitterService {
@@ -46,11 +48,16 @@ public class TwitterServiceImpl implements TwitterService {
 	@Autowired
 	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
+	DataModelRepository dataModelRepository;
+	@Autowired
 	TokenRepository tokenRepository;
 	@Autowired
 	OntologyService ontologyService;
 	@Autowired
 	UserService userService;
+
+	public static final String DATAMODEL_TWITTER="TWEET_DATAMODEL";
+	
 
 	@Override
 	public List<TwitterListening> getAllListenings() {
@@ -102,5 +109,51 @@ public class TwitterServiceImpl implements TwitterService {
 	@Override
 	public void createListening(TwitterListening twitterListening) {
 		this.twitterListeningRepository.save(twitterListening);
+	}
+	
+	@Override
+	public void updateListen(TwitterListening twitterListener)
+	{
+		TwitterListening newTwitterListening=this.twitterListeningRepository.findById(twitterListener.getId());
+		if(newTwitterListening!=null)
+		{
+			newTwitterListening.setIdentificator(twitterListener.getIdentificator());
+			newTwitterListening.setConfiguration(this.configurationRepository.findByDescription(twitterListener.getConfiguration().getDescription()));
+			newTwitterListening.setTopics(twitterListener.getTopics());
+			newTwitterListening.setDateFrom(twitterListener.getDateFrom());
+			newTwitterListening.setDateTo(twitterListener.getDateTo());
+			this.twitterListeningRepository.save(newTwitterListening);
+		}
+	
+	}
+	
+	@Override
+	public boolean existOntology(String identification)
+	{
+		if(this.ontologyService.getOntologyByIdentification(identification)!=null) return true;
+		else return false;
+	}
+	
+	@Override
+	public boolean existClientPlatform(String identification)
+	{
+		if(this.clientPlatformRepository.findByIdentification(identification)!=null) return true;
+		else return false;
+	}
+	
+	@Override
+	public Ontology createTwitterOntology(String ontologyId, String dataModel)
+	{
+		DataModel dataModelTwitter= this.dataModelRepository.findByIdentification(dataModel).get(0);
+		Ontology ontology= new Ontology();
+		ontology.setIdentification(ontologyId);
+		if(dataModelTwitter.equals(DATAMODEL_TWITTER)) ontology.setDescription("Ontology created for tweet recollection");
+		ontology.setJsonSchema(dataModelTwitter.getSchema());
+		ontology.setActive(true);
+		ontology.setPublic(false);
+		ontology.setRtdbClean(false);
+		ontology.setRtdbToHdb(false);
+		return ontology;
+		
 	}
 }

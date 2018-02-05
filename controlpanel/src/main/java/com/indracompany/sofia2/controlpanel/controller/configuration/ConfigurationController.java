@@ -31,9 +31,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
-import com.indracompany.sofia2.service.user.UserService;
-import com.indracompany.sofia2.services.configuration.ConfigurationService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -88,13 +88,6 @@ public class ConfigurationController {
 			return "redirect:/configurations/create";
 		}
 		this.configurationService.createConfiguration(configuration);
-		/*
-		 * if (configuration != null) { // Fields needed if
-		 * (configuration.getConfigurationType() != null && configuration.get() != null
-		 * && configuration.getUser() != null) {
-		 * this.configurationService.createConfiguration(configuration); } else {
-		 * log.debug("Missing fields"); return "redirect:/configurations/create"; } }
-		 */
 		return "redirect:/configurations/list";
 
 	}
@@ -142,6 +135,7 @@ public class ConfigurationController {
 
 	public void populateFormData(Model model) {
 		model.addAttribute("configurationTypes", this.configurationService.getAllConfigurationTypes());
+		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
 	}
 
 	@GetMapping(value = "/show/{id}", produces = "text/html")

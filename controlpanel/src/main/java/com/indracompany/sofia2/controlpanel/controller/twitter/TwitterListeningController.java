@@ -22,18 +22,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.twitter.TwitterService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
-import com.indracompany.sofia2.service.ontology.OntologyService;
-import com.indracompany.sofia2.service.twitter.TwitterService;
+
+
+import com.indracompany.sofia2.config.services.user.UserService;
+
 
 @Controller
 @RequestMapping("/twitter")
@@ -45,8 +52,11 @@ public class TwitterListeningController {
 	TwitterService twitterService;
 	@Autowired
 	OntologyService ontologyService;
-	public static final String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
-	public static final String DATAMODEL_TWITTER = "TWEET_DATAMODEL";
+
+	@Autowired
+	UserService userService;
+	public static final String ROLE_ADMINISTRATOR="ROLE_ADMINISTRATOR";
+	public static final String DATAMODEL_TWITTER="TWEET_DATAMODEL";
 
 	@GetMapping("/scheduledsearch/list")
 	public String list(Model model) {
@@ -72,12 +82,31 @@ public class TwitterListeningController {
 		return "/twitter/scheduledsearch/create";
 	}
 
+	@PutMapping("/scheduledsearch/update/{id}")
+	public String update(Model model,@PathVariable ("id") String id,@ModelAttribute TwitterListening twitterListener)
+	{
+		
+		if(twitterListener!=null) this.twitterService.updateListen(twitterListener);
+		return "redirect:/twitter/scheduledsearch/update/"+id;
+	}
 	@PostMapping("/scheduledsearch/create")
-	public String create(Model model, @Valid TwitterListening twitterListening) {
-		if (twitterListening != null) {
-			this.twitterService.createListening(twitterListening);
+	public String create(Model model,@ModelAttribute TwitterListening twitterListener,
+			@RequestParam("_new") Boolean newOntology,
+			@RequestParam(value="ontologyId",required=false) String ontologyId,
+			@RequestParam(value="clientPlatformId",required=false) String clientPlatformId)
+	{
+		if(twitterListener!=null)
+		{
+			if(!newOntology)this.twitterService.createListening(twitterListener);
+			else
+			{
+				Ontology ontology=this.twitterService.createTwitterOntology(ontologyId, DATAMODEL_TWITTER);
+				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
+				ontology=this.ontologyService.saveOntology(ontology);
+				//TODO CREATE CLIENT & TOKEN-->THEN SAVE TWITTERLISTEN
+			}
 		}
-		return "redirec:/twitter/scheduledsearch/create";
+		return "redirect:/twitter/scheduledsearch/create";
 	}
 
 	@PostMapping("/scheduledsearch/getclients")
@@ -110,5 +139,14 @@ public class TwitterListeningController {
 		model.addAttribute("ontologies", ontologies);
 
 	}
-
+	@PostMapping("/scheduledsearch/existontology")
+	public @ResponseBody  boolean existOntology(@RequestBody String identification)
+	{
+		return this.twitterService.existOntology(identification);
+	}
+	@PostMapping("/scheduledsearch/existclient")
+	public @ResponseBody  boolean existClient(@RequestBody String identification)
+	{
+		return this.twitterService.existClientPlatform(identification);
+	}
 }

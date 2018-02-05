@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.menu;
+package com.indracompany.sofia2.config.services.menu;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public String loadMenuByRole(User user) {
 		if (user != null)
-			return this.consoleMenuRepository.findByRoleType(user.getRole()).getJsonSchema();
+			return this.consoleMenuRepository.findByRoleType(user.getRole()).getJson();
 		else
 			return null;
 	}

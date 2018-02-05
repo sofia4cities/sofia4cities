@@ -11,19 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.token;
+package com.indracompany.sofia2.config.services.token;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.indracompany.sofia2.config.model.Token;
-import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.repository.TokenRepository;
 
 @Service
 
 public class TokenServiceImpl {
-	
-
 
 }

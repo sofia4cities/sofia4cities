@@ -126,6 +126,7 @@ var ConfigurationsCreateController = function() {
             //matchBrackets: true,
             styleActiveLine: true,
             theme:"material",          
+
         });
 		myCodeMirror.setSize("100%", 350);
     }
