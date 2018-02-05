@@ -20,15 +20,11 @@
 
 package com.indracompany.sofia2.config.model;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -45,29 +41,33 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "ONTOLOGY")
-public class Ontology extends AuditableEntityWithUUID{
+public class Ontology extends AuditableEntityWithUUID {
 
-	@Column(name = "JSON_SCHEMA",nullable = false)
+	@Column(name = "JSON_SCHEMA", nullable = false)
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Setter private String jsonSchema;
+	@Setter
+	private String jsonSchema;
 
 	@Column(name = "XML_Diagram")
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String xmlDiagram;
-
+	@Getter
+	@Setter
+	private String xmlDiagram;
 
 	@Column(name = "ONTOLOGY_CLASS", length = 50)
-	@Getter @Setter private String ontologyClass;
+	@Getter
+	@Setter
+	private String ontologyClass;
 
 	public String getJsonSchema() {
 		String schema = "";
 		schema = this.jsonSchema;
 
 		if (schema != null && schema.length() > 0) {
-			schema= schema.replaceAll("\\<.*?>", "");
+			schema = schema.replaceAll("\\<.*?>", "");
 			schema = schema.replaceAll("&nbsp;", "");
 			schema = schema.replaceAll("&amp;", "");
 			schema = schema.replaceAll("&quot;", "\"");
@@ -79,64 +79,72 @@ public class Ontology extends AuditableEntityWithUUID{
 		return schema;
 	}
 
-
-	@OneToMany(mappedBy = "ontologyId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter @Setter private Set<ClientPlatformOntology> clientPlatformOntologyId;
-
 	/*
-	@OneToMany(mappedBy = "ontologiaId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_USUARIO_USUARIOONTOLOGIA")
-    private Set<Usuarioontologia> usuarioontologias;*/
-
-	@OneToMany(mappedBy = "ontologyId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter @Setter private Set<OntologyEmulator> ontologyEmulator;
+	 * @OneToMany(mappedBy = "ontologiaId", cascade = CascadeType.ALL)
+	 * 
+	 * @OnDelete(action = OnDeleteAction.CASCADE)
+	 * 
+	 * @ForeignKey(name = "FK_USUARIO_USUARIOONTOLOGIA") private
+	 * Set<Usuarioontologia> usuarioontologias;
+	 */
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "DATA_MODEL_ID", referencedColumnName = "ID")
-	@Getter @Setter private DataModel dataModelId;
+	@Getter
+	@Setter
+	private DataModel dataModel;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-	@Getter @Setter private User userId;
+	@Getter
+	@Setter
+	private User user;
 
-	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
+	@Column(name = "IDENTIFICATION", length = 50, unique = true, nullable = false)
 	@NotNull
-	@Getter @Setter private String identification;
+	@Getter
+	@Setter
+	private String identification;
 
-	@Column(name = "ACTIVE",nullable = false)
+	@Column(name = "ACTIVE", nullable = false)
 	@NotNull
-	@Getter @Setter private boolean active;
+	@Getter
+	@Setter
+	private boolean active;
 
-	@Column(name = "RTDBCLEAN",nullable = false)
+	@Column(name = "RTDBCLEAN", nullable = false)
 	@NotNull
-	@Getter @Setter private boolean rtdbClean;
+	@Getter
+	@Setter
+	private boolean rtdbClean;
 
 	@Column(name = "RTDBHDB", nullable = false)
 	@NotNull
-	@Getter @Setter private boolean rtdbToHdb;
+	@Getter
+	@Setter
+	private boolean rtdbToHdb;
 
-	@Column(name = "PUBLIC",nullable = false)
+	@Column(name = "PUBLIC", nullable = false)
 	@NotNull
-	@Getter @Setter private boolean isPublic;
+	@Getter
+	@Setter
+	private boolean isPublic;
 
 	@Column(name = "DESCRIPTION", length = 512)
-	@Getter @Setter private String description;
+	@Getter
+	@Setter
+	private String description;
 
 	@Column(name = "METAINF", length = 1024)
-	@Getter @Setter private String metainf;
+	@Getter
+	@Setter
+	private String metainf;
 
 	@Column(name = "DATA_MODEL_VERSION", length = 50)
-	@Getter @Setter private String dataModelVersion;
-
-
-
-
-
-
+	@Getter
+	@Setter
+	private String dataModelVersion;
 
 }

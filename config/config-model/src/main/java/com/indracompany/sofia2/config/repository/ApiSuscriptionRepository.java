@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.repository;
+
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,11 +21,10 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiSuscription;
 import com.indracompany.sofia2.config.model.User;
 
-public interface ApiSuscriptionRepository extends JpaRepository<ApiSuscription,String> {
-
+public interface ApiSuscriptionRepository extends JpaRepository<ApiSuscription, String> {
 
 	ApiSuscription findById(String id);
-	List<ApiSuscription> findAllByApiIdAndUserId(Api api, User user);
 
+	List<ApiSuscription> findAllByApiAndUser(Api api, User user);
 
 }

@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.api.rest.api;
+
 import java.util.Locale;
 
 import javax.ws.rs.core.MediaType;
@@ -24,56 +25,55 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.api.rest.api.dto.ApiDTO;
 import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 
-
-
 @Component("apiRestServiceImpl")
 public class APiRestServiceImpl implements ApiRestService {
-	
-	
-	
+
 	Locale locale = LocaleContextHolder.getLocale();
-	
+
 	@Autowired
 	private ApiServiceRest apiService;
-	
+
 	@Autowired
 	private ApiFIQL apiFIQL;
-	
+
 	@Override
 	public Response getApi(String identificacion, String tokenUsuario) throws Exception {
 		return Response.ok(apiFIQL.toApiDTO(apiService.findApi(identificacion, tokenUsuario))).build();
 	}
 
 	@Override
-	public Response getApiFilter(String identificacion, String estado, String usuario, String tokenUsuario) throws Exception {
-		return Response.ok(apiFIQL.toApiDTO(apiService.findApis(identificacion, estado, usuario, tokenUsuario))).build();
+	public Response getApiFilter(String identificacion, String estado, String usuario, String tokenUsuario)
+			throws Exception {
+		return Response.ok(apiFIQL.toApiDTO(apiService.findApis(identificacion, estado, usuario, tokenUsuario)))
+				.build();
 	}
 
 	@Override
 	public Response create(ApiDTO api, String tokenUsuario) throws Exception {
 		apiService.createApi(api, tokenUsuario);
-		Object parametros[]={api.getIdentificacion()};
+		Object parametros[] = { api.getIdentification() };
 		return Response.ok(parametros).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
 	public Response update(ApiDTO api, String tokenUsuario) throws Exception {
 		apiService.updateApi(api, tokenUsuario);
-		Object parametros[]={api.getIdentificacion()};
+		Object parametros[] = { api.getIdentification() };
 		return Response.ok(parametros).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
 	public Response delete(ApiDTO api, String tokenUsuario) throws Exception {
 		apiService.removeApi(api, tokenUsuario);
-		Object parametros[]={api.getIdentificacion(), api.getNumversion().toString()};
+		Object parametros[] = { api.getIdentification(), api.getVersion().toString() };
 		return Response.ok(parametros).type(MediaType.APPLICATION_JSON).build();
 	}
-	
+
 	@Override
-	public Response deleteByIdentificacionNumversion(String identificacion, String numversion, String tokenUsuario) throws Exception {
+	public Response deleteByIdentificacionNumversion(String identificacion, String numversion, String tokenUsuario)
+			throws Exception {
 		apiService.removeApiByIdentificacionNumversion(identificacion, numversion, tokenUsuario);
-		Object parametros[]={identificacion, numversion};
+		Object parametros[] = { identificacion, numversion };
 		return Response.ok(parametros).type(MediaType.APPLICATION_JSON).build();
 	}
 

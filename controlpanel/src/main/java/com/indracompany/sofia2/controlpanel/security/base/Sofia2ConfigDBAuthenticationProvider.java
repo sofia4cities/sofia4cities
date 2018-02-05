@@ -35,33 +35,31 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvider {
 
+	@Autowired
+	private UserRepository userRepository;
 
-	@Autowired 
-    private UserRepository userRepository;
-	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		
+
 		String name = authentication.getName();
-        Object credentials = authentication.getCredentials();
-        log.info("credentials class: " + credentials.getClass());
-        if (!(credentials instanceof String)) {
-            return null;
-        }
-        String password = credentials.toString();
+		Object credentials = authentication.getCredentials();
+		log.info("credentials class: " + credentials.getClass());
+		if (!(credentials instanceof String)) {
+			return null;
+		}
+		String password = credentials.toString();
 
-        User user = userRepository.findByUserIdAndPassword(name,password);
+		User user = userRepository.findByUserIdAndPassword(name, password);
 
-        if (user==null) {
+		if (user == null) {
 			log.info("authenticate: User or password incorrect: " + name);
-            throw new BadCredentialsException("Authentication failed for " + name);
-        }
+			throw new BadCredentialsException("Authentication failed for " + name);
+		}
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(user.getRoleTypeId().getName()));
-        Authentication auth = new
-                UsernamePasswordAuthenticationToken(name, password, grantedAuthorities);
-        return auth;
+		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
+		Authentication auth = new UsernamePasswordAuthenticationToken(name, password, grantedAuthorities);
+		return auth;
 	}
 
 	@Override

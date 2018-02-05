@@ -54,45 +54,46 @@ public class GadgetQueryIntegrationTest {
 	GadgetQueryRepository repository;
 	@Autowired
 	GadgetRepository grepository;
-	
+
 	@Autowired
-	UserRepository userRepository;	
+	UserRepository userRepository;
+
 	private User getUserCollaborator() {
 		return this.userRepository.findByUserId("collaborator");
 	}
-	
+
 	@Before
 	public void setUp() {
-		List<GadgetQuery> gadgetQuerys= this.repository.findAll();
+		List<GadgetQuery> gadgetQuerys = this.repository.findAll();
 		if (gadgetQuerys.isEmpty()) {
 			log.info("No gadget querys ...");
-			GadgetQuery gadgetQuery=new GadgetQuery();
+			GadgetQuery gadgetQuery = new GadgetQuery();
 			gadgetQuery.setQuery("Query1");
-			List<Gadget> gadgets= this.grepository.findAll();
+			List<Gadget> gadgets = this.grepository.findAll();
 			Gadget gadget;
-			if(gadgets.isEmpty()){
+			if (gadgets.isEmpty()) {
 				log.info("No gadgets ...");
-				gadget=new Gadget();
+				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUserId(getUserCollaborator());
+				gadget.setUser(getUserCollaborator());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
 
 				grepository.save(gadget);
-			}else{
-				gadget=grepository.findAll().get(0);
+			} else {
+				gadget = grepository.findAll().get(0);
 			}
-			gadgetQuery.setGadgetId(gadget);
+			gadgetQuery.setGadget(gadget);
 			repository.save(gadgetQuery);
 		}
 	}
 
 	@Test
-	public void test_findByGadgetId() { 
-		GadgetQuery gadgetQuery=this.repository.findAll().get(0);
-		log.info("Loaded gadget query with gadget id: "+gadgetQuery.getGadgetId().getId());
-		Assert.assertTrue(this.repository.findByGadgetId(gadgetQuery.getGadgetId()).size()>0);
+	public void test_findByGadgetId() {
+		GadgetQuery gadgetQuery = this.repository.findAll().get(0);
+		log.info("Loaded gadget query with gadget id: " + gadgetQuery.getGadget().getId());
+		Assert.assertTrue(this.repository.findByGadget(gadgetQuery.getGadget()).size() > 0);
 	}
 
 }

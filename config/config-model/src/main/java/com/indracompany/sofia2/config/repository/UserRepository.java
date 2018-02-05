@@ -30,15 +30,23 @@ import com.indracompany.sofia2.config.model.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-
 	List<User> findByEmail(String email);
+
 	User findByUserId(String userId);
-	User findByUserIdAndPassword(String userId,String password);
+
+	User findByUserIdAndPassword(String userId, String password);
+
 	void deleteByUserId(String userId);
-	@Query("SELECT o FROM User AS o WHERE o.roleTypeId !='1'")
+
+	@Query("SELECT o FROM User AS o WHERE o.role !='ADMINISTRATOR'")
 	List<User> findUsersNoAdmin();
-	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.roleTypeId.name =:roleType)")
-	List<User> findByUserIdOrFullNameOrEmailOrRoleType(@Param("userId")String userId, @Param("fullName")String fullName,@Param("email")String email, @Param("roleType")String roleType);
-	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.roleTypeId.name =:roleType) AND (o.active=:#{#active})")
-	List<User> findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(@Param("userId")String userId, @Param("fullName")String fullName,@Param("email")String email, @Param("roleType")String roleType,@Param("active")boolean active);
+
+	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.role.name =:role)")
+	List<User> findByUserIdOrFullNameOrEmailOrRoleType(@Param("userId") String userId,
+			@Param("fullName") String fullName, @Param("email") String email, @Param("role") String role);
+
+	@Query("SELECT o FROM User AS o WHERE (o.userId LIKE %:userId% OR o.fullName LIKE %:fullName% OR o.email LIKE %:email% OR o.role.name =:role) AND (o.active=:#{#active})")
+	List<User> findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(@Param("userId") String userId,
+			@Param("fullName") String fullName, @Param("email") String email, @Param("role") String role,
+			@Param("active") boolean active);
 }

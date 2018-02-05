@@ -30,44 +30,65 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "TWITTER_LISTENER")
+@Table(name = "TWITTER_LISTENING")
 @Configurable
-public class TwitterListener extends AuditableEntityWithUUID{
-	
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
-    @Getter @Setter private Ontology ontologyId;
+public class TwitterListening extends AuditableEntityWithUUID {
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "CONFIGURATION_ID", referencedColumnName = "ID")
-	@Getter @Setter private Configuration configurationId;
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
+	@Getter
+	@Setter
+	private Ontology ontology;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
-    @JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID")
-	@Getter @Setter private Token tokenId;
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@Getter
+	@Setter
+	private User user;
 
-	@Column(name = "IDENTIFICATOR", length = 50,nullable = false)
-    @NotNull
-    @Getter @Setter private String identificator;
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "CONFIGURATION_ID", referencedColumnName = "ID")
+	@Getter
+	@Setter
+	private Configuration configuration;
 
-	@Column(name = "dateFrom", length = 100,nullable = false)
-    @NotNull
-    @Getter @Setter private String dateFrom;
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID")
+	@Getter
+	@Setter
+	private Token token;
 
-	@Column(name = "dateTo", length = 100,nullable = false)
-    @NotNull
-    @Getter @Setter private String dateTo;
+	@Column(name = "IDENTIFICATOR", length = 50, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String identificator;
 
-	@Column(name = "topics", length = 512,nullable = false)
-    @NotNull
-    @Getter @Setter private String topics;
+	@Column(name = "dateFrom", length = 100, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String dateFrom;
+
+	@Column(name = "dateTo", length = 100, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String dateTo;
+
+	@Column(name = "topics", length = 512, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String topics;
 
 	@Column(name = "cron", length = 100)
-	@Getter @Setter private String cron;
+	@Getter
+	@Setter
+	private String cron;
 
-
-	
 }

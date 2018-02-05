@@ -24,17 +24,17 @@ import com.indracompany.sofia2.config.model.User;
 
 public interface OntologyUserAccessRepository extends JpaRepository<OntologyUserAccess, String> {
 
-	List<OntologyUserAccess> findByOntologyIdAndUserId(Ontology ontologyId, User userId);
+	List<OntologyUserAccess> findByOntologyIdAndUser(Ontology ontology, User user);
 
-	List<OntologyUserAccess> findByUserId(User userId);
+	List<OntologyUserAccess> findByUser(User user);
 
-	List<OntologyUserAccess> findByUserIdAndOntologyUserAccessTypeId(User userId,
-			OntologyUserAccessType ontologyUserAccessTypeId);
+	List<OntologyUserAccess> findByUserAndOntologyUserAccessType(User user,
+			OntologyUserAccessType ontologyUserAccessType);
 
 	OntologyUserAccess findById(String id);
 
-	List<OntologyUserAccess> findByOntologyUserAccessTypeId(OntologyUserAccessType ontologyUserAccessTypeId);
+	List<OntologyUserAccess> findByOntologyUserAccessType(OntologyUserAccessType ontologyUserAccessType);
 
-	List<OntologyUserAccess> findByOntologyId(Ontology ontologyId);
+	List<OntologyUserAccess> findByOntology(Ontology ontology);
 
 }

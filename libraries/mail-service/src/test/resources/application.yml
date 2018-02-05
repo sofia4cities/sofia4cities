@@ -1,4 +1,4 @@
-# Gmail SMTP
+# Gmail Config for SMTP
 spring:
    mail:
       host: smtp.gmail.com

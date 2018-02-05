@@ -17,24 +17,33 @@ import java.util.List;
 
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.TwitterListener;
-
+import com.indracompany.sofia2.config.model.TwitterListening;
 
 public interface TwitterService {
-	
-	List<TwitterListener> getAllListens();
-	List<TwitterListener> getAllListensByUserId(String userId);
-	TwitterListener getListenById(String id);
+
+	List<TwitterListening> getAllListenings();
+
+	List<TwitterListening> getAllListeningsByUser(String userId);
+
+	TwitterListening getListenById(String id);
+
 	List<Configuration> getAllConfigurations();
+
 	List<Configuration> getConfigurationsByUserId(String userId);
+
 	List<String> getClientsFromOntology(String ontologyId);
+
 	List<String> getTokensFromClient(String clientPlatformId);
-	void createListen(TwitterListener twitterListener);
-	void updateListen(TwitterListener twitterListener);
+	
+	void updateListen(TwitterListening twitterListener);
+	
 	boolean existOntology(String identification);
+	
 	boolean existClientPlatform(String identification);
-	Ontology createTwitterOntology(String ontologyId, String dataModel);
 	
-	
+	Ontology createTwitterOntology(String ontologyId, String dataModel);	
+
+	void createListening(TwitterListening TwitterListening);
+
 
 }

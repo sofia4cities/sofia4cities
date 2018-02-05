@@ -37,10 +37,6 @@ import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -48,56 +44,54 @@ import lombok.extern.slf4j.Slf4j;
 
 public class OntologyIntegrationTest {
 
-	@Autowired 
+	@Autowired
 	OntologyRepository repository;
 	@Autowired
-	UserRepository userRepository;	
+	UserRepository userRepository;
+
 	private User getUserCollaborator() {
 		return this.userRepository.findByUserId("collaborator");
 	}
+
 	@Before
 	public void setUp() {
-		List<Ontology> ontologies=this.repository.findAll();
-		if(ontologies.isEmpty())
-		{
+		List<Ontology> ontologies = this.repository.findAll();
+		if (ontologies.isEmpty()) {
 			log.info("No ontologies..adding");
-			Ontology ontology=new Ontology();
+			Ontology ontology = new Ontology();
 			ontology.setJsonSchema("{}");
 			ontology.setIdentification("Id 1");
 			ontology.setDescription("Description");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setPublic(true);
-			ontology.setUserId(getUserCollaborator());			
+			ontology.setUser(getUserCollaborator());
 			repository.save(ontology);
-			
-			ontology=new Ontology();
+
+			ontology = new Ontology();
 			ontology.setJsonSchema("{Data:,Temperature:}");
 			ontology.setDescription("Description");
 			ontology.setIdentification("Id 2");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setPublic(true);
-			ontology.setUserId(getUserCollaborator());	
+			ontology.setUser(getUserCollaborator());
 			repository.save(ontology);
 
 		}
 	}
-	@Test
-	public void test_findByIdentificationLikeAndDescriptionLike()
-	{
-		Ontology o=this.repository.findAll().get(0);
-		o.isActive();
-		Assert.assertTrue(this.repository.findByIdentificationLikeAndDescriptionLike(o.getIdentification(), o.getDescription()).size()>0);
 
+	@Test
+	public void test_findByIdentificationLikeAndDescriptionLike() {
+		Ontology o = this.repository.findAll().get(0);
+		o.isActive();
+		Assert.assertTrue(this.repository
+				.findByIdentificationLikeAndDescriptionLike(o.getIdentification(), o.getDescription()).size() > 0);
 
 	}
 
-	public void countByIsActiveTrueAndIsPublicTrue()
-	{
-		Assert.assertTrue(this.repository.countByActiveTrueAndIsPublicTrue()==1L);
-
-
+	public void countByIsActiveTrueAndIsPublicTrue() {
+		Assert.assertTrue(this.repository.countByActiveTrueAndIsPublicTrue() == 1L);
 
 	}
 }

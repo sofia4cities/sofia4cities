@@ -22,97 +22,103 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.service.user.UserService;
 
-
 @Service
-public class OntologyServiceImpl implements OntologyService{
+public class OntologyServiceImpl implements OntologyService {
 
 	@Autowired
 	OntologyRepository ontologyRepository;
 	@Autowired
 	UserService userService;
-	
-	public static final String ADMINISTRATOR="ROLE_ADMINISTRATOR";
 
-	public List<Ontology> getAllOntologies()
-	{
-		List<Ontology> ontologies=this.ontologyRepository.findAll();
+	public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
+
+	@Override
+	public List<Ontology> getAllOntologies() {
+		List<Ontology> ontologies = this.ontologyRepository.findAll();
 
 		return ontologies;
 	}
-	public List<Ontology> getOntologiesByUserId(String userId)
-	{
-		return this.ontologyRepository.findByUserIdAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
+
+	@Override
+	public List<Ontology> getOntologiesByUserId(String userId) {
+		return this.ontologyRepository
+				.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
 	}
-	public List<Ontology> getOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description)
-	{
+
+	@Override
+	public List<Ontology> getOntolgiesWithDescriptionAndIdentification(String userId, String identification,
+			String description) {
 		List<Ontology> ontologies;
-		User user= this.userService.getUser(userId);
-		
-		if(user.getRoleTypeId().getName().equals(OntologyServiceImpl.ADMINISTRATOR))
-		{
-			if(description!=null && identification!=null){
+		User user = this.userService.getUser(userId);
 
-				ontologies=this.ontologyRepository.findByIdentificationContainingAndDescriptionContaining(identification, description);
+		if (user.getRole().getName().equals(OntologyServiceImpl.ADMINISTRATOR)) {
+			if (description != null && identification != null) {
 
-			}else if(description==null && identification!=null){
+				ontologies = this.ontologyRepository
+						.findByIdentificationContainingAndDescriptionContaining(identification, description);
 
-				ontologies=this.ontologyRepository.findByIdentificationContaining(identification);
+			} else if (description == null && identification != null) {
 
-			}else if(description!=null && identification==null){	
+				ontologies = this.ontologyRepository.findByIdentificationContaining(identification);
 
-				ontologies=this.ontologyRepository.findByDescriptionContaining(description);
+			} else if (description != null && identification == null) {
 
-			}else{
+				ontologies = this.ontologyRepository.findByDescriptionContaining(description);
 
-				ontologies=this.ontologyRepository.findAll();
+			} else {
+
+				ontologies = this.ontologyRepository.findAll();
 			}
-		}else
-		{
-			if(description!=null && identification!=null){
+		} else {
+			if (description != null && identification != null) {
 
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContainingAndDescriptionContaining(user,identification, description);
+				ontologies = this.ontologyRepository.findByUserAndIdentificationContainingAndDescriptionContaining(user,
+						identification, description);
 
-			}else if(description==null && identification!=null){
+			} else if (description == null && identification != null) {
 
-				ontologies=this.ontologyRepository.findByUserIdAndIdentificationContaining(user,identification);
+				ontologies = this.ontologyRepository.findByUserAndIdentificationContaining(user, identification);
 
-			}else if(description!=null && identification==null){	
+			} else if (description != null && identification == null) {
 
-				ontologies=this.ontologyRepository.findByUserIdAndDescriptionContaining(user,description);
+				ontologies = this.ontologyRepository.findByUserAndDescriptionContaining(user, description);
 
-			}else{
+			} else {
 
-				ontologies=this.ontologyRepository.findByUserId(user);
+				ontologies = this.ontologyRepository.findByUser(user);
 			}
 		}
 		return ontologies;
 	}
-	public List<String> getAllIdentifications()
-	{
-		List<Ontology> ontologies=this.ontologyRepository.findAllByOrderByIdentificationAsc();
-		List<String> identifications=new ArrayList<String>();
-		for(Ontology ontology:ontologies)
-		{
+
+	@Override
+	public List<String> getAllIdentifications() {
+		List<Ontology> ontologies = this.ontologyRepository.findAllByOrderByIdentificationAsc();
+		List<String> identifications = new ArrayList<String>();
+		for (Ontology ontology : ontologies) {
 			identifications.add(ontology.getIdentification());
-			
+
 		}
 		return identifications;
 	}
-	
+
+	@Override
 	public Ontology getOntologyById(String id) {
 		return this.ontologyRepository.findById(id);
 	}
-	public Ontology getOntologyByIdentification(String identification)
-	{
+
+	@Override
+	public Ontology getOntologyByIdentification(String identification) {
 		return this.ontologyRepository.findByIdentification(identification);
 	}
+
 	
 	public Ontology saveOntology(Ontology ontology)
 	{
 		return this.ontologyRepository.save(ontology);
 		
 	}
+
 }

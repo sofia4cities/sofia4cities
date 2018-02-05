@@ -35,15 +35,10 @@ import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-
 public class ClientPlatformOntologyIntegrationTest {
 
 	@Autowired
@@ -65,8 +60,8 @@ public class ClientPlatformOntologyIntegrationTest {
 	public void test_findByOntologyIdAndClientPlatformId() {
 		ClientPlatformOntology cpo = this.repository.findAll().get(0);
 
-		Assert.assertTrue(this.repository
-				.findByOntologyIdAndClientPlatformId(cpo.getOntologyId(), cpo.getClientPlatformId()).size() > 0);
+		Assert.assertTrue(
+				this.repository.findByOntologyAndClientPlatform(cpo.getOntology(), cpo.getClientPlatform()).size() > 0);
 
 	}
 

@@ -19,6 +19,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -35,7 +36,6 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
@@ -46,42 +46,57 @@ import lombok.Setter;
 @Table(name = "USER")
 @Configurable
 public class User extends AuditableEntity {
-	
+
 	@Id
-	@Column(name = "USER_ID", length = 50, unique = true,nullable = false)
+	@Column(name = "USER_ID", length = 50, unique = true, nullable = false)
 	@NotNull
-	@Getter @Setter private String userId;
-	
-	@Column(name = "EMAIL", length = 255,nullable = false)
+	@Getter
+	@Setter
+	private String userId;
+
+	@Column(name = "EMAIL", length = 255, nullable = false)
 	@NotNull
 	@Pattern(regexp = "^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,3})$")
-	@Getter @Setter private String email;
+	@Getter
+	@Setter
+	private String email;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JoinColumn(name = "ROLE_TYPE_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private RoleType roleTypeId;
+	@JoinColumn(name = "ROLE_ID", referencedColumnName = "ID", nullable = false)
+	// @Convert(converter = StringCryptoConverter.class)
+	@Getter
+	@Setter
+	private Role role;
 
-
-	@Column(name = "PASSWORD", length = 128,nullable = false)
+	@Column(name = "PASSWORD", length = 128, nullable = false)
 	@NotNull
-	@Getter @Setter private String password;
+	@Getter
+	@Setter
+	private String password;
 
-	@Column(name = "DATE_CREATED",nullable = false)
+	@Column(name = "DATE_CREATED", nullable = false)
 	@NotNull
 	@Temporal(TemporalType.DATE)
-	@Getter @Setter private Date dateCreated;
+	@Getter
+	@Setter
+	private Date dateCreated;
 
-	@Column(name = "ACTIVE",nullable = false)
+	@Column(name = "ACTIVE", nullable = false)
 	@NotNull
-	@Getter @Setter private boolean active;
+	@Getter
+	@Setter
+	private boolean active;
 
 	@Column(name = "FULL_NAME", length = 255)
-	@Getter @Setter private String fullName;
+	@Getter
+	@Setter
+	private String fullName;
 
 	@Column(name = "DATE_DELETED")
 	@Temporal(TemporalType.DATE)
-	@Getter @Setter private Date dateDeleted;
-
+	@Getter
+	@Setter
+	private Date dateDeleted;
 
 }

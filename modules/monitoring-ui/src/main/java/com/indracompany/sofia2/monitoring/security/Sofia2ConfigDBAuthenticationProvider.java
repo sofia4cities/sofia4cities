@@ -27,6 +27,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.UserRepository;
 
@@ -36,43 +37,41 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvider {
 
+	@Autowired
+	private UserRepository userRepository;
 
-	@Autowired 
-    private UserRepository userRepository;
-	
-	 @Autowired
+	@Autowired
 	private CounterService counterService;
-	 
-	
+
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		
+
 		String name = authentication.getName();
-        Object credentials = authentication.getCredentials();
-        log.info("credentials class: " + credentials.getClass());
-        if (!(credentials instanceof String)) {
-            return null;
-        }
-        String password = credentials.toString();
-	
-        User user = userRepository.findByUserIdAndPassword(name,password);
+		Object credentials = authentication.getCredentials();
+		log.info("credentials class: " + credentials.getClass());
+		if (!(credentials instanceof String)) {
+			return null;
+		}
+		String password = credentials.toString();
 
-        if (user==null) {
+		User user = userRepository.findByUserIdAndPassword(name, password);
+
+		if (user == null) {
 			log.info("authenticate: User or password incorrect: " + name);
-            throw new BadCredentialsException("Authentication failed for " + name);
-        }
-        if (!user.getRoleTypeId().getName().equalsIgnoreCase("ROLE_OPERATIONS")) {
-			log.info("authenticate: Role of user "+user.getUserId()+" is not ROLE_OPERATIONS: ");
-            throw new BadCredentialsException("Authentication failed for user "+user.getUserId()+"User has not ROLE_OPERATIONS: ");        	
-        }
+			throw new BadCredentialsException("Authentication failed for " + name);
+		}
+		if (!user.getRole().getId().equals(Role.Type.OPERATIONS)) {
+			log.info("authenticate: Role of user " + user.getUserId() + " is not ROLE_OPERATIONS: ");
+			throw new BadCredentialsException(
+					"Authentication failed for user " + user.getUserId() + "User has not ROLE_OPERATIONS: ");
+		}
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(user.getRoleTypeId().getName()));
-        Authentication auth = new
-                UsernamePasswordAuthenticationToken(name, password, grantedAuthorities);
-        
-        counterService.increment("_sofia2.monitoring.metrics.logins");
-        return auth;
+		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
+		Authentication auth = new UsernamePasswordAuthenticationToken(name, password, grantedAuthorities);
+
+		counterService.increment("_sofia2.monitoring.metrics.logins");
+		return auth;
 	}
 
 	@Override

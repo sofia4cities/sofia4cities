@@ -19,6 +19,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -37,95 +38,51 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Configurable
 @Entity
 @Table(name = "api_user_assessment")
 @SuppressWarnings("deprecation")
 public class ApiUserAssessment extends AuditableEntityWithUUID {
-    
+
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-   
-    @JoinColumn(name = "ontologyId", referencedColumnName = "ID")
-    private Ontology ontologyId;
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID")
+	private Ontology ontology;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-   
-    @JoinColumn(name = "commentId", referencedColumnName = "ID")
-    private ApiComment commentId;
+
+	@JoinColumn(name = "COMMENT_ID", referencedColumnName = "ID")
+	private ApiComment comment;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-   
-    @JoinColumn(name = "apiId", referencedColumnName = "ID")
-    private Api apiId;
+	@JoinColumn(name = "API_ID", referencedColumnName = "ID")
+	private Api api;
 
-	@Column(name = "USER_ID", length = 50,nullable = false)
-    @NotNull
-    private String userId;
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@Getter
+	@Setter
+	private User user;
 
-	@Column(name = "ASSESSMENT", precision = 10,nullable = false)
-    @NotNull
-    private Double assessment;
+	@Column(name = "ASSESSMENT", precision = 10, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private Double assessment;
 
 	@Column(name = "ASSESSMENT_DATE")
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(style = "M-")
-    private Date fecha;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(style = "M-")
+	@Getter
+	@Setter
+	private Date fecha;
 
-	public Ontology getOntologyId() {
-		return ontologyId;
-	}
-
-	public void setOntologyId(Ontology ontologyId) {
-		this.ontologyId = ontologyId;
-	}
-
-	public ApiComment getCommentId() {
-		return commentId;
-	}
-
-	public void setCommentId(ApiComment commentId) {
-		this.commentId = commentId;
-	}
-
-	public Api getApiId() {
-		return apiId;
-	}
-
-	public void setApiId(Api apiId) {
-		this.apiId = apiId;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public Double getAssessment() {
-		return assessment;
-	}
-
-	public void setAssessment(Double assessment) {
-		this.assessment = assessment;
-	}
-
-	public Date getFecha() {
-		return fecha;
-	}
-
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
-	}
-
-	
-
-
-	
 }

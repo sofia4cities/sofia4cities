@@ -54,6 +54,10 @@
 			
 			<!-- BEGIN CONTENT BODY -->
 			<div class="page-content">
+			
+                <div class="alert alert-success display-hide">
+					<span th:text="${globalMessage}"></span>
+				</div>		
 				
 				<!-- BEGIN PAGE BAR AND BREADCRUM-->
 				<div class="page-bar margin-bottom-20">
@@ -100,11 +104,12 @@
 								<div class="row">
 									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
 										<div class="alert alert-danger display-hide">
-											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
-										</div>
+											<button class="close" data-close="alert"></button> 
+											<span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>										
                                         <div class="alert alert-success display-hide">
 											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
-										</div>									
+										</div>								
 									</div>
 									<div class="col-md-12">										
 										<form role="form" id="user_create_form" th:object="${user}" method="post" class="form">
@@ -160,7 +165,7 @@
 													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')">
 														<div class="form-group">
 															<label class="control-label" th:text="#{user.rolTypeName} + ':'">Role</label>
-															<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" th:field="*{roleTypeId.name}" th:required="true">
+															<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" th:field="*{role.name}" th:required="true">
 																<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>
 															</select>
 														</div>
@@ -179,15 +184,15 @@
 															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-calendar-o"></i>
-																<input id="datedeleted" type="text"  maxlength="50" th:field="*{dateDeleted}" class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
+																<input id="datedeleted" type="text" maxlength="50" th:field="*{dateDeleted}" class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+													<div class="col-md-2 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 														<div class="form-group">
 															<label class="" th:text="#{user.active} + '?'">Active</label>
 															<div class="mt-checkbox-list">
-																<label class="mt-checkbox font-md" ><i class="la la-lightbulb-o" ></i> <div class="inline" th:text="#{user.active}">User Active?</div>
+																<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.active.help},data-title=#{user.active}"><i class="la la-lightbulb-o"></i> <div class="inline" th:text="#{user.active}">User Active?</div>
 																	<input id="checkboxactive" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
 																	<span></span><!-- needed by styles -->
 																</label>																													

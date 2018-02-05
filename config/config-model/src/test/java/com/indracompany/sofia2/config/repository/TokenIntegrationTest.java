@@ -18,7 +18,6 @@
  * All rights reserved
  ******************************************************************************/
 
-
 package com.indracompany.sofia2.config.repository;
 
 import java.util.HashSet;
@@ -40,12 +39,7 @@ import com.indracompany.sofia2.config.model.Token;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
-
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
@@ -58,16 +52,16 @@ public class TokenIntegrationTest {
 
 	@Before
 	public void setUp() {
-		List<Token> tokens= this.repository.findAll();
+		List<Token> tokens = this.repository.findAll();
 		if (tokens.isEmpty()) {
 			log.info("No Tokens, adding ...");
 
-			ClientPlatform client= new ClientPlatform();
+			ClientPlatform client = new ClientPlatform();
 			client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
-			Set<Token> hashSetTokens=new HashSet<Token>();
+			Set<Token> hashSetTokens = new HashSet<Token>();
 
-			Token token=new Token();
-			token.setClientPlatformId(client);
+			Token token = new Token();
+			token.setClientPlatform(client);
 			token.setToken("Token1");
 			token.setActive(true);
 			hashSetTokens.add(token);
@@ -77,9 +71,9 @@ public class TokenIntegrationTest {
 	}
 
 	@Test
-	public void test_findByClientPlatformId() { 
-		Token token=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByClientPlatformId(token.getClientPlatformId()).size()>0);		
+	public void test_findByClientPlatformId() {
+		Token token = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findByClientPlatform(token.getClientPlatform()).size() > 0);
 	}
 
 }

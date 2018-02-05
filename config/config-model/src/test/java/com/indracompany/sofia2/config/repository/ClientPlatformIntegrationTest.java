@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
+
 import java.util.List;
 
 import org.junit.Assert;
@@ -43,25 +44,25 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 public class ClientPlatformIntegrationTest {
-	@Autowired 
+	@Autowired
 	ClientPlatformRepository repository;
 
 	@Autowired
 	UserRepository userRep;
-	
+
 	@Before
 	public void setUp() {
-		List<ClientPlatform> clients= this.repository.findAll();
+		List<ClientPlatform> clients = this.repository.findAll();
 		if (clients.isEmpty()) {
 			log.info("No clients ...");
-			ClientPlatform client= new ClientPlatform();
-			client.setUserId(userRep.findByUserId("2"));
+			ClientPlatform client = new ClientPlatform();
+			client.setUser(userRep.findByUserId("collaborator"));
 			client.setIdentification("Client-MasterData");
 			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
 			client.setDescription("ClientPatform created as MasterData");
-			repository.save(client);			
-			client= new ClientPlatform();
-			client.setUserId(userRep.findByUserId("2"));
+			repository.save(client);
+			client = new ClientPlatform();
+			client.setUser(userRep.findByUserId("collaborator"));
 			client.setIdentification("GTKP-Example");
 			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
 			client.setDescription("ClientPatform created as Example");
@@ -71,9 +72,9 @@ public class ClientPlatformIntegrationTest {
 	}
 
 	@Test
-	public void test1_FindByType() { 
-		List<ClientPlatform> client=this.repository.findByIdentificationAndDescription("GTKP-fjgcornejo", null);
-		Assert.assertTrue(client!=null);		
+	public void test1_FindByType() {
+		List<ClientPlatform> client = this.repository.findByIdentificationAndDescription("GTKP-fjgcornejo", null);
+		Assert.assertTrue(client != null);
 	}
 
 }

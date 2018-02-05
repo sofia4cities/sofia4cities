@@ -85,9 +85,9 @@
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
 								</div>
 								<div class="actions margin-right-20">
-									<div class="btn-group">												
-										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../configurations/create'" ><i class="fa"></i> <span th:text="#{gen.create}">New </span></button>	
-									</div>										
+									<div class="btn-group">
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../configurations/create'" ><i class="flaticon-cogwheel-2"></i> <span th:text="#{gen.create}">New </span></button>
+									</div>
 								</div>
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
@@ -167,10 +167,10 @@
 												<table id="configurations" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
 														<tr class="cabecera-tabla">
-															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.id}" >Name</span></th>
-															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{configuration.id}" >Name</span></th>
+															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{configuration.userid}" >Name</span></th>
+															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{configuration.environment}" >Environment</span></th>
 															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.type}" >Configuration Type</span></th>
-															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.json}">Json</span></th>
+															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.yml}">YML Configuration</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 												
 														</tr>
@@ -178,13 +178,13 @@
 													<tbody th:remove="all-but-first">
 														<tr th:each="configuration : ${configurations}" pages:paginate="10">
 															<!-- USERID -->
-															<td class="text-left no-wrap bold" th:text="${configuration.userId.userId}"></td>
+															<td class="text-left no-wrap bold" th:text="${configuration.user.userId}"></td>
 															<!-- IDENTIFICATION -->
-															<td class="text-left no-wrap bold" th:text="${configuration.identification}"></td>
+															<td class="text-left no-wrap bold" th:text="${configuration.environment}"></td>
 															<!-- CONFIGURATION TYPE -->														
-															<td class="text-left no-wrap bold" th:text="${configuration.configurationTypeId.name}"></td>
+															<td class="text-left no-wrap bold" th:text="${configuration.configurationType.description}"></td>
 															<!-- JSON CONFIG -->
-															<td class="text-left text-truncate-sm" th:text="${configuration.jsonSchema}"></td>													
+															<td class="text-left text-truncate-sm" th:text="${configuration.ymlConfig}"></td>													
 															
 															<!-- OPTIONS -->
 															<td class="icon" style="white-space: nowrap">

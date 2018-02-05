@@ -44,49 +44,74 @@ public class GadgetMeasure extends AuditableEntityWithUUID {
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "GADGET_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private Gadget gadgetId;
+	@Getter
+	@Setter
+	private Gadget gadget;
 
-	@Column(name = "ATTRIBUTE", length = 200,nullable = false)
+	@Column(name = "ATTRIBUTE", length = 200, nullable = false)
 	@NotNull
-	@Getter @Setter private String attribute;
+	@Getter
+	@Setter
+	private String attribute;
 
 	@Column(name = "ATTRIBUTE2", length = 200)
-	@Getter @Setter private String attribute2;
+	@Getter
+	@Setter
+	private String attribute2;
 
 	@Column(name = "ATTRIBUTE3", length = 200)
-	@Getter @Setter private String attribute3;
+	@Getter
+	@Setter
+	private String attribute3;
 
 	@Column(name = "TRANS_ATTRIBUTE", length = 250)
-	@Getter @Setter private String transAttribute;
+	@Getter
+	@Setter
+	private String transAttribute;
 
 	@Column(name = "TRANS_ATTRIBUTE2", length = 250)
-	@Getter @Setter  private String transAttribute2;
+	@Getter
+	@Setter
+	private String transAttribute2;
 
 	@Column(name = "TRANS_ATTRIBUTE3", length = 250)
-	@Getter @Setter private String transAttribute3;
+	@Getter
+	@Setter
+	private String transAttribute3;
 
 	@Column(name = "SERIAL_NAME", length = 250)
-	@Getter @Setter private String serialName;
+	@Getter
+	@Setter
+	private String serialName;
 
 	@Column(name = "ATTRIBUTE4", length = 200)
-	@Getter @Setter  private String attribute4;
+	@Getter
+	@Setter
+	private String attribute4;
 
 	@Column(name = "TRANS_ATTRIBUTE4", length = 250)
-	@Getter @Setter private String transAttribute4;
+	@Getter
+	@Setter
+	private String transAttribute4;
 
 	@Column(name = "POSITION_ID")
-	@Getter @Setter private Integer positionId;
+	@Getter
+	@Setter
+	private Integer positionId;
 
 	@Column(name = "ICON_TYPE", length = 50)
-	@Getter @Setter private String iconType;
+	@Getter
+	@Setter
+	private String iconType;
 
 	@Column(name = "ICON_COLOR", length = 50)
-	@Getter @Setter private String iconColor;
+	@Getter
+	@Setter
+	private String iconColor;
 
 	@Column(name = "QUERY_ID", length = 50)
-	@Getter @Setter private String queryId;
-
-
-
+	@Getter
+	@Setter
+	private String queryId;
 
 }

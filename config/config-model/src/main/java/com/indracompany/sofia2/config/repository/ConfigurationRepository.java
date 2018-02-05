@@ -21,13 +21,21 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.User;
 
-public interface ConfigurationRepository extends JpaRepository<Configuration, String>{
-	
-	List<Configuration> findByUserId(User userId);
+public interface ConfigurationRepository extends JpaRepository<Configuration, String> {
+
+	List<Configuration> findByUser(User user);
+
 	Configuration findById(String id);
-	List<Configuration> findByConfigurationTypeId(ConfigurationType configurationTypeId);
-	List<Configuration> findByUserIdAndConfigurationTypeId(User userId, ConfigurationType configurationTypeId);
+	
+	Configuration findByDescription(String description);
+
+	List<Configuration> findByConfigurationType(ConfigurationType configurationTypeId);
+
+	List<Configuration> findByConfigurationTypeAndEnvironmentAndSuffix(ConfigurationType configurationType,
+			String environment, String suffix);
+
+	List<Configuration> findByUserAndConfigurationType(User userId, ConfigurationType configurationType);
+
 	void deleteById(String id);
-	Configuration findByIdentification(String identification);
 
 }

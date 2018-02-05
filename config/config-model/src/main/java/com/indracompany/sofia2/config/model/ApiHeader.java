@@ -32,6 +32,9 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name = "API_HEADER")
 @Configurable
@@ -41,74 +44,37 @@ public class ApiHeader extends AuditableEntityWithUUID {
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "apioperationId", referencedColumnName = "ID", nullable = false)
-	private ApiOperation apioperationId;
+	@JoinColumn(name = "API_OPERATION_ID", referencedColumnName = "ID", nullable = false)
+	@Getter
+	@Setter
+	private ApiOperation apiOperation;
 
 	@Column(name = "NAME", length = 50, nullable = false)
 	@NotNull
+	@Getter
+	@Setter
 	private String name;
 
 	@Column(name = "HEADER_TYPE", length = 50, nullable = false)
 	@NotNull
+	@Getter
+	@Setter
 	private String header_type;
 
 	@Column(name = "HEADER_DESCRIPTION", length = 512, nullable = false)
 	@NotNull
+	@Getter
+	@Setter
 	private String header_description;
 
 	@Column(name = "HEADER_VALUE", length = 512)
+	@Getter
+	@Setter
 	private String header_value;
 
 	@Column(name = "HEADER_CONDITION", length = 50)
-    private String header_condition;
+	@Getter
+	@Setter
+	private String header_condition;
 
-	public ApiOperation getApioperationId() {
-		return apioperationId;
-	}
-
-	public void setApioperationId(ApiOperation apioperationId) {
-		this.apioperationId = apioperationId;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getHeader_type() {
-		return header_type;
-	}
-
-	public void setHeader_type(String header_type) {
-		this.header_type = header_type;
-	}
-
-	public String getHeader_description() {
-		return header_description;
-	}
-
-	public void setHeader_description(String header_description) {
-		this.header_description = header_description;
-	}
-
-	public String getHeader_value() {
-		return header_value;
-	}
-
-	public void setHeader_value(String header_value) {
-		this.header_value = header_value;
-	}
-
-	public String getHeader_condition() {
-		return header_condition;
-	}
-
-	public void setHeader_condition(String header_condition) {
-		this.header_condition = header_condition;
-	}
 }
-
-

@@ -23,45 +23,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+public class AutenticacionDTO implements Cloneable, Serializable {
 
-public class AutenticacionDTO implements Cloneable, Serializable{
-	
-	@ApiModelProperty(value = "Tipo de Autenticación utilizada en la API")
-    private String type;
-	
-	@ApiModelProperty(value = "Descripción de la autenticación")
-    private String description;
+	@ApiModelProperty(value = "Authentication Type for API")
+	@Getter
+	@Setter
+	private String type;
 
-    private ArrayList<ArrayList<AutenticacionAtribDTO>> autParametros;
-	
-	
-	
-	public String getType() {
-		return type;
-	}
+	@ApiModelProperty(value = "Description")
+	@Getter
+	@Setter
+	private String description;
 
-	public String getDescription() {
-		return description;
-	}
-
-	public ArrayList<ArrayList<AutenticacionAtribDTO>> getAutParametros() {
-		return autParametros;
-	}
-
-
-	public void setType(String tipo) {
-		this.type = tipo;
-	}
-
-
-	public void setDescription(String descripcion) {
-		this.description = descripcion;
-	}
-	
-	public void setAutParametros(ArrayList<ArrayList<AutenticacionAtribDTO>> autParametros) {
-		this.autParametros = autParametros;
-	}
-
+	@Getter
+	@Setter
+	private ArrayList<ArrayList<AutenticacionAtribDTO>> autParametros;
 
 }

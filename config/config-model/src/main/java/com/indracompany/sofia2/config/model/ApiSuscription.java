@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -27,7 +28,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -36,76 +36,48 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Configurable
 @Entity
 @Table(name = "api_suscription")
 @SuppressWarnings("deprecation")
 public class ApiSuscription extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  
 	@ManyToOne
-    @JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "API_ID", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Api apiId;
+	@Getter
+	@Setter
+	private Api api;
 
-	@Column(name = "USER_ID", length = 50,nullable = false)
-    @NotNull
-    private String userId;
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@Getter
+	@Setter
+	private User user;
 
 	@Column(name = "INIT_DATE")
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(style = "M-")
-    private Date initDate;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(style = "M-")
+	@Getter
+	@Setter
+	private Date initDate;
 
 	@Column(name = "END_DATE")
-    @Temporal(TemporalType.DATE)
-    @DateTimeFormat(style = "M-")
-    private Date endDate;
+	@Temporal(TemporalType.DATE)
+	@DateTimeFormat(style = "M-")
+	@Getter
+	@Setter
+	private Date endDate;
 
-	@Column(name = "ACTIVE",columnDefinition = "boolean default false")
-    private Boolean isActive;
+	@Column(name = "ACTIVE", columnDefinition = "boolean default false")
+	@Getter
+	@Setter
+	private Boolean isActive;
 
-	public Api getApiId() {
-		return apiId;
-	}
-
-	public void setApiId(Api apiId) {
-		this.apiId = apiId;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public Date getInitDate() {
-		return initDate;
-	}
-
-	public void setInitDate(Date initDate) {
-		this.initDate = initDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public Boolean getIsActive() {
-		return isActive;
-	}
-
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
-
-	
 }

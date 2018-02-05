@@ -27,6 +27,7 @@
 		
 		<!-- PLUGINS STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.css}"/>		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
 		
 	</head>	
@@ -162,30 +163,31 @@
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene">																						
 											<div>
-												<!-- DATATABLE DANDELION CONF. -->												
-												<table id="users" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+												
+												<table id="users" class="table table-hover table-striped" dt:table="true"  dt:filterClearSelector="#clearFilters" dt:filterPlaceholder="none" dt:paginationtype="full_numbers">
+												
 													<thead>
 														<tr class="cabecera-tabla">
-															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{user.id}">Identification</span></th>
+															<th dt:filterable="true" dt:filterCssClass="input-small" dt:selector="userFilter" class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{user.id}">Identification</span></th>
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{user.name}" >Name</span></th>
 															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{user.email}" >eMail</span></th>
-															<th class="titulo-columnas text-left" th:text="#{user.rolTypeName}">Role</th>
+															<th id="roleType" dt:filterable="true" dt:filterType="select" dt:selector="roleFilter" dt:filterCssClass="input-small" class="titulo-columnas text-left" th:text="#{user.rolTypeName}">Role</th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateCreated}">Created At</span></th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted}">Deleted At </span></th>																
 															<th class="titulo-columnas text-center" th:text="#{user.active}">Active</th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
-													<tbody th:remove="all-but-first">
+													<tbody th:remove="all-but-first">														
 														<tr th:each="user : ${users}" pages:paginate="10">
 															<!-- IDENTIFICATION -->
-															<td class="text-left no-wrap bold" th:text="${user.userId}"></td>
+															<td class="text-left no-wrap bold internalId" th:text="${user.userId}"></td>
 															<!-- NAME -->
 															<td class="text-left no-wrap bold" th:text="${user.fullName}"></td>
 															<!-- EMAIL -->
 															<td class="text-left no-wrap " th:text="${user.email}"></td>
 															<!-- ROLE -->
-															<td class="text-left no-wrap bold" th:text="${user.roleTypeId.name}"></td>
+															<td  class="text-left no-wrap bold" th:text="${user.role.name}"></td>
 															<!-- DATE CREATED -->
 															<td class="text-center" th:if="${user.createdAt!=null}" th:text="${#dates.format(user.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${user.createdAt==null}" th:text="'---'"></td>
@@ -210,9 +212,37 @@
 													</tbody>
 												</table>
 												
-												<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
+												<!-- DATATABLE DANDELION CONF. -->
+												<div dt:conf="users">
+													<div dt:confType="extrahtml" dt:uid="0">
+														<!-- TABLE FILTERS AUX. ROW -->
+														<table id="filteringTable" class="hide">
+																<tr id="filtering" class="hide" role="row">
+																	<th id="userFilter" class="dtFilter"></th>
+																	<th></th>
+																	<th></th>
+																	<th id="roleFilter" class="dtFilter"></th>
+																	<th></th>
+																	<th></th>
+																	<th></th>
+																	<th></th>															
+																</tr>
+														</table>
+													</div>
+												</div>
+												
+												
+												
+												<!-- TABLE TOOLBAR -->
 												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
-													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
+												
+													<!-- CLEAR-FILTERS, TOGGLE-SELECTION AND DELETE-SELECTED -->
+													<button id="clearFilters" th:value="#{gen.resetBtn}" class="btn purple-plum btn-outline sbold" style="padding: 7px 10px;"><i class="fa fa-times"></i></button>  													
+													<button id="BtnToggleSel" class="btn purple-plum btn-outline sbold" style="padding: 7px 10px;"><i class="fa fa-check"></i></button>
+													<button id="BtnRemoveSel" th:value="#{gen.deleteBtn}" class="btn btn-outline sbold red-sunglo" data-elements="" style="padding: 7px 10px;"><i class="fa fa-trash"></i></button>
+													
+													<!-- COLUMNS TOGGLE -->
+													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn purple-plum btn-sm btn-outline">
 														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
@@ -225,6 +255,7 @@
 														<label class="toggle-vis" data-column="6" th:text="#{user.active}"> Active</label>															
 														<label class="toggle-vis" data-column="7" th:text="#{gen.options}"> Options</label>
 													</div>
+													
 												</div>											
 											</div>
 										</div>											
@@ -249,6 +280,7 @@
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>
+	<script th:src="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.js}"/>
 	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
 	
 	
@@ -294,11 +326,16 @@
 			// Get the column API object
 			var column = $('#users').DataTable().column( $(this).attr('data-column') ); 
 			// Toggle the visibility
-			column.visible( ! column.visible() );			
+			column.visible( ! column.visible() );
+			// Toggle visibility on filtering row
+			if ($('#filtering')){
+				$('#filtering th').eq($(this).attr('data-column')).toggle();
+			}
 			// toggle Text
 			$(this).toggleClass('text-muted line-through');			
 		});	
 		
+					
 		// SEARCH FORM RESET
 		$('#reset_user').on('click',function(){
 			$('#form_user')[0].reset();
@@ -308,14 +345,106 @@
 		// SEARCH FORM
 		$('#search_user').on('click',function(){ $('#form_user')[0].submit(); });
 		
+		// TOGGLE SELECTION DATATABLES
+		$('#BtnToggleSel').on('click', function(){
+			var defaultSelection = $('.dataTable').DataTable().rows().nodes();			
+			
+			$.each(defaultSelection,function(gIdx,gObj){
+				$(gObj).hasClass('success') ? $(gObj).removeClass('success') : $(gObj).addClass('success');
+			});
+			
+			var dtElements = '';
+			var btnObj = $('#BtnRemoveSel');
+								
+
+			// get elements Ids, marked with internalId on success rows
+			$('.dataTable tr.success td.internalId').each(function(i, internalIdObj){						
+				dtElements += $(internalIdObj).text() + ',';
+			});
+			
+			if (dtElements) {
+				btnObj.removeClass('disabled red-sunglo').addClass('purple-plum');
+				btnObj.attr('data-elements',dtElements);
+				console.log('SelectedElements: ' + btnObj.attr('data-elements'));
+			}
+			else {
+				dtElements = '';
+				btnObj.attr('data-elements',dtElements); console.log('SelectedElements: ' + btnObj.attr('data-elements')); 
+				btnObj.removeClass('purple-plum').addClass('disabled red-sunglo');					
+			}			
+		});
+		
 	});
-	 
+	
+	// FUNCION PARA SELECCION SIMPLE DE REGISTROS DE UN LISTADO DATATABLE
+	var handleSingleSelection = function(pTableId){
+		$("#"+pTableId).on('click','tr:not(.tr-detail)',function(event){
+			if ($(event.target).is('td')){
+				event.stopPropagation();
+				var eleRow = $(event.target).parent('tr');
+				
+				// SE CUENTAN LAS FILAS QUE NO SEAN CABECERA NI FILTRO.
+				if (!$(eleRow).hasClass('cabecera-tabla') && !$(eleRow).hasClass('filtering')){					
+				
+					// SUCCESS VISUAL SELECTION
+					$(eleRow).hasClass('success') ?  $(eleRow).removeClass('success') : $(eleRow).addClass('success');
+				
+				
+					var dtElements = '';
+					var btnObj = $('#BtnRemoveSel');
+										
+
+					// get elements Ids, marked with internalId on success rows
+					$('#' + pTableId + ' tr.success td.internalId').each(function(i, internalIdObj){						
+						dtElements += $(internalIdObj).text() + ',';
+					});
+					
+					if (dtElements) {
+						btnObj.removeClass('disabled red-sunglo').addClass('purple-plum');
+						btnObj.attr('data-elements',dtElements);
+						console.log('SelectedElements: ' + btnObj.attr('data-elements'));
+					}
+					else {
+						dtElements = '';
+						btnObj.attr('data-elements',dtElements); console.log('SelectedElements: ' + btnObj.attr('data-elements')); 
+						btnObj.removeClass('purple-plum').addClass('disabled red-sunglo');					
+					} 
+				}
+			}
+		});
+	}
+		 
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
+		
+		//DATATABLE 
+		var oTable = $('#users').DataTable();
 		
 		// SHOW/HIDE DATATABLES COLUMN INIT 		
 		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
 		$('#dataTable-vis-toggle').removeClass('hide');
+		
+		// FILTERING COLUMNS INIT
+		$('#filtering').appendTo($('#users > thead'));
+		$('#filtering').removeClass('hide');
+		
+		// RESET ALL FILTERS BTN
+		$('#clearFilters').on('click', function(){			
+			yadcf.exResetAllFilters(oTable);		
+		});	
+		
+		
+		// ADJUST CSS FOR DATATABLE FILTERS 
+		var filters = $('.dtFilter .yadcf-filter-wrapper .yadcf-filter');
+		var filtersResets = $('.dtFilter .yadcf-filter-wrapper .yadcf-filter-reset-button');
+		filters.addClass('input-small font-sm');
+		filtersResets.addClass('hide');		
+		
+		//yadcf.init(oTable,{params:{language:{select: 'Seleccione...', select_multi: 'Seleccione multiples ...', filter: 'escribe para filtrar...', range: ['desde ', 'hasta'] ,date: 'Seleccione Fecha'}}});
+		
+		// INIT row selection
+		handleSingleSelection('users');
+				
 		
 	});
 	

@@ -21,14 +21,16 @@ import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 
 @Service
 
-public class MenuServiceImpl implements MenuService{
-	
+public class MenuServiceImpl implements MenuService {
+
 	@Autowired
 	ConsoleMenuRepository consoleMenuRepository;
 
-	public String loadMenuByRole(User user)
-	{
-		if(user!=null) return this.consoleMenuRepository.findByRoleTypeId(user.getRoleTypeId()).getJsonSchema();
-		else return null;
+	@Override
+	public String loadMenuByRole(User user) {
+		if (user != null)
+			return this.consoleMenuRepository.findByRoleType(user.getRole()).getJsonSchema();
+		else
+			return null;
 	}
 }

@@ -41,42 +41,49 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "DASHBOARD")
-public class Dashboard extends AuditableEntityWithUUID{
+public class Dashboard extends AuditableEntityWithUUID {
 
-	@Column(name = "MODEL",nullable = false)
+	@Column(name = "MODEL", nullable = false)
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String model;
+	@Getter
+	@Setter
+	private String model;
 	/*
-	@OneToMany(mappedBy = "dashboardId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_GRUPOSDASHBOARD_DASHBOARDID")
-    private Set<Gruposdashboard> gruposdashboards;
-
-	public Set<Gruposdashboard> getGruposdashboards() {
-        return gruposdashboards;
-    }
-
-	public void setGruposdashboards(Set<Gruposdashboard> gruposdashboards) {
-        this.gruposdashboards = gruposdashboards;
-    }
+	 * @OneToMany(mappedBy = "dashboardId", cascade = CascadeType.ALL)
+	 * 
+	 * @OnDelete(action = OnDeleteAction.CASCADE)
+	 * 
+	 * @ForeignKey(name = "FK_GRUPOSDASHBOARD_DASHBOARDID") private
+	 * Set<Gruposdashboard> gruposdashboards;
+	 * 
+	 * public Set<Gruposdashboard> getGruposdashboards() { return gruposdashboards;
+	 * }
+	 * 
+	 * public void setGruposdashboards(Set<Gruposdashboard> gruposdashboards) {
+	 * this.gruposdashboards = gruposdashboards; }
 	 */
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-	@Getter @Setter private User userId;
-	
+	@Getter
+	@Setter
+	private User user;
 
-	@Column(name = "NAME", length = 100,nullable = false)
+	@Column(name = "NAME", length = 100, nullable = false)
 	@NotNull
-	@Getter @Setter private String name;
+	@Getter
+	@Setter
+	private String name;
 
-	@Column(name = "DASHBOARD_TYPE_ID", length = 50,nullable = false)
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "DASHBOARD_TYPE_ID", referencedColumnName = "ID", nullable = false)
 	@NotNull
-	@Getter @Setter private String dashboardTypeId;
-
-
+	@Getter
+	@Setter
+	private DashboardType dashboardType;
 
 }

@@ -89,7 +89,7 @@ public class UserController {
 						return "/error/403";
 					// If the user is not admin, the RoleType is not in the request by default
 					if (!this.utils.getRole().equals(ROLE_ADMINISTRATOR))
-						user.setRoleTypeId(this.userService.getUserRole(this.utils.getRole()));
+						user.setRole(this.userService.getUserRole(this.utils.getRole()));
 					this.userService.updateUser(user);
 				} catch (Exception e) {
 					log.debug(e.getMessage());
@@ -108,22 +108,29 @@ public class UserController {
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/create")
-	public String create(@ModelAttribute User user) {
+	public String create(@ModelAttribute User user) { // , RedirectAttributes redirect) {
+		// FIXME: Use Valid and send Errors to HTML
+		// if (bindingResult.hasErrors()) {
+		// return "/users/create";
+		// }
 		if (user != null) {
 			if (user.getPassword() != null && user.getDateCreated() != null && user.getEmail() != null
-					&& user.getRoleTypeId() != null && user.getUserId() != null) {
+					&& user.getRole() != null && user.getUserId() != null) {
 				try {
 					this.userService.createUser(user);
+					// redirect.addFlashAttribute("globalMessage", "Successfully created user " +
+					// user.getUserId());
 				} catch (Exception e) {
-					log.debug(e.getMessage());
-					return "/users/create";
+					log.error("Error creating user:" + e.getMessage());
+					// redirect.addFlashAttribute("globalMessage", "Error creating user " +
+					// user.getUserId());
+					return "redirect:/users/create";
 				}
 			} else {
 				log.debug("Some user properties missing");
 				return "/users/create";
 			}
 		}
-
 		return "redirect:/users/list";
 
 	}

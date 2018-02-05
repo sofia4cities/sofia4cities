@@ -39,38 +39,46 @@ import lombok.Setter;
 @Entity
 @Table(name = "GADGET_QUERY")
 @Configurable
-public class GadgetQuery extends AuditableEntityWithUUID{
+public class GadgetQuery extends AuditableEntityWithUUID {
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "GADGET_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private Gadget gadgetId;
+	@Getter
+	@Setter
+	private Gadget gadget;
 	/*
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_GADGET_QUERY_ONTOLOGIA")
-    @JoinColumn(name = "ONTOLOGIA_ID", referencedColumnName = "ID", nullable = false)
-    private Ontologia ontologiaId;
-
-
-	public Ontologia getOntologiaId() {
-        return ontologiaId;
-    }
-
-	public void setOntologiaId(Ontologia ontologiaId) {
-        this.ontologiaId = ontologiaId;
-    }
+	 * @ManyToOne
+	 * 
+	 * @OnDelete(action = OnDeleteAction.CASCADE)
+	 * 
+	 * @ForeignKey(name = "FK_GADGET_QUERY_ONTOLOGIA")
+	 * 
+	 * @JoinColumn(name = "ONTOLOGIA_ID", referencedColumnName = "ID", nullable =
+	 * false) private Ontologia ontologiaId;
+	 * 
+	 * 
+	 * public Ontologia getOntologiaId() { return ontologiaId; }
+	 * 
+	 * public void setOntologiaId(Ontologia ontologiaId) { this.ontologiaId =
+	 * ontologiaId; }
 	 */
 
-	@Column(name = "QUERY",nullable = false)
+	@Column(name = "QUERY", nullable = false)
 	@NotNull
 	@Lob
-	@Getter @Setter private String query;
+	@Getter
+	@Setter
+	private String query;
 
 	@Column(name = "POSITION_ID")
-	@Getter @Setter private Integer positionId;
+	@Getter
+	@Setter
+	private Integer positionId;
 
 	@Column(name = "IDENTIFICATION", length = 50)
-	@Getter @Setter private String identification;
+	@Getter
+	@Setter
+	private String identification;
 
 }

@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.repository;
+
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,27 +20,39 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.User;
 
-public interface ApiRepository extends JpaRepository<Api,String> {
+public interface ApiRepository extends JpaRepository<Api, String> {
 
 	List<Api> findByIdentificationIgnoreCase(String identification);
-	List<Api> findByDescription(String description);
-	List<Api> findByIdentification(String identification);
-	List<Api> findByDescriptionContaining(String description);
-	List<Api> findByIdentificationContaining(String identification);
-	List<Api> findByUserId(String userId);
-	List<Api> findByIdentificationLikeAndDescriptionLike(String identification, String description);
-	List<Api> findByUserIdAndIdentificationLikeAndDescriptionLike(User userId,String identification,String description);
-	List<Api> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
-	List<Api> findByUserIdAndIdentificationContainingAndDescriptionContaining(User userId,String identification,String description);
-	List<Api> findByUserIdAndIdentificationContaining(User userId,String identification);
-	List<Api> findByUserIdAndDescriptionContaining(User userId,String description);
-	
-	
-	List<Api> findByIdentificationAndNumversionAndApiType(String identification,Integer apiVersion, String apiType);
-	List<Api> findByIdentificationAndNumversion(String identification,Integer apiVersion);
 
-	
+	List<Api> findByDescription(String description);
+
+	List<Api> findByIdentification(String identification);
+
+	List<Api> findByDescriptionContaining(String description);
+
+	List<Api> findByIdentificationContaining(String identification);
+
+	List<Api> findByUser(User user);
+
+	List<Api> findByIdentificationLikeAndDescriptionLike(String identification, String description);
+
+	List<Api> findByUserAndIdentificationLikeAndDescriptionLike(User user, String identification, String description);
+
+	List<Api> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
+
+	List<Api> findByUserAndIdentificationContainingAndDescriptionContaining(User user, String identification,
+			String description);
+
+	List<Api> findByUserAndIdentificationContaining(User user, String identification);
+
+	List<Api> findByUserAndDescriptionContaining(User user, String description);
+
+	List<Api> findByIdentificationAndNumversionAndApiType(String identification, Integer apiVersion, String apiType);
+
+	List<Api> findByIdentificationAndNumversion(String identification, Integer apiVersion);
+
 	Api findById(String id);
-	List<Api> findByUserIdAndIsPublicTrue(User userId);
+
+	List<Api> findByUserAndIsPublicTrue(User userId);
 
 }

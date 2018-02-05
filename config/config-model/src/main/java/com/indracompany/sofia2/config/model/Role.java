@@ -40,22 +40,34 @@ import lombok.Setter;
 @Entity
 @Table(name = "ROLE_TYPE")
 @Configurable
-public class RoleType extends AuditableEntity {
+public class Role extends AuditableEntity {
+
+	public static enum Type {
+		USER, COLLABORATOR, ADMINISTRATOR, ANALYTICS, PARTNER, OPERATIONS, SYS_ADMIN, DEVOPS;
+	}
 
 	@Id
 	@Column(name = "ID")
-	@Getter @Setter private Integer id;    
+	@Getter
+	@Setter
+	private String id;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ROLE_PARENT", unique = false, nullable = true, insertable = true, updatable = true)
-	@Getter @Setter private RoleType roleparent;
+	@Getter
+	@Setter
+	private Role roleParent;
 
-	@Column(name = "NAME", length = 24, unique = true,nullable = false)
+	@Column(name = "NAME", length = 24, unique = true, nullable = false)
 	@NotNull
-	@Getter @Setter private String name;
+	@Getter
+	@Setter
+	private String name;
 
 	@Column(name = "DESCRIPTION", length = 255)
-	@Getter @Setter private String description;
+	@Getter
+	@Setter
+	private String description;
 
 }

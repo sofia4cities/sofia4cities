@@ -15,7 +15,7 @@ package com.indracompany.sofia2.service.user;
 
 import java.util.List;
 
-import com.indracompany.sofia2.config.model.RoleType;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
@@ -27,14 +27,14 @@ public interface UserService {
 	public User getUser(UserToken token);
 	public User getUserByToken(String token);
 	public User getUser(String userId);
-	public List<RoleType> getAllRoles();
+	public List<Role> getAllRoles();
 	public UserToken getUserToken(User userId);
 	public List<User> getAllUsers();
 	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,Boolean active);
 	public void createUser(User user);
 	public boolean userExists(User user);
 	public void updateUser(User user);
-	public RoleType getUserRole(String role);
+	public Role getUserRole(String role);
 	public void deleteUser(String userId);
 
 }

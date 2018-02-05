@@ -26,10 +26,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetQuery;
 
-public interface GadgetQueryRepository extends JpaRepository<GadgetQuery,String>{
+public interface GadgetQueryRepository extends JpaRepository<GadgetQuery, String> {
 
-	List<GadgetQuery> findByGadgetId(Gadget gadgetId);
+	List<GadgetQuery> findByGadget(Gadget gadget);
+
 	List<GadgetQuery> findById(String id);
-
 
 }

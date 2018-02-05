@@ -28,26 +28,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Sofia2ConfigDBDetailsService implements UserDetailsService {
 
-	@Autowired 
-    private UserRepository userRepository;
-	
+	@Autowired
+	private UserRepository userRepository;
+
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		
-		User user = userRepository.findByUserId(username);		
-		
-		if (user==null) {
+
+		User user = userRepository.findByUserId(username);
+
+		if (user == null) {
 			log.info("LoadUserByUserName: User not found by name: " + username);
-            throw new UsernameNotFoundException("User not found by name: " + username);
-		}		
+			throw new UsernameNotFoundException("User not found by name: " + username);
+		}
 
 		return toUserDetails(user);
 	}
-	
+
 	private UserDetails toUserDetails(User userObject) {
-        return org.springframework.security.core.userdetails.User.withUsername(userObject.getUserId())
-                   .password(userObject.getPassword())
-                   .roles(userObject.getRoleTypeId().getName()).build();
-    }
+		return org.springframework.security.core.userdetails.User.withUsername(userObject.getUserId())
+				.password(userObject.getPassword()).roles(userObject.getRole().getName()).build();
+	}
 
 }

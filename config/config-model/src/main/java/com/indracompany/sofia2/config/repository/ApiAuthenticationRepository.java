@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.repository;
+
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,11 +20,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiAuthentication;
 
-public interface ApiAuthenticationRepository extends JpaRepository<ApiAuthentication,String> {
-
+public interface ApiAuthenticationRepository extends JpaRepository<ApiAuthentication, String> {
 
 	ApiAuthentication findById(String id);
-	List<ApiAuthentication> findAllByApiId(Api api);
 
+	List<ApiAuthentication> findAllByApi(Api api);
 
 }
