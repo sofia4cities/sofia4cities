@@ -56,9 +56,6 @@ public class TwitterServiceImpl implements TwitterService {
 	@Autowired
 	UserService userService;
 
-	public static final String DATAMODEL_TWITTER="TWEET_DATAMODEL";
-	
-
 	@Override
 	public List<TwitterListening> getAllListenings() {
 		return this.twitterListeningRepository.findAll();
@@ -110,50 +107,51 @@ public class TwitterServiceImpl implements TwitterService {
 	public void createListening(TwitterListening twitterListening) {
 		this.twitterListeningRepository.save(twitterListening);
 	}
-	
+
 	@Override
-	public void updateListen(TwitterListening twitterListener)
-	{
-		TwitterListening newTwitterListening=this.twitterListeningRepository.findById(twitterListener.getId());
-		if(newTwitterListening!=null)
-		{
+	public void updateListen(TwitterListening twitterListener) {
+		TwitterListening newTwitterListening = this.twitterListeningRepository.findById(twitterListener.getId());
+		if (newTwitterListening != null) {
 			newTwitterListening.setIdentificator(twitterListener.getIdentificator());
-			newTwitterListening.setConfiguration(this.configurationRepository.findByDescription(twitterListener.getConfiguration().getDescription()));
+			newTwitterListening.setConfiguration(this.configurationRepository
+					.findByDescription(twitterListener.getConfiguration().getDescription()));
 			newTwitterListening.setTopics(twitterListener.getTopics());
 			newTwitterListening.setDateFrom(twitterListener.getDateFrom());
 			newTwitterListening.setDateTo(twitterListener.getDateTo());
 			this.twitterListeningRepository.save(newTwitterListening);
 		}
-	
+
 	}
-	
+
 	@Override
-	public boolean existOntology(String identification)
-	{
-		if(this.ontologyService.getOntologyByIdentification(identification)!=null) return true;
-		else return false;
+	public boolean existOntology(String identification) {
+		if (this.ontologyService.getOntologyByIdentification(identification) != null)
+			return true;
+		else
+			return false;
 	}
-	
+
 	@Override
-	public boolean existClientPlatform(String identification)
-	{
-		if(this.clientPlatformRepository.findByIdentification(identification)!=null) return true;
-		else return false;
+	public boolean existClientPlatform(String identification) {
+		if (this.clientPlatformRepository.findByIdentification(identification) != null)
+			return true;
+		else
+			return false;
 	}
-	
+
 	@Override
-	public Ontology createTwitterOntology(String ontologyId, String dataModel)
-	{
-		DataModel dataModelTwitter= this.dataModelRepository.findByIdentification(dataModel).get(0);
-		Ontology ontology= new Ontology();
+	public Ontology createTwitterOntology(String ontologyId, String dataModel) {
+		DataModel dataModelTwitter = this.dataModelRepository.findByName(dataModel).get(0);
+		Ontology ontology = new Ontology();
 		ontology.setIdentification(ontologyId);
-		if(dataModelTwitter.equals(DATAMODEL_TWITTER)) ontology.setDescription("Ontology created for tweet recollection");
+		if (dataModelTwitter.getType().equals(DataModel.MainType.Twitter))
+			ontology.setDescription("Ontology created for tweet recollection");
 		ontology.setJsonSchema(dataModelTwitter.getSchema());
 		ontology.setActive(true);
 		ontology.setPublic(false);
 		ontology.setRtdbClean(false);
 		ontology.setRtdbToHdb(false);
 		return ontology;
-		
+
 	}
 }
