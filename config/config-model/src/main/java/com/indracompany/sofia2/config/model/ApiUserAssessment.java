@@ -43,8 +43,7 @@ import lombok.Setter;
 
 @Configurable
 @Entity
-@Table(name = "api_user_assessment")
-@SuppressWarnings("deprecation")
+@Table(name = "API_USER_ASSESSMENT")
 public class ApiUserAssessment extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
