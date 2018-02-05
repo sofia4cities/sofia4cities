@@ -200,7 +200,7 @@ public class InitConfigDB {
 
 			ConfigurationType type = new ConfigurationType();
 			Configuration config = new Configuration();
-			type.setId(ConfigurationType.Type.TwitterConfiguration);
+			type.setIdEnum(ConfigurationType.Type.TwitterConfiguration);
 			type.setDescription("Configuration for access Twitter account (Token and Key)");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
@@ -219,7 +219,7 @@ public class InitConfigDB {
 			this.configurationRepository.save(config);
 			//
 			type = new ConfigurationType();
-			type.setId(ConfigurationType.Type.EndpointModulesConfiguration);
+			type.setIdEnum(ConfigurationType.Type.EndpointModulesConfiguration);
 			type.setDescription("Endpoints of Sofia2 Modules Configuration p");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
@@ -230,7 +230,7 @@ public class InitConfigDB {
 			this.configurationRepository.save(config);
 			//
 			type = new ConfigurationType();
-			type.setId(ConfigurationType.Type.MailConfiguration);
+			type.setIdEnum(ConfigurationType.Type.MailConfiguration);
 			type.setDescription("Mail Configuration por mail sending");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
@@ -241,7 +241,7 @@ public class InitConfigDB {
 			this.configurationRepository.save(config);
 			//
 			type = new ConfigurationType();
-			type.setId(ConfigurationType.Type.RTDBConfiguration);
+			type.setIdEnum(ConfigurationType.Type.RTDBConfiguration);
 			type.setDescription("Configuration for the default RealTime DB (MongoDB)");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
@@ -252,7 +252,7 @@ public class InitConfigDB {
 			this.configurationRepository.save(config);
 			//
 			type = new ConfigurationType();
-			type.setId(ConfigurationType.Type.MonitoringConfiguration);
+			type.setIdEnum(ConfigurationType.Type.MonitoringConfiguration);
 			type.setDescription("Configuration for report to Monitoring UI");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
@@ -354,7 +354,7 @@ public class InitConfigDB {
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("1");
 				menu.setJsonSchema(loadFromResources("menu_admin.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.ADMINISTRATOR));
+				menu.setRoleType(roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role ADMIN");
@@ -364,7 +364,7 @@ public class InitConfigDB {
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("2");
 				menu.setJsonSchema(loadFromResources("menu_collaborator.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.COLLABORATOR));
+				menu.setRoleType(roleRepository.findById(Role.Type.COLLABORATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role COLLABORATOR");
@@ -374,7 +374,7 @@ public class InitConfigDB {
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("3");
 				menu.setJsonSchema(loadFromResources("menu_user.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.USER));
+				menu.setRoleType(roleRepository.findById(Role.Type.USER.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role USER");
@@ -447,7 +447,7 @@ public class InitConfigDB {
 			log.info("No DataModels ...");
 			DataModel dataModel = new DataModel();
 			dataModel.setName("Alarm");
-			dataModel.setType(DataModel.MainType.SmartCities);
+			dataModel.setTypeEnum(DataModel.MainType.SmartCities);
 			dataModel.setJsonSchema(loadFromResources("DataModel_Alarm.json"));
 			dataModel.setDescription("Base Alarm: assetId, timestamp, severity, source, details and status..");
 			dataModel.setLabels("Alarm,General,IoT");
@@ -456,7 +456,7 @@ public class InitConfigDB {
 			//
 			dataModel = new DataModel();
 			dataModel.setName("Audit");
-			dataModel.setType(DataModel.MainType.SmartCities);
+			dataModel.setTypeEnum(DataModel.MainType.SmartCities);
 			dataModel.setJsonSchema(loadFromResources("DataModel_Audit.json"));
 			dataModel.setDescription("Base Audit");
 			dataModel.setLabels("Audit,General,IoT");
@@ -465,7 +465,7 @@ public class InitConfigDB {
 			//
 			dataModel = new DataModel();
 			dataModel.setName("Device");
-			dataModel.setType(DataModel.MainType.IoT);
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
 			dataModel.setJsonSchema(loadFromResources("DataModel_Device.json"));
 			dataModel.setDescription("Base Device");
 			dataModel.setLabels("Audit,General,IoT,Smart Cities");
@@ -474,7 +474,7 @@ public class InitConfigDB {
 			//
 			dataModel = new DataModel();
 			dataModel.setName("EmptyBase");
-			dataModel.setType(DataModel.MainType.General);
+			dataModel.setTypeEnum(DataModel.MainType.General);
 			dataModel.setJsonSchema(loadFromResources("DataModel_EmptyBase.json"));
 			dataModel.setDescription("Base DataModel");
 			dataModel.setLabels("General,IoT");
@@ -483,7 +483,7 @@ public class InitConfigDB {
 			//
 			dataModel = new DataModel();
 			dataModel.setName("Feed");
-			dataModel.setType(DataModel.MainType.IoT);
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
 			dataModel.setJsonSchema(loadFromResources("DataModel_Feed.json"));
 			dataModel.setDescription("Base Feed");
 			dataModel.setLabels("Audit,General,IoT,Smart Cities");
@@ -492,7 +492,7 @@ public class InitConfigDB {
 			//
 			dataModel = new DataModel();
 			dataModel.setName("Twitter");
-			dataModel.setType(DataModel.MainType.Twitter);
+			dataModel.setTypeEnum(DataModel.MainType.Twitter);
 			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter.json"));
 			dataModel.setDescription("Twitter DataModel");
 			dataModel.setLabels("Twitter,Social Media");
@@ -501,7 +501,7 @@ public class InitConfigDB {
 			//
 			dataModel = new DataModel();
 			dataModel.setName("WasteContainer");
-			dataModel.setType(DataModel.MainType.GSMA);
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
 			dataModel.setJsonSchema(loadFromResources("DataModel_WasteContainer.json"));
 			dataModel.setDescription("GSMA WasteContainer");
 			dataModel.setLabels("General,IoT,Smart Cities");
@@ -793,9 +793,6 @@ public class InitConfigDB {
 				type.setIdEnum(Role.Type.ANALYTICS);
 				type.setName("ROLE_ANALYTICS");
 				type.setDescription("Analytics User of the Platform");
-				// RoleType typeParent=new RoleType();
-				// typeParent.setId(2);
-				// type.setRoleparent(typeParent);
 				roleRepository.save(type);
 				//
 				type = new Role();
@@ -824,14 +821,15 @@ public class InitConfigDB {
 				roleRepository.save(type);
 				//
 				// UPDATE of the ROLE_ANALYTICS
-				Role typeSon = roleRepository.findById(Role.Type.ANALYTICS);
-				Role typeParent = roleRepository.findById(Role.Type.COLLABORATOR);
+				Role typeSon = roleRepository.findById(Role.Type.ANALYTICS.toString());
+				Role typeParent = roleRepository.findById(Role.Type.COLLABORATOR.toString());
 				typeSon.setRoleParent(typeParent);
 				roleRepository.save(typeSon);
 
 			} catch (Exception e) {
 				log.error("Error initRoleType:" + e.getMessage());
 				roleRepository.deleteAll();
+				throw new RuntimeException("Error creating Roles...Stopping");
 			}
 
 		}
@@ -873,7 +871,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Administrator of the Platform");
 				type.setEmail("administrator@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.ADMINISTRATOR));
+				type.setRole(this.roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -883,7 +881,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Advanced User of the Platform");
 				type.setEmail("collaborator@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR));
+				type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -893,7 +891,7 @@ public class InitConfigDB {
 				type.setFullName("Generic User of the Platform");
 				type.setEmail("user@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.USER));
+				type.setRole(this.roleRepository.findById(Role.Type.USER.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -903,7 +901,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Analytics User of the Platform");
 				type.setEmail("analytics@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.ANALYTICS));
+				type.setRole(this.roleRepository.findById(Role.Type.ANALYTICS.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -913,7 +911,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Partner of the Platform");
 				type.setEmail("partner@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.PARTNER));
+				type.setRole(this.roleRepository.findById(Role.Type.PARTNER.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -923,7 +921,7 @@ public class InitConfigDB {
 				type.setFullName("Generic SysAdmin of the Platform");
 				type.setEmail("sysadmin@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.SYS_ADMIN));
+				type.setRole(this.roleRepository.findById(Role.Type.SYS_ADMIN.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
@@ -933,7 +931,7 @@ public class InitConfigDB {
 				type.setFullName("Operations of the Platform");
 				type.setEmail("operations@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.OPERATIONS));
+				type.setRole(this.roleRepository.findById(Role.Type.OPERATIONS.toString()));
 				type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
