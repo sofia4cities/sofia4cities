@@ -23,12 +23,20 @@ import com.indracompany.sofia2.config.model.ConfigurationType;
 public interface ConfigurationService {
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-	public List<Configuration> getAllConfigurations();
+	List<Configuration> getAllConfigurations();
+
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-	public void deleteConfiguration(String id);
-	public Configuration getConfiguration(String id);
-	public List<ConfigurationType> getAllConfigurationTypes();
-	public void createConfiguration(Configuration configuration);
-	public boolean existsConfiguration(Configuration configuration);
-	public void updateConfiguration(Configuration configuration);
+	void deleteConfiguration(String id);
+
+	Configuration getConfiguration(String id);
+
+	List<ConfigurationType> getAllConfigurationTypes();
+
+	void createConfiguration(Configuration configuration);
+
+	boolean existsConfiguration(Configuration configuration);
+
+	void updateConfiguration(Configuration configuration);
+
+	boolean isValidYML(final String yml);
 }

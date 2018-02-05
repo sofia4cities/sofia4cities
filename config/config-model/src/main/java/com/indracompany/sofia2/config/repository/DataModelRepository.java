@@ -19,22 +19,29 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import com.indracompany.sofia2.config.model.DataModel;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 
-
+import com.indracompany.sofia2.config.model.DataModel;
 
 public interface DataModelRepository extends JpaRepository<DataModel, String> {
 
 	DataModel findById(String id);
+
 	List<DataModel> findByTypeAndIdentificationAndDescription(String type, String identification, String description);
+
 	List<DataModel> findByIdentification(String identification);
+
 	List<DataModel> findByRelationalTrue();
+
 	List<DataModel> findByRelationalFalse();
+
 	List<DataModel> findByType(String type);
+
 	List<DataModel> findByCategory(String category);
+
 	long countByIdentification(String identification);
+
 	long countByType(String type);
 }

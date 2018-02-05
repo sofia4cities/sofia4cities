@@ -18,10 +18,13 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.InstanceGenerator;
+import com.indracompany.sofia2.config.model.User;
 
-public interface InstanceGeneratorRepository extends JpaRepository<InstanceGenerator, Integer>{
+public interface InstanceGeneratorRepository extends JpaRepository<InstanceGenerator, Integer> {
 
 	List<InstanceGenerator> findByIdentification(String identification);
-	List<InstanceGenerator> findByUserId(String userId);
+
+	List<InstanceGenerator> findByUser(User user);
+
 	InstanceGenerator findById(Integer id);
 }

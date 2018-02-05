@@ -37,10 +37,6 @@ import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -68,7 +64,7 @@ public class OntologyEmulatorIntegrationTest {
 			OntologyEmulator oe = new OntologyEmulator();
 			oe.setMeasures("2.5,3.4,4.5");
 			oe.setIdentification("Id 1");
-			oe.setUserId(getUserCollaborator());
+			oe.setUser(getUserCollaborator());
 			oe.setInsertEvery(5);
 			Ontology o = this.orepository.findAll().get(0);
 			if (o == null) {
@@ -82,7 +78,7 @@ public class OntologyEmulatorIntegrationTest {
 				orepository.save(o);
 
 			}
-			oe.setOntologyId(o);
+			oe.setOntology(o);
 			this.repository.save(oe);
 
 		}
@@ -93,8 +89,7 @@ public class OntologyEmulatorIntegrationTest {
 	public void test_findByIdentificationAndUserId() {
 		OntologyEmulator oe = this.repository.findAll().get(0);
 
-		Assert.assertTrue(
-				this.repository.findByIdentificationAndUserId(oe.getIdentification(), oe.getUserId()).size() > 0);
+		Assert.assertTrue(this.repository.findByIdentificationAndUser(oe.getIdentification(), oe.getUser()).size() > 0);
 
 	}
 

@@ -17,12 +17,16 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.indracompany.sofia2.config.model.TwitterListener;
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.model.User;
 
-public interface TwitterListenerRepository extends JpaRepository<TwitterListener,String>{
-	
-	TwitterListener findById(String id);
-	
+public interface TwitterListeningRepository extends JpaRepository<TwitterListening, String> {
+
+	TwitterListening findById(String id);
+
+	List<TwitterListening> findByUser(User user);
+
+	List<TwitterListening> findByOntology(Ontology ontology);
 
 }

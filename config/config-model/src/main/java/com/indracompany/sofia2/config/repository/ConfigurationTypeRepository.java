@@ -19,6 +19,6 @@ import com.indracompany.sofia2.config.model.ConfigurationType;
 
 public interface ConfigurationTypeRepository extends JpaRepository<ConfigurationType, String> {
 
-	ConfigurationType findByName(String name);
-	
+	ConfigurationType findById(String id);
+
 }

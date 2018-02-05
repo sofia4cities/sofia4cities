@@ -19,7 +19,6 @@
  ******************************************************************************/
 package com.indracompany.sofia2.api.rest.api.fiql;
 
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
@@ -30,19 +29,19 @@ import com.indracompany.sofia2.api.rest.api.dto.ApiHeaderDTO;
 import com.indracompany.sofia2.config.model.ApiHeader;
 
 import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 public final class HeaderFIQL {
-	
+
 	private static final String API_REQUERIDO = "REQUIRED";
 	private static final String API_OPCIONAL = "OPTIONAL";
 	private static final String API_CONSTANTE = "CONSTANT";
 	private static final String API_NUMBER = "NUMBER";
 	private static final String API_BOOLEAN = "BOOLEAN";
 	private static final String API_STRING = "STRING";
-	
-	
+
 	static Locale locale = LocaleContextHolder.getLocale();
-	
+
 	private HeaderFIQL() {
 		throw new AssertionError("Instantiating utility class...");
 	}
@@ -50,75 +49,75 @@ public final class HeaderFIQL {
 	public static ArrayList<ApiHeaderDTO> toHeaderDTO(Set<ApiHeader> apiheaders) {
 		ArrayList<ApiHeaderDTO> headersDTO = new ArrayList<ApiHeaderDTO>();
 		for (ApiHeader apiheader : apiheaders) {
-			ApiHeaderDTO apiheaderDTO = toHeaderDTO(apiheader);	
+			ApiHeaderDTO apiheaderDTO = toHeaderDTO(apiheader);
 			headersDTO.add(apiheaderDTO);
 		}
 		return headersDTO;
 	}
-	
+
 	public static ApiHeaderDTO toHeaderDTO(ApiHeader apiheader) {
 		ApiHeaderDTO apiheaderDTO = new ApiHeaderDTO();
-		apiheaderDTO.setNombre(apiheader.getName());
-		apiheaderDTO.setTipo(apiheader.getHeader_type());
-		apiheaderDTO.setCondicion(apiheader.getHeader_condition());
-		apiheaderDTO.setDescripcion(apiheader.getHeader_description());
-		apiheaderDTO.setValor(apiheader.getHeader_value());
+		apiheaderDTO.setName(apiheader.getName());
+		apiheaderDTO.setType(apiheader.getHeader_type());
+		apiheaderDTO.setCondition(apiheader.getHeader_condition());
+		apiheaderDTO.setDescription(apiheader.getHeader_description());
+		apiheaderDTO.setValue(apiheader.getHeader_value());
 		return apiheaderDTO;
 	}
-	
+
 	public static ApiHeader copyProperties(ApiHeaderDTO apiheaderDTO) {
 		ApiHeader apiheader = new ApiHeader();
-		
-		if (apiheaderDTO.getNombre()==null || apiheaderDTO.getNombre().equals("")){
+
+		if (apiheaderDTO.getName() == null || apiheaderDTO.getName().equals("")) {
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.HeaderNombreRequired");
 		}
-		if (apiheaderDTO.getTipo()==null || apiheaderDTO.getTipo().equals("")){
-			Object parametros[]={apiheaderDTO.getNombre()};
+		if (apiheaderDTO.getType() == null || apiheaderDTO.getType().equals("")) {
+			Object parametros[] = { apiheaderDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.HeaderTipoRequired");
 		}
-		if (!isValidType(apiheaderDTO.getTipo())){
-			Object parametros[]={apiheaderDTO.getNombre()};
+		if (!isValidType(apiheaderDTO.getType())) {
+			Object parametros[] = { apiheaderDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.HeaderWrongTipo");
 		}
-		if (apiheaderDTO.getCondicion()==null || apiheaderDTO.getCondicion().equals("")){
+		if (apiheaderDTO.getCondition() == null || apiheaderDTO.getCondition().equals("")) {
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.HeaderCondicionRequired");
 		}
-		if (!isValidCondition(apiheaderDTO.getCondicion())){
-			Object parametros[]={apiheaderDTO.getNombre()};
+		if (!isValidCondition(apiheaderDTO.getCondition())) {
+			Object parametros[] = { apiheaderDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.HeaderWrongCondicion");
 		}
-		if (!isValidTypeValue(apiheaderDTO.getTipo(), apiheaderDTO.getValor())){
-			Object parametros[]={apiheaderDTO.getValor(), apiheaderDTO.getNombre(), apiheaderDTO.getTipo()};
+		if (!isValidTypeValue(apiheaderDTO.getType(), apiheaderDTO.getValue())) {
+			Object parametros[] = { apiheaderDTO.getValue(), apiheaderDTO.getName(), apiheaderDTO.getType() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.HeaderWrongTipoValue");
 		}
-		if (!isValidCondicionValue(apiheaderDTO.getCondicion(), apiheaderDTO.getValor())){
-			Object parametros[]={apiheaderDTO.getValor(), apiheaderDTO.getNombre(), apiheaderDTO.getCondicion()};
+		if (!isValidCondicionValue(apiheaderDTO.getCondition(), apiheaderDTO.getValue())) {
+			Object parametros[] = { apiheaderDTO.getValue(), apiheaderDTO.getName(), apiheaderDTO.getCondition() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.HeaderWrongCondicionValue");
 		}
-		apiheader.setName(apiheaderDTO.getNombre());
-		apiheader.setHeader_type(apiheaderDTO.getTipo());
-		apiheader.setHeader_condition(apiheaderDTO.getCondicion());
-		apiheader.setHeader_description(apiheaderDTO.getDescripcion());
-		apiheader.setHeader_value(apiheaderDTO.getValor());
-		
+		apiheader.setName(apiheaderDTO.getName());
+		apiheader.setHeader_type(apiheaderDTO.getType());
+		apiheader.setHeader_condition(apiheaderDTO.getCondition());
+		apiheader.setHeader_description(apiheaderDTO.getDescription());
+		apiheader.setHeader_value(apiheaderDTO.getValue());
+
 		return apiheader;
 	}
 
 	private static boolean isValidCondicionValue(String condicion, String valor) {
-		if (condicion.equals(API_CONSTANTE)){
-			return (valor!=null && !valor.equals(""));
+		if (condicion.equals(API_CONSTANTE)) {
+			return (valor != null && !valor.equals(""));
 		}
 		return true;
 	}
 
 	private static boolean isValidTypeValue(String tipo, String valor) {
-		if (tipo.equals(API_NUMBER)){
+		if (tipo.equals(API_NUMBER)) {
 			try {
 				Integer.parseInt(valor);
 			} catch (Exception e) {
 				return false;
 			}
-		} else if (tipo.equals(API_BOOLEAN)){
+		} else if (tipo.equals(API_BOOLEAN)) {
 			try {
 				Boolean.parseBoolean(valor);
 			} catch (Exception e) {
@@ -129,11 +128,13 @@ public final class HeaderFIQL {
 	}
 
 	private static boolean isValidCondition(String tipo) {
-		return (tipo.equalsIgnoreCase(API_CONSTANTE)||tipo.equalsIgnoreCase(API_OPCIONAL)||tipo.equalsIgnoreCase(API_REQUERIDO));
+		return (tipo.equalsIgnoreCase(API_CONSTANTE) || tipo.equalsIgnoreCase(API_OPCIONAL)
+				|| tipo.equalsIgnoreCase(API_REQUERIDO));
 	}
 
 	private static boolean isValidType(String tipo) {
-		return (tipo.equalsIgnoreCase(API_STRING)||tipo.equalsIgnoreCase(API_NUMBER)||tipo.equalsIgnoreCase(API_BOOLEAN));
+		return (tipo.equalsIgnoreCase(API_STRING) || tipo.equalsIgnoreCase(API_NUMBER)
+				|| tipo.equalsIgnoreCase(API_BOOLEAN));
 	}
 
 }

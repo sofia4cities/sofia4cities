@@ -36,15 +36,19 @@ import lombok.Setter;
 @Entity
 @Table(name = "CLIENT_PLATFORM_ONTOLOGY")
 @Configurable
-public class ClientPlatformOntology extends AuditableEntityWithUUID{
+public class ClientPlatformOntology extends AuditableEntityWithUUID {
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private ClientPlatform clientPlatformId;
+	@Getter
+	@Setter
+	private ClientPlatform clientPlatform;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private Ontology ontologyId;
+	@Getter
+	@Setter
+	private Ontology ontology;
 }

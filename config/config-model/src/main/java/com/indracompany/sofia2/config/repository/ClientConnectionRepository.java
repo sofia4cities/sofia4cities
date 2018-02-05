@@ -32,17 +32,16 @@ import com.indracompany.sofia2.config.model.User;
 
 public interface ClientConnectionRepository extends JpaRepository<ClientConnection, String> {
 
-	List<ClientConnection> findByClientPlatformId(ClientPlatform clientPlatform);
+	List<ClientConnection> findByClientPlatform(ClientPlatform clientPlatform);
 
-	List<ClientConnection> findByClientPlatformIdAndStaticIpTrue(ClientPlatform clientPlatform);
+	List<ClientConnection> findByClientPlatformAndStaticIpTrue(ClientPlatform clientPlatform);
 
-	List<ClientConnection> findByClientPlatformIdAndStaticIpFalse(ClientPlatform clientPlatform);
+	List<ClientConnection> findByClientPlatformAndStaticIpFalse(ClientPlatform clientPlatform);
 
-	List<ClientConnection> findByClientPlatformIdAndIdentification(ClientPlatform clientPlatform,
-			String indentification);
+	List<ClientConnection> findByClientPlatformAndIdentification(ClientPlatform clientPlatform, String indentification);
 
-	@Query("SELECT o FROM ClientConnection o WHERE o.clientPlatformId.userId= :#{#userId}")
-	List<ClientConnection> findByUserId(@Param("userId") User userId);
+	@Query("SELECT o FROM ClientConnection o WHERE o.clientPlatform.user= :#{#user}")
+	List<ClientConnection> findByUser(@Param("user") User user);
 
 	ClientConnection findById(String id);
 
@@ -50,6 +49,6 @@ public interface ClientConnectionRepository extends JpaRepository<ClientConnecti
 
 	long countByIdentification(String identification);
 
-	long countByClientPlatformId(ClientPlatform clientPlatform);
+	long countByClientPlatform(ClientPlatform clientPlatform);
 
 }

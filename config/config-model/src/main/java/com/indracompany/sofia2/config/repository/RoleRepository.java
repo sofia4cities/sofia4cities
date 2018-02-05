@@ -22,11 +22,14 @@ package com.indracompany.sofia2.config.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.indracompany.sofia2.config.model.RoleType;
+import com.indracompany.sofia2.config.model.Role;
 
-public interface RoleTypeRepository extends JpaRepository<RoleType, Integer> {
+public interface RoleRepository extends JpaRepository<Role, Integer> {
 
 	long countByName(String name);
-	RoleType findByName(String name);
+
+	Role findByName(String name);
+
+	Role findById(String id);
 
 }

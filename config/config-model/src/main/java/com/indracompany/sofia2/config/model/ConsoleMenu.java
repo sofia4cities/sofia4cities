@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 /*******************************************************************************
- * © Indra Sistemas, S.A.
+ * ï¿½ Indra Sistemas, S.A.
  * 2013 - 2018  SPAIN
  *
  * All rights reserved
@@ -38,26 +38,31 @@ import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
 import lombok.Getter;
 import lombok.Setter;
+
 @Configurable
 @Entity
 @Table(name = "CONSOLE_MENU")
-public class ConsoleMenu extends AuditableEntity{
+public class ConsoleMenu extends AuditableEntity {
 
 	@Id
 	@Column(name = "ID", length = 50)
-	@Getter @Setter private String id;
+	@Getter
+	@Setter
+	private String id;
 
-	@Column(name = "JSON_SCHEMA",nullable = false)
+	@Column(name = "JSON_SCHEMA", nullable = false)
 	@NotNull
 	@Lob
 	@JsonRawValue
-	@Getter @Setter private String jsonSchema;
-	
+	@Getter
+	@Setter
+	private String jsonSchema;
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "ROLE_TYPE_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private RoleType roleTypeId;
-
-
+	@Getter
+	@Setter
+	private Role roleType;
 
 }

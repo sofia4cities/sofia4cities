@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -29,44 +30,28 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Configurable
 @Entity
-@Table(name = "api_comment_reply")
-@SuppressWarnings("deprecation")
-public class ApiCommentReply extends AuditableEntityWithUUID{
+@Table(name = "API_COMMENT_REPLY")
+public class ApiCommentReply extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
-	
 
 	@ManyToOne
-    @JoinColumn(name = "COMMENT_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "COMMENT_ID", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private ApiComment commentId;
+	@Getter
+	@Setter
+	private ApiComment comment;
 
 	@ManyToOne
-    @JoinColumn(name = "REPLY_ID", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "REPLY_ID", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private ApiComment replyId;
+	@Getter
+	@Setter
+	private ApiComment replyComment;
 
-	
-
-	public ApiComment getCommentId() {
-		return commentId;
-	}
-
-	public void setCommentId(ApiComment commentId) {
-		this.commentId = commentId;
-	}
-
-	public ApiComment getReplyId() {
-		return replyId;
-	}
-
-	public void setReplyId(ApiComment replyId) {
-		this.replyId = replyId;
-	}
-
-	
-
-	
 }

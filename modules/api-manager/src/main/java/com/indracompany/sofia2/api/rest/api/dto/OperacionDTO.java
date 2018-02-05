@@ -23,87 +23,44 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+public class OperacionDTO implements Cloneable, Serializable {
 
+	@ApiModelProperty(value = "Identificación de la Operacion")
+	@Getter
+	@Setter
+	private String identificacion;
 
-public class OperacionDTO implements Cloneable, Serializable{
-	
-	@ApiModelProperty(value = "Identificación de la Operacion")  
-    private String identificacion;
-    
-	@ApiModelProperty(value = "Descripción de la Operacion")  
-    private String descripcion;
-    
+	@ApiModelProperty(value = "Descripción de la Operacion")
+	@Getter
+	@Setter
+	private String descripcion;
+
 	@ApiModelProperty(value = "Tipo de Operacion")
-    private String operacion;
-    
+	@Getter
+	@Setter
+	private String operacion;
+
 	@ApiModelProperty(value = "Enpoint Particular de la Operacion")
-    private String endpoint;
-    
+	@Getter
+	@Setter
+	private String endpoint;
+
 	@ApiModelProperty(value = "Path de la Operacion")
-    private String path;
+	@Getter
+	@Setter
+	private String path;
 
 	@ApiModelProperty(value = "Headers de la Operacion")
+	@Getter
+	@Setter
 	private ArrayList<ApiHeaderDTO> headers;
-	
+
 	@ApiModelProperty(value = "QueryParams de la Operacion")
+	@Getter
+	@Setter
 	private ArrayList<ApiQueryParameterDTO> queryParams;
-	
-	public String getIdentificacion() {
-		return identificacion;
-	}
 
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public String getOperacion() {
-		return operacion;
-	}
-
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public ArrayList<ApiHeaderDTO> getHeaders() {
-		return headers;
-	}
-
-	public ArrayList<ApiQueryParameterDTO> getQueryParams() {
-		return queryParams;
-	}
-
-
-	public void setIdentificacion(String identificacion) {
-		this.identificacion = identificacion;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-
-
-	public void setOperacion(String operacion) {
-		this.operacion = operacion;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-    
-	public void setHeaders(ArrayList<ApiHeaderDTO> headersDTO) {
-		this.headers = headersDTO;
-	}
-
-	public void setQueryParams(ArrayList<ApiQueryParameterDTO> queryParamsDTO) {
-		this.queryParams = queryParamsDTO;
-	}
 }

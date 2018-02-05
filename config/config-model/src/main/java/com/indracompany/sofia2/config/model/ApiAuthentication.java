@@ -12,6 +12,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.config.model;
+
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -29,67 +30,39 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name = "API_AUTHENTICATION")
 @Configurable
-@SuppressWarnings("deprecation")
 public class ApiAuthentication extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
-
-
-	@OneToMany(mappedBy = "autId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiAuthenticationParameter> apiAuthenticationParameters;
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
-    private Api apiId;
+	@JoinColumn(name = "API_ID", referencedColumnName = "ID", nullable = false)
+	@Getter
+	@Setter
+	private Api api;
 
-	@Column(name = "TYPE", length = 50,nullable = false)
-    @NotNull
-    private String type;
+	@OneToMany(mappedBy = "apiAuthentication", cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter
+	@Setter
+	private Set<ApiAuthenticationParameter> apiAuthenticationParameters;
 
-	@Column(name = "DESCRIPTION", length = 512,nullable = false)
+	@Column(name = "TYPE", length = 50, nullable = false)
 	@NotNull
-    private String description;
+	@Getter
+	@Setter
+	private String type;
 
-	public Set<ApiAuthenticationParameter> getApiAuthenticationParameters() {
-		return apiAuthenticationParameters;
-	}
+	@Column(name = "DESCRIPTION", length = 512, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String description;
 
-	public void setApiAuthenticationParameters(Set<ApiAuthenticationParameter> apiAuthenticationParameters) {
-		this.apiAuthenticationParameters = apiAuthenticationParameters;
-	}
-
-	public Api getApiId() {
-		return apiId;
-	}
-
-	public void setApiId(Api apiId) {
-		this.apiId = apiId;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	
 }

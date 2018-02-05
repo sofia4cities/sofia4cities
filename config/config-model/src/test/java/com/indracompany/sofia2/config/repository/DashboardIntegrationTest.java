@@ -48,38 +48,40 @@ public class DashboardIntegrationTest {
 
 	@Autowired
 	DashboardRepository repository;
-	
+	@Autowired
+	DashboardTypeRepository dashboardTypeRepo;
+
 	@Autowired
 	UserRepository userRep;
 
 	@Before
 	public void setUp() {
-		List<Dashboard> dashboards=this.repository.findAll();
-		if(dashboards.isEmpty())	{
+		List<Dashboard> dashboards = this.repository.findAll();
+		if (dashboards.isEmpty()) {
 			log.info("No dashboards...adding");
-			Dashboard dashboard= new Dashboard();
+			Dashboard dashboard = new Dashboard();
 			dashboard.setModel("Modelo 1");
-			dashboard.setUserId(this.userRep.findByUserId("collaborator"));
+			dashboard.setUser(this.userRep.findByUserId("collaborator"));
 			dashboard.setName("Nombre del modelo 1");
-			dashboard.setDashboardTypeId("9");
+			dashboard.setDashboardType(this.dashboardTypeRepo.findAll().get(0));
 			repository.save(dashboard);
 		}
 
 	}
+
 	@Test
-	public void test_countByName(){
+	public void test_countByName() {
 
-		Dashboard d=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.countByName(d.getName())==1L);
-
-
-	}
-	@Test
-	public void test_findByNameAndDashboardTypeId(){
-		Dashboard d=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByNameAndDashboardTypeId(d.getName(), d.getDashboardTypeId()).size()>0);
+		Dashboard d = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.countByName(d.getName()) == 1L);
 
 	}
 
+	@Test
+	public void test_findByNameAndDashboardTypeId() {
+		Dashboard d = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findByNameAndDashboardType(d.getName(), d.getDashboardType()).size() > 0);
+
+	}
 
 }

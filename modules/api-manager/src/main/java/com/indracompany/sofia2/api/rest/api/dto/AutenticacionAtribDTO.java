@@ -22,32 +22,24 @@ package com.indracompany.sofia2.api.rest.api.dto;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+public class AutenticacionAtribDTO implements Cloneable, Serializable {
 
-public class AutenticacionAtribDTO implements Cloneable, Serializable{
-	
-	@ApiModelProperty(value = "Nombre del atributo")
-    private String nombre;
-	
-	@ApiModelProperty(value = "Valor del atributo")
-    private String valor;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-	public String getNombre() {
-		return nombre;
-	}
+	@ApiModelProperty(value = "Attribute Name")
+	@Getter
+	@Setter
+	private String name;
 
-	public String getValor() {
-		return valor;
-	}
-
-	
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	
-	public void setValor(String valor) {
-		this.valor = valor;
-	}
+	@ApiModelProperty(value = "Attribute Value")
+	@Getter
+	@Setter
+	private String value;
 
 }

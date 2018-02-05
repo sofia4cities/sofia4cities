@@ -77,8 +77,8 @@ public class InstanceGeneratorIntegrationTest {
 				type.setKeyValueDef("desde,100;hasta,10000;numdecimal,0");
 				this.gtrepository.save(type);
 			}
-			generator.setGeneratorTypeId(type);
-			generator.setUserId(getUserCollaborator());
+			generator.setGeneratorType(type);
+			generator.setUser(getUserCollaborator());
 			this.repository.save(generator);
 
 		}

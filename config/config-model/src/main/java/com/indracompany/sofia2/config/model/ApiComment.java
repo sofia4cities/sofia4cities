@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import java.util.Calendar;
 import java.util.Set;
 
@@ -39,113 +40,63 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Configurable
 @Entity
-@Table(name = "api_comment")
-@SuppressWarnings("deprecation")
-public class ApiComment extends AuditableEntityWithUUID{
+@Table(name = "API_COMMENT")
+public class ApiComment extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
-	
-	@OneToMany(mappedBy = "replyId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiCommentReply> commentReplies;
 
 	@ManyToOne
-    @JoinColumn(name = "ontologyId", referencedColumnName = "ID")
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Ontology ontologyId;
+	@Getter
+	@Setter
+	private Ontology ontology;
 
 	@ManyToOne
-    @JoinColumn(name = "apiId", referencedColumnName = "ID")
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@Getter
+	@Setter
+	private User user;
+
+	@ManyToOne
+	@JoinColumn(name = "API_ID", referencedColumnName = "ID")
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Api apiId;
+	@Getter
+	@Setter
+	private Api api;
 
-	@Column(name = "TITLE", length = 512,nullable = false)
-    @NotNull
-    private String title;
+	@OneToMany(mappedBy = "replyComment", cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter
+	@Setter
+	private Set<ApiCommentReply> commentReplies;
 
-	@Column(name = "COMMENT", length = 1024,nullable = false)
-    @NotNull
-    private String comment;
+	@Column(name = "TITLE", length = 512, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String title;
 
-	@Column(name = "USER_ID", length = 50,nullable = false)
-    @NotNull
-    private String userId;
+	@Column(name = "COMMENT", length = 1024, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String comment;
 
 	@Column(name = "ASSESSMENT", precision = 10)
-    private Double assessment;
+	private Double assessment;
 
 	@Column(name = "COMMENT_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar date;
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(style = "MM")
+	@Getter
+	@Setter
+	private Calendar date;
 
-	public Set<ApiCommentReply> getCommentReplies() {
-		return commentReplies;
-	}
-
-	public void setCommentReplies(Set<ApiCommentReply> commentReplies) {
-		this.commentReplies = commentReplies;
-	}
-
-	public Ontology getOntologyId() {
-		return ontologyId;
-	}
-
-	public void setOntologyId(Ontology ontologyId) {
-		this.ontologyId = ontologyId;
-	}
-
-	public Api getApiId() {
-		return apiId;
-	}
-
-	public void setApiId(Api apiId) {
-		this.apiId = apiId;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public Double getAssessment() {
-		return assessment;
-	}
-
-	public void setAssessment(Double assessment) {
-		this.assessment = assessment;
-	}
-
-	public Calendar getDate() {
-		return date;
-	}
-
-	public void setDate(Calendar date) {
-		this.date = date;
-	}
-
-	
-
-	
 }

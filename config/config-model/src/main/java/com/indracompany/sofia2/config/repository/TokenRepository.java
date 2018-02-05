@@ -27,11 +27,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Token;
 
-public interface TokenRepository extends JpaRepository<Token, String>{
+public interface TokenRepository extends JpaRepository<Token, String> {
 
-	List<Token> findByClientPlatformId(ClientPlatform clientPlatformId);
+	List<Token> findByClientPlatform(ClientPlatform clientPlatform);
+
 	Token findByToken(String token);
-
-
 
 }

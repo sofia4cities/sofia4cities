@@ -8,6 +8,7 @@ server: ## Config Web Server
       basedir: target/tomcat
 
 sofia2: #Config Sofia2 specific
+   encription.key: sofia2
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin

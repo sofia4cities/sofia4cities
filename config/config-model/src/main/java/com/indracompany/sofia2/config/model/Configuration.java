@@ -15,7 +15,6 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -26,8 +25,6 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.indracompany.sofia2.config.model.base.AuditableEntity;
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
 import lombok.Getter;
@@ -37,28 +34,45 @@ import lombok.Setter;
 @Table(name = "CONFIGURATION")
 @Configurable
 public class Configuration extends AuditableEntityWithUUID {
-	
+
+	public static enum Environment {
+		ALL, LOCAL, DEV, PRE, PRO, OTHER
+	}
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-	@Getter @Setter private User userId;
-	
-	@Column(name = "JSON_SCHEMA",nullable = false)
+	@Getter
+	@Setter
+	private User user;
+
+	@Column(name = "ymlConfig", nullable = false)
 	@NotNull
 	@Lob
-	@JsonRawValue
-	@Getter @Setter private String jsonSchema;	
-	
+	@Getter
+	@Setter
+	private String ymlConfig;
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JoinColumn(name = "CONFIGURATION_TYPE_ID", referencedColumnName = "ID", nullable = false)
-	@Getter @Setter private ConfigurationType configurationTypeId;
-	
-	@Column(name = "IDENTIFICATION")
-	@Getter @Setter private String identification;    
-	
-	
+	@JoinColumn(name = "CONFIGURATION_TYPE", referencedColumnName = "ID", nullable = false)
+	@Getter
+	@Setter
+	private ConfigurationType configurationType;
 
-	
+	@Column(name = "environment", length = 50)
+	@Getter
+	@Setter
+	private String environment;
+
+	@Column(name = "SUFFIX", length = 50)
+	@Getter
+	@Setter
+	private String suffix;
+
+	@Column(name = "DESCRIPTION", length = 255)
+	@Getter
+	@Setter
+	private String description;
 
 }

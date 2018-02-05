@@ -1,0 +1,5 @@
+sofia2: 
+   urls:
+    iotbroker: http://localhost:18080
+    controlpanel: http://localhost:18080
+    monitoring-ui: http://localhost:18090

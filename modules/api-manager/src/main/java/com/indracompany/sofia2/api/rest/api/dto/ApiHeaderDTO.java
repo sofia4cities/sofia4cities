@@ -22,66 +22,34 @@ package com.indracompany.sofia2.api.rest.api.dto;
 import java.io.Serializable;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+public class ApiHeaderDTO implements Cloneable, Serializable {
 
-public class ApiHeaderDTO implements Cloneable, Serializable{
-	
-	
-	@ApiModelProperty(value = "Nombre del Header")
-    private String nombre;
+	@ApiModelProperty(value = "Header Name")
+	@Getter
+	@Setter
+	private String name;
 
-	@ApiModelProperty(value = "Tipo de Header")
-    private String tipo;
-	
-	@ApiModelProperty(value = "Descripción del Header")
-    private String descripcion;
-    
-	@ApiModelProperty(value = "Valor del Header")
-    private String valor;
+	@ApiModelProperty(value = "Header Type")
+	@Getter
+	@Setter
+	private String type;
 
-	@ApiModelProperty(value = "Condición del Header")
-    private String condicion;
+	@ApiModelProperty(value = "Header Description")
+	@Getter
+	@Setter
+	private String description;
 
-	public String getNombre() {
-		return nombre;
-	}
+	@ApiModelProperty(value = "Header Value")
+	@Getter
+	@Setter
+	private String value;
 
-	public String getTipo() {
-		return tipo;
-	}
+	@ApiModelProperty(value = "Header Condition")
+	@Getter
+	@Setter
+	private String condition;
 
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public String getValor() {
-		return valor;
-	}
-
-	public String getCondicion() {
-		return condicion;
-	}
-
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-
-	public void setTipo(String tipo) {
-		this.tipo = tipo;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-
-	public void setValor(String valor) {
-		this.valor = valor;
-	}
-
-
-	public void setCondicion(String condicion) {
-		this.condicion = condicion;
-	}    
 }

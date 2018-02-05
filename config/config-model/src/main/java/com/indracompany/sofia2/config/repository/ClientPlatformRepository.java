@@ -19,25 +19,32 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.User;
-
 import java.util.List;
 
-public interface ClientPlatformRepository extends JpaRepository<ClientPlatform, String>{
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.User;
+
+public interface ClientPlatformRepository extends JpaRepository<ClientPlatform, String> {
 
 	ClientPlatform findById(String id);
+
 	List<ClientPlatform> findByIdentificationAndDescription(String identification, String description);
-	List<ClientPlatform> findByUserIdAndIdentificationAndDescription(User userId, String identification, String description);
+
+	List<ClientPlatform> findByUserAndIdentificationAndDescription(User user, String identification,
+			String description);
+
 	long countByIdentification(String identification);
+
 	List<ClientPlatform> countByIdentificationLike(String identification);
-	long countByUserId(User userId);
+
+	long countByUser(User user);
+
 	ClientPlatform findByIdentification(String identification);
+
 	List<ClientPlatform> findByIdentificationLike(String identification);
-	List<ClientPlatform> findByUserId(User userId);
 
-
+	List<ClientPlatform> findByUser(User user);
 
 }

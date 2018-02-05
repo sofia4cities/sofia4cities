@@ -16,18 +16,24 @@ package com.indracompany.sofia2.service.twitter;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.TwitterListener;
-
+import com.indracompany.sofia2.config.model.TwitterListening;
 
 public interface TwitterService {
-	
-	List<TwitterListener> getAllListens();
-	List<TwitterListener> getAllListensByUserId(String userId);
-	TwitterListener getListenById(String id);
+
+	List<TwitterListening> getAllListenings();
+
+	List<TwitterListening> getAllListeningsByUser(String userId);
+
+	TwitterListening getListenById(String id);
+
 	List<Configuration> getAllConfigurations();
+
 	List<Configuration> getConfigurationsByUserId(String userId);
+
 	List<String> getClientsFromOntology(String ontologyId);
+
 	List<String> getTokensFromClient(String clientPlatformId);
-	void createListen(TwitterListener twitterListener);
+
+	void createListening(TwitterListening TwitterListening);
 
 }

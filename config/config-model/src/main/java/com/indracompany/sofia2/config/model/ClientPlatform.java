@@ -45,46 +45,57 @@ import lombok.Setter;
 @Entity
 @Table(name = "CLIENT_PLATFORM")
 @Configurable
-public class ClientPlatform extends AuditableEntityWithUUID  {
+public class ClientPlatform extends AuditableEntityWithUUID {
 
-    @OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "clientPlatform", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @Getter @Setter private Set<ClientPlatformOntology> clientPlatformOntologies;
+	@Getter
+	@Setter
+	private Set<ClientPlatformOntology> clientPlatformOntologies;
 
-	@OneToMany(mappedBy = "clientPlatformId", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "clientPlatform", cascade = CascadeType.REMOVE)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter @Setter private Set<Token> tokens;
+	@Getter
+	@Setter
+	private Set<Token> tokens;
 
-	@OneToMany(mappedBy = "clientPlatformId", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "clientPlatform", fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter @Setter private Set<ClientConnection> clientConnections;
-	
+	@Getter
+	@Setter
+	private Set<ClientConnection> clientConnections;
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-	@Getter @Setter private User userId;
-	
-	@Column(name = "ENCRYPTION_KEY",nullable = false)
+	@Getter
+	@Setter
+	private User user;
+
+	@Column(name = "ENCRYPTION_KEY", nullable = false)
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String encryptionKey;
+	@Getter
+	@Setter
+	private String encryptionKey;
 
 	@Column(name = "METADATA")
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@Getter @Setter private String metadata;
+	@Getter
+	@Setter
+	private String metadata;
 
-
-	@Column(name = "IDENTIFICATION", length = 50, unique = true,nullable = false)
+	@Column(name = "IDENTIFICATION", length = 50, unique = true, nullable = false)
 	@NotNull
-	@Getter @Setter private String identification;
+	@Getter
+	@Setter
+	private String identification;
 
 	@Column(name = "DESCRIPTION", length = 256)
-	@Getter @Setter private String description;
-
-
-
-
+	@Getter
+	@Setter
+	private String description;
 
 }

@@ -187,7 +187,7 @@
 															<!-- EMAIL -->
 															<td class="text-left no-wrap " th:text="${user.email}"></td>
 															<!-- ROLE -->
-															<td  class="text-left no-wrap bold" th:text="${user.roleTypeId.name}"></td>
+															<td  class="text-left no-wrap bold" th:text="${user.role.name}"></td>
 															<!-- DATE CREATED -->
 															<td class="text-center" th:if="${user.createdAt!=null}" th:text="${#dates.format(user.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${user.createdAt==null}" th:text="'---'"></td>

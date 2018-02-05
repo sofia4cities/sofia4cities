@@ -43,67 +43,73 @@ import lombok.Setter;
 @Entity
 @Table(name = "CLIENT_CONNECTION")
 @Configurable
-public class ClientConnection extends AuditableEntityWithUUID{
+public class ClientConnection extends AuditableEntityWithUUID {
 
-	/* Comentado para posterior implementacion
-	
-	@OneToMany(mappedBy = "idInstanciaKp", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_ASSET_INSTANCIAKP")
-    private Set<Asset> assets;
-
-	@OneToMany(mappedBy = "instanciaId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    @ForeignKey(name = "FK_GRUPOSINSTANCIAKP_INSTANCIA")
-    private Set<Gruposinstanciakp> gruposinstanciakps;
-
-    
-    public Set<Asset> getAssets() {
-        return assets;
-    }
-
-	public void setAssets(Set<Asset> assets) {
-        this.assets = assets;
-    }
-
-	public Set<Gruposinstanciakp> getGruposinstanciakps() {
-        return gruposinstanciakps;
-    }
-
-	public void setGruposinstanciakps(Set<Gruposinstanciakp> gruposinstanciakps) {
-        this.gruposinstanciakps = gruposinstanciakps;
-    }
-
-	*/
-	
+	/*
+	 * Comentado para posterior implementacion
+	 * 
+	 * @OneToMany(mappedBy = "idInstanciaKp", cascade = CascadeType.ALL, fetch =
+	 * FetchType.EAGER)
+	 * 
+	 * @OnDelete(action = OnDeleteAction.CASCADE)
+	 * 
+	 * @ForeignKey(name = "FK_ASSET_INSTANCIAKP") private Set<Asset> assets;
+	 * 
+	 * @OneToMany(mappedBy = "instanciaId", cascade = CascadeType.ALL)
+	 * 
+	 * @OnDelete(action = OnDeleteAction.CASCADE)
+	 * 
+	 * @ForeignKey(name = "FK_GRUPOSINSTANCIAKP_INSTANCIA") private
+	 * Set<Gruposinstanciakp> gruposinstanciakps;
+	 * 
+	 * 
+	 * public Set<Asset> getAssets() { return assets; }
+	 * 
+	 * public void setAssets(Set<Asset> assets) { this.assets = assets; }
+	 * 
+	 * public Set<Gruposinstanciakp> getGruposinstanciakps() { return
+	 * gruposinstanciakps; }
+	 * 
+	 * public void setGruposinstanciakps(Set<Gruposinstanciakp> gruposinstanciakps)
+	 * { this.gruposinstanciakps = gruposinstanciakps; }
+	 * 
+	 */
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
-    @Getter @Setter private ClientPlatform clientPlatformId;
-	
-	@Column(name = "IDENTIFICATION", length = 255, unique = true,nullable = false)
-    @NotNull
-    @Getter @Setter private String identification;
+	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
+	@Getter
+	@Setter
+	private ClientPlatform clientPlatform;
+
+	@Column(name = "IDENTIFICATION", length = 255, unique = true, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String identification;
 
 	@Column(name = "LAST_IP", length = 39)
-	@Getter @Setter private String lastIp;
+	@Getter
+	@Setter
+	private String lastIp;
 
-	@Column(name = "IP_STRICT",nullable = false,columnDefinition = "boolean default false")
-    @NotNull
-    @Getter @Setter private boolean ipStrict;
+	@Column(name = "IP_STRICT", nullable = false, columnDefinition = "boolean default false")
+	@NotNull
+	@Getter
+	@Setter
+	private boolean ipStrict;
 
 	@Column(name = "LAST_CONNECTION")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-	@Getter @Setter private Calendar lastConnection;
+	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(style = "MM")
+	@Getter
+	@Setter
+	private Calendar lastConnection;
 
-	@Column(name = "STATIC_IP",nullable = false,columnDefinition = "boolean default false")
-    @NotNull
-    @Getter @Setter private boolean staticIp;
-
-	
-
-	
+	@Column(name = "STATIC_IP", nullable = false, columnDefinition = "boolean default false")
+	@NotNull
+	@Getter
+	@Setter
+	private boolean staticIp;
 
 }

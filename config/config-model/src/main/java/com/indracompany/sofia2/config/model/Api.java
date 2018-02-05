@@ -18,6 +18,7 @@
  * All rights reserved
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
+
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -39,259 +40,128 @@ import org.springframework.beans.factory.annotation.Configurable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Configurable
 @Entity
 @Table(name = "API")
-@SuppressWarnings("deprecation")
 public class Api extends AuditableEntityWithUUID {
 
-    private static final long serialVersionUID = 1L;
-
-   
-
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name = "IMAGE")
-    @Lob
-    @Type(type="org.hibernate.type.BinaryType")
-    private byte[] image;
-    
-    @Column(name = "SSL_CERTIFICATE")
-    @NotNull
-    private boolean ssl_certificate;
-
-	
-
-	@OneToMany(mappedBy = "apiId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiComment> comments;
-
-	@OneToMany(mappedBy = "apiId", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-    private Set<ApiUserAssessment> userAssessments;
+	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "ontologyId", referencedColumnName = "ID")
-    private Ontology ontologyId;
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID")
+	@Getter
+	@Setter
+	private Ontology ontology;
 
-	@Column(name = "IDENTIFICATION", length = 50,nullable = false)
-    @NotNull
-    private String identification;
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@Getter
+	@Setter
+	private User user;
+
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "IMAGE")
+	@Lob
+	@Type(type = "org.hibernate.type.BinaryType")
+	@Getter
+	@Setter
+	private byte[] image;
+
+	@Column(name = "SSL_CERTIFICATE")
+	@NotNull
+	@Getter
+	@Setter
+	private boolean ssl_certificate;
+
+	@OneToMany(mappedBy = "api", cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter
+	@Setter
+	private Set<ApiComment> comments;
+
+	@OneToMany(mappedBy = "api", cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter
+	@Setter
+	private Set<ApiUserAssessment> userAssessments;
+
+	@Column(name = "IDENTIFICATION", length = 50, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String identification;
 
 	@Column(name = "NUM_VERSION")
-    private Integer numversion;
+	@Getter
+	@Setter
+	private Integer numversion;
 
-	@Column(name = "DESCRIPTION", length = 512,nullable = false)
-    @NotNull
-    private String description;
+	@Column(name = "DESCRIPTION", length = 512, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String description;
 
-	@Column(name = "CATEGORY", length = 50)
-    private String category;
+	@Column(name = "CATEGORY", length = 255)
+	@Getter
+	@Setter
+	private String category;
 
 	@Column(name = "ENDPOINT", length = 512)
-    private String endpoint;
+	@Getter
+	@Setter
+	private String endpoint;
 
 	@Column(name = "ENDPOINT_EXT", length = 512)
-    private String endpointExt;
+	@Getter
+	@Setter
+	private String endpointExt;
 
-	@Column(name = "STATE", length = 10,nullable = false)
-    @NotNull
-    private String state;
+	@Column(name = "STATE", length = 10, nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private String state;
 
 	@Column(name = "META_INF", length = 512)
-    private String metaInf;
+	@Getter
+	@Setter
+	private String metaInf;
 
 	@Column(name = "IMAGE_TYPE", length = 20)
-    private String imageType;
+	@Getter
+	@Setter
+	private String imageType;
 
-	
-
-	@Column(name = "USER_ID", length = 50,nullable = false)
+	@Column(name = "IS_PUBLIC", nullable = false)
 	@NotNull
-    private String userId;
-
-	@Column(name = "IS_PUBLIC",nullable = false)
-    @NotNull
-    private boolean isPublic;
+	@Getter
+	@Setter
+	private boolean isPublic;
 
 	@Column(name = "CACHE_TIMEOUT")
-    private Integer cachetimeout;
+	@Getter
+	@Setter
+	private Integer cachetimeout;
 
 	@Column(name = "API_LIMIT")
-    private Integer apilimit;
+	@Getter
+	@Setter
+	private Integer apilimit;
 
 	@Column(name = "API_TYPE", length = 50)
-    private String apiType;
+	@Getter
+	@Setter
+	private String apiType;
 
 	@Column(name = "ASSESSMENT", precision = 10)
-    private Double assessment;
-
-	public byte[] getImage() {
-		return image;
-	}
-
-	public void setImage(byte[] image) {
-		this.image = image;
-	}
-
-	public boolean isSsl_certificate() {
-		return ssl_certificate;
-	}
-
-	public void setSsl_certificate(boolean ssl_certificate) {
-		this.ssl_certificate = ssl_certificate;
-	}
-
-	public Set<ApiComment> getComments() {
-		return comments;
-	}
-
-	public void setComments(Set<ApiComment> comments) {
-		this.comments = comments;
-	}
-
-	
-
-	public Ontology getOntologyId() {
-		return ontologyId;
-	}
-
-	public void setOntologyId(Ontology ontologyId) {
-		this.ontologyId = ontologyId;
-	}
-
-	public String getIdentification() {
-		return identification;
-	}
-
-	public void setIdentification(String identification) {
-		this.identification = identification;
-	}
-
-	public Integer getNumversion() {
-		return numversion;
-	}
-
-	public void setNumversion(Integer numversion) {
-		this.numversion = numversion;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-
-	public String getEndpointExt() {
-		return endpointExt;
-	}
-
-	public void setEndpointExt(String endpointExt) {
-		this.endpointExt = endpointExt;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getMetaInf() {
-		return metaInf;
-	}
-
-	public void setMetaInf(String metaInf) {
-		this.metaInf = metaInf;
-	}
-
-	public String getImageType() {
-		return imageType;
-	}
-
-	public void setImageType(String imageType) {
-		this.imageType = imageType;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-
-	public boolean isPublic() {
-		return isPublic;
-	}
-
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
-
-	public Integer getCachetimeout() {
-		return cachetimeout;
-	}
-
-	public void setCachetimeout(Integer cachetimeout) {
-		this.cachetimeout = cachetimeout;
-	}
-
-	public Integer getApilimit() {
-		return apilimit;
-	}
-
-	public void setApilimit(Integer apilimit) {
-		this.apilimit = apilimit;
-	}
-
-	public String getApiType() {
-		return apiType;
-	}
-
-	public void setApiType(String apiType) {
-		this.apiType = apiType;
-	}
-
-	public Double getAssessment() {
-		return assessment;
-	}
-
-	public void setAssessment(Double assessment) {
-		this.assessment = assessment;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
-	public Set<ApiUserAssessment> getUserAssessments() {
-		return userAssessments;
-	}
-
-	public void setUserAssessments(Set<ApiUserAssessment> userAssessments) {
-		this.userAssessments = userAssessments;
-	}
-	
-	
+	@Getter
+	@Setter
+	private Double assessment;
 
 }

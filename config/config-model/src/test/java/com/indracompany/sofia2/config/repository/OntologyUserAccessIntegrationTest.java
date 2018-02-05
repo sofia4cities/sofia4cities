@@ -67,9 +67,9 @@ public class OntologyUserAccessIntegrationTest {
 		if (users.isEmpty()) {
 			log.info("No OntologyUserAccess found...adding");
 			OntologyUserAccess user = new OntologyUserAccess();
-			user.setUserId(getUserCollaborator());
-			user.setOntologyId(ontRep.findAll().get(0));
-			user.setOntologyUserAccessTypeId(ouatRep.findAll().get(0));
+			user.setUser(getUserCollaborator());
+			user.setOntology(ontRep.findAll().get(0));
+			user.setOntologyUserAccessType(ouatRep.findAll().get(0));
 			this.repository.save(user);
 		}
 	}
@@ -77,7 +77,7 @@ public class OntologyUserAccessIntegrationTest {
 	@Test
 	public void findByUserId() {
 		OntologyUserAccess user = this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByUserId(user.getUserId()).size() > 0);
+		Assert.assertTrue(this.repository.findByUser(user.getUser()).size() > 0);
 
 	}
 }

@@ -28,29 +28,53 @@ import org.springframework.data.jpa.repository.Query;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 
-public interface OntologyRepository extends JpaRepository<Ontology,String> {
+public interface OntologyRepository extends JpaRepository<Ontology, String> {
 
 	List<Ontology> findByIdentificationIgnoreCase(String identification);
+
 	List<Ontology> findByDescription(String description);
+
 	Ontology findByIdentification(String identification);
+
 	List<Ontology> findAllByOrderByIdentificationAsc();
+
 	List<Ontology> findByDescriptionContaining(String description);
+
 	List<Ontology> findByIdentificationContaining(String identification);
-	List<Ontology> findByUserId(User userId);
-	List<Ontology> findByUserIdAndActiveTrue(User userId);
+
+	List<Ontology> findByUser(User user);
+
+	List<Ontology> findByUserAndActiveTrue(User user);
+
 	List<Ontology> findByIdentificationLikeAndDescriptionLike(String identification, String description);
-	List<Ontology> findByUserIdAndIdentificationLikeAndDescriptionLike(User userId,String identification,String description);
+
+	List<Ontology> findByUserAndIdentificationLikeAndDescriptionLike(User user, String identification,
+			String description);
+
 	List<Ontology> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
-	List<Ontology> findByUserIdAndIdentificationContainingAndDescriptionContaining(User userId,String identification,String description);
-	List<Ontology> findByUserIdAndIdentificationContaining(User userId,String identification);
-	List<Ontology> findByUserIdAndDescriptionContaining(User userId,String description);
+
+	List<Ontology> findByUserAndIdentificationContainingAndDescriptionContaining(User user, String identification,
+			String description);
+
+	List<Ontology> findByUserAndIdentificationContaining(User user, String identification);
+
+	List<Ontology> findByUserAndDescriptionContaining(User user, String description);
+
 	List<Ontology> findByActiveTrueAndIsPublicTrue();
+
 	List<Ontology> findByActiveTrue();
+
 	Ontology findById(String id);
-	List<Ontology> findByUserIdAndIsPublicTrue(User userId);
+
+	List<Ontology> findByUserAndIsPublicTrue(User user);
+
 	long countByActiveTrueAndIsPublicTrue();
-	long countByIdentificationLikeOrDescriptionLikeOrMetainfLike(String identification, String description, String metainf);
+
+	long countByIdentificationLikeOrDescriptionLikeOrMetainfLike(String identification, String description,
+			String metainf);
+
 	long countByActiveTrueAndIsPublicTrueAndMetainfIsNull();
-	@Query("SELECT o FROM Ontology AS o WHERE o.userId=:userId OR o.id IN (SELECT uo.ontologyId.id FROM OntologyUserAccess AS uo WHERE uo.userId=:userId) AND o.active=true")
-	List<Ontology> findByUserIdAndOntologyUserAccessAndAllPermissions(User userId);
+
+	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user) AND o.active=true")
+	List<Ontology> findByUserAndOntologyUserAccessAndAllPermissions(User user);
 }

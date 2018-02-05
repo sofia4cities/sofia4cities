@@ -71,7 +71,7 @@ var ConfigurationsCreateController = function() {
             rules: {
 				userId:					{ minlength: 5, required: true },             
 				configurationTypes:		{ required: true },
-				jsonSchema: 			{required:true},
+				ymlConfig:   			{required:true},
 				createdAt:				{ date: true, required: true },
 
             },
@@ -116,15 +116,17 @@ var ConfigurationsCreateController = function() {
 	
 	// INIT CODEMIRROR
 	var handleCodeMirror = function () {
-		logControl ? console.log('handleCodeMirror() on -> jsonSchema') : '';	
+		logControl ? console.log('handleCodeMirror() on -> ymlConfig') : '';	
 		
-        var myTextArea = document.getElementById('jsonSchema');
+        var myTextArea = document.getElementById('ymlConfig');
         var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-            lineNumbers: true,
-            matchBrackets: true,
-            styleActiveLine: true,
-            theme:"material",
-            mode: {name: "javascript", json: true}
+        	mode: "text/x-yaml"
+            lineNumbers: false,
+            foldGutter: true
+            //matchBrackets: true,
+            styleActiveLine: true
+            //theme:"material",
+            //mode: {name: "javascript", json: true}
         });
 		myCodeMirror.setSize("100%", 350);
     }

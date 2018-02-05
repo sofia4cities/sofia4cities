@@ -125,10 +125,10 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{configurations.type} + ':'">Configuration Type</label>
-															<select id="configurationTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{configurationTypeId.name}" th:required="true">
-																<option th:each="configurationTypeId :${configurationTypes}" th:value="${configurationTypeId.name}" th:text="${configurationTypeId.name}" ></option>
-																<th:block if="${configuration.configurationTypeId !=null}">
-																	<option th:text="${configuration.configurationTypeId.name}" th:value="${configuration.configurationTypeId.name}"></option>
+															<select id="configurationTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{configurationType.id}" th:required="true">
+																<option th:each="configurationType :${configurationTypes}" th:value="${configurationType.id}" th:text="${configurationType.description}" ></option>
+																<th:block if="${configuration.configurationType !=null}">
+																	<option th:text="${configuration.configurationType.description}" th:value="${configuration.configurationType.id}"></option>
 																</th:block>
 															</select>													
 														</div>
@@ -138,16 +138,16 @@
 															<label class="" th:text="#{configuration.userid} + ':'">User ID</label>
 															<div class="input-icon ">
 																<i class="fa fa-user"></i>
-																<input readOnly="true" id="userId" type="text"  th:required="true"  maxlength="50" th:field="*{userId.userId}" class="form-control no-remove" th:placeholder="#{user.id}"/>
+																<input readOnly="true" id="userId" type="text"  th:required="true"  maxlength="50" th:field="*{user.userId}" class="form-control no-remove" th:placeholder="#{user.id}"/>
 															</div>	
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{configuration.id} + ':'">Configuration ID</label>
+															<label class="control-label" th:text="#{configuration.environment} + ':'">Environment</label>
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
-																<input id="id" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control no-remove" th:placeholder="#{configuration.id}"/>
+																<input id="id" type="text"  th:required="true"  maxlength="50" th:field="*{environment}" class="form-control no-remove" th:placeholder="#{configuration.environment}"/>
 															</div>	
 														</div>
 													</div>												
@@ -156,8 +156,8 @@
 												<div class="row">
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
-															<label th:text="#{configurations.json}">JSON</label>														
-															<textarea id="jsonSchema" name="jsonSchema"  th:required="true" th:field="*{jsonSchema}" class="form-control autoExpand" rows="3" data-min-rows='3'></textarea>
+															<label th:text="#{configurations.yml}">YML Config</label>														
+															<textarea id="ymlConfig" name="ymlConfig"  th:required="true" th:field="*{ymlConfig}" class="form-control autoExpand" rows="5" data-min-rows='5'></textarea>
 														</div>
 													</div>																					
 												</div>
