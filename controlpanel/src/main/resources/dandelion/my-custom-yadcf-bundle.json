@@ -3,7 +3,7 @@
       {
          "name" : "jquery.datatables.yadcf", 
          "locations" : {
-            "webapp" : "/static/js/vendor/yadcf.js"   
+            "webapp" : "/static/js/vendor/datatable/features/filtering/jquery.dataTables.yadcf.js"   
          }
       }
    ]

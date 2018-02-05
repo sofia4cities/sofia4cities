@@ -29,7 +29,7 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public String loadMenuByRole(User user) {
 		if (user != null)
-			return this.consoleMenuRepository.findByRoleType(user.getRole()).getJsonSchema();
+			return this.consoleMenuRepository.findByRoleType(user.getRole()).getJson();
 		else
 			return null;
 	}

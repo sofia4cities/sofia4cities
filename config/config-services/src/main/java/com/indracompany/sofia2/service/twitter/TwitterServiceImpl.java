@@ -110,6 +110,8 @@ public class TwitterServiceImpl implements TwitterService {
 	public void createListening(TwitterListening twitterListening) {
 		this.twitterListeningRepository.save(twitterListening);
 	}
+	
+	@Override
 	public void updateListen(TwitterListening twitterListener)
 	{
 		TwitterListening newTwitterListening=this.twitterListeningRepository.findById(twitterListener.getId());
@@ -124,16 +126,22 @@ public class TwitterServiceImpl implements TwitterService {
 		}
 	
 	}
+	
+	@Override
 	public boolean existOntology(String identification)
 	{
 		if(this.ontologyService.getOntologyByIdentification(identification)!=null) return true;
 		else return false;
 	}
+	
+	@Override
 	public boolean existClientPlatform(String identification)
 	{
 		if(this.clientPlatformRepository.findByIdentification(identification)!=null) return true;
 		else return false;
 	}
+	
+	@Override
 	public Ontology createTwitterOntology(String ontologyId, String dataModel)
 	{
 		DataModel dataModelTwitter= this.dataModelRepository.findByIdentification(dataModel).get(0);

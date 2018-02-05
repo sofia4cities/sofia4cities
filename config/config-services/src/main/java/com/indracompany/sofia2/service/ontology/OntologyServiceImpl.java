@@ -19,9 +19,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.service.user.UserService;
 
 @Service
@@ -29,6 +31,8 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Autowired
 	OntologyRepository ontologyRepository;
+	@Autowired
+	DataModelRepository dataModelRepository;
 	@Autowired
 	UserService userService;
 
@@ -114,11 +118,17 @@ public class OntologyServiceImpl implements OntologyService {
 		return this.ontologyRepository.findByIdentification(identification);
 	}
 
-	
+	@Override
 	public Ontology saveOntology(Ontology ontology)
 	{
 		return this.ontologyRepository.save(ontology);
 		
+	}
+	
+	@Override
+	public List<DataModel> getAllDataModels()
+	{
+		return this.dataModelRepository.findAll();
 	}
 
 }

@@ -345,7 +345,7 @@ public class InitConfigDB {
 				log.info("Adding menu for role ADMIN");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("1");
-				menu.setJsonSchema(loadFromResources("menu_admin.json"));
+				menu.setJson(loadFromResources("menu_admin.json"));
 				menu.setRoleType(roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
@@ -355,7 +355,7 @@ public class InitConfigDB {
 				log.info("Adding menu for role COLLABORATOR");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("2");
-				menu.setJsonSchema(loadFromResources("menu_collaborator.json"));
+				menu.setJson(loadFromResources("menu_collaborator.json"));
 				menu.setRoleType(roleRepository.findById(Role.Type.COLLABORATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
@@ -365,7 +365,7 @@ public class InitConfigDB {
 				log.info("Adding menu for role USER");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("3");
-				menu.setJsonSchema(loadFromResources("menu_user.json"));
+				menu.setJson(loadFromResources("menu_user.json"));
 				menu.setRoleType(roleRepository.findById(Role.Type.USER.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {

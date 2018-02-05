@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.services.configuration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.Configuration.Environment;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
@@ -111,6 +114,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		} catch (Exception e) {
 			return false;
 		}
+	}
+	
+	@Override
+	public List<Environment> getEnvironmentValues()
+	{
+		Environment[] environments= Configuration.Environment.values();
+		List<Environment> environmentsList=new ArrayList<Environment>(Arrays.asList(environments));
+		return environmentsList;
+	
 	}
 
 }

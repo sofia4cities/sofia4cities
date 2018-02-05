@@ -18,6 +18,7 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.Configuration.Environment;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 
 public interface ConfigurationService {
@@ -39,4 +40,6 @@ public interface ConfigurationService {
 	void updateConfiguration(Configuration configuration);
 
 	boolean isValidYML(final String yml);
+	
+	List<Environment> getEnvironmentValues();
 }
