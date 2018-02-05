@@ -5,6 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
 		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
+
 		
 		<!-- WEB FONTs -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -16,17 +17,24 @@
             }
           });
 		</script>
+
 		<!-- STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
 		<!-- THEME -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>	
-	</head>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND BOOSTRAP-TIMEPICKER  -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>
+		
+	</head>	
 	
-	<!-- page-sidebar-closed para inicial página con menu cerrado -->
+	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
 	<!-- MAIN PAGE WRAPPER -->
 	<div class="page-wrapper">
 	
@@ -36,465 +44,181 @@
 		
 		<!-- HEADER AND CONTENT DIVIDER -->
 		<div class="clearfix"> </div>
-
+			
 		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
 		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
 		<!-- END SIDEBAR -->
 			
 		<!-- BEGIN CONTENT -->
-		<div class="page-content-wrapper">			
-						
+		<div class="page-content-wrapper">
+			
 			<!-- BEGIN CONTENT BODY -->
 			<div class="page-content">
+			
+                <div class="alert alert-success display-hide">
+					<span th:text="${globalMessage}"></span>
+				</div>		
 				
-				<!-- BEGIN PAGE HEADER-->
-				
-				<!-- BEGIN PAGE BAR -->
+				<!-- BEGIN PAGE BAR AND BREADCRUM-->
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/ontologies/list}" > <span th:text="#{ontology.breadcrumb.list}">Ontologies</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{ontology.wizard}">Ontology Wizard</span></li>
+						<li><a th:href="@{/ontologies/list}"> <span th:text="#{ontology.breadcrumb.prev}">Ontologies </span></a><i class="fa fa-circle"></i></li>
+						<li>
+							<span th:if="${ontology.user.userId} == null" th:text="#{ontology.breadcrumb.create}">Show Ontology</span>
+							<span th:if="${ontology.user.userId} != null" th:text="#{ontology.breadcrumb.update}">Update Ontology</span>
+						</li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{ontology.wizard}"> Ontology Wizard</span></h1>
+				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
 				<div class="row">
-					<div class="col-md-12">
-					
+					<div class="col-md-12">						
 						<div class="portlet light bordered">
 							<div class="portlet-title">
 								<div class="caption">
-									<i class="icon-edit font-grey-gallery"></i>
-									<span  th:text="#{ontology.wizard}" class="caption-subject bold font-grey-gallery uppercase"> Ontology Wizard </span>										
+									<i class="la la-users font-grey-gallery"></i>						
+									
+									<!-- FORM TITLE -->
+									<span th:if="${ontology.user.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.create} + ':'"> New Ontology</span>
+									<span th:if="${ontology.user.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.update} + ' ' + ${ontology.id} + ':'"> Update Ontology </span>
 								</div>									
 								<div class="tools">
-									<a href="" class="collapse" data-original-title="" title=""> </a>
-									<a href="#portlet-config" data-toggle="modal" class="config" data-original-title="" title=""> </a>										
+									<a href="" class="collapse" data-original-title="" title=""> </a>																			
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
 								</div>
-								<div class="actions margin-right-20">
-									<div class="btn-group">												
-										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
-											<i class="flaticon-add"></i> <span th:text="#{gen.createBtn}"> New</span> <i class="fa fa-angle-down"></i>
-										</a>												
-										<ul class="dropdown-menu pull-right" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createwizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../opendataontologies/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../opendataontologies/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
-										</ul>
-									</div>										
+								<div class="actions">
+									<!-- ACTION INDICATORs -->									
+									<span th:if="${ontology.user.userId} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${ontology.user.userId} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>
+								
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
-								<div class="row">									
-									<!-- CONTENEDORES DE CREACION DE ONTOLOGIAS PASO A PASO -->	
-									<div class="col-md-12 col-sm-12 col-xs-12">
-										
-										<div class="portlet light bordered">
-											<div class="portlet-title">
-												<div class="caption font-grey-mint">
-													<i class="icon-settings font-grey-mint"></i>
-													<span class="caption-subject uppercase bold" th:text="#{proyectos_formulario_button_crear_proyecto}"> Formulario Crear Proyecto </span>
-												</div>									
-												
-												<div class="tools">
-													<a href="" class="collapse" data-original-title="" title=""> </a>																									
-													<a href="" class="fullscreen" data-original-title="" title=""> </a>													
-												</div>
-												<div class="actions margin-right-20">
-																						
-												</div>
-											</div>
-											<div class="portlet-body" style="display: block; height: auto;">
-												
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> 
+											<span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>										
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
+									</div>
+									<div class="col-md-12">										
+										<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
+											<!-- FORM ACTIONS FOR INSERT-->
+											<input th:if="${ontology.id} == null" type="hidden" name="action" th:value="@{/ontologies/create}"/>
+											
+											<!-- FORM ACTIONS FOR UPDATE -->											
+											<input th:if="${ontology.user.userId} != null" type="hidden" name="action" th:value="@{/ontologies/update}"/>
+											<input th:if="${ontology.user.userId} != null" type="hidden" name="_method" value="PUT"/>											
+											
+											<div class="form-body">
+												<!-- user, name and email -->
 												<div class="row">
-													<div class="col-md-12 alert-zone">
-														<!-- ZONA DE ALERTAS PARA FORMS -->
-														<div class="alert alert-warning alert-dismissable hide ">
-															<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-															<strong>Alerta!</strong> Montaje provisonal con nuevo estilo. 
-														</div>								
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{ontology.id} + ':'">Identification</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.id}"  th:readonly="*{user.userId}" th:classappend="${ontology.user.userId} ? no-remove : ''"  />
+															</div>															
+														</div>
+													</div>													
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="" th:text="#{ontology.identification} + ':'">Name</label>
+															<div class="input-icon ">
+																<i class="fa fa-user"></i>
+																<input id="identification" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{ontology.identification}"/>
+															</div>	
+														</div>
 													</div>
-													
-													<!-- FORMULARIO DE PROYECTO -->
-													<div class="col-md-12 margin-bottom-20">											
-														<div class="portlet light">	
-															
-															<div class="portlet-body form">
-																<form role="form" id="form_crear_ontologia" data-toggle="validator" action="createWizard.html" th:object="${ontologia}" th:action="@{/ontologias}" method="post" class="formulario_ontologiasgrupo" enctype="multipart/form-data">
-																
-																	<div class="form-body">
-																		
-																		<!-- Nombre -->
-																		<div class="row">
-																			<!-- 1º columna -->
-																			<div class="col-md-6 col-sm-6 col-xs-12">
-																				<div class="col-md-6 col-sm-6 col-xs-12">
-																					<div class="form-group">
-																						<label th:text="#{ontologias_formulario_nombre}">Nombre</label><span class="required"> (*)</span>
-																						<div class="input-icon ">
-																							<i class="fa fa-tag"></i>																			
-																							<input id="id_campo_nombre" name="campo_nombre" class="form-control" type="text" maxlength="50" th:field="*{identificacion}" th:required="true" data-minlength="5" pattern=".{5,}" min="5" th:onchange="'javascript:existeNombreOntologia();'" />
-																						</div>
-																						<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontologias_formulario_name_min}"> 5 caracteres mínimos</small></span>
-																					</div>																
-																				</div>
-																				<!-- meta-inf. -->
-																				<div class="col-md-6 col-sm-6 col-xs-12">
-																					<div class="form-group">
-																						<label th:text="#{apimanager_formulario_metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="Seleccione una ontolgía de la tabla, para agregrala seleccione en el selector de tipo de permiso, el permiso que le otorgará a esa ontología en el proyecto" data-original-title="Seleccionar Ontología" title="Seleccionar Ontología"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>																		
-																						<input  id="id_campo_metainf" data-role="tagsinput" class="form-control" type="text" th:field="*{metainf}" th:required="true" data-minlength="2" pattern=".{2,}" min="2"></input>
-																						<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontologias_formulario_metainf_min}"> 2 caracteres mínimos</small></span>
-																					</div>
-																				</div>
-																				<div class="clearfix"></div>
-																				<div class="col-md-4 col-sm-6 col-xs-12">
-																					<!-- ontologia activa -->
-																					<div class="form-group">
-																						<label>&nbsp;</label>
-																						<div class="mt-checkbox-list">
-																							<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="Seleccione una ontolgía de la tabla, para agregrala seleccione en el selector de tipo de permiso, el permiso que le otorgará a esa ontología en el proyecto" data-original-title="Seleccionar Ontología" title="Seleccionar Ontología"><i class="la la-lightbulb-o" ></i> <div class="inline" th:text="#{ontologias_formulario_activa}">Ontología Activa</div>
-																								<input id="checkboxActiva" name="checkboxActiva" type="checkbox" class="form-control campo_activa" th:field="*{activa}" th:checked="checked"/>
-																								<span></span><!-- necesario por estilos. -->
-																							</label>																													
-																						</div>
-																					</div>
-																				</div>
-																				<div class="col-md-4 col-sm-6 col-xs-12">
-																				<!--ontologia publica -->
-																					<div class="form-group">
-																						<label>&nbsp;</label>
-																						<div class="mt-checkbox-list">
-																							<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="Seleccione una ontolgía de la tabla, para agregrala seleccione en el selector de tipo de permiso, el permiso que le otorgará a esa ontología en el proyecto" data-original-title="Seleccionar Ontología" title="Seleccionar Ontología"><i class="la la-lightbulb-o font-md"></i> <div class="inline" th:text="#{ontologias_formulario_publica}">Ontología Pública</div>
-																								<input id="checkboxPublica" class="form-control campo_publica"  name="checkboxPublica" type="checkbox" th:field="*{publico}" />																				
-																								<span></span><!-- necesario por estilos. -->
-																							</label>																													
-																						</div>
-																					</div>
-																				</div>															
-																				<div class="col-md-4 col-sm-6 col-xs-12">
-																				<!--ontologia padre -->
-																					<div class="form-group">
-																						<label>&nbsp;</label>
-																						<div class="mt-checkbox-list">
-																							<label id="checkpadreLabel" class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="Seleccione una ontolgía de la tabla, para agregrala seleccione en el selector de tipo de permiso, el permiso que le otorgará a esa ontología en el proyecto" data-original-title="Seleccionar Ontología" title="Seleccionar Ontología"><i class="la la-lightbulb-o font-md"></i> <div class="inline" th:text="#{ontologias_formulario_padre}">Ontología Padre</div>
-																								<input id="checkpadre" class="form-control campo_padre" name="checkpadre" type="checkbox" th:field="*{padre}" />
-																								<span></span><!-- necesario por estilos. -->
-																							</label>																													
-																						</div>
-																					</div>
-																				</div>
-																				<!-- descripción. -->																																														
-																				<div class="col-md-12 col-sm-12 col-xs-12">
-																					<div class="form-group">
-																						<label th:text="#{ontologias_formulario_descripcion}">Comentarios </label><span class="required"> (*)</span>																		
-																						<textarea class="element textarea small form-control" id="id_campo_comentarios" name="campo_comentarios" maxlength="512" th:field="*{descripcion}" th:required="true" data-minlength="5" pattern=".{5,}" min="5"  cols="" rows=""></textarea>
-																					</div>
-																					<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontologias_formulario_name_min}"></small></span>
-																				</div>																	
-																			
-																			</div>
-																			<!-- 2º columna -->
-																			<div class="col-md-6 col-sm-6 col-xs-12">
-																				<div class="row">																																
-																					<div class="col-md-6 col-xs-12">
-																						<div class="form-group">
-																							<label id="notificaciones" th:text="#{ontologias_formulario_config_notificaciones}">Configuración de notificaciones</label>
-																							<div class="mt-checkbox-list">
-																								<label class="mt-checkbox"> <div class="inline" th:text="#{ontologias_formulario_notificaciones_bdtr}">Query suscripción BDTR </div>
-																									<input id="bdtr" value="bdtr" checked="checked" type="checkbox" />
-																									<span></span>
-																								</label>
-																								<label class="mt-checkbox"> <div class="inline" th:text="#{ontologias_formulario_notificaciones_script}"> Regla Script </div>
-																									<input id="script" value="script" checked="checked"  type="checkbox" />
-																									<span></span>
-																								</label>
-																								<label class="mt-checkbox"> <div class="inline" th:text="#{ontologias_formulario_notificaciones_cep}">Regla CEP</div>
-																									<input id="cep" value="cep" checked="checked" type="checkbox" />
-																									<span></span>
-																								</label>
-																							</div>
-																						</div>
-																					</div>
-																					<div class="col-md-6 col-xs-12">
-																						<div class="form-group">
-																							<label id="intervaloBTRBH"><i class="la la-lightbulb-o"></i> <span th:text="#{ontologias_formulario_intervalo_sin_paso}"> Plantilla </span></label>
-																							<select id="id_campo_temporizador" class="selectpicker form-control" data-live-search="true" data-width="100%" th:text="#{ontologias_formulario_intervalo_sin_paso}"  data-none-selected-text="Nada Seleccionado" th:field="*{bdtrbdh}" onchange="changeBDTRBorrado();" th:required="true">
-																								<option th:each="temporizador:${periodidadesBdtr}" th:value="${#numbers.formatDecimal(temporizador.valor,1,0)}" th:text="#{${temporizador.nombre}}"></option>
-																							</select>
-																							<div class="mt-checkbox-list">
-																								<label class="mt-checkbox"> <div class="inline" id="borradolabel" th:text="#{ontologias_formulario_borrado}">Eliminar de BDTR </div>
-																									<input id="checkboxborrado" name="checkboxborrado" type="checkbox" th:field="*{bdtrclean}" onchange="changeBDTRText();" th:disabled="disabled" />
-																									<span></span>
-																								</label>
-																							</div>
-																						</div>
-																					</div>																		
-																					<div class="col-md-6 col-xs-12">
-																						<div class="form-group">
-																							<label id="instanciaBdtr"><i class="la la-lightbulb-o"></i> <span th:text="#{ontologias_formulario_selecionar_instancia_bdtr}">Seleccionar Instancia BDTR </span></label>
-																							<select id="id_instancia_bdtr" class="selectpicker form-control" data-live-search="true" data-width="100%"   data-none-selected-text="Nada Seleccionado" th:field="*{bdtrdatasourceid}" th:required="true">
-																								<option th:each="bdtr:${bdtrs}" th:value="${bdtr.identificacion}" th:text="${bdtr.identificacion}"></option>
-																							</select>
-																							<input id="bdtr_seleccionada" name="bdtr_seleccionada" type="hidden" value=""/>
-																							<input id="porDefecto" name="porDefecto" type="hidden" th:value="${porDefecto}" />																				
-																						</div>
-																					</div>
-																					<div class="col-md-6 col-xs-12">
-																						<div class="form-group" sec:authorize="hasRole('ROL_ADMINISTRADOR')">
-																							<label id="ontologyClass" th:text="#{ontologias_formulario_clase_agrupadora}">Agrupador de datos</label>
-																							<div class="input-icon ">
-																								<i class="fa fa-cog"></i>																			
-																								<input id="id_ontologia_clase" name="campo_nombre" class="form-control" type="text" maxlength="100" th:field="*{ontologyClass}" th:disabled="disabled" />
-																							</div>
-																							<div class="mt-checkbox-list">
-																								<label class="mt-checkbox"> <div class="inline" id="agrupadorlabel" th:text="#{ontologias_formulario_agrupador}">Agrupar datos</div>
-																									<input id="checkboxagrupador" name="checkboxagrupador" type="checkbox" th:field="*{reduce}" onchange="enableOntologyClass();" />
-																									<span></span>
-																								</label>
-																							</div>																				
-																						</div>																			
-																					</div>
-																				</div>																
-																			</div>																
-																		</div>
-																		
-																		
-																		<!-- SECCIONE DE ONTOLOGIA -->
-																		<div class="row" id="secciones" >
-																			<div class="col-md-12">
-																				<div class="portlet light ">
-																					<div class="portlet-title tabbable-line">																																					
-																						<div class="tools">
-																							<a href="javascript:;" class="collapse" data-original-title="" title=""> </a>																				
-																							<a href="" class="fullscreen" data-original-title="" title=""> </a>
-																						</div>
-																						<!-- SECCIONES DE LA ONTOLOGIA TABS -->
-																						<ul class="nav nav-tabs pull-left">
-																							<li id="tab-plantilla" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> SELECCIONAR PLANTILLA</a></li>
-																							<li id="tab-propiedades" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><i class="la la-edit"></i> AÑADIR NUEVAS PROPIEDADES </a></li>
-																							<li id="tab-esquema" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> GENERADOR DE ESQUEMA E INSTANCIAS JSON</a></li>
-																						</ul>
-																					</div>
-																					<div class="portlet-body">
-																						<div class="col-md-12 margin-top-10 ">																				
-																							<div class="tab-content">
-																								<div class="tab-pane active" id="tab_1">
-																									<div class="alert alert-info alert-dismissable  ">
-																										<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-																										<strong>PLANTILLAS ONTOLOGIA</strong> Montaje provisonal con nuevo estilo. 
-																									</div>
-																									<div class="row">
-																										<div class="col-lg-3 col-md-4 col-xs-12">
-																										<!-- columna de selector de plantillas -->
-																											<div class="mt-element-list">                                            
-																												<div class="mt-list-container list-default ext-1 group" style="padding:0;">																									
-																													<a data-toggle="collapse" href="#general" aria-expanded="true" class="list-toggle-container">
-																														<div class="list-toggle bg-grey-mint uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaGeneral',true,'')" > <span th:text="#{plantilla_categoriaGeneral}">GENERAL</span><span class="badge badge-default pull-right bg-white font-purple bold">2</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" aria-expanded="true"  id="general">
-																														<ul id="plantilla_categoriaGeneral">
-																															
-																														</ul>
-																													</div>
-																													<a class="list-toggle-container" data-toggle="collapse" href="#smartcity" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_City',true,'')"><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaSmart_City}">SMART CITY</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="smartcity" aria-expanded="true" >
-																														<ul id="plantilla_categoriaSmart_City">																												
-																														</ul>
-																													</div>
-																													<a class="list-toggle-container" data-toggle="collapse" href="#enviroment" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaEnvironment',true,'')"><i class="fa fa-globe"></i> <span th:text="#{plantilla_categoriaEnvironment}">ENVIROMENT</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="enviroment" aria-expanded="true">
-																														<ul id="plantilla_categoriaEnvironment">																												
-																														</ul>
-																													</div>
-																													<a class="list-toggle-container" data-toggle="collapse" href="#smartindustry" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaIndustry',true,'')" ><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaIndustry}">SMART INDUSTRY</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="smartindustry" aria-expanded="true">
-																														<ul id="plantilla_categoriaIndustry">																												
-																														</ul>
-																													</div>
-																													<a class="list-toggle-container" data-toggle="collapse" href="#smartbuilding" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Building',true,'')" ><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaSmart_Building}">SMART BUILDING</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="smartbuilding" aria-expanded="true" >
-																														<ul id="plantilla_categoriaSmart_Building">																																																					
-																														</ul>
-																													</div>
-																													<a class="list-toggle-container" data-toggle="collapse" href="#smarthome" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Home',true,'')" ><i class="fa fa-home"></i> <span th:text="#{plantilla_categoriaSmart_Home}">SMART HOME</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="smarthome" aria-expanded="true" >
-																														<ul id="plantilla_categoriaSmart_Home">																																																						
-																														</ul>
-																													</div>
-																													<a class="list-toggle-container" data-toggle="collapse" href="#smartretail" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Retail',true,'')" ><i class="fa fa-th"></i> <span th:text="#{plantilla_categoriaSmart_Retail}">SMART RETAIL</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="smartretail" aria-expanded="true" style="">
-																														<ul id="plantilla_categoriaSmart_Retail">																																																					
-																														</ul>
-																													</div>																									
-																													<a class="list-toggle-container" data-toggle="collapse" href="#social" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSocial',true,'')"><i class="fa fa-thumb-up"></i> <span th:text="#{plantilla_categoriaSocial}">SOCIAL</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="social" aria-expanded="true" style="">
-																														<ul id="plantilla_categoriaSocial">																												
-																														</ul>
-																													</div>
-																													<a class="list-toggle-container" data-toggle="collapse" href="#iot" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaIoT',true,'')" ><i class="fa fa-code"></i> <span th:text="#{plantilla_categoriaIoT}">IoT</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="iot" aria-expanded="true" style="">
-																														<ul id="plantilla_categoriaIoT">
-																														</ul>
-																													</div>
-																													<a class="list-toggle-container" data-toggle="collapse" href="#gsma" aria-expanded="true">
-																														<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaGSMA',true,'')" ><i class="fa fa-chart"></i> <span th:text="#{plantilla_categoriaGSMA}">GSMA</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																													</a>
-																													<div class="panel-collapse collapse in" id="gsma" aria-expanded="true" style="">
-																														<ul id="plantilla_categoriaGSMA">																												
-																														</ul>
-																													</div>
-																												</div>
-																											</div>
-																										</div>
-																										<div class="col-lg-9 col-md-8 col-xs-12">
-																										<!-- columna de atributos de plantilla seleccionada --> 
-																											<!-- TO-DO: preguntar esto porque no tiene sentido... -->
-																											<div id="seleccionPlantilla" style="">                                                                   
-																												<select id="_plantillas_id" class="element select form-control" name="_plantillas_id" th:field="*{plantillaId}" onchange="loadSchemaPlantillaInterno()" style="">
-																													<option th:each="plantilla:${plantillas}" th:value="${plantilla.id}" th:text="${plantilla.identificacion}">plantilla</option>
-																												</select>     
-																		
-																												<select id="_plantillas_id_copia_categoria" class="element select form-control" name="_plantillas_id" th:field="*{plantillaId}"  style="">
-																													<option th:each="plantilla:${plantillas}" th:value="${plantilla.id}" th:text="${plantilla.categoria}"></option>
-																												</select>                           
-																											</div>
-																											<input id="_tipo_id" name="tipo" class="form-control" type="hidden" maxlength="50" th:value="*{versionPlantilla}"/>
-																											<input id="plantillaSeleccionada" name="plantillaSeleccionada" type="hidden" value="false"/>					                                         
-																											<div id="divtableplantilla" class="col-md-12"> 
-																												<table id="id_relational_fields_table_plantilla" class="table table-hover table-striped" dt:table="true" dt:paginate="false" dt:sort="false">
-																													<thead>
-																														<tr class="cabecera-tabla">
-																															<th class="titulo-columnas" th:text="#{wizardontologias_nuevapropiedad_propiedad}">Propiedad</th>
-																															<th class="titulo-columnas" th:text="#{wizardontologias_nuevapropiedad_tipodatos}">Tipo de datos</th>
-																															<th class="titulo-columnas" th:text="#{wizardontologias_nuevapropiedad_requerido}">Requerido</th>
-																															<th class="titulo-columnas" th:text="#{wizardontologias_nuevapropiedad_descripcion}">Descripcion</th>
-																															<th class="titulo-columnas"></th>
-																														</tr>
-																													</thead>
-																													<tbody/>
-																												</table>
-																											</div>																							
-																										</div>
-																									</div>																					
-																								</div>
-																								<div class="tab-pane" id="tab_2">
-																								<div class="alert alert-info alert-dismissable  ">
-																										<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-																										<strong>NUEVAS PROPIEDADES</strong> Montaje provisonal con nuevo estilo. 
-																									</div>
-																									<p> Howdy, I'm in Section 2. </p>	
-																									<input id="id_listaCamposOntologia" name="listaCamposPlantillas" type="hidden" th:value="[]"/>
-																									<input type="hidden" id="id_source_wizard" name="id_source_wizard" value="true" />																						
-																								</div>
-																								<div class="tab-pane" id="tab_3">
-																									<div class="alert alert-info alert-dismissable  ">
-																										<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-																										<strong>GENERAR ESQUEMA JSON</strong> Montaje provisonal con nuevo estilo. 
-																									</div>
-																									<div class="button-group col-sm-12">
-																										<input id="generar_ontologia" class="button_text" type="button" value="#{wizardontologias_generar_ontologia}" title="#{wizardontologias_generar_ontologia}" th:title="#{wizardontologias_generar_ontologia}" name="generar_ontologia" th:value="#{wizardontologias_generar_ontologia}" onclick="generarEsquemaOntologia()"/>  
-																									</div>
-																									<input id="_esquemajson_id" name="esquemajson" type="hidden" th:field="*{esquemajson}"/>  
-																									<div id="editor" style=" height: 500px;display:none;">					                                        
-																										<h2 class="descripcion_peq" th:text="#{ontologias_formulario_esquema}">Esquema</h2>																								 
-																										<div class="form-group col-sm-12">
-																										<input id="_esquemajson_id" name="esquemajson" type="hidden" th:field="*{esquemajson}"/>                                
-																										<div id="jsoneditor"></div>
-
-																										<!-- Para que funcione como el createJsonSchema saltandose la validacion de esquema por llevar fichero informado al mapear al controller -->
-																										<input  type="file" style="display:none;"  th:field="*{fichero}"  accept="text/xml"/>
-																										
-																										<script th:inline="javascript"  type="text/javascript">
-																										/*<![CDATA[*/
-																											var container = document.getElementById('jsoneditor');
-																										
-																											var options = {
-																												mode: 'text',
-																												modes: ['code', 'text', 'tree', 'view'], // allowed modes
-																												error: function (err) {
-																													 document.getElementById("dialog-error").innerHTML=err.toString();
-																													 showInfoDialog(null);
-																												}
-																											};
-																											
-																											var editor = new jsoneditor.JSONEditor(container, options, ""); 
-												
-																											/*]]>*/
-																										</script>
-
-																										</div>													   
-																									</div>
-																									<div  id="instancia" style="display:none;">
-																										 <div class="button-group col-sm-12">
-																											 <input id="generar_instancia" class="button_text" type="button" value="#{wizardontologias_generar_ontologia}" title="#{wizardontologias_generar_ontologia}" th:title="#{wizardontologias_generar_ontologia}" name="generar_ontologia" th:value="#{wizardontologias_generar_instancia}" onclick="generarInstanciaOntologia()"/>
-																										 </div>
-																										 <h2 class="descripcion_peq" th:text="#{herramientas_formulario_instancia}">Instancia JSON</h2>
-																										 <div class="form-group col-sm-12">                                                       
-																											<textarea class="element textarea medium form-control" id="id_campo_instanciaJSON" name="id_campo_instanciaJSON" th:text="${valor_instancia}" readOnly="readonly"  cols="" rows=""></textarea>                                                       
-																										</div>																							   
-																								   </div>
-																								</div>
-																							</div>
-																						</div>
-																					</div>
-																				</div>
-																			</div>																
-																		</div>															
-																		
-																		
-																	</div>
-																	<div class="form-actions">
-																		<div class="pull-right">
-																			<button id="crear" type="button" class="btn btn-square btn-success" name="crear"  value="Crear" th:onclick="'javascript:crearProyecto();'" ><i class="la la-check"></i> <span th:value="#{ontologias_formulario_button_crear}">Enviar</span></button>
-																			<span class="sep">ó</span>
-																			<button id="cancelar" type="button" class="btn btn-square btn-outline red-sunglo" name="cancelar"  value="Cancelar" th:onclick="'javascript:navigateShow(\'' + @{/proyectos/list} + '\');'"><i class="la la-times"></i><span th:value="#{usuariostw_formulario_button_cancelar}"> Cancelar</span></button>
-																		</div>
-																	</div>
-																</form>
+													<div class="col-md-6 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="metainf HELP" title="meta-Inf"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>																		
+															<input  id="metainf" data-role="tagsinput" class="form-control" type="text" th:field="*{metainf}" th:required="true" data-minlength="2" pattern=".{2,}" min="2"></input>
+															<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.metainf_min}"> min. 2 chars</small></span>
+														</div>
+													</div>													
+												</div>
+												<!-- active , public -->
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+														<div class="form-group">
+															<label class="" th:text="#{ontology.active} + '?'">Active</label>
+															<div class="mt-checkbox-list">
+																<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline" th:text="#{ontology.active}">Active Ontology?</div>
+																	<input id="checkboxactive" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
+																	<span></span><!-- needed by styles -->
+																</label>																													
 															</div>
 														</div>
-														
-														
-														
 													</div>
-													<!-- FIN FORMULARIO -->
+													<div class="col-md-3 col-sm-6 col-xs-12">													
+														<div class="form-group">
+															<label>&nbsp;</label>
+															<div class="mt-checkbox-list">
+																<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" data-title="Identificador" data-content="Seleccione una ontolgía de la tabla, para agregrala seleccione en el selector de tipo de permiso, el permiso que le otorgará a esa ontología en el proyecto" data-original-title="Seleccionar Ontología" title="Seleccionar Ontología"><i class="la la-lightbulb-o font-md"></i> <div class="inline" th:text="#{ontology.ispublic}">Public?</div>
+																	<input id="checkboxPublica" class="form-control campo_publica"  name="checkboxPublica" type="checkbox" th:field="*{isPublic}" />																				
+																	<span></span><!-- necesario por estilos. -->
+																</label>																													
+															</div>
+														</div>
+													</div>
+													<div class="col-md-12 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{ontology.description}">Comments </label><span class="required"> (*)</span>																		
+															<textarea class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true" data-minlength="5" pattern=".{5,}" min="5"  cols="" rows=""></textarea>
+														</div>
+														<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.description.min}"></small></span>
+													</div>
 												</div>
 											</div>
-										</div>
-																					
-									</div><!-- END CONTENEDORES -->																	
+											<!-- FORM BUTTONS -->
+											<div class="form-actions">
+												<div class="pull-right">
+													<!-- CREATE -->
+													<button th:if="${ontology.user.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													
+													<!-- UPDATE -->
+													<button th:if="${ontology.user.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													
+													<!-- REMOVE -->
+													<button th:if="${ontology.user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.Id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+																										
+													<!-- RESET -->
+													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+													
+													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+													
+													<!-- CANCEL TO-DO: authentication and control -->
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+												</div>
+											</div>											
+										</form>
+										
+										<!-- AUXILIAR FORM TO DELETE USER -->
+										<form id="delete_ontology_form" class="delete-user hide"  th:action="@{'/ontologies/'+${ontology.id}}"  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="ontologyId" th:value="${ontology.id}"/>
+										</form>										
+									</div>									
 								</div>
 							</div>
-						</div><!-- END PORTLET BASIC LIGHT -->							
+						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->						
-				</div><!-- END MAIN ROW -->				
+				</div><!-- END MAIN ROW -->
 			</div><!-- END CONTENT BODY -->
-		</div><!-- END CONTENT page-content-wrapper -->	
+		</div><!-- END CONTENT page-content-wrapper -->		
 	</div>
 	<!-- END MAIN PAGE WRAPPER -->
 	
@@ -503,1776 +227,38 @@
 	
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
-	<script th:src="@{/static/js/layout.js}"/>	
-
-	<!-- plugins -->
+	<script th:src="@{/static/js/layout.js}"/>
 	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	<!-- LOADING DEFAULT DATES IF NEEDED -->
+	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js}" type="text/javascript"></script>
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
+    <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
 	
-	<script th:inline="javascript">	
-	// <![CDATA[
-	// DATATABLES LANGUAJE FROM PROPERTIES.
-	datatable_lang = [[#{datatables_lang}]];	
-	var languageJson = JSON.parse(datatable_lang);
-	if ( languageJson ){
-		$.extend( true, $.fn.dataTable.defaults, {
-			language: languageJson
-		});	
-	}
-	// ]]>
-	</script>
-	
-	<script th:inline="javascript">
-	// <![CDATA[
-	var optionName = 'ONTOLOGIAS';		
-	var plantillaBase;
-	var editor, options = {};
-    
-	
-    function showInfoDialog(element) {
-		console.log('showInfoDialog() ->');
-        $( "#dialog-error" ).dialog({
-            resizable: false,
-            height:160,
-            modal: true,
-            position: [($(window).width() / 2) - 150, 160],
-            dialogClass: 'DeleteConfirmDialog',
-            buttons: {
-              'OK': function() {
-                
-            	$( this ).dialog( "close" );
-            	if( element!=null && element.hasClass('collapsed') ){
-            	    element.click();
-            	}
-              }
-            }
-          });
-    };
-    
-    function navigateUrl(url){  window.location.href = url; };
-	
-    function enableOntologyClass() {
-        var checkagrupador = document.getElementById("checkboxagrupador");
-
-        if (checkagrupador != null) {
-		    if (checkagrupador.checked) {
-		        document.getElementById("id_ontologia_clase").disabled=false;
+	<!-- LOADING DEFAULT LANG MESSAGES IF NEEDED -->
+	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}" type="text/javascript"></script>
 		
-		    } else {
-		        document.getElementById("id_ontologia_clase").disabled=true;
-		        document.getElementById("id_ontologia_clase").value="";
-		    }
-	    }
-    };
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/ontologyCreate.js}"/>
+		
+	<!-- MAIN INIT -->
+	<script  th:inline="javascript">
 	
-    function changeBDTRBorrado(){
-    	var value= document.getElementById("id_campo_temporizador").value;
-    	var checkborrar= document.getElementById("checkboxborrado");
-        if (value=="-1") {
-            document.getElementById('intervaloBTRBH').innerHTML = [[#{ontologias_formulario_intervalo_sin_paso}]];
-            checkborrar.disabled=true;
-            checkborrar.checked=false;
-        } else {
-        	changeBDTRText();
-        	checkborrar.disabled=false;
-        }
-    };
 	
-    function changeBDTRText(){
-    	var checkborrar= document.getElementById("checkboxborrado").checked;
-        if (checkborrar) {
-        	document.getElementById('intervaloBTRBH').innerHTML = [[#{ontologias_formulario_intervalo_borrado}]];
-        } else {
-        	document.getElementById('intervaloBTRBH').innerHTML = [[#{ontologias_formulario_intervalo_almacenamiento}]];
-        }
-    };
+	var currentLanguage = [[${lang}]];	
 	
-	function existeNombreOntologia(){
-        var identificador=document.getElementById("id_campo_nombre").value;
-        if ((identificador!=null) && (identificador.length>0)){
-            $.ajax({ 
-                url: "existOntology", 
-                type: 'POST',
-                data:identificador,
-                dataType: 'text', 
-                contentType: 'text/plain',
-                mimeType: 'text/plain',
-                success: function(data) {
-                         if (data == "ErrorOntologiaExistente") {
-                      	     document.getElementById("dialog-error").innerHTML=[[#{loadexcel_formulario_generar_ontologia_nombre_existe}]]; 
-                             showErrorDialog();
-                             document.getElementById("id_campo_nombre").value="";
-                         }
-                },
-                error:   function(data,status,er) { 
-                            document.getElementById("dialog-error").innerHTML=[[#{dialogo_error_consulta_datos}]];
-                            showErrorDialog();
-                         }
-                }); 
-        }
-    };
-   
-    function restaurar(){
-    	
-    	var esquema= document.getElementById("_esquemajson_id").value;
-        if (esquema!=null && esquema!=""){
-        	
-        	esquema=esquema.replace(/['']+/g, "\"");
-        	
-        	 // Restaurar plantilla seleccionada con propiedades activadas o no y requeridas o no
-        	 $("#_plantillas_id").val($("#_plantillas_id option:selected").val());
-        	 
-        	 $("#plantillaSeleccionada").val(true);
-   
-              var tipo = $("#_plantillas_id").val();
-        
-              'use strict';
-              //load template in editor
-
-              $.ajax({
-                      url:[[@{/ontologias/load}]],
-                      type: 'POST',
-                      data:tipo,
-                      dataType:'json',
-                      contentType: 'application/json',
-                      mimeType: 'application/json',
-                      success: function(data) {
-                          
-                          document.getElementById("_tipo_id").value= data.version;
-                          
-                          restaurarPopulate(data.esquemajson,esquema);
-                          
-                          plantillaBase=data.esquemajson;
-                      },
-                      error:function(data, status, er) { 
-                          alert("ERROR al cargar: " + " Estado: " + status );
-                      }
-                }); 
-          
-            editor.setText("{}");
-            editor.setMode("tree");
-            editor.setText(esquema);
-
-            generarInstanciaOntologia();
-            document.getElementById('instancia').style.display = 'block';
-            document.getElementById('editor').style.display = 'block';  
-            
-            
-            // Poner categoria y plantilla : pulsada
-            var categoria = $("#_plantillas_id_copia_categoria option:selected").text();
-            if(null!=categoria){
-              // Añade clase pulsado
-              
-              // Lanza busqueda de plantillas de categoria
-
-              loadPlantillasByCategoria(categoria,false,$("#_plantillas_id option:selected").val());
-              
-              $("#"+categoria+" h4").addClass("pulsado");
-              
-            }
-       } 
-    };	
-   
-    function restaurarPopulate(schemaOrigen,schemaCommit){
-    	
-    	//cargar tabla plantilla con las propiedades seelecionadas por el cliente
-    	restaurarPopulateWizardTableFieldsFromSchemaPlantilla(schemaOrigen,schemaCommit);
-    	
-    	 mostrarTablaPLantilla();
-    	 
-    	//cargar tabla propia con las propiedades seelecionadas por el cliente
-    	restaurarPopulateWizardTableFieldsFromSchema(schemaOrigen,schemaCommit);
-    	
-    	mostrarTablaPropia();
-    	
-    };
-    
-    function restaurarPopulateWizardTableFieldsFromSchemaPlantilla(schemaOrigen,schemaCommit){
-    	
-         var obj = $.parseJSON(schemaOrigen);
-         var objSchemaCommit = $.parseJSON(schemaCommit);
-        
-         if(obj.datos!=null && obj.datos.properties!=null && objSchemaCommit!=null && objSchemaCommit.datos!=null && objSchemaCommit.datos.properties!=null){                 
-            
-			$.each(obj.datos.properties, function(key, element) {
-                
-            	 var  flagexiste=objSchemaCommit.datos.properties.hasOwnProperty(key);	
-            	 if(flagexiste){
-            		 //copia valor
-            		 obj.datos.properties[key]=objSchemaCommit.datos.properties[key];
-            	 }
-            		 
-           		 //para cada propiedad veo si esta en schema Commit
-                   var datatype='';
-                   if(element.type!='object'){
-                       datatype=element.type;
-                   }else{
-                       datatype=element.type;
-                       if(null!=element.properties){
-	                       $.each(element.properties, function(internalkey, internalelement) {
-	                          if(internalkey=='$date'){
-	                              datatype='timestamp';
-	                          } 
-	                       });
-                       }
-                   }
-
-                   var required="codnorequerido";
-
-                   if(flagexiste){
-	                   if(objSchemaCommit.datos.required != null){
-	                       for(var i=0;i<objSchemaCommit.datos.required.length;i++){
-	                           if(key==objSchemaCommit.datos.required[i]){
-	                              required = "codrequerido";
-	                           }
-	                       }
-	                   }
-	                   
-                   }
-				   else{
-                	   
-                	   if(obj.datos.required != null){
-                           for(var i=0;i<obj.datos.required.length;i++){
-                               if(key == obj.datos.required[i]){
-                                  required = "codrequerido";
-                               }
-                           }
-                           
-                       }
-                   }
-                   
-                   var description=undefined!=objSchemaCommit.datos.properties[key]?objSchemaCommit.datos.properties[key].description:'';
-                   if (!([[${@contexto.getPropiedad('bdtr.type')}]]=="relationalKudu" && (datatype=='object' || datatype=='array') )){        
-                	    createTableRegisterPlantilla(key, datatype, required,flagexiste,description);
-                   }
-
-             });
-        
-         // Plantillas que no contienen datos: EJ GSMA
-         }else if(obj.properties!=null
-        		 && objSchemaCommit!=null
-                 && objSchemaCommit.properties!=null){
-             
-        	 $.each(obj.properties, function(key, element) {
-                 
-                 //if(objSchemaCommit.properties.hasOwnProperty(key)){
-                 var  flagexiste=objSchemaCommit.properties.hasOwnProperty(key);  
-                 if(flagexiste){
-                     //copia valor
-                     obj.properties[key]=objSchemaCommit.properties[key];
-                 }
-
-                   //para cada propiedad veo si esta en schema Commit
-                   var datatype='';
-                   if(element.type!='object'){
-                       datatype=element.type;
-                   }else{
-                       datatype=element.type;
-                       if(null!=element.properties){
-	                       $.each(element.properties, function(internalkey, internalelement) {
-	                          if(internalkey=='$date'){
-	                              datatype='timestamp';
-	                          } 
-	                       });
-                       }
-                   }
-
-                   if(flagexiste){
-                     var required="codnorequerido";
-                     
-                     if(objSchemaCommit.required != null){
-                         for(var i=0;i<objSchemaCommit.required.length;i++){
-                             if(key==objSchemaCommit.required[i]){
-                                required="codrequerido";
-                             }
-                         }
-                     }
-                   }else{
-                	   if(obj.required != null){
-                           for(var i=0;i<obj.required.length;i++){
-                               if(key==obj.required[i]){
-                                  required="codrequerido";
-                               }
-                           }
-                           
-                       }
-                   }
-                   var description=undefined!=objSchemaCommit.properties[key]?objSchemaCommit.properties[key].description:'';
-                   if (!([[${@contexto.getPropiedad('bdtr.type')}]]=="relationalKudu" && (datatype=='object' || datatype=='array') )){      
-                	   createTableRegisterPlantilla(key, datatype, required,flagexiste,description);
-                   }
-
-             });
-        
-         }
-
-    };
-    
-    function restaurarPopulateWizardTableFieldsFromSchema(schemaOrigen,schemaCommit){
-    	
-
-        
-    	var obj = $.parseJSON(schemaOrigen);
-        var objSchemaCommit = $.parseJSON(schemaCommit);
-
-        /*if(objSchemaCommit!=null
-                && objSchemaCommit.datos!=null 
-                && objSchemaCommit.datos.properties!=null
-                && $("#_plantillas_id option:selected").text()=="Empty"){
-        	
-        	populateWizardTableFieldsFromSchema(schemaCommit);
-
-        }else*/ if(objSchemaCommit!=null
-        		&& objSchemaCommit.datos!=null 
-        		&& objSchemaCommit.datos.properties!=null
-        		&& obj!=null
-        		&& obj.datos!=null
-        		&& obj.datos.properties!=null){
-        
-            $.each(objSchemaCommit.datos.properties, function(key, element) {
-               
-                var  flagexiste=obj.datos.properties.hasOwnProperty(key);  
-                if(!flagexiste){
-                   
-                	//para cada propiedad veo si esta en schema Commit
-                    var datatype='';
-                    if(element.type!='object'){
-                        datatype=element.type;
-                    }else{
-                    	
-                    	if(null!=element.properties){
-	                        $.each(element.properties, function(internalkey, internalelement) {
-	                           if(internalkey=='$date'){
-	                               datatype='timestamp';
-	                           } 
-	                        });
-                    	}
-                    }
-
-                    var required=[[#{wizardontologias_nuevapropiedad_combo_no_requerido}]];
-
-                     if(objSchemaCommit.datos.required != null){
-                         for(var i=0;i<objSchemaCommit.datos.required.length;i++){
-                             if(key==objSchemaCommit.datos.required[i]){
-                                required=[[#{wizardontologias_nuevapropiedad_combo_requerido}]];
-                             }
-                         }
-                     }
-
-                     var description=element.description;
-                     
-                     createTableRegister(key, datatype, required,description);
-                }
-
-            });
-       
-        // Plantillas que no contienen datos: EJ GSMA
-        }else if(objSchemaCommit!=null 
-        		&& objSchemaCommit.properties!=null
-        		&& obj!=null
-                && obj.properties!=null){
-
-                
-                $.each(objSchemaCommit.properties, function(key, element) {
-                   
-                    var  flagexiste=obj.properties.hasOwnProperty(key);  
-                    if(!flagexiste){
-                       
-                        //para cada propiedad veo si esta en schema Commit
-                        var datatype='';
-                        if(element.type!='object'){
-                            datatype=element.type;
-                        }else{
-                        	if(null!=element.properties){
-                        
-	                            $.each(element.properties, function(internalkey, internalelement) {
-	                               if(internalkey=='$date'){
-	                                   datatype='timestamp';
-	                               } 
-	                            });
-                        	}
-                        }
-
-                        var required=[[#{wizardontologias_nuevapropiedad_combo_no_requerido}]];
-
-                         if(objSchemaCommit.required != null){
-                             for(var i=0;i<objSchemaCommit.required.length;i++){
-                                 if(key==objSchemaCommit.required[i]){
-                                    required=[[#{wizardontologias_nuevapropiedad_combo_requerido}]];
-                                 }
-                             }
-                         }
-
-                         var description=element.description;
-                        	 
-                         createTableRegister(key, datatype, required,description);
-                    }
-
-                });
-           
-            }
-        	
-
-    };
-      
-    function submitform() {
-    	 var bdtr = $("#id_instancia_bdtr").val();
-     	$("#bdtr_seleccionada").val(bdtr);
-    	 var esquema = document.getElementById("_esquemajson_id");
-        var ontologyName = document.getElementById("id_campo_nombre").value;
-        esquema.value = editor.getText();
-        
-        var bdtr = document.getElementById("bdtr").checked;
-        var script = document.getElementById("script").checked;
-        var cep = document.getElementById("cep").checked;
-        
-        var id1 = $("#pest1");
-        id1.append('<input name="bdtr" type="hidden" value="'+bdtr+'" /> ');
-        id1.append('<input name="script" type="hidden" value="'+script+'" /> ');
-        id1.append('<input name="cep" type="hidden" value="'+cep+'" /> ');
-        
-        if ([[${@contexto.getPropiedad('bdtr.type')}]]=="relationalKudu"){
-        	var listjson=[];
-            $($('#id_relational_fields_table').find("tbody")[0]).find('tr').slice(1).each(function(){
-                var hijos = $(this).children('td').slice(0, 2);
-                var json = {}; 
-                json.nombreCampo=ontologyName+"__"+hijos[0].innerText;
-                json.tipoCampo=hijos[1].innerText;
-                json.idCampoReferencia="";
-                json.strOntologiaReferencia="";
-                json.strCampoReferencia="";
-                json.precisionCampo="";
-
-                listjson.push(json);
-            });
-            
-            $($('#id_relational_fields_table_plantilla').find("tbody")[0]).find('tr').slice(1).each(function(){
-                var hijos = $(this).children('td').slice(0, 2);
-                var json = {}; 
-                json.nombreCampo=ontologyName+"__"+hijos[0].innerText;
-                json.tipoCampo=hijos[1].innerText;
-                json.idCampoReferencia="";
-                json.strOntologiaReferencia="";
-                json.strCampoReferencia="";
-                json.precisionCampo="";
-
-                listjson.push(json);
-            });
-            
-            document.getElementById("id_listaCamposOntologia").value=JSON.stringify(listjson);
-        }
-        
-        try{
-        	//Plantilla
-            selectPlantilla = $("#plantillaSeleccionada").val();
-            if (selectPlantilla == "false"){
-                document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_generar_ontologia_plantilla_error}]];
-                showInfoDialog(null);
-            } else if (ontologyName != ontologyName.replace(/[^a-zA-Z0-9_]/g,"")){
-                document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_generar_ontologia_nombre_error}]];
-                showInfoDialog(null);
-        	} else {
-	            if(JSON.parse(editor.getText())){ 
-	                document.getElementById("form_crear_ontologia").submit();
-	            }
-        	}
-        } catch(err) {
-            document.getElementById("dialog-error").innerHTML=[[#{plantillas_formulario_json_error}]];
-            showInfoDialog(null);
-        }
-     };
-    
-	// CARGA DE PLANTILLA EN TABLA Y ACTUALIZACION
-	function loadSchemaPlantilla(obj) {
-
-	console.log('loadSchemaPlantilla() -> ' + obj.getAttribute("id") + ' call: loadSchemaPlantillaInterno()');
-	$("#_plantillas_id").val(obj.getAttribute("id"));                          
-
-	loadSchemaPlantillaInterno(obj);
-	console.log('loadSchemaPlantilla() -> call resetearSchemaEInstancia()');
-	resetearSchemaEInstancia();
-
-	$("#plantillaSeleccionada").val(true);
-
+	var ontologyCreateJson = { 		
+		"close" : [[#{gen.closeBtn}]],		
+		"language" : currentLanguage,
+		"actionMode" : [[${ontology.user.userId}]],		
 	};
-	
-	function loadSchemaPlantillaInterno(plantilla) {
-    	
-		console.log('loadSchemaPlantillaInterno() -> plantilla: ' + plantilla );
-		
-         'use strict';
-          //load template in editor
-          var tipo = document.getElementById("_plantillas_id").value;
-          $.ajax({
-                  url:[[@{/ontologias/load}]],
-                  type: 'POST',
-                  data:tipo,
-                  dataType:'json',
-                  contentType: 'application/json',
-                  mimeType: 'application/json',
-                  success: function(data) {					
-					  if (!editor){
 						
-						var options = {
-                              mode: 'tree',
-                              modes: ['code', 'text', 'tree', 'view'], // allowed modes
-                              error: function (err) {
-                            	  document.getElementById("dialog-error").innerHTML=err.toString();
-                                  showInfoDialog(null);
-							  }
-						};
-						var json_container = document.getElementById('jsoneditor');
-						var editor = new jsoneditor.JSONEditor(json_container, options, ""); 											  
-					  }
-					  
-					  editor.setText("{}");
-                      editor.setMode("tree");
-                      editor.setText(data.esquemajson);                      
-					  
-                      document.getElementById("_tipo_id").value = data.version;					
-                      populateWizardTableFieldsFromSchemaPlantilla(data.esquemajson);
-                      plantillaBase = data.esquemajson;					  
-                      
-                      var selectedTemplate = $(plantilla).find('a').text();					  
-                      var isEmpty = (selectedTemplate =='Empty' || selectedTemplate == 'JsonML');
-                      
-					  // PLANTILLAS SIN NOMBRE O JsonML
-                      if( isEmpty ){
-                          
-                           var options = {
-                              mode: 'view',
-                              modes: [ 'view'], // allowed modes
-                              error: function (err) {
-                                  $('#dialog-error').innerHTML = err.toString();
-                                  showInfoDialog(null);
-                              }
-                          };
-						  
-                          editor._delete();						  
-                          var editor = new jsoneditor.JSONEditor(container, options, "");
-						// SE BLOQUEA EL DE PROPIEDADES
-                        //document.getElementById('idsectionpropio').style.display = 'none';
-                      }
-					  else{
-                          
-                          var options = {
-                              mode: 'tree',
-                              modes: ['code', 'text', 'tree', 'view'], // allowed modes
-                              error: function (err) {
-                            	  $('#dialog-error').innerHTML=err.toString();
-                                  showInfoDialog(null);
-                              }
-                          };
-                          editor._delete();						  
-                          var editor = new jsoneditor.JSONEditor(container, options, "");                          
-						  // SE MUESTRA EL DE PROPIEDADES
-                    	  //document.getElementById('idsectionpropio').style.display = 'block';
-                      }
-                    
-                  },
-                  error:function(data, status, er) { 
-                      alert("ERROR al cargar: " + " Estado: " + status );
-                  }
-            }); 
-       };
-  
-    function resetearSchemaEInstancia(){
-    	  // to-do: RESETEA EL ESQUEMA JSON 
-    	  editor.setText(null);
-    	  $('#id_campo_instanciaJSON').text(null);
-    	  document.getElementById('instancia').style.display = 'none';
-    	  document.getElementById('editor').style.display = 'none';
-      };
-  
-    function addPropiedadOntologiaTabla(){
-          
-    	 
-           
-          var propiedad=$("#id_propiedad_ontologia").val();
-          var tipoDatos=$("#id_campotipo_datos").val();
-          var requerido=$("#id_campo_requerido").val();
-          var ontologyDescription = $("#ontology_description").val();
-          
-          if(propiedad.trim()==''){
-              document.getElementById("dialog-error").innerHTML=[[#{wizardontologias_nuevapropiedad_nombre_vacio}]];
-              showInfoDialog(null);
-              return;
-          }
-          
-          var existe=false;
-          $("#id_relational_fields_table tbody tr").each(function () {
-              var prop = $(this).find("td").eq(0).html();
-              if(prop==propiedad){
-            	  existe=true;
-            	  document.getElementById("dialog-error").innerHTML=[[#{wizardontologias_nuevapropiedad_nombre_duplicado}]];
-                  showInfoDialog(null);
-                 
-              }
-         });
-    	  
-    	  if(!existe){
-    		  
-    		  $('#divtable').css('display','block');
-    		  
-	    	  createTableRegister(propiedad, tipoDatos, requerido, ontologyDescription);
-	    	  
-	    	  resetearSchemaEInstancia();
-	    	  	          
-	          //Limpia el formulario
-	          $("#id_propiedad_ontologia").val('');
-	          $("#id_campotipo_datos").val('string');
-	          $("#id_campotipo_datos_array").css("display", "none");
-	          $("#id_campo_requerido").val([[#{wizardontologias_nuevapropiedad_combo_no_requerido}]]);
-	          $("#ontology_description").val('');
-    	  }
-      };
-      
-    function loadTablePropertiesRegister(event) {
-    	 
-    	  var name = $("td:eq(0)", $(event.target).parent()).html();
-    	  var dataType = $("td:eq(1)", $(event.target).parent()).html();
-    	  var required = $("td:eq(2)", $(event.target).parent()).html();
-    	  var description = $("td:eq(3)", $(event.target).parent()).find('textarea').val();
-    	  
-    	  $("#id_propiedad_ontologia").val(name);
-          if(dataType.substring(0,"array".length)=="array"){
-        	  $("#id_campotipo_datos").val("array");
-        	  $("#id_campotipo_datos_array").css("display", "block");
-        	  $("#id_campotipo_datos_array").val(dataType.substring("array&lt;".length, dataType.length-"&gt;".length));
-          }else{
-        	  $("#id_campotipo_datos_array").css("display", "none");
-        	  $("#id_campotipo_datos").val(dataType);
-          }
-          $("#id_campo_requerido").val(required);
-          $("#ontology_description").val(description);
-      };
-      
-    function createTableRegister(propiedad, tipoDatos, requerido, ontologyDescription){
-    	//Añade el registro a la tabla
-          //############################
-          //Recupera el cuerpo de la tabla
-          var tbBody=$("#id_relational_fields_table").find("tbody");
-          //Crea el nuevo registro al que añadira los campos
-          var tr = $("<tr>");
-          tr.css("background","white");
-          
-          //Se le añade los eventos de raton
-          tr.mouseover(function() {
-        	  $("#id_relational_fields_table tr").css("background-color","white");
-              $(this).css("background-color","#ccc");
-          }).mouseout(function() {
-             $(this).css("background","white");
-          });
-          
-          tbBody.append(tr);
-          
-          //Crea el campo de Propiedad
-          var tdPropiedad = $('<td>').append(propiedad);
-          
-          tdPropiedad.click(loadTablePropertiesRegister);
-          
-          //Crea el campo de tipo de datos
-          var tdTipoDatos = $('<td>');
-          if(tipoDatos!='array'){
-        	  tdTipoDatos.append(tipoDatos);
-          }else{
-        	  //tdTipoDatos.append();
-        	  tdTipoDatos.text(tipoDatos+"<"+$("#id_campotipo_datos_array").val()+">");
-          }
-          
-          tdTipoDatos.click(loadTablePropertiesRegister);
-          
-          //Crea el campo de requerido
-          var tdRequerido = $('<td>').append(requerido);
-          
-          tdRequerido.click(loadTablePropertiesRegister);	  
-          
-           var tdOntologyDescription = $('<td>');
-           var textAreaDescription=document.createElement("textarea");
-           textAreaDescription.setAttribute("readOnly",true);            
-           if(''!=ontologyDescription && undefined !=ontologyDescription){
-           	var description=document.createTextNode(ontologyDescription);
-           	textAreaDescription.appendChild(description);
-           }
-           tdOntologyDescription.append(textAreaDescription);
-           //tdOntologyDescription.click(loadTablePropertiesRegister);
-          
-          
-          //Crea el campo con el botón de eliminar
-          var tdEliminar = $('<td>');
-          
-          var imgEliminar =  $('<input>').attr({
-        	    type: 'image',
-        	    src: [[@{/resources/images/ico_borrar.png}]]
-          		//css: "image",
-          		//title: [[#{wizardontologias_nuevapropiedad_eliminar}]] 
-        	}).click (function () {
-        		document.getElementById("dialog-confirm-generic").innerHTML=[[#{wizardontologias_nuevapropiedad_eliminar_confirm}]];
-                showConfirmTableDialog(eliminarPropiedadOntologia, propiedad, null);
-        	});
-        	
-          tdEliminar.append(imgEliminar);
-          
-          //Añade los campos al registro
-          tr.append(tdPropiedad);
-          tr.append(tdTipoDatos);
-          tr.append(tdRequerido);
-          tr.append(tdOntologyDescription);
-          tr.append(tdEliminar);
-          
-          //Con esto se evita que al pulsar sobre eliminar redireccione al path del formulario
-          $("#id_relational_fields_table tbody tr input").click(function(event){
-               event.preventDefault();
-          });
-      };
-      
-    function createTableRegisterPlantilla(propiedad, tipoDatos, requerido,habilitar,ontologyDescription){
-          //Añade el registro a la tabla
-            //############################
-            //Recupera el cuerpo de la tabla
-            var tbBody=$("#id_relational_fields_table_plantilla").find("tbody");
-            //Crea el nuevo registro al que añadira los campos
-            var tr = document.createElement("tr");
-            tr.style.background="white"
-            //Se le añade los eventos de raton
-            tr.onmouseover = function() {
-                  $("#id_relational_fields_table_plantilla tr").css("background-color","white");
-                  $(this).css("background-color","#ccc");
-            };
-            tr.onmouseout = function() {
-               $(this).css("background","white");
-            };
-            
-            tbBody.append(tr);
-            
-            //Crea el campo de Propiedad
-            var tdPropiedad = document.createElement("td");
-            var textPropiedad = document.createTextNode(propiedad);
-            tdPropiedad.appendChild(textPropiedad);
-            
-            //Crea el campo de tipo de datos
-            var textTipoDatos;
-            var tdTipoDatos = document.createElement("td");
-            if(tipoDatos!='array'){
-                textTipoDatos = document.createTextNode(tipoDatos);
-            }else{
-                //textTipoDatos = document.createTextNode(tipoDatos+"<"+$("#id_campotipo_datos_array").val()+">");
-            	textTipoDatos = document.createTextNode(tipoDatos);
-            }
-            tdTipoDatos.appendChild(textTipoDatos);
-            
-            //Crea el campo de requerido
-             var tdRequerido = document.createElement("td");
-             var tdnuevoSelect = document.createElement("select"); //creo el nodo del select
-             var tdnuevoOption1 = document.createElement("option"); //creo el nodo option
-             tdnuevoOption1.setAttribute("value", "codrequerido");
-             var nodoTextoOption1 = document.createTextNode([[#{wizardontologias_nuevapropiedad_combo_requerido}]]); //creo un nodo texto para el option
-             tdnuevoOption1.appendChild(nodoTextoOption1); //añado el nodo texto al nodo option
-             
-             var tdnuevoOption2 = document.createElement("option"); //creo el nodo option
-             tdnuevoOption2.setAttribute("value", "codnorequerido");
-             var nodoTextoOption2 = document.createTextNode( [[#{wizardontologias_nuevapropiedad_combo_no_requerido}]]); //creo un nodo texto para el option
-             tdnuevoOption2.appendChild(nodoTextoOption2);
-             
-             if(requerido=="codrequerido"){
-                 tdnuevoOption1.setAttribute("selected", "selected");
-             }else{
-                 tdnuevoOption2.setAttribute("selected", "selected");
-             }
-             
-             tdnuevoSelect.appendChild(tdnuevoOption1); //añado el nodo option al nodo select
-             tdnuevoSelect.appendChild(tdnuevoOption2); //añado el nodo option al nodo select
-             
-             tdnuevoSelect.onchange = function() {
-            	 resetearSchemaEInstancia();
-             }
-             
-             tdRequerido.appendChild(tdnuevoSelect);
-            
-            //Crea el campo description
-            var tdDescription = document.createElement("td");
-            var textAreaDescription=document.createElement("textarea");
-            textAreaDescription.setAttribute("maxlength",255);
-            if(''!=ontologyDescription && undefined !=ontologyDescription){
-            	var description=document.createTextNode(ontologyDescription);
-            	textAreaDescription.appendChild(description);
-      		}
-            tdDescription.appendChild(textAreaDescription);
-            
-            textAreaDescription.onchange = function() {
-           	 resetearSchemaEInstancia();
-            }
-             
-            //Crea el campo con el check de seleccionar
-            var tdCheckSeleccionar = document.createElement("td");
-            
-            var inputCheckSeleccionar = document.createElement("input");
-            inputCheckSeleccionar.setAttribute("type", "checkbox");
-            if(habilitar){
-                inputCheckSeleccionar.setAttribute("checked", "checked");
-            }
-            inputCheckSeleccionar.setAttribute("title", [[#{wizardontologias_nuevapropiedad_eliminar}]]);
-            tdCheckSeleccionar.appendChild(inputCheckSeleccionar);
-            tdCheckSeleccionar.onchange = function() {
-            	resetearSchemaEInstancia();
-            }
-
-            
-            //Añade los campos al registro
-            tr.appendChild(tdPropiedad);
-            tr.appendChild(tdTipoDatos);
-            tr.appendChild(tdRequerido);
-            tr.appendChild(tdDescription);
-            tr.appendChild(tdCheckSeleccionar);
-            
-            
-            
-          //Con esto se evita que al pulsar sobre eliminar redireccione al path del formulario
-            $("#id_relational_fields_table tbody tr input").click(function(event){
-                 event.preventDefault();
-               });
-        };
-      
-    function eliminarPropiedadOntologia(propiedadBorrar){
-            $("#id_relational_fields_table tbody tr").each(function () {
-                if( $(this).find("td").length >1){
-                    var propiedad = $(this).find("td").eq(0).html();
-                    if(propiedad==propiedadBorrar){
-                        $(this).remove()
-                    }
-                }
-           });
-            
-          //Limpia el formulario
-          $("#id_propiedad_ontologia").val('');
-          $("#id_campotipo_datos").val('string');
-          $("#id_campo_requerido").val([[#{wizardontologias_nuevapropiedad_combo_no_requerido}]]);
-          
-          mostrarTablaPropia();
-          resetearSchemaEInstancia();
-  	        
-      };
-      
-    function eliminarPropiedadOntologiaPlantilla(propiedadBorrar){
-          $("#id_relational_fields_table_plantilla tbody tr").each(function () {
-              if( $(this).find("td").length >1){
-                  var propiedad = $(this).find("td").eq(0).html();
-                  if(propiedad==propiedadBorrar){
-                      $(this).remove()
-                  }
-              }
-         });
-          
-    };
-      
-    function showConfirmTableDialog(confirmFunction, param1, param2) {
-    	  $( "#dialog-confirm-generic" ).dialog({
-            resizable: false,
-            height:180,
-            modal: true,
-            position: [($(window).width() / 2) - 150, 300],
-            dialogClass: 'DeleteConfirmDialog',
-            buttons: {
-              [[#{dialogo_confirm_table_button_continuar}]]: function() {
-                confirmFunction(param1, param2);
-                $( this ).dialog( "close" );
-              },
-              [[#{dialogo_confirm_table_button_cancelar}]]: function() {
-                $( this ).dialog( "close" );
-              }
-            }
-          });
-        };
-       
-    function populateWizardTableFieldsFromSchema(schemaJson){
-          var obj = $.parseJSON(schemaJson);
-         
-          if(obj.datos!=null && obj.datos.properties!=null){
-          
-              $.each(obj.datos.properties, function(key, element) {
-                      
-                 var datatype='';
-                 if(element.type!='object'){
-                     datatype=element.type;
-                 }else{
-                	 if(null!=element.properties){
-                 
-	                     $.each(element.properties, function(internalkey, internalelement) {
-	                        if(internalkey=='$date'){
-	                            datatype='timestamp';
-	                        } 
-	                     });
-                	 }
-                 }
-                 
-                 var required=[[#{wizardontologias_nuevapropiedad_combo_no_requerido}]];
-                 
-                 if(obj.datos.required != null){
-                     for(var i=0;i<obj.datos.required.length;i++){
-                         if(key==obj.datos.required[i]){
-                            required=[[#{wizardontologias_nuevapropiedad_combo_requerido}]];
-                         }
-                     }
-                     
-                 }
-                
-                 var description=element.description;
-                 createTableRegister(key, datatype, required,description);
-              });
-         
-          // Plantillas que no contienen datos: EJ GSMA
-          }else if(obj.properties!=null){
-              
-              $.each(obj.properties, function(key, element) {
-                      
-                 var datatype='';
-                 if(element.type!='object'){
-                     datatype=element.type;
-                 }else{
-                	 if(null!=element.properties){ 
-	                     $.each(element.properties, function(internalkey, internalelement) {
-	                        if(internalkey=='$date'){
-	                            datatype='timestamp';
-	                        } 
-	                     });
-                	 }
-                 }
-                 
-                 var required=[[#{wizardontologias_nuevapropiedad_combo_no_requerido}]];
-                 
-                 if(obj.required != null){
-                     for(var i=0;i<obj.required.length;i++){
-                         if(key==obj.required[i]){
-                            required=[[#{wizardontologias_nuevapropiedad_combo_requerido}]];
-                         }
-                     }
-                 }
-                 var description=element.description;
-                 createTableRegister(key, datatype, required,description);
-              });
-          }
-          
-      };
-    
-	// MONSTRAR LA TABLA DE CAMPOS DE LA PLANTILLA
-    function mostrarTablaPLantilla(){
-    	console.log('mostrarTablaPLantilla() -> ');
-		
-    	var flagMostrarTabla = false;
-    	$("#id_relational_fields_table_plantilla tbody tr").each(function () {
-              //aqui cojo los valores de la tabla creados por mi
-              if($(this).find("td").length > 1){
-            	  flagMostrarTabla = true;
-              }
-        });
-    	  
-    	if( flagMostrarTabla ){
-    		  $('#divtableplantilla').fadeIn();
-    	  }else{
-    		  $('#divtableplantilla').fadeOut();
-    	  }
-      };
-      
-    function mostrarTablaPropia(){
-          
-          var flagMostrarTabla=false;
-          $("#id_relational_fields_table tbody tr").each(function () {
-              //aqui cojo los valores de la tabla creados por mi
-              if($(this).find("td").length >1){
-                  flagMostrarTabla=true;
-              }
-         });
-          
-          if(flagMostrarTabla){
-              $('#divtable').css('display','block');
-          }else{
-              $('#divtable').css('display','none');
-          }
-      };
-      
-    function populateWizardTableFieldsFromSchemaPlantilla(schemaJson){
-    	  
-    	  $("#id_relational_fields_table_plantilla tbody tr").each(function () {
-              //aqui cojo los valores de la tabla creados por mi
-              if( $(this).find("td").length > 1 ){
-                  var prop = $(this).find("td").eq(0).html();
-                  if( prop != undefined){
-					eliminarPropiedadOntologiaPlantilla(prop);
-                  }
-              }
-         });
-          
-          var obj = $.parseJSON(schemaJson);
-         
-          if( obj.datos != null && obj.datos.properties != null){
-        	  
-			  // TRATMIENTRO DE LOS CAMPOS DE LA PLANTILLA.
-              $.each(obj.datos.properties, function(key, element) {
-                 
-	                var datatype = '';
-	                if( element.type != 'object'){
-	                     datatype = element.type;
-	                }
-					else{
-						datatype = element.type;
-						if( element.properties != null ){
-							$.each( element.properties, function(internalkey, internalelement) {
-								if( internalkey == '$date'){ datatype = 'timestamp'; } 
-							});
-						}
-					}
-	                 
-					 // CONTROL CAMPOS REQUERIDOS
-	                 var required = "codnorequerido";	                 
-	                 if( obj.datos.required != null){
-	                     for( var i = 0; i < obj.datos.required.length; i++){
-	                         if( key == obj.datos.required[i] ){
-	                            required = "codrequerido";
-	                         }
-	                     }
-	                     
-	                 }
-					 
-	                 var description = element.description;
-	                 if (!([[${@contexto.getPropiedad('bdtr.type')}]] == "relationalKudu" && (datatype == 'object' || datatype == 'array') )){      
-		                 createTableRegisterPlantilla(key, datatype, required,true,description);    
-		             }
-              });
-         
-          // Plantillas que no contienen datos: EJ GSMA
-          }
-		  else if( obj.properties != null){
-              
-			$.each(obj.properties, function(key, element) {
-				 var datatype='';
-				 if(element.type!='object'){
-					 datatype=element.type;
-				 }else{
-					 datatype=element.type;
-					 if(null!=element.properties){
-						 $.each(element.properties, function(internalkey, internalelement) {
-							if(internalkey=='$date'){
-								datatype='timestamp';
-							} 
-						 });
-					 }
-				 }
-				 
-				 var required="codnorequerido";
-				 
-				 if(obj.required != null){
-					 for(var i=0;i<obj.required.length;i++){
-						 if(key==obj.required[i]){
-							 required="codrequerido";
-						 }
-					 }
-				 }
-				 var description=element.description;
-				 if (!([[${@contexto.getPropiedad('bdtr.type')}]]=="relationalKudu" && (datatype=='object' || datatype=='array') )){    
-					  createTableRegisterPlantilla(key, datatype, required,true,description);
-				 }
-			});
-          }
-        
-		// MOSTRAMOS LA TABLA DE CAMPOS.
-        mostrarTablaPLantilla();
-          
-      };
-      
-    function generarEsquemaOntologia(){
-    	  
-    	  // VALIDACIONES
-    	  
-    	  var ontologyName = document.getElementById("id_campo_nombre").value;         
-          var ontologyDescription = document.getElementById("id_campo_comentarios").value;
-          var ontologyMetaInf = document.getElementById("id_campo_metainf").value;
-          
-        //Si se informa el nombre de la ontologia, se genera el esquema utilizando ese nombre en vez de el de la plantilla
-           if (ontologyName.length < 5) {
-                  document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_nombre}]]+':'+[[#{ontologias_formulario_name_min}]];
-                  $('#id_campo_nombre').blur();
-                  showInfoDialog(null);
-                  return;
-                
-                  
-          }else if (ontologyDescription.length < 5) {
-              document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_descripcion}]]+':'+[[#{ontologias_formulario_name_min}]];
-              showInfoDialog(null);   
-              $('#id_campo_comentarios').blur();
-              showInfoDialog(null);
-              return;
-              
-          }else if (ontologyMetaInf.length < 2) {
-              document.getElementById("dialog-error").innerHTML=[[#{apimanager_formulario_metainf}]]+':'+[[#{ontologias_formulario_metainf_min}]];
-              $('#id_campo_metainf').blur();
-              showInfoDialog(null);
-              return;
-              
-          } else if (ontologyName != ontologyName.replace(/[^a-zA-Z0-9_]/g,"")){
-               document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_generar_ontologia_nombre_error}]];
-               showInfoDialog(null);
-               return;
-           }
-
-          
-          var flagHayValoresTablaPropia=false;
-          $("#id_relational_fields_table tbody tr").each(function () {
-              if( $(this).find("td").length >1){
-            	  flagHayValoresTablaPropia=true;
-              }
-         });
-          
-          var flagHayValoresTablaPlantilla=false;
-          //Se añaden la sección de campos requeridos
-          $("#id_relational_fields_table_plantilla tbody tr").each(function () {
-        	  if( $(this).find("td").length >1){
-                   if($(this).find("td").eq(4).find('input')[0].checked==true){ 
-                       flagHayValoresTablaPlantilla=true;
-                   }
-        	  }
-         });
-          
-
-          if(null==$('#plantillaSeleccionada') || $('#plantillaSeleccionada').val()=="false"){
-        	  document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_validar_plantilla_previa}]];
-        	  showInfoDialog($('#idsectionplantilla'));
-              return;
-          }
-          
-          var isEmpty = ($('.pulsado .identPlantilla').text()=='Empty' || $('.pulsado .identPlantilla').text()=='JsonML');
-
-          
-          if(isEmpty){
-        	  
-        	  // Plantilla Empty: A la hora de crear como al modificar, no se permitirán añadir campos de ningún tipo.
-          }
-          else if($('.pulsado .identPlantilla').text()=='EmptyBase'){
-        	  
-          
-        	  // Plantilla EmptyBase: se permite crear/modificar si se cumple alguna de estas condiciones:
-        		  //-  Hay al menos un campo (requerido o no requerido)
-        		  //-  No hay ningún campo (requerido o no requerido) pero tenemos el AditionalProperties = true
-          
-        	  if(!flagHayValoresTablaPropia && !($("#id_additional_properties").val()=='true')){
-                   document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_validar_propiedad_total_minimo_additional}]];
-                   showInfoDialog($('#idsectionpropio'));
-                   return;
-              }
-          }else{
-
-        	  // Resto de casos: Con que haya al menos un campo (da igual que sea requerido o no requerido) o el AditionalProperties = true,
-        	  // se permite crear/actualizar el esquema de la ontología.
-        	  if(!flagHayValoresTablaPropia && !flagHayValoresTablaPlantilla && !($("#id_additional_properties").val()=='true')){
-        		   document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_validar_propiedad_total_minimo_additional}]];
-                   showInfoDialog(null);
-                   return;
-              }
-          }
-
-          var ontologia = $.parseJSON(plantillaBase);
-          var ontologiaCopiaAux = $.parseJSON(plantillaBase);
-    	  
-    	  ontologia.title=$("#id_campo_nombre").val().trim()+" Schema";
-    	  
-          ontologia.type="object";
-          
-
-          if(isEmpty){
-        	  
-        	  // no se genera con $ref : datos para que tenga mayor flexibilidad
-        	
-          }else 
-        	// Con datos
-        	  if(ontologia.datos!=undefined ){
-        	  
-        		  /*Bug: nombre de raiz igual al de la plantilla*/
-	        	  //ontologia.required=new Array();
-	              //ontologia.required[0]=$("#id_campo_nombre").val().trim();
-	        	  //ontologia.properties= $.parseJSON("{\""+$("#id_campo_nombre").val().trim()+"\": {\"type\": \"string\", \"$ref\": \"#/datos\"}}");
-	        	  /*Fin Bug: nombre de raiz igual al de la plantilla*/  
-	        	  
-	              ontologia.datos={};
-	              ontologia.datos.description= ontologyDescription; //"Info "+$("#id_campo_nombre").val().trim();
-	              ontologia.datos.type="object";
-	              
-	              
-	              //Se añaden la sección de campos requeridos
-	              ontologia.datos.required=new Array();
-	              
-	              $("#id_relational_fields_table tbody tr").each(function () {
-	                  if( $(this).find("td").length >1){
-	                      if($(this).find("td").eq(2).html()==[[#{wizardontologias_nuevapropiedad_combo_requerido}]]){
-	                          ontologia.datos.required[ontologia.datos.required.length]=$(this).find("td").eq(0).html();
-	                      }
-	                  }
-	             });
-	              
-	              //Se añaden la sección de campos requeridos
-	              $("#id_relational_fields_table_plantilla tbody tr").each(function () {
-	                  if( $(this).find("td").length >1){
-	                      
-	                      if($(this).find("td").eq(2).find('select')[0].value=="codrequerido"
-	                      && $(this).find("td").eq(4).find('input')[0].checked==true){
-	                          ontologia.datos.required[ontologia.datos.required.length]=$(this).find("td").eq(0).html();
-	                      }
-	                      
-	                  }
-	             });
-	              
-	              /*Si no van campos obligatorios se elimina del esquema*/
-	              if(ontologia.datos.required.length==0){
-	            	  delete ontologia.datos.required;
-	              }
-	              
-	              
-	              //Se añaden las propiedades
-	              ontologia.datos.properties={};
-	              $("#id_relational_fields_table tbody tr").each(function () {
-	                  if( $(this).find("td").length >1){
-	                	               	      
-	                	      var name = $("td:eq(0)", this).html();
-	                	      var dataType = $("td:eq(1)", this).html();
-	                	      var description = $("td:eq(3)", this).find('textarea').val();
-	                    
-	                          if( dataType == "timestamp"){
-	                              ontologia.datos.properties[name]={"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}},"additionalProperties": false};
-	                          }else if(dataType == "geometry"){
-	                              ontologia.datos.properties[name]={"type": "object", "required": ["coordinates","type"],"properties": {"coordinates": {"type": "array","items": [{"type": "number","maximum": 180,"minimum": -180},{"type": "number","maximum": 90,"minimum": -90}],"minItems": 2,"maxItems": 2},"type": {"type": "string","enum": ["Point"]}},"additionalProperties": false}
-	                          }else if(dataType.substring(0,"array".length)=="array"){
-	                        	  
-	                              ontologia.datos.properties[name]=$.parseJSON("{\"type\": \"array\",\"items\": {\"type\": \""+$(this).find("td").eq(1).html().substring("array&lt;".length, $(this).find("td").eq(1).html().length-"&gt;".length)+"\"}}");
-	                          }else if(dataType == "binary"){
-	                              ontologia.datos.properties[name]={"type": "object", "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg"]}}}},"additionalProperties": false}
-	                          }else{
-	                              ontologia.datos.properties[name] = $.parseJSON("{\"type\": \""+$(this).find("td").eq(1).html()+"\"}");
-	                          }
-	                          
-	                          if (description !== ''){
-	                        	  ontologia.datos.properties[name].description = description;
-	                          }
-	                      
-	                  }
-	             });
-	               
-	             $("#id_relational_fields_table_plantilla tbody tr").each(function () {
-	                   if( $(this).find("td").length >1){
-	                       if($(this).find("td").eq(4).find('input')[0].checked==true){
-	                    	   
-	                    	   if(ontologiaCopiaAux.datos.properties.hasOwnProperty($(this).find("td").eq(0).html())){
-                                   ontologia.datos.properties[$(this).find("td").eq(0).html()]=ontologiaCopiaAux.datos.properties[$(this).find("td").eq(0).html()];
-                                   
-                                   var name = $("td:eq(0)", this).html();
-    	                    	   var description = $("td:eq(3)", this).find('textarea').val();
-    	                    	   if (description !== ''){
-    		                        	  ontologia.datos.properties[name].description = description;
-    		                        }
-                               }
-	                       }
-	                   }
-	              });
-	             
-	               
-	              if($("#id_additional_properties").val()=='true'){
-	                  ontologia.datos.additionalProperties = true;
-	              }else if($("#id_additional_properties").val()=='false'){
-	                  ontologia.datos.additionalProperties = false;
-	              }
-
-          }
-          // GSMA: Sin datos
-          else{
-
-        	  ontologia.description = ontologyDescription;
-        	  
-              //Se añaden la sección de campos requeridos
-              ontologia.required=new Array();
-              
-              $("#id_relational_fields_table tbody tr").each(function () {
-                  if( $(this).find("td").length >1){
-                      if($(this).find("td").eq(2).html()==[[#{wizardontologias_nuevapropiedad_combo_requerido}]]){
-                          ontologia.required[ontologia.required.length]=$(this).find("td").eq(0).html();
-                      }
-                  }
-             });
-              
-              //Se añaden la sección de campos requeridos
-              $("#id_relational_fields_table_plantilla tbody tr").each(function () {
-                  if( $(this).find("td").length >1){
-                      
-                      if($(this).find("td").eq(2).find('select')[0].value=="codrequerido"
-                      && $(this).find("td").eq(4).find('input')[0].checked==true){
-                          ontologia.required[ontologia.required.length]=$(this).find("td").eq(0).html();
-                      }
-                      
-                  }
-             });
-              
-              /*Si no van campos obligatorios se elimina del esquema*/
-              if(ontologia.required.length==0){
-                  delete ontologia.required;
-              }
-              
-              
-              //Se añaden las propiedades
-              ontologia.properties={};
-              $("#id_relational_fields_table tbody tr").each(function () {
-                  if( $(this).find("td").length >1){
-                	  
-                	  	  var name = $("td:eq(0)", this).html();
-            	      	  var dataType = $("td:eq(1)", this).html();
-            	      	  var description = $("td:eq(3)", this).find('textarea').val();
-                    
-                          if(dataType == "timestamp"){
-                              ontologia.properties[name]={"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}},"additionalProperties": false};
-                          }else if(dataType == "geometry"){
-                              ontologia.properties[name]={"type": "object", "required": ["coordinates","type"],"properties": {"coordinates": {"type": "array","items": [{"type": "number","maximum": 180,"minimum": -180},{"type": "number","maximum": 90,"minimum": -90}],"minItems": 2,"maxItems": 2},"type": {"type": "string","enum": ["Point"]}},"additionalProperties": false};
-                          }else if(dataType.substring(0,"array".length)=="array"){
-                              ontologia.properties[name]=$.parseJSON("{\"type\": \"array\",\"items\": {\"type\": \""+$(this).find("td").eq(1).html().substring("array&lt;".length, $(this).find("td").eq(1).html().length-"&gt;".length)+"\"}}");
-                          }else if(dataType == "binary"){
-                              ontologia.properties[name]={"type": "object", "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg"]}}}},"additionalProperties": false};
-                          }else{
-                              ontologia.properties[name] = $.parseJSON("{\"type\": \""+$(this).find("td").eq(1).html()+"\"}");
-                          }
-                          
-                          if (description !== ''){
-                        	  ontologia.properties[name].description = description;
-                          }
-                      
-                  }
-             });
-               
-             $("#id_relational_fields_table_plantilla tbody tr").each(function () {
-                   if( $(this).find("td").length >1){
-                       if($(this).find("td").eq(4).find('input')[0].checked==true){
-                    	   if(ontologiaCopiaAux.properties.hasOwnProperty($(this).find("td").eq(0).html())){
-                               ontologia.properties[$(this).find("td").eq(0).html()]=ontologiaCopiaAux.properties[$(this).find("td").eq(0).html()]; 
-	                    	    var name = $("td:eq(0)", this).html();
-	                         	var description = $("td:eq(3)", this).find('textarea').val();
-	                  	   		if (description !== ''){
-	                          	  ontologia.properties[name].description = description;
-	                           }
-                           }
-                    	   
-                       }
-                   }
-              }); 
-             
-             /*Si no van campos obligatorios se elimina del esquema*/
-             if(jQuery.isEmptyObject(ontologia.properties)){
-           	  delete ontologia.properties;
-             }
-               
-               
-              if($("#id_additional_properties").val()=='true'){
-                  ontologia.additionalProperties = true;
-              }else if($("#id_additional_properties").val()=='false'){
-                  ontologia.additionalProperties = false;
-              }
-        	  
-          }
-          
-
-    	  editor.setText(JSON.stringify(ontologia, undefined, 2));
-    	 
-    	  generarInstanciaOntologia();
-    	 
-    	  document.getElementById('instancia').style.display = 'block';
-    	  
-          document.getElementById('editor').style.display = 'block';
-    	  
-      };
-      
-    function checkDatatypes(){
-    	  if($("#id_campotipo_datos").val()=='array'){
-              $("#id_campotipo_datos_array").css("display", "block");
-          }else{
-        	  $("#id_campotipo_datos_array").css("display", "none");
-          }
-    	  
-    	  if($("#id_campotipo_datos").val()=='geometry' && $("#id_propiedad_ontologia").val()!='geometry'){
-    		  document.getElementById("dialog-confirm-generic").innerHTML=[[#{wizardontologias_nuevapropiedad_poner_geometry}]];
-              showConfirmTableDialog(setPropertyAsGeometry, null, null);
-    	  }
-      };
-      
-    function setPropertyAsGeometry(){
-    	  $("#id_propiedad_ontologia").val('geometry');
-    };
-      
-    function crearOntologia(){
-          
-		  var ontologyName = document.getElementById("id_campo_nombre").value;         
-          var ontologyDescription = document.getElementById("id_campo_comentarios").value;
-          var ontologyMetaInf = document.getElementById("id_campo_metainf").value;
-          
-          if (ontologyName.length < 5) {
-                  document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_nombre}]]+':'+[[#{ontologias_formulario_name_min}]];
-                  showInfoDialog(null);                  
-          }else if (ontologyDescription.length < 5) {
-              document.getElementById("dialog-error").innerHTML=[[#{ontologias_formulario_descripcion}]]+':'+[[#{ontologias_formulario_name_min}]];
-              showInfoDialog(null);                  
-      	  }else if (ontologyMetaInf.length < 2) {
-              document.getElementById("dialog-error").innerHTML=[[#{apimanager_formulario_metainf}]]+':'+[[#{ontologias_formulario_metainf_min}]];
-              showInfoDialog(null);                  
-          }  else {
-        	  
-        	  if(null==editor.getText() || editor.getText()==undefined || editor.getText()=="" || editor.getText()=="{}"|| editor.getText()=="null"){
-        		  document.getElementById("dialog-error").innerHTML= [[#{ontologias_formulario_validar_esquema_previo}]];
-                  showInfoDialog($('#idsectionultimo'));
-        	  }
-        	  else{	  
-	              var ontologia = "";
-	              
-	              try {
-	            	    ontologia=$.parseJSON(editor.getText());
-	              } catch(err) {
-	            	  document.getElementById("dialog-error").innerHTML=[[#{plantillas_formulario_json_error}]]+" Error esquema: "+ err;
-	            	  showInfoDialog($('#idsectionultimo'));
-	              }
-	              
-	              var isEmpty = ($('.pulsado .identPlantilla').text()=='Empty' || $('.pulsado .identPlantilla').text()=='JsonML');
-	              if(!validarEsquemaCrearOntologia(isEmpty)){
-
-                      if(!isEmpty && !compararEsquemaConPlantilla()){
-                    	  confirmCrearOntologiaPlantillaModificada();
-	                  }else{
-	                	  submitform();  
-	                  }
-                  }
-	          }    
-          }                           
-      };
-      
-    function confirmCrearOntologiaPlantillaModificada() {
-          
-          document.getElementById("dialog-confirm-generic").innerHTML=[[#{plantillas_error_esquema_distinto_ontologia}]];
-          $( "#dialog-confirm-generic" ).dialog({
-            resizable: false,
-            height:140,
-            modal: true,
-            position: [($(window).width() / 2) - 150, 300],
-            dialogClass: 'DeleteConfirmDialog',
-            buttons: {                         
-                [[#{dialogo_confirm_table_button_continuar}]]: function() {$(this).dialog( "close" );submitform();} ,
-                [[#{dialogo_confirm_table_button_cancelar}]]:  function() {$(this).dialog("close");}
-                
-            }
-          });      
-          };
-          
-    /*Validaciones sobre esquema antes de crear ontologia*/
-    function validarEsquemaCrearOntologia(isEmpty){
-         
-            var error=false;
-            
-            if(JSON.parse(editor.getText())){    
-             
-                // obtener esquemaOntologiaJson
-                var ontologia = $.parseJSON(editor.getText());
-                
-                if(isEmpty && (ontologia.properties == undefined && ontologia.required == undefined)){
-                
-                	//Plantilla Empty: A la hora de crear como al modificar, no se permitirán añadir campos de ningún tipo.
-                	// Como el editor esta en view no se permite modificar
-                	
-                }else if(ontologia.properties ==undefined && (ontologia.additionalProperties == null || ontologia.additionalProperties == false)){
-                
-                    document.getElementById("dialog-error").innerHTML= [[#{ontologias_formulario_validar_esquema_previo}]];
-                    showInfoDialog(null);
-                    error=true;
-                        
-                }else{  
-                
-                    // Situarse en elemento raiz  ontologia.properties (ontologia) o ontologia.datos.properties (datos)
-                    var nodo;
-                    
-                    if(jQuery.isEmptyObject(ontologia.properties)){
-                    	 //esquema sin raiz
-                    	 nodo=ontologia;
-                    }else{
-                    	for (var property in ontologia.properties){
-                            
-                            var data = "";
-                            //Se comprueba si dispone de un elemento raiz
-                            if (ontologia.properties[property] && ontologia.properties[property].$ref){
-                            
-                                // Se accede al elemento raiz que referencia el objeto
-                                var ref = ontologia.properties[property].$ref;
-                                ref = ref.substring(ref.indexOf("/")+1, ref.length);
-                                nodo = ontologia[ref];
-                                
-                            } else {
-                            	//esquema sin raiz
-                                nodo=ontologia;
-                            }
-                        }
-                    }
-
-                    
-                   // Plantilla EmptyBase: se permite crear/modificar si se cumple alguna de estas condiciones:
-
-                    	//a.     Hay al menos un campo (requerido o no requerido)
-                    	//b.     No hay ningún campo (requerido o no requerido) pero tenemos el AditionalProperties = true
-
-                   // Resto de casos: Con que haya al menos un campo (da igual que sea requerido o no requerido) o el AditionalProperties = true, se permite crear/actualizar el esquema de la ontología.
-                    
-                    // Nodo no tiene valor
-                    if( (nodo == undefined)){
-                           
-                          document.getElementById("dialog-error").innerHTML= [[#{ontologias_formulario_validar_esquema_previo}]];
-                          showInfoDialog(null);
-                          error=true;
-                          
-                    // Propiedades no definida y additionarProperteis no esta informado a true     
-                    }else  if(  (nodo.properties ==undefined || jQuery.isEmptyObject(nodo.properties))  && (nodo.additionalProperties == null || nodo.additionalProperties == false)){
-                    	
-                    	document.getElementById("dialog-error").innerHTML= [[#{wizardontologias_ontologia_sin_propiedades}]];
-                        showInfoDialog(null);
-                        error=true;
-                    }
-                   
-                   
-                    // Requeridas no definida y additionarProperteis no esta informado  a true
-                    /*else  if( nodo.required == undefined && (nodo.additionalProperties == null || nodo.additionalProperties == false)){
-                        
-                        document.getElementById("dialog-error").innerHTML= [[#{wizardontologias_ontologia_sin_dato_requerido}]];
-                        showInfoDialog(null);
-                        error=true;
-                    }*/
-                    
-                    //Validaciones sobre propiedas y requeridos
-                    else if(nodo.required!=undefined && (nodo.additionalProperties == null || nodo.additionalProperties == false)) {
-
-                        var requiredData = nodo.required.length;
-                        
-                        // Si tiene elementos requeridos
-                        if (requiredData!=null && requiredData>0){
-                        
-                               if(nodo.properties!=null){
-                                     var propertiesNumber=0;
-                                     for(var propertyName in nodo.properties) {
-                                         propertiesNumber++;
-                                      }
-                                     if(propertiesNumber==0){
-                                        document.getElementById("dialog-error").innerHTML=[[#{wizardontologias_ontologia_sin_propiedades}]];
-                                        showInfoDialog(null);
-                                        error=true;
-                                     }
-                                 }else{
-                                      document.getElementById("dialog-error").innerHTML=[[#{wizardontologias_ontologia_sin_propiedades}]];
-                                      showInfoDialog(null);
-                                      error=true;
-                                 }
-                            
-                          //TODO comprobar que los que esten en requerido esten en propiedades
-                            
-                          }/*else if(nodo.additionalProperties == null || nodo.additionalProperties == false){
-                                        document.getElementById("dialog-error").innerHTML=[[#{wizardontologias_ontologia_sin_dato_requerido}]];
-                                        showInfoDialog(null);
-                                        error=true;
-                            }  */            
-                      }                    
-                }
-            }
-            
-            return error;
-        };
-      
-    function vaciarTablaPlantilla(){
-          
-          $("#id_relational_fields_table_plantilla tbody tr").each(function () {
-              //aqui cojo los valores de la tabla creados por mi
-              if($(this).find("td").length >1){
-                  var prop = $(this).find("td").eq(0).html();
-                  if(prop!=undefined){
-                          eliminarPropiedadOntologiaPlantilla(prop);
-                  }
-              }
-         });
-          
-          mostrarTablaPLantilla();
-      };
-      
-    function loadPlantillasByCategoria(categoria,reiniciar,elemento) {
-          
-    	 //---reiniciar estado inicial--
-    	 <!-- if(reiniciar){ -->
-	          <!-- $("#_plantillas_id").val(''); -->
-	          <!-- $("#plantillaSeleccionada").val(false); -->
-	          <!-- vaciarTablaPlantilla(); -->
-	          
-	          <!-- document.getElementById('instancia').style.display = 'none'; -->
-	          <!-- document.getElementById('editor').style.display = 'none'; -->
-	          <!-- $("#mostrar_plantillas").empty(); -->
-    	 <!-- } -->
-          //------
-          
-          var datos;
-          $.ajax({
-              url:[[@{/plantillas/loadPlantillasByCategoria}]],
-              type: 'POST',
-              data:categoria,
-              dataType:'json',
-              contentType: 'application/json',
-              mimeType: 'application/json',
-              success: function(data) {
-                  if(data!= null && data !=""){                   
-                      //$("#mostrar_plantillas").empty();
-                      $.each(data, function() {
-					  
-						// codigo nuevo
-						$("<li class='mt-list-item' onclick='loadSchemaPlantilla(this);'>")
-						.attr("id", this.id)
-                        .attr("name", this.identificacion)
-						.append("<div class='list-item-content' style='padding: 0 15px 0 10px;'><h3 class='uppercase'><a href='javascript:;'>"+ this.identificacion +"</a></h3><p>"+ this.descripcion +"</p></div></li> ")
-						.appendTo('#'+ categoria);
-							
-						
-					  
-					  
-						<!-- $("<div class='form-group col-sm-12 col-md-2 boxIdPlantilla' onclick='loadSchemaPlantilla(this);' />") -->
-						<!-- .attr("id", this.id) -->
-						<!-- .attr("name", this.identificacion) -->
-						<!-- .append("<p class=\"identPlantilla\">"+this.identificacion+"<p/>") -->
-						<!-- .append("<p>"+this.descripcion+"<p/>") -->
-						<!-- .appendTo("#mostrar_plantillas"); -->
-                      });  
-                      
-                      //document.getElementById('seleccionPlantilla').style.display = 'block';
-                       
-                      <!-- $('.boxIdPlantilla').click(function(){ -->
-                          <!-- $('.boxIdPlantilla').each(function(){ -->
-                              <!-- $('.boxIdPlantilla').removeClass('pulsado'); -->
-                          <!-- }); -->
-                          <!-- $(this).addClass('pulsado'); -->
-                          
-                      <!-- }); -->
-                      
-                      <!-- if(!reiniciar){ -->
-                              <!-- if(null!=elemento){ -->
-                                <!-- $("#"+elemento).addClass("pulsado"); -->
-                              <!-- } -->
-                      <!-- } -->
-                      
-                      
-                  }           
-              },
-              error:function(data, status, er) { 
-                  alert("ERROR al cargar: " + " Estado: " + status );
-              }
-             
-          });
-
-      };
-      
-    function mostrarPlantilla(){
-
-          
-          document.getElementById('seleccionPlantilla').style.display = 'none';
-          document.getElementById('seleccionCategoria').style.display = 'block';
-
-        };
-        
-    function compararEsquemaConPlantilla(){
-            
-            var  igual = false;
-            
-            try{
-                 
-              var  objplantilla =$.parseJSON(plantillaBase);
-              var  objesquemanuevo =$.parseJSON(editor.getText());
-             
-               // Situarse en elemento raiz  objplantilla.properties (ontologia) o objplantilla.datos.properties (datos)
-               var nodoplantilla;
-               for (var property in objplantilla.properties){
-                   
-                   var data = "";
-                   //Se comprueba si dispone de un elemento raiz
-                   if (objplantilla.properties[property] && objplantilla.properties[property].$ref){
-                   
-                       // Se accede al elemento raiz que referencia el objeto
-                       var ref = objplantilla.properties[property].$ref;
-                       ref = ref.substring(ref.indexOf("/")+1, ref.length);
-                       nodoplantilla = objplantilla[ref];
-                       
-                   } else {
-                       nodoplantilla=objplantilla;
-                   }
-               }
-               
-               // Situarse en elemento raiz objesquemanuevo.properties (ontologia) o objesquemanuevo.datos.properties (datos)
-               var nodoesquemanuevo;
-               for (var property in objesquemanuevo.properties){
-                   
-                   var data = "";
-                   //Se comprueba si dispone de un elemento raiz
-                   if (objesquemanuevo.properties[property] && objesquemanuevo.properties[property].$ref){
-                   
-                       // Se accede al elemento raiz que referencia el objeto
-                       var ref = objesquemanuevo.properties[property].$ref;
-                       ref = ref.substring(ref.indexOf("/")+1, ref.length);
-                       nodoesquemanuevo = objesquemanuevo[ref];
-                       
-                   } else {
-                       nodoesquemanuevo=objesquemanuevo;
-                   }
-               }
-                 
-               //compara requeridos  
-               if(JSON.stringify(nodoplantilla.required)==JSON.stringify(nodoesquemanuevo.required)
-               && JSON.stringify(nodoplantilla.properties)==JSON.stringify(nodoesquemanuevo.properties)){
-                       igual=true;
-                 }else{
-                      igual=false;
-                 }
-
-             }catch (err){
-             }
-             
-             return igual;
-                             
-    };
+	// LOAD DATA TO USE IN MENUCONTROLLER
+	// MENU CONTROLLER LOAD AND INIT ITSELF
 	
-	
-	// SECCION DOCUMENT READY 
-	$( document ).ready(function() {
-
-		enableOntologyClass();
-
-    	if($("#porDefecto").val()!="relacional"){
-    		//Se añade opción BDTR por defecto
-        	$("#id_instancia_bdtr").append('<option value="defecto" selected="selected">' + [[#{admin_gestion_bdtrs_defecto}]] + '</option>');
-    	}
-    	
-        $('#id_campo_temporizador option[value="86400"]').attr("selected", "selected");
-        changeBDTRBorrado();
-        $('#checkboxborrado').attr('checked', true);
-        $('#checkboxActiva').attr('checked', true);
-        changeBDTRText();
-        
-		// ESQUEMA
-    	var esquema = $('#_esquemajson_id').val();
-    	if ( esquema != null && esquema != ""){
-    		restaurar();
-    	}
-		
-	});
-	
-	
-	
-	// SECCION WINDOW LOAD DESPUES DE READY
-	$(window).load(function(){  
-		var listaCampos = document.getElementById("id_listaCamposOntologia").value;
-		var data = JSON.parse(listaCampos);
-		if ( Object.prototype.toString.apply(data) === '[object Array]' ) {
-			for ( i = 0; i < data.length; i += 1) {
-				addCampo(data[i])
-			}
-		}		
-	});
-	
-	
-	// ]]>
-	</script>
-
-	</body>
+   
+	</script>	
+</body>
 </html>
