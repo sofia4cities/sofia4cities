@@ -33,7 +33,7 @@ public class ScheduledJob {
 	@Column(name = "ID")
 	@Getter @Setter private Long id;
 
-	@Column(name = "USER_ID", length = 50, unique = true,nullable = false)
+	@Column(name = "USER_ID", length = 50,nullable = false)
 	@NotNull
 	@Getter @Setter private String userId;
 
@@ -41,11 +41,11 @@ public class ScheduledJob {
 	@NotNull
 	@Getter @Setter private String jobName;
 
-	@Column(name = "JOB_GROUP", length = 256, unique = true,nullable = false)
+	@Column(name = "JOB_GROUP", length = 256,nullable = false)
 	@NotNull
 	@Getter @Setter private String groupName;
 
-	@Column(name = "SCHEDULER_ID", length = 256, unique = true,nullable = false)
+	@Column(name = "SCHEDULER_ID", length = 256,nullable = false)
 	@NotNull
 	@Getter @Setter private String schedulerId;
 

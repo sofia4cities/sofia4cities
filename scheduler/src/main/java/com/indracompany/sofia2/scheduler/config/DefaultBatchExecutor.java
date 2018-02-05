@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import com.indracompany.sofia2.scheduler.job.BatchGenericExecutor;
 
 @Configuration
-@ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
+//@ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 public class DefaultBatchExecutor {
 	
 	@Bean
