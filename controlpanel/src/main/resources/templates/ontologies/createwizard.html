@@ -212,78 +212,21 @@
 																				<div class="col-lg-3 col-md-4 col-xs-12">
 																				<!-- columna de selector de plantillas -->
 																					<div class="mt-element-list">                                            
-																						<div class="mt-list-container list-default ext-1 group" style="padding:0;">																									
+																						<div class="mt-list-container list-default ext-1 group"  th:each="datamodel : ${dataModels}" style="padding:0;">																									
 																							<a data-toggle="collapse" href="#general" aria-expanded="true" class="list-toggle-container">
-																								<div class="list-toggle bg-grey-mint uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaGeneral',true,'')" > <span th:text="#{plantilla_categoriaGeneral}">GENERAL</span><span class="badge badge-default pull-right bg-white font-purple bold">2</span></div>
+																								<div class="list-toggle bg-grey-mint uppercase"> <span th:text="${datamodel.identification}">GENERAL</span><span class="badge badge-default pull-right bg-white font-purple bold">2</span></div>
 																							</a>
 																							<div class="panel-collapse collapse in" aria-expanded="true"  id="general">
-																								<ul id="plantilla_categoriaGeneral">
-																									
+																								<ul th:id="${datamodel.identification}">
+																									<li class="mt-list-item" >
+																										<div class="list-item-content" style="padding: 0 15px 0 10px;" >
+																											<h3 class="uppercase"><a href="javascript:;" th:text="${datamodel.identification}"></a></h3>
+																											<p th:text="${datamodel.description}"></p>
+																											<p th:text="${datamodel.jsonSchema}"></p>
+																										</div>
+																									</li>																									
 																								</ul>
-																							</div>
-																							<a class="list-toggle-container" data-toggle="collapse" href="#smartcity" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_City',true,'')"><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaSmart_City}">SMART CITY</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="smartcity" aria-expanded="true" >
-																								<ul id="plantilla_categoriaSmart_City">																												
-																								</ul>
-																							</div>
-																							<a class="list-toggle-container" data-toggle="collapse" href="#enviroment" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaEnvironment',true,'')"><i class="fa fa-globe"></i> <span th:text="#{plantilla_categoriaEnvironment}">ENVIROMENT</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="enviroment" aria-expanded="true">
-																								<ul id="plantilla_categoriaEnvironment">																												
-																								</ul>
-																							</div>
-																							<a class="list-toggle-container" data-toggle="collapse" href="#smartindustry" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaIndustry',true,'')" ><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaIndustry}">SMART INDUSTRY</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="smartindustry" aria-expanded="true">
-																								<ul id="plantilla_categoriaIndustry">																												
-																								</ul>
-																							</div>
-																							<a class="list-toggle-container" data-toggle="collapse" href="#smartbuilding" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Building',true,'')" ><i class="fa fa-building"></i> <span th:text="#{plantilla_categoriaSmart_Building}">SMART BUILDING</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="smartbuilding" aria-expanded="true" >
-																								<ul id="plantilla_categoriaSmart_Building">																																																					
-																								</ul>
-																							</div>
-																							<a class="list-toggle-container" data-toggle="collapse" href="#smarthome" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Home',true,'')" ><i class="fa fa-home"></i> <span th:text="#{plantilla_categoriaSmart_Home}">SMART HOME</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="smarthome" aria-expanded="true" >
-																								<ul id="plantilla_categoriaSmart_Home">																																																						
-																								</ul>
-																							</div>
-																							<a class="list-toggle-container" data-toggle="collapse" href="#smartretail" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSmart_Retail',true,'')" ><i class="fa fa-th"></i> <span th:text="#{plantilla_categoriaSmart_Retail}">SMART RETAIL</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="smartretail" aria-expanded="true" style="">
-																								<ul id="plantilla_categoriaSmart_Retail">																																																					
-																								</ul>
-																							</div>																									
-																							<a class="list-toggle-container" data-toggle="collapse" href="#social" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaSocial',true,'')"><i class="fa fa-thumb-up"></i> <span th:text="#{plantilla_categoriaSocial}">SOCIAL</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="social" aria-expanded="true" style="">
-																								<ul id="plantilla_categoriaSocial">																												
-																								</ul>
-																							</div>
-																							<a class="list-toggle-container" data-toggle="collapse" href="#iot" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaIoT',true,'')" ><i class="fa fa-code"></i> <span th:text="#{plantilla_categoriaIoT}">IoT</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="iot" aria-expanded="true" style="">
-																								<ul id="plantilla_categoriaIoT">
-																								</ul>
-																							</div>
-																							<a class="list-toggle-container" data-toggle="collapse" href="#gsma" aria-expanded="true">
-																								<div class="list-toggle uppercase" onclick="loadPlantillasByCategoria('plantilla_categoriaGSMA',true,'')" ><i class="fa fa-chart"></i> <span th:text="#{plantilla_categoriaGSMA}">GSMA</span><span class="badge badge-default pull-right bg-white font-dark bold">3</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" id="gsma" aria-expanded="true" style="">
-																								<ul id="plantilla_categoriaGSMA">																												
-																								</ul>
-																							</div>
+																							</div>																							
 																						</div>
 																					</div>
 																				</div>

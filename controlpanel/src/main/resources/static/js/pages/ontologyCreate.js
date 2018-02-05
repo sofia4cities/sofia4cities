@@ -45,7 +45,7 @@ var OntologyCreateController = function() {
         // for more info visit the official plugin documentation: 
         // http://docs.jquery.com/Plugins/Validation
 		
-        var form1 = $('#user_create_form');
+        var form1 = $('#ontology_create_form');
         var error1 = $('.alert-danger');
         var success1 = $('.alert-success');
 		
@@ -59,8 +59,7 @@ var OntologyCreateController = function() {
             ignore: ":hidden:not(.selectpicker)", // validate all fields including form hidden input but not selectpicker
 			lang: currentLanguage,
 			// custom messages
-            messages: {
-					datedeleted: { checkdates : ontologyCreateReg.validation_dates }
+            messages: {					
 			},
 			// validation rules
             rules: {
