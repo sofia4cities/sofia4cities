@@ -11,26 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.menu;
+package com.indracompany.sofia2.config.services.ontology;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
+import java.util.List;
 
-@Service
+import com.indracompany.sofia2.config.model.Ontology;
 
-public class MenuServiceImpl implements MenuService {
 
-	@Autowired
-	ConsoleMenuRepository consoleMenuRepository;
+public interface OntologyService {
 
-	@Override
-	public String loadMenuByRole(User user) {
-		if (user != null)
-			return this.consoleMenuRepository.findByRoleType(user.getRole()).getJsonSchema();
-		else
-			return null;
-	}
+	List<Ontology> getAllOntologies();
+	List<Ontology> getOntologiesByUserId(String userId);
+	List<Ontology> getOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
+	List<String> getAllIdentifications();
+	Ontology getOntologyById(String id);
+	Ontology getOntologyByIdentification(String identification);
 }

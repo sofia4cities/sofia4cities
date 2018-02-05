@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.user;
+package com.indracompany.sofia2.config.services.user;
 
 import java.util.List;
 

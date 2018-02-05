@@ -31,9 +31,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
-import com.indracompany.sofia2.service.user.UserService;
-import com.indracompany.sofia2.services.configuration.ConfigurationService;
 
 import lombok.extern.slf4j.Slf4j;
 

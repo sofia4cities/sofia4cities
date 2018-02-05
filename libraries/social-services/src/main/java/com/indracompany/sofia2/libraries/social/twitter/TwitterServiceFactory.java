@@ -33,6 +33,13 @@ public class TwitterServiceFactory {
 		Twitter twitter = new TwitterTemplate(consumerKey,consumerSecret,accessToken,accessTokenSecret);
 		TwitterServiceSpringSocialImpl twitterService = new TwitterServiceSpringSocialImpl(twitter);
 		return twitterService;
+	}
+
+	@Bean
+	public static TwitterServiceSpringSocialImpl getSpringSocialImpl(TwitterConfiguration) {
+		Twitter twitter = new TwitterTemplate(consumerKey,consumerSecret,accessToken,accessTokenSecret);
+		TwitterServiceSpringSocialImpl twitterService = new TwitterServiceSpringSocialImpl(twitter);
+		return twitterService;
 	}	
 	
 }

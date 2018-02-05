@@ -29,7 +29,7 @@ public interface ConfigurationRepository extends JpaRepository<Configuration, St
 
 	List<Configuration> findByConfigurationType(ConfigurationType configurationTypeId);
 
-	List<Configuration> findByConfigurationTypeAndEnvironmentAndSuffix(ConfigurationType configurationType,
+	Configuration findByConfigurationTypeAndEnvironmentAndSuffix(ConfigurationType configurationType,
 			String environment, String suffix);
 
 	List<Configuration> findByUserAndConfigurationType(User userId, ConfigurationType configurationType);

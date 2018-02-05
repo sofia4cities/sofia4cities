@@ -11,12 +11,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.token;
+package com.indracompany.sofia2.config.services.menu;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 
 @Service
 
-public class TokenServiceImpl {
+public class MenuServiceImpl implements MenuService {
 
+	@Autowired
+	ConsoleMenuRepository consoleMenuRepository;
+
+	@Override
+	public String loadMenuByRole(User user) {
+		if (user != null)
+			return this.consoleMenuRepository.findByRoleType(user.getRole()).getJsonSchema();
+		else
+			return null;
+	}
 }

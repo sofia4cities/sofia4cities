@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
-import com.indracompany.sofia2.service.ontology.OntologyService;
 
 import lombok.extern.slf4j.Slf4j;
 

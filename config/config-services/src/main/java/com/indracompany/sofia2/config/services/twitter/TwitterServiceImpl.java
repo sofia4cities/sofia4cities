@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.twitter;
+package com.indracompany.sofia2.config.services.twitter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +31,8 @@ import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.TwitterListeningRepository;
-import com.indracompany.sofia2.service.ontology.OntologyService;
-import com.indracompany.sofia2.service.user.UserService;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.user.UserService;
 
 @Service
 public class TwitterServiceImpl implements TwitterService {

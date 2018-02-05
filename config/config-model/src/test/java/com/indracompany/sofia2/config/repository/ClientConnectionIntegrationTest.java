@@ -38,10 +38,6 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

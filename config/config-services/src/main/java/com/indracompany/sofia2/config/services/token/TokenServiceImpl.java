@@ -11,20 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.ontology;
+package com.indracompany.sofia2.config.services.token;
 
+import org.springframework.stereotype.Service;
 
-import java.util.List;
+@Service
 
-import com.indracompany.sofia2.config.model.Ontology;
+public class TokenServiceImpl {
 
-
-public interface OntologyService {
-
-	List<Ontology> getAllOntologies();
-	List<Ontology> getOntologiesByUserId(String userId);
-	List<Ontology> getOntolgiesWithDescriptionAndIdentification(String userId,String identification, String description);
-	List<String> getAllIdentifications();
-	Ontology getOntologyById(String id);
-	Ontology getOntologyByIdentification(String identification);
 }

@@ -11,23 +11,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.services.configuration;
+package com.indracompany.sofia2.config.services.configuration;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.Yaml;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
+import com.indracompany.sofia2.config.model.ConfigurationType.Types;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
-import com.indracompany.sofia2.service.user.UserService;
+import com.indracompany.sofia2.config.services.exceptions.ConfigServiceException;
+import com.indracompany.sofia2.config.services.user.UserService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	ConfigurationRepository configurationRepository;
@@ -38,9 +45,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public List<Configuration> getAllConfigurations() {
-
 		return this.configurationRepository.findAll();
-
 	}
 
 	@Override
@@ -94,6 +99,18 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
+	public TwitterConfiguration getTwitterConfiguration(String environment, String suffix) {
+		try {
+			Configuration config = this.getConfiguration(ConfigurationType.Types.TwitterConfiguration, environment,
+					suffix);
+			return null;
+		} catch (Exception e) {
+			log.error("Error getting TwitterConfiguration", e);
+			throw new ConfigServiceException("Error getting TwitterConfiguration", e);
+		}
+	}
+
+	@Override
 	public boolean existsConfiguration(Configuration configuration) {
 		if (this.configurationRepository.findById(configuration.getId()) == null)
 			return false;
@@ -102,15 +119,33 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public boolean isValidYML(final String yml) {
+	public Map fromYaml(String yaml) {
+		Yaml yamlParser = new Yaml();
+		return (Map) yamlParser.load(yaml);
+	}
+
+	@Override
+	public boolean isValidYaml(final String yml) {
 		try {
-			// ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.readTree(yml);
+			Yaml yamlParser = new Yaml();
+			yamlParser.load(yml);
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
+	}
+
+	@Override
+	public List<Configuration> getConfigurations(Types configurationTypeId) {
+		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
+		return this.configurationRepository.findByConfigurationType(confType);
+	}
+
+	@Override
+	public Configuration getConfiguration(Types configurationTypeId, String environment, String suffix) {
+		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
+		return this.configurationRepository.findByConfigurationTypeAndEnvironmentAndSuffix(confType, environment,
+				suffix);
 	}
 
 }

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.service.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
 
 import lombok.extern.slf4j.Slf4j;
 

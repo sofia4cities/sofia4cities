@@ -11,12 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.services.configuration;
+package com.indracompany.sofia2.config.services.configuration;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 
@@ -30,6 +32,12 @@ public interface ConfigurationService {
 
 	Configuration getConfiguration(String id);
 
+	TwitterConfiguration getTwitterConfiguration(String environment, String suffix);
+
+	List<Configuration> getConfigurations(ConfigurationType.Types configurationTypeId);
+
+	Configuration getConfiguration(ConfigurationType.Types configurationType, String environment, String suffix);
+
 	List<ConfigurationType> getAllConfigurationTypes();
 
 	void createConfiguration(Configuration configuration);
@@ -38,5 +46,7 @@ public interface ConfigurationService {
 
 	void updateConfiguration(Configuration configuration);
 
-	boolean isValidYML(final String yml);
+	boolean isValidYaml(final String yaml);
+
+	Map fromYaml(final String yaml);
 }
