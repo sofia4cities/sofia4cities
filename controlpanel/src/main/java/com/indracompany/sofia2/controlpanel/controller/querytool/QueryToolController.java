@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.RTDBController;
+package com.indracompany.sofia2.controlpanel.controller.querytool;
 
 import java.util.List;
 
@@ -28,9 +28,9 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
-@RequestMapping("/databases")
+@RequestMapping("/querytool")
 @Slf4j
-public class RTDBConsoleController {
+public class QueryToolController {
 	@Autowired
 	private OntologyService ontologyService;
 

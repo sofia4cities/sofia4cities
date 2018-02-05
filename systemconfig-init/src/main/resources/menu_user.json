@@ -1,6 +1,6 @@
 {
 	"menu": "Sofia4Cities",
-	"rol": "ROLE_ADMINISTRATOR",
+	"rol": "ROLE_USER",
 	"noSession": "/console/login",
 	"navigation": [
 		{
@@ -25,7 +25,7 @@
 						"ES": "Simulador"
 					},
 					"icon": "",
-					"url": "/controlpanel/instancegenerator/list"
+					"url": "/controlpanel/simulator/show"
 				}
 			]
 		},
@@ -43,7 +43,7 @@
 						"ES": "Mis Clientes IoT"
 					},
 					"icon": "",
-					"url": "/controlpanel/clientplatform/list"
+					"url": "/controlpanel/clients/list"
 				},
 				{
 					"title": {
@@ -51,7 +51,7 @@
 						"ES": "Estado"
 					},
 					"icon": "",
-					"url": "/controlpanel/managedevices/list"
+					"url": "/controlpanel/clients/status/list"
 				}
 			]
 		},
@@ -69,7 +69,7 @@
 						"ES": "Mis Gadgets"
 					},
 					"icon": "",
-					"url": "/controlpanel/gadget/list"
+					"url": "/controlpanel/gadgets/list"
 				},
 				{
 					"title": {
@@ -77,7 +77,7 @@
 						"ES": "Mis Dashboards"
 					},
 					"icon": "",
-					"url": "/controlpanel/dashboard/listgroup"
+					"url": "/controlpanel/dashboards/list"
 				}
 			]
 		},
@@ -95,7 +95,7 @@
 						"ES": "Consola Consultas"
 					},
 					"icon": "",
-					"url": "/controlpanel/databases/show"
+					"url": "/controlpanel/querytool/show"
 				}
 			]
 		}

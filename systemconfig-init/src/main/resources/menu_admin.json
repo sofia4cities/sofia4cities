@@ -33,7 +33,7 @@
 						"ES": "Simulador"
 					},
 					"icon": "",
-					"url": "/controlpanel/instancegenerator/list"
+					"url": "/controlpanel/simulator/show"
 				},
 				{
 					"title": {
@@ -41,7 +41,7 @@
 						"ES": "Autorizaciones"
 					},
 					"icon": "",
-					"url": "/controlpanel/ontologies/authorize/list"
+					"url": "/controlpanel/ontologies/authorization/list"
 				}
 			]
 		},
@@ -59,7 +59,7 @@
 						"ES": "Mis Clientes IoT"
 					},
 					"icon": "",
-					"url": "/controlpanel/clientplatform/list"
+					"url": "/controlpanel/clients/list"
 				},
 				{
 					"title": {
@@ -67,7 +67,7 @@
 						"ES": "Estado"
 					},
 					"icon": "",
-					"url": "/controlpanel/managedevices/list"
+					"url": "/controlpanel/clients/status/list"
 				}
 			]
 		},
@@ -85,7 +85,7 @@
 						"ES": "Mis Gadgets"
 					},
 					"icon": "",
-					"url": "/controlpanel/gadget/list"
+					"url": "/controlpanel/gadgets/list"
 				},
 				{
 					"title": {
@@ -93,7 +93,7 @@
 						"ES": "Mis Dashboards"
 					},
 					"icon": "",
-					"url": "/controlpanel/dashboard/listgroup"
+					"url": "/controlpanel/dashboards/list"
 				}
 			]
 		},
@@ -111,7 +111,7 @@
 						"ES": "Consola Consultas"
 					},
 					"icon": "",
-					"url": "/controlpanel/databases/show"
+					"url": "/controlpanel/querytool/show"
 				}
 			]
 		},
@@ -126,7 +126,7 @@
 				{
 					"title": {
 						"EN": "DataModels",
-						"ES": "Modelos de Datos (Plantillas)"
+						"ES": "Modelos de Datos"
 					},
 					"icon": "",
 					"url": "/controlpanel/datamodels/list"
@@ -145,7 +145,7 @@
 						"ES": "Conexiones"
 					},
 					"icon": "",
-					"url": "/controlpanel/manageconnections/show"
+					"url": "/controlpanel/connections/show"
 				},
 				{
 					"title": {
@@ -171,7 +171,7 @@
 						"ES": "Configuración Acceso"
 					},
 					"icon": "",
-					"url": "/controlpanel/SNconfiguration/list"
+					"url": "/controlpanel/social/configuration/list"
 				},
 				{
 					"title": {
@@ -179,7 +179,7 @@
 						"ES": "Escucha Twitter"
 					},
 					"icon": "",
-					"url": "/controlpanel/twitterusers/scheduledsearch"
+					"url": "/controlpanel/social/twitter/list"
 				}
 			]
 		}
