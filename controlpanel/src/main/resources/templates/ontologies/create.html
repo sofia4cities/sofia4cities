@@ -84,8 +84,8 @@
 											<i class="flaticon-add"></i> <span th:text="#{gen.createBtn}"> New</span> <i class="fa fa-angle-down"></i>
 										</a>												
 										<ul class="dropdown-menu pull-right" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createwizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../opendataontologies/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../opendataontologies/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
 										</ul>
@@ -104,7 +104,7 @@
 										<div class="row">
 											<div class="col-md-12 col-sm-12 grid grid--effect-vega">																										
 												<!-- ontología tipo -->
-												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createWizard'" class="col-md-3 col-sm-6 col-xs-12 grid__item grid__item--c1">
+												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createwizard'" class="col-md-3 col-sm-6 col-xs-12 grid__item grid__item--c1">
 													<div class="stack">
 														<div class="stack__deco"></div>
 														<div class="stack__deco"></div>
@@ -123,7 +123,7 @@
 												</a>
 												<!-- end ontologia tipo -->
 												<!-- ontología tipo -->
-												<a  sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createJsonSchema'" class="col-md-3 col-sm-6  grid__item grid__item--c2">
+												<a  sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')" onclick="location.href='../ontologies/createjsonschema'" class="col-md-3 col-sm-6  grid__item grid__item--c2">
 													<div class="stack">
 														<div class="stack__deco"></div>
 														<div class="stack__deco"></div>
