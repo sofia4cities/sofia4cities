@@ -40,7 +40,7 @@
                 <version>${spring-boot.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
+            </dependency>			
             <dependency>
 		    	<groupId>com.github.javafaker</groupId>
 		    	<artifactId>javafaker</artifactId>

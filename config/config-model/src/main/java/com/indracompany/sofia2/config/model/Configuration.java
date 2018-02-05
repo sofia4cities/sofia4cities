@@ -65,6 +65,10 @@ public class Configuration extends AuditableEntityWithUUID {
 	@Setter
 	private String environment;
 
+	public void setEnvironmentEnum(Configuration.Environment env) {
+		this.environment = env.toString();
+	}
+
 	@Column(name = "SUFFIX", length = 50)
 	@Getter
 	@Setter

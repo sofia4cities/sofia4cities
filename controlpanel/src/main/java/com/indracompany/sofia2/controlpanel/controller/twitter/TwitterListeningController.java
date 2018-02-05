@@ -16,8 +16,6 @@ package com.indracompany.sofia2.controlpanel.controller.twitter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,16 +30,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.twitter.TwitterService;
-import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
-
-
 import com.indracompany.sofia2.config.services.user.UserService;
-
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 @Controller
 @RequestMapping("/twitter")
@@ -58,8 +54,8 @@ public class TwitterListeningController {
 
 	@Autowired
 	UserService userService;
-	public static final String ROLE_ADMINISTRATOR="ROLE_ADMINISTRATOR";
-	public static final String DATAMODEL_TWITTER="TWEET_DATAMODEL";
+	public static final String ROLE_ADMINISTRATOR = "ROLE_ADMINISTRATOR";
+	public static final String DATAMODEL_TWITTER = "TWEET_DATAMODEL";
 
 	@GetMapping("/scheduledsearch/list")
 	public String list(Model model) {
@@ -86,12 +82,13 @@ public class TwitterListeningController {
 	}
 
 	@PutMapping("/scheduledsearch/update/{id}")
-	public String update(Model model,@PathVariable ("id") String id,@ModelAttribute TwitterListening twitterListening)
-	{
-		
-		if(twitterListening!=null) this.twitterService.updateListen(twitterListening);
-		return "redirect:/twitter/scheduledsearch/update/"+id;
+	public String update(Model model, @PathVariable("id") String id, @ModelAttribute TwitterListening twitterListener) {
+
+		if (twitterListener != null)
+			this.twitterService.updateListen(twitterListener);
+		return "redirect:/twitter/scheduledsearch/update/" + id;
 	}
+
 	@PostMapping("/scheduledsearch/create")
 	public String create(Model model,@ModelAttribute TwitterListening twitterListening,
 			@RequestParam("_new") Boolean newOntology,
@@ -109,8 +106,8 @@ public class TwitterListeningController {
 			{
 				Ontology ontology=this.twitterService.createTwitterOntology(ontologyId, DATAMODEL_TWITTER);
 				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
-				ontology=this.ontologyService.saveOntology(ontology);
-				//TODO CREATE CLIENT & TOKEN-->THEN SAVE TWITTERLISTEN
+				ontology = this.ontologyService.saveOntology(ontology);
+				// TODO CREATE CLIENT & TOKEN-->THEN SAVE TWITTERLISTEN
 			}
 		}
 		return "redirect:/twitter/scheduledsearch/create";
@@ -135,7 +132,7 @@ public class TwitterListeningController {
 		} else {
 			configurations = this.twitterService.getConfigurationsByUserId(this.utils.getUserId());
 			for (Ontology ontology : this.ontologyService.getOntologiesByUserId(this.utils.getUserId())) {
-				if (ontology.getDataModel().getIdentification().equals(DATAMODEL_TWITTER)) {
+				if (ontology.getDataModel().getType().equals(DataModel.MainType.Twitter)) {
 					ontologies.add(ontology);
 				}
 			}
@@ -146,14 +143,14 @@ public class TwitterListeningController {
 		model.addAttribute("ontologies", ontologies);
 
 	}
+
 	@PostMapping("/scheduledsearch/existontology")
-	public @ResponseBody  boolean existOntology(@RequestBody String identification)
-	{
+	public @ResponseBody boolean existOntology(@RequestBody String identification) {
 		return this.twitterService.existOntology(identification);
 	}
+
 	@PostMapping("/scheduledsearch/existclient")
-	public @ResponseBody  boolean existClient(@RequestBody String identification)
-	{
+	public @ResponseBody boolean existClient(@RequestBody String identification) {
 		return this.twitterService.existClientPlatform(identification);
 	}
 }

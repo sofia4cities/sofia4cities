@@ -142,7 +142,7 @@ public class InitConfigDB {
 		// first we need to create users
 		init_RoleUser();
 		log.info("OK init_RoleUser");
-		init_UserCDB();
+		init_User();
 		log.info("OK init_UserCDB");
 		//
 		init_DataModel();
@@ -200,65 +200,65 @@ public class InitConfigDB {
 
 			ConfigurationType type = new ConfigurationType();
 			Configuration config = new Configuration();
-			type.setId(ConfigurationType.Types.TwitterConfiguration.toString());
+			type.setIdEnum(ConfigurationType.Type.TwitterConfiguration);
 			type.setDescription("Configuration for access Twitter account (Token and Key)");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
 			config.setConfigurationType(type);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.ALL.toString());
+			config.setEnvironmentEnum(Configuration.Environment.ALL);
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
 			config = new Configuration();
 			config.setConfigurationType(type);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.ALL.toString());
+			config.setEnvironmentEnum(Configuration.Environment.ALL);
 			config.setSuffix("lmgracia");
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
 			type = new ConfigurationType();
-			type.setId(ConfigurationType.Types.EndpointModulesConfiguration.toString());
+			type.setIdEnum(ConfigurationType.Type.EndpointModulesConfiguration);
 			type.setDescription("Endpoints of Sofia2 Modules Configuration p");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
 			config.setConfigurationType(type);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.DEV.toString());
+			config.setEnvironmentEnum(Configuration.Environment.DEV);
 			config.setYmlConfig(loadFromResources("EndpointModulesConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
 			type = new ConfigurationType();
-			type.setId(ConfigurationType.Types.MailConfiguration.toString());
+			type.setIdEnum(ConfigurationType.Type.MailConfiguration);
 			type.setDescription("Mail Configuration por mail sending");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
 			config.setConfigurationType(type);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.ALL.toString());
+			config.setEnvironmentEnum(Configuration.Environment.ALL);
 			config.setYmlConfig(loadFromResources("MailConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
 			type = new ConfigurationType();
-			type.setId(ConfigurationType.Types.RTDBConfiguration.toString());
+			type.setIdEnum(ConfigurationType.Type.RTDBConfiguration);
 			type.setDescription("Configuration for the default RealTime DB (MongoDB)");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
 			config.setConfigurationType(type);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.LOCAL.toString());
+			config.setEnvironmentEnum(Configuration.Environment.LOCAL);
 			config.setYmlConfig(loadFromResources("RTDBConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
 			type = new ConfigurationType();
-			type.setId(ConfigurationType.Types.MonitoringConfiguration.toString());
+			type.setIdEnum(ConfigurationType.Type.MonitoringConfiguration);
 			type.setDescription("Configuration for report to Monitoring UI");
 			this.configurationTypeRepository.save(type);
 			config = new Configuration();
 			config.setConfigurationType(type);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.LOCAL.toString());
+			config.setEnvironmentEnum(Configuration.Environment.LOCAL);
 			config.setYmlConfig(loadFromResources("MonitoringConfiguration.yml"));
 			this.configurationRepository.save(config);
 
@@ -446,26 +446,68 @@ public class InitConfigDB {
 		if (dataModels.isEmpty()) {
 			log.info("No DataModels ...");
 			DataModel dataModel = new DataModel();
-			dataModel.setIdentification("GSMA-Weather Forecast");
-			dataModel.setType("0");
-			dataModel.setJsonSchema(
-					"{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}");
-			dataModel.setDescription("This contains a harmonised description of a Weather Forecast.");
-			dataModel.setCategory("plantilla_categoriaGSMA");
-			dataModel.setRelational(false);
-			dataModel.setUser(getUserCollaborator());
+			dataModel.setName("Alarm");
+			dataModel.setTypeEnum(DataModel.MainType.SmartCities);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Alarm.json"));
+			dataModel.setDescription("Base Alarm: assetId, timestamp, severity, source, details and status..");
+			dataModel.setLabels("Alarm,General,IoT");
+			dataModel.setUser(getUserAdministrator());
 			dataModelRepository.save(dataModel);
-			///
+			//
 			dataModel = new DataModel();
-			dataModel.setIdentification("TagsProjectBrandwatch");
-			dataModel.setType("1");
-			dataModel.setJsonSchema(
-					"{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}");
-			dataModel.setDescription("Plantilla para almacenar los TAG definidos en un PROJECT Brandwatch");
-			dataModel.setCategory("plantilla_categoriaSocial");
-			dataModel.setRelational(false);
-			dataModel.setUser(getUserCollaborator());
+			dataModel.setName("Audit");
+			dataModel.setTypeEnum(DataModel.MainType.SmartCities);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Audit.json"));
+			dataModel.setDescription("Base Audit");
+			dataModel.setLabels("Audit,General,IoT");
+			dataModel.setUser(getUserAdministrator());
 			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("Device");
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Device.json"));
+			dataModel.setDescription("Base Device");
+			dataModel.setLabels("Audit,General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("EmptyBase");
+			dataModel.setTypeEnum(DataModel.MainType.General);
+			dataModel.setJsonSchema(loadFromResources("DataModel_EmptyBase.json"));
+			dataModel.setDescription("Base DataModel");
+			dataModel.setLabels("General,IoT");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("Feed");
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Feed.json"));
+			dataModel.setDescription("Base Feed");
+			dataModel.setLabels("Audit,General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("Twitter");
+			dataModel.setTypeEnum(DataModel.MainType.Twitter);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter.json"));
+			dataModel.setDescription("Twitter DataModel");
+			dataModel.setLabels("Twitter,Social Media");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("WasteContainer");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_WasteContainer.json"));
+			dataModel.setDescription("GSMA WasteContainer");
+			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
 
 		}
 
@@ -723,60 +765,57 @@ public class InitConfigDB {
 	}
 
 	public void init_RoleUser() {
-		log.info("init ClientPlatformContainerType");
+		log.info("init init_RoleUser");
 		List<Role> types = this.roleRepository.findAll();
 		if (types.isEmpty()) {
 			try {
 
 				log.info("No roles en tabla.Adding...");
 				Role type = new Role();
-				type.setId(Role.Type.ADMINISTRATOR.toString());
+				type.setIdEnum(Role.Type.ADMINISTRATOR);
 				type.setName("ROLE_ADMINISTRATOR");
 				type.setDescription("Administrator of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.COLLABORATOR.toString());
+				type.setIdEnum(Role.Type.COLLABORATOR);
 				type.setName("ROLE_COLLABORATOR");
 				type.setDescription("Advanced User of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.USER.toString());
+				type.setIdEnum(Role.Type.USER);
 				type.setName("ROLE_USER");
 				type.setDescription("Basic User of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.ANALYTICS.toString());
+				type.setIdEnum(Role.Type.ANALYTICS);
 				type.setName("ROLE_ANALYTICS");
 				type.setDescription("Analytics User of the Platform");
-				// RoleType typeParent=new RoleType();
-				// typeParent.setId(2);
-				// type.setRoleparent(typeParent);
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.PARTNER.toString());
+				type.setIdEnum(Role.Type.PARTNER);
 				type.setName("ROLE_PARTNER");
 				type.setDescription("Partner in the Platform");
 				roleRepository.save(type);
 				//
 				//
 				type = new Role();
-				type.setId(Role.Type.SYS_ADMIN.toString());
+				type.setIdEnum(Role.Type.SYS_ADMIN);
 				type.setName("ROLE_SYS_ADMIN");
 				type.setDescription("System Administradot of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.OPERATIONS.toString());
+				type.setIdEnum(Role.Type.OPERATIONS);
 				type.setName("ROLE_OPERATIONS");
 				type.setDescription("Operations for the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setId(Role.Type.DEVOPS.toString());
+				type.setIdEnum(Role.Type.DEVOPS);
 				type.setName("ROLE_DEVOPS");
 				type.setDescription("DevOps for the Platform");
 				roleRepository.save(type);
@@ -790,6 +829,7 @@ public class InitConfigDB {
 			} catch (Exception e) {
 				log.error("Error initRoleType:" + e.getMessage());
 				roleRepository.deleteAll();
+				throw new RuntimeException("Error creating Roles...Stopping");
 			}
 
 		}
@@ -818,12 +858,10 @@ public class InitConfigDB {
 
 	}
 
-	public void init_UserCDB() {
+	public void init_User() {
 		log.info("init UserCDB");
 		List<User> types = this.userCDBRepository.findAll();
-
 		User type = null;
-
 		if (types.isEmpty()) {
 			try {
 				log.info("No types en tabla.Adding...");

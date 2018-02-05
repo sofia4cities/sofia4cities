@@ -34,50 +34,48 @@ public class AppWebUtils {
 
 	@Autowired
 	private MessageSource messageSource;
-	
+
 	public Authentication getAuthentication() {
-		return  SecurityContextHolder.getContext().getAuthentication();
+		return SecurityContextHolder.getContext().getAuthentication();
 	}
+
 	public String getUserId() {
 		Authentication auth = getAuthentication();
-		if (auth==null) return null;
+		if (auth == null)
+			return null;
 		return auth.getName();
 	}
+
 	public String getRole() {
 		Authentication auth = getAuthentication();
-		if (auth==null) return null;
+		if (auth == null)
+			return null;
 		return auth.getAuthorities().toArray()[0].toString();
 	}
 
-	public String getMessage(String key,String valueDefault){
-		try{
+	public String getMessage(String key, String valueDefault) {
+		try {
 			return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
-		}catch (Exception e){
-			log.debug("Key:"+key+" not found. Returns:"+valueDefault);
+		} catch (Exception e) {
+			log.debug("Key:" + key + " not found. Returns:" + valueDefault);
 			return valueDefault;
 		}
 	}
-	
-	public void setSessionAttribute(HttpServletRequest request, String name,Object o)
-	{
+
+	public void setSessionAttribute(HttpServletRequest request, String name, Object o) {
 		WebUtils.setSessionAttribute(request, name, o);
 	}
-	
-	public String jsonStringToString(String json)
-	{
-		
+
+	public String validateAndReturnJson(String json) {
 		ObjectMapper objectMapper = new ObjectMapper();
-		String formattedJson=null;
-		
+		String formattedJson = null;
 		try {
-			JsonNode tree = objectMapper.readValue(json,JsonNode.class);
+			JsonNode tree = objectMapper.readValue(json, JsonNode.class);
 			formattedJson = tree.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error reading JSON by:" + e.getMessage(), e);
 		}
-		
 		return formattedJson;
 	}
-	
 
 }

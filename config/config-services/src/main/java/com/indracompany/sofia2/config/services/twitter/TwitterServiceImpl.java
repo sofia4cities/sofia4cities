@@ -58,9 +58,6 @@ public class TwitterServiceImpl implements TwitterService {
 	@Autowired
 	UserService userService;
 
-	public static final String DATAMODEL_TWITTER="TWEET_DATAMODEL";
-	
-
 	@Override
 	public List<TwitterListening> getAllListenings() {
 		return this.twitterListeningRepository.findAll();
@@ -79,7 +76,7 @@ public class TwitterServiceImpl implements TwitterService {
 
 	@Override
 	public List<Configuration> getAllConfigurations() {
-		return this.configurationService.getConfigurations(ConfigurationType.Types.TwitterConfiguration);
+		return this.configurationService.getConfigurations(ConfigurationType.Type.TwitterConfiguration);
 	}
 
 	@Override
@@ -121,53 +118,58 @@ public class TwitterServiceImpl implements TwitterService {
 		if(twitterListening.getToken().getId()==null)
 			twitterListening.setToken(this.tokenRepository.findByToken(twitterListening.getToken().getToken()));
 		if(twitterListening.getConfiguration().getId()==null)
-			twitterListening.setConfiguration(this.configurationService.getConfigurationByDescrption(twitterListening.getConfiguration().getDescription()));
+			twitterListening.setConfiguration(this.configurationService.getConfigurationByDescription(twitterListening.getConfiguration().getDescription()));
 		this.twitterListeningRepository.save(twitterListening);
 	}
-	
+
 	@Override
+
 	public void updateListen(TwitterListening twitterListening)
 	{
 		TwitterListening newTwitterListening=this.twitterListeningRepository.findById(twitterListening.getId());
 		if(newTwitterListening!=null)
 		{
 			newTwitterListening.setIdentificator(twitterListening.getIdentificator());
-			newTwitterListening.setConfiguration(this.configurationService.getConfigurationByDescrption(twitterListening.getConfiguration().getDescription()));
+			newTwitterListening.setConfiguration(this.configurationService
+					.getConfigurationByDescription(twitterListening.getConfiguration().getDescription()));
 			newTwitterListening.setTopics(twitterListening.getTopics());
 			newTwitterListening.setDateFrom(twitterListening.getDateFrom());
 			newTwitterListening.setDateTo(twitterListening.getDateTo());
+
 			this.twitterListeningRepository.save(newTwitterListening);
 		}
-	
+
 	}
-	
+
 	@Override
-	public boolean existOntology(String identification)
-	{
-		if(this.ontologyService.getOntologyByIdentification(identification)!=null) return true;
-		else return false;
+	public boolean existOntology(String identification) {
+		if (this.ontologyService.getOntologyByIdentification(identification) != null)
+			return true;
+		else
+			return false;
 	}
-	
+
 	@Override
-	public boolean existClientPlatform(String identification)
-	{
-		if(this.clientPlatformRepository.findByIdentification(identification)!=null) return true;
-		else return false;
+	public boolean existClientPlatform(String identification) {
+		if (this.clientPlatformRepository.findByIdentification(identification) != null)
+			return true;
+		else
+			return false;
 	}
-	
+
 	@Override
-	public Ontology createTwitterOntology(String ontologyId, String dataModel)
-	{
-		DataModel dataModelTwitter= this.dataModelRepository.findByIdentification(dataModel).get(0);
-		Ontology ontology= new Ontology();
+	public Ontology createTwitterOntology(String ontologyId, String dataModel) {
+		DataModel dataModelTwitter = this.dataModelRepository.findByName(dataModel).get(0);
+		Ontology ontology = new Ontology();
 		ontology.setIdentification(ontologyId);
-		if(dataModelTwitter.equals(DATAMODEL_TWITTER)) ontology.setDescription("Ontology created for tweet recollection");
+		if (dataModelTwitter.getType().equals(DataModel.MainType.Twitter))
+			ontology.setDescription("Ontology created for tweet recollection");
 		ontology.setJsonSchema(dataModelTwitter.getSchema());
 		ontology.setActive(true);
 		ontology.setPublic(false);
 		ontology.setRtdbClean(false);
 		ontology.setRtdbToHdb(false);
 		return ontology;
-		
+
 	}
 }
