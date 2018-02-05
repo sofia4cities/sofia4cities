@@ -95,8 +95,9 @@ public class ConfigurationController {
 	@GetMapping("/update/{id}")
 	public String updateForm(@PathVariable String id, Model model) {
 
+		this.populateFormData(model);
 		Configuration configuration = this.configurationService.getConfiguration(id);
-
+		
 		if (configuration == null) {
 			configuration = new Configuration();
 			configuration.setUser(this.userService.getUser(this.utils.getUserId()));

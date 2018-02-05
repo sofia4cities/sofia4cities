@@ -49,10 +49,11 @@ public class DataModel extends AuditableEntityWithUUID {
 	@Setter
 	private User user;
 
-	@Column(name = "JSONSCHEMA", nullable = false)
+	@Column(name = "JSON_SCHEMA", nullable = false)
 	@NotNull
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
+	@Getter
 	@Setter
 	private String jsonSchema;
 

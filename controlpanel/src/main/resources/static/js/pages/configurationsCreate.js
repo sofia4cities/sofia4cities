@@ -123,10 +123,9 @@ var ConfigurationsCreateController = function() {
         	mode: "text/x-yaml",
             lineNumbers: false,
             foldGutter: true,
-            //matchBrackets: true,
+            matchBrackets: true,
             styleActiveLine: true,
-            //theme:"material",
-            //mode: {name: "javascript", json: true}
+            theme:"material",
         });
 		myCodeMirror.setSize("100%", 350);
     }

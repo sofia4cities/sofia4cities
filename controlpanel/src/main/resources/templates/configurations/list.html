@@ -170,7 +170,7 @@
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{configuration.userid}" >Name</span></th>
 															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{configuration.environment}" >Environment</span></th>
 															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.type}" >Configuration Type</span></th>
-															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.yml}">YML Configuration</span></th>
+															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configuration.description}">Description</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 												
 														</tr>
@@ -183,8 +183,8 @@
 															<td class="text-left no-wrap bold" th:text="${configuration.environment}"></td>
 															<!-- CONFIGURATION TYPE -->														
 															<td class="text-left no-wrap bold" th:text="${configuration.configurationType.description}"></td>
-															<!-- JSON CONFIG -->
-															<td class="text-left text-truncate-sm" th:text="${configuration.ymlConfig}"></td>													
+															<!-- DESCRIPTION -->
+															<td class="text-left text-truncate-sm" th:text="${configuration.description}"></td>													
 															
 															<!-- OPTIONS -->
 															<td class="icon" style="white-space: nowrap">
@@ -206,10 +206,10 @@
 														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-														<label class="toggle-vis" data-column="0" th:text="#{user.name}"> Name</label>
-														<label class="toggle-vis" data-column="1" th:text="#{configuration.id}"> Identification</label>
+														<label class="toggle-vis" data-column="0" th:text="#{configuration.userid}"> Name</label>
+														<label class="toggle-vis" data-column="1" th:text="#{configuration.environment}"> Entorno</label>
 														<label class="toggle-vis" data-column="2" th:text="#{configurations.type}">Configuration Type</label>
-														<label class="toggle-vis" data-column="3" th:text="#{configurations.json}">Json</label>		
+														<label class="toggle-vis" data-column="3" th:text="#{configuration.description}">Description</label>		
 														<label class="toggle-vis" data-column="4" th:text="#{gen.options}"> Options</label>
 													</div>
 												</div>											

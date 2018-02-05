@@ -53,5 +53,7 @@ public interface ConfigurationService {
 	List<Environment> getEnvironmentValues();
 
 	Map fromYaml(final String yaml);
+	
+	Configuration getConfigurationByDescrption(String descrption);
 
 }
