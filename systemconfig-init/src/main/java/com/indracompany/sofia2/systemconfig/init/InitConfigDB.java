@@ -210,6 +210,14 @@ public class InitConfigDB {
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
+			config = new Configuration();
+			config.setConfigurationType(type);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment(Configuration.Environment.ALL.toString());
+			config.setSuffix("lmgracia");
+			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
 			type = new ConfigurationType();
 			type.setId(ConfigurationType.Types.EndpointModulesConfiguration.toString());
 			type.setDescription("Endpoints of Sofia2 Modules Configuration p");

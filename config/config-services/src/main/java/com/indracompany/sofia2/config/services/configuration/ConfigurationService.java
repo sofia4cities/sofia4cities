@@ -32,11 +32,11 @@ public interface ConfigurationService {
 
 	Configuration getConfiguration(String id);
 
-	TwitterConfiguration getTwitterConfiguration(String environment, String suffix);
-
 	List<Configuration> getConfigurations(ConfigurationType.Types configurationTypeId);
 
 	Configuration getConfiguration(ConfigurationType.Types configurationType, String environment, String suffix);
+
+	TwitterConfiguration getTwitterConfiguration(String environment, String suffix);
 
 	List<ConfigurationType> getAllConfigurationTypes();
 
