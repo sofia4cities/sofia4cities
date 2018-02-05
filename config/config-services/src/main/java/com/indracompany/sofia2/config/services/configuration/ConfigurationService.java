@@ -33,11 +33,13 @@ public interface ConfigurationService {
 
 	Configuration getConfiguration(String id);
 
-	List<Configuration> getConfigurations(ConfigurationType.Types configurationTypeId);
+	List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId);
 
-	Configuration getConfiguration(ConfigurationType.Types configurationType, String environment, String suffix);
+	Configuration getConfiguration(ConfigurationType.Type configurationType, String environment, String suffix);
 
 	TwitterConfiguration getTwitterConfiguration(String environment, String suffix);
+
+	List<Environment> getEnvironmentValues();
 
 	List<ConfigurationType> getAllConfigurationTypes();
 
@@ -47,11 +49,7 @@ public interface ConfigurationService {
 
 	void updateConfiguration(Configuration configuration);
 
-
-	boolean isValidYML(final String yml);
-	
-	List<Environment> getEnvironmentValues();
+	boolean isValidYaml(final String yaml);
 
 	Map fromYaml(final String yaml);
-
 }

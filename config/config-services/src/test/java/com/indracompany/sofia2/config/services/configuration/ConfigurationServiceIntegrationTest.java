@@ -40,8 +40,7 @@ public class ConfigurationServiceIntegrationTest {
 
 	@Test
 	public void testGetConfigurationTwitter() {
-		Configuration config = service.getConfiguration(ConfigurationType.Types.TwitterConfiguration, "ALL",
-				"lmgracia");
+		Configuration config = service.getConfiguration(ConfigurationType.Type.TwitterConfiguration, "ALL", "lmgracia");
 		Map values = service.fromYaml(config.getYmlConfig());
 		Map value = (Map) values.get("twitter");
 		Assert.assertEquals(value.get("accessToken"), "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy");
