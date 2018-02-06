@@ -195,9 +195,9 @@
 																</div>
 																<!-- SECCIONES DE LA ONTOLOGIA TABS -->
 																<ul class="nav nav-tabs pull-left">
-																	<li id="tab-plantilla" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span th:text="ontology.section.templates">Ontology Templates</span></a></li>
-																	<li id="tab-propiedades" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><i class="la la-edit"></i> <span th:text="ontology.section.properties">Additional Properties</span> </a></li>
-																	<li id="tab-esquema" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span th:text="ontology.section.schema">Schema Generator and JSON Instances</span></a></li>
+																	<li id="tab-plantilla" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span class="uppercase font-md" th:text="#{ontology.section.templates}">Ontology Templates</span></a></li>
+																	<li id="tab-propiedades" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><i class="la la-edit"></i> <span class="uppercase font-md" th:text="#{ontology.section.properties}">Additional Properties</span> </a></li>
+																	<li id="tab-esquema" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.section.schema}">Schema Generator and JSON Instances</span></a></li>
 																</ul>
 															</div>
 															<div class="portlet-body">
@@ -209,20 +209,21 @@
 																				<div class="col-lg-3 col-md-4 col-xs-12">
 																				<!-- TEMPLATES SELECTOR -->
 																					<div class="mt-element-list">
-																						<div class="mt-list-container list-default ext-1 group"  th:each="datamodeltype : ${dataModelTypes}" style="padding:0;">
-																							<a data-toggle="collapse" th:href="'#'+${datamodeltype}" aria-expanded="true" class="list-toggle-container">
-																								<div class="list-toggle bg-grey-mint uppercase"> <span th:text="${datamodeltype}">DatamodelType</span><span class="badge badge-default pull-right bg-white font-purple bold datamodel-number">2</span></div>
-																							</a>
-																							<div class="panel-collapse collapse in" aria-expanded="true"  th:id="${datamodeltype}">
-																								<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}">
-																									<li th:if="${datamodeltype} == ${datamodel.type}" class="mt-list-item datamodel-template" >
-																										<div class="list-item-content" style="padding: 0 15px 0 10px;" th:attr="data-schema=${datamodel.jsonSchema}">
-																											<h3 class="uppercase"><a href="javascript:;" th:text="${datamodel.name}"></a></h3>
-																											<p class="text-truncate-sm text-left" th:text="${datamodel.description}"></p>
-																											<p><span class="label label-sm label-primary"><i class="fa fa-tag"></i> <em th:text="${datamodel.type}">type</em></span></p>
-																										</div>
-																									</li>
-																								</ul>
+																						<div class="mt-list-container list-default ext-1 group" style="padding:0;">
+																							<div th:each="datamodeltype,iter : ${dataModelTypes}">
+																								<a data-toggle="collapse" th:href="'#type-'+ ${datamodeltype}" aria-expanded="false" class="list-toggle-container collapsed">
+																									<div class="list-toggle bg-grey-mint uppercase"> <span th:text="${datamodeltype}">DatamodelType</span></div>
+																								</a>
+																								<div class="panel-collapse collapse" aria-expanded="false"  th:id="'type-'+ ${datamodeltype}">
+																									<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}">
+																										<li th:if="${datamodel.type} == ${datamodeltype}" class="mt-list-item datamodel-template">
+																											<div class="list-item-content" style="padding: 0 15px 0 10px;" th:attr="data-schema=${datamodel.jsonSchema}">
+																												<h3 class="uppercase"><a href="javascript:;" th:text="${datamodel.name}"></a></h3>
+																												<p th:if="${datamodel.description}" lass="text-truncate-sm text-left" th:text="${datamodel.description}"></p>																												
+																											</div>
+																										</li>																										
+																									</ul>
+																								</div>
 																							</div>
 																						</div>
 																					</div>
