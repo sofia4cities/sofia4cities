@@ -64,8 +64,8 @@ public class ApiFIQL {
 	@Autowired
 	private ApiAuthenticationRepository authenticationRepository;
 
-	public static final String API_PUBLICA = "PUBLICA";
-	public static final String API_PRIVADA = "PRIVADA";
+	public static final String API_PUBLICA = "PUBLIC";
+	public static final String API_PRIVADA = "PRIVATE";
 
 	static Locale locale = LocaleContextHolder.getLocale();
 
@@ -113,7 +113,7 @@ public class ApiFIQL {
 		ArrayList<OperacionDTO> operacionesDTO = new ArrayList<OperacionDTO>();
 		List<ApiOperation> operaciones = operationRepository.findByApiOrderByOperationDesc(api);
 		for (ApiOperation operacion : operaciones) {
-			OperacionDTO operacionDTO = OperacionFIQL.toOperacionDTO(operacion);
+			OperacionDTO operacionDTO = OperationFIQL.toOperacionDTO(operacion);
 			operacionesDTO.add(operacionDTO);
 		}
 
@@ -122,7 +122,7 @@ public class ApiFIQL {
 		List<ApiAuthentication> autenticaciones = authenticationRepository.findAllByApi(api);
 		if (autenticaciones != null && autenticaciones.size() > 0) {
 			autenticacion = autenticaciones.get(0);
-			AutenticacionDTO autenticacionDTO = AutenticacionFIQL.toAutenticacionDTO(autenticacion);
+			AutenticacionDTO autenticacionDTO = AuthenticationFIQL.toAutenticacionDTO(autenticacion);
 
 			// Se copian los parámetros
 			Set<ApiAuthenticationParameter> parametros = autenticacion.getApiAuthenticationParameters();
@@ -138,7 +138,7 @@ public class ApiFIQL {
 				}
 				parametrosDTO.add(atributosDTO);
 			}
-			autenticacionDTO.setAutParametros(parametrosDTO);
+			autenticacionDTO.setAuthParameters(parametrosDTO);
 
 			apiDTO.setAuthentication(autenticacionDTO);
 		}
@@ -180,7 +180,7 @@ public class ApiFIQL {
 		}
 
 		if (apiDTO.getUserId() != null) {
-			User user = userService.getUser(api.getUser().getUserId());
+			User user = userService.getUser(apiDTO.getUserId());
 			if (user != null) {
 				api.setUser(user);
 			}

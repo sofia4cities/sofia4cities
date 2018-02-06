@@ -57,72 +57,68 @@ public final class QueryParameterFIQL {
 
 	public static ApiQueryParameterDTO toQueryParamDTO(ApiQueryParameter apiqueryparam) {
 		ApiQueryParameterDTO apiqueryparamDTO = new ApiQueryParameterDTO();
-		apiqueryparamDTO.setNombre(apiqueryparam.getName());
-		apiqueryparamDTO.setTipo(apiqueryparam.getType());
-		apiqueryparamDTO.setCondicion(apiqueryparam.getCondition());
-		apiqueryparamDTO.setDescripcion(apiqueryparam.getDescription());
-		apiqueryparamDTO.setValor(apiqueryparam.getValue());
+		apiqueryparamDTO.setName(apiqueryparam.getName());
+		apiqueryparamDTO.setDataType(apiqueryparam.getDataType());
+		apiqueryparamDTO.setHeaderType(apiqueryparam.getHeaderType());
+		apiqueryparamDTO.setDescription(apiqueryparam.getDescription());
+		apiqueryparamDTO.setValue(apiqueryparam.getValue());
 		return apiqueryparamDTO;
 	}
 
 	public static ApiQueryParameter copyProperties(ApiQueryParameterDTO apiqueryparamDTO) {
 		ApiQueryParameter apiqueryparam = new ApiQueryParameter();
 
-		if (apiqueryparamDTO.getNombre() == null || apiqueryparamDTO.getNombre().equals("")) {
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamNombreRequired");
+		if (apiqueryparamDTO.getName() == null || apiqueryparamDTO.getName().equals("")) {
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamNameRequired");
 		}
-		if (apiqueryparamDTO.getTipo() == null || apiqueryparamDTO.getTipo().equals("")) {
-			Object parametros[] = { apiqueryparamDTO.getNombre() };
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamTipoRequired");
+		if (apiqueryparamDTO.getDataType() == null || apiqueryparamDTO.getDataType().equals("")) {
+			Object parametros[] = { apiqueryparamDTO.getName() };
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamDataTypeRequired");
 		}
-		if (!isValidType(apiqueryparamDTO.getTipo())) {
-			Object parametros[] = { apiqueryparamDTO.getNombre() };
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongTipo");
+		if (!isValidType(apiqueryparamDTO.getDataType())) {
+			Object parametros[] = { apiqueryparamDTO.getName() };
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongDataType");
 		}
-		if (apiqueryparamDTO.getCondicion() == null || apiqueryparamDTO.getCondicion().equals("")) {
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamCondicionRequired");
+		if (apiqueryparamDTO.getHeaderType() == null || apiqueryparamDTO.getHeaderType().equals("")) {
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamConditionRequired");
 		}
-		if (!isValidCondition(apiqueryparamDTO.getCondicion())) {
-			Object parametros[] = { apiqueryparamDTO.getNombre() };
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongCondicion");
+		if (!isValidCondition(apiqueryparamDTO.getHeaderType())) {
+			Object parametros[] = { apiqueryparamDTO.getName() };
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongCondition");
 		}
-		if (!isValidTypeValue(apiqueryparamDTO.getTipo(), apiqueryparamDTO.getValor())) {
-			Object parametros[] = { apiqueryparamDTO.getValor(), apiqueryparamDTO.getNombre(),
-					apiqueryparamDTO.getTipo() };
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongTipoValue");
+		if (!isValidTypeValue(apiqueryparamDTO.getDataType(), apiqueryparamDTO.getValue())) {
+			Object parametros[] = { apiqueryparamDTO.getValue(), apiqueryparamDTO.getName(),
+					apiqueryparamDTO.getDataType() };
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongDataTypeValue");
 		}
-		if (!isValidCondicionValue(apiqueryparamDTO.getCondicion(), apiqueryparamDTO.getValor())) {
-			Object parametros[] = { apiqueryparamDTO.getValor(), apiqueryparamDTO.getNombre(),
-					apiqueryparamDTO.getCondicion() };
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongCondicionValue");
-		}
+		
 
-		apiqueryparam.setName(apiqueryparamDTO.getNombre());
-		apiqueryparam.setType(apiqueryparamDTO.getTipo());
-		apiqueryparam.setCondition(apiqueryparamDTO.getCondicion());
-		apiqueryparam.setDescription(apiqueryparamDTO.getDescripcion());
-		apiqueryparam.setValue(apiqueryparamDTO.getValor());
+		apiqueryparam.setName(apiqueryparamDTO.getName());
+		apiqueryparam.setDataType(apiqueryparamDTO.getDataType());
+		apiqueryparam.setHeaderType(apiqueryparamDTO.getHeaderType());
+		apiqueryparam.setDescription(apiqueryparamDTO.getDescription());
+		apiqueryparam.setValue(apiqueryparamDTO.getValue());
 
 		return apiqueryparam;
 	}
 
-	private static boolean isValidCondicionValue(String condicion, String valor) {
-		if (condicion.equals(API_CONSTANTE)) {
-			return (valor != null && !valor.equals(""));
+	private static boolean isValidConditionValue(String Condition, String Value) {
+		if (Condition.equals(API_CONSTANTE)) {
+			return (Value != null && !Value.equals(""));
 		}
 		return true;
 	}
 
-	private static boolean isValidTypeValue(String tipo, String valor) {
-		if (tipo.equals(API_NUMBER)) {
+	private static boolean isValidTypeValue(String DataType, String Value) {
+		if (DataType.equals(API_NUMBER)) {
 			try {
-				Integer.parseInt(valor);
+				Integer.parseInt(Value);
 			} catch (Exception e) {
 				return false;
 			}
-		} else if (tipo.equals(API_BOOLEAN)) {
+		} else if (DataType.equals(API_BOOLEAN)) {
 			try {
-				Boolean.parseBoolean(valor);
+				Boolean.parseBoolean(Value);
 			} catch (Exception e) {
 				return false;
 			}
@@ -131,17 +127,17 @@ public final class QueryParameterFIQL {
 	}
 
 	/*
-	 * private static boolean isValidCondition(String tipo) { return
-	 * (tipo.equalsIgnoreCase(API_CONSTANTE)||tipo.equalsIgnoreCase(API_OPCIONAL)||
-	 * tipo.equalsIgnoreCase(API_REQUERIDO)); }
+	 * private static boolean isValidCondition(String DataType) { return
+	 * (DataType.equalsIgnoreCase(API_CONSTANTE)||DataType.equalsIgnoreCase(API_OPCIONAL)||
+	 * DataType.equalsIgnoreCase(API_REQUERIDO)); }
 	 */
 
-	private static boolean isValidCondition(String tipo) {
-		return (tipo.equalsIgnoreCase("query") || tipo.equalsIgnoreCase("path") || tipo.equalsIgnoreCase("body"));
+	private static boolean isValidCondition(String DataType) {
+		return (DataType.equalsIgnoreCase("query") || DataType.equalsIgnoreCase("path") || DataType.equalsIgnoreCase("body"));
 	}
 
-	private static boolean isValidType(String tipo) {
-		return (tipo.equalsIgnoreCase(API_STRING) || tipo.equalsIgnoreCase(API_NUMBER)
-				|| tipo.equalsIgnoreCase(API_BOOLEAN));
+	private static boolean isValidType(String DataType) {
+		return (DataType.equalsIgnoreCase(API_STRING) || DataType.equalsIgnoreCase(API_NUMBER)
+				|| DataType.equalsIgnoreCase(API_BOOLEAN));
 	}
 }

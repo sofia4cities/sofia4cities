@@ -59,7 +59,8 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User getUserByToken(String token) {
 		Token theToken = getToken(token);
-		User user = getUser(userTokenRepository.findByToken(theToken).getId());
+		UserToken usertoken = userTokenRepository.findByToken(theToken);
+		User user = usertoken.getUser();
 		return user;
 	}
 

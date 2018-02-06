@@ -176,11 +176,11 @@ public class RestSwaggerReader {
 
 	private void parse(Swagger swagger, OperacionDTO operacionDTO) {
 
-		String description = operacionDTO.getDescripcion();
+		String description = operacionDTO.getDescription();
 		String endpoint = operacionDTO.getEndpoint();
 		ArrayList<ApiHeaderDTO> headers = operacionDTO.getHeaders();
-		String identification = operacionDTO.getIdentificacion();
-		String operation = operacionDTO.getOperacion();
+		String identification = operacionDTO.getIdentification();
+		String operation = operacionDTO.getOperation();
 		String path = operacionDTO.getPath();
 		if (!path.startsWith("/"))
 			path = "/" + path;
@@ -207,11 +207,11 @@ public class RestSwaggerReader {
 
 		for (ApiQueryParameterDTO apiQueryParameterDTO : queryParams) {
 
-			String desc = apiQueryParameterDTO.getDescripcion();
-			String name = apiQueryParameterDTO.getNombre();
-			String type = apiQueryParameterDTO.getTipo();
-			String value = apiQueryParameterDTO.getValor();
-			String condition = apiQueryParameterDTO.getCondicion();
+			String desc = apiQueryParameterDTO.getDescription();
+			String name = apiQueryParameterDTO.getName();
+			String type = apiQueryParameterDTO.getDataType();
+			String value = apiQueryParameterDTO.getValue();
+			String condition = apiQueryParameterDTO.getHeaderType();
 
 			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, name, description, false,
 					condition, type, null, value);

@@ -31,17 +31,17 @@ public class OperacionDTO implements Cloneable, Serializable {
 	@ApiModelProperty(value = "Identificación de la Operacion")
 	@Getter
 	@Setter
-	private String identificacion;
+	private String identification;
 
 	@ApiModelProperty(value = "Descripción de la Operacion")
 	@Getter
 	@Setter
-	private String descripcion;
+	private String description;
 
 	@ApiModelProperty(value = "Tipo de Operacion")
 	@Getter
 	@Setter
-	private String operacion;
+	private String operation;
 
 	@ApiModelProperty(value = "Enpoint Particular de la Operacion")
 	@Getter

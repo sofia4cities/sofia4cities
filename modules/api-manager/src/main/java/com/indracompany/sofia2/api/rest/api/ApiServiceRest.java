@@ -29,9 +29,9 @@ import com.indracompany.sofia2.api.rest.api.dto.AutenticacionAtribDTO;
 import com.indracompany.sofia2.api.rest.api.dto.AutenticacionDTO;
 import com.indracompany.sofia2.api.rest.api.dto.OperacionDTO;
 import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
-import com.indracompany.sofia2.api.rest.api.fiql.AutenticacionFIQL;
+import com.indracompany.sofia2.api.rest.api.fiql.AuthenticationFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.HeaderFIQL;
-import com.indracompany.sofia2.api.rest.api.fiql.OperacionFIQL;
+import com.indracompany.sofia2.api.rest.api.fiql.OperationFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.QueryParameterFIQL;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiAuthentication;
@@ -216,7 +216,7 @@ public class ApiServiceRest {
 
 	private void createOperations(ArrayList<OperacionDTO> operaciones, Api api) {
 		for (OperacionDTO operacionDTO : operaciones) {
-			ApiOperation operacion = OperacionFIQL.copyProperties(operacionDTO);
+			ApiOperation operacion = OperationFIQL.copyProperties(operacionDTO);
 			operacion.setApi(api);
 			apiOperationRepository.saveAndFlush(operacion);
 
@@ -271,12 +271,12 @@ public class ApiServiceRest {
 
 	private void createAutenticacion(AutenticacionDTO autenticacionDTO, Api api) {
 		if (autenticacionDTO != null) {
-			ApiAuthentication authentication = AutenticacionFIQL.copyProperties(autenticacionDTO);
+			ApiAuthentication authentication = AuthenticationFIQL.copyProperties(autenticacionDTO);
 			authentication.setApi(api);
 			apiAuthenticationRepository.saveAndFlush(authentication);
 
 			// Se crean los parametros
-			for (ArrayList<AutenticacionAtribDTO> parametroDTO : autenticacionDTO.getAutParametros()) {
+			for (ArrayList<AutenticacionAtribDTO> parametroDTO : autenticacionDTO.getAuthParameters()) {
 				ApiAuthenticationParameter parameter = new ApiAuthenticationParameter();
 				parameter.setApiAuthentication(authentication);
 				apiAuthenticationParameterRepository.saveAndFlush(parameter);

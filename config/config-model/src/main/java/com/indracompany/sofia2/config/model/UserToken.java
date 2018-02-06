@@ -32,7 +32,7 @@ import lombok.Setter;;
 public class UserToken extends AuditableEntityWithUUID {
 
 	@OneToOne
-	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "TOKEN", nullable = false)
+	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID", nullable = false)
 	@NotNull
 	@Getter
 	@Setter

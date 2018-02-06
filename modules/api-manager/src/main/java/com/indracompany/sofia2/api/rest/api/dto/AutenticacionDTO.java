@@ -40,6 +40,6 @@ public class AutenticacionDTO implements Cloneable, Serializable {
 
 	@Getter
 	@Setter
-	private ArrayList<ArrayList<AutenticacionAtribDTO>> autParametros;
+	private ArrayList<ArrayList<AutenticacionAtribDTO>> authParameters;
 
 }

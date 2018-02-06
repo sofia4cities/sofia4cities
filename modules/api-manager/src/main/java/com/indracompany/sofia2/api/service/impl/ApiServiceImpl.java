@@ -68,6 +68,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
 		
 		System.out.println((String)data.get(ApiServiceInterface.DUMP));
+		System.out.println((String)data.get(ApiServiceInterface.BODY));
 		
 		sendResponse(response, HttpServletResponse.SC_OK, (String)data.get(ApiServiceInterface.DUMP),null,null);
 

@@ -222,7 +222,7 @@ public class ApiManagerService {
 				throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
 			} else {
 				// Se comprueba que el valor es del tipo definido en la operacion
-				if (customqueryparameter.getType().equals(Constants.API_TIPO_DATE)) {
+				if (customqueryparameter.getDataType().equals(Constants.API_TIPO_DATE)) {
 					try {
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 						df.parse(paramvalue);
@@ -232,7 +232,7 @@ public class ApiManagerService {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Date" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
 					}
-				} else if (customqueryparameter.getType().equals(Constants.API_TIPO_STRING)) {
+				} else if (customqueryparameter.getDataType().equals(Constants.API_TIPO_STRING)) {
 					try {
 						paramvalue.toString();
 						paramvalue = "'" + paramvalue + "'";
@@ -241,7 +241,7 @@ public class ApiManagerService {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
 					}
-				} else if (customqueryparameter.getType().equals(Constants.API_TIPO_NUMBER)) {
+				} else if (customqueryparameter.getDataType().equals(Constants.API_TIPO_NUMBER)) {
 					try {
 						Double.parseDouble(paramvalue);
 					} catch (Exception e) {
@@ -249,7 +249,7 @@ public class ApiManagerService {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Integer" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
 					}
-				} else if (customqueryparameter.getType().equals(Constants.API_TIPO_BOOLEAN)) {
+				} else if (customqueryparameter.getDataType().equals(Constants.API_TIPO_BOOLEAN)) {
 					if (!paramvalue.equalsIgnoreCase("true") && !paramvalue.equalsIgnoreCase("false")) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Boolean" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");

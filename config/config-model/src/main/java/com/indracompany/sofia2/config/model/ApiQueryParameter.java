@@ -55,11 +55,11 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@Setter
 	private String name;
 
-	@Column(name = "QUERY_TYPE", length = 50, nullable = false)
+	@Column(name = "QUERY_DATA_TYPE", length = 50, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
-	private String type;
+	private String dataType;
 
 	@Column(name = "QUERY_DESCRIPTION", length = 512, nullable = false)
 	@NotNull
@@ -76,5 +76,10 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String condition;
+	
+	@Column(name = "QUERY_HEADER_TYPE", length = 50)
+	@Getter
+	@Setter
+	private String headerType;
 
 }
