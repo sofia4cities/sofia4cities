@@ -75,13 +75,6 @@ public class User extends AuditableEntity {
 	// @Convert(converter = StringCryptoConverter.class)
 	private String password;
 
-	@Column(name = "DATE_CREATED", nullable = false)
-	@NotNull
-	@Temporal(TemporalType.DATE)
-	@Getter
-	@Setter
-	private Date dateCreated;
-
 	@Column(name = "ACTIVE", nullable = false)
 	@NotNull
 	@Getter
