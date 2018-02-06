@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.indracompany.sofia2.api.rest.api.dto.ApiDTO;
 import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 import com.indracompany.sofia2.api.rest.swagger.RestSwaggerReader;
+import com.indracompany.sofia2.api.service.api.ApiServiceRest;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
@@ -41,10 +42,13 @@ public class SwaggerGeneratorServiceImpl implements SwaggerGeneratorService {
 		
 		ApiDTO apiDto = apiFIQL.toApiDTO(apiService.findApi(identificacion, token));
 		
+		int version = apiDto.getVersion();
+		String vVersion="v"+version;
+		
 		BeanConfig config = new BeanConfig();
 		config.setHost("localhost:8080");
 		config.setSchemes(new String[]{"http"});
-		config.setBasePath("/api");
+		config.setBasePath("/api"+"/"+vVersion+"/"+identificacion);
 		
 		RestSwaggerReader reader = new RestSwaggerReader();
 

@@ -22,19 +22,34 @@ import org.jeasy.rules.annotation.Condition;
 import org.jeasy.rules.annotation.Priority;
 import org.jeasy.rules.annotation.Rule;
 import org.jeasy.rules.api.Facts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
+import com.indracompany.sofia2.api.service.api.ApiManagerService;
+import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.user.UserService;
 
 @Component
 @Rule
-public class IsSqlLikeRule extends DefaultRuleBase {
+public class DerivedFactsRule extends DefaultRuleBase {
+	
+	@Autowired
+	private ApiManagerService apiManagerService;
+	
+	@Autowired
+	private ApiFIQL apiFIQL;
+	
+	@Autowired
+	private UserService userService;
 
 	@Priority
 	public int getPriority() {
-		return 1;
+		return 2;
 	}
 
 	@Condition
@@ -50,20 +65,21 @@ public class IsSqlLikeRule extends DefaultRuleBase {
 	public void setFirstDerivedData(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
-		request.getRequestURI();
-		String query = (String) data.get(ApiServiceInterface.QUERY);
-		String queryType = (String) data.get(ApiServiceInterface.QUERY_TYPE);
 
-		boolean isSQLLIKE = isSQLLIKE(query, queryType);
-
-		data.put(ApiServiceInterface.ISSQLLIKE, isSQLLIKE);
-
-	}
-
-	private boolean isSQLLIKE(String query, String queryType) {
-		if (query != null && query.length() > 0 && queryType != null && queryType.length() > 0) {
-			return queryType.equals("SQLLIKE");
+		String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
+		String TOKEN = (String) data.get(ApiServiceInterface.AUTHENTICATION_HEADER);
+		
+		User user = userService.getUserByToken(TOKEN);
+		Api api=null;
+		if (user==null) stopAllNextRules(facts, "User not Found by Token :"+TOKEN);
+		else {
+			api = apiManagerService.getApi(PATH_INFO, user);
+			if (api==null) stopAllNextRules(facts, "API not Found by Token :"+TOKEN +" and Path Info"+PATH_INFO );
 		}
-		return false;
+
+		data.put(ApiServiceInterface.USER, user);
+		data.put(ApiServiceInterface.API, api);
 	}
+
+	
 }

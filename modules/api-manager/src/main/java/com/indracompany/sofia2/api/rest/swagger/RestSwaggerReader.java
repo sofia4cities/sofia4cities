@@ -51,7 +51,7 @@ public class RestSwaggerReader {
 
 	public static String LICENSE_NAME = "1.0.0";
 	public static String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
-	public static String BASE_PATH = "/api";
+	//public static String BASE_PATH = "/api";
 
 	public static String CONTACT_NAME = "The Sofia2Open team";
 	public static String CONTACT_URL = "http://sofia2.com";
@@ -129,7 +129,11 @@ public class RestSwaggerReader {
 		swagger.setProduces(PRODUCES);
 		swagger.setResponses(responses);
 
-		swagger.setBasePath(BASE_PATH);
+		int version = apiDto.getVersion();
+		String vVersion="v"+version;
+		String identification = apiDto.getIdentification();
+		
+		swagger.setBasePath("/api"+"/"+vVersion+"/"+identification);
 
 		swagger.setSchemes(schemes);
 

@@ -17,8 +17,9 @@ import org.jeasy.rules.api.Facts;
 
 public class DefaultRuleBase {
 		
-	protected void stopAllNextRules(Facts facts) {
+	protected void stopAllNextRules(Facts facts, String reason) {
 		facts.put(RuleManager.STOP_STATE, true);
+		facts.put(RuleManager.REASON, reason);
 	}
 	
 	protected boolean canExecuteRule(Facts facts) {

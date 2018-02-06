@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.api.rest.api.dto.ApiDTO;
 import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
+import com.indracompany.sofia2.api.service.api.ApiServiceRest;
 
 @Component("apiRestServiceImpl")
 public class APiRestServiceImpl implements ApiRestService {
