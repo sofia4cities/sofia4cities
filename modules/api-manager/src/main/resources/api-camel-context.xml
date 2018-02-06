@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+
+	<bean id="throttlerProcessor" class="com.indracompany.sofia2.api.rest.camel.ThrottlerProcessor"/>
+
+	<camelContext id="camel-context" streamCache="true" trace="true"
+		xmlns="http://camel.apache.org/schema/spring">
+
+
+		<route id="entry-point">
+			<from uri="servlet:camel" />
+			<throttle timePeriodMillis="10000" rejectExecution="true" >
+				<method ref="throttlerProcessor" method="getThrottle" />
+				<to uri="log:com.mycompany.nous?level=INFO" />
+			</throttle>
+			<process ref="throttlerProcessor"/>
+		</route>
+
+
+
+	</camelContext>
+
+</beans>
