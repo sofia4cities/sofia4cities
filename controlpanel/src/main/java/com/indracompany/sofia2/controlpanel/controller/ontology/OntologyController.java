@@ -78,6 +78,7 @@ public class OntologyController {
 	public String createWizard(Model model) {
 		model.addAttribute("ontology", new Ontology());
 		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
+		model.addAttribute("dataModelTypes", this.ontologyService.getAllDataModelTypes());
 		return "/ontologies/createwizard";
 	}
 

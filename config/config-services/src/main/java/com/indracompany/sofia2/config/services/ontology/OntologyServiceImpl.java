@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.config.services.ontology;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -125,6 +127,12 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public List<DataModel> getAllDataModels() {
 		return this.dataModelRepository.findAll();
+	}
+	
+	@Override
+	public List<MainType> getAllDataModelTypes()
+	{
+		return Arrays.asList(DataModel.MainType.values());
 	}
 
 }
