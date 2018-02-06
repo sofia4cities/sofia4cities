@@ -126,53 +126,115 @@
 											<div class="form-body">
 												<!-- user, name and email -->
 												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label th:text="#{ontology.identification} + ':'">Identification</label><span class="required"> (*)</span>
-															<div class="input-icon ">
-																<i class="fa fa-credit-card"></i>
-																<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.identification}"  th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
+													<div class="col-md-6 col-xs-12">
+														<div class="col-md-6 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<label th:text="#{ontology.identification} + ':'">Identification</label><span class="required"> (*)</span>
+																<div class="input-icon ">
+																	<i class="fa fa-credit-card"></i>
+																	<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.identification}"  th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
+																</div>
 															</div>
 														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="" th:text="#{ontology.name} + ':'">Name</label><span class="required"> (*)</span>
-															<div class="input-icon ">
-																<i class="flaticon-network"></i>
-																<input id="identification" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{ontology.name}"/>
-															</div>	
-														</div>
-													</div>
-													<div class="col-md-6 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" th:attr=" data-content=#{ontology.metainf.help},data-title=#{ontology.metainf}"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>
-															<input  id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" th:required="true" data-minlength="2" pattern=".{2,}" min="2"></input>
-															<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.metainf.min}"> min. 2 chars</small></span>
-														</div>
-													</div>
-												</div>
-												<!-- active , public -->
-												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
-														<div class="form-group">
-															<label class="" th:text="#{ontology.active} + ':'">Active</label>
-															<div class="mt-checkbox-list">
-																<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline font-xs" th:text="#{ontology.active} + '?'">Active Ontology?</div>
-																	<input id="active" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
-																	<span></span><!-- needed by styles -->
-																</label>
+														<div class="col-md-6 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<label class="" th:text="#{ontology.name} + ':'">Name</label><span class="required"> (*)</span>
+																<div class="input-icon ">
+																	<i class="flaticon-network"></i>
+																	<input id="identification" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{ontology.name}"/>
+																</div>	
 															</div>
 														</div>
+														<div class="clearfix"></div>
+														<div class="col-md-6 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" th:attr=" data-content=#{ontology.metainf.help},data-title=#{ontology.metainf}"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>
+																<input  id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" th:required="true" data-minlength="2" pattern=".{2,}" min="2"></input>
+																<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.metainf.min}"> min. 2 chars</small></span>
+															</div>
+														</div>													
+														<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+															<div class="form-group">
+																<label class="" th:text="#{ontology.active} + ':'">Active</label>
+																<div class="mt-checkbox-list">
+																	<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline font-xs" th:text="#{ontology.active} + '?'">Active Ontology?</div>
+																		<input id="active" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
+																		<span></span><!-- needed by styles -->
+																	</label>
+																</div>
+															</div>
+														</div>
+														<div class="col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<label class="" th:text="#{ontology.public} + ':'">Public</label>
+																<div class="mt-checkbox-list">
+																	<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.public} +'?'">Public?</div>
+																		<input id="public" class="form-control campo_publica"  name="public" type="checkbox" th:field="*{public}" />
+																		<span></span><!-- necesario por estilos. -->
+																	</label>
+																</div>
+															</div>
+														</div>							
 													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="" th:text="#{ontology.public} + ':'">Public</label>
-															<div class="mt-checkbox-list">
-																<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.public} +'?'">Public?</div>
-																	<input id="public" class="form-control campo_publica"  name="public" type="checkbox" th:field="*{public}" />
-																	<span></span><!-- necesario por estilos. -->
-																</label>
+													<div class="col-md-6 col-sm-12 col-xs-12">
+														<div class="row">																																
+															<div class="col-md-6 col-xs-12">
+																<div class="form-group">
+																	<label id="notificaciones" >Configuración de notificaciones</label>
+																	<div class="mt-checkbox-list">
+																		<label class="mt-checkbox"> <div class="inline" >Query suscripción BDTR </div>
+																			<input id="bdtr" name="bdtr" value="bdtr" checked="checked" type="checkbox" />
+																			<span></span>
+																		</label>
+																		<label class="mt-checkbox"> <div class="inline" > Regla Script </div>
+																			<input id="script" name="script" value="script" checked="checked"  type="checkbox" />
+																			<span></span>
+																		</label>
+																		<label class="mt-checkbox"> <div class="inline" >Regla CEP</div>
+																			<input id="cep" name="cep" value="cep" checked="checked" type="checkbox" />
+																			<span></span>
+																		</label>
+																	</div>
+																</div>
+															</div>
+															<div class="col-md-6 col-xs-12">
+																<div class="form-group">
+																	<label id="intervaloBTRBH"><i class="la la-lightbulb-o"></i> <span > Plantilla </span></label>
+																	<!-- <select id="id_campo_temporizador" class="selectpicker form-control" data-live-search="true" data-width="100%" th:text="#{ontologias_formulario_intervalo_sin_paso}"  data-none-selected-text="Nada Seleccionado" th:field="*{bdtrbdh}" onchange="changeBDTRBorrado();" th:required="true"> -->
+																		<!-- <option th:each="temporizador:${periodidadesBdtr}" th:value="${#numbers.formatDecimal(temporizador.valor,1,0)}" th:text="#{${temporizador.nombre}}"></option> -->
+																	<!-- </select> -->
+																	<div class="mt-checkbox-list">
+																		<label class="mt-checkbox"> <div class="inline" id="borradolabel" >Eliminar de BDTR </div>
+																			<input id="checkboxborrado" name="checkboxborrado" type="checkbox" onchange="changeBDTRText();" th:disabled="disabled" />
+																			<span></span>
+																		</label>
+																	</div>
+																</div>
+															</div>																		
+															<div class="col-md-6 col-xs-12">
+																<div class="form-group">
+																	<label id="instanciaBdtr"><i class="la la-lightbulb-o"></i> <span >Seleccionar Instancia BDTR </span></label>
+																	<!-- <select id="id_instancia_bdtr" class="selectpicker form-control" data-live-search="true" data-width="100%"   data-none-selected-text="Nada Seleccionado" th:field="*{bdtrdatasourceid}" th:required="true">
+																		<option th:each="bdtr:${bdtrs}" th:value="${bdtr.identificacion}" th:text="${bdtr.identificacion}"></option>
+																	</select> -->
+																	<input id="bdtr_seleccionada" name="bdtr_seleccionada" type="hidden" value=""/>
+																	<input id="porDefecto" name="porDefecto" type="hidden" th:value="${porDefecto}" />																				
+																</div>
+															</div>
+															<div class="col-md-6 col-xs-12">
+																<div class="form-group" sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')">
+																	<label id="ontologyClass" >Agrupador de datos</label>
+																	<div class="input-icon ">
+																		<i class="fa fa-cog"></i>																			
+																		<!-- <input id="id_ontologia_clase" name="campo_nombre" class="form-control" type="text" maxlength="100" th:field="*{ontologyClass}" th:disabled="disabled" /> -->
+																	</div>
+																	<div class="mt-checkbox-list">
+																		<label class="mt-checkbox"> <div class="inline" id="agrupadorlabel" >Agrupar datos</div>
+																			<input id="checkboxagrupador" name="checkboxagrupador" type="checkbox"  onchange="enableOntologyClass();" />
+																			<span></span>
+																		</label>
+																	</div>																				
+																</div>																			
 															</div>
 														</div>
 													</div>
@@ -182,8 +244,8 @@
 															<textarea class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true" data-minlength="5" pattern=".{5,}" min="5"  cols="" rows=""></textarea>
 														</div>
 														<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.description.min}"></small></span>
-													</div>
-												</div>
+													</div>													
+												</div>											
 												
 												<!-- SECCIONE DE ONTOLOGIA -->
 												<div class="row" id="secciones" >
@@ -244,7 +306,7 @@
 																		
 																		<!-- SCHEMA GENERATOR AND JSON INSTANCE -->
 																		<div class="tab-pane" id="tab_3">
-																			<p> Howdy, I'm in Section 3. </p>
+																			<p class="bold uppercase"><i class="flaticon-network font-grey-gallery"></i> <span id="schema_title"> Selected Data model: </span></p>
 																			<div id="jsoneditor"></div>																			
 																		</div>
 																	</div>
@@ -320,6 +382,10 @@
 	<script th:src="@{/static/vendor/json/json2.min.js}"/>
 	<script th:src="@{/static/vendor/json/jsoneditor.js}"/>
 	
+	<script th:src="@{/static/vendor/ace/ace.js}" charset="utf-8"/>
+	<script th:src="@{/static/vendor/ace/mode-json.js}"/>
+	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
+	
 	
 
 	<!-- TEMPLATE CONTROLLER  -->	
@@ -339,12 +405,13 @@
 	
 	
 	function schemaToTable(schema,tableId){
-		var data = '';
-		var properties = '';
+		console.log('|---  schemaToTable()...');
+		var data, properties = '';
 		
 		
 		if (typeof schema == 'string'){		
-			data = JSON.parse(schema);					
+			data = JSON.parse(schema);				
+			
 		}else if (typeof schema == 'object') { data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
 		
 		console.log('JSON: ' + data);
@@ -353,20 +420,26 @@
 		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; alert('propiedades (datos): ' + JSON.stringify(properties)); } else { properties = data.properties; alert('propiedades (properties): ' + JSON.stringify(properties));  }
 		// CREATING TABLE FROM DATA.		
 		$('#'+tableId).createTable(properties, {});
+		
+		// UPDATING JSON EDITOR
+		$('#schema_title').text(data.title + ':');
+		editor.setMode("text");
+        editor.setText(schema);
 		editor.setMode("tree");
-        editor.setText(data);
 	
 	};
 	
 
 	
-																						
+	var editor;
+	var aceEditor;
 	$(document).ready(function(){
 		
 		console.log(' INICIANDO WIZARD...');		
 		var container = document.getElementById('jsoneditor');	
 		var options = {
-			mode: 'text',
+			mode: 'code',
+			theme: 'bootstrap3',
 			modes: ['code', 'text', 'tree', 'view'], // allowed modes
 			error: function (err) {
 				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
@@ -374,15 +447,13 @@
 			}
 		};
 		
-		var editor = new jsoneditor.JSONEditor(container, options, "");		
+		editor = new jsoneditor.JSONEditor(container, options, "");		
 		console.log('editor' + editor);	
 	});
 	
-	$(document).load(function(){
-		 JSONEditor.defaults.options.theme = 'bootstrap3';
-		 console.log('editor on load:' + editor);
-		 var test = { "hello": "world"};
-		$('jsoneditor').jsoneditor('value',test);		 
+	$(document).load(function(){		 
+		 
+		
 	});	
 	
 	// LOAD DATA TO USE IN CREATE WIZARD CONTROLLER
