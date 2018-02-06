@@ -905,6 +905,7 @@ public class InitConfigDB {
 				type.setEmail("administrator@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -914,6 +915,7 @@ public class InitConfigDB {
 				type.setEmail("collaborator@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -923,6 +925,7 @@ public class InitConfigDB {
 				type.setEmail("user@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.USER.toString()));
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -932,6 +935,7 @@ public class InitConfigDB {
 				type.setEmail("analytics@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ANALYTICS.toString()));
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -941,6 +945,7 @@ public class InitConfigDB {
 				type.setEmail("partner@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.PARTNER.toString()));
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -950,6 +955,7 @@ public class InitConfigDB {
 				type.setEmail("sysadmin@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.SYS_ADMIN.toString()));
+
 				userCDBRepository.save(type);
 				//
 				type = new User();

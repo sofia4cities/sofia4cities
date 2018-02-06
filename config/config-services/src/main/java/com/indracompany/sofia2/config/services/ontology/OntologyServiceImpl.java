@@ -134,9 +134,15 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 	
 	@Override
-	public List<MainType> getAllDataModelTypes()
+	public List<String> getAllDataModelTypes()
 	{
-		return Arrays.asList(DataModel.MainType.values());
+		List<MainType> types= Arrays.asList(DataModel.MainType.values());
+		List<String> typesString=new ArrayList<String> ();
+		for(MainType type: types)
+		{
+			typesString.add(type.toString());
+		}
+		return typesString;
 	}
 
 }

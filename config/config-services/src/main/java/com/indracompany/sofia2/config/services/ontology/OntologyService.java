@@ -38,5 +38,5 @@ public interface OntologyService {
 
 	List<DataModel> getAllDataModels();
 	
-	List<MainType> getAllDataModelTypes();
+	List<String> getAllDataModelTypes();
 }
