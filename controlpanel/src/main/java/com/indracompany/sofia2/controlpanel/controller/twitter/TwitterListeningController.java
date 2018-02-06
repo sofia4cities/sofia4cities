@@ -102,7 +102,9 @@ public class TwitterListeningController {
 						DataModel.MainType.Twitter.toString());
 				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 				ontology = this.ontologyService.saveOntology(ontology);
+				
 				// TODO CREATE CLIENT & TOKEN-->THEN SAVE TWITTERLISTEN
+				
 			}
 		}
 		return "redirect:/twitter/scheduledsearch/create";

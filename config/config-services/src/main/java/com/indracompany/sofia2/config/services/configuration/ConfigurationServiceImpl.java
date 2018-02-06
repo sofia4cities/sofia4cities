@@ -104,7 +104,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 			this.configurationRepository.save(oldConfiguration);
 
 		} else {
-			throw new RuntimeException("You cann´t update a Configuration:" + configuration.toString());
+			throw new ConfigServiceException("You cann´t update a Configuration:" + configuration.toString());
 		}
 	}
 

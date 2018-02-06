@@ -87,7 +87,6 @@ public class UserIntegrationTest {
 		type.setEmail("lmgracia@sofia2.com");
 		type.setActive(true);
 		type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
-		type.setDateCreated(Calendar.getInstance().getTime());
 		repository.save(type);
 		Assert.assertTrue(this.repository.count() == 8);
 

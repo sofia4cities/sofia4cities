@@ -127,8 +127,7 @@ public class UserServiceImpl implements UserService {
 			if (!userDb.isActive() && user.isActive())
 				userDb.setDateDeleted(null);
 			userDb.setActive(user.isActive());
-			userDb.setUpdatedAt(new Date());
-			// if(user.getDateDeleted()!=null) userDb.setDateDeleted(user.getDateDeleted());
+			if(user.getDateDeleted()!=null) userDb.setDateDeleted(user.getDateDeleted());
 			userDb.setFullName(user.getFullName());
 			this.userRepository.save(userDb);
 		}
