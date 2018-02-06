@@ -57,15 +57,8 @@ public class OntologyController {
 			if (description.equals(""))
 				description = null;
 		}
-		List<Ontology> ontologies = null;
-
-		if (utils.isAdministrator()) {
-		} else {
-			ontologies = this.ontologyService.getOntologiesWithDescriptionAndIdentification(utils.getUserId(),
+		List<Ontology> ontologies = this.ontologyService.getOntologiesWithDescriptionAndIdentification(utils.getUserId(),
 					identification, description);
-
-		}
-
 		model.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
 	}
