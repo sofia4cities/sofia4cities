@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
@@ -112,22 +113,22 @@ public class UserController {
 	@PostMapping(value = "/create")
 	public String create(@Valid User user, BindingResult bindingResult) { // , RedirectAttributes redirect) {
 
-		if (bindingResult.hasErrors())
-		{
-			log.debug("Some user properties missing");
-			return "/users/create";			
-		}
+	if (bindingResult.hasErrors())
+	{
+		log.debug("Some user properties missing");
+		return "/users/create";			
+	}
 
 		
-		this.userService.createUser(user);
+		try
+		{
+			this.userService.createUser(user);
+		}catch(UserServiceException e)
+		{
+			log.debug("Cannot update user that does not exist");
+			return "redirect:/users/create";
+		}
 		
-			// redirect.addFlashAttribute("globalMessage", "Successfully created user " +
-			// user.getUserId());
-		
-			//log.error("Error creating user:" + e.getMessage());
-			// redirect.addFlashAttribute("globalMessage", "Error creating user " +
-			// user.getUserId());
-			//return "redirect:/users/create";
 		
 		return "redirect:/users/list";
 }

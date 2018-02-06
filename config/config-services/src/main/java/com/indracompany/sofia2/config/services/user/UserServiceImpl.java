@@ -28,6 +28,7 @@ import com.indracompany.sofia2.config.repository.RoleRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.repository.UserTokenRepository;
+import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -105,7 +106,8 @@ public class UserServiceImpl implements UserService {
 		if (!this.userExists(user)) {
 			user.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
 			this.userRepository.save(user);
-		}
+		}else
+			throw new UserServiceException("User already exists in Database");
 	}
 
 	@Override
@@ -130,7 +132,8 @@ public class UserServiceImpl implements UserService {
 			if(user.getDateDeleted()!=null) userDb.setDateDeleted(user.getDateDeleted());
 			userDb.setFullName(user.getFullName());
 			this.userRepository.save(userDb);
-		}
+		}else
+			throw new UserServiceException("Cannot update user that does not exist");
 	}
 
 	@Override
@@ -145,7 +148,8 @@ public class UserServiceImpl implements UserService {
 			user.setDateDeleted(new Date());
 			user.setActive(false);
 			this.userRepository.save(user);
-		}
+		}else
+			throw new UserServiceException("Cannot delete user that does not exist");
 
 	}
 }
