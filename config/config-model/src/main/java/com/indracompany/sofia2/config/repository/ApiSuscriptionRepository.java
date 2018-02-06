@@ -26,5 +26,7 @@ public interface ApiSuscriptionRepository extends JpaRepository<ApiSuscription, 
 	ApiSuscription findById(String id);
 
 	List<ApiSuscription> findAllByApiAndUser(Api api, User user);
+	List<ApiSuscription> findAllByUser(User user);
+	
 
 }

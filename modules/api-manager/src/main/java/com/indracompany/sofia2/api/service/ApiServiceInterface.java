@@ -27,6 +27,10 @@ public interface ApiServiceInterface {
 	public static final String QUERY="$query";
 	public static final String DUMP="DUMP";
 	public static final String BODY="BODY";
+	public static final String METHOD="METHOD";
+	
+	public static final String USER="USER";
+	public static final String API="API";
 	
 	public static final String PATH_INFO="PATH_INFO";
 

@@ -22,19 +22,29 @@ import org.jeasy.rules.annotation.Condition;
 import org.jeasy.rules.annotation.Priority;
 import org.jeasy.rules.annotation.Rule;
 import org.jeasy.rules.api.Facts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
+import com.indracompany.sofia2.api.service.api.ApiManagerService;
+import com.indracompany.sofia2.api.service.api.ApiSecurityService;
+import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.user.UserService;
 
 @Component
 @Rule
-public class IsSqlLikeRule extends DefaultRuleBase {
+public class SecurityRule extends DefaultRuleBase {
+	
+	@Autowired
+	private ApiSecurityService apiSecurityService;
 
 	@Priority
 	public int getPriority() {
-		return 1;
+		return 3;
 	}
 
 	@Condition
@@ -48,22 +58,24 @@ public class IsSqlLikeRule extends DefaultRuleBase {
 
 	@Action
 	public void setFirstDerivedData(Facts facts) {
-		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
-		request.getRequestURI();
-		String query = (String) data.get(ApiServiceInterface.QUERY);
-		String queryType = (String) data.get(ApiServiceInterface.QUERY_TYPE);
 
-		boolean isSQLLIKE = isSQLLIKE(query, queryType);
-
-		data.put(ApiServiceInterface.ISSQLLIKE, isSQLLIKE);
-
-	}
-
-	private boolean isSQLLIKE(String query, String queryType) {
-		if (query != null && query.length() > 0 && queryType != null && queryType.length() > 0) {
-			return queryType.equals("SQLLIKE");
+		User user = (User) data.get(ApiServiceInterface.USER);
+		Api api = (Api) data.get(ApiServiceInterface.API);
+		
+		boolean checkLimit=false;
+		boolean checkUser = apiSecurityService.checkUserApiPermission(api, user);
+		if (checkUser==false) 
+			stopAllNextRules(facts, "User has no permission to use API");
+		
+		else {
+			checkLimit =  apiSecurityService.checkApiLimit(api);
+			if (checkLimit==false)
+				stopAllNextRules(facts, "User API Limit Reached");
 		}
-		return false;
+		
+		
 	}
+
+	
 }

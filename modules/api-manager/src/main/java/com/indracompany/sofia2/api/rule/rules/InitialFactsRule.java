@@ -61,7 +61,7 @@ public class InitialFactsRule {
 
 		headerToken = Optional.ofNullable(headerToken).orElse("");
 		
-
+		String method = request.getMethod();
 		String pathInfo = request.getPathInfo();
 
 		String queryDb = Optional.ofNullable(request.getParameter(ApiServiceInterface.FILTER_PARAM)).orElse("");
@@ -75,6 +75,7 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.FILTER_PARAM, queryDb);
 		data.put(ApiServiceInterface.TARGET_DB_PARAM, targetDb);
 		data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
+		data.put(ApiServiceInterface.METHOD, method);
 
 	}
 }

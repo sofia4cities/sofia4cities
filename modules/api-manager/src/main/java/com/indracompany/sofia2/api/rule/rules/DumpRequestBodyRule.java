@@ -57,12 +57,8 @@ public class DumpRequestBodyRule {
 
 		String body = request.getReader().lines().collect(Collectors.joining());
 
-		JSONParser parser = new JSONParser();
-		JSONObject json = (JSONObject) parser.parse(body);
-		
-		
 
-		data.put(ApiServiceInterface.BODY, json.toJSONString());
+		data.put(ApiServiceInterface.BODY, body);
 
 	}
 }

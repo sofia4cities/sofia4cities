@@ -35,10 +35,13 @@ import com.indracompany.sofia2.api.service.exception.ForbiddenException;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.ApiQueryParameter;
+import com.indracompany.sofia2.config.model.ApiSuscription;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
+import com.indracompany.sofia2.config.repository.ApiSuscriptionRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,9 +55,15 @@ public class ApiManagerService {
 
 	@Autowired
 	private ApiOperationRepository apiOperationRepository;
+	
+	@Autowired
+	private ApiSuscriptionRepository apiSuscriptionRepository;
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private ApiServiceRest apiService;
 
 	/*
 	 * @Autowired ApiSecurityService apiSecurityService;
@@ -95,10 +104,10 @@ public class ApiManagerService {
 
 		// Comprobamos si está disponible --> publicada, deprecada, en desarrollo o
 		// creada y el usuario es propietario
-		boolean disponible = apiSecurityService.checkApiAvailable(api, user);
+		/*boolean disponible = apiSecurityService.checkApiAvailable(api, user);
 		if (!disponible) {
 			throw new ForbiddenException("com.indra.sofia2.api.service.wrongapistatus");
-		}
+		}*/
 		return api;
 	}
 
@@ -187,7 +196,7 @@ public class ApiManagerService {
 		}
 	}
 
-	public ApiOperation getCustomSQL(String pathInfo, Api api) {
+	public ApiOperation getCustomSQL(String pathInfo, Api api, String operation) {
 
 		String apiIdentifier = this.getApiIdentifier(pathInfo);
 
@@ -199,10 +208,16 @@ public class ApiManagerService {
 
 		List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
 
+		String match = apiIdentifier+"_"+operation;
+		
+		if (!opIdentifier.equals("") ) {
+			match+="_"+opIdentifier;
+		}
+		
 		// Se recorren las operaciones de la API, buscando las que coincidan por metodo
 		// HTTP y por Path
 		for (ApiOperation operacion : operaciones) {
-			if (operacion.getId().equals(opIdentifier)) {
+			if (operacion.getIdentification().equals(match)) {
 				return operacion;
 			}
 		}
@@ -318,6 +333,53 @@ public class ApiManagerService {
 		}
 		return buffer.toString();
 	}
+	
+	
+	
+	public List<ApiSuscription> findApiSuscriptions(String identificacionApi, String tokenUsuario) {
+		if (identificacionApi==null){
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.IdentificacionApiRequerido");
+		}
+		if (tokenUsuario==null){
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.TokenUsuarioApiRequerido");
+		}
+		
+		Api api =apiService.findApi(identificacionApi, tokenUsuario);
+		List<ApiSuscription> suscripciones = null;
+		
+		User user = getUsuarioByApiToken(tokenUsuario);
+		suscripciones = apiSuscriptionRepository.findAllByApiAndUser(api, user);
+
+		return suscripciones;
+	}
+	
+	public List<ApiSuscription> findApiSuscripcionesUser(String identificacionUsuario) {
+		List<ApiSuscription> suscripciones = null;
+		
+		
+		if (identificacionUsuario==null){
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.IdentificacionApiRequerido");
+		}
+
+		// Se obtiene el usuario suscriptor
+		User suscriber = userService.getUser(identificacionUsuario);
+		suscripciones = apiSuscriptionRepository.findAllByUser(suscriber);	
+		return suscripciones;
+	}
+	
+	public void createSuscripcion(ApiSuscription suscripcion) {
+		apiSuscriptionRepository.save(suscripcion);
+	}
+
+	public void updateSuscripcion(ApiSuscription suscripcion) {
+		apiSuscriptionRepository.save(suscripcion);
+	}
+
+	public void removeSuscripcionByUserAndAPI(ApiSuscription suscripcion) {
+		apiSuscriptionRepository.delete(suscripcion);
+	}
+	
+	
 
 	/*
 	 * public void checkApiLimit(Api api){ Locale locale =
