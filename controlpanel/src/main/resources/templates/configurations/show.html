@@ -141,7 +141,7 @@
 													
 													
 													<!-- REMOVE TO-DO: caducado -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteConfigurationConfirmation(\'' + 'delete-configuration' + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteConfigurationConfirmation(\'' + ${configuration?.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
@@ -152,10 +152,10 @@
 											</div>											
 										</form>
 										
-										<!-- AUXILIAR FORM TO DELETE USER -->
+										<!-- AUXILIAR FORM TO DELETE CONFIGURATION -->
 										<form id="delete_configuration_form" class="delete-configuration hide"  action=""  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
-											<input type="hidden" name="id" th:value="*{id}"/>
+											<input type="hidden" name="id" th:value="${configuration?.id}"/>
 										</form>
 									</div>									
 								</div>
@@ -200,7 +200,7 @@
 		console.log('deleteUserConfirmation() -> formAction: ' + $('.delete-configuration').attr('action') + ' ID: ' + $('.delete-configuration').attr('userId'));
 		
 		// call configuration Confirm at header.
-		HeaderController.showConfirmDialogUsuario('delete_configuration_form');	
+		HeaderController.showConfirmDialog(configurationId);	
 	}	
 	
 	// MAIN WHEN READY
@@ -225,32 +225,12 @@
 	 
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
-<<<<<<< HEAD
 		// init on load.		
 		showLog ? console.log('SHOW Configuration load()...') : '';		
 	});
 	
 	//]]>
-=======
-		
-		var myTextArea = document.getElementById('ymlConfig');
-		var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-			lineNumbers : true,
-			matchBrackets : true,
-			styleActiveLine : true,
-			theme : "material",
-			mode : "text/x-yaml"
-			
-		});
-		myCodeMirror.setSize("100%", 350);
-	
-	});
-	
-	
 
-	
-		//]]>
->>>>>>> 2c2ae8dc7eb6118b97df12ecdd42933545644b2e
 	</script>	
 	
 	

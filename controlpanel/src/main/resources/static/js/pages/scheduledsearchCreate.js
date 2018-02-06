@@ -1,21 +1,24 @@
+  var ontologyExist=true;
+  var clientExist=true;
+  
 
-var ontologyExist;
-var clientExist
 function submitForm()
 {
 	$('#_checkboxnew').val($('#checkboxnew').is(':checked'));
+  existOntology();
+  existClient();
 	if($('input[name=ontologyId]').val()!="")
 	{
-		if(ontologyExist && clientExist) $('#scheduledsearch_create_form').submit();
+		if(ontologyExist==false && clientExist==false) $('#scheduledsearch_create_form').submit();
 		else
 		{
-			if(ontologyExist) 
+			if(ontologyExist==true) 
 			{
 				hideErrors();
 				$('.alert-generic').show();
 				$('.alert-exists-text').html("Ontology Exists");
 			}
-			if(clientExist)
+			else if(clientExist==true)
 			{ 
 				hideErrors();
 				$('.alert-generic').show();
@@ -33,27 +36,31 @@ function existOntology(){
 		url: "/controlpanel/twitter/scheduledsearch/existontology",
 		type: 'POST',
 		data:identification,
+    async: false,
 		dataType: 'text', 
 		contentType: 'text/plain',
 		mimeType: 'text/plain',
-		success: function(data) { 
-		  ontologyExist=data;
+		success: function(exists) { 
+		  if(exists=="false") ontologyExist=false;
+      else ontologyExist=true;
 		}
 	});
 }
 
 
-function existClient(){
+function existClient(callback){
 	var identification = $('input[name=clientPlatformId]').val();
 	return $.ajax({ 
 		url: "/controlpanel/twitter/scheduledsearch/existclient", 
 		type: 'POST',
 		data: identification,
+    async: false,
 		dataType: 'text', 
 		contentType: 'text/plain',
 		mimeType: 'text/plain',
-		success: function(data) { 
-		  clientExist=data;       
+		success: function(exists) { 
+      if(exists=="false") clientExist=false;
+      else clientExist=true;      
 		}
 	}); 
 }
@@ -385,6 +392,19 @@ var ScheduledSearchController= function()
 		}
 
 	} 
+  // DELETE twitterListening
+  var deleteTwitterListeningConfirmation = function(twitterListeningId){
+    console.log('deletetwitterListeningConfirmation() -> formId: '+ twitterListeningId);
+    
+    
+    // set action and twitterListeningId to the form
+    $('.delete-twitterListening').attr('id',twitterListeningId);
+    $('.delete-twitterListening').attr('action','/controlpanel/twitterListenings/' + twitterListeningId);
+    console.log('deleteconfiugrationConfirmation() -> formAction: ' + $('.delete-twitterListening').attr('action') + ' ID: ' + $('.delete-twitterListening').attr('userId'));
+    
+    // call twitterListening Confirm at header.
+    HeaderController.showtwitterListeningConfirmDialog(twitterListeningId); 
+  }
 
 
 
@@ -408,6 +428,11 @@ var ScheduledSearchController= function()
 			logControl ? console.log(LIB_TITLE + ': go()') : '';  
 			navigateUrl(url); 
 		},
+    // DELETE CONFIG
+    deletetwitterListening: function(twitterListeningId){
+      logControl ? console.log(LIB_TITLE + ': deletetwitterListening()') : ''; 
+      deleteTwitterListeningConfirmation(twitterListeningId);     
+    }
 
 
 	};

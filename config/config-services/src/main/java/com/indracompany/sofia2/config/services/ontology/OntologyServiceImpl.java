@@ -27,6 +27,7 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 @Service
@@ -120,7 +121,10 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public Ontology saveOntology(Ontology ontology) {
-		return this.ontologyRepository.save(ontology);
+		if(this.ontologyRepository.findByIdentification(ontology.getIdentification())==null)
+			return this.ontologyRepository.save(ontology);
+		else
+			throw new OntologyServiceException("Ontology Exists");
 
 	}
 

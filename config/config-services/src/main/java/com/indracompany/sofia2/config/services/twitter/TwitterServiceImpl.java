@@ -162,7 +162,7 @@ public class TwitterServiceImpl implements TwitterService {
 		DataModel dataModelTwitter = this.dataModelRepository.findByName(dataModel).get(0);
 		Ontology ontology = new Ontology();
 		ontology.setIdentification(ontologyId);
-		if (dataModelTwitter.getType().equals(DataModel.MainType.Twitter))
+		if (dataModelTwitter.getType().equals(DataModel.MainType.Twitter.toString()))
 			ontology.setDescription("Ontology created for tweet recollection");
 		ontology.setJsonSchema(dataModelTwitter.getSchema());
 		ontology.setActive(true);

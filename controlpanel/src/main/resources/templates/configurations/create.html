@@ -182,10 +182,13 @@
 													<button th:if="${configuration.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													<!-- UPDATE -->
 													<button th:if="${configuration.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+											
+													<!-- REMOVE  -->
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'ConfigurationsCreateController.deleteConfiguration(\'' + ${configuration?.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 													
+															
 													<!-- RESET -->
 													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
-													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
@@ -195,7 +198,7 @@
 										</form>
 										
 										<!-- AUXILIAR FORM TO DELETE USER -->
-										<form id="delete_user_form" class="delete-user hide"  action=""  method="post">
+										<form id="delete_configuration_form" class="delete-configuration hide"  action=""  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
 											<input type="hidden" name="userId" th:value="*{configuration.id}"/>
 										</form>
