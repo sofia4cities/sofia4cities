@@ -157,7 +157,7 @@
 														<div class="form-group">
 															<label class="" th:text="#{ontology.active} + ':'">Active</label>
 															<div class="mt-checkbox-list">
-																<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline" th:text="#{ontology.active} + '?'">Active Ontology?</div>
+																<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline font-xs" th:text="#{ontology.active} + '?'">Active Ontology?</div>
 																	<input id="active" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
 																	<span></span><!-- needed by styles -->
 																</label>
@@ -168,7 +168,7 @@
 														<div class="form-group">
 															<label class="" th:text="#{ontology.public} + ':'">Public</label>
 															<div class="mt-checkbox-list">
-																<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline" th:text="#{ontology.public} +'?'">Public?</div>
+																<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.public} +'?'">Public?</div>
 																	<input id="public" class="form-control campo_publica"  name="public" type="checkbox" th:field="*{public}" />
 																	<span></span><!-- necesario por estilos. -->
 																</label>
@@ -209,17 +209,17 @@
 																				<div class="col-lg-3 col-md-4 col-xs-12">
 																				<!-- TEMPLATES SELECTOR -->
 																					<div class="mt-element-list">
-																						<div class="mt-list-container list-default ext-1 group"  th:each="datamodel : ${dataModels}" style="padding:0;">
-																							<a data-toggle="collapse" th:href="'#'+${datamodel.id}" aria-expanded="true" class="list-toggle-container">
-																								<div class="list-toggle bg-grey-mint uppercase"> <span th:text="${datamodel.name}">Datamodel</span><span class="badge badge-default pull-right bg-white font-purple bold">2</span></div>
+																						<div class="mt-list-container list-default ext-1 group"  th:each="datamodeltype : ${dataModelTypes}" style="padding:0;">
+																							<a data-toggle="collapse" th:href="'#'+${datamodeltype}" aria-expanded="true" class="list-toggle-container">
+																								<div class="list-toggle bg-grey-mint uppercase"> <span th:text="${datamodeltype}">DatamodelType</span><span class="badge badge-default pull-right bg-white font-purple bold datamodel-number">2</span></div>
 																							</a>
-																							<div class="panel-collapse collapse in" aria-expanded="true"  th:id="${datamodel.id}">
-																								<ul th:id="${datamodel.name}">
-																									<li class="mt-list-item" >
+																							<div class="panel-collapse collapse in" aria-expanded="true"  th:id="${datamodeltype}">
+																								<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}">
+																									<li th:if="${datamodeltype} == ${datamodel.type}" class="mt-list-item datamodel-template" >
 																										<div class="list-item-content" style="padding: 0 15px 0 10px;" th:attr="data-schema=${datamodel.jsonSchema}">
 																											<h3 class="uppercase"><a href="javascript:;" th:text="${datamodel.name}"></a></h3>
-																											<p th:text="${datamodel.description}"></p>
-																											<p th:text="${datamodel.type}"></p>
+																											<p class="text-truncate-sm text-left" th:text="${datamodel.description}"></p>
+																											<p><span class="label label-sm label-primary"><i class="fa fa-tag"></i> <em th:text="${datamodel.type}">type</em></span></p>
 																										</div>
 																									</li>
 																								</ul>

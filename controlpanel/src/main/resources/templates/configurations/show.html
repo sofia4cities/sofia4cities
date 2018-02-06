@@ -189,7 +189,7 @@
 	// REDIRECT
 	function navigateUrl(url){  window.location.href = url;	}
 	
-	// DELETE Configuration
+	// DELETE Configuration 
 	function deleteConfigurationConfirmation(configurationId){
 		console.log('deleteConfigurationConfirmation() -> formId: '+ configurationId);
 		
@@ -216,41 +216,20 @@
             lineNumbers: false,
             matchBrackets: true,
             styleActiveLine: true,
-            theme:"material",          
+            theme:"material"          
         });
 		myCodeMirror.setSize("100%", 350);
 
-		
 	});
 	 
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
-<<<<<<< HEAD
+
 		// init on load.		
 		showLog ? console.log('SHOW Configuration load()...') : '';		
 	});
 	
 	//]]>
-=======
-		
-		var myTextArea = document.getElementById('ymlConfig');
-		var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-			lineNumbers : true,
-			matchBrackets : true,
-			styleActiveLine : true,
-			theme : "material",
-			mode : "text/x-yaml"
-			
-		});
-		myCodeMirror.setSize("100%", 350);
-	
-	});
-	
-	
-
-	
-		//]]>
->>>>>>> 2c2ae8dc7eb6118b97df12ecdd42933545644b2e
 	</script>	
 	
 	
