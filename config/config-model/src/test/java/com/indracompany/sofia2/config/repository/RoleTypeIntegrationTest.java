@@ -55,12 +55,8 @@ public class RoleTypeIntegrationTest {
 
 	@Test
 	public void test1_Count() {
-		Assert.assertTrue(this.repository.count() == 7);
-	}
-
-	@Test
-	public void test2_GetAll() {
-		Assert.assertTrue(this.repository.findAll().size() == 7);
+		Assert.assertTrue(this.repository.findAll().size() == 8);
+		Assert.assertTrue(this.repository.count() == 8);
 	}
 
 	@Test
@@ -70,7 +66,7 @@ public class RoleTypeIntegrationTest {
 
 	@Test
 	public void test4_FindByName() {
-		// Assert.assertTrue(this.repository.findByName("ROLE_ADMINISTRATOR").get(0).getId()==1L);
+		Assert.assertTrue(this.repository.findById("ADMINISTRATOR").getName().equals("ROLE_ADMINISTRATOR"));
 	}
 
 }

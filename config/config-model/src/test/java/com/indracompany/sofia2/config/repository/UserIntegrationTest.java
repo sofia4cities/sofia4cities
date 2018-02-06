@@ -19,7 +19,6 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Assert;
@@ -37,10 +36,6 @@ import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Luis Miguel Gracia
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -64,22 +59,22 @@ public class UserIntegrationTest {
 
 	@Test
 	public void test1_Count() {
-		Assert.assertTrue(this.repository.count() == 7);
+		Assert.assertTrue(this.repository.count() > 6);
 	}
 
 	@Test
 	public void test3_FindUserNoAdmin() {
-		Assert.assertTrue(this.repository.findUsersNoAdmin().size() == 6L);
+		Assert.assertTrue(this.repository.findUsersNoAdmin().size() > 5);
 	}
 
 	@Test
 	public void test4_FindByEmail() {
-		Assert.assertTrue(this.repository.findByEmail("administrator@sofia2.com").size() == 1L);
+		Assert.assertTrue(this.repository.findByEmail("administrator@sofia2.com").size() == 1);
 	}
 
 	@Test
 	public void test5_createAndDeleteUser() {
-		Assert.assertTrue(this.repository.count() == 7);
+		long count = this.repository.count();
 		User type = new User();
 		type.setUserId("lmgracia");
 		type.setPassword("changeIt!");
@@ -88,7 +83,9 @@ public class UserIntegrationTest {
 		type.setActive(true);
 		type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
 		repository.save(type);
-		Assert.assertTrue(this.repository.count() == 8);
+		Assert.assertTrue(this.repository.count() == count + 1);
+		repository.delete(type);
+		Assert.assertTrue(this.repository.count() == count);
 
 	}
 
