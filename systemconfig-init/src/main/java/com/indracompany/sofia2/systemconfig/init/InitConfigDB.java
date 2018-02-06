@@ -905,7 +905,7 @@ public class InitConfigDB {
 				type.setEmail("administrator@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
-			//type.setDateCreated(Calendar.getInstance().getTime());
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -915,7 +915,7 @@ public class InitConfigDB {
 				type.setEmail("collaborator@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
-				//type.setDateCreated(Calendar.getInstance().getTime());
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -925,7 +925,7 @@ public class InitConfigDB {
 				type.setEmail("user@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.USER.toString()));
-				//type.setDateCreated(Calendar.getInstance().getTime());
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -935,7 +935,7 @@ public class InitConfigDB {
 				type.setEmail("analytics@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ANALYTICS.toString()));
-			//	type.setDateCreated(Calendar.getInstance().getTime());
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -945,7 +945,7 @@ public class InitConfigDB {
 				type.setEmail("partner@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.PARTNER.toString()));
-				//type.setDateCreated(Calendar.getInstance().getTime());
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -955,7 +955,7 @@ public class InitConfigDB {
 				type.setEmail("sysadmin@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.SYS_ADMIN.toString()));
-				//type.setDateCreated(Calendar.getInstance().getTime());
+
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -965,7 +965,6 @@ public class InitConfigDB {
 				type.setEmail("operations@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.OPERATIONS.toString()));
-				//type.setDateCreated(Calendar.getInstance().getTime());
 				userCDBRepository.save(type);
 				//
 			} catch (Exception e) {

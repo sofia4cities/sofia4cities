@@ -13,10 +13,38 @@
  */
 package com.indracompany.sofia2.config.services.token;
 
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.repository.TokenRepository;
+import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 
 @Service
 
-public class TokenServiceImpl {
-
+public class TokenServiceImpl implements TokenService{
+	
+	@Autowired
+	TokenRepository tokenRepository;
+	
+	
+	@Override
+	public Token generateTokenForClient(ClientPlatform clientPlatform)
+	{
+		Token token = new Token();
+		if(clientPlatform.getId()!=null)
+		{
+			token.setClientPlatform(clientPlatform);
+			token.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
+			token.setActive(true);
+			if(this.tokenRepository.findByToken(token.getToken())==null)
+				token=this.tokenRepository.save(token);
+			else
+				throw new TokenServiceException("Token with value "+ token.getToken()+" already exists");
+		}
+		return token;
+	}
 }

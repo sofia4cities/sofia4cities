@@ -11,15 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.services.token;
+package com.indracompany.sofia2.config.services.exceptions;
 
-import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.Token;
-import com.indracompany.sofia2.config.model.User;
+public class UserServiceException extends RuntimeException {
 
-public interface TokenService {
-	
-	public Token generateTokenForClient(ClientPlatform clientPlatform);
-	
-
+	public UserServiceException(String message)
+	{
+		super(message);
+	}
 }
