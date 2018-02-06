@@ -46,7 +46,7 @@ public class Token extends AuditableEntityWithUUID {
 	@Setter
 	private ClientPlatform clientPlatform;
 
-	@Column(name = "token", length = 50, unique = true, nullable = false)
+	@Column(name = "TOKEN", length = 50, unique = true, nullable = false)
 	@NotNull
 	@Getter
 	@Setter

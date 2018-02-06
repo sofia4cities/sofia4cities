@@ -52,6 +52,7 @@ import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
@@ -75,6 +76,7 @@ import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepositor
 import com.indracompany.sofia2.config.repository.RoleRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
+import com.indracompany.sofia2.config.repository.UserTokenRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -134,6 +136,9 @@ public class InitConfigDB {
 	ConfigurationRepository configurationRepository;
 	@Autowired
 	ConfigurationTypeRepository configurationTypeRepository;
+	
+	@Autowired
+	UserTokenRepository userTokenRepository;
 
 	@PostConstruct
 	@Test
@@ -171,6 +176,9 @@ public class InitConfigDB {
 		//
 		init_Token();
 		log.info("OK init_Token");
+		
+		init_UserToken();
+		log.info("OK USER_Token");
 		//
 		init_DashboardType();
 		log.info("OK init_DashboardType");
@@ -854,6 +862,31 @@ public class InitConfigDB {
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
 			tokenRepository.save(token);
+		}
+
+	}
+	
+	public void init_UserToken() {
+
+		log.info("init user token");
+		List<UserToken> tokens = this.userTokenRepository.findAll();
+		if (tokens.isEmpty()) {
+			
+			try {
+				Token token = this.tokenRepository.findAll().get(0);
+				User user = this.userCDBRepository.findAll().get(0);
+				UserToken userToken = new UserToken();
+				
+				userToken.setToken(token);
+				userToken.setUser(user);
+				userToken.setCreatedAt(Calendar.getInstance().getTime());
+				
+				
+				userTokenRepository.save(userToken);
+			} catch (Exception e) {
+				log.info("Could not create user token");
+			}
+			
 		}
 
 	}
