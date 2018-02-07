@@ -23,9 +23,17 @@ pipeline {
 	   
 	   stage('Build Artifacts') {
             when {
-                branch 'develop'
+                branch 'feature/testdockerintegration'
             }	   
 	   		steps {
+	   			sh "docker run --name sofiabdc \
+					-e MYSQL_ROOT_PASSWORD='my-secret-pw' \
+					-e MYSQL_USER='indra' \
+					-e MYSQL_PASSWORD='select4cities2018' \
+					-e MYSQL_DATABASE='sofia2_s4c' \
+					-p 3306:3306 \
+					-d mysql/mysql-server || true"
+					
 		    	// Run maven build
 	        	sh "mvn clean install -Dmaven.test.skip=true"
 	   		}
