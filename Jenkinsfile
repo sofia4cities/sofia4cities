@@ -32,7 +32,7 @@ pipeline {
 	   				sh "docker network create --subnet=172.28.0.0/16 datanetwork"
 	   					   				
 	   				sh "docker run --name sofiabdc \
-	   					--network=datanetwork \
+	   					--network datanetwork \
 						-e MYSQL_ROOT_PASSWORD='my-secret-pw' \
 						-e MYSQL_USER='indra' \
 						-e MYSQL_PASSWORD='select4cities2018' \
@@ -41,7 +41,7 @@ pipeline {
 						-d mysql/mysql-server"
 						
 					sh "docker run --name sofiabdtr \
-	   					--network=datanetwork \					
+						--network datanetwork \					
 						-p 27017:27017 \
 						-e MONGO_INITDB_DATABASE='sofia2_s4c' \
 						-d mongo:latest"							 
@@ -49,7 +49,7 @@ pipeline {
 					sleep 10
 					
 					sh "docker run --name quasar \
-	   					--network=datanetwork \					
+						--network datanetwork \					
 						-p 10800:10800 \
 						-d sofia/quasar:latest"
 					
