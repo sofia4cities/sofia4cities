@@ -25,20 +25,17 @@ import org.jeasy.rules.api.Facts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
-import com.indracompany.sofia2.api.service.api.ApiManagerService;
 import com.indracompany.sofia2.api.service.api.ApiSecurityService;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.services.user.UserService;
 
 @Component
 @Rule
 public class SecurityRule extends DefaultRuleBase {
-	
+
 	@Autowired
 	private ApiSecurityService apiSecurityService;
 
@@ -62,20 +59,18 @@ public class SecurityRule extends DefaultRuleBase {
 
 		User user = (User) data.get(ApiServiceInterface.USER);
 		Api api = (Api) data.get(ApiServiceInterface.API);
-		
-		boolean checkLimit=false;
+
+		boolean checkLimit = false;
 		boolean checkUser = apiSecurityService.checkUserApiPermission(api, user);
-		if (checkUser==false) 
+		if (checkUser == false)
 			stopAllNextRules(facts, "User has no permission to use API");
-		
+
 		else {
-			checkLimit =  apiSecurityService.checkApiLimit(api);
-			if (checkLimit==false)
+			checkLimit = apiSecurityService.checkApiLimit(api);
+			if (checkLimit == false)
 				stopAllNextRules(facts, "User API Limit Reached");
 		}
-		
-		
+
 	}
 
-	
 }

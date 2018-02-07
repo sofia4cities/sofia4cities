@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.common.exception.BaseException;
@@ -33,21 +32,25 @@ public class LeaveProcessor implements MessageTypeProcessor {
 
 	@Autowired
 	SecurityPluginManager securityManager;
+
 	@Override
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws BaseException {
-		String sessionKey=message.getSessionKey();
-		
+		String sessionKey = message.getSessionKey();
+
 		securityManager.closeSession(sessionKey);
-		
-//		return sessionKey;
+
+		// return sessionKey;
 		return null;
 	}
+
 	@Override
 	public List<SSAPMessageTypes> getMessageTypes() {
 		return Collections.singletonList(SSAPMessageTypes.LEAVE);
 	}
+
 	@Override
-	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {}
+	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+	}
 
 }
