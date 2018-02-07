@@ -44,10 +44,7 @@ pipeline {
 					
 					sleep 10
 					
-					sh "docker run --name quasar \
-					    --network=datanetwork \					
-						-p 10800:10800 \
-						-d sofia/quasar:latest"
+					sh "docker run --name quasar --network=datanetwork -p 10800:10800 -d sofia/quasar:latest"
 					
 					// Wait until CDB and BDTR are up and running
 					sleep 10
