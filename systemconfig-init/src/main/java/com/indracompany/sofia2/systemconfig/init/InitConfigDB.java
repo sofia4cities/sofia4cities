@@ -908,10 +908,10 @@ public class InitConfigDB {
 				userCDBRepository.save(type);
 				//
 				type = new User();
-				type.setUserId("collaborator");
+				type.setUserId("developer");
 				type.setPassword("changeIt!");
-				type.setFullName("Generic Advanced User of the Platform");
-				type.setEmail("collaborator@sofia2.com");
+				type.setFullName("Developer of the Platform");
+				type.setEmail("developer@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
 
