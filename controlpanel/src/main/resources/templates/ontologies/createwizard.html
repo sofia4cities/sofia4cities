@@ -281,7 +281,7 @@
 																									<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}">
 																										<li th:if="${datamodel.type} == ${datamodeltype}" class="mt-list-item datamodel-template">
 																											<div class="list-item-content" style="padding: 0 15px 0 10px;">
-																												<h3 class="uppercase" onclick="schemaToTable($(this).attr('data-schema'),'datamodel_properties');" th:text="${datamodel.name}" th:attr="data-schema=${datamodel.jsonSchema}"></h3>
+																												<h3 class="uppercase" onclick="schemaToTable(this,'datamodel_properties');" th:text="${datamodel.name}" th:attr="data-schema=${datamodel.jsonSchema}"></h3>
 																												<p th:if="${datamodel.description}" lass="text-truncate-sm text-left" th:text="${datamodel.description}"></p>																												
 																											</div>
 																										</li>																										
@@ -306,21 +306,21 @@
 																							</thead>
 																							<tbody>
 																								<tr class="mountable-model">
-																									<td><input type="text" name="property[]"  readonly="readonly" class="form-control"/></td>
-																									<td><input type="text" name="type[]" readonly="readonly" class="form-control"/></td>
-																									<td>
-																										<select name="required[]" class="form-control">
-																											<option value="required">required</option>
-																											<option value="">optional</option>
-																										</select>
-																									</td>
+																									<td><input type="text" name="property[]"  class="form-control"/></td>
+																									<td><input type="text" name="type[]"  class="form-control"/></td>
+																									<td><input type="text" name="required[]"  class="form-control"/></td>
 																									<td><input type="text" name="description[]" class="form-control"/></td>
 																									<td><button type="button" class="btn btn-default btn-sm btn-outline red-sunglo mountable-remove-line-2">Remove</button></td>
 																								</tr>
 																							</tbody>
 																							<tfoot>
 																								<tr>
-																									<td colspan="5"><button type="button" class="btn btn-sm btn-default green-haze btn-outline" id="button2">Add a new Property</button></td>
+																									<td colspan="5">
+																										<div class="btn-group">
+																											<button type="button" class="btn btn-sm btn-default green-haze btn-outline" id="button2">Add a new Property</button>
+																											<button type="button" class="btn btn-sm btn-default yellow-casablanca btn-outline " id="btn-updateSchema">Update Schema</button>
+																										</div>
+																									</td>
 																								</tr>
 																							</tfoot>
 																						</table>
@@ -446,12 +446,10 @@
 		
 		// Required
 		if ( jsonData.hasOwnProperty('datos') ){ required = jsonData.datos.required; } else { required = jsonData.required;  }
-		console.log('Required: '+ JSON.stringify(required));
-		
+				
 		// Properties
 		if ( jsonData.hasOwnProperty('datos') ){ properties = jsonData.datos.properties; } else { properties = jsonData.properties;  }
-		console.log('Properties: '+ JSON.stringify(properties));
-		
+				
 		// KEY and VALUE (value or object, or array...)
 		$.each( properties, function (key, object){			
 			if (object){
@@ -468,15 +466,24 @@
 				});
 			}
 		});
-		console.log('FORMATTED: ' + JSON.stringify(jsonFormatted));
+		//console.log('FORMATTED: ' + JSON.stringify(jsonFormatted));
 		return jsonFormatted;
 	};
 	
 	
 	// datamodel properties json to HTML
-	function schemaToTable(schema,tableId){
+	var schema = '';
+	function schemaToTable(objschema,tableId){
 		console.log('|---  schemaToTable()...');
+		
 		var data, properties, jsonProperties = '';
+		
+					
+		// highlight current datamodel
+		$('li.mt-list-item.datamodel-template').removeClass('bg-success done');
+		$(objschema).closest('li').addClass('bg-success done');
+		
+		schema = $(objschema).attr('data-schema');
 		
 		if (typeof schema == 'string'){		
 			data = JSON.parse(schema);				
@@ -494,7 +501,8 @@
 			noDebug: false,
 			addLine:{				
 				button: "#button2",					
-				onClick: function (element){console.log('Line added!');
+				onClick: function (element){
+					console.log('Property added!');				
 					return true;
 				}
 			},
@@ -502,13 +510,16 @@
 				button: ".mountable-remove-line-2",
 				onClick: function (element){
 					if (confirm("Are you sure?")){
-						console.log('Line removed!');
+						console.log('Property removed!');
 						return true;
 					}
 				}
-			}
+			}			
 		});
 		$('#template_schema').removeClass('hide');
+		
+		//INIT UPDATE SCHEMA
+		$('#btn-updateSchema').on('click',function(){ updateSchemaProperties(); });
 		
 		
 		// UPDATING JSON EDITOR
@@ -518,6 +529,93 @@
 		editor.setMode("tree");
 	
 	};
+	
+	// getProperties
+	function getProperties(json){			
+		var arrProperties = [];
+			
+		// KEYs
+		$.each( json, function (key, object){						
+			$.each(object, function (key, value){
+				if (value){ if ( key == 'property') { arrProperties.push(value); }}
+			});			
+		});			
+		console.log('|----- getProperties: ' + JSON.stringify(arrProperties));			
+		return arrProperties;	
+	}
+	
+	// getTypes
+	function getTypes(json){					
+		var arrTypes = [];
+						
+		// TYPEs
+		$.each( json, function (key, object){						
+			$.each(object, function (key, value){
+				if (value){ if ( key == 'type'){ arrTypes.push(value); }}
+			});
+		});		
+		console.log('|----- getTypes: ' + JSON.stringify(arrTypes));	
+		return arrTypes;
+	}
+	
+	// getRequired
+	function getRequired(json){		
+		var arrRequired = [];		
+		// REQUIREDs
+		$.each( json, function (key, object){						
+			$.each(object, function (key, value){
+				if (value){ if ( key == 'required'){ if (value == '') { value=','; } arrRequired.push(value); }}
+			});
+		});
+		console.log('|----- getRequired: ' + JSON.stringify(arrRequired));
+		return arrRequired;
+	}
+	
+	// update Schema from additional properties
+	function updateSchemaProperties(){
+	
+		var updateProperties = $("input[name='property\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();
+		
+		var schemaObj = {};
+		
+		console.log('|--- CURRENT: ' + updateProperties + ' types: ' + updateTypes + ' required: ' + updateRequired);
+				
+		// get current schema 
+		if (typeof schema == 'string'){		
+			schemaObj = JSON.parse(schema);				
+			
+		}else if (typeof schema == 'object') { schemaObj = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
+		
+		// compare properties added with properties on current schema
+		baseJson = createJsonProperties(schemaObj);
+		console.log('|----- BASE: ' + JSON.stringify(baseJson));
+		
+		// schema string -> Object --> update --> toString --> to editor.
+		baseArrProperties = getProperties(baseJson);
+		baseArrTypes = getTypes(baseJson);
+		baseArrRequired = getRequired(baseJson);
+		
+		console.log('|--- Base Schema properties: ' + baseArrProperties.toString() + ' types: ' + baseArrTypes.toString() + ' required: ' + baseArrRequired.toString() );
+		
+		//TO-DO: COMPARE BASE WITH CURRENT
+		var toUpdateProperties = [];
+		var i = 0;
+		jQuery.grep(updateProperties, function(el) {
+			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
+				i++;
+			});
+			alert(" the difference is " + toUpdateProperties);
+		
+		
+		
+		//update schema editor
+	
+	
+	}
+	
+	
 	
 	var editor;
 	var aceEditor;
@@ -537,7 +635,7 @@
 		};
 		
 		editor = new jsoneditor.JSONEditor(container, options, "");		
-		console.log('editor' + editor);	
+		
 	});
 	
 	$(document).load(function(){		 
