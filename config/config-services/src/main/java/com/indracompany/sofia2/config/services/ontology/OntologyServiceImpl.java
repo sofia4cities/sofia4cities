@@ -144,5 +144,17 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 		return typesString;
 	}
+	
+	@Override
+	public boolean hasUserPermissionForQuery(String userId, String ontologyIdentification){
+		List<Ontology> ontologies = this.ontologyRepository.findByUserAndOntologyUserAccessAndPermissionsQuery(this.userService.getUser(userId));
+		for(Ontology ontology: ontologies)
+		{
+			if(ontology.getIdentification().equals(ontologyIdentification))
+				return true;
+		}
+		return false;	
+					
+	}
 
 }
