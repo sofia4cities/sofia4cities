@@ -46,8 +46,8 @@ spring:
    ## JPA Config
    datasource:
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
-      username: root
-      password:  
+      username: indra
+      password: select4cities2018 
    jpa:
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       hibernate.ddl-auto: validate
