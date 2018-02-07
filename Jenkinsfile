@@ -25,6 +25,7 @@ pipeline {
             when {
                 branch 'feature/testdockerintegration'
             }	   
+
 	   		steps {	   			
 					
 				// Load Sofia2 CDB and BDTR					
