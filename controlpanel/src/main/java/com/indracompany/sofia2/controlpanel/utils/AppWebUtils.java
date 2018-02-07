@@ -64,7 +64,7 @@ public class AppWebUtils {
 
 	public void addRedirectMessage(String messageKey, RedirectAttributes redirect) {
 		String message = getMessage(messageKey, "Error processing request");
-		redirect.addFlashAttribute("message", "Account not created");
+		redirect.addFlashAttribute("message", message);
 
 	}
 

@@ -113,7 +113,7 @@ public class TwitterListeningController {
 		if(bindingResult.hasErrors() && !newOntology)
 		{
 			log.debug("TwitterListening object has errors");
-			redirect.addFlashAttribute("message", "TwitterListening object has errors");
+			this.utils.addRedirectMessage("twitterlistening.validation.error", redirect);
 			return "redirect:/twitter/scheduledsearch/create";
 		}
 

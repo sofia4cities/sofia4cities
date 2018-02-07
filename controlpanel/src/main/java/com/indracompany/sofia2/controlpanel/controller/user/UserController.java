@@ -88,7 +88,7 @@ public class UserController {
 			RedirectAttributes redirect) {
 		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
-			redirect.addFlashAttribute("message", "Errors in user form");
+			utils.addRedirectMessage("user.validation.error", redirect);
 			return "redirect:/users/update/";
 		}
 
@@ -102,10 +102,10 @@ public class UserController {
 			this.userService.updateUser(user);
 		} catch (UserServiceException e) {
 			log.debug("Cannot update user");
-			redirect.addFlashAttribute("message", "Account not updated");
+			utils.addRedirectMessage("user.update.error", redirect);
 			return "redirect:/users/create";
 		}
-		redirect.addFlashAttribute("message", "Account updated successfully");
+		utils.addRedirectMessage("user.update.success", redirect);
 		return "redirect:/users/show/" + user.getUserId();
 
 	}
@@ -122,12 +122,11 @@ public class UserController {
 			this.userService.createUser(user);
 		} catch (UserServiceException e) {
 			log.debug("Cannot update user that does not exist");
-			redirect.addFlashAttribute("message", "Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
 			return "redirect:/users/create";
 		}
 
-		redirect.addFlashAttribute("message", "Account created successfully");
+		utils.addRedirectMessage("user.create.success", redirect);
 		return "redirect:/users/list";
 	}
 
