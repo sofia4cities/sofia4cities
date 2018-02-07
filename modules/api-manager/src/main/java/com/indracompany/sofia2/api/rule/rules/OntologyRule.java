@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.api.rule.rules;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import org.jeasy.rules.api.Facts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.api.rest.api.dto.ODataDTO;
 import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
@@ -32,6 +35,7 @@ import com.indracompany.sofia2.api.service.api.ApiManagerService;
 import com.indracompany.sofia2.api.service.api.ApiSecurityService;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
+import com.indracompany.sofia2.config.model.ApiQueryParameter;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 
@@ -61,6 +65,7 @@ public class OntologyRule extends DefaultRuleBase {
 	@Action
 	public void setFirstDerivedData(Facts facts) {
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
+		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
 
 		User user = (User) data.get(ApiServiceInterface.USER);
 		Api api = (Api) data.get(ApiServiceInterface.API);
@@ -68,22 +73,84 @@ public class OntologyRule extends DefaultRuleBase {
 		String method = (String) data.get(ApiServiceInterface.METHOD);
 		String body = (String) data.get(ApiServiceInterface.BODY);
 		
+		
 		Ontology ontology = api.getOntology();
 		if (ontology!=null) {
+			data.put(ApiServiceInterface.IS_EXTERNAL_API, false);
+			
 			ApiOperation customSQL = apiManagerService.getCustomSQL(pathInfo, api,method);
 			Boolean isPathQuery = apiManagerService.isPathQuery(pathInfo);
 			
 			// Si la invocacion es un GET con ID
 			if (isPathQuery && customSQL==null) {
+				
 				System.out.println("GET WITH ID");
+				String objectId=apiManagerService.getObjectidFromPathQuery(pathInfo);
+				int index = pathInfo.lastIndexOf(api.getIdentification());
+				String queryPath = api.getEndpoint()+"/"+pathInfo.substring(index+api.getIdentification().length()+1);
+				
+				ODataDTO odata = null;
+				try{
+					odata= new ODataDTO(api.getIdentification(),objectId,queryPath, request.getParameterMap());
+				}catch(Exception e){
+					System.out.println(e);
+				}
+				System.out.println(odata.getQueryMongo());
+				
+				data.put(ApiServiceInterface.ODATA_DTO, odata);
 			}
 			// Si es una invocacion sin ID y no CUSTOM 
 			else if (customSQL==null){
 				System.out.println("GET WITH NO ID AND NO CUSTOM"); 
+				
+				String queryDb = (String) data.get(ApiServiceInterface.FILTER_PARAM);
+				String targetDb = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
+				String formatResult = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
+				
+				//TODO GENERATE QUERY
+				
+				
+				
 			 }
 			// Si es un metodo CUSTOMSQL
 			else {
 				System.out.println("CUSTOM"); 
+				String queryType = (String) data.get(ApiServiceInterface.QUERY_TYPE);
+				
+				// Se recuperan los parametros de los filtros de la operacion
+				String queryDb = "";
+				String targetDb = "";
+				String formatResult="";
+				
+				
+				HashSet<ApiQueryParameter> queryParametersCustomQuery = new HashSet<ApiQueryParameter>();
+				HashMap<String, String> queryParametersValues = new HashMap<String, String>();
+				
+				for (ApiQueryParameter queryparameter : customSQL.getApiqueryparameters()) {
+					String name = queryparameter.getName();
+					String value = queryparameter.getValue();
+					
+					if (matchParameter(name,ApiServiceInterface.QUERY)) queryDb=value;
+					else if (matchParameter(name,ApiServiceInterface.QUERY_TYPE)) queryType=value;
+					else if (matchParameter(name,ApiServiceInterface.TARGET_DB_PARAM)) targetDb=value;
+					else if (matchParameter(name,ApiServiceInterface.FORMAT_RESULT)) formatResult=value;
+					else queryParametersCustomQuery.add(queryparameter);
+					
+				}
+				// Se obtienen todos los parametros definidos en la operacion y se validan
+				queryParametersValues = apiManagerService.getCustomParametersValues(request, queryParametersCustomQuery);
+				
+				// Se parsea la query con los parametros que llegan
+				queryDb = apiManagerService.buildQuery (queryDb, queryParametersValues);	
+				
+				
+				data.put(ApiServiceInterface.QUERY_TYPE, queryType);
+				data.put(ApiServiceInterface.QUERY, queryDb);
+				data.put(ApiServiceInterface.QUERY_TYPE, queryType);
+				data.put(ApiServiceInterface.TARGET_DB_PARAM, targetDb);
+				data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
+				data.put(ApiServiceInterface.API_OPERATION, customSQL);
+				
 			 }
 			
 			
@@ -92,9 +159,16 @@ public class OntologyRule extends DefaultRuleBase {
 			//Guess type of operation!!!
 			
 		}
-		
-		
+		else {
+			data.put(ApiServiceInterface.IS_EXTERNAL_API, true);
+			
+		}
 	}
 
-	
+	private static boolean matchParameter(String name, String match) {
+		String variable = match.replace("$", "");
+		
+		if (name.equalsIgnoreCase(match) || name.equalsIgnoreCase(variable)) return true;
+		else return false;
+	}
 }
