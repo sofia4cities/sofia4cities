@@ -28,8 +28,11 @@ pipeline {
 	   		steps {	   			
 					
 				// Load Sofia2 CDB and BDTR					
-	   			dir("${env.SYSTEMCONFIG}") {	   				
+	   			dir("${env.SYSTEMCONFIG}") {
+	   				sh "docker network create --subnet=172.28.0.0/16 datanetwork"
+	   					   				
 	   				sh "docker run --name sofiabdc \
+	   					--network=datanetwork \
 						-e MYSQL_ROOT_PASSWORD='my-secret-pw' \
 						-e MYSQL_USER='indra' \
 						-e MYSQL_PASSWORD='select4cities2018' \
@@ -38,6 +41,7 @@ pipeline {
 						-d mysql/mysql-server"
 						
 					sh "docker run --name sofiabdtr \
+	   					--network=datanetwork \					
 						-p 27017:27017 \
 						-e MONGO_INITDB_DATABASE='sofia2_s4c' \
 						-d mongo:latest"							 
@@ -45,6 +49,7 @@ pipeline {
 					sleep 10
 					
 					sh "docker run --name quasar \
+	   					--network=datanetwork \					
 						-p 10800:10800 \
 						-d sofia/quasar:latest"
 					
@@ -74,7 +79,9 @@ pipeline {
         	sh "docker rm sofiabdtr || true"
         	
         	sh "docker stop quasar || true"
-        	sh "docker rm quasar || true"          	        	
+        	sh "docker rm quasar || true"      
+        	
+        	sh "docker network rm datanetwork || true"    	        	
         	
         	echo "Removing orphan volumes"
         	sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"
