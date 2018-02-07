@@ -42,7 +42,7 @@ pipeline {
 						-e MONGO_INITDB_DATABASE='sofia2_s4c' \
 						-d mongo:latest"							 
 					
-					sleep 5
+					sleep 10
 					
 					sh "docker run --name quasar \
 						-p 10800:10800 \
