@@ -21,6 +21,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -59,6 +60,12 @@ public class AppWebUtils {
 		if (getRole().equals(ADMINISTRATOR))
 			return true;
 		return false;
+	}
+
+	public void addRedirectMessage(String messageKey, RedirectAttributes redirect) {
+		String message = getMessage(messageKey, "Error processing request");
+		redirect.addFlashAttribute("message", "Account not created");
+
 	}
 
 	public String getMessage(String key, String valueDefault) {

@@ -65,4 +65,6 @@ public interface BasicOpsDBRepository {
 
 	public long count(String ontology) throws DBPersistenceException;
 
+	public long countNative(String collectionName, String query) throws DBPersistenceException;
+
 }

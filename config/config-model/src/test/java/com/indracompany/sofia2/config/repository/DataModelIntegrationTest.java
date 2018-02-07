@@ -68,7 +68,7 @@ public class DataModelIntegrationTest {
 
 	@Test
 	public void test4_FindByType() {
-		Assert.assertTrue(this.repository.findByType("0").size() == 1L);
+		Assert.assertTrue(this.repository.findByType("IoT").size() > 1L);
 	}
 
 }

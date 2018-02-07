@@ -47,15 +47,36 @@ public class UtilMongoDB {
 			throw new DBPersistenceException(new Exception("No found collection in query"));
 		}
 	}
-	
+
 	/**
-	 * add {} into the String representing the JSON if not has 
+	 * add {} into the String representing the JSON if not has
 	 * 
 	 * @param query
 	 * @return
 	 */
+	public String prepareQuotes4find(String ontology, String query) {
+		String result = query.trim();
+		result = result.toLowerCase().replace("db." + ontology.toLowerCase() + ".find()", "{}");
+		result = result.toLowerCase().replace("db." + ontology.toLowerCase() + ".find({})", "{}");
+		String sI = "db." + ontology.toLowerCase() + ".find(";
+		int i = result.toLowerCase().indexOf(sI);
+		if (i != -1) {
+			result = result.replace(sI, "");
+			result = result.replace(")", "");
+		}
+		// newChar)
+		if (!result.startsWith("{")) {
+			StringBuffer resultObj = new StringBuffer(result);
+			resultObj.insert(0, "{");
+			resultObj.append("}");
+			result = resultObj.toString();
+		}
+		return result;
+	}
+
 	public String prepareQuotes(String query) {
 		String result = query.trim();
+		// newChar)
 		if (!result.startsWith("{")) {
 			StringBuffer resultObj = new StringBuffer(result);
 			resultObj.insert(0, "{");
@@ -84,7 +105,7 @@ public class UtilMongoDB {
 
 		return query;
 	}
-	
+
 	public String getParentProperties(Map<String, Object> elements, Map<String, Object> schema) {
 		for (Entry<String, Object> jsonElement : elements.entrySet()) {
 			if (jsonElement.getValue() instanceof LinkedHashMap) {
@@ -97,7 +118,7 @@ public class UtilMongoDB {
 					if (refObjet != null) {
 						Map<String, Object> refObjectMap = (Map<String, Object>) refObjet;
 						Map<String, Object> properties = (Map<String, Object>) refObjectMap.get("properties");
-						if (null!=properties && properties.containsKey("geometry")) {
+						if (null != properties && properties.containsKey("geometry")) {
 							Map<String, Object> geometry = (Map<String, Object>) properties.get("geometry");
 							if (geometry.containsKey("properties")) {
 								Map<String, Object> propertiesGeometry = (Map<String, Object>) geometry
@@ -108,8 +129,7 @@ public class UtilMongoDB {
 									Map<String, Object> coordinates = (Map<String, Object>) propertiesGeometry
 											.get("coordinates");
 									if (type.containsKey("enum") && coordinates.containsKey("type")) {
-										log.debug("DEBUG.END",
-												"getParentProperties");
+										log.debug("DEBUG.END", "getParentProperties");
 										return jsonElement.getKey();
 									}
 								}
@@ -125,7 +145,7 @@ public class UtilMongoDB {
 		}
 		return "";
 	}
-	
+
 	public String prepareEsquema(String esquemajson) {
 		String esquemajsonAux = esquemajson;
 		if (esquemajsonAux != null && esquemajsonAux.length() > 0) {
@@ -140,7 +160,7 @@ public class UtilMongoDB {
 		}
 		return esquemajsonAux;
 	}
-	
+
 	public String getOntologyFromNativeQuery(String query) {
 		String ontology = "";
 		// .find or .count or .distinct or .aggregate
@@ -161,7 +181,7 @@ public class UtilMongoDB {
 		}
 		return ontology;
 	}
-	
+
 	public boolean isNativeQuery(String query) {
 		boolean isNative = true;
 		if ((query.indexOf('.') == -1 || query.toLowerCase().indexOf(".find") == -1
@@ -209,19 +229,17 @@ public class UtilMongoDB {
 		}
 		return pInsert;
 	}
-	
 
 	public ContextData buildMinimalContextData() {
 		ContextData contextData = new ContextData();
 		contextData.setTimezoneId(CalendarAdapter.getServerTimezoneId());
 		return contextData;
 	}
-	
 
 	public <T> Collection<T> toJavaCollection(MongoIterable<T> iterable) {
 		return toJavaList(iterable);
 	}
-	
+
 	public <T> List<T> toJavaList(MongoIterable<T> iterable) {
 		List<T> result = new ArrayList<T>();
 		iterable.into(result);
@@ -235,19 +253,19 @@ public class UtilMongoDB {
 		}
 		return result;
 	}
-	
+
 	public String getObjectIdString(ObjectId id) {
 		String strId;
-		
-		strId = "{\"_id\":{ \"$oid\":\""  +id.toString() + "\"}}";
-//		if(ThreadLocalProperties.jsonMode.get() == true) {
-//			strId = "{\"_id\":{ \"$oid\":\""  +id.toString() + "\"}}";
-//		}
-//		else {
-//			strId = "{\"_id\":ObjectId(\"" + id.toString() + "\")}";
-//		}
-		
+
+		strId = "{\"_id\":{ \"$oid\":\"" + id.toString() + "\"}}";
+		// if(ThreadLocalProperties.jsonMode.get() == true) {
+		// strId = "{\"_id\":{ \"$oid\":\"" +id.toString() + "\"}}";
+		// }
+		// else {
+		// strId = "{\"_id\":ObjectId(\"" + id.toString() + "\")}";
+		// }
+
 		return strId;
 	}
-	
+
 }

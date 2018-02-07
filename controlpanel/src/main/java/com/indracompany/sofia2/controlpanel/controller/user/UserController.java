@@ -24,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -85,13 +84,12 @@ public class UserController {
 	}
 
 	@PutMapping(value = "/update/{id}")
-	public String update(@PathVariable("id") String id, @Valid User user,
-			BindingResult bindingResult, RedirectAttributes redirect) {
-		if (bindingResult.hasErrors())
-		{
+	public String update(@PathVariable("id") String id, @Valid User user, BindingResult bindingResult,
+			RedirectAttributes redirect) {
+		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
 			redirect.addFlashAttribute("message", "Errors in user form");
-			return "redirect:/users/update/";		
+			return "redirect:/users/update/";
 		}
 
 		if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
@@ -100,7 +98,7 @@ public class UserController {
 		if (!utils.isAdministrator())
 			user.setRole(this.userService.getUserRole(this.utils.getRole()));
 
-		try{
+		try {
 			this.userService.updateUser(user);
 		} catch (UserServiceException e) {
 			log.debug("Cannot update user");
@@ -115,30 +113,23 @@ public class UserController {
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/create")
 	public String create(@Valid User user, BindingResult bindingResult, RedirectAttributes redirect) {
-
-		if (bindingResult.hasErrors())
-		{
+		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
-			redirect.addFlashAttribute("message", "Account not created");
-			return "redirect:/users/create";			
+			utils.addRedirectMessage("user.create.error", redirect);
+			return "redirect:/users/create";
 		}
-
-
-		try
-		{
+		try {
 			this.userService.createUser(user);
-		}catch(UserServiceException e)
-		{
+		} catch (UserServiceException e) {
 			log.debug("Cannot update user that does not exist");
+			redirect.addFlashAttribute("message", "Cannot update user that does not exist");
+			utils.addRedirectMessage("user.create.error", redirect);
 			return "redirect:/users/create";
 		}
 
 		redirect.addFlashAttribute("message", "Account created successfully");
 		return "redirect:/users/list";
 	}
-
-
-
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/list", produces = "text/html")
