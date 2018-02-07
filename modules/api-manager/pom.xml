@@ -10,7 +10,7 @@
 		<relativePath>../..</relativePath>
 	</parent>
 	<groupId>com.indracompany.sofia2</groupId>
-	<artifactId>api-manager</artifactId>
+	<artifactId>sofia2-api-manager</artifactId>
 	<packaging>jar</packaging>
 
 	<name>sofia2-api-manager</name>
