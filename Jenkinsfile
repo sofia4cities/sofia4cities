@@ -40,9 +40,7 @@ pipeline {
 						-p 3306:3306 \
 						-d mysql/mysql-server"
 						
-					sh "docker run --name sofiabdtr \				
-						-p 27017:27017 --network=datanetwork -e MONGO_INITDB_DATABASE='sofia2_s4c' \
-						-d mongo:latest"							 
+					sh "docker run --name sofiabdtr -p 27017:27017 --network=datanetwork -e MONGO_INITDB_DATABASE='sofia2_s4c' -d mongo:latest"							 
 					
 					sleep 10
 					
