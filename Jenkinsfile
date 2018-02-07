@@ -27,7 +27,7 @@ pipeline {
             }	   
 	   		steps {	   			
 					
-				// Load Sofia CDB					
+				// Load Sofia2 CDB and BDTR					
 	   			dir("${env.SYSTEMCONFIG}") {	   				
 	   				sh "docker run --name sofiabdc \
 						-e MYSQL_ROOT_PASSWORD='my-secret-pw' \
@@ -35,9 +35,14 @@ pipeline {
 						-e MYSQL_PASSWORD='select4cities2018' \
 						-e MYSQL_DATABASE='sofia2_s4c' \
 						-p 3306:3306 \
-						-d mysql/mysql-server"	 
+						-d mysql/mysql-server"
+						
+					sh "docker run --name sofiabdtr \
+						-p 27017:27017 \
+						-e MONGO_INITDB_DATABASE='sofia2_s4c' 
+						-d mongo:latest"							 
 					
-					// Wait until CDB 
+					// Wait until CDB and BDTR are up and running
 					sleep 10
 						
 					sh "mvn spring-boot:run"	  			
@@ -58,6 +63,9 @@ pipeline {
         	echo 'Stopping Docker containers...'
         	sh "docker stop sofiabdc || true"
         	sh "docker rm sofiabdc || true"
+        	
+        	sh "docker stop sofiabdtr || true"
+        	sh "docker rm sofiabdtr || true"        	
         	
         	echo "Removing orphan volumes"
         	sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"
