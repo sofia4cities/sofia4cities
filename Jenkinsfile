@@ -68,7 +68,7 @@ pipeline {
         	echo 'Stopping Docker containers...'
         	sh "docker stop sofiabdc || true"
         	sh "docker rm sofiabdc || true"
-        	
+
         	sh "docker stop sofiabdtr || true"
         	sh "docker rm sofiabdtr || true"
         	
@@ -79,6 +79,7 @@ pipeline {
         	
         	echo "Removing orphan volumes"
         	sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"
+
         }   
 	    success {
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
