@@ -39,7 +39,7 @@ pipeline {
 						
 					sh "docker run --name sofiabdtr \
 						-p 27017:27017 \
-						-e MONGO_INITDB_DATABASE='sofia2_s4c' 
+						-e MONGO_INITDB_DATABASE='sofia2_s4c' \
 						-d mongo:latest"							 
 					
 					// Wait until CDB and BDTR are up and running
