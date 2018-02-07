@@ -33,7 +33,7 @@ pipeline {
 	   				sh "docker network create --subnet=172.28.0.0/16 datanetwork"
 
 	   				sh "docker run --name sofiabdc \
-	   					--network=datanetwork \
+	   					--network datanetwork \
 						-e MYSQL_ROOT_PASSWORD='my-secret-pw' \
 						-e MYSQL_USER='indra' \
 						-e MYSQL_PASSWORD='select4cities2018' \
