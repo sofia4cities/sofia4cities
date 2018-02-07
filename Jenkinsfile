@@ -31,7 +31,8 @@ pipeline {
 	   			dir("${env.SYSTEMCONFIG}") {
 	   				sh "docker network create --subnet=172.28.0.0/16 datanetwork"
 	   					   				
-	   				sh "docker run --name sofiabdc --network=datanetwork \
+	   				sh "docker run --name sofiabdc \
+	   				    --network=datanetwork \
 						-e MYSQL_ROOT_PASSWORD='my-secret-pw' \
 						-e MYSQL_USER='indra' \
 						-e MYSQL_PASSWORD='select4cities2018' \
@@ -39,14 +40,16 @@ pipeline {
 						-p 3306:3306 \
 						-d mysql/mysql-server"
 						
-					sh "docker run --name sofiabdtr --network=datanetwork \				
+					sh "docker run --name sofiabdtr \				
 						-p 27017:27017 \
+						--network=datanetwork \
 						-e MONGO_INITDB_DATABASE='sofia2_s4c' \
 						-d mongo:latest"							 
 					
 					sleep 10
 					
-					sh "docker run --name quasar --network=datanetwork \					
+					sh "docker run --name quasar \
+					    --network=datanetwork \					
 						-p 10800:10800 \
 						-d sofia/quasar:latest"
 					
