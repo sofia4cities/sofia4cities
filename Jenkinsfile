@@ -36,6 +36,9 @@ pipeline {
 						-e MYSQL_DATABASE='sofia2_s4c' \
 						-p 3306:3306 \
 						-d mysql/mysql-server"	 
+					
+					// Wait until CDB 
+					sleep 10
 						
 					sh "mvn spring-boot:run"	  			
 	   			}					
