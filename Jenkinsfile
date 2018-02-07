@@ -51,7 +51,7 @@ pipeline {
         	sh "docker rm sofiabdc || true"
         	
         	echo "Removing orphan volumes"
-        	sh "docker volume rm $(docker volume ls -qf dangling=true) || true"
+        	sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"
         }   
 	    success {
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
