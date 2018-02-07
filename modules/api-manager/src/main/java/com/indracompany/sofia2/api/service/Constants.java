@@ -27,5 +27,9 @@ public final class Constants {
 	public static final String API_TIPO_NUMBER = "NUMBER";
 	public static final String API_TIPO_DATE = "DATE";
 	public static final String API_TIPO_BINARY = "BINARY";
+	
+	public static final String API_STATE_CREATED = "CREATED";
+	public static final String API_STATE_PUBLISHED = "PUBLISHED";
+	public static final String API_STATE_DELETED = "DELETED";
 
 }
