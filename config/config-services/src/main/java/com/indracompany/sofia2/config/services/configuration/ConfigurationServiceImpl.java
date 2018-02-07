@@ -29,6 +29,7 @@ import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Configuration.Environment;
 import com.indracompany.sofia2.config.model.ConfigurationType;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.config.services.exceptions.ConfigServiceException;
@@ -154,7 +155,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
 		return this.configurationRepository.findByConfigurationType(confType);
 	}
-
+	
+	@Override
+	public List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId, User user){
+		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
+		return this.configurationRepository.findByConfigurationTypeAndUser(confType,user);
+	}
 	@Override
 	public Configuration getConfiguration(ConfigurationType.Type configurationTypeId, String environment,
 			String suffix) {
