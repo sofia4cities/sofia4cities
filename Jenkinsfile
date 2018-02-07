@@ -42,6 +42,12 @@ pipeline {
 						-e MONGO_INITDB_DATABASE='sofia2_s4c' \
 						-d mongo:latest"							 
 					
+					sleep 5
+					
+					sh "docker run --name quasar \
+						-p 10800:10800 \
+						-d sofia/quasar:latest"
+					
 					// Wait until CDB and BDTR are up and running
 					sleep 10
 						
@@ -65,7 +71,10 @@ pipeline {
         	sh "docker rm sofiabdc || true"
         	
         	sh "docker stop sofiabdtr || true"
-        	sh "docker rm sofiabdtr || true"        	
+        	sh "docker rm sofiabdtr || true"
+        	
+        	sh "docker stop quasar || true"
+        	sh "docker rm quasar || true"          	        	
         	
         	echo "Removing orphan volumes"
         	sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"
