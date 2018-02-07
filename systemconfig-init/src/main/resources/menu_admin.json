@@ -63,6 +63,14 @@
 				},
 				{
 					"title": {
+						"EN": "My DeviceTwins",
+						"ES": "Mis DeviceTwings"
+					},
+					"icon": "",
+					"url": "/controlpanel/devicetwins/list"
+				},
+				{
+					"title": {
 						"EN": "Status",
 						"ES": "Estado"
 					},
