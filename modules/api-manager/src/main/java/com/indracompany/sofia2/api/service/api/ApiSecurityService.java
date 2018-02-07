@@ -20,22 +20,51 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.services.user.UserService;
 
+
+//TODO Implement
 @Service
 public class ApiSecurityService {
 
 	@Autowired
 	ApiManagerService apiManagerService;
+	@Autowired
+	private UserService userService;
 	
+	public static boolean isAdmin(final User usuario) {
+		return usuario.getRole().getId().equalsIgnoreCase("ADMINISTRATOR");
+	}
+	
+	public static boolean isCol(final User usuario) {
+		return usuario.getRole().getId().equalsIgnoreCase("COLLABORATOR");
+	}
+	
+	public static boolean isUser(final User usuario) {
+		return usuario.getRole().getId().equalsIgnoreCase("USER");
+	}
+	
+	public User getUser(String userId) {
+		return userService.getUser(userId);
+	}
+	
+	public User getUserByApiToken(String token) {
+		return userService.getUserByToken(token);
+	}
+
+	public UserToken getUserToken(User userId) {
+		return this.userService.getUserToken(userId);
+	}
 	
 	public  boolean authorized(Api api, String tokenUsuario, String roleName) {
-		User user = apiManagerService.getUsuarioByApiToken(tokenUsuario);
+		User user = getUserByApiToken(tokenUsuario);
 		Role role = user.getRole();
 		return role.getId().equalsIgnoreCase(roleName);
 	}
 	
 	public boolean authorized(Api api, String tokenUsuario) {
-		User user = apiManagerService.getUsuarioByApiToken(tokenUsuario);
+		User user = getUserByApiToken(tokenUsuario);
 		return true;
 	}
 	
