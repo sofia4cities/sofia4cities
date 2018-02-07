@@ -43,7 +43,7 @@ pipeline {
 					sh "docker run --name sofiabdtr -p 27017:27017 --network=datanetwork -e MONGO_INITDB_DATABASE='sofia2_s4c' -d mongo:latest"							 
 					
 					sleep 10
-					
+
 					sh "docker run --name quasar --network=datanetwork -p 10800:10800 -d sofia/quasar:latest"
 
 					// Wait until CDB and BDTR are up and running
@@ -77,7 +77,10 @@ pipeline {
         	sh "docker network rm datanetwork || true"    	        	
         	
         	sh "docker stop sofiabdtr || true"
-        	sh "docker rm sofiabdtr || true"        	
+        	sh "docker rm sofiabdtr || true"
+        	
+        	sh "docker stop quasar || true"
+        	sh "docker rm quasar || true"          	        	
         	
         	echo "Removing orphan volumes"
         	sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"
