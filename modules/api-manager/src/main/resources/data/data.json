@@ -126,10 +126,11 @@
          "path":"/",
          "queryParams":[
             {
-               "headerType":"path",
+               "headerType":"body",
                "description":"",
-               "name":"id",
-               "dataType":"string"
+               "name":"body",
+               "dataType":"string",
+               "value":"#/definitions/String"
             }
          ]
       },

@@ -199,16 +199,15 @@ public class ApiManagerService {
 		return null;
 	}
 
-	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request,
-			HashSet<ApiQueryParameter> queryParametersCustomQuery) {
+	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request, String body, HashSet<ApiQueryParameter> queryParametersCustomQuery) {
 
 		HashMap<String, String> customqueryparametersvalues = new HashMap<String, String>();
 		for (ApiQueryParameter customqueryparameter : queryParametersCustomQuery) {
 			String paramvalue = request.getParameter(customqueryparameter.getName());
 			if (paramvalue == null) {
-				// No se encuentra el valor del parametro configurado en la operacion en la
-				// peticion
-				throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
+				if (customqueryparameter.getHeaderType().equalsIgnoreCase(Constants.API_TIPO_BODY)) {
+					paramvalue = body;
+				}
 			} else {
 				// Se comprueba que el valor es del tipo definido en la operacion
 				if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_DATE)) {
