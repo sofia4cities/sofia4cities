@@ -50,6 +50,13 @@
 					<p th:text="#{login.logout}">You have been logged out.</p>
 				</div>
 				
+				<div th:if="${message} != null ? true" class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+					<p th:text="${message}">messages</p>
+				</div>
+				
+				
+				
 				<form class="cd-form" th:action="@{/login}" method="post" >
 					<!-- <p class="fieldset">
 						<label class="image-replace cd-email" for="signin-email">E-mail</label>
@@ -85,11 +92,6 @@
 
 			<div id="cd-signup"> <!-- sign up form -->
 		
-				<div th:if="${param.errorRegister}" class="alert alert-warning alert-dismissable">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-					<p th:text="#{login.errorRegister}">Invalid username and passworddddddddddddddddddddddd.</p>
-				</div>
-								
 				<form class="cd-form" th:action="@{/users/register}" th:object= "${users}"  method="post">
 				
 					<p class="fieldset">
