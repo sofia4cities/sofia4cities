@@ -77,7 +77,7 @@ public class QueryToolController {
 					String[] splitLimit = query.split("limit");
 					limit=Integer.parseInt(splitLimit[1].replaceAll("[();]", ""));
 				}
-				return queryToolService.queryNativeAsJson(ontologyIdentification, query, 0, limit);
+				return queryToolService.queryNativeAsJson(ontologyIdentification, query, 0, limit).replace("\\\"", "'").replace("\"","");
 			}else{
 				return utils.getMessage("querytool.querytype.notselected", "{'message' : 'Please select queryType Native or SQL'}");				
 			}

@@ -35,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Configuration;
+import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -71,8 +72,10 @@ public class TwitterListeningController {
 	@Autowired
 	UserService userService;
 
+	
+	//SCHEDULED SEARCH BEGIN METHODS
 	@GetMapping("/scheduledsearch/list")
-	public String list(Model model) {
+	public String listListenings(Model model) {
 		model.addAttribute("twitterListenings", this.twitterService.getAllListeningsByUser(utils.getUserId()));
 		return "/twitter/scheduledsearch/list";
 	}
@@ -168,6 +171,19 @@ public class TwitterListeningController {
 		return this.twitterService.getTokensFromClient(clientPlatformId);
 	}
 
+
+	@PostMapping("/scheduledsearch/existontology")
+	public @ResponseBody boolean existOntology(@RequestBody String identification) {
+		return this.twitterService.existOntology(identification);
+	}
+
+	@PostMapping("/scheduledsearch/existclient")
+	public @ResponseBody boolean existClient(@RequestBody String identification) {
+		return this.twitterService.existClientPlatform(identification);
+	}
+	
+	
+
 	public void loadOntologiesAndConfigurations(Model model) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		List<Ontology> ontologies = new ArrayList<Ontology>();
@@ -186,14 +202,21 @@ public class TwitterListeningController {
 		model.addAttribute("ontologies", ontologies);
 
 	}
-
-	@PostMapping("/scheduledsearch/existontology")
-	public @ResponseBody boolean existOntology(@RequestBody String identification) {
-		return this.twitterService.existOntology(identification);
+	
+	//SCHEDULED SEARCH BEGIN END
+	
+	@GetMapping("/configurations/list")
+	public String listConfigurations(Model model) {
+		List<Configuration> configurations = this.configurationService.getConfigurations(
+				ConfigurationType.Type.TwitterConfiguration, 
+				this.userService.getUser(this.utils.getUserId()));
+		model.addAttribute("configurations",configurations);
+		return "/configurations/list";
 	}
+	
 
-	@PostMapping("/scheduledsearch/existclient")
-	public @ResponseBody boolean existClient(@RequestBody String identification) {
-		return this.twitterService.existClientPlatform(identification);
+	public void populateFormData(Model model) {
+		model.addAttribute("configurationTypes", ConfigurationType.Type.TwitterConfiguration);
+		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
 	}
 }
