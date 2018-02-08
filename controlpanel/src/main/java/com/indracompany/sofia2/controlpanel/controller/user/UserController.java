@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.indracompany.sofia2.config.model.User;
@@ -215,4 +216,35 @@ public void populateFormData(Model model) {
 	model.addAttribute("roleTypes", this.userService.getAllRoles());
 }
 
+	@RequestMapping(value = "/register" ,  method = RequestMethod.POST)
+	public String registerUserLogin(@ModelAttribute User user)
+	{
+		//TODO: DateCreated it is necessary (we already have createdAt field)
+		//TODO: We need to send Email. Is there a library to do it?
+		System.out.println("En UserController:");
+		System.out.println("-------------------- \n userID:"+ user.getUserId() +"\t Pass "+user.getPassword()+"\n Full Name: "+ user.getFullName()+ "\n email "+ user.getEmail() +"\nactive "+ user.isActive() +"\n---------------------------\n");
+
+		if(user!=null)
+		{
+			System.out.println("user not null");
+			if(user.getUserId() != null && user.getPassword() != null && user.getFullName() != null && user.getEmail() != null && user.isActive() == true )
+			{	
+				if (this.userService.registerUser(user)) {
+					log.debug("User created");
+					System.out.println("\ncreeeeeeeea");//return "redirect:/main";
+				}
+				log.debug("This user already exist");
+				System.out.println("\n1");
+				return "redirect:/login?error";
+				//return "redirect:/login?errorRegister";
+								
+			}
+		}
+		
+		//return "redirect:/main";
+		System.out.println("\n3");
+		// ok return "redirect:/login?error"; 
+		return "redirect:/login?errorRegister";
+		
+	}
 }

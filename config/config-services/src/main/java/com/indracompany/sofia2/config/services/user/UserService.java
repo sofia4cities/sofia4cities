@@ -36,5 +36,6 @@ public interface UserService {
 	public void updateUser(User user);
 	public Role getUserRole(String role);
 	public void deleteUser(String userId);
+	public boolean registerUser(User user);
 
 }

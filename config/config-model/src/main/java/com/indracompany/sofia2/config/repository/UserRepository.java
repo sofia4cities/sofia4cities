@@ -26,6 +26,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
@@ -49,4 +50,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 	List<User> findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(@Param("userId") String userId,
 			@Param("fullName") String fullName, @Param("email") String email, @Param("role") String role,
 			@Param("active") boolean active);
+	
+
 }
