@@ -12,7 +12,7 @@ pipeline {
       // Base sources path 
       SYSTEMCONFIG = 'systemconfig-init' 
       DOCKERCONFIG = 'docker'   
-
+	  BRANCHNAME = 'feature/testdockerintegration'	
    }
    
    triggers {
@@ -24,7 +24,7 @@ pipeline {
 	   
 	   stage('Build Artifacts') {
             when {
-                branch 'feature/testdockerintegration'
+                branch "${env.BRANCHNAME}"
             }
 
 	   		steps {	   			
@@ -62,23 +62,17 @@ pipeline {
         	echo 'Clean up workspace...'
         	deleteDir()       		
         }   
-	    success {
-            when {
-                branch 'feature/testdockerintegration'
-            }	    
+	    success {	    
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
 	        mail from: 'plataformasofia2@gmail.com',
-	             to: 'mmoran@minsait.com',
+	             to: 'lmgracia@minsait.com, jjmorenoa@minsait.com, mmoran@minsait.com',
 	             subject: "La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${currentBuild.fullDisplayName}",
 	             body: "La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${env.BUILD_URL}"
 	    }
-	    failure {
-            when {
-                branch 'feature/testdockerintegration'
-            }	    
+	    failure {   
 	    	echo "El pipeline: '${currentBuild.fullDisplayName}' ha fallado: '${env.BUILD_URL}' se procede a enviar notificación por correo"
 	        mail from: 'plataformasofia2@gmail.com',
-	             to: 'mmoran@minsait.com',
+	             to: 'lmgracia@minsait.com, jjmorenoa@minsait.com, mmoran@minsait.com',
 	             subject: "Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities: ${currentBuild.fullDisplayName}",
 	             body: "Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities. id del Build: ${env.BUILD_URL}"	    
 	    }

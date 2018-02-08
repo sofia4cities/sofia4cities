@@ -30,7 +30,7 @@ services:
     networks:
      - datanetwork
     ports:
-     - "10800:10800"
+     - "18200:10800"
     depends_on:
      - "sofiabdtr"
      - "sofiabdc"         
