@@ -12,7 +12,7 @@ pipeline {
       // Base sources path 
       SYSTEMCONFIG = 'systemconfig-init' 
       DOCKERCONFIG = 'docker'   
-	  BRANCHNAME = 'feature/testdockerintegration'	
+	  BRANCHNAME = 'develop'	
    }
    
    triggers {
