@@ -2,7 +2,12 @@ pipeline {
    
    // Execute the Pipeline, or stage, on any available agent	
    agent { node { label 'sofia2master' } }
-   
+
+   options { 
+   	  buildDiscarder(logRotator(numToKeepStr:'1'))
+      disableConcurrentBuilds()
+   }
+      
    tools { 
    	  maven 'maven'
    	  jdk 'java8'
