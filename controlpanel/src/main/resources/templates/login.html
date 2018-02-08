@@ -39,7 +39,7 @@
 			</ul>
 
 			<div id="cd-login"> <!-- log in form -->			
-					
+				
 				<div th:if="${param.error}" class="alert alert-warning alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
 					<p th:text="#{login.error}">Invalid username and password.</p>
@@ -49,6 +49,12 @@
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
 					<p th:text="#{login.logout}">You have been logged out.</p>
 				</div>
+				
+				<div th:if="${message} != null ? true" class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+					<p th:text="${message}">messages</p>
+				</div>
+				
 				
 				
 				<form class="cd-form" th:action="@{/login}" method="post" >
@@ -85,36 +91,43 @@
 			</div> <!-- cd-login -->
 
 			<div id="cd-signup"> <!-- sign up form -->
-				<form class="cd-form"  >
+		
+				<form class="cd-form" th:action="@{/users/register}" th:object= "${users}"  method="post">
+				
 					<p class="fieldset">
 						<label class="image-replace cd-username" for="signup-username">Username</label>
-						<input class="full-width has-padding has-border" id="usernameup" name="usernameup" type="text" placeholder="Username"/>
-						<span class="cd-error-message">Error message here!</span>
+						<input class="full-width has-padding has-border" id="usernameup" th:field="*{userId}" name="usernameup" type="text" placeholder="Username" th:required="true"/>
+						<span class="cd-error-message">Invalid Username</span>
+						
 					</p>
-
-					<p class="fieldset hide ">
-						<label class="image-replace cd-email" for="signup-email">E-mail</label>
-						<input class="full-width has-padding has-border" id="signup-email" type="email" placeholder="E-mail"/>
-						<span class="cd-error-message">Error message here!</span>
-					</p>
-
+					
 					<p class="fieldset">
 						<label class="image-replace cd-password" for="signup-password">Password</label>
-						<input class="full-width has-padding has-border" id="passwordup" name="passwordup" type="text"  placeholder="Password"/>
+						<input class="full-width has-padding has-border" id="passwordup" th:field="*{password}" name="passwordup" type="text"  placeholder="Password" th:required="true"/>
 						<a href="#0" class="hide-password">Hide</a>
-						<span class="cd-error-message">Error message here!</span>
+						<span class="cd-error-message">Error with password</span>
 					</p>
-
+					
 					<p class="fieldset">
-						<input type="checkbox" id="accept-terms"/>
+						<label class="image-replace cd-username" for="signup-name">Name</label>
+						<input class="full-width has-padding has-border" id="signup-name" th:field="*{fullName}" name="nameup" type="text" placeholder="Name" th:required="true"/>
+						<span class="cd-error-message">Error with Name</span>
+					</p>
+					
+					<p class="fieldset">
+						<label class="image-replace cd-email" for="signup-email">E-mail</label>
+						<input class="full-width has-padding has-border" id="signup-email" th:field="*{email}" name ="emailup" type="email" placeholder="E-mail" th:required="true"/>
+						<span class="cd-error-message">Invalid email</span>
+					</p>
+					
+					<p class="fieldset">
+						<input type="checkbox" id="accept-terms" th:field="*{active}" name="active" th:required="true"/>
 						<label for="accept-terms">I agree to the <a href="#0">Terms</a></label>
 					</p>
-
 					<p class="fieldset">
 						<input class="full-width has-padding" type="submit" value="Create account"/>
 					</p>
 				</form>
-
 				<!-- <a href="#0" class="cd-close-form">Close</a> -->
 			</div> <!-- cd-signup -->
 
@@ -165,6 +178,7 @@
 		color: "#FFFFFF"
 		});
 		timer = setTimeout(function(){ $('.cd-signin').trigger('click'); }, 1250);
+		$('.cd-password').trigger('click');
 	};
 	</script>
 </body>

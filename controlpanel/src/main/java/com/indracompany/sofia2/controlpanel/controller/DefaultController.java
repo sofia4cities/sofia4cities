@@ -15,8 +15,10 @@ package com.indracompany.sofia2.controlpanel.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 @Controller
@@ -39,7 +41,8 @@ public class DefaultController {
 	}
 
 	@GetMapping("/login")
-	public String login() {
+	public String login(Model model) {
+		model.addAttribute("users", new User());
 		return "/login";
 	}
 

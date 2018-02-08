@@ -24,10 +24,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -210,4 +212,27 @@ public class UserController {
 		model.addAttribute("roleTypes", this.userService.getAllRoles());
 	}
 
+	@RequestMapping(value = "/register" ,  method = RequestMethod.POST)
+	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes)
+	{
+		if(user!=null)
+		{
+			
+			if(user.getUserId() != null && user.getPassword() != null && user.getFullName() != null && user.getEmail() != null && user.isActive() == true )
+			{	
+				if (this.userService.registerUser(user)) {
+					log.debug("User created from login");
+					utils.addRedirectMessage("login.register.created", redirectAttributes);
+					return "redirect:/login";
+				}
+				log.debug("This user already exist");
+				utils.addRedirectMessage("login.error.register", redirectAttributes);
+				return "redirect:/login";
+								
+			}
+		}
+		
+		return "redirect:/login?errorRegister";
+		
+	}
 }
