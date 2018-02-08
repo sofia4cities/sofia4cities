@@ -60,7 +60,7 @@ pipeline {
 			}        
 			
         	echo 'Clean up workspace...'
-        	deleteDir()
+        	deleteDir()       		
         }   
 	    success {
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
