@@ -74,7 +74,7 @@ pipeline {
 	        mail from: 'plataformasofia2@gmail.com',
 	             to: 'mmoran@minsait.com',
 	             subject: "Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities: ${currentBuild.fullDisplayName}",
-	             body: "Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities. id del Build: ${env.BUILD_URL}"	    
+	             body: "${env.BUILD_LOG, maxLines=9999, escapeHtml=false}"	    
 	    }
    }      
 }
