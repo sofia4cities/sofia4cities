@@ -334,14 +334,14 @@ public class InitConfigDB {
 			log.info("No clients ...");
 			ClientPlatform client = new ClientPlatform();
 			client.setId("1");
-			client.setUser(getUserCollaborator());
+			client.setUser(getUserDeveloper());
 			client.setIdentification("Client-MasterData");
 			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
 			client.setDescription("ClientPatform created as MasterData");
 			clientPlatformRepository.save(client);
 			client = new ClientPlatform();
 			client.setId("2");
-			client.setUser(getUserCollaborator());
+			client.setUser(getUserDeveloper());
 			client.setIdentification("GTKP-Example");
 			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
 			client.setDescription("ClientPatform created as Example");
@@ -410,16 +410,16 @@ public class InitConfigDB {
 			Dashboard dashboard = new Dashboard();
 			dashboard.setId("1");
 			dashboard.setModel("Model Dashboard Master");
-			dashboard.setUser(getUserCollaborator());
+			dashboard.setUser(getUserDeveloper());
 			dashboard.setName("Dashboard Master");
 			dashboard.setDashboardType(this.dashboardTypeRepository.findAll().get(0));
 			dashboardRepository.save(dashboard);
 		}
 	}
 
-	private User getUserCollaborator() {
+	private User getUserDeveloper() {
 		if (userCollaborator == null)
-			userCollaborator = this.userCDBRepository.findByUserId("collaborator");
+			userCollaborator = this.userCDBRepository.findByUserId("developer");
 		return userCollaborator;
 	}
 
@@ -438,7 +438,7 @@ public class InitConfigDB {
 			DashboardType dashboardType = new DashboardType();
 			dashboardType.setId(1);
 			dashboardType.setModel("Modelo 1");
-			dashboardType.setUser(getUserCollaborator());
+			dashboardType.setUser(getUserDeveloper());
 			dashboardType.setPublic(true);
 			dashboardType.setType("Tipo de modelo 1");
 			dashboardTypeRepository.save(dashboardType);
@@ -530,7 +530,7 @@ public class InitConfigDB {
 			GadgetDataModel gadgetDM = new GadgetDataModel();
 			gadgetDM.setIdentification("1");
 			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
-			gadgetDM.setUser(getUserCollaborator());
+			gadgetDM.setUser(getUserDeveloper());
 			gadgetDM.setPublic(true);
 			gadgetDataModelRepository.save(gadgetDM);
 		}
@@ -551,7 +551,7 @@ public class InitConfigDB {
 				log.info("No gadgets ...");
 				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUser(getUserCollaborator());
+				gadget.setUser(getUserDeveloper());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
@@ -580,7 +580,7 @@ public class InitConfigDB {
 				log.info("No gadgets ...");
 				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUser(getUserCollaborator());
+				gadget.setUser(getUserDeveloper());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
@@ -603,7 +603,7 @@ public class InitConfigDB {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
 			gadget.setDbType("RTDB");
-			gadget.setUser(getUserCollaborator());
+			gadget.setUser(getUserDeveloper());
 			gadget.setPublic(true);
 			gadget.setName("Gadget Example");
 			gadget.setType("Type 1");
@@ -680,7 +680,7 @@ public class InitConfigDB {
 			OntologyEmulator oe = new OntologyEmulator();
 			oe.setMeasures("2.5,3.4,4.5");
 			oe.setIdentification("Id 1");
-			oe.setUser(getUserCollaborator());
+			oe.setUser(getUserDeveloper());
 			oe.setInsertEvery(5);
 			Ontology o = this.ontologyRepository.findAll().get(0);
 			if (o == null) {
@@ -716,7 +716,7 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
-			ontology.setUser(getUserCollaborator());
+			ontology.setUser(getUserDeveloper());
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -728,7 +728,7 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
-			ontology.setUser(getUserCollaborator());
+			ontology.setUser(getUserDeveloper());
 			ontologyRepository.save(ontology);
 
 		}
