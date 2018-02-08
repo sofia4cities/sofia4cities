@@ -24,7 +24,6 @@ pipeline {
 	   
 	   stage('Build Artifacts') {
             when {
-            	beforeAgent true
                 branch 'feature/testdockerintegration'
             }
 
