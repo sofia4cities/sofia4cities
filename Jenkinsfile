@@ -63,6 +63,9 @@ pipeline {
         	deleteDir()       		
         }   
 	    success {
+            when {
+                branch 'feature/testdockerintegration'
+            }	    
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
 	        mail from: 'plataformasofia2@gmail.com',
 	             to: 'mmoran@minsait.com',
@@ -70,11 +73,14 @@ pipeline {
 	             body: "La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${env.BUILD_URL}"
 	    }
 	    failure {
+            when {
+                branch 'feature/testdockerintegration'
+            }	    
 	    	echo "El pipeline: '${currentBuild.fullDisplayName}' ha fallado: '${env.BUILD_URL}' se procede a enviar notificación por correo"
 	        mail from: 'plataformasofia2@gmail.com',
 	             to: 'mmoran@minsait.com',
 	             subject: "Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities: ${currentBuild.fullDisplayName}",
-	             body: "${env.BUILD_LOG, maxLines=9999, escapeHtml=false}"	    
+	             body: "Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities. id del Build: ${env.BUILD_URL}"	    
 	    }
    }      
 }
