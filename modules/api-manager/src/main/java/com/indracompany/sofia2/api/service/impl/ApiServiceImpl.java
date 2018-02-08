@@ -40,6 +40,12 @@ import com.indracompany.sofia2.api.service.exception.ForbiddenException;
 import com.indracompany.sofia2.api.service.exporter.ExportToCsv;
 import com.indracompany.sofia2.api.service.exporter.ExportToExcel;
 import com.indracompany.sofia2.api.service.exporter.ExportToXml;
+import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.SSAPMessageDirection;
+import com.indracompany.sofia2.ssap.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
 
 @Service
 public class ApiServiceImpl extends ApiManagerService implements ApiServiceInterface {
@@ -68,9 +74,16 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
 		
-		
-		
 		System.out.println(hashPP(data));
+		
+		
+	/*	SSAPMessage<SSAPBodyOperationMessage> message = new SSAPMessage<>();
+		
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.QUERY);
+		SSAPBodyOperationMessage body = new SSAPBodyOperationMessage();
+		body.setQuery(query);
+		message.setBody(body);*/
 		
 		sendResponse(response, HttpServletResponse.SC_OK, hashPP(data),null,null);
 

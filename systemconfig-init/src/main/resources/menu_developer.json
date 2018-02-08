@@ -1,6 +1,6 @@
 {
 	"menu": "Sofia4Cities",
-	"rol": "ROLE_COLLABORATOR",
+	"rol": "ROLE_DEVELOPER",
 	"noSession": "/console/login",
 	"navigation": [
 		{

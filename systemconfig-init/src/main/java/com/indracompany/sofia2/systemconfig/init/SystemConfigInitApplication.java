@@ -25,5 +25,6 @@ public class SystemConfigInitApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SystemConfigInitApplication.class, args);
+		System.exit(0);
 	}
 }

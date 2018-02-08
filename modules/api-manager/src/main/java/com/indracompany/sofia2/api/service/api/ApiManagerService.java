@@ -55,26 +55,6 @@ public class ApiManagerService {
 	@Autowired
 	private ApiOperationRepository apiOperationRepository;
 	
-	@Autowired
-	private ApiSuscriptionRepository apiSuscriptionRepository;
-
-	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private ApiServiceRest apiService;
-
-	/*
-	 * @Autowired ApiSecurityService apiSecurityService;
-	 */
-
-	public User getUser(String userId) {
-		return userService.getUser(userId);
-	}
-
-	public UserToken getUserToken(User userId) {
-		return this.userService.getUserToken(userId);
-	}
 
 	public ApiRepository getApiRepository() {
 		return apiRepository;
@@ -176,10 +156,6 @@ public class ApiManagerService {
 		return api.get(0);
 	}
 
-	public User getUsuarioByApiToken(String headerToken) throws ForbiddenException {
-		User user = userService.getUserByToken(headerToken);
-		return user;
-	}
 
 	public boolean isPathQuery(String pathInfo) {
 
@@ -223,16 +199,15 @@ public class ApiManagerService {
 		return null;
 	}
 
-	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request,
-			HashSet<ApiQueryParameter> queryParametersCustomQuery) {
+	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request, String body, HashSet<ApiQueryParameter> queryParametersCustomQuery) {
 
 		HashMap<String, String> customqueryparametersvalues = new HashMap<String, String>();
 		for (ApiQueryParameter customqueryparameter : queryParametersCustomQuery) {
 			String paramvalue = request.getParameter(customqueryparameter.getName());
 			if (paramvalue == null) {
-				// No se encuentra el valor del parametro configurado en la operacion en la
-				// peticion
-				throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
+				if (customqueryparameter.getHeaderType().equalsIgnoreCase(Constants.API_TIPO_BODY)) {
+					paramvalue = body;
+				}
 			} else {
 				// Se comprueba que el valor es del tipo definido en la operacion
 				if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_DATE)) {
@@ -337,65 +312,10 @@ public class ApiManagerService {
 		return buffer.toString();
 	}
 	
+	//TODO ALLL
 	public String prepareOntologiaQuery(String ontologiaRecurso, String sqlQuery){
 		return "";
 	}
 	
-	
-	
-	public List<ApiSuscription> findApiSuscriptions(String identificacionApi, String tokenUsuario) {
-		if (identificacionApi==null){
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.IdentificacionApiRequerido");
-		}
-		if (tokenUsuario==null){
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.TokenUsuarioApiRequerido");
-		}
-		
-		Api api =apiService.findApi(identificacionApi, tokenUsuario);
-		List<ApiSuscription> suscripciones = null;
-		
-		User user = getUsuarioByApiToken(tokenUsuario);
-		suscripciones = apiSuscriptionRepository.findAllByApiAndUser(api, user);
-
-		return suscripciones;
-	}
-	
-	public List<ApiSuscription> findApiSuscripcionesUser(String identificacionUsuario) {
-		List<ApiSuscription> suscripciones = null;
-		
-		
-		if (identificacionUsuario==null){
-			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.IdentificacionApiRequerido");
-		}
-
-		// Se obtiene el usuario suscriptor
-		User suscriber = userService.getUser(identificacionUsuario);
-		suscripciones = apiSuscriptionRepository.findAllByUser(suscriber);	
-		return suscripciones;
-	}
-	
-	public void createSuscripcion(ApiSuscription suscripcion) {
-		apiSuscriptionRepository.save(suscripcion);
-	}
-
-	public void updateSuscripcion(ApiSuscription suscripcion) {
-		apiSuscriptionRepository.save(suscripcion);
-	}
-
-	public void removeSuscripcionByUserAndAPI(ApiSuscription suscripcion) {
-		apiSuscriptionRepository.delete(suscripcion);
-	}
-	
-	
-
-	/*
-	 * public void checkApiLimit(Api api){ Locale locale =
-	 * LocaleContextHolder.getLocale(); if(cacheApiLimitService.isLimit(api)){
-	 * Integer timeLeft=cacheApiLimitService.getApiLimitTimeoutLeft(api.getId());
-	 * LogService.getLogI18n(this.getClass()).debug("ApiService.debug.peticiones",
-	 * api.getEndpoint(), cacheApiLimitService.getApiRequestsNumber(api.getId()));
-	 * throw new ApiLimitException(log.getMensaje(locale,
-	 * "com.indra.sofia2.api.service.apilimit",timeLeft)); } }
-	 */
 
 }
