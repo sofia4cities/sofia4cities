@@ -11,16 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.service.api;
+package com.indracompany.sofia2.config.services.exceptions;
 
-import com.indracompany.sofia2.config.model.Api;
-import com.indracompany.sofia2.config.model.User;
+public class OntologyServiceException extends RuntimeException {
 
-public class apiSecurityService {
-
-	public static boolean checkApiAvailable(Api api, User user) {
-		// TODO Auto-generated method stub
-		return false;
+	public OntologyServiceException(String message) {
+		super(message);
 	}
-
 }

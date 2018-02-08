@@ -16,9 +16,12 @@ package com.indracompany.sofia2.controlpanel.controller.twitter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,19 +31,30 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
+import com.indracompany.sofia2.config.services.exceptions.ClientPlatformServiceException;
+import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
+import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.twitter.TwitterService;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.controlpanel.controller.user.UserController;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/twitter")
+@Slf4j
 public class TwitterListeningController {
 
 	@Autowired
@@ -51,20 +65,22 @@ public class TwitterListeningController {
 	OntologyService ontologyService;
 	@Autowired
 	ConfigurationService configurationService;
+	@Autowired
+	ClientPlatformService clientPlatformService;
 
 	@Autowired
 	UserService userService;
 
 	@GetMapping("/scheduledsearch/list")
 	public String list(Model model) {
-		model.addAttribute("twitterListens", this.twitterService.getAllListeningsByUser(utils.getUserId()));
-		return "redirect:/main";
+		model.addAttribute("twitterListenings", this.twitterService.getAllListeningsByUser(utils.getUserId()));
+		return "/twitter/scheduledsearch/list";
 	}
 
 	@GetMapping("/scheduledsearch/create")
 	public String createForm(Model model) {
 		this.loadOntologiesAndConfigurations(model);
-		model.addAttribute("twitterListen", new TwitterListening());
+		model.addAttribute("twitterListening", new TwitterListening());
 		return "/twitter/scheduledsearch/create";
 	}
 
@@ -74,7 +90,7 @@ public class TwitterListeningController {
 		TwitterListening = this.twitterService.getListenById(id);
 		if (TwitterListening == null)
 			TwitterListening = new TwitterListening();
-		model.addAttribute("twitterListen", TwitterListening);
+		model.addAttribute("twitterListening", TwitterListening);
 		this.loadOntologiesAndConfigurations(model);
 		return "/twitter/scheduledsearch/create";
 	}
@@ -88,26 +104,58 @@ public class TwitterListeningController {
 	}
 
 	@PostMapping("/scheduledsearch/create")
-	public String create(Model model, @ModelAttribute TwitterListening twitterListening,
+	public String create(Model model, @Valid TwitterListening twitterListening,
+			BindingResult bindingResult, RedirectAttributes redirect,
 			@RequestParam("_new") Boolean newOntology,
 			@RequestParam(value = "ontologyId", required = false) String ontologyId,
 			@RequestParam(value = "clientPlatformId", required = false) String clientPlatformId) {
-		if (twitterListening != null) {
-			if (!newOntology) {
-				if (twitterListening.getUser() == null)
-					twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
-				this.twitterService.createListening(twitterListening);
-			} else {
+
+		if(bindingResult.hasErrors() && !newOntology)
+		{
+			log.debug("TwitterListening object has errors");
+			this.utils.addRedirectMessage("twitterlistening.validation.error", redirect);
+			return "redirect:/twitter/scheduledsearch/create";
+		}
+
+		if (!newOntology) {
+			if (twitterListening.getUser() == null)
+				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
+			this.twitterService.createListening(twitterListening);
+		} else {
+
+			try{
 				Ontology ontology = this.twitterService.createTwitterOntology(ontologyId,
 						DataModel.MainType.Twitter.toString());
 				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 				ontology = this.ontologyService.saveOntology(ontology);
-				
-				// TODO CREATE CLIENT & TOKEN-->THEN SAVE TWITTERLISTEN
-				
+
+				ArrayList<Ontology> ontologies = new ArrayList<Ontology>();
+				ontologies.add(ontology);				
+
+				ClientPlatform client= new ClientPlatform();
+				client.setUser(this.userService.getUser(utils.getUserId()));
+				client.setIdentification(clientPlatformId);
+
+				Token token = this.clientPlatformService.createClientAndToken(ontologies, client);
+
+				twitterListening.setOntology(ontology);
+				twitterListening.setToken(token);
+				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
+				this.twitterService.createListening(twitterListening);
+			}catch (RuntimeException e)
+			{
+				if(e instanceof OntologyServiceException)
+					log.debug("Error creating ontology");
+				if(e instanceof ClientPlatformServiceException)
+					log.debug("Error creating platform client");
+				if(e instanceof TokenServiceException)
+					log.debug("Error generating token");
+				e.printStackTrace();
 			}
+
 		}
-		return "redirect:/twitter/scheduledsearch/create";
+		return "redirect:/twitter/scheduledsearch/list";
+
 	}
 
 	@PostMapping("/scheduledsearch/getclients")

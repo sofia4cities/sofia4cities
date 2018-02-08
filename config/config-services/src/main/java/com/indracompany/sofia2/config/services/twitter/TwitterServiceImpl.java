@@ -30,7 +30,6 @@ import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
-import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.TwitterListeningRepository;
@@ -82,11 +81,11 @@ public class TwitterServiceImpl implements TwitterService {
 	@Override
 	public List<Configuration> getConfigurationsByUserId(String userId) {
 		List<Configuration> configurationsByUser = new ArrayList<Configuration>();
-		for(Configuration configuration: this.getAllConfigurations())
-		{
-			if(configuration.getUser().getUserId().equals(userId)) configurationsByUser.add(configuration);
+		for (Configuration configuration : this.getAllConfigurations()) {
+			if (configuration.getUser().getUserId().equals(userId))
+				configurationsByUser.add(configuration);
 		}
-		
+
 		return configurationsByUser;
 
 	}
@@ -113,22 +112,22 @@ public class TwitterServiceImpl implements TwitterService {
 
 	@Override
 	public void createListening(TwitterListening twitterListening) {
-		if(twitterListening.getOntology().getId()==null)
-			twitterListening.setOntology(this.ontologyService.getOntologyByIdentification(twitterListening.getOntology().getIdentification()));
-		if(twitterListening.getToken().getId()==null)
+		if (twitterListening.getOntology().getId() == null)
+			twitterListening.setOntology(this.ontologyService
+					.getOntologyByIdentification(twitterListening.getOntology().getIdentification()));
+		if (twitterListening.getToken().getId() == null)
 			twitterListening.setToken(this.tokenRepository.findByToken(twitterListening.getToken().getToken()));
-		if(twitterListening.getConfiguration().getId()==null)
-			twitterListening.setConfiguration(this.configurationService.getConfigurationByDescription(twitterListening.getConfiguration().getDescription()));
+		if (twitterListening.getConfiguration().getId() == null)
+			twitterListening.setConfiguration(this.configurationService
+					.getConfigurationByDescription(twitterListening.getConfiguration().getDescription()));
 		this.twitterListeningRepository.save(twitterListening);
 	}
 
 	@Override
 
-	public void updateListen(TwitterListening twitterListening)
-	{
-		TwitterListening newTwitterListening=this.twitterListeningRepository.findById(twitterListening.getId());
-		if(newTwitterListening!=null)
-		{
+	public void updateListen(TwitterListening twitterListening) {
+		TwitterListening newTwitterListening = this.twitterListeningRepository.findById(twitterListening.getId());
+		if (newTwitterListening != null) {
 			newTwitterListening.setIdentificator(twitterListening.getIdentificator());
 			newTwitterListening.setConfiguration(this.configurationService
 					.getConfigurationByDescription(twitterListening.getConfiguration().getDescription()));
@@ -162,7 +161,7 @@ public class TwitterServiceImpl implements TwitterService {
 		DataModel dataModelTwitter = this.dataModelRepository.findByName(dataModel).get(0);
 		Ontology ontology = new Ontology();
 		ontology.setIdentification(ontologyId);
-		if (dataModelTwitter.getType().equals(DataModel.MainType.Twitter))
+		if (dataModelTwitter.getType().equals(DataModel.MainType.Twitter.toString()))
 			ontology.setDescription("Ontology created for tweet recollection");
 		ontology.setJsonSchema(dataModelTwitter.getSchema());
 		ontology.setActive(true);

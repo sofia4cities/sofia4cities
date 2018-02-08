@@ -22,6 +22,7 @@ import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Configuration.Environment;
 import com.indracompany.sofia2.config.model.ConfigurationType;
+import com.indracompany.sofia2.config.model.User;
 
 public interface ConfigurationService {
 
@@ -34,6 +35,8 @@ public interface ConfigurationService {
 	Configuration getConfiguration(String id);
 
 	List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId);
+	
+	List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId, User user);
 
 	Configuration getConfiguration(ConfigurationType.Type configurationType, String environment, String suffix);
 

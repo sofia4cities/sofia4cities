@@ -57,7 +57,7 @@ public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvi
 		}
 
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
+		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getId()));
 		Authentication auth = new UsernamePasswordAuthenticationToken(name, password, grantedAuthorities);
 		return auth;
 	}

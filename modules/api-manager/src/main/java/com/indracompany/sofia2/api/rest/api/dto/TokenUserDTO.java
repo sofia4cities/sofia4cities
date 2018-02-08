@@ -11,22 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.rest.api;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 
-import org.springframework.stereotype.Service;
+package com.indracompany.sofia2.api.rest.api.dto;
 
-@Path("/sayHello")
-@Service
-public interface HelloService {
+public class TokenUserDTO {
+	private String userIdentification;
+	private String token;
+	public String getUserIdentification() {
+		return userIdentification;
+	}
+	public void setUserIdentification(String userIdentification) {
+		this.userIdentification = userIdentification;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
 
-    @GET
-    @Path("/{a}")
-    @Produces(MediaType.TEXT_PLAIN)
-    String sayHello(@PathParam("a") String a);
 
+	
 }

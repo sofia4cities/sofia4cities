@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
@@ -81,9 +82,10 @@ public class ConfigurationController {
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping("/create")
-	public String create(@Valid Configuration configuration, BindingResult bindingResult) {
+	public String create(@Valid Configuration configuration, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
-			log.debug("Missing fields");
+			this.utils.addRedirectMessage("configuration.validation.error", redirectAttributes);
+			log.debug("Missing fields");			
 			return "redirect:/configurations/create";
 		}
 		this.configurationService.createConfiguration(configuration);

@@ -175,7 +175,7 @@
 															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateCreated} + ':'">Created At</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-calendar-o"></i>
-																<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{dateCreated}" class="form-control datetime no-remove"  th:readonly="*{dateCreated}" th:placeholder="#{user.dateCreated}"/>
+																<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{createdAt}" class="form-control datetime no-remove"  th:readonly="*{createdAt}" th:placeholder="#{user.dateCreated}"/>
 															</div>
 														</div>
 													</div>
@@ -184,7 +184,8 @@
 															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
 															<div class="input-icon ">
 																<i class="fa fa-calendar-o"></i>
-																<input id="datedeleted" type="text" maxlength="50" th:field="*{dateDeleted}" class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
+																<!-- th:field="*{dateDeleted}" -->
+																<input id="datedeleted" type="text" maxlength="50"  class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
 															</div>
 														</div>
 													</div>
@@ -273,7 +274,7 @@
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"actionMode" : [[${user.userId}]],
-		"dateCreated" : [[${user.dateCreated}]],				
+		"dateCreated" : [[${user.createdAt}]],				
 		"dateDeleted" : [[${user.dateDeleted}]],
 	};
 						

@@ -50,7 +50,7 @@ public class IsSqlLikeRule extends DefaultRuleBase {
 	public void setFirstDerivedData(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
-
+		request.getRequestURI();
 		String query = (String) data.get(ApiServiceInterface.QUERY);
 		String queryType = (String) data.get(ApiServiceInterface.QUERY_TYPE);
 

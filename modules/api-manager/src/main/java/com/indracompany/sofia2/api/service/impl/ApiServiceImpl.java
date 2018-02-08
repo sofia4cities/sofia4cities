@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -39,6 +40,12 @@ import com.indracompany.sofia2.api.service.exception.ForbiddenException;
 import com.indracompany.sofia2.api.service.exporter.ExportToCsv;
 import com.indracompany.sofia2.api.service.exporter.ExportToExcel;
 import com.indracompany.sofia2.api.service.exporter.ExportToXml;
+import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.SSAPMessageDirection;
+import com.indracompany.sofia2.ssap.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
 
 @Service
 public class ApiServiceImpl extends ApiManagerService implements ApiServiceInterface {
@@ -67,10 +74,18 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
 		
-		System.out.println((String)data.get(ApiServiceInterface.DUMP));
-		System.out.println((String)data.get(ApiServiceInterface.BODY));
+		System.out.println(hashPP(data));
 		
-		sendResponse(response, HttpServletResponse.SC_OK, (String)data.get(ApiServiceInterface.DUMP),null,null);
+		
+	/*	SSAPMessage<SSAPBodyOperationMessage> message = new SSAPMessage<>();
+		
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.QUERY);
+		SSAPBodyOperationMessage body = new SSAPBodyOperationMessage();
+		body.setQuery(query);
+		message.setBody(body);*/
+		
+		sendResponse(response, HttpServletResponse.SC_OK, hashPP(data),null,null);
 
 	}
 
@@ -90,6 +105,27 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	public void doDelete(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		doGet(request,response);
 
+	}
+	
+	private static String hashPP(final Map<String,Object> m, String... offset) {
+	    String retval = "";
+	    String delta = offset.length == 0 ? "" : offset[0];
+	    for( Map.Entry<String, Object> e : m.entrySet() ) {
+	        retval += delta + "["+e.getKey() + "] -> ";
+	        Object value = e.getValue();
+	        if( value instanceof Map ) {
+	            retval += "(Hash)\n" + hashPP((Map<String,Object>)value, delta + "  ");
+	        } else if( value instanceof List ) {
+	            retval += "{";
+	            for( Object element : (List)value ) {
+	                retval += element+", ";
+	            }
+	            retval += "}\n";
+	        } else {
+	            retval += "["+value.toString()+"]\n";
+	        }
+	    }
+	    return retval+"\n";
 	}
 	
 private void sendResponse(HttpServletResponse response, int status, String message, String formatResult,String query) throws IOException{

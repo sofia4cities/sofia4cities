@@ -60,14 +60,14 @@ public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvi
 			log.info("authenticate: User or password incorrect: " + name);
 			throw new BadCredentialsException("Authentication failed for " + name);
 		}
-		if (!user.getRole().getId().equals(Role.Type.OPERATIONS.toString())) {
+		if (!user.getRole().getId().equals(Role.Type.ROLE_OPERATIONS.toString())) {
 			log.info("authenticate: Role of user " + user.getUserId() + " is not ROLE_OPERATIONS: ");
 			throw new BadCredentialsException(
 					"Authentication failed for user " + user.getUserId() + "User has not ROLE_OPERATIONS: ");
 		}
 
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getName()));
+		grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getId()));
 		Authentication auth = new UsernamePasswordAuthenticationToken(name, password, grantedAuthorities);
 
 		counterService.increment("_sofia2.monitoring.metrics.logins");

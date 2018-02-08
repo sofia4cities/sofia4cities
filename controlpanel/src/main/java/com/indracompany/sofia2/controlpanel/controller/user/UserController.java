@@ -31,9 +31,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
@@ -84,137 +86,131 @@ public class UserController {
 	}
 
 	@PutMapping(value = "/update/{id}")
-	public String update(@PathVariable("id") String id, @ModelAttribute User user) {
-		if (user != null) {
-			if (user.getPassword() != null && user.getEmail() != null && user.getUserId() != null) {
-				try {
-					if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
-						return "/error/403";
-					// If the user is not admin, the RoleType is not in the request by default
-					if (!utils.isAdministrator())
-						user.setRole(this.userService.getUserRole(this.utils.getRole()));
-					this.userService.updateUser(user);
-				} catch (Exception e) {
-					log.debug(e.getMessage());
-					return "/users/create";
-				}
-			} else {
-				log.debug("Some user properties missing");
-				return "/users/create";
-			}
-			return "redirect:/users/show/" + user.getUserId();
+	public String update(@PathVariable("id") String id, @Valid User user, BindingResult bindingResult,
+			RedirectAttributes redirect) {
+		if (bindingResult.hasErrors()) {
+			log.debug("Some user properties missing");
+			utils.addRedirectMessage("user.validation.error", redirect);
+			return "redirect:/users/update/";
 		}
 
-		return "redirect:/users/update/";
+		if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
+			return "/error/403";
+		// If the user is not admin, the RoleType is not in the request by default
+		if (!utils.isAdministrator())
+			user.setRole(this.userService.getUserRole(this.utils.getRole()));
+
+		try {
+			this.userService.updateUser(user);
+		} catch (UserServiceException e) {
+			log.debug("Cannot update user");
+			utils.addRedirectMessage("user.update.error", redirect);
+			return "redirect:/users/create";
+		}
+		utils.addRedirectMessage("user.update.success", redirect);
+		return "redirect:/users/show/" + user.getUserId();
 
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/create")
-	public String create(@Valid User user, BindingResult bindingResult) { // , RedirectAttributes redirect) {
-
-		if (bindingResult.hasErrors())
-		{
+	public String create(@Valid User user, BindingResult bindingResult, RedirectAttributes redirect) {
+		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
-			return "/users/create";			
+			utils.addRedirectMessage("user.create.error", redirect);
+			return "redirect:/users/create";
+		}
+		try {
+			this.userService.createUser(user);
+		} catch (UserServiceException e) {
+			log.debug("Cannot update user that does not exist");
+			utils.addRedirectMessage("user.create.error", redirect);
+			return "redirect:/users/create";
 		}
 
-		
-		this.userService.createUser(user);
-		
-			// redirect.addFlashAttribute("globalMessage", "Successfully created user " +
-			// user.getUserId());
-		
-			//log.error("Error creating user:" + e.getMessage());
-			// redirect.addFlashAttribute("globalMessage", "Error creating user " +
-			// user.getUserId());
-			//return "redirect:/users/create";
-		
+		utils.addRedirectMessage("user.create.success", redirect);
 		return "redirect:/users/list";
-}
-
-
-
-
-@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-@GetMapping(value = "/list", produces = "text/html")
-public String list(Model model, @RequestParam(required = false) String userId,
-		@RequestParam(required = false) String fullName, @RequestParam(required = false) String roleType,
-		@RequestParam(required = false) String email, @RequestParam(required = false) Boolean active) {
-	this.populateFormData(model);
-	if (userId != null) {
-		if (userId.equals(""))
-			userId = null;
-	}
-	if (fullName != null) {
-		if (fullName.equals(""))
-			fullName = null;
-	}
-	if (email != null) {
-		if (email.equals(""))
-			email = null;
-	}
-	if (roleType != null) {
-		if (roleType.equals(""))
-			roleType = null;
 	}
 
-	if ((userId == null) && (email == null) && (fullName == null) && (active == null) && (roleType == null)) {
-		log.debug("No params for filtering, loading all users");
-		model.addAttribute("users", this.userService.getAllUsers());
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@GetMapping(value = "/list", produces = "text/html")
+	public String list(Model model, @RequestParam(required = false) String userId,
+			@RequestParam(required = false) String fullName, @RequestParam(required = false) String roleType,
+			@RequestParam(required = false) String email, @RequestParam(required = false) Boolean active) {
+		this.populateFormData(model);
+		if (userId != null) {
+			if (userId.equals(""))
+				userId = null;
+		}
+		if (fullName != null) {
+			if (fullName.equals(""))
+				fullName = null;
+		}
+		if (email != null) {
+			if (email.equals(""))
+				email = null;
+		}
+		if (roleType != null) {
+			if (roleType.equals(""))
+				roleType = null;
+		}
 
-	} else {
-		log.debug("Params detected, filtering users...");
-		model.addAttribute("users",
-				this.userService.getAllUsersByCriteria(userId, fullName, email, roleType, active));
+		if ((userId == null) && (email == null) && (fullName == null) && (active == null) && (roleType == null)) {
+			log.debug("No params for filtering, loading all users");
+			model.addAttribute("users", this.userService.getAllUsers());
+
+		} else {
+			log.debug("Params detected, filtering users...");
+			model.addAttribute("users",
+					this.userService.getAllUsersByCriteria(userId, fullName, email, roleType, active));
+		}
+
+		return "/users/list";
+
 	}
 
-	return "/users/list";
+	@GetMapping(value = "/show/{id}", produces = "text/html")
+	public String showUser(@PathVariable("id") String id, Model model) {
+		User user = null;
+		if (id != null) {
+			// If non admin user tries to update any other user-->forbidden
+			if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
+				return "/error/403";
+			user = this.userService.getUser(id);
+		}
+		// If user does not exist
+		if (user == null)
+			return "/error/404";
 
-}
+		model.addAttribute("user", user);
+		UserToken userToken = null;
+		try {
+			userToken = this.userService.getUserToken(user);
+		} catch (Exception e) {
+			log.debug("No token found for user: " + user);
+		}
 
-@GetMapping(value = "/show/{id}", produces = "text/html")
-public String showUser(@PathVariable("id") String id, Model model) {
-	User user = null;
-	if (id != null) {
-		// If non admin user tries to update any other user-->forbidden
-		if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
-			return "/error/403";
-		user = this.userService.getUser(id);
-	}
-	// If user does not exist
-	if (user == null)
-		return "/error/404";
+		model.addAttribute("userToken", userToken);
+		model.addAttribute("itemId", user.getUserId());
 
-	model.addAttribute("user", user);
-	UserToken userToken = null;
-	try {
-		userToken = this.userService.getUserToken(user);
-	} catch (Exception e) {
-		log.debug("No token found for user: " + user);
-	}
-
-	model.addAttribute("userToken", userToken);
-	model.addAttribute("itemId", user.getUserId());
-
-	Date today = new Date();
-	if (user.getDateDeleted() != null) {
-		if (user.getDateDeleted().before(today)) {
-			model.addAttribute("obsolete", true);
+		Date today = new Date();
+		if (user.getDateDeleted() != null) {
+			if (user.getDateDeleted().before(today)) {
+				model.addAttribute("obsolete", true);
+			} else {
+				model.addAttribute("obsolete", false);
+			}
 		} else {
 			model.addAttribute("obsolete", false);
 		}
-	} else {
-		model.addAttribute("obsolete", false);
+
+		return "/users/show";
+
 	}
 
-	return "/users/show";
-
-}
-
-public void populateFormData(Model model) {
-	model.addAttribute("roleTypes", this.userService.getAllRoles());
-}
+	public void populateFormData(Model model) {
+		model.addAttribute("roleTypes", this.userService.getAllRoles());
+	}
 
 	@RequestMapping(value = "/register" ,  method = RequestMethod.POST)
 	public String registerUserLogin(@ModelAttribute User user)

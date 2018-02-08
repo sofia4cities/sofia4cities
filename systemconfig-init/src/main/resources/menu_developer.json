@@ -1,6 +1,6 @@
 {
 	"menu": "Sofia4Cities",
-	"rol": "ROLE_COLLABORATOR",
+	"rol": "ROLE_DEVELOPER",
 	"noSession": "/console/login",
 	"navigation": [
 		{
@@ -60,6 +60,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/clients/list"
+				},
+				{
+					"title": {
+						"EN": "My DeviceTwins",
+						"ES": "Mis DeviceTwings"
+					},
+					"icon": "",
+					"url": "/controlpanel/devicetwins/list"
 				},
 				{
 					"title": {

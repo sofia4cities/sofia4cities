@@ -35,10 +35,12 @@ import com.indracompany.sofia2.api.service.exception.ForbiddenException;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.ApiQueryParameter;
+import com.indracompany.sofia2.config.model.ApiSuscription;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
+import com.indracompany.sofia2.config.repository.ApiSuscriptionRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,21 +54,7 @@ public class ApiManagerService {
 
 	@Autowired
 	private ApiOperationRepository apiOperationRepository;
-
-	@Autowired
-	private UserService userService;
-
-	/*
-	 * @Autowired ApiSecurityService apiSecurityService;
-	 */
-
-	public User getUser(String userId) {
-		return userService.getUser(userId);
-	}
-
-	public UserToken getUserToken(User userId) {
-		return this.userService.getUserToken(userId);
-	}
+	
 
 	public ApiRepository getApiRepository() {
 		return apiRepository;
@@ -95,10 +83,10 @@ public class ApiManagerService {
 
 		// Comprobamos si está disponible --> publicada, deprecada, en desarrollo o
 		// creada y el usuario es propietario
-		boolean disponible = apiSecurityService.checkApiAvailable(api, user);
+		/*boolean disponible = apiSecurityService.checkApiAvailable(api, user);
 		if (!disponible) {
 			throw new ForbiddenException("com.indra.sofia2.api.service.wrongapistatus");
-		}
+		}*/
 		return api;
 	}
 
@@ -168,10 +156,6 @@ public class ApiManagerService {
 		return api.get(0);
 	}
 
-	public User getUsuarioByApiToken(String headerToken) throws ForbiddenException {
-		User user = userService.getUserByToken(headerToken);
-		return user;
-	}
 
 	public boolean isPathQuery(String pathInfo) {
 
@@ -187,7 +171,7 @@ public class ApiManagerService {
 		}
 	}
 
-	public ApiOperation getCustomSQL(String pathInfo, Api api) {
+	public ApiOperation getCustomSQL(String pathInfo, Api api, String operation) {
 
 		String apiIdentifier = this.getApiIdentifier(pathInfo);
 
@@ -199,30 +183,34 @@ public class ApiManagerService {
 
 		List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
 
+		String match = apiIdentifier+"_"+operation;
+		
+		if (!opIdentifier.equals("") ) {
+			match+="_"+opIdentifier;
+		}
+		
 		// Se recorren las operaciones de la API, buscando las que coincidan por metodo
 		// HTTP y por Path
 		for (ApiOperation operacion : operaciones) {
-			if (operacion.getId().equals(opIdentifier)) {
+			if (operacion.getIdentification().equals(match)) {
 				return operacion;
 			}
 		}
 		return null;
 	}
 
-	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request,
-			HashSet<ApiQueryParameter> queryParametersCustomQuery) {
-		Locale locale = LocaleContextHolder.getLocale();
+	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request, String body, HashSet<ApiQueryParameter> queryParametersCustomQuery) {
 
 		HashMap<String, String> customqueryparametersvalues = new HashMap<String, String>();
 		for (ApiQueryParameter customqueryparameter : queryParametersCustomQuery) {
-			String paramvalue = request.getParameter("$" + customqueryparameter.getName());
+			String paramvalue = request.getParameter(customqueryparameter.getName());
 			if (paramvalue == null) {
-				// No se encuentra el valor del parametro configurado en la operacion en la
-				// peticion
-				throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
+				if (customqueryparameter.getHeaderType().equalsIgnoreCase(Constants.API_TIPO_BODY)) {
+					paramvalue = body;
+				}
 			} else {
 				// Se comprueba que el valor es del tipo definido en la operacion
-				if (customqueryparameter.getDataType().equals(Constants.API_TIPO_DATE)) {
+				if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_DATE)) {
 					try {
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 						df.parse(paramvalue);
@@ -230,29 +218,29 @@ public class ApiManagerService {
 					} catch (Exception e) {
 						// Esta definido como un string pero no se recibe un String
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Date" };
-						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
+						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype "+parametros[0]);
 					}
-				} else if (customqueryparameter.getDataType().equals(Constants.API_TIPO_STRING)) {
+				} else if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_STRING)) {
 					try {
 						paramvalue.toString();
 						paramvalue = "'" + paramvalue + "'";
 					} catch (Exception e) {
 						// Esta definido como un string pero no se recibe un String
 						Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
-						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
+						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
 					}
-				} else if (customqueryparameter.getDataType().equals(Constants.API_TIPO_NUMBER)) {
+				} else if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_NUMBER)) {
 					try {
 						Double.parseDouble(paramvalue);
 					} catch (Exception e) {
 						// Esta definido como un Integer pero no se recibe un Integer
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Integer" };
-						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
+						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
 					}
-				} else if (customqueryparameter.getDataType().equals(Constants.API_TIPO_BOOLEAN)) {
+				} else if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_BOOLEAN)) {
 					if (!paramvalue.equalsIgnoreCase("true") && !paramvalue.equalsIgnoreCase("false")) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Boolean" };
-						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype");
+						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
 					}
 				}
 				// el parametro es de tipo correcto, se añade a la lista
@@ -264,6 +252,11 @@ public class ApiManagerService {
 
 	public String buildQuery(String queryDb, HashMap<String, String> queryParametersValues) {
 		for (String param : queryParametersValues.keySet()) {
+			
+			System.out.println(param);
+			String value = queryParametersValues.get(param);
+			System.out.println(value);
+			
 			queryDb = queryDb.replace("{$" + param + "}", queryParametersValues.get(param));
 		}
 		return queryDb;
@@ -318,15 +311,11 @@ public class ApiManagerService {
 		}
 		return buffer.toString();
 	}
-
-	/*
-	 * public void checkApiLimit(Api api){ Locale locale =
-	 * LocaleContextHolder.getLocale(); if(cacheApiLimitService.isLimit(api)){
-	 * Integer timeLeft=cacheApiLimitService.getApiLimitTimeoutLeft(api.getId());
-	 * LogService.getLogI18n(this.getClass()).debug("ApiService.debug.peticiones",
-	 * api.getEndpoint(), cacheApiLimitService.getApiRequestsNumber(api.getId()));
-	 * throw new ApiLimitException(log.getMensaje(locale,
-	 * "com.indra.sofia2.api.service.apilimit",timeLeft)); } }
-	 */
+	
+	//TODO ALLL
+	public String prepareOntologiaQuery(String ontologiaRecurso, String sqlQuery){
+		return "";
+	}
+	
 
 }

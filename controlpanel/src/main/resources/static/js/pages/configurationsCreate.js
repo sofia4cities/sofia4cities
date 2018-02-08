@@ -130,6 +130,20 @@ var ConfigurationsCreateController = function() {
         });
 		myCodeMirror.setSize("100%", 350);
     }
+	
+	// DELETE CONFIGURATION
+	var deleteConfigurationConfirmation = function(configurationId){
+		console.log('deleteConfigurationConfirmation() -> formId: '+ configurationId);
+		
+		
+		// set action and configurationId to the form
+		$('.delete-configuration').attr('id',configurationId);
+		$('.delete-configuration').attr('action','/controlpanel/configurations/' + configurationId);
+		console.log('deleteconfiugrationConfirmation() -> formAction: ' + $('.delete-configuration').attr('action') + ' ID: ' + $('.delete-configuration').attr('userId'));
+		
+		// call configuration Confirm at header.
+		HeaderController.showConfigurationConfirmDialog(configurationId);	
+	}
 
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{		
@@ -146,8 +160,14 @@ var ConfigurationsCreateController = function() {
 			initTemplateElements();
 			handleCodeMirror();
 			
-		}		
+		},
+		// DELETE CONFIG
+		deleteConfiguration: function(configurationId){
+			logControl ? console.log(LIB_TITLE + ': deleteConfiguration()') : '';	
+			deleteConfigurationConfirmation(configurationId);			
+		}
 	};
+
 }();
 
 // AUTO INIT CONTROLLER WHEN READY

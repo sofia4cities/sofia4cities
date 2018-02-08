@@ -11,17 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.rest.api;
-import org.springframework.stereotype.Service;
+package com.indracompany.sofia2.config.services.exceptions;
 
-import io.swagger.annotations.Api;
+public class ClientPlatformServiceException extends RuntimeException {
 
-@Api("/sayHello")
-@Service
-public class HelloServiceImpl1 implements HelloService {
-
-    public String sayHello(String a) {
-        return "Hello " + a + ", Welcome to CXF RS Spring Boot World!!!";
-    }
-
+	public ClientPlatformServiceException(String message)
+	{
+		super(message);
+	}
 }

@@ -287,8 +287,8 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 		List<String> result = new ArrayList<>();
 		try {
 			query = util.convertObjectIdV1toVLegacy(query);
-			MongoIterable<BasicDBObject> cursor = mongoDbConnector.find(database, ontology, util.prepareQuotes(query),
-					numMaxRegisters, queryExecutionTimeout);
+			MongoIterable<BasicDBObject> cursor = mongoDbConnector.find(database, ontology,
+					util.prepareQuotes4find(ontology, query), numMaxRegisters, queryExecutionTimeout);
 			for (BasicDBObject obj : cursor) {
 				result.add(obj.toJson());
 			}
@@ -346,6 +346,16 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	public long count(String collectionName) throws DBPersistenceException {
 		try {
 			return mongoDbConnector.count(database, collectionName, "{}");
+		} catch (javax.persistence.PersistenceException e) {
+			log.error("count Error:" + e.getMessage());
+			throw new DBPersistenceException(e);
+		}
+	}
+
+	@Override
+	public long countNative(String collectionName, String query) throws DBPersistenceException {
+		try {
+			return mongoDbConnector.count(database, collectionName, query);
 		} catch (javax.persistence.PersistenceException e) {
 			log.error("count Error:" + e.getMessage());
 			throw new DBPersistenceException(e);

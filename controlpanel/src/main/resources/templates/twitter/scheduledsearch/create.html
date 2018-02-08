@@ -69,8 +69,8 @@
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
 						<li><a th:href="@{/twitter/scheduledsearch/list}"> <span th:text="#{scheduledsearch.breadcrumb.prev}">Scheduled Search List</span></a><i class="fa fa-circle"></i></li>
 						<li>
-							<span th:if="${twitterListen.id} == null" th:text="#{scheduledsearch.breadcrumb.create}">Create SS</span>
-							<span th:if="${twitterListen.id} != null" th:text="#{scheduledsearch.breadcrumb.update}">Update SS</span>
+							<span th:if="${twitterListening.id} == null" th:text="#{scheduledsearch.breadcrumb.create}">Create SS</span>
+							<span th:if="${twitterListening.id} != null" th:text="#{scheduledsearch.breadcrumb.update}">Update SS</span>
 						</li>
 					</ul>						
 				</div>
@@ -88,8 +88,8 @@
 								<div class="caption">
 									<i class="la la-users font-grey-gallery"></i>
 									<!-- FORM TITLE -->
-									<span th:if="${twitterListen.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{scheduledsearch.template.create} + ':'"> New Scheduled Search</span>
-									<span th:if="${twitterListen.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{scheduledsearch.template.update}"> Update Configuration</span>
+									<span th:if="${twitterListening.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{scheduledsearch.template.create} + ':'"> New Scheduled Search</span>
+									<span th:if="${twitterListening.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{scheduledsearch.template.update}"> Update Configuration</span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -97,8 +97,8 @@
 								</div>
 								<div class="actions">
 									<!-- ACTION INDICATORs -->									
-									<span th:if="${twitterListen.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
-									<span th:if="${twitterListen.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
+									<span th:if="${twitterListening?.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${twitterListening?.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>									
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
@@ -116,13 +116,13 @@
 										</div>								
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="scheduledsearch_create_form" th:object="${twitterListen}"  method="post" class="form">
+										<form role="form" id="scheduledsearch_create_form" th:object="${twitterListening}"  method="post" class="form">
 											<!-- FORM ACTIONS FOR INSERT-->
-											<input th:if="${twitterListen.id} == null" type="hidden" name="action" th:value="@{/twitter/scheduledsearch/create}"/>
+											<input th:if="${twitterListening.id} == null" type="hidden" name="action" th:value="@{/twitter/scheduledsearch/create}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->											
-											<input th:if="${twitterListen.id} != null" type="hidden" name="action" th:value="@{/twitter/scheduledsearch}"/>
-											<input th:if="${twitterListen.id} != null" type="hidden" name="_method" value="PUT"/>											
+											<input th:if="${twitterListening.id} != null" type="hidden" name="action" th:value="@{/twitter/scheduledsearch}"/>
+											<input th:if="${twitterListening.id} != null" type="hidden" name="_method" value="PUT"/>											
 											
 											<div class="form-body">
 												<!-- ID,CONFIG,TOPICS -->
@@ -175,7 +175,7 @@
 														</div>
 													</div>
 												</div>
-												<div class="row">
+												<div th:if="${twitterListening?.id} ==null ? true" class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="mt-checkbox-list">
 															<label class="mt-checkbox font-md" ><i class="la la-lightbulb-o" ></i> <div class="inline" th:text="#{scheduledsearch.newontology}">New ontology?</div>
@@ -191,7 +191,7 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{scheduledsearch.ontologies.target} + ':'">Ontologies</label>
-															<select id="ontologies" th:disabled="${twitterListen.id} != null ? true" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{scheduledsearch.ontologies}" th:field="*{ontology.identification}" th:required="true" onchange="getClients()">
+															<select id="ontologies" th:disabled="${twitterListening.id} != null ? true" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{scheduledsearch.ontologies}" th:field="*{ontology.identification}" onchange="getClients()">
 															<option th:each="ontology :${ontologies}" th:value="${ontology.identification}" th:text="${ontology.identification}"></option>										
 															</select>													
 														</div>
@@ -199,16 +199,16 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{scheduledsearch.clientplatform} + ':'">Platform Clients</label>
-															<select  id="clientplatforms" th:disabled="${twitterListen.id} != null ? true"  th:required="true"  data-width="100%" th:field="*{token.clientPlatform.identification}" class="select-picker form-control" data-live-search="true" th:value="${token?.clientPlatform?.identification}" onchange="getTokens()" >
-																<option th:if="${twitterListen.token?.clientPlatform?.identification} != null" th:value="${twitterListen.token.clientPlatform.identification}" th:text="${twitterListen.token.clientPlatform.identification}"/>
+															<select  id="clientplatforms" th:disabled="${twitterListening.id} != null ? true" data-width="100%" th:field="*{token.clientPlatform.identification}" class="select-picker form-control" data-live-search="true" th:value="${token?.clientPlatform?.identification}" onchange="getTokens()" >
+																<option th:if="${twitterListening.token?.clientPlatform?.identification} != null" th:value="${twitterListening.token.clientPlatform.identification}" th:text="${twitterListening.token.clientPlatform.identification}"/>
 															</select>										
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{scheduledsearch.token} + ':'">Tokens</label>
-															<select  id="tokens" th:required="true"  th:disabled="${twitterListen.id} != null ? true" th:field="*{token.token}" data-width="100%" data-live-search="true" class="select-picker form-control" th:value="${token?.token}" >
-															<option th:if="${twitterListen.token?.token} != null" th:value="${twitterListen.token.token}" th:text="${twitterListen.token.token}"/>
+															<select  id="tokens" th:disabled="${twitterListening.id} != null ? true" th:field="*{token.token}" data-width="100%" data-live-search="true" class="select-picker form-control" th:value="${token?.token}" >
+															<option th:if="${twitterListening.token?.token} != null" th:value="${twitterListening.token.token}" th:text="${twitterListening.token.token}"/>
 															</select>									
 																											
 														</div>
@@ -220,7 +220,7 @@
 															<label class="control-label" th:text="#{scheduledsearch.ontologies.target} + ':'">Ontologies</label>														
 															<div class="input-icon ">
 																<i class="fa"></i>
-																<input id="ontology" name="ontology" type="text"  th:required="true"  maxlength="100" class="form-control no-remove"/>
+																<input id="ontologyId" name="ontologyId" type="text"    maxlength="100" class="form-control no-remove"/>
 															</div>													
 														</div>
 													</div>
@@ -229,7 +229,7 @@
 															<label class="control-label" th:text="#{scheduledsearch.clientplatform} + ':'">Platform Clients</label>
 															<div class="input-icon ">
 																<i class="fa"></i>
-																<input id="clientPlatform" name="clientPlatform" type="text"  th:required="true"  maxlength="100" class="form-control no-remove"/>
+																<input id="clientPlatformId" name="clientPlatformId" type="text" maxlength="100" class="form-control no-remove"/>
 															</div>											
 														</div>
 													</div>													
@@ -239,9 +239,13 @@
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-													<button th:if="${twitterListen.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" onclick="submitForm()"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<button th:if="${twitterListening.id} == null" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" onclick="submitForm()"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													<!-- UPDATE -->
-													<button th:if="${twitterListen.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													<button th:if="${twitterListening.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+
+													<!-- REMOVE -->
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'ScheduledSearchController.deleteConfiguration(\'' + ${twitterListening?.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													
 													
 													<!-- RESET -->
 													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
@@ -255,9 +259,9 @@
 										</form>
 										
 										<!-- AUXILIAR FORM TO DELETE USER -->
-										<form id="delete_user_form" class="delete-user hide"  action=""  method="post">
+										<form id="delete_twitterListening_form" class="delete-twitterListening hide"  action=""  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
-											<input type="hidden" name="userId" th:value="*{twitterListen.id}"/>
+											<input type="hidden" name="userId" th:value="*{twitterListening.id}"/>
 										</form>
 									</div>									
 								</div>
@@ -306,8 +310,8 @@
 	var ScheduledSearchCreateJson = { 
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
-		"dateTo" : [[#{twitterListen.dateTo}]],
-		"dateFrom" : [[#{twitterListen.dateFrom}]]
+		"dateTo" : [[#{twitterListening.dateTo}]],
+		"dateFrom" : [[#{twitterListening.dateFrom}]]
 
 	};
 	
