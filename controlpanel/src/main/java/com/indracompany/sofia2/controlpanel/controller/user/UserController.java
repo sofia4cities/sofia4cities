@@ -215,27 +215,19 @@ public class UserController {
 	@RequestMapping(value = "/register" ,  method = RequestMethod.POST)
 	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes)
 	{
-		//TODO: DateCreated it is necessary (we already have createdAt field)
-		//TODO: We need to send Email. Is there a library to do it?
-		System.out.println("En UserController:");
-		System.out.println("-------------------- \n userID:"+ user.getUserId() +"\t Pass "+user.getPassword()+"\n Full Name: "+ user.getFullName()+ "\n email "+ user.getEmail() +"\nactive "+ user.isActive() +"\n---------------------------\n");
-
 		if(user!=null)
 		{
-			System.out.println("user not null");
+			
 			if(user.getUserId() != null && user.getPassword() != null && user.getFullName() != null && user.getEmail() != null && user.isActive() == true )
 			{	
 				if (this.userService.registerUser(user)) {
 					log.debug("User created from login");
-					System.out.println("\ncreeeeeeeea");
 					utils.addRedirectMessage("login.register.created", redirectAttributes);
 					return "redirect:/login";
 				}
 				log.debug("This user already exist");
-				System.out.println("\n1");
 				utils.addRedirectMessage("login.error.register", redirectAttributes);
 				return "redirect:/login";
-				
 								
 			}
 		}
