@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Api;
@@ -71,16 +72,22 @@ public class ApiSecurityService {
 		return this.userService.getUserToken(userId);
 	}
 	
-	public  boolean authorized(Api api, String tokenUsuario, String roleName) {
+/*	public  boolean authorized(Api api, String tokenUsuario, String roleName) {
 		User user = getUserByApiToken(tokenUsuario);
 		Role role = user.getRole();
 		return role.getId().equalsIgnoreCase(roleName);
-	}
+	}*/
 	
 	public boolean authorized(Api api, String tokenUsuario) {
 		User user = getUserByApiToken(tokenUsuario);
-		return true;
+		if (isAdmin(user) || user.getUserId().equals(api.getUser().getUserId())){
+			return true;
+		} else {
+			throw new AuthorizationServiceException("com.indra.sofia2.web.api.services.NoPermisosOperacionUsuario") ;
+		}
 	}
+	
+	
 	
 	public boolean checkOntologyOperationPermission(Api api, User user, String query, String queryType){
 		return true;
