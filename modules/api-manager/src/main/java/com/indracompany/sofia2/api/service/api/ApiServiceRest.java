@@ -450,26 +450,13 @@ public class ApiServiceRest {
 	
 	//TODO CLIENT_PLATFORM
 	public UserToken init_Token(User user) {
-		
-		ClientPlatform client =new ClientPlatform();
-		Set<Token> hashSetTokens = new HashSet<Token>();
 
-		Token token = new Token();
-		token.setClientPlatform(client);
-		token.setToken(generateTokenUsuario());
-		token.setActive(true);
-		hashSetTokens.add(token);
-		client.setTokens(hashSetTokens);
-		tokenRepository.save(token);
-		
-		
 		UserToken userToken = new UserToken();
 		
-		userToken.setToken(token);
+		userToken.setToken(generateTokenUsuario());
 		userToken.setUser(user);
 		userToken.setCreatedAt(Calendar.getInstance().getTime());
-		
-		
+			
 		userTokenRepository.save(userToken);
 		return userToken;
 
