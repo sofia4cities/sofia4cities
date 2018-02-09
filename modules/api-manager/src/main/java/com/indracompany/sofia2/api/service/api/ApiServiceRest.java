@@ -189,7 +189,7 @@ public class ApiServiceRest {
 
 		api.setUser(user);
 
-		api.setState(Constants.API_STATE_CREATED);
+		api.setState(Api.ApiType.CREATED.toString());
 		apiRepository.saveAndFlush(api);
 
 		// Se crean las operaciones
@@ -377,6 +377,12 @@ public class ApiServiceRest {
 		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
 		suscripciones = apiSuscriptionRepository.findAllByApiAndUser(api, user);
 
+		return suscripciones;
+	}
+	
+	public List<ApiSuscription> findApiSuscriptions(Api api, User user) {		
+		List<ApiSuscription> suscripciones = null;
+		suscripciones = apiSuscriptionRepository.findAllByApiAndUser(api, user);
 		return suscripciones;
 	}
 	

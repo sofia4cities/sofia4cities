@@ -39,7 +39,16 @@ import lombok.Setter;
 @Entity
 @Table(name = "API_QUERY_PARAMETER")
 public class ApiQueryParameter extends AuditableEntityWithUUID {
-
+	
+	public static enum HeaderType {
+		body, formData, header,path,query;
+	}
+	
+	public static enum DataType {
+		string, array, date,password,binary,email,uuid,uri,hostname;
+	}
+	  
+	
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
@@ -60,6 +69,10 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String dataType;
+	
+	public void setDataTypeEnum(ApiQueryParameter.DataType type) {
+		this.dataType = type.toString();
+	}
 
 	@Column(name = "QUERY_DESCRIPTION", length = 512, nullable = false)
 	@NotNull
@@ -81,5 +94,9 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String headerType;
+	
+	public void setHeaderTypeEnum(ApiQueryParameter.HeaderType type) {
+		this.headerType = type.toString();
+	}
 
 }

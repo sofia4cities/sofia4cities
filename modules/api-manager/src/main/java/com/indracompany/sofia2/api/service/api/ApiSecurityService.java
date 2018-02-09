@@ -13,14 +13,21 @@
  */
 package com.indracompany.sofia2.api.service.api;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.ApiSuscription;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 
@@ -30,19 +37,26 @@ public class ApiSecurityService {
 
 	@Autowired
 	ApiManagerService apiManagerService;
+	
+	@Autowired
+	ApiServiceRest apiServiceRest;
+	
 	@Autowired
 	private UserService userService;
 	
-	public static boolean isAdmin(final User usuario) {
-		return usuario.getRole().getId().equalsIgnoreCase("ADMINISTRATOR");
+	@Autowired
+	private OntologyUserAccessRepository ontologyUserAccessRepository;
+	
+	public static boolean isAdmin(final User user) {
+		return (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
-	public static boolean isCol(final User usuario) {
-		return usuario.getRole().getId().equalsIgnoreCase("COLLABORATOR");
+	public static boolean isCol(final User user) {
+		return (Role.Type.ROLE_OPERATIONS.toString().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
-	public static boolean isUser(final User usuario) {
-		return usuario.getRole().getId().equalsIgnoreCase("USER");
+	public static boolean isUser(final User user) {
+		return (Role.Type.ROLE_USER.toString().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
 	public User getUser(String userId) {
@@ -73,17 +87,96 @@ public class ApiSecurityService {
 	}
 	
 	public boolean checkUserApiPermission(Api api, User user) {
-		return true;
+
+		if(api==null || user==null) throw new IllegalArgumentException("com.indra.sofia2.api.service.apiusernull");
+		
+		boolean autorizado=false;
+		
+		//Si es administrador u otro rol, pero o propietario o esta suscrito al API
+		if (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
+			autorizado=true;
+			
+		}else if(api.getUser().getUserId()!=null && api.getUser().getUserId().equals(user.getUserId())){//Otro rol pero propietario
+			autorizado=true;
+		}else{
+			//No administrador, ni propietario pero está suscrito
+			List<ApiSuscription> lSuscripcionesApi=null;
+			try{
+				lSuscripcionesApi=apiServiceRest.findApiSuscriptions(api, user);
+			} catch (Exception e) {}
+			
+			if(lSuscripcionesApi!=null && lSuscripcionesApi.size()>0){
+				for(ApiSuscription suscripcion:lSuscripcionesApi){
+					if(suscripcion.getEndDate()==null){
+						autorizado=true;
+					}else if(suscripcion.getEndDate().after(new Date())){
+						autorizado=true;
+					}
+				}
+			}
+		}
+		
+		return autorizado;
 	}
 	
 	public boolean checkApiAvailable(Api api, User user){
-		return true;
+		// El APi esta disponible si se encuentra en uno de estos estados:
+				// 1 Publicada
+				// 2 Deprecada
+				// 3 En Desarrollo
+				// 4 Creada y el usuario es el propietario
+				return	(api.getState().equalsIgnoreCase(Api.ApiType.PUBLISHED.toString())
+						|| api.getState().equalsIgnoreCase(Api.ApiType.DEPRECATED.toString()) 
+						|| api.getState().equalsIgnoreCase(Api.ApiType.DEVELOPMENT.toString())
+						||
+						((api.getState().equals(Api.ApiType.CREATED.toString())) && (api.getUser().getUserId().equals(user.getUserId()))));
 	}
 	
 	public Boolean checkRole(User user, Ontology ontology, boolean insert){
-		return true;
+		
+		Boolean authorize=false;
+		//If the role is Manager always allows the operation
+		if (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
+			authorize=true;
+			
+		}else{
+			
+			if(ontology.getUser().getUserId().equals(user.getUserId())){//Si es el propietario
+				return true;
+			}
+						
+			//If other role, it checks whether the user is associated with ontology
+			List<OntologyUserAccess> uo = ontologyUserAccessRepository.findByUser(user);
+			if(uo==null){
+				return false;
+			}
+			
+			for (OntologyUserAccess usuarioOntologia : uo){
+				if (usuarioOntologia.getOntology().getId().equals(ontology.getId())){
+					//If the user has full permissions to perform the operation permit
+					if (usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.ALL.name())){
+						authorize=true;
+						break;
+						//In another case it is found that has the minimum permissions to perform the operation	
+					}else{
+						//If we insert permissions can perform any operation except query
+						if (insert && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.INSERT.name())){
+							authorize=true;
+							break;
+							//If they are readable and has read permission can perform the operation	
+						}else if (!insert && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.QUERY.name())){
+							authorize=true;
+							break;
+						}
+					}
+				}
+			}
+			
+		}
+		return authorize;
 	}
 	
+	//TODO IMPLEMENT!
 	public Boolean checkApiLimit(Api api){
 		return true;
 	}

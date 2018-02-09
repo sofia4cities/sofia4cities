@@ -32,5 +32,7 @@ public final class Constants {
 	public static final String API_STATE_CREATED = "CREATED";
 	public static final String API_STATE_PUBLISHED = "PUBLISHED";
 	public static final String API_STATE_DELETED = "DELETED";
+	public static final String API_STATE_DEPRECATED = "DEPRECATED";
+	public static final String API_STATE_DEVELOPMENT = "DEVELOPMENT";
 
-}
+} 
