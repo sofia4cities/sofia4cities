@@ -294,28 +294,28 @@
 																				<div class="col-lg-9 col-md-8 col-xs-12">
 																					<!-- TEMPLATE FIELDS -->
 																					<div id="template_schema" class="margin-bottom-20 hide">
-																						<table class="table" id="datamodel_properties">
+																						<table class="table" id="datamodel_properties" data-loaded="false">
 																							<thead>
 																								<tr class="cabecera-tabla" role="row" >
 																									<th class="titulo-columnas">Propiedad</th>
 																									<th class="titulo-columnas">T.datos</th>
 																									<th class="titulo-columnas">Requerido</th>
-																									<th class="titulo-columnas">Descripción</th>
-																									<th class="titulo-columnas">Opciones</th>								
+																									<th class="titulo-columnas">Descripción</th>																															
+																									<th class="titulo-columnas">Options</th>
 																								</tr>
 																							</thead>
 																							<tbody>
 																								<tr class="mountable-model">
-																									<td><input type="text" name="property[]"  class="form-control"/></td>
+																									<td><input type="text" name="property[]"  onblur="checkProperty(this)" class="form-control"/></td>
 																									<td><input type="text" name="type[]"  class="form-control"/></td>
 																									<td><input type="text" name="required[]"  class="form-control"/></td>
-																									<td><input type="text" name="description[]" class="form-control"/></td>
-																									<td><button type="button" class="btn btn-default btn-sm btn-outline red-sunglo mountable-remove-line-2">Remove</button></td>
+																									<td><input type="text" name="description[]" class="form-control"/></td>																									
+																									<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="removeProperty(this)">Remove</button></td>			
 																								</tr>
 																							</tbody>
 																							<tfoot>
 																								<tr>
-																									<td colspan="5">
+																									<td colspan="4">
 																										<div class="btn-group">
 																											<button type="button" class="btn btn-sm btn-default green-haze btn-outline" id="button2">Add a new Property</button>
 																											<button type="button" class="btn btn-sm btn-default yellow-casablanca btn-outline " id="btn-updateSchema">Update Schema</button>
@@ -424,8 +424,19 @@
 
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
-
-
+	
+	
+	// VALID PROPERTY TYPES 
+	validTypes = ["string","object","number","date","timestamp","array"];
+	
+	
+	// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
+	Array.prototype.unique = function() {
+		return this.filter(function (value, index, self) { 
+			return self.indexOf(value) === index;
+		});
+	};
+	
 	var currentLanguage = [[${lang}]];	
 	
 	var ontologyCreateJson = { 		
@@ -434,7 +445,40 @@
 		"actionMode" : [[${ontology.user?.userId}]],
 	};
 	
-	// datamodel properties cast to correct Json format.
+	
+	
+	// REMOVE PROPERTYS (ONLY ADDITIONAL NO BASE)
+	function removeProperty(obj){ 
+		 
+		var remproperty = $(obj).closest('tr').find("input[name='property\\[\\]']").val();		
+		if (( remproperty == '')||( noBaseProperty(remproperty))){ $(obj).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'CAN´T REMOVE A BASE PROPERTY!'}); }
+	};
+	
+	// CHECK FOR NON DUPLICATE PROPERTIES
+	function checkProperty(obj){	
+		var allProperties = $("input[name='property\\[\\]']").map(function(){return $(this).val();}).get();		
+		areUnique = allProperties.unique();
+		if (allProperties.length !== areUnique.length)  { 
+			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'DUPLICATE VALUES!'});
+			$(obj).val(''); return false;
+		} 
+		else {
+			$(obj).closest('tr').find('.btn-mountable-remove').attr('data-property', $(obj).val() );   
+		}
+	};
+	
+	
+	// CHECK IF A WRITTEN PROPERTY IS OR NOT FROM THE BASE
+	function noBaseProperty(property){
+		var isNoBaseProperty = false;
+		var noBaseJson = createJsonProperties(JSON.parse(schema)); // to JSON		
+		var noBaseProperties = getProperties(noBaseJson); // only Properties Arr
+		isNoBaseProperty = $.inArray( property, noBaseProperties ) > -1 ? false : true;
+		return isNoBaseProperty;
+	}
+	
+	
+	// DATAMODEL PROPERTIES OBJECT JSON
 	function createJsonProperties(jsonData){
 		console.log('|---  createJsonProperties()...');
 		
@@ -471,57 +515,93 @@
 	};
 	
 	
-	// datamodel properties json to HTML
+	// DATAMODEL PROPERTIES JSON TO HTML 
 	var schema = '';
+	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, remove current and create a new one.
 	function schemaToTable(objschema,tableId){
 		console.log('|---  schemaToTable()...');
 		
-		var data, properties, jsonProperties = '';
-		
-					
-		// highlight current datamodel
-		$('li.mt-list-item.datamodel-template').removeClass('bg-success done');
-		$(objschema).closest('li').addClass('bg-success done');
-		
+		var data, properties, jsonProperties = '';		
+	
+		// JSON-STRING SCHEMA TO JSON 
 		schema = $(objschema).attr('data-schema');
-		
-		if (typeof schema == 'string'){		
-			data = JSON.parse(schema);				
+		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
+		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }		
 			
-		}else if (typeof schema == 'object') { data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }		
-			
-		// check json schema
+		// SCHEMA MODEL ( PROPERTIES / DATOS) 
 		if ( data.hasOwnProperty('datos') ){ properties = data.datos; } else { properties = data;  }
 		
 		// CREATING TABLE FROM DATA.		
 		jsonProperties = createJsonProperties(properties);
-		// TO-DO: remove table before print but remain model
-		$('#'+tableId).mounTable(jsonProperties,{
-			model: '.mountable-model',
-			noDebug: false,
-			addLine:{				
-				button: "#button2",					
-				onClick: function (element){
-					console.log('Property added!');				
-					return true;
-				}
-			},
-			deleteLine:{
-				button: ".mountable-remove-line-2",
-				onClick: function (element){
-					if (confirm("Are you sure?")){
-						console.log('Property removed!');
+		
+		// CHECK IF WE HAVE A DATAMODEL LOADED YET... o-DO: make confirm.
+		if ( $('#datamodel_properties').attr('data-loaded') == 'true' ){		
+		
+			$.confirm({ title: 'CONFIRM!', theme: 'dark', type: 'orange', content: 'IF YOU CHANGE DATAMODEL YOUR PROPERTIES AND SCHEMA CONFIGURATION WILL BE REMOVE AND STARTED AGAIN!',
+				buttons: {
+					confirm: function () {
+					
+						$('#datamodel_properties > tbody').html("");
+						$('#datamodel_properties > tbody').append(mountableModel);
+						editor.setMode("text");
+						editor.setText('{}');
+						editor.setMode("tree");
+						
+						// TO-HTML
+						$('#'+tableId).mounTable(jsonProperties,{
+							model: '.mountable-model',
+							noDebug: false,
+							addLine:{				
+								button: "#button2",					
+								onClick: function (element){
+									console.log('Property added!');				
+									return true;
+								}
+							}			
+						});
+						
+						// UPDATING JSON EDITOR
+						$('#schema_title').text(data.title + ':');
+						editor.setMode("text");
+						editor.setText(schema);
+						editor.setMode("tree");
+		
+						return true;					
+					},
+					cancel: function () {
 						return true;
 					}
 				}
-			}			
-		});
+			});		
+		} else {
+		
+			// TO-HTML
+			$('#'+tableId).mounTable(jsonProperties,{
+				model: '.mountable-model',
+				noDebug: false,
+				addLine:{				
+					button: "#button2",					
+					onClick: function (element){
+						console.log('Property added!');				
+						return true;
+					}
+				}			
+			});
+		
+		}		
+		
+		
+		// HIGHLIGHT CURRENT DATAMODEL AND SHOW TABLE
+		$('li.mt-list-item.datamodel-template').removeClass('bg-success done');
+		$(objschema).closest('li').addClass('bg-success done');
+		
 		$('#template_schema').removeClass('hide');
+		$('#datamodel_properties').attr('data-loaded', true);
 		
 		//INIT UPDATE SCHEMA
 		$('#btn-updateSchema').on('click',function(){ updateSchemaProperties(); });
 		
-		
+			
 		// UPDATING JSON EDITOR
 		$('#schema_title').text(data.title + ':');
 		editor.setMode("text");
@@ -537,51 +617,30 @@
 		// KEYs
 		$.each( json, function (key, object){						
 			$.each(object, function (key, value){
-				if (value){ if ( key == 'property') { arrProperties.push(value); }}
+				if (value){ if ( key == 'property') { arrProperties.push(value); } } 
 			});			
 		});			
 		console.log('|----- getProperties: ' + JSON.stringify(arrProperties));			
 		return arrProperties;	
 	}
 	
-	// getTypes
-	function getTypes(json){					
-		var arrTypes = [];
-						
-		// TYPEs
-		$.each( json, function (key, object){						
-			$.each(object, function (key, value){
-				if (value){ if ( key == 'type'){ arrTypes.push(value); }}
-			});
-		});		
-		console.log('|----- getTypes: ' + JSON.stringify(arrTypes));	
-		return arrTypes;
-	}
 	
-	// getRequired
-	function getRequired(json){		
-		var arrRequired = [];		
-		// REQUIREDs
-		$.each( json, function (key, object){						
-			$.each(object, function (key, value){
-				if (value){ if ( key == 'required'){ if (value == '') { value=','; } arrRequired.push(value); }}
-			});
-		});
-		console.log('|----- getRequired: ' + JSON.stringify(arrRequired));
-		return arrRequired;
-	}
 	
-	// update Schema from additional properties
+	// update Schema from additional properties, schema is base current schema loaded
 	function updateSchemaProperties(){
 	
 		// properties, types and required arrays
-		var updateProperties = $("input[name='property\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateProperties = $("input[name='property\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
 		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
 		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();
+		
 		
 		var schemaObj = {};
 		
 		console.log('|--- CURRENT: ' + updateProperties + ' types: ' + updateTypes + ' required: ' + updateRequired);
+		
+		checkUnique = updateProperties.unique();
+		if (updateProperties.length !== checkUnique.length)  { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'HAY DUPLICADOS, REVISE!'}); return false; } 
 				
 		// get current schema 
 		if (typeof schema == 'string'){		
@@ -591,30 +650,37 @@
 		
 		// compare properties added with properties on current schema
 		baseJson = createJsonProperties(schemaObj);
-		console.log('|----- BASE: ' + JSON.stringify(baseJson));
-		
+				
 		// schema string -> Object --> update --> toString --> to editor.
-		baseArrProperties = getProperties(baseJson);
-		baseArrTypes = getTypes(baseJson);
-		baseArrRequired = getRequired(baseJson);
+		baseArrProperties	= getProperties(baseJson);
 		
-		console.log('|--- Base Schema properties: ' + baseArrProperties.toString() + ' types: ' + baseArrTypes.toString() + ' required: ' + baseArrRequired.toString() );
+		//console.log('|--- Base Schema properties: ' + baseArrProperties.toString() + ' types: ' + baseArrTypes.toString() + ' required: ' + baseArrRequired.toString() );
 		
 		//TO-DO: COMPARE BASE WITH CURRENT
 		var toUpdateProperties = [];
 		var toUpdateTypes = [];
 		var toUpdateRequired = [];
 		var i = j = k = 0;
+		
+		// DIFFERENCE BETWEEN BASE WITH CURRENT
 		jQuery.grep(updateProperties, function(el) {
 			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
 				i++;
-			});
-			alert(" the difference is " + toUpdateProperties);
+		});	
+		
+		console.log(" |-------------  the difference are " + toUpdateProperties + ' elements: ' + toUpdateProperties.length);
 		
 		
+		// UPDATE SCHEMA
+		var toUpdateSchema = [];
+		if ( toUpdateProperties.length ){
 		
-		//update schema editor
-	
+			// get properties to update, use her index to access to type and required, mount object and update the schema.			
+			$.each(toUpdateProperties, function( index, value ) {
+				propIndex = updateProperties.indexOf(value);
+				console.log('index: ' + propIndex + ' | property: ' + updateProperties[propIndex] + ' type: ' + updateTypes[propIndex] + ' required: ' + updateRequired[propIndex]);
+			});		
+		}
 	
 	}
 	
