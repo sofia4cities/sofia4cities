@@ -15,9 +15,7 @@ package com.indracompany.sofia2.api.service.api;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,6 @@ import com.indracompany.sofia2.api.rest.api.fiql.AuthenticationFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.HeaderFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.OperationFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.QueryParameterFIQL;
-import com.indracompany.sofia2.api.service.Constants;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiAuthentication;
 import com.indracompany.sofia2.config.model.ApiAuthenticationAttribute;
@@ -44,8 +41,6 @@ import com.indracompany.sofia2.config.model.ApiHeader;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.ApiQueryParameter;
 import com.indracompany.sofia2.config.model.ApiSuscription;
-import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ApiAuthenticationAttributeRepository;
@@ -119,7 +114,7 @@ public class ApiServiceRest {
 		Api api = null;
 		List<Api> apis = apiRepository.findByIdentification(identificacionApi);
 		for (Api apiAux : apis) {
-			if (apiAux.getState().equals("publicada")) {
+			if (apiAux.getState().equals(Api.ApiType.PUBLISHED.name())) {
 				api = apiAux;
 			}
 		}
@@ -189,7 +184,7 @@ public class ApiServiceRest {
 
 		api.setUser(user);
 
-		api.setState(Constants.API_STATE_CREATED);
+		api.setState(Api.ApiType.CREATED.toString());
 		apiRepository.saveAndFlush(api);
 
 		// Se crean las operaciones
@@ -363,6 +358,12 @@ public class ApiServiceRest {
 	}
 
 	
+	
+	
+	
+	
+	
+	
 	public List<ApiSuscription> findApiSuscriptions(String identificacionApi, String tokenUsuario) {
 		if (identificacionApi==null){
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.IdentificacionApiRequerido");
@@ -377,6 +378,12 @@ public class ApiServiceRest {
 		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
 		suscripciones = apiSuscriptionRepository.findAllByApiAndUser(api, user);
 
+		return suscripciones;
+	}
+	
+	public List<ApiSuscription> findApiSuscriptions(Api api, User user) {		
+		List<ApiSuscription> suscripciones = null;
+		suscripciones = apiSuscriptionRepository.findAllByApiAndUser(api, user);
 		return suscripciones;
 	}
 	
@@ -405,6 +412,59 @@ public class ApiServiceRest {
 	public void removeSuscripcionByUserAndAPI(ApiSuscription suscripcion) {
 		apiSuscriptionRepository.delete(suscripcion);
 	}
+	/*
+	public void createSuscripcion(Apisuscripcion suscripcion, String tokenUsuario) {
+		// Se comprueba que esté autorizado el usuario que va a suscribir la API
+		List<Usuarioapi> autorizaciones = UsuarioapiRepository.findUsuarioapiByApiAndUser(suscripcion.getApiId(), suscripcion.getUsuarioId()).getResultList();
+		if (autorizaciones!=null && autorizaciones.size()>0){
+			// Se comprueba que no este suscrito
+			List<Apisuscripcion> apis = ApisuscripcionRepository.findApisuscripcionsByApiIdUserId(suscripcion.getApiId(), suscripcion.getUsuarioId()).getResultList();
+			if (apis==null || apis.size()==0){
+				suscripcion.persist();
+			} else {
+				throw new IllegalArgumentException(log.getMensaje(locale, "com.indra.sofia2.web.api.services.SuscripcionExiste"));
+			}
+		} else {
+			throw new IllegalArgumentException(log.getMensaje(locale, "com.indra.sofia2.web.api.services.NoAutorizado"));
+		}
+	}
+
+	public void updateSuscripcion(Apisuscripcion suscripcion, String tokenUsuario) {
+		if (authorizedOrSuscriptor(suscripcion.getApiId(), tokenUsuario, suscripcion.getUsuarioId())){
+			try {
+				Apisuscripcion apiUpdate = ApisuscripcionRepository.findApisuscripcionsByApiIdUserId(suscripcion.getApiId(), suscripcion.getUsuarioId()).getSingleResult();
+				apiUpdate.setActiva(suscripcion.getActiva());
+				apiUpdate.setFechainicio(suscripcion.getFechainicio());
+				apiUpdate.setFechafin(suscripcion.getFechafin());
+				apiUpdate.merge();
+			} catch (Exception e) {
+				throw new IllegalArgumentException(log.getMensaje(locale, "com.indra.sofia2.web.api.services.SuscripcionNoExiste"));
+			}
+		}
+	}
+
+	public void removeSuscripcionByUserAndAPI(Apisuscripcion suscripcion, String tokenUsuario) {
+		if (authorizedOrSuscriptor(suscripcion.getApiId(), tokenUsuario, suscripcion.getUsuarioId())){
+			try {
+				Apisuscripcion apiUpdate = ApisuscripcionRepository.findApisuscripcionsByApiIdUserId(suscripcion.getApiId(), suscripcion.getUsuarioId()).getSingleResult();
+				apiUpdate.remove();
+			} catch (Exception e) {
+				throw new IllegalArgumentException(log.getMensaje(locale, "com.indra.sofia2.web.api.services.SuscripcionNoExiste"));
+			}
+		}
+	}
+	
+	private boolean authorizedOrSuscriptor(Api api, String tokenUsuario, String suscriptor) {
+		Usuario user = Utils.getUser(tokenUsuario);
+		if (Utils.isAdmin(user) || user.getId().equals(api.getUsuarioId()) || user.getId().equals(suscriptor)){
+			return true;
+		} else {
+			throw new AuthorizationServiceException(log.getMensaje(locale, "com.indra.sofia2.web.api.services.NoPermisosOperacionUsuario")) ;
+		}
+	}
+	*/
+	
+	
 	public UserToken findTokenUserByIdentification(String identificacion, String tokenUsuario) {
 
 		UserToken token = null;
@@ -415,8 +475,34 @@ public class ApiServiceRest {
 		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
 		
 		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(identificacion)){
+			User userToTokenize = apiSecurityService.getUser(identificacion);
+			token = apiSecurityService.getUserToken(userToTokenize);
+		} else {
+			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
+		}
+		return token;
+	}
+	
+	public UserToken addTokenUsuario(String identificacion, String tokenUsuario) {
+		UserToken token = null;
+		if (identificacion==null){
+			throw new IllegalArgumentException("IdentificacionScriptRequerido");
+		}
+
+		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
+		
+		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(identificacion)){
+					
+			User userToTokenize = apiSecurityService.getUser(identificacion);
 			
-			token = apiSecurityService.getUserToken(user);
+			token = apiSecurityService.getUserToken(userToTokenize);
+			if (token==null)
+				token = init_Token(userToTokenize); 
+			else {
+				userTokenRepository.delete(token);
+				token = init_Token(userToTokenize); 
+			}
+				
 		} else {
 			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
 		}
@@ -433,8 +519,12 @@ public class ApiServiceRest {
 		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
 		
 		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(identificacion)){
-						
-			token = init_Token(user);
+					
+			User userToTokenize = apiSecurityService.getUser(identificacion);
+			
+			token = apiSecurityService.getUserToken(userToTokenize);
+			if (token==null)
+				token = init_Token(userToTokenize); 
 				
 		} else {
 			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
@@ -461,6 +551,10 @@ public class ApiServiceRest {
 		return userToken;
 
 	}
+
+
+
+	
 	
 	
 }

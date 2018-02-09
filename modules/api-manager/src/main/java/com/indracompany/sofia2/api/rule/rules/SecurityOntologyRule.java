@@ -30,24 +30,28 @@ import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
 import com.indracompany.sofia2.api.service.api.ApiSecurityService;
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 
 @Component
 @Rule
-public class SecurityRule extends DefaultRuleBase {
+public class SecurityOntologyRule extends DefaultRuleBase {
 
 	@Autowired
 	private ApiSecurityService apiSecurityService;
 
 	@Priority
 	public int getPriority() {
-		return 3;
+		return 5;
 	}
 
 	@Condition
 	public boolean existsRequest(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
-		if ((request != null) && canExecuteRule(facts))
+		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
+		Ontology ontology = (Ontology) data.get(ApiServiceInterface.ONTOLOGY);
+	
+		if ((request != null && ontology !=null) && canExecuteRule(facts))
 			return true;
 		else
 			return false;
@@ -58,21 +62,14 @@ public class SecurityRule extends DefaultRuleBase {
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
 		User user = (User) data.get(ApiServiceInterface.USER);
-		Api api = (Api) data.get(ApiServiceInterface.API);
-
-		boolean available  = apiSecurityService.checkApiAvailable(api, user);
-		boolean checkUser  = apiSecurityService.checkUserApiPermission(api, user);
-		boolean checkLimit = apiSecurityService.checkApiLimit(api);
+		Ontology ontology = (Ontology) facts.get(ApiServiceInterface.ONTOLOGY);
 		
-		if (!available) {
-			stopAllNextRules(facts, "API is not Available");
+		boolean ontologyPermission = apiSecurityService.checkRole(user, ontology, true);
+		
+		if (!ontologyPermission) {
+			stopAllNextRules(facts, "User has no permission to use Ontology "+ontology.getIdentification());
 		}
-		if (!checkUser) {
-			stopAllNextRules(facts, "User has no permission to use API");
-		}
-		if (!checkLimit) {
-			stopAllNextRules(facts, "User API Limit Reached");
-		}
+		
 		
 
 	}

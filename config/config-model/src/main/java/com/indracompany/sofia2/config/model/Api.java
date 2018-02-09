@@ -49,6 +49,11 @@ import lombok.Setter;
 public class Api extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static enum ApiType {
+		CREATED, PUBLISHED, DELETED, DEPRECATED, DEVELOPMENT;
+	}
+	
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -158,6 +163,10 @@ public class Api extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String apiType;
+	
+	public void setApiTypeEnum(Api.ApiType type) {
+		this.apiType = type.toString();
+	}
 
 	@Column(name = "ASSESSMENT", precision = 10)
 	@Getter

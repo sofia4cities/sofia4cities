@@ -31,11 +31,11 @@ public interface BasicOpsDBRepository {
 	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)
 			throws DBPersistenceException;
 
-	public List<String> updateNative(String ontology, String updateStmt) throws DBPersistenceException;
+	public void updateNative(String ontology, String updateStmt) throws DBPersistenceException;
 
-	public List<String> updateNative(String collection, String query, String data) throws DBPersistenceException;
+	public void updateNative(String collection, String query, String data) throws DBPersistenceException;
 
-	public List<String> deleteNative(String collection, String query) throws DBPersistenceException;
+	public void deleteNative(String collection, String query) throws DBPersistenceException;
 
 	public List<String> queryNative(String ontology, String query) throws DBPersistenceException;
 
