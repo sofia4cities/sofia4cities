@@ -1157,6 +1157,23 @@ public class InitConfigDB {
 		}
 	}
 
+	public void init_FlowNodeTypes() {
+		try {
+			if (flowNodeTypeRepository.findAll().isEmpty()) {
+				FlowNodeType nodeType = new FlowNodeType();
+				nodeType.setIdentification("ssap-process-request");
+				flowNodeTypeRepository.save(nodeType);
+
+				nodeType = new FlowNodeType();
+				nodeType.setIdentification("script-topic");
+				flowNodeTypeRepository.save(nodeType);
+			}
+		} catch (Exception e) {
+			log.error("Could not create the required flow node types :" + e.getMessage());
+			userCDBRepository.deleteAll();
+		}
+	}
+
 	/*
 	 * public void init_Template() { log.info("init template"); List<Template>
 	 * templates= this.templateRepository.findAll();

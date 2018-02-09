@@ -40,10 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class NodeRedAdminClientImpl implements NodeRedAdminClient {
-
 	@Value("${sofia2.flowengine.admin.url}")
 	private String flowengineUrl;
-
 	// Services
 	@Value("${sofia2.flowengine.services.request.timeout.ms:5000}")
 	private int restRequestTimeout;
@@ -65,29 +63,22 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	private String flowEngineDomainStop;
 	@Value("${sofia2.flowengine.services.sync}")
 	private String syncFlowEngineDomains;
-
 	private HttpComponentsClientHttpRequestFactory httpRequestFactory;
-
 	private ObjectMapper mapper;
-
 	private boolean isSynchronizedWithBDC;
 
 	@PostConstruct
 	public void init() {
 		httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		httpRequestFactory.setConnectTimeout(restRequestTimeout);
-
 		this.mapper = new ObjectMapper();
-
 		resetSynchronizedWithBDC();
-
 	}
 
 	@Override
 	public String stopFlowEngine() {
 		String response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			response = restTemplate.postForObject(flowengineUrl + stopflowEngine, null, String.class);
@@ -105,9 +96,7 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public void stopFlowEngineDomain(String domain) {
-
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			restTemplate.put(flowengineUrl + flowEngineDomainStop + "/" + domain, null);
@@ -120,10 +109,8 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public String startFlowEngineDomain(FlowEngineDomain domain) {
-
 		String response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			HttpHeaders headers = new HttpHeaders();
@@ -139,10 +126,8 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public String createFlowengineDomain(FlowEngineDomain domain) {
-
 		String response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			HttpHeaders headers = new HttpHeaders();
@@ -158,9 +143,7 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public void deleteFlowEngineDomain(String domainId) {
-
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			restTemplate.delete(flowengineUrl + flowEngineDomainDelete + "/" + domainId);
@@ -174,7 +157,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	public FlowEngineDomain getFlowEngineDomain(String domainId) {
 		FlowEngineDomain response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(flowengineUrl + flowEngineDomainGet)
@@ -191,10 +173,8 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public List<FlowEngineDomainStatus> getAllFlowEnginesDomains() {
-
 		List<FlowEngineDomainStatus> domainStatus = new ArrayList<>();
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			String responseRest = restTemplate.getForObject(flowengineUrl + flowEngineDomainGetAll, String.class);
@@ -204,16 +184,13 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 			log.warn("Unable to retrieve all flow engine domains. Cause={}, message={}", e.getCause(), e.getMessage());
 			throw new NodeRedAdminServiceException("Unable to retrieve all flow engine domains.");
 		}
-
 		return domainStatus;
 	}
 
 	@Override
 	public List<FlowEngineDomainStatus> getFlowEngineDomainStatus(List<String> domainList) {
-
 		List<FlowEngineDomainStatus> response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(flowengineUrl + flowEngineDomainStatus)
@@ -227,14 +204,11 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 			throw new NodeRedAdminServiceException("Unable to retrieve domain's statuses from NodeRedAdminClient.");
 		}
 		return response;
-
 	}
 
 	@Override
 	public String synchronizeMF(List<FlowEngineDomainStatus> domainList) {
-
 		String response = null;
-
 		SynchronizeDomainStatusRequest synchronizeDomainStatusRequest = new SynchronizeDomainStatusRequest();
 		synchronizeDomainStatusRequest.setListDomain(domainList);
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
@@ -248,7 +222,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 			log.warn("Unable to synchronize domains with CDB. Cause={}, message={}", e.getCause(), e.getMessage());
 			throw new NodeRedAdminServiceException("Unable to synchronize domains with CDB.");
 		}
-
 		return response;
 	}
 
