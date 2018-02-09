@@ -99,7 +99,7 @@ public final class QueryParameterFIQL {
 
 	
 	private static boolean isValidTypeValue(String DataType, String Value) {
-		if (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.string.toString())) {
+		if (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.number.toString())) {
 			try {
 				Integer.parseInt(Value);
 			} catch (Exception e) {

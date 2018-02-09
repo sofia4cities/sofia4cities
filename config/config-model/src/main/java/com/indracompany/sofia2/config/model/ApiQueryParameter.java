@@ -45,7 +45,7 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	}
 	
 	public static enum DataType {
-		string, array, date,password,binary,email,uuid,uri,hostname;
+		string, array, date,password,binary,email,uuid,uri,hostname,number;
 	}
 	  
 	
