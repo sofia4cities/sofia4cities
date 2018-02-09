@@ -18,21 +18,4 @@ public final class Constants {
 	public static final String API_AUT_HEADER = "HEADER";
 	public static final String API_AUTHORIZATION = "Authorization";
 	
-	public static final String API_REQUERIDO = "REQUIRED";
-	public static final String API_OPCIONAL = "OPTIONAL";
-	public static final String API_CONSTANTE = "CONSTANT";
-	
-	public static final String API_TIPO_STRING = "STRING";
-	public static final String API_TIPO_BOOLEAN = "BOOLEAN";
-	public static final String API_TIPO_NUMBER = "NUMBER";
-	public static final String API_TIPO_DATE = "DATE";
-	public static final String API_TIPO_BINARY = "BINARY";
-	public static final String API_TIPO_BODY = "BODY";
-	
-	public static final String API_STATE_CREATED = "CREATED";
-	public static final String API_STATE_PUBLISHED = "PUBLISHED";
-	public static final String API_STATE_DELETED = "DELETED";
-	public static final String API_STATE_DEPRECATED = "DEPRECATED";
-	public static final String API_STATE_DEVELOPMENT = "DEVELOPMENT";
-
 } 
