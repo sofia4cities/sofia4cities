@@ -40,6 +40,7 @@ import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DashboardType;
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.FlowNodeType;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDataModel;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
@@ -63,6 +64,7 @@ import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.FlowNodeTypeRepository;
 import com.indracompany.sofia2.config.repository.GadgetDataModelRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetQueryRepository;
@@ -137,7 +139,8 @@ public class InitConfigDB {
 	ConfigurationRepository configurationRepository;
 	@Autowired
 	ConfigurationTypeRepository configurationTypeRepository;
-
+	@Autowired
+	FlowNodeTypeRepository flowNodeTypeRepository;
 	@Autowired
 	UserTokenRepository userTokenRepository;
 
@@ -201,6 +204,7 @@ public class InitConfigDB {
 		log.info("OK init_ConsoleMenu");
 		init_Configuration();
 		log.info("OK init_Configuration");
+		init_FlowNodeTypes();
 	}
 
 	private void init_Configuration() {
@@ -294,7 +298,8 @@ public class InitConfigDB {
 			clientConnectionRepository.save(con);
 		}
 	}
-	// List<ClientConnection> clients= this.clientConnectionRepository.findAll();
+	// List<ClientConnection> clients=
+	// this.clientConnectionRepository.findAll();
 	// if (clients.isEmpty()) {
 	// log.info("No clients ...");
 	// ClientConnection con= new ClientConnection();
@@ -740,9 +745,10 @@ public class InitConfigDB {
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
 		/*
-		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
-		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
-		 * user=new OntologyUserAccess(); user.setUser("6");
+		 * List<OntologyUserAccess>
+		 * users=this.ontologyUserAccessRepository.findAll();
+		 * if(users.isEmpty()) { log.info("No users found...adding");
+		 * OntologyUserAccess user=new OntologyUserAccess(); user.setUser("6");
 		 * user.setOntology(ontologyRepository.findAll().get(0));
 		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
 		 * this.ontologyUserAccessRepository.save(user); }
@@ -975,6 +981,23 @@ public class InitConfigDB {
 		}
 	}
 
+	public void init_FlowNodeTypes() {
+		try {
+			if (flowNodeTypeRepository.findAll().isEmpty()) {
+				FlowNodeType nodeType = new FlowNodeType();
+				nodeType.setIdentification("ssap-process-request");
+				flowNodeTypeRepository.save(nodeType);
+
+				nodeType = new FlowNodeType();
+				nodeType.setIdentification("script-topic");
+				flowNodeTypeRepository.save(nodeType);
+			}
+		} catch (Exception e) {
+			log.error("Could not create the required flow node types :" + e.getMessage());
+			userCDBRepository.deleteAll();
+		}
+	}
+
 	/*
 	 * public void init_Template() { log.info("init template"); List<Template>
 	 * templates= this.templateRepository.findAll();
@@ -982,14 +1005,15 @@ public class InitConfigDB {
 	 * if (templates.isEmpty()) { try {
 	 * 
 	 * log.info("No templates Adding..."); Template template= new Template();
-	 * template.setIdentification("GSMA-Weather Forecast"); template.setType("0");
-	 * template.
+	 * template.setIdentification("GSMA-Weather Forecast");
+	 * template.setType("0"); template.
 	 * setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}"
 	 * ); template.
 	 * setDescription("This contains a harmonised description of a Weather Forecast."
 	 * ); template.setCategory("plantilla_categoriaGSMA");
 	 * template.setIsrelational(false); templateRepository.save(template); ///
-	 * template=new Template(); template.setIdentification("TagsProjectBrandwatch");
+	 * template=new Template();
+	 * template.setIdentification("TagsProjectBrandwatch");
 	 * template.setType("1"); template.
 	 * setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}"
 	 * ); template.
