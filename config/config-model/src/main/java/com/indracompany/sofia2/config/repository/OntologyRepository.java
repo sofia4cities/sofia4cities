@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
@@ -76,5 +77,5 @@ public interface OntologyRepository extends JpaRepository<Ontology, String> {
 	long countByActiveTrueAndIsPublicTrueAndMetainfIsNull();
 
 	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user) AND o.active=true")
-	List<Ontology> findByUserAndOntologyUserAccessAndAllPermissions(User user);
+	List<Ontology> findByUserAndOntologyUserAccessAndAllPermissions(@Param("user") User user);
 }
