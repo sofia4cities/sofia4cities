@@ -574,6 +574,7 @@
 	// update Schema from additional properties
 	function updateSchemaProperties(){
 	
+		// properties, types and required arrays
 		var updateProperties = $("input[name='property\\[\\]']").map(function(){return $(this).val();}).get();
 		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
 		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();
@@ -601,7 +602,9 @@
 		
 		//TO-DO: COMPARE BASE WITH CURRENT
 		var toUpdateProperties = [];
-		var i = 0;
+		var toUpdateTypes = [];
+		var toUpdateRequired = [];
+		var i = j = k = 0;
 		jQuery.grep(updateProperties, function(el) {
 			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
 				i++;
