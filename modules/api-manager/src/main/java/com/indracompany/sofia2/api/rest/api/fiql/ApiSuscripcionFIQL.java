@@ -31,6 +31,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.api.rest.api.dto.ApiSuscripcionDTO;
+import com.indracompany.sofia2.api.service.api.ApiSecurityService;
 import com.indracompany.sofia2.api.service.api.ApiServiceRest;
 import com.indracompany.sofia2.config.model.ApiSuscription;
 import com.indracompany.sofia2.config.model.User;
@@ -40,9 +41,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ApiSuscripcionFIQL {
-
+	
 	@Autowired
-	private ApiServiceRest apiServiceRest;
+	private ApiSecurityService apiSecurityService;
+	
+	@Autowired
+	private ApiServiceRest apiService;
 
 	static Locale locale = LocaleContextHolder.getLocale();
 
@@ -60,7 +64,7 @@ public class ApiSuscripcionFIQL {
 		ApiSuscripcionDTO suscripcionDTO = new ApiSuscripcionDTO();
 		String id = suscripcion.getApi().getIdentification();
 		suscripcionDTO.setApiIdentification(id);
-		User user = apiServiceRest.getUser(suscripcion.getUser().getUserId());
+		User user = apiSecurityService.getUser(suscripcion.getUser().getUserId());
 
 		suscripcionDTO.setUserId(user.getUserId());
 		if (suscripcion.getInitDate() != null) {
@@ -75,9 +79,9 @@ public class ApiSuscripcionFIQL {
 
 	public ApiSuscription copyProperties(ApiSuscripcionDTO suscripcion) {
 		ApiSuscription apiSuscripcion = new ApiSuscription();
-		apiSuscripcion.setApi(apiServiceRest.getApi(suscripcion.getApiIdentification()));
+		apiSuscripcion.setApi(apiService.getApi(suscripcion.getApiIdentification()));
 
-		User user = apiServiceRest.getUser(suscripcion.getUserId());
+		User user = apiSecurityService.getUser(suscripcion.getUserId());
 
 		if (user != null) {
 			apiSuscripcion.setUser(user);

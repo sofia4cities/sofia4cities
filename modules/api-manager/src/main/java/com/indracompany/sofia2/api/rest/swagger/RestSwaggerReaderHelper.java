@@ -98,6 +98,22 @@ public class RestSwaggerReaderHelper {
                             }
                         }
                     }
+                    if (dataType.equalsIgnoreCase("date") || 
+                    		dataType.equalsIgnoreCase("date-time") || 
+                    		dataType.equalsIgnoreCase("password") ||
+                    		dataType.equalsIgnoreCase("byte") || 
+                    		dataType.equalsIgnoreCase("binary") || 
+                    		dataType.equalsIgnoreCase("email") || 
+                    		dataType.equalsIgnoreCase("uuid") || 
+                    		dataType.equalsIgnoreCase("uri") || 
+                    		dataType.equalsIgnoreCase("hostname") || 
+                    		dataType.equalsIgnoreCase("ipv4") 
+                    		) 
+                    {
+                    	serializableParameter.setType("string");
+                    	serializableParameter.setFormat(dataType); 
+                    }
+
                 }
                
             }

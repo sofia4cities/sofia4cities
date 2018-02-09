@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Role;
@@ -28,11 +29,17 @@ import com.indracompany.sofia2.config.repository.RoleRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.repository.UserTokenRepository;
+
+
+
+import sun.rmi.runtime.Log;
+
 import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+	private static final String log = null;
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -48,7 +55,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserToken getUserToken(Token token) {
+	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);
 	}
 
@@ -59,8 +66,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByToken(String token) {
-		Token theToken = getToken(token);
-		UserToken usertoken = userTokenRepository.findByToken(theToken);
+		UserToken usertoken = userTokenRepository.findByToken(token);
 		User user = usertoken.getUser();
 		return user;
 	}
@@ -104,7 +110,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void createUser(User user) {
 		if (!this.userExists(user)) {
+			System.out.println("create user,  no exist");
 			user.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
+			System.out.println("repo");
 			this.userRepository.save(user);
 		}else
 			throw new UserServiceException("User already exists in Database");
@@ -151,5 +159,22 @@ public class UserServiceImpl implements UserService {
 		}else
 			throw new UserServiceException("Cannot delete user that does not exist");
 
+	}
+	
+	public boolean registerUser(User user) {
+		
+		if(!this.userExists(user)){
+						
+			Role r = new Role();
+			r.setName(Role.Type.ROLE_USER.name());
+			r.setIdEnum(Role.Type.ROLE_USER);
+			user.setRole(r);
+					
+			this.userRepository.save(user);
+			return true;	
+		}
+				
+		return false;
+	
 	}
 }

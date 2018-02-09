@@ -136,7 +136,7 @@ public class InitConfigDB {
 	ConfigurationRepository configurationRepository;
 	@Autowired
 	ConfigurationTypeRepository configurationTypeRepository;
-	
+
 	@Autowired
 	UserTokenRepository userTokenRepository;
 
@@ -176,7 +176,7 @@ public class InitConfigDB {
 		//
 		init_Token();
 		log.info("OK init_Token");
-		
+
 		init_UserToken();
 		log.info("OK USER_Token");
 		//
@@ -334,14 +334,14 @@ public class InitConfigDB {
 			log.info("No clients ...");
 			ClientPlatform client = new ClientPlatform();
 			client.setId("1");
-			client.setUser(getUserCollaborator());
+			client.setUser(getUserDeveloper());
 			client.setIdentification("Client-MasterData");
 			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
 			client.setDescription("ClientPatform created as MasterData");
 			clientPlatformRepository.save(client);
 			client = new ClientPlatform();
 			client.setId("2");
-			client.setUser(getUserCollaborator());
+			client.setUser(getUserDeveloper());
 			client.setIdentification("GTKP-Example");
 			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
 			client.setDescription("ClientPatform created as Example");
@@ -362,7 +362,7 @@ public class InitConfigDB {
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("1");
 				menu.setJson(loadFromResources("menu_admin.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
+				menu.setRoleType(roleRepository.findById(Role.Type.ROLE_ADMINISTRATOR.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role ADMIN");
@@ -371,8 +371,8 @@ public class InitConfigDB {
 				log.info("Adding menu for role COLLABORATOR");
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("2");
-				menu.setJson(loadFromResources("menu_collaborator.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.COLLABORATOR.toString()));
+				menu.setJson(loadFromResources("menu_developer.json"));
+				menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role COLLABORATOR");
@@ -382,7 +382,7 @@ public class InitConfigDB {
 				ConsoleMenu menu = new ConsoleMenu();
 				menu.setId("3");
 				menu.setJson(loadFromResources("menu_user.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.USER.toString()));
+				menu.setRoleType(roleRepository.findById(Role.Type.ROLE_USER.toString()));
 				this.consoleMenuRepository.save(menu);
 			} catch (Exception e) {
 				log.error("Error adding menu for role USER");
@@ -410,16 +410,16 @@ public class InitConfigDB {
 			Dashboard dashboard = new Dashboard();
 			dashboard.setId("1");
 			dashboard.setModel("Model Dashboard Master");
-			dashboard.setUser(getUserCollaborator());
+			dashboard.setUser(getUserDeveloper());
 			dashboard.setName("Dashboard Master");
 			dashboard.setDashboardType(this.dashboardTypeRepository.findAll().get(0));
 			dashboardRepository.save(dashboard);
 		}
 	}
 
-	private User getUserCollaborator() {
+	private User getUserDeveloper() {
 		if (userCollaborator == null)
-			userCollaborator = this.userCDBRepository.findByUserId("collaborator");
+			userCollaborator = this.userCDBRepository.findByUserId("developer");
 		return userCollaborator;
 	}
 
@@ -438,7 +438,7 @@ public class InitConfigDB {
 			DashboardType dashboardType = new DashboardType();
 			dashboardType.setId(1);
 			dashboardType.setModel("Modelo 1");
-			dashboardType.setUser(getUserCollaborator());
+			dashboardType.setUser(getUserDeveloper());
 			dashboardType.setPublic(true);
 			dashboardType.setType("Tipo de modelo 1");
 			dashboardTypeRepository.save(dashboardType);
@@ -530,7 +530,7 @@ public class InitConfigDB {
 			GadgetDataModel gadgetDM = new GadgetDataModel();
 			gadgetDM.setIdentification("1");
 			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
-			gadgetDM.setUser(getUserCollaborator());
+			gadgetDM.setUser(getUserDeveloper());
 			gadgetDM.setPublic(true);
 			gadgetDataModelRepository.save(gadgetDM);
 		}
@@ -551,7 +551,7 @@ public class InitConfigDB {
 				log.info("No gadgets ...");
 				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUser(getUserCollaborator());
+				gadget.setUser(getUserDeveloper());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
@@ -580,7 +580,7 @@ public class InitConfigDB {
 				log.info("No gadgets ...");
 				gadget = new Gadget();
 				gadget.setDbType("DBC");
-				gadget.setUser(getUserCollaborator());
+				gadget.setUser(getUserDeveloper());
 				gadget.setPublic(true);
 				gadget.setName("Gadget1");
 				gadget.setType("Tipo 1");
@@ -603,7 +603,7 @@ public class InitConfigDB {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
 			gadget.setDbType("RTDB");
-			gadget.setUser(getUserCollaborator());
+			gadget.setUser(getUserDeveloper());
 			gadget.setPublic(true);
 			gadget.setName("Gadget Example");
 			gadget.setType("Type 1");
@@ -680,7 +680,7 @@ public class InitConfigDB {
 			OntologyEmulator oe = new OntologyEmulator();
 			oe.setMeasures("2.5,3.4,4.5");
 			oe.setIdentification("Id 1");
-			oe.setUser(getUserCollaborator());
+			oe.setUser(getUserDeveloper());
 			oe.setInsertEvery(5);
 			Ontology o = this.ontologyRepository.findAll().get(0);
 			if (o == null) {
@@ -716,7 +716,7 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
-			ontology.setUser(getUserCollaborator());
+			ontology.setUser(getUserDeveloper());
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -728,7 +728,7 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
-			ontology.setUser(getUserCollaborator());
+			ontology.setUser(getUserDeveloper());
 			ontologyRepository.save(ontology);
 
 		}
@@ -780,57 +780,57 @@ public class InitConfigDB {
 
 				log.info("No roles en tabla.Adding...");
 				Role type = new Role();
-				type.setIdEnum(Role.Type.ADMINISTRATOR);
-				type.setName("ROLE_ADMINISTRATOR");
+				type.setIdEnum(Role.Type.ROLE_ADMINISTRATOR);
+				type.setName("Administrator");
 				type.setDescription("Administrator of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setIdEnum(Role.Type.COLLABORATOR);
-				type.setName("ROLE_COLLABORATOR");
+				type.setIdEnum(Role.Type.ROLE_DEVELOPER);
+				type.setName("Developer");
 				type.setDescription("Advanced User of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setIdEnum(Role.Type.USER);
-				type.setName("ROLE_USER");
+				type.setIdEnum(Role.Type.ROLE_USER);
+				type.setName("User");
 				type.setDescription("Basic User of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setIdEnum(Role.Type.ANALYTICS);
-				type.setName("ROLE_ANALYTICS");
+				type.setIdEnum(Role.Type.ROLE_DATASCIENTIST);
+				type.setName("Analytics");
 				type.setDescription("Analytics User of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setIdEnum(Role.Type.PARTNER);
-				type.setName("ROLE_PARTNER");
+				type.setIdEnum(Role.Type.ROLE_PARTNER);
+				type.setName("Partner");
 				type.setDescription("Partner in the Platform");
 				roleRepository.save(type);
 				//
 				//
 				type = new Role();
-				type.setIdEnum(Role.Type.SYS_ADMIN);
-				type.setName("ROLE_SYS_ADMIN");
+				type.setIdEnum(Role.Type.ROLE_SYS_ADMIN);
+				type.setName("SysAdmin");
 				type.setDescription("System Administradot of the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setIdEnum(Role.Type.OPERATIONS);
-				type.setName("ROLE_OPERATIONS");
+				type.setIdEnum(Role.Type.ROLE_OPERATIONS);
+				type.setName("Operations");
 				type.setDescription("Operations for the Platform");
 				roleRepository.save(type);
 				//
 				type = new Role();
-				type.setIdEnum(Role.Type.DEVOPS);
-				type.setName("ROLE_DEVOPS");
+				type.setIdEnum(Role.Type.ROLE_DEVOPS);
+				type.setName("DevOps");
 				type.setDescription("DevOps for the Platform");
 				roleRepository.save(type);
 				//
 				// UPDATE of the ROLE_ANALYTICS
-				Role typeSon = roleRepository.findById(Role.Type.ANALYTICS.toString());
-				Role typeParent = roleRepository.findById(Role.Type.COLLABORATOR.toString());
+				Role typeSon = roleRepository.findById(Role.Type.ROLE_DATASCIENTIST.toString());
+				Role typeParent = roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString());
 				typeSon.setRoleParent(typeParent);
 				roleRepository.save(typeSon);
 
@@ -865,28 +865,26 @@ public class InitConfigDB {
 		}
 
 	}
-	
+
 	public void init_UserToken() {
 
 		log.info("init user token");
 		List<UserToken> tokens = this.userTokenRepository.findAll();
 		if (tokens.isEmpty()) {
-			
+
 			try {
-				Token token = this.tokenRepository.findAll().get(0);
 				User user = this.userCDBRepository.findAll().get(0);
 				UserToken userToken = new UserToken();
-				
-				userToken.setToken(token);
+
+				userToken.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
 				userToken.setUser(user);
 				userToken.setCreatedAt(Calendar.getInstance().getTime());
-				
-				
+
 				userTokenRepository.save(userToken);
 			} catch (Exception e) {
 				log.info("Could not create user token");
 			}
-			
+
 		}
 
 	}
@@ -904,17 +902,17 @@ public class InitConfigDB {
 				type.setFullName("Generic Administrator of the Platform");
 				type.setEmail("administrator@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.ADMINISTRATOR.toString()));
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_ADMINISTRATOR.toString()));
 
 				userCDBRepository.save(type);
 				//
 				type = new User();
-				type.setUserId("collaborator");
+				type.setUserId("developer");
 				type.setPassword("changeIt!");
-				type.setFullName("Generic Advanced User of the Platform");
-				type.setEmail("collaborator@sofia2.com");
+				type.setFullName("Developer of the Platform");
+				type.setEmail("developer@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
 
 				userCDBRepository.save(type);
 				//
@@ -924,7 +922,7 @@ public class InitConfigDB {
 				type.setFullName("Generic User of the Platform");
 				type.setEmail("user@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.USER.toString()));
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_USER.toString()));
 
 				userCDBRepository.save(type);
 				//
@@ -934,7 +932,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Analytics User of the Platform");
 				type.setEmail("analytics@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.ANALYTICS.toString()));
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DATASCIENTIST.toString()));
 
 				userCDBRepository.save(type);
 				//
@@ -944,7 +942,7 @@ public class InitConfigDB {
 				type.setFullName("Generic Partner of the Platform");
 				type.setEmail("partner@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.PARTNER.toString()));
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_PARTNER.toString()));
 
 				userCDBRepository.save(type);
 				//
@@ -954,7 +952,7 @@ public class InitConfigDB {
 				type.setFullName("Generic SysAdmin of the Platform");
 				type.setEmail("sysadmin@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.SYS_ADMIN.toString()));
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_SYS_ADMIN.toString()));
 
 				userCDBRepository.save(type);
 				//
@@ -964,7 +962,7 @@ public class InitConfigDB {
 				type.setFullName("Operations of the Platform");
 				type.setEmail("operations@sofia2.com");
 				type.setActive(true);
-				type.setRole(this.roleRepository.findById(Role.Type.OPERATIONS.toString()));
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_OPERATIONS.toString()));
 				userCDBRepository.save(type);
 				//
 			} catch (Exception e) {

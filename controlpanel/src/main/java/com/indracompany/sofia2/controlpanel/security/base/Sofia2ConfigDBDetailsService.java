@@ -46,7 +46,7 @@ public class Sofia2ConfigDBDetailsService implements UserDetailsService {
 
 	private UserDetails toUserDetails(User userObject) {
 		return org.springframework.security.core.userdetails.User.withUsername(userObject.getUserId())
-				.password(userObject.getPassword()).roles(userObject.getRole().getName()).build();
+				.password(userObject.getPassword()).roles(userObject.getRole().getId()).build();
 	}
 
 }

@@ -24,10 +24,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -88,7 +90,7 @@ public class UserController {
 			RedirectAttributes redirect) {
 		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
-			redirect.addFlashAttribute("message", "Errors in user form");
+			utils.addRedirectMessage("user.validation.error", redirect);
 			return "redirect:/users/update/";
 		}
 
@@ -102,10 +104,10 @@ public class UserController {
 			this.userService.updateUser(user);
 		} catch (UserServiceException e) {
 			log.debug("Cannot update user");
-			redirect.addFlashAttribute("message", "Account not updated");
+			utils.addRedirectMessage("user.update.error", redirect);
 			return "redirect:/users/create";
 		}
-		redirect.addFlashAttribute("message", "Account updated successfully");
+		utils.addRedirectMessage("user.update.success", redirect);
 		return "redirect:/users/show/" + user.getUserId();
 
 	}
@@ -122,12 +124,11 @@ public class UserController {
 			this.userService.createUser(user);
 		} catch (UserServiceException e) {
 			log.debug("Cannot update user that does not exist");
-			redirect.addFlashAttribute("message", "Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
 			return "redirect:/users/create";
 		}
 
-		redirect.addFlashAttribute("message", "Account created successfully");
+		utils.addRedirectMessage("user.create.success", redirect);
 		return "redirect:/users/list";
 	}
 
@@ -211,4 +212,27 @@ public class UserController {
 		model.addAttribute("roleTypes", this.userService.getAllRoles());
 	}
 
+	@RequestMapping(value = "/register" ,  method = RequestMethod.POST)
+	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes)
+	{
+		if(user!=null)
+		{
+			
+			if(user.getUserId() != null && user.getPassword() != null && user.getFullName() != null && user.getEmail() != null && user.isActive() == true )
+			{	
+				if (this.userService.registerUser(user)) {
+					log.debug("User created from login");
+					utils.addRedirectMessage("login.register.created", redirectAttributes);
+					return "redirect:/login";
+				}
+				log.debug("This user already exist");
+				utils.addRedirectMessage("login.error.register", redirectAttributes);
+				return "redirect:/login";
+								
+			}
+		}
+		
+		return "redirect:/login?errorRegister";
+		
+	}
 }

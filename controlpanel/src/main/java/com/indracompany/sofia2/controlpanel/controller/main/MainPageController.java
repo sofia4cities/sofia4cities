@@ -46,8 +46,7 @@ public class MainPageController {
 		// Load menu by role in session
 		String jsonMenu = this.menuService.loadMenuByRole(this.userService.getUser(utils.getUserId()));
 		// Remove PrettyPrinted
-		String menu = utils.validateAndReturnJson(jsonMenu);
-
+		String menu = utils.validateAndReturnJson(jsonMenu);		
 		utils.setSessionAttribute(request, "menu", menu);
 		return "/main";
 	}

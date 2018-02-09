@@ -38,4 +38,6 @@ public interface OntologyService {
 	List<DataModel> getAllDataModels();
 
 	List<String> getAllDataModelTypes();
+	
+	boolean hasUserPermissionForQuery(String userId, String ontologyIdentification);
 }

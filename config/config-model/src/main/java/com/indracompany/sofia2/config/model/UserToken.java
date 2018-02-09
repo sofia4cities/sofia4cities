@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.config.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -31,12 +32,11 @@ import lombok.Setter;;
 @Table(name = "USER_TOKEN")
 public class UserToken extends AuditableEntityWithUUID {
 
-	@OneToOne
-	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID", nullable = false)
+	@Column(name = "TOKEN", nullable = false)
 	@NotNull
 	@Getter
 	@Setter
-	private Token token;
+	String token;
 
 	@OneToOne
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)

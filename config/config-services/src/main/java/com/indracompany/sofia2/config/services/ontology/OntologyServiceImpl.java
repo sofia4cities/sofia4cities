@@ -21,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
@@ -59,7 +59,7 @@ public class OntologyServiceImpl implements OntologyService {
 		List<Ontology> ontologies;
 		User user = this.userService.getUser(userId);
 
-		if (user.getRole().getId().equals(Role.Type.ADMINISTRATOR.toString())) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			if (description != null && identification != null) {
 				ontologies = this.ontologyRepository
 						.findByIdentificationContainingAndDescriptionContaining(identification, description);
@@ -121,7 +121,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public Ontology saveOntology(Ontology ontology) {
-		if(this.ontologyRepository.findByIdentification(ontology.getIdentification())==null)
+		if (this.ontologyRepository.findByIdentification(ontology.getIdentification()) == null)
 			return this.ontologyRepository.save(ontology);
 		else
 			throw new OntologyServiceException("Ontology Exists");
@@ -132,17 +132,27 @@ public class OntologyServiceImpl implements OntologyService {
 	public List<DataModel> getAllDataModels() {
 		return this.dataModelRepository.findAll();
 	}
-	
+
 	@Override
-	public List<String> getAllDataModelTypes()
-	{
-		List<MainType> types= Arrays.asList(DataModel.MainType.values());
-		List<String> typesString=new ArrayList<String> ();
-		for(MainType type: types)
-		{
+	public List<String> getAllDataModelTypes() {
+		List<MainType> types = Arrays.asList(DataModel.MainType.values());
+		List<String> typesString = new ArrayList<String>();
+		for (MainType type : types) {
 			typesString.add(type.toString());
 		}
 		return typesString;
+	}
+
+	@Override
+	public boolean hasUserPermissionForQuery(String userId, String ontologyIdentification) {
+		List<Ontology> ontologies = this.ontologyRepository
+				.findByUserAndOntologyUserAccessAndPermissionsQuery(this.userService.getUser(userId));
+		for (Ontology ontology : ontologies) {
+			if (ontology.getIdentification().equals(ontologyIdentification))
+				return true;
+		}
+		return false;
+
 	}
 
 }

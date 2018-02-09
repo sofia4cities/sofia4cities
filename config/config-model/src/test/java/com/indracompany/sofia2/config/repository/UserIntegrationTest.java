@@ -81,7 +81,7 @@ public class UserIntegrationTest {
 		type.setFullName("Luis Miguel Gracia");
 		type.setEmail("lmgracia@sofia2.com");
 		type.setActive(true);
-		type.setRole(this.roleRepository.findById(Role.Type.COLLABORATOR.toString()));
+		type.setRole(this.roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
 		repository.save(type);
 		Assert.assertTrue(this.repository.count() == count + 1);
 		repository.delete(type);
