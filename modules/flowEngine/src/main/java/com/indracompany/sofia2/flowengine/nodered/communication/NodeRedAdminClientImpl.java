@@ -14,9 +14,7 @@
 package com.indracompany.sofia2.flowengine.nodered.communication;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
@@ -31,9 +29,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.flowengine.api.rest.pojo.FlowEngineDomain;
 import com.indracompany.sofia2.flowengine.exception.NodeRedAdminServiceException;
 import com.indracompany.sofia2.flowengine.exception.NotSynchronizedToCdbException;
+import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomain;
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomainStatus;
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.SynchronizeDomainStatusRequest;
 
@@ -42,10 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class NodeRedAdminClientImpl implements NodeRedAdminClient {
-
 	@Value("${sofia2.flowengine.admin.url}")
 	private String flowengineUrl;
-
 	// Services
 	@Value("${sofia2.flowengine.services.request.timeout.ms:5000}")
 	private int restRequestTimeout;
@@ -67,39 +63,24 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	private String flowEngineDomainStop;
 	@Value("${sofia2.flowengine.services.sync}")
 	private String syncFlowEngineDomains;
-
 	private HttpComponentsClientHttpRequestFactory httpRequestFactory;
-
 	private ObjectMapper mapper;
-
 	private boolean isSynchronizedWithBDC;
 
 	@PostConstruct
 	public void init() {
 		httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		httpRequestFactory.setConnectTimeout(restRequestTimeout);
-
 		this.mapper = new ObjectMapper();
-
 		resetSynchronizedWithBDC();
-
 	}
 
 	@Override
 	public String stopFlowEngine() {
 		String response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
-			/*
-			 * ResponseEntity<String> responseEntity =
-			 * restTemplate.exchange(flowengineUrl + stopflowEngine,
-			 * HttpMethod.POST, null, String.class); response =
-			 * FlowEngineAdminResponse.builder().ok(true).error("").body(
-			 * responseEntity.getBody())
-			 * .returnCode(responseEntity.getStatusCode().value()).build();
-			 */
 			response = restTemplate.postForObject(flowengineUrl + stopflowEngine, null, String.class);
 		} catch (Exception e) {
 			log.warn("Unable to stop the flow engine. Cause={}, message={}", e.getCause(), e.getMessage());
@@ -115,19 +96,9 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public void stopFlowEngineDomain(String domain) {
-
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
-			/*
-			 * ResponseEntity<String> responseEntity = restTemplate
-			 * .exchange(flowengineUrl + flowEngineDomainStop + "/" + domain,
-			 * HttpMethod.PUT, null, String.class); response =
-			 * FlowEngineAdminResponse.builder().ok(true).error("").body(
-			 * responseEntity.getBody())
-			 * .returnCode(responseEntity.getStatusCode().value()).build();
-			 */
 			restTemplate.put(flowengineUrl + flowEngineDomainStop + "/" + domain, null);
 		} catch (Exception e) {
 			log.warn("Unable to stop the flow engine Domain={}. Cause={}, message={}", domain, e.getCause(),
@@ -138,23 +109,13 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public String startFlowEngineDomain(FlowEngineDomain domain) {
-
 		String response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<FlowEngineDomain> domainToStart = new HttpEntity<FlowEngineDomain>(domain, headers);
-			/*
-			 * ResponseEntity<String> responseEntity =
-			 * restTemplate.exchange(flowengineUrl + flowEngineDomainStart,
-			 * HttpMethod.POST, domainToStart, String.class); response =
-			 * FlowEngineAdminResponse.builder().ok(true).error("").body(
-			 * responseEntity.getBody())
-			 * .returnCode(responseEntity.getStatusCode().value()).build();
-			 */
 			response = restTemplate.postForObject(flowengineUrl + flowEngineDomainStart, domainToStart, String.class);
 		} catch (Exception e) {
 			log.warn("Unable to start Domain={}. Cause={}, message={}", domain, e.getCause(), e.getMessage());
@@ -165,23 +126,13 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public String createFlowengineDomain(FlowEngineDomain domain) {
-
 		String response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<FlowEngineDomain> newDomain = new HttpEntity<FlowEngineDomain>(domain, headers);
-			/*
-			 * ResponseEntity<String> responseEntity =
-			 * restTemplate.exchange(flowengineUrl + flowEngineDomainCreate,
-			 * HttpMethod.POST, newDomain, String.class); response =
-			 * FlowEngineAdminResponse.builder().ok(true).error("").body(
-			 * responseEntity.getBody())
-			 * .returnCode(responseEntity.getStatusCode().value()).build();
-			 */
 			response = restTemplate.postForObject(flowengineUrl + flowEngineDomainCreate, newDomain, String.class);
 		} catch (Exception e) {
 			log.warn("Unable to create Domain={}. Cause={}, message={}", domain, e.getCause(), e.getMessage());
@@ -192,21 +143,9 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public void deleteFlowEngineDomain(String domainId) {
-
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
-			/*
-			 * ResponseEntity<String> responseEntity = restTemplate.exchange(
-			 * flowengineUrl + flowEngineDomainDelete + "/" + domainId,
-			 * HttpMethod.DELETE, null, String.class);
-			 * 
-			 * response =
-			 * FlowEngineAdminResponse.builder().ok(true).error("").body(
-			 * responseEntity.getBody())
-			 * .returnCode(responseEntity.getStatusCode().value()).build();
-			 */
 			restTemplate.delete(flowengineUrl + flowEngineDomainDelete + "/" + domainId);
 		} catch (Exception e) {
 			log.warn("Unable to Delete Domain={}. Cause={}, message={}", domainId, e.getCause(), e.getMessage());
@@ -218,20 +157,11 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	public FlowEngineDomain getFlowEngineDomain(String domainId) {
 		FlowEngineDomain response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(flowengineUrl + flowEngineDomainGet)
 					.queryParam("domain", domainId);
 			String responseRest = restTemplate.getForObject(builder.build().encode().toUri(), String.class);
-			/*
-			 * ResponseEntity<String> responseEntity =
-			 * restTemplate.exchange(builder.build().encode().toUri(),
-			 * HttpMethod.GET, null, String.class); response =
-			 * FlowEngineAdminResponse.builder().ok(true).error("").body(
-			 * responseEntity.getBody())
-			 * .returnCode(responseEntity.getStatusCode().value()).build();
-			 */
 			response = mapper.readValue(responseRest, new TypeReference<FlowEngineDomain>() {
 			});
 		} catch (Exception e) {
@@ -243,17 +173,10 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public List<FlowEngineDomainStatus> getAllFlowEnginesDomains() {
-
 		List<FlowEngineDomainStatus> domainStatus = new ArrayList<>();
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
-			/*
-			 * ResponseEntity<String> responseEntity =
-			 * restTemplate.exchange(flowengineUrl + flowEngineDomainGetAll,
-			 * HttpMethod.GET, null, String.class);
-			 */
 			String responseRest = restTemplate.getForObject(flowengineUrl + flowEngineDomainGetAll, String.class);
 			domainStatus = (List<FlowEngineDomainStatus>) FlowEngineDomainStatus
 					.fromJsonArrayToDomainStatus(responseRest);
@@ -261,23 +184,17 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 			log.warn("Unable to retrieve all flow engine domains. Cause={}, message={}", e.getCause(), e.getMessage());
 			throw new NodeRedAdminServiceException("Unable to retrieve all flow engine domains.");
 		}
-
 		return domainStatus;
 	}
 
 	@Override
 	public List<FlowEngineDomainStatus> getFlowEngineDomainStatus(List<String> domainList) {
-
 		List<FlowEngineDomainStatus> response = null;
 		checkIsSynchronized();
-
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(flowengineUrl + flowEngineDomainStatus)
 					.queryParam("domains", mapper.writeValueAsString(domainList));
-			Map<String, String> uriVars = new HashMap<>();
-			uriVars.put("domains", mapper.writeValueAsString(domainList));
-
 			String responseRest = restTemplate.getForObject(builder.build().encode().toUri(), String.class);
 			response = (List<FlowEngineDomainStatus>) FlowEngineDomainStatus.fromJsonArrayToDomainStatus(responseRest);
 		} catch (Exception e) {
@@ -286,14 +203,11 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 			throw new NodeRedAdminServiceException("Unable to retrieve domain's statuses from NodeRedAdminClient.");
 		}
 		return response;
-
 	}
 
 	@Override
 	public String synchronizeMF(List<FlowEngineDomainStatus> domainList) {
-
 		String response = null;
-
 		SynchronizeDomainStatusRequest synchronizeDomainStatusRequest = new SynchronizeDomainStatusRequest();
 		synchronizeDomainStatusRequest.setListDomain(domainList);
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
@@ -301,21 +215,12 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<String> domainsToSync = new HttpEntity<String>(synchronizeDomainStatusRequest.toJson(), headers);
-			/*
-			 * ResponseEntity<String> responseEntity =
-			 * restTemplate.exchange(flowengineUrl + syncFlowEngineDomains,
-			 * HttpMethod.POST, domainsToSync, String.class); response =
-			 * FlowEngineAdminResponse.builder().ok(true).error("").body(
-			 * responseEntity.getBody())
-			 * .returnCode(responseEntity.getStatusCode().value()).build();
-			 */
 			response = restTemplate.postForObject(flowengineUrl + syncFlowEngineDomains, domainsToSync, String.class);
 			this.isSynchronizedWithBDC = true;
 		} catch (Exception e) {
 			log.warn("Unable to synchronize domains with CDB. Cause={}, message={}", e.getCause(), e.getMessage());
 			throw new NodeRedAdminServiceException("Unable to synchronize domains with CDB.");
 		}
-
 		return response;
 	}
 
