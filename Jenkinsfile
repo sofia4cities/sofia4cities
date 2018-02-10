@@ -34,14 +34,14 @@ pipeline {
 
 	   		steps {	   			
 					
-				// Starts BDC, BDTR and Quasar	
+				// Starts configdb, realtimedb and Quasar	
 				dir("${env.DOCKERCONFIG}") {
 					sh "docker-compose up -d || true"
 				}
 					
 				// Load Sofia2 CDB and BDTR					
 	   			dir("${env.SYSTEMCONFIG}") {
-					// Wait until CDB and BDTR are up and running
+					// Wait until configdb and realtimedb are up and running
 					sleep 10
 						
 					sh "mvn spring-boot:run"	  			
@@ -71,14 +71,14 @@ pipeline {
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
 	        mail from: 'plataformasofia2@gmail.com',
 	             to: 'lmgracia@minsait.com, jjmorenoa@minsait.com, mmoran@minsait.com',
-	             subject: "La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${currentBuild.fullDisplayName}",
+	             subject: "[SUCCESSFUL!] La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${currentBuild.fullDisplayName}",
 	             body: "La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${env.BUILD_URL}"
 	    }
 	    failure {   
 	    	echo "El pipeline: '${currentBuild.fullDisplayName}' ha fallado: '${env.BUILD_URL}' se procede a enviar notificación por correo"
 	        mail from: 'plataformasofia2@gmail.com',
 	             to: 'lmgracia@minsait.com, jjmorenoa@minsait.com, mmoran@minsait.com',
-	             subject: "Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities: ${currentBuild.fullDisplayName}",
+	             subject: "[ERROR!] Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities: ${currentBuild.fullDisplayName}",
 	             body: "Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities. id del Build: ${env.BUILD_URL}"	    
 	    }
    }      

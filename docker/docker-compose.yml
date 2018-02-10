@@ -1,18 +1,18 @@
 version: "2.1"
 
 services:
-  sofiabdtr:
+  realtimedb:
     image: mongo:latest
-    container_name: sofiabdtr
+    container_name: realtimedb
     networks:
       - datanetwork
     ports:
       - "27017:27017"
     environment:
      - MONGO_INITDB_DATABASE=sofia2_s4c
-  sofiabdc:
+  configdb:
     image: mysql/mysql-server
-    container_name: sofiabdc
+    container_name: configdb
     networks:
       - datanetwork
     ports:
@@ -23,7 +23,7 @@ services:
      - MYSQL_PASSWORD=select4cities2018
      - MYSQL_DATABASE=sofia2_s4c
     depends_on:
-     - "sofiabdtr"     
+     - "realtimedb"     
   quasar:
     image: ${REPOSITORY}sofia/quasar:latest
     container_name: quasar
@@ -32,8 +32,8 @@ services:
     ports:
      - "18200:10800"
     depends_on:
-     - "sofiabdtr"
-     - "sofiabdc"         
+     - "realtimedb"
+     - "configdb"         
 networks:
   datanetwork:
     ipam:
