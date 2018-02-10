@@ -18,19 +18,21 @@ services:
     ports:
       - "3306:3306"
     environment:
-     - MYSQL_ROOT_PASSWORD=my-secret-pw
+     - MYSQL_ALLOW_EMPTY_PASSWORD=true
      - MYSQL_USER=indra
      - MYSQL_PASSWORD=select4cities2018
      - MYSQL_DATABASE=sofia2_s4c
     depends_on:
      - "realtimedb"     
   quasar:
-    image: ${REPOSITORY}sofia/quasar:latest
+    image: ${REPOSITORY}sofia/quasar:${SOFIA2TAG}
     container_name: quasar
     networks:
      - datanetwork
     ports:
      - "18200:10800"
+    environment:
+     - REALTIMEDB=realtimedb 
     depends_on:
      - "realtimedb"
      - "configdb"         
