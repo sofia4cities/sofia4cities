@@ -19,6 +19,8 @@ services:
       - "3306:3306"
     environment:
      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+     - MYSQL_ROOT_HOST=%
+     - MYSQL_ROOT_PASSWORD=
      - MYSQL_USER=indra
      - MYSQL_PASSWORD=select4cities2018
      - MYSQL_DATABASE=sofia2_s4c
