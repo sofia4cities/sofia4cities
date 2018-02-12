@@ -99,7 +99,7 @@ var OntologyCreateController = function() {
 	
 	// INIT TEMPLATE ELEMENTS
 	var initTemplateElements = function(){
-		logControl ? console.log('initTemplateElements() -> selectpickers, datepickers, resetForm,  currentLanguage: ' + currentLanguage) : '';
+		logControl ? console.log('initTemplateElements() ->  resetForm,  currentLanguage: ' + currentLanguage) : '';
 		
 		// selectpicker validate fix when handleValidation()
 		$('.selectpicker').on('change', function () {

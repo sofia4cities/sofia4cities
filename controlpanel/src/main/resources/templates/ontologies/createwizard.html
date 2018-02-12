@@ -124,7 +124,7 @@
 											
 											
 											<!-- FORM ACTIONS FOR INSERT-->
-											<input th:if="${ontology.id} == null" type="hidden" name="action" th:value="@{/ontologies/create}"/>
+											<input th:if="${ontology.id} == null" type="hidden" name="action" th:value="@{/ontologies/createwizard}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->
 											<input th:if="${ontology.user?.userId} != null" type="hidden" name="action" th:value="@{'/ontologies/update/'+${ontology.id}}"/>
@@ -377,14 +377,7 @@
 	// VALID PROPERTY TYPES 
 	validTypes = ["string","object","number","date","timestamp","array","binary"];
 	
-	
-	// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
-	Array.prototype.unique = function() {
-		return this.filter(function (value, index, self) { 
-			return self.indexOf(value) === index;
-		});
-	};
-	
+		
 	var currentLanguage = [[${lang}]];	
 	
 	var ontologyCreateJson = { 		
@@ -739,6 +732,7 @@
 		var options = {
 			mode: 'code',
 			theme: 'bootstrap3',
+			required_by_default: true,
 			modes: ['code', 'text', 'tree', 'view'], // allowed modes
 			error: function (err) {
 				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
