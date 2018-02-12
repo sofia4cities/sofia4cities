@@ -17,7 +17,6 @@ var OntologyCreateController = function() {
 	
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
-
 	
 	
 	// AUX. DATAMODEL PROPERTIES OBJECT JSON
@@ -71,8 +70,119 @@ var OntologyCreateController = function() {
 		return arrProperties;	
 	}
 	
+	
+	// AUX. UPDATE SCHEMA FROM ADDITIONAL PROPERTIES, SCHEMA IS BASE CURRENT SCHEMA LOADED
+	var updateSchemaProperties = function(){
+		logControl ? console.log('updateSchemaProperties() -> ') : '';
+		
+		// properties, types and required arrays
+		var updateProperties = $("input[name='property\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
+		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();
+		
+		
+		var schemaObj = {};
+		
+		logControl ? console.log('|--- CURRENT: ' + updateProperties + ' types: ' + updateTypes + ' required: ' + updateRequired): '';
+		
+		checkUnique = updateProperties.unique();
+		if (updateProperties.length !== checkUnique.length)  { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'HAY DUPLICADOS, REVISE!'}); return false; } 
+				
+		// get current schema 
+		if (typeof schema == 'string'){		
+			schemaObj = JSON.parse(schema);				
+			
+		}else if (typeof schema == 'object') { schemaObj = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
+		
+		// compare properties added with properties on current schema
+		baseJson = createJsonProperties(schemaObj);
+				
+		// schema string -> Object --> update --> toString --> to editor.
+		baseArrProperties	= getProperties(baseJson);
+		
+				
+		// COMPARE BASE WITH CURRENT
+		var toUpdateProperties = [];
+		var toUpdateTypes = [];
+		var toUpdateRequired = [];
+		var i = 0;		
+		
+		// DIFFERENCE BETWEEN BASE vs CURRENT
+		jQuery.grep(updateProperties, function(el) {
+			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
+				i++;
+		});	
+		
+		logControl ? console.log(" |-------------  the difference are " + toUpdateProperties + ' elements: ' + toUpdateProperties.length): '';
+		
+		
+		// UPDATE SCHEMA
+		var toUpdateSchema = [];
+		if ( toUpdateProperties.length ){			
+			// get properties to update, use her index to access to type and required, mount object and update the schema.			
+			$.each(toUpdateProperties, function( index, value ) {
+				propIndex = updateProperties.indexOf(value);
+				logControl ? console.log('index: ' + propIndex + ' | property: ' + updateProperties[propIndex] + ' type: ' + updateTypes[propIndex] + ' required: ' + updateRequired[propIndex]) : '';
+					// update property on Schema /current are stored in schema var.  (property,type,required)
+					updateProperty(updateProperties[propIndex], updateTypes[propIndex], updateRequired[propIndex] );					
+			});			
+		}
+	}
+	
+	
+	// AUX. UPDATE PROPERTY IN SCHEMA FOR EACH NEW PROPERTY ADDED
+	var updateProperty = function(prop, type, req){
+		logControl ? console.log('|---   updateProperty() -> ') : '';
+		
+		var properties = [];
+		var requires = [];
+		
+		
+		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
+		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }		
+			
+		// SCHEMA MODEL ( PROPERTIES / DATOS) 
+		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; requires = data.datos.required; } else { properties = data.properties;  requires = data.required }
+	
+		// ADD PROPERTY+TYPE
+		if (type != 'timestamp'){
+			properties[prop] = { "type": type};
+		} 
+		else {			
+			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}
+		
+		}
+		
+		// ADD REQUIRED
+		if (req == 'required') {  requires.push(prop); } 
+		
+		console.log('added: ' + prop +' with type: ' + type + ' required: ' + req);
+		console.log('JSON: ' + JSON.stringify(data));
+		
+		// ADD additionalProperties, because we are adding properties.
+		if (!data.hasOwnProperty('additionalProperties')){
+			data["additionalProperties"] = true;			
+		}	
+		
+		// ADD INFO TO SCHEMA EDITOR
+		editor.setMode("text");
+        editor.setText('');
+		editor.setText(JSON.stringify(data));
+		editor.setMode("tree");	
+
+		// UDATING SCHEMA STRING
+		schema = JSON.stringify(data);
+		
+		// UPDATING FORM FIELDS
+		$('#jsonschema').val(schema);
+		
+	}
+	
+	
 	// REDIRECT URL
-	var navigateUrl = function(url){ window.location.href = url; }
+	var navigateUrl = function(url){
+		window.location.href = url; 
+	}
 	
 	
 	// CLEAN FIELDS FORM
@@ -182,7 +292,7 @@ var OntologyCreateController = function() {
 		// EDIT MODE ACTION 
 		else {	
 			logControl ? console.log('|---> Action-mode: UPDATE') : '';
-			
+			// to-do: recuperar el schema cargarlo y lanzar el trigger para restaurar toda la info.
 		}
 		
 	}	
@@ -204,114 +314,7 @@ var OntologyCreateController = function() {
 		HeaderController.showConfirmDialog('delete_ontology_form');	
 	}
 
-	
-	// UPDATE SCHEMA FROM ADDITIONAL PROPERTIES, SCHEMA IS BASE CURRENT SCHEMA LOADED
-	var updateSchemaProperties = function(){
-		logControl ? console.log('updateSchemaProperties() -> ') : '';
 		
-		// properties, types and required arrays
-		var updateProperties = $("input[name='property\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
-		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
-		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();
-		
-		
-		var schemaObj = {};
-		
-		logControl ? console.log('|--- CURRENT: ' + updateProperties + ' types: ' + updateTypes + ' required: ' + updateRequired): '';
-		
-		checkUnique = updateProperties.unique();
-		if (updateProperties.length !== checkUnique.length)  { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'HAY DUPLICADOS, REVISE!'}); return false; } 
-				
-		// get current schema 
-		if (typeof schema == 'string'){		
-			schemaObj = JSON.parse(schema);				
-			
-		}else if (typeof schema == 'object') { schemaObj = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
-		
-		// compare properties added with properties on current schema
-		baseJson = createJsonProperties(schemaObj);
-				
-		// schema string -> Object --> update --> toString --> to editor.
-		baseArrProperties	= getProperties(baseJson);
-		
-				
-		// COMPARE BASE WITH CURRENT
-		var toUpdateProperties = [];
-		var toUpdateTypes = [];
-		var toUpdateRequired = [];
-		var i = 0;		
-		
-		// DIFFERENCE BETWEEN BASE vs CURRENT
-		jQuery.grep(updateProperties, function(el) {
-			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
-				i++;
-		});	
-		
-		logControl ? console.log(" |-------------  the difference are " + toUpdateProperties + ' elements: ' + toUpdateProperties.length): '';
-		
-		
-		// UPDATE SCHEMA
-		var toUpdateSchema = [];
-		if ( toUpdateProperties.length ){			
-			// get properties to update, use her index to access to type and required, mount object and update the schema.			
-			$.each(toUpdateProperties, function( index, value ) {
-				propIndex = updateProperties.indexOf(value);
-				logControl ? console.log('index: ' + propIndex + ' | property: ' + updateProperties[propIndex] + ' type: ' + updateTypes[propIndex] + ' required: ' + updateRequired[propIndex]) : '';
-					// update property on Schema /current are stored in schema var.  (property,type,required)
-					updateProperty(updateProperties[propIndex], updateTypes[propIndex], updateRequired[propIndex] );					
-			});			
-		}
-	}
-	
-	
-	// UPDATE PROPERTY IN SCHEMA FOR EACH NEW PROPERTY ADDED
-	var updateProperty = function(prop, type, req){
-		logControl ? console.log('|---   updateProperty() -> ') : '';
-		
-		var properties = [];
-		var requires = [];
-		
-		
-		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
-		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }		
-			
-		// SCHEMA MODEL ( PROPERTIES / DATOS) 
-		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; requires = data.datos.required; } else { properties = data.properties;  requires = data.required }
-	
-		// ADD PROPERTY+TYPE
-		if (type != 'timestamp'){
-			properties[prop] = { "type": type};
-		} 
-		else {			
-			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}
-		
-		}
-		
-		// ADD REQUIRED
-		if (req == 'required') {  requires.push(prop); } 
-		
-		console.log('added: ' + prop +' with type: ' + type + ' required: ' + req);
-		console.log('JSON: ' + JSON.stringify(data));
-		
-		// ADD additionalProperties, because we are adding properties.
-		if (!data.hasOwnProperty('additionalProperties')){
-			data["additionalProperties"] = true;			
-		}	
-		
-		// ADD INFO TO SCHEMA EDITOR
-		editor.setMode("text");
-        editor.setText('');
-		editor.setText(JSON.stringify(data));
-		editor.setMode("tree");	
-
-		// UDATING SCHEMA STRING
-		schema = JSON.stringify(data);
-		
-		// UPDATING FORM FIELDS
-		$('#jsonschema').val(schema);
-		
-	}
-	
 	// CREATE EDITOR FOR JSON SCHEMA 
 	var createEditor = function(){
 		
@@ -332,6 +335,11 @@ var OntologyCreateController = function() {
 		
 	}
 	
+	
+	
+	
+	
+	
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{		
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
@@ -348,23 +356,27 @@ var OntologyCreateController = function() {
 			createEditor();
 			
 		},
+		
 		// REDIRECT
 		go: function(url){
 			logControl ? console.log(LIB_TITLE + ': go()') : '';	
 			navigateUrl(url); 
 		},
+		
 		// DELETE ONTOLOGY 
 		deleteOntology: function(ontologyId){
 			logControl ? console.log(LIB_TITLE + ': deleteOntology()') : '';	
 			deleteOntologyConfirmation(ontologyId);			
 		},
+		
 		// REMOVE PROPERTYS (ONLY ADDITIONAL NO BASE)
 		removeProperty: function(obj){
 			logControl ? console.log(LIB_TITLE + ': removeProperty()') : '';
 			
 			var remproperty = $(obj).closest('tr').find("input[name='property\\[\\]']").val();		
 			if (( remproperty == '')||( noBaseProperty(remproperty))){ $(obj).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'CAN´T REMOVE A BASE PROPERTY!'}); }
-		},	
+		},
+		
 		// CHECK FOR NON DUPLICATE PROPERTIES
 		checkProperty: function(obj){
 			logControl ? console.log(LIB_TITLE + ': checkProperty()') : '';
@@ -378,6 +390,7 @@ var OntologyCreateController = function() {
 				$(obj).closest('tr').find('.btn-mountable-remove').attr('data-property', $(obj).val() );   
 			}
 		},
+		
 		// CHECK PROPERTIES TYPE
 		checkType: function(obj){	
 			logControl ? console.log(LIB_TITLE + ': checkType()') : '';
@@ -388,6 +401,7 @@ var OntologyCreateController = function() {
 			propType = $.inArray( currentType, validTypes ) > -1 ?  currentType : 'string';
 			$(obj).val(propType);
 		},
+		
 		// CHECK PROPERTIES to be  REQUIRED or NOT 
 		checkRequired: function(obj){
 			logControl ? console.log(LIB_TITLE + ': checkRequired()') : '';
@@ -398,6 +412,7 @@ var OntologyCreateController = function() {
 			propRequired = currentRequired == 'required' ?  currentRequired : '';
 			$(obj).val(propRequired);
 		},
+		
 		// CHECK IF A WRITTEN PROPERTY IS OR NOT FROM THE BASE
 		noBaseProperty: function(property){
 			logControl ? console.log(LIB_TITLE + ': noBaseProperty()') : '';
@@ -408,6 +423,7 @@ var OntologyCreateController = function() {
 			isNoBaseProperty = $.inArray( property, noBaseProperties ) > -1 ? false : true;
 			return isNoBaseProperty;
 		},
+		
 		// DATAMODEL PROPERTIES JSON TO HTML 
 		schemaToTable: function(objschema,tableId){
 			logControl ? console.log(LIB_TITLE + ': schemaToTable()') : '';
