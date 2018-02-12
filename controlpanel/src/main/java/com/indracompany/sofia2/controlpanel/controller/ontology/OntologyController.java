@@ -81,6 +81,7 @@ public class OntologyController {
 	@GetMapping(value = "/create")
 	public String create(Model model) {
 		model.addAttribute("ontology", new Ontology());
+		this.populateForm(model);
 		return "/ontologies/create";
 	}
 	
@@ -114,6 +115,7 @@ public class OntologyController {
 			if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
 				return "/error/403";
 			model.addAttribute("ontology", ontology);
+			this.populateForm(model);
 			return "/ontologies/createwizard";
 		}else
 			return "/ontologies/create";
@@ -160,9 +162,12 @@ public class OntologyController {
 	@GetMapping(value = "/createwizard", produces = "text/html")
 	public String createWizard(Model model) {
 		model.addAttribute("ontology", new Ontology());
-		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
-		model.addAttribute("dataModelTypes", this.ontologyService.getAllDataModelTypes());
+		this.populateForm(model);
 		return "/ontologies/createwizard";
 	}
 
+	public void populateForm(Model model) {
+		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
+		model.addAttribute("dataModelTypes", this.ontologyService.getAllDataModelTypes());
+	}
 }
