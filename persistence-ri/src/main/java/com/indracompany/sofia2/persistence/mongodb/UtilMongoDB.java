@@ -20,8 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -48,32 +46,6 @@ public class UtilMongoDB {
 		}
 	}
 
-	/**
-	 * add {} into the String representing the JSON if not has
-	 * 
-	 * @param query
-	 * @return
-	 */
-	public String prepareQuotes4find(String ontology, String query) {
-		String result = query.trim();
-		result = result.toLowerCase().replace("db." + ontology.toLowerCase() + ".find()", "{}");
-		result = result.toLowerCase().replace("db." + ontology.toLowerCase() + ".find({})", "{}");
-		String sI = "db." + ontology.toLowerCase() + ".find(";
-		int i = result.toLowerCase().indexOf(sI);
-		if (i != -1) {
-			result = result.replace(sI, "");
-			result = result.replace(")", "");
-		}
-		// newChar)
-		if (!result.startsWith("{")) {
-			StringBuffer resultObj = new StringBuffer(result);
-			resultObj.insert(0, "{");
-			resultObj.append("}");
-			result = resultObj.toString();
-		}
-		return result;
-	}
-
 	public String prepareQuotes(String query) {
 		String result = query.trim();
 		// newChar)
@@ -84,26 +56,6 @@ public class UtilMongoDB {
 			result = resultObj.toString();
 		}
 		return result;
-	}
-
-	public String convertObjectIdV1toVLegacy(String query) {
-
-		StringBuffer sb = new StringBuffer();
-		Pattern pattern = Pattern
-				.compile("\\{\\\\*\"_id\\\\*\"\\s*:\\s*\\{\\s*\"\\$oid\"\\s*:\\s*\\\\*\"(.*)\\\\*\"\\s*}\\s*}");
-		Matcher matcher = pattern.matcher(query);
-		boolean changed = false;
-		while (matcher.find()) {
-			changed = true;
-			matcher.group(0);
-			String g1 = matcher.group(1);
-			matcher.appendReplacement(sb, "{\"_id\":ObjectId(\"" + g1 + "\")}");
-		}
-		matcher.appendTail(sb);
-		if (changed)
-			query = sb.toString();
-
-		return query;
 	}
 
 	public String getParentProperties(Map<String, Object> elements, Map<String, Object> schema) {

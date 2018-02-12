@@ -205,12 +205,12 @@ public class ApiManagerService {
 		for (ApiQueryParameter customqueryparameter : queryParametersCustomQuery) {
 			String paramvalue = request.getParameter(customqueryparameter.getName());
 			if (paramvalue == null) {
-				if (customqueryparameter.getHeaderType().equalsIgnoreCase(Constants.API_TIPO_BODY)) {
+				if (customqueryparameter.getHeaderType().equalsIgnoreCase(ApiQueryParameter.HeaderType.body.name())) {
 					paramvalue = body;
 				}
 			} else {
 				// Se comprueba que el valor es del tipo definido en la operacion
-				if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_DATE)) {
+				if (customqueryparameter.getDataType().equalsIgnoreCase(ApiQueryParameter.DataType.date.name())) {
 					try {
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 						df.parse(paramvalue);
@@ -220,7 +220,7 @@ public class ApiManagerService {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Date" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype "+parametros[0]);
 					}
-				} else if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_STRING)) {
+				} else if (customqueryparameter.getDataType().equalsIgnoreCase(ApiQueryParameter.DataType.string.name())) {
 					try {
 						paramvalue.toString();
 						paramvalue = "'" + paramvalue + "'";
@@ -229,7 +229,7 @@ public class ApiManagerService {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
 					}
-				} else if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_NUMBER)) {
+				} else if (customqueryparameter.getDataType().equalsIgnoreCase(ApiQueryParameter.DataType.number.name())) {
 					try {
 						Double.parseDouble(paramvalue);
 					} catch (Exception e) {
@@ -237,7 +237,7 @@ public class ApiManagerService {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Integer" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
 					}
-				} else if (customqueryparameter.getDataType().equalsIgnoreCase(Constants.API_TIPO_BOOLEAN)) {
+				} else if (customqueryparameter.getDataType().equalsIgnoreCase("boolean")) {
 					if (!paramvalue.equalsIgnoreCase("true") && !paramvalue.equalsIgnoreCase("false")) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Boolean" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);

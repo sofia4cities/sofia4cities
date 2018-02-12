@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserToken getUserToken(Token token) {
+	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);
 	}
 
@@ -66,8 +66,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByToken(String token) {
-		Token theToken = getToken(token);
-		UserToken usertoken = userTokenRepository.findByToken(theToken);
+		UserToken usertoken = userTokenRepository.findByToken(token);
 		User user = usertoken.getUser();
 		return user;
 	}

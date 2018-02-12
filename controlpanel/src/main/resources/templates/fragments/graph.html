@@ -1,5 +1,5 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<!-- BEGIN GRAPH -->
+<!-- BEGIN GRAPH COMPONENT -->
 <div th:fragment="graphFragment" id="graphFragment">
 	
 	<!-- GRAPH CSS -->
@@ -19,7 +19,7 @@
 				<div class="portlet-title">
 					<div class="caption">
 						<i class="flaticon-network font-grey-gallery"></i>
-						<span class="caption-subject bold font-grey-gallery uppercase"> <span th:text="#{main.title}">My Sofia2 Universe</span></span>
+						<span class="caption-subject bold font-grey-gallery uppercase"> <span th:text="#{graph.universe}">My Sofia2 Universe</span></span>
 					</div>									
 					<div class="tools">
 						<a href="" class="collapse" data-original-title="" title=""> </a>
@@ -34,7 +34,7 @@
 								<div id="id_panel_botones" class="btn-group  pull-right">
 									<div class="btn-group">
 										<button type="button" data-toggle="dropdown" aria-expanded="false" class="btn btn-primary btn-sm dropdown-toggle button_text">
-											<i class="fa fa-ellipsis-horizontal"></i> <span th:text="#{graph.cluster}"></span>
+											<i class="fa fa-ellipsis-horizontal"></i> <span th:text="#{graph.clustering}"></span>
 											<i class="fa fa-angle-down"></i>
 										</button>
 										<ul id="clusterOptions" class="dropdown-menu">
@@ -56,23 +56,23 @@
 										</button>
 										<ul id="hierarchicalOptions" class="dropdown-menu">
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-arr-aba">
-												<a data-action="UD" href="javascript:;"> <i class="fa fa-arrow-up"></i> <span class="lang" th:text="#{graph.up_down}" data-lang="mnu-arr-aba" ></span></a>
+												<a data-action="UD" href="javascript:;"> <i class="fa fa-arrow-up"></i> <span class="lang" th:text="#{graph.up-down}" data-lang="mnu-arr-aba" ></span></a>
 											</li>
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-aba-arr">
-												<a data-action="DU" href="javascript:;"> <i class="fa fa-arrow-down"></i> <span class="lang" th:text="#{graph.down_up}" data-lang="mnu-aba-arr"></span></a>
+												<a data-action="DU" href="javascript:;"> <i class="fa fa-arrow-down"></i> <span class="lang" th:text="#{graph.down-up}" data-lang="mnu-aba-arr"></span></a>
 											</li>
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-izq-der">
-												<a data-action="LR" href="javascript:;"> <i class="fa fa-arrow-left"></i> <span class="lang" th:text="#{graph.left_right}" data-lang="mnu-izq-der"></span></a>
+												<a data-action="LR" href="javascript:;"> <i class="fa fa-arrow-left"></i> <span class="lang" th:text="#{graph.left-right}" data-lang="mnu-izq-der"></span></a>
 											</li>
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-der-izq">
-												<a data-action="RL" href="javascript:;"> <i class="fa fa-arrow-right"></i> <span class="lang" th:text="#{graph.right_left}" data-lang="mnu-der-izq"></span></a>
+												<a data-action="RL" href="javascript:;"> <i class="fa fa-arrow-right"></i> <span class="lang" th:text="#{graph.right-left}" data-lang="mnu-der-izq"></span></a>
 											</li>
 											<li data-original-title="" class="tooltips lang" data-lang-tooltip="mnu-recarga">
 												<a data-action="default" href="javascript:;"> <i class="fa fa-refresh"></i> <span class="lang" th:text="#{graph.reload}" data-lang="mnu-recarga"></span></a>
 											</li>
 										</ul>
 									</div>
-									<button id="btn-graphInfo" th:text="#{graph.information}" th:title="#{graph.description}" class="btn btn-primary btn-sm button_text"></button>
+									<button id="btn-graphInfo" th:text="#{graph.information}" class="btn btn-primary btn-sm button_text popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=#{graph.description},data-title=#{graph.information}" ></button>
 								</div>
 							</div>
 							<div id="graphporlet" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel margin-bottom-20">				
@@ -94,13 +94,13 @@
 	<script type="text/javascript" th:inline="javascript"> 
 				
 		var graphJson = {
-			"propertyCol" 	: [[#{grafo_tabla_propiedades}]],
-			"valueCol"		: [[#{grafo_tabla_valor}]],
-			"tableName"		: [[#{grafo_tabla_nombre}]],
-			"tableSource"	: [[#{grafo_tabla_source}]],
-			"tableLinkS"	: [[#{grafo_tabla_enlaceS}]],
-			"tableLinkC"	: [[#{grafo_tabla_enlaceC}]],
-			"tableLinkBtn"	: [[#{grafo_tabla_enlace_acceder}]],
+			"propertyCol" 	: [[#{graph.table.properties}]],
+			"valueCol"		: [[#{graph.table.item}]],
+			"tableName"		: [[#{graph.table.value}]],
+			"tableSource"	: [[#{graph.table.source}]],
+			"tableLinkS"	: [[#{graph.table.show}]],
+			"tableLinkC"	: [[#{graph.table.create}]],
+			"tableLinkBtn"	: [[#{graph.table.go}]],
 			"data":[]
 		};
 		// LOAD DATA TO USE IN GRAPHCONTROLLER

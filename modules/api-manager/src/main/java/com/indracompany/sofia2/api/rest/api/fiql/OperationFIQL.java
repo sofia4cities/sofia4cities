@@ -33,13 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class OperationFIQL {
 	
-	private static final String GET = "GET";
-	private static final String POST = "POST";
-	private static final String PUT = "PUT";
-	private static final String DELETE = "DELETE";
-	
 
-	
 	static Locale locale = LocaleContextHolder.getLocale();
 	
 	private OperationFIQL() {
@@ -90,9 +84,9 @@ public final class OperationFIQL {
 	}
 
 	private static boolean isValidOperacion(String operacion) {
-		return (operacion.equalsIgnoreCase(GET)||
-				operacion.equalsIgnoreCase(POST)||
-				operacion.equalsIgnoreCase(PUT)||
-				operacion.equalsIgnoreCase(DELETE));
+		return (operacion.equalsIgnoreCase(ApiOperation.Type.DELETE.toString())||
+				operacion.equalsIgnoreCase(ApiOperation.Type.POST.toString())||
+				operacion.equalsIgnoreCase(ApiOperation.Type.PUT.toString())||
+				operacion.equalsIgnoreCase(ApiOperation.Type.GET.toString()));
 	}
 }

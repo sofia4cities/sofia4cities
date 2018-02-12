@@ -873,11 +873,10 @@ public class InitConfigDB {
 		if (tokens.isEmpty()) {
 
 			try {
-				Token token = this.tokenRepository.findAll().get(0);
 				User user = this.userCDBRepository.findAll().get(0);
 				UserToken userToken = new UserToken();
 
-				userToken.setToken(token);
+				userToken.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
 				userToken.setUser(user);
 				userToken.setCreatedAt(Calendar.getInstance().getTime());
 

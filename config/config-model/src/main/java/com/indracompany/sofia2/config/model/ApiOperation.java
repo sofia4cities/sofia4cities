@@ -45,6 +45,10 @@ import lombok.Setter;
 public class ApiOperation extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static enum Type {
+		PUT, POST, GET, DELETE;
+	}
 
 	@ManyToOne
 	@JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
@@ -82,6 +86,10 @@ public class ApiOperation extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String operation;
+	
+	public void setOperationEnum(ApiOperation.Type type) {
+		this.operation = type.toString();
+	}
 
 	@Column(name = "ENDPOINT", length = 512)
 	@Getter

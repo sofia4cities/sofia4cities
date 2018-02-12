@@ -37,7 +37,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 @Component
 @Scope("prototype")
@@ -48,29 +47,35 @@ public class MongoQueryNativeImpl implements MongoQueryNative {
 
 	private MongoQueryNativeUtil mongoQueryNativeUtil;
 
-	
-
 	@Value("${sofia2.database.mongodb.database:#{null}}")
-	@Getter @Setter private String database;
+	@Getter
+	@Setter
+	private String database;
 
 	@Value("${sofia2.database.mongodb.queries.executionTimeout:30000}")
-	@Getter @Setter private long queryExecutionTimeout;
+	@Getter
+	@Setter
+	private long queryExecutionTimeout;
 
 	@Value("${sofia2.database.mongodb.queries.defaultLimit:100}")
-	@Getter @Setter private int numMaxRegisters;
+	@Getter
+	@Setter
+	private int numMaxRegisters;
 
 	@Value("${sofia2.database.mongodb.queries.maxConcurrentQueries:3}")
-	@Getter @Setter private int maxConcurrentQueries;
-	
-	
+	@Getter
+	@Setter
+	private int maxConcurrentQueries;
+
 	@Override
 	public MongoIterable<BasicDBObject> onFind(String query, String objectId, boolean ignoreLimit, Integer limit,
 			boolean checkAuthorization) throws DBPersistenceException {
-		log.info("Request operation: "+query+ " on database:"+database);
-		String collName = MongoQueryNativeUtil.getCollNameFromAction(query, "find");		
+		log.info("Request operation: " + query + " on database:" + database);
+		String collName = MongoQueryNativeUtil.getCollNameFromAction(query, "find");
 		if (checkAuthorization) {
-			//FIXME
-			//this.securityPluginManager.checkAuthorization(SSAPMessageTypes.QUERY, collName, null);
+			// FIXME
+			// this.securityPluginManager.checkAuthorization(SSAPMessageTypes.QUERY,
+			// collName, null);
 		}
 		MFindQuery findQuery = mongoQueryNativeUtil.parseFindQuery(database, query);
 		if (limit != null) {
@@ -90,7 +95,7 @@ public class MongoQueryNativeImpl implements MongoQueryNative {
 		}
 		return runQuery(collName, findQuery, ignoreLimit);
 	}
-	
+
 	private MongoIterable<BasicDBObject> runQuery(String collName, MFindQuery findQuery, boolean ignoreLimit) {
 		BasicDBObject nativeQuery = null;
 		BasicDBObject projection = null;
@@ -110,11 +115,11 @@ public class MongoQueryNativeImpl implements MongoQueryNative {
 			sortObject = findQuery.getSortArg();
 		}
 
-		int skip = (int) findQuery.getSkipArg();
+		int skip = findQuery.getSkipArg();
 		if (skip < 0)
 			skip = 0;
 
-		int limit = (int) findQuery.getLimitArg();
+		int limit = findQuery.getLimitArg();
 
 		if (ignoreLimit) {
 			limit = 0;
@@ -131,7 +136,7 @@ public class MongoQueryNativeImpl implements MongoQueryNative {
 			throw new PersistenceException(e);
 		}
 	}
-	
+
 	@Override
 	public void validateQuery(String query) throws DBPersistenceException {
 		mongoQueryNativeUtil.parseFindQuery(database, query);

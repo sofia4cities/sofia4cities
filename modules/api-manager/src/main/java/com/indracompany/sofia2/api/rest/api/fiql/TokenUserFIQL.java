@@ -23,7 +23,7 @@ public final class TokenUserFIQL {
 
 	public static TokenUserDTO toTokenUsuarioDTO(UserToken token) throws Exception {
 		TokenUserDTO tokenUsuarioDTO = new TokenUserDTO();
-		tokenUsuarioDTO.setToken(token.getToken().getToken());
+		tokenUsuarioDTO.setToken(token.getToken());
 		tokenUsuarioDTO.setUserIdentification(token.getUser().getUserId());
 		return tokenUsuarioDTO;
 	}
