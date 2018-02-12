@@ -90,7 +90,7 @@
 									
 									<!-- FORM TITLE -->
 									<span th:if="${ontology.user?.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.create} + ':'"> New Ontology</span>
-									<span th:if="${ontology.user?.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.update} + ' ' + ${ontology.id} + ':'"> Update Ontology </span>
+									<span th:if="${ontology.user?.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.update} + ' ' + ${ontology.identification} + ':'"> Update Ontology </span>
 								</div>
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
@@ -206,9 +206,8 @@
 																</div>
 																<!-- SECCIONES DE LA ONTOLOGIA TABS -->
 																<ul class="nav nav-tabs pull-left">
-																	<li id="tab-plantilla" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span class="uppercase font-md" th:text="#{ontology.section.templates}">Ontology Templates</span></a></li>
-																	<li id="tab-propiedades" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><i class="la la-edit"></i> <span class="uppercase font-md" th:text="#{ontology.section.properties}">Additional Properties</span> </a></li>
-																	<li id="tab-esquema" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.section.schema}">Schema Generator and JSON Instances</span></a></li>
+																	<li id="tab-plantilla" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span class="uppercase font-md" th:text="#{ontology.section.templates}">Ontology Templates</span></a></li>																	
+																	<li id="tab-esquema" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.section.schema}">Schema Generator and JSON Instances</span></a></li>
 																</ul>
 															</div>
 															<div class="portlet-body">
@@ -229,7 +228,7 @@
 																									<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}">
 																										<li th:if="${datamodel.type} == ${datamodeltype}" class="mt-list-item datamodel-template">
 																											<div class="list-item-content" style="padding: 0 15px 0 10px;">
-																												<h3 class="uppercase" onclick="schemaToTable(this,'datamodel_properties');" th:text="${datamodel.name}" th:attr="data-model=${datamodel.id},data-schema=${datamodel.jsonSchema}"></h3>
+																												<h3 class="uppercase" onclick="OntologyCreateController.schemaToTable(this,'datamodel_properties');" th:text="${datamodel.name}" th:attr="data-model=${datamodel.id},data-schema=${datamodel.jsonSchema}"></h3>
 																												<p th:if="${datamodel.description}" lass="text-truncate-sm text-left" th:text="${datamodel.description}"></p>																												
 																											</div>
 																										</li>																										
@@ -254,11 +253,11 @@
 																							</thead>
 																							<tbody>
 																								<tr class="mountable-model">
-																									<td><input type="text" name="property[]"  onblur="checkProperty(this)" class="form-control"/></td>
-																									<td><input type="text" name="type[]"   onblur="checkType(this)" class="form-control"/></td>
-																									<td><input type="text" name="required[]"   onblur="checkRequired(this)" class="form-control"/></td>
+																									<td><input type="text" name="property[]"  onblur="OntologyCreateController.checkProperty(this)" class="form-control"/></td>
+																									<td><input type="text" name="type[]"   onblur="OntologyCreateController.checkType(this)" class="form-control"/></td>
+																									<td><input type="text" name="required[]"   onblur="OntologyCreateController.checkRequired(this)" class="form-control"/></td>
 																									<td><input type="text" name="descriptions[]" class="form-control"/></td>																									
-																									<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="removeProperty(this)">Remove</button></td>			
+																									<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="OntologyCreateController.removeProperty(this)">Remove</button></td>			
 																								</tr>
 																							</tbody>
 																							<tfoot>
@@ -275,16 +274,10 @@
 																					</div>
 																				</div>
 																			</div>
-																		</div>
-																		<!-- ADDITIONAL PROPERTIES SECTION -->
-																		<div class="tab-pane" id="tab_2">																			
-																			<p> Howdy, I'm in Section 2. </p>	
-																			<input id="id_listaCamposOntologia" name="listaCamposPlantillas" type="hidden" th:value="[]"/>
-																			<input type="hidden" id="id_source_wizard" name="id_source_wizard" value="true" />
-																		</div>
+																		</div>																		
 																		
 																		<!-- SCHEMA GENERATOR AND JSON INSTANCE -->
-																		<div class="tab-pane" id="tab_3">
+																		<div class="tab-pane" id="tab_2">
 																			<p class="bold uppercase"><i class="flaticon-network font-grey-gallery"></i> <span id="schema_title"> Selected Data model: </span></p>
 																			<div id="jsoneditor"></div>																			
 																		</div>
@@ -373,382 +366,15 @@
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	
-	
-	// VALID PROPERTY TYPES 
-	validTypes = ["string","object","number","date","timestamp","array","binary"];
-	
-		
+			
 	var currentLanguage = [[${lang}]];	
-	
 	var ontologyCreateJson = { 		
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"actionMode" : [[${ontology.user?.userId}]],
 	};	
 	
-	
-	// REMOVE PROPERTYS (ONLY ADDITIONAL NO BASE)
-	function removeProperty(obj){ 
-		 
-		var remproperty = $(obj).closest('tr').find("input[name='property\\[\\]']").val();		
-		if (( remproperty == '')||( noBaseProperty(remproperty))){ $(obj).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'CAN´T REMOVE A BASE PROPERTY!'}); }
-	};
-	
-	
-	// CHECK FOR NON DUPLICATE PROPERTIES
-	function checkProperty(obj){	
-		var allProperties = $("input[name='property\\[\\]']").map(function(){return $(this).val();}).get();		
-		areUnique = allProperties.unique();
-		if (allProperties.length !== areUnique.length)  { 
-			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'DUPLICATE VALUES!'});
-			$(obj).val(''); return false;
-		} 
-		else {
-			$(obj).closest('tr').find('.btn-mountable-remove').attr('data-property', $(obj).val() );   
-		}
-	};
-	
-	
-	// CHECK PROPERTIES TYPE
-	function checkType(obj){	
-	
-		var propType = '';
-		var currentTypeValue = $(obj).val();
-		var currentType = currentTypeValue.toLowerCase();
-		// if type is a valid type, assign this value , if not, string by default.
-		propType = $.inArray( currentType, validTypes ) > -1 ?  currentType : 'string';
-		$(obj).val(propType);
-	};
-	
-	
-	// CHECK PROPERTIES to be  REQUIRED or NOT 
-	function checkRequired(obj){	
-	
-		var propRequired = '';
-		var currentRequiredValue = $(obj).val();
-		var currentRequired = currentRequiredValue.toLowerCase();
-		// if type is a required field, assign this value , if not, '' by default, (not required).
-		propRequired = currentRequired == 'required' ?  currentRequired : '';
-		$(obj).val(propRequired);
-	};
-	
-	
-	// CHECK IF A WRITTEN PROPERTY IS OR NOT FROM THE BASE
-	function noBaseProperty(property){
-		var isNoBaseProperty = false;
-		var noBaseJson = createJsonProperties(JSON.parse(schema)); // to JSON		
-		var noBaseProperties = getProperties(noBaseJson); // only Properties Arr
-		isNoBaseProperty = $.inArray( property, noBaseProperties ) > -1 ? false : true;
-		return isNoBaseProperty;
-	}
-	
-	
-	// AUX. DATAMODEL PROPERTIES OBJECT JSON
-	function createJsonProperties(jsonData){
-		console.log('|---  createJsonProperties()...');
-		
-		var jsonFormatted 	= [];
-		var properties 		= [];
-		var required 		= [];
-		var propObj			= {};
-		var propRequired	= '';
-		
-		// Required
-		if ( jsonData.hasOwnProperty('datos') ){ required = jsonData.datos.required; } else { required = jsonData.required;  }
-				
-		// Properties
-		if ( jsonData.hasOwnProperty('datos') ){ properties = jsonData.datos.properties; } else { properties = jsonData.properties;  }
-				
-		// KEY and VALUE (value or object, or array...)
-		$.each( properties, function (key, object){			
-			if (object){
-				console.log('|--- Key: '+ key );
-				$.each(object, function (propKey, propValue){					
-					if ( propKey == 'type'){ 						
-						// check required						
-						propRequired = $.inArray( key, required ) > -1 ? propRequired = 'required' : propRequired = '';
-						
-						// add property to properties
-						propObj = {"property": key, "type": propValue, "required": propRequired, "description": ''};
-						jsonFormatted.push(propObj);						
-					}
-				});
-			}
-		});
-		//console.log('FORMATTED: ' + JSON.stringify(jsonFormatted));
-		return jsonFormatted;
-	};
-	
-	
-	// DATAMODEL PROPERTIES JSON TO HTML 
-	var schema = '';
-	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, remove current and create a new one.
-	function schemaToTable(objschema,tableId){
-		console.log('|---  schemaToTable()...');
-		
-		var data, properties, jsonProperties = '';		
-	
-		// JSON-STRING SCHEMA TO JSON 
-		schema = $(objschema).attr('data-schema');
-		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
-		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
-		
-		// needs Ontology name and description to Run.
-		if (($('#identification').val() == '') || ($('#description').val() == '')){
-			$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'PLEASE, FILL NAME AND DESCRIPTION BEFORE DATAMODEL SELECTION!'}); return false;  
-		} 
-		else {
-			// adding title and description
-			// ADD TITLE
-			data["title"] = $('#identification').val();
-		
-			// ADD DESCRIPTION
-			if (!data.hasOwnProperty('description')){ data["description"] = $('#description').val(); }
-			
-			// UDATING SCHEMA STRING
-			schema = JSON.stringify(data);
-		}
-			
-		// SCHEMA MODEL ( PROPERTIES / DATOS) 
-		if ( data.hasOwnProperty('datos') ){ properties = data.datos; } else { properties = data;  }
-		
-		// CREATING TABLE FROM DATA.		
-		jsonProperties = createJsonProperties(properties);
-		
-		// CHECK IF WE HAVE A DATAMODEL LOADED YET... o-DO: make confirm.
-		if ( $('#datamodel_properties').attr('data-loaded') == 'true' ){		
-		
-			$.confirm({ title: 'CONFIRM!', theme: 'dark', type: 'orange', content: 'IF YOU CHANGE DATAMODEL YOUR PROPERTIES AND SCHEMA CONFIGURATION WILL BE REMOVE AND STARTED AGAIN!',
-				buttons: {
-					confirm: function () {
-					
-						$('#datamodel_properties > tbody').html("");
-						$('#datamodel_properties > tbody').append(mountableModel);
-						editor.setMode("text");
-						editor.setText('{}');
-						editor.setMode("tree");
-						
-						// TO-HTML
-						$('#'+tableId).mounTable(jsonProperties,{
-							model: '.mountable-model',
-							noDebug: false,
-							addLine:{				
-								button: "#button2",					
-								onClick: function (element){
-									console.log('Property added!');				
-									return true;
-								}
-							}			
-						});
-						
-						// UPDATING JSON EDITOR
-						$('#schema_title').text(data.title + ':');
-						editor.setMode("text");
-						editor.setText(schema);
-						editor.setMode("tree");
-						
-						// UPDATING FORM FIELDS
-						$('#jsonschema').val(schema);
-		
-						return true;					
-					},
-					cancel: function () {
-						return true;
-					}
-				}
-			});		
-		} else {
-		
-			// TO-HTML
-			$('#'+tableId).mounTable(jsonProperties,{
-				model: '.mountable-model',
-				noDebug: false,
-				addLine:{				
-					button: "#button2",					
-					onClick: function (element){
-						console.log('Property added!');				
-						return true;
-					}
-				}			
-			});
-		
-		}		
-		
-		
-		// HIGHLIGHT CURRENT DATAMODEL AND SHOW TABLE
-		$('li.mt-list-item.datamodel-template').removeClass('bg-success done');
-		$(objschema).closest('li').addClass('bg-success done');
-		
-		$('#template_schema').removeClass('hide');
-		$('#datamodel_properties').attr('data-loaded', true);
-		
-		//INIT UPDATE SCHEMA
-		$('#btn-updateSchema').on('click',function(){ updateSchemaProperties(); });
-		
-			
-		// UPDATING JSON EDITOR
-		$('#schema_title').text(data.title + ':');
-		editor.setMode("text");
-        editor.setText(schema);
-		editor.setMode("tree");
-		
-		// UPDATING DATAMODEL ID for ONTOLOGY
-		$('#datamodelid').val($(objschema).attr('data-model'));
-		
-		// UPDATING FORM FIELDS
-		$('#jsonschema').val(schema);
-	
-	};
-	
-	// AUX. getProperties return properties array
-	function getProperties(json){			
-		var arrProperties = [];
-			
-		// KEYs
-		$.each( json, function (key, object){						
-			$.each(object, function (key, value){
-				if (value){ if ( key == 'property') { arrProperties.push(value); } } 
-			});			
-		});			
-		console.log('|----- getProperties: ' + JSON.stringify(arrProperties));			
-		return arrProperties;	
-	}
-		
-	
-	// update Schema from additional properties, schema is base current schema loaded
-	function updateSchemaProperties(){
-	
-		// properties, types and required arrays
-		var updateProperties = $("input[name='property\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
-		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
-		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();
-		
-		
-		var schemaObj = {};
-		
-		console.log('|--- CURRENT: ' + updateProperties + ' types: ' + updateTypes + ' required: ' + updateRequired);
-		
-		checkUnique = updateProperties.unique();
-		if (updateProperties.length !== checkUnique.length)  { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'HAY DUPLICADOS, REVISE!'}); return false; } 
-				
-		// get current schema 
-		if (typeof schema == 'string'){		
-			schemaObj = JSON.parse(schema);				
-			
-		}else if (typeof schema == 'object') { schemaObj = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
-		
-		// compare properties added with properties on current schema
-		baseJson = createJsonProperties(schemaObj);
-				
-		// schema string -> Object --> update --> toString --> to editor.
-		baseArrProperties	= getProperties(baseJson);
-		
-				
-		// COMPARE BASE WITH CURRENT
-		var toUpdateProperties = [];
-		var toUpdateTypes = [];
-		var toUpdateRequired = [];
-		var i = 0;		
-		
-		// DIFFERENCE BETWEEN BASE vs CURRENT
-		jQuery.grep(updateProperties, function(el) {
-			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
-				i++;
-		});	
-		
-		console.log(" |-------------  the difference are " + toUpdateProperties + ' elements: ' + toUpdateProperties.length);
-		
-		
-		// UPDATE SCHEMA
-		var toUpdateSchema = [];
-		if ( toUpdateProperties.length ){			
-			// get properties to update, use her index to access to type and required, mount object and update the schema.			
-			$.each(toUpdateProperties, function( index, value ) {
-				propIndex = updateProperties.indexOf(value);
-				console.log('index: ' + propIndex + ' | property: ' + updateProperties[propIndex] + ' type: ' + updateTypes[propIndex] + ' required: ' + updateRequired[propIndex]);				
-					// update property on Schema /current are stored in schema var.  (property,type,required)
-					updateProperty(updateProperties[propIndex], updateTypes[propIndex], updateRequired[propIndex] );					
-			});			
-		}
-	}
-	
-	
-	// UPDATE PROPERTY IN SCHEMA FOR EACH NEW PROPERTY ADDED
-	function updateProperty(prop, type, req){
-	
-		var properties = [];
-		var requires = [];
-		
-		
-		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
-		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }		
-			
-		// SCHEMA MODEL ( PROPERTIES / DATOS) 
-		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; requires = data.datos.required; } else { properties = data.properties;  requires = data.required }
-	
-		// ADD PROPERTY+TYPE
-		if (type != 'timestamp'){
-			properties[prop] = { "type": type};
-		} 
-		else {			
-			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}
-		
-		}
-		
-		// ADD REQUIRED
-		if (req == 'required') {  requires.push(prop); } 
-		
-		console.log('added: ' + prop +' with type: ' + type + ' required: ' + req);
-		console.log('JSON: ' + JSON.stringify(data));
-		
-		// ADD additionalProperties, because we are adding properties.
-		if (!data.hasOwnProperty('additionalProperties')){
-			data["additionalProperties"] = true;			
-		}	
-		
-		// ADD INFO TO SCHEMA EDITOR
-		editor.setMode("text");
-        editor.setText('');
-		editor.setText(JSON.stringify(data));
-		editor.setMode("tree");	
 
-		// UDATING SCHEMA STRING
-		schema = JSON.stringify(data);
-		
-		// UPDATING FORM FIELDS
-		$('#jsonschema').val(schema);
-		
-	}
-	
-	
-	// GLOBAL JSON AND CODE EDITOR INSTANCES
-	var editor;
-	var aceEditor;
-	
-	$(document).ready(function(){
-		
-		console.log(' INICIANDO WIZARD...');		
-		var container = document.getElementById('jsoneditor');	
-		var options = {
-			mode: 'code',
-			theme: 'bootstrap3',
-			required_by_default: true,
-			modes: ['code', 'text', 'tree', 'view'], // allowed modes
-			error: function (err) {
-				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
-				return false;
-			}
-		};
-		
-		editor = new jsoneditor.JSONEditor(container, options, "");		
-		
-	});
-	
-	$(document).load(function(){		 
-		 
-		
-	});	
-	
 	// LOAD DATA TO USE IN CREATE WIZARD CONTROLLER
 	// CREATE WIZARD CONTROLLER LOAD AND INIT ITSELF
 	
