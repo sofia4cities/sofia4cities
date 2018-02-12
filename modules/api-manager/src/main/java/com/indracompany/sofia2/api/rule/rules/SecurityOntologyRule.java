@@ -62,7 +62,7 @@ public class SecurityOntologyRule extends DefaultRuleBase {
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
 		User user = (User) data.get(ApiServiceInterface.USER);
-		Ontology ontology = (Ontology) facts.get(ApiServiceInterface.ONTOLOGY);
+		Ontology ontology = (Ontology) data.get(ApiServiceInterface.ONTOLOGY);
 		
 		boolean ontologyPermission = apiSecurityService.checkRole(user, ontology, true);
 		

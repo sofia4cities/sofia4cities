@@ -22,9 +22,20 @@ public final class TokenUserFIQL {
 	
 
 	public static TokenUserDTO toTokenUsuarioDTO(UserToken token) throws Exception {
-		TokenUserDTO tokenUsuarioDTO = new TokenUserDTO();
-		tokenUsuarioDTO.setToken(token.getToken());
-		tokenUsuarioDTO.setUserIdentification(token.getUser().getUserId());
-		return tokenUsuarioDTO;
+		
+		if (token!=null) {
+			TokenUserDTO tokenUsuarioDTO = new TokenUserDTO();
+			tokenUsuarioDTO.setToken(token.getToken());
+			tokenUsuarioDTO.setUserIdentification(token.getUser().getUserId());
+			return tokenUsuarioDTO;
+		}
+		else {
+			TokenUserDTO tokenUsuarioDTO = new TokenUserDTO();
+			tokenUsuarioDTO.setToken("NO_VALID_TOKEN_FOUND");
+			tokenUsuarioDTO.setUserIdentification(token.getUser().getUserId());
+			return tokenUsuarioDTO;
+		}
+		
+		
 	}
 }
