@@ -70,17 +70,17 @@ pipeline {
 	    success {	    
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
 			emailext attachLog: true, 
-			body: 'La compilación de la rama $BRANCH_NAME del proyecto $PROJECT_NAME se ha completado satisfactoriamente. id del Build: $BUILD_NUMBER', 
+			body: 'La compilación de la rama $BRANCH_NAME del proyecto $PROJECT_NAME se ha completado satisfactoriamente. url del Build: $BUILD_URL', 
 			compressLog: true, 
-			subject: '[SUCCESSFUL!] La compilación de la rama $BRANCH_NAME del proyecto $PROJECT_NAME se ha completado satisfactoriamente. id del Build: $currentBuild.fullDisplayName', 
+			subject: '[SUCCESSFUL!] La compilación de la rama $BRANCH_NAME del proyecto $PROJECT_NAME se ha completado satisfactoriamente. id del Build: $BUILD_NUMBER', 
 			to: 'mmoran@minsait.com'
  		}
 	    failure {   
 	    	echo "El pipeline: '${currentBuild.fullDisplayName}' ha fallado: '${env.BUILD_URL}' se procede a enviar notificación por correo"
 			emailext attachLog: true, 
-			body: 'Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto $PROJECT_NAME. id del Build: ${env.BUILD_URL}', 
+			body: 'Ha ocurrido un error al compilar los fuentes de la rama $BRANCH_NAME del proyecto $PROJECT_NAME.url del Build: $BUILD_URL', 
 			compressLog: true, 
-			subject: '[ERROR!] Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto $PROJECT_NAME: ${currentBuild.fullDisplayName}', 
+			subject: '[ERROR!] Ha ocurrido un error al compilar los fuentes de la rama $BRANCH_NAME del proyecto $PROJECT_NAME. Se adjuntan los logs de la compilación. id del Build: $BUILD_NUMBER', 
 			to: 'mmoran@minsait.com'
 	    }
    }      
