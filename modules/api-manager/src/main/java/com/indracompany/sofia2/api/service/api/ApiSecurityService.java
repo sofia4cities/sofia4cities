@@ -49,15 +49,15 @@ public class ApiSecurityService {
 	private OntologyUserAccessRepository ontologyUserAccessRepository;
 	
 	public static boolean isAdmin(final User user) {
-		return (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId()));
+		return (Role.Type.ROLE_ADMINISTRATOR.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
 	public static boolean isCol(final User user) {
-		return (Role.Type.ROLE_OPERATIONS.toString().equalsIgnoreCase(user.getRole().getId()));
+		return (Role.Type.ROLE_OPERATIONS.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
 	public static boolean isUser(final User user) {
-		return (Role.Type.ROLE_USER.toString().equalsIgnoreCase(user.getRole().getId()));
+		return (Role.Type.ROLE_USER.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
 	public User getUser(String userId) {
@@ -100,7 +100,7 @@ public class ApiSecurityService {
 		boolean autorizado=false;
 		
 		//Si es administrador u otro rol, pero o propietario o esta suscrito al API
-		if (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
+		if (Role.Type.ROLE_ADMINISTRATOR.name().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
 			autorizado=true;
 			
 		}else if(api.getUser().getUserId()!=null && api.getUser().getUserId().equals(user.getUserId())){//Otro rol pero propietario
@@ -143,7 +143,7 @@ public class ApiSecurityService {
 		
 		Boolean authorize=false;
 		//If the role is Manager always allows the operation
-		if (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
+		if (Role.Type.ROLE_ADMINISTRATOR.name().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
 			authorize=true;
 			
 		}else{

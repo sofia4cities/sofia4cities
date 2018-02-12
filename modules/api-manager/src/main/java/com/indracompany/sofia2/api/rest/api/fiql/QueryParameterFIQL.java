@@ -99,7 +99,7 @@ public final class QueryParameterFIQL {
 
 	
 	private static boolean isValidTypeValue(String DataType, String Value) {
-		if (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.number.toString())) {
+		if (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.number.name())) {
 			try {
 				Integer.parseInt(Value);
 			} catch (Exception e) {
@@ -117,21 +117,21 @@ public final class QueryParameterFIQL {
 
 
 	private static boolean isValidHeaderType(String DataType) {
-		return (DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.body.toString())
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.path.toString()) 
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.query.toString()));
+		return (DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.body.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.path.name()) 
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.query.name()));
 	}
 
 	private static boolean isValidType(String DataType) {
-		return (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.string.toString()) 
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.array.toString())
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.date.toString())
+		return (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.string.name()) 
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.array.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.date.name())
 				|| DataType.equalsIgnoreCase("boolean")
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.uri.toString())
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.password.toString())
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.binary.toString())
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.email.toString())
-				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.uuid.toString())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.uri.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.password.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.binary.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.email.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.uuid.name())
 				
 				);
 	}
