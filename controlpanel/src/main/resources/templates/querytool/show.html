@@ -30,6 +30,8 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css}"/>	
+		
+		<!-- Funciones AJAX -->
 		<script th:inline="javascript">
 
 		function getQueryExecutedFragment() {
@@ -515,7 +517,7 @@
 			   //else if (( opcion == "native") && ( queryKp  != "null")){ $('#querySql').innerHTML =  "" ; $('#querySql').val(""); }
 			   else if (( opcion == "native") && ( bdtrType == "rtdb") && (queryKp == "null")){ $('#querySql').innerHTML =  "db." + ontologia_base +".find().limit(3);";  $('#querySql').val("db." + ontologia_base +".find().limit(3);"); }
 			  // else if (( opcion == "native") && ( bdtrType == "relationalOracle") && (queryKp == "null")){ $('#querySql').innerHTML =  "select * from " + ontologia_base +" where ROWNUM <= 3;"; $('#querySql').val("select * from " + ontologia_base +" where ROWNUM <= 3;"); }
-			   else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType == "rtdb")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3;"; $('#querySql').val("select * from " + ontologia_base +" limit 3;"); }
+			   else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType == "rtdb")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3;"; $('#querySql').val("select * from " + ontologia_base +" limit 3"); }
 			   //else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType == "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +""; $('#querySql').val("select * from " + ontologia_base +""); }
 			   //else if (( opcion == "sql2")   && (queryKp == "null") && (bdtrType != "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3"; $('#querySql').val("select * from " + ontologia_base +" limit 3"); }
 			   //else if (( opcion == "sql2")   && (queryKp == "null") && (bdtrType == "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +""; $('#querySql').val("select * from " + ontologia_base + ""); }
@@ -717,329 +719,7 @@
 	<script th:inline="javascript">
 
 	//<![CDATA[
-	  
-
-
-
-
-		
-		
-		function descargarFichero (tipoFichero) { 
-			
-			mostrarCapaLoading();
-			$(".boton").css("display", "none");
-			var combodb=document.getElementById('targetDatabase');
-			var targetdb= combodb.options[combodb.selectedIndex].value;
-			
-			if (bdtrType=="relationalKudu"){
-				bdtrDWR.transfToFichero(dwr.util.getValue("querySql"),data_consulta,tipoFichero, {callback:function(data){
-					esconderCapaLoading();
-					if (data!=null){
-					  dwr.engine.openInDownload(data); 
-					  checkdisplayDownload();
-					} else {
-						document.getElementById("dialog-error").innerHTML=[[#{herramientas_descarga_alerta}]];
-						showErrorDialog();
-					}
-				  }});  
-			} else if(targetdb == "bdh"){
-				 bdtrDWR.transfBDHResultToFichero(dwr.util.getValue("querySql"),data_consulta,dwr.util.getValue("resultFormat").toUpperCase(),tipoFichero, {callback:function(data){
-					 esconderCapaLoading();
-					 if (data!=null){
-					   dwr.engine.openInDownload(data); 
-					   checkdisplayDownload();
-					   }
-					 else
-						 alert([[#{herramientas_descarga_alerta}]]);
-					 }
-								});             
-			} else {
-				 bdtrDWR.transfToFichero(dwr.util.getValue("querySql"),data_consulta,tipoFichero, {callback:function(data){
-					 
-					 esconderCapaLoading();
-					 if (data!=null){
-					   dwr.engine.openInDownload(data); 
-					   checkdisplayDownload();
-					 } else {
-						 document.getElementById("dialog-error").innerHTML=[[#{herramientas_descarga_alerta}]];
-						 showErrorDialog();
-					 }
-				   }});     
-			}
-			
-				 
-		}	
-		
-		
-		// FUNCION AUXILIAR PARA CREAR LA CABECERA DE LAS TABLAS QUASAR A PARTIR DE LOS DATOS DEVUELTOS.
-		// recibe el data[0] de la consulta , y a partir de eso monta el sistema de columnas, retorna un campo tableHeader con en HTML resultante
-		function createColumns(data_columns){
-		
-			// variable de retorno
-			var tableHeader = '';
-			
-			// inicialización de las columnas de la tabla.
-			var columnsHTML = '<tr><th rowspan="2" class="quasar-first">#</th><th colspan="5" class="quasar context">Context</th>';
-			
-			// inicialización de la fila de columnas de contexto y campos que extiende las columnas de la tabla.
-			var contextDataHTML = '<tr><th class="context">session_key</th><th class="context">user</th><th class="context">kp</th><th class="context">kp_instancia</th><th class="context">timestamp</th>';
-		
-			showLog ? console.log('crear_tabla_quasar() -> createColumns() -> creando tabla...') : '';
-			if (!data_columns instanceof Array) { console.log('ERROR, el array de columnas no es correcto'); return false; }
-			
-			
-			// inicialización de varibles. 
-			var arrColumns = data_columns;
-			var checkCol = '';
-			var actualColText, actualColAtrr = '';
-			var attrCounter = 0;
-			var hayAttrib = false;
-					
-			// ITERAMOS EL ARRAY DE COLUMNAS 
-			arrColumns.map(function( column, index ){
-				
-				var actualCol = column;						
-				// CONTROL PARA LOS CONTEXTDATA (VALORES INTERNOS DE SISTEMA)
-				var col = column; 
-				if( col.indexOf('contextData.') != -1 ){
-					showLog ? console.log('CONTEXT: ' + col) : '';
-				}
-				else {
-					// CONTROL PARA CAMPOS QUE TIENEN 1 MÁS ATRIBUTOS Y NO SON DE CONTEXTO.		
-					// COLUMNA UNICA
-					if(col.indexOf('[') == -1){
-						showLog ? console.log('ÚNICO: ' + col) : '';
-						if ( hayAttrib ){ columnsHTML += '<th colspan="'+ attrCounter +'" class="quasar" >'+ actualColText +'</th><th rowspan="2" class="quasar" >'+ col +'</th>'; hayAttrib = false; attrCounter = 0;  } else { columnsHTML += '<th rowspan="2" class="quasar" >'+ col +'</th>'; }
-					}
-					else {
-					// COLUMNA UNICA O CON ATRIBUTOS
-						
-						hayAttrib = true;
-						attrCounter++;
-						actualColText = actualCol.split("[")[0];
-						actualColAtrr = actualCol.split("[")[1].replace(']','');
-						showLog ? console.log('COL: ' + actualColText + 'ATTRIB:  ' + actualColAtrr) : '';
-						
-						// MIENTRAS HAY CAMPOS SEGUIMOS AGREGANDOLOS AL HTML						
-						contextDataHTML += '<th class="attrib">'+ actualColAtrr +'</th>';						
-					}				
-				}			
-			});
-			
-			// MONTAJE FINAL DE COLUMNADO:
-			tableHeader = '<thead>' +columnsHTML + '</tr>' + contextDataHTML + '</tr></thead>';
-			return tableHeader;
-			
-		};
-		
-		// MOSTRAR/OCULTAR LOS DATOS DE CONTEXTO INTERNO DE LOS REGISTROS EN LA TABLA.
-		function toggleContext(){
-				icon = $('#btnContextToggle').children('i');
-				if (icon.hasClass('fa fa-eye-slash')) { icon.removeClass('fa fa-eye-slash').addClass('fa fa-eye'); } else { icon.removeClass('fa fa-eye').addClass('fa fa-eye-slash'); }
-				$('.context').toggle('hide');
-		
-		}
-		
-		
-		// FUNCION PARA DEVOLVER LA SALIDA DE CONSULTA EN FORMATO TABLE.
-		function crear_tabla_quasar(data){
-			
-			showLog ? console.log('crear_tabla_quasar() -> data: '+ JSON.stringify(data)) : '';		
-			
-			// TRATAMIENTO PARA UN ARRAY
-			if ( data instanceof Array) {
-				if ($('#result-panel').hasClass('hide')){ $('#result-panel').toggleClass('hide'); }
-				$('#query-ontologia-result').text($('#selector_ontologias').val());
-				$("#Canvasrespuesta").append('<div class="table-scrollable" style="overflow: auto;" ><table id="quasarTable"  class="datatable no-footer table table-hover table-striped table-condensed" ></table></div>');
-							
-				
-				// MONTAMOS LA SALIDA DE COLUMNAS DE LA TABLA DATA[0], 1 CAMPO TH ROWSPAN = 2 PARA CAMPOS SIN CAMPOS ADICIONALES, Y UN TH COLSPAN = Nº ATRIBUTOS QUE TIENE.
-				var cabecera = data.shift(); 
-				var tableColumns = createColumns(cabecera);
-				$('#quasarTable').append(tableColumns);
-							
-				var tableRows = '<tbody>';
-				var tableRow = '';			
-				// ITERAMOS EL ARRAY DE COLUMNAS 
-				data.map(function( row, rowindex ){				
-					tableRows += '<tr><td class="quasar-first">'+ rowindex + '</td>';
-					for (var i = 0; i < row.length; i++){ if (i<5){ cssContext = 'context'} else { cssContext='' } tableRow += '<td class="'+ cssContext +'">' + row[i] + '</td>'; }
-					tableRows += tableRow + '</tr>';
-					tableRow = '';
-					
-				});
-				tableRows += '</tbody>';
-				
-				// agregamos las filas de datos
-				$('#quasarTable').append(tableRows);			
-			}
-			else {
-				// LANZAMOS EL PROCESO DE SALIDA HABITUAL EN JSON.
-				Process("respuesta", data);
-				return;
-			}
-		}
-		
-		
-		
-		function crear_tabla(data){
-			showLog ? console.log('crear_tabla() -> a crear_tabla_quasar() -> son iguales. '): '';
-			crear_tabla_quasar(data);        
-		}
-
-		function descarga_completa() {
-			
-			$("#respuesta").val("");        
-			$("#Canvasrespuesta").empty(); 
-			mostrarCapaLoading();
-			var combodb=document.getElementById('targetDatabase');
-			var targetdb= combodb.options[combodb.selectedIndex].value;
-
-			if(targetdb == "bdtr" || bdtrType=="relationalKudu"){
-				bdtrDWR.downloadAllDataInCSV(dwr.util.getValue("querySql"), dwr.util.getValue("typeQuery"),{callback:function(data){
-					esconderCapaLoading();
-					if (data!=null){
-						dwr.engine.openInDownload(data); 
-					  } else {
-						  document.getElementById("dialog-error").innerHTML=[[#{herramientas_descarga_alerta}]];
-						  showErrorDialog();
-					  }
-				}});
-			} else if (targetdb == "bdh"){
-				ImpalaDWR.downloadAllDataInCSVFromBDH(dwr.util.getValue("querySql"),{callback:function(data){
-					esconderCapaLoading();
-					if (data!=null){
-						dwr.engine.openInDownload(data); 
-					  } else {
-						  document.getElementById("dialog-error").innerHTML=[[#{herramientas_descarga_alerta}]];
-						  showErrorDialog();
-					  }
-				}});
-			} else {
-				esconderCapaLoading();
-				document.getElementById("dialog-error").innerHTML="Service unavailable";
-				showErrorDialog();
-			}
-			
-		}
-
-		function checkdisplayDownload(){
-			if(dwr.util.getValue("resultFormat").toLowerCase() == "table"){
-				$(".boton").css("display", "none"); //formato tabla no se puede exportar
-			}else {
-				$(".boton").css("display", "");
-			}
-		}
-		
-		
-		// FUNCIÓN QUE EJECUTA LA CONSULTA DEFINIDA ACORDE A LOS PARAMETROS ENVIADOS.
-		function enviarSql() {
-			
-			$("#respuesta").val("");        
-			$("#Canvasrespuesta").empty(); 
-			$("#colapsable").click();
-			$('html,body').scrollTop(0);
-					
-			var isTimeSerie = $("#isTimeSerie").val();
-			var combodb = document.getElementById('targetDatabase')
-			var targetdb = combodb.options[combodb.selectedIndex].value;                
-			var combo = document.getElementById('typeQuery');
-			var opcion = combo.options[combo.selectedIndex].value;
-			
-			showLog ? console.log('enviarSql(): timeSerie? ' + isTimeSerie + ' DDBB: ' + targetdb + ' type: ' + opcion ) : '';
-			
-			// BBDD BDTR
-			if( targetdb == "bdtr"){
-				
-				$(".boton").css("display", "none");             
-				
-				// BBDD relationalKudu
-				if (bdtrType == "relationalKudu"){
-					bdtrDWR.querySql(dwr.util.getValue("querySql"),dwr.util.getValue("resultFormat"), {callback:function(data) {
-						
-						// FORMATO DE SALIDA TABLE 
-						if (dwr.util.getValue("resultFormat") == "table"){
-							if(data[0] != ""){
-								crear_tabla_quasar(data);
-							}
-							else{
-								$("#Canvasrespuesta").append("<p>Error: no data available</p>");
-							}
-							
-							// agregamos la query al histórico.
-							addQueryToHistory();
-						}
-						else {
-							// FORMATO JSON
-							Process("respuesta", data);
-							if  (data != null && data != ''){
-								checkdisplayDownload(); 
-							}
-						}
-					},
-					timeout:0});				
-				}
-				else {
-					
-					// SERIES DE TIEMPO
-					if(isTimeSerie == "true"){
-						bdtrDWR.querySql(dwr.util.getValue("querySql"), dwr.util.getValue("time_serie"), {callback:function(data) {
-							
-							bdtrDWR._path =  busServer;
-							Process("respuesta", data);
-							if  (data != null && data != ''){
-								checkdisplayDownload(); 
-							}
-							data_consulta = data;
-							addQueryToHistory();
-						},
-						timeout:0});
-						
-					}
-					else{
-						if( opcion != "sql2"){
-							bdtrDWR.querySql(dwr.util.getValue("querySql"), dwr.util.getValue("typeQuery"), {callback:function(data) {
-								
-								bdtrDWR._path = busServer;
-								Process("respuesta", data);
-								if  (data != null && data != ''){
-									checkdisplayDownload(); 
-								}
-								data_consulta = data;
-								addQueryToHistory();
-							},
-							timeout:0});
-						}
-						else{
-							
-							bdtrDWR.querySql2(dwr.util.getValue("querySql"), dwr.util.getValue("typeQuery"),dwr.util.getValue("resultFormat"), dwr.util.getValue("offset"), {callback:function(data) {                            
-								bdtrDWR._path =  busServer;
-								if(dwr.util.getValue("resultFormat") != "table"){
-									Process("respuesta", data);
-									if  (data != null && data != ''){
-										checkdisplayDownload(); 
-									}
-								}else{
-									if(data[0] != ""){
-										crear_tabla_quasar(data);
-									}
-									else{
-										$("#Canvasrespuesta").append("<p>Error: no data available</p>");
-									}                            	
-								}
-								data_consulta=data;
-								addQueryToHistory();
-							},
-							timeout:0});
-						}
-					}               
-				}
-			}
-			
-
-		};
-		
-		
+	  	
 		function addQueryToHistory(){
 			var queryHistory=document.getElementById("queryHistory");
 			if (queryHistory.options[0].value == 'queries' ){
@@ -1062,13 +742,7 @@
 			$('#querySql').val(queryCombo);
 	   }  
 		
-		function esconderCapaLoading() {
-			$('.capa-loading').hide();
-		}
-		
-		function mostrarCapaLoading() {
-			$('.capa-loading').show();
-		}
+
 		
 		// SELECCIÓN DE ONTOLOGÍA
 		function seleccionarOntologia(idOntologia){
@@ -1112,18 +786,7 @@
 			$('#query-ontologia').text('' + idOntologia);		
 		}
 		
-		
-		function seleccionarTablaBDC(){
-			var comboTablaBdc = document.getElementById('tablaBDC');
-			
-			if(comboTablaBdc.selectedIndex==-1){
-			  alert([[#{herramientas_seleccione_tablaBdc}]]);
-			}else{
-				  var tabla = comboTablaBdc.options[comboTablaBdc.selectedIndex].value;
-				  $('#querySql').val("select * from "+ tabla +";");
-			}
-		}
-		
+
 		
 
 		
@@ -1216,7 +879,7 @@
 		            text: 'OK',
 		            btnClass: 'btn-blue',
 		            action: function () {
-		               
+		               createQuery();
 		            }
 		        },
 		        cancel: function () {
@@ -1270,6 +933,7 @@
 			                where = '<li  id="condicion'+indexCondition+'" condition="'+queryCondition+'"  class="list-group-item bold">'+ queryCondition +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'condicion'+indexCondition+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
 							indexCondition++;
 							$("#where_ul").append(where);
+							createQuery();
 						}
 		            }
 		        },
@@ -1340,15 +1004,7 @@
 			return add;
 		}
 		
-		// CONFIRMACION GENERICA 
-		function mostrarDialogo(texto){
-			document.getElementById("dialog-confirm-generic").innerHTML = texto;
-			$( "#dialog-confirm-generic" ).dialog({resizable: false, height:160, modal: true,  position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {                                 
-				   [[#{dialogo_confirm_table_button_continuar}]]: function() { $( this ).dialog("close"); }
-				}               
-			});
-		}
+
 		
 		// QUITAR CONDICION, REGENERA LA QUERY AUTOMATICAMENTE PARA NO TENER QUE HACERLO MANUAL COMO ANTES.
 		function deleteCondition(elemento){
@@ -1498,18 +1154,16 @@
 			else if( groupby.checked == true && queryCampos == "*"){ hayGroupBy = false; mostrarDialogo([[#{consultas_formulario_error_groupby}]]); }
 			
 			// MONTAJE DE CONSULTA
-			if(		 hayCondicion && hayGroupBy && hayOrderBy )  { query = query + queryCampos + " from " + ontologia + " where " + condicion + " group by " + queryGroupBy + " order by "+ queyrOrderBy;}
-			else if( !hayCondicion && !hayGroupBy && !hayOrderBy){ query = query + queryCampos + " from " + ontologia; }
-			else if( hayCondicion  && !hayGroupBy && !hayOrderBy){ query = query + queryCampos + " from " + ontologia + " where " + condicion; }
-			else if( !hayCondicion && hayGroupBy  && !hayOrderBy){ query = query + queryCampos + " from " + ontologia + " group by " + queryGroupBy; }
-			else if( hayCondicion  && !hayGroupBy && hayOrderBy) { query = query + queryCampos + " from " + ontologia + " where " + condicion + " order by "+ queryOrderBy;}
-			else if( !hayCondicion && hayGroupBy  && hayOrderBy) { query = query + queryCampos + " from " + ontologia + " group by " + queryGroupBy + " order by "+ queryOrderBy; }
-			else if( hayCondicion  && hayGroupBy  && !hayOrderBy){ query = query + queryCampos + " from " + ontologia + " where " + condicion + " group by " + queryGroupBy;}
-			else if( !hayCondicion && !hayGroupBy && hayOrderBy) { query = query + queryCampos + " from " + ontologia + " order by " + queryOrderBy; }
-			
-			// CONTROL RELATIONALORACLE O NO-RELATIONALORACLE
-			if( bdtrType == "relationalOracle"){ query = query + ";"; } else if( bdtrType != "relationalOracle"){ query = query + " limit 3;"; }
-			
+	        if( hayCondicion && hayGroupBy && hayOrderBy )		  { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " group by " + queryGroupBy + " order by "+ queryOrderBy;}
+			else if( !hayCondicion && !hayGroupBy && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c"; }
+			else if( hayCondicion  && !hayGroupBy && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion; }
+			else if( !hayCondicion && hayGroupBy  && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c group by " + queryGroupBy; }
+			else if( hayCondicion  && !hayGroupBy && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " order by "+ queryOrderBy;}
+			else if( !hayCondicion && hayGroupBy  && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c group by " + queryGroupBy + " order by "+ queryOrderBy; }
+			else if( hayCondicion  && hayGroupBy  && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " group by " + queryGroupBy; }
+			else if( !hayCondicion && !hayGroupBy && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c order by " + queryOrderBy;}
+	        
+		
 			// RETORNA EL STRING QUERY COMPLETADO.
 			return query;
 		}
@@ -1712,7 +1366,7 @@
 			console.log('Cargando ontologia: ' + selected + ' del grupo: ' + grupo + 'con ID: '+ ontologiaID);
 			
 			// selección de ontología y carga.				
-			if ( grupo === 'general') { seleccionarOntologia(selected); obtenerCampos(ontologiaID) } else { seleccionarOntologiaGrupo(); }			
+			if ( grupo === 'general') { seleccionarOntologia(selected); } else { seleccionarOntologiaGrupo(); }			
 			
 	
 		});		
