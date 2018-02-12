@@ -35,6 +35,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,8 @@ public class OntologyController {
 
 	@Autowired
 	private OntologyService ontologyService;
+	@Autowired
+	private UserService userService;
 
 	@Autowired
 	private AppWebUtils utils;
@@ -75,13 +78,13 @@ public class OntologyController {
 		return this.ontologyService.getAllIdentifications();
 	}
 
-	@GetMapping(value = "/create", produces = "text/html")
+	@GetMapping(value = "/create")
 	public String create(Model model) {
 		model.addAttribute("ontology", new Ontology());
 		return "/ontologies/create";
 	}
 	
-	@PostMapping(value = "/create", produces = "text/html")
+	@PostMapping(value = {"/create","/createwizard"})
 	public String createOntology(Model model,
 			@Valid Ontology ontology, BindingResult bindingResult,
 			RedirectAttributes redirect) {
@@ -92,6 +95,7 @@ public class OntologyController {
 			return "redirect:/ontologies/create";
 		}
 		try{
+			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 			this.ontologyService.createOntology(ontology);
 		}catch (OntologyServiceException e)
 		{
@@ -100,7 +104,7 @@ public class OntologyController {
 			return "redirect:/ontologies/create";
 		}
 		utils.addRedirectMessage("ontology.create.success", redirect);
-		return "redirect:/ontology/list";
+		return "redirect:/ontologies/list";
 	}
 	
 	@GetMapping(value = "/update/{id}", produces = "text/html")
@@ -110,7 +114,7 @@ public class OntologyController {
 			if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
 				return "/error/403";
 			model.addAttribute("ontology", ontology);
-			return "/ontologies/update";
+			return "/ontologies/createwizard";
 		}else
 			return "/ontologies/create";
 		
@@ -126,7 +130,7 @@ public class OntologyController {
 		{
 			log.debug("Some ontology properties missing");
 			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return "redirect:/ontologies/update/"+id;
+			return "redirect:/ontologies/createwizard/"+id;
 		}
 		if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
 			return "/error/403";
