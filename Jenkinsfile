@@ -70,9 +70,9 @@ pipeline {
 	    success {	    
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
 			emailext attachLog: true, 
-			body: 'La compilación de la rama ${env.GIT_BRANCH} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${env.BUILD_URL}', 
+			body: 'La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: $BUILD_NUMBER', 
 			compressLog: true, 
-			subject: '[SUCCESSFUL!] La compilación de la rama ${env.GIT_BRANCH} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${currentBuild.fullDisplayName}', 
+			subject: '[SUCCESSFUL!] La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${currentBuild.fullDisplayName}', 
 			to: 'mmoran@minsait.com'
  		}
 	    failure {   
