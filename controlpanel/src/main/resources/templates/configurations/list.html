@@ -86,7 +86,8 @@
 								</div>
 								<div class="actions margin-right-20">
 									<div class="btn-group">
-										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../configurations/create'" ><i class="flaticon-cogwheel-2"></i> <span th:text="#{gen.create}">New </span></button>
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='/controlpanel/configurations/create'" ><i class="flaticon-cogwheel-2"></i> <span th:text="#{gen.create}">New </span></button>
+										<button sec:authorize="!hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../configurations/create'" ><i class="flaticon-cogwheel-2"></i> <span th:text="#{gen.create}">New </span></button>
 									</div>
 								</div>
 							</div>

@@ -133,9 +133,13 @@ public class UserServiceImpl implements UserService {
 			userDb.setPassword(user.getPassword());
 			userDb.setEmail(user.getEmail());
 			userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
-			// If user was deleted and now is going to be active
+			
+			// Update dateDeleted for in/active user
 			if (!userDb.isActive() && user.isActive())
 				userDb.setDateDeleted(null);
+			if(userDb.isActive() && !user.isActive())
+				userDb.setDateDeleted(new Date());
+			
 			userDb.setActive(user.isActive());
 			if(user.getDateDeleted()!=null) userDb.setDateDeleted(user.getDateDeleted());
 			userDb.setFullName(user.getFullName());

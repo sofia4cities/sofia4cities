@@ -66,7 +66,7 @@ var OntologyCreateController = function() {
 				ontologyId:		{ minlength: 5, required: true },
                 identification:	{ minlength: 5, required: true },
 				metainf:		{ minlength: 5, required: true },
-				description:	{ minlength: 5, required: true }                
+				description:	{ required: true }                
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
                 success1.hide();
@@ -106,19 +106,10 @@ var OntologyCreateController = function() {
 			$(this).valid();
 		});
 		
-				
-		// set current language and formats
-		currentLanguage = ontologyCreateReg.language || LANGUAGE[0];
-		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';		
-		
-		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage) : '';
-		
-				
 		// Reset form
 		$('#resetBtn').on('click',function(){ 
 			cleanFields('ontology_create_form');
-		});
-		
+		});		
 		
 		// INSERT MODE ACTIONS  (ontologyCreateReg.actionMode = NULL ) 
 		if ( ontologyCreateReg.actionMode === null){

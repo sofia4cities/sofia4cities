@@ -30,8 +30,23 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css}"/>	
+		<script th:inline="javascript">
+
+		function getQueryExecutedFragment() {
+			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()})
+		} 
+	
+
+		function getOntologyFields() {
+
+			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
+
+		}
 		
+		</script>
+
 	</head>	
+	
 	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
@@ -66,7 +81,7 @@
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
+				<h1 class="page-title "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -103,13 +118,11 @@
 										<div class="form-group">										
 											<div class="input-group input-group-sm">
 												<span class="input-group-addon" th:value="#{database.ontologies}" > ONTOLOGÍAS</span>
-												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" th:title="#{database.ontologies} +'...'">
+												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" onchange="cambioConsulta()" th:title="#{database.ontologies} +'...'">
 												  <optgroup th:label="#{database.generic}">
 													<option th:each="ontology : ${ontologies}" th:id="${ontology.user.userId}" th:data-description="${ontology.description}" data-type="general" th:value="${ontology.identification}" th:text="${ontology.identification}"  ></option>
 												  </optgroup>
-												 <!--  <optgroup label="Grupo">
-													<option th:each="ontologiagrupo:${ontologiasGrupo}" th:id="${ontologiagrupo.id}" data-type="grupo" th:value="${ontologiagrupo.identificacion}" th:text="${ontologiagrupo.identificacion}" ></option>
-												  </optgroup> -->
+											
 												</select>
 											</div>
 											<span class="help-block hidden-xs" th:text="#{database.ontologies.help}"> Seleccione Ontologías Genéricas o de Grupo </span>										
@@ -117,46 +130,43 @@
 									</div>									
 									
 									<!-- CREACIÓN DE CONSULTA -->
-									<div id="query-panel" class="col-md-12 hide">									
+									<div id="query-panel" class="col-md-12">									
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase"><i class="fa fa-sitemap"></i> Consultas sobre <span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-sitemap"></i> Consultas sobre <span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
 											</div>
 											<div class="panel-body no-space">											
 												<!-- OPCIONES DE CONSULTA -->
 												<div class="col-md-6 col-sm-12 panel-tools">
-													<fieldset class="col-sm-3">												
+													<fieldset class="col-sm-4">												
 														<select class="element select small form-control" id="targetDatabase" name="targetDatabase" onChange="cambioConsulta();">
 															<option name="rtdb" value="rtdb"> RealTime DB</option>
-															<option name="hdb" value="hdb"> Historical DB </option>
 														</select>
 													</fieldset>
 													<fieldset class="col-md-3">							
 														<select  class="element select small form-control" id="typeQuery" name="typeQuery" onChange="cambioConsulta()">
-															<option name="sql" value="sql2"> SQL </option>
+															<option name="sql" value="sql"> SQL </option>
 															<option name="native" value="native"> NATIVE </option>
 														</select>
 													</fieldset>
 													<fieldset class="col-md-3">							
 														<select  class="element select small form-control" id="resultFormat" name="typeQuery" disabled="disabled">
 															<option name="json" value="json"> JSON </option>
-															<option name="table" value="table"> TABLE </option>
 														</select>
 													</fieldset>	
 													<fieldset id="fieldset_offset" class="col-md-3">
 														<label id="label_offset" class="description labelSmallText" for="offset">Offset </label>
 														<input id="offset" disabled="disabled"/>
 													</fieldset>
-													<input type="hidden" id="time_serie" value="time_serie" />
 												</div>
 												<!-- TOOLBAR DE CONSULTA -->
 												<div class="col-md-6 col-sm-12 panel-tools">
 													<div class="btn-group pull-right">
-														<button type="button" class="btn btn-sm btn-primary" onclick="addSelect()"><i class="fa fa-table"></i> SELECT</button>
-														<button type="button" class="btn btn-sm btn-primary" onclick="addCondition()"><i class="fa fa-filter"></i> WHERE</button>
-														<button type="button" class="btn btn-sm btn-primary" disabled="true"><i class="fa fa-object-group"></i> GROUP BY</button>
-														<button type="button" class="btn btn-sm btn-primary" onclick="addOrderBy()"><i class="fa fa-sort"></i> ORDER</button>
-														<button type="button" class="btn btn-sm btn-danger" onclick="cambioConsulta()"><i class="fa fa-times"></i> RESET</button>
+														<button type="button" class="btn btn-sm btn-outline dark" onclick="addSelect()"><i class="fa fa-table"></i> SELECT</button>
+														<button type="button" class="btn btn-sm btn-outline dark" onclick="addCondition()"><i class="fa fa-filter"></i> WHERE</button>
+														<button type="button" class="btn btn-sm btn-outline dark" disabled="true"><i class="fa fa-object-group"></i> GROUP BY</button>
+														<button type="button" class="btn btn-sm btn-outline dark" onclick="addOrderBy()"><i class="fa fa-sort"></i> ORDER</button>
+														<button type="button" class="btn btn-sm btn-outline dark" onclick="cambioConsulta()"><i class="fa fa-times"></i> RESET</button>
 													</div>
 													<div class="clearfix"></div>
 												</div>
@@ -188,16 +198,16 @@
 																<li type="none" class="columnMine">
 																	<ul id="where_ul" class="list-group ">
 																		<!-- LI principal , agrega elementos de condición al where, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
-																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-filter"></i> WHERE<span onclick="addCondition()" class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campos al WHERE"><i class="fa fa-plus"></i></span></li>																													
+																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-filter"></i> WHERE<span onclick="addCondition()" class="btn bg-grey-steel font-grey-mint btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campos al WHERE"><i class="fa fa-plus"></i></span></li>																													
 																	</ul>
 																</li>
 																<!-- END WHERE PANEL -->
 																
 																<!-- GROUPBY PANEL -->
 																<li type="none" class="columnMine">
-																	<ul id="groupBy_ul" class="list-group" style="height: 100px">
+																	<ul id="groupBy_ul" class="list-group">
 																		<!-- LI principal , agrega groupby, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
-																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-object-group"></i> GROUP BY<span class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar condiciones al GROUPBY"><input type="checkbox" id="groupby_check" style="display:none; margin:0px"/> </span></li>																													
+																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-object-group"></i> GROUP BY<span class="btn bg-grey-steel font-grey-mint btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar condiciones al GROUPBY"><input type="checkbox" id="groupby_check" style="display:none; margin:0px"/> </span></li>																													
 																	</ul>
 																	<!-- ELEMENTOS TEMPORALES DE GROUPBY -->
 																	<div id="groupBy_time_ul" class="col-md-12" style="display:none;">
@@ -213,7 +223,7 @@
 																<li type="none" class="columnMine">
 																	<ul id="orderby_ul" class="list-group list-orderby">
 																		<!-- LI principal , agrega orderby, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
-																		<li class="list-group-item panel-sofia2 bold uppercase"><i class="fa fa-sort"></i> ORDER BY<span onclick="addOrderBy()" class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campo al ORDER BY"><i class="fa fa-plus"></i></span></li>																													
+																		<li class="list-group-item panel-sofia2 bold uppercase"><i class="fa fa-sort"></i> ORDER BY<span onclick="addOrderBy()" class="btn bg-grey-steel font-grey-mint btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campo al ORDER BY"><i class="fa fa-plus"></i></span></li>																													
 																	</ul>
 																</li>
 																<!-- END ORDERBY PANEL -->
@@ -246,7 +256,7 @@
 												<div class="pull-right col-md-2 col-sm-4 col-xs-12">
 													<div class="btn-group">
 														<!-- <button type="button" class="btn btn-sm btn-primary" onClick="createQuery()"><i class="fa fa-edit"></i> Generar Query</button> no hace falta cuando todo haga refresh -->
-														<button type="button" class="btn btn-sm btn-primary" onClick="enviarSql()"><i class="fa fa-play"></i> Ejecutar Query </button>
+														<button type="button" class="btn btn-sm btn-primary" onclick="getQueryExecutedFragment()" id="executeQuery"><i class="fa fa-play"></i> Ejecutar Query </button>
 													</div>											
 												</div>
 												<div class="clearfix"></div>
@@ -255,12 +265,12 @@
 									</div>
 									
 									<!-- RESULTADOS DE CONSULTA -->
-									<div id="result-panel" class="col-md-12 hide">
+									<div id="result-panel" class="col-md-12">
 									
 										<!-- PANEL DE RESULTADOS -->
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase"><i class="fa fa-database"></i> Resultados  sobre <span id="query-ontologia-result" class="bold uppercase">ontología</span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> Resultados  sobre <span id="query-ontologia-result" class="bold uppercase">ontología</span></h3>											
 											</div>
 											<div class="panel-body no-space">
 											<!-- CONTENEDOR DE RESULTADOS , AQUI SE CREAN LOS DIVS PARA LA SALIDA DE LA CONSULTA A HTML,TABLE O JSON. -->
@@ -280,13 +290,64 @@
 												
 												<!-- RESPUESTA DE CONSULTA -->
 												<div class="col-md-12 margin-top-10 margin-bottom-20">
-													<div id="Canvasrespuesta">														
-													
+													<div th:fragment="query" id="Canvasrespuesta">														
+													<p th:text="${queryResult}"></p>
 													</div>												
 												</div>
 												<div id="example" class="col-md-12">
 													
-												</div>											
+												</div>
+											
+							                    
+							                    <div id="dialog-execution-condition" style="display: none;" class="tabla_description" title="Condicion - WHERE">
+							                            <div>
+							                                <fieldset>
+							                                    <label class="description" for="identificacionPipeline">Campos</label>
+							                                    <select class="element select small form-control" id="form_campos" name="typeCombo" style="width: 250px;"></select>
+							                                </fieldset>  
+							                            </div>
+							                            <div>
+							                                <fieldset>
+							                                    <label class="description" for="descripcionPipeline">Operador</label>
+							                                    <select class="element select small form-control" id="select_operador" name="typeCondicion" style="width: 250px;">
+							                                            <option name="mayor" value="mayor"> > </option>
+							                                            <option name="menor" value="menor"> &#60; </option>
+							                                            <option name="mayor-igual" value="mayor-igual"> >= </option>
+							                                            <option name="menor-igual" value="menor-igual"> &#60;= </option>
+							                                            <option name="igual" value="igual"> = </option>
+							                                            <option name="distinto" value="distinto"> != </option>
+							                                    </select>
+							                                </fieldset>
+							                            </div>
+							                            <div id="cronExpresion">
+							                                <fieldset id="timer_capa"> 
+							                                    <label class="description" for="temporizador">Condicion*</label>
+							                                    <input id="form_condicion" name="condicion" class="element text form-control" type="text" value="" style="width: 250px;" /> 
+							                                                                                    
+							                                </fieldset>
+							                            </div>
+							                        </div>							                    
+							                        <div id="dialog-execution-orderby" style="display: none;" class="tabla_description" title="ORDER BY">
+							                            <div>
+							                                <fieldset>
+							                                    <label class="description" for="form_orderby_campos">Campos</label>
+							                                    <select class="element select small form-control" id="form_orderby_campos" name="typeCombo">
+							                                            
+							                                    </select>
+							                                </fieldset> 
+							                                <fieldset>
+							                                    <label class="description" for="form_orden">Órden</label>
+							                                    <select class="element select small form-control" id="form_orden" name="typeCondicion" style="width: 270px;">
+							                                            <option name="asc" value="ASC"> ASC </option>
+							                                            <option name="desc" value="DESC"> DESC </option>
+							                                    </select>
+							                                </fieldset> 
+							                            </div>
+							                        </div>
+							                    <div id="dialog-confirm-generic" title="Información" style="display: none;">
+							                            <div>Información</div>
+							                    </div>
+							             										
 											</div>
 										</div>	
 									</div>	
@@ -303,17 +364,25 @@
 	
 	<!-- FOOTER INCLUDE -->
 	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
-	
+
+	<!-- FRAGMENT AJAX FOR ONTOLOGY FIELDS -->
+	<div style="display: none">
+	<div th:fragment="fields" id="fields">
+		<script th:inline="javascript">
+			campos= [[${fields}]];
+		</script>
+			<option th:id="selectFields" th:text="#{querytool.select.fields}"></option>
+			<option th:id="all" th:text="#{querytool.all.fields}"></option>
+			<option th:each="field :${fields}" th:value="${field}" th:id="check + ${field}" th:text="${field}"/>
+		
+	</div>
+	</div>
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 	
 	<!-- DATABASE PLUGINS TO-DO: pendiente de ubicación -->
-	<script type='text/javascript' th:src="@{/js/sib/dwr/engine.js}"/>
-	<script type='text/javascript' th:src="@{/js/sib/drw/util.js}"/>
-	<script th:src="@{/js/dwr/interface/BdtrDWR.js}"/>
-	<script th:src="@{/js/dwr/interface/ImpalaDWR.js}"/>
-	<script th:src="@{/js/dwr/interface/BdcDWR.js}"/>
+
 	
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>	
@@ -373,8 +442,11 @@
 	   //	FUNCION QUE INICIALIZA LOS PANELES DE MONTAJE DE LA CONSULTA [ SELECT, WHERE, GROUP, ORDERBY ]
 	   function cambioConsulta(){
 			
+			//Load fields 
+			getOntologyFields();			
+
 			var ontologia_base = 'SensorTemperatura';
-			
+		
 			// Se borran todos los paneles con el cambio de consulta.
 			var queryPanels = $("#where_ul,#select_ul,#from_ul,#groupBy_ul,#checks,#campos,#orderby_ul");
 			queryPanels.each(function(){ $(this).children().not('.panel-sofia2').remove(); });
@@ -384,6 +456,7 @@
 			var ontologia = $('#selector_ontologias').val();
 			console.log('cambioConsulta() -> tiene ontologia seleccionada? ' + ontologia);
 			if (ontologia !== '') {
+
 				var from =  '<li id="from" name="'+ ontologia +'" id="'+ ontologia +'" class="list-group-item bold uppercase"> '+ ontologia +' </li>';
 				$("#from_ul").append(from);
 			}
@@ -396,8 +469,8 @@
 			<!-- $("#campos").empty(); -->
 			<!-- $("#orderby_ul").empty(); -->
 
-			var queryKp = "[[${QUERY}]]";
-			console.log('cambioconsulta() -> queryKp -> '+ queryKp);
+			//var queryKp = "[[${QUERY}]]";
+			//console.log('cambioconsulta() -> queryKp -> '+ queryKp);
 			  
 			// TIPO DE QUERY  
 			var combo = document.getElementById('typeQuery');       
@@ -407,9 +480,9 @@
 			var combodb = document.getElementById('targetDatabase');
 			var targetdb = combodb.options[combodb.selectedIndex].value;
 		   
-			// SQL2 ó NATIVE
-			if( opcion == "sql2" || opcion == "native"){    	   
-				if (opcion == "sql2"){ $('#fieldset_offset').css('display','');  $("#resultFormat").prop("disabled", false);} else { $('#fieldset_offset').css('display','none');  $("#resultFormat").prop("disabled", true);}    	      	 
+			// SQL ó NATIVE
+			if( opcion == "sql" || opcion == "native"){    	   
+				if (opcion == "sql"){ $('#fieldset_offset').css('display','');  $("#resultFormat").prop("disabled", false);} else { $('#fieldset_offset').css('display','none');  $("#resultFormat").prop("disabled", true);}    	      	 
 			}
 			else{
 			   $('#fieldset_offset').css('display','none');  
@@ -438,75 +511,18 @@
 			   // SI TENEMOS UNA YA SELECCIONADA , HACEMOS QUE LA QUERY BASE SEA CON LA QUE TENEMOS
 			   if ( $('#selector_ontologias').val() != '' ){ ontologia_base = $('#selector_ontologias').val(); }
 			   
-			   if 	   ((opcion == "sql")     && ( queryKp != "null")) { $('#querySql').innerHTML =  queryKp;  $('#querySql').val(queryKp); }
-			   else if (( opcion == "native") && ( queryKp  != "null")){ $('#querySql').innerHTML =  "" ; $('#querySql').val(""); }
-			   else if (( opcion == "native") && ( bdtrType != "relationalOracle") && (queryKp == "null")){ $('#querySql').innerHTML =  "db." + ontologia_base +".find().limit(3);";  $('#querySql').val("db." + ontologia_base +".find().limit(3);"); }
-			   else if (( opcion == "native") && ( bdtrType == "relationalOracle") && (queryKp == "null")){ $('#querySql').innerHTML =  "select * from " + ontologia_base +" where ROWNUM <= 3;"; $('#querySql').val("select * from " + ontologia_base +" where ROWNUM <= 3;"); }
-			   else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType != "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3;"; $('#querySql').val("select * from " + ontologia_base +" limit 3;"); }
-			   else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType == "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +""; $('#querySql').val("select * from " + ontologia_base +""); }
-			   else if (( opcion == "sql2")   && (queryKp == "null") && (bdtrType != "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3"; $('#querySql').val("select * from " + ontologia_base +" limit 3"); }
-			   else if (( opcion == "sql2")   && (queryKp == "null") && (bdtrType == "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +""; $('#querySql').val("select * from " + ontologia_base + ""); }
+			  // if 	   ((opcion == "sql")     && ( queryKp != "null")) { $('#querySql').innerHTML =  queryKp;  $('#querySql').val(queryKp); }
+			   //else if (( opcion == "native") && ( queryKp  != "null")){ $('#querySql').innerHTML =  "" ; $('#querySql').val(""); }
+			   else if (( opcion == "native") && ( bdtrType == "rtdb") && (queryKp == "null")){ $('#querySql').innerHTML =  "db." + ontologia_base +".find().limit(3);";  $('#querySql').val("db." + ontologia_base +".find().limit(3);"); }
+			  // else if (( opcion == "native") && ( bdtrType == "relationalOracle") && (queryKp == "null")){ $('#querySql').innerHTML =  "select * from " + ontologia_base +" where ROWNUM <= 3;"; $('#querySql').val("select * from " + ontologia_base +" where ROWNUM <= 3;"); }
+			   else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType == "rtdb")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3;"; $('#querySql').val("select * from " + ontologia_base +" limit 3;"); }
+			   //else if (( opcion == "sql")    && (queryKp == "null") && (bdtrType == "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +""; $('#querySql').val("select * from " + ontologia_base +""); }
+			   //else if (( opcion == "sql2")   && (queryKp == "null") && (bdtrType != "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3"; $('#querySql').val("select * from " + ontologia_base +" limit 3"); }
+			   //else if (( opcion == "sql2")   && (queryKp == "null") && (bdtrType == "relationalOracle")) { $('#querySql').innerHTML =  "select * from " + ontologia_base +""; $('#querySql').val("select * from " + ontologia_base + ""); }
 		  
 			   if( document.getElementById("enviar_consulta_descarga") ){ document.getElementById("enviar_consulta_descarga").style.display = ''; }
 		   }
-		   
-			// BBDD: BDH
-			else if( targetdb == "bdh"){
-		   
-			   $('#fieldset_offset').css('display','none'); 
-			   $('#json_deprecated').css('display',''); 
-			   $("#resultFormat").prop("disabled", false);
-			   
-			   var comboBDH = document.getElementById('ontologia');
-			   
-			   if( comboBDH.length > 0){	           
-				   $('#querySql').val("select * from "+ comboBDH.value +" limit 3;"); 
-			   }
-			   
-			   <!-- divListaTablasBDC.style.display='none'; -->
-			   <!-- divListaOntologias.style.display = 'block'; -->
-			   <!-- divListaOntologiasGrupo.style.display = 'block'; -->
 
-			   $('#contenedor-tabla-outside1').addClass('in');
-			   $('#contenedor-tabla-outside1').css('height','auto');
-			   $('#contenedor-tabla-outside2').removeClass('in');
-
-			   $("#crear-query").css('display','block'); 
-			   $("#crear-query-label").css('display','block');           
-			   $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3;";
-			   
-			   combo.value = "sql";
-			   combo.disabled = true;
-			   if( document.getElementById("enviar_consulta_descarga") ){
-				   document.getElementById("enviar_consulta_descarga").style.display = '';
-			   }
-			}
-			// BBDD: BDC
-			else if( targetdb == "bdc"){
-			
-				document.getElementById('json_deprecated').style.display='none';
-				$('#fieldset_offset').css('display','none'); 
-				var comboTablaBDC = document.getElementById('tablaBDC');
-
-				if(comboTablaBDC.length > 0){ comboTablaBDC[0].selected=true;	}
-
-				document.getElementById("crear-query").style.display = 'none';
-				document.getElementById("crear-query-label").style.display = 'none';
-				document.getElementById("boton-crear-query").style.display = 'none';
-
-				$('#querySql').val("select * from "+ comboTablaBDC.value +" limit 3;");
-				combo.value = "sql";
-				combo.disabled = true; 
-				
-				//Cambia los contenidos del cuadrado
-				<!-- divListaOntologias.style.display = 'none'; -->
-				<!-- divListaOntologiasGrupo.style.display = 'none'; -->
-				<!-- divListaTablasBDC.style.display='block'; -->
-
-				if( document.getElementById("enviar_consulta_descarga") ){
-				   document.getElementById("enviar_consulta_descarga").style.display = 'none';
-				}
-			}
 		}  
 		//]]>             
 	</script> 
@@ -702,29 +718,12 @@
 
 	//<![CDATA[
 	  
-		var busServer = pathToDwrServletAdmin; // Adaptacion WAS +'/';
 
-		$(function(){
-		  dwr.engine.setActiveReverseAjax(true);
-		  dwr.engine.setErrorHandler(errorHandler);
-		  dwr.engine.setTimeout(0);
-		});
 
-		function errorHandler(message, ex){
-		//dwr.util.setValue("error", "No se ha podido conectar con el SIB. Inicializando lógica de reintento.", {escapeHtml:false});
-		//setTimeout(function() { dwr.util.setValue("error", ""); }, 5000)
-		}
-		  
-		function enviar() { 
-			$("#respuesta").val("");
-			$("#Canvasrespuesta").empty();
-			bdtrDWR.query(dwr.util.getValue("query"), function(data) {
-				bdtrDWR._path =  busServer;          
-				Process("respuesta", data);
-			});
-		}
+
+
 		
-		var data_consulta;
+		
 		function descargarFichero (tipoFichero) { 
 			
 			mostrarCapaLoading();
@@ -1036,61 +1035,7 @@
 					}               
 				}
 			}
-			// BBDD BDH
-			else if(targetdb == "bdh"){
 			
-				$(".boton").css("display", "none");             
-				ImpalaDWR.querySql(dwr.util.getValue("querySql"),dwr.util.getValue("resultFormat"), {callback:function(data) {
-					bdtrDWR._path =  busServer;
-					if (dwr.util.getValue("resultFormat").toLowerCase() == "table"){
-						try{
-							var dataList = JSON.parse(data);
-							if( dataList[0] != ""){ crear_tabla_quasar(dataList); } else { $("#Canvasrespuesta").append("<p>Error: no data available</p>"); }
-					   }
-					   catch(Err){ crear_tabla_quasar(data); }
-						addQueryToHistory();					
-					}
-					// PROCESADO DE CONSULTA SEGUN PARAMETROS OBTENIDOS EN DWR.
-					else if( data == "herramientas_operacionnosoportada"){  Process("respuesta", [[#{herramientas_operacionnosoportada}]]); } 
-					else if( data == "herramientas_sentencianosoportada"){  Process("respuesta", [[#{herramientas_operacionnosoportada}]]); }
-					else if( data == "herramientas_sentencianoparseable"){  Process("respuesta", [[#{herramientas_sentencianoparseable}]]); }
-					else if( data == "herramientas_noresultados")		 {  Process("respuesta", [[#{herramientas_noresultados}]]); }
-					else if( data.substring(0, "herramientas_errorpersistencia".length ) === "herramientas_errorpersistencia"){ Process("respuesta", [[#{herramientas_errorpersistencia}]]+": "+data.substring("herramientas_errorpersistencia".length, data.length)); }
-					else if( data == "herramientas_errorautorizacion")	 {  Process("respuesta", [[#{herramientas_errorautorizacion}]]); }
-					else if( data.substring(0, "herramientas_errorgenerico".length ) === "herramientas_errorgenerico"){ Process("respuesta", [[#{herramientas_errorgenerico}]]+": "+data.substring("herramientas_errorgenerico".length, data.length)); }
-					else{
-						// PROCESADOR GENERICO?
-						Process("respuesta", data);
-						if(data != null && data != ''){ 					  
-							checkdisplayDownload();
-						}					
-						// RETORNO DE DATOS.
-						data_consulta = data;
-						addQueryToHistory();
-					}
-				},
-				timeout:0});
-				
-			}		
-			// BBDD BDC
-			else if( targetdb == "bdc" ){
-				
-				BdcDWR.querySql(dwr.util.getValue("querySql"), {callback:function(data) {                
-					bdtrDWR._path =  busServer;
-					data_consulta = data;
-					if( data.substring(0, "herramientas_sentencianosoportada".length ) === "herramientas_sentencianosoportada"){ Process("respuesta", [[#{herramientas_sentencianosoportada}]]+": "+data.substring("herramientas_sentencianosoportada".length, data.length)); }
-					else if( data == "herramientas_sentencianoparseable")	{ Process("respuesta", [[#{herramientas_sentencianoparseable}]]); }
-					else if( data == "herramientas_noresultados")		 	{ Process("respuesta", [[#{herramientas_noresultados}]]); }
-					else if( data == "herramientas_errorautorizaciontabla")	{ Process("respuesta", [[#{herramientas_errorautorizaciontabla}]]); }
-					else if( data.substring(0, "herramientas_errorgenerico".length ) === "herramientas_errorgenerico"){ Process("respuesta", [[#{herramientas_errorgenerico}]]+": "+data.substring("herramientas_errorgenerico".length, data.length)); }
-					else if( data.substring(0, "herramientas_errorautorizacion_atributo".length ) === "herramientas_errorautorizacion_atributo"){ Process("respuesta", [[#{herramientas_errorautorizacion_atributo}]]+": "+data.substring("herramientas_errorautorizacion_atributo".length, data.length)); }
-					else{
-						Process("respuesta", data);            
-						addQueryToHistory();
-					  }
-				},
-				timeout:0});
-			}
 
 		};
 		
@@ -1132,17 +1077,7 @@
 			console.log('seleccionarOntologia(): ' + idOntologia);
 			if ( idOntologia === '' ) { alert([[#{herramientas_seleccione_ontologia}]]); return; }       
 			
-			bdtrDWR.isPostgreSQL(idOntologia, {callback:function(data) {
-				bdtrDWR._path =  busServer;
-				isPostgreSQL  = data;
-				if(isPostgreSQL == "true"){
-					$("#typeQuery").val("sql").attr("selected", "selected");
-					$("#typeQuery").attr("disabled", "disabled");
-				}else{
-					$("#typeQuery").removeAttr("disabled");
-				}
-			 },
-			 timeout:0});
+			
 			
 		   
 			if( idOntologia === ''){
@@ -1171,13 +1106,6 @@
 				$("#from_ul").append(from);
 			}
 			
-			bdtrDWR.isTimeSerie(idOntologia, {callback:function(data) {
-				bdtrDWR._path =  busServer;
-				isTimeSerie=data;
-				$("#create_query").append('<input type="hidden" id="isTimeSerie" value="'+ isTimeSerie +'" />');
-				if(isTimeSerie){ mostrarDialogoTimeSerie();}
-			},
-			timeout:0});
 					 
 			// mostramos el panel de consultas. 
 			if ($('#query-panel').hasClass('hide')){ $('#query-panel').toggleClass('hide'); } 
@@ -1197,36 +1125,7 @@
 		}
 		
 		
-		function seleccionarOntologiaGrupo(){        
-			
-			 var comboOnt = document.getElementById('ontologia');
-			 if(comboOnt.selectedIndex!=-1){
-				 comboOnt.options[comboOnt.selectedIndex].selected = false;
-			 }
-			
-			 var comboOntologia = document.getElementById('ontologiagrupo');
-			 if(comboOntologia.selectedIndex==-1){
-			   alert([[#{herramientas_seleccione_ontologia}]]);
-			 }else{
-				   var ontologia = comboOntologia.options[comboOntologia.selectedIndex].value;
-				   
-				   var comboTypeQuery = document.getElementById('typeQuery');
-				   if(comboTypeQuery.selectedIndex==-1){
-					   alert([[#{herramientas_seleccione_tipoquery}]]);
-				   }else{
-					   var opcion = comboTypeQuery.options[comboTypeQuery.selectedIndex].value;
-					   if(opcion=="sql"){
-							 $('#querySql').val("select * from "+ontologia+" limit 3;");
-					   }else if(opcion=="native"){
-						   $('#querySql').value = "db."+ontologia+".find().limit(3);";
-					   }
-				   }
-				   $( "#from_ul" ).children().not('.panel-sofia2').remove();
-					$( "#select_ul" ).children().not('.panel-sofia2').remove();
-					from = '<li id="from" name="'+ontologia+'" type="none" style="list-style:none;padding-left: 3px;word-wrap: break-word;"><td th:text="'+ontologia+'" th:id="'+ontologia+'">'+ontologia+'</td></li>';
-					$("#from_ul").append(from);  
-			 }
-		} 
+
 		
 	   
 		
@@ -1234,90 +1133,26 @@
 		// ARRAY DE CAMPOS DE CADA ONTOLOGIA, SE CARGA CON CADA ONTOLOGIA MEDIANTE OBTENERCAMPOS()
 		var campos = [];
 		
-		// OBTIENE LOS CAMPOS DE UNA ONTOLOGIA DADA.
-		function obtenerCampos(idOntologia){
-
-			var combo		= document.getElementById('typeQuery');
-			var opcion		= combo.options[combo.selectedIndex].value;
-			var combodb		= document.getElementById('targetDatabase');
-			var targetdb	= combodb.options[combodb.selectedIndex].value;
-			
-			showLog ? console.log('obtenerCampos('+idOntologia+')...') : '';
-
-			$( "#checkselect" ).empty();
-			$( "#campos" ).empty();		
-			$("#where_ul").children().not('.panel-sofia2').remove();
-			$("#groupBy_ul").children().not('.panel-sofia2').remove();
-			$("#orderby_ul").children().not('.panel-sofia2').remove();		
-
-			// BDTR - SQL
-			if( targetdb == "bdtr" && opcion == "sql"){
-				showLog ? console.log('obtenerCampos... BDTR - SQL ') : '';                 
-				//$('.bootstrap-switch-id-groupby_check').css("display","none"); TO-DO: DESHABILITAR GROUPBY
-				//document.getElementById('groupby_label').style.display = "none";
-			}
-			// BDTR - ( NATIVE || SQL2 )
-			else if(( targetdb == "bdtr" && opcion == "native") || (targetdb == "bdtr" && opcion == "sql2" )){			
-				showLog ? console.log('obtenerCampos... BDTR -NATIVE-SQL2 ') : '';
-			}
-			// BDH
-			else if(targetdb == "bdh"){			
-				showLog ?  console.log('obtenerCampos... BDH') : '';
-			}		
-			
-			campos.splice(0,campos.length);
-			
-			// inicialización del select de campos para el SELECT
-			check = '<option id="seleccione" th:value="seleccione" selected="selected">Seleccione los campos...</option>';
-			$("#checkselect").append(check);
-			check = '<option th:id="Todos" th:value="Todos">Todos los campos</option>';
-			$("#checkselect").append(check);
-			
-			bdtrDWR.getOntologyFields(idOntologia, {callback:function(data) {
-				bdtrDWR._path =  busServer;
-				campos = data;
-				for (i=0;i<campos.length;i++) {
-					nextinput++;
-					if( campos[i] == "error"){				 
-					  mostrarDialogo([[#{consultas_formulario_campos_error}]]);
-					}
-					else{
-						// se agregan los campos de la ontología seleccionada al select de campos 
-						check = '<option th:id="check'+ nextinput +'" th:value="'+ campos[i] +'">'+ campos[i] +'</option>';					
-						$("#checkselect").append(check);
-					}
-				} 
-			},timeout:0});     
-			 
-		};
 		
 		
 		//var indexCampo = 0;
 		
 		// FUNCION PARA AGREGAR CAMPOS AL SELECT DE LA CONSULTA 
 		function addRemoveCampoToSelect(campos){
-			var isTimeSerie = $("#isTimeSerie").val();
+		
 			var repetido = false;
 			var campoSelected = document.getElementById("checkselect").value;
-			 
-			// SERIES DE TIEMPO
-			if( isTimeSerie == "true" ){
-				$("#select_ul").children().not('.panel-sofia2').remove();
-				if( campoSelected == "Todos los campos"){ $("#groupby_label,#groupBy_time_ul").hide(); } else { $("#groupby_label,#groupBy_time_ul").show(); }
-				
-				// creamos el nuevo li con el campo a agregar
-				select = '<li id="'+campoSelected+'" name="'+campoSelected+'" class="list-group-item bold even">'+campoSelected+'<div class="btn btn-xs pull-right" onclick="deleteCondition(\''+campoSelected+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
-				$("#select_ul").append(select); 
-				$('#dialog-execution-select').dialog("close");
-				console.log('regenerando query tras agregar o quitar: ' + campoSelected);
-				createQuery();
-			}
-			else{
-			// SERIES NORMALES
+
+			
 				if( campoSelected !== "Seleccione los campos..." ){
 					
 					// seleccionamos el id del campo seleccionado.
-					for(var i = 0; i < campos.length; i++){ if( campos[i].value == campoSelected ){ var campoId=campos[i].getAttribute("th:id"); break; }}
+					for(var i = 0; i < campos.length; i++){
+					 if( campos[i].value == campoSelected ){ 
+					 	var campoId=campos[i].getAttribute("id"); 
+					 	break; 
+					 }
+					}
 					
 					// si es Todos, se vacia la lista.
 					if( campoId == "Todos" ){ 
@@ -1346,10 +1181,10 @@
 						createQuery();
 					}
 					// cerramos el dialogo.
-					$('#dialog-execution-select').dialog("close");
-					document.getElementById("seleccione").selected = true;
+					
+					document.getElementById("selectFields").selected = true;
 				} 
-			}
+			
 		};
 		
 			
@@ -1362,49 +1197,44 @@
 		function mostrarDialogoSelect(){
 			 var combodb=document.getElementById('targetDatabase');
 			 var targetdb= combodb.options[combodb.selectedIndex].value;
-			 document.getElementById("checkselect").style.display="block";      
+			 getOntologyFields();
+			 var comboFields=$('#fields').html();
 
-			 $( "#dialog-execution-select" ).dialog({resizable: false,height:220,modal: true,position: [($(window).width() / 2) - 150, 300],dialogClass: 'DeleteConfirmDialog'});
-		};
 		
-		// TO-DO: falta chquear con alguna ontolgia de time
-		function mostrarDialogoTimeSerie(){
-			document.getElementById("dialog-execution-time-serie").innerHTML=[[#{consultar_formulario_dialog_time_serie}]];
-		   $( "#dialog-execution-time-serie" ).dialog({
-			   resizable: false,
-			   height:200,
-			   modal: true,
-			   position: [($(window).width() / 2) - 150, 300],
-			   dialogClass: 'DeleteConfirmDialog',
-			   buttons: {                                 
-				   [[#{dialogo_confirm_delete_button_cancelar}]]: function() {
-					   $("#typeQuery").removeAttr("disabled");
-					   $("#resultFormat").removeAttr("disabled");
-					   $("#isTimeSerie").val(false);
-					   $( this ).dialog("close");
-				   },
-				   [[#{dialogo_confirm_table_button_continuar}]]: function() {
-					   $("#checkselect")
-							.empty()
-							.append('<option id="seleccione" th:value="seleccione" selected="selected">Seleccione los campos...</option>')
-							.append('<option value="Todos los campos">Todos los campos</option>')
-							.append('<option value="MAX">MAX(*)</option>')
-							.append('<option value="MIN">MIN(*)</option>')
-							.append('<option value="SUM">SUM(*)</option>')
-							.append('<option value="AVG">AVG(*)</option>')
-							.append('<option value="COUNT">COUNT(*)</option>');
-					   
-					   $("#typeQuery").attr("disabled", "disabled");
-					   $("#resultFormat").attr("disabled", "disabled");
-					   $("#orderby_label").hide();
-					   $("#img_add_order").hide();
-					   $('.bootstrap-switch-id-groupby_check').hide();
-					   $("#isTimeSerie").val(true);
-					   $( this ).dialog("close");
-				   }
-			   }
-		   });
-		}
+			 
+		/*[+
+			$.confirm({
+		    title: [[#{querytool.select.fields}]],
+		    content: '' +
+		    '<form action="" class="formName">' +
+		    '<div class="form-group">' +
+		    '<label>Select fields</label> <select id="checkselect" onchange="addRemoveCampoToSelect(this)" class="form-control querySelect" data-width="100%">'+ comboFields +
+		    '</select></div>' +
+		    '</form>',
+		    buttons: {
+		        formSubmit: {
+		            text: 'OK',
+		            btnClass: 'btn-blue',
+		            action: function () {
+		               
+		            }
+		        },
+		        cancel: function () {
+		            //close
+		        },
+		    },
+		    onContentReady: function () {
+		        // bind to events
+		        var jc = this;
+		        getOntologyFields();
+		        this.$content.find('form').on('submit', function (e) {
+		            // if the user submits the form by pressing enter in the field.
+		            e.preventDefault();
+		            jc.$$formSubmit.trigger('click'); // reference the button and click it
+		        });
+		    }
+		});+]*/
+		};
 		
 		
 		// MODAL DE CONDICIONES DEL WHERE 
@@ -1412,42 +1242,56 @@
 		function mostrarDialogoCondicion(){
 			var combodb = document.getElementById('targetDatabase');
 			var targetdb = combodb.options[combodb.selectedIndex].value;
-			$( "#dialog-execution-condition" ).dialog({ resizable: false, height:200, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					[[#{dialogo_confirm_delete_button_cancelar}]]: function() {
-						$("#form_condicion").val('');
-						$( this ).dialog("close");
-					},
-					[[#{dialogo_confirm_table_button_continuar}]]: function() {
-						if( $("#form_condicion").val() == ""){
-							mostrarDialogo([[#{consultas_formulario_error}]]);
+			var comboFields=$('#fields').html();
+			var comboCondition=$('#select_operador').html();
+			/*[+
+			$.confirm({
+		    title: [[#{querytool.select.where}]],
+		    content: '' +
+		    '<form action="" class="form_condicion" id="form_condicion">' +
+		    '<div class="form-group">' +
+		    '<label>Select fields</label> <select id="conditionFields" class="form-control querySelect" data-width="100%">'+ comboFields +
+		    '</select> <select class="element select small form-control" id="conditionOperator" name="typeCondicion" >'+comboCondition+'</select><label class=""></label><input type="text" id="condition">Condition</input></div>' +
+		    '</form>',
+		    buttons: {
+		        formSubmit: {
+		            text: 'OK',
+		            btnClass: 'btn-blue',
+		            action: function () {
+		            	var campo = $("#conditionFields").val();
+						var operador = $("#conditionOperator option:selected").text();
+						var condicion = $("#condition").val();						
+						var c = Number(condicion);						
+						if( c.toString() == "NaN"){ condicion = '&#34;'+condicion+'&#34;'; }
+						if( operador == " < "){ operador=" &#60; "; }else if( operador == "<="){operador=" &#60;= "; }						
+						queryCondition = campo + operador + condicion;
+						var add = comprobarCondicion(queryCondition);
+						if( add ){							
+			                where = '<li  id="condicion'+indexCondition+'" condition="'+queryCondition+'"  class="list-group-item bold">'+ queryCondition +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'condicion'+indexCondition+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
+							indexCondition++;
+							$("#where_ul").append(where);
 						}
-						else{
-							var campo = $("#form_campos").val();
-							var operador = $("#form_operador option:selected").text();
-							var condicion = $("#form_condicion").val();						
-							var c = Number(condicion);						
-							if( c.toString() == "NaN"){ condicion = '&#34;'+condicion+'&#34;'; }
-							if( operador == " < "){ operador=" &#60; "; }else if( operador == "<="){operador=" &#60;= "; }						
-							queryCondition = campo + operador + condicion;
-							var add = comprobarCondicion(queryCondition);
-							if( add ){							
-								where = '<li  id="condicion'+indexCondition+'" condition="'+queryCondition+'"  class="list-group-item bold">'+ queryCondition +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'condicion'+indexCondition+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
-								indexCondition++;
-								$("#where_ul").append(where);							
-							}
-							$("#form_condicion").val('');
-							$( this ).dialog("close");
-							showLog ? console.log('regenerando query tras agregar o quitar condición: ' + queryCondition) : '';
-							createQuery();
-						}
-					}
-				}
-			});
-			$( "#form_campos" ).empty();
-			for( i=0; i < campos.length; i++){
-				 $('#form_campos').append($('<option>', {value: campos[i],text : campos[i]}));
-			}
+		            }
+		        },
+		        cancel: function () {
+		            //close
+		        },
+		    },
+		    onContentReady: function () {
+		        // bind to events
+		        var jc = this;
+		        getOntologyFields();
+		        this.$content.find('form').on('submit', function (e) {
+		            // if the user submits the form by pressing enter in the field.
+		            e.preventDefault();
+		            jc.$$formSubmit.trigger('click'); // reference the button and click it
+		        });
+		    }
+		});+]*/
+
+
+			
+			
 		};
 		
 		// COMPROBAR LAS CONDICIONES ANTES DE INYECTARLAS
@@ -1516,15 +1360,26 @@
 		var indexOrderby = 0;
 		// DIALOGO DE CONFIGURACION DEL ORDERBY
 		function mostrarDialogoOrderBy(){
-			$( "#dialog-execution-orderby" ).dialog({resizable: false, height:160,  modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					[[#{dialogo_confirm_delete_button_cancelar}]]: function() {
-						$( this ).dialog("close");
-					},
-					[[#{dialogo_confirm_table_button_continuar}]]: function() {
-						$("#orderby_ul").children().not('.panel-sofia2').remove();
-						var campo = $("#form_orderby_campos").val();
-						var orden = $("#form_orden").val();
+			var comboFields=$('#fields').html();
+			var comboOrders=$('#form_orden').html();
+
+			/*[+
+			$.confirm({
+		    title: [[#{querytool.select.orderby}]],
+		    content: '' +
+		    '<form action="" class="form_order" id="form_order">' +
+		    '<div class="form-group">' +
+		    '<label>Select fields</label> <select id="orderFields" class="form-control querySelect" data-width="100%">'+ comboFields +
+		    '</select> <select class="element select small form-control" id="orderType" name="orderType">'+comboOrders+'</select></div>' +
+		    '</form>',
+		    buttons: {
+		        formSubmit: {
+		            text: 'OK',
+		            btnClass: 'btn-blue',
+		            action: function () {
+		            	var campo = $("#orderFields").val();
+						var orden = $("#orderType").val();
+											
 						var add = comprobarOrderby(campo);
 						if(add){                        
 							var orderby = '<li id="orderby'+indexOrderby+'" name="'+campo+' '+orden+'" class="list-group-item bold">'+ campo +' '+ orden +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'orderby'+indexOrderby+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
@@ -1533,22 +1388,31 @@
 							createQuery();
 						}
 						indexOrderby++;
-						$( this ).dialog("close");
-					}
-				}
-			});
-			
-			$( "#form_orderby_campos" ).empty();
-			for( i=0; i < campos.length; i++){
-				 $('#form_orderby_campos').append($('<option>', { value: campos[i], text : campos[i]}));
-			}
+		            }
+		        },
+		        cancel: function () {
+		            //close
+		        },
+		    },
+		    onContentReady: function () {
+		        // bind to events
+		        var jc = this;
+		        getOntologyFields();
+		        this.$content.find('form').on('submit', function (e) {
+		            // if the user submits the form by pressing enter in the field.
+		            e.preventDefault();
+		            jc.$$formSubmit.trigger('click'); // reference the button and click it
+		        });
+		    }
+		});+]*/
+
 		}
 
 		
 		// DISPATCHER PARA LLAMAR A LA FUNCION CORRESPONDIENTE QUE MONTA EL QUERY STRING DEPENDIENDO DE LA BBDD Y DEL TIPO DE CONSULTA, Y SALIDA.
 		function createQuery(){
 			
-			var isTimeSerie = $("#isTimeSerie").val();
+			
 			
 			// CHECK DE ONTOLOGIA
 			ontologia = $('#selector_ontologias').selectpicker('val');	
@@ -1561,20 +1425,12 @@
 			
 				var comboTypeQuery = document.getElementById('typeQuery');		
 				var opcion = comboTypeQuery.options[comboTypeQuery.selectedIndex].value;			
-				// TIME-SERIE
-				if( isTimeSerie == "true"){$('#querySql').val(createQueryTimeSerie()); }			
-				// SQL NO-RELATIONALORACLE
-				else if(opcion=="sql" && bdtrType!="relationalOracle"){ console.log('createQuery()->createQuerySqlNo');  $('#querySql').val(createQuerySql()); }			
+					
+				
 				// SQL-RELATIONALORACLE
-				else if(opcion=="sql" && bdtrType=="relationalOracle"){ console.log('createQuery()->createQuerySql'); $('#querySql').val(createQuerySql()); }			
-				// NATIVE NO-RELATIONALORACLE
-				else if(opcion=="native" && bdtrType!="relationalOracle"){ console.log('createQuery()->createQueryNativeNo'); $('#querySql').val(createQueryNative()); }			
-				// NATIVE RELATIONALORACLE
-				else if(opcion=="native" && bdtrType=="relationalOracle"){ console.log('createQuery()->createQueryNative'); $('#querySql').val(createQueryNative()); }			
-				// SQL2 NO-RELATIONALORACLE
-				else if(opcion=="sql2" && bdtrType!="relationalOracle"){ console.log('createQuery()->createQuerySql2No'); $('#querySql').val(createQuerySql2()); }			
-				// SQL2 RELATIONALORACLE
-				else if(opcion=="sql1" && bdtrType=="relationalOracle"){ console.log('createQuery()->createQuerySql2'); $('#querySql').val(createQuerySql2()); } 		
+				if(opcion=="sql"){ console.log('createQuery()->createQuerySql'); $('#querySql').val(createQuerySql()); }			
+				// NATIVE 
+				else if(opcion=="native"){ console.log('createQuery()->createQueryNativeNo'); $('#querySql').val(createQueryNative()); }			
 			}
 		};
 		
@@ -1658,138 +1514,6 @@
 			return query;
 		}
 		
-		// GENERACIÓN DE CONSULTAS SQL1 O SQL2 RELATIONALORACLE O NO-RELATIONALORACLE ES EXACTAMENTE IGUAL QUE createQuerySql, PERO AGREGA EL STRING C. TO-DO: UNIFICARLAS.
-		function createQuerySql2(){
-			
-			// Inicialización de elementos y strings de la query.        
-			var todosCampos = false;
-			var query 		= "select ";
-			var queryCampos = "";
-			var ontologia 	= document.getElementById("from").getAttribute("name");
-			var condiciones = $('#where_ul li:not(".panel-sofia2")');
-			var groupby 	= document.getElementById('groupby_check');
-			var orderby 	= $('#orderby_ul li:not(".panel-sofia2")');
-			var campos 		= $('#select_ul li:not(".panel-sofia2")');
-			var condicion, queryGroupBy, queryOrderBy = "";
-					
-			// controles de elementos de la query
-			hayCondicion 	= false;
-			hayGroupBy	 	= false;
-			hayOrderBy 		= false;
-			
-			
-			// CONDICIONES WHERE
-			if( condiciones.length == 1){
-				hayCondicion = true;
-				condicion = condiciones.attr('condition');
-				condicion = obtainCondition(condicion);
-				condicion= "c." + condicion;
-			}
-			else if( condiciones.length > 0){
-				hayCondicion = true;
-				condiciones.each(function(index){		
-					showLog ? console.log('condición auxiliar en EACH-'+ index +' es: ' + $(this).attr('condition')) : '';
-					var condicionAux = obtainCondition($(this).attr('condition'));				
-					 if( index == 0){ condicion = "c." + condicionAux; } else {  condicion = condicion + " AND " + "c." + condicionAux; }			
-				});           
-			}
-			
-			// ORDER BY
-			if( orderby.length == 1){ hayOrderBy = true; queryOrderBy = orderby[0].getAttribute("name"); }
-			
-			// CONTROL SELECT ALL
-			if(campos.length == 1){
-				if( campos[0].getAttribute("name") == "Todos los campos"){
-					todosCampos = true;
-				}else{
-					 queryCampos = "c." + campos[0].getAttribute("name");
-				}
-			}
-			else if( campos.length == 0){
-				todosCampos = true;
-			}
-			// CONTROL SELECTS
-			else{
-				for(i=0; i < campos.length; i++){
-					if( campos[i].getAttribute("name") == "Todos los campos"){
-						todosCampos = true;
-					}
-					else{
-						queryCampos =  queryCampos + "c." +campos[i].getAttribute("name");
-						if( i < campos.length-1){
-							queryCampos = queryCampos + ", ";
-						}
-					}
-				}
-			}
-			
-			if( todosCampos ){ queryCampos = "*"; }
-			
-			if( groupby.checked == true && queryCampos != "*"){ hayGroupBy = true; queryGroupBy = queryCampos; }
-			else if(groupby.checked==true && queryCampos=="*"){  hayGroupBy = false; mostrarDialogo([[#{consultas_formulario_error_groupby}]]); }
-			
-			// MONTAJE DE CONSULTA
-			if( hayCondicion && hayGroupBy && hayOrderBy )		  { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " group by " + queryGroupBy + " order by "+ queryOrderBy;}
-			else if( !hayCondicion && !hayGroupBy && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c"; }
-			else if( hayCondicion  && !hayGroupBy && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion; }
-			else if( !hayCondicion && hayGroupBy  && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c group by " + queryGroupBy; }
-			else if( hayCondicion  && !hayGroupBy && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " order by "+ queryOrderBy;}
-			else if( !hayCondicion && hayGroupBy  && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c group by " + queryGroupBy + " order by "+ queryOrderBy; }
-			else if( hayCondicion  && hayGroupBy  && !hayOrderBy) { query = query + queryCampos + " from " + ontologia + " as c where " + condicion + " group by " + queryGroupBy; }
-			else if( !hayCondicion && !hayGroupBy && hayOrderBy ) { query = query + queryCampos + " from " + ontologia + " as c order by " + queryOrderBy;}
-			
-			if( bdtrType != "relationalOracle"){ query = query + " limit 3"; }
-			// RETORNO DEL QUERY_STRING
-			return query;
-		}
-		
-		// GENERACIÓN DE CONSULTAS DE TIME-SERIE TO-DO: probar con una ontologia que me permita verlo.
-		function createQueryTimeSerie(){
-				
-			// Inicialización de elementos y strings de la query.      
-			var query 		= "select ";
-			var queryCampos = "";
-			var ontologia 	= document.getElementById("from").getAttribute("name");
-			var condiciones = $('#where_ul li:not(".panel-sofia2")');
-			var groupby 	= document.getElementById('groupby_check');       
-			var campos 		= $('#select_ul li:not(".panel-sofia2")');
-			var condicion, queryGroupBy = "";
-			
-			hayCondicion = false;
-			hayGroupBy	 = false;
-			
-				
-			// CONDICIONES WHERE
-			if( condiciones.length == 1){
-				hayCondicion = true;
-				condicion = condiciones.attr('condition');
-				condicion = obtainCondition(condicion);
-				condicion= "c." + condicion;
-			}
-			else if( condiciones.length > 0){
-				hayCondicion = true;
-				condiciones.each(function(index){		
-					showLog ? console.log('condición auxiliar en EACH-'+ index +' es: ' + $(this).attr('condition')) : '';
-					var condicionAux = obtainCondition($(this).attr('condition'));				
-					 if( index == 0){ condicion = condicionAux; } else {  condicion = condicion + " AND " + condicionAux; }			
-				});           
-			}	
-					
-			// GROUPBY
-			if( groupby.length != 0){ groupby = groupby.attr("id").split("groupby_")[1]; hayGroupBy = true; } else { hayGroupBy = false; }
-			
-			// CAMPOS 
-			if( campos.length == 0){ queryCampos = "*"; } else { queryCampos = campos[0].getAttribute("name");if( queryCampos == "Todos los campos"){ queryCampos = "*"; } else { queryCampos += "(*)";}}
-			
-			// MONTAJE DE CONSULTA 
-			if	   ( hayCondicion  && hayGroupBy ){ query = query + queryCampos + " from " + ontologia + " where " + condicion + " group by " + groupby; }
-			else if( !hayCondicion && !hayGroupBy){ query = query + queryCampos + " from " + ontologia; }
-			else if( hayCondicion  && !hayGroupBy){ query = query + queryCampos + " from " + ontologia + " where " + condicion;}
-			else if( !hayCondicion && hayGroupBy) { query = query + queryCampos + " from " + ontologia + " group by " + groupby; }
-			
-			// RETORNO DEL STRING QUERY
-			return query;
-		}
 		
 		// OBTIENE LA CONDICIÓN DEL WHERE HACIENDO UN ESCAPE DE CARACTERES PARA EL QUERY STRING
 		function obtainCondition(condicion){

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.WebUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -91,6 +92,14 @@ public class AppWebUtils {
 			log.error("Error reading JSON by:" + e.getMessage(), e);
 		}
 		return formattedJson;
+	}
+
+	public String beautifyJson(String json) throws JsonProcessingException {
+		
+		ObjectMapper mapper = new ObjectMapper();
+		
+		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+		
 	}
 
 }
