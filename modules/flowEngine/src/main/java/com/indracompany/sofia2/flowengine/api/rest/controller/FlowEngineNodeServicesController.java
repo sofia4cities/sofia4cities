@@ -45,29 +45,32 @@ public class FlowEngineNodeServicesController {
 	@RequestMapping(value = "/deployment", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody String deploymentNotification(@RequestBody String json) {
 		return flowEngineNodeService.deploymentNotification(json);
+
 	}
 
-	@RequestMapping(value = "/user/ontologies", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/user/ontologies", method = RequestMethod.GET, produces = { "application/javascript" })
 	public @ResponseBody String getOntologiesByUser(@RequestParam String user, @RequestParam String password)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException {
 		String response = mapper.writeValueAsString(flowEngineNodeService.getOntologyByUser(user, password));
 		return "ontologies(" + response + ")";
 	}
 
-	@RequestMapping(value = "/user/client_platforms", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/user/client_platforms", method = RequestMethod.GET, produces = { "application/javascript",
+			"application/json" })
 	public @ResponseBody String getClientPlatformsByUser(@RequestParam String user, @RequestParam String password)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException {
 		String response = mapper.writeValueAsString(flowEngineNodeService.getClientPlatformByUser(user, password));
 		return "kpUser(" + response + ")";
 	}
 
-	@RequestMapping(value = "/user/validate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/user/validate", method = RequestMethod.POST, produces = { "application/javascript",
+			"application/json" })
 	public @ResponseBody String getClientPlatformsByUser(@RequestBody UserDomainValidationRequest request)
 			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException {
 		return flowEngineNodeService.validateUserDomain(request);
 	}
 
-	@RequestMapping(value = "/user/all_data", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/user/all_data", method = RequestMethod.GET, produces = { "application/javascript" })
 	public @ResponseBody String getOntologiesAndClientPlatformsByUser(@RequestParam String user,
 			@RequestParam String password)
 			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException, JsonProcessingException {
@@ -75,12 +78,14 @@ public class FlowEngineNodeServicesController {
 		String clientPlatforms = mapper
 				.writeValueAsString(flowEngineNodeService.getClientPlatformByUser(user, password));
 		StringBuilder response = new StringBuilder();
-		response.append("dataAllUser(").append(ontologies.substring(1, ontologies.length() - 1)).append(",\"##$$##\",")
-				.append(clientPlatforms.substring(1, clientPlatforms.length() - 1)).append(")");
+		response.append("dataAllUser([").append(ontologies.substring(1, ontologies.length() - 1)).append(",\"##$$##\",")
+				.append(clientPlatforms.substring(1, clientPlatforms.length() - 1)).append("])");
+
 		return response.toString();
 	}
 
-	@RequestMapping(value = "/user/query", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@RequestMapping(value = "/user/query", method = RequestMethod.GET, produces = { "application/javascript",
+			"application/json" })
 	public @ResponseBody String submitQuery(@RequestParam(required = true) String ontology,
 			@RequestParam(required = true) String queryDB, @RequestParam(required = true) String queryType,
 			@RequestParam(required = true) @Size(min = 1) String query, @RequestParam(required = true) String user,

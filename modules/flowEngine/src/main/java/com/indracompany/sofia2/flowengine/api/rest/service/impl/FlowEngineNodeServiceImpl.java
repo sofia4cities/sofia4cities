@@ -342,7 +342,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 
 		if (ontology == null) {
 			log.error("Ontology {} not found.", ontologyIdentification);
-			throw new NotFoundException("Ontology " + ontologyIdentification + " not found.");
+			throw new ResourceNotFoundException("Ontology " + ontologyIdentification + " not found.");
 		}
 
 		if (ontology.getUser().equals(user)
