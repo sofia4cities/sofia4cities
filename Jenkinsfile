@@ -70,17 +70,18 @@ pipeline {
 	    success {	    
 	        echo "Pipeline: '${currentBuild.fullDisplayName}' completado satisfactoriamente" 
 			emailext attachLog: true, 
-			body: 'La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${env.BUILD_URL}', 
+			body: 'La compilación de la rama ${env.GIT_BRANCH} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${env.BUILD_URL}', 
 			compressLog: true, 
-			subject: '[SUCCESSFUL!] La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${currentBuild.fullDisplayName}', 
+			subject: '[SUCCESSFUL!] La compilación de la rama ${env.GIT_BRANCH} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${currentBuild.fullDisplayName}', 
 			to: 'mmoran@minsait.com'
  		}
 	    failure {   
 	    	echo "El pipeline: '${currentBuild.fullDisplayName}' ha fallado: '${env.BUILD_URL}' se procede a enviar notificación por correo"
-	        mail from: 'plataformasofia2@gmail.com',
-	             to: 'mmoran@minsait.com',
-	             subject: "[ERROR!] Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities: ${currentBuild.fullDisplayName}",
-	             body: "'${env.BUILD_LOG}' Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities. id del Build: ${env.BUILD_URL}"	    
+			emailext attachLog: true, 
+			body: 'Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities. id del Build: ${env.BUILD_URL}', 
+			compressLog: true, 
+			subject: '[ERROR!] Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities: ${currentBuild.fullDisplayName}', 
+			to: 'mmoran@minsait.com'
 	    }
    }      
 }
