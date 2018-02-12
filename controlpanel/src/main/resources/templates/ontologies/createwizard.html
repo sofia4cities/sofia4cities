@@ -182,66 +182,7 @@
 														</div>							
 													</div>
 													<div class="col-md-6 col-sm-12 col-xs-12">
-														<div class="row">																																
-															<div class="col-md-6 col-xs-12">
-																<div class="form-group">
-																	<label id="notificaciones" >Configuración de notificaciones</label>
-																	<div class="mt-checkbox-list">
-																		<label class="mt-checkbox"> <div class="inline" >Query suscripción BDTR </div>
-																			<input id="bdtr" name="bdtr" value="bdtr" checked="checked" type="checkbox" />
-																			<span></span>
-																		</label>
-																		<label class="mt-checkbox"> <div class="inline" > Regla Script </div>
-																			<input id="script" name="script" value="script" checked="checked"  type="checkbox" />
-																			<span></span>
-																		</label>
-																		<label class="mt-checkbox"> <div class="inline" >Regla CEP</div>
-																			<input id="cep" name="cep" value="cep" checked="checked" type="checkbox" />
-																			<span></span>
-																		</label>
-																	</div>
-																</div>
-															</div>
-															<div class="col-md-6 col-xs-12">
-																<div class="form-group">
-																	<label id="intervaloBTRBH"><i class="la la-lightbulb-o"></i> <span > Plantilla </span></label>
-																	<!-- <select id="id_campo_temporizador" class="selectpicker form-control" data-live-search="true" data-width="100%" th:text="#{ontologias_formulario_intervalo_sin_paso}"  data-none-selected-text="Nada Seleccionado" th:field="*{bdtrbdh}" onchange="changeBDTRBorrado();" th:required="true"> -->
-																		<!-- <option th:each="temporizador:${periodidadesBdtr}" th:value="${#numbers.formatDecimal(temporizador.valor,1,0)}" th:text="#{${temporizador.nombre}}"></option> -->
-																	<!-- </select> -->
-																	<div class="mt-checkbox-list">
-																		<label class="mt-checkbox"> <div class="inline" id="borradolabel" >Eliminar de BDTR </div>
-																			<input id="checkboxborrado" name="checkboxborrado" type="checkbox" onchange="changeBDTRText();" th:disabled="disabled" />
-																			<span></span>
-																		</label>
-																	</div>
-																</div>
-															</div>																		
-															<div class="col-md-6 col-xs-12">
-																<div class="form-group">
-																	<label id="instanciaBdtr"><i class="la la-lightbulb-o"></i> <span >Seleccionar Instancia BDTR </span></label>
-																	<!-- <select id="id_instancia_bdtr" class="selectpicker form-control" data-live-search="true" data-width="100%"   data-none-selected-text="Nada Seleccionado" th:field="*{bdtrdatasourceid}" th:required="true">
-																		<option th:each="bdtr:${bdtrs}" th:value="${bdtr.identificacion}" th:text="${bdtr.identificacion}"></option>
-																	</select> -->
-																	<input id="bdtr_seleccionada" name="bdtr_seleccionada" type="hidden" value=""/>
-																	<input id="porDefecto" name="porDefecto" type="hidden" th:value="${porDefecto}" />																				
-																</div>
-															</div>
-															<div class="col-md-6 col-xs-12">
-																<div class="form-group" sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')">
-																	<label id="ontologyClass" >Agrupador de datos</label>
-																	<div class="input-icon ">
-																		<i class="fa fa-cog"></i>																			
-																		<!-- <input id="id_ontologia_clase" name="campo_nombre" class="form-control" type="text" maxlength="100" th:field="*{ontologyClass}" th:disabled="disabled" /> -->
-																	</div>
-																	<div class="mt-checkbox-list">
-																		<label class="mt-checkbox"> <div class="inline" id="agrupadorlabel" >Agrupar datos</div>
-																			<input id="checkboxagrupador" name="checkboxagrupador" type="checkbox"  onchange="enableOntologyClass();" />
-																			<span></span>
-																		</label>
-																	</div>																				
-																</div>																			
-															</div>
-														</div>
+														<p>pendiente</p>
 													</div>
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
@@ -768,7 +709,10 @@
 		editor.setMode("text");
         editor.setText('');
 		editor.setText(JSON.stringify(data));
-		editor.setMode("tree");		
+		editor.setMode("tree");	
+
+		// UDATING SCHEMA STRING
+		schema = JSON.stringify(data);
 		
 	}
 	

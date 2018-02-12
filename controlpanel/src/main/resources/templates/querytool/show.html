@@ -47,6 +47,7 @@
 
 	</head>	
 	
+	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
 
@@ -132,7 +133,7 @@
 									<div id="query-panel" class="col-md-12">									
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase"><i class="fa fa-sitemap"></i> Consultas sobre <span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-sitemap"></i> Consultas sobre <span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
 											</div>
 											<div class="panel-body no-space">											
 												<!-- OPCIONES DE CONSULTA -->
@@ -161,11 +162,11 @@
 												<!-- TOOLBAR DE CONSULTA -->
 												<div class="col-md-6 col-sm-12 panel-tools">
 													<div class="btn-group pull-right">
-														<button type="button" class="btn btn-sm btn-primary" onclick="addSelect()"><i class="fa fa-table"></i> SELECT</button>
-														<button type="button" class="btn btn-sm btn-primary" onclick="addCondition()"><i class="fa fa-filter"></i> WHERE</button>
-														<button type="button" class="btn btn-sm btn-primary" disabled="true"><i class="fa fa-object-group"></i> GROUP BY</button>
-														<button type="button" class="btn btn-sm btn-primary" onclick="addOrderBy()"><i class="fa fa-sort"></i> ORDER</button>
-														<button type="button" class="btn btn-sm btn-danger" onclick="cambioConsulta()"><i class="fa fa-times"></i> RESET</button>
+														<button type="button" class="btn btn-sm btn-outline dark" onclick="addSelect()"><i class="fa fa-table"></i> SELECT</button>
+														<button type="button" class="btn btn-sm btn-outline dark" onclick="addCondition()"><i class="fa fa-filter"></i> WHERE</button>
+														<button type="button" class="btn btn-sm btn-outline dark" disabled="true"><i class="fa fa-object-group"></i> GROUP BY</button>
+														<button type="button" class="btn btn-sm btn-outline dark" onclick="addOrderBy()"><i class="fa fa-sort"></i> ORDER</button>
+														<button type="button" class="btn btn-sm btn-outline dark" onclick="cambioConsulta()"><i class="fa fa-times"></i> RESET</button>
 													</div>
 													<div class="clearfix"></div>
 												</div>
@@ -197,7 +198,7 @@
 																<li type="none" class="columnMine">
 																	<ul id="where_ul" class="list-group ">
 																		<!-- LI principal , agrega elementos de condición al where, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
-																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-filter"></i> WHERE<span onclick="addCondition()" class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campos al WHERE"><i class="fa fa-plus"></i></span></li>																													
+																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-filter"></i> WHERE<span onclick="addCondition()" class="btn bg-grey-steel font-grey-mint btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campos al WHERE"><i class="fa fa-plus"></i></span></li>																													
 																	</ul>
 																</li>
 																<!-- END WHERE PANEL -->
@@ -206,7 +207,7 @@
 																<li type="none" class="columnMine">
 																	<ul id="groupBy_ul" class="list-group">
 																		<!-- LI principal , agrega groupby, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
-																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-object-group"></i> GROUP BY<span class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar condiciones al GROUPBY"><input type="checkbox" id="groupby_check" style="display:none; margin:0px"/> </span></li>																													
+																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-object-group"></i> GROUP BY<span class="btn bg-grey-steel font-grey-mint btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar condiciones al GROUPBY"><input type="checkbox" id="groupby_check" style="display:none; margin:0px"/> </span></li>																													
 																	</ul>
 																	<!-- ELEMENTOS TEMPORALES DE GROUPBY -->
 																	<div id="groupBy_time_ul" class="col-md-12" style="display:none;">
@@ -222,7 +223,7 @@
 																<li type="none" class="columnMine">
 																	<ul id="orderby_ul" class="list-group list-orderby">
 																		<!-- LI principal , agrega orderby, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
-																		<li class="list-group-item panel-sofia2 bold uppercase"><i class="fa fa-sort"></i> ORDER BY<span onclick="addOrderBy()" class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campo al ORDER BY"><i class="fa fa-plus"></i></span></li>																													
+																		<li class="list-group-item panel-sofia2 bold uppercase"><i class="fa fa-sort"></i> ORDER BY<span onclick="addOrderBy()" class="btn bg-grey-steel font-grey-mint btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar campo al ORDER BY"><i class="fa fa-plus"></i></span></li>																													
 																	</ul>
 																</li>
 																<!-- END ORDERBY PANEL -->
@@ -269,7 +270,7 @@
 										<!-- PANEL DE RESULTADOS -->
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase"><i class="fa fa-database"></i> Resultados  sobre <span id="query-ontologia-result" class="bold uppercase">ontología</span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> Resultados  sobre <span id="query-ontologia-result" class="bold uppercase">ontología</span></h3>											
 											</div>
 											<div class="panel-body no-space">
 											<!-- CONTENEDOR DE RESULTADOS , AQUI SE CREAN LOS DIVS PARA LA SALIDA DE LA CONSULTA A HTML,TABLE O JSON. -->
