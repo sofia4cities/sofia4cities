@@ -13,13 +13,18 @@
  */
 package com.indracompany.sofia2.config.services.ontology;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.model.Ontology;
@@ -153,6 +158,25 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 		return false;
 
+	}
+	
+	@Override
+	public List<String> getOntologyFields(String identification) throws JsonProcessingException, IOException {
+		List<String> fields = new ArrayList<String>();
+		Ontology ontology = this.ontologyRepository.findByIdentification(identification);
+		if(ontology != null)
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode jsonNode = mapper.readTree(ontology.getJsonSchema());
+			//Predefine Path to data properties
+			jsonNode = jsonNode.path("datos").path("properties");
+			Iterator<String> iterator = jsonNode.fieldNames();
+			while(iterator.hasNext())
+			{
+				fields.add(iterator.next());
+			}
+		}
+		return fields;
 	}
 
 }

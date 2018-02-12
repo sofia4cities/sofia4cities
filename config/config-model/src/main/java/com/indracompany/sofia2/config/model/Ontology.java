@@ -63,22 +63,22 @@ public class Ontology extends AuditableEntityWithUUID {
 	@Setter
 	private String ontologyClass;
 
-	public String getJsonSchema() {
-		String schema = "";
-		schema = this.jsonSchema;
-
-		if (schema != null && schema.length() > 0) {
-			schema = schema.replaceAll("\\<.*?>", "");
-			schema = schema.replaceAll("&nbsp;", "");
-			schema = schema.replaceAll("&amp;", "");
-			schema = schema.replaceAll("&quot;", "\"");
-			schema = schema.replaceAll("\"", "'");
-			schema = schema.replaceAll("\n", "");
-			schema = schema.replaceAll("\t", "");
-			schema = schema.replaceAll("\r", "");
-		}
-		return schema;
-	}
+//	public String getJsonSchema() {
+//		String schema = "";
+//		schema = this.jsonSchema;
+//
+//		if (schema != null && schema.length() > 0) {
+//			schema = schema.replaceAll("\\<.*?>", "");
+//			schema = schema.replaceAll("&nbsp;", "");
+//			schema = schema.replaceAll("&amp;", "");
+//			schema = schema.replaceAll("&quot;", "\"");
+//			schema = schema.replaceAll("\"", "'");
+//			schema = schema.replaceAll("\n", "");
+//			schema = schema.replaceAll("\t", "");
+//			schema = schema.replaceAll("\r", "");
+//		}
+//		return schema;
+//	}
 
 	/*
 	 * @OneToMany(mappedBy = "ontologiaId", cascade = CascadeType.ALL)

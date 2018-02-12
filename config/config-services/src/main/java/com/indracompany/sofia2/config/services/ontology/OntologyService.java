@@ -13,8 +13,10 @@
  */
 package com.indracompany.sofia2.config.services.ontology;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 
@@ -40,4 +42,6 @@ public interface OntologyService {
 	List<String> getAllDataModelTypes();
 	
 	boolean hasUserPermissionForQuery(String userId, String ontologyIdentification);
+	
+	List<String> getOntologyFields(String identification) throws JsonProcessingException, IOException;
 }
