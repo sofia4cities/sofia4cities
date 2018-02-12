@@ -21,6 +21,8 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -68,11 +70,9 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@NotNull
 	@Getter
 	@Setter
-	private String dataType;
+	@Enumerated(EnumType.STRING)
+	private DataType dataType;
 	
-	public void setDataTypeEnum(ApiQueryParameter.DataType type) {
-		this.dataType = type.toString();
-	}
 
 	@Column(name = "QUERY_DESCRIPTION", length = 512, nullable = false)
 	@NotNull
@@ -93,10 +93,8 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@Column(name = "QUERY_HEADER_TYPE", length = 50)
 	@Getter
 	@Setter
-	private String headerType;
+	@Enumerated(EnumType.STRING)
+	private HeaderType headerType;
 	
-	public void setHeaderTypeEnum(ApiQueryParameter.HeaderType type) {
-		this.headerType = type.toString();
-	}
 
 }

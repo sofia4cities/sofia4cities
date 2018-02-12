@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
+import com.indracompany.sofia2.api.util.RequestDumpUtil;
 
 @Component
 @Rule
@@ -51,8 +52,8 @@ public class InitialFactsRule {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
-		String query = Optional.ofNullable(request.getParameter(ApiServiceInterface.QUERY)).orElse("");
-		String queryType = Optional.ofNullable(request.getParameter(ApiServiceInterface.QUERY_TYPE)).orElse("");
+		String query = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY, request)).orElse("");
+		String queryType = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY_TYPE, request)).orElse("");
 
 		String headerToken = request.getHeader(ApiServiceInterface.AUTHENTICATION_HEADER);
 		if (headerToken == null) {
@@ -64,9 +65,9 @@ public class InitialFactsRule {
 		String method = request.getMethod();
 		String pathInfo = request.getPathInfo();
 
-		String queryDb = Optional.ofNullable(request.getParameter(ApiServiceInterface.FILTER_PARAM)).orElse("");
-		String targetDb = Optional.ofNullable(request.getParameter(ApiServiceInterface.TARGET_DB_PARAM)).orElse("");
-		String formatResult = Optional.ofNullable(request.getParameter(ApiServiceInterface.FORMAT_RESULT)).orElse("");
+		String queryDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FILTER_PARAM, request)).orElse("");
+		String targetDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.TARGET_DB_PARAM, request)).orElse("");
+		String formatResult = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FORMAT_RESULT, request)).orElse("");
 
 		data.put(ApiServiceInterface.QUERY, query);
 		data.put(ApiServiceInterface.QUERY_TYPE, queryType);

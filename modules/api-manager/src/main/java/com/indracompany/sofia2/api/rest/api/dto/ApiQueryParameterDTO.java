@@ -21,6 +21,9 @@ package com.indracompany.sofia2.api.rest.api.dto;
 
 import java.io.Serializable;
 
+import com.indracompany.sofia2.config.model.ApiQueryParameter.DataType;
+import com.indracompany.sofia2.config.model.ApiQueryParameter.HeaderType;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,7 +38,7 @@ public class ApiQueryParameterDTO implements Cloneable, Serializable {
 	@ApiModelProperty(value = "Tipo de Header")
 	@Getter
 	@Setter
-	private String dataType;
+	private DataType dataType;
 
 	@ApiModelProperty(value = "Descripción del Header")
 	@Getter
@@ -50,6 +53,6 @@ public class ApiQueryParameterDTO implements Cloneable, Serializable {
 	@ApiModelProperty(value = "Condición del Header")
 	@Getter
 	@Setter
-	private String headerType;
+	private HeaderType headerType;
 
 }

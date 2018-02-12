@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -85,11 +87,8 @@ public class ApiOperation extends AuditableEntityWithUUID {
 	@NotNull
 	@Getter
 	@Setter
-	private String operation;
-	
-	public void setOperationEnum(ApiOperation.Type type) {
-		this.operation = type.toString();
-	}
+	@Enumerated(EnumType.STRING)
+	private Type operation;
 
 	@Column(name = "ENDPOINT", length = 512)
 	@Getter
