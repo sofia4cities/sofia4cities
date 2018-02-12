@@ -73,7 +73,11 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		ruleManager.fire(facts);
 
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
-		
+		Boolean stopped = (Boolean)facts.get(RuleManager.STOP_STATE);
+		String reason="";
+		if (stopped!=null && stopped==true) {
+			reason=((String)facts.get(RuleManager.REASON));
+		}
 		System.out.println(hashPP(data));
 		
 		
@@ -85,7 +89,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		body.setQuery(query);
 		message.setBody(body);*/
 		
-		sendResponse(response, HttpServletResponse.SC_OK, hashPP(data),null,null);
+		sendResponse(response, HttpServletResponse.SC_OK, hashPP(data)+"\n"+reason,null,null);
 
 	}
 

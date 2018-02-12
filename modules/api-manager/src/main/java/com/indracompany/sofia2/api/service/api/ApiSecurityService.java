@@ -127,16 +127,16 @@ public class ApiSecurityService {
 	}
 	
 	public boolean checkApiAvailable(Api api, User user){
-		// El APi esta disponible si se encuentra en uno de estos estados:
-				// 1 Publicada
-				// 2 Deprecada
-				// 3 En Desarrollo
-				// 4 Creada y el usuario es el propietario
-				return	(api.getState().equalsIgnoreCase(Api.ApiType.PUBLISHED.toString())
-						|| api.getState().equalsIgnoreCase(Api.ApiType.DEPRECATED.toString()) 
-						|| api.getState().equalsIgnoreCase(Api.ApiType.DEVELOPMENT.toString())
-						||
-						((api.getState().equals(Api.ApiType.CREATED.toString())) && (api.getUser().getUserId().equals(user.getUserId()))));
+		boolean can = api.getState().name().equalsIgnoreCase(Api.ApiType.CREATED.name()) && (api.getUser().getUserId().equals(user.getUserId()));
+		if (can) return true;
+		else {
+			String state = api.getState().name();
+			can =  (state.equalsIgnoreCase(Api.ApiType.PUBLISHED.name()) || 
+					state.equalsIgnoreCase(Api.ApiType.DEPRECATED.name()) ||
+					state.equalsIgnoreCase(Api.ApiType.DEVELOPMENT.name()) );
+			return can;
+		}
+		
 	}
 	
 	public Boolean checkRole(User user, Ontology ontology, boolean insert){
