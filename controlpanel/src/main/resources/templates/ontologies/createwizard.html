@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
 		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
@@ -116,11 +117,15 @@
 									</div>
 									<div class="col-md-12">
 										<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
+											<input id="datamodelid" type="hidden" th:required="true" th:field="*{dataModel}" />
+											<input id="rtdbclean" type="hidden" th:required="true" th:field="*{rtdbClean}" value="true" />
+											<input id="rtdbhdb" type="hidden" th:required="true" th:field="*{rtdbToHdb}" value="true" />
+											
 											<!-- FORM ACTIONS FOR INSERT-->
 											<input th:if="${ontology.id} == null" type="hidden" name="action" th:value="@{/ontologies/create}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->
-											<input th:if="${ontology.user?.userId} != null" type="hidden" name="action" th:value="@{/ontologies/update}"/>
+											<input th:if="${ontology.user?.userId} != null" type="hidden" name="action" th:value="@{'/ontologies/update/'+${ontology.id}}"/>
 											<input th:if="${ontology.user?.userId} != null" type="hidden" name="_method" value="PUT"/>
 											
 											<div class="form-body">
@@ -129,10 +134,10 @@
 													<div class="col-md-6 col-xs-12">
 														<div class="col-md-6 col-sm-6 col-xs-12">
 															<div class="form-group">
-																<label th:text="#{ontology.identification} + ':'">Identification</label><span class="required"> (*)</span>
+																<label class="popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.identification.help},data-title=#{ontology.identification}"><i class="la la-lightbulb-o"></i> <span th:text="#{ontology.identification} + ':'">Identification</span></label><span class="required"> (*)</span>
 																<div class="input-icon ">
 																	<i class="fa fa-credit-card"></i>
-																	<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.identification}"  th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
+																	<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.identification}" th:disabled="!*{id}" th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
 																</div>
 															</div>
 														</div>
@@ -241,7 +246,7 @@
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label th:text="#{ontology.description}">Comments </label><span class="required"> (*)</span>
-															<textarea class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true" data-minlength="5" pattern=".{5,}" min="5"  cols="" rows=""></textarea>
+															<textarea class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
 														</div>
 														<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.description.min}"></small></span>
 													</div>													
@@ -281,7 +286,7 @@
 																									<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}">
 																										<li th:if="${datamodel.type} == ${datamodeltype}" class="mt-list-item datamodel-template">
 																											<div class="list-item-content" style="padding: 0 15px 0 10px;">
-																												<h3 class="uppercase" onclick="schemaToTable(this,'datamodel_properties');" th:text="${datamodel.name}" th:attr="data-schema=${datamodel.jsonSchema}"></h3>
+																												<h3 class="uppercase" onclick="schemaToTable(this,'datamodel_properties');" th:text="${datamodel.name}" th:attr="data-model=${datamodel.id},data-schema=${datamodel.jsonSchema}"></h3>
 																												<p th:if="${datamodel.description}" lass="text-truncate-sm text-left" th:text="${datamodel.description}"></p>																												
 																											</div>
 																										</li>																										
@@ -307,9 +312,9 @@
 																							<tbody>
 																								<tr class="mountable-model">
 																									<td><input type="text" name="property[]"  onblur="checkProperty(this)" class="form-control"/></td>
-																									<td><input type="text" name="type[]"  class="form-control"/></td>
-																									<td><input type="text" name="required[]"  class="form-control"/></td>
-																									<td><input type="text" name="description[]" class="form-control"/></td>																									
+																									<td><input type="text" name="type[]"   onblur="checkType(this)" class="form-control"/></td>
+																									<td><input type="text" name="required[]"   onblur="checkRequired(this)" class="form-control"/></td>
+																									<td><input type="text" name="descriptions[]" class="form-control"/></td>																									
 																									<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="removeProperty(this)">Remove</button></td>			
 																								</tr>
 																							</tbody>
@@ -358,7 +363,7 @@
 													<button th:if="${ontology.user?.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 													
 													<!-- REMOVE -->
-													<button th:if="${ontology.user?.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.Id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													<button th:if="${ontology.user?.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 													
 													<!-- RESET -->
 													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
@@ -366,14 +371,14 @@
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:OntologyCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:OntologyCreateController.go(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>
 										</form>
 										
-										<!-- AUXILIAR FORM TO DELETE USER -->
-										<form id="delete_ontology_form" class="delete-user hide"  th:action="@{'/ontologies/'+${ontology.id}}"  method="post">
+										<!-- AUXILIAR FORM TO DELETE ONTOLOGY -->
+										<form id="delete_ontology_form" class="delete-ontology hide"  th:action="@{'/ontologies/'+${ontology.id}}"  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
 											<input type="hidden" name="ontologyId" th:value="${ontology.id}"/>
 										</form>
@@ -427,7 +432,7 @@
 	
 	
 	// VALID PROPERTY TYPES 
-	validTypes = ["string","object","number","date","timestamp","array"];
+	validTypes = ["string","object","number","date","timestamp","array","binary"];
 	
 	
 	// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
@@ -443,8 +448,7 @@
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"actionMode" : [[${ontology.user?.userId}]],
-	};
-	
+	};	
 	
 	
 	// REMOVE PROPERTYS (ONLY ADDITIONAL NO BASE)
@@ -453,6 +457,7 @@
 		var remproperty = $(obj).closest('tr').find("input[name='property\\[\\]']").val();		
 		if (( remproperty == '')||( noBaseProperty(remproperty))){ $(obj).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'CAN´T REMOVE A BASE PROPERTY!'}); }
 	};
+	
 	
 	// CHECK FOR NON DUPLICATE PROPERTIES
 	function checkProperty(obj){	
@@ -468,6 +473,30 @@
 	};
 	
 	
+	// CHECK PROPERTIES TYPE
+	function checkType(obj){	
+	
+		var propType = '';
+		var currentTypeValue = $(obj).val();
+		var currentType = currentTypeValue.toLowerCase();
+		// if type is a valid type, assign this value , if not, string by default.
+		propType = $.inArray( currentType, validTypes ) > -1 ?  currentType : 'string';
+		$(obj).val(propType);
+	};
+	
+	
+	// CHECK PROPERTIES to be  REQUIRED or NOT 
+	function checkRequired(obj){	
+	
+		var propRequired = '';
+		var currentRequiredValue = $(obj).val();
+		var currentRequired = currentRequiredValue.toLowerCase();
+		// if type is a required field, assign this value , if not, '' by default, (not required).
+		propRequired = currentRequired == 'required' ?  currentRequired : '';
+		$(obj).val(propRequired);
+	};
+	
+	
 	// CHECK IF A WRITTEN PROPERTY IS OR NOT FROM THE BASE
 	function noBaseProperty(property){
 		var isNoBaseProperty = false;
@@ -478,7 +507,7 @@
 	}
 	
 	
-	// DATAMODEL PROPERTIES OBJECT JSON
+	// AUX. DATAMODEL PROPERTIES OBJECT JSON
 	function createJsonProperties(jsonData){
 		console.log('|---  createJsonProperties()...');
 		
@@ -526,7 +555,23 @@
 		// JSON-STRING SCHEMA TO JSON 
 		schema = $(objschema).attr('data-schema');
 		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
-		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }		
+		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
+		
+		// needs Ontology name and description to Run.
+		if (($('#identification').val() == '') || ($('#description').val() == '')){
+			$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'PLEASE, FILL NAME AND DESCRIPTION BEFORE DATAMODEL SELECTION!'}); return false;  
+		} 
+		else {
+			// adding title and description
+			// ADD TITLE
+			data["title"] = $('#identification').val();
+		
+			// ADD DESCRIPTION
+			if (!data.hasOwnProperty('description')){ data["description"] = $('#description').val(); }
+			
+			// UDATING SCHEMA STRING
+			schema = JSON.stringify(data);
+		}
 			
 		// SCHEMA MODEL ( PROPERTIES / DATOS) 
 		if ( data.hasOwnProperty('datos') ){ properties = data.datos; } else { properties = data;  }
@@ -607,10 +652,13 @@
 		editor.setMode("text");
         editor.setText(schema);
 		editor.setMode("tree");
+		
+		// UPDATING DATAMODEL ID for ONTOLOGY
+		$('#datamodelid').val($(objschema).attr('data-model'));
 	
 	};
 	
-	// getProperties
+	// AUX. getProperties return properties array
 	function getProperties(json){			
 		var arrProperties = [];
 			
@@ -623,8 +671,7 @@
 		console.log('|----- getProperties: ' + JSON.stringify(arrProperties));			
 		return arrProperties;	
 	}
-	
-	
+		
 	
 	// update Schema from additional properties, schema is base current schema loaded
 	function updateSchemaProperties(){
@@ -654,15 +701,14 @@
 		// schema string -> Object --> update --> toString --> to editor.
 		baseArrProperties	= getProperties(baseJson);
 		
-		//console.log('|--- Base Schema properties: ' + baseArrProperties.toString() + ' types: ' + baseArrTypes.toString() + ' required: ' + baseArrRequired.toString() );
-		
-		//TO-DO: COMPARE BASE WITH CURRENT
+				
+		// COMPARE BASE WITH CURRENT
 		var toUpdateProperties = [];
 		var toUpdateTypes = [];
 		var toUpdateRequired = [];
-		var i = j = k = 0;
+		var i = 0;		
 		
-		// DIFFERENCE BETWEEN BASE WITH CURRENT
+		// DIFFERENCE BETWEEN BASE vs CURRENT
 		jQuery.grep(updateProperties, function(el) {
 			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
 				i++;
@@ -673,19 +719,61 @@
 		
 		// UPDATE SCHEMA
 		var toUpdateSchema = [];
-		if ( toUpdateProperties.length ){
-		
+		if ( toUpdateProperties.length ){			
 			// get properties to update, use her index to access to type and required, mount object and update the schema.			
 			$.each(toUpdateProperties, function( index, value ) {
 				propIndex = updateProperties.indexOf(value);
-				console.log('index: ' + propIndex + ' | property: ' + updateProperties[propIndex] + ' type: ' + updateTypes[propIndex] + ' required: ' + updateRequired[propIndex]);
-			});		
+				console.log('index: ' + propIndex + ' | property: ' + updateProperties[propIndex] + ' type: ' + updateTypes[propIndex] + ' required: ' + updateRequired[propIndex]);				
+					// update property on Schema /current are stored in schema var.  (property,type,required)
+					updateProperty(updateProperties[propIndex], updateTypes[propIndex], updateRequired[propIndex] );					
+			});			
 		}
-	
 	}
 	
 	
+	// UPDATE PROPERTY IN SCHEMA FOR EACH NEW PROPERTY ADDED
+	function updateProperty(prop, type, req){
 	
+		var properties = [];
+		var requires = [];
+		
+		
+		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
+		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }		
+			
+		// SCHEMA MODEL ( PROPERTIES / DATOS) 
+		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; requires = data.datos.required; } else { properties = data.properties;  requires = data.required }
+	
+		// ADD PROPERTY+TYPE
+		if (type != 'timestamp'){
+			properties[prop] = { "type": type};
+		} 
+		else {			
+			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}
+		
+		}
+		
+		// ADD REQUIRED
+		if (req == 'required') {  requires.push(prop); } 
+		
+		console.log('added: ' + prop +' with type: ' + type + ' required: ' + req);
+		console.log('JSON: ' + JSON.stringify(data));
+		
+		// ADD additionalProperties, because we are adding properties.
+		if (!data.hasOwnProperty('additionalProperties')){
+			data["additionalProperties"] = true;			
+		}	
+		
+		// ADD INFO TO SCHEMA EDITOR
+		editor.setMode("text");
+        editor.setText('');
+		editor.setText(JSON.stringify(data));
+		editor.setMode("tree");		
+		
+	}
+	
+	
+	// GLOBAL JSON AND CODE EDITOR INSTANCES
 	var editor;
 	var aceEditor;
 	
