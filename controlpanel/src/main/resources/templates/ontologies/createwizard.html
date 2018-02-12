@@ -120,6 +120,8 @@
 											<input id="datamodelid" type="hidden" th:required="true" th:field="*{dataModel}" />
 											<input id="rtdbclean" type="hidden" th:required="true" th:field="*{rtdbClean}" value="true" />
 											<input id="rtdbhdb" type="hidden" th:required="true" th:field="*{rtdbToHdb}" value="true" />
+											<input id="jsonschema" type="hidden" th:required="true" th:field="*{jsonSchema}"  />
+											
 											
 											<!-- FORM ACTIONS FOR INSERT-->
 											<input th:if="${ontology.id} == null" type="hidden" name="action" th:value="@{/ontologies/create}"/>
@@ -551,6 +553,9 @@
 						editor.setMode("text");
 						editor.setText(schema);
 						editor.setMode("tree");
+						
+						// UPDATING FORM FIELDS
+						$('#jsonschema').val(schema);
 		
 						return true;					
 					},
@@ -596,6 +601,9 @@
 		
 		// UPDATING DATAMODEL ID for ONTOLOGY
 		$('#datamodelid').val($(objschema).attr('data-model'));
+		
+		// UPDATING FORM FIELDS
+		$('#jsonschema').val(schema);
 	
 	};
 	
@@ -713,6 +721,9 @@
 
 		// UDATING SCHEMA STRING
 		schema = JSON.stringify(data);
+		
+		// UPDATING FORM FIELDS
+		$('#jsonschema').val(schema);
 		
 	}
 	
