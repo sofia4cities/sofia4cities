@@ -1389,15 +1389,10 @@
 		    '</form>',
 		    buttons: {
 		        formSubmit: {
-		            text: 'Submit',
+		            text: 'OK',
 		            btnClass: 'btn-blue',
 		            action: function () {
-		                var select = this.$content.find('.querySelect').val();
-		                if(!select){
-		                    $.alert('provide fields');
-		                    return false;
-		                }
-		                $.alert('Option ' + select);
+		               
 		            }
 		        },
 		        cancel: function () {
@@ -1427,16 +1422,16 @@
 			var comboCondition=$('#select_operador').html();
 			/*[+
 			$.confirm({
-		    title: [[#{querytool.select.fields}]],
+		    title: [[#{querytool.select.where}]],
 		    content: '' +
 		    '<form action="" class="form_condicion" id="form_condicion">' +
 		    '<div class="form-group">' +
 		    '<label>Select fields</label> <select id="conditionFields" class="form-control querySelect" data-width="100%">'+ comboFields +
-		    '</select> <select class="element select small form-control" id="conditionOperator" name="typeCondicion" style="width: 250px;">'+comboCondition+'</select><label class=""></label><input type="text" id="condition">Condition</input></div>' +
+		    '</select> <select class="element select small form-control" id="conditionOperator" name="typeCondicion" >'+comboCondition+'</select><label class=""></label><input type="text" id="condition">Condition</input></div>' +
 		    '</form>',
 		    buttons: {
 		        formSubmit: {
-		            text: 'Submit',
+		            text: 'OK',
 		            btnClass: 'btn-blue',
 		            action: function () {
 		            	var campo = $("#conditionFields").val();
@@ -1541,15 +1536,26 @@
 		var indexOrderby = 0;
 		// DIALOGO DE CONFIGURACION DEL ORDERBY
 		function mostrarDialogoOrderBy(){
-			$( "#dialog-execution-orderby" ).dialog({resizable: false, height:160,  modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					[[#{dialogo_confirm_delete_button_cancelar}]]: function() {
-						$( this ).dialog("close");
-					},
-					[[#{dialogo_confirm_table_button_continuar}]]: function() {
-						$("#orderby_ul").children().not('.panel-sofia2').remove();
-						var campo = $("#form_orderby_campos").val();
-						var orden = $("#form_orden").val();
+			var comboFields=$('#fields').html();
+			var comboOrders=$('#form_orden').html();
+
+			/*[+
+			$.confirm({
+		    title: [[#{querytool.select.orderby}]],
+		    content: '' +
+		    '<form action="" class="form_order" id="form_order">' +
+		    '<div class="form-group">' +
+		    '<label>Select fields</label> <select id="orderFields" class="form-control querySelect" data-width="100%">'+ comboFields +
+		    '</select> <select class="element select small form-control" id="orderType" name="orderType">'+comboOrders+'</select></div>' +
+		    '</form>',
+		    buttons: {
+		        formSubmit: {
+		            text: 'OK',
+		            btnClass: 'btn-blue',
+		            action: function () {
+		            	var campo = $("#orderFields").val();
+						var orden = $("#orderType").val();
+											
 						var add = comprobarOrderby(campo);
 						if(add){                        
 							var orderby = '<li id="orderby'+indexOrderby+'" name="'+campo+' '+orden+'" class="list-group-item bold">'+ campo +' '+ orden +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'orderby'+indexOrderby+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
@@ -1558,11 +1564,24 @@
 							createQuery();
 						}
 						indexOrderby++;
-						$( this ).dialog("close");
-					}
-				}
-			});
-			
+		            }
+		        },
+		        cancel: function () {
+		            //close
+		        },
+		    },
+		    onContentReady: function () {
+		        // bind to events
+		        var jc = this;
+		        getOntologyFields();
+		        this.$content.find('form').on('submit', function (e) {
+		            // if the user submits the form by pressing enter in the field.
+		            e.preventDefault();
+		            jc.$$formSubmit.trigger('click'); // reference the button and click it
+		        });
+		    }
+		});+]*/
+
 			$( "#form_orderby_campos" ).empty();
 			for( i=0; i < campos.length; i++){
 				 $('#form_orderby_campos').append($('<option>', { value: campos[i], text : campos[i]}));

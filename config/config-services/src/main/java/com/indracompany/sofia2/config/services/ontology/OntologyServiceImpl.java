@@ -167,16 +167,59 @@ public class OntologyServiceImpl implements OntologyService {
 		if(ontology != null)
 		{
 			ObjectMapper mapper = new ObjectMapper();
+			
+			String prefix = mapper.readTree(ontology.getJsonSchema()).get("title").asText();
+			prefix=prefix.split(" ")[0];
+			
 			JsonNode jsonNode = mapper.readTree(ontology.getJsonSchema());
 			//Predefine Path to data properties
 			jsonNode = jsonNode.path("datos").path("properties");
 			Iterator<String> iterator = jsonNode.fieldNames();
 			while(iterator.hasNext())
 			{
-				fields.add(iterator.next());
+				fields.add(prefix+"."+iterator.next());
 			}
 		}
 		return fields;
 	}
+	
+	@Override
+	public void updateOntology(Ontology ontology) {
+		Ontology ontologyDb = this.ontologyRepository.findById(ontology.getId());
+		if(ontologyDb!=null)
+		{
+			ontologyDb.setActive(ontology.isActive());
+			ontologyDb.setPublic(ontology.isPublic());
+			ontologyDb.setDescription(ontology.getDescription());
+			ontologyDb.setIdentification(ontology.getIdentification());
+			ontologyDb.setRtdbClean(ontology.isRtdbClean());
+			ontologyDb.setRtdbToHdb(ontology.isRtdbToHdb());
+			if(!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
+				ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
+			ontologyDb.setJsonSchema(ontology.getJsonSchema());
+			if(ontology.getDataModel().getId().equals(ontologyDb.getDataModel().getId()))
+				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
+			ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
+			ontologyDb.setMetainf(ontology.getMetainf());
+				
+				
+		}else
+			throw new OntologyServiceException("Ontology does not exist");
+	}
+	
+
+	@Override
+	public void createOntology(Ontology ontology) {
+		ontology.setUser(this.userService.getUser(ontology.getUser().getUserId()));
+		ontology.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
+		this.saveOntology(ontology);
+		
+	}
+	
+	@Override
+	public void deleteOntology(String id) {
+		this.ontologyRepository.deleteById(id);
+	}
+	
 
 }
