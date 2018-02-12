@@ -160,9 +160,10 @@ module.exports = {
   devServer: {
     proxy: [{
       context: '/api',
-      target: 'http://localhost:8080',
+      target: 'http://localhost:18090',
       secure: false
-    }]
+    }],
+    contentBase: [path.join(__dirname, "core"), path.join(__dirname, "modules")]
   },
   node: {
     fs: 'empty'
