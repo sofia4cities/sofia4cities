@@ -40,12 +40,8 @@ import com.indracompany.sofia2.api.service.exception.ForbiddenException;
 import com.indracompany.sofia2.api.service.exporter.ExportToCsv;
 import com.indracompany.sofia2.api.service.exporter.ExportToExcel;
 import com.indracompany.sofia2.api.service.exporter.ExportToXml;
-import com.indracompany.sofia2.config.model.Api;
-import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.SSAPMessageDirection;
-import com.indracompany.sofia2.ssap.SSAPMessageTypes;
-import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
+
+import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
 @Service
 public class ApiServiceImpl extends ApiManagerService implements ApiServiceInterface {
@@ -63,6 +59,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	private ExportToCsv varCsv;
 
 	@Override
+	@PrometheusTimeMethod(name = "ApiServiceImplEntryPoint", help = "ApiServiceImpl doGET")
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		Facts facts = new Facts();
