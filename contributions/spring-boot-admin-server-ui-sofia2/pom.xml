@@ -112,6 +112,11 @@
                 <targetPath>META-INF/spring-boot-admin-server-ui</targetPath>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+            	<directory>de.codecentric-maven-info/maven</directory>
+            	<targetPath>META-INF/maven</targetPath>
+            	<filtering>false</filtering>
+            </resource>
         </resources>
     </build>
 </project>
