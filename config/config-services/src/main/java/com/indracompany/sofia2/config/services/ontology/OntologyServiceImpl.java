@@ -210,7 +210,6 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public void createOntology(Ontology ontology) {
-		ontology.setUser(this.userService.getUser(ontology.getUser().getUserId()));
 		ontology.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 		this.saveOntology(ontology);
 		
