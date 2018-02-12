@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -216,6 +218,7 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 	
 	@Override
+	@Transactional
 	public void deleteOntology(String id) {
 		this.ontologyRepository.deleteById(id);
 	}

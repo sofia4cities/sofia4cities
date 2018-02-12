@@ -7,6 +7,20 @@ server: ## Config Web Server
       access_log_enabled: true
       basedir: target/tomcat
 
+# all access to actuator endpoints without security
+management:
+  security:
+    enabled : false
+  port: 19091
+# turn on actuator health check
+endpoints:
+  health:
+    enabled : true
+  jmx:
+    enabled: true
+     
+ 
+    
 #Security Config
 security:
     user:
@@ -47,7 +61,10 @@ spring: ## General Config
       port: 587
       properties.mail.smtp.auth: true
       properties.mail.smtp.starttls.enable: true
-          
+   jmx:
+    enabled: true
+
+              
 ## LOGGING CONF
 logging:
    level:

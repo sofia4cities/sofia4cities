@@ -34,6 +34,7 @@ import com.indracompany.sofia2.api.rest.api.fiql.HeaderFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.OperationFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.QueryParameterFIQL;
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.Api.ApiType;
 import com.indracompany.sofia2.config.model.ApiAuthentication;
 import com.indracompany.sofia2.config.model.ApiAuthenticationAttribute;
 import com.indracompany.sofia2.config.model.ApiAuthenticationParameter;
@@ -114,7 +115,7 @@ public class ApiServiceRest {
 		Api api = null;
 		List<Api> apis = apiRepository.findByIdentification(identificacionApi);
 		for (Api apiAux : apis) {
-			if (apiAux.getState().equals(Api.ApiType.PUBLISHED.name())) {
+			if (apiAux.getState().name().equalsIgnoreCase(Api.ApiType.PUBLISHED.name())) {
 				api = apiAux;
 			}
 		}
@@ -163,6 +164,27 @@ public class ApiServiceRest {
 		}
 		apis = apiRepository.findByIdentification(identificacion);
 		return apis;
+	}
+	
+
+	public Api changeState(String indentifier, ApiType api, String token) {
+		
+		
+		User user = apiSecurityService.getUserByApiToken(token);
+		
+		if (apiSecurityService.isAdmin(user)) {
+			List<Api> apis = apiRepository.findByIdentification(indentifier);
+			if (apis!=null) {
+				Api theApi = apis.get(0);
+				theApi.setState(api);
+				apiRepository.saveAndFlush(theApi);
+				return theApi;
+				
+			}
+			else return null;
+		}
+		
+		return null;
 	}
 
 	public void createApi(ApiDTO apiDTO, String token) {
@@ -551,6 +573,9 @@ public class ApiServiceRest {
 		return userToken;
 
 	}
+
+
+
 
 
 

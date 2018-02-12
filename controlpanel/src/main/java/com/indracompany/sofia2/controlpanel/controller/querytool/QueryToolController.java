@@ -75,7 +75,9 @@ public class QueryToolController {
 		if(hasUserPermission) {
 			if(queryType.toUpperCase().equals(QUERY_SQL))
 			{
-				return queryToolService.querySQLAsJson(ontologyIdentification, query, 0);
+				String queryResult = queryToolService.querySQLAsJson(ontologyIdentification, query, 0);
+				model.addAttribute("queryResult", queryResult);
+				return "/querytool/show :: query";
 				
 			}else if(queryType.toUpperCase().equals(QUERY_NATIVE))
 			{
@@ -85,6 +87,7 @@ public class QueryToolController {
 					String[] splitLimit = query.split("limit");
 					limit=Integer.parseInt(splitLimit[1].replaceAll("[();]", ""));
 				}
+				//replace("\\\"", "'").replace("\"","")
 				String queryResult = this.utils.beautifyJson(queryToolService.queryNativeAsJson(ontologyIdentification, query, 0, limit).replace("\\\"", "'").replace("\"",""));
 				model.addAttribute("queryResult", queryResult);
 				return "/querytool/show :: query";

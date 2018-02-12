@@ -23,35 +23,31 @@ import org.jeasy.rules.annotation.Priority;
 import org.jeasy.rules.annotation.Rule;
 import org.jeasy.rules.api.Facts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
-import com.indracompany.sofia2.api.service.api.ApiSecurityService;
 import com.indracompany.sofia2.config.model.Api;
-import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 
 @Component
 @Rule
-public class SecurityOntologyRule extends DefaultRuleBase {
-
+public class MetricsRule extends DefaultRuleBase {
+	
 	@Autowired
-	private ApiSecurityService apiSecurityService;
+	private  CounterService counterService;
 
 	@Priority
 	public int getPriority() {
-		return 5;
+		return 100;
 	}
 
 	@Condition
 	public boolean existsRequest(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
-		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
-		Ontology ontology = (Ontology) data.get(ApiServiceInterface.ONTOLOGY);
-	
-		if ((request != null && ontology !=null) && canExecuteRule(facts))
+		if ((request != null) && canExecuteRule(facts))
 			return true;
 		else
 			return false;
@@ -60,18 +56,22 @@ public class SecurityOntologyRule extends DefaultRuleBase {
 	@Action
 	public void setFirstDerivedData(Facts facts) {
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
+		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
 
 		User user = (User) data.get(ApiServiceInterface.USER);
-		Ontology ontology = (Ontology) data.get(ApiServiceInterface.ONTOLOGY);
+		Api api = (Api) data.get(ApiServiceInterface.API);
+		String pathInfo = (String) data.get(ApiServiceInterface.PATH_INFO);
+		String method = (String) data.get(ApiServiceInterface.METHOD);
+		String body = (String) data.get(ApiServiceInterface.BODY);
+		String queryType = (String) data.get(ApiServiceInterface.QUERY_TYPE);
+		String AUTHENTICATION_HEADER = (String) data.get(ApiServiceInterface.AUTHENTICATION_HEADER);
 		
-		boolean ontologyPermission = apiSecurityService.checkRole(user, ontology, true);
-		
-		if (!ontologyPermission) {
-			stopAllNextRules(facts, "User has no permission to use Ontology "+ontology.getIdentification());
-		}
+		counterService.increment("rule.audit."+api.getIdentification());
+		counterService.increment("rule.audit."+api.getIdentification()+"."+AUTHENTICATION_HEADER);
+		counterService.increment("rule.audit."+api.getIdentification()+"."+method);
 		
 		
-
 	}
 
+	
 }
