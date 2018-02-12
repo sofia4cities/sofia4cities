@@ -15,6 +15,7 @@ package com.indracompany.sofia2.api.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,15 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
+import org.apache.cxf.metrics.MetricsFeature;
+import org.apache.cxf.metrics.codahale.CodahaleMetricsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.codahale.metrics.JmxReporter;
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 @Configuration
@@ -64,7 +69,13 @@ public class JaxRSConfig {
 		 endpoint.setProviders(providers);
 		 endpoint.setServiceBeans(lista);
 		 endpoint.setAddress("/");
-		 endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), loggingFeature()));
+		 endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), loggingFeature(),new MetricsFeature(new CodahaleMetricsProvider(bus))));
+		 endpoint.setProperties(
+					Collections.singletonMap(
+						"org.apache.cxf.management.service.counter.name", 
+						"cxf-services."
+					)
+				);
 		 return endpoint.create();
 	 }
 	 
@@ -74,6 +85,16 @@ public class JaxRSConfig {
 		 LoggingFeature loggingFeature = new LoggingFeature();
 		 loggingFeature.setPrettyLogging(true);
 		 return loggingFeature;
+	 }
+	 
+	 @Bean(initMethod = "start", destroyMethod = "stop")
+	 public JmxReporter jmxReporter() {
+		 return JmxReporter.forRegistry(metricRegistry()).build();
+	 }
+		
+	 @Bean
+	 public MetricRegistry metricRegistry() {
+		 return new MetricRegistry();
 	 }
 	 
 
