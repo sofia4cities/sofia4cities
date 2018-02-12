@@ -72,14 +72,14 @@ pipeline {
 	        mail from: 'plataformasofia2@gmail.com',
 	             to: 'mmoran@minsait.com',
 	             subject: "[SUCCESSFUL!] La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${currentBuild.fullDisplayName}",
-	             body: "${BUILD_LOG, maxLines=50, escapeHtml=false} La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${env.BUILD_URL}"
+	             body: "'${env.BUILD_LOG}' La compilación de la rama ${env.BRANCH_NAME} del proyecto Select4Cities se ha completado satisfactoriamente. id del Build: ${env.BUILD_URL}"
 	    }
 	    failure {   
 	    	echo "El pipeline: '${currentBuild.fullDisplayName}' ha fallado: '${env.BUILD_URL}' se procede a enviar notificación por correo"
 	        mail from: 'plataformasofia2@gmail.com',
 	             to: 'mmoran@minsait.com',
 	             subject: "[ERROR!] Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities: ${currentBuild.fullDisplayName}",
-	             body: "${BUILD_LOG, maxLines=50, escapeHtml=false} Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities. id del Build: ${env.BUILD_URL}"	    
+	             body: "'${env.BUILD_LOG}' Ha ocurrido un error al compilar los fuentes de la rama ${env.BRANCH_NAME} del proyecto Select4Cities. id del Build: ${env.BUILD_URL}"	    
 	    }
    }      
 }
