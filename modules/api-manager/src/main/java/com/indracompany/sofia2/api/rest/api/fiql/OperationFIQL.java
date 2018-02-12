@@ -68,7 +68,7 @@ public final class OperationFIQL {
 	public static ApiOperation copyProperties(OperacionDTO operacionDTO) {
 		ApiOperation operacion = new ApiOperation();
 
-		if (!isValidOperacion(operacionDTO.getOperation())){
+		if (!isValidOperacion(operacionDTO.getOperation().name())){
 			Object parametros[]={operacionDTO.getIdentification()};
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.HeaderWrongOperacion");
 		}
@@ -84,9 +84,9 @@ public final class OperationFIQL {
 	}
 
 	private static boolean isValidOperacion(String operacion) {
-		return (operacion.equalsIgnoreCase(ApiOperation.Type.DELETE.toString())||
-				operacion.equalsIgnoreCase(ApiOperation.Type.POST.toString())||
-				operacion.equalsIgnoreCase(ApiOperation.Type.PUT.toString())||
-				operacion.equalsIgnoreCase(ApiOperation.Type.GET.toString()));
+		return (operacion.equalsIgnoreCase(ApiOperation.Type.DELETE.name())||
+				operacion.equalsIgnoreCase(ApiOperation.Type.POST.name())||
+				operacion.equalsIgnoreCase(ApiOperation.Type.PUT.name())||
+				operacion.equalsIgnoreCase(ApiOperation.Type.GET.name()));
 	}
 }

@@ -25,6 +25,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -131,7 +133,8 @@ public class Api extends AuditableEntityWithUUID {
 	@NotNull
 	@Getter
 	@Setter
-	private String state;
+	@Enumerated(EnumType.STRING)
+	private ApiType state;
 
 	@Column(name = "META_INF", length = 512)
 	@Getter
@@ -164,9 +167,6 @@ public class Api extends AuditableEntityWithUUID {
 	@Setter
 	private String apiType;
 	
-	public void setApiTypeEnum(Api.ApiType type) {
-		this.apiType = type.toString();
-	}
 
 	@Column(name = "ASSESSMENT", precision = 10)
 	@Getter

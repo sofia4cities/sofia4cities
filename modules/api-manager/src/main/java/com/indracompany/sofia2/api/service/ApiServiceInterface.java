@@ -20,11 +20,11 @@ public interface ApiServiceInterface {
 	
 	public static final String AUTHENTICATION_HEADER="X-SOFIA2-APIKey";
 	public static final String WEB_SERVICE_API = "webservice";
-	public static final String FILTER_PARAM="$filter";
-	public static final String TARGET_DB_PARAM="$targetdb";
-	public static final String FORMAT_RESULT="$formatResult";
-	public static final String QUERY_TYPE="$queryType";
-	public static final String QUERY="$query";
+	public static final String FILTER_PARAM="filter";
+	public static final String TARGET_DB_PARAM="targetdb";
+	public static final String FORMAT_RESULT="formatResult";
+	public static final String QUERY_TYPE="queryType";
+	public static final String QUERY="query";
 	public static final String DUMP="DUMP";
 	public static final String BODY="BODY";
 	public static final String METHOD="METHOD";

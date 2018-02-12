@@ -184,7 +184,7 @@ public class ApiServiceRest {
 
 		api.setUser(user);
 
-		api.setState(Api.ApiType.CREATED.toString());
+		api.setState(Api.ApiType.CREATED);
 		apiRepository.saveAndFlush(api);
 
 		// Se crean las operaciones

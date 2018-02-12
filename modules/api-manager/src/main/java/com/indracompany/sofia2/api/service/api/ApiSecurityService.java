@@ -49,15 +49,15 @@ public class ApiSecurityService {
 	private OntologyUserAccessRepository ontologyUserAccessRepository;
 	
 	public static boolean isAdmin(final User user) {
-		return (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId()));
+		return (Role.Type.ROLE_ADMINISTRATOR.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
 	public static boolean isCol(final User user) {
-		return (Role.Type.ROLE_OPERATIONS.toString().equalsIgnoreCase(user.getRole().getId()));
+		return (Role.Type.ROLE_OPERATIONS.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
 	public static boolean isUser(final User user) {
-		return (Role.Type.ROLE_USER.toString().equalsIgnoreCase(user.getRole().getId()));
+		return (Role.Type.ROLE_USER.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
 	public User getUser(String userId) {
@@ -100,7 +100,7 @@ public class ApiSecurityService {
 		boolean autorizado=false;
 		
 		//Si es administrador u otro rol, pero o propietario o esta suscrito al API
-		if (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
+		if (Role.Type.ROLE_ADMINISTRATOR.name().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
 			autorizado=true;
 			
 		}else if(api.getUser().getUserId()!=null && api.getUser().getUserId().equals(user.getUserId())){//Otro rol pero propietario
@@ -127,23 +127,23 @@ public class ApiSecurityService {
 	}
 	
 	public boolean checkApiAvailable(Api api, User user){
-		// El APi esta disponible si se encuentra en uno de estos estados:
-				// 1 Publicada
-				// 2 Deprecada
-				// 3 En Desarrollo
-				// 4 Creada y el usuario es el propietario
-				return	(api.getState().equalsIgnoreCase(Api.ApiType.PUBLISHED.toString())
-						|| api.getState().equalsIgnoreCase(Api.ApiType.DEPRECATED.toString()) 
-						|| api.getState().equalsIgnoreCase(Api.ApiType.DEVELOPMENT.toString())
-						||
-						((api.getState().equals(Api.ApiType.CREATED.toString())) && (api.getUser().getUserId().equals(user.getUserId()))));
+		boolean can = api.getState().name().equalsIgnoreCase(Api.ApiType.CREATED.name()) && (api.getUser().getUserId().equals(user.getUserId()));
+		if (can) return true;
+		else {
+			String state = api.getState().name();
+			can =  (state.equalsIgnoreCase(Api.ApiType.PUBLISHED.name()) || 
+					state.equalsIgnoreCase(Api.ApiType.DEPRECATED.name()) ||
+					state.equalsIgnoreCase(Api.ApiType.DEVELOPMENT.name()) );
+			return can;
+		}
+		
 	}
 	
 	public Boolean checkRole(User user, Ontology ontology, boolean insert){
 		
 		Boolean authorize=false;
 		//If the role is Manager always allows the operation
-		if (Role.Type.ROLE_ADMINISTRATOR.toString().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
+		if (Role.Type.ROLE_ADMINISTRATOR.name().equalsIgnoreCase(user.getRole().getId())){//Rol administrador
 			authorize=true;
 			
 		}else{
