@@ -30,7 +30,21 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css}"/>	
+		<script th:inline="javascript">
+
+		function fragmentRefresh() {
+			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()})
+		} 
+	
+
+		function getOntologyFields() {
+
+			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
+
+		}
 		
+		</script>
+
 	</head>	
 	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
@@ -66,7 +80,7 @@
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
+				<h1 class="page-title "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -103,13 +117,11 @@
 										<div class="form-group">										
 											<div class="input-group input-group-sm">
 												<span class="input-group-addon" th:value="#{database.ontologies}" > ONTOLOGÍAS</span>
-												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" th:title="#{database.ontologies} +'...'">
+												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" onchange="cambioConsulta()" th:title="#{database.ontologies} +'...'">
 												  <optgroup th:label="#{database.generic}">
 													<option th:each="ontology : ${ontologies}" th:id="${ontology.user.userId}" th:data-description="${ontology.description}" data-type="general" th:value="${ontology.identification}" th:text="${ontology.identification}"  ></option>
 												  </optgroup>
-												 <!--  <optgroup label="Grupo">
-													<option th:each="ontologiagrupo:${ontologiasGrupo}" th:id="${ontologiagrupo.id}" data-type="grupo" th:value="${ontologiagrupo.identificacion}" th:text="${ontologiagrupo.identificacion}" ></option>
-												  </optgroup> -->
+											
 												</select>
 											</div>
 											<span class="help-block hidden-xs" th:text="#{database.ontologies.help}"> Seleccione Ontologías Genéricas o de Grupo </span>										
@@ -117,7 +129,7 @@
 									</div>									
 									
 									<!-- CREACIÓN DE CONSULTA -->
-									<div id="query-panel" class="col-md-12 hide">									
+									<div id="query-panel" class="col-md-12">									
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
 												<h3 class="panel-title uppercase"><i class="fa fa-sitemap"></i> Consultas sobre <span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
@@ -125,29 +137,26 @@
 											<div class="panel-body no-space">											
 												<!-- OPCIONES DE CONSULTA -->
 												<div class="col-md-6 col-sm-12 panel-tools">
-													<fieldset class="col-sm-3">												
+													<fieldset class="col-sm-4">												
 														<select class="element select small form-control" id="targetDatabase" name="targetDatabase" onChange="cambioConsulta();">
 															<option name="rtdb" value="rtdb"> RealTime DB</option>
-															<option name="hdb" value="hdb"> Historical DB </option>
 														</select>
 													</fieldset>
 													<fieldset class="col-md-3">							
 														<select  class="element select small form-control" id="typeQuery" name="typeQuery" onChange="cambioConsulta()">
-															<option name="sql" value="sql2"> SQL </option>
+															<option name="sql" value="sql"> SQL </option>
 															<option name="native" value="native"> NATIVE </option>
 														</select>
 													</fieldset>
 													<fieldset class="col-md-3">							
 														<select  class="element select small form-control" id="resultFormat" name="typeQuery" disabled="disabled">
 															<option name="json" value="json"> JSON </option>
-															<option name="table" value="table"> TABLE </option>
 														</select>
 													</fieldset>	
 													<fieldset id="fieldset_offset" class="col-md-3">
 														<label id="label_offset" class="description labelSmallText" for="offset">Offset </label>
 														<input id="offset" disabled="disabled"/>
 													</fieldset>
-													<input type="hidden" id="time_serie" value="time_serie" />
 												</div>
 												<!-- TOOLBAR DE CONSULTA -->
 												<div class="col-md-6 col-sm-12 panel-tools">
@@ -195,7 +204,7 @@
 																
 																<!-- GROUPBY PANEL -->
 																<li type="none" class="columnMine">
-																	<ul id="groupBy_ul" class="list-group" style="height: 100px">
+																	<ul id="groupBy_ul" class="list-group">
 																		<!-- LI principal , agrega groupby, tiene la clase panel-sofia para no ser borrado al cambiar de consulta. -->
 																		<li class="list-group-item panel-sofia2 bold uppercase" ><i class="fa fa-object-group"></i> GROUP BY<span class="btn btn-primary btn-xs pull-right tooltips" data-container="body" data-placement="top" data-original-title="Agregar condiciones al GROUPBY"><input type="checkbox" id="groupby_check" style="display:none; margin:0px"/> </span></li>																													
 																	</ul>
@@ -246,7 +255,7 @@
 												<div class="pull-right col-md-2 col-sm-4 col-xs-12">
 													<div class="btn-group">
 														<!-- <button type="button" class="btn btn-sm btn-primary" onClick="createQuery()"><i class="fa fa-edit"></i> Generar Query</button> no hace falta cuando todo haga refresh -->
-														<button type="button" class="btn btn-sm btn-primary" onClick="enviarSql()"><i class="fa fa-play"></i> Ejecutar Query </button>
+														<button type="button" class="btn btn-sm btn-primary" onclick="fragmentRefresh()" id="executeQuery"><i class="fa fa-play"></i> Ejecutar Query </button>
 													</div>											
 												</div>
 												<div class="clearfix"></div>
@@ -255,7 +264,7 @@
 									</div>
 									
 									<!-- RESULTADOS DE CONSULTA -->
-									<div id="result-panel" class="col-md-12 hide">
+									<div id="result-panel" class="col-md-12">
 									
 										<!-- PANEL DE RESULTADOS -->
 										<div class="panel panel-default">
@@ -280,13 +289,64 @@
 												
 												<!-- RESPUESTA DE CONSULTA -->
 												<div class="col-md-12 margin-top-10 margin-bottom-20">
-													<div id="Canvasrespuesta">														
-													
+													<div th:fragment="query" id="Canvasrespuesta">														
+													<p th:text="${queryResult}"></p>
 													</div>												
 												</div>
 												<div id="example" class="col-md-12">
 													
-												</div>											
+												</div>
+											
+							                    
+							                    <div id="dialog-execution-condition" style="display: none;" class="tabla_description" title="Condicion - WHERE">
+							                            <div>
+							                                <fieldset>
+							                                    <label class="description" for="identificacionPipeline">Campos</label>
+							                                    <select class="element select small form-control" id="form_campos" name="typeCombo" style="width: 250px;"></select>
+							                                </fieldset>  
+							                            </div>
+							                            <div>
+							                                <fieldset>
+							                                    <label class="description" for="descripcionPipeline">Operador</label>
+							                                    <select class="element select small form-control" id="select_operador" name="typeCondicion" style="width: 250px;">
+							                                            <option name="mayor" value="mayor"> > </option>
+							                                            <option name="menor" value="menor"> &#60; </option>
+							                                            <option name="mayor-igual" value="mayor-igual"> >= </option>
+							                                            <option name="menor-igual" value="menor-igual"> &#60;= </option>
+							                                            <option name="igual" value="igual"> = </option>
+							                                            <option name="distinto" value="distinto"> != </option>
+							                                    </select>
+							                                </fieldset>
+							                            </div>
+							                            <div id="cronExpresion">
+							                                <fieldset id="timer_capa"> 
+							                                    <label class="description" for="temporizador">Condicion*</label>
+							                                    <input id="form_condicion" name="condicion" class="element text form-control" type="text" value="" style="width: 250px;" /> 
+							                                                                                    
+							                                </fieldset>
+							                            </div>
+							                        </div>							                    
+							                        <div id="dialog-execution-orderby" style="display: none;" class="tabla_description" title="ORDER BY">
+							                            <div>
+							                                <fieldset>
+							                                    <label class="description" for="form_orderby_campos">Campos</label>
+							                                    <select class="element select small form-control" id="form_orderby_campos" name="typeCombo">
+							                                            
+							                                    </select>
+							                                </fieldset> 
+							                                <fieldset>
+							                                    <label class="description" for="form_orden">Órden</label>
+							                                    <select class="element select small form-control" id="form_orden" name="typeCondicion" style="width: 270px;">
+							                                            <option name="asc" value="ASC"> ASC </option>
+							                                            <option name="desc" value="DESC"> DESC </option>
+							                                    </select>
+							                                </fieldset> 
+							                            </div>
+							                        </div>
+							                    <div id="dialog-confirm-generic" title="Información" style="display: none;">
+							                            <div>Información</div>
+							                    </div>
+							             										
 											</div>
 										</div>	
 									</div>	
@@ -303,7 +363,19 @@
 	
 	<!-- FOOTER INCLUDE -->
 	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
-	
+
+	<!-- FRAGMENTS AJAX -->
+	<div style="display: none">
+	<div th:fragment="fields" id="fields">
+		<script th:inline="javascript">
+			campos= [[${fields}]];
+		</script>
+			<option th:id="selectFields" th:text="#{querytool.select.fields}"></option>
+			<option th:id="all" th:text="#{querytool.all.fields}"></option>
+			<option th:each="field :${fields}" th:value="${field}" th:id="check + ${field}" th:text="${field}"/>
+		
+	</div>
+	</div>
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
@@ -373,8 +445,11 @@
 	   //	FUNCION QUE INICIALIZA LOS PANELES DE MONTAJE DE LA CONSULTA [ SELECT, WHERE, GROUP, ORDERBY ]
 	   function cambioConsulta(){
 			
+			//Load fields 
+			getOntologyFields();			
+
 			var ontologia_base = 'SensorTemperatura';
-			
+			getOntologyFields();
 			// Se borran todos los paneles con el cambio de consulta.
 			var queryPanels = $("#where_ul,#select_ul,#from_ul,#groupBy_ul,#checks,#campos,#orderby_ul");
 			queryPanels.each(function(){ $(this).children().not('.panel-sofia2').remove(); });
@@ -384,6 +459,7 @@
 			var ontologia = $('#selector_ontologias').val();
 			console.log('cambioConsulta() -> tiene ontologia seleccionada? ' + ontologia);
 			if (ontologia !== '') {
+
 				var from =  '<li id="from" name="'+ ontologia +'" id="'+ ontologia +'" class="list-group-item bold uppercase"> '+ ontologia +' </li>';
 				$("#from_ul").append(from);
 			}
@@ -449,64 +525,7 @@
 		  
 			   if( document.getElementById("enviar_consulta_descarga") ){ document.getElementById("enviar_consulta_descarga").style.display = ''; }
 		   }
-		   
-			// BBDD: BDH
-			else if( targetdb == "bdh"){
-		   
-			   $('#fieldset_offset').css('display','none'); 
-			   $('#json_deprecated').css('display',''); 
-			   $("#resultFormat").prop("disabled", false);
-			   
-			   var comboBDH = document.getElementById('ontologia');
-			   
-			   if( comboBDH.length > 0){	           
-				   $('#querySql').val("select * from "+ comboBDH.value +" limit 3;"); 
-			   }
-			   
-			   <!-- divListaTablasBDC.style.display='none'; -->
-			   <!-- divListaOntologias.style.display = 'block'; -->
-			   <!-- divListaOntologiasGrupo.style.display = 'block'; -->
 
-			   $('#contenedor-tabla-outside1').addClass('in');
-			   $('#contenedor-tabla-outside1').css('height','auto');
-			   $('#contenedor-tabla-outside2').removeClass('in');
-
-			   $("#crear-query").css('display','block'); 
-			   $("#crear-query-label").css('display','block');           
-			   $('#querySql').innerHTML =  "select * from " + ontologia_base +" limit 3;";
-			   
-			   combo.value = "sql";
-			   combo.disabled = true;
-			   if( document.getElementById("enviar_consulta_descarga") ){
-				   document.getElementById("enviar_consulta_descarga").style.display = '';
-			   }
-			}
-			// BBDD: BDC
-			else if( targetdb == "bdc"){
-			
-				document.getElementById('json_deprecated').style.display='none';
-				$('#fieldset_offset').css('display','none'); 
-				var comboTablaBDC = document.getElementById('tablaBDC');
-
-				if(comboTablaBDC.length > 0){ comboTablaBDC[0].selected=true;	}
-
-				document.getElementById("crear-query").style.display = 'none';
-				document.getElementById("crear-query-label").style.display = 'none';
-				document.getElementById("boton-crear-query").style.display = 'none';
-
-				$('#querySql').val("select * from "+ comboTablaBDC.value +" limit 3;");
-				combo.value = "sql";
-				combo.disabled = true; 
-				
-				//Cambia los contenidos del cuadrado
-				<!-- divListaOntologias.style.display = 'none'; -->
-				<!-- divListaOntologiasGrupo.style.display = 'none'; -->
-				<!-- divListaTablasBDC.style.display='block'; -->
-
-				if( document.getElementById("enviar_consulta_descarga") ){
-				   document.getElementById("enviar_consulta_descarga").style.display = 'none';
-				}
-			}
 		}  
 		//]]>             
 	</script> 
@@ -1296,28 +1315,20 @@
 		
 		// FUNCION PARA AGREGAR CAMPOS AL SELECT DE LA CONSULTA 
 		function addRemoveCampoToSelect(campos){
-			var isTimeSerie = $("#isTimeSerie").val();
+		
 			var repetido = false;
 			var campoSelected = document.getElementById("checkselect").value;
-			 
-			// SERIES DE TIEMPO
-			if( isTimeSerie == "true" ){
-				$("#select_ul").children().not('.panel-sofia2').remove();
-				if( campoSelected == "Todos los campos"){ $("#groupby_label,#groupBy_time_ul").hide(); } else { $("#groupby_label,#groupBy_time_ul").show(); }
-				
-				// creamos el nuevo li con el campo a agregar
-				select = '<li id="'+campoSelected+'" name="'+campoSelected+'" class="list-group-item bold even">'+campoSelected+'<div class="btn btn-xs pull-right" onclick="deleteCondition(\''+campoSelected+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
-				$("#select_ul").append(select); 
-				$('#dialog-execution-select').dialog("close");
-				console.log('regenerando query tras agregar o quitar: ' + campoSelected);
-				createQuery();
-			}
-			else{
-			// SERIES NORMALES
+
+			
 				if( campoSelected !== "Seleccione los campos..." ){
 					
 					// seleccionamos el id del campo seleccionado.
-					for(var i = 0; i < campos.length; i++){ if( campos[i].value == campoSelected ){ var campoId=campos[i].getAttribute("th:id"); break; }}
+					for(var i = 0; i < campos.length; i++){
+					 if( campos[i].value == campoSelected ){ 
+					 	var campoId=campos[i].getAttribute("id"); 
+					 	break; 
+					 }
+					}
 					
 					// si es Todos, se vacia la lista.
 					if( campoId == "Todos" ){ 
@@ -1346,10 +1357,10 @@
 						createQuery();
 					}
 					// cerramos el dialogo.
-					$('#dialog-execution-select').dialog("close");
-					document.getElementById("seleccione").selected = true;
+					
+					document.getElementById("selectFields").selected = true;
 				} 
-			}
+			
 		};
 		
 			
@@ -1362,49 +1373,44 @@
 		function mostrarDialogoSelect(){
 			 var combodb=document.getElementById('targetDatabase');
 			 var targetdb= combodb.options[combodb.selectedIndex].value;
-			 document.getElementById("checkselect").style.display="block";      
+			 getOntologyFields();
+			 var comboFields=$('#fields').html();
 
-			 $( "#dialog-execution-select" ).dialog({resizable: false,height:220,modal: true,position: [($(window).width() / 2) - 150, 300],dialogClass: 'DeleteConfirmDialog'});
-		};
 		
-		// TO-DO: falta chquear con alguna ontolgia de time
-		function mostrarDialogoTimeSerie(){
-			document.getElementById("dialog-execution-time-serie").innerHTML=[[#{consultar_formulario_dialog_time_serie}]];
-		   $( "#dialog-execution-time-serie" ).dialog({
-			   resizable: false,
-			   height:200,
-			   modal: true,
-			   position: [($(window).width() / 2) - 150, 300],
-			   dialogClass: 'DeleteConfirmDialog',
-			   buttons: {                                 
-				   [[#{dialogo_confirm_delete_button_cancelar}]]: function() {
-					   $("#typeQuery").removeAttr("disabled");
-					   $("#resultFormat").removeAttr("disabled");
-					   $("#isTimeSerie").val(false);
-					   $( this ).dialog("close");
-				   },
-				   [[#{dialogo_confirm_table_button_continuar}]]: function() {
-					   $("#checkselect")
-							.empty()
-							.append('<option id="seleccione" th:value="seleccione" selected="selected">Seleccione los campos...</option>')
-							.append('<option value="Todos los campos">Todos los campos</option>')
-							.append('<option value="MAX">MAX(*)</option>')
-							.append('<option value="MIN">MIN(*)</option>')
-							.append('<option value="SUM">SUM(*)</option>')
-							.append('<option value="AVG">AVG(*)</option>')
-							.append('<option value="COUNT">COUNT(*)</option>');
-					   
-					   $("#typeQuery").attr("disabled", "disabled");
-					   $("#resultFormat").attr("disabled", "disabled");
-					   $("#orderby_label").hide();
-					   $("#img_add_order").hide();
-					   $('.bootstrap-switch-id-groupby_check').hide();
-					   $("#isTimeSerie").val(true);
-					   $( this ).dialog("close");
-				   }
-			   }
-		   });
-		}
+			 
+		/*[+
+			$.confirm({
+		    title: [[#{querytool.select.fields}]],
+		    content: '' +
+		    '<form action="" class="formName">' +
+		    '<div class="form-group">' +
+		    '<label>Select fields</label> <select id="checkselect" onchange="addRemoveCampoToSelect(this)" class="form-control querySelect" data-width="100%">'+ comboFields +
+		    '</select></div>' +
+		    '</form>',
+		    buttons: {
+		        formSubmit: {
+		            text: 'OK',
+		            btnClass: 'btn-blue',
+		            action: function () {
+		               
+		            }
+		        },
+		        cancel: function () {
+		            //close
+		        },
+		    },
+		    onContentReady: function () {
+		        // bind to events
+		        var jc = this;
+		        getOntologyFields();
+		        this.$content.find('form').on('submit', function (e) {
+		            // if the user submits the form by pressing enter in the field.
+		            e.preventDefault();
+		            jc.$$formSubmit.trigger('click'); // reference the button and click it
+		        });
+		    }
+		});+]*/
+		};
 		
 		
 		// MODAL DE CONDICIONES DEL WHERE 
@@ -1412,38 +1418,52 @@
 		function mostrarDialogoCondicion(){
 			var combodb = document.getElementById('targetDatabase');
 			var targetdb = combodb.options[combodb.selectedIndex].value;
-			$( "#dialog-execution-condition" ).dialog({ resizable: false, height:200, modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					[[#{dialogo_confirm_delete_button_cancelar}]]: function() {
-						$("#form_condicion").val('');
-						$( this ).dialog("close");
-					},
-					[[#{dialogo_confirm_table_button_continuar}]]: function() {
-						if( $("#form_condicion").val() == ""){
-							mostrarDialogo([[#{consultas_formulario_error}]]);
-						}
-						else{
-							var campo = $("#form_campos").val();
-							var operador = $("#form_operador option:selected").text();
-							var condicion = $("#form_condicion").val();						
-							var c = Number(condicion);						
-							if( c.toString() == "NaN"){ condicion = '&#34;'+condicion+'&#34;'; }
-							if( operador == " < "){ operador=" &#60; "; }else if( operador == "<="){operador=" &#60;= "; }						
-							queryCondition = campo + operador + condicion;
-							var add = comprobarCondicion(queryCondition);
-							if( add ){							
-								where = '<li  id="condicion'+indexCondition+'" condition="'+queryCondition+'"  class="list-group-item bold">'+ queryCondition +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'condicion'+indexCondition+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
-								indexCondition++;
-								$("#where_ul").append(where);							
-							}
-							$("#form_condicion").val('');
-							$( this ).dialog("close");
-							showLog ? console.log('regenerando query tras agregar o quitar condición: ' + queryCondition) : '';
-							createQuery();
-						}
-					}
-				}
-			});
+			var comboFields=$('#fields').html();
+			var comboCondition=$('#select_operador').html();
+			/*[+
+			$.confirm({
+		    title: [[#{querytool.select.where}]],
+		    content: '' +
+		    '<form action="" class="form_condicion" id="form_condicion">' +
+		    '<div class="form-group">' +
+		    '<label>Select fields</label> <select id="conditionFields" class="form-control querySelect" data-width="100%">'+ comboFields +
+		    '</select> <select class="element select small form-control" id="conditionOperator" name="typeCondicion" >'+comboCondition+'</select><label class=""></label><input type="text" id="condition">Condition</input></div>' +
+		    '</form>',
+		    buttons: {
+		        formSubmit: {
+		            text: 'OK',
+		            btnClass: 'btn-blue',
+		            action: function () {
+		            	var campo = $("#conditionFields").val();
+						var operador = $("#conditionOperator option:selected").text();
+						var condicion = $("#condition").val();						
+						var c = Number(condicion);						
+						if( c.toString() == "NaN"){ condicion = '&#34;'+condicion+'&#34;'; }
+						if( operador == " < "){ operador=" &#60; "; }else if( operador == "<="){operador=" &#60;= "; }						
+						queryCondition = campo + operador + condicion;
+		                where = '<li  id="condicion'+indexCondition+'" condition="'+queryCondition+'"  class="list-group-item bold">'+ queryCondition +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'condicion'+indexCondition+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
+						indexCondition++;
+						$("#where_ul").append(where);
+		            }
+		        },
+		        cancel: function () {
+		            //close
+		        },
+		    },
+		    onContentReady: function () {
+		        // bind to events
+		        var jc = this;
+		        getOntologyFields();
+		        this.$content.find('form').on('submit', function (e) {
+		            // if the user submits the form by pressing enter in the field.
+		            e.preventDefault();
+		            jc.$$formSubmit.trigger('click'); // reference the button and click it
+		        });
+		    }
+		});+]*/
+
+
+			
 			$( "#form_campos" ).empty();
 			for( i=0; i < campos.length; i++){
 				 $('#form_campos').append($('<option>', {value: campos[i],text : campos[i]}));
@@ -1516,15 +1536,26 @@
 		var indexOrderby = 0;
 		// DIALOGO DE CONFIGURACION DEL ORDERBY
 		function mostrarDialogoOrderBy(){
-			$( "#dialog-execution-orderby" ).dialog({resizable: false, height:160,  modal: true, position: [($(window).width() / 2) - 150, 300], dialogClass: 'DeleteConfirmDialog',
-				buttons: {
-					[[#{dialogo_confirm_delete_button_cancelar}]]: function() {
-						$( this ).dialog("close");
-					},
-					[[#{dialogo_confirm_table_button_continuar}]]: function() {
-						$("#orderby_ul").children().not('.panel-sofia2').remove();
-						var campo = $("#form_orderby_campos").val();
-						var orden = $("#form_orden").val();
+			var comboFields=$('#fields').html();
+			var comboOrders=$('#form_orden').html();
+
+			/*[+
+			$.confirm({
+		    title: [[#{querytool.select.orderby}]],
+		    content: '' +
+		    '<form action="" class="form_order" id="form_order">' +
+		    '<div class="form-group">' +
+		    '<label>Select fields</label> <select id="orderFields" class="form-control querySelect" data-width="100%">'+ comboFields +
+		    '</select> <select class="element select small form-control" id="orderType" name="orderType">'+comboOrders+'</select></div>' +
+		    '</form>',
+		    buttons: {
+		        formSubmit: {
+		            text: 'OK',
+		            btnClass: 'btn-blue',
+		            action: function () {
+		            	var campo = $("#orderFields").val();
+						var orden = $("#orderType").val();
+											
 						var add = comprobarOrderby(campo);
 						if(add){                        
 							var orderby = '<li id="orderby'+indexOrderby+'" name="'+campo+' '+orden+'" class="list-group-item bold">'+ campo +' '+ orden +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'orderby'+indexOrderby+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
@@ -1533,11 +1564,24 @@
 							createQuery();
 						}
 						indexOrderby++;
-						$( this ).dialog("close");
-					}
-				}
-			});
-			
+		            }
+		        },
+		        cancel: function () {
+		            //close
+		        },
+		    },
+		    onContentReady: function () {
+		        // bind to events
+		        var jc = this;
+		        getOntologyFields();
+		        this.$content.find('form').on('submit', function (e) {
+		            // if the user submits the form by pressing enter in the field.
+		            e.preventDefault();
+		            jc.$$formSubmit.trigger('click'); // reference the button and click it
+		        });
+		    }
+		});+]*/
+
 			$( "#form_orderby_campos" ).empty();
 			for( i=0; i < campos.length; i++){
 				 $('#form_orderby_campos').append($('<option>', { value: campos[i], text : campos[i]}));
