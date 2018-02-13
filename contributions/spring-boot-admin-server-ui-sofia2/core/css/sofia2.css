@@ -1,0 +1,64 @@
+/** Overriding core.css and all-modules.css **/
+/**************************Sofia2 - core.css******************************/
+
+body {
+    background-color: #f2f3f8;
+  }
+  
+  /* HEADER */
+  #sofia2-override .header--navbar .navbar-inner {
+    background-color: #212529;
+    border-top: 4px solid #36c6d3;
+  }
+  #sofia2-override .header--navbar .navbar-inner .navbar-link.active a {
+    background-color: #f2f3f8;
+  }
+  #sofia2-override .header--navbar .navbar-inner .navbar-link a {
+    color: #676c7b;
+  }
+  #sofia2-override .header--navbar .navbar-inner .navbar-link:hover a {
+    color: #676c7b;
+    background-color: #f2f3f8;
+  }
+  
+  /* LOGO */
+  #sofia2-override a.spring-logo {
+    background: url("../img/logo_sofia2.png") -1px -1px no-repeat;
+  }
+  #sofia2-override .spring-logo span {
+    background: url("../img/logo_sofia2.png") -1px -1px no-repeat;
+  }
+  #sofia2-override a.spring-logo span {
+    background: url("../img/logo_sofia2.png") -1px -1px no-repeat;
+  }
+  
+  /* TABS */
+  #sofia2-override .nav-tabs > .active > a,
+  .nav-tabs > .active > a:hover,
+  .nav-tabs > .active > a:focus,
+  .table > thead > tr > th {
+    background-color: #636263;
+    border-color: #636263;
+    color: #f1f1f1;
+  }
+  
+  /* FOOTER */
+  
+  #sofia2-override .footer {
+    background-color: #212529;
+    color: #f2f3f8;
+  }
+  #sofia2-override .footer a {
+    color: #676c7b;
+  }
+  
+  
+  /**************************Sofia2 - all-modules.css******************************/
+  
+  #sofia2-override .sorted-ascending {
+    color: #36c6d3;
+  }
+  
+  #sofia2-override .sorted-descending {
+    color: #36c6d3;
+  }

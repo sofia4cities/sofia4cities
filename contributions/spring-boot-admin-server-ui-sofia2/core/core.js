@@ -22,6 +22,7 @@ require('bootstrap.css');
 require('font-awesome/css/font-awesome.css');
 require('googlefonts.css');
 require('./css/core.css');
+require('./css/sofia2.css');
 
 require('./img/favicon.png');
 
