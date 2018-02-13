@@ -67,7 +67,7 @@ public class SecurityOntologyRule extends DefaultRuleBase {
 		boolean ontologyPermission = apiSecurityService.checkRole(user, ontology, true);
 		
 		if (!ontologyPermission) {
-			stopAllNextRules(facts, "User has no permission to use Ontology "+ontology.getIdentification());
+			stopAllNextRules(facts, "User has no permission to use Ontology "+ontology.getIdentification(),DefaultRuleBase.ReasonType.SECURITY);
 		}
 		
 		

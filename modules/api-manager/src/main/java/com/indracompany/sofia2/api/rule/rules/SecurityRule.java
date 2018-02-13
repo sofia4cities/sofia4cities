@@ -64,10 +64,10 @@ public class SecurityRule extends DefaultRuleBase {
 		boolean checkUser  = apiSecurityService.checkUserApiPermission(api, user);
 		
 		if (!available) {
-			stopAllNextRules(facts, "API is not Available");
+			stopAllNextRules(facts, "API is not Available",DefaultRuleBase.ReasonType.SECURITY);
 		}
 		if (!checkUser) {
-			stopAllNextRules(facts, "User has no permission to use API");
+			stopAllNextRules(facts, "User has no permission to use API",DefaultRuleBase.ReasonType.SECURITY);
 		}
 		
 

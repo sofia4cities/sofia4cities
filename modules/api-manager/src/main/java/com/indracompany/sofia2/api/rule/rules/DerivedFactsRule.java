@@ -71,10 +71,10 @@ public class DerivedFactsRule extends DefaultRuleBase {
 		
 		User user = userService.getUserByToken(TOKEN);
 		Api api=null;
-		if (user==null) stopAllNextRules(facts, "User not Found by Token :"+TOKEN);
+		if (user==null) stopAllNextRules(facts, "User not Found by Token :"+TOKEN, DefaultRuleBase.ReasonType.GENERAL);
 		else {
 			api = apiManagerService.getApi(PATH_INFO, user);
-			if (api==null) stopAllNextRules(facts, "API not Found by Token :"+TOKEN +" and Path Info"+PATH_INFO );
+			if (api==null) stopAllNextRules(facts, "API not Found by Token :"+TOKEN +" and Path Info"+PATH_INFO,DefaultRuleBase.ReasonType.GENERAL );
 		}
 
 		data.put(ApiServiceInterface.USER, user);

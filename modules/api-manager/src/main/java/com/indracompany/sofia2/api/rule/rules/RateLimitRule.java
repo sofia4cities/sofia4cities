@@ -68,7 +68,7 @@ public class RateLimitRule extends DefaultRuleBase {
 		boolean apiLimit = rateLimitingService.processRateLimit(AUTHENTICATION_HEADER, limit);
 		
 		if (!apiLimit) {
-			stopAllNextRules(facts, "API LIMIT REACHED "+AUTHENTICATION_HEADER);
+			stopAllNextRules(facts, "API LIMIT REACHED "+AUTHENTICATION_HEADER,DefaultRuleBase.ReasonType.API_LIMIT);
 		}
 		
 		
