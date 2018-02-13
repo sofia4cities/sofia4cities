@@ -48,15 +48,15 @@ public class ApiSecurityService {
 	@Autowired
 	private OntologyUserAccessRepository ontologyUserAccessRepository;
 	
-	public static boolean isAdmin(final User user) {
+	public boolean isAdmin(final User user) {
 		return (Role.Type.ROLE_ADMINISTRATOR.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
-	public static boolean isCol(final User user) {
+	public boolean isCol(final User user) {
 		return (Role.Type.ROLE_OPERATIONS.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
-	public static boolean isUser(final User user) {
+	public boolean isUser(final User user) {
 		return (Role.Type.ROLE_USER.name().equalsIgnoreCase(user.getRole().getId()));
 	}
 	
@@ -183,9 +183,5 @@ public class ApiSecurityService {
 		return authorize;
 	}
 	
-	//TODO IMPLEMENT!
-	public Boolean checkApiLimit(Api api){
-		return true;
-	}
-
+	
 }

@@ -62,16 +62,12 @@ public class SecurityRule extends DefaultRuleBase {
 
 		boolean available  = apiSecurityService.checkApiAvailable(api, user);
 		boolean checkUser  = apiSecurityService.checkUserApiPermission(api, user);
-		boolean checkLimit = apiSecurityService.checkApiLimit(api);
 		
 		if (!available) {
 			stopAllNextRules(facts, "API is not Available");
 		}
 		if (!checkUser) {
 			stopAllNextRules(facts, "User has no permission to use API");
-		}
-		if (!checkLimit) {
-			stopAllNextRules(facts, "User API Limit Reached");
 		}
 		
 

@@ -34,8 +34,6 @@ public interface ApiServiceInterface {
 	public static final String OBJECT_ID="OBJECT_ID";
 	public static final String ONTOLOGY="ONTOLOGY";
 	
-	
-	
 	public static final String USER="USER";
 	public static final String API="API";
 	

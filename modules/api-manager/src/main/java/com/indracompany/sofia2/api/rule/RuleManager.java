@@ -76,9 +76,7 @@ public class RuleManager implements ApplicationContextAware{
 	
 	public void fire(Facts facts) {
 		rulesEngine.fire(rules, facts);
-		
 	}
-
 	
 	public RulesEngineListener getListener() {
 		return listener;

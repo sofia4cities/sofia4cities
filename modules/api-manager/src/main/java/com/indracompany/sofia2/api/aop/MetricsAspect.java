@@ -51,7 +51,6 @@ public class MetricsAspect extends BaseAspect {
 		Object proceed = null;
 
 		try {
-
 			proceed = joinPoint.proceed();
 
 		} finally {
@@ -62,7 +61,6 @@ public class MetricsAspect extends BaseAspect {
 		log.info("Controller @Around for " + getMethod(joinPoint) + " Interceptor Called : "	+ joinPoint.getSignature() + " executed in " + executionTime + "ms");
 
 		return proceed;
-
 	}
 
 	@Before("execution(* com.indracompany.sofia2.api.rest.api.*.*(..))")
@@ -71,7 +69,6 @@ public class MetricsAspect extends BaseAspect {
 		//counterService.increment("counter.calls.beforeSampleCreation");
 		log.info("Controller @Before for " + getMethod(joinPoint) + " Method Invoked: "+ joinPoint.getSignature().getName());
 
-	
 		if (joinPoint.getArgs() != null) {
 			int size = joinPoint.getArgs().length;
 			if (size > 0) {

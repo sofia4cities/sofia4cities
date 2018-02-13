@@ -65,33 +65,15 @@ public class ApiManagerService {
 	}
 
 	public Api getApi(String pathInfo, User user) {
-		Locale locale = LocaleContextHolder.getLocale();
-
 		String apitipo = null;
-
-		/*
-		 * String apitipo=null; if (pathInfo.startsWith(openDataPath)) { pathInfo =
-		 * pathInfo.substring(openDataPath.length()); apitipo="OData"; } else if
-		 * (pathInfo.startsWith(webServicePath)) { pathInfo =
-		 * pathInfo.substring(webServicePath.length()); apitipo = WEB_SERVICE_API; }
-		 */
 		String apiVersion = this.getApiVersion(pathInfo);
 		String apiIdentifier = this.getApiIdentifier(pathInfo);
 
-		// Recuperamos el API de BDC
 		Api api = getApi(apiIdentifier, Integer.parseInt(apiVersion), apitipo);
-
-		// Comprobamos si está disponible --> publicada, deprecada, en desarrollo o
-		// creada y el usuario es propietario
-		/*boolean disponible = apiSecurityService.checkApiAvailable(api, user);
-		if (!disponible) {
-			throw new ForbiddenException("com.indra.sofia2.api.service.wrongapistatus");
-		}*/
 		return api;
 	}
 
 	public String getApiVersion(String pathInfo) throws BadRequestException {
-		Locale locale = LocaleContextHolder.getLocale();
 
 		String apiVersion = pathInfo;
 
@@ -101,13 +83,10 @@ public class ApiManagerService {
 
 		int slashIndex = apiVersion.indexOf('/');
 
-		// Comprueba que existe el delimitador a partir del que vendrá el identificador
-		// de la ontologia
 		if (slashIndex == -1) {
 			throw new BadRequestException("com.indra.sofia2.api.service.notvalidformat");
 		}
-		// Ya tenemos el campo de versión
-		// Eliminamos la v inicial
+
 		apiVersion = apiVersion.substring(0, slashIndex);
 		if (apiVersion.startsWith("v")) {
 			apiVersion = apiVersion.substring(1);
@@ -121,11 +100,9 @@ public class ApiManagerService {
 	}
 
 	public String getApiIdentifier(String pathInfo) throws BadRequestException {
-		Locale locale = LocaleContextHolder.getLocale();
-
+	
 		String apiVersion = this.getApiVersion(pathInfo);
 
-		// Acotamos el identificador del API quitando la versión
 		String apiIdentifier = pathInfo.substring(pathInfo.indexOf(apiVersion + "/") + (apiVersion + "/").length());
 
 		int slashIndex = apiIdentifier.indexOf('/');
@@ -143,11 +120,9 @@ public class ApiManagerService {
 
 	public Api getApi(String apiIdentifier, int apiVersion, String tipoapi)
 			throws BadRequestException, ForbiddenException {
-		Locale locale = LocaleContextHolder.getLocale();
-
+		
 		List<Api> api = null;
 
-		// Recupera la entidad del API de BDC
 		if (tipoapi != null) {
 			api = apiRepository.findByIdentificationAndNumversionAndApiType(apiIdentifier, apiVersion, tipoapi);
 		} else {
@@ -160,8 +135,6 @@ public class ApiManagerService {
 	public boolean isPathQuery(String pathInfo) {
 
 		String apiIdentifier = this.getApiIdentifier(pathInfo);
-
-		// Acotamos el identificador del API quitando la versión
 		String objectId = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 
 		if (objectId.length() == 0 || !objectId.startsWith("/")) {
@@ -174,8 +147,7 @@ public class ApiManagerService {
 	public ApiOperation getCustomSQL(String pathInfo, Api api, String operation) {
 
 		String apiIdentifier = this.getApiIdentifier(pathInfo);
-
-		// Acotamos el identificador del API quitando la versión
+		
 		String opIdentifier = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 		if (opIdentifier.startsWith("\\") || opIdentifier.startsWith("/")) {
 			opIdentifier = opIdentifier.substring(1);
@@ -189,8 +161,6 @@ public class ApiManagerService {
 			match+="_"+opIdentifier;
 		}
 		
-		// Se recorren las operaciones de la API, buscando las que coincidan por metodo
-		// HTTP y por Path
 		for (ApiOperation operacion : operaciones) {
 			if (operacion.getIdentification().equals(match)) {
 				return operacion;
@@ -209,14 +179,12 @@ public class ApiManagerService {
 					paramvalue = body;
 				}
 			} else {
-				// Se comprueba que el valor es del tipo definido en la operacion
 				if (customqueryparameter.getDataType().name().equalsIgnoreCase(ApiQueryParameter.DataType.date.name())) {
 					try {
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 						df.parse(paramvalue);
 						paramvalue = "'" + paramvalue + "'";
 					} catch (Exception e) {
-						// Esta definido como un string pero no se recibe un String
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Date" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype "+parametros[0]);
 					}
@@ -225,7 +193,6 @@ public class ApiManagerService {
 						paramvalue.toString();
 						paramvalue = "'" + paramvalue + "'";
 					} catch (Exception e) {
-						// Esta definido como un string pero no se recibe un String
 						Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
 					}
@@ -233,7 +200,6 @@ public class ApiManagerService {
 					try {
 						Double.parseDouble(paramvalue);
 					} catch (Exception e) {
-						// Esta definido como un Integer pero no se recibe un Integer
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Integer" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
 					}
@@ -243,7 +209,6 @@ public class ApiManagerService {
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
 					}
 				}
-				// el parametro es de tipo correcto, se añade a la lista
 				customqueryparametersvalues.put(customqueryparameter.getName(), paramvalue);
 			}
 		}
@@ -266,7 +231,6 @@ public class ApiManagerService {
 
 		String apiIdentifier = this.getApiIdentifier(pathInfo);
 
-		// Acotamos el identificador del API quitando la versión
 		String objectId = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 
 		if (!objectId.startsWith("/")) {
