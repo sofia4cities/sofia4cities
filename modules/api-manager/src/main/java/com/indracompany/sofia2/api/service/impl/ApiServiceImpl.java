@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -60,6 +61,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 	@Override
 	@PrometheusTimeMethod(name = "ApiServiceImplEntryPoint", help = "ApiServiceImpl doGET")
+	@Timed
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		Facts facts = new Facts();
