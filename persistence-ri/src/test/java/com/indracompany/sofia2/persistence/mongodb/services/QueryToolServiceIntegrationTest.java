@@ -202,7 +202,7 @@ public class QueryToolServiceIntegrationTest {
 	public void test_QueryCountSQL() {
 		try {
 			String json = queryTool.querySQLAsJson(ONT_NAME, "select count(*) from contextData", 0);
-			Assert.assertTrue(json.indexOf("1") != -1);
+			Assert.assertTrue(json.indexOf("3") != -1);
 		} catch (Exception e) {
 			Assert.fail("Error test_QuerySQL" + e.getMessage());
 		}
