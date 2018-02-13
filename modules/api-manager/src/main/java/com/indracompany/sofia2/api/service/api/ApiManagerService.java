@@ -20,28 +20,21 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.indra.sofia2.ssap.ssap.SSAPQueryType;
-import com.indracompany.sofia2.api.service.Constants;
 import com.indracompany.sofia2.api.service.exception.BadRequestException;
 import com.indracompany.sofia2.api.service.exception.ForbiddenException;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.ApiQueryParameter;
-import com.indracompany.sofia2.config.model.ApiSuscription;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
-import com.indracompany.sofia2.config.repository.ApiSuscriptionRepository;
-import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.ssap.SSAPQueryType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -255,7 +248,7 @@ public class ApiManagerService {
 
 	public boolean isSQLLIKE(String query, String queryType) {
 		if (query != null && query.length() > 0 && queryType != null && queryType.length() > 0) {
-			return queryType.equals(SSAPQueryType.SQLLIKE.toString());
+			return queryType.equals(SSAPQueryType.SQL.name());
 		}
 		return false;
 	}
