@@ -7,22 +7,51 @@
 
 
 
-	<bean id="throttlerProcessor" class="com.indracompany.sofia2.api.rest.camel.ThrottlerProcessor"/>
+	<bean id="throttlerProcessor"
+		class="com.indracompany.sofia2.api.rest.camel.ThrottlerProcessor" />
 
 	<camelContext id="camel-context" streamCache="true" trace="true"
 		xmlns="http://camel.apache.org/schema/spring">
 
-
 		<route id="entry-point">
-			<from uri="servlet:camel" />
-			<throttle timePeriodMillis="10000" rejectExecution="true" >
-				<method ref="throttlerProcessor" method="getThrottle" />
-				<to uri="log:com.mycompany.nous?level=INFO" />
-			</throttle>
-			<process ref="throttlerProcessor"/>
+			<from uri="servlet:///api?matchOnUriPrefix=true" />
+			<convertBodyTo type="java.lang.String" />
+			<choice>
+				<when>
+					<simple>${in.header.CamelHttpMethod} == 'OPTIONS'</simple>
+					<setHeader headerName="Access-Control-Allow-Origin">
+						<constant>*</constant>
+					</setHeader>
+					<setHeader headerName="Access-Control-Allow-Headers">
+						<constant>X-SOFIA2-APIKey,auth-token,Content-Type</constant>
+					</setHeader>
+					<setHeader headerName="Access-Control-Allow-Methods">
+						<constant>POST,GET,DELETE,PUT,OPTIONS</constant>
+					</setHeader>
+					<setHeader headerName="Access-Control-Allow-Methods">
+						<constant>POST,GET,DELETE,PUT,OPTIONS</constant>
+					</setHeader>
+					<setHeader headerName="Content-Type">
+						<constant>application/json</constant>
+					</setHeader>
+					<setBody>
+						<constant>["APITEST","developer"]</constant>
+					</setBody>
+				</when>
+				<otherwise>
+					<to uri="direct:process-api"/>
+				</otherwise>
+			</choice>
+
+			<!-- throttle timePeriodMillis="10000" rejectExecution="true"> <method 
+				ref="throttlerProcessor" method="getThrottle" /> <process ref="apiServiceImpl"></process> 
+				</throttle -->
 		</route>
 
-
+		<route id="process-api">
+			<from uri="direct:process-api"/>
+			<process ref="apiServiceImpl"/>
+		</route>
 
 	</camelContext>
 

@@ -30,6 +30,7 @@ import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 
 @Component
@@ -47,7 +48,9 @@ public class RateLimitRule extends DefaultRuleBase {
 	@Condition
 	public boolean existsRequest(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
-		if ((request != null) && canExecuteRule(facts))
+		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
+		Api api = (Api) data.get(ApiServiceInterface.API);
+		if ((request != null && api !=null) && canExecuteRule(facts))
 			return true;
 		else
 			return false;

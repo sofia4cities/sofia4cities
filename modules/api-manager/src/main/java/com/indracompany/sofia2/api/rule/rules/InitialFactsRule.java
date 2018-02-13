@@ -77,6 +77,7 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.TARGET_DB_PARAM, targetDb);
 		data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
 		data.put(ApiServiceInterface.METHOD, method);
+		facts.put(RuleManager.ACTION, method);
 		
 		
 

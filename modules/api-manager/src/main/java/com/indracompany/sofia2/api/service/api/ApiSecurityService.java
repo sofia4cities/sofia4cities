@@ -127,6 +127,9 @@ public class ApiSecurityService {
 	}
 	
 	public boolean checkApiAvailable(Api api, User user){
+		
+		if (api==null || user == null) return false;
+		
 		boolean can = api.getState().name().equalsIgnoreCase(Api.ApiType.CREATED.name()) && (api.getUser().getUserId().equals(user.getUserId()));
 		if (can) return true;
 		else {

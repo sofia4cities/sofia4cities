@@ -20,6 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,28 +70,40 @@ public class ApiManagerService {
 
 	public String getApiVersion(String pathInfo) throws BadRequestException {
 
-		String apiVersion = pathInfo;
-
-		if (apiVersion.startsWith("/")) {
-			apiVersion = apiVersion.substring(1);
+		String version = "1";
+		Pattern pattern = Pattern.compile("(.*)/api/v(.*)/");
+		Matcher matcher = pattern.matcher(pathInfo);
+		if (matcher.find())
+		{
+			String param = matcher.group(2);
+			version = param.substring(0, param.indexOf("/"));
+			return version;
 		}
+		
+		else {
+			version = pathInfo;
 
-		int slashIndex = apiVersion.indexOf('/');
+			if (version.startsWith("/")) {
+				version = version.substring(1);
+			}
 
-		if (slashIndex == -1) {
-			throw new BadRequestException("com.indra.sofia2.api.service.notvalidformat");
-		}
+			int slashIndex = version.indexOf('/');
 
-		apiVersion = apiVersion.substring(0, slashIndex);
-		if (apiVersion.startsWith("v")) {
-			apiVersion = apiVersion.substring(1);
-		}
+			if (slashIndex == -1) {
+				throw new BadRequestException("com.indra.sofia2.api.service.notvalidformat");
+			}
 
-		if (apiVersion == null || apiVersion.equals("")) {
-			throw new BadRequestException("com.indra.sofia2.api.service.notapiversion");
-		}
+			version = version.substring(0, slashIndex);
+			if (version.startsWith("v")) {
+				version = version.substring(1);
+			}
 
-		return apiVersion;
+			if (version == null || version.equals("")) {
+				throw new BadRequestException("com.indra.sofia2.api.service.notapiversion");
+			}
+
+			return version;
+         }
 	}
 
 	public String getApiIdentifier(String pathInfo) throws BadRequestException {
