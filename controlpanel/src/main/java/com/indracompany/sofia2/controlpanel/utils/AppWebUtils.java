@@ -27,6 +27,7 @@ import org.springframework.web.util.WebUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -96,9 +97,11 @@ public class AppWebUtils {
 
 	public String beautifyJson(String json) throws JsonProcessingException {
 		
-		ObjectMapper mapper = new ObjectMapper();
-		
-		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+		ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+		String result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+		System.out.println(json);
+		System.out.println(result);
+		return result;
 		
 	}
 

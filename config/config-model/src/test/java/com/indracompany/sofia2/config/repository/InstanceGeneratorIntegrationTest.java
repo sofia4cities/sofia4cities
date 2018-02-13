@@ -55,8 +55,8 @@ public class InstanceGeneratorIntegrationTest {
 	@Autowired
 	UserRepository userRepository;
 
-	private User getUserCollaborator() {
-		return this.userRepository.findByUserId("collaborator");
+	private User getUserDeveloper() {
+		return this.userRepository.findByUserId("developer");
 	}
 
 	@Before
@@ -68,7 +68,7 @@ public class InstanceGeneratorIntegrationTest {
 			generator.setId(1);
 			generator.setValues("desde,0;hasta,400");
 			generator.setIdentification("Integer 0 a 400");
-			GeneratorType type = this.gtrepository.findById(4);
+			GeneratorType type = this.gtrepository.findAll().get(0);
 			if (type == null) {
 				type = new GeneratorType();
 				type.setId(1);
@@ -78,7 +78,7 @@ public class InstanceGeneratorIntegrationTest {
 				this.gtrepository.save(type);
 			}
 			generator.setGeneratorType(type);
-			generator.setUser(getUserCollaborator());
+			generator.setUser(getUserDeveloper());
 			this.repository.save(generator);
 
 		}

@@ -49,8 +49,8 @@ public class GadgetDataModelIntegrationTest {
 	@Autowired
 	UserRepository userRepository;
 
-	private User getUserCollaborator() {
-		return this.userRepository.findByUserId("collaborator");
+	private User getUserDeveloper() {
+		return this.userRepository.findByUserId("developer");
 	}
 
 	@Before
@@ -61,7 +61,7 @@ public class GadgetDataModelIntegrationTest {
 			GadgetDataModel gadgetDM = new GadgetDataModel();
 			gadgetDM.setIdentification("1");
 			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
-			gadgetDM.setUser(getUserCollaborator());
+			gadgetDM.setUser(getUserDeveloper());
 			gadgetDM.setPublic(true);
 			repository.save(gadgetDM);
 		}
@@ -71,30 +71,30 @@ public class GadgetDataModelIntegrationTest {
 	public void test_findByIdentificationIsAndUserIdIsOrIdentificationIsAndPublicTrue() {
 		GadgetDataModel gadgetDM = this.repository.findAll().get(0);
 		String identification = gadgetDM.getIdentification();
-		String userId = getUserCollaborator().getUserId();
+		String userId = getUserDeveloper().getUserId();
 		log.info("GadgetDataModel with identification: " + identification + " ,userId: " + userId + " public: "
 				+ gadgetDM.isPublic());
 		log.info("Identification: " + identification + " userId: " + userId + " should return true (size of list>0)");
 		Assert.assertTrue(this.repository
-				.findByIdentificationAndUserOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+				.findByIdentificationAndUserOrIsPublicTrue(identification, getUserDeveloper()).size() > 0);
 		log.info("Identification: 000 (harcoded) userId: " + userId + " should return false (size of list=0)");
 		Assert.assertTrue(
-				this.repository.findByIdentificationAndUserOrIsPublicTrue("000", getUserCollaborator()).size() == 0);
+				this.repository.findByIdentificationAndUserOrIsPublicTrue("000", getUserDeveloper()).size() == 0);
 		if (gadgetDM.isPublic()) {
 			log.info("Identification: " + identification
 					+ " userId: 000 (harcoded) should return true (size of list>0) because is public");
 			Assert.assertTrue(this.repository
-					.findByIdentificationAndUserOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+					.findByIdentificationAndUserOrIsPublicTrue(identification, getUserDeveloper()).size() > 0);
 
 		} else {
 			log.info("Identification: " + identification
 					+ " userId: 000 (harcoded) should return false (size of list=0) because is not public");
 			Assert.assertTrue(this.repository
-					.findByIdentificationAndUserOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+					.findByIdentificationAndUserOrIsPublicTrue(identification, getUserDeveloper()).size() > 0);
 
 		}
 		Assert.assertTrue(this.repository
-				.findByIdentificationAndUserOrIsPublicTrue(identification, getUserCollaborator()).size() > 0);
+				.findByIdentificationAndUserOrIsPublicTrue(identification, getUserDeveloper()).size() > 0);
 
 	}
 
