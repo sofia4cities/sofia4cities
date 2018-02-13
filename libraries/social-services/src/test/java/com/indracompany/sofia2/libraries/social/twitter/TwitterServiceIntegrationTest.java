@@ -77,7 +77,7 @@ public class TwitterServiceIntegrationTest {
         .count(25)
         .includeEntities(false);
 		SearchResults results = twitterS.search(params);
-		Assert.assertTrue(results.getTweets().size()==25);		
+		Assert.assertTrue(results.getTweets().size()>0 && results.getTweets().size()<=25);		
 	}
 	
 	@Test 

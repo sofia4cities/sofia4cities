@@ -549,92 +549,7 @@
 		function IsArray(obj) {  return obj && typeof obj === 'object' && typeof obj.length === 'number' && !(obj.propertyIsEnumerable('length')); }
 		
 		
-		// PROCESO DE RESPUESTA DE CONSULTA  
-		function Process(id, json){
-			SetTab();
-			window.IsCollapsible = true;	
-			var html = "";
-			try {
-				if(json == "" || json == null) { json = "\"\""; }
-				var obj = eval("["+json+"]");
-				html = ProcessObject(obj[0], 0, false, false, false);			
-				$id("Canvas"+ id).innerHTML = "<PRE class='CodeContainer'>"+ html +"</PRE>";
-			}
-			catch(e){	
-				$id("Canvas" + id).innerHTML = json;
-			}
-			// mostramos el panel de resultado de consultas. 
-			if ($('#result-panel').hasClass('hide')){ $('#result-panel').toggleClass('hide'); } 
-			$('#query-ontologia-result').text('' + $('#selector_ontologias').val());	
-		}
 		
-		
-		// PROCESADO DEL OBJETO QUE CONTIENE LOS RESULTADOS DE LA CONSULTA
-		function ProcessObject(obj, indent, addComma, isArray, isPropertyContent){
-			var html = "";
-			var comma = (addComma) ? "<span class='Comma'>,</span> " : ""; 
-			var type = typeof obj;
-			var clpsHtml = "";
-			
-			// PROCESADO DE ARRAY
-			if( IsArray(obj) ){
-				if(obj.length == 0){
-					html += GetRow(indent, "<span class='ArrayBrace'>[ ]</span>"+comma, isPropertyContent);
-				}
-				else{
-					clpsHtml = window.IsCollapsible ? "<span><img src=\""+window.ImgExpanded+"\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
-					html += GetRow(indent, "<span class='ArrayBrace'>[</span>"+clpsHtml, isPropertyContent);
-					for(var i = 0; i < obj.length; i++){
-						html += ProcessObject(obj[i], indent + 1, i < (obj.length - 1), true, false);
-					}
-					
-					clpsHtml = window.IsCollapsible ? "</span>" : "";
-					html += GetRow(indent, clpsHtml+"<span class='ArrayBrace'>]</span>"+comma);
-				}
-			}
-			// PROCESADO SI ES UN OBJETO
-			else if( type == 'object'){
-				if (obj == null){
-					html += FormatLiteral("null", "", comma, indent, isArray, "Null");
-				}
-				else if (obj.constructor == window._dateObj.constructor)  { html += FormatLiteral("new Date(" + obj.getTime() + ") /*" + obj.toLocaleString()+"*/", "", comma, indent, isArray, "Date"); }
-				else if (obj.constructor == window._regexpObj.constructor){	html += FormatLiteral("new RegExp(" + obj + ")", "", comma, indent, isArray, "RegExp"); }
-				else{
-					var numProps = 0;
-					for(var prop in obj) { numProps++; }
-					if(numProps == 0){
-						html += GetRow(indent, "<span class='ObjectBrace'>{ }</span>"+comma, isPropertyContent);
-					}
-					else{
-						clpsHtml = window.IsCollapsible ? "<span><img src=\""+window.ImgExpanded+"\" onClick=\"ExpImgClicked(this)\" /></span><span class='collapsible'>" : "";
-						html += GetRow(indent, "<span class='ObjectBrace'>{</span>"+clpsHtml, isPropertyContent);
-						var j = 0;
-						for(var prop in obj){
-							var quote = window.QuoteKeys ? "\"" : "";
-							html += GetRow(indent + 1, "<span class='PropertyName'>"+quote+prop+quote+"</span>: "+ProcessObject(obj[prop], indent + 1, ++j < numProps, false, true));
-						}					
-						clpsHtml = window.IsCollapsible ? "</span>" : "";
-						html += GetRow(indent, clpsHtml+"<span class='ObjectBrace'>}</span>"+comma);
-					}
-				}
-			}
-			// PROCESADO SI ES UN NUMERO
-			else if( type == 'number' ){ html += FormatLiteral(obj, "", comma, indent, isArray, "Number"); }
-			// PROCESADO SI ES BOOLEAN
-			else if( type == 'boolean'){ html += FormatLiteral(obj, "", comma, indent, isArray, "Boolean"); }
-			// PROCESADO SI ES UNA FUNCTION
-			else if(type == 'function'){ if (obj.constructor == window._regexpObj.constructor) { html += FormatLiteral("new RegExp(" + obj + ")", "", comma, indent, isArray, "RegExp"); } else{ obj = FormatFunction(indent, obj); html += FormatLiteral(obj, "", comma, indent, isArray, "Function"); }}
-			// PROCESADO DE UNDEFINED
-			else if(type == 'undefined'){ html += FormatLiteral("undefined", "", comma, indent, isArray, "Null");}
-			// PROCESADO GENÉRICO
-			else{
-				html += FormatLiteral(obj.toString().split("\\").join("\\\\").split('"').join('\\"'), "\"", comma, indent, isArray, "String");
-			}
-			
-			// RETORNO DEL DATO.
-			return html;
-		}
-
 		
 		// PROCESADO DE FORMA LITERALES
 		function FormatLiteral(literal, quote, comma, indent, isArray, style){
@@ -766,11 +681,9 @@
 				}
 				else{
 					var opcion = comboTypeQuery.options[comboTypeQuery.selectedIndex].value;
-					if(opcion == "sql"){ $('#querySql').val("select * from "+ ontologia +" limit 3;"); }
-					else if( opcion == "native" && bdtrType != "relationalOracle" && bdtrType != "relationalKudu"){ $('#querySql').val("db."+ ontologia +".find().limit(3);"); }
-					else if( opcion == "native" && bdtrType == "relationalOracle"){ $('#querySql').val("select * from "+ ontologia +" where ROWNUM <= 50;"); }
-					else if( opcion == "native" && bdtrType == "relationalKudu")  { $('#querySql').val("select * from "+ ontologia +" limit 3"); }
-					else if( opcion == "sql2"){ $('#querySql').val("select * from "+ ontologia +" limit 3"); }
+					if(opcion == "sql"){ $('#querySql').val("select * from "+ ontologia +" limit 3"); }
+					else if( opcion == "native" ){ $('#querySql').val("db."+ ontologia +".find().limit(3);"); }
+					
 				}
 				$("#groupBy_time_ul").hide();
 				$( "#from_ul" ).children().not('.panel-sofia2').remove();
@@ -957,6 +870,57 @@
 			
 			
 		};
+
+		var indexOrderby = 0;
+		// DIALOGO DE CONFIGURACION DEL ORDERBY
+		function mostrarDialogoOrderBy(){
+			var comboFields=$('#fields').html();
+			var comboOrders=$('#form_orden').html();
+
+			/*[+
+			$.confirm({
+		    title: [[#{querytool.select.orderby}]],
+		    content: '' +
+		    '<form action="" class="form_order" id="form_order">' +
+		    '<div class="form-group">' +
+		    '<label>Select fields</label> <select id="orderFields" class="form-control querySelect" data-width="100%">'+ comboFields +
+		    '</select> <select class="element select small form-control" id="orderType" name="orderType">'+comboOrders+'</select></div>' +
+		    '</form>',
+		    buttons: {
+		        formSubmit: {
+		            text: 'OK',
+		            btnClass: 'btn-blue',
+		            action: function () {
+		            	var campo = $("#orderFields").val();
+						var orden = $("#orderType").val();
+											
+						var add = comprobarOrderby(campo);
+						if(add){                        
+							var orderby = '<li id="orderby'+indexOrderby+'" name="'+campo+' '+orden+'" class="list-group-item bold">'+ campo +' '+ orden +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'orderby'+indexOrderby+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
+							$("#orderby_ul").append(orderby);
+							showLog ? console.log('regenerando query tras agregar o quitar orderby: ' + campo) : '';
+							createQuery();
+						}
+						indexOrderby++;
+		            }
+		        },
+		        cancel: function () {
+		            //close
+		        },
+		    },
+		    onContentReady: function () {
+		        // bind to events
+		        var jc = this;
+		        getOntologyFields();
+		        this.$content.find('form').on('submit', function (e) {
+		            // if the user submits the form by pressing enter in the field.
+		            e.preventDefault();
+		            jc.$$formSubmit.trigger('click'); // reference the button and click it
+		        });
+		    }
+		});+]*/
+
+		}
 		
 		// COMPROBAR LAS CONDICIONES ANTES DE INYECTARLAS
 		function comprobarCondicion(queryCondicion){
@@ -1013,56 +977,7 @@
 			createQuery();
 		}
 		
-		var indexOrderby = 0;
-		// DIALOGO DE CONFIGURACION DEL ORDERBY
-		function mostrarDialogoOrderBy(){
-			var comboFields=$('#fields').html();
-			var comboOrders=$('#form_orden').html();
 
-			/*[+
-			$.confirm({
-		    title: [[#{querytool.select.orderby}]],
-		    content: '' +
-		    '<form action="" class="form_order" id="form_order">' +
-		    '<div class="form-group">' +
-		    '<label>Select fields</label> <select id="orderFields" class="form-control querySelect" data-width="100%">'+ comboFields +
-		    '</select> <select class="element select small form-control" id="orderType" name="orderType">'+comboOrders+'</select></div>' +
-		    '</form>',
-		    buttons: {
-		        formSubmit: {
-		            text: 'OK',
-		            btnClass: 'btn-blue',
-		            action: function () {
-		            	var campo = $("#orderFields").val();
-						var orden = $("#orderType").val();
-											
-						var add = comprobarOrderby(campo);
-						if(add){                        
-							var orderby = '<li id="orderby'+indexOrderby+'" name="'+campo+' '+orden+'" class="list-group-item bold">'+ campo +' '+ orden +'<div class="btn btn-xs pull-right" onclick="deleteCondition(\'orderby'+indexOrderby+'\')"><i class="fa fa-trash-o" style="font-size: 14px;"></i></div></li>';
-							$("#orderby_ul").append(orderby);
-							showLog ? console.log('regenerando query tras agregar o quitar orderby: ' + campo) : '';
-							createQuery();
-						}
-						indexOrderby++;
-		            }
-		        },
-		        cancel: function () {
-		            //close
-		        },
-		    },
-		    onContentReady: function () {
-		        // bind to events
-		        var jc = this;
-		        getOntologyFields();
-		        this.$content.find('form').on('submit', function (e) {
-		            // if the user submits the form by pressing enter in the field.
-		            e.preventDefault();
-		            jc.$$formSubmit.trigger('click'); // reference the button and click it
-		        });
-		    }
-		});+]*/
-
-		}
 
 		
 		// DISPATCHER PARA LLAMAR A LA FUNCION CORRESPONDIENTE QUE MONTA EL QUERY STRING DEPENDIENDO DE LA BBDD Y DEL TIPO DE CONSULTA, Y SALIDA.
@@ -1327,7 +1242,7 @@
 				else if(hayCondicion  && hayOrderBy) { query = "db."+ ontologia + ".aggregate([{$match:{" + condicion + "}},{" + queryGroup + "},{$sort:{" + queryOrder + "}}])"; } 
 			}
 			
-			if( bdtrType == "relationalOracle"){ query = query + ";"; } else if( bdtrType != "relationalOracle"){ query = query +".limit(3);"; }
+			query = query +".limit(3);"; 
 			
 			// RETORNA EL STRING QUERY NATIVE
 			return query;
@@ -1365,8 +1280,7 @@
 			console.log('ontologia seleccionada: ' + selected);
 			console.log('Cargando ontologia: ' + selected + ' del grupo: ' + grupo + 'con ID: '+ ontologiaID);
 			
-			// selección de ontología y carga.				
-			if ( grupo === 'general') { seleccionarOntologia(selected); } else { seleccionarOntologiaGrupo(); }			
+			
 			
 	
 		});		
