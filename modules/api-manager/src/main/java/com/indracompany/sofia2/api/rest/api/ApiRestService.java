@@ -48,7 +48,6 @@ public interface ApiRestService {
 	    httpMethod="GET",
 	    produces=MediaType.APPLICATION_JSON,
 	    consumes=MediaType.APPLICATION_JSON,
-	   // response = Pet.class,
 	    authorizations = @Authorization(value = "token")
 	  )
 	@ApiResponses(value = { 
@@ -65,7 +64,6 @@ public interface ApiRestService {
     httpMethod="GET",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	@ApiResponses(value = { 
@@ -80,12 +78,11 @@ public interface ApiRestService {
 
 	@POST
 	@Path("/")
-	@ApiOperation(value = "Creación de un API", 
-    notes = "Creación de un API", 
+	@ApiOperation(value = "Creación API", 
+    notes = "Creación API", 
     httpMethod="POST",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	@ApiResponses(value = { 
@@ -94,15 +91,30 @@ public interface ApiRestService {
 		@ApiResponse(code = 401, message = "Unauthorized"),
 		@ApiResponse(code = 501, message = "Internal Server Error")})
 	public Response create( ApiDTO api, @HeaderParam("X-SOFIA2-APIKey") String token) throws Exception;
+	
+	@POST
+	@Path("/changestate/{indentifier}")
+	@ApiOperation(value = "Change STate API", 
+    notes = "Change STate API", 
+    httpMethod="POST",
+    produces=MediaType.APPLICATION_JSON,
+    consumes=MediaType.APPLICATION_JSON,
+    authorizations = @Authorization(value = "token")
+  )
+	@ApiResponses(value = { 
+		@ApiResponse(code=  204, message="No Content"),
+		@ApiResponse(code = 400, message = "Bad Request"),
+		@ApiResponse(code = 401, message = "Unauthorized"),
+		@ApiResponse(code = 501, message = "Internal Server Error")})
+	public Response create(@DefaultValue("") @QueryParam("indentifier") @ApiParam(name="indentifier") String indentifier, com.indracompany.sofia2.config.model.Api.ApiType api, @HeaderParam("X-SOFIA2-APIKey") String token) throws Exception;
 
 	@PUT
 	@Path("/")
-	@ApiOperation(value = "Modify de un API", 
-    notes = "Modify de un API", 
+	@ApiOperation(value = "Modify API", 
+    notes = "Modify API", 
     httpMethod="PUT",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	@ApiResponses(value = { 
@@ -114,12 +126,11 @@ public interface ApiRestService {
 
 	@DELETE
 	@Path("/")
-	@ApiOperation(value = "Delete de un API", 
-    notes = "Delete de un API", 
+	@ApiOperation(value = "Delete API", 
+    notes = "Delete API", 
     httpMethod="DELETE",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	@ApiResponses(value = { 
@@ -136,7 +147,6 @@ public interface ApiRestService {
     httpMethod="DELETE",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	@ApiResponses(value = { 
@@ -150,13 +160,12 @@ public interface ApiRestService {
 
 
 	@GET
-	@Path("/usuario/{idUsuario}")
+	@Path("/user/{idUsuario}")
 	@ApiOperation(value = "GET USER", 
     notes = "GET USER", 
     httpMethod="GET",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	@ApiResponses(value = { 
