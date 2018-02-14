@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.jeasy.rules.api.Facts;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
@@ -88,12 +90,11 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			REASON=((String)facts.get(RuleManager.REASON));
 			REASON_TYPE=((Object)facts.get(RuleManager.REASON_TYPE));
 			
-
-			exchange.getIn().setBody(REASON+" \n"+REASON_TYPE);
+			
+			exchange.getIn().setBody("[\"STOPPED EXECUTION\",\""+REASON+"\"]");
 			exchange.getIn().setHeader("content-type", "text/plain");
 		}
 		else {
-			System.out.println(hashPP(data));
 			
 			User user = (User) data.get(ApiServiceInterface.USER);
 			Api api = (Api) data.get(ApiServiceInterface.API);
@@ -106,9 +107,9 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
 			String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
 			
-			String str = hashPP(data);
+			String str = getJsonFromMap(data).toString(4);
 			
-			exchange.getIn().setBody(str+" \n"+REASON);
+			exchange.getIn().setBody(str);
 			exchange.getIn().setHeader("content-type", "text/plain");
 		}
 		
@@ -170,6 +171,25 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		doGet(request,response);
 
 	}
+	
+
+	
+
+
+
+private static JSONObject getJsonFromMap(Map<String, Object> map) throws JSONException {
+    JSONObject jsonData = new JSONObject();
+    for (String key : map.keySet()) {
+        Object value = map.get(key);
+        if (value instanceof Map<?, ?>) {
+            value = getJsonFromMap((Map<String, Object>) value);
+        }
+        jsonData.put(key, value);
+    }
+    return jsonData;
+}
+
+
 	
 	private static String hashPP(final Map<String,Object> m, String... offset) {
 	    String retval = "";
