@@ -137,6 +137,7 @@ public class OntologyController {
 		if (!this.ontologyService.hasUserPermissionForInsert(this.utils.getUserId(), ontology.getIdentification()) && !utils.isAdministrator())
 			return "/error/403";
 		try {
+			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 			this.ontologyService.updateOntology(ontology);
 		}catch (OntologyServiceException e)
 		{
