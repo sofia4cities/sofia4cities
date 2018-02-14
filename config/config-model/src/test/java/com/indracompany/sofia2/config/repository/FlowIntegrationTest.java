@@ -133,13 +133,4 @@ public class FlowIntegrationTest {
 		Assert.assertTrue(ssapNodes.size() > 0);
 	}
 
-	@Test
-	public void test3_generateFlowNodeTypes() {
-
-		FlowNodeType type = new FlowNodeType();
-		type.setIdentification("script-topic");
-		nodeTypeRepository.save(type);
-
-		Assert.assertTrue(true);
-	}
 }
