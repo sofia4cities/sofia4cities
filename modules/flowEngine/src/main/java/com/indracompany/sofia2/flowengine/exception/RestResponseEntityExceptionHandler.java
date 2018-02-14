@@ -1,4 +1,4 @@
-package com.indracompany.sofia2.flowengine.api.rest.exception;
+package com.indracompany.sofia2.flowengine.exception;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -29,6 +29,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	@ExceptionHandler(value = { NotAllowedException.class })
 	protected ResponseEntity<Object> handleForbidden(RuntimeException ex, WebRequest request) {
 		return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+	}
+
+	@ExceptionHandler(value = { NodeRedAdminServiceException.class })
+	protected ResponseEntity<Object> handleNoreRedService(RuntimeException ex, WebRequest request) {
+		return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR,
+				request);
 	}
 
 }
