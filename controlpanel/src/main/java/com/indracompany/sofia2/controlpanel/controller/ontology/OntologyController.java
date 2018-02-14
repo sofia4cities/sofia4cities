@@ -147,7 +147,7 @@ public class OntologyController {
 		}
 		
 		utils.addRedirectMessage("ontology.update.success", redirect);
-		return "redirect:/ontologies/show"+id;
+		return "redirect:/ontologies/show/"+id;
 	}
 	
 	@DeleteMapping("/{id}")

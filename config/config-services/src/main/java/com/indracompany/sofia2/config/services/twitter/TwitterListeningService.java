@@ -19,7 +19,7 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
 
-public interface TwitterService {
+public interface TwitterListeningService {
 
 	List<TwitterListening> getAllListenings();
 

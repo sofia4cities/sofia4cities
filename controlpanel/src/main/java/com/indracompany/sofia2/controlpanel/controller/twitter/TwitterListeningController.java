@@ -46,10 +46,10 @@ import com.indracompany.sofia2.config.services.exceptions.ClientPlatformServiceE
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
-import com.indracompany.sofia2.config.services.twitter.TwitterService;
+import com.indracompany.sofia2.config.services.twitter.TwitterListeningService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.controller.user.UserController;
-import com.indracompany.sofia2.controlpanel.service.TwitterControlService;
+import com.indracompany.sofia2.controlpanel.services.twitter.TwitterControlService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -62,7 +62,7 @@ public class TwitterListeningController {
 	@Autowired
 	private AppWebUtils utils;
 	@Autowired
-	private TwitterService twitterService;
+	private TwitterListeningService twitterListeningService;
 	@Autowired
 	private OntologyService ontologyService;
 	@Autowired
@@ -79,7 +79,7 @@ public class TwitterListeningController {
 	//SCHEDULED SEARCH BEGIN METHODS
 	@GetMapping("/scheduledsearch/list")
 	public String listListenings(Model model) {
-		model.addAttribute("twitterListenings", this.twitterService.getAllListeningsByUser(utils.getUserId()));
+		model.addAttribute("twitterListenings", this.twitterListeningService.getAllListeningsByUser(utils.getUserId()));
 		return "/twitter/scheduledsearch/list";
 	}
 
@@ -93,7 +93,7 @@ public class TwitterListeningController {
 	@GetMapping("/scheduledsearch/update/{id}")
 	public String updateForm(Model model, @PathVariable("id") String id) {
 		TwitterListening TwitterListening = null;
-		TwitterListening = this.twitterService.getListenById(id);
+		TwitterListening = this.twitterListeningService.getListenById(id);
 		if (TwitterListening == null)
 			TwitterListening = new TwitterListening();
 		model.addAttribute("twitterListening", TwitterListening);
@@ -105,7 +105,7 @@ public class TwitterListeningController {
 	public String update(Model model, @PathVariable("id") String id, @ModelAttribute TwitterListening twitterListener) {
 
 		if (twitterListener != null)
-			this.twitterService.updateListen(twitterListener);
+			this.twitterListeningService.updateListen(twitterListener);
 		return "redirect:/twitter/scheduledsearch/update/" + id;
 	}
 
@@ -126,12 +126,12 @@ public class TwitterListeningController {
 		if (!newOntology) {
 			if (twitterListening.getUser() == null)
 				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
-			twitterListening = this.twitterService.createListening(twitterListening);
+			twitterListening = this.twitterListeningService.createListening(twitterListening);
 			this.twitterControlService.scheduleTwitterListening(twitterListening);
 		} else {
 
 			try{
-				Ontology ontology = this.twitterService.createTwitterOntology(ontologyId,
+				Ontology ontology = this.twitterListeningService.createTwitterOntology(ontologyId,
 						DataModel.MainType.Twitter.toString());
 				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 				ontology = this.ontologyService.saveOntology(ontology);
@@ -148,7 +148,7 @@ public class TwitterListeningController {
 				twitterListening.setOntology(ontology);
 				twitterListening.setToken(token);
 				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
-				this.twitterService.createListening(twitterListening);
+				this.twitterListeningService.createListening(twitterListening);
 			}catch (RuntimeException e)
 			{
 				if(e instanceof OntologyServiceException)
@@ -167,23 +167,23 @@ public class TwitterListeningController {
 
 	@PostMapping("/scheduledsearch/getclients")
 	public @ResponseBody List<String> getClientsOntology(@RequestBody String ontologyId) {
-		return this.twitterService.getClientsFromOntology(ontologyId);
+		return this.twitterListeningService.getClientsFromOntology(ontologyId);
 	}
 
 	@PostMapping("/scheduledsearch/gettokens")
 	public @ResponseBody List<String> getTokensClient(@RequestBody String clientPlatformId) {
-		return this.twitterService.getTokensFromClient(clientPlatformId);
+		return this.twitterListeningService.getTokensFromClient(clientPlatformId);
 	}
 
 
 	@PostMapping("/scheduledsearch/existontology")
 	public @ResponseBody boolean existOntology(@RequestBody String identification) {
-		return this.twitterService.existOntology(identification);
+		return this.twitterListeningService.existOntology(identification);
 	}
 
 	@PostMapping("/scheduledsearch/existclient")
 	public @ResponseBody boolean existClient(@RequestBody String identification) {
-		return this.twitterService.existClientPlatform(identification);
+		return this.twitterListeningService.existClientPlatform(identification);
 	}
 	
 	
@@ -192,10 +192,10 @@ public class TwitterListeningController {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		List<Ontology> ontologies = new ArrayList<Ontology>();
 		if (utils.isAdministrator()) {
-			configurations = this.twitterService.getAllConfigurations();
+			configurations = this.twitterListeningService.getAllConfigurations();
 			ontologies = this.ontologyService.getAllOntologies();
 		} else {
-			configurations = this.twitterService.getConfigurationsByUserId(this.utils.getUserId());
+			configurations = this.twitterListeningService.getConfigurationsByUserId(this.utils.getUserId());
 			for (Ontology ontology : this.ontologyService.getOntologiesByUserId(this.utils.getUserId())) {
 				if (ontology.getDataModel().getType().equals(DataModel.MainType.Twitter)) {
 					ontologies.add(ontology);

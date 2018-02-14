@@ -48,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TwitterServiceIntegrationTest {
 
 	@Autowired
-	TwitterService twitterService;
+	TwitterListeningService twitterListeningService;
 	@Autowired
 	TokenService tokenService;
 	@Autowired
@@ -66,13 +66,13 @@ public class TwitterServiceIntegrationTest {
 		Ontology ontology;
 		Token token;
 		ClientPlatform clientPlatform;
-		if(twitterService.getListenByIdentificator("Listening Test") == null) {
+		if(twitterListeningService.getListenByIdentificator("Listening Test") == null) {
 			twitterListening = new TwitterListening();
 			twitterListening.setId("1");
 			twitterListening.setConfiguration(configurationService.getConfiguration(ConfigurationType.Type.TwitterConfiguration, "ALL", "lmgracia"));
 			
 			if(this.ontologyService.getOntologyByIdentification("OntologyTwitter") == null) {
-				ontology = twitterService.createTwitterOntology("OntologyTwitter", DataModel.MainType.Twitter.name());
+				ontology = twitterListeningService.createTwitterOntology("OntologyTwitter", DataModel.MainType.Twitter.name());
 				ontology.setUser(userService.getUser("administrator"));
 				ontology = ontologyService.saveOntology(ontology);
 			}else
@@ -100,9 +100,9 @@ public class TwitterServiceIntegrationTest {
 			twitterListening.setDateTo(dateTo);
 			twitterListening.setIdentificator("Listening Test");
 			twitterListening.setTopics("Helsinki,Madrid");
-			twitterListening = twitterService.createListening(twitterListening);
+			twitterListening = twitterListeningService.createListening(twitterListening);
 		}
-		twitterListening = twitterService.getListenByIdentificator("Listening Test");
+		twitterListening = twitterListeningService.getListenByIdentificator("Listening Test");
 		Assert.assertTrue(twitterListening.getId() != null);
 		
 	}

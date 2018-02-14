@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.service;
+package com.indracompany.sofia2.controlpanel.services.twitter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.TwitterListening;
-import com.indracompany.sofia2.config.services.twitter.TwitterService;
+import com.indracompany.sofia2.config.services.twitter.TwitterListeningService;
 import com.indracompany.sofia2.scheduler.SchedulerType;
 import com.indracompany.sofia2.scheduler.scheduler.bean.TaskInfo;
 import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
@@ -29,7 +29,7 @@ import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
 public class TwitterControlService {
 
 	@Autowired
-	TwitterService twitterService;
+	TwitterListeningService twitterListeningService;
 	@Autowired
 	TaskService taskService;
 

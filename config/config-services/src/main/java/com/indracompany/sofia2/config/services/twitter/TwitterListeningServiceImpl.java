@@ -41,7 +41,7 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 @Service
-public class TwitterServiceImpl implements TwitterService {
+public class TwitterListeningServiceImpl implements TwitterListeningService {
 
 	@Autowired
 	TwitterListeningRepository twitterListeningRepository;
