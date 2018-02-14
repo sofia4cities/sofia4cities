@@ -210,11 +210,10 @@ public class OntologyServiceImpl implements OntologyService {
 			if(!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
 				ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
 			ontologyDb.setJsonSchema(ontology.getJsonSchema());
-			if(!ontology.getDataModel().getId().equals(ontologyDb.getDataModel().getId()))
-				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
+			ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 			ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 			ontologyDb.setMetainf(ontology.getMetainf());
-			this.saveOntology(ontologyDb);
+			this.ontologyRepository.save(ontologyDb);
 				
 				
 		}else

@@ -123,13 +123,13 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.datamodel} + ':'">Datamodel Template</label>
-															<p class="form-control-static-block bold" th:text="*{dataModel.name} "> datamodel </p>
+															<p class="form-control-static-block bold" th:text="*{dataModel?.name} "> datamodel </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.datamodel.type} + ':'">Datamodel Type</label>
-															<p class="form-control-static-block bold" th:text="*{dataModel.type} "> datamodel type </p>
+															<p class="form-control-static-block bold" th:text="*{dataModel?.type} "> datamodel type </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12" >
