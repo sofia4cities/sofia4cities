@@ -117,8 +117,8 @@
 									</div>
 									<div class="col-md-12">
 										<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
-											<input id="datamodelid" type="hidden" th:required="true" th:field="*{dataModel}" />											
-											<input id="jsonschema" type="hidden" th:required="true" th:field="*{jsonSchema}"  />
+											<input id="datamodelid" class="hidden-validation" type="hidden" th:required="true" th:field="*{dataModel}" />											
+											<input id="jsonschema"  class="hidden-validation" type="hidden" th:required="true" th:field="*{jsonSchema}"  />
 											
 											
 											<!-- FORM ACTIONS FOR INSERT-->
@@ -154,8 +154,8 @@
 														<div class="col-md-6 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" th:attr=" data-content=#{ontology.metainf.help},data-title=#{ontology.metainf}"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>
-																<input  id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" th:required="true" data-minlength="2" pattern=".{2,}" min="2"></input>
-																<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.metainf.min}"> min. 2 chars</small></span>
+																<input  id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" data-minlength="2" pattern=".{2,}" min="2" th:required="true"></input>
+																
 															</div>
 														</div>													
 														<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
@@ -232,6 +232,12 @@
 															<div class="portlet-body">
 																<div class="col-md-12 margin-top-10 ">
 																	<div class="tab-content">
+																	
+																		<div id="datamodelError" class="alert alert-warning hide">
+																			<button class="close" data-close="alert"></button> 
+																				<span th:text="#{ontology.datamodel.error}">You have some form errors. Please Select a Datamodel below.</span>
+																		</div>
+																	
 																		<!-- ONTOLOGY TEMPLATES -->
 																		<div class="tab-pane active" id="tab_1">																			
 																			<div class="row">
@@ -273,7 +279,7 @@
 																							<tbody>
 																								<tr class="mountable-model">
 																									<td><input type="text" name="property[]"  onblur="OntologyCreateController.checkProperty(this)" class="form-control"/></td>
-																									<td><input type="text" name="type[]"   onblur="OntologyCreateController.checkType(this)" class="form-control"/></td>
+																									<td><input type="text" name="type[]"   onblur="OntologyCreateController.checkType(this)" class="form-control" placeholder="[string, number, object, timestamp, binary]" /></td>
 																									<td><input type="text" name="required[]"   onblur="OntologyCreateController.checkRequired(this)" class="form-control"/></td>
 																									<td><input type="text" name="descriptions[]" class="form-control"/></td>																									
 																									<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="OntologyCreateController.removeProperty(this)">Remove</button></td>			
@@ -312,7 +318,7 @@
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-													<button th:if="${ontology.user?.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<button th:if="${ontology.user?.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<!-- UPDATE -->
 													<button th:if="${ontology.user?.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>

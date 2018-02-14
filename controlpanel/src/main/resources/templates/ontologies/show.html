@@ -198,7 +198,7 @@
 													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													
 													<!-- REMOVE -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteOntologyConfirmation(\'' + 'delete-ontology' + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteOntologyConfirmation(\'' + ${ontology.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
@@ -262,7 +262,7 @@
 		if ( !ontologyId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO ontology-FORM SELECTED!'}); return false; }
 		
 		// set action and ontologyId to the form
-		$('.delete-ontology').attr('ontologyId',ontologyId);
+		$('#delete-ontologyId').attr('ontologyId',ontologyId);
 		$('.delete-ontology').attr('action','/controlpanel/ontologies/' + ontologyId);
 		showLog ? console.log('deleteOntologyConfirmation() -> formAction: ' + $('.delete-ontology').attr('action') + ' ID: ' + $('#delete-ontologyId').attr('ontologyId')): '';
 		

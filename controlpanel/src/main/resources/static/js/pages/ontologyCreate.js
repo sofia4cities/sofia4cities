@@ -177,6 +177,17 @@ var OntologyCreateController = function() {
 	}
 	
 	
+	// CHECK IF A WRITTEN PROPERTY IS OR NOT FROM THE BASE
+	var	noBaseProperty =  function(property){
+			logControl ? console.log(LIB_TITLE + ': noBaseProperty()') : '';
+			
+			var isNoBaseProperty = false;
+			var noBaseJson = createJsonProperties(JSON.parse(schema)); // to JSON		
+			var noBaseProperties = getProperties(noBaseJson); // only Properties Arr
+			isNoBaseProperty = $.inArray( property, noBaseProperties ) > -1 ? false : true;
+			return isNoBaseProperty;
+	}
+	
 	// REDIRECT URL
 	var navigateUrl = function(url){
 		window.location.href = url; 
@@ -215,6 +226,7 @@ var OntologyCreateController = function() {
         var error1 = $('.alert-danger');
         var success1 = $('.alert-success');
 		
+					
 		// set current language
 		currentLanguage = ontologyCreateReg.language || LANGUAGE;
 		
@@ -222,17 +234,21 @@ var OntologyCreateController = function() {
             errorElement: 'span', //default input error message container
             errorClass: 'help-block help-block-error', // default input error message class
             focusInvalid: false, // do not focus the last invalid input
-            ignore: ":hidden:not(.selectpicker)", // validate all fields including form hidden input but not selectpicker
+            ignore: ":hidden:not('.selectpicker, .hidden-validation'), :not(:visible('.tagsinput'))", // validate all fields including form hidden input but not selectpicker
 			lang: currentLanguage,
 			// custom messages
-            messages: {					
+            messages: {	
+				jsonschema: { required:"El esquema no se ha guardado correctamente"},
+				datamodelid: { required: "Por favor seleccione una plantilla de ontología, aunque sea la vacia."}
 			},
 			// validation rules
             rules: {
 				ontologyId:		{ minlength: 5, required: true },
                 identification:	{ minlength: 5, required: true },
-				metainf:		{ minlength: 5, required: true },
-				description:	{ required: true }                
+				metainf:		{ required: true},				
+				datamodelid:	{ required: true},
+				jsonschema:		{ required: true},
+				description:	{ required: true }
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
                 success1.hide();
@@ -242,6 +258,7 @@ var OntologyCreateController = function() {
             errorPlacement: function(error, element) {
                 if 		( element.is(':checkbox'))	{ error.insertAfter(element.closest(".md-checkbox-list, .md-checkbox-inline, .checkbox-list, .checkbox-inline")); }
 				else if ( element.is(':radio'))		{ error.insertAfter(element.closest(".md-radio-list, .md-radio-inline, .radio-list,.radio-inline")); }
+				else if ( element.is(':hidden'))	{ $('#datamodelError').removeClass('hide'); }				
 				else { error.insertAfter(element); }
             },
             highlight: function(element) { // hightlight error inputs
@@ -342,9 +359,7 @@ var OntologyCreateController = function() {
 		
 	}
 	
-	
-	
-	
+		
 	
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
@@ -377,6 +392,7 @@ var OntologyCreateController = function() {
 			deleteOntologyConfirmation(ontologyId);			
 		},
 		
+				
 		// REMOVE PROPERTYS (ONLY ADDITIONAL NO BASE)
 		removeProperty: function(obj){
 			logControl ? console.log(LIB_TITLE + ': removeProperty()') : '';
@@ -421,17 +437,7 @@ var OntologyCreateController = function() {
 			$(obj).val(propRequired);
 		},
 		
-		// CHECK IF A WRITTEN PROPERTY IS OR NOT FROM THE BASE
-		noBaseProperty: function(property){
-			logControl ? console.log(LIB_TITLE + ': noBaseProperty()') : '';
-			
-			var isNoBaseProperty = false;
-			var noBaseJson = createJsonProperties(JSON.parse(schema)); // to JSON		
-			var noBaseProperties = getProperties(noBaseJson); // only Properties Arr
-			isNoBaseProperty = $.inArray( property, noBaseProperties ) > -1 ? false : true;
-			return isNoBaseProperty;
-		},
-		
+				
 		// DATAMODEL PROPERTIES JSON TO HTML 
 		schemaToTable: function(objschema,tableId){
 			logControl ? console.log(LIB_TITLE + ': schemaToTable()') : '';
@@ -547,6 +553,9 @@ var OntologyCreateController = function() {
 			
 			// UPDATING FORM FIELDS
 			$('#jsonschema').val(schema);
+			
+			// HIDE ERROR FOR DATAMODEL NOT SELECTED IF IT WAS VISIBLE
+			$('#datamodelError').addClass('hide');
 		
 		}
 		
