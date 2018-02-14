@@ -29,4 +29,6 @@ public interface TwitterListeningRepository extends JpaRepository<TwitterListeni
 
 	List<TwitterListening> findByOntology(Ontology ontology);
 
+	TwitterListening findByIdentificator(String identificator);
+
 }

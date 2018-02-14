@@ -22,4 +22,6 @@ import com.indracompany.sofia2.config.model.Token;
 public interface ClientPlatformService {
 
 	Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform);
+	
+	ClientPlatform getByIdentification(String identification);
 }

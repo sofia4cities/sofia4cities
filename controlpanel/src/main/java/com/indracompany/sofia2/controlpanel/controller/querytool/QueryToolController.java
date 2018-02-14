@@ -88,7 +88,7 @@ public class QueryToolController {
 					limit=Integer.parseInt(splitLimit[1].replaceAll("[();]", ""));
 				}
 				//replace("\\\"", "'").replace("\"","")
-				String queryResult = this.utils.beautifyJson(queryToolService.queryNativeAsJson(ontologyIdentification, query, 0, limit).replace("\\\"", "'").replace("\"",""));
+				String queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query, 0, limit).replace("\\\"", "'").replace("\"","");
 				model.addAttribute("queryResult", queryResult);
 				return "/querytool/show :: query";
 			}else{

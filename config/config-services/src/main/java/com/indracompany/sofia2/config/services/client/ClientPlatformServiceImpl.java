@@ -65,5 +65,10 @@ public class ClientPlatformServiceImpl implements ClientPlatformService{
 		}else
 			throw new ClientPlatformServiceException("Platform Client already exists");
 	}
+	
+	@Override
+	public ClientPlatform getByIdentification(String identification) {
+		return this.clientPlatformRepository.findByIdentification(identification);
+	}
 
 }

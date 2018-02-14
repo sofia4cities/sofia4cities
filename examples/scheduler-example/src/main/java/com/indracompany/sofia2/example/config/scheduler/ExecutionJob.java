@@ -25,11 +25,14 @@ public class ExecutionJob implements BatchGenericExecutor{
 	
 	@Autowired
 	private AnotherExampleJob anotherExampleJob;
+	@Autowired
+	private TwitterStreamingJob twitterStreamingJob;
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
 		anotherExampleJob.execute(context);
+		twitterStreamingJob.execute(context);
 		
 	}
 
