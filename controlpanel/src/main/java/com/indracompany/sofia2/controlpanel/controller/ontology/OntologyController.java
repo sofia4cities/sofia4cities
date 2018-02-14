@@ -151,11 +151,19 @@ public class OntologyController {
 	}
 	
 	@DeleteMapping("/{id}")
-	public String delete(Model model, @PathVariable ("id") String id) {
+	public String delete(Model model, @PathVariable ("id") String id,
+			RedirectAttributes redirect) {
 		
 		if(!this.ontologyService.getOntologyById(id).getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
 			return "/error/403";
-		this.ontologyService.deleteOntology(id);
+		try{
+			this.ontologyService.deleteOntology(id);
+			//TODO ON DELETE CASCADE
+		}catch(Exception e)
+		{
+			utils.addRedirectMessage("ontology.delete.error", redirect);
+			return "redirect:/ontologies/list";
+		}
 		
 		return "redirect:/ontologies/list";
 	}

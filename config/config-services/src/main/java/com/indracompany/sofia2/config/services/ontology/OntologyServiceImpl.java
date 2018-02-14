@@ -33,6 +33,7 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -44,6 +45,8 @@ public class OntologyServiceImpl implements OntologyService {
 	OntologyRepository ontologyRepository;
 	@Autowired
 	DataModelRepository dataModelRepository;
+	@Autowired
+	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
 	UserService userService;
 
@@ -210,10 +213,10 @@ public class OntologyServiceImpl implements OntologyService {
 			if(!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
 				ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
 			ontologyDb.setJsonSchema(ontology.getJsonSchema());
-			if(!ontology.getDataModel().getId().equals(ontologyDb.getDataModel().getId()))
-				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
+			ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 			ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 			ontologyDb.setMetainf(ontology.getMetainf());
+			this.ontologyRepository.save(ontologyDb);
 				
 				
 		}else
@@ -231,7 +234,16 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	@Transactional
 	public void deleteOntology(String id) {
-		this.ontologyRepository.deleteById(id);
+		try{
+			if(this.clientPlatformOntologyRepository.findByOntology(this.ontologyRepository.findById(id)) != null) {
+				this.clientPlatformOntologyRepository.deleteByOntology(this.ontologyRepository.findById(id));
+			}
+			this.ontologyRepository.deleteById(id);
+		}catch(Exception e){
+			throw new OntologyServiceException("Couldn't delete ontology");
+		}
+			
+		
 	}
 	
 
