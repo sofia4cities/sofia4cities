@@ -316,7 +316,7 @@
 										<!-- AUXILIAR FORM TO DELETE ONTOLOGY -->
 										<form id="delete_ontology_form" class="delete-ontology hide"  th:action="@{'/ontologies/'+${ontology.id}}"  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
-											<input type="hidden" name="ontologyId" th:value="${ontology.id}"/>
+											<input id="delete-ontologyId" type="hidden" name="ontologyId" th:value="${ontology.id}"/>
 										</form>
 									</div>
 								</div>
@@ -372,6 +372,8 @@
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"actionMode" : [[${ontology.user?.userId}]],
+		"schemaEditMode" : [[${ontology?.jsonSchema}]],
+		"dataModelEditMode" : [[${ontology.dataModel?.id}]]
 	};	
 	
 
