@@ -46,7 +46,7 @@ public class Configuration extends AuditableEntityWithUUID {
 	@Setter
 	private User user;
 
-	@Column(name = "ymlConfig", nullable = false)
+	@Column(name = "YML_CONFIG", nullable = false)
 	@NotNull
 	@Lob
 	@Getter
