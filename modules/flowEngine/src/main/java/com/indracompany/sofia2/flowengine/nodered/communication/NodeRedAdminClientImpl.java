@@ -143,7 +143,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public void deleteFlowEngineDomain(String domainId) {
-		checkIsSynchronized();
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			restTemplate.delete(flowengineUrl + flowEngineDomainDelete + "/" + domainId);
@@ -173,7 +172,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 
 	@Override
 	public List<FlowEngineDomainStatus> getAllFlowEnginesDomains() {
-		List<FlowEngineDomainStatus> domainStatus = new ArrayList<>();
 		checkIsSynchronized();
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
