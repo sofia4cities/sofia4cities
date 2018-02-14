@@ -11,9 +11,7 @@ var OntologyCreateController = function() {
 	var schema = ''; // current schema json string var
 	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	
-	// GLOBAL JSON AND CODE EDITOR INSTANCES
-	var editor;
-	var aceEditor;
+	
 	
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
@@ -292,7 +290,19 @@ var OntologyCreateController = function() {
 		// EDIT MODE ACTION 
 		else {	
 			logControl ? console.log('|---> Action-mode: UPDATE') : '';
-			// to-do: recuperar el schema cargarlo y lanzar el trigger para restaurar toda la info.
+			
+			// take schema from ontology and load it
+			schema = ontologyCreateReg.schemaEditMode;
+			
+			
+			// overwrite datamodel schema with loaded ontology schema generated with this datamodel  template.
+			var theSelectedModel = $("h3[data-model='"+ ontologyCreateReg.dataModelEditMode +"']");
+			var theSelectedModelType = theSelectedModel.closest('div .panel-collapse').parent().find("a").trigger('click');			
+			theSelectedModel.attr('data-schema',schema).trigger('click');
+			
+			
+			
+			
 		}
 		
 	}	
@@ -303,15 +313,12 @@ var OntologyCreateController = function() {
 		console.log('deleteOntologyConfirmation() -> formId: '+ ontologyId);
 		
 		// no Id no fun!
-		if ( !ontologyId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO ONTOLOGY-FORM SELECTED!'}); return false; }
+		if ( !ontologyId ) {$.alert({title: 'ERROR!', type: 'red' , theme: 'dark', content: 'NO ONTOLOGY-FORM SELECTED!'}); return false; }
 		
-		// No dateDeleted no fun!
-		if ( !$('#datedeleted').val() ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: ontologyCreateReg.validation_dates}); return false; }
-		
-		logControl ? console.log('deleteOntologyConfirmation() -> formAction: ' + $('.delete-ontology').attr('action') + ' ID: ' + $('.delete-ontology').attr('ontologyId')) : '';
+		logControl ? console.log('deleteOntologyConfirmation() -> formAction: ' + $('.delete-ontology').attr('action') + ' ID: ' + $('#delete-ontologyId').attr('ontologyId')) : '';
 		
 		// call ontology Confirm at header. 
-		HeaderController.showConfirmDialog('delete_ontology_form');	
+		HeaderController.showConfirmDialogOntologia('delete_ontology_form');	
 	}
 
 		
@@ -352,8 +359,9 @@ var OntologyCreateController = function() {
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';			
 			handleValidation();
-			initTemplateElements();
 			createEditor();
+			initTemplateElements();
+			
 			
 		},
 		
@@ -548,6 +556,10 @@ var OntologyCreateController = function() {
 
 // AUTO INIT CONTROLLER WHEN READY
 jQuery(document).ready(function() {
+	
+	// GLOBAL JSON AND CODE EDITOR INSTANCES
+	var editor;
+	var aceEditor;
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
 	OntologyCreateController.load(ontologyCreateJson);	
