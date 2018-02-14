@@ -15,33 +15,33 @@ package com.indracompany.sofia2.flowengine.nodered.communication;
 
 import java.util.List;
 
-import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineAdminResponse;
+import com.indracompany.sofia2.flowengine.api.rest.pojo.FlowEngineDomain;
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomainStatus;
 
 public interface NodeRedAdminClient {
 
 	// Shuts down the Flow Engine Admin
-	public FlowEngineAdminResponse stopFlowEngine();
+	public String stopFlowEngine();
 
 	// Flow Engine Domain Management
-	public FlowEngineAdminResponse stopFlowEngineDomain(String domain);
+	public void stopFlowEngineDomain(String domain);
 
-	public FlowEngineAdminResponse startFlowEngineDomain(String domain, int port, String home, int servicePort);
+	public String startFlowEngineDomain(FlowEngineDomain domain);
 
-	public FlowEngineAdminResponse createFlowengineDomain(String domain, int port, String home, int servicePort);
+	public String createFlowengineDomain(FlowEngineDomain domain);
 
-	public FlowEngineAdminResponse deleteFlowEngineDomain(String domainId);
+	public void deleteFlowEngineDomain(String domainId);
 
-	public FlowEngineAdminResponse getFlowEngineDomain(String domainId);
+	public FlowEngineDomain getFlowEngineDomain(String domainId);
 
 	// Generic Flow Engine Requests
-	public FlowEngineAdminResponse getAllFlowEnginesDomains();
+	public List<FlowEngineDomainStatus> getAllFlowEnginesDomains();
 
-	public FlowEngineAdminResponse getFlowEngineDomainStatus(List<String> domainList);
+	public List<FlowEngineDomainStatus> getFlowEngineDomainStatus(List<String> domainList);
 
 	// Synchronization of the active/inactive domains with CDB
 	void resetSynchronizedWithBDC();
 
-	public FlowEngineAdminResponse synchronizeMF(List<FlowEngineDomainStatus> domainList);
+	public String synchronizeMF(List<FlowEngineDomainStatus> domainList);
 
 }

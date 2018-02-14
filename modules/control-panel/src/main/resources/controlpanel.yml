@@ -6,7 +6,7 @@ server: ## Config Web Server
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat
-      
+
 sofia2: #Config Sofia2 specific
    database.mongodb:
       database: sofia2_s4c
@@ -28,7 +28,7 @@ sofia2: #Config Sofia2 specific
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
-  
+    
 management.security.enabled: false
  
 spring: ## General Config  
@@ -38,7 +38,7 @@ spring: ## General Config
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:  
+      password: 123456
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.
@@ -55,8 +55,8 @@ spring: ## General Config
       url: http://localhost:18090
       username: admin
       password: admin
-      client.metadata.user.name: ${security.user.name}
-      client.metadata.user.password: ${security.user.password}      
+      client.metadata.user.name: ${spring.boot.admin.username}
+      client.metadata.user.password: $spring.boot.admin.password}     
       
 ## LOGGING CONF
 logging:
@@ -67,4 +67,4 @@ logging:
       org.hibernate: INFO
 
 
- 
+
