@@ -26,6 +26,11 @@
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>		
 		
+		<!-- PLUGINS -->
+		<!-- CODEMIRROR -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
+		
 	</head>	
 	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
@@ -116,13 +121,13 @@
 												</div>
 												<!-- Role, created-at, removed-at -->
 												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+													<div class="col-md-4 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.dataModel} + ':'">Datamodel Template</label>
 															<p class="form-control-static-block bold" th:text="*{ontology.dataModel.name}"> datamodel </p>
 														</div>
 													</div>											
-													<div class="col-md-4 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+													<div class="col-md-4 col-sm-6 col-xs-12" >
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.active} + '?'">Active</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
@@ -131,7 +136,7 @@
 															</p>
 														</div>
 													</div>
-													<div class="col-md-4 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+													<div class="col-md-4 col-sm-6 col-xs-12" >
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.public} + '?'">Public</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
@@ -140,6 +145,20 @@
 															</p>
 														</div>
 													</div>
+													<div class="col-md-12 col-sm-12 col-xs-12" >
+														<div class="form-group">
+															<label class="control-label" th:text="#{ontology.description} + ':'">Description</label>
+															<p class="form-control-static-block " th:text="*{ontology.description}"> description </p>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-12 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{ontology.schema}">Ontology Schema</label>														
+															<textarea readonly="true" id="ontologySchema" name="ontologySchema"  th:required="true" th:field="*{jsonSchema}" class="form-control bold autoExpand" rows="6" data-min-rows='5'></textarea>
+														</div>
+													</div>																					
 												</div>
 											</div>
 											<!-- FORM BUTTONS -->
@@ -153,7 +172,7 @@
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${ontology.ontologyId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													
-													<!-- REMOVE TO-DO: caducado -->
+													<!-- REMOVE -->
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteOntologyConfirmation(\'' + 'delete-ontology' + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
@@ -188,6 +207,12 @@
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/codemirror/lib/codemirror.js}"/>
+	<script th:src="@{/static/vendor/codemirror/mode/javascript/javascript.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/matchbrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/selection/active-line.js}" />
+	
 	<!-- TEMPLATE CONTROLLER  -->	
 		
 	<!-- MAIN INIT -->
@@ -199,8 +224,8 @@
 	function navigateUrl(url){  window.location.href = url;	}
 	
 	// DELETE ontology
-	function deleteontologyConfirmation(ontologyId){
-		console.log('deleteontologyConfirmation() -> formId: '+ ontologyId);
+	function deleteOntologyConfirmation(ontologyId){
+		showLog ? console.log('deleteOntologyConfirmation() -> formId: '+ ontologyId): '';
 		
 		// no Id no fun!
 		if ( !ontologyId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO ontology-FORM SELECTED!'}); return false; }
@@ -208,7 +233,7 @@
 		// set action and ontologyId to the form
 		$('.delete-ontology').attr('ontologyId',ontologyId);
 		$('.delete-ontology').attr('action','/controlpanel/ontologies/' + ontologyId);
-		console.log('deleteontologyConfirmation() -> formAction: ' + $('.delete-ontology').attr('action') + ' ID: ' + $('#delete-ontologyId').attr('ontologyId'));
+		showLog ? console.log('deleteOntologyConfirmation() -> formAction: ' + $('.delete-ontology').attr('action') + ' ID: ' + $('#delete-ontologyId').attr('ontologyId')): '';
 		
 		// call ontology Confirm at header.
 		HeaderController.showConfirmDialogOntologia('delete_ontology_form');	
@@ -219,6 +244,19 @@
 	$( document ).ready(function() {
 		// init when Document is ready
 		showLog ? console.log('SHOW ontology ready()...') : '';
+		
+		var myTextArea = document.getElementById('ontologySchema');
+        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "application/json",
+            lineNumbers: false,
+            matchBrackets: true,
+            styleActiveLine: true,
+			readOnly: true,
+            theme:"material"
+        });
+		myCodeMirror.setSize("100%", 350);
+		
+		
 	});
 	 
 	// MAIN WHEN LOAD
