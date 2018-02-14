@@ -26,6 +26,8 @@ public interface TwitterService {
 	List<TwitterListening> getAllListeningsByUser(String userId);
 
 	TwitterListening getListenById(String id);
+	
+	TwitterListening getListenByIdentificator(String identificator);
 
 	List<Configuration> getAllConfigurations();
 
@@ -43,7 +45,9 @@ public interface TwitterService {
 	
 	Ontology createTwitterOntology(String ontologyId, String dataModel);	
 
-	void createListening(TwitterListening TwitterListening);
+	TwitterListening createListening(TwitterListening TwitterListening);
+	
+	boolean scheduleTwitterListening(TwitterListening TwitterListening);
 
 
 }

@@ -47,4 +47,9 @@ public class TokenServiceImpl implements TokenService{
 		}
 		return token;
 	}
+	
+	@Override
+	public Token getToken(ClientPlatform clientPlatform) {
+		return this.tokenRepository.findByClientPlatform(clientPlatform).get(0);
+	}
 }

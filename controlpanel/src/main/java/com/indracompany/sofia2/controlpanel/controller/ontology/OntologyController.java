@@ -132,7 +132,7 @@ public class OntologyController {
 		{
 			log.debug("Some ontology properties missing");
 			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return "redirect:/ontologies/createwizard/"+id;
+			return "redirect:/ontologies/update/"+id;
 		}
 		if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
 			return "/error/403";
@@ -146,7 +146,7 @@ public class OntologyController {
 		}
 		
 		utils.addRedirectMessage("ontology.update.success", redirect);
-		return "redirect:/ontologies/list";
+		return "redirect:/ontologies/show"+id;
 	}
 	
 	@DeleteMapping("/{id}")
@@ -165,9 +165,32 @@ public class OntologyController {
 		this.populateForm(model);
 		return "/ontologies/createwizard";
 	}
+	
+	
+	@GetMapping("/show/{id}")
+	public String show(Model model, @PathVariable ("id") String id,
+			RedirectAttributes redirect) {
+		Ontology ontology = this.ontologyService.getOntologyById(id);
+		if(ontology != null) {
+			if(ontology.getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
+				return "/error/403";
+			
+			model.addAttribute("ontology",ontology);
+			return "/ontologies/show";
+		}else
+		{
+			this.utils.addRedirectMessage("ontology.notfound.error", redirect);
+			return "redirect:/ontologies/list";
+		}
+	
+		
+		
+	}
 
 	public void populateForm(Model model) {
 		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
 		model.addAttribute("dataModelTypes", this.ontologyService.getAllDataModelTypes());
 	}
+	
+	
 }
