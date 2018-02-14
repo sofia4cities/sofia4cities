@@ -106,13 +106,13 @@
 															<p class="form-control-static-block bold" th:text="*{id}"> ontology Identification </p>
 														</div>
 													</div>
-													<div class="col-md-5 col-sm-6 col-xs-12">
+													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.identification} + ':'">Name</label>
 															<p class="form-control-static-block bold" th:text="*{identification}"> ontology Name </p>
 														</div>
 													</div>
-													<div class="col-md-4 col-sm-6 col-xs-12">
+													<div class="col-md-6 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label"><i class="la la-envelope-o"></i> <span th:text="#{ontology.metainf} + ':'">Meta Information</span></label>
 															<p class="form-control-static-block bold" th:text="*{metainf}"> meta </p>
@@ -121,13 +121,19 @@
 												</div>
 												<!-- Role, created-at, removed-at -->
 												<div class="row">
-													<div class="col-md-4 col-sm-6 col-xs-12">
+													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.dataModel} + ':'">Datamodel Template</label>
-															<p class="form-control-static-block bold" th:text="*{ontology.dataModel.name}"> datamodel </p>
+															<p class="form-control-static-block bold" th:text="*{dataModel.name} "> datamodel </p>
 														</div>
-													</div>											
-													<div class="col-md-4 col-sm-6 col-xs-12" >
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{ontology.dataModelType} + ':'">Datamodel Type</label>
+															<p class="form-control-static-block bold" th:text="*{dataModel.type} "> datamodel type </p>
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12" >
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.active} + '?'">Active</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
@@ -136,7 +142,7 @@
 															</p>
 														</div>
 													</div>
-													<div class="col-md-4 col-sm-6 col-xs-12" >
+													<div class="col-md-3 col-sm-6 col-xs-12" >
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.public} + '?'">Public</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
@@ -148,7 +154,7 @@
 													<div class="col-md-12 col-sm-12 col-xs-12" >
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.description} + ':'">Description</label>
-															<p class="form-control-static-block " th:text="*{ontology.description}"> description </p>
+															<p class="form-control-static-block " th:text="*{description}"> description </p>
 														</div>
 													</div>
 												</div>
@@ -168,8 +174,8 @@
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${ontology.ontologyId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${ontology.ontologyId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${ontology.user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${ontology.user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													
 													<!-- REMOVE -->
@@ -248,9 +254,10 @@
 		var myTextArea = document.getElementById('ontologySchema');
         var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
         	mode: "application/json",
-            lineNumbers: false,
+            lineNumbers: true,
             matchBrackets: true,
             styleActiveLine: true,
+			lineWrapping: true,
 			readOnly: true,
             theme:"material"
         });
