@@ -47,7 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	@Autowired
 	private AppWebUtils utils;
 
@@ -208,7 +208,7 @@ public class UserController {
 
 	}
 
-	public void populateFormData(Model model) {
+	private void populateFormData(Model model) {
 		model.addAttribute("roleTypes", this.userService.getAllRoles());
 	}
 

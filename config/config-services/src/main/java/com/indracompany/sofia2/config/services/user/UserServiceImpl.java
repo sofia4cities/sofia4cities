@@ -41,13 +41,13 @@ public class UserServiceImpl implements UserService {
 
 	private static final String log = null;
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	@Autowired
-	RoleRepository roleTypeRepository;
+	private RoleRepository roleTypeRepository;
 	@Autowired
-	UserTokenRepository userTokenRepository;
+	private UserTokenRepository userTokenRepository;
 	@Autowired
-	TokenRepository tokenRepository;
+	private TokenRepository tokenRepository;
 
 	@Override
 	public Token getToken(String token) {

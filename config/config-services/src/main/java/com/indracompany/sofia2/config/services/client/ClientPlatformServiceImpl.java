@@ -33,11 +33,11 @@ public class ClientPlatformServiceImpl implements ClientPlatformService{
 	
 	
 	@Autowired
-	ClientPlatformRepository clientPlatformRepository;
+	private ClientPlatformRepository clientPlatformRepository;
 	@Autowired
-	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
+	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
-	TokenService tokenService;
+	private TokenService tokenService;
 	
 	@Override
 	public Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform) 

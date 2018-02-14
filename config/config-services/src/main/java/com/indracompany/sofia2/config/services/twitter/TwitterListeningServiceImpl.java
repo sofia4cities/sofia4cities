@@ -44,21 +44,21 @@ import com.indracompany.sofia2.config.services.user.UserService;
 public class TwitterListeningServiceImpl implements TwitterListeningService {
 
 	@Autowired
-	TwitterListeningRepository twitterListeningRepository;
+	private TwitterListeningRepository twitterListeningRepository;
 	@Autowired
-	ConfigurationService configurationService;
+	private ConfigurationService configurationService;
 	@Autowired
-	ClientPlatformRepository clientPlatformRepository;
+	private ClientPlatformRepository clientPlatformRepository;
 	@Autowired
-	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
+	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
-	DataModelRepository dataModelRepository;
+	private DataModelRepository dataModelRepository;
 	@Autowired
-	TokenRepository tokenRepository;
+	private TokenRepository tokenRepository;
 	@Autowired
-	OntologyService ontologyService;
+	private OntologyService ontologyService;
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 
 	@Override

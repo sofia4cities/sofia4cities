@@ -42,13 +42,13 @@ import com.indracompany.sofia2.config.services.user.UserService;
 public class OntologyServiceImpl implements OntologyService {
 
 	@Autowired
-	OntologyRepository ontologyRepository;
+	private OntologyRepository ontologyRepository;
 	@Autowired
-	DataModelRepository dataModelRepository;
+	private DataModelRepository dataModelRepository;
 	@Autowired
-	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
+	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@Override
 	public List<Ontology> getAllOntologies() {

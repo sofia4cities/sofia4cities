@@ -41,11 +41,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
-	ConfigurationRepository configurationRepository;
+	private ConfigurationRepository configurationRepository;
 	@Autowired
-	ConfigurationTypeRepository configurationTypeRepository;
+	private ConfigurationTypeRepository configurationTypeRepository;
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@Override
 	public List<Configuration> getAllConfigurations() {

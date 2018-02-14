@@ -196,7 +196,7 @@ public class OntologyController {
 		
 	}
 
-	public void populateForm(Model model) {
+	private void populateForm(Model model) {
 		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
 		model.addAttribute("dataModelTypes", this.ontologyService.getAllDataModelTypes());
 	}

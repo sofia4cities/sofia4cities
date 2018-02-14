@@ -28,7 +28,7 @@ import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 public class TokenServiceImpl implements TokenService{
 	
 	@Autowired
-	TokenRepository tokenRepository;
+	private TokenRepository tokenRepository;
 	
 	
 	@Override

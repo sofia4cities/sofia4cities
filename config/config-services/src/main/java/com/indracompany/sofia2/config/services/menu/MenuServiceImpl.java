@@ -24,7 +24,7 @@ import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 public class MenuServiceImpl implements MenuService {
 
 	@Autowired
-	ConsoleMenuRepository consoleMenuRepository;
+	private ConsoleMenuRepository consoleMenuRepository;
 
 	@Override
 	public String loadMenuByRole(User user) {

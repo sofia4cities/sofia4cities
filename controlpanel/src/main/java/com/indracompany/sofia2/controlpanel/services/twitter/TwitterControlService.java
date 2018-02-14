@@ -29,9 +29,9 @@ import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
 public class TwitterControlService {
 
 	@Autowired
-	TwitterListeningService twitterListeningService;
+	private TwitterListeningService twitterListeningService;
 	@Autowired
-	TaskService taskService;
+	private TaskService taskService;
 
 	public boolean scheduleTwitterListening(TwitterListening twitterListening) {
 		
