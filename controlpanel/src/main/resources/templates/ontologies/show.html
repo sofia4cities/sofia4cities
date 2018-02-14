@@ -27,9 +27,8 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>		
 		
 		<!-- PLUGINS -->
-		<!-- CODEMIRROR -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
+		<!-- JSON EDITOR -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/json/jsoneditor.css}"/>
 		
 	</head>	
 	
@@ -114,7 +113,7 @@
 													</div>
 													<div class="col-md-6 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label"><i class="la la-envelope-o"></i> <span th:text="#{ontology.metainf} + ':'">Meta Information</span></label>
+															<label class="control-label"><i class="la la-tags"></i> <span th:text="#{ontology.metainf} + ':'">Meta Information</span></label>
 															<p class="form-control-static-block bold" th:text="*{metainf}"> meta </p>
 														</div>
 													</div>													
@@ -123,13 +122,13 @@
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.dataModel} + ':'">Datamodel Template</label>
+															<label class="control-label" th:text="#{ontology.datamodel} + ':'">Datamodel Template</label>
 															<p class="form-control-static-block bold" th:text="*{dataModel.name} "> datamodel </p>
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.dataModelType} + ':'">Datamodel Type</label>
+															<label class="control-label" th:text="#{ontology.datamodel.type} + ':'">Datamodel Type</label>
 															<p class="form-control-static-block bold" th:text="*{dataModel.type} "> datamodel type </p>
 														</div>
 													</div>
@@ -154,17 +153,17 @@
 													<div class="col-md-12 col-sm-12 col-xs-12" >
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.description} + ':'">Description</label>
-															<p class="form-control-static-block " th:text="*{description}"> description </p>
+															<p class="form-control-static-block bold" th:text="*{description}"> description </p>
 														</div>
 													</div>
 												</div>
-												<div class="row">
+												<div class="row">																																
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.schema}">Ontology Schema</label>														
-															<textarea readonly="true" id="ontologySchema" name="ontologySchema"  th:required="true" th:field="*{jsonSchema}" class="form-control bold autoExpand" rows="6" data-min-rows='5'></textarea>
+															<label class="control-label"><i class="flaticon-network"></i> <span th:text="#{ontology.schema}">Ontology Schema</span></label>														
+															<div id="jsoneditor"></div>	
 														</div>
-													</div>																					
+													</div>
 												</div>
 											</div>
 											<!-- FORM BUTTONS -->
@@ -214,10 +213,13 @@
 	<script th:src="@{/static/js/layout.js}"/>
 
 	<!-- PLUGINS -->
-	<script th:src="@{/static/vendor/codemirror/lib/codemirror.js}"/>
-	<script th:src="@{/static/vendor/codemirror/mode/javascript/javascript.js}" />
-	<script th:src="@{/static/vendor/codemirror/addon/edit/matchbrackets.js}" />
-	<script th:src="@{/static/vendor/codemirror/addon/selection/active-line.js}" />
+	
+	<!-- JSON EDITOR -->	
+	<script th:src="@{/static/vendor/json/jsoneditor.js}"/>
+	
+	<script th:src="@{/static/vendor/ace/ace.js}" charset="utf-8"/>
+	<script th:src="@{/static/vendor/ace/mode-json.js}"/>
+	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
 	
 	<!-- TEMPLATE CONTROLLER  -->	
 		
@@ -225,6 +227,9 @@
 	<script  th:inline="javascript">
 	var showLog = 1; // console.log toggle
     //<![CDATA[ 
+	
+	var stringSchema = [[${ontology.jsonSchema}]];
+	var jsonSchema = JSON.parse(stringSchema);
 
 	// REDIRECT
 	function navigateUrl(url){  window.location.href = url;	}
@@ -247,21 +252,23 @@
 	
 	
 	// MAIN WHEN READY
+	var editor;
 	$( document ).ready(function() {
 		// init when Document is ready
 		showLog ? console.log('SHOW ontology ready()...') : '';
 		
-		var myTextArea = document.getElementById('ontologySchema');
-        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-        	mode: "application/json",
-            lineNumbers: true,
-            matchBrackets: true,
-            styleActiveLine: true,
-			lineWrapping: true,
-			readOnly: true,
-            theme:"material"
-        });
-		myCodeMirror.setSize("100%", 350);
+		var container = document.getElementById('jsoneditor');	
+		var options = {
+			mode: 'view',
+			theme: 'bootstrap3',			
+			modes: ['view'], // allowed modes
+			error: function (err) {
+				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
+				return false;
+			}
+		};
+		
+		editor = new jsoneditor.JSONEditor(container, options, jsonSchema);
 		
 		
 	});
@@ -270,6 +277,8 @@
 	$(window).load(function(){  
 		// init on load.		
 		showLog ? console.log('SHOW ontology load()...') : '';
+			
+	
 	});
 	
 	//]]>

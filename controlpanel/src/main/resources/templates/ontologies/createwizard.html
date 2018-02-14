@@ -136,7 +136,7 @@
 													<div class="col-md-6 col-xs-12">
 														<div class="col-md-6 col-sm-6 col-xs-12">
 															<div class="form-group">
-																<label class="popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.identification.help},data-title=#{ontology.identification}"><i class="la la-lightbulb-o"></i> <span th:text="#{ontology.identification} + ':'">Identification</span></label><span class="required"> (*)</span>
+																<label class="popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.identification.help},data-title=#{ontology.id}"><i class="la la-lightbulb-o"></i> <span th:text="#{ontology.id} + ':'">Identification</span></label><span class="required"> (*)</span>
 																<div class="input-icon ">
 																	<i class="fa fa-credit-card"></i>
 																	<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.identification}" th:disabled="!*{id}" th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
