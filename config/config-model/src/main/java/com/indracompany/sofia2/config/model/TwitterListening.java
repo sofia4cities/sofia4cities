@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.config.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -34,7 +35,7 @@ import lombok.Setter;
 @Configurable
 public class TwitterListening extends AuditableEntityWithUUID {
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
 	@Getter

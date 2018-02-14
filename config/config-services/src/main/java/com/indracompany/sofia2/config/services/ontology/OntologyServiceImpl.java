@@ -33,6 +33,7 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -44,6 +45,8 @@ public class OntologyServiceImpl implements OntologyService {
 	OntologyRepository ontologyRepository;
 	@Autowired
 	DataModelRepository dataModelRepository;
+	@Autowired
+	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
 	UserService userService;
 
@@ -231,6 +234,9 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	@Transactional
 	public void deleteOntology(String id) {
+		if(this.clientPlatformOntologyRepository.findByOntology(this.ontologyRepository.findById(id)) != null) {
+			this.clientPlatformOntologyRepository.deleteByOntology(this.ontologyRepository.findById(id));
+		}
 		this.ontologyRepository.deleteById(id);
 	}
 	
