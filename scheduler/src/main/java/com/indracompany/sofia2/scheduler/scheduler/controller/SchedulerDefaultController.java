@@ -33,7 +33,7 @@ import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/scheduler")
-public class DefaultController {
+public class SchedulerDefaultController {
 	
 	@Autowired
 	private TaskService taskService;
