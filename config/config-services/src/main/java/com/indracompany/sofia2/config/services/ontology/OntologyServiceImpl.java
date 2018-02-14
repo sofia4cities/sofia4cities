@@ -214,6 +214,7 @@ public class OntologyServiceImpl implements OntologyService {
 				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 			ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 			ontologyDb.setMetainf(ontology.getMetainf());
+			this.saveOntology(ontologyDb);
 				
 				
 		}else
