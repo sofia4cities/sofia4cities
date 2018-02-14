@@ -234,10 +234,16 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	@Transactional
 	public void deleteOntology(String id) {
-		if(this.clientPlatformOntologyRepository.findByOntology(this.ontologyRepository.findById(id)) != null) {
-			this.clientPlatformOntologyRepository.deleteByOntology(this.ontologyRepository.findById(id));
+		try{
+			if(this.clientPlatformOntologyRepository.findByOntology(this.ontologyRepository.findById(id)) != null) {
+				this.clientPlatformOntologyRepository.deleteByOntology(this.ontologyRepository.findById(id));
+			}
+			this.ontologyRepository.deleteById(id);
+		}catch(Exception e){
+			throw new OntologyServiceException("Couldn't delete ontology");
 		}
-		this.ontologyRepository.deleteById(id);
+			
+		
 	}
 	
 
