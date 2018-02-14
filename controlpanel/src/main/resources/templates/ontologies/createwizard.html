@@ -117,9 +117,7 @@
 									</div>
 									<div class="col-md-12">
 										<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
-											<input id="datamodelid" type="hidden" th:required="true" th:field="*{dataModel}" />
-											<input id="rtdbclean" type="hidden" th:required="true" th:field="*{rtdbClean}" value="true" />
-											<input id="rtdbhdb" type="hidden" th:required="true" th:field="*{rtdbToHdb}" value="true" />
+											<input id="datamodelid" type="hidden" th:required="true" th:field="*{dataModel}" />											
 											<input id="jsonschema" type="hidden" th:required="true" th:field="*{jsonSchema}"  />
 											
 											
@@ -184,7 +182,28 @@
 														</div>							
 													</div>
 													<div class="col-md-6 col-sm-12 col-xs-12">
-														<p>pendiente</p>
+														<div class="col-md-6 col-sm-6 col-xs-12" >
+															<div class="form-group">
+																<label class="" th:text="#{ontology.rtdbclean} + ':'">RTDB Clean</label>
+																<div class="mt-checkbox-list">
+																	<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline font-xs" th:text="#{ontology.rtdbclean} + '?'">rtdbclean?</div>
+																		<input id="rtdbclean" name="rtdbclean" type="checkbox" class="form-control" th:field="*{rtdbClean}" th:checked="checked"/>
+																		<span></span><!-- needed by styles -->
+																	</label>
+																</div>
+															</div>
+														</div>
+														<div class="col-md-6 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<label class="" th:text="#{ontology.rtdbtohdb} + ':'">RTDB to HDB</label>
+																<div class="mt-checkbox-list">
+																	<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.rtdbtohdb} +'?'">rtdbtohdb?</div>
+																		<input id="rtdbtohdb" class="form-control"  name="rtdbtohdb" type="checkbox" th:field="*{rtdbToHdb}" />
+																		<span></span><!-- necesario por estilos. -->
+																	</label>
+																</div>
+															</div>
+														</div>
 													</div>
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
