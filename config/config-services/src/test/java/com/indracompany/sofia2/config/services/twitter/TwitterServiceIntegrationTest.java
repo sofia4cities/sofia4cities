@@ -106,18 +106,18 @@ public class TwitterServiceIntegrationTest {
 		Assert.assertTrue(twitterListening.getId() != null);
 		
 	}
-	
-	@Test
-	public void addScheduledSearchJob() {
-		TwitterListening twitterListening = twitterService.getListenByIdentificator("Listening Test");
-		if(twitterListening == null)
-		{
-			this.testCreateListening();
-			twitterListening = twitterService.getListenByIdentificator("Listening Test");
-		}
-		
-		Assert.assertTrue(twitterService.scheduleTwitterListening(twitterListening));
-		
-		
-	}
+//	
+//	@Test
+//	public void addScheduledSearchJob() {
+//		TwitterListening twitterListening = twitterService.getListenByIdentificator("Listening Test");
+//		if(twitterListening == null)
+//		{
+//			this.testCreateListening();
+//			twitterListening = twitterService.getListenByIdentificator("Listening Test");
+//		}
+//		
+//		Assert.assertTrue(twitterService.scheduleTwitterListening(twitterListening));
+//		
+//		
+//	}
 }

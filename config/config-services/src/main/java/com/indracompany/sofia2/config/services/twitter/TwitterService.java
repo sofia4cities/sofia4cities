@@ -47,7 +47,6 @@ public interface TwitterService {
 
 	TwitterListening createListening(TwitterListening TwitterListening);
 	
-	boolean scheduleTwitterListening(TwitterListening TwitterListening);
 
 
 }

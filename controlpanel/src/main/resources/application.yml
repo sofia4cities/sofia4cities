@@ -77,8 +77,7 @@ quartz:
    autoStartupSchedulers:
       #- scriptScheduler
       #- twitterScheduler  
-      
-#spring.jpa.hibernate.naming.physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl  
+     
       
 ## LOGGING CONF
 logging:
@@ -86,7 +85,7 @@ logging:
       org.springframework: INFO
       com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
-      org.hibernate: debug
+      org.hibernate: INFO
 
 
  

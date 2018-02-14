@@ -163,6 +163,17 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 	
 	@Override
+	public boolean hasUserPermissionForInsert(String userId, String ontologyIdentification) {
+		List<Ontology> ontologies = this.ontologyRepository.
+				findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
+		for (Ontology ontology : ontologies) {
+			if (ontology.getIdentification().equals(ontologyIdentification))
+				return true;
+		}
+		return false;
+	}
+	
+	@Override
 	public List<String> getOntologyFields(String identification) throws JsonProcessingException, IOException {
 		List<String> fields = new ArrayList<String>();
 		Ontology ontology = this.ontologyRepository.findByIdentification(identification);

@@ -49,6 +49,7 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.twitter.TwitterService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.controller.user.UserController;
+import com.indracompany.sofia2.controlpanel.service.TwitterControlService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,15 +60,17 @@ import lombok.extern.slf4j.Slf4j;
 public class TwitterListeningController {
 
 	@Autowired
-	AppWebUtils utils;
+	private AppWebUtils utils;
 	@Autowired
-	TwitterService twitterService;
+	private TwitterService twitterService;
 	@Autowired
-	OntologyService ontologyService;
+	private OntologyService ontologyService;
 	@Autowired
-	ConfigurationService configurationService;
+	private ConfigurationService configurationService;
 	@Autowired
-	ClientPlatformService clientPlatformService;
+	private ClientPlatformService clientPlatformService;
+	@Autowired
+	private TwitterControlService twitterControlService;
 
 	@Autowired
 	UserService userService;
@@ -123,7 +126,8 @@ public class TwitterListeningController {
 		if (!newOntology) {
 			if (twitterListening.getUser() == null)
 				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
-			this.twitterService.createListening(twitterListening);
+			twitterListening = this.twitterService.createListening(twitterListening);
+			this.twitterControlService.scheduleTwitterListening(twitterListening);
 		} else {
 
 			try{

@@ -43,6 +43,8 @@ public interface OntologyService {
 	
 	boolean hasUserPermissionForQuery(String userId, String ontologyIdentification);
 	
+	boolean hasUserPermissionForInsert(String userId, String ontologyIdentification);
+	
 	List<String> getOntologyFields(String identification) throws JsonProcessingException, IOException;
 	
 	void updateOntology(Ontology ontology);

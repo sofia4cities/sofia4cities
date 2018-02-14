@@ -134,7 +134,7 @@ public class OntologyController {
 			utils.addRedirectMessage("ontology.validation.error", redirect);
 			return "redirect:/ontologies/update/"+id;
 		}
-		if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
+		if (!this.ontologyService.hasUserPermissionForInsert(this.utils.getUserId(), ontology.getIdentification()) && !utils.isAdministrator())
 			return "/error/403";
 		try {
 			this.ontologyService.updateOntology(ontology);

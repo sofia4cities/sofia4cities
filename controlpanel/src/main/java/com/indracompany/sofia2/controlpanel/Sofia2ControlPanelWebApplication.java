@@ -42,7 +42,7 @@ import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableAutoConfiguration
-@ComponentScan("com.indracompany.sofia2.controlpanel")
+@ComponentScan("com.indracompany.sofia2")
 public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 
 	public static void main(String[] args) throws Exception {

@@ -39,9 +39,7 @@ import com.indracompany.sofia2.config.repository.TwitterListeningRepository;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.scheduler.SchedulerType;
-import com.indracompany.sofia2.scheduler.scheduler.bean.TaskInfo;
-import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
+
 @Service
 public class TwitterServiceImpl implements TwitterService {
 
@@ -61,8 +59,7 @@ public class TwitterServiceImpl implements TwitterService {
 	OntologyService ontologyService;
 	@Autowired
 	UserService userService;
-	@Autowired
-	TaskService taskService;
+
 
 	@Override
 	public List<TwitterListening> getAllListenings() {
@@ -186,34 +183,5 @@ public class TwitterServiceImpl implements TwitterService {
 
 	}
 	
-	@Override
-	public boolean scheduleTwitterListening(TwitterListening twitterListening) {
-		
-		TaskInfo task = new TaskInfo();
-		task.setJobName(twitterListening.getId());
-		task.setSchedulerType(SchedulerType.Twitter);
-		
-		Map<String, Object> jobContext = new HashMap<String, Object>();
-		jobContext.put("id", twitterListening.getId());
-		jobContext.put("ontology", twitterListening.getOntology().getIdentification());
-		jobContext.put("clientPlatform", twitterListening.getToken().getClientPlatform().getIdentification());
-		jobContext.put("token", twitterListening.getToken().getToken());
-		jobContext.put("topics", twitterListening.getTopics());
-		jobContext.put("geolocation", false);
-		jobContext.put("timeout", 2);
-		if (twitterListening.getConfiguration() != null) {
-			jobContext.put("configuration", twitterListening.getConfiguration().getId());
-		} else {
-			jobContext.put("configuration", null);
-		}
-		
-		task.setUsername(twitterListening.getUser().getUserId());
-		task.setData(jobContext);
-		task.setSingleton(false);
-		task.setCronExpression("0 * 0 ? * * *");
-		return taskService.addJob(task).isSuccess();
-		
-		
-		
-	}
+
 }
