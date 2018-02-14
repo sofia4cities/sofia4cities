@@ -1,4 +1,4 @@
-package com.indracompany.sofia2.flowengine.api.rest.exception;
+package com.indracompany.sofia2.flowengine.exception;
 
 public class NotAllowedException extends RuntimeException {
 

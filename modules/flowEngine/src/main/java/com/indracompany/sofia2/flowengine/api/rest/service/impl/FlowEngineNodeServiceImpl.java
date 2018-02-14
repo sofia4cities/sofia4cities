@@ -45,12 +45,12 @@ import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.security.UserRole;
-import com.indracompany.sofia2.flowengine.api.rest.exception.NotAllowedException;
-import com.indracompany.sofia2.flowengine.api.rest.exception.NotAuthorizedException;
-import com.indracompany.sofia2.flowengine.api.rest.exception.ResourceNotFoundException;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.DeployRequestRecord;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineNodeService;
+import com.indracompany.sofia2.flowengine.exception.NotAllowedException;
+import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
+import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 
@@ -271,7 +271,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	}
 
 	@Override
-	public String submitQuery(String ontologyIdentificator, String queryDB, String queryType, String query, String user,
+	public String submitQuery(String ontologyIdentificator, String queryType, String query, String user,
 			String password) throws ResourceNotFoundException, NotAuthorizedException, NotFoundException,
 			JsonProcessingException, DBPersistenceException {
 		// TODO Auto-generated method stub
@@ -295,16 +295,16 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 					log.error("User {} has no INSERT/ALL access over {} ontology.", user, ontologyIdentificator);
 				}
 			}
-		} else if ("NATIVE".equals(queryType)) {
-			if (query.toLowerCase().startsWith(".find")) {
+		} else if ("native".equals(queryType)) {
+			if (query.toLowerCase().contains(".find")) {
 				return mapper.writeValueAsString(basicRDBRepository.queryNative(ontologyIdentificator, query));
-			} else if (query.toLowerCase().startsWith(".update")) {
+			} else if (query.toLowerCase().contains(".update")) {
 				// TODO: Not implemented in RTDB yet
 				throw new NotImplementedException();
-			} else if (query.toLowerCase().startsWith(".remove")) {
+			} else if (query.toLowerCase().contains(".remove")) {
 				// TODO: Not implemented in RTDB yet
 				throw new NotImplementedException();
-			} else if (query.toLowerCase().startsWith(".insert")) {
+			} else if (query.toLowerCase().contains(".insert")) {
 				// TODO: Not implemented in RTDB yet
 				throw new NotImplementedException();
 			}
