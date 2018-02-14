@@ -50,9 +50,15 @@
 
 		<route id="process-api">
 			<from uri="direct:process-api"/>
-			<process ref="apiServiceImpl"/>
+			
+			<doTry>
+				<process ref="apiServiceImpl"/>
+				<doCatch>	
+					<exception>java.lang.Exception</exception>
+			    	<log message="Error processing API" loggingLevel="ERROR" />
+				</doCatch>
+			</doTry>			
 		</route>
-
 	</camelContext>
 
 </beans>

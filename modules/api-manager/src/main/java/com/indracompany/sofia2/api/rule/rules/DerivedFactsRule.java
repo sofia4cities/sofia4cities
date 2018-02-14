@@ -68,8 +68,11 @@ public class DerivedFactsRule extends DefaultRuleBase {
 
 		String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
 		String TOKEN = (String) data.get(ApiServiceInterface.AUTHENTICATION_HEADER);
+		User user =null;
+		try {
+			user = userService.getUserByToken(TOKEN);
+		} catch (Exception e) {}
 		
-		User user = userService.getUserByToken(TOKEN);
 		Api api=null;
 		if (user==null) stopAllNextRules(facts, "User not Found by Token :"+TOKEN, DefaultRuleBase.ReasonType.GENERAL);
 		else {
