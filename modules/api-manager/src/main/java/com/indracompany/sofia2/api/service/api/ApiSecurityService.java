@@ -95,7 +95,7 @@ public class ApiSecurityService {
 	
 	public boolean checkUserApiPermission(Api api, User user) {
 
-		if(api==null || user==null) throw new IllegalArgumentException("com.indra.sofia2.api.service.apiusernull");
+		if(api==null || user==null) return false;
 		
 		boolean autorizado=false;
 		

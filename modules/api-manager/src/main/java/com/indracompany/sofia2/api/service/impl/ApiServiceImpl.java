@@ -83,28 +83,35 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
 		Boolean stopped = (Boolean)facts.get(RuleManager.STOP_STATE);
 		String REASON="";
-		String  REASON_TYPE="";
+		Object REASON_TYPE;
 		if (stopped!=null && stopped==true) {
 			REASON=((String)facts.get(RuleManager.REASON));
-			REASON_TYPE=((String)facts.get(RuleManager.REASON_TYPE));
+			REASON_TYPE=((Object)facts.get(RuleManager.REASON_TYPE));
+			
+
+			exchange.getIn().setBody(REASON+" \n"+REASON_TYPE);
+			exchange.getIn().setHeader("content-type", "text/plain");
 		}
-		System.out.println(hashPP(data));
+		else {
+			System.out.println(hashPP(data));
+			
+			User user = (User) data.get(ApiServiceInterface.USER);
+			Api api = (Api) data.get(ApiServiceInterface.API);
+			String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
+			String METHOD = (String) data.get(ApiServiceInterface.METHOD);
+			String BODY = (String) data.get(ApiServiceInterface.BODY);
+			String QUERY_TYPE = (String) data.get(ApiServiceInterface.QUERY_TYPE);
+			String QUERY = (String) data.get(ApiServiceInterface.QUERY);
+			String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
+			String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
+			String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
+			
+			String str = hashPP(data);
+			
+			exchange.getIn().setBody(str+" \n"+REASON);
+			exchange.getIn().setHeader("content-type", "text/plain");
+		}
 		
-		User user = (User) data.get(ApiServiceInterface.USER);
-		Api api = (Api) data.get(ApiServiceInterface.API);
-		String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
-		String METHOD = (String) data.get(ApiServiceInterface.METHOD);
-		String BODY = (String) data.get(ApiServiceInterface.BODY);
-		String QUERY_TYPE = (String) data.get(ApiServiceInterface.QUERY_TYPE);
-		String QUERY = (String) data.get(ApiServiceInterface.QUERY);
-		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
-		String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
-		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
-		
-		String str = hashPP(data);
-		
-		exchange.getIn().setBody(str);
-		exchange.getIn().setHeader("content-type", "text/plain");
 	}
 
 	@Override

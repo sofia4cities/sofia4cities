@@ -48,7 +48,6 @@ import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.twitter.TwitterService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.controlpanel.controller.user.UserController;
 import com.indracompany.sofia2.controlpanel.service.TwitterControlService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
