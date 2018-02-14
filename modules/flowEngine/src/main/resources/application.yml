@@ -22,6 +22,9 @@ spring:
 
 sofia2: #Config Sofia2 specific
    flowengine:
+      sync.monitor:
+         interval.sec: 30
+         initial.delay.sec: 20
       admin.url: http://localhost:10000
       node.path: node4
       launcher:

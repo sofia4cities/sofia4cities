@@ -16,10 +16,10 @@ package com.indracompany.sofia2.flowengine.api.rest.service;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.indracompany.sofia2.flowengine.api.rest.exception.NotAllowedException;
-import com.indracompany.sofia2.flowengine.api.rest.exception.NotAuthorizedException;
-import com.indracompany.sofia2.flowengine.api.rest.exception.ResourceNotFoundException;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
+import com.indracompany.sofia2.flowengine.exception.NotAllowedException;
+import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
+import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 
 import javassist.NotFoundException;
 
@@ -36,7 +36,6 @@ public interface FlowEngineNodeService {
 	public String validateUserDomain(UserDomainValidationRequest request)
 			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException;
 
-	public String submitQuery(String ontology, String queryDB, String queryType, String query, String user,
-			String password)
+	public String submitQuery(String ontology, String queryType, String query, String user, String password)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException;
 }

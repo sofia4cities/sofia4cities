@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClient;
+import com.indracompany.sofia2.flowengine.nodered.sync.NodeRedDomainSyncMonitor;
 
 @Component
 public class NodeRedLauncher {
@@ -62,11 +63,18 @@ public class NodeRedLauncher {
 	@Autowired
 	private NodeRedAdminClient nodeRedAdminClient;
 
+	@Autowired
+	private NodeRedDomainSyncMonitor nodeRedMonitor;
+
 	@PostConstruct
 	public void init() {
 
 		// Stop the flow engine in case it is still up
-		nodeRedAdminClient.stopFlowEngine();
+		try {
+			nodeRedAdminClient.stopFlowEngine();
+		} catch (Exception e) {
+			log.warn("Could not stop Flow Engine.");
+		}
 
 		if (null != nodePath && null != nodeRedLauncherPath) {
 			NodeRedLauncherExecutionThread launcherThread = new NodeRedLauncherExecutionThread(this.nodePath,
@@ -109,6 +117,7 @@ public class NodeRedLauncher {
 
 		public void stop() {
 			this.stop = true;
+			nodeRedMonitor.stopMonitor();
 		}
 
 		@Override
@@ -123,7 +132,8 @@ public class NodeRedLauncher {
 
 			while (!stop) {
 				try {
-
+					nodeRedAdminClient.resetSynchronizedWithBDC();
+					nodeRedMonitor.stopMonitor();
 					TimeUnit.SECONDS.sleep(rebootDelay);
 
 					this.watchDog = new ExecuteWatchdog(ExecuteWatchdog.INFINITE_TIMEOUT);
@@ -146,7 +156,7 @@ public class NodeRedLauncher {
 								new RolloverFileOutputStream(logPath + File.separator + "yyyy_mm_dd.debug.log")));
 					}
 					executor.execute(commandLine, handler);
-
+					nodeRedMonitor.startMonitor();
 					handler.waitFor();
 				} catch (Exception e) {
 					log.error("Error arrancando NodeRED", e);

@@ -49,7 +49,7 @@ public class FlowEngineDomainStatus {
 
 	@Getter
 	@Setter
-	private String State;
+	private String state;
 
 	@Getter
 	@Setter

@@ -32,7 +32,6 @@ import com.indracompany.sofia2.config.model.Flow;
 import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.FlowNode;
 import com.indracompany.sofia2.config.model.FlowNodeProperties;
-import com.indracompany.sofia2.config.model.FlowNodeType;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -52,6 +51,9 @@ public class FlowIntegrationTest {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private OntologyRepository ontologyRepository;
 
 	@Before
 	public void setUp() {
@@ -131,13 +133,4 @@ public class FlowIntegrationTest {
 		Assert.assertTrue(ssapNodes.size() > 0);
 	}
 
-	@Test
-	public void test3_generateFlowNodeTypes() {
-
-		FlowNodeType type = new FlowNodeType();
-		type.setIdentification("script-topic");
-		nodeTypeRepository.save(type);
-
-		Assert.assertTrue(true);
-	}
 }

@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.flowengine.api.rest.exception.NotAllowedException;
-import com.indracompany.sofia2.flowengine.api.rest.exception.NotAuthorizedException;
-import com.indracompany.sofia2.flowengine.api.rest.exception.ResourceNotFoundException;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineNodeService;
+import com.indracompany.sofia2.flowengine.exception.NotAllowedException;
+import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
+import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 
 import javassist.NotFoundException;
 
@@ -74,7 +74,7 @@ public class FlowEngineNodeServicesController {
 	public @ResponseBody String getOntologiesAndClientPlatformsByUser(@RequestParam String user,
 			@RequestParam String password)
 			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException, JsonProcessingException {
-		String ontologies = mapper.writeValueAsString(flowEngineNodeService.getClientPlatformByUser(user, password));
+		String ontologies = mapper.writeValueAsString(flowEngineNodeService.getOntologyByUser(user, password));
 		String clientPlatforms = mapper
 				.writeValueAsString(flowEngineNodeService.getClientPlatformByUser(user, password));
 		StringBuilder response = new StringBuilder();
@@ -87,11 +87,12 @@ public class FlowEngineNodeServicesController {
 	@RequestMapping(value = "/user/query", method = RequestMethod.GET, produces = { "application/javascript",
 			"application/json" })
 	public @ResponseBody String submitQuery(@RequestParam(required = true) String ontology,
-			@RequestParam(required = true) String queryDB, @RequestParam(required = true) String queryType,
+			@RequestParam(required = true) String targetDB, @RequestParam(required = true) String queryType,
 			@RequestParam(required = true) @Size(min = 1) String query, @RequestParam(required = true) String user,
 			@RequestParam(required = true) String password)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
-		return flowEngineNodeService.submitQuery(ontology, queryDB, queryType, query, user, password);
+		// TODO One field not used
+		return flowEngineNodeService.submitQuery(ontology, queryType, query, user, password);
 	}
 
 }
