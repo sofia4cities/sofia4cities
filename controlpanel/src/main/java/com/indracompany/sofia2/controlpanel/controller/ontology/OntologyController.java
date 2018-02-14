@@ -132,7 +132,7 @@ public class OntologyController {
 		{
 			log.debug("Some ontology properties missing");
 			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return "redirect:/ontologies/createwizard/"+id;
+			return "redirect:/ontologies/update/"+id;
 		}
 		if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
 			return "/error/403";
