@@ -32,6 +32,9 @@
 							<exception>org.apache.camel.processor.ThrottlerRejectedExecutionException</exception>
 							<log message="Error processing API" loggingLevel="ERROR" />
 							<to uri="direct:set-default-headers" />
+							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+								<constant>429</constant>
+							</setHeader>
 							<setBody>
 								<simple>["GLOBAL THROTTLER POLICY","${exception.message}"]</simple>
 							</setBody>
@@ -53,6 +56,9 @@
 					<exception>java.lang.Exception</exception>
 					<log message="Error processing API" loggingLevel="ERROR" />
 					<to uri="direct:set-default-headers" />
+					<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+						<constant>500</constant>
+					</setHeader>
 					<setBody>
 						<simple>["MESSAGE EXCEPTION","${exception.message}"]</simple>
 					</setBody>

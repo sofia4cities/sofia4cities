@@ -190,7 +190,7 @@ public class ApiManagerService {
 					try {
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 						df.parse(paramvalue);
-						paramvalue = "'" + paramvalue + "'";
+						paramvalue = "\"" + paramvalue + "\"";
 					} catch (Exception e) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Date" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype "+parametros[0]);
@@ -198,7 +198,7 @@ public class ApiManagerService {
 				} else if (customqueryparameter.getDataType().name().equalsIgnoreCase(ApiQueryParameter.DataType.string.name())) {
 					try {
 						paramvalue.toString();
-						paramvalue = "'" + paramvalue + "'";
+						paramvalue = "\"" + paramvalue + "\"";
 					} catch (Exception e) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
 						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);

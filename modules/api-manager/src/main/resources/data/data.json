@@ -1,5 +1,5 @@
 {
-   "identification":"APITEST",
+   "identification":"APIPRODUCT",
    "version":1,
    "type":"iot",
    "category":"publicidad",
@@ -7,8 +7,8 @@
    "ontologyId":"f8420a03-f733-4dfd-9699-b16ccf1835e0",
    "endpoint":"https://sofia2.com/sib-api/api/v1/TEST2",
    "endpointExt":"string",
-   "description":"APITEST",
-   "metainf":"APITEST",
+   "description":"APIPRODUCT",
+   "metainf":"APIPRODUCT",
    "imageType":"string",
    "userId":"string",
    "operations":[
@@ -26,7 +26,7 @@
                "description":"",
                "name":"body",
                "dataType":"string",
-               "value":"#/definitions/String"
+               "value":""
             }
          ]
       },
@@ -44,7 +44,7 @@
                "description":"",
                "name":"body",
                "dataType":"string",
-               "value":"#/definitions/String"
+               "value":""
             }
          ]
       },
@@ -55,7 +55,7 @@
 
          ],
          "operation":"GET",
-         "path":"/bycity?$city={city}&$casa={casa}",
+         "path":"/byName?$name={name}",
          "queryParams":[
             {
                "headerType":"query",
@@ -83,16 +83,10 @@
                "description":"",
                "name":"query",
                "dataType":"string",
-               "value":"select * from WeatherDetails where WeatherDetails.location.city = {$city} and WeatherDetails.location.casa = {$casa} limit 3"
+               "value":"select * from product where name = {$name}"
             },
             {
-               "name":"city",
-               "dataType":"string",
-               "description":"",
-               "headerType":"query"
-            },
-            {
-               "name":"casa",
+               "name":"name",
                "dataType":"string",
                "description":"",
                "headerType":"query"
@@ -130,7 +124,7 @@
                "description":"",
                "name":"body",
                "dataType":"string",
-               "value":"#/definitions/String"
+               "value":""
             }
          ]
       },
