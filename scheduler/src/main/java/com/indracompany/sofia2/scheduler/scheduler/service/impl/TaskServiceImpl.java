@@ -155,7 +155,8 @@ public class TaskServiceImpl implements TaskService {
 			JobDetail jobDetail = jobGenerator.createJobDetail(jobKey, jobDataMap, BatchGenericJob.class, jobDescription);
 
 			TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
-			Trigger trigger = triggerGenerator.createCronTrigger(cronExpression, jobDetail, triggerKey);
+			Trigger trigger = triggerGenerator.createCronTrigger(cronExpression, jobDetail, triggerKey, 
+																 info.getStartAt(), info.getEndAt());
 			
 			scheduler.scheduleJob(jobDetail, trigger);
 			

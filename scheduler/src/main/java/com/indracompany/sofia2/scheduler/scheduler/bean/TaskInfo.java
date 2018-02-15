@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.scheduler.scheduler.bean;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.indracompany.sofia2.scheduler.SchedulerType;
@@ -25,13 +26,15 @@ public class TaskInfo {
 	private SchedulerType schedulerType;
 	private Map<String, Object> data;
 	private boolean isSingleton;
+	private Date startAt;
+	private Date endAt;
 	
 	public TaskInfo () {
 		
 	}
 	
 	public TaskInfo(String jobName, String username, String cronExpression, SchedulerType schedulerType, Map<String, Object> data,
-			boolean isSingleton) {
+			boolean isSingleton, Date startAt, Date endAt) {
 		super();
 		this.jobName = jobName;
 		this.username = username;
@@ -39,6 +42,8 @@ public class TaskInfo {
 		this.schedulerType = schedulerType;
 		this.data = data;
 		this.isSingleton = isSingleton;
+		this.startAt = startAt;
+		this.endAt = endAt;
 	}
 	
 	public String getJobName() {
@@ -87,6 +92,22 @@ public class TaskInfo {
 
 	public void setSingleton(boolean isSingleton) {
 		this.isSingleton = isSingleton;
+	}
+
+	public Date getStartAt() {
+		return startAt;
+	}
+
+	public void setStartAt(Date startAt) {
+		this.startAt = startAt;
+	}
+
+	public Date getEndAt() {
+		return endAt;
+	}
+
+	public void setEndAt(Date endAt) {
+		this.endAt = endAt;
 	}
 
 }

@@ -13,7 +13,10 @@
  */
 package com.indracompany.sofia2.scheduler.scheduler.generator.impl;
 
+import java.util.Date;
+
 import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
@@ -38,18 +41,25 @@ public class TriggerGeneratorImpl implements TriggerGenerator{
 	}
 
 	@Override
-	public Trigger createCronTrigger(String cronExpression, JobDetail jobDetail, TriggerKey triggerKey) {
+	public Trigger createCronTrigger(String cronExpression, JobDetail jobDetail, TriggerKey triggerKey, Date startAt, Date endAt) {
 		
 		CronScheduleBuilder schedBuilder = CronScheduleBuilder.cronSchedule(cronExpression).
 				   withMisfireHandlingInstructionDoNothing();
         
-        Trigger trigger = TriggerBuilder.newTrigger()
+		TriggerBuilder<CronTrigger> builder = TriggerBuilder.newTrigger()
                 .forJob(jobDetail)
                 .withSchedule(schedBuilder)
-                .withIdentity(triggerKey)
-                .build();
+                .withIdentity(triggerKey);
+                
+        if (startAt != null) {
+        	builder.startAt(startAt);
+        }        
         
-        return trigger;
+        if (endAt != null) {
+        	builder.endAt(endAt);
+        }
+        
+        return builder.build();
     }
 	
 }

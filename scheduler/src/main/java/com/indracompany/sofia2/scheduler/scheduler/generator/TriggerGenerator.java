@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.scheduler.scheduler.generator;
 
+import java.util.Date;
+
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
@@ -22,6 +24,6 @@ public interface TriggerGenerator {
 
 	Trigger createTrigger(JobDetail jobDetail, TriggerKey triggerKey);
 	
-	Trigger createCronTrigger(String cronExpression, JobDetail jobDetail, TriggerKey triggerKey);
+	Trigger createCronTrigger(String cronExpression, JobDetail jobDetail, TriggerKey triggerKey, Date startAt, Date endAt);
 		
 }
