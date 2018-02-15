@@ -44,6 +44,10 @@ import lombok.Setter;
 @Table(name = "ONTOLOGY_USER_ACCES_TYPE")
 public class OntologyUserAccessType extends AuditableEntity {
 
+	public static enum Type {
+		ALL, QUERY, INSERT;
+	}
+	
 	@Id
 	@Column(name = "ID")
 	@Getter
@@ -61,6 +65,10 @@ public class OntologyUserAccessType extends AuditableEntity {
 	@Getter
 	@Setter
 	private String name;
+	
+	public void setNameEnum(OntologyUserAccessType.Type type) {
+		this.name = type.toString();
+	}
 
 	@Column(name = "DESCRIPTION", length = 255)
 	@Getter

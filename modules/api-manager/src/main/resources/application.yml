@@ -7,6 +7,20 @@ server: ## Config Web Server
       access_log_enabled: true
       basedir: target/tomcat
 
+# all access to actuator endpoints without security
+management:
+  security:
+    enabled : false
+  port: 19091
+# turn on actuator health check
+endpoints:
+  health:
+    enabled : true
+  jmx:
+    enabled: true
+     
+ 
+    
 #Security Config
 security:
     user:
@@ -26,7 +40,7 @@ spring: ## General Config
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:  
+      password:
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.
@@ -47,7 +61,10 @@ spring: ## General Config
       port: 587
       properties.mail.smtp.auth: true
       properties.mail.smtp.starttls.enable: true
-          
+   jmx:
+    enabled: true
+
+              
 ## LOGGING CONF
 logging:
    level:

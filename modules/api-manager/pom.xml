@@ -23,6 +23,7 @@
 		<version.easyrules>3.1.0</version.easyrules>
 		<version.poi>3.17</version.poi>
 		<version.swaggerui>3.9.3</version.swaggerui>
+		<version.prometheus>0.2.0</version.prometheus>
 	</properties>
 
 	<dependencies>
@@ -34,6 +35,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -73,13 +85,20 @@
 			<version>2.9.4</version>
 		</dependency>
 
-
+		<!-- CORE LIBS FOR API MANAGER -->
 		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>swagger-ui</artifactId>
 			<version>${version.swaggerui}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jeasy</groupId>
+			<artifactId>easy-rules-core</artifactId>
+			<version>${version.easyrules}</version>
+		</dependency>
+
+		<!-- sofia2 -->
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-ri</artifactId>
@@ -91,19 +110,14 @@
 			<artifactId>sofia2-config-services</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
-		</dependency>	
-
-		<dependency>
-			<groupId>org.jeasy</groupId>
-			<artifactId>easy-rules-core</artifactId>
-			<version>${version.easyrules}</version>
 		</dependency>
 
+		<!-- JSON -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -113,10 +127,9 @@
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
-			<version>1.1.1</version>
 		</dependency>
 
-
+		<!-- poi -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
@@ -128,14 +141,13 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>${version.poi}</version>
 		</dependency>
+
+		<!-- camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-boot-starter</artifactId>
 			<version>${version.camel}</version>
 		</dependency>
-
-
-
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -149,11 +161,60 @@
 			<version>${version.camel}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-metrics-starter</artifactId>
+			<version>${version.camel}</version>
+		</dependency>
+
+		<!-- metrics -->
+		<dependency>
+			<groupId>io.dropwizard.metrics</groupId>
+			<artifactId>metrics-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.dropwizard.metrics</groupId>
+			<artifactId>metrics-graphite</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.dropwizard.metrics</groupId>
+			<artifactId>metrics-annotation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jolokia</groupId>
+			<artifactId>jolokia-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_spring_boot</artifactId>
+			<version>${version.prometheus}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_dropwizard</artifactId>
+			<version>${version.prometheus}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient_hotspot</artifactId>
+			<version>${version.prometheus}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>24.0-jre</version>
+		</dependency>
+
 
 	</dependencies>
-
-
-
 
 	<build>
 		<plugins>

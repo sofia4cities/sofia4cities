@@ -97,7 +97,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	@Test
 	public void test_count_movie() {
 		try {
-			Assert.assertTrue(repository.count("movie") > 0);
+			Assert.assertTrue(repository.count("movie") == 0);
 		} catch (Exception e) {
 			Assert.fail("Error test_count" + e.getMessage());
 		}

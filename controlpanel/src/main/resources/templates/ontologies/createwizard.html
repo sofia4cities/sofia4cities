@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
 		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
@@ -89,7 +90,7 @@
 									
 									<!-- FORM TITLE -->
 									<span th:if="${ontology.user?.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.create} + ':'"> New Ontology</span>
-									<span th:if="${ontology.user?.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.update} + ' ' + ${ontology.id} + ':'"> Update Ontology </span>
+									<span th:if="${ontology.user?.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.update} + ' ' + ${ontology.identification} + ':'"> Update Ontology </span>
 								</div>
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
@@ -116,11 +117,15 @@
 									</div>
 									<div class="col-md-12">
 										<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
+											<input id="datamodelid" class="hidden-validation" type="hidden" th:required="true" th:field="*{dataModel}" />											
+											<input id="jsonschema"  class="hidden-validation" type="hidden" th:required="true" th:field="*{jsonSchema}"  />
+											
+											
 											<!-- FORM ACTIONS FOR INSERT-->
-											<input th:if="${ontology.id} == null" type="hidden" name="action" th:value="@{/ontologies/create}"/>
+											<input th:if="${ontology.id} == null" type="hidden" name="action" th:value="@{/ontologies/createwizard}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->
-											<input th:if="${ontology.user?.userId} != null" type="hidden" name="action" th:value="@{/ontologies/update}"/>
+											<input th:if="${ontology.user?.userId} != null" type="hidden" name="action" th:value="@{'/ontologies/update/'+${ontology.id}}"/>
 											<input th:if="${ontology.user?.userId} != null" type="hidden" name="_method" value="PUT"/>
 											
 											<div class="form-body">
@@ -129,10 +134,10 @@
 													<div class="col-md-6 col-xs-12">
 														<div class="col-md-6 col-sm-6 col-xs-12">
 															<div class="form-group">
-																<label th:text="#{ontology.identification} + ':'">Identification</label><span class="required"> (*)</span>
+																<label class="popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.identification.help},data-title=#{ontology.id}"><i class="la la-lightbulb-o"></i> <span th:text="#{ontology.id} + ':'">Identification</span></label><span class="required"> (*)</span>
 																<div class="input-icon ">
 																	<i class="fa fa-credit-card"></i>
-																	<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.identification}"  th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
+																	<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.identification}" th:disabled="!*{id}" th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
 																</div>
 															</div>
 														</div>
@@ -149,8 +154,8 @@
 														<div class="col-md-6 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" th:attr=" data-content=#{ontology.metainf.help},data-title=#{ontology.metainf}"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>
-																<input  id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" th:required="true" data-minlength="2" pattern=".{2,}" min="2"></input>
-																<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.metainf.min}"> min. 2 chars</small></span>
+																<input  id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" data-minlength="2" pattern=".{2,}" min="2" th:required="true"></input>
+																
 															</div>
 														</div>													
 														<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
@@ -177,71 +182,33 @@
 														</div>							
 													</div>
 													<div class="col-md-6 col-sm-12 col-xs-12">
-														<div class="row">																																
-															<div class="col-md-6 col-xs-12">
-																<div class="form-group">
-																	<label id="notificaciones" >Configuración de notificaciones</label>
-																	<div class="mt-checkbox-list">
-																		<label class="mt-checkbox"> <div class="inline" >Query suscripción BDTR </div>
-																			<input id="bdtr" name="bdtr" value="bdtr" checked="checked" type="checkbox" />
-																			<span></span>
-																		</label>
-																		<label class="mt-checkbox"> <div class="inline" > Regla Script </div>
-																			<input id="script" name="script" value="script" checked="checked"  type="checkbox" />
-																			<span></span>
-																		</label>
-																		<label class="mt-checkbox"> <div class="inline" >Regla CEP</div>
-																			<input id="cep" name="cep" value="cep" checked="checked" type="checkbox" />
-																			<span></span>
-																		</label>
-																	</div>
+														<div class="col-md-6 col-sm-6 col-xs-12" >
+															<div class="form-group">
+																<label class="" th:text="#{ontology.rtdbclean} + ':'">RTDB Clean</label>
+																<div class="mt-checkbox-list">
+																	<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline font-xs" th:text="#{ontology.rtdbclean} + '?'">rtdbclean?</div>
+																		<input id="rtdbclean" name="rtdbclean" type="checkbox" class="form-control" th:field="*{rtdbClean}" th:checked="checked"/>
+																		<span></span><!-- needed by styles -->
+																	</label>
 																</div>
 															</div>
-															<div class="col-md-6 col-xs-12">
-																<div class="form-group">
-																	<label id="intervaloBTRBH"><i class="la la-lightbulb-o"></i> <span > Plantilla </span></label>
-																	<!-- <select id="id_campo_temporizador" class="selectpicker form-control" data-live-search="true" data-width="100%" th:text="#{ontologias_formulario_intervalo_sin_paso}"  data-none-selected-text="Nada Seleccionado" th:field="*{bdtrbdh}" onchange="changeBDTRBorrado();" th:required="true"> -->
-																		<!-- <option th:each="temporizador:${periodidadesBdtr}" th:value="${#numbers.formatDecimal(temporizador.valor,1,0)}" th:text="#{${temporizador.nombre}}"></option> -->
-																	<!-- </select> -->
-																	<div class="mt-checkbox-list">
-																		<label class="mt-checkbox"> <div class="inline" id="borradolabel" >Eliminar de BDTR </div>
-																			<input id="checkboxborrado" name="checkboxborrado" type="checkbox" onchange="changeBDTRText();" th:disabled="disabled" />
-																			<span></span>
-																		</label>
-																	</div>
+														</div>
+														<div class="col-md-6 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<label class="" th:text="#{ontology.rtdbtohdb} + ':'">RTDB to HDB</label>
+																<div class="mt-checkbox-list">
+																	<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.rtdbtohdb} +'?'">rtdbtohdb?</div>
+																		<input id="rtdbtohdb" class="form-control"  name="rtdbtohdb" type="checkbox" th:field="*{rtdbToHdb}" />
+																		<span></span><!-- necesario por estilos. -->
+																	</label>
 																</div>
-															</div>																		
-															<div class="col-md-6 col-xs-12">
-																<div class="form-group">
-																	<label id="instanciaBdtr"><i class="la la-lightbulb-o"></i> <span >Seleccionar Instancia BDTR </span></label>
-																	<!-- <select id="id_instancia_bdtr" class="selectpicker form-control" data-live-search="true" data-width="100%"   data-none-selected-text="Nada Seleccionado" th:field="*{bdtrdatasourceid}" th:required="true">
-																		<option th:each="bdtr:${bdtrs}" th:value="${bdtr.identificacion}" th:text="${bdtr.identificacion}"></option>
-																	</select> -->
-																	<input id="bdtr_seleccionada" name="bdtr_seleccionada" type="hidden" value=""/>
-																	<input id="porDefecto" name="porDefecto" type="hidden" th:value="${porDefecto}" />																				
-																</div>
-															</div>
-															<div class="col-md-6 col-xs-12">
-																<div class="form-group" sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')">
-																	<label id="ontologyClass" >Agrupador de datos</label>
-																	<div class="input-icon ">
-																		<i class="fa fa-cog"></i>																			
-																		<!-- <input id="id_ontologia_clase" name="campo_nombre" class="form-control" type="text" maxlength="100" th:field="*{ontologyClass}" th:disabled="disabled" /> -->
-																	</div>
-																	<div class="mt-checkbox-list">
-																		<label class="mt-checkbox"> <div class="inline" id="agrupadorlabel" >Agrupar datos</div>
-																			<input id="checkboxagrupador" name="checkboxagrupador" type="checkbox"  onchange="enableOntologyClass();" />
-																			<span></span>
-																		</label>
-																	</div>																				
-																</div>																			
 															</div>
 														</div>
 													</div>
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label th:text="#{ontology.description}">Comments </label><span class="required"> (*)</span>
-															<textarea class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true" data-minlength="5" pattern=".{5,}" min="5"  cols="" rows=""></textarea>
+															<textarea class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
 														</div>
 														<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.description.min}"></small></span>
 													</div>													
@@ -258,14 +225,19 @@
 																</div>
 																<!-- SECCIONES DE LA ONTOLOGIA TABS -->
 																<ul class="nav nav-tabs pull-left">
-																	<li id="tab-plantilla" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span class="uppercase font-md" th:text="#{ontology.section.templates}">Ontology Templates</span></a></li>
-																	<li id="tab-propiedades" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false"><i class="la la-edit"></i> <span class="uppercase font-md" th:text="#{ontology.section.properties}">Additional Properties</span> </a></li>
-																	<li id="tab-esquema" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.section.schema}">Schema Generator and JSON Instances</span></a></li>
+																	<li id="tab-plantilla" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span class="uppercase font-md" th:text="#{ontology.section.templates}">Ontology Templates</span></a></li>																	
+																	<li id="tab-esquema" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.section.schema}">Schema Generator and JSON Instances</span></a></li>
 																</ul>
 															</div>
 															<div class="portlet-body">
 																<div class="col-md-12 margin-top-10 ">
 																	<div class="tab-content">
+																	
+																		<div id="datamodelError" class="alert alert-warning hide">
+																			<button class="close" data-close="alert"></button> 
+																				<span th:text="#{ontology.datamodel.error}">You have some form errors. Please Select a Datamodel below.</span>
+																		</div>
+																	
 																		<!-- ONTOLOGY TEMPLATES -->
 																		<div class="tab-pane active" id="tab_1">																			
 																			<div class="row">
@@ -281,7 +253,7 @@
 																									<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}">
 																										<li th:if="${datamodel.type} == ${datamodeltype}" class="mt-list-item datamodel-template">
 																											<div class="list-item-content" style="padding: 0 15px 0 10px;">
-																												<h3 class="uppercase" onclick="schemaToTable($(this).attr('data-schema'),'template_schema');" th:text="${datamodel.name}" th:attr="data-schema=${datamodel.jsonSchema}"></h3>
+																												<h3 class="uppercase" onclick="OntologyCreateController.schemaToTable(this,'datamodel_properties');" th:text="${datamodel.name}" th:attr="data-model=${datamodel.id},data-schema=${datamodel.jsonSchema}"></h3>
 																												<p th:if="${datamodel.description}" lass="text-truncate-sm text-left" th:text="${datamodel.description}"></p>																												
 																											</div>
 																										</li>																										
@@ -293,19 +265,44 @@
 																				</div>
 																				<div class="col-lg-9 col-md-8 col-xs-12">
 																					<!-- TEMPLATE FIELDS -->
-																					<div id="template_schema" class="margin-bottom-20"></div>
+																					<div id="template_schema" class="margin-bottom-20 hide">
+																						<table class="table" id="datamodel_properties" data-loaded="false">
+																							<thead>
+																								<tr class="cabecera-tabla" role="row" >
+																									<th class="titulo-columnas">Propiedad</th>
+																									<th class="titulo-columnas">T.datos</th>
+																									<th class="titulo-columnas">Requerido</th>
+																									<th class="titulo-columnas">Descripción</th>																															
+																									<th class="titulo-columnas">Options</th>
+																								</tr>
+																							</thead>
+																							<tbody>
+																								<tr class="mountable-model">
+																									<td><input type="text" name="property[]"  onblur="OntologyCreateController.checkProperty(this)" class="form-control"/></td>
+																									<td><input type="text" name="type[]"   onblur="OntologyCreateController.checkType(this)" class="form-control" placeholder="[string, number, object, timestamp, binary]" /></td>
+																									<td><input type="text" name="required[]"   onblur="OntologyCreateController.checkRequired(this)" class="form-control"/></td>
+																									<td><input type="text" name="descriptions[]" class="form-control"/></td>																									
+																									<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="OntologyCreateController.removeProperty(this)">Remove</button></td>			
+																								</tr>
+																							</tbody>
+																							<tfoot>
+																								<tr>
+																									<td colspan="4">
+																										<div class="btn-group">
+																											<button type="button" class="btn btn-sm btn-default green-haze btn-outline" id="button2">Add a new Property</button>
+																											<button type="button" class="btn btn-sm btn-default yellow-casablanca btn-outline " id="btn-updateSchema">Update Schema</button>
+																										</div>
+																									</td>
+																								</tr>
+																							</tfoot>
+																						</table>
+																					</div>
 																				</div>
 																			</div>
-																		</div>
-																		<!-- ADDITIONAL PROPERTIES SECTION -->
-																		<div class="tab-pane" id="tab_2">																			
-																			<p> Howdy, I'm in Section 2. </p>	
-																			<input id="id_listaCamposOntologia" name="listaCamposPlantillas" type="hidden" th:value="[]"/>
-																			<input type="hidden" id="id_source_wizard" name="id_source_wizard" value="true" />
-																		</div>
+																		</div>																		
 																		
 																		<!-- SCHEMA GENERATOR AND JSON INSTANCE -->
-																		<div class="tab-pane" id="tab_3">
+																		<div class="tab-pane" id="tab_2">
 																			<p class="bold uppercase"><i class="flaticon-network font-grey-gallery"></i> <span id="schema_title"> Selected Data model: </span></p>
 																			<div id="jsoneditor"></div>																			
 																		</div>
@@ -321,13 +318,13 @@
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-													<button th:if="${ontology.user?.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<button th:if="${ontology.user?.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													
 													<!-- UPDATE -->
 													<button th:if="${ontology.user?.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 													
 													<!-- REMOVE -->
-													<button th:if="${ontology.user?.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.Id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													<button th:if="${ontology.user?.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 													
 													<!-- RESET -->
 													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
@@ -335,16 +332,16 @@
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:OntologyCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:OntologyCreateController.go(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>
 										</form>
 										
-										<!-- AUXILIAR FORM TO DELETE USER -->
-										<form id="delete_ontology_form" class="delete-user hide"  th:action="@{'/ontologies/'+${ontology.id}}"  method="post">
+										<!-- AUXILIAR FORM TO DELETE ONTOLOGY -->
+										<form id="delete_ontology_form" class="delete-ontology hide"  th:action="@{'/ontologies/'+${ontology.id}}"  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
-											<input type="hidden" name="ontologyId" th:value="${ontology.id}"/>
+											<input id="delete-ontologyId" type="hidden" name="ontologyId" th:value="${ontology.id}"/>
 										</form>
 									</div>
 								</div>
@@ -376,7 +373,7 @@
 	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}" type="text/javascript"></script>
 
 	<script th:src="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js}" type="text/javascript"></script>
-	<script th:src="@{/static/vendor/json/jsonToTable.js}" type="text/javascript"></script>
+	<script th:src="@{/static/vendor/json/mountable.min.js}" type="text/javascript"></script>
 	
 	<!-- JSON EDITOR -->
 	<script th:src="@{/static/vendor/json/json2.min.js}"/>
@@ -393,69 +390,18 @@
 
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
-
-
-	var currentLanguage = [[${lang}]];	
 	
+			
+	var currentLanguage = [[${lang}]];	
 	var ontologyCreateJson = { 		
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"actionMode" : [[${ontology.user?.userId}]],
-	};
-	
-	
-	function schemaToTable(schema,tableId){
-		console.log('|---  schemaToTable()...');
-		var data, properties = '';
-		
-		
-		if (typeof schema == 'string'){		
-			data = JSON.parse(schema);				
-			
-		}else if (typeof schema == 'object') { data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
-		
-		console.log('JSON: ' + data);
-		
-		// check json schema
-		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; alert('propiedades (datos): ' + JSON.stringify(properties)); } else { properties = data.properties; alert('propiedades (properties): ' + JSON.stringify(properties));  }
-		// CREATING TABLE FROM DATA.		
-		$('#'+tableId).createTable(properties, {});
-		
-		// UPDATING JSON EDITOR
-		$('#schema_title').text(data.title + ':');
-		editor.setMode("text");
-        editor.setText(schema);
-		editor.setMode("tree");
-	
-	};
+		"schemaEditMode" : [[${ontology?.jsonSchema}]],
+		"dataModelEditMode" : [[${ontology.dataModel?.id}]]
+	};	
 	
 
-	
-	var editor;
-	var aceEditor;
-	$(document).ready(function(){
-		
-		console.log(' INICIANDO WIZARD...');		
-		var container = document.getElementById('jsoneditor');	
-		var options = {
-			mode: 'code',
-			theme: 'bootstrap3',
-			modes: ['code', 'text', 'tree', 'view'], // allowed modes
-			error: function (err) {
-				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
-				return false;
-			}
-		};
-		
-		editor = new jsoneditor.JSONEditor(container, options, "");		
-		console.log('editor' + editor);	
-	});
-	
-	$(document).load(function(){		 
-		 
-		
-	});	
-	
 	// LOAD DATA TO USE IN CREATE WIZARD CONTROLLER
 	// CREATE WIZARD CONTROLLER LOAD AND INIT ITSELF
 	

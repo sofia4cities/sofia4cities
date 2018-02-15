@@ -21,6 +21,8 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -39,7 +41,16 @@ import lombok.Setter;
 @Entity
 @Table(name = "API_QUERY_PARAMETER")
 public class ApiQueryParameter extends AuditableEntityWithUUID {
-
+	
+	public static enum HeaderType {
+		body, formData, header,path,query;
+	}
+	
+	public static enum DataType {
+		string, array, date,password,binary,email,uuid,uri,hostname,number;
+	}
+	  
+	
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
@@ -59,7 +70,9 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@NotNull
 	@Getter
 	@Setter
-	private String dataType;
+	@Enumerated(EnumType.STRING)
+	private DataType dataType;
+	
 
 	@Column(name = "QUERY_DESCRIPTION", length = 512, nullable = false)
 	@NotNull
@@ -80,6 +93,8 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@Column(name = "QUERY_HEADER_TYPE", length = 50)
 	@Getter
 	@Setter
-	private String headerType;
+	@Enumerated(EnumType.STRING)
+	private HeaderType headerType;
+	
 
 }

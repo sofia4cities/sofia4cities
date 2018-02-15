@@ -25,6 +25,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -49,6 +51,11 @@ import lombok.Setter;
 public class Api extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static enum ApiType {
+		CREATED, PUBLISHED, DELETED, DEPRECATED, DEVELOPMENT;
+	}
+	
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -126,7 +133,8 @@ public class Api extends AuditableEntityWithUUID {
 	@NotNull
 	@Getter
 	@Setter
-	private String state;
+	@Enumerated(EnumType.STRING)
+	private ApiType state;
 
 	@Column(name = "META_INF", length = 512)
 	@Getter
@@ -158,6 +166,7 @@ public class Api extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String apiType;
+	
 
 	@Column(name = "ASSESSMENT", precision = 10)
 	@Getter

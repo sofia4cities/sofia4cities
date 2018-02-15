@@ -20,7 +20,6 @@
 package com.indracompany.sofia2.persistence.mongodb;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -116,131 +115,104 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	}
 
 	@Override
-	public List<String> deleteNative(String collection, String query) throws DBPersistenceException {
+	public void deleteNative(String collection, String query) throws DBPersistenceException {
 		log.debug("removeInstance", collection, query);
 		try {
-			List<String> objectIds = getObjectIdsOfAffectedDocuments(collection, query);
 			mongoDbConnector.remove(database, collection, query);
-			return objectIds;
 		} catch (javax.persistence.PersistenceException e) {
 			log.error("remove", e);
 			throw new DBPersistenceException(e);
 		}
 	}
 
-	private List<String> getObjectIdsOfAffectedDocuments(String collection, String query) {
-		Map<String, Integer> projection = new HashMap<String, Integer>();
-		projection.put("_id", 1);
-		List<String> objectIds = new ArrayList<String>();
-		for (BasicDBObject document : mongoDbConnector.find(database, collection, query, projection, null, 0, 0,
-				this.queryExecutionTimeout)) {
-			objectIds.add("{\"_id\":ObjectId(\"" + document.get("_id") + "\")}");
-		}
-		return objectIds;
-	}
-
 	@Override
-	public List<String> updateNative(String collection, String query, String data) throws DBPersistenceException {
+	public void updateNative(String collection, String updateQuery) throws DBPersistenceException {
+		String query = null;
+		String dataToUpdate = null;
 		try {
-			log.debug("update", collection, query, data);
-			MongoIterable<BasicDBObject> cursor = mongoDbConnector.find(database, collection, util.prepareQuotes(query),
-					queryExecutionTimeout);
-			List<String> ids = new ArrayList<String>();
-			BasicDBObject updatedInstance = (BasicDBObject) JSON.parse(util.prepareQuotes(data));
-			for (BasicDBObject document : cursor) {
-				/*
-				 * En 'datos' llega sólo la instancia de la ontología, sin ContextData. En el
-				 * documento a actualizar debemos poner al mismo nivel el ContextData y la
-				 * instancia de la ontología. El bucle hace falta porque no siempre la instancia
-				 * de ontología tiene una única clave de primer nivel y el resto de campos
-				 * anidados bajo ella.
-				 */
-				BasicDBObject contextData = (BasicDBObject) document.get("contextData");
-				BasicDBObject updatedDocument = new BasicDBObject();
-				updatedDocument.append("contextData", contextData);
-				for (String key : updatedInstance.keySet()) {
-					updatedDocument.append(key, updatedInstance.get(key));
-				}
-				mongoDbConnector.replace(database, collection, document, updatedDocument);
-				ids.add(util.getObjectIdString(document.getObjectId("_id")));
+			if (updateQuery.indexOf(".update(") != -1) {
+				updateQuery = updateQuery.substring(updateQuery.indexOf(".update(") + 8, updateQuery.length());
+				query = updateQuery.substring(0, updateQuery.indexOf("},") + 1);
+				dataToUpdate = updateQuery.substring(updateQuery.indexOf("},") + 2, updateQuery.length());
 			}
-			return ids;
-		} catch (javax.persistence.PersistenceException e) {
+
+			updateNative(collection, query, dataToUpdate);
+		} catch (Exception e) {
 			log.error("update", e);
 			throw new PersistenceException(e);
 		}
 	}
 
 	@Override
-	public List<String> updateNative(String ontology, String statement) throws DBPersistenceException {
-		log.debug("update", statement);
-		String statementAux = statement;
-		String data = "";
-		String query = "";
+	public void updateNative(String collection, String query, String dataToUpdate) throws DBPersistenceException {
 		try {
-			if (statementAux == null || statementAux.length() == 0)
-				throw new DBPersistenceException("Statement null: " + statement);
+			log.debug("update", collection, query, dataToUpdate);
 
-			if (statementAux.startsWith("{")) {
-				statementAux = statementAux.substring(1);
-			}
-			if (statementAux.endsWith("}")) {
-				statementAux = statementAux.substring(0, statementAux.length() - 1);
-			}
-			if (!statementAux.endsWith(";")) {
-				statementAux = statementAux.concat(";");
-			}
-			if (!statementAux.toLowerCase().startsWith("db.")) {
-				log.warn("updateByNativeQuery", "Expected MongoDB update statement");
-				throw new DBPersistenceException("Expected MongoDB update statement");
-			}
-			if (statementAux.contains("db.")) {
-				statementAux = statementAux.replace("db.", "");
-			}
-			if (statementAux.contains("update(")) {
-				statementAux = statementAux.substring(statementAux.indexOf("(") + 1, statementAux.lastIndexOf(")"));
-				statementAux = statementAux.trim();
-
-				int anidamiento = 0;
-				int indiceInicioObjeto = 0;
-				List<String> objetos = new ArrayList<String>();
-				for (int i = 0; i < statementAux.length(); i++) {
-					if (statementAux.charAt(i) == '{') {
-						anidamiento++;
-					} else if (statementAux.charAt(i) == '}') {
-						anidamiento--;
-					}
-					if ((statementAux.charAt(i) == ',' || i == statementAux.length() - 1) && anidamiento == 0) {
-						if (statementAux.charAt(i) == ',') {
-							objetos.add(new String(statementAux.substring(indiceInicioObjeto, i)));
-						} else {
-							objetos.add(new String(statementAux.substring(indiceInicioObjeto)));
-						}
-						indiceInicioObjeto = i + 1;
-					}
-				}
-
-				if (objetos.size() >= 2) {
-					query = objetos.get(0);
-					data = objetos.get(1);
-
-				} else {
-					log.warn("update", "Expected {$set:{[field:value]}} ||  {$inc:{[field:value]}}");
-					throw new DBPersistenceException("Expected {$set:{[field:value]}} ||  {$inc:{[field:value]}}");
-				}
-			}
+			mongoDbConnector.update(database, collection, query, dataToUpdate, true);
+			//
+			// FIXME: Update contextData
 			/*
-			 * Native updates specify the document to be replaced; SQL-LIKE ones specify an
-			 * update operator. We should remove this inconsistency.
+			 * List<String> ids = new ArrayList<String>(); BasicDBObject updatedInstance =
+			 * (BasicDBObject) JSON.parse(util.prepareQuotes(data)); for (BasicDBObject
+			 * document : cursor) { BasicDBObject contextData = (BasicDBObject)
+			 * document.get("contextData"); BasicDBObject updatedDocument = new
+			 * BasicDBObject(); updatedDocument.append("contextData", contextData); for
+			 * (String key : updatedInstance.keySet()) { updatedDocument.append(key,
+			 * updatedInstance.get(key)); } mongoDbConnector.replace(database, collection,
+			 * document, updatedDocument);
+			 * ids.add(util.getObjectIdString(document.getObjectId("_id"))); } return ids;
 			 */
-			String updateOperation = util.prepareQuotes(data);
-			String result = getUpdateStatement(data, ontology);
-			return updateNative(ontology, query, updateOperation);
-		} catch (Exception e) {
-			log.error("update", e, statement);
-			throw new PersistenceException("Necesary indicate a valid value " + e.getMessage());
+		} catch (javax.persistence.PersistenceException e) {
+			log.error("updateNative", e);
+			throw new PersistenceException(e);
 		}
 	}
+
+	/*
+	 * @Override public List<String> updateNative(String ontology, String statement)
+	 * throws DBPersistenceException { log.debug("update", statement); String
+	 * statementAux = statement; String data = ""; String query = ""; try { if
+	 * (statementAux == null || statementAux.length() == 0) throw new
+	 * DBPersistenceException("Statement null: " + statement);
+	 * 
+	 * if (statementAux.startsWith("{")) { statementAux = statementAux.substring(1);
+	 * } if (statementAux.endsWith("}")) { statementAux = statementAux.substring(0,
+	 * statementAux.length() - 1); } if (!statementAux.endsWith(";")) { statementAux
+	 * = statementAux.concat(";"); } if
+	 * (!statementAux.toLowerCase().startsWith("db.")) {
+	 * log.warn("updateByNativeQuery", "Expected MongoDB update statement"); throw
+	 * new DBPersistenceException("Expected MongoDB update statement"); } if
+	 * (statementAux.contains("db.")) { statementAux = statementAux.replace("db.",
+	 * ""); } if (statementAux.contains("update(")) { statementAux =
+	 * statementAux.substring(statementAux.indexOf("(") + 1,
+	 * statementAux.lastIndexOf(")")); statementAux = statementAux.trim();
+	 * 
+	 * int anidamiento = 0; int indiceInicioObjeto = 0; List<String> objetos = new
+	 * ArrayList<String>(); for (int i = 0; i < statementAux.length(); i++) { if
+	 * (statementAux.charAt(i) == '{') { anidamiento++; } else if
+	 * (statementAux.charAt(i) == '}') { anidamiento--; } if
+	 * ((statementAux.charAt(i) == ',' || i == statementAux.length() - 1) &&
+	 * anidamiento == 0) { if (statementAux.charAt(i) == ',') { objetos.add(new
+	 * String(statementAux.substring(indiceInicioObjeto, i))); } else {
+	 * objetos.add(new String(statementAux.substring(indiceInicioObjeto))); }
+	 * indiceInicioObjeto = i + 1; } }
+	 * 
+	 * if (objetos.size() >= 2) { query = objetos.get(0); data = objetos.get(1);
+	 * 
+	 * } else { log.warn("update",
+	 * "Expected {$set:{[field:value]}} ||  {$inc:{[field:value]}}"); throw new
+	 * DBPersistenceException("Expected {$set:{[field:value]}} ||  {$inc:{[field:value]}}"
+	 * ); } } /* Native updates specify the document to be replaced; SQL-LIKE ones
+	 * specify an update operator. We should remove this inconsistency. String
+	 * updateOperation = util.prepareQuotes(data); String result =
+	 * getUpdateStatement(data, ontology);return
+	 * 
+	 * updateNative(ontology, query, updateOperation); }catch(
+	 * 
+	 * Exception e) { log.error("update", e, statement); throw new
+	 * PersistenceException("Necesary indicate a valid value " + e.getMessage()); }
+	 * }
+	 */
 
 	private String getUpdateStatement(String data, String collection) throws Exception {
 		if (data.contains("$set")) {
@@ -267,7 +239,6 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 			throws DBPersistenceException {
 		log.debug("find", query, ontology);
 		try {
-			query = util.convertObjectIdV1toVLegacy(query);
 			return JSON.serialize(queryNative(ontology, query, offset, limit));
 		} catch (javax.persistence.PersistenceException e) {
 			log.error("find", e, query, ontology);
@@ -280,20 +251,28 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 		return queryNative(ontology, query, 0, numMaxRegisters);
 	}
 
+	/**
+	 * this method converts a query in shell language to Java representation
+	 * .limit() .sort() projections skip
+	 * 
+	 */
 	@Override
 	public List<String> queryNative(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
 		log.debug("find", query, ontology);
 		List<String> result = new ArrayList<>();
 		try {
-			query = util.convertObjectIdV1toVLegacy(query);
-			MongoIterable<BasicDBObject> cursor = mongoDbConnector.find(database, ontology,
-					util.prepareQuotes4find(ontology, query), numMaxRegisters, queryExecutionTimeout);
+			log.info("mongoDbConnector: executing query:" + query);
+
+			MongoQueryAndParams mc = new MongoQueryAndParams();
+			mc.parseQuery(query, limit, offset);
+
+			MongoIterable<BasicDBObject> cursor = mongoDbConnector.find(database, ontology, mc, queryExecutionTimeout);
 			for (BasicDBObject obj : cursor) {
 				result.add(obj.toJson());
 			}
 			return result;
-		} catch (javax.persistence.PersistenceException e) {
+		} catch (Exception e) {
 			log.error("find", e, query, ontology);
 			throw new PersistenceException(e);
 		}
@@ -332,7 +311,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 		try {
 			List<String> result = new ArrayList<>();
 			log.debug("findAll", collection, limit);
-			for (BasicDBObject obj : mongoDbConnector.find(database, collection, "{}", limit)) {
+			for (BasicDBObject obj : mongoDbConnector.findAll(database, collection, 0, limit, queryExecutionTimeout)) {
 				result.add(obj.toJson());
 			}
 			return result;

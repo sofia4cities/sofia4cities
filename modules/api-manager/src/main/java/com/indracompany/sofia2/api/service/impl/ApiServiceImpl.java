@@ -24,11 +24,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.jeasy.rules.api.Facts;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -42,13 +47,11 @@ import com.indracompany.sofia2.api.service.exporter.ExportToExcel;
 import com.indracompany.sofia2.api.service.exporter.ExportToXml;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.SSAPMessageDirection;
-import com.indracompany.sofia2.ssap.SSAPMessageTypes;
-import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
+
+import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
 @Service
-public class ApiServiceImpl extends ApiManagerService implements ApiServiceInterface {
+public class ApiServiceImpl extends ApiManagerService implements ApiServiceInterface, Processor {
 	
 	@Autowired
 	RuleManager ruleManager;
@@ -61,8 +64,60 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	
 	@Autowired
 	private ExportToCsv varCsv;
+	
+	@Override
+	@PrometheusTimeMethod(name = "ApiServiceImplEntryPointCamel", help = "ApiServiceImpl doGET")
+	@Timed
+	public void process(Exchange exchange) throws Exception {
+		
+		HttpServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
+		HttpServletResponse response = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_RESPONSE, HttpServletResponse.class);
+
+		Facts facts = new Facts();
+		facts.put(RuleManager.REQUEST, request);
+		
+		Map<String,Object> dataFact=new HashMap<String,Object>();
+		dataFact.put(ApiServiceInterface.BODY, exchange.getIn().getBody());
+		
+		facts.put(RuleManager.FACTS, dataFact);
+		ruleManager.fire(facts);
+
+		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
+		Boolean stopped = (Boolean)facts.get(RuleManager.STOP_STATE);
+		String REASON="";
+		Object REASON_TYPE;
+		if (stopped!=null && stopped==true) {
+			REASON=((String)facts.get(RuleManager.REASON));
+			REASON_TYPE=((Object)facts.get(RuleManager.REASON_TYPE));
+			
+			
+			exchange.getIn().setBody("[\"STOPPED EXECUTION\",\""+REASON+"\"]");
+			exchange.getIn().setHeader("content-type", "text/plain");
+		}
+		else {
+			
+			User user = (User) data.get(ApiServiceInterface.USER);
+			Api api = (Api) data.get(ApiServiceInterface.API);
+			String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
+			String METHOD = (String) data.get(ApiServiceInterface.METHOD);
+			String BODY = (String) data.get(ApiServiceInterface.BODY);
+			String QUERY_TYPE = (String) data.get(ApiServiceInterface.QUERY_TYPE);
+			String QUERY = (String) data.get(ApiServiceInterface.QUERY);
+			String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
+			String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
+			String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
+			
+			String str = getJsonFromMap(data).toString(4);
+			
+			exchange.getIn().setBody(str);
+			exchange.getIn().setHeader("content-type", "text/plain");
+		}
+		
+	}
 
 	@Override
+	@PrometheusTimeMethod(name = "ApiServiceImplEntryPoint", help = "ApiServiceImpl doGET")
+	@Timed
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
 		Facts facts = new Facts();
@@ -73,19 +128,29 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		ruleManager.fire(facts);
 
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
-		
+		Boolean stopped = (Boolean)facts.get(RuleManager.STOP_STATE);
+		String REASON="";
+		String  REASON_TYPE="";
+		if (stopped!=null && stopped==true) {
+			REASON=((String)facts.get(RuleManager.REASON));
+			REASON_TYPE=((String)facts.get(RuleManager.REASON_TYPE));
+		}
 		System.out.println(hashPP(data));
 		
+		User user = (User) data.get(ApiServiceInterface.USER);
+		Api api = (Api) data.get(ApiServiceInterface.API);
+		String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
+		String METHOD = (String) data.get(ApiServiceInterface.METHOD);
+		String BODY = (String) data.get(ApiServiceInterface.BODY);
+		String QUERY_TYPE = (String) data.get(ApiServiceInterface.QUERY_TYPE);
+		String QUERY = (String) data.get(ApiServiceInterface.QUERY);
+		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
+		String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
+		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
 		
-	/*	SSAPMessage<SSAPBodyOperationMessage> message = new SSAPMessage<>();
 		
-		message.setDirection(SSAPMessageDirection.REQUEST);
-		message.setMessageType(SSAPMessageTypes.QUERY);
-		SSAPBodyOperationMessage body = new SSAPBodyOperationMessage();
-		body.setQuery(query);
-		message.setBody(body);*/
 		
-		sendResponse(response, HttpServletResponse.SC_OK, hashPP(data),null,null);
+		sendResponse(response, HttpServletResponse.SC_OK, hashPP(data)+"\n"+REASON,null,null);
 
 	}
 
@@ -106,6 +171,25 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		doGet(request,response);
 
 	}
+	
+
+	
+
+
+
+private static JSONObject getJsonFromMap(Map<String, Object> map) throws JSONException {
+    JSONObject jsonData = new JSONObject();
+    for (String key : map.keySet()) {
+        Object value = map.get(key);
+        if (value instanceof Map<?, ?>) {
+            value = getJsonFromMap((Map<String, Object>) value);
+        }
+        jsonData.put(key, value);
+    }
+    return jsonData;
+}
+
+
 	
 	private static String hashPP(final Map<String,Object> m, String... offset) {
 	    String retval = "";
@@ -222,6 +306,8 @@ public ExportToCsv getVarCsv() {
 public void setVarCsv(ExportToCsv varCsv) {
 	this.varCsv = varCsv;
 }
+
+
 
 	
 

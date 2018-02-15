@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -45,6 +47,10 @@ import lombok.Setter;
 public class ApiOperation extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
+	
+	public static enum Type {
+		PUT, POST, GET, DELETE;
+	}
 
 	@ManyToOne
 	@JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
@@ -81,7 +87,8 @@ public class ApiOperation extends AuditableEntityWithUUID {
 	@NotNull
 	@Getter
 	@Setter
-	private String operation;
+	@Enumerated(EnumType.STRING)
+	private Type operation;
 
 	@Column(name = "ENDPOINT", length = 512)
 	@Getter

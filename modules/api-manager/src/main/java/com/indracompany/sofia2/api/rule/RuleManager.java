@@ -38,6 +38,7 @@ public class RuleManager implements ApplicationContextAware{
 	public static final String REQUEST = "request";
 	public static final String ACTION = "action";
 	public static final String REASON = "reason";
+	public static final String REASON_TYPE = "REASON_TYPE";
 	
 	public static final String STOP_STATE = "STOP_STATE";
 	
@@ -76,9 +77,7 @@ public class RuleManager implements ApplicationContextAware{
 	
 	public void fire(Facts facts) {
 		rulesEngine.fire(rules, facts);
-		
 	}
-
 	
 	public RulesEngineListener getListener() {
 		return listener;

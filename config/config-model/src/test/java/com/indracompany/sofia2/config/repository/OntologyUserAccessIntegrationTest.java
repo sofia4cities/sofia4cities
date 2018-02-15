@@ -57,8 +57,8 @@ public class OntologyUserAccessIntegrationTest {
 	@Autowired
 	UserRepository userRepository;
 
-	private User getUserCollaborator() {
-		return this.userRepository.findByUserId("collaborator");
+	private User getUserDeveloper() {
+		return this.userRepository.findByUserId("developer");
 	}
 
 	@Before
@@ -67,7 +67,7 @@ public class OntologyUserAccessIntegrationTest {
 		if (users.isEmpty()) {
 			log.info("No OntologyUserAccess found...adding");
 			OntologyUserAccess user = new OntologyUserAccess();
-			user.setUser(getUserCollaborator());
+			user.setUser(getUserDeveloper());
 			user.setOntology(ontRep.findAll().get(0));
 			user.setOntologyUserAccessType(ouatRep.findAll().get(0));
 			this.repository.save(user);

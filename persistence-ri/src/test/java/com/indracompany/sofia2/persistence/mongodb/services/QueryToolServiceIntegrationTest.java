@@ -69,6 +69,7 @@ public class QueryToolServiceIntegrationTest {
 	public void setUp() throws PersistenceException, IOException {
 		if (!connect.collectionExists(DATABASE, ONT_NAME))
 			connect.createCollection(DATABASE, ONT_NAME);
+		// 1º
 		ContextData data = new ContextData();
 		data.setClientConnection(UUID.randomUUID().toString());
 		data.setClientPatform(UUID.randomUUID().toString());
@@ -80,11 +81,71 @@ public class QueryToolServiceIntegrationTest {
 		int init = 17;
 		int end = refOid.indexOf("\"}}");
 		refOid = refOid.substring(init, end);
+		// 2º
+		data = new ContextData();
+		data.setClientConnection(UUID.randomUUID().toString());
+		data.setClientPatform(UUID.randomUUID().toString());
+		data.setClientSession(UUID.randomUUID().toString());
+		data.setTimezoneId(UUID.randomUUID().toString());
+		data.setUser("admin");
+		mapper = new ObjectMapper();
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		// 3º
+		data = new ContextData();
+		data.setClientConnection(UUID.randomUUID().toString());
+		data.setClientPatform(UUID.randomUUID().toString());
+		data.setClientSession(UUID.randomUUID().toString());
+		data.setTimezoneId(UUID.randomUUID().toString());
+		data.setUser("other");
+		mapper = new ObjectMapper();
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 	}
 
 	@After
 	public void tearDown() {
 		connect.dropCollection(DATABASE, ONT_NAME);
+	}
+
+	@Test
+	public void test1_QueryNativeLimit() {
+		try {
+			String json = queryTool.queryNativeAsJson(ONT_NAME, "db." + ONT_NAME + ".find({'user':'user'}).limit(2)", 0,
+					0);
+			Assert.assertTrue(json.indexOf("user") != -1);
+		} catch (Exception e) {
+			Assert.fail("Error test_QueryNative" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void test1_QueryNativeProjections() {
+		try {
+			String json = queryTool.queryNativeAsJson(ONT_NAME,
+					"db." + ONT_NAME + ".find({'user':'user'},{user:1,_id:0})", 0, 0);
+			Assert.assertTrue(json.indexOf("user") != -1);
+		} catch (Exception e) {
+			Assert.fail("Error test_QueryNative" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void test1_QuerySort() {
+		try {
+			String json = queryTool.queryNativeAsJson(ONT_NAME, "db." + ONT_NAME + ".find().sort({'user':-1})", 0, 0);
+			Assert.assertTrue(json.indexOf("user") != -1);
+		} catch (Exception e) {
+			Assert.fail("Error test_QueryNative" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void test1_QuerySkip() {
+		try {
+			String json = queryTool.queryNativeAsJson(ONT_NAME, "db." + ONT_NAME + ".find().skip(2)", 0, 0);
+			Assert.assertTrue(json.indexOf("other") != -1);
+		} catch (Exception e) {
+			Assert.fail("Error test_QueryNative" + e.getMessage());
+		}
 	}
 
 	@Test
@@ -120,8 +181,8 @@ public class QueryToolServiceIntegrationTest {
 	@Test
 	public void test_QueryNativeType3() {
 		try {
-			String json = queryTool.queryNativeAsJson(ONT_NAME, "db." + ONT_NAME + ".find({\"user\":\"user\"})", 0, 0);
-			Assert.assertTrue(json.indexOf("user") != -1);
+			String json = queryTool.queryNativeAsJson(ONT_NAME, "db." + ONT_NAME + ".find({\"user\":\"admin\"})", 0, 0);
+			Assert.assertTrue(json.indexOf("admin") != -1);
 		} catch (Exception e) {
 			Assert.fail("Error test_QueryNative" + e.getMessage());
 		}
@@ -141,7 +202,7 @@ public class QueryToolServiceIntegrationTest {
 	public void test_QueryCountSQL() {
 		try {
 			String json = queryTool.querySQLAsJson(ONT_NAME, "select count(*) from contextData", 0);
-			Assert.assertTrue(json.indexOf("1") != -1);
+			Assert.assertTrue(json.indexOf("3") != -1);
 		} catch (Exception e) {
 			Assert.fail("Error test_QuerySQL" + e.getMessage());
 		}

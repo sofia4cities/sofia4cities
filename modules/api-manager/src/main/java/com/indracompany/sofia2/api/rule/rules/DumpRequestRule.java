@@ -60,7 +60,7 @@ public class DumpRequestRule {
 
 		System.out.println(sb.toString());
 
-		data.put(ApiServiceInterface.DUMP, sb.toString());
+		//data.put(ApiServiceInterface.DUMP, sb.toString());
 
 	}
 }

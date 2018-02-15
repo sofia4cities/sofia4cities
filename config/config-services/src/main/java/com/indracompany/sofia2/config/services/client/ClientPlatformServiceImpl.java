@@ -33,11 +33,11 @@ public class ClientPlatformServiceImpl implements ClientPlatformService{
 	
 	
 	@Autowired
-	ClientPlatformRepository clientPlatformRepository;
+	private ClientPlatformRepository clientPlatformRepository;
 	@Autowired
-	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
+	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
-	TokenService tokenService;
+	private TokenService tokenService;
 	
 	@Override
 	public Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform) 
@@ -64,6 +64,11 @@ public class ClientPlatformServiceImpl implements ClientPlatformService{
 			return token;
 		}else
 			throw new ClientPlatformServiceException("Platform Client already exists");
+	}
+	
+	@Override
+	public ClientPlatform getByIdentification(String identification) {
+		return this.clientPlatformRepository.findByIdentification(identification);
 	}
 
 }

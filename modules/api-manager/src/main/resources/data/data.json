@@ -4,7 +4,7 @@
    "type":"iot",
    "category":"publicidad",
    "externalApi":false,
-   "ontologyId":"58542214-0bf4-409b-ac93-8abe8e51553b",
+   "ontologyId":"f8420a03-f733-4dfd-9699-b16ccf1835e0",
    "endpoint":"https://sofia2.com/sib-api/api/v1/TEST2",
    "endpointExt":"string",
    "description":"APITEST",

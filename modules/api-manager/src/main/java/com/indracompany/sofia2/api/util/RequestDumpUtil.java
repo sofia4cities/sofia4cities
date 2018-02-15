@@ -23,6 +23,21 @@ public class RequestDumpUtil {
 
     private static final String INDENT = "\t";
     private static final String LF = "\n";
+    
+    public static String getValueFromRequest(String key,HttpServletRequest request ) {
+    	
+    	String value = null;
+    	value = request.getParameter(key);
+    	if (value==null)
+    		value = request.getParameter("$"+key);
+    	if (value==null)
+    		value = request.getHeader(key);
+    	if (value==null)
+    		value = request.getHeader("$"+key);
+    	
+    	return value;
+    	
+    }
 
     public static void dumpRequest(StringBuilder sb, HttpServletRequest request) {
         sb.append(INDENT).append("[Class] ").append(request.getClass().getName()).append(", instance=" + request.toString().trim()).append(LF);

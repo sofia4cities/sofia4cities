@@ -14,7 +14,6 @@
 
 package com.indracompany.sofia2.api.rest.api;
 
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +37,14 @@ public class TokenUserRestServiceImpl implements TokenUserRestService {
 
 	@Override
 	public Response addTokenUser(String identificacion, String token) throws Exception {
-		TokenUserDTO tokenUsuarioDTO =TokenUserFIQL.toTokenUsuarioDTO(apiService.generateTokenUsuario(identificacion, token));
-		return Response.ok( tokenUsuarioDTO.getToken()).type(MediaType.APPLICATION_JSON).build();
+		TokenUserDTO tokenUsuarioDTO =TokenUserFIQL.toTokenUsuarioDTO(apiService.addTokenUsuario(identificacion, token));
+		return Response.ok( tokenUsuarioDTO.getToken()).build();
 	}
 
 	@Override
 	public Response generateToken(String identificacion, String token) throws Exception {
 		TokenUserDTO tokenUsuarioDTO =TokenUserFIQL.toTokenUsuarioDTO(apiService.generateTokenUsuario(identificacion, token));
-		return Response.ok( tokenUsuarioDTO.getToken()).type(MediaType.APPLICATION_JSON).build();
+		return Response.ok( tokenUsuarioDTO.getToken()).build();
 	}
 
 }

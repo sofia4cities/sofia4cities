@@ -133,7 +133,7 @@ public class RestSwaggerReader {
 		String vVersion="v"+version;
 		String identification = apiDto.getIdentification();
 		
-		swagger.setBasePath("/api"+"/"+vVersion+"/"+identification);
+		swagger.setBasePath("/camel/api"+"/"+vVersion+"/"+identification);
 
 		swagger.setSchemes(schemes);
 
@@ -184,7 +184,7 @@ public class RestSwaggerReader {
 		String endpoint = operacionDTO.getEndpoint();
 		ArrayList<ApiHeaderDTO> headers = operacionDTO.getHeaders();
 		String identification = operacionDTO.getIdentification();
-		String operation = operacionDTO.getOperation();
+		String operation = operacionDTO.getOperation().name();
 		String path = operacionDTO.getPath();
 		if (!path.startsWith("/"))
 			path = "/" + path;
@@ -213,9 +213,9 @@ public class RestSwaggerReader {
 
 			String desc = apiQueryParameterDTO.getDescription();
 			String name = apiQueryParameterDTO.getName();
-			String type = apiQueryParameterDTO.getDataType();
+			String type = apiQueryParameterDTO.getDataType().name();
 			String value = apiQueryParameterDTO.getValue();
-			String condition = apiQueryParameterDTO.getHeaderType();
+			String condition = apiQueryParameterDTO.getHeaderType().name();
 
 			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, name, description, false,
 					condition, type, null, value);

@@ -19,6 +19,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
 import org.springframework.boot.actuate.endpoint.MetricsEndpointMetricReader;
 import org.springframework.boot.actuate.endpoint.PublicMetrics;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +41,7 @@ import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 
 @SpringBootApplication
 @EnableJpaAuditing
+@EnableAutoConfiguration
 @ComponentScan("com.indracompany.sofia2")
 public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 

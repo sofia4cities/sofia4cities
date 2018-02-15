@@ -44,11 +44,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ConfigurationController {
 
 	@Autowired
-	ConfigurationService configurationService;
+	private ConfigurationService configurationService;
 	@Autowired
 	private AppWebUtils utils;
 	@Autowired
-	UserService userService;
+	private UserService userService;
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping
@@ -133,7 +133,7 @@ public class ConfigurationController {
 
 	}
 
-	public void populateFormData(Model model) {
+	private void populateFormData(Model model) {
 		model.addAttribute("configurationTypes", this.configurationService.getAllConfigurationTypes());
 		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
 	}

@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.config.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -34,7 +35,7 @@ import lombok.Setter;
 @Configurable
 public class TwitterListening extends AuditableEntityWithUUID {
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
 	@Getter
@@ -68,25 +69,25 @@ public class TwitterListening extends AuditableEntityWithUUID {
 	@Setter
 	private String identificator;
 
-	@Column(name = "dateFrom", length = 100, nullable = false)
+	@Column(name = "DATE_FROM", length = 100, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String dateFrom;
 
-	@Column(name = "dateTo", length = 100, nullable = false)
+	@Column(name = "DATE_TO", length = 100, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String dateTo;
 
-	@Column(name = "topics", length = 512, nullable = false)
+	@Column(name = "TOPICS", length = 512, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String topics;
 
-	@Column(name = "cron", length = 100)
+	@Column(name = "CRON", length = 100)
 	@Getter
 	@Setter
 	private String cron;

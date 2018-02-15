@@ -37,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MongoDbToolsAdapterImpl extends MongoDbToolsAdapter {
 
-
 	@Autowired
 	private MongoDbCredentials credentials;
 
@@ -75,7 +74,8 @@ public class MongoDbToolsAdapterImpl extends MongoDbToolsAdapter {
 	@Override
 	public String runMongoExportCommand(String database, String collection, String query, String outputFile)
 			throws CommandExecutionException {
-		String sentence = buildMongoexportCommand(database, collection, query, outputFile,Boolean.FALSE,Integer.valueOf(0));
+		String sentence = buildMongoexportCommand(database, collection, query, outputFile, Boolean.FALSE,
+				Integer.valueOf(0));
 		log.info("Executing mongoexport command. Database = {}, collection = {}, query = {}, outputFile = {}.",
 				database, collection, query, outputFile);
 		String output = runCommand(sentence);
@@ -84,11 +84,11 @@ public class MongoDbToolsAdapterImpl extends MongoDbToolsAdapter {
 				database, collection, query, outputFile, output);
 		return output;
 	}
-	
+
 	@Override
-	public String runMongoExportCommand(String database, String collection, String query, String outputFile, Boolean flagLimit, Integer limit)
-			throws CommandExecutionException {
-		String sentence = buildMongoexportCommand(database, collection, query, outputFile,flagLimit,limit);
+	public String runMongoExportCommand(String database, String collection, String query, String outputFile,
+			Boolean flagLimit, Integer limit) throws CommandExecutionException {
+		String sentence = buildMongoexportCommand(database, collection, query, outputFile, flagLimit, limit);
 		log.info("Executing mongoexport command. Database = {}, collection = {}, query = {}, outputFile = {}.",
 				database, collection, query, outputFile);
 		String output = runCommand(sentence);
@@ -140,7 +140,8 @@ public class MongoDbToolsAdapterImpl extends MongoDbToolsAdapter {
 	 * @param limit
 	 * @return
 	 */
-	private String buildMongoexportCommand(String database, String collection, String query, String outputFile, Boolean flagLimit, Integer limit) {
+	private String buildMongoexportCommand(String database, String collection, String query, String outputFile,
+			Boolean flagLimit, Integer limit) {
 		StringBuilder sentence = new StringBuilder();
 		sentence.append(mongoexportPath + " --db " + database);
 		ServerAddress masterAddress = mongoDbConnector.getReplicaSetMaster();
@@ -148,40 +149,40 @@ public class MongoDbToolsAdapterImpl extends MongoDbToolsAdapter {
 		sentence.append(" --port " + masterAddress.getPort());
 		sentence.append(" " + buildAuthenticationArgs());
 		sentence.append(" -c " + collection + " -o " + getShellArgDelimiter() + outputFile + getShellArgDelimiter());
-		
-		if(null!=query && !query.isEmpty()){
-			sentence.append(" -q " + query); 
+
+		if (null != query && !query.isEmpty()) {
+			sentence.append(" -q " + query);
 		}
 
-		if(Boolean.TRUE.equals(flagLimit)){
-			 /**
-			  * Ordenado descendientemente para quedarse con los ultimos registros insertados
-			  */
-			sentence.append(" --sort " + "{_id:-1}" + " --limit " + limit + " ");	
+		if (Boolean.TRUE.equals(flagLimit)) {
+			/**
+			 * Ordenado descendientemente para quedarse con los ultimos registros insertados
+			 */
+			sentence.append(" --sort " + "{_id:-1}" + " --limit " + limit + " ");
 		}
-		
+
 		return sentence.toString();
 	}
 
 	@Override
 	public String runMongoImportCommand(String database, String collection, String inputFile)
 			throws CommandExecutionException {
-		String command = buildMongoimportCommand(database, collection, inputFile,null);
-		log.info("Executing mongoimport command. Database = {}, collection = {}, inputFile = {}.", database,
-				collection, inputFile);
+		String command = buildMongoimportCommand(database, collection, inputFile, null);
+		log.info("Executing mongoimport command. Database = {}, collection = {}, inputFile = {}.", database, collection,
+				inputFile);
 		String output = runCommand(command);
 		log.info(
 				"The mongoimport command has been executed. Database = {}, collection = {}, inputFile = {}, output = {}.",
 				database, collection, inputFile, output);
 		return output;
 	}
-	
+
 	@Override
 	public String runMongoImportCommand(String database, String collection, String inputFile, String accion)
 			throws CommandExecutionException {
-		String command = buildMongoimportCommand(database, collection, inputFile,accion);
-		log.info("Executing mongoimport command. Database = {}, collection = {}, inputFile = {}.", database,
-				collection, inputFile);
+		String command = buildMongoimportCommand(database, collection, inputFile, accion);
+		log.info("Executing mongoimport command. Database = {}, collection = {}, inputFile = {}.", database, collection,
+				inputFile);
 		String output = runCommand(command);
 		log.info(
 				"The mongoimport command has been executed. Database = {}, collection = {}, inputFile = {}, output = {}.",
@@ -205,11 +206,11 @@ public class MongoDbToolsAdapterImpl extends MongoDbToolsAdapter {
 		sentence.append(" --collection " + collection);
 		sentence.append(" " + buildAuthenticationArgs());
 		sentence.append(" --file " + getShellArgDelimiter() + inputFile + getShellArgDelimiter());
-		
-		if(null!=accion && !accion.isEmpty()){
-			sentence.append( accion );
+
+		if (null != accion && !accion.isEmpty()) {
+			sentence.append(accion);
 		}
-			
+
 		return sentence.toString();
 	}
 }

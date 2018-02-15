@@ -22,6 +22,8 @@ package com.indracompany.sofia2.api.rest.api.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.indracompany.sofia2.config.model.ApiOperation.Type;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +43,8 @@ public class OperacionDTO implements Cloneable, Serializable {
 	@ApiModelProperty(value = "Tipo de Operacion")
 	@Getter
 	@Setter
-	private String operation;
+	private Type operation;
+	
 
 	@ApiModelProperty(value = "Enpoint Particular de la Operacion")
 	@Getter

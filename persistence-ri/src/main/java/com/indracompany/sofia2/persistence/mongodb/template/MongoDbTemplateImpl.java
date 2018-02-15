@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.persistence.mongodb.MongoQueryAndParams;
 import com.indracompany.sofia2.persistence.mongodb.UtilMongoDB;
 import com.indracompany.sofia2.persistence.mongodb.config.MongoDbCredentials;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
@@ -118,7 +119,7 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	public void init() throws PersistenceException {
 		log.info("Initializing MongoDB connector...");
 		normalizedCollectionNames = new ConcurrentHashMap<String, String>();
-		if(this.servers!=null){
+		if (this.servers != null) {
 			registerMongoDbServers();
 			configureMongoDbClient();
 		}
@@ -194,16 +195,16 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 					e.getCause(), e.getMessage());
 			throw new PersistenceException(e);
 		}
-	}	
+	}
 
 	@Override
-	public Boolean collectionExists(String database, String collection){
+	public Boolean collectionExists(String database, String collection) {
 		MongoIterable<String> resultListCollectionNames = mongoDbClient.getDatabase(database).listCollectionNames();
-		if(null!=resultListCollectionNames){
+		if (null != resultListCollectionNames) {
 			for (String resultName : resultListCollectionNames) {
-				 if (resultName.equalsIgnoreCase(collection)) {
-			            return true;
-			        }
+				if (resultName.equalsIgnoreCase(collection)) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -227,12 +228,12 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 			log.debug("Retrieving database stats. Database = {}.", database);
 			return mongoDbClient.getDatabase(database).runCommand(new Document("dbstats", 1));
 		} catch (Throwable e) {
-			log.error("Unable to retrieve database stats. Database = {}, cause = {}, errorMessage = {}.", 
-					database, e.getCause(), e.getMessage());
+			log.error("Unable to retrieve database stats. Database = {}, cause = {}, errorMessage = {}.", database,
+					e.getCause(), e.getMessage());
 			throw new PersistenceException("Unable to retrieve database stats.", e);
 		}
 	}
-	
+
 	@Override
 	public Document getCollectionStats(String database, String collection) throws PersistenceException {
 		try {
@@ -290,22 +291,22 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	public long count(String database, String collection, String query) throws PersistenceException {
 		log.debug("Running count command. Database = {}, collection = {}, query = {}.", database, collection, query);
 		try {
-			if(!query.trim().equals("{}")){
-				query = query.substring(query.indexOf("count(")+6, query.indexOf(")"));
+			if (!query.trim().equals("{}")) {
+				query = query.substring(query.indexOf("count(") + 6, query.indexOf(")"));
 			}
-//			String queryAux = query.substring(query.indexOf("count(")+6, query.indexOf(")"));
-			if(query!=null && query!="" && !query.trim().equals("{}") && !query.isEmpty()){
+			if (query != null && query != "" && !query.trim().equals("{}") && !query.isEmpty()) {
 				BasicDBObject queryObject = (BasicDBObject) JSON.parse(query);
 				return getCollection(database, collection, BasicDBObject.class).count(queryObject);
-			}else{
+			} else {
 				return getCollection(database, collection, BasicDBObject.class).count();
 			}
-//			if (!query.trim().equals("{}")) {
-//				BasicDBObject queryObject = (BasicDBObject) JSON.parse(query);
-//				return getCollection(database, collection, BasicDBObject.class).count(queryObject);
-//			} else {
-//				return getCollection(database, collection, BasicDBObject.class).count();
-//			}
+			// if (!query.trim().equals("{}")) {
+			// BasicDBObject queryObject = (BasicDBObject) JSON.parse(query);
+			// return getCollection(database, collection,
+			// BasicDBObject.class).count(queryObject);
+			// } else {
+			// return getCollection(database, collection, BasicDBObject.class).count();
+			// }
 		} catch (Throwable e) {
 			String errorMessage = String.format(
 					"Unable to run count command. Database = %s, collection = %s, query = %s, cause = %s, errorMessage = %s.",
@@ -358,11 +359,12 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	@Override
 	public MongoIterable<BasicDBObject> aggregate(String database, String collection, List<BasicDBObject> pipeline)
 			throws PersistenceException {
-		log.debug("Running aggregate command. Database = {} , Collection = {} , Pipeline = {} ", database,
-				collection, pipeline);
+		log.debug("Running aggregate command. Database = {} , Collection = {} , Pipeline = {} ", database, collection,
+				pipeline);
 		try {
 			if (pipeline == null || pipeline.isEmpty())
-				throw new IllegalArgumentException("The aggregation pipeline is required, and must contain at least one operation.");
+				throw new IllegalArgumentException(
+						"The aggregation pipeline is required, and must contain at least one operation.");
 			MongoCollection<BasicDBObject> dbCollection = getCollection(database, collection, BasicDBObject.class);
 			return dbCollection.aggregate(pipeline);
 		} catch (Throwable e) {
@@ -420,86 +422,64 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 			throw new PersistenceException(errorMessage, e);
 		}
 	}
-	
+
 	@Override
 	public BasicDBObject findById(String database, String collection, String objectId) throws PersistenceException {
-		//String stmt="{db."+collection+".find({\"_id\":{\"$oid\":\""+objectId+"\"}})};";
-		//{ "_id" : { "$oid" : "5a326463a2b488aa28e8ed1c"}
-		
-		//MongoIterable<BasicDBObject> res= find(database, collection, stmt,maxWaitTime);
-		
+		// String
+		// stmt="{db."+collection+".find({\"_id\":{\"$oid\":\""+objectId+"\"}})};";
+		// { "_id" : { "$oid" : "5a326463a2b488aa28e8ed1c"}
+
+		// MongoIterable<BasicDBObject> res= find(database, collection,
+		// stmt,maxWaitTime);
 
 		MongoCollection<BasicDBObject> dbCollection = getCollection(database, collection, BasicDBObject.class);
-		FindIterable<BasicDBObject> res = dbCollection.find(new BasicDBObject("_id",new ObjectId(objectId)));		
-		if (res!=null) return res.first();
+		FindIterable<BasicDBObject> res = dbCollection.find(new BasicDBObject("_id", new ObjectId(objectId)));
+		if (res != null)
+			return res.first();
 		return null;
 	}
 
 	@Override
-	public MongoIterable<BasicDBObject> find(String database, String collection, String query,
-			long queryExecutionTimeoutMillis) throws PersistenceException {
-		return find(database, collection, query, null, null, 0, 0, queryExecutionTimeoutMillis);
-	}
-
-	@Override
-	public MongoIterable<BasicDBObject> find(String database, String collection, String query, int limit,
-			long queryExecutionTimeoutMillis) throws PersistenceException {
-		return find(database, collection, query, null, null, 0, limit, queryExecutionTimeoutMillis);
-	}
-
-	@Override
-	public MongoIterable<BasicDBObject> find(String database, String collection, String query,
-			Map<String, Integer> sort, int limit, long queryExecutionTimeoutMillis) throws PersistenceException {
-		return find(database, collection, query, null, sort, 0, limit, queryExecutionTimeoutMillis);
-	}
-
-	@Override
-	public MongoIterable<BasicDBObject> find(String database, String collection, String query,
-			Map<String, Integer> projection, Map<String, Integer> sort, int limit, long queryExecutionTimeoutMillis)
-			throws PersistenceException {
-		return find(database, collection, query, projection, sort, 0, limit, queryExecutionTimeoutMillis);
-	}
-
-	@Override
-	public MongoIterable<BasicDBObject> find(String database, String collection, String query,
-			Map<String, Integer> projection, Map<String, Integer> sort, int skip, int limit,
-			long queryExecutionTimeoutMillis) throws PersistenceException {
-		BasicDBObject projectionObj = null;
-		if (projection != null && !projection.isEmpty()) {
-			projectionObj = new BasicDBObject(projection);
-		}
-		BasicDBObject sortObj = null;
-		if (sort != null && !sort.isEmpty()) {
-			sortObj = new BasicDBObject(sort);
-		}
+	public MongoIterable<BasicDBObject> findAll(String database, String collection, int skip, int limit,
+			long queryExecutionTimeoutMillis) {
+		log.debug(
+				"Running query. Database = {} , collection = {} , query = {}, projection = {} , sort = {} , skip = {} , limit = {}, executionTimeOut = {}.",
+				database, collection, skip, limit, queryExecutionTimeoutMillis);
 		try {
-			return find(database, collection, (BasicDBObject) JSON.parse(query), projectionObj, sortObj, skip, limit,
-					queryExecutionTimeoutMillis);
-
-			//FIXME:
-			/*
-			if(OntologiaRepository.findOntologiasByIdentificacion(collection).getSingleResult().isTimeSeries()){
-				return find(database, collection, BasicDBObject.parse(query), projectionObj, sortObj, skip, limit,
-						queryExecutionTimeoutMillis);
-			}
-			else{
-				return find(database, collection, (BasicDBObject) JSON.parse(query), projectionObj, sortObj, skip, limit,
-						queryExecutionTimeoutMillis);
-			}
-			*/
-			
-		} catch (JSONParseException e) {
+			if (queryExecutionTimeoutMillis < 0)
+				throw new IllegalArgumentException("The query execution timeout must be greater than or equal to zero");
+			if (skip < 0)
+				throw new IllegalArgumentException("The skip value must be greater than or equal to zero");
+			if (limit < 0)
+				throw new IllegalArgumentException("The limit value must be greater than or equal to zero");
+			MongoCollection<BasicDBObject> dbCollection = getCollection(database, collection, BasicDBObject.class);
+			FindIterable<BasicDBObject> result = null;
+			result = dbCollection.find((Bson) JSON.parse("{}"));
+			result = result.skip(skip);
+			result = result.limit(limit);
+			if (queryExecutionTimeoutMillis > 0)
+				result = result.maxTime(queryExecutionTimeoutMillis, TimeUnit.MILLISECONDS);
+			return result;
+		} catch (Throwable e) {
 			String errorMessage = String.format(
-					"Unable to parse JSON query. Query = %s, cause = %s, errorMessage = %s.", query, e.getCause(),
-					e.getMessage());
+					"Unable to retrieve the required information. Database = %s , collection = %s , query = %s , projection = %s, "
+							+ "sort = %s , skip = %s , limit = %s , queryExecutionTimeOut = %s, cause = %s, errorMessage = %s.",
+					database, collection, skip, limit, queryExecutionTimeoutMillis, e.getCause(), e.getMessage());
 			log.error(errorMessage);
 			throw new PersistenceException(errorMessage, e);
 		}
 	}
 
 	@Override
-	public MongoIterable<BasicDBObject> find(String database, String collection, BasicDBObject query, Bson projection,
-			Bson sort, int skip, int limit, long queryExecutionTimeoutMillis) {
+	public MongoIterable<BasicDBObject> find(String database, String collection, MongoQueryAndParams mq,
+			long queryExecutionTimeoutMillis) {
+		return find(database, collection, mq.getFinalQuery(), mq.getProjection(), mq.getSort(), mq.getSkip(),
+				mq.getLimit(), queryExecutionTimeoutMillis);
+	}
+
+	@Override
+	public MongoIterable<BasicDBObject> find(String database, String collection, Bson query, Bson projection, Bson sort,
+			int skip, int limit, long queryExecutionTimeoutMillis) {
 		log.debug(
 				"Running query. Database = {} , collection = {} , query = {}, projection = {} , sort = {} , skip = {} , limit = {}, executionTimeOut = {}.",
 				database, collection, query, projection, sort, skip, limit, queryExecutionTimeoutMillis);
@@ -542,7 +522,7 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 		// FIXME: the eval() method is deprecated. We must remove this ASAP.
 		log.debug("Evaluating JavaScript code. Database = {} , code = {} , args = {}", database, code, args);
 		try {
-			return mongoDbClient.getDB(database).eval(code, (args != null ? args :new Object[1]));
+			return mongoDbClient.getDB(database).eval(code, (args != null ? args : new Object[1]));
 		} catch (Throwable e) {
 			String errorMessage = String.format(
 					"Unable to evaluate the given function. Database = %s , code = %s , args = %s , cause = %s , errorMessage =%s.",
@@ -584,8 +564,8 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	}
 
 	@Override
-	public List<BulkWriteResult> bulkInsert(String database, String collection, List<String> data,
-			boolean orderedOp, boolean includeObjectIds) throws PersistenceException {
+	public List<BulkWriteResult> bulkInsert(String database, String collection, List<String> data, boolean orderedOp,
+			boolean includeObjectIds) throws PersistenceException {
 
 		BulkWriteResult[] bwResults = new BulkWriteResult[data.size()];
 		log.debug(
@@ -675,8 +655,7 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 
 	@Override
 	public void remove(String database, String collection, BasicDBObject query) throws PersistenceException {
-		log.debug("Removing from MongoDB...Database= {} , collection = {} , query = {}.", database, collection,
-				query);
+		log.debug("Removing from MongoDB...Database= {} , collection = {} , query = {}.", database, collection, query);
 		MongoCollection<?> dbCollection = getCollection(database, collection, BasicDBObject.class);
 		try {
 			dbCollection.deleteMany(query);
@@ -846,7 +825,7 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 		log.info("Dropping database. DatabaseName = {}.", database);
 		mongoDbClient.getDatabase(database).drop();
 	}
-	
+
 	@Override
 	public GridFSBucket configureGridFSBucket(String database) {
 		return GridFSBuckets.create(mongoDbClient.getDatabase(database));

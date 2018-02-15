@@ -44,7 +44,9 @@ public class DumpRequestBodyRule {
 	@Condition
 	public boolean existsRequest(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
-		if (request != null)
+		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
+		Object body = data.get(ApiServiceInterface.BODY);
+		if (request != null && body==null)
 			return true;
 		else
 			return false;

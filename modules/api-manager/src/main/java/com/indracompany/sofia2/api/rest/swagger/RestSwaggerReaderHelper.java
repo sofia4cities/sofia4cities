@@ -15,7 +15,6 @@ package com.indracompany.sofia2.api.rest.swagger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
@@ -118,7 +117,6 @@ public class RestSwaggerReaderHelper {
                
             }
             
-
             // set schema on body parameter
             if (parameter instanceof BodyParameter) {
                 BodyParameter bp = (BodyParameter) parameter;
@@ -151,12 +149,9 @@ public class RestSwaggerReaderHelper {
             }
             
 		}
-		
 		return parameter;
-
 	}
 
-	
 	  private static Property modelTypeAsProperty(String typeName, Swagger swagger) {
 	        boolean array = typeName.endsWith("[]");
 	        if (array) {
@@ -230,23 +225,5 @@ public class RestSwaggerReaderHelper {
 	        return null;
 	    }
 	  
-	    public static void appendModels(Class clazz, Swagger swagger) {
-	        RestModelConverters converters = new RestModelConverters();
-	        final Map<String, Model> models = converters.readClass(clazz);
-	        for (Map.Entry<String, Model> entry : models.entrySet()) {
-
-	            // favor keeping any existing model that has the vendor extension in the model
-	            boolean oldExt = false;
-	            if (swagger.getDefinitions() != null && swagger.getDefinitions().get(entry.getKey()) != null) {
-	                Model oldModel = swagger.getDefinitions().get(entry.getKey());
-	                if (oldModel.getVendorExtensions() != null && !oldModel.getVendorExtensions().isEmpty()) {
-	                    oldExt = oldModel.getVendorExtensions().get("x-className") != null;
-	                }
-	            }
-
-	            if (!oldExt) {
-	                swagger.model(entry.getKey(), entry.getValue());
-	            }
-	        }
-	}
+	
 }

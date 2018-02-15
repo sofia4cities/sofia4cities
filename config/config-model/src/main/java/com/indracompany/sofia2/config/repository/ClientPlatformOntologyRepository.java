@@ -31,10 +31,12 @@ public interface ClientPlatformOntologyRepository extends JpaRepository<ClientPl
 
 	List<ClientPlatformOntology> findByOntologyAndClientPlatform(Ontology ontology, ClientPlatform clientPlatform);
 
-	List<ClientPlatformOntology> findByClientPlatform(ClientPlatform clientPlatformId);
+	List<ClientPlatformOntology> findByClientPlatform(ClientPlatform clientPlatform);
 
 	List<ClientPlatformOntology> findById(String id);
 
-	List<ClientPlatformOntology> findByOntology(Ontology ontologyId);
+	List<ClientPlatformOntology> findByOntology(Ontology ontology);
+
+	void deleteByOntology(Ontology ontology);
 
 }

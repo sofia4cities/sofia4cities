@@ -54,7 +54,6 @@ public interface ApiSuscriptionRestService {
     httpMethod="GET",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 
@@ -72,7 +71,6 @@ public interface ApiSuscriptionRestService {
     httpMethod="GET",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	
@@ -91,7 +89,6 @@ public interface ApiSuscriptionRestService {
     httpMethod="POST",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	
@@ -109,7 +106,6 @@ public interface ApiSuscriptionRestService {
     httpMethod="PUT",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	@ApiResponses(value = { 
@@ -126,7 +122,6 @@ public interface ApiSuscriptionRestService {
     httpMethod="DELETE",
     produces=MediaType.APPLICATION_JSON,
     consumes=MediaType.APPLICATION_JSON,
-   // response = Pet.class,
     authorizations = @Authorization(value = "token")
   )
 	@ApiResponses(value = { 

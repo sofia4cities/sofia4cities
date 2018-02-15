@@ -156,7 +156,8 @@
 															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{ontology.userId}" >Owner</span></th>
 															<th class="titulo-columnas" th:text="#{ontology.description}">Description</th>
 															<th class="titulo-columnas text-center" th:text="#{ontology.active}">Active</th>
-															<th class="titulo-columnas text-center" th:text="#{ontology.public}">Public</th>																
+															<th class="titulo-columnas text-center" th:text="#{ontology.public}">Public</th>
+															<th class="titulo-columnas text-center" th:text="#{ontology.datamodel}">Datamodel</th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{ontology.createdAt}"> Created At </span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
@@ -175,6 +176,8 @@
 															<!-- PUBLIC -->
 															<td class="text-center" th:if="${ontology.public}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
 															<td class="text-center" th:if="${!ontology.public}"></td>
+															<!-- DATAMODEL -->
+															<td class="text-center bold" th:text="${ontology.dataModel?.name}"></td>
 															<!-- DATE -->
 															<td class="text-center" th:if="${ontology.createdAt!=null}" th:text="${#dates.format(ontology.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${ontology.createdAt==null}" th:text="${ontology.createdAt}"></td>
@@ -182,10 +185,10 @@
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/show/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  th:if="(${#authentication.name} == ${ontology.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/${ontology.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  th:if="(${#authentication.name} == ${ontology.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/update/${ontology.id}|} + '\');'"><i class="fa fa-edit"></i></span>
 																	
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
@@ -204,9 +207,10 @@
 														<label class="toggle-vis" data-column="1" th:text="#{ontology.userId}"> Owner </label>
 														<label class="toggle-vis" data-column="2" th:text="#{ontology.description}"> Description</label>
 														<label class="toggle-vis" data-column="3" th:text="#{ontology.active}"> Active</label>
-														<label class="toggle-vis" data-column="4" th:text="#{ontology.public}"> Public</label>														
-														<label class="toggle-vis" data-column="5" th:text="#{ontology.createdAt}"> Created At</label>
-														<label class="toggle-vis" data-column="6" th:text="#{gen.options}" > Options</label>															
+														<label class="toggle-vis" data-column="4" th:text="#{ontology.public}"> Public</label>
+														<label class="toggle-vis" data-column="5" th:text="#{ontology.datamodel}"> Datamodel</label>
+														<label class="toggle-vis" data-column="6" th:text="#{ontology.createdAt}"> Created At</label>
+														<label class="toggle-vis" data-column="7" th:text="#{gen.options}" > Options</label>															
 													</div>
 												</div>												
 											</div>

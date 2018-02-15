@@ -21,5 +21,7 @@ public interface TokenService {
 	
 	public Token generateTokenForClient(ClientPlatform clientPlatform);
 	
+	public Token getToken(ClientPlatform clientPlatform);
+	
 
 }

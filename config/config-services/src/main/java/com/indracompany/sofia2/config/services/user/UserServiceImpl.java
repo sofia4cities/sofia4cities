@@ -41,13 +41,13 @@ public class UserServiceImpl implements UserService {
 
 	private static final String log = null;
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 	@Autowired
-	RoleRepository roleTypeRepository;
+	private RoleRepository roleTypeRepository;
 	@Autowired
-	UserTokenRepository userTokenRepository;
+	private UserTokenRepository userTokenRepository;
 	@Autowired
-	TokenRepository tokenRepository;
+	private TokenRepository tokenRepository;
 
 	@Override
 	public Token getToken(String token) {
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserToken getUserToken(Token token) {
+	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);
 	}
 
@@ -66,8 +66,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByToken(String token) {
-		Token theToken = getToken(token);
-		UserToken usertoken = userTokenRepository.findByToken(theToken);
+		UserToken usertoken = userTokenRepository.findByToken(token);
 		User user = usertoken.getUser();
 		return user;
 	}
@@ -134,9 +133,13 @@ public class UserServiceImpl implements UserService {
 			userDb.setPassword(user.getPassword());
 			userDb.setEmail(user.getEmail());
 			userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
-			// If user was deleted and now is going to be active
+			
+			// Update dateDeleted for in/active user
 			if (!userDb.isActive() && user.isActive())
 				userDb.setDateDeleted(null);
+			if(userDb.isActive() && !user.isActive())
+				userDb.setDateDeleted(new Date());
+			
 			userDb.setActive(user.isActive());
 			if(user.getDateDeleted()!=null) userDb.setDateDeleted(user.getDateDeleted());
 			userDb.setFullName(user.getFullName());

@@ -28,7 +28,7 @@ import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 public class TokenServiceImpl implements TokenService{
 	
 	@Autowired
-	TokenRepository tokenRepository;
+	private TokenRepository tokenRepository;
 	
 	
 	@Override
@@ -46,5 +46,10 @@ public class TokenServiceImpl implements TokenService{
 				throw new TokenServiceException("Token with value "+ token.getToken()+" already exists");
 		}
 		return token;
+	}
+	
+	@Override
+	public Token getToken(ClientPlatform clientPlatform) {
+		return this.tokenRepository.findByClientPlatform(clientPlatform).get(0);
 	}
 }

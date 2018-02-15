@@ -19,6 +19,8 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -32,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.Role;
+import com.indracompany.sofia2.config.model.Role.Type;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,10 +49,10 @@ public class RoleTypeIntegrationTest {
 
 	@Before
 	public void setUp() {
-		List<Role> types = this.repository.findAll();
+		List<Type> types = new ArrayList<Type>(Arrays.asList(Role.Type.values()));
 		if (types.isEmpty()) {
 			// log.info("No types en tabla.Adding...");
-			throw new RuntimeException("No types en tabla.Adding...");
+			throw new RuntimeException("No role types in class Role...");
 		}
 	}
 
@@ -60,13 +63,13 @@ public class RoleTypeIntegrationTest {
 	}
 
 	@Test
-	public void test3_CountByName() {
-		Assert.assertTrue(this.repository.countByName("ROLE_ADMINISTRATOR") == 1L);
+	public void test3_CountById() {
+		Assert.assertTrue(this.repository.countById("ROLE_ADMINISTRATOR") == 1L);
 	}
 
 	@Test
 	public void test4_FindByName() {
-		Assert.assertTrue(this.repository.findById("ADMINISTRATOR").getName().equals("ROLE_ADMINISTRATOR"));
+		Assert.assertTrue(this.repository.findById("ROLE_ADMINISTRATOR").getName().equals("Administrator"));
 	}
 
 }

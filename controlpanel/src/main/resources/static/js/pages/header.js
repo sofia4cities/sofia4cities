@@ -240,6 +240,7 @@ var HeaderController = function() {
 			icon: 'fa fa-warning',
 			title: Title,
 			theme: 'dark',
+			type: 'red',
 			columnClass: 'medium',
 			content: Content,
 			draggable: true,
