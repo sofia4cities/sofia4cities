@@ -8,17 +8,16 @@
     <sba-info-panel ng-repeat="metric in metrics | orderBy:'name'" panel-title="{{ metric.name }}"
                     raw="api/applications/{{ application.id }}/metrics/{{ metric.name }}.*"
                     ng-show="!searchFilter || (metric.values | filter:searchFilter).length > 0">
-        <table class="table">
-            <tr ng-if="showRichGauges" ng-repeat="m in metric.values | filter:searchFilter">
-                <td>
-                    <sba-rich-metric-bar for-metric="m" global-max="metric.max"></sba-rich-metric-bar>
-                </td>
-            </tr>
-            <tr ng-if="!showRichGauges" ng-repeat="m in metric.values | filter:searchFilter">
-                <td>
-                    <sba-simple-metric-bar for-metric="m" global-max="metric.max"></sba-simple-metric-bar>
-                </td>
-            </tr>
-        </table>
+        <lu class="table">
+            <li class="sofia2-metric-row" ng-if="showRichGauges" ng-repeat="m in metric.values | filter:searchFilter">
+                <!--<sba-rich-metric-bar for-metric="m" global-max="metric.max"></sba-rich-metric-bar>-->
+                <sba-canvas-gauge-metric for-metric="m" global-max="metric.max"></sba-canvas-gauge-metric>
+            </li>
+            <li class="sofia2-metric-row" ng-if="!showRichGauges" ng-repeat="m in metric.values | filter:searchFilter">
+                <!--<sba-simple-metric-bar for-metric="m" global-max="metric.max"></sba-simple-metric-bar>-->
+                <sba-canvas-gauge-metric for-metric="m" global-max="metric.max"></sba-canvas-gauge-metric>
+            </li>
+        </lu>
     </sba-info-panel>
+    
 </div>

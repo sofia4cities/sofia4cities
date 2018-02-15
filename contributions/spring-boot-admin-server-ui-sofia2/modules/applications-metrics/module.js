@@ -24,6 +24,7 @@ module.controller('metricsCtrl', require('./controllers/metricsCtrl.js'));
 
 module.directive('sbaSimpleMetricBar', require('./directives/simpleMetricBar.js'));
 module.directive('sbaRichMetricBar', require('./directives/richMetricBar.js'));
+module.directive('sbaCanvasGaugeMetric', require('./directives/canvasGaugeMetric.js'));
 
 module.config(function ($stateProvider) {
   $stateProvider.state('applications.metrics', {

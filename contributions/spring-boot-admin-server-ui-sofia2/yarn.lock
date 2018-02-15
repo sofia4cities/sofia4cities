@@ -434,6 +434,10 @@ caniuse-db@^1.0.30000529, caniuse-db@^1.0.30000634, caniuse-db@^1.0.30000639:
   version "1.0.30000686"
   resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000686.tgz#d55b479ed6e6402c1fd3f1fd8f46e694d86ea464"
 
+canvas-gauges@^2.1.4:
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/canvas-gauges/-/canvas-gauges-2.1.4.tgz#4b54ecbf3b1a94b41e01a4a9ecd0e4bacad1f13a"
+
 caseless@~0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/caseless/-/caseless-0.11.0.tgz#715b96ea9841593cc33067923f5ec60ebda4f7d7"
