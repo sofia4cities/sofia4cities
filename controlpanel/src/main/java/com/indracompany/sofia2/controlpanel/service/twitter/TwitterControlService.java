@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.services.twitter;
+package com.indracompany.sofia2.controlpanel.service.twitter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +57,7 @@ public class TwitterControlService {
 		task.setData(jobContext);
 		task.setSingleton(false);
 		task.setCronExpression("0 * 0 ? * * *");
+		//TODO job name to {unSchedule,pause,resume}
 		return taskService.addJob(task).isSuccess();
 
 	}

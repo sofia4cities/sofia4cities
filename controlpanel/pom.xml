@@ -26,7 +26,11 @@
 			<artifactId>sofia2-persistence-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-social-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-scheduler</artifactId>

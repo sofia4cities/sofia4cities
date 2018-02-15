@@ -49,7 +49,7 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.twitter.TwitterListeningService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.controller.user.UserController;
-import com.indracompany.sofia2.controlpanel.services.twitter.TwitterControlService;
+import com.indracompany.sofia2.controlpanel.service.twitter.TwitterControlService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
