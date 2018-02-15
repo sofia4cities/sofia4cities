@@ -63,9 +63,9 @@ public class GraphUtil {
 	@Autowired
 	private AppWebUtils utils;
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	@Value("${sofia2.urls.iotbroker}")
-	String url;
+	private String url;
 
 	@PostConstruct
 	public void init() {
