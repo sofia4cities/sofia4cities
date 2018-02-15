@@ -48,6 +48,7 @@ import com.indracompany.sofia2.api.service.exporter.ExportToXml;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
@@ -69,6 +70,10 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	
 	@Autowired
 	private QueryToolService queryToolService;
+	
+	@Autowired
+	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
+	
 	
 	static final String ONT_NAME = "contextData";
 	static final String DATABASE = "sofia2_s4c";
@@ -125,8 +130,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 					salida = queryToolService.querySQLAsJson(ontology.getIdentification(), QUERY, 0);
 				}
 				else {
-					salida = queryToolService.queryNativeAsJson(ontology.getIdentification(), QUERY, 0,
-							0);
+					salida = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);
 				}
 			}
 			
