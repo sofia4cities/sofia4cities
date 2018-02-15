@@ -46,7 +46,9 @@ import com.indracompany.sofia2.api.service.exporter.ExportToCsv;
 import com.indracompany.sofia2.api.service.exporter.ExportToExcel;
 import com.indracompany.sofia2.api.service.exporter.ExportToXml;
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.persistence.services.QueryToolService;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
@@ -64,6 +66,14 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	
 	@Autowired
 	private ExportToCsv varCsv;
+	
+	@Autowired
+	private QueryToolService queryToolService;
+	
+	static final String ONT_NAME = "contextData";
+	static final String DATABASE = "sofia2_s4c";
+	
+	 
 	
 	@Override
 	@PrometheusTimeMethod(name = "ApiServiceImplEntryPointCamel", help = "ApiServiceImpl doGET")
@@ -98,6 +108,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			
 			User user = (User) data.get(ApiServiceInterface.USER);
 			Api api = (Api) data.get(ApiServiceInterface.API);
+			Ontology ontology = (Ontology) data.get(ApiServiceInterface.ONTOLOGY);
 			String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
 			String METHOD = (String) data.get(ApiServiceInterface.METHOD);
 			String BODY = (String) data.get(ApiServiceInterface.BODY);
@@ -107,9 +118,23 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
 			String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
 			
+			String salida = "";
+			if (QUERY_TYPE !=null)
+			{
+				if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
+					salida = queryToolService.querySQLAsJson(ontology.getIdentification(), QUERY, 0);
+				}
+				else {
+					salida = queryToolService.queryNativeAsJson(ontology.getIdentification(), QUERY, 0,
+							0);
+				}
+			}
+			
+			
+			
 			String str = getJsonFromMap(data).toString(4);
 			
-			exchange.getIn().setBody(str);
+			exchange.getIn().setBody(salida);
 			exchange.getIn().setHeader("content-type", "text/plain");
 		}
 		
