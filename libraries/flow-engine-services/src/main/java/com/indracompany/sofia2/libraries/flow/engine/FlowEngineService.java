@@ -11,37 +11,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.nodered.communication;
+package com.indracompany.sofia2.libraries.flow.engine;
 
 import java.util.List;
 
-import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomain;
-import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomainStatus;
+import org.springframework.web.bind.annotation.RequestParam;
 
-public interface NodeRedAdminClient {
+import com.indracompany.sofia2.libraries.flow.engine.dto.FlowEngineDomain;
+import com.indracompany.sofia2.libraries.flow.engine.dto.FlowEngineDomainStatus;
 
-	// Shuts down the Flow Engine Admin
-	public String stopFlowEngine();
+public interface FlowEngineService {
 
-	// Flow Engine Domain Management
 	public void stopFlowEngineDomain(String domain);
 
-	public String startFlowEngineDomain(FlowEngineDomain domain);
+	public void startFlowEngineDomain(FlowEngineDomain domain);
 
-	public String createFlowengineDomain(FlowEngineDomain domain);
+	public void createFlowengineDomain(FlowEngineDomain domain);
 
 	public void deleteFlowEngineDomain(String domainId);
 
-	public FlowEngineDomain getFlowEngineDomain(String domainId);
+	public FlowEngineDomain getFlowEngineDomain(@RequestParam String domainId);
 
-	// Generic Flow Engine Requests
 	public List<FlowEngineDomainStatus> getAllFlowEnginesDomains();
 
 	public List<FlowEngineDomainStatus> getFlowEngineDomainStatus(List<String> domainList);
-
-	// Synchronization of the active/inactive domains with CDB
-	void resetSynchronizedWithBDC();
-
-	public String synchronizeMF(List<FlowEngineDomainStatus> domainList);
 
 }

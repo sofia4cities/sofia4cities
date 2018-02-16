@@ -11,19 +11,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.repository;
+package com.indracompany.sofia2.config.services.flownode;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.config.model.Flow;
+import com.indracompany.sofia2.config.model.FlowNode;
+import com.indracompany.sofia2.config.repository.FlowNodeRepository;
 
-public interface FlowRepository extends JpaRepository<Flow, String> {
+@Service
+public class FlowNodeServiceImpl implements FlowNodeService {
 
-	List<Flow> findByIdentification(String identification);
+	@Autowired
+	private FlowNodeRepository nodeRepository;
 
-	List<Flow> findByFlowDomain_Identification(String domainIdentification);
+	@Override
+	public List<FlowNode> getAllFlowNodes() {
+		return nodeRepository.findAll();
+	}
 
-	Flow findByNodeRedFlowId(String nodeRedFlowId);
+	@Override
+	public FlowNode saveFlowNode(FlowNode flowNode) {
+		return nodeRepository.save(flowNode);
+	}
+
 }

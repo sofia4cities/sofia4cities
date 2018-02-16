@@ -11,21 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.exception;
+package com.indracompany.sofia2.config.services.flownode;
 
-public class NotSynchronizedToCdbException extends RuntimeException {
+import java.util.List;
 
-	private static final long serialVersionUID = 1L;
+import com.indracompany.sofia2.config.model.FlowNode;
 
-	public NotSynchronizedToCdbException() {
-		super();
-	}
+public interface FlowNodeService {
 
-	public NotSynchronizedToCdbException(String msg) {
-		super(msg);
-	}
+	public List<FlowNode> getAllFlowNodes();
 
-	public NotSynchronizedToCdbException(Exception e) {
-		super(e);
-	}
+	public FlowNode saveFlowNode(FlowNode flowNode);
+
 }

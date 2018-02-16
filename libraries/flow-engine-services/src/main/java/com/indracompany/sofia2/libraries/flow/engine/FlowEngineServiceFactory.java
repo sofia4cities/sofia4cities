@@ -11,21 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.exception;
+package com.indracompany.sofia2.libraries.flow.engine;
 
-public class NotSynchronizedToCdbException extends RuntimeException {
+import org.springframework.context.annotation.Bean;
 
-	private static final long serialVersionUID = 1L;
+public class FlowEngineServiceFactory {
 
-	public NotSynchronizedToCdbException() {
-		super();
-	}
-
-	public NotSynchronizedToCdbException(String msg) {
-		super(msg);
-	}
-
-	public NotSynchronizedToCdbException(Exception e) {
-		super(e);
+	@Bean
+	public static FlowEngineServiceImpl getFlowEngineService(String restBaseUrl, int resrRequestTimeout) {
+		return new FlowEngineServiceImpl(restBaseUrl, resrRequestTimeout);
 	}
 }

@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,9 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.flowengine.api.rest.pojo.FlowEngineDomain;
 import com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClient;
-import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineAdminResponse;
+import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomain;
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomainStatus;
 
 @RestController
@@ -41,9 +41,9 @@ public class FlowEngineController {
 		return nodeRedClientAdmin.stopFlowEngine();
 	}
 
-	@RequestMapping(value = "/domain/stop", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody void stopFlowEngineDomain(@RequestParam String domain) {
-		nodeRedClientAdmin.stopFlowEngineDomain(domain);
+	@RequestMapping(value = "/domain/stop/{domainId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody void stopFlowEngineDomain(@PathVariable(value = "domainId") String domainId) {
+		nodeRedClientAdmin.stopFlowEngineDomain(domainId);
 	}
 
 	@RequestMapping(value = "/domain/start", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -56,13 +56,13 @@ public class FlowEngineController {
 		return nodeRedClientAdmin.createFlowengineDomain(domain);
 	}
 
-	@RequestMapping(value = "/domain", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody void deleteFlowEngineDomain(@RequestParam String domainId) {
+	@RequestMapping(value = "/domain/{domainId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody void deleteFlowEngineDomain(@PathVariable(value = "domainId") String domainId) {
 		nodeRedClientAdmin.deleteFlowEngineDomain(domainId);
 	}
 
-	@RequestMapping(value = "/domain", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody FlowEngineDomain getFlowEngineDomain(@RequestParam String domainId) {
+	@RequestMapping(value = "/domain/{domainId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody FlowEngineDomain getFlowEngineDomain(@PathVariable(value = "domainId") String domainId) {
 		return nodeRedClientAdmin.getFlowEngineDomain(domainId);
 	}
 
@@ -79,9 +79,8 @@ public class FlowEngineController {
 
 	// Synchronization of the active/inactive domains with CDB
 	@RequestMapping(value = "/sync/reset", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody FlowEngineAdminResponse resetSynchronizedWithBDC() {
+	public @ResponseBody void resetSynchronizedWithBDC() {
 		nodeRedClientAdmin.resetSynchronizedWithBDC();
-		return FlowEngineAdminResponse.builder().body("OK").returnCode(200).error("").ok(true).build();
 	}
 
 	@RequestMapping(value = "/sync", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

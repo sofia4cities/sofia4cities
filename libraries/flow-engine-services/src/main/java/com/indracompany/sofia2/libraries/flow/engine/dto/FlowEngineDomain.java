@@ -11,21 +11,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.exception;
+package com.indracompany.sofia2.libraries.flow.engine.dto;
 
-public class NotSynchronizedToCdbException extends RuntimeException {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-	private static final long serialVersionUID = 1L;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-	public NotSynchronizedToCdbException() {
-		super();
-	}
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
+public class FlowEngineDomain {
+	// TODO Change to libraries/COMMONS
+	@Getter
+	@Setter
+	private String domain;
 
-	public NotSynchronizedToCdbException(String msg) {
-		super(msg);
-	}
+	@Getter
+	@Setter
+	private int port;
 
-	public NotSynchronizedToCdbException(Exception e) {
-		super(e);
-	}
+	@Getter
+	@Setter
+	private String home;
+
+	@Getter
+	@Setter
+	private int servicePort;
 }

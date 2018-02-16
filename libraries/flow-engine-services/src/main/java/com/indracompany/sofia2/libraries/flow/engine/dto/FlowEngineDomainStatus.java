@@ -11,80 +11,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.api.rest.pojo;
+package com.indracompany.sofia2.libraries.flow.engine.dto;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-@ToString()
-public class DeployRequestRecord {
+public class FlowEngineDomainStatus {
 
+	// TODO Change to libraries/COMMONS
 	@Getter
 	@Setter
 	private String domain;
+
 	@Getter
 	@Setter
-	private String id;
+	private int port;
+
 	@Getter
 	@Setter
-	private String type;
+	private String home;
+
 	@Getter
 	@Setter
-	private String label;
+	private int servicePort;
+
 	@Getter
 	@Setter
-	private String z;
+	private String state;
+
 	@Getter
 	@Setter
-	private String name;
+	private String runtimeState;
+
 	@Getter
 	@Setter
-	private String topic;
+	private String cpu;
+
 	@Getter
 	@Setter
-	@JsonProperty("direccion")
-	private String direction;
-	@Getter
-	@Setter
-	@JsonProperty("tipomensaje")
-	private String meassageType;
-	@Getter
-	@Setter
-	private String ontology;
-	@Getter
-	@Setter
-	private String token;
-	@Getter
-	@Setter
-	private String thinKp;
-	@Getter
-	@Setter
-	@JsonProperty("instanciakp")
-	private String kpInstance;
-	@Getter
-	@Setter
-	private String query;
-	@Getter
-	@Setter
-	@JsonProperty("tipoQuery")
-	private String QueryType;
-	@Getter
-	@Setter
-	private String msRefresh;
-	@Getter
-	@Setter
-	private String pingQuery;
-	@Getter
-	@Setter
-	private String pingType;
-	@Getter
-	@Setter
-	private String pingTimer;
+	private String memory;
+
+	public static Collection<FlowEngineDomainStatus> fromJsonArrayToDomainStatus(String json)
+			throws JsonParseException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+
+		return mapper.readValue(json, new TypeReference<List<FlowEngineDomainStatus>>() {
+		});
+
+	}
 }

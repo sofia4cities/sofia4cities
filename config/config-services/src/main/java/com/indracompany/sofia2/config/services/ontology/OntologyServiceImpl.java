@@ -161,78 +161,77 @@ public class OntologyServiceImpl implements OntologyService {
 		return false;
 
 	}
-	
+
 	@Override
 	public boolean hasUserPermissionForInsert(String userId, String ontologyIdentification) {
-		List<Ontology> ontologies = this.ontologyRepository.
-				findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
+		List<Ontology> ontologies = this.ontologyRepository
+				.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
 		for (Ontology ontology : ontologies) {
 			if (ontology.getIdentification().equals(ontologyIdentification))
 				return true;
 		}
 		return false;
 	}
-	
+
 	@Override
 	public List<String> getOntologyFields(String identification) throws JsonProcessingException, IOException {
 		List<String> fields = new ArrayList<String>();
 		Ontology ontology = this.ontologyRepository.findByIdentification(identification);
-		if(ontology != null)
-		{
+		if (ontology != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			
+
 			String prefix = mapper.readTree(ontology.getJsonSchema()).get("title").asText();
-			prefix=prefix.split(" ")[0];
-			
+			prefix = prefix.split(" ")[0];
+
 			JsonNode jsonNode = mapper.readTree(ontology.getJsonSchema());
-			//Predefine Path to data properties
+			// Predefine Path to data properties
 			jsonNode = jsonNode.path("datos").path("properties");
 			Iterator<String> iterator = jsonNode.fieldNames();
-			while(iterator.hasNext())
-			{
-				fields.add(prefix+"."+iterator.next());
+			while (iterator.hasNext()) {
+				fields.add(prefix + "." + iterator.next());
 			}
 		}
 		return fields;
 	}
-	
+
 	@Override
 	public void updateOntology(Ontology ontology) {
 		Ontology ontologyDb = this.ontologyRepository.findById(ontology.getId());
-		if(ontologyDb!=null)
-		{
+		if (ontologyDb != null) {
 			ontologyDb.setActive(ontology.isActive());
 			ontologyDb.setPublic(ontology.isPublic());
 			ontologyDb.setDescription(ontology.getDescription());
 			ontologyDb.setIdentification(ontology.getIdentification());
 			ontologyDb.setRtdbClean(ontology.isRtdbClean());
 			ontologyDb.setRtdbToHdb(ontology.isRtdbToHdb());
-			if(!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
+			if (!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
 				ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
 			ontologyDb.setJsonSchema(ontology.getJsonSchema());
-			if(!ontology.getDataModel().getId().equals(ontologyDb.getDataModel().getId()))
+			if (!ontology.getDataModel().getId().equals(ontologyDb.getDataModel().getId()))
 				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 			ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 			ontologyDb.setMetainf(ontology.getMetainf());
-				
-				
-		}else
+
+		} else
 			throw new OntologyServiceException("Ontology does not exist");
 	}
-	
 
 	@Override
 	public void createOntology(Ontology ontology) {
 		ontology.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 		this.saveOntology(ontology);
-		
+
 	}
-	
+
 	@Override
 	@Transactional
 	public void deleteOntology(String id) {
 		this.ontologyRepository.deleteById(id);
 	}
-	
+
+	@Override
+	public List<Ontology> getOntologiesByActiveTrue() {
+		return this.ontologyRepository.findByActiveTrue();
+	}
 
 }
