@@ -710,7 +710,7 @@ public class InitConfigDB {
 			Ontology ontology = new Ontology();
 			ontology.setId("1");
 			ontology.setJsonSchema("{}");
-			ontology.setIdentification("Ontology Master");
+			ontology.setIdentification("OntologyMaster");
 			ontology.setDescription("Ontology created as Master Data");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
@@ -722,8 +722,8 @@ public class InitConfigDB {
 			ontology = new Ontology();
 			ontology.setId("2");
 			ontology.setJsonSchema("{Data:,Temperature:}");
-			ontology.setDescription("Ontology Example");
-			ontology.setIdentification("Ontology crated as example");
+			ontology.setIdentification("OntologyExample");
+			ontology.setDescription("Ontology created as example");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);

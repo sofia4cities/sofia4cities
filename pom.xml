@@ -67,7 +67,7 @@
 		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
 		
 		<module>modules/iotbroker</module>		
-		<module>controlpanel</module>		
+		<module>modules/controlpanel</module>		
         <module>modules/monitoring-ui</module>
         <module>libraries/commons</module>
         <module>libraries/mail-service</module>

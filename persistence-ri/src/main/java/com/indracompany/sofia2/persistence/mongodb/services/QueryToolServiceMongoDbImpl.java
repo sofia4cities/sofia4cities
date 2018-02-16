@@ -28,14 +28,23 @@ public class QueryToolServiceMongoDbImpl implements QueryToolService {
 
 	@Autowired
 	MongoBasicOpsDBRepository mongoRepo = null;
-//	@Autowired
-//	OntologyService ontologyService;
+	// @Autowired
+	// OntologyService ontologyService;
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
-			throws DBPersistenceException {	
+			throws DBPersistenceException {
 		try {
 			return mongoRepo.queryNativeAsJson(ontology, query, offset, limit);
+		} catch (Exception e) {
+			throw new DBPersistenceException("Error executing query:" + e.getMessage(), e);
+		}
+	}
+
+	@Override
+	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
+		try {
+			return mongoRepo.queryNativeAsJson(ontology, query);
 		} catch (Exception e) {
 			throw new DBPersistenceException("Error executing query:" + e.getMessage(), e);
 		}
