@@ -1,0 +1,143 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.indracompany.sofia2.libraries.flow.engine;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.libraries.flow.engine.dto.FlowEngineDomain;
+import com.indracompany.sofia2.libraries.flow.engine.dto.FlowEngineDomainStatus;
+
+public class FlowEngineServiceImpl implements FlowEngineService {
+
+	private HttpComponentsClientHttpRequestFactory httpRequestFactory;
+
+	private ObjectMapper mapper;
+	private String restBaseUrl;
+
+	public FlowEngineServiceImpl(String restBaseUrl, int restRequestTimeout) {
+		httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+		httpRequestFactory.setConnectTimeout(restRequestTimeout);
+		this.restBaseUrl = restBaseUrl;
+		mapper = new ObjectMapper();
+	}
+
+	@Override
+	public void stopFlowEngineDomain(String domainId) {
+		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
+		try {
+			restTemplate.put(restBaseUrl + "/domain/stop/" + domainId, null);
+		} catch (Exception e) {
+			// TODO ¿NEW FlowEngineServiceException?
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	@Override
+	public void startFlowEngineDomain(FlowEngineDomain domain) {
+		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<FlowEngineDomain> domainToStart = new HttpEntity<FlowEngineDomain>(domain, headers);
+			restTemplate.put(restBaseUrl + "/domain/start/", domainToStart);
+		} catch (Exception e) {
+			// TODO ¿NEW FlowEngineServiceException?
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void createFlowengineDomain(FlowEngineDomain domain) {
+		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<FlowEngineDomain> newDomain = new HttpEntity<FlowEngineDomain>(domain, headers);
+			restTemplate.postForObject(restBaseUrl + "/domain", newDomain, String.class);
+		} catch (Exception e) {
+			// TODO ¿NEW FlowEngineServiceException?
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
+	public void deleteFlowEngineDomain(String domainId) {
+		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
+		try {
+			restTemplate.delete(restBaseUrl + "/domain/" + domainId);
+		} catch (Exception e) {
+			// TODO ¿NEW FlowEngineServiceException?
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	@Override
+	public FlowEngineDomain getFlowEngineDomain(String domainId) {
+		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
+		FlowEngineDomain domain = null;
+		try {
+			domain = restTemplate.getForObject(restBaseUrl + "/domain/" + domainId, FlowEngineDomain.class);
+		} catch (Exception e) {
+			// TODO ¿NEW FlowEngineServiceException?
+			throw new RuntimeException(e);
+		}
+		return domain;
+	}
+
+	@Override
+	public List<FlowEngineDomainStatus> getAllFlowEnginesDomains() {
+		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
+		List<FlowEngineDomainStatus> response = new ArrayList<>();
+		try {
+			ResponseEntity<String> responseHttp = restTemplate.getForEntity(restBaseUrl + "/domain/all", String.class);
+			response = (List<FlowEngineDomainStatus>) FlowEngineDomainStatus
+					.fromJsonArrayToDomainStatus(responseHttp.getBody());
+		} catch (Exception e) {
+			// TODO ¿NEW FlowEngineServiceException?
+			throw new RuntimeException(e);
+		}
+		return response;
+	}
+
+	@Override
+	public List<FlowEngineDomainStatus> getFlowEngineDomainStatus(List<String> domainList) {
+		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
+		List<FlowEngineDomainStatus> response = new ArrayList<>();
+		try {
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(restBaseUrl + "/domain/status")
+					.queryParam("domainList", mapper.writeValueAsString(domainList));
+
+			ResponseEntity<String> responseHttp = restTemplate.getForEntity(builder.toUriString(), String.class);
+			response = (List<FlowEngineDomainStatus>) FlowEngineDomainStatus
+					.fromJsonArrayToDomainStatus(responseHttp.getBody());
+		} catch (Exception e) {
+			// TODO ¿NEW FlowEngineServiceException?
+			throw new RuntimeException(e);
+		}
+		return response;
+	}
+
+}

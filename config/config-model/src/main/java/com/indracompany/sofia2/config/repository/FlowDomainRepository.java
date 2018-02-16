@@ -20,4 +20,8 @@ import com.indracompany.sofia2.config.model.FlowDomain;
 public interface FlowDomainRepository extends JpaRepository<FlowDomain, String> {
 
 	FlowDomain findByIdentification(String identification);
+
+	FlowDomain findByUser_userId(String userId);
+
+	void deleteByIdentification(String identification);
 }

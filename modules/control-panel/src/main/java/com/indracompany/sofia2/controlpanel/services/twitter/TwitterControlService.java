@@ -27,16 +27,15 @@ import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
 
 @Service
 public class TwitterControlService {
-
 	@Autowired
 	private TaskService taskService;
 
 	public boolean scheduleTwitterListening(TwitterListening twitterListening) {
-		
+
 		TaskInfo task = new TaskInfo();
 		task.setJobName(twitterListening.getId());
 		task.setSchedulerType(SchedulerType.Twitter);
-		
+
 		Map<String, Object> jobContext = new HashMap<String, Object>();
 		jobContext.put("id", twitterListening.getId());
 		jobContext.put("ontology", twitterListening.getOntology().getIdentification());
@@ -50,7 +49,7 @@ public class TwitterControlService {
 		} else {
 			jobContext.put("configuration", null);
 		}
-		
+
 		task.setUsername(twitterListening.getUser().getUserId());
 		task.setData(jobContext);
 		task.setSingleton(false);
@@ -58,7 +57,6 @@ public class TwitterControlService {
 		task.setStartAt(twitterListening.getDateFrom());
 		task.setEndAt(twitterListening.getDateTo());
 		return taskService.addJob(task).isSuccess();
-
 	}
-	
+
 }

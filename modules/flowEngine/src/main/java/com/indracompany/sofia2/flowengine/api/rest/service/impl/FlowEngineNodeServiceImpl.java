@@ -34,17 +34,14 @@ import com.indracompany.sofia2.config.model.FlowNode;
 import com.indracompany.sofia2.config.model.FlowNodeProperties;
 import com.indracompany.sofia2.config.model.FlowNodeType;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
-import com.indracompany.sofia2.config.repository.FlowDomainRepository;
-import com.indracompany.sofia2.config.repository.FlowNodeRepository;
-import com.indracompany.sofia2.config.repository.FlowNodeTypeRepository;
-import com.indracompany.sofia2.config.repository.FlowRepository;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
-import com.indracompany.sofia2.config.repository.UserRepository;
-import com.indracompany.sofia2.config.security.UserRole;
+import com.indracompany.sofia2.config.services.client.ClientPlatformService;
+import com.indracompany.sofia2.config.services.flow.FlowService;
+import com.indracompany.sofia2.config.services.flowdomain.FlowDomainService;
+import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
+import com.indracompany.sofia2.config.services.flownodetype.FlowNodeTypeService;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.DeployRequestRecord;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineNodeService;
@@ -67,37 +64,34 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	private BasicOpsDBRepository basicRDBRepository;
 
 	@Autowired
-	private FlowDomainRepository domainRepository;
+	private FlowDomainService domainService;
 
 	@Autowired
-	private FlowRepository flowRepository;
+	private FlowService flowService;
 
 	@Autowired
-	private FlowNodeRepository nodeRepository;
+	private FlowNodeService nodeService;
 
 	@Autowired
-	private FlowNodeTypeRepository nodeTypeRepository;
+	private FlowNodeTypeService nodeTypeService;
 
 	@Autowired
-	private UserRepository userRepository;
+	private OntologyService ontologyService;
 
 	@Autowired
-	private OntologyRepository ontologyRepository;
+	private ClientPlatformService clientPlatformService;
 
 	@Autowired
-	private ClientPlatformRepository clientPlatformRepository;
-
-	@Autowired
-	private OntologyUserAccessRepository userAccessRepository;
+	private UserService userService;
 
 	@Override
 	public String deploymentNotification(String json) {
-		// TODO Change Return type
+		// TODO Change Return type??
 		ObjectMapper mapper = new ObjectMapper();
 		FlowDomain domain = null;
 		List<DeployRequestRecord> deployRecords = new ArrayList<>();
 
-		List<FlowNodeType> sofia2NodeTypes = nodeTypeRepository.findAll();
+		List<FlowNodeType> sofia2NodeTypes = nodeTypeService.getAllFlowNodeTypes();
 
 		try {
 			deployRecords = mapper.readValue(json, new TypeReference<List<DeployRequestRecord>>() {
@@ -106,17 +100,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 				if (record != null) {
 					if (record.getDomain() != null) {
 						log.info("Deployment info from domain = {}", record.getDomain());
-						domain = domainRepository.findByIdentification(record.getDomain());
-						// Delete all data from this Domain,
-						// including flows, nodes and properties
-						List<Flow> flows = flowRepository.findByFlowDomain_Identification(domain.getIdentification());
-						for (Flow flow : flows) {
-							List<FlowNode> nodes = nodeRepository.findByFlow_NodeRedFlowId(flow.getNodeRedFlowId());
-							for (FlowNode node : nodes) {
-								nodeRepository.delete(node);
-							}
-							flowRepository.delete(flow);
-						}
+						domainService.deleteFlowDomainFlows(record.getDomain());
 					} else {
 						log.debug("Deployment record = {}", record.toString());
 						if (record.getType() != null) {
@@ -127,7 +111,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 								newFlow.setNodeRedFlowId(record.getId());
 								newFlow.setActive(true);
 								newFlow.setFlowDomain(domain);
-								flowRepository.save(newFlow);
+								flowService.saveFlowDomain(newFlow);
 							} else {
 								// its a regular node.
 								for (FlowNodeType type : sofia2NodeTypes) {
@@ -138,9 +122,9 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 										FlowNodeProperties nodeProperty;
 										Map<String, FlowNodeProperties> flowNodeProperties = new HashMap<>();
 
-										Flow flow = flowRepository.findByNodeRedFlowId(record.getZ()).get(0);
+										Flow flow = flowService.getFlowByNodeRedFlowId(record.getZ());
 										node.setNodeRedNodeId(record.getId());
-										node.setFlowNodeType(nodeTypeRepository.findByIdentification(record.getType()));
+										node.setFlowNodeType(nodeTypeService.getByIdentification(record.getType()));
 										node.setFlow(flow);
 
 										if (record.getType().equals("ssap-process-request")) {
@@ -166,7 +150,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 										}
 
 										node.setFlowNodeProperties(flowNodeProperties);
-										nodeRepository.save(node);
+										nodeService.saveFlowNode(node);
 									}
 								}
 							}
@@ -194,15 +178,14 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 
 		User sofia2User = validateUserCredentials(userId, password);
 
-		UserRole.valueOf(sofia2User.getRole().getName());
 		List<Ontology> ontologies = null;
-		switch (UserRole.valueOf(sofia2User.getRole().getName())) {
-		case ROLE_ADMINISTRATOR:
-			ontologies = ontologyRepository.findByActiveTrue();
+		switch (sofia2User.getRole().getName()) {
+		case "ROLE_ADMINISTRATOR":
+			ontologies = ontologyService.getOntologiesByActiveTrue();
 			break;
 		default:
-			// TODO check default criteria
-			ontologies = ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(sofia2User);
+			// TODO check default criteria. Public ontologies should be included
+			ontologies = ontologyService.getOntologiesByUserId(sofia2User.getUserId());
 			break;
 		}
 		for (Ontology ontology : ontologies) {
@@ -220,15 +203,14 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 
 		User sofia2User = validateUserCredentials(userId, password);
 
-		UserRole.valueOf(sofia2User.getRole().getName());
 		List<ClientPlatform> clientPlatforms = null;
-		switch (UserRole.valueOf(sofia2User.getRole().getName())) {
-		case ROLE_ADMINISTRATOR:
-			clientPlatforms = clientPlatformRepository.findAll();
+		switch (sofia2User.getRole().getName()) {
+		case "ROLE_ADMINISTRATOR":
+			clientPlatforms = clientPlatformService.getAllClientPlatforms();
 			break;
 		default:
 			// TODO check default criteria
-			clientPlatforms = clientPlatformRepository.findByUser(sofia2User);
+			clientPlatforms = clientPlatformService.getclientPlatformsByUser(sofia2User);
 			break;
 		}
 		for (ClientPlatform clientPlatform : clientPlatforms) {
@@ -248,15 +230,15 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throw new IllegalArgumentException("DomainId must be specified.");
 		}
 
-		FlowDomain domain = domainRepository.findByIdentification(request.getDomainId());
+		FlowDomain domain = domainService.getFlowDomainByIdentification(request.getDomainId());
 
 		if (domain == null) {
 			throw new ResourceNotFoundException(
 					"Domain with identification " + request.getDomainId() + " could not be found.");
 		}
 
-		switch (UserRole.valueOf(sofia2User.getRole().getName())) {
-		case ROLE_ADMINISTRATOR:
+		switch (sofia2User.getRole().getName()) {
+		case "ROLE_ADMINISTRATOR":
 			response = "OK"; // Has permission over all domains
 			break;
 		default:
@@ -276,20 +258,18 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			JsonProcessingException, DBPersistenceException {
 		// TODO Auto-generated method stub
 		ObjectMapper mapper = new ObjectMapper();
-		User sofia2User = validateUserCredentials(user, password);
-		String privilleges = validateOntologyUser(sofia2User, ontologyIdentificator);
 		// TODO Change criteria. There should be no conditions harcoded refered
 		// to a certain query language
+		// TODO Throw not authorized Exceptions when needed
 		if ("SQL".equals(queryType)) {
 			if (query.toLowerCase().startsWith("select")) {
-				if (!privilleges.equals("INSERT")) {
+				if (this.ontologyService.hasUserPermissionForQuery(user, ontologyIdentificator)) {
 					return basicRDBRepository.querySQLAsJson(ontologyIdentificator, query);
-
 				} else {
 					log.error("User {} has no QUERY/ALL access over {} ontology.", user, ontologyIdentificator);
 				}
 			} else if (query.toLowerCase().startsWith("update") || query.toLowerCase().startsWith("insert")) {
-				if (!privilleges.equals("QUERY")) {
+				if (this.ontologyService.hasUserPermissionForInsert(user, ontologyIdentificator)) {
 					return basicRDBRepository.querySQLAsJson(ontologyIdentificator, query);
 				} else {
 					log.error("User {} has no INSERT/ALL access over {} ontology.", user, ontologyIdentificator);
@@ -324,7 +304,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throw new IllegalArgumentException("User or password cannot be empty.");
 		}
 
-		User sofia2User = userRepository.findByUserId(userId);
+		User sofia2User = userService.getUser(userId);
 		if (sofia2User == null) {
 			log.error("Requested user does not exist");
 			throw new ResourceNotFoundException("Requested user does not exist");
