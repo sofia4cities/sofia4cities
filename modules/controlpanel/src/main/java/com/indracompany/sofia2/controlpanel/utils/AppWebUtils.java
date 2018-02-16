@@ -105,9 +105,10 @@ public class AppWebUtils {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			Object oJson = mapper.readValue(json, Object.class);
-			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oJson);
+			return oJson;
+			// return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oJson);
 		} catch (Exception e) {
-			log.error("Impossible to beautify JSON, returning the same");
+			log.error("Impossible to convert to Object, returning the same");
 			return json;
 		}
 
