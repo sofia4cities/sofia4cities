@@ -316,29 +316,4 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		return sofia2User;
 	}
 
-	private String validateOntologyUser(User user, String ontologyIdentification)
-			throws ResourceNotFoundException, NotAuthorizedException, NotFoundException {
-		Ontology ontology = ontologyRepository.findByIdentification(ontologyIdentification);
-
-		if (ontology == null) {
-			log.error("Ontology {} not found.", ontologyIdentification);
-			throw new ResourceNotFoundException("Ontology " + ontologyIdentification + " not found.");
-		}
-
-		if (ontology.getUser().equals(user)
-				|| user.getRole().getName().equals(UserRole.ROLE_ADMINISTRATOR.toString())) {
-			return "ALL";
-		} else {
-			// check user access
-			List<OntologyUserAccess> userPrivilleges = userAccessRepository.findByOntologyIdAndUser(ontology, user);
-			if (userPrivilleges.size() > 1) {
-				return "ALL";
-			} else if (userPrivilleges.size() == 1) {
-				return userPrivilleges.get(0).getOntologyUserAccessType().getName();
-			}
-		}
-		throw new NotAllowedException("User " + user.getUserId() + " has no provilleges over the requested ontology "
-				+ ontologyIdentification + ".");
-	}
-
 }

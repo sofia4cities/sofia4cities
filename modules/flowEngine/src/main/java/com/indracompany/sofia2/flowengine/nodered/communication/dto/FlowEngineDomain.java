@@ -11,21 +11,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.exception;
+package com.indracompany.sofia2.flowengine.nodered.communication.dto;
 
-public class ResourceNotFoundException extends RuntimeException {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-	private static final long serialVersionUID = 1L;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-	public ResourceNotFoundException() {
-		super();
-	}
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
+public class FlowEngineDomain {
 
-	public ResourceNotFoundException(String msg) {
-		super(msg);
-	}
+	@Getter
+	@Setter
+	private String domain;
 
-	public ResourceNotFoundException(Exception e) {
-		super(e);
-	}
+	@Getter
+	@Setter
+	private int port;
+
+	@Getter
+	@Setter
+	private String home;
+
+	@Getter
+	@Setter
+	private int servicePort;
+
 }
