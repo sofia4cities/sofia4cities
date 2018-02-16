@@ -25,5 +25,5 @@ public interface FlowRepository extends JpaRepository<Flow, String> {
 
 	List<Flow> findByFlowDomain_Identification(String domainIdentification);
 
-	List<Flow> findByNodeRedFlowId(String nodeRedFlowId);
+	Flow findByNodeRedFlowId(String nodeRedFlowId);
 }

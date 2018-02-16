@@ -24,6 +24,8 @@ public interface OntologyService {
 
 	List<Ontology> getAllOntologies();
 
+	List<Ontology> getOntologiesByActiveTrue();
+
 	List<Ontology> getOntologiesByUserId(String userId);
 
 	List<Ontology> getOntologiesWithDescriptionAndIdentification(String userId, String identification,
@@ -40,15 +42,15 @@ public interface OntologyService {
 	List<DataModel> getAllDataModels();
 
 	List<String> getAllDataModelTypes();
-	
+
 	boolean hasUserPermissionForQuery(String userId, String ontologyIdentification);
-	
+
 	boolean hasUserPermissionForInsert(String userId, String ontologyIdentification);
-	
+
 	List<String> getOntologyFields(String identification) throws JsonProcessingException, IOException;
-	
+
 	void updateOntology(Ontology ontology);
-	
+
 	void createOntology(Ontology ontology);
 	
 }

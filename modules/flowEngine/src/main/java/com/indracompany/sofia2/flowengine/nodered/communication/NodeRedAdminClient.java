@@ -15,7 +15,7 @@ package com.indracompany.sofia2.flowengine.nodered.communication;
 
 import java.util.List;
 
-import com.indracompany.sofia2.flowengine.api.rest.pojo.FlowEngineDomain;
+import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomain;
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomainStatus;
 
 public interface NodeRedAdminClient {
