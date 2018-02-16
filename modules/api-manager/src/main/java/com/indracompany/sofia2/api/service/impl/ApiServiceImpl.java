@@ -140,13 +140,13 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		}
 		
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
-			
+			OUTPUT = mongoBasicOpsDBRepository.insert(ontology.getIdentification(), BODY);	
 		}
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
-			
+			 mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), BODY);	
 		}
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
-			//mongoBasicOpsDBRepository.de
+			mongoBasicOpsDBRepository.deleteNative(ontology.getIdentification(), "{\"_id\": { \"$oid\" : \""+OBJECT_ID+"\" }}");
 		}
 				
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
@@ -173,20 +173,17 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		
 		String xmlOrCsv=OUTPUT;
 		
-		
 		if (FORMAT_RESULT.equalsIgnoreCase("JSON")) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "application/json");
 			CONTENT_TYPE = "application/json";
 		}
-		
 		else if (FORMAT_RESULT.equalsIgnoreCase("XML")) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "application/atom+xml");
 			
 			if (jsonObj!=null) xmlOrCsv = XML.toString(jsonObj);
 			if (jsonArray!=null) xmlOrCsv = XML.toString(jsonArray);
 			CONTENT_TYPE = "application/atom+xml";
-		}
-		
+		}	
 		else if (FORMAT_RESULT.equalsIgnoreCase("CSV")) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
 			
@@ -200,9 +197,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		}
 		
 		data.put(ApiServiceInterface.OUTPUT, xmlOrCsv);
-		
 		exchange.getIn().setHeader(ApiServiceInterface.CONTENT_TYPE, CONTENT_TYPE);
-		
 		return data;
 		
 	}
@@ -263,8 +258,6 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
 		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
 		
-		
-		
 		sendResponse(response, HttpServletResponse.SC_OK, hashPP(data)+"\n"+REASON,null,null);
 
 	}
@@ -288,65 +281,59 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	}
 	
 
-	
+	private void sendResponse(HttpServletResponse response, int status, String message, String formatResult,
+			String query) throws IOException {
 
-
-
-
-	
-private void sendResponse(HttpServletResponse response, int status, String message, String formatResult,String query) throws IOException{
-		
-		String infoJSON=null;
+		String infoJSON = null;
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		response.setStatus(status);
 		response.setCharacterEncoding("UTF-8");
-		
-		ByteArrayOutputStream byteFichero=null;
+
+		ByteArrayOutputStream byteFichero = null;
 		Locale locale = LocaleContextHolder.getLocale();
-		
+
 		try {
 			response.setContentType("text/plain");
-			//message=message.replace("\n", " ");
+			// message=message.replace("\n", " ");
 			response.getWriter().write(message);
-		} catch(IOException e) {
+		} catch (IOException e) {
 			throw new IOException(e);
 		}
 		return;
 	}
 
-private static JSONObject getJsonFromMap(Map<String, Object> map) throws JSONException {
-    JSONObject jsonData = new JSONObject();
-    for (String key : map.keySet()) {
-        Object value = map.get(key);
-        if (value instanceof Map<?, ?>) {
-            value = getJsonFromMap((Map<String, Object>) value);
-        }
-        jsonData.put(key, value);
-    }
-    return jsonData;
-}
-
+	private static JSONObject getJsonFromMap(Map<String, Object> map) throws JSONException {
+		JSONObject jsonData = new JSONObject();
+		for (String key : map.keySet()) {
+			Object value = map.get(key);
+			if (value instanceof Map<?, ?>) {
+				value = getJsonFromMap((Map<String, Object>) value);
+			}
+			jsonData.put(key, value);
+		}
+		return jsonData;
+	}
 
 	
-	private static String hashPP(final Map<String,Object> m, String... offset) {
-	    String retval = "";
-	    String delta = offset.length == 0 ? "" : offset[0];
-	    for( Map.Entry<String, Object> e : m.entrySet() ) {
-	        retval += delta + "["+e.getKey() + "] -> ";
-	        Object value = e.getValue();
-	        if( value instanceof Map ) {
-	            retval += "(Hash)\n" + hashPP((Map<String,Object>)value, delta + "  ");
-	        } else if( value instanceof List ) {
-	            retval += "{";
-	            for( Object element : (List)value ) {
-	                retval += element+", ";
-	            }
-	            retval += "}\n";
-	        } else {
-	            retval += "["+value.toString()+"]\n";
-	        }
-	    }
-	    return retval+"\n";
+	private static String hashPP(final Map<String, Object> m, String... offset) {
+		String retval = "";
+		String delta = offset.length == 0 ? "" : offset[0];
+		for (Map.Entry<String, Object> e : m.entrySet()) {
+			retval += delta + "[" + e.getKey() + "] -> ";
+			Object value = e.getValue();
+			if (value instanceof Map) {
+				retval += "(Hash)\n" + hashPP((Map<String, Object>) value, delta + "  ");
+			} else if (value instanceof List) {
+				retval += "{";
+				for (Object element : (List) value) {
+					retval += element + ", ";
+				}
+				retval += "}\n";
+			} else {
+				retval += "[" + value.toString() + "]\n";
+			}
+		}
+		return retval + "\n";
 	}
 
 
