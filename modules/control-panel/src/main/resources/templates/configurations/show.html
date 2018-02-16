@@ -112,7 +112,13 @@
 													</div>											
 												</div>
 												<!-- Json-->
-												<div class="row">
+												<div class="row">												
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{configuration.suffix} + ':'"> Suffix </label>
+															<p class="form-control-static-block bold" th:text="*{suffix}"> Suffix </p>
+														</div>
+													</div>	
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{configuration.description} + ':'">Configuration Description</label>
