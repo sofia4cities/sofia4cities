@@ -108,9 +108,6 @@
 					<log message="Error processing OUTPUT API ${exception.message}" loggingLevel="ERROR" />
 					<to uri="direct:set-default-headers" />
 				</doCatch>
-				
-				<log message="${in.headers.OUTPUT}" loggingLevel="ERROR" />
-				<log message="${in.headers.CONTENT_TYPE}" loggingLevel="ERROR" />
 				<setHeader headerName="Content-Type">
 					<simple>${in.headers.CONTENT_TYPE}</simple>
 				</setHeader>

@@ -164,6 +164,10 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		String OUTPUT = (String) data.get(ApiServiceInterface.OUTPUT);
 		String CONTENT_TYPE="text/plain";
 		
+		if (OUTPUT==null || OUTPUT.equalsIgnoreCase("")) {
+			OUTPUT="{\"RESULT\":\"NO_DATA\"}";
+		}
+		
 		JSONObject jsonObj = toJSONObject(OUTPUT);
 		JSONArray jsonArray = toJSONArray(OUTPUT);
 		
@@ -176,7 +180,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		}
 		
 		else if (FORMAT_RESULT.equalsIgnoreCase("XML")) {
-			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
+			data.put(ApiServiceInterface.CONTENT_TYPE, "application/atom+xml");
 			
 			if (jsonObj!=null) xmlOrCsv = XML.toString(jsonObj);
 			if (jsonArray!=null) xmlOrCsv = XML.toString(jsonArray);
@@ -196,7 +200,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		}
 		
 		data.put(ApiServiceInterface.OUTPUT, xmlOrCsv);
-		exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+		
 		exchange.getIn().setHeader(ApiServiceInterface.CONTENT_TYPE, CONTENT_TYPE);
 		
 		return data;
