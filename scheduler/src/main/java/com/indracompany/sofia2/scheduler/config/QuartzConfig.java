@@ -23,14 +23,16 @@ import org.springframework.beans.factory.config.PropertiesFactoryBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.core.io.ClassPathResource;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
+@Slf4j
 public class QuartzConfig {
-	
-	@Bean(name="quartzProperties")
+
+	@Bean(name = "quartzProperties")
 	public Properties quartzProperties() {
 		PropertiesFactoryBean propertiesFactoryBean = new PropertiesFactoryBean();
 		propertiesFactoryBean.setLocation(new ClassPathResource(SCHEDULER_PROPERTIES));
@@ -40,12 +42,10 @@ public class QuartzConfig {
 			properties = propertiesFactoryBean.getObject();
 
 		} catch (IOException e) {
-			System.out.println("Cannot load " + SCHEDULER_PROPERTIES);
+			log.error("Cannot load " + SCHEDULER_PROPERTIES + "by:" + e.getMessage());
 		}
 
 		return properties;
 	}
-	
-	
-	
+
 }

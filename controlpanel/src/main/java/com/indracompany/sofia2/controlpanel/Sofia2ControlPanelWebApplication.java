@@ -38,7 +38,6 @@ import com.github.dandelion.core.web.DandelionServlet;
 import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 
-
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableAutoConfiguration
@@ -48,74 +47,73 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Sofia2ControlPanelWebApplication.class, args);
 	}
-	
 
-    @Bean
-    public ResourceBundleMessageSource messageSource() {
-        ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-        resourceBundleMessageSource.setBasename("i18n/messages");
-        return resourceBundleMessageSource;
-    }
-    
+	@Bean
+	public ResourceBundleMessageSource messageSource() {
+		ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
+		resourceBundleMessageSource.setBasename("i18n/messages");
+		resourceBundleMessageSource.setDefaultEncoding("UTF-8");
+		return resourceBundleMessageSource;
+	}
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-    }
-    
-    /**
-     * Exports the all endpoint metrics like those implementing {@link PublicMetrics}.
-     */
-    @Bean
-    public MetricsEndpointMetricReader metricsEndpointMetricReader(MetricsEndpoint metricsEndpoint) {
-        return new MetricsEndpointMetricReader(metricsEndpoint);
-    }
-    
-    /**
-     * Dandelion Config Beans
-     */
-    @Bean
-    public DandelionDialect dandelionDialect() {
-        return new DandelionDialect();
-    }
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+	}
 
-    @Bean
-    public DataTablesDialect dataTablesDialect(){
-        return new DataTablesDialect();
-    }
+	/**
+	 * Exports the all endpoint metrics like those implementing
+	 * {@link PublicMetrics}.
+	 */
+	@Bean
+	public MetricsEndpointMetricReader metricsEndpointMetricReader(MetricsEndpoint metricsEndpoint) {
+		return new MetricsEndpointMetricReader(metricsEndpoint);
+	}
 
-    @Bean
-    public DandelionFilter dandelionFilter() {
-        return new DandelionFilter();
-    }
+	/**
+	 * Dandelion Config Beans
+	 */
+	@Bean
+	public DandelionDialect dandelionDialect() {
+		return new DandelionDialect();
+	}
 
-    @Bean
-    public ServletRegistrationBean dandelionServletRegistrationBean() {
-        return new ServletRegistrationBean(new DandelionServlet(), "/dandelion-assets/*");
-    }
+	@Bean
+	public DataTablesDialect dataTablesDialect() {
+		return new DataTablesDialect();
+	}
 
-    /**
-     * Locale Context Beans
-     */
-    @Bean
-    public LocaleResolver localeResolver() {
-        SessionLocaleResolver slr = new SessionLocaleResolver();
-        Locale spanish= new Locale("es","ES");
-        slr.setDefaultLocale(spanish);
-        return slr;
-    }
-    
-    @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor() {
-        LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName("lang");
-        return lci;
-    }
-    
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor());
-    }
-    
+	@Bean
+	public DandelionFilter dandelionFilter() {
+		return new DandelionFilter();
+	}
+
+	@Bean
+	public ServletRegistrationBean dandelionServletRegistrationBean() {
+		return new ServletRegistrationBean(new DandelionServlet(), "/dandelion-assets/*");
+	}
+
+	/**
+	 * Locale Context Beans
+	 */
+	@Bean
+	public LocaleResolver localeResolver() {
+		SessionLocaleResolver slr = new SessionLocaleResolver();
+		Locale spanish = new Locale("es", "ES");
+		slr.setDefaultLocale(spanish);
+		return slr;
+	}
+
+	@Bean
+	public LocaleChangeInterceptor localeChangeInterceptor() {
+		LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+		lci.setParamName("lang");
+		return lci;
+	}
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(localeChangeInterceptor());
+	}
 
 }

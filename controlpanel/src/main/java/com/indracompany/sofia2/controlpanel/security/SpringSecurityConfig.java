@@ -44,14 +44,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.csrf().disable().authorizeRequests().antMatchers("/", "/home", "/favicon.ico").permitAll()
-				.antMatchers("/api/applications", "/api/applications/").permitAll()
-				.antMatchers("/users/register").permitAll()
-				.antMatchers("/health", "/info", "/metrics", "/trace", "/api").permitAll().antMatchers("/admin")
-				.hasAnyRole("ROLE_ADMINISTRATOR").antMatchers("/admin/**").hasAnyRole("ROLE_ADMINISTRATOR").anyRequest()
-				.authenticated().and().formLogin().loginPage("/login").defaultSuccessUrl("/main").permitAll().and()
-				.logout().permitAll().and().sessionManagement().invalidSessionUrl("/login").maximumSessions(1)
-				.sessionRegistry(sessionRegistry()).and().sessionFixation().none().and().exceptionHandling()
-				.accessDeniedHandler(accessDeniedHandler);
+				.antMatchers("/api/applications", "/api/applications/").permitAll().antMatchers("/users/register")
+				.permitAll().antMatchers("/health", "/info", "/metrics", "/trace", "/api").permitAll()
+				.antMatchers("/admin").hasAnyRole("ROLE_ADMINISTRATOR").antMatchers("/admin/**")
+				.hasAnyRole("ROLE_ADMINISTRATOR").anyRequest().authenticated().and().formLogin().loginPage("/login")
+				.defaultSuccessUrl("/main").permitAll().and().logout().permitAll().and().sessionManagement()
+				.invalidSessionUrl("/login").maximumSessions(1).sessionRegistry(sessionRegistry()).and()
+				.sessionFixation().none().and().exceptionHandling().accessDeniedHandler(accessDeniedHandler);
 	}
 
 	@Autowired

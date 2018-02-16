@@ -54,9 +54,12 @@
 		<module>sofia2-springboot-autoconfigure-starter</module>
 		-->
 		<module>ssap</module>
+
 		<!--CONFIG -->
 		<module>config/config-model</module>
 		<module>config/config-services</module>
+		
+		<module>security/security-ui-ri</module>
 		
 		<module>persistence-ri</module>		
 		
@@ -66,9 +69,10 @@
 		<module>modules/iotbroker</module>		
 		<module>controlpanel</module>		
         <module>modules/monitoring-ui</module>
-        <module>libraries/social-services</module>
+        <module>libraries/commons</module>
+        <module>libraries/mail-service</module>
 
-         <module>modules/api-manager</module>
+        <module>modules/api-manager</module>
 
 		<module>scheduler</module>
 

@@ -39,6 +39,17 @@ spring: ## General Config
    application.name: sofia2-control-panel
    thymeleaf: ## Thymeleaf Config
       cache: false  
+      encoding: UTF-8
+      check-template: true
+      check-template-location: true
+      content-type: text/html
+      enabled: true
+      # excluded-view-names:
+      # mode: HTML5
+      # prefix: /templates/
+      # suffix: .html
+      # template-resolver-order:
+      # view-names:
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root

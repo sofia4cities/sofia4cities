@@ -96,13 +96,10 @@ public class AppWebUtils {
 	}
 
 	public String beautifyJson(String json) throws JsonProcessingException {
-		
 		ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 		String result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
-		System.out.println(json);
-		System.out.println(result);
 		return result;
-		
+
 	}
 
 }
