@@ -26,6 +26,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.commons.security.PasswordEncoder;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.UserRepository;
 
@@ -49,11 +50,22 @@ public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvi
 		}
 		String password = credentials.toString();
 
-		User user = userRepository.findByUserIdAndPassword(name, password);
+		User user = userRepository.findByUserId(name);
 
 		if (user == null) {
-			log.info("authenticate: User or password incorrect: " + name);
-			throw new BadCredentialsException("Authentication failed for " + name);
+			log.info("authenticate: User not exist: " + name);
+			throw new BadCredentialsException("Authentication failed. User not exists: " + name);
+		}
+		String hashPassword = null;
+		try {
+			hashPassword = PasswordEncoder.getInstance().encodeSHA256(password);
+		} catch (Exception e) {
+			log.error("authenticate: Error encoding: " + e.getMessage());
+			throw new BadCredentialsException("Authentication failed. Error authenticating.");
+		}
+		if (!hashPassword.equals(user.getPassword())) {
+			log.info("authenticate: Password incorrect: " + name);
+			throw new BadCredentialsException("Authentication failed. Password incorrect for " + name);
 		}
 
 		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
