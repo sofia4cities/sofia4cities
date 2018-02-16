@@ -28,12 +28,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CommandsLauncher {
-	
-	public static String executeCommand(String command) throws CommandExecutionException {		
+
+	public static String executeCommand(String command) throws CommandExecutionException {
 		log.info("Command to be executed: " + command);
-		
+
 		StringBuffer output = new StringBuffer();
-		String outputreturn=String.valueOf("");	
+		String outputreturn = String.valueOf("");
 
 		Process p;
 		try {
@@ -79,47 +79,38 @@ public class CommandsLauncher {
 		}
 
 		return outputreturn;
-	}	
+	}
 }
 
+class StreamGobbler extends Thread {
+	InputStream is;
+	String type;
+	StringBuffer output = new StringBuffer();
 
+	StreamGobbler(InputStream is, String type) {
+		this.is = is;
+		this.type = type;
+	}
 
-class StreamGobbler extends Thread
-{
-    InputStream is;
-    String type;
-    StringBuffer output = new StringBuffer();
-    
-    StreamGobbler(InputStream is, String type)
-    {
-        this.is = is;
-        this.type = type;
-    }
-    
-    public void run()
-    {
-        try
-        {
-	            InputStreamReader isr = new InputStreamReader(is);
-	            BufferedReader br = new BufferedReader(isr);
-	            String line=null;
-	            while ( (line = br.readLine()) != null){
-	            	if(line!=null){
-		            	output.append(type + ">" + line +"\n");
-		                //System.out.println(type + ">" + line);
-	            	}
-	            }
-            	
-            } catch (IOException ioe)
-         {
-                ioe.printStackTrace();  
-         }
-    }
-    
-    public StringBuffer getStringBufferOutPut(){
-    	
-    	return output;
-    }
+	@Override
+	public void run() {
+		try {
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				if (line != null) {
+					output.append(type + ">" + line + "\n");
+				}
+			}
+
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		}
+	}
+
+	public StringBuffer getStringBufferOutPut() {
+
+		return output;
+	}
 }
-
-
