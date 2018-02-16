@@ -970,6 +970,7 @@ public class InitConfigDB {
 			} catch (Exception e) {
 				log.error("Error UserCDB:" + e.getMessage());
 				userCDBRepository.deleteAll();
+				throw new RuntimeException("Error creating users...ignoring creation rest of Tables");
 			}
 		}
 	}

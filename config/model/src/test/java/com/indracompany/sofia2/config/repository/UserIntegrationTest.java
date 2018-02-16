@@ -76,7 +76,7 @@ public class UserIntegrationTest {
 	public void test5_createAndDeleteUser() {
 		long count = this.repository.count();
 		User type = new User();
-		type.setUserId("lmgracia");
+		type.setUserId("lmgracia1");
 		type.setPassword("changeIt!");
 		type.setFullName("Luis Miguel Gracia");
 		type.setEmail("lmgracia@sofia2.com");

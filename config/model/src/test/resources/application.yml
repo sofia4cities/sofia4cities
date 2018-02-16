@@ -12,7 +12,7 @@ spring:
       hibernate.ddl-auto: update
       
 sofia2:
-   encription.key: sofia2
+   encription.key: ThisIsASecretKey
    
 ## LOGGING CONF
 logging:

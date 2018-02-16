@@ -72,7 +72,7 @@ public class User extends AuditableEntity {
 	@NotNull
 	@Getter
 	@Setter
-	// @Convert(converter = StringCryptoConverter.class)
+	// @Convert(converter = JPACryptoConverter.class)
 	private String password;
 
 	@Column(name = "ACTIVE", nullable = false)
