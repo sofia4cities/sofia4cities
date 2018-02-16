@@ -51,5 +51,4 @@ public interface OntologyService {
 	
 	void createOntology(Ontology ontology);
 	
-	void deleteOntology(String id);
 }

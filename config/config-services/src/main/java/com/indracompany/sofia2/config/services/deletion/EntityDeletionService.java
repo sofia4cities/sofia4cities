@@ -11,22 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.init;
+package com.indracompany.sofia2.config.services.deletion;
 
-import java.util.UUID;
+public interface EntityDeletionService {
 
-public class PojoFactoryLoadData {
-	
-	
-	public static Product createProduct(String name) {
-		Product product = new Product();
-		product.setCategory("CATEGORY");
-		product.setCode(UUID.randomUUID().toString());
-		product.setGroupId("GROUP");
-		product.setMainImage("IMAGE");
-		product.setName(name);
-		return product;
-	}
-
-
+	void deleteOntology(String id);
 }

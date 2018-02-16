@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -47,6 +48,8 @@ public class OntologyController {
 
 	@Autowired
 	private OntologyService ontologyService;
+	@Autowired
+	private EntityDeletionService entityDeletionService;
 	@Autowired
 	private UserService userService;
 
@@ -157,7 +160,7 @@ public class OntologyController {
 		if(!this.ontologyService.getOntologyById(id).getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
 			return "/error/403";
 		try{
-			this.ontologyService.deleteOntology(id);
+			this.entityDeletionService.deleteOntology(id);
 			//TODO ON DELETE CASCADE
 		}catch(Exception e)
 		{

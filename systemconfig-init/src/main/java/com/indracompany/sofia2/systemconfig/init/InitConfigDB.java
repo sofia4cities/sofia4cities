@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.systemconfig.init;
 
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
@@ -392,7 +393,7 @@ public class InitConfigDB {
 
 	private String loadFromResources(String name) {
 		try {
-			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())));
+			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),Charset.forName("UTF-8"));
 
 		} catch (Exception e) {
 			log.error("**********************************************");
@@ -710,7 +711,7 @@ public class InitConfigDB {
 			Ontology ontology = new Ontology();
 			ontology.setId("1");
 			ontology.setJsonSchema("{}");
-			ontology.setIdentification("Ontology Master");
+			ontology.setIdentification("OntologyMaster");
 			ontology.setDescription("Ontology created as Master Data");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
@@ -723,7 +724,7 @@ public class InitConfigDB {
 			ontology.setId("2");
 			ontology.setJsonSchema("{Data:,Temperature:}");
 			ontology.setDescription("Ontology Example");
-			ontology.setIdentification("Ontology crated as example");
+			ontology.setIdentification("OntologyTest");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);

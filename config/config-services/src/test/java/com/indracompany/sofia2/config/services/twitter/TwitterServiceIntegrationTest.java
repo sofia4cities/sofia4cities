@@ -93,10 +93,8 @@ public class TwitterServiceIntegrationTest {
 			twitterListening.setToken(token);
 			twitterListening.setOntology(ontology);
 			twitterListening.setUser(ontology.getUser());
-			String dateFrom = new Date().toString();
-			String dateTo = new Date(System.currentTimeMillis()+10000000).toString();
-			twitterListening.setDateFrom(dateFrom);
-			twitterListening.setDateTo(dateTo);
+			twitterListening.setDateFrom(new Date());
+			twitterListening.setDateTo( new Date(System.currentTimeMillis()+10000000));
 			twitterListening.setIdentificator("Listening Test");
 			twitterListening.setTopics("Helsinki,Madrid");
 			twitterListening = twitterListeningService.createListening(twitterListening);
