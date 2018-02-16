@@ -53,28 +53,32 @@
 	<!--
 		<module>sofia2-springboot-autoconfigure-starter</module>
 		-->
-		<module>ssap</module>
+		<!--LIBRARIES--> 
+		<module>libraries/ssap</module>
+        <module>libraries/commons</module>
+        <module>libraries/mail</module>
+        <module>libraries/social</module>
 
 		<!--CONFIG -->
-		<module>config/config-model</module>
-		<module>config/config-services</module>
+		<module>config/model</module>
+		<module>config/services</module>
+		<module>config/init</module>
 		
+		<!--SECURITY-->		
 		<module>security/security-ui-ri</module>
 		
-		<module>persistence-ri</module>		
-		
-		<module>systemconfig-init</module>
+		<!--PERSISTENCE-->
+		<module>persistence/persistence-ri</module>				
+		<!--
 		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
-		
-		<module>modules/iotbroker</module>		
-		<module>modules/controlpanel</module>		
+		-->
+		<!--MODULES-->
+		<module>modules/iot-broker</module>		
+		<module>modules/control-panel</module>		
         <module>modules/monitoring-ui</module>
-        <module>libraries/commons</module>
-        <module>libraries/mail-service</module>
-
         <module>modules/api-manager</module>
-
-		<module>scheduler</module>
+		<!--        <module>modules/scripting-engine</module-->
+		<module>modules/planner</module>
 
 		<!--
         <module>api-manager</module>
