@@ -29,8 +29,6 @@ import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
 public class TwitterControlService {
 
 	@Autowired
-	private TwitterListeningService twitterListeningService;
-	@Autowired
 	private TaskService taskService;
 
 	public boolean scheduleTwitterListening(TwitterListening twitterListening) {
@@ -57,6 +55,8 @@ public class TwitterControlService {
 		task.setData(jobContext);
 		task.setSingleton(false);
 		task.setCronExpression("0 * 0 ? * * *");
+		task.setStartAt(twitterListening.getDateFrom());
+		task.setEndAt(twitterListening.getDateTo());
 		return taskService.addJob(task).isSuccess();
 
 	}

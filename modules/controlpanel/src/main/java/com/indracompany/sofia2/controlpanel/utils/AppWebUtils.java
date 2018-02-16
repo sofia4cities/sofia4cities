@@ -27,6 +27,7 @@ import org.springframework.web.util.WebUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -95,17 +96,16 @@ public class AppWebUtils {
 	}
 
 	public String beautifyJson(String json) throws JsonProcessingException {
-		// ObjectMapper mapper = new
-		// ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-		// String result =
-		// mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+		ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+		String result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json);
+		return result;
+	}
+
+	public Object getAsObject(String json) throws JsonProcessingException {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			Object oJson = mapper.readValue(json, Object.class);
-			String result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oJson);
-			log.debug("Beautified:" + result);
-			return result;
-
+			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(oJson);
 		} catch (Exception e) {
 			log.error("Impossible to beautify JSON, returning the same");
 			return json;

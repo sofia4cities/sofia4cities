@@ -155,6 +155,9 @@ public class LoadSampleData implements ApplicationRunner {
 			// 1º
 						Product data = PojoFactoryLoadData.createProduct("name1");
 						ObjectMapper mapper = new ObjectMapper();
+						
+						System.out.println(mapper.writeValueAsString(data));
+						
 						refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 						int init = 17;
 						int end = refOid.indexOf("\"}}");

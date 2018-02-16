@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.config.model;
 
+import java.util.Date;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -73,13 +75,13 @@ public class TwitterListening extends AuditableEntityWithUUID {
 	@NotNull
 	@Getter
 	@Setter
-	private String dateFrom;
+	private Date dateFrom;
 
 	@Column(name = "DATE_TO", length = 100, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
-	private String dateTo;
+	private Date dateTo;
 
 	@Column(name = "TOPICS", length = 512, nullable = false)
 	@NotNull

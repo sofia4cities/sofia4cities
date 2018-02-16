@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyEmulator;
 import com.indracompany.sofia2.config.model.User;
 
@@ -36,4 +37,8 @@ public interface OntologyEmulatorRepository extends JpaRepository<OntologyEmulat
 	List<OntologyEmulator> findByUser(User user);
 
 	List<OntologyEmulator> findById(String id);
+
+	OntologyEmulator findByOntology(Ontology ontology);
+
+	void deleteByOntology(Ontology ontology);
 }

@@ -37,4 +37,6 @@ public interface OntologyUserAccessRepository extends JpaRepository<OntologyUser
 
 	List<OntologyUserAccess> findByOntology(Ontology ontology);
 
+	void deleteByOntology(Ontology ontology);
+
 }

@@ -78,8 +78,7 @@ public class QueryToolController {
 
 			} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
 				String queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
-				// .replace("\\\"", "'").replace("\"", "");
-				model.addAttribute("queryResult", utils.beautifyJson(queryResult));
+				model.addAttribute("queryResult", utils.getAsObject(queryResult));
 				return "/querytool/show :: query";
 			} else {
 				return utils.getMessage("querytool.querytype.notselected",
