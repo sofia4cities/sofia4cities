@@ -6,7 +6,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
-	<camelContext id="camel-context" streamCache="true" trace="true"
+	<camelContext id="camel-context" streamCache="true" trace="false"
 		xmlns="http://camel.apache.org/schema/spring">
 
 		<route id="entry-point">
@@ -17,7 +17,7 @@
 					<simple>${in.header.CamelHttpMethod} == 'OPTIONS'</simple>
 					<to uri="direct:set-default-headers-options" />
 					<setBody>
-						<constant>["APITEST","developer"]</constant>
+						<constant>["OPTIONS","OPTIONS"]</constant>
 					</setBody>
 				</when>
 				<otherwise>
@@ -63,6 +63,60 @@
 						<simple>["MESSAGE EXCEPTION","${exception.message}"]</simple>
 					</setBody>
 				</doCatch>
+				<choice>
+					<when>
+						<simple>${in.headers.STATUS} == 'STOP'</simple>
+						<log message="STOP STATE DETECTED" loggingLevel="ERROR" />
+						<to uri="direct:set-default-headers" />
+
+					</when>
+					<otherwise>
+						<to uri="direct:process-query" />
+					</otherwise>
+				</choice>
+			</doTry>
+		</route>
+
+		<route id="process-query">
+			<from uri="direct:process-query" />
+
+			<doTry>
+				<to uri="bean:apiServiceImpl?method=processQuery" />
+				<doCatch>
+					<exception>java.lang.Exception</exception>
+					<log message="Error processing QUERTY API" loggingLevel="ERROR" />
+					<to uri="direct:set-default-headers" />
+					<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+						<constant>500</constant>
+					</setHeader>
+					<setBody>
+						<simple>["MESSAGE EXCEPTION","${exception.message}"]</simple>
+					</setBody>
+				</doCatch>
+				<to uri="direct:process-output" />
+			</doTry>
+		</route>
+
+
+		<route id="process-output">
+			<from uri="direct:process-output" />
+
+			<doTry>
+				<to uri="bean:apiServiceImpl?method=processOutput" />
+				<doCatch>
+					<exception>java.lang.Exception</exception>
+					<log message="Error processing OUTPUT API ${exception.message}" loggingLevel="ERROR" />
+					<to uri="direct:set-default-headers" />
+				</doCatch>
+				
+				<log message="${in.headers.OUTPUT}" loggingLevel="ERROR" />
+				<log message="${in.headers.CONTENT_TYPE}" loggingLevel="ERROR" />
+				<setHeader headerName="Content-Type">
+					<simple>${in.headers.CONTENT_TYPE}</simple>
+				</setHeader>
+				<setBody>
+					<simple>${body[OUTPUT]}</simple>
+				</setBody>
 			</doTry>
 		</route>
 

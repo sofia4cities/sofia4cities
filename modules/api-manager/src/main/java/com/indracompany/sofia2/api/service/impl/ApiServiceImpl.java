@@ -15,7 +15,6 @@ package com.indracompany.sofia2.api.service.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -27,25 +26,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.jeasy.rules.api.Facts;
+import org.json.CDL;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.api.rule.DefaultRuleBase.ReasonType;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
 import com.indracompany.sofia2.api.service.api.ApiManagerService;
-import com.indracompany.sofia2.api.service.exception.ForbiddenException;
-import com.indracompany.sofia2.api.service.exporter.ExportToCsv;
-import com.indracompany.sofia2.api.service.exporter.ExportToExcel;
-import com.indracompany.sofia2.api.service.exporter.ExportToXml;
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
@@ -58,36 +54,25 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	
 	@Autowired
 	RuleManager ruleManager;
-	
-	@Autowired
-	private ExportToExcel varExcel;
-	
-	@Autowired
-	private ExportToXml varXml;
-	
-	@Autowired
-	private ExportToCsv varCsv;
-	
+		
 	@Autowired
 	private QueryToolService queryToolService;
 	
 	@Autowired
 	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
 	
-	
 	static final String ONT_NAME = "contextData";
 	static final String DATABASE = "sofia2_s4c";
 	
 	 
-	
+	@SuppressWarnings("unchecked")
 	@Override
 	@PrometheusTimeMethod(name = "ApiServiceImplEntryPointCamel", help = "ApiServiceImpl doGET")
 	@Timed
 	public void process(Exchange exchange) throws Exception {
 		
 		HttpServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
-		HttpServletResponse response = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_RESPONSE, HttpServletResponse.class);
-
+	
 		Facts facts = new Facts();
 		facts.put(RuleManager.REQUEST, request);
 		
@@ -100,52 +85,149 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		Map<String,Object> data = (Map<String,Object>)facts.get(RuleManager.FACTS);
 		Boolean stopped = (Boolean)facts.get(RuleManager.STOP_STATE);
 		String REASON="";
-		Object REASON_TYPE;
+		String REASON_TYPE;
+		
 		if (stopped!=null && stopped==true) {
 			REASON=((String)facts.get(RuleManager.REASON));
-			REASON_TYPE=((Object)facts.get(RuleManager.REASON_TYPE));
+			REASON_TYPE=((String)facts.get(RuleManager.REASON_TYPE));
 			
+			if (REASON_TYPE.equals(ReasonType.API_LIMIT.name())) {
+				exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 429);
+			}
+			else if (REASON_TYPE.equals(ReasonType.SECURITY.name())){
+				exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 403);
+			}
+			else {
+				exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+			}
 			
-			exchange.getIn().setBody("[\"STOPPED EXECUTION\",\""+REASON+"\"]");
+			exchange.getIn().setBody("[\"STOPPED EXECUTION BY "+REASON_TYPE+"\",\""+REASON+"\"]");
 			exchange.getIn().setHeader("content-type", "text/plain");
+			exchange.getIn().setHeader("STATUS", "STOP");
+			exchange.getIn().setHeader("REASON", REASON);
 		}
 		else {
+			exchange.getIn().setHeader("STATUS", "FOLLOW");
+			exchange.getIn().setBody(data);
+		}
+	}
+	
+	@PrometheusTimeMethod(name = "processQuery", help = "processQuery")
+	@Timed
+	public Map<String,Object> processQuery(Map<String,Object> data, Exchange exchange) {
+		
+		Ontology ontology = (Ontology) data.get(ApiServiceInterface.ONTOLOGY);
+		String METHOD = (String) data.get(ApiServiceInterface.METHOD);
+		String BODY = (String) data.get(ApiServiceInterface.BODY);
+		String QUERY_TYPE = (String) data.get(ApiServiceInterface.QUERY_TYPE);
+		String QUERY = (String) data.get(ApiServiceInterface.QUERY);
+		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
+		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
+		
+		String OUTPUT="";
+		
+		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
 			
-			User user = (User) data.get(ApiServiceInterface.USER);
-			Api api = (Api) data.get(ApiServiceInterface.API);
-			Ontology ontology = (Ontology) data.get(ApiServiceInterface.ONTOLOGY);
-			String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
-			String METHOD = (String) data.get(ApiServiceInterface.METHOD);
-			String BODY = (String) data.get(ApiServiceInterface.BODY);
-			String QUERY_TYPE = (String) data.get(ApiServiceInterface.QUERY_TYPE);
-			String QUERY = (String) data.get(ApiServiceInterface.QUERY);
-			String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
-			String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
-			String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
-			
-			String salida = "";
 			if (QUERY_TYPE !=null)
 			{
 				if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
-					salida = queryToolService.querySQLAsJson(ontology.getIdentification(), QUERY, 0);
+					OUTPUT = queryToolService.querySQLAsJson(ontology.getIdentification(), QUERY, 0);
 				}
 				else {
-					salida = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);
+					OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);
 				}
 			}
-			
-			
-			
-			String str = getJsonFromMap(data).toString(4);
-			
-			exchange.getIn().setBody(salida);
-			exchange.getIn().setHeader("content-type", "text/plain");
 		}
 		
+		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
+			
+		}
+		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+			
+		}
+		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
+			//mongoBasicOpsDBRepository.de
+		}
+				
+		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
+		exchange.getIn().setBody(data);
+		return data;
 	}
-
+	
+	
+	
+	@PrometheusTimeMethod(name = "processOutput", help = "processOutput")
+	@Timed
+	public Map<String,Object> processOutput(Map<String,Object> data, Exchange exchange) throws Exception {
+		
+		String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
+		String OUTPUT = (String) data.get(ApiServiceInterface.OUTPUT);
+		String CONTENT_TYPE="text/plain";
+		
+		JSONObject jsonObj = toJSONObject(OUTPUT);
+		JSONArray jsonArray = toJSONArray(OUTPUT);
+		
+		String xmlOrCsv=OUTPUT;
+		
+		
+		if (FORMAT_RESULT.equalsIgnoreCase("JSON")) {
+			data.put(ApiServiceInterface.CONTENT_TYPE, "application/json");
+			CONTENT_TYPE = "application/json";
+		}
+		
+		else if (FORMAT_RESULT.equalsIgnoreCase("XML")) {
+			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
+			
+			if (jsonObj!=null) xmlOrCsv = XML.toString(jsonObj);
+			if (jsonArray!=null) xmlOrCsv = XML.toString(jsonArray);
+			CONTENT_TYPE = "application/atom+xml";
+		}
+		
+		else if (FORMAT_RESULT.equalsIgnoreCase("CSV")) {
+			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
+			
+			if (jsonObj!=null) xmlOrCsv = CDL.toString(new JSONArray("[" + jsonObj + "]"));
+			if (jsonArray!=null) xmlOrCsv = CDL.toString(jsonArray);
+			CONTENT_TYPE = "text/plain";
+		}
+		else {
+			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
+			CONTENT_TYPE = "text/plain";
+		}
+		
+		data.put(ApiServiceInterface.OUTPUT, xmlOrCsv);
+		exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+		exchange.getIn().setHeader(ApiServiceInterface.CONTENT_TYPE, CONTENT_TYPE);
+		
+		return data;
+		
+	}
+	
+	
+	private JSONObject toJSONObject(String input) {
+		JSONObject jsonObj =null;
+		try {
+			jsonObj = new JSONObject(input);
+		} catch (JSONException e) {
+			return null;
+		}
+		return jsonObj;
+	}
+	
+	private JSONArray toJSONArray(String input) {
+		JSONArray jsonObj =null;
+		try {
+			jsonObj = new JSONArray(input);
+		} catch (JSONException e) {
+			return null;
+		}
+		return jsonObj;
+	}
+	
+	
+	
 	@Override
-	@PrometheusTimeMethod(name = "ApiServiceImplEntryPoint", help = "ApiServiceImpl doGET")
+	@PrometheusTimeMethod(name = "ApiServiceImplEntryPoint", help = "ApiServiceImpl")
 	@Timed
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
@@ -206,6 +288,28 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 
 
+
+	
+private void sendResponse(HttpServletResponse response, int status, String message, String formatResult,String query) throws IOException{
+		
+		String infoJSON=null;
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		response.setStatus(status);
+		response.setCharacterEncoding("UTF-8");
+		
+		ByteArrayOutputStream byteFichero=null;
+		Locale locale = LocaleContextHolder.getLocale();
+		
+		try {
+			response.setContentType("text/plain");
+			//message=message.replace("\n", " ");
+			response.getWriter().write(message);
+		} catch(IOException e) {
+			throw new IOException(e);
+		}
+		return;
+	}
+
 private static JSONObject getJsonFromMap(Map<String, Object> map) throws JSONException {
     JSONObject jsonData = new JSONObject();
     for (String key : map.keySet()) {
@@ -240,101 +344,6 @@ private static JSONObject getJsonFromMap(Map<String, Object> map) throws JSONExc
 	    }
 	    return retval+"\n";
 	}
-	
-private void sendResponse(HttpServletResponse response, int status, String message, String formatResult,String query) throws IOException{
-		
-		String infoJSON=null;
-		response.addHeader("Access-Control-Allow-Origin", "*");
-		response.setStatus(status);
-		response.setCharacterEncoding("UTF-8");
-		
-		ByteArrayOutputStream byteFichero=null;
-		Locale locale = LocaleContextHolder.getLocale();
-		
-		if (formatResult!=null ){
-		
-			if (formatResult.toUpperCase().equals("JSON") || formatResult.toUpperCase().equals("JSON_DEPRECATED")) {
-				response.setContentType("application/json");
-
-			} else {	
-				try {
-					
-					Map<String, Object> obj = new ObjectMapper().readValue(message,	new TypeReference<Map<String, Object>>() {});
-					
-					infoJSON=obj.get("data").toString();
-				} catch (JsonParseException e) {
-					e.printStackTrace();
-					throw new ForbiddenException("com.indra.sofia2.api.service.noJSON");
-				} catch (JsonMappingException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} 
-				
-				if (formatResult.toUpperCase().equals("EXCEL")){
-					byteFichero=varExcel.extractJSONtoFile(infoJSON);
-					//response.setContentType("application/ms-excel");
-					//response.setContentLength(byteFichero.toByteArray().length);
-					//response.getOutputStream().write(byteFichero.toByteArray());
-					throw new ForbiddenException("com.indra.sofia2.api.service.excelnotsupported");
-					
-				}else if (formatResult.toUpperCase().equals("XML")){
-					
-					
-					byteFichero=varXml.extractJSONtoXML(null, infoJSON);
-					response.setContentType("application/atom+xml");
-					try {
-						message=byteFichero.toString("UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
-				}else if (formatResult.toUpperCase().equals("CSV")){
-					byteFichero=varCsv.extractJSONtoCSV(infoJSON);
-					response.setContentType("text/plain");
-					try {
-						message=byteFichero.toString("UTF-8");
-					} catch (UnsupportedEncodingException e) {
-						e.printStackTrace();
-					}
-				}
-				else 
-					throw new ForbiddenException("com.indra.sofia2.api.service.formatnotvalid");
-			}
-			
-		}
-		try {
-			response.setContentType("text/plain");
-			//message=message.replace("\n", " ");
-			response.getWriter().write(message);
-		} catch(IOException e) {
-			throw new IOException(e);
-		}
-		return;
-	}
-
-public ExportToExcel getVarExcel() {
-	return varExcel;
-}
-
-public void setVarExcel(ExportToExcel varExcel) {
-	this.varExcel = varExcel;
-}
-
-public ExportToXml getVarXml() {
-	return varXml;
-}
-
-public void setVarXml(ExportToXml varXml) {
-	this.varXml = varXml;
-}
-
-public ExportToCsv getVarCsv() {
-	return varCsv;
-}
-
-public void setVarCsv(ExportToCsv varCsv) {
-	this.varCsv = varCsv;
-}
 
 
 

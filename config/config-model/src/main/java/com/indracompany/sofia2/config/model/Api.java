@@ -52,7 +52,7 @@ public class Api extends AuditableEntityWithUUID {
 
 	private static final long serialVersionUID = 1L;
 	
-	public static enum ApiType {
+	public static enum ApiStates {
 		CREATED, PUBLISHED, DELETED, DEPRECATED, DEVELOPMENT;
 	}
 	
@@ -134,7 +134,7 @@ public class Api extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	@Enumerated(EnumType.STRING)
-	private ApiType state;
+	private ApiStates state;
 
 	@Column(name = "META_INF", length = 512)
 	@Getter
