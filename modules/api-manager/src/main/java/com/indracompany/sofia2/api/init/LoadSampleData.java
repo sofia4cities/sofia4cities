@@ -75,10 +75,13 @@ public class LoadSampleData implements ApplicationRunner {
 	ObjectMapper mapper = new ObjectMapper();
 	
 	@Override
-	public void run(ApplicationArguments arg0) throws Exception {
+	public void run(ApplicationArguments arg0) {
 		init_Ontology();
-		loadDataForMongo();
-		loadDataFromJson();
+		try {
+			loadDataForMongo();
+			loadDataFromJson();
+		} catch (Exception e) {}
+		
 	}
 
 	private User getUserDeveloper() {
