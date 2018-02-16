@@ -15,6 +15,8 @@ package com.indracompany.sofia2.config.services.exceptions;
 
 public class OntologyServiceException extends RuntimeException {
 
+	private static final long serialVersionUID = 1L;
+
 	public OntologyServiceException(String message) {
 		super(message);
 	}
