@@ -449,7 +449,8 @@ var OntologyCreateController = function() {
 		schemaToTable: function(objschema,tableId){
 			logControl ? console.log(LIB_TITLE + ': schemaToTable()') : '';
 			
-			var data, properties, jsonProperties = '';		
+			var data, properties, jsonProperties = '';
+				
 		
 			// JSON-STRING SCHEMA TO JSON 
 			schema = $(objschema).attr('data-schema');
@@ -458,7 +459,7 @@ var OntologyCreateController = function() {
 			
 			// needs Ontology name and description to Run.
 			if (($('#identification').val() == '') || ($('#description').val() == '')){
-				$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'PLEASE, FILL NAME AND DESCRIPTION BEFORE DATAMODEL SELECTION!'}); return false;  
+				$.alert({title: ontologyCreateReg.datamodel, theme: 'dark', type: 'orange', content: ontologyCreateReg.dataModelSelection}); return false;  
 			} 
 			else {
 				// adding title and description
