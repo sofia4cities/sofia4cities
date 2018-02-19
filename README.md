@@ -4,7 +4,7 @@
   </a>
 </p>
 
-Sofia4Cities Open-Source Platform [![Build Status](https://travis-ci.org/sofia4cities/sofia4cities.svg?branch=develop)](https://travis-ci.org/sofia4citiest/)
+Sofia4Cities Open-Source Platform [![Build Status](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/buildStatus/icon?job=select4cities/develop)](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/view/SELECT4CITIES/job/select4cities/job/develop/)
 ============================
 
 Sofia4Cities is a open-source, production-ready, multi-purpose platform for building complete end-to-end solutions, connected applications, and smart products. 
