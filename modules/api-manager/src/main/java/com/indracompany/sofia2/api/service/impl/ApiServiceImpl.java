@@ -143,11 +143,18 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			OUTPUT = mongoBasicOpsDBRepository.insert(ontology.getIdentification(), BODY);	
 		}
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+			
+			if (BODY!=null && BODY.length()>0) {
+				String updateQuery = "db."+ontology.getIdentification()+".update({\"_id\": {\"$oid\" : \""+OBJECT_ID+"\" }}, {$set:"+BODY+" })";
+				mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), updateQuery);	
+				OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);	
+			}
+			
+			else {
+				mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), BODY);	
+			}
 
-			String updateQuery = "db."+ontology.getIdentification()+".update({\"_id\": {\"$oid\" : \""+OBJECT_ID+"\" }}, {$set:"+BODY+" })";
-				
-			mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), updateQuery);	
-			OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);
+			
 		}
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
 			mongoBasicOpsDBRepository.deleteNative(ontology.getIdentification(), "{\"_id\": { \"$oid\" : \""+OBJECT_ID+"\" }}");
