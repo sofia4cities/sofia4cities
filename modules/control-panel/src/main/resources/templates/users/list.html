@@ -438,11 +438,13 @@
 		var filters = $('.dtFilter .yadcf-filter-wrapper .yadcf-filter');
 		var filtersResets = $('.dtFilter .yadcf-filter-wrapper .yadcf-filter-reset-button');
 		filters.addClass('input-small font-sm');
-		filtersResets.addClass('hide');		
-		
+		filtersResets.addClass('hide');				
 		
 		// INIT row selection
 		handleSingleSelection('users');
+		
+		// HIDE COLUMNS 4,5,6 (DETELEDAT,CREATEDAT,ACTIVE)		
+		$.each([ 4,5,6 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
 				
 		
 	});
