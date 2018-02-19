@@ -25,8 +25,6 @@ public interface OntologyService {
 
 	List<Ontology> getAllOntologies();
 
-	List<Ontology> getOntologiesByActiveTrue();
-
 	List<Ontology> getOntologiesByUserId(String userId);
 
 	List<Ontology> getOntologiesWithDescriptionAndIdentification(String userId, String identification,
