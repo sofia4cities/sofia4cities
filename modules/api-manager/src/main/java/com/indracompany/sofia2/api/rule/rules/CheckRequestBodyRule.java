@@ -24,17 +24,17 @@ import org.jeasy.rules.annotation.Condition;
 import org.jeasy.rules.annotation.Priority;
 import org.jeasy.rules.annotation.Rule;
 import org.jeasy.rules.api.Facts;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
 
 @Component
 @Rule
-public class DumpRequestBodyRule {
+public class CheckRequestBodyRule {
 
 	@Priority
 	public int getPriority() {
@@ -58,9 +58,10 @@ public class DumpRequestBodyRule {
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
 		String body = request.getReader().lines().collect(Collectors.joining());
-
-
+		
 		data.put(ApiServiceInterface.BODY, body);
 
 	}
+	
+	
 }
