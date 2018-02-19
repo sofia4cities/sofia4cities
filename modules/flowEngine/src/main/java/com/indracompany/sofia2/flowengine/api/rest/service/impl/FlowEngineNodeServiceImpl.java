@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Flow;
 import com.indracompany.sofia2.config.model.FlowDomain;
@@ -34,7 +35,6 @@ import com.indracompany.sofia2.config.model.FlowNode;
 import com.indracompany.sofia2.config.model.FlowNodeProperties;
 import com.indracompany.sofia2.config.model.FlowNodeType;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.flow.FlowService;
 import com.indracompany.sofia2.config.services.flowdomain.FlowDomainService;
@@ -181,7 +181,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		List<Ontology> ontologies = null;
 		switch (sofia2User.getRole().getName()) {
 		case "ROLE_ADMINISTRATOR":
-			ontologies = ontologyService.getOntologiesByActiveTrue();
+			ontologies = ontologyService.getAllOntologies();
 			break;
 		default:
 			// TODO check default criteria. Public ontologies should be included

@@ -12,12 +12,9 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.flowengine.nodered.communication;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +23,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.flowengine.exception.NodeRedAdminServiceException;
@@ -34,9 +30,7 @@ import com.indracompany.sofia2.flowengine.exception.NotSynchronizedToCdbExceptio
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomain;
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomainStatus;
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.SynchronizeDomainStatusRequest;
-
 import lombok.extern.slf4j.Slf4j;
-
 @Service
 @Slf4j
 public class NodeRedAdminClientImpl implements NodeRedAdminClient {
@@ -66,7 +60,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	private HttpComponentsClientHttpRequestFactory httpRequestFactory;
 	private ObjectMapper mapper;
 	private boolean isSynchronizedWithBDC;
-
 	@PostConstruct
 	public void init() {
 		httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -74,7 +67,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 		this.mapper = new ObjectMapper();
 		resetSynchronizedWithBDC();
 	}
-
 	@Override
 	public String stopFlowEngine() {
 		String response = null;
@@ -88,12 +80,10 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 		}
 		return response;
 	}
-
 	@Override
 	public void resetSynchronizedWithBDC() {
 		this.isSynchronizedWithBDC = false;
 	}
-
 	@Override
 	public void stopFlowEngineDomain(String domain) {
 		checkIsSynchronized();
@@ -106,7 +96,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 			throw new NodeRedAdminServiceException("Unable to stop the flow engine Domain = " + domain + ".");
 		}
 	}
-
 	@Override
 	public String startFlowEngineDomain(FlowEngineDomain domain) {
 		String response = null;
@@ -123,7 +112,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 		}
 		return response;
 	}
-
 	@Override
 	public String createFlowengineDomain(FlowEngineDomain domain) {
 		String response = null;
@@ -140,9 +128,9 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 		}
 		return response;
 	}
-
 	@Override
 	public void deleteFlowEngineDomain(String domainId) {
+		checkIsSynchronized();
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
 			restTemplate.delete(flowengineUrl + flowEngineDomainDelete + "/" + domainId);
@@ -151,7 +139,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 			throw new NodeRedAdminServiceException("Unable to delete Domain = " + domainId + ".");
 		}
 	}
-
 	@Override
 	public FlowEngineDomain getFlowEngineDomain(String domainId) {
 		FlowEngineDomain response = null;
@@ -169,9 +156,9 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 		}
 		return response;
 	}
-
 	@Override
 	public List<FlowEngineDomainStatus> getAllFlowEnginesDomains() {
+		List<FlowEngineDomainStatus> domainStatus = new ArrayList<>();
 		checkIsSynchronized();
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		try {
@@ -184,7 +171,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 		}
 		return domainStatus;
 	}
-
 	@Override
 	public List<FlowEngineDomainStatus> getFlowEngineDomainStatus(List<String> domainList) {
 		List<FlowEngineDomainStatus> response = null;
@@ -202,7 +188,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 		}
 		return response;
 	}
-
 	@Override
 	public String synchronizeMF(List<FlowEngineDomainStatus> domainList) {
 		String response = null;
@@ -221,7 +206,6 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 		}
 		return response;
 	}
-
 	private void checkIsSynchronized() {
 		if (!this.isSynchronizedWithBDC) {
 			log.warn("NodeRed AdminClient is not synchronized with CDB data.");
