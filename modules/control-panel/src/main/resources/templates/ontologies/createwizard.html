@@ -131,34 +131,22 @@
 											<div class="form-body">
 												<!-- user, name and email -->
 												<div class="row">
-													<div class="col-md-6 col-xs-12">
-													<!--  
-														<div class="col-md-6 col-sm-6 col-xs-12">
-															<div class="form-group">
-																<label class="popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.identification.help},data-title=#{ontology.id}"><i class="la la-lightbulb-o"></i> <span th:text="#{ontology.id} + ':'">Identification</span></label><span class="required"> (*)</span>
-																<div class="input-icon ">
-																	<i class="fa fa-credit-card"></i>
-																	<input id="ontologyId" type="text" name="ontologyId" th:required="true"  maxlength="50" th:field="*{id}" class="form-control " th:placeholder="#{ontology.identification}" th:disabled="!*{id}" th:readonly="*{id}" th:classappend="${ontology.user?.userId} ? no-remove : ''"  />
-																</div>
-															</div>
-														</div>
-														-->
+													<div class="col-md-6 col-xs-12">													
 														<div class="col-md-6 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label class="" th:text="#{ontology.name} + ':'">Name</label><span class="required"> (*)</span>
 																<div class="input-icon ">
 																	<i class="flaticon-network"></i>
-																	<input id="identification" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{ontology.name}"/>
+																	<input th:tabindex="1" id="identification" type="text"   th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{ontology.name}"/>
 																</div>	
 															</div>
-														</div>
-																								
+														</div>														
 														<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 															<div class="form-group">
 																<label class="" th:text="#{ontology.active} + ':'">Active</label>
 																<div class="mt-checkbox-list">
 																	<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{ontology.active.help},data-title=#{ontology.active}"><i class="la la-lightbulb-o"></i> <div class="inline font-xs" th:text="#{ontology.active} + '?'">Active Ontology?</div>
-																		<input id="active" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
+																		<input id="active" name="active" type="checkbox" class="form-control no-remove" th:field="*{active}" th:checked="checked"/>
 																		<span></span><!-- needed by styles -->
 																	</label>
 																</div>
@@ -169,17 +157,17 @@
 																<label class="" th:text="#{ontology.public} + ':'">Public</label>
 																<div class="mt-checkbox-list">
 																	<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.public} +'?'">Public?</div>
-																		<input id="public" class="form-control campo_publica"  name="public" type="checkbox" th:field="*{public}" />
+																		<input  id="public" class="form-control no-remove"  name="public" type="checkbox" th:field="*{public}"  />
 																		<span></span><!-- necesario por estilos. -->
 																	</label>
 																</div>
 															</div>
 														</div>			
 														<div class="clearfix"></div>
-														<div class="col-md-6 col-sm-6 col-xs-12">
+														<div class="col-md-12 col-sm-12 col-xs-12">
 															<div class="form-group">
 																<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" th:attr=" data-content=#{ontology.metainf.help},data-title=#{ontology.metainf}"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>
-																<input  id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" data-minlength="2" pattern=".{2,}" min="2" th:required="true"></input>
+																<input  th:tabindex="2" id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" data-minlength="2" pattern=".{2,}" min="2" th:required="true"></input>
 																
 															</div>
 														</div>							
@@ -207,14 +195,14 @@
 																</div>
 															</div>
 														</div>
-													</div>
-													<div class="col-md-12 col-sm-12 col-xs-12">
-														<div class="form-group">
-															<label th:text="#{ontology.description}">Comments </label><span class="required"> (*)</span>
-															<textarea class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
+														<div class="col-md-12 col-sm-12 col-xs-12">
+															<div class="form-group">
+																<label th:text="#{ontology.description}">Comments </label><span class="required"> (*)</span>
+																<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
+															</div>
+															<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.description.min}"></small></span>
 														</div>
-														<span class="help-block"><i class="la la-warning"></i> <small th:text="#{ontology.description.min}"></small></span>
-													</div>													
+													</div>
 												</div>											
 												
 												<!-- SECCIONE DE ONTOLOGIA -->
@@ -248,17 +236,18 @@
 																				<!-- TEMPLATES SELECTOR -->
 																					<div class="mt-element-list">
 																						<div class="mt-list-container list-default ext-1 group" style="padding:0;">
-																							<div th:each="datamodeltype,iter : ${dataModelTypes}">
+																							<div th:each="datamodeltype,iter : ${dataModelTypes}" class="datamodel-types" th:attr="data-datamodeltype=${datamodeltype}" >
 																								<a data-toggle="collapse" th:href="'#type-'+ ${datamodeltype}" aria-expanded="false" class="list-toggle-container collapsed">
-																									<div class="list-toggle bg-grey-mint uppercase"> <span th:text="${datamodeltype}">DatamodelType</span></div>
+																									<div class="list-toggle bg-grey-mint uppercase"><span th:text="${iter.index} + 1 + '.- '"></span> <span th:text="${datamodeltype}">DatamodelType</span></div>
 																								</a>
 																								<div class="panel-collapse collapse" aria-expanded="false"  th:id="'type-'+ ${datamodeltype}">
-																									<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}">
-																										<li th:if="${datamodel.type} == ${datamodeltype}" class="mt-list-item datamodel-template">
+																									<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}" th:if="${datamodel.type} == ${datamodeltype}"  class="datamodel-template" >
+																										<li  class="mt-list-item datamodel-template">
 																											<div class="list-item-content" style="padding: 0 15px 0 10px;">
 																												<h3 class="uppercase" onclick="OntologyCreateController.schemaToTable(this,'datamodel_properties');" th:text="${datamodel.name}" th:attr="data-model=${datamodel.id},data-schema=${datamodel.jsonSchema}"></h3>
 																												<p th:if="${datamodel.description}" lass="text-truncate-sm text-left" th:text="${datamodel.description}"></p>																												
 																											</div>
+																										
 																										</li>																										
 																									</ul>
 																								</div>
@@ -387,6 +376,9 @@
 	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
 	
 	
+	<!-- INPUTMASK -->
+	<script th:src="@{/static/vendor/jquery-inputmask/dist/min/jquery.inputmask.bundle.min.js}"/>
+	
 
 	<!-- TEMPLATE CONTROLLER  -->	
 	<script th:src="@{/static/js/pages/ontologyCreate.js}"/>
@@ -401,7 +393,9 @@
 		"language" : currentLanguage,
 		"actionMode" : [[${ontology.user?.userId}]],
 		"schemaEditMode" : [[${ontology?.jsonSchema}]],
-		"dataModelEditMode" : [[${ontology.dataModel?.id}]]
+		"dataModelEditMode" : [[${ontology.dataModel?.id}]],
+		"dataModelSelection" : [[#{ontology.datamodel.selection}]],
+		"datamodel": [[#{ontology.datamodel}]]
 	};	
 	
 

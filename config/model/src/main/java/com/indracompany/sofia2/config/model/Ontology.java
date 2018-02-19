@@ -25,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -63,31 +64,6 @@ public class Ontology extends AuditableEntityWithUUID {
 	@Setter
 	private String ontologyClass;
 
-//	public String getJsonSchema() {
-//		String schema = "";
-//		schema = this.jsonSchema;
-//
-//		if (schema != null && schema.length() > 0) {
-//			schema = schema.replaceAll("\\<.*?>", "");
-//			schema = schema.replaceAll("&nbsp;", "");
-//			schema = schema.replaceAll("&amp;", "");
-//			schema = schema.replaceAll("&quot;", "\"");
-//			schema = schema.replaceAll("\"", "'");
-//			schema = schema.replaceAll("\n", "");
-//			schema = schema.replaceAll("\t", "");
-//			schema = schema.replaceAll("\r", "");
-//		}
-//		return schema;
-//	}
-
-	/*
-	 * @OneToMany(mappedBy = "ontologiaId", cascade = CascadeType.ALL)
-	 * 
-	 * @OnDelete(action = OnDeleteAction.CASCADE)
-	 * 
-	 * @ForeignKey(name = "FK_USUARIO_USUARIOONTOLOGIA") private
-	 * Set<Usuarioontologia> usuarioontologias;
-	 */
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
@@ -147,5 +123,12 @@ public class Ontology extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String dataModelVersion;
+	
+	@PostLoad
+	protected void trim(){
+	    if(this.identification!=null){
+	        this.identification=this.identification.replaceAll(" ", "");
+	    }
+	}
 
 }

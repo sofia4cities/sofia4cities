@@ -15,6 +15,7 @@ package com.indracompany.sofia2.config.services.ontology;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.config.model.DataModel;
@@ -45,7 +46,7 @@ public interface OntologyService {
 	
 	boolean hasUserPermissionForInsert(String userId, String ontologyIdentification);
 	
-	List<String> getOntologyFields(String identification) throws JsonProcessingException, IOException;
+	Map<String, String> getOntologyFields(String identification) throws JsonProcessingException, IOException;
 	
 	void updateOntology(Ontology ontology);
 	
