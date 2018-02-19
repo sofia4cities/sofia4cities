@@ -137,7 +137,7 @@
 																<label class="" th:text="#{ontology.name} + ':'">Name</label><span class="required"> (*)</span>
 																<div class="input-icon ">
 																	<i class="flaticon-network"></i>
-																	<input id="identification" type="text"  th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{ontology.name}"/>
+																	<input id="identification" type="text"   th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{ontology.name}"/>
 																</div>	
 															</div>
 														</div>														
@@ -374,6 +374,9 @@
 	<script th:src="@{/static/vendor/ace/mode-json.js}"/>
 	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
 	
+	
+	<!-- INPUTMASK -->
+	<script th:src="@{/static/vendor/jquery-inputmask/dist/min/jquery.inputmask.bundle.min.js}"/>
 	
 
 	<!-- TEMPLATE CONTROLLER  -->	

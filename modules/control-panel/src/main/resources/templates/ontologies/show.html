@@ -98,14 +98,8 @@
 										<form role="form" id="ontology_view_form" action="show.html" th:object="${ontology}" th:action="@{|/controlpanel/ontologies/${id}|}"  method="post" class="form">
 											<div class="form-body">
 												<!-- ontology, id , identification -->
-												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label"><i class="la la-credit-card"></i> <span th:text="#{ontology.id} + ':'">ontology Id</span></label>
-															<p class="form-control-static-block bold" th:text="*{id}"> ontology Identification </p>
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
+												<div class="row">													
+													<div class="col-md-6 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{ontology.identification} + ':'">Name</label>
 															<p class="form-control-static-block bold" th:text="*{identification}"> ontology Name </p>
@@ -137,7 +131,7 @@
 															<label class="control-label" th:text="#{ontology.active} + '?'">Active</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
 																<span th:if="*{active}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{active}" class="label label-sm label-danger"><i class="fa fa-warning"></i></span>
+																<span th:if="!*{active}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
 															</p>
 														</div>
 													</div>
@@ -146,7 +140,7 @@
 															<label class="control-label" th:text="#{ontology.public} + '?'">Public</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
 																<span th:if="*{public}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{public}" class="label label-sm label-danger"><i class="fa fa-warning"></i></span>
+																<span th:if="!*{public}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
 															</p>
 														</div>
 													</div>
@@ -163,7 +157,7 @@
 															<label class="control-label" th:text="#{ontology.rtdbclean} + '?'">rtdbclean</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
 																<span th:if="*{rtdbClean}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{rtdbClean}" class="label label-sm label-danger"><i class="fa fa-warning"></i></span>
+																<span th:if="!*{rtdbClean}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
 															</p>
 														</div>
 													</div>
@@ -172,7 +166,7 @@
 															<label class="control-label" th:text="#{ontology.rtdbtohdb} + '?'">rtdbtohdb</label>
 															<p class="form-control-static-block form-control-static-no-border bold">
 																<span th:if="*{rtdbToHdb}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{rtdbToHdb}" class="label label-sm label-danger"><i class="fa fa-warning"></i></span>
+																<span th:if="!*{rtdbToHdb}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
 															</p>
 														</div>
 													</div>

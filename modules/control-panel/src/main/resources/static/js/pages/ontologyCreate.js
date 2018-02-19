@@ -289,6 +289,9 @@ var OntologyCreateController = function() {
 			$(this).valid();
 		});
 		
+		// 	INPUT MASK FOR ontology identification allow only letters, numbers and -_
+		$("#identification").inputmask({ regex: "[a-zA-Z0-9_-]*", greedy: false });
+		
 		// Reset form
 		$('#resetBtn').on('click',function(){ 
 			cleanFields('ontology_create_form');
