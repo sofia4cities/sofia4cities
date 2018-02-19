@@ -27,6 +27,7 @@ import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
 
 @Service
 public class TwitterControlService {
+	
 	@Autowired
 	private TaskService taskService;
 
