@@ -106,7 +106,7 @@ public interface ApiRestService {
 		@ApiResponse(code = 400, message = "Bad Request"),
 		@ApiResponse(code = 401, message = "Unauthorized"),
 		@ApiResponse(code = 501, message = "Internal Server Error")})
-	public Response create(@DefaultValue("") @QueryParam("indentifier") @ApiParam(name="indentifier") String indentifier, com.indracompany.sofia2.config.model.Api.ApiType api, @HeaderParam("X-SOFIA2-APIKey") String token) throws Exception;
+	public Response create(@DefaultValue("") @QueryParam("indentifier") @ApiParam(name="indentifier") String indentifier, com.indracompany.sofia2.config.model.Api.ApiStates api, @HeaderParam("X-SOFIA2-APIKey") String token) throws Exception;
 
 	@PUT
 	@Path("/")

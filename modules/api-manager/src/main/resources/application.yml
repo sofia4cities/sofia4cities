@@ -19,7 +19,31 @@ endpoints:
   jmx:
     enabled: true
      
- 
+sofia2: #Config Sofia2 specific
+   database.mongodb:
+      database: sofia2_s4c
+      authenticationDatabase:  #admin
+      servers: localhost:27017
+      autoConnectRetry: true
+      socketTimeout: 5000
+      maxAutoConnectRetryTime: 5000
+      maxWaitTime: 5000
+      useAuth: false
+      username: #username
+      password: #password
+      readFromSecondaries: false
+      queries.executionTimeout: 5000
+      queries.defaultLimit: 150
+      queries.maxConcurrentQueries: 3
+      writeConcern: UNACKNOWLEDGED
+      tools.mongoexport.path: mongoexport
+      tools.mongoimport.path: mongoimport
+      tools.mongoshell.path: mongo
+      tools.useSequentialOps: true
+      quasar.maxHttpConnections: 10
+      quasar.maxHttpConnectionsPerRoute: 10
+      quasar.connectionTimeout.millis: 10000
+      quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
     
 #Security Config
 security:
@@ -30,13 +54,11 @@ security:
 spring: ## General Config  
    application.name: sofia2-api-manager
    boot.admin: #Spring Boot Admin Config    
-      # url: http://localhost:18090
-      routes.endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
-      #Not autoregister as Spring Boot Admin client
-      # username: operations
-      # password: changeIt!
-      # client.metadata.user.name: ${spring.boot.admin.username}
-      # client.metadata.user.password: $spring.boot.admin.password} 
+      url: http://localhost:18090
+      username: operations
+      password: changeIt!
+      client.metadata.user.name: ${spring.boot.admin.username}
+      client.metadata.user.password: $spring.boot.admin.password} 
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root

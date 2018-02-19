@@ -24,7 +24,7 @@ public class DefaultRuleBase {
 	protected void stopAllNextRules(Facts facts, String reason, ReasonType type) {
 		facts.put(RuleManager.STOP_STATE, true);
 		facts.put(RuleManager.REASON, reason);
-		facts.put(RuleManager.REASON_TYPE, type);
+		facts.put(RuleManager.REASON_TYPE, type.name());
 	}
 	
 	protected boolean canExecuteRule(Facts facts) {

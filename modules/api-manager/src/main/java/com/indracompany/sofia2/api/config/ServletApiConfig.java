@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.indracompany.sofia2.api.servlet.ApiServletEntryPoint;
 
-@Configuration
+//@Configuration
 public class ServletApiConfig {
 
     @Bean

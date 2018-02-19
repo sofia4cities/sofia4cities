@@ -34,7 +34,7 @@ import com.indracompany.sofia2.api.rest.api.fiql.HeaderFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.OperationFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.QueryParameterFIQL;
 import com.indracompany.sofia2.config.model.Api;
-import com.indracompany.sofia2.config.model.Api.ApiType;
+import com.indracompany.sofia2.config.model.Api.ApiStates;
 import com.indracompany.sofia2.config.model.ApiAuthentication;
 import com.indracompany.sofia2.config.model.ApiAuthenticationAttribute;
 import com.indracompany.sofia2.config.model.ApiAuthenticationParameter;
@@ -111,7 +111,7 @@ public class ApiServiceRest {
 		Api api = null;
 		List<Api> apis = apiRepository.findByIdentification(identificacionApi);
 		for (Api apiAux : apis) {
-			if (apiAux.getState().name().equalsIgnoreCase(Api.ApiType.PUBLISHED.name())) {
+			if (apiAux.getState().name().equalsIgnoreCase(Api.ApiStates.PUBLISHED.name())) {
 				api = apiAux;
 			}
 		}
@@ -163,7 +163,7 @@ public class ApiServiceRest {
 	}
 	
 
-	public Api changeState(String indentifier, ApiType api, String token) {
+	public Api changeState(String indentifier, ApiStates api, String token) {
 
 		User user = apiSecurityService.getUserByApiToken(token);
 		if (apiSecurityService.isAdmin(user)) {
@@ -197,7 +197,7 @@ public class ApiServiceRest {
 
 		api.setUser(user);
 
-		api.setState(Api.ApiType.CREATED);
+		api.setState(Api.ApiStates.CREATED);
 		apiRepository.saveAndFlush(api);
 		createOperations(apiDTO.getOperations(), api);
 		createAutenticacion(apiDTO.getAuthentication(), api);
