@@ -14,6 +14,10 @@
    "operations":[
       {
          "description":"PUT_DESC",
+         "endpoint":null,
+         "headers":[
+
+         ],
          "operation":"PUT",
          "path":"/",
          "queryParams":[
@@ -28,6 +32,10 @@
       },
       {
          "description":"PUT_DESC_ID",
+         "endpoint":null,
+         "headers":[
+
+         ],
          "operation":"PUT",
          "path":"/{id}",
          "queryParams":[
@@ -48,6 +56,10 @@
       },
       {
          "description":"POST_DESC",
+         "endpoint":null,
+         "headers":[
+
+         ],
          "operation":"POST",
          "path":"/",
          "queryParams":[
@@ -61,7 +73,11 @@
          ]
       },
       {
-         "description":"QUERY_CONFIGURATION",
+         "description":"QUERY_CONFIGURATION_DESC",
+         "endpoint":null,
+         "headers":[
+
+         ],
          "operation":"GET",
          "path":"/byName?$name={name}",
          "queryParams":[
@@ -102,7 +118,11 @@
          ]
       },
       {
-         "description":"GET_ID",
+         "description":"GET_ID_DESC",
+         "endpoint":null,
+         "headers":[
+
+         ],
          "operation":"GET",
          "path":"/{id}",
          "queryParams":[
@@ -114,9 +134,30 @@
             }
          ]
       },
-     
       {
-         "description":"DELETE_ID",
+         "description":"DELETE_DESC",
+         "endpoint":null,
+         "headers":[
+
+         ],
+         "operation":"DELETE",
+         "path":"/",
+         "queryParams":[
+            {
+               "headerType":"body",
+               "description":"",
+               "name":"body",
+               "dataType":"string",
+               "value":""
+            }
+         ]
+      },
+      {
+         "description":"DELETE_ID_DESC",
+         "endpoint":null,
+         "headers":[
+
+         ],
          "operation":"DELETE",
          "path":"/{id}",
          "queryParams":[
