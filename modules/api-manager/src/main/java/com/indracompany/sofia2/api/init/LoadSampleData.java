@@ -75,10 +75,13 @@ public class LoadSampleData implements ApplicationRunner {
 	ObjectMapper mapper = new ObjectMapper();
 	
 	@Override
-	public void run(ApplicationArguments arg0) throws Exception {
+	public void run(ApplicationArguments arg0) {
 		init_Ontology();
-		loadDataForMongo();
-		loadDataFromJson();
+		try {
+			loadDataForMongo();
+			loadDataFromJson();
+		} catch (Exception e) {}
+		
 	}
 
 	private User getUserDeveloper() {
@@ -152,6 +155,9 @@ public class LoadSampleData implements ApplicationRunner {
 			// 1º
 						Product data = PojoFactoryLoadData.createProduct("name1");
 						ObjectMapper mapper = new ObjectMapper();
+						
+						System.out.println(mapper.writeValueAsString(data));
+						
 						refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 						int init = 17;
 						int end = refOid.indexOf("\"}}");

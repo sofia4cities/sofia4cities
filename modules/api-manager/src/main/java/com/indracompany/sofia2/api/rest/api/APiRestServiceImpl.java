@@ -26,7 +26,7 @@ import com.indracompany.sofia2.api.rest.api.dto.ApiDTO;
 import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 import com.indracompany.sofia2.api.service.api.ApiServiceRest;
 import com.indracompany.sofia2.config.model.Api;
-import com.indracompany.sofia2.config.model.Api.ApiType;
+import com.indracompany.sofia2.config.model.Api.ApiStates;
 
 @Component("apiRestServiceImpl")
 public class APiRestServiceImpl implements ApiRestService {
@@ -102,7 +102,7 @@ public class APiRestServiceImpl implements ApiRestService {
 	}
 
 	@Override
-	public Response create(String indentifier, ApiType api, String token) throws Exception {
+	public Response create(String indentifier, ApiStates api, String token) throws Exception {
 		Api apiRes = apiService.changeState(indentifier, api, token);
 		if (apiRes!=null) {
 			Object parametros[] = { apiRes };

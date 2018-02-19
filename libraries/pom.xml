@@ -26,6 +26,7 @@
 	<modules>
 		<module>social-services</module>
 		<module>mail-service</module>
+		<module>commons</module>
 	</modules>
 
 	<build>

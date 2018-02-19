@@ -14,10 +14,6 @@
    "operations":[
       {
          "description":"PUT_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
          "operation":"PUT",
          "path":"/",
          "queryParams":[
@@ -31,11 +27,27 @@
          ]
       },
       {
+         "description":"PUT_DESC_ID",
+         "operation":"PUT",
+         "path":"/{id}",
+         "queryParams":[
+            {
+               "headerType":"body",
+               "description":"",
+               "name":"body",
+               "dataType":"string",
+               "value":""
+            },
+            {
+               "headerType":"path",
+               "description":"",
+               "name":"id",
+               "dataType":"string"
+            }
+         ]
+      },
+      {
          "description":"POST_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
          "operation":"POST",
          "path":"/",
          "queryParams":[
@@ -49,11 +61,7 @@
          ]
       },
       {
-         "description":"QUERY_CONFIGURATION_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
+         "description":"QUERY_CONFIGURATION",
          "operation":"GET",
          "path":"/byName?$name={name}",
          "queryParams":[
@@ -94,11 +102,7 @@
          ]
       },
       {
-         "description":"GET_ID_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
+         "description":"GET_ID",
          "operation":"GET",
          "path":"/{id}",
          "queryParams":[
@@ -110,30 +114,9 @@
             }
          ]
       },
+     
       {
-         "description":"DELETE_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
-         "operation":"DELETE",
-         "path":"/",
-         "queryParams":[
-            {
-               "headerType":"body",
-               "description":"",
-               "name":"body",
-               "dataType":"string",
-               "value":""
-            }
-         ]
-      },
-      {
-         "description":"DELETE_ID_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
+         "description":"DELETE_ID",
          "operation":"DELETE",
          "path":"/{id}",
          "queryParams":[

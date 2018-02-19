@@ -54,13 +54,11 @@ security:
 spring: ## General Config  
    application.name: sofia2-api-manager
    boot.admin: #Spring Boot Admin Config    
-      # url: http://localhost:18090
-      routes.endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
-      #Not autoregister as Spring Boot Admin client
-      # username: operations
-      # password: changeIt!
-      # client.metadata.user.name: ${spring.boot.admin.username}
-      # client.metadata.user.password: $spring.boot.admin.password} 
+      url: http://localhost:18090
+      username: operations
+      password: changeIt!
+      client.metadata.user.name: ${spring.boot.admin.username}
+      client.metadata.user.password: $spring.boot.admin.password} 
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root

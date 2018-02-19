@@ -69,7 +69,9 @@ public class JaxRSConfig {
 		 endpoint.setProviders(providers);
 		 endpoint.setServiceBeans(lista);
 		 endpoint.setAddress("/");
-		 endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), loggingFeature(),new MetricsFeature(new CodahaleMetricsProvider(bus))));
+		 //TODO REFACTOR!
+		// endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), loggingFeature(),new MetricsFeature(new CodahaleMetricsProvider(bus))));
+		 endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), loggingFeature()));
 		 endpoint.setProperties(
 					Collections.singletonMap(
 						"org.apache.cxf.management.service.counter.name", 
