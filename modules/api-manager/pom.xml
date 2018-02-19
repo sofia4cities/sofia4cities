@@ -19,10 +19,9 @@
 	<properties>
 		<license.dir>${project.parent.basedir}</license.dir>
 		<version.camel>2.20.2</version.camel>
-		<version.cxf>3.2.1</version.cxf>
+		<version.cxf>3.2.2</version.cxf>
 		<version.easyrules>3.1.0</version.easyrules>
-		<version.poi>3.17</version.poi>
-		<version.swaggerui>3.9.3</version.swaggerui>
+		<version.swaggerui>3.10.0</version.swaggerui>
 		<version.prometheus>0.2.0</version.prometheus>
 	</properties>
 

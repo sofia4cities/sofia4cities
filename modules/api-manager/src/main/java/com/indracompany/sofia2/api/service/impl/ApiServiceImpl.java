@@ -133,6 +133,9 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 				if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
 					OUTPUT = queryToolService.querySQLAsJson(ontology.getIdentification(), QUERY, 0);
 				}
+				else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
+					OUTPUT = queryToolService.queryNativeAsJson(ontology.getIdentification(), QUERY, 0,0);
+				}
 				else {
 					OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);
 				}
@@ -143,10 +146,28 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			OUTPUT = mongoBasicOpsDBRepository.insert(ontology.getIdentification(), BODY);	
 		}
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
-			 mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), BODY);	
+			
+			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
+				String updateQuery = "db."+ontology.getIdentification()+".update({\"_id\": {\"$oid\" : \""+OBJECT_ID+"\" }}, {$set:"+BODY+" })";
+				mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), updateQuery);	
+				OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);	
+			}
+			
+			else {
+				mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), BODY);	
+			}
+	
 		}
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
-			mongoBasicOpsDBRepository.deleteNative(ontology.getIdentification(), "{\"_id\": { \"$oid\" : \""+OBJECT_ID+"\" }}");
+			
+			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
+				mongoBasicOpsDBRepository.deleteNative(ontology.getIdentification(), "{\"_id\": { \"$oid\" : \""+OBJECT_ID+"\" }}");
+			}
+			
+			else {
+				mongoBasicOpsDBRepository.deleteNative(ontology.getIdentification(), BODY);	
+			}
+			
 		}
 				
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);

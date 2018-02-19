@@ -97,6 +97,14 @@
 				},
 				{
 					"title": {
+						"EN": "My Datasources",
+						"ES": "Mis Datasources"
+					},
+					"icon": "",
+					"url": "/controlpanel/datasources/list"
+				},
+				{
+					"title": {
 						"EN": "My Dashboards",
 						"ES": "Mis Dashboards"
 					},

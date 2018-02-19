@@ -97,6 +97,14 @@
 				},
 				{
 					"title": {
+						"EN": "My Datasources",
+						"ES": "Mis Datasources"
+					},
+					"icon": "",
+					"url": "/controlpanel/datasources/list"
+				},
+				{
+					"title": {
 						"EN": "My Dashboards",
 						"ES": "Mis Dashboards"
 					},
@@ -187,7 +195,7 @@
 						"ES": "Escucha Twitter"
 					},
 					"icon": "",
-					"url": "/controlpanel/social/twitter/list"
+					"url": "/controlpanel/twitter/scheduledsearch/list"
 				}
 			]
 		},

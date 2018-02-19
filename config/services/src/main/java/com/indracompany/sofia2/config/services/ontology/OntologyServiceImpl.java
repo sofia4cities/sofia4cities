@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.transaction.Transactional;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,6 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
-import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -45,8 +44,6 @@ public class OntologyServiceImpl implements OntologyService {
 	private OntologyRepository ontologyRepository;
 	@Autowired
 	private DataModelRepository dataModelRepository;
-	@Autowired
-	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
 	private UserService userService;
 
@@ -168,7 +165,7 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public boolean hasUserPermissionForInsert(String userId, String ontologyIdentification) {
 		List<Ontology> ontologies = this.ontologyRepository
-				.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
+				.findByUserAndOntologyUserAccessAndPermissionsInsert(this.userService.getUser(userId));
 		for (Ontology ontology : ontologies) {
 			if (ontology.getIdentification().equals(ontologyIdentification))
 				return true;
@@ -177,21 +174,31 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public List<String> getOntologyFields(String identification) throws JsonProcessingException, IOException {
-		List<String> fields = new ArrayList<String>();
+	public Map<String,String> getOntologyFields(String identification) throws JsonProcessingException, IOException {
+		Map<String,String> fields = new TreeMap<String,String>();
 		Ontology ontology = this.ontologyRepository.findByIdentification(identification);
 		if (ontology != null) {
 			ObjectMapper mapper = new ObjectMapper();
 
-			String prefix = mapper.readTree(ontology.getJsonSchema()).get("title").asText();
-			prefix = prefix.split(" ")[0];
+			//String prefix = mapper.readTree(ontology.getJsonSchema()).get("title").asText();
+		
 
 			JsonNode jsonNode = mapper.readTree(ontology.getJsonSchema());
 			// Predefine Path to data properties
 			jsonNode = jsonNode.path("datos").path("properties");
 			Iterator<String> iterator = jsonNode.fieldNames();
+			String property;
 			while (iterator.hasNext()) {
-				fields.add(prefix + "." + iterator.next());
+				property = iterator.next();
+				
+				if(jsonNode.path(property).get("type").asText().equals("object")) {
+					this.extractSubFieldsFromJson(fields, jsonNode, property, property, false);
+				}else if(jsonNode.path(property).get("type").asText().equals("array")) {
+					this.extractSubFieldsFromJson(fields, jsonNode, property, property, true);
+				}else {
+					fields.put(property,jsonNode.path(property).get("type").asText());
+				}
+				
 			}
 		}
 		return fields;
@@ -224,6 +231,32 @@ public class OntologyServiceImpl implements OntologyService {
 		ontology.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 		this.saveOntology(ontology);
 
+	}
+	
+	public Map<String,String> extractSubFieldsFromJson(Map<String,String> fields, JsonNode jsonNode, String property, String parentField, boolean isPropertyArray) 
+	{
+		if(isPropertyArray)
+			jsonNode = jsonNode.path(property).path("items").path("properties");
+		else
+			jsonNode = jsonNode.path(property).path("properties");
+		Iterator<String> iterator = jsonNode.fieldNames();
+		String subProperty;
+		while(iterator.hasNext()) {
+			subProperty = iterator.next();
+			
+			if(jsonNode.path(subProperty).get("type").equals("object")) {
+				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField+"."+ subProperty, false);
+			}else if(jsonNode.path(subProperty).get("type").equals("array")) {
+				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField+"."+ subProperty, true);
+			}else {
+				fields.put(parentField+"."+ subProperty,jsonNode.path(subProperty).get("type").asText());
+			}
+		}
+		
+		
+		
+		return fields;
+		
 	}
 
 }

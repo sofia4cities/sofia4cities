@@ -371,11 +371,12 @@
 	<div style="display: none">
 	<div th:fragment="fields" id="fields">
 		<script th:inline="javascript">
-			campos= [[${fields}]];
+		//Map with field,type struct	
+		campos= [[${fields}]];
 		</script>
 			<option th:id="selectFields" th:text="#{querytool.select.fields}"></option>
 			<option th:id="all" th:text="#{querytool.all.fields}"></option>
-			<option th:each="field :${fields}" th:value="${field}" th:id="check + ${field}" th:text="${field}"/>
+			<option th:each="field :${fields}" th:value="${field.key}" th:id="check + ${field.key}" th:text="${field.key}" th:type="${field.value}"/>
 		
 	</div>
 	</div>
@@ -729,7 +730,7 @@
 					 	break; 
 					 }
 					}
-					
+					campoId = campoId.replace(".","_");
 					// si es Todos, se vacia la lista.
 					if( campoId == "Todos" ){ 
 						$("#select_ul").children().not('.panel-sofia2').remove();
@@ -835,10 +836,14 @@
 		            btnClass: 'btn-blue',
 		            action: function () {
 		            	var campo = $("#conditionFields").val();
+		            	var fieldType = $("#conditionFields option:selected").attr("type")
 						var operador = $("#conditionOperator option:selected").text();
-						var condicion = $("#condition").val();						
+						var condicion = $("#condition").val();
+								
 						var c = Number(condicion);						
-						if( c.toString() == "NaN"){ condicion = '&#34;'+condicion+'&#34;'; }
+						if(fieldType=="string") {
+							condicion = "'"+condicion+"'";
+						}		
 						if( operador == " < "){ operador=" &#60; "; }else if( operador == "<="){operador=" &#60;= "; }						
 						queryCondition = campo + operador + condicion;
 						var add = comprobarCondicion(queryCondition);
@@ -971,12 +976,13 @@
 
 		
 		// QUITAR CONDICION, REGENERA LA QUERY AUTOMATICAMENTE PARA NO TENER QUE HACERLO MANUAL COMO ANTES.
-		function deleteCondition(elemento){
-			$('#'+ elemento +'').remove();
+		function deleteCondition(id){
+			$('#'+ id +'').remove();
 			// regeneramos la query automaticamente.
 			createQuery();
 		}
-		
+
+
 
 
 		
@@ -1030,13 +1036,15 @@
 				hayCondicion = true;
 				condicion = condiciones.attr('condition');
 				condicion = obtainCondition(condicion);
+				condicion = condicion.replace(/'/g,"\"");
 				condicion= "c." + condicion;
 			}
 			else if( condiciones.length > 0){
 				hayCondicion = true;
 				condiciones.each(function(index){		
 					showLog ? console.log('condición auxiliar en EACH-'+ index +' es: ' + $(this).attr('condition')) : '';
-					var condicionAux = obtainCondition($(this).attr('condition'));				
+					var condicionAux = obtainCondition($(this).attr('condition'));
+					condicionAux = condicionAux.replace(/'/g,"\"");				
 					if( index == 0){ condicion = "c." + condicionAux; } else {  condicion = condicion + " AND " + condicionAux; }			
 				});           
 			}		
@@ -1098,6 +1106,7 @@
 		
 		
 		// MONTAJE DE LA CONSULTA CUANDO ES QUERY NATIVE , TO-DO: chequear su funcionamiento
+
 		function createQueryNative(){
 					
 			// Inicialización de elementos y strings de la query.        
@@ -1140,59 +1149,74 @@
 			}
 			
 			// WHERE
-			if( condiciones.length == 1){
-				hayCondicion = true;
-				condicion = condiciones.attr('condition');
-				condicion = obtainCondition(condicion);
-				var splitCondicion = condicion.split(" ");
-				var operador = splitCondicion[1];
-				var comando = "";
-				for( var a = 2; a <= splitCondicion.length ; a++){
-					if( splitCondicion[a] != "undefined" && splitCondicion[a] != null){
-						comando += splitCondicion[a];
-						if( a < splitCondicion.length ){ comando += " "; }
-					}
-				}
-				var comando = comando.split("\n").join("");
-				if	   ( operador == "=") { operador="$eq";}
-				else if( operador == "<") { operador="$lt";}
-				else if( operador == "<="){ operador="$lte";}
-				else if( operador == ">") { operador="$gt";}
-				else if( operador == ">="){ operador="$gte";}
-				else if( operador == "!="){ operador="$ne";}
+			if(condiciones.length==1){
+            hayCondicion=true;
+            condicion=condiciones.attr('condition');
+            condicion=obtainCondition(condicion);
+            var splitCondicion=condicion.split(" ");
+            var operador = splitCondicion[1];
+            var comando="";
+            for(var a=2; a<=splitCondicion.length ; a++){
+                if(splitCondicion[a] != "undefined" && splitCondicion[a]!=null){
+                    comando +=splitCondicion[a];
+                    if(a<splitCondicion.length){
+                        comando += " ";
+                    }
+                }
+            }
+            var comando = comando.split("\n").join("");
+            if(operador=="="){
+              operador="$eq";
+            }else if(operador=="<"){
+              operador="$lt";
+            }else if(operador=="<="){
+              operador="$lte";
+            }else if(operador==">"){
+              operador="$gt";
+            }else if(operador==">="){
+              operador="$gte";
+            }else if(operador=="!="){
+              operador="$ne";
+            }
 
-				condicion = "'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}";
+            condicion="'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}";
 
-			}
-			else if(condiciones.length > 0){
-				hayCondicion = true;
-				
-				condiciones.each(function(index){		
-					showLog ? console.log('condición auxiliar en EACH-'+ index +' es: ' + $(this).attr('condition')) : '';
-					//var condicionAux = obtainCondition($(this).attr('condition'));
-					
-					var condicionSQL = obtainCondition($(this).attr('condition'));
-					var splitCondicion = condicionSQL.split(" ");
-					var operador = splitCondicion[1];
+          }else if(condiciones.length>0){
+            hayCondicion=true;
+            for(var i=0;i<condiciones.length;i++){
+              var condicionSQL=condiciones[i].innerText;
+              var splitCondicion = condicionSQL.split(" ");
+              var operador = splitCondicion[1];
 
-					var comando = "";
-					for(var a = 2;  a <= splitCondicion.length ; a++){
-						if( splitCondicion[a] != "undefined" && splitCondicion[a] != null && i < splitCondicion.length){
-							comando += splitCondicion[a];
-							if( a < splitCondicion.length){ comando += " ";}
-						}
-					}
-				  
-					if	   ( operador == "=") { operador="$eq";}
-					else if( operador == "<") { operador="$lt";}
-					else if( operador == "<="){ operador="$lte";}
-					else if( operador == ">") { operador="$gt";}
-					else if( operador == ">="){ operador="$gte";}
-					else if( operador == "!="){ operador="$ne";}
-						
-					if( index == 0){ condicion="'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}"; } else if( index < condiciones.length) { condicion = condicion +",'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}"; }			
-				});           
-			}
+              var comando="";
+              for(var a=2; a<=splitCondicion.length ; a++){
+                if(splitCondicion[a] != "undefined" && splitCondicion[a]!=null && i<splitCondicion.length){
+                    comando +=splitCondicion[a];
+                    if(a<splitCondicion.length){
+                        comando += " ";
+                    }
+                }
+              }
+              if(operador=="="){
+                operador="$eq";
+              }else if(operador=="<"){
+                operador="$lt";
+              }else if(operador=="<="){
+                operador="$lte";
+              }else if(operador==">"){
+                operador="$gt";
+              }else if(operador==">="){
+                operador="$gte";
+              }else if(operador=="!="){
+                operador="$ne";
+              }
+              if(i==0){
+                condicion="'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}";
+              }else if(i<condiciones.length){
+                condicion = condicion +",'" + splitCondicion[0] + "':{" + operador + ":" + comando + "}";
+              }
+            }
+          }
 
 			// ORDERBY
 			if( orderby.length > 0){
