@@ -352,6 +352,10 @@ var OntologyCreateController = function() {
 			error: function (err) {
 				$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
 				return false;
+			},
+			onChange: function(){
+				
+				console.log('se modifica el editor en modo:' + editor.mode + ' contenido: ' + editor.getText());
 			}
 		};
 		
