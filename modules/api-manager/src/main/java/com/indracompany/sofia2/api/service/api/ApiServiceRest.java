@@ -278,8 +278,10 @@ public class ApiServiceRest {
 			}
 			operacion.setApi(api);
 			apiOperationRepository.saveAndFlush(operacion);
-			createHeaders(operacion, operacionDTO.getHeaders());
-			createQueryParams(operacion, operacionDTO.getQueryParams());
+			if (operacionDTO.getHeaders()!=null)
+				createHeaders(operacion, operacionDTO.getHeaders());
+			if (operacionDTO.getQueryParams()!=null)
+				createQueryParams(operacion, operacionDTO.getQueryParams());
 		}
 	}
 
