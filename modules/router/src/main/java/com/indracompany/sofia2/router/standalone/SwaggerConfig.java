@@ -240,7 +240,7 @@ public class SwaggerConfig  {
 
 		return new Docket(DocumentationType.SWAGGER_2)  
           .select()                                  
-          .apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.router.service"))     
+          .apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.router.controller"))     
           .paths(PathSelectors.any())     
           .build()
           .apiInfo(apiInfo());                                           

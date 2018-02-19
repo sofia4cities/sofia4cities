@@ -205,7 +205,7 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.indracompany.sofia2.router.service.controller;
+package com.indracompany.sofia2.router.controller;
 
 public interface RouterControllerInterface {
 

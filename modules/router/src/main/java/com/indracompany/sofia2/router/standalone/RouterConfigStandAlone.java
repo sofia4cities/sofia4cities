@@ -207,6 +207,7 @@
  */
 package com.indracompany.sofia2.router.standalone;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
@@ -214,6 +215,7 @@ import com.indracompany.sofia2.router.config.RouterConfig;
 
 @Configuration()
 @Import({RouterConfig.class})
+@ComponentScan("com.indracompany.sofia2.router.controller")
 public class RouterConfigStandAlone  {
 
 }
