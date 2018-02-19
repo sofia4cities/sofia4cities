@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.indracompany.sofia2.commons.OSDetector;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
@@ -58,7 +59,8 @@ public class InitMongoDB {
 	@Test
 	public void init() {
 		init_AuditGeneral();
-		init_RestaurantsDataSet();
+		if (OSDetector.isWindows())
+			init_RestaurantsDataSet();
 	}
 
 	private User getUserDeveloper() {
