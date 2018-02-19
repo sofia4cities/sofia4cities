@@ -29,7 +29,7 @@
 
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-scheduler</artifactId>
+			<artifactId>sofia2-planner</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>
