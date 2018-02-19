@@ -31,6 +31,8 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.mongodb.MongoQueryException;
+import com.mongodb.util.JSONParseException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,8 +79,14 @@ public class QueryToolController {
 				return "/querytool/show :: query";
 
 			} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
-				String queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
-				model.addAttribute("queryResult", utils.getAsObject(queryResult));
+				try {
+					String queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
+					model.addAttribute("queryResult", utils.getAsObject(queryResult));
+					
+				}catch (Exception e) {
+					model.addAttribute("queryResult", utils.getMessage("querytool.query.native.error", "Error malformed query"));
+				}
+
 				return "/querytool/show :: query";
 			} else {
 				return utils.getMessage("querytool.querytype.notselected",

@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Restaurants",
+  "type": "object",
+  "required": [
+    "EmptyBase"
+  ],
+  "properties": {
+    "EmptyBase": {
+      "type": "string",
+      "$ref": "#/datos"
+    }
+  },
+  "datos": {
+    "description": "Info EmptyBase",
+    "type": "object",
+    "required": [
+      
+    ],
+    "properties": {
+      "address": {
+        "type": "object",
+        "required": [
+          
+        ],
+        "properties": {
+          "building": {
+            "type": "string"
+          },
+          "coord": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "street": {
+            "type": "string"
+          },
+          "zipcode": {
+            "type": "string"
+          }
+        }
+      },
+      "borough": {
+        "type": "string"
+      },
+      "cuisine": {
+        "type": "string"
+      },
+      "grades": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string"
+            },
+            "grade": {
+              "type": "string"
+            },
+            "score": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "name": {
+        "type": "string"
+      },
+      "restaurant_id": {
+        "type": "string"
+      }
+    }
+  },
+  "description": "Ontology Restaurants for testing",
+  "additionalProperties": true
+}

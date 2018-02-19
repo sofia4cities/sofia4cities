@@ -81,6 +81,9 @@ public interface OntologyRepository extends JpaRepository<Ontology, String> {
 	
 	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user AND (uo.ontologyUserAccessType='ALL' OR uo.ontologyUserAccessType='QUERY')) AND o.active=true")
 	List<Ontology> findByUserAndOntologyUserAccessAndPermissionsQuery(@Param ("user") User user);
+	
+	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user AND (uo.ontologyUserAccessType='ALL' OR uo.ontologyUserAccessType='INSERT')) AND o.active=true")
+	List<Ontology> findByUserAndOntologyUserAccessAndPermissionsInsert(@Param ("user") User user);
 
 	void deleteById(String id);
 }

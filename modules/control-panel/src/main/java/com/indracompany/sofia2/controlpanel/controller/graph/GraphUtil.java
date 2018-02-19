@@ -32,6 +32,7 @@ import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DashboardType;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
@@ -70,10 +71,10 @@ public class GraphUtil {
 	@PostConstruct
 	public void init() {
 		// initialize URLS
-		this.urlClientPlatform = this.url + "/console/clientPlatforms/";
-		this.urlGadget = this.url + "/console/gadget/";
-		this.urlDashboard = this.url + "/console/dashboard/";
-		this.urlOntology = this.url + "/console/ontologies/";
+		this.urlClientPlatform = this.url + "/controlpanel/platformclients/";
+		this.urlGadget = this.url + "/controlpanel/gadgets/";
+		this.urlDashboard = this.url + "/controlpanel/dashboards/";
+		this.urlOntology = this.url + "/controlpanel/ontologies/";
 
 	}
 
@@ -85,10 +86,13 @@ public class GraphUtil {
 		// carga de nodo ontologia con link a crear y con titulo
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlOntology + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlOntology + "create"));
-
-		List<Ontology> ontologies = ontologyRepository.findByUser(this.userService.getUser(utils.getUserId()));
+		List<Ontology> ontologies;
+		if(utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			ontologies = ontologyRepository.findAll();
+		else 
+			ontologies = ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(utils.getUserId()));
 		for (Ontology ont : ontologies) {
-			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology + "list", urlOntology + ont.getId(), name,
+			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology + "list", urlOntology + "show/"+ont.getId(), name,
 					"ontology", name, ont.getIdentification(), "licensing"));
 		}
 		return arrayLinks;

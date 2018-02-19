@@ -13,6 +13,10 @@
  */
 package com.indracompany.sofia2.systemconfig.init;
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javax.annotation.PostConstruct;
 
 import org.junit.Test;
@@ -80,7 +84,7 @@ public class InitMongoDB {
 			}
 			if (ontologyRepository.findByIdentification("Restaurants") == null) {
 				Ontology ontology = new Ontology();
-				ontology.setJsonSchema("{}");
+				ontology.setJsonSchema(this.loadFromResources("Restaurants_schema.json"));
 				ontology.setIdentification("Restaurants");
 				ontology.setDescription("Ontology Restaurants for testing");
 				ontology.setActive(true);
@@ -119,5 +123,18 @@ public class InitMongoDB {
 			}
 		}
 	}
+	private String loadFromResources(String name) {
+		try {
+			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
+					Charset.forName("UTF-8"));
+
+		} catch (Exception e) {
+			log.error("**********************************************");
+			log.error("Error loading resource: " + name + ".Please check if this error affect your database");
+			log.error(e.getMessage());
+			return null;
+		}
+	}
+
 
 }
