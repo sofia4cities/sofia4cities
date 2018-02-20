@@ -88,8 +88,12 @@ spring: ## General Config
       properties.mail.smtp.starttls.enable: true
    jmx:
     enabled: true
+    
+   # Embedded ActiveMQ Configuration Example
+   activemq:
+      broker-url: vm://localhost
 
-              
+        
 ## LOGGING CONF
 logging:
    level:
@@ -98,4 +102,6 @@ logging:
       com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
       org.hibernate: INFO
+      
+ 
  
