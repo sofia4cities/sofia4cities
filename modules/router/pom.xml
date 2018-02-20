@@ -49,14 +49,11 @@
 			<artifactId>activemq-all</artifactId>
 			<version>${version.activemq}</version>
 		</dependency>
-
-	
-
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -119,13 +116,24 @@
 			<version>${version.camel}</version>
 		</dependency>
 
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-http-starter</artifactId>
+			<version>${version.camel}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-hystrix-starter</artifactId>
+			<version>${version.camel}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-amqp</artifactId>
 			<version>${version.camel}</version>
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>io.hawt</groupId>
