@@ -24,5 +24,7 @@
 		</route>
 		
 	</camelContext>
+	
+	
 
 </beans>

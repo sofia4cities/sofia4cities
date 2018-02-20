@@ -207,7 +207,11 @@
  */
 package com.indracompany.sofia2.router.controller;
 
-import org.apache.camel.ProducerTemplate;
+import java.io.File;
+import java.io.InputStream;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.RoutesDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -218,6 +222,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.indracompany.sofia2.router.service.RouterService;
+import com.indracompany.sofia2.router.util.Utils;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -226,6 +231,9 @@ import io.swagger.annotations.ApiOperation;
 @CrossOrigin(origins = "*")
 @RequestMapping("router")
 public class RouterControllerImpl implements RouterControllerInterface {
+	
+	@Autowired
+	CamelContext camelContext;
 	
 	@Autowired
 	@Qualifier("routerServiceProxy")
@@ -242,6 +250,22 @@ public class RouterControllerImpl implements RouterControllerInterface {
 	public String scriptingEngine(@RequestBody String login) throws Exception {
 		return (String)routerService.scriptingEngine(login);
 	}
+	
+	@RequestMapping(value = "/camel", method = RequestMethod.GET)
+	@ApiOperation(value = "camel")
+	public String camel( String login) throws Exception {
+		//camelContext.stop();
+		
+		String TEST_PATH_QUALITY = "./src/main/resources/router-camel-context2.xml";
+		
+		InputStream is = Utils.getResourceFromFile(new File(TEST_PATH_QUALITY));
+		RoutesDefinition routes = camelContext.loadRoutesDefinition(is);
+		
+		camelContext.addRouteDefinitions(routes.getRoutes());
+		
+		return routes.toString();
+	}
+	
 	
 
 }
