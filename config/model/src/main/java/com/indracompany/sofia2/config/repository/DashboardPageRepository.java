@@ -211,28 +211,18 @@
  *
  * All rights reserved
  ******************************************************************************/
+
 package com.indracompany.sofia2.config.repository;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.indracompany.sofia2.config.model.Gadget;
-import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.DashboardPage;
 
-public interface GadgetRepository extends JpaRepository<Gadget,String>{
-	
-	Gadget findById(String Id);
-	List<Gadget> findByUser(User user);
-	List<Gadget> findByUserAndIdentificationContaining(User user, String identification);
-	List<Gadget> findByUserAndDescriptionContaining(User user, String description);
-	List<Gadget> findByIdentificationAndTypeAndUser(String identification, String type, User user);
-	List<Gadget> findByIdentificationAndType(String identification, String type);
-	List<Gadget> findAllByOrderByIdentificationAsc();
-	List<Gadget> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
-	List<Gadget> findByIdentificationContaining(String identification);
-	List<Gadget> findByDescriptionContaining(String description);
-	List<Gadget> findByUserAndIdentificationContainingAndDescriptionContaining(User user ,String identification,String description);
-    Gadget findByIdentification(String identification);
-	
-}
+public interface DashboardPageRepository extends JpaRepository<DashboardPage, Integer>{
+
+	List<DashboardPage> findByIdentification(String identification);
+	List<DashboardPage> findByModel(String model);
+	List<DashboardPage> findByPosition(Integer position);
+	}

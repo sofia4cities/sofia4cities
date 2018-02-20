@@ -1,0 +1,52 @@
+
+@import url('https://fonts.googleapis.com/css?family=Libre+Baskerville:400,700');
+
+/*
+h3{
+	margin-bottom:8px; 
+	margin-top:8px; 
+	color:#555555;
+	font-size:12px;
+	font-weight:bold; 
+	text-shadow:0.5px 0.5px 0 rgba(0,0,0,0.2);
+	text-transform: uppercase;
+
+		}
+*/
+.card{
+	box-shadow:2px 2px 20px rgba(0,0,0,0.3); 
+	border:none; 
+	margin-bottom:20px;
+	background: white;
+	}
+.card-01 .card-body{
+	position:relative; 
+	padding-top:8px;
+	background: white;
+	border:none;
+	}
+.card-01.height-fix{
+	height:455px;
+	 overflow:hidden;
+	 }
+	 
+.card-01.height-fix .card-img-top{
+	width:auto!imporat;
+	cursor: pointer;
+	}
+
+h4.font-title{
+	margin-bottom:8px;   
+	margin-top:10px; 
+	padding-top:8px;
+	text-align:center;
+	text-transform: uppercase;
+		}
+
+.card-img-top {
+    display: block;
+    width: 100%;
+    cursor:pointer;
+    height: auto; 
+}
+

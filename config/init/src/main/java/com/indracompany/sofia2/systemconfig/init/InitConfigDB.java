@@ -2,14 +2,208 @@
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *      http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *
+ * Apache License
+ *                            Version 2.0, January 2004
+ *                         http://www.apache.org/licenses/
+ *
+ *    TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ *
+ *    1. Definitions.
+ *
+ *       "License" shall mean the terms and conditions for use, reproduction,
+ *       and distribution as defined by Sections 1 through 9 of this document.
+ *
+ *       "Licensor" shall mean the copyright owner or entity authorized by
+ *       the copyright owner that is granting the License.
+ *
+ *       "Legal Entity" shall mean the union of the acting entity and all
+ *       other entities that control, are controlled by, or are under common
+ *       control with that entity. For the purposes of this definition,
+ *       "control" means (i) the power, direct or indirect, to cause the
+ *       direction or management of such entity, whether by contract or
+ *       otherwise, or (ii) ownership of fifty percent (50%) or more of the
+ *       outstanding shares, or (iii) beneficial ownership of such entity.
+ *
+ *       "You" (or "Your") shall mean an individual or Legal Entity
+ *       exercising permissions granted by this License.
+ *
+ *       "Source" form shall mean the preferred form for making modifications,
+ *       including but not limited to software source code, documentation
+ *       source, and configuration files.
+ *
+ *       "Object" form shall mean any form resulting from mechanical
+ *       transformation or translation of a Source form, including but
+ *       not limited to compiled object code, generated documentation,
+ *       and conversions to other media types.
+ *
+ *       "Work" shall mean the work of authorship, whether in Source or
+ *       Object form, made available under the License, as indicated by a
+ *       copyright notice that is included in or attached to the work
+ *       (an example is provided in the Appendix below).
+ *
+ *       "Derivative Works" shall mean any work, whether in Source or Object
+ *       form, that is based on (or derived from) the Work and for which the
+ *       editorial revisions, annotations, elaborations, or other modifications
+ *       represent, as a whole, an original work of authorship. For the purposes
+ *       of this License, Derivative Works shall not include works that remain
+ *       separable from, or merely link (or bind by name) to the interfaces of,
+ *       the Work and Derivative Works thereof.
+ *
+ *       "Contribution" shall mean any work of authorship, including
+ *       the original version of the Work and any modifications or additions
+ *       to that Work or Derivative Works thereof, that is intentionally
+ *       submitted to Licensor for inclusion in the Work by the copyright owner
+ *       or by an individual or Legal Entity authorized to submit on behalf of
+ *       the copyright owner. For the purposes of this definition, "submitted"
+ *       means any form of electronic, verbal, or written communication sent
+ *       to the Licensor or its representatives, including but not limited to
+ *       communication on electronic mailing lists, source code control systems,
+ *       and issue tracking systems that are managed by, or on behalf of, the
+ *       Licensor for the purpose of discussing and improving the Work, but
+ *       excluding communication that is conspicuously marked or otherwise
+ *       designated in writing by the copyright owner as "Not a Contribution."
+ *
+ *       "Contributor" shall mean Licensor and any individual or Legal Entity
+ *       on behalf of whom a Contribution has been received by Licensor and
+ *       subsequently incorporated within the Work.
+ *
+ *    2. Grant of Copyright License. Subject to the terms and conditions of
+ *       this License, each Contributor hereby grants to You a perpetual,
+ *       worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+ *       copyright license to reproduce, prepare Derivative Works of,
+ *       publicly display, publicly perform, sublicense, and distribute the
+ *       Work and such Derivative Works in Source or Object form.
+ *
+ *    3. Grant of Patent License. Subject to the terms and conditions of
+ *       this License, each Contributor hereby grants to You a perpetual,
+ *       worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+ *       (except as stated in this section) patent license to make, have made,
+ *       use, offer to sell, sell, import, and otherwise transfer the Work,
+ *       where such license applies only to those patent claims licensable
+ *       by such Contributor that are necessarily infringed by their
+ *       Contribution(s) alone or by combination of their Contribution(s)
+ *       with the Work to which such Contribution(s) was submitted. If You
+ *       institute patent litigation against any entity (including a
+ *       cross-claim or counterclaim in a lawsuit) alleging that the Work
+ *       or a Contribution incorporated within the Work constitutes direct
+ *       or contributory patent infringement, then any patent licenses
+ *       granted to You under this License for that Work shall terminate
+ *       as of the date such litigation is filed.
+ *
+ *    4. Redistribution. You may reproduce and distribute copies of the
+ *       Work or Derivative Works thereof in any medium, with or without
+ *       modifications, and in Source or Object form, provided that You
+ *       meet the following conditions:
+ *
+ *       (a) You must give any other recipients of the Work or
+ *           Derivative Works a copy of this License; and
+ *
+ *       (b) You must cause any modified files to carry prominent notices
+ *           stating that You changed the files; and
+ *
+ *       (c) You must retain, in the Source form of any Derivative Works
+ *           that You distribute, all copyright, patent, trademark, and
+ *           attribution notices from the Source form of the Work,
+ *           excluding those notices that do not pertain to any part of
+ *           the Derivative Works; and
+ *
+ *       (d) If the Work includes a "NOTICE" text file as part of its
+ *           distribution, then any Derivative Works that You distribute must
+ *           include a readable copy of the attribution notices contained
+ *           within such NOTICE file, excluding those notices that do not
+ *           pertain to any part of the Derivative Works, in at least one
+ *           of the following places: within a NOTICE text file distributed
+ *           as part of the Derivative Works; within the Source form or
+ *           documentation, if provided along with the Derivative Works; or,
+ *           within a display generated by the Derivative Works, if and
+ *           wherever such third-party notices normally appear. The contents
+ *           of the NOTICE file are for informational purposes only and
+ *           do not modify the License. You may add Your own attribution
+ *           notices within Derivative Works that You distribute, alongside
+ *           or as an addendum to the NOTICE text from the Work, provided
+ *           that such additional attribution notices cannot be construed
+ *           as modifying the License.
+ *
+ *       You may add Your own copyright statement to Your modifications and
+ *       may provide additional or different license terms and conditions
+ *       for use, reproduction, or distribution of Your modifications, or
+ *       for any such Derivative Works as a whole, provided Your use,
+ *       reproduction, and distribution of the Work otherwise complies with
+ *       the conditions stated in this License.
+ *
+ *    5. Submission of Contributions. Unless You explicitly state otherwise,
+ *       any Contribution intentionally submitted for inclusion in the Work
+ *       by You to the Licensor shall be under the terms and conditions of
+ *       this License, without any additional terms or conditions.
+ *       Notwithstanding the above, nothing herein shall supersede or modify
+ *       the terms of any separate license agreement you may have executed
+ *       with Licensor regarding such Contributions.
+ *
+ *    6. Trademarks. This License does not grant permission to use the trade
+ *       names, trademarks, service marks, or product names of the Licensor,
+ *       except as required for reasonable and customary use in describing the
+ *       origin of the Work and reproducing the content of the NOTICE file.
+ *
+ *    7. Disclaimer of Warranty. Unless required by applicable law or
+ *       agreed to in writing, Licensor provides the Work (and each
+ *       Contributor provides its Contributions) on an "AS IS" BASIS,
+ *       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ *       implied, including, without limitation, any warranties or conditions
+ *       of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+ *       PARTICULAR PURPOSE. You are solely responsible for determining the
+ *       appropriateness of using or redistributing the Work and assume any
+ *       risks associated with Your exercise of permissions under this License.
+ *
+ *    8. Limitation of Liability. In no event and under no legal theory,
+ *       whether in tort (including negligence), contract, or otherwise,
+ *       unless required by applicable law (such as deliberate and grossly
+ *       negligent acts) or agreed to in writing, shall any Contributor be
+ *       liable to You for damages, including any direct, indirect, special,
+ *       incidental, or consequential damages of any character arising as a
+ *       result of this License or out of the use or inability to use the
+ *       Work (including but not limited to damages for loss of goodwill,
+ *       work stoppage, computer failure or malfunction, or any and all
+ *       other commercial damages or losses), even if such Contributor
+ *       has been advised of the possibility of such damages.
+ *
+ *    9. Accepting Warranty or Additional Liability. While redistributing
+ *       the Work or Derivative Works thereof, You may choose to offer,
+ *       and charge a fee for, acceptance of support, warranty, indemnity,
+ *       or other liability obligations and/or rights consistent with this
+ *       License. However, in accepting such obligations, You may act only
+ *       on Your own behalf and on Your sole responsibility, not on behalf
+ *       of any other Contributor, and only if You agree to indemnify,
+ *       defend, and hold each Contributor harmless for any liability
+ *       incurred by, or claims asserted against, such Contributor by reason
+ *       of your accepting any such warranty or additional liability.
+ *
+ *    END OF TERMS AND CONDITIONS
+ *
+ *    APPENDIX: How to apply the Apache License to your work.
+ *
+ *       To apply the Apache License to your work, attach the following
+ *       boilerplate notice, with the fields enclosed by brackets "{}"
+ *       replaced with your own identifying information. (Don't include
+ *       the brackets!)  The text should be enclosed in the appropriate
+ *       comment syntax for the file format. We also recommend that a
+ *       file or class name and description of purpose be included on the
+ *       same "printed page" as the copyright notice for easier
+ *       identification within third-party archives.
+ *
+ *    Copyright {yyyy} {name of copyright owner}
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
  */
 package com.indracompany.sofia2.systemconfig.init;
 
@@ -38,12 +232,10 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
-import com.indracompany.sofia2.config.model.DashboardType;
-import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.DashboardPage;
 import com.indracompany.sofia2.config.model.Gadget;
-import com.indracompany.sofia2.config.model.GadgetDataModel;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
-import com.indracompany.sofia2.config.model.GadgetQuery;
+import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GeneratorType;
 import com.indracompany.sofia2.config.model.InstanceGenerator;
 import com.indracompany.sofia2.config.model.Ontology;
@@ -61,11 +253,9 @@ import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
-import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
-import com.indracompany.sofia2.config.repository.DataModelRepository;
-import com.indracompany.sofia2.config.repository.GadgetDataModelRepository;
+import com.indracompany.sofia2.config.repository.DashboardPageRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
-import com.indracompany.sofia2.config.repository.GadgetQueryRepository;
+import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.GeneratorTypeRepository;
 import com.indracompany.sofia2.config.repository.InstanceGeneratorRepository;
@@ -102,15 +292,11 @@ public class InitConfigDB {
 	@Autowired
 	DashboardRepository dashboardRepository;
 	@Autowired
-	DashboardTypeRepository dashboardTypeRepository;
-	@Autowired
-	DataModelRepository dataModelRepository;
-	@Autowired
-	GadgetDataModelRepository gadgetDataModelRepository;
+	DashboardPageRepository dashboardPageRepository;
 	@Autowired
 	GadgetMeasureRepository gadgetMeasureRepository;
 	@Autowired
-	GadgetQueryRepository gadgetQueryRepository;
+	GadgetDatasourceRepository gadgetDatasourceRepository;
 	@Autowired
 	GadgetRepository gadgetRepository;
 	@Autowired
@@ -181,18 +367,18 @@ public class InitConfigDB {
 		init_UserToken();
 		log.info("OK USER_Token");
 		//
-		init_DashboardType();
-		log.info("OK init_DashboardType");
 		init_Dashboard();
 		log.info("OK init_Dashboard");
-		init_GadgetDataModel();
-		log.info("OK init_GadgetDataModel");
-		init_GadgetMeasure();
-		log.info("OK init_GadgetMeasure");
-		init_GadgetQuery();
-		log.info("OK init_GadgetQuery");
+		init_DashboardPage();
+		log.info("OK init_DashboardPage");
 		init_Gadget();
 		log.info("OK init_Gadget");
+		init_GadgetDatasource();
+		log.info("OK init_GadgetDatasource");
+		init_GadgetMeasure();
+		log.info("OK init_GadgetMeasure");
+		
+		
 		init_GeneratorType();
 		log.info("OK init_GeneratorType");
 		// init_InstanceGenerator();
@@ -410,14 +596,18 @@ public class InitConfigDB {
 		if (dashboards.isEmpty()) {
 			log.info("No dashboards...adding");
 			Dashboard dashboard = new Dashboard();
-			dashboard.setId("1");
-			dashboard.setModel("Model Dashboard Master");
-			dashboard.setUser(getUserDeveloper());
-			dashboard.setName("Dashboard Master");
-			dashboard.setDashboardType(this.dashboardTypeRepository.findAll().get(0));
+			dashboard.setIdentification("TempDashboard");
+			dashboard.setDescription("Dashboard show temperatures around the country");
+			//dashboard.setUser("518e04c4-898f-4c97-8c0f-5092276078b6");
+			dashboard.setJsoni18n("");
+			dashboard.setCustomcss("");
+			dashboard.setCustomjs("");
+			dashboard.setPublic(true);
+			dashboard.setUser(getUserCollaborator());
+					
 			dashboardRepository.save(dashboard);
 		}
-	}
+	}	
 
 	private User getUserDeveloper() {
 		if (userCollaborator == null)
@@ -430,173 +620,54 @@ public class InitConfigDB {
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
 		return userAdministrator;
 	}
+	
+	private Token getTokenCollaborator() {
+		if (tokenCollaborator==null) tokenCollaborator=this.tokenRepository.findByToken("acbca01b-da32-469e-945d-05bb6cd1552e");
+		return tokenCollaborator;
+	}
+	
 
-	public void init_DashboardType() {
+	private Ontology getOntologyCollaborator() {
+		if (ontologyCollaborator==null) ontologyCollaborator=this.ontologyRepository.findByIdentification("Ontology Master");
+		return ontologyCollaborator;
+	}
 
-		log.info("init DashboardType");
-		List<DashboardType> dashboardTypes = this.dashboardTypeRepository.findAll();
-		if (dashboardTypes.isEmpty()) {
-			log.info("No dashboards...adding");
-			DashboardType dashboardType = new DashboardType();
-			dashboardType.setId(1);
-			dashboardType.setModel("Modelo 1");
-			dashboardType.setUser(getUserDeveloper());
-			dashboardType.setPublic(true);
-			dashboardType.setType("Tipo de modelo 1");
-			dashboardTypeRepository.save(dashboardType);
+	private GadgetDatasource getGadgetDatasourceCollaborator() {
+		if (gadgetDatasourceCollaborator==null) gadgetDatasourceCollaborator=this.gadgetDatasourceRepository.findById("942b6983-286c-43aa-bbc1-e46038de4181");
+		return gadgetDatasourceCollaborator;
+	}
+	
+	private Gadget getGadgetCollaborator() {
+		if (gadgetCollaborator==null) gadgetCollaborator=this.gadgetRepository.findById("c41a9d92-d08a-4e94-baf8-3679ff5cd347");
+		return gadgetCollaborator;
+		
+	}
+
+	public void init_DashboardPage() {
+
+		log.info("init DashboardPage");
+		List<DashboardPage> dashboardPages = this.dashboardPageRepository.findAll();
+		if (dashboardPages.isEmpty()) {
+			log.info("No dashboardsPages...adding");
+			DashboardPage dashboardpage = new DashboardPage();
+			//ID y fechas se generan "automaticamente". No se introducen a mano.
+			//Las tengo q inicializar?
+			//dashboardpage.setId("1");
+			//Date date = new Date();
+		    //dashboardpage.setCreatedAt(date);
+			//dashboardpage.setUpdatedAt(date);
+			dashboardpage.setIdentification("Temp Page");
+			dashboardpage.setDescription("{}");
+			dashboardpage.setModel("{}");
+			dashboardpage.setPosition(1);
+					
+			dashboardPageRepository.save(dashboardpage);
 
 		}
 
 	}
 
-	public void init_DataModel() {
-
-		log.info("init DataModel");
-		List<DataModel> dataModels = this.dataModelRepository.findAll();
-		if (dataModels.isEmpty()) {
-			log.info("No DataModels ...");
-			DataModel dataModel = new DataModel();
-			dataModel.setName("Alarm");
-			dataModel.setTypeEnum(DataModel.MainType.SmartCities);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Alarm.json"));
-			dataModel.setDescription("Base Alarm: assetId, timestamp, severity, source, details and status..");
-			dataModel.setLabels("Alarm,General,IoT");
-			dataModel.setUser(getUserAdministrator());
-			dataModelRepository.save(dataModel);
-			//
-			dataModel = new DataModel();
-			dataModel.setName("Audit");
-			dataModel.setTypeEnum(DataModel.MainType.SmartCities);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Audit.json"));
-			dataModel.setDescription("Base Audit");
-			dataModel.setLabels("Audit,General,IoT");
-			dataModel.setUser(getUserAdministrator());
-			dataModelRepository.save(dataModel);
-			//
-			dataModel = new DataModel();
-			dataModel.setName("Device");
-			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Device.json"));
-			dataModel.setDescription("Base Device");
-			dataModel.setLabels("Audit,General,IoT,Smart Cities");
-			dataModel.setUser(getUserAdministrator());
-			dataModelRepository.save(dataModel);
-			//
-			dataModel = new DataModel();
-			dataModel.setName("EmptyBase");
-			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_EmptyBase.json"));
-			dataModel.setDescription("Base DataModel");
-			dataModel.setLabels("General,IoT");
-			dataModel.setUser(getUserAdministrator());
-			dataModelRepository.save(dataModel);
-			//
-			dataModel = new DataModel();
-			dataModel.setName("Feed");
-			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Feed.json"));
-			dataModel.setDescription("Base Feed");
-			dataModel.setLabels("Audit,General,IoT,Smart Cities");
-			dataModel.setUser(getUserAdministrator());
-			dataModelRepository.save(dataModel);
-			//
-			dataModel = new DataModel();
-			dataModel.setName("Twitter");
-			dataModel.setTypeEnum(DataModel.MainType.Twitter);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter.json"));
-			dataModel.setDescription("Twitter DataModel");
-			dataModel.setLabels("Twitter,Social Media");
-			dataModel.setUser(getUserAdministrator());
-			dataModelRepository.save(dataModel);
-			//
-			dataModel = new DataModel();
-			dataModel.setName("WasteContainer");
-			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_WasteContainer.json"));
-			dataModel.setDescription("GSMA WasteContainer");
-			dataModel.setLabels("General,IoT,Smart Cities");
-			dataModel.setUser(getUserAdministrator());
-			dataModelRepository.save(dataModel);
-			//
-
-		}
-
-	}
-
-	public void init_GadgetDataModel() {
-
-		log.info("init GadgetDataModel");
-		List<GadgetDataModel> gadgetDataModels = this.gadgetDataModelRepository.findAll();
-		if (gadgetDataModels.isEmpty()) {
-			log.info("No gadget data models ...");
-			GadgetDataModel gadgetDM = new GadgetDataModel();
-			gadgetDM.setIdentification("1");
-			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
-			gadgetDM.setUser(getUserDeveloper());
-			gadgetDM.setPublic(true);
-			gadgetDataModelRepository.save(gadgetDM);
-		}
-
-	}
-
-	public void init_GadgetMeasure() {
-
-		log.info("init GadgetMeasure");
-		List<GadgetMeasure> gadgetMeasures = this.gadgetMeasureRepository.findAll();
-		if (gadgetMeasures.isEmpty()) {
-			log.info("No gadget measures ...");
-			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			gadgetMeasure.setAttribute("Attr1");
-			List<Gadget> gadgets = this.gadgetRepository.findAll();
-			Gadget gadget;
-			if (gadgets.isEmpty()) {
-				log.info("No gadgets ...");
-				gadget = new Gadget();
-				gadget.setDbType("DBC");
-				gadget.setUser(getUserDeveloper());
-				gadget.setPublic(true);
-				gadget.setName("Gadget1");
-				gadget.setType("Tipo 1");
-
-				gadgetRepository.save(gadget);
-			} else {
-				gadget = gadgetRepository.findAll().get(0);
-			}
-			gadgetMeasure.setGadget(gadget);
-			gadgetMeasureRepository.save(gadgetMeasure);
-		}
-
-	}
-
-	public void init_GadgetQuery() {
-
-		log.info("init GadgetQuery");
-		List<GadgetQuery> gadgetQuerys = this.gadgetQueryRepository.findAll();
-		if (gadgetQuerys.isEmpty()) {
-			log.info("No gadget querys ...");
-			GadgetQuery gadgetQuery = new GadgetQuery();
-			gadgetQuery.setQuery("Query1");
-			List<Gadget> gadgets = this.gadgetRepository.findAll();
-			Gadget gadget;
-			if (gadgets.isEmpty()) {
-				log.info("No gadgets ...");
-				gadget = new Gadget();
-				gadget.setDbType("DBC");
-				gadget.setUser(getUserDeveloper());
-				gadget.setPublic(true);
-				gadget.setName("Gadget1");
-				gadget.setType("Tipo 1");
-
-				gadgetRepository.save(gadget);
-			} else {
-				gadget = gadgetRepository.findAll().get(0);
-			}
-			gadgetQuery.setGadget(gadget);
-			gadgetQueryRepository.save(gadgetQuery);
-		}
-
-	}
-
+	
 	public void init_Gadget() {
 
 		log.info("init Gadget");
@@ -604,13 +675,63 @@ public class InitConfigDB {
 		if (gadgets.isEmpty()) {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
-			gadget.setDbType("RTDB");
-			gadget.setUser(getUserDeveloper());
+			
+			//ID y las fechas se generan de manera "automática". No se van a 
+			//introducir a mano -> tengo q inicializarlos?
+		    //gadget.setId("1");
+			//Date date = new Date();
+		    //gadget.setCreatedAt(date);
+			//gadget.setUpdatedAt(date);
+			gadget.setIdentification("My Gadget");
+			//gadget.setUser("518e04c4-898f-4c97-8c0f-5092276078b6");
 			gadget.setPublic(true);
-			gadget.setName("Gadget Example");
-			gadget.setType("Type 1");
+			gadget.setDescription("This is my new RT gadget for temperature evolution");
+			gadget.setType("Area");
+			gadget.setConfig("");
+			gadget.setUser(getUserCollaborator());
 
 			gadgetRepository.save(gadget);
+		}
+
+	}	
+	
+
+	public void init_GadgetDatasource() {
+
+		log.info("init GadgetDatasource");
+		List<GadgetDatasource> gadgetDatasource = this.gadgetDatasourceRepository.findAll();
+		if (gadgetDatasource.isEmpty()) {
+			log.info("No gadget querys ...");
+			GadgetDatasource gadgetDatasources = new GadgetDatasource();
+			gadgetDatasources.setId("1");
+			gadgetDatasources.setIdentification("My Gadget");
+			gadgetDatasources.setMode("Streaming");
+			gadgetDatasources.setQuery("");
+			gadgetDatasources.setBdtype("BDTR");
+			gadgetDatasources.setOntology(getOntologyCollaborator());
+			gadgetDatasources.setToken(getTokenCollaborator());
+			gadgetDatasources.setRefresh(0);
+			gadgetDatasources.setMaxvalues(150);
+			gadgetDatasources.setConfig("{‘name’:”Temperature Evolution");
+			gadgetDatasources.setUser(getUserCollaborator());
+			gadgetDatasourceRepository.save(gadgetDatasources);
+		}
+
+	}
+	
+	public void init_GadgetMeasure() {
+
+		log.info("init GadgetMeasure");
+		List<GadgetMeasure> gadgetMeasures = this.gadgetMeasureRepository.findAll();
+		if (gadgetMeasures.isEmpty()) {
+			log.info("No gadget measures ...");
+			GadgetMeasure gadgetMeasure = new GadgetMeasure();
+			//inicializo el id?
+			//gadgetMeasure.setId("1");
+			gadgetMeasure.setDatasource(getGadgetDatasourceCollaborator());
+			gadgetMeasure.setConfig("‘field’:’temperature’,’transformation’:’’}],’name’:’Avg. Temperature’");
+			gadgetMeasure.setGadget(getGadgetCollaborator());
+			gadgetMeasureRepository.save(gadgetMeasure);
 		}
 
 	}

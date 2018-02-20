@@ -211,28 +211,70 @@
  *
  * All rights reserved
  ******************************************************************************/
-package com.indracompany.sofia2.config.repository;
 
-import java.util.List;
+package com.indracompany.sofia2.config.model;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-import com.indracompany.sofia2.config.model.Gadget;
-import com.indracompany.sofia2.config.model.User;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.Type;
+import org.springframework.beans.factory.annotation.Configurable;
 
-public interface GadgetRepository extends JpaRepository<Gadget,String>{
+import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Configurable
+@Entity
+@Table(name = "GADGET_DATASOURCE")
+public class GadgetDatasource extends AuditableEntityWithUUID{
+		
+	@Column(name = "IDENTIFICATION", length = 100, unique=true ,nullable = false)
+    @Getter @Setter private String 	identification;
 	
-	Gadget findById(String Id);
-	List<Gadget> findByUser(User user);
-	List<Gadget> findByUserAndIdentificationContaining(User user, String identification);
-	List<Gadget> findByUserAndDescriptionContaining(User user, String description);
-	List<Gadget> findByIdentificationAndTypeAndUser(String identification, String type, User user);
-	List<Gadget> findByIdentificationAndType(String identification, String type);
-	List<Gadget> findAllByOrderByIdentificationAsc();
-	List<Gadget> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
-	List<Gadget> findByIdentificationContaining(String identification);
-	List<Gadget> findByDescriptionContaining(String description);
-	List<Gadget> findByUserAndIdentificationContainingAndDescriptionContaining(User user ,String identification,String description);
-    Gadget findByIdentification(String identification);
+	@Column(name = "MODE", length = 45,nullable = false)
+    @Getter @Setter private String mode;
 	
+	@Column(name = "QUERY",nullable = false)
+	@Type(type ="org.hibernate.type.TextType")
+    @Lob
+    @Getter @Setter  private String query;
+	
+	@Column(name = "BDTYPE", length = 10, nullable=false)
+	@Getter @Setter private String bdtype;
+	
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "IDENTIFICATION")
+	@Getter @Setter private Ontology ontology;
+	
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID")
+	@Getter @Setter private Token token;
+	
+	@ManyToOne
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
+	@Getter @Setter private User user;
+	
+	@Column(name = "REFRESH")
+	@Getter @Setter private Integer refresh;
+	
+	@Column(name = "MAXVALUES",columnDefinition = "int default 10")
+	@Getter @Setter private Integer maxvalues;
+	
+	@Column(name = "DESCRIPTION", length = 512)
+    @Getter @Setter private String description;
+	
+	 @Column(name = "CONFIG")
+	 @Lob
+	 @Type(type ="org.hibernate.type.TextType")
+    @Getter @Setter private String config;
 }
