@@ -49,7 +49,6 @@ public class ApiManagerService {
 
 	@Autowired
 	private ApiOperationRepository apiOperationRepository;
-	
 
 	public ApiRepository getApiRepository() {
 		return apiRepository;
@@ -73,13 +72,12 @@ public class ApiManagerService {
 		String version = "1";
 		Pattern pattern = Pattern.compile("(.*)/api/v(.*)/");
 		Matcher matcher = pattern.matcher(pathInfo);
-		if (matcher.find())
-		{
+		if (matcher.find()) {
 			String param = matcher.group(2);
 			version = param.substring(0, param.indexOf("/"));
 			return version;
 		}
-		
+
 		else {
 			version = pathInfo;
 
@@ -103,11 +101,11 @@ public class ApiManagerService {
 			}
 
 			return version;
-         }
+		}
 	}
 
 	public String getApiIdentifier(String pathInfo) throws BadRequestException {
-	
+
 		String apiVersion = this.getApiVersion(pathInfo);
 
 		String apiIdentifier = pathInfo.substring(pathInfo.indexOf(apiVersion + "/") + (apiVersion + "/").length());
@@ -127,7 +125,7 @@ public class ApiManagerService {
 
 	public Api getApi(String apiIdentifier, int apiVersion, String tipoapi)
 			throws BadRequestException, ForbiddenException {
-		
+
 		List<Api> api = null;
 
 		if (tipoapi != null) {
@@ -137,7 +135,6 @@ public class ApiManagerService {
 		}
 		return api.get(0);
 	}
-
 
 	public boolean isPathQuery(String pathInfo) {
 
@@ -154,7 +151,7 @@ public class ApiManagerService {
 	public ApiOperation getCustomSQL(String pathInfo, Api api, String operation) {
 
 		String apiIdentifier = this.getApiIdentifier(pathInfo);
-		
+
 		String opIdentifier = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 		if (opIdentifier.startsWith("\\") || opIdentifier.startsWith("/")) {
 			opIdentifier = opIdentifier.substring(1);
@@ -162,12 +159,12 @@ public class ApiManagerService {
 
 		List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
 
-		String match = apiIdentifier+"_"+operation;
-		
-		if (!opIdentifier.equals("") ) {
-			match+="_"+opIdentifier;
+		String match = apiIdentifier + "_" + operation;
+
+		if (!opIdentifier.equals("")) {
+			match += "_" + opIdentifier;
 		}
-		
+
 		for (ApiOperation operacion : operaciones) {
 			if (operacion.getIdentification().equals(match)) {
 				return operacion;
@@ -176,44 +173,53 @@ public class ApiManagerService {
 		return null;
 	}
 
-	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request, String body, HashSet<ApiQueryParameter> queryParametersCustomQuery) {
+	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request, String body,
+			HashSet<ApiQueryParameter> queryParametersCustomQuery) {
 
 		HashMap<String, String> customqueryparametersvalues = new HashMap<String, String>();
 		for (ApiQueryParameter customqueryparameter : queryParametersCustomQuery) {
 			String paramvalue = request.getParameter(customqueryparameter.getName());
 			if (paramvalue == null) {
-				if (customqueryparameter.getHeaderType().name().equalsIgnoreCase(ApiQueryParameter.HeaderType.body.name())) {
+				if (customqueryparameter.getHeaderType().name()
+						.equalsIgnoreCase(ApiQueryParameter.HeaderType.body.name())) {
 					paramvalue = body;
 				}
 			} else {
-				if (customqueryparameter.getDataType().name().equalsIgnoreCase(ApiQueryParameter.DataType.date.name())) {
+				if (customqueryparameter.getDataType().name()
+						.equalsIgnoreCase(ApiQueryParameter.DataType.date.name())) {
 					try {
 						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 						df.parse(paramvalue);
-						paramvalue = "'" + paramvalue + "'";
+						paramvalue = "\"" + paramvalue + "\"";
 					} catch (Exception e) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Date" };
-						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype "+parametros[0]);
+						throw new BadRequestException(
+								"com.indra.sofia2.api.service.wrongparametertype " + parametros[0]);
 					}
-				} else if (customqueryparameter.getDataType().name().equalsIgnoreCase(ApiQueryParameter.DataType.string.name())) {
+				} else if (customqueryparameter.getDataType().name()
+						.equalsIgnoreCase(ApiQueryParameter.DataType.string.name())) {
 					try {
 						paramvalue.toString();
-						paramvalue = "'" + paramvalue + "'";
+						paramvalue = "\"" + paramvalue + "\"";
 					} catch (Exception e) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
-						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
+						throw new BadRequestException(
+								"com.indra.sofia2.api.service.wrongparametertype" + parametros[0]);
 					}
-				} else if (customqueryparameter.getDataType().name().equalsIgnoreCase(ApiQueryParameter.DataType.number.name())) {
+				} else if (customqueryparameter.getDataType().name()
+						.equalsIgnoreCase(ApiQueryParameter.DataType.number.name())) {
 					try {
 						Double.parseDouble(paramvalue);
 					} catch (Exception e) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Integer" };
-						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
+						throw new BadRequestException(
+								"com.indra.sofia2.api.service.wrongparametertype" + parametros[0]);
 					}
 				} else if (customqueryparameter.getDataType().name().equalsIgnoreCase("boolean")) {
 					if (!paramvalue.equalsIgnoreCase("true") && !paramvalue.equalsIgnoreCase("false")) {
 						Object parametros[] = { "$" + customqueryparameter.getName(), "Boolean" };
-						throw new BadRequestException("com.indra.sofia2.api.service.wrongparametertype"+parametros[0]);
+						throw new BadRequestException(
+								"com.indra.sofia2.api.service.wrongparametertype" + parametros[0]);
 					}
 				}
 				customqueryparametersvalues.put(customqueryparameter.getName(), paramvalue);
@@ -224,11 +230,7 @@ public class ApiManagerService {
 
 	public String buildQuery(String queryDb, HashMap<String, String> queryParametersValues) {
 		for (String param : queryParametersValues.keySet()) {
-			
-			System.out.println(param);
 			String value = queryParametersValues.get(param);
-			System.out.println(value);
-			
 			queryDb = queryDb.replace("{$" + param + "}", queryParametersValues.get(param));
 		}
 		return queryDb;
@@ -282,11 +284,10 @@ public class ApiManagerService {
 		}
 		return buffer.toString();
 	}
-	
-	//TODO ALLL
-	public String prepareOntologiaQuery(String ontologiaRecurso, String sqlQuery){
+
+	// TODO ALLL
+	public String prepareOntologiaQuery(String ontologiaRecurso, String sqlQuery) {
 		return "";
 	}
-	
 
 }

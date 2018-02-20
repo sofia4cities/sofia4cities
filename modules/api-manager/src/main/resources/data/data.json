@@ -1,5 +1,5 @@
 {
-   "identification":"APITEST",
+   "identification":"APIPRODUCT",
    "version":1,
    "type":"iot",
    "category":"publicidad",
@@ -7,17 +7,13 @@
    "ontologyId":"f8420a03-f733-4dfd-9699-b16ccf1835e0",
    "endpoint":"https://sofia2.com/sib-api/api/v1/TEST2",
    "endpointExt":"string",
-   "description":"APITEST",
-   "metainf":"APITEST",
+   "description":"APIPRODUCT",
+   "metainf":"APIPRODUCT",
    "imageType":"string",
    "userId":"string",
    "operations":[
       {
          "description":"PUT_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
          "operation":"PUT",
          "path":"/",
          "queryParams":[
@@ -26,16 +22,32 @@
                "description":"",
                "name":"body",
                "dataType":"string",
-               "value":"#/definitions/String"
+               "value":""
+            }
+         ]
+      },
+      {
+         "description":"PUT_DESC_ID",
+         "operation":"PUT",
+         "path":"/{id}",
+         "queryParams":[
+            {
+               "headerType":"body",
+               "description":"",
+               "name":"body",
+               "dataType":"string",
+               "value":""
+            },
+            {
+               "headerType":"path",
+               "description":"",
+               "name":"id",
+               "dataType":"string"
             }
          ]
       },
       {
          "description":"POST_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
          "operation":"POST",
          "path":"/",
          "queryParams":[
@@ -44,18 +56,14 @@
                "description":"",
                "name":"body",
                "dataType":"string",
-               "value":"#/definitions/String"
+               "value":""
             }
          ]
       },
       {
-         "description":"QUERY_CONFIGURATION_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
+         "description":"QUERY_CONFIGURATION",
          "operation":"GET",
-         "path":"/bycity?$city={city}&$casa={casa}",
+         "path":"/byName?$name={name}",
          "queryParams":[
             {
                "headerType":"query",
@@ -83,16 +91,10 @@
                "description":"",
                "name":"query",
                "dataType":"string",
-               "value":"select * from WeatherDetails where WeatherDetails.location.city = {$city} and WeatherDetails.location.casa = {$casa} limit 3"
+               "value":"select * from product where name = {$name}"
             },
             {
-               "name":"city",
-               "dataType":"string",
-               "description":"",
-               "headerType":"query"
-            },
-            {
-               "name":"casa",
+               "name":"name",
                "dataType":"string",
                "description":"",
                "headerType":"query"
@@ -100,11 +102,7 @@
          ]
       },
       {
-         "description":"GET_ID_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
+         "description":"GET_ID",
          "operation":"GET",
          "path":"/{id}",
          "queryParams":[
@@ -116,30 +114,9 @@
             }
          ]
       },
+     
       {
-         "description":"DELETE_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
-         "operation":"DELETE",
-         "path":"/",
-         "queryParams":[
-            {
-               "headerType":"body",
-               "description":"",
-               "name":"body",
-               "dataType":"string",
-               "value":"#/definitions/String"
-            }
-         ]
-      },
-      {
-         "description":"DELETE_ID_DESC",
-         "endpoint":null,
-         "headers":[
-
-         ],
+         "description":"DELETE_ID",
          "operation":"DELETE",
          "path":"/{id}",
          "queryParams":[

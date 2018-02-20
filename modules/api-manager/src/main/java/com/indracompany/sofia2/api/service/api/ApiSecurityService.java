@@ -130,13 +130,13 @@ public class ApiSecurityService {
 		
 		if (api==null || user == null) return false;
 		
-		boolean can = api.getState().name().equalsIgnoreCase(Api.ApiType.CREATED.name()) && (api.getUser().getUserId().equals(user.getUserId()));
+		boolean can = api.getState().name().equalsIgnoreCase(Api.ApiStates.CREATED.name()) && (api.getUser().getUserId().equals(user.getUserId()));
 		if (can) return true;
 		else {
 			String state = api.getState().name();
-			can =  (state.equalsIgnoreCase(Api.ApiType.PUBLISHED.name()) || 
-					state.equalsIgnoreCase(Api.ApiType.DEPRECATED.name()) ||
-					state.equalsIgnoreCase(Api.ApiType.DEVELOPMENT.name()) );
+			can =  (state.equalsIgnoreCase(Api.ApiStates.PUBLISHED.name()) || 
+					state.equalsIgnoreCase(Api.ApiStates.DEPRECATED.name()) ||
+					state.equalsIgnoreCase(Api.ApiStates.DEVELOPMENT.name()) );
 			return can;
 		}
 		

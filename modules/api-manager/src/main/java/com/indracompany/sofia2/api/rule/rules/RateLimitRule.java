@@ -66,13 +66,15 @@ public class RateLimitRule extends DefaultRuleBase {
 		String AUTHENTICATION_HEADER = (String) data.get(ApiServiceInterface.AUTHENTICATION_HEADER);
 		
 		Integer limit = api.getApilimit();
-		if (limit==null) limit=2;
-		
-		boolean apiLimit = rateLimitingService.processRateLimit(AUTHENTICATION_HEADER, limit);
-		
-		if (!apiLimit) {
-			stopAllNextRules(facts, "API LIMIT REACHED "+AUTHENTICATION_HEADER,DefaultRuleBase.ReasonType.API_LIMIT);
+		if (limit!=null) {
+			boolean apiLimit = rateLimitingService.processRateLimit(AUTHENTICATION_HEADER, limit);
+			
+			if (!apiLimit) {
+				stopAllNextRules(facts, "API LIMIT REACHED "+AUTHENTICATION_HEADER,DefaultRuleBase.ReasonType.API_LIMIT);
+			}
 		}
+		
+		
 		
 		
 	}
