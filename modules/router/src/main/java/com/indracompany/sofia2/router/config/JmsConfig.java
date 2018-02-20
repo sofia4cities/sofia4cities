@@ -207,17 +207,56 @@
  */
 package com.indracompany.sofia2.router.config;
 
-import org.springframework.context.annotation.ComponentScan;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.broker.jmx.ManagementContext;
+import org.apache.activemq.jms.pool.PooledConnectionFactory;
+import org.apache.camel.component.amqp.AMQPComponent;
+import org.apache.qpid.jms.JmsConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
-import com.indracompany.sofia2.router.config.CamelConfig;
-import com.indracompany.sofia2.router.config.MetricsConfig;
-import com.indracompany.sofia2.router.config.ServicesConfig;
 
 @Configuration()
-@ComponentScan({ "com.indracompany.sofia2.router.service",
-	             "com.indracompany.sofia2.router.config"})
-public class RouterConfig  {
+
+public class JmsConfig  {
+	
+	  @Value("${spring.activemq.broker-url}")
+	  private String brokerUrl;
+	
+	 @Bean(name = "amqp-component")
+	 AMQPComponent amqpComponent() {
+		 JmsConnectionFactory qpid = new JmsConnectionFactory(brokerUrl);
+		 qpid.setTopicPrefix("topic://");
+
+		 PooledConnectionFactory factory = new PooledConnectionFactory();
+		 factory.setConnectionFactory(qpid);
+
+		 return new AMQPComponent(factory);
+	 }
+	 
+	 @Bean(initMethod = "start", destroyMethod = "stop")
+	 public BrokerService broker() throws Exception {
+		 final BrokerService broker = new BrokerService();
+		 broker.addConnector(brokerUrl);
+		 
+		 broker.setPersistent(true);
+		 final ManagementContext managementContext = new ManagementContext();
+		 managementContext.setCreateConnector(true);
+		 broker.setManagementContext(managementContext);
+
+		 return broker;
+	 }
+	  
+
+
+	 @Bean
+	 public ActiveMQConnectionFactory activeMQConnectionFactory() {
+		 ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
+		 activeMQConnectionFactory.setBrokerURL(brokerUrl);
+
+		 return activeMQConnectionFactory;
+	 }
 
 }
