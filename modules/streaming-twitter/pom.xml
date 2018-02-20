@@ -7,9 +7,10 @@
 		<version>5.0.0-SNAPSHOT</version>
 		<relativePath>../..</relativePath>
 	</parent>
-	<groupId>com.indracompany.sofia2</groupId>
+
 	<artifactId>streaming-twitter</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
 	<name>streaming-twitter</name>
 	<description>Module streaming twitter</description>
 	<properties>
@@ -45,7 +46,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-scheduler</artifactId>
+			<artifactId>sofia2-planner</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>

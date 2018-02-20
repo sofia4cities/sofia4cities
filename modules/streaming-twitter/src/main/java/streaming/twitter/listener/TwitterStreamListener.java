@@ -96,8 +96,8 @@ public class TwitterStreamListener implements StreamListener {
 	private LinkedBlockingQueue<Tweet> tweetsQueue;
 
 	// private TwitterStream twitterStream;
-	private int countInserts = 0;
-	private int maxInserts;
+	//private int countInserts = 0;
+	//private int maxInserts;
 
 	private static final int QUEUE_LENGTH = 25;
 	private static final String A_PATTERN = "<a href=\"(.*)\" rel=\"(.*)\">(.*)</a>";
@@ -232,6 +232,7 @@ public class TwitterStreamListener implements StreamListener {
 
 	class ListenerThread implements Runnable {
 
+		@SuppressWarnings("unused")
 		private TwitterStreamListener listener;
 
 		public ListenerThread(TwitterStreamListener listener) {
@@ -245,8 +246,8 @@ public class TwitterStreamListener implements StreamListener {
 					Tweet tweet = tweetsQueue.poll();
 					if (tweet != null) {
 						// insertTweet
-						String foundLongitude = "0.0";
-						String foundLatitude = "0.0";
+						//String foundLongitude = "0.0";
+						//String foundLatitude = "0.0";
 
 						/* Ontology instance generation */
 						SimpleDateFormat sdf_mongo = new SimpleDateFormat(MONGO_DATE_FORMAT);
