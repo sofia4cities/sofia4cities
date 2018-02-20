@@ -10,6 +10,7 @@ var OntologyCreateController = function() {
 	var validTypes = ["string","object","number","date","timestamp","array","binary"]; // Valid property types	
 	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var validJsonSchema = false;
+	var validMetaInf = false;
 	
 	
 	
@@ -303,7 +304,7 @@ var OntologyCreateController = function() {
             errorElement: 'span', //default input error message container
             errorClass: 'help-block help-block-error', // default input error message class
             focusInvalid: false, // do not focus the last invalid input
-            ignore: ":hidden:not('.selectpicker, .hidden-validation'), :not(:visible('.tagsinput'))", // validate all fields including form hidden input but not selectpicker
+            ignore: ":hidden:not('.selectpicker, .hidden-validation')", // validate all fields including form hidden input but not selectpicker
 			lang: currentLanguage,
 			// custom messages
             messages: {	
@@ -313,8 +314,7 @@ var OntologyCreateController = function() {
 			// validation rules
             rules: {
 				ontologyId:		{ minlength: 5, required: true },
-                identification:	{ minlength: 5, required: true },
-				metainf:		{ required: true},				
+                identification:	{ minlength: 5, required: true },						
 				datamodelid:	{ required: true},
 				jsonschema:		{ required: true},
 				description:	{ required: true }
@@ -324,10 +324,12 @@ var OntologyCreateController = function() {
                 error1.show();
                 App.scrollTo(error1, -200);
             },
-            errorPlacement: function(error, element) {
+            errorPlacement: function(error, element) {				
                 if 		( element.is(':checkbox'))	{ error.insertAfter(element.closest(".md-checkbox-list, .md-checkbox-inline, .checkbox-list, .checkbox-inline")); }
 				else if ( element.is(':radio'))		{ error.insertAfter(element.closest(".md-radio-list, .md-radio-inline, .radio-list,.radio-inline")); }
-				else if ( element.is(':hidden'))	{ $('#datamodelError').removeClass('hide'); }				
+				else if ( element.is(':hidden'))	{ 
+					if ($('#datamodelid').val() === '') { $('#datamodelError').removeClass('hide');} 					
+				}				
 				else { error.insertAfter(element); }
             },
             highlight: function(element) { // hightlight error inputs
@@ -343,17 +345,19 @@ var OntologyCreateController = function() {
             submitHandler: function(form) {
                
                 error1.hide();
-				
-				validJsonSchema = validateJsonSchema();
-				console.log('VALIDO?: ' + validJsonSchema);
+				// VALIDATE JSON SCHEMA 
+				validJsonSchema = validateJsonSchema();				
 				if (validJsonSchema){
-					//form.submit();
-					console.log('ENVIAAAAAA...');
+					
+					// VALIDATE TAGSINPUT
+					validMetaInf = validateTagsInput();
+					if (validMetaInf) {
+						form.submit();					
+					}
 				}
 				else {
 					success1.hide();
-					error1.show();					
-					
+					error1.show();										
 				}
 				
 			}
@@ -369,6 +373,13 @@ var OntologyCreateController = function() {
 		$('.selectpicker').on('change', function () {
 			$(this).valid();
 		});
+		
+		// tagsinput validate fix when handleValidation()
+		$('#metainf').on('itemAdded', function(event) {
+			
+			if ($(this).val() !== ''){ $('#metainferror').addClass('hide');}
+		});
+				
 		
 		// 	INPUT MASK FOR ontology identification allow only letters, numbers and -_
 		$("#identification").inputmask({ regex: "[a-zA-Z0-9_-]*", greedy: false });
@@ -602,6 +613,11 @@ var OntologyCreateController = function() {
 		return isValid;
 	}	
 	
+	
+	// VALIDATE TAGSINPUT
+	var validateTagsInput = function(){		
+		if ($('#metainf').val() === '') { $('#metainferror').removeClass('hide').addClass('help-block-error'); console.log('metainf ERROR'); return false;  } else { console.log('metainf OK'); return true;} 
+	}
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{		

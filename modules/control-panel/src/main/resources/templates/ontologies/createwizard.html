@@ -167,9 +167,10 @@
 														<div class="col-md-12 col-sm-12 col-xs-12">
 															<div class="form-group">
 																<label th:text="#{ontology.metainf}" class="popovers font-sm" data-trigger="hover" data-placement="top" data-container="body" th:attr=" data-content=#{ontology.metainf.help},data-title=#{ontology.metainf}"><i class="la la-lightbulb-o font-md"></i> Meta-inf</label><span class="required"> (*)</span>
-																<input  th:tabindex="2" id="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" data-minlength="2" pattern=".{2,}" min="2" th:required="true"></input>
-																
+																<input  data-msg="Please fill this field" th:tabindex="2" id="metainf" name="metainf" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{metainf}" data-minlength="2" pattern=".{2,}" min="2" th:required="true"></input>																
+																<span id="metainferror" class="help-block font-red hide"><i class="la la-warning"></i> Este campos es Obligatorio</span>
 															</div>
+															
 														</div>							
 													</div>
 													<div class="col-md-6 col-sm-12 col-xs-12">
