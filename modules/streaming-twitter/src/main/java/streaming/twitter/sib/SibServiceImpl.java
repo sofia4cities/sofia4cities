@@ -205,238 +205,107 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package streaming.twitter.listener;
+package streaming.twitter.sib;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.social.twitter.api.Stream;
-import org.springframework.social.twitter.api.StreamDeleteEvent;
-import org.springframework.social.twitter.api.StreamListener;
-import org.springframework.social.twitter.api.StreamWarningEvent;
-import org.springframework.social.twitter.api.Tweet;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
+import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.SSAPMessageDirection;
+import com.indracompany.sofia2.ssap.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.SSAPQueryType;
+import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import streaming.twitter.sib.SibService;
 
-
-@Component
+@Service
 @Slf4j
-public class TwitterStreamListener implements StreamListener {
+public class SibServiceImpl implements SibService {
 
 	@Autowired
-	MessageProcessor messageProcessor;
-	@Autowired
-	SibService sibService;
-	@Getter
-	@Setter
-	private List<String> keywords;
-	@Getter
-	@Setter
-	private boolean geolocation;
-	@Getter
-	@Setter
-	private int timeout;
-	@Getter
-	@Setter
-	private String ontology;
-	@Getter
-	@Setter
-	private String clientPlatform;
-	@Getter
-	@Setter
-	private String token;
-	@Getter
-	@Setter
-	private String id;
-	@Getter
-	@Setter
-	private String configurationId;
+	private MessageProcessor messageProcessor;
 
-//	@Value("${sofia2.urls.iotbroker.services}" + "${sofia2.paths.ssap}")
-//	private String url;
-	@Getter
-	@Setter
-	private String sessionKey;
+	@Override
+	public String getSessionKey(String token) throws SSAPComplianceException, AuthenticationException {
 
-	@Getter
-	@Setter
-	private ExecutorService executor;
-	@Getter
-	@Setter
-	private Runnable tweetInsert;
-	private static final int THREADS = 10;
-	@Getter private LinkedBlockingQueue<Tweet> tweetsQueue;
+		String sessionKey = null;
 
-	@Getter
-	@Setter
-	private Stream twitterStream;
-	// private int countInserts = 0;
-	// private int maxInserts;
+		SSAPBodyJoinMessage joinMessage = new SSAPBodyJoinMessage();
+		joinMessage.setToken(token);
 
-	private static final int QUEUE_LENGTH = 25;
-	private static final String A_PATTERN = "<a href=\"(.*)\" rel=\"(.*)\">(.*)</a>";
-	private static final String MONGO_DATE_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSS'Z'";
-	private static final String ONTOLOGY_INSTANCE_PATTERN = "{'Tweet': {" + " 'timestamp': {'$date':'%s'},"
-	// + " 'geometry': {'type': 'Point', 'coordinates': [ %s, %s ]},"
-			+ " 'tweet_id': '%s'," + " 'tweet_createdat': {'$date':'%s'}," + " 'tweet_source': '%s',"
-			+ " 'tweet_text': '%s'," + " 'tweet_user_id': '%s'," + " 'tweet_user_screenname': '%s',"
-			+ " 'tweet_user_name': '%s'," + " 'tweet_user_profileimage': '%s'," + " 'tweet_favoritecount': '%s',"
-			+ " 'tweet_retweetcount': '%s'" + "}}";
+		SSAPMessage<SSAPBodyJoinMessage> message = new SSAPMessage<SSAPBodyJoinMessage>();
+		message.setMessageType(SSAPMessageTypes.JOIN);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setBody(joinMessage);
 
-	public TwitterStreamListener() {
+		SSAPMessage<SSAPBodyReturnMessage> responseJoin = messageProcessor.process(message);
+		
+			sessionKey = responseJoin.getSessionKey();
+		if (sessionKey != null) {
+			log.debug("Connected to SIB with token: " + responseJoin.getSessionKey() + " session key: "
+					+ responseJoin.getSessionKey());
+		} else
+			log.debug("Can't connect to IoT Broker");
 
-		tweetsQueue = new LinkedBlockingQueue<Tweet>();
-		executor = Executors.newFixedThreadPool(THREADS);
-		tweetInsert = defineMonitoringRunnable();
-		for (int i = 0; i < THREADS; i++) {
-			executor.execute(tweetInsert);
-		}
+		return sessionKey;
 	}
 
 	@Override
-	public void onTweet(Tweet tweet) {
+	public SSAPMessage<SSAPBodyReturnMessage> disconnect(String sessionKey) {
+		SSAPMessage<SSAPBodyReturnMessage> response = null;
+		SSAPMessage<SSAPBodyLeaveMessage> message = new SSAPMessage<SSAPBodyLeaveMessage>();
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setBody(new SSAPBodyLeaveMessage());
+		message.setMessageType(SSAPMessageTypes.LEAVE);
+		message.setSessionKey(sessionKey);
+
 		try {
-			/* Si ha muerto alg�n hilo se vuelve a levantar */
-			if (executor instanceof ThreadPoolExecutor && ((ThreadPoolExecutor) executor).getActiveCount() < THREADS) {
-				for (int i = 0; i < (THREADS - ((ThreadPoolExecutor) executor).getActiveCount()); i++) {
-					executor.execute(tweetInsert);
-				}
-			}
-
-			/* Se agrega el tweet a la cola */
-
-			if (tweetsQueue.size() < QUEUE_LENGTH) {
-				tweetsQueue.add(tweet);
-
-			}
+			response = messageProcessor.process(message);
+			log.debug("Disconnected from SIB");
 		} catch (Exception e) {
-			log.debug("Error on status: " + e.getMessage());
+			log.debug("Couldn't disconnect from SIB");
 		}
-
+		
+		return response;
 	}
 
 	@Override
-	public void onDelete(StreamDeleteEvent deleteEvent) {
-		this.twitterStream.close();
+	public boolean insertOntologyInstance(String instance, String sessionKey, String ontology, String clientPlatform,
+			String clientPlatformInstance) throws JsonProcessingException, IOException {
 
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode json = mapper.readTree(instance);
+
+		SSAPMessage<SSAPBodyOperationMessage> message = new SSAPMessage<SSAPBodyOperationMessage>();
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.INSERT);
+		message.setSessionKey(sessionKey);
+		message.setOntology(ontology);
+		SSAPBodyOperationMessage operationMessage = new SSAPBodyOperationMessage();
+		operationMessage.setClientPlatform(clientPlatform);
+		operationMessage.setClientPlatformInstance(clientPlatformInstance);
+		operationMessage.setData(json);
+		operationMessage.setQueryType(SSAPQueryType.NATIVE);
+		message.setBody(operationMessage);
+
+		SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(message);
+		if (response.getBody().isOk())
+			log.debug("Ontology instance inserted");
+		else
+			log.debug("Couldn't insert instance");
+
+		return response.getBody().isOk();
 	}
 
-	@Override
-	public void onLimit(int numberOfLimitedTweets) {
-		this.twitterStream.close();
-
-	}
-
-	@Override
-	public void onWarning(StreamWarningEvent warningEvent) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void insertInstance(String instance) {
-		try {
-			this.sibService.insertOntologyInstance(instance, this.getSessionKey(), this.getOntology(),
-					this.getClientPlatform(), this.getConfigurationId());
-		} catch (Exception e) {
-			log.debug("Error inserting tweet : " + this.getOntology() + ". Cause: " + e.getMessage(), e);
-		}
-
-	}
-
-	public void getSibSessionKey() throws SSAPComplianceException, AuthenticationException {
-
-		this.setSessionKey(sibService.getSessionKey(this.getToken()));
-
-	}
-
-	public void deleteSibSessionKey() {
-
-		this.sibService.disconnect(this.getSessionKey());
-
-	}
-
-
-	class ListenerThread implements Runnable {
-
-		@SuppressWarnings("unused")
-		private TwitterStreamListener listener;
-
-		public ListenerThread(TwitterStreamListener listener) {
-			this.listener = listener;
-		}
-
-		@Override
-		public void run() {
-			while (true) {
-				if (tweetsQueue.size() > 0) {
-					Tweet tweet = tweetsQueue.poll();
-					if (tweet != null) {
-						// insertTweet
-						// String foundLongitude = "0.0";
-						// String foundLatitude = "0.0";
-
-						/* Ontology instance generation */
-						SimpleDateFormat sdf_mongo = new SimpleDateFormat(MONGO_DATE_FORMAT);
-						Pattern pattern = Pattern.compile(A_PATTERN);
-						Matcher matcher = pattern.matcher(tweet.getSource());
-						String processed_source = "";
-						if (matcher.find()) {
-							processed_source = matcher.group(1);
-						}
-
-						String instance = String.format(ONTOLOGY_INSTANCE_PATTERN,
-								sdf_mongo.format(new Date()).toString(),
-								// (tweet.getExtraData()== null ? foundLongitude
-								// :
-								// Double.toString(tweet.getGeoLocation().getLongitude())),
-								// (tweet.getGeoLocation() == null ?
-								// foundLatitude :
-								// Double.toString(tweet.getGeoLocation().getLatitude())),
-								Long.toString(tweet.getId()), sdf_mongo.format(tweet.getCreatedAt()).toString(),
-								processed_source,
-								tweet.getText().replace("%", "%25").replace("\\", "").replace("'", "%27")
-										.replace("\"", "%22").replace("\r", " ").replace("\n", " "),
-								Long.toString(tweet.getUser().getId()),
-								tweet.getUser().getScreenName().replace("%", "%25").replace("\\", "")
-										.replace("'", "%27").replace("\"", "%22"),
-								tweet.getUser().getName().replace("%", "%25").replace("\\", "").replace("'", "%27")
-										.replace("\"", "%22"),
-								tweet.getUser().getProfileImageUrl(), Integer.toString(tweet.getFavoriteCount()),
-								Integer.toString(tweet.getRetweetCount()));
-
-						/* Se inserta el tweet */
-						insertInstance(instance);
-						
-					}
-				}
-
-				try {
-					Thread.sleep(150);
-				} catch (InterruptedException ex) {
-					ex.printStackTrace();
-				}
-			}
-		}
-
-	}
-
-	private Runnable defineMonitoringRunnable() {
-		return new ListenerThread(this);
-	}
 }
