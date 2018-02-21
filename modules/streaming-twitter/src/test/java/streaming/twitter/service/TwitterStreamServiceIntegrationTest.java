@@ -1,3 +1,16 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package streaming.twitter.service;
 
 import static org.mockito.Matchers.any;
@@ -21,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.social.twitter.api.Stream;
 import org.springframework.social.twitter.api.Tweet;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
@@ -35,6 +49,7 @@ import streaming.twitter.listener.TwitterStreamListener;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = StreamingTwitterApp.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@ContextConfiguration(classes= StreamingTwitterApp.class) 
 @Slf4j
 public class TwitterStreamServiceIntegrationTest {
 
@@ -72,7 +87,7 @@ public class TwitterStreamServiceIntegrationTest {
 		twitterStreamListener.setToken(UUID.randomUUID().toString());
 		twitterStreamListener.setKeywords(keywords);
 		twitterStreamListener.setGeolocation(false);
-		twitterStreamListener.setTimeout(1000);
+		twitterStreamListener.setTimeout(60000);
 		twitterStreamListener.setConfigurationId(UUID.randomUUID().toString());
 	}
 
@@ -116,10 +131,10 @@ public class TwitterStreamServiceIntegrationTest {
 
 		doNothing().when(twitterStreamListener).insertInstance(any());
 
-		while (twitterStreamListener.getTweetsQueue().size() == 0) {
+		while (twitterStreamListener.getLastTweets().size() == 0) {
 			//wait until tweet
 		}
-		Tweet lastTweet = twitterStreamListener.getTweetsQueue().poll();
+		Tweet lastTweet = twitterStreamListener.getLastTweets().get(0);
 		log.info("Last tweet by user:" + lastTweet.getFromUser() + ", text: "
 				+ lastTweet.getText());
 		
