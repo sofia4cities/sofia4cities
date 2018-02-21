@@ -11,14 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.config;
+package com.indracompany.sofia2.router.service;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
-//@EnableSpringBootAdminRegister
-public class SpringBootAdminConfig {
+@Component("counterBean")
+public class CounterBean {
 
-	
-	
+	private int counter;
+
+	public String someMethod(String body) {
+		return "" + ++counter;
+	}
 }

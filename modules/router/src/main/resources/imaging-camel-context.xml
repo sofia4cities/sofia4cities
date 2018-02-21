@@ -1,15 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-       
-    <bean id="cookieBean" class="com.minsait.smartstore.osa.eai.camel.imageserver.proxy.ImageServerProcessor" />
-
-	<camelContext id="camel-context" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="camel-context2" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/spring">
 	
-		<errorHandler id="defaultEH" onRedeliveryRef="cookieBean">
+		<errorHandler id="defaultEH">
             <redeliveryPolicy maximumRedeliveries="10" retryAttemptedLogLevel="WARN" redeliveryDelay="5000"/>
         </errorHandler>
         
@@ -37,41 +28,19 @@
 			</post>
 		</rest>
 		
-		<route id="quality-proxy" errorHandlerRef="defaultEH">
-			<from uri="direct:qualityProxy" />
-			<to uri="bean:imageServerClientProcessor?method=postQuality" />
-		</route>
-		
-		<route id="recognition-proxy" errorHandlerRef="defaultEH">
-			<from uri="direct:recognitionProxy" />
-			<to uri="bean:imageServerClientProcessor?method=postRecognition" />
-		</route>
-		
-		<route id="output-tracer">
-			<from uri="direct:tracer" />
-			<to uri="{{dlq.log.uri}}"/>
-		</route>
-		
 		<route id="quality-mock">
 			<from uri="direct:quality" />
-			<setHeader headerName="operation"><constant>QUALITY</constant></setHeader>
-			<process ref="convertProcessor"/>
-			<to uri="bean:imagingService?method=postQuality" />
-			<to uri="bean:imagingService?method=toString" />
+			<to uri="mock:bar" />
 	
 		</route>
 		
 		<route id="recognition-mock">
 			<from uri="direct:recognition" />
-			<setHeader headerName="operation"><constant>RECOGNITION</constant></setHeader>
-			<process ref="convertProcessor"/>
-			<to uri="bean:imagingService?method=postRecognition" />
-			<to uri="bean:imagingService?method=toString" />
+			<to uri="mock:bar" />
+			
 			
 		</route>
 		
 		
 		
 	</camelContext>
-
-</beans>
