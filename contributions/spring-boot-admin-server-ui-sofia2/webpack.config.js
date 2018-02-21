@@ -8,7 +8,8 @@ var Webpack = require('webpack'),
   path = require('path'),
   glob = require('glob');
 
-var DIST = path.resolve(__dirname, 'target/classes/META-INF/spring-boot-admin-server-ui');
+//var DIST = path.resolve(__dirname, 'target/classes/META-INF/spring-boot-admin-server-ui');
+var DIST = path.resolve(__dirname, 'dist');
 var ROOT = __dirname;
 var isDevServer = path.basename(require.main.filename) === 'webpack-dev-server.js';
 
