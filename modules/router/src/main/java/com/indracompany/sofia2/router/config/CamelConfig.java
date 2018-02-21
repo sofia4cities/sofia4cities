@@ -39,7 +39,7 @@ import io.hawt.web.AuthenticationFilter;
 @Configuration
 @EnableConfigurationProperties(CamelConfigurationProperties.class)
 @Import(TypeConversionConfiguration.class)
-@ImportResource({"classpath:router-camel-context.xml"})
+@ImportResource({"classpath:camel-context-reference.xml"})
 public class CamelConfig {
 	
 	@Autowired
