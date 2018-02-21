@@ -1,10 +1,4 @@
-	<camelContext id="camel-context2" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/spring">
-	
-		<errorHandler id="defaultEH">
-            <redeliveryPolicy maximumRedeliveries="10" retryAttemptedLogLevel="WARN" redeliveryDelay="5000"/>
-        </errorHandler>
-        
-        <restConfiguration component="servlet" 
+ <restConfiguration component="servlet" 
 		 	apiContextListing="true"
 			enableCORS="true">
 			<dataFormatProperty key="prettyPrint" value="true" />
@@ -40,7 +34,3 @@
 			
 			
 		</route>
-		
-		
-		
-	</camelContext>

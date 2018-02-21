@@ -297,7 +297,17 @@
 																		<!-- SCHEMA GENERATOR AND JSON INSTANCE -->
 																		<div class="tab-pane" id="tab_2">
 																			<p class="bold uppercase"><i class="flaticon-network font-grey-gallery"></i> <span id="schema_title"> Selected Data model: </span></p>
-																			<div id="jsoneditor"></div>																			
+																			<div id="jsoneditor"></div>
+																			<div class="clearfix"></div>
+																			<div class="pull-right margin-right-10 margin-top-30 margin-bottom-30">
+																				<div class="btn-group">
+																					<button type="button" class="btn grey-mint  btn-outline sbold" onclick="OntologyCreateController.generateInstance()"><i class="flaticon-network"></i> <span>Generar Instancia</span></button>									
+																				</div>
+																			</div>
+																			<div class="clearfix"></div>
+																			<div class="col-md-12 col-xs-12">
+																				<textarea class="form-control" id="ontology_instance" name="ontology_instance" readOnly="readonly"  cols="" rows=""></textarea>
+																			</div>
 																		</div>
 																	</div>
 																</div>

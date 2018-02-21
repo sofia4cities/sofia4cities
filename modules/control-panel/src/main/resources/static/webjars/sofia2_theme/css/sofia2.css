@@ -780,7 +780,9 @@ color: whitesmoke !Important;
 
 .panel-tools { 
 margin: 0;
-padding: 10px 15px 10px 5px;
+padding: 10px 10px 10px 5px;
 background-color: #f5f5f5;
 border-bottom: 1px solid #CCC;
+height: auto;
+display: flex;
  }

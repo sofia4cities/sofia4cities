@@ -40,9 +40,7 @@
 	
 
 		function getOntologyFields() {
-
 			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
-
 		}
 		
 		</script>
@@ -83,7 +81,7 @@
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
+				<h1 class="page-title hide"><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -137,40 +135,41 @@
 											<div class="panel-heading panel-sofia2">
 												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-sitemap"></i> Consultas sobre <span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
 											</div>
-											<div class="panel-body no-space">											
-												<!-- OPCIONES DE CONSULTA -->
-												<div class="col-md-6 col-sm-12 panel-tools">
-													<fieldset class="col-sm-4">												
-														<select class="element select small form-control" id="targetDatabase" name="targetDatabase" onChange="cambioConsulta();">
-															<option name="rtdb" value="rtdb"> RealTime DB</option>
-														</select>
-													</fieldset>
-													<fieldset class="col-md-3">							
-														<select  class="element select small form-control" id="typeQuery" name="typeQuery" onChange="cambioConsulta()">
-															<option name="sql" value="sql"> SQL </option>
-															<option name="native" value="native"> NATIVE </option>
-														</select>
-													</fieldset>
-													<fieldset class="col-md-3">							
-														<select  class="element select small form-control" id="resultFormat" name="typeQuery" disabled="disabled">
-															<option name="json" value="json"> JSON </option>
-														</select>
-													</fieldset>	
-													<fieldset id="fieldset_offset" class="col-md-3">
-														<label id="label_offset" class="description labelSmallText" for="offset">Offset </label>
-														<input id="offset" disabled="disabled"/>
-													</fieldset>
-												</div>
-												<!-- TOOLBAR DE CONSULTA -->
-												<div class="col-md-6 col-sm-12 panel-tools">
-													<div class="btn-group pull-right">
-														<button type="button" class="btn btn-sm btn-outline dark" onclick="addSelect()"><i class="fa fa-table"></i> SELECT</button>
-														<button type="button" class="btn btn-sm btn-outline dark" onclick="addCondition()"><i class="fa fa-filter"></i> WHERE</button>
-														<button type="button" class="btn btn-sm btn-outline dark" disabled="true"><i class="fa fa-object-group"></i> GROUP BY</button>
-														<button type="button" class="btn btn-sm btn-outline dark" onclick="addOrderBy()"><i class="fa fa-sort"></i> ORDER</button>
-														<button type="button" class="btn btn-sm btn-outline dark" onclick="cambioConsulta()"><i class="fa fa-times"></i> RESET</button>
+											<div class="panel-body no-space">	
+												<div class="panel-tools">	
+													<!-- OPCIONES DE CONSULTA -->
+													<div class="col-md-6 col-sm-12  margin-top-10 margin-bottom-10">
+														<fieldset class="col-sm-3">												
+															<select class="form-control" id="targetDatabase" name="targetDatabase" onChange="cambioConsulta();">
+																<option name="rtdb" value="rtdb"> RealTime DB</option>
+															</select>
+														</fieldset>
+														<fieldset class="col-md-3">							
+															<select  class="form-control" id="typeQuery" name="typeQuery" onChange="cambioConsulta()">
+																<option name="sql" value="sql"> SQL </option>
+																<option name="native" value="native"> NATIVE </option>
+															</select>
+														</fieldset>
+														<fieldset class="col-md-3">							
+															<select  class="form-control" id="resultFormat" name="typeQuery" disabled="disabled">
+																<option name="json" value="json"> JSON </option>
+															</select>
+														</fieldset>	
+														<fieldset id="fieldset_offset" class="col-md-2">														
+															<input class="form-control" placeholder="Offset" name="offset" id="offset"/>															
+														</fieldset>
 													</div>
-													<div class="clearfix"></div>
+													<!-- TOOLBAR DE CONSULTA -->
+													<div class="col-md-6 col-sm-12  margin-top-10 margin-bottom-10">
+														<div class="btn-group pull-right">
+															<button type="button" class="btn btn-sm btn-outline dark" onclick="addSelect()"><i class="fa fa-table"></i> SELECT</button>
+															<button type="button" class="btn btn-sm btn-outline dark" onclick="addCondition()"><i class="fa fa-filter"></i> WHERE</button>
+															<button type="button" class="btn btn-sm btn-outline dark" disabled="true"><i class="fa fa-object-group"></i> GROUP BY</button>
+															<button type="button" class="btn btn-sm btn-outline dark" onclick="addOrderBy()"><i class="fa fa-sort"></i> ORDER</button>
+															<button type="button" class="btn btn-sm btn-outline dark" onclick="cambioConsulta()"><i class="fa fa-times"></i> RESET</button>
+														</div>
+														<div class="clearfix"></div>
+													</div>
 												</div>
 												<div class="clearfix"></div>
 												
@@ -348,8 +347,7 @@
 							                        </div>
 							                    <div id="dialog-confirm-generic" title="Información" style="display: none;">
 							                            <div>Información</div>
-							                    </div>
-							             										
+							                    </div>							             	
 											</div>
 										</div>	
 									</div>	
@@ -464,17 +462,7 @@
 				$("#from_ul").append(from);
 			}
 			
-			<!-- $("#where_ul").empty(); -->
-			<!-- $("#select_ul").empty(); -->
-			<!-- $("#from_ul").empty(); -->
-			<!-- $("#groupBy_ul").empty(); -->
-			<!-- $("#checks").empty(); -->
-			<!-- $("#campos").empty(); -->
-			<!-- $("#orderby_ul").empty(); -->
-
-			//var queryKp = "[[${QUERY}]]";
-			//console.log('cambioconsulta() -> queryKp -> '+ queryKp);
-			  
+						  
 			// TIPO DE QUERY  
 			var combo = document.getElementById('typeQuery');       
 			var opcion = combo.options[combo.selectedIndex].value;

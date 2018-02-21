@@ -15,10 +15,13 @@ package com.indracompany.sofia2.router.controller;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.commons.io.IOUtils;
+import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -40,11 +43,11 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("router")
 public class RouterControllerImpl implements RouterControllerInterface {
 	
-	@Autowired
-	CamelContext camelContext;
 	
 	@Autowired
 	CamelContextHandler camelContextHandler;
+	
+	public static String defaultPath="./src/main/resources/";
 	
 	@Autowired
 	@Qualifier("routerServiceProxy")
@@ -62,42 +65,64 @@ public class RouterControllerImpl implements RouterControllerInterface {
 		return (String)routerService.scriptingEngine(login);
 	}
 	
-	@RequestMapping(value = "/camel", method = RequestMethod.GET)
-	@ApiOperation(value = "camel")
-	public String camel( String login) throws Exception {
-		//camelContext.stop();
+	@RequestMapping(value = "/camel/context", method = RequestMethod.GET)
+	@ApiOperation(value = "camel-context")
+	public Set<String> camelContext() throws Exception {
+		Map<String,SpringCamelContext>  list = camelContextHandler.findCamelContexts();
+		return list.keySet();
+	}
+	@RequestMapping(value = "/camel/context/status", method = RequestMethod.GET)
+	@ApiOperation(value = "camel-context-status")
+	public ServiceStatus camelContextStatus(String name) throws Exception {
+		CamelContext context = camelContextHandler.getCamelContext(name);
+		return context.getStatus();
+	}
+	
+	@RequestMapping(value = "/camel/context/start", method = RequestMethod.PUT)
+	@ApiOperation(value = "camel-context-start")
+	public void camelContextStart( String login) throws Exception {
+		camelContextHandler.getCamelContext(login).start();
+	}
+	
+	@RequestMapping(value = "/camel/context/stop", method = RequestMethod.PUT)
+	@ApiOperation(value = "camel-context-stop")
+	public void camelContextStop( String login) throws Exception {
+		camelContextHandler.getCamelContext(login).stop();
+	}
+	
+	@RequestMapping(value = "/camel/routes/load/context", method = RequestMethod.POST)
+	@ApiOperation(value = "camel-routes-load-into-context")
+	public String camelRoutesLoadIntoContext( String name, String context) throws Exception {
 		
-		String TEST_PATH_QUALITY = "./src/main/resources/router-camel-context2.xml";
-		
-		InputStream is = Utils.getResourceFromFile(new File(TEST_PATH_QUALITY));
-		RoutesDefinition routes = camelContext.loadRoutesDefinition(is);
-		
-		camelContext.addRouteDefinitions(routes.getRoutes());
-		
+		String TEST_PATH_QUALITY = defaultPath+context+".xml";
+		String routes = loadRoutes(TEST_PATH_QUALITY,name);
 		return routes.toString();
 	}
 	
-	@RequestMapping(value = "/pepe", method = RequestMethod.GET)
-	@ApiOperation(value = "pepe")
-	public String camel2( String login) throws Exception {
+	@RequestMapping(value = "/camel/context/load", method = RequestMethod.POST)
+	@ApiOperation(value = "camel-context-load")
+	public String cameContextLoad(String name) throws Exception {
 		
-		String TEST_PATH_QUALITY = "./src/main/resources/imaging-camel-context.xml";
-		
-		loadRoutes(TEST_PATH_QUALITY);
+		String TEST_PATH_QUALITY = defaultPath+name+".xml";
+		loadRoutes(TEST_PATH_QUALITY,name);
 		return TEST_PATH_QUALITY.toString();
 	}
 	
-	public void loadRoutes(String routestr) {
-		  if (routestr != null && !routestr.isEmpty()) {
-		    try {
-		      RoutesDefinition routes = camelContextHandler.getCamelContext(0).loadRoutesDefinition(IOUtils.toInputStream(routestr, "UTF-8"));
+	public String loadRoutes(String routestr, String name) {
+		RoutesDefinition routes=null;
+		if (routestr != null && !routestr.isEmpty()) {
+			try {
+				InputStream is = Utils.getResourceFromFile(new File(routestr));
+				routes = camelContextHandler.getCamelContext(name).loadRoutesDefinition(is);
 
-		      camelContextHandler.getCamelContext(0).addRouteDefinitions(routes.getRoutes());
+				camelContextHandler.getCamelContext(name).addRouteDefinitions(routes.getRoutes());
 
-		    } catch (Exception e) {
+			} catch (Exception e) {
 		      // Log error
-		    }
-		  }
+			}
+			
 		}
+			return routes.toString();
+	}
 
 }
