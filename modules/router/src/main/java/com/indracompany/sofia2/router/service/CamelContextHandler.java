@@ -13,8 +13,11 @@
  */
 package com.indracompany.sofia2.router.service;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.boot.CamelConfigurationProperties;
 import org.springframework.beans.factory.BeanFactory;
@@ -22,12 +25,15 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class CamelContextHandler implements BeanFactoryAware {
 
   private BeanFactory beanFactory;
+  
+  @Autowired
+  CamelContext camelContextReference;
 
   @Autowired
   private ApplicationContext applicationContext;
@@ -40,14 +46,17 @@ public class CamelContextHandler implements BeanFactoryAware {
     this.beanFactory = beanFactory;
   }
 
-  public boolean camelContextExist(int id) {
-    String name = "camelContext" + id;
+  public boolean camelContextExist(String name) {
     return applicationContext.containsBean(name);
   }
+  
+  public Map<String,SpringCamelContext> findCamelContexts() {
+	 return (Map<String,SpringCamelContext>)applicationContext.getBeansOfType(SpringCamelContext.class);
+  }
 
-  public CamelContext getCamelContext(int id) {
+  public CamelContext getCamelContext(String id) {
     CamelContext camelContext = null;
-    String name = "camelContext" + id;
+    String name = "" + id;
     if (applicationContext.containsBean(name)) {    
        camelContext = applicationContext.getBean(name, SpringCamelContext.class);
     } else {
@@ -56,6 +65,7 @@ public class CamelContextHandler implements BeanFactoryAware {
     return camelContext;
   }
 
+  @SuppressWarnings("deprecation")
   private CamelContext camelContext(String contextName) {
     CamelContext camelContext = new SpringCamelContext(applicationContext);
     SpringCamelContext.setNoStart(true);
@@ -73,40 +83,30 @@ public class CamelContextHandler implements BeanFactoryAware {
     }
 
     camelContext.setStreamCaching( camelConfigurationProperties.isStreamCaching());
-
     camelContext.setTracing( camelConfigurationProperties.isTracing());
-
     camelContext.setMessageHistory( camelConfigurationProperties.isMessageHistory());
-
     camelContext.setHandleFault( camelConfigurationProperties.isHandleFault());
-
     camelContext.setAutoStartup( camelConfigurationProperties.isAutoStartup());
-
-camelContext.setAllowUseOriginalMessage(camelConfigurationProperties.isAllowUseOriginalMessage());
+    camelContext.setAllowUseOriginalMessage(camelConfigurationProperties.isAllowUseOriginalMessage());
+    
+    ErrorHandlerBuilder ehBuilder= camelContextReference.getErrorHandlerBuilder();
 
     if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-      camelContext.getManagementStrategy().getManagementAgent()
-.setEndpointRuntimeStatisticsEnabled(camelConfigurationProperties.isEndpointRuntimeStatisticsEnabled());
-
-      camelContext.getManagementStrategy().getManagementAgent()
-.setStatisticsLevel(camelConfigurationProperties.getJmxManagementStatisticsLevel());
-
-      camelContext.getManagementStrategy().getManagementAgent()
-.setManagementNamePattern(camelConfigurationProperties.getJmxManagementNamePattern());
-
-      camelContext.getManagementStrategy().getManagementAgent()
-.setCreateConnector(camelConfigurationProperties.isJmxCreateConnector());
+    	camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(camelConfigurationProperties.isEndpointRuntimeStatisticsEnabled());
+    	camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(camelConfigurationProperties.getJmxManagementStatisticsLevel());
+    	camelContext.getManagementStrategy().getManagementAgent().setManagementNamePattern(camelConfigurationProperties.getJmxManagementNamePattern());
+    	camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(camelConfigurationProperties.isJmxCreateConnector());
 
     }
 
     ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
     configurableBeanFactory.registerSingleton(contextName, camelContext);
 
-    try {
+   /* try {
       camelContext.start();
     } catch (Exception e) {
       // Log error
-    }
+    }*/
     return camelContext;
   }
 
