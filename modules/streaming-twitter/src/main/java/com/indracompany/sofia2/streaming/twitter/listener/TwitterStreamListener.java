@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package streaming.twitter.listener;
+package com.indracompany.sofia2.streaming.twitter.listener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,12 +35,11 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
+import com.indracompany.sofia2.streaming.twitter.sib.SibService;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import streaming.twitter.sib.SibService;
-
 
 @Component
 @Slf4j
@@ -75,8 +74,8 @@ public class TwitterStreamListener implements StreamListener {
 	@Setter
 	private String configurationId;
 
-//	@Value("${sofia2.urls.iotbroker.services}" + "${sofia2.paths.ssap}")
-//	private String url;
+	// @Value("${sofia2.urls.iotbroker.services}" + "${sofia2.paths.ssap}")
+	// private String url;
 	@Getter
 	@Setter
 	private String sessionKey;
@@ -88,13 +87,17 @@ public class TwitterStreamListener implements StreamListener {
 	@Setter
 	private Runnable tweetInsert;
 	private static final int THREADS = 10;
-	@Getter private LinkedBlockingQueue<Tweet> tweetsQueue;
-	@Getter private List<Tweet> lastTweets;
+	@Getter
+	private LinkedBlockingQueue<Tweet> tweetsQueue;
+	// Just for debug
+	@Getter
+	private Tweet lastTweet;
 	@Getter
 	@Setter
 	private Stream twitterStream;
-	// private int countInserts = 0;
-	// private int maxInserts;
+	private int countInserts = 0;
+	@Setter
+	private int maxInserts;
 
 	private static final int QUEUE_LENGTH = 25;
 	private static final String A_PATTERN = "<a href=\"(.*)\" rel=\"(.*)\">(.*)</a>";
@@ -107,9 +110,10 @@ public class TwitterStreamListener implements StreamListener {
 			+ " 'tweet_retweetcount': '%s'" + "}}";
 
 	public TwitterStreamListener() {
-
-		lastTweets = new ArrayList<Tweet>();
+		
+		
 		tweetsQueue = new LinkedBlockingQueue<Tweet>();
+		this.setMaxInserts(50);
 		executor = Executors.newFixedThreadPool(THREADS);
 		tweetInsert = defineMonitoringRunnable();
 		for (int i = 0; i < THREADS; i++) {
@@ -120,19 +124,20 @@ public class TwitterStreamListener implements StreamListener {
 	@Override
 	public void onTweet(Tweet tweet) {
 		try {
+			this.lastTweet = tweet;
+
+		
 			/* Si ha muerto alg�n hilo se vuelve a levantar */
 			if (executor instanceof ThreadPoolExecutor && ((ThreadPoolExecutor) executor).getActiveCount() < THREADS) {
 				for (int i = 0; i < (THREADS - ((ThreadPoolExecutor) executor).getActiveCount()); i++) {
 					executor.execute(tweetInsert);
 				}
 			}
-
 			/* Se agrega el tweet a la cola */
-
 			if (tweetsQueue.size() < QUEUE_LENGTH) {
 				tweetsQueue.add(tweet);
-
 			}
+
 		} catch (Exception e) {
 			log.debug("Error on status: " + e.getMessage());
 		}
@@ -179,26 +184,24 @@ public class TwitterStreamListener implements StreamListener {
 
 	}
 
-
 	class ListenerThread implements Runnable {
 
-		@SuppressWarnings("unused")
-		private TwitterStreamListener listener;
+		public ListenerThread() {
 
-		public ListenerThread(TwitterStreamListener listener) {
-			this.listener = listener;
 		}
 
 		@Override
 		public void run() {
 			while (true) {
 				if (tweetsQueue.size() > 0) {
+
 					Tweet tweet = tweetsQueue.poll();
 					if (tweet != null) {
+						
+
 						// insertTweet
 						// String foundLongitude = "0.0";
 						// String foundLatitude = "0.0";
-						lastTweets.add(tweet);
 						/* Ontology instance generation */
 						SimpleDateFormat sdf_mongo = new SimpleDateFormat(MONGO_DATE_FORMAT);
 						Pattern pattern = Pattern.compile(A_PATTERN);
@@ -207,7 +210,6 @@ public class TwitterStreamListener implements StreamListener {
 						if (matcher.find()) {
 							processed_source = matcher.group(1);
 						}
-
 						String instance = String.format(ONTOLOGY_INSTANCE_PATTERN,
 								sdf_mongo.format(new Date()).toString(),
 								// (tweet.getExtraData()== null ? foundLongitude
@@ -227,13 +229,11 @@ public class TwitterStreamListener implements StreamListener {
 										.replace("\"", "%22"),
 								tweet.getUser().getProfileImageUrl(), Integer.toString(tweet.getFavoriteCount()),
 								Integer.toString(tweet.getRetweetCount()));
-
 						/* Se inserta el tweet */
 						insertInstance(instance);
-						
+
 					}
 				}
-
 				try {
 					Thread.sleep(150);
 				} catch (InterruptedException ex) {
@@ -241,10 +241,10 @@ public class TwitterStreamListener implements StreamListener {
 				}
 			}
 		}
-
 	}
 
 	private Runnable defineMonitoringRunnable() {
-		return new ListenerThread(this);
+		return new ListenerThread();
 	}
+
 }

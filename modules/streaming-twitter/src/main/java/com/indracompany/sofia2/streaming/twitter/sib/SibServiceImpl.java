@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package streaming.twitter.sib;
+package com.indracompany.sofia2.streaming.twitter.sib;
 
 import java.io.IOException;
 

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package streaming.twitter.job;
+package com.indracompany.sofia2.streaming.twitter.job;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -22,8 +22,9 @@ import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import streaming.twitter.listener.TwitterStreamListener;
-import streaming.twitter.service.TwitterStreamService;
+import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
+import com.indracompany.sofia2.streaming.twitter.service.TwitterStreamService;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -41,7 +42,7 @@ public class TwitterStreamingJob {
 		String id = context.getJobDetail().getJobDataMap().getString("id");
 		
 	
-		if(!twitterStreamService.isSuscribe(id)) {
+		if(!twitterStreamService.isSubscribe(id)) {
 			
 			String topics = context.getJobDetail().getJobDataMap().getString("topics");
 			twitterStreamListener.setId(id);
@@ -55,7 +56,7 @@ public class TwitterStreamingJob {
 		
 			
 			try {
-				twitterStreamService.suscribe(twitterStreamListener);
+				twitterStreamService.subscribe(twitterStreamListener);
 			} catch (Exception e) {
 				log.debug("Could not suscribe listener");
 			}

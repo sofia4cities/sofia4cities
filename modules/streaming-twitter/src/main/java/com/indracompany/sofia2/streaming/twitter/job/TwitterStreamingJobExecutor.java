@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package streaming.twitter.job;
+package com.indracompany.sofia2.streaming.twitter.job;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

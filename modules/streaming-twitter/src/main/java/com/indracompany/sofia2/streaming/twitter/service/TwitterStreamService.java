@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package streaming.twitter.service;
+package com.indracompany.sofia2.streaming.twitter.service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +25,9 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceFactory;
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceSpringSocialImpl;
+import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
 
 import lombok.extern.slf4j.Slf4j;
-import streaming.twitter.listener.TwitterStreamListener;
 
 @Component
 @Slf4j
@@ -53,7 +53,7 @@ public class TwitterStreamService {
 		
 	}
 	
-	public Stream suscribe(TwitterStreamListener twitterStreamListener) throws Exception {
+	public Stream subscribe(TwitterStreamListener twitterStreamListener) throws Exception {
 		String listenerId = twitterStreamListener.getId();
 		
 		if(listenersMap.containsKey(listenerId)) 
@@ -96,7 +96,7 @@ public class TwitterStreamService {
 			throw new Exception("Error listener not found");
 	}
 	
-	public boolean isSuscribe(String id) {
+	public boolean isSubscribe(String id) {
 		if(listenersMap.containsKey(id))
 			return true;
 		else

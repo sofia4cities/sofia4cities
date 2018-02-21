@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package streaming.twitter.service;
+package com.indracompany.sofia2.streaming.twitter.service;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -40,16 +40,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
-
+import com.indracompany.sofia2.streaming.twitter.application.StreamingTwitterApp;
+import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
+import com.indracompany.sofia2.streaming.twitter.service.TwitterStreamService;
 
 import lombok.extern.slf4j.Slf4j;
-import streaming.twitter.application.StreamingTwitterApp;
-import streaming.twitter.listener.TwitterStreamListener;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = StreamingTwitterApp.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@ContextConfiguration(classes= StreamingTwitterApp.class) 
+@ContextConfiguration(classes = StreamingTwitterApp.class)
 @Slf4j
 public class TwitterStreamServiceIntegrationTest {
 
@@ -62,7 +62,6 @@ public class TwitterStreamServiceIntegrationTest {
 
 	@Spy
 	private TwitterStreamListener twitterStreamListener;
-	private Stream stream;
 	private String accessToken = "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy";
 	private String accessTokenSecret = "Cmd9XOX9N8xMRvlYUz3Wg49ZCGFnanMJvJPI9QMfTXix2";
 	private String consumerKey = "PWgCyepuon5U8X9HqfUtNpntq";
@@ -79,6 +78,7 @@ public class TwitterStreamServiceIntegrationTest {
 		List<String> keywords = new ArrayList<String>();
 		keywords.add("Helsinki");
 		keywords.add("Borbones");
+		keywords.add("ARCO");
 
 		twitterStreamListener = Mockito.spy(new TwitterStreamListener());
 		twitterStreamListener.setId(UUID.randomUUID().toString());
@@ -91,31 +91,29 @@ public class TwitterStreamServiceIntegrationTest {
 		twitterStreamListener.setConfigurationId(UUID.randomUUID().toString());
 	}
 
-	@Test
 	public void test_1_subscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
 		doNothing().when(twitterStreamListener).getSibSessionKey();
-
-		Assert.assertNotNull(this.twitterStreamService.suscribe(twitterStreamListener));
+		Assert.assertNotNull(this.twitterStreamService.subscribe(twitterStreamListener));
 
 	}
 
-	@Test
 	public void test_2_isSubscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
 		doNothing().when(twitterStreamListener).getSibSessionKey();
-		this.twitterStreamService.suscribe(twitterStreamListener);
-		Assert.assertTrue(this.twitterStreamService.isSuscribe(twitterStreamListener.getId()));
+		// this.twitterStreamService.subscribe(twitterStreamListener);
+		Assert.assertTrue(this.twitterStreamService.isSubscribe(twitterStreamListener.getId()));
+
 	}
 
-	@Test
 	public void test_3_unsubscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
 		doNothing().when(twitterStreamListener).getSibSessionKey();
-		this.twitterStreamService.suscribe(twitterStreamListener);
+		if (this.twitterStreamService.isSubscribe(twitterStreamListener.getId()))
+			this.twitterStreamService.unsubscribe(twitterStreamListener.getId());
 
 		doNothing().when(twitterStreamListener).deleteSibSessionKey();
 
@@ -126,18 +124,16 @@ public class TwitterStreamServiceIntegrationTest {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
 		doNothing().when(twitterStreamListener).getSibSessionKey();
-
-		stream = this.twitterStreamService.suscribe(twitterStreamListener);
+		// if(this.twitterStreamService.isSubscribe(twitterStreamListener.getId()))
+		this.twitterStreamService.subscribe(twitterStreamListener);
 
 		doNothing().when(twitterStreamListener).insertInstance(any());
 
-		while (twitterStreamListener.getLastTweets().size() == 0) {
-			//wait until tweet
-		}
-		Tweet lastTweet = twitterStreamListener.getLastTweets().get(0);
-		log.info("Last tweet by user:" + lastTweet.getFromUser() + ", text: "
-				+ lastTweet.getText());
-		
+		Thread.sleep(5000);
+
+		Tweet lastTweet = twitterStreamListener.getLastTweet();
+		log.info("Last tweet by user:" + lastTweet.getFromUser() + ", text: " + lastTweet.getText());
+
 		Assert.assertTrue(lastTweet.getText() != null && !lastTweet.getText().equals(""));
 	}
 }
