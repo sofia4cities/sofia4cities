@@ -51,7 +51,7 @@ public class JoinProcessor implements MessageTypeProcessor {
 
 		String sessionKey = securityManager.authenticate(message);
 
-		if (StringUtils.isEmpty(sessionKey)) {
+		if (!StringUtils.isEmpty(sessionKey)) {
 			response.setDirection(SSAPMessageDirection.RESPONSE);
 			response.setMessageId(join.getMessageId());
 			response.setMessageType(SSAPMessageTypes.JOIN);
