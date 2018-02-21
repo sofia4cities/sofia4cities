@@ -40,9 +40,7 @@
 	
 
 		function getOntologyFields() {
-
 			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
-
 		}
 		
 		</script>
@@ -140,7 +138,7 @@
 											<div class="panel-body no-space">											
 												<!-- OPCIONES DE CONSULTA -->
 												<div class="col-md-6 col-sm-12 panel-tools">
-													<fieldset class="col-sm-4">												
+													<fieldset class="col-sm-3">												
 														<select class="element select small form-control" id="targetDatabase" name="targetDatabase" onChange="cambioConsulta();">
 															<option name="rtdb" value="rtdb"> RealTime DB</option>
 														</select>
@@ -156,9 +154,8 @@
 															<option name="json" value="json"> JSON </option>
 														</select>
 													</fieldset>	
-													<fieldset id="fieldset_offset" class="col-md-3">
-														<label id="label_offset" class="description labelSmallText" for="offset">Offset </label>
-														<input id="offset" disabled="disabled"/>
+													<fieldset id="fieldset_offset" class="col-md-3">														
+														<input class=""  name="offset" id="offset"/>
 													</fieldset>
 												</div>
 												<!-- TOOLBAR DE CONSULTA -->
@@ -348,8 +345,7 @@
 							                        </div>
 							                    <div id="dialog-confirm-generic" title="Información" style="display: none;">
 							                            <div>Información</div>
-							                    </div>
-							             										
+							                    </div>							             	
 											</div>
 										</div>	
 									</div>	
@@ -464,17 +460,7 @@
 				$("#from_ul").append(from);
 			}
 			
-			<!-- $("#where_ul").empty(); -->
-			<!-- $("#select_ul").empty(); -->
-			<!-- $("#from_ul").empty(); -->
-			<!-- $("#groupBy_ul").empty(); -->
-			<!-- $("#checks").empty(); -->
-			<!-- $("#campos").empty(); -->
-			<!-- $("#orderby_ul").empty(); -->
-
-			//var queryKp = "[[${QUERY}]]";
-			//console.log('cambioconsulta() -> queryKp -> '+ queryKp);
-			  
+						  
 			// TIPO DE QUERY  
 			var combo = document.getElementById('typeQuery');       
 			var opcion = combo.options[combo.selectedIndex].value;
