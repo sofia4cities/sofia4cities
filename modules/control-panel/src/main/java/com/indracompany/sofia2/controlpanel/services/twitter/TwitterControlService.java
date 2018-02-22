@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.controlpanel.services.twitter;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,9 +55,14 @@ public class TwitterControlService {
 		task.setUsername(twitterListening.getUser().getUserId());
 		task.setData(jobContext);
 		task.setSingleton(false);
-		task.setCronExpression("10 * * ? * * *");
-		//task.setStartAt(twitterListening.getDateFrom());
-		//task.setEndAt(twitterListening.getDateTo());
+		//task.setCronExpression("10 * * ? * * *");
+		
+		
+		Calendar end = Calendar.getInstance();		
+		end.add(Calendar.MINUTE, 3);
+		
+		task.setStartAt(Calendar.getInstance().getTime());//twitterListening.getDateFrom());
+		task.setEndAt(end.getTime());//witterListening.getDateTo());
 		return taskService.addJob(task).isSuccess();
 
 	}
