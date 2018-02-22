@@ -13,7 +13,11 @@
  */
 package com.indracompany.sofia2.config.services.deletion;
 
+import com.indracompany.sofia2.config.model.TwitterListening;
+
 public interface EntityDeletionService {
 
 	void deleteOntology(String id);
+	
+	void deleteTwitterListening(TwitterListening twitterListening);
 }

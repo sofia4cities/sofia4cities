@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
@@ -65,5 +66,11 @@ public class EntityDeletionServiceImpl implements EntityDeletionService{
 		}catch(Exception e){
 			throw new OntologyServiceException("Couldn't delete ontology");
 		}
+	}
+	
+	@Override
+	@Transactional
+	public void deleteTwitterListening(TwitterListening twitterListening) {
+		this.twitterListeningRepository.deleteById(twitterListening.getId());
 	}
 }

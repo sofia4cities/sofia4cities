@@ -30,6 +30,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
@@ -52,7 +53,8 @@ public class InitMongoDB {
 
 	@Autowired
 	BasicOpsDBRepository basicOps;
-
+	@Autowired
+	DataModelRepository dataModelRepository;
 	@Autowired
 	OntologyRepository ontologyRepository;
 	@Autowired
@@ -89,6 +91,7 @@ public class InitMongoDB {
 				ontology.setDescription("Ontology Restaurants for testing");
 				ontology.setActive(true);
 				ontology.setRtdbClean(true);
+				ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
 				ontology.setRtdbToHdb(true);
 				ontology.setPublic(true);
 				ontology.setUser(getUserDeveloper());

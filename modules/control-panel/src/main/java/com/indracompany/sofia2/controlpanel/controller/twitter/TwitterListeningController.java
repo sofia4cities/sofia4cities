@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +43,7 @@ import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
+import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.ClientPlatformServiceException;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
@@ -71,6 +73,8 @@ public class TwitterListeningController {
 	private ClientPlatformService clientPlatformService;
 	@Autowired
 	private TwitterControlService twitterControlService;
+	@Autowired
+	private EntityDeletionService entityDeletionService;
 
 	@Autowired
 	UserService userService;
@@ -206,6 +210,18 @@ public class TwitterListeningController {
 		model.addAttribute("configurations", configurations);
 		model.addAttribute("ontologies", ontologies);
 
+	}
+	@DeleteMapping("/scheduledsearch/{id}")
+	public String delete(Model model, @PathVariable ("id") String id,
+			RedirectAttributes redirect ) {
+		TwitterListening listening = this.twitterListeningService.getListenById(id);
+		if(listening != null){
+			this.entityDeletionService.deleteTwitterListening(listening);
+			this.utils.addRedirectMessage("scheduledsearch.delete.success", redirect);
+		}else
+			this.utils.addRedirectMessage("scheduledsearch.delete.fail", redirect);
+		
+		return "redirect:/twitter/scheduledsearch/list";
 	}
 	
 	//SCHEDULED SEARCH BEGIN END

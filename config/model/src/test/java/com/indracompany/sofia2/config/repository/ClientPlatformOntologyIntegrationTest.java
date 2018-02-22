@@ -61,7 +61,7 @@ public class ClientPlatformOntologyIntegrationTest {
 		ClientPlatformOntology cpo = this.repository.findAll().get(0);
 
 		Assert.assertTrue(
-				this.repository.findByOntologyAndClientPlatform(cpo.getOntology(), cpo.getClientPlatform()).size() > 0);
+				this.repository.findByOntologyAndClientPlatform(cpo.getOntology(), cpo.getClientPlatform()) != null);
 
 	}
 
