@@ -11,6 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.indracompany.sofia2.service.dashboard;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,6 @@ public class DashboardServiceImpl implements DashboardService{
 		List<Dashboard> dashboards;
 		User user= this.userRepository.findByUserId(userId);
 		
-		if(user.getRoleTypeId().getName().equals(DashboardServiceImpl.ADMINISTRATOR))
 		{
 			if(description!=null && identification!=null){
 
