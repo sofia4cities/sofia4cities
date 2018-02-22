@@ -399,11 +399,11 @@ var ScheduledSearchController= function()
     
     // set action and twitterListeningId to the form
     $('.delete-twitterListening').attr('id',twitterListeningId);
-    $('.delete-twitterListening').attr('action','/controlpanel/twitterListenings/' + twitterListeningId);
-    console.log('deleteconfiugrationConfirmation() -> formAction: ' + $('.delete-twitterListening').attr('action') + ' ID: ' + $('.delete-twitterListening').attr('userId'));
+    $('.delete-twitterListening').attr('action','/controlpanel/twitter/scheduledsearch/' + twitterListeningId);
+    console.log('deletetwitterListeningConfirmation() -> formAction: ' + $('.delete-twitterListening').attr('action') + ' ID: ' + $('.delete-twitterListening').attr('userId'));
     
     // call twitterListening Confirm at header.
-    HeaderController.showtwitterListeningConfirmDialog(twitterListeningId); 
+    HeaderController.showTwitterListeningConfirmDialog(twitterListeningId); 
   }
 
 

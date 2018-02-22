@@ -224,6 +224,7 @@ public class InitConfigDB {
 			config.setUser(getUserAdministrator());
 			config.setEnvironmentEnum(Configuration.Environment.ALL);
 			config.setSuffix("lmgracia");
+			config.setDescription("Twitter");
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
