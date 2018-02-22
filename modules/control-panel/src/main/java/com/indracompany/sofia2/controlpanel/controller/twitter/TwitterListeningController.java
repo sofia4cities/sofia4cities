@@ -127,7 +127,7 @@ public class TwitterListeningController {
 			if (twitterListening.getUser() == null)
 				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
 			twitterListening = this.twitterListeningService.createListening(twitterListening);
-			this.twitterControlService.scheduleTwitterListening(twitterListening);
+			
 		} else {
 
 			try{
@@ -161,6 +161,7 @@ public class TwitterListeningController {
 			}
 
 		}
+		this.twitterControlService.scheduleTwitterListening(twitterListening);
 		return "redirect:/twitter/scheduledsearch/list";
 
 	}

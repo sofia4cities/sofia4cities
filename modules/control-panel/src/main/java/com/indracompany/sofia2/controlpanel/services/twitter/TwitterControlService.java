@@ -54,7 +54,7 @@ public class TwitterControlService {
 		task.setUsername(twitterListening.getUser().getUserId());
 		task.setData(jobContext);
 		task.setSingleton(false);
-		task.setCronExpression("0 * 0 ? * * *");
+		task.setCronExpression("0,30 * 0 ? * * *");
 		task.setStartAt(twitterListening.getDateFrom());
 		task.setEndAt(twitterListening.getDateTo());
 		return taskService.addJob(task).isSuccess();
