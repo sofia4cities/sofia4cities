@@ -46,17 +46,17 @@ public class TwitterControlService {
 		jobContext.put("geolocation", false);
 		jobContext.put("timeout", 2);
 		if (twitterListening.getConfiguration() != null) {
-			jobContext.put("configuration", twitterListening.getConfiguration().getId());
+			jobContext.put("configurationId", twitterListening.getConfiguration().getId());
 		} else {
-			jobContext.put("configuration", null);
+			jobContext.put("configurationId", null);
 		}
 		
 		task.setUsername(twitterListening.getUser().getUserId());
 		task.setData(jobContext);
 		task.setSingleton(false);
-		task.setCronExpression("0,30 * 0 ? * * *");
-		task.setStartAt(twitterListening.getDateFrom());
-		task.setEndAt(twitterListening.getDateTo());
+		task.setCronExpression("10 * * ? * * *");
+		//task.setStartAt(twitterListening.getDateFrom());
+		//task.setEndAt(twitterListening.getDateTo());
 		return taskService.addJob(task).isSuccess();
 
 	}

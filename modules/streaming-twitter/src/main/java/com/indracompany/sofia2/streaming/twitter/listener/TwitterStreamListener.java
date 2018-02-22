@@ -111,7 +111,7 @@ public class TwitterStreamListener implements StreamListener {
 
 	public TwitterStreamListener() {
 		
-		
+		log.info("New TwitterListener up");
 		tweetsQueue = new LinkedBlockingQueue<Tweet>();
 		this.setMaxInserts(50);
 		executor = Executors.newFixedThreadPool(THREADS);
@@ -124,9 +124,10 @@ public class TwitterStreamListener implements StreamListener {
 	@Override
 	public void onTweet(Tweet tweet) {
 		try {
+			log.info("New Tweet, Stream: "+this.twitterStream.hashCode());
 			this.lastTweet = tweet;
 
-		
+			
 			/* Si ha muerto alg�n hilo se vuelve a levantar */
 			if (executor instanceof ThreadPoolExecutor && ((ThreadPoolExecutor) executor).getActiveCount() < THREADS) {
 				for (int i = 0; i < (THREADS - ((ThreadPoolExecutor) executor).getActiveCount()); i++) {
@@ -164,8 +165,8 @@ public class TwitterStreamListener implements StreamListener {
 
 	public void insertInstance(String instance) {
 		try {
-			this.sibService.insertOntologyInstance(instance, this.getSessionKey(), this.getOntology(),
-					this.getClientPlatform(), this.getConfigurationId());
+			//this.sibService.insertOntologyInstance(instance, this.getSessionKey(), this.getOntology(),
+				//	this.getClientPlatform(), this.getConfigurationId());
 		} catch (Exception e) {
 			log.debug("Error inserting tweet : " + this.getOntology() + ". Cause: " + e.getMessage(), e);
 		}
@@ -174,13 +175,13 @@ public class TwitterStreamListener implements StreamListener {
 
 	public void getSibSessionKey() throws SSAPComplianceException, AuthenticationException {
 
-		this.setSessionKey(sibService.getSessionKey(this.getToken()));
+		//this.setSessionKey(sibService.getSessionKey(this.getToken()));
 
 	}
 
 	public void deleteSibSessionKey() {
 
-		this.sibService.disconnect(this.getSessionKey());
+		//this.sibService.disconnect(this.getSessionKey());
 
 	}
 

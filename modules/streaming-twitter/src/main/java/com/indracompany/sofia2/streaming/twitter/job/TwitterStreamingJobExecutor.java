@@ -20,8 +20,12 @@ import org.springframework.stereotype.Service;
 
 
 import com.indracompany.sofia2.scheduler.job.BatchGenericExecutor;
+import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class TwitterStreamingJobExecutor implements BatchGenericExecutor{
 
 	@Autowired
@@ -30,6 +34,7 @@ public class TwitterStreamingJobExecutor implements BatchGenericExecutor{
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		
 		try {
+			log.info("Executed job");
 			twitterStreamingJob.execute(context);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

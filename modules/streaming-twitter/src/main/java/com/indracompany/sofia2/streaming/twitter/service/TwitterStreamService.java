@@ -54,8 +54,9 @@ public class TwitterStreamService {
 	}
 	
 	public Stream subscribe(TwitterStreamListener twitterStreamListener) throws Exception {
-		String listenerId = twitterStreamListener.getId();
 		
+		String listenerId = twitterStreamListener.getId();
+		log.info("Suscribing listener"+listenerId);
 		if(listenersMap.containsKey(listenerId)) 
 			throw new Exception("Error listener already created");
 		
@@ -76,7 +77,7 @@ public class TwitterStreamService {
 				.createFilterStreaming(keywords, twitterStreamListener);
 		twitterStreamListener.setTwitterStream(stream);
 		twitterStreamListener.getSibSessionKey();
-		
+		log.info("Suscribed stream: "+stream.toString());
 		listenersMap.put(listenerId, twitterStreamListener);
 		streamMap.put(listenerId, stream);
 		log.debug("Listener registered with id "+listenerId+", keywords: "+keywords);

@@ -37,10 +37,11 @@ public class TwitterStreamingJob {
 	
 	public void execute (JobExecutionContext context)  {
 
+		
 		TwitterStreamListener twitterStreamListener = new TwitterStreamListener();
 		
 		String id = context.getJobDetail().getJobDataMap().getString("id");
-		
+		log.info("Receiving job" + id);
 	
 		if(!twitterStreamService.isSubscribe(id)) {
 			
@@ -54,7 +55,7 @@ public class TwitterStreamingJob {
 			twitterStreamListener.setTimeout(context.getJobDetail().getJobDataMap().getInt("timeout"));
 			twitterStreamListener.setConfigurationId(context.getJobDetail().getJobDataMap().getString("configurationId"));
 		
-			
+			log.info(twitterStreamListener.toString());
 			try {
 				twitterStreamService.subscribe(twitterStreamListener);
 			} catch (Exception e) {
