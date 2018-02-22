@@ -29,7 +29,7 @@ import com.indracompany.sofia2.config.model.Ontology;
 
 public interface ClientPlatformOntologyRepository extends JpaRepository<ClientPlatformOntology, String> {
 
-	List<ClientPlatformOntology> findByOntologyAndClientPlatform(Ontology ontology, ClientPlatform clientPlatform);
+	ClientPlatformOntology findByOntologyAndClientPlatform(Ontology ontology, ClientPlatform clientPlatform);
 
 	List<ClientPlatformOntology> findByClientPlatform(ClientPlatform clientPlatform);
 
