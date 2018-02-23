@@ -148,8 +148,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
 			
 			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				String updateQuery = "db."+ontology.getIdentification()+".update({\"_id\": {\"$oid\" : \""+OBJECT_ID+"\" }}, {$set:"+BODY+" })";
-				mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), updateQuery);	
+				mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontology.getIdentification(), OBJECT_ID, BODY);	
 				OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);	
 			}
 			
@@ -161,7 +160,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
 			
 			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.deleteNative(ontology.getIdentification(), "{\"_id\": { \"$oid\" : \""+OBJECT_ID+"\" }}");
+				mongoBasicOpsDBRepository.deleteNativeById(ontology.getIdentification(), OBJECT_ID);
 			}
 			
 			else {
@@ -169,7 +168,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			}
 			
 		}
-				
+			
+		
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
 		exchange.getIn().setBody(data);
 		return data;
