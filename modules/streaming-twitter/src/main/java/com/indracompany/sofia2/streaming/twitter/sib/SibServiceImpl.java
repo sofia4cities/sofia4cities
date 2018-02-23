@@ -14,16 +14,21 @@
 package com.indracompany.sofia2.streaming.twitter.sib;
 
 import java.io.IOException;
+import java.time.ZoneId;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
+import com.indracompany.sofia2.persistence.ContextData;
+import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.SSAPMessageTypes;
@@ -41,6 +46,10 @@ public class SibServiceImpl implements SibService {
 
 	@Autowired
 	private MessageProcessor messageProcessor;
+	@Autowired
+	BasicOpsDBRepository repository;
+	@Autowired
+	MongoTemplate springDataMongoTemplate;
 
 	@Override
 	public String getSessionKey(String token) throws SSAPComplianceException, AuthenticationException {
@@ -112,6 +121,31 @@ public class SibServiceImpl implements SibService {
 			log.debug("Couldn't insert instance");
 
 		return response.getBody().isOk();
+	}
+
+	@Override
+	public void inserOntologyInstanceToMongo(String instance, String ontology, String clientPlatform, String clientPlatformInstance, String user) throws JsonProcessingException, IOException {
+		if (!springDataMongoTemplate.collectionExists(ontology)) {
+			springDataMongoTemplate.createCollection(ontology);
+			log.debug("Ontology collection created");
+		}
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode jsonNode = objectMapper.readTree(instance);
+		
+		ContextData contextData = new ContextData();
+
+		contextData.setClientConnection("");
+		contextData.setClientPatform(clientPlatform);
+		contextData.setClientPatformInstance(clientPlatformInstance);
+		contextData.setTimezoneId(ZoneId.systemDefault().toString());
+		contextData.setUser(user);
+		
+		((ObjectNode) jsonNode).set("contextData", objectMapper.valueToTree(contextData));
+		
+		repository.insert(ontology,
+				jsonNode.toString());
+		
 	}
 
 }

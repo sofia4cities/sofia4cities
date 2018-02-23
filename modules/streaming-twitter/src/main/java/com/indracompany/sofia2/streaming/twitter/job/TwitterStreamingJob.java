@@ -30,59 +30,50 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class TwitterStreamingJob {
-	
+
 	@Autowired
 	TwitterStreamService twitterStreamService;
-	
-	
-	public void execute (JobExecutionContext context)  {
+	@Autowired
+	TwitterStreamListener twitterStreamListener;
 
-		
-		TwitterStreamListener twitterStreamListener = new TwitterStreamListener();
-		
+	public void execute(JobExecutionContext context) {
+
 		String id = context.getJobDetail().getJobDataMap().getString("id");
-		log.info("Receiving job" + id);
-	
-		if(!twitterStreamService.isSubscribe(id)) {
-			
+
+		if (!twitterStreamService.isSubscribe(id)) {
 			String topics = context.getJobDetail().getJobDataMap().getString("topics");
 			twitterStreamListener.setId(id);
+			twitterStreamListener.setUser(context.getJobDetail().getJobDataMap().getString("userId"));
 			twitterStreamListener.setOntology(context.getJobDetail().getJobDataMap().getString("ontology"));
 			twitterStreamListener.setClientPlatform(context.getJobDetail().getJobDataMap().getString("clientPlatform"));
 			twitterStreamListener.setToken(context.getJobDetail().getJobDataMap().getString("token"));
 			twitterStreamListener.setKeywords(this.getKeywordsForListener(topics));
 			twitterStreamListener.setGeolocation(context.getJobDetail().getJobDataMap().getBoolean("geolocation"));
 			twitterStreamListener.setTimeout(context.getJobDetail().getJobDataMap().getInt("timeout"));
-			twitterStreamListener.setConfigurationId(context.getJobDetail().getJobDataMap().getString("configurationId"));
-		
-			log.info(twitterStreamListener.toString());
+			twitterStreamListener
+					.setConfigurationId(context.getJobDetail().getJobDataMap().getString("configurationId"));
+
 			try {
 				twitterStreamService.subscribe(twitterStreamListener);
 			} catch (Exception e) {
 				log.debug("Could not suscribe listener");
 			}
 		}
-		
-		
+
 	}
 
 	private List<String> getKeywordsForListener(String topics) {
 		try {
 			topics = new String(topics.getBytes("iso-8859-1"), "utf8");
-		 } catch (UnsupportedEncodingException e) {
-			 log.debug("Problem decodifying keywords");
-		 }
-		 List<String> arrayKeywords=new ArrayList<String>();
-		 StringTokenizer st=new StringTokenizer(topics, ",");
-	     while(st.hasMoreTokens()) {
-			 arrayKeywords.add(st.nextToken().trim());
-		 }
-	     return arrayKeywords;
-	}
-
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
+		} catch (UnsupportedEncodingException e) {
+			log.debug("Problem decodifying keywords");
+		}
+		List<String> arrayKeywords = new ArrayList<String>();
+		StringTokenizer st = new StringTokenizer(topics, ",");
+		while (st.hasMoreTokens()) {
+			arrayKeywords.add(st.nextToken().trim());
+		}
+		return arrayKeywords;
 	}
 
 }

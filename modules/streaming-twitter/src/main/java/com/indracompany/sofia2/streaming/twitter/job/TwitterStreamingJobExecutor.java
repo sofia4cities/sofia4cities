@@ -13,22 +13,20 @@
  */
 package com.indracompany.sofia2.streaming.twitter.job;
 
-import org.quartz.InterruptableJob;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.quartz.UnableToInterruptJobException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import com.indracompany.sofia2.scheduler.job.BatchGenericExecutor;
-import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
 
 import lombok.extern.slf4j.Slf4j;
 
+@DisallowConcurrentExecution
 @Service
 @Slf4j
-public class TwitterStreamingJobExecutor implements BatchGenericExecutor, InterruptableJob {
+public class TwitterStreamingJobExecutor implements BatchGenericExecutor{
 
 	@Autowired
 	private TwitterStreamingJob twitterStreamingJob;
@@ -37,17 +35,12 @@ public class TwitterStreamingJobExecutor implements BatchGenericExecutor, Interr
 		
 		try {
 			log.info("Executed job");
-			//twitterStreamingJob.execute(context);
+			twitterStreamingJob.execute(context);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
-	@Override
-	public void interrupt() throws UnableToInterruptJobException {
-		
-		twitterStreamingJob.destroy();
-	}
+
 
 }

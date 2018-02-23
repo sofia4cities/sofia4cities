@@ -24,6 +24,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 public interface SibService {
 
 	String getSessionKey(String token) throws SSAPComplianceException, AuthenticationException;
+	void inserOntologyInstanceToMongo(String instance, String ontology, String clientPlatform, String clientPlatformInstance, String user) throws JsonProcessingException, IOException;
 	SSAPMessage<SSAPBodyReturnMessage> disconnect(String sessionKey);
 	boolean insertOntologyInstance(String instance, String sessionKey,
 			String ontology, String clientPlatform, String clientPlatformInstance) throws JsonProcessingException, IOException;

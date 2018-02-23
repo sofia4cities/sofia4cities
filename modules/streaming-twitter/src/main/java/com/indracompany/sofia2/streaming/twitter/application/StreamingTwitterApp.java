@@ -16,10 +16,12 @@ package com.indracompany.sofia2.streaming.twitter.application;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 
 
 @SpringBootApplication
-@ComponentScan("streaming.twitter")
+@ComponentScan("com.indracompany.sofia2")
 public class StreamingTwitterApp {
 
 	public static void main(String[] args) {

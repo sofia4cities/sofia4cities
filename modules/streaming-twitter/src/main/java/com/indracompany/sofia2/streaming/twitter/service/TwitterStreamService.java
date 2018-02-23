@@ -23,9 +23,11 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
+import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceFactory;
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceSpringSocialImpl;
 import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
+import com.indracompany.sofia2.streaming.twitter.sib.SibService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,72 +38,70 @@ public class TwitterStreamService {
 	@Autowired
 	private ConfigurationService configurationService;
 
+	@Autowired
+	SibService sibService;
+	@Autowired
+	MessageProcessor messageProcessor;
 
-	
-	private Map<String, TwitterStreamListener> listenersMap = new HashMap<String, TwitterStreamListener>(); 
+	private Map<String, TwitterStreamListener> listenersMap = new HashMap<String, TwitterStreamListener>();
 	private Map<String, Stream> streamMap = new HashMap<String, Stream>();
-	
+
 	private TwitterServiceSpringSocialImpl getTwitterConfiguration(String configurationId) {
-		
-		//TODO get default config  throw exception
+
+		// TODO get default config throw exception
 		Configuration configuration = this.configurationService.getConfiguration(configurationId);
-		TwitterConfiguration twitterConfiguration = this.configurationService.
-				getTwitterConfiguration(configuration.getEnvironment(), configuration.getSuffix());
-		return TwitterServiceFactory.getSpringSocialImpl(twitterConfiguration.getConsumerKey(), 
-				twitterConfiguration.getConsumerSecret(), twitterConfiguration.getAccessToken(), 
+		TwitterConfiguration twitterConfiguration = this.configurationService
+				.getTwitterConfiguration(configuration.getEnvironment(), configuration.getSuffix());
+		return TwitterServiceFactory.getSpringSocialImpl(twitterConfiguration.getConsumerKey(),
+				twitterConfiguration.getConsumerSecret(), twitterConfiguration.getAccessToken(),
 				twitterConfiguration.getAccessTokenSecret());
-		
+
 	}
-	
+
 	public Stream subscribe(TwitterStreamListener twitterStreamListener) throws Exception {
 		
 		String listenerId = twitterStreamListener.getId();
-		log.info("Suscribing listener"+listenerId);
-		if(listenersMap.containsKey(listenerId)) 
-			throw new Exception("Error listener already created");
-		
-		String keywords= "";
-		for(String keyword: twitterStreamListener.getKeywords()) {
+	
+		if(listenersMap.containsKey(listenerId))
+			throw new Exception("Listener already exists");
+
+		String keywords = "";
+		for (String keyword : twitterStreamListener.getKeywords()) {
 			keywords = keywords + keyword + ",";
 		}
-		if(keywords.equals("")) 
+		if (keywords.equals(""))
 			throw new Exception("No keywords found for this Listener");
-		
-		//close existing stream
-		if(streamMap.containsKey(listenerId)) {
-			streamMap.get(listenerId).close();
-			streamMap.remove(listenerId);
-		}
-		
+
 		Stream stream = this.getTwitterConfiguration(twitterStreamListener.getConfigurationId())
 				.createFilterStreaming(keywords, twitterStreamListener);
 		twitterStreamListener.setTwitterStream(stream);
 		twitterStreamListener.getSibSessionKey();
-		log.info("Suscribed stream: "+stream.toString());
+		log.info("Suscribed stream: " + stream.toString());
 		listenersMap.put(listenerId, twitterStreamListener);
 		streamMap.put(listenerId, stream);
-		log.debug("Listener registered with id "+listenerId+", keywords: "+keywords);
+		log.debug("Listener registered with id " + listenerId + ", keywords: " + keywords);
+
 		return stream;
 	}
-	
+
 	public void unsubscribe(String listenerId) throws Exception {
 		TwitterStreamListener listener = listenersMap.get(listenerId);
-		
-		if(listener!=null) {
+
+		if (listener != null) {
 			Stream stream = streamMap.get(listenerId);
 			stream.close();
 			listenersMap.remove(listenerId);
 			streamMap.remove(listenerId);
 			listener.deleteSibSessionKey();
-		}else
+		} else
 			throw new Exception("Error listener not found");
 	}
-	
+
 	public boolean isSubscribe(String id) {
-		if(listenersMap.containsKey(id))
+		if (listenersMap.containsKey(id))
 			return true;
 		else
 			return false;
 	}
-	
+
 }

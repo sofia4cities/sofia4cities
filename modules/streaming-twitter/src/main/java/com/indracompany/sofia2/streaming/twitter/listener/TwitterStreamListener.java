@@ -14,7 +14,6 @@
 package com.indracompany.sofia2.streaming.twitter.listener;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -41,17 +40,21 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Component("prototype")
 @Slf4j
 public class TwitterStreamListener implements StreamListener {
 
 	@Autowired
 	MessageProcessor messageProcessor;
+
 	@Autowired
 	SibService sibService;
 	@Getter
 	@Setter
 	private List<String> keywords;
+	@Getter
+	@Setter
+	private String user;
 	@Getter
 	@Setter
 	private boolean geolocation;
@@ -74,8 +77,6 @@ public class TwitterStreamListener implements StreamListener {
 	@Setter
 	private String configurationId;
 
-	// @Value("${sofia2.urls.iotbroker.services}" + "${sofia2.paths.ssap}")
-	// private String url;
 	@Getter
 	@Setter
 	private String sessionKey;
@@ -95,9 +96,6 @@ public class TwitterStreamListener implements StreamListener {
 	@Getter
 	@Setter
 	private Stream twitterStream;
-	private int countInserts = 0;
-	@Setter
-	private int maxInserts;
 
 	private static final int QUEUE_LENGTH = 25;
 	private static final String A_PATTERN = "<a href=\"(.*)\" rel=\"(.*)\">(.*)</a>";
@@ -110,10 +108,9 @@ public class TwitterStreamListener implements StreamListener {
 			+ " 'tweet_retweetcount': '%s'" + "}}";
 
 	public TwitterStreamListener() {
-		
+
 		log.info("New TwitterListener up");
 		tweetsQueue = new LinkedBlockingQueue<Tweet>();
-		this.setMaxInserts(50);
 		executor = Executors.newFixedThreadPool(THREADS);
 		tweetInsert = defineMonitoringRunnable();
 		for (int i = 0; i < THREADS; i++) {
@@ -124,17 +121,17 @@ public class TwitterStreamListener implements StreamListener {
 	@Override
 	public void onTweet(Tweet tweet) {
 		try {
-			log.info("New Tweet, Stream: "+this.twitterStream.hashCode());
+			log.info("New Tweet, Stream: " + this.twitterStream.hashCode());
 			this.lastTweet = tweet;
 
-			
-			/* Si ha muerto alg�n hilo se vuelve a levantar */
+			/* Review each thread, if it is shutted down, then reactivate */
 			if (executor instanceof ThreadPoolExecutor && ((ThreadPoolExecutor) executor).getActiveCount() < THREADS) {
 				for (int i = 0; i < (THREADS - ((ThreadPoolExecutor) executor).getActiveCount()); i++) {
 					executor.execute(tweetInsert);
 				}
 			}
-			/* Se agrega el tweet a la cola */
+		
+			/*Add to queue*/
 			if (tweetsQueue.size() < QUEUE_LENGTH) {
 				tweetsQueue.add(tweet);
 			}
@@ -165,8 +162,16 @@ public class TwitterStreamListener implements StreamListener {
 
 	public void insertInstance(String instance) {
 		try {
-			//this.sibService.insertOntologyInstance(instance, this.getSessionKey(), this.getOntology(),
-				//	this.getClientPlatform(), this.getConfigurationId());
+			// this.sibService.insertOntologyInstance(instance,
+			// this.getSessionKey(), this.getOntology(),
+			// this.getClientPlatform(), this.getConfigurationId());
+			
+			//while we dont have iotbroker
+			instance = instance.replaceAll("'", "\"");
+			this.sibService.inserOntologyInstanceToMongo(instance, this.getOntology(), this.getClientPlatform(),
+					this.getClientPlatform() + ":twitterStreaming", user);
+			log.info("Called sibservice");
+
 		} catch (Exception e) {
 			log.debug("Error inserting tweet : " + this.getOntology() + ". Cause: " + e.getMessage(), e);
 		}
@@ -175,13 +180,13 @@ public class TwitterStreamListener implements StreamListener {
 
 	public void getSibSessionKey() throws SSAPComplianceException, AuthenticationException {
 
-		//this.setSessionKey(sibService.getSessionKey(this.getToken()));
+		// this.setSessionKey(sibService.getSessionKey(this.getToken()));
 
 	}
 
 	public void deleteSibSessionKey() {
 
-		//this.sibService.disconnect(this.getSessionKey());
+		// this.sibService.disconnect(this.getSessionKey());
 
 	}
 
@@ -198,7 +203,6 @@ public class TwitterStreamListener implements StreamListener {
 
 					Tweet tweet = tweetsQueue.poll();
 					if (tweet != null) {
-						
 
 						// insertTweet
 						// String foundLongitude = "0.0";
