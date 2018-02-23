@@ -13,11 +13,8 @@
  */
 package com.indracompany.sofia2.config.services.twitter;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,7 +57,6 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 	@Autowired
 	private UserService userService;
 
-
 	@Override
 	public List<TwitterListening> getAllListenings() {
 		return this.twitterListeningRepository.findAll();
@@ -81,6 +77,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 	public TwitterListening getListenByIdentificator(String identificator) {
 		return this.twitterListeningRepository.findByIdentificator(identificator);
 	}
+
 	@Override
 	public List<Configuration> getAllConfigurations() {
 		return this.configurationService.getConfigurations(ConfigurationType.Type.TwitterConfiguration);
@@ -128,7 +125,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		if (twitterListening.getConfiguration().getId() == null)
 			twitterListening.setConfiguration(this.configurationService
 					.getConfigurationByDescription(twitterListening.getConfiguration().getDescription()));
-		
+
 		twitterListening = this.twitterListeningRepository.save(twitterListening);
 		return twitterListening;
 
@@ -172,7 +169,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		DataModel dataModelTwitter = this.dataModelRepository.findByName(dataModel).get(0);
 		Ontology ontology = new Ontology();
 		ontology.setIdentification(ontologyId);
-		if (dataModelTwitter.getType().equals(DataModel.MainType.Twitter.toString()))
+		if (dataModelTwitter.getType().equals(DataModel.MainType.SocialMedia.toString()))
 			ontology.setDescription("Ontology created for tweet recollection");
 		ontology.setJsonSchema(dataModelTwitter.getSchema());
 		ontology.setActive(true);
@@ -182,6 +179,5 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		return ontology;
 
 	}
-	
 
 }

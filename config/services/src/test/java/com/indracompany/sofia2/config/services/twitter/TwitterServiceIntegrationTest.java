@@ -58,63 +58,66 @@ public class TwitterServiceIntegrationTest {
 	OntologyService ontologyService;
 	@Autowired
 	ConfigurationService configurationService;
-	
+
 	@Test
 	public void testCreateListening() {
 		TwitterListening twitterListening;
 		Ontology ontology;
 		Token token;
 		ClientPlatform clientPlatform;
-		if(twitterListeningService.getListenByIdentificator("Listening Test") == null) {
+		if (twitterListeningService.getListenByIdentificator("Listening Test") == null) {
 			twitterListening = new TwitterListening();
 			twitterListening.setId("1");
-			twitterListening.setConfiguration(configurationService.getConfiguration(ConfigurationType.Type.TwitterConfiguration, "ALL", "lmgracia"));
-			
-			if(this.ontologyService.getOntologyByIdentification("OntologyTwitter") == null) {
-				ontology = twitterListeningService.createTwitterOntology("OntologyTwitter", DataModel.MainType.Twitter.name());
+			twitterListening.setConfiguration(configurationService
+					.getConfiguration(ConfigurationType.Type.TwitterConfiguration, "ALL", "lmgracia"));
+
+			if (this.ontologyService.getOntologyByIdentification("OntologyTwitter") == null) {
+				ontology = twitterListeningService.createTwitterOntology("OntologyTwitter",
+						DataModel.MainType.SocialMedia.name());
 				ontology.setUser(userService.getUser("administrator"));
 				ontology = ontologyService.saveOntology(ontology);
-			}else
+			} else
 				ontology = this.ontologyService.getOntologyByIdentification("OntologyTwitter");
-			
+
 			List<Ontology> ontologies = new ArrayList<Ontology>();
 			ontologies.add(ontology);
-			
-			if(clientPlatformService.getByIdentification("CPTwitter") == null) {
+
+			if (clientPlatformService.getByIdentification("CPTwitter") == null) {
 				clientPlatform = new ClientPlatform();
 				clientPlatform.setUser(userService.getUser("administrator"));
 				clientPlatform.setIdentification("CPTwitter");
 				token = clientPlatformService.createClientAndToken(ontologies, clientPlatform);
-			}else{
+			} else {
 				clientPlatform = clientPlatformService.getByIdentification("CPTwitter");
 				token = tokenService.getToken(clientPlatform);
 			}
-			
+
 			twitterListening.setToken(token);
 			twitterListening.setOntology(ontology);
 			twitterListening.setUser(ontology.getUser());
 			twitterListening.setDateFrom(new Date());
-			twitterListening.setDateTo( new Date(System.currentTimeMillis()+10000000));
+			twitterListening.setDateTo(new Date(System.currentTimeMillis() + 10000000));
 			twitterListening.setIdentificator("Listening Test");
 			twitterListening.setTopics("Helsinki,Madrid");
 			twitterListening = twitterListeningService.createListening(twitterListening);
 		}
 		twitterListening = twitterListeningService.getListenByIdentificator("Listening Test");
 		Assert.assertTrue(twitterListening.getId() != null);
-		
+
 	}
-//	
-//	@Test
-//	public void addScheduledSearchJob() {
-//		TwitterListening twitterListening = twitterService.getListenByIdentificator("Listening Test");
-//		if(twitterListening == null)
-//		{
-//			this.testCreateListening();
-//			twitterListening = twitterService.getListenByIdentificator("Listening Test");
-//		}
-//		
-//		Assert.assertTrue(twitterService.scheduleTwitterListening(twitterListening));
-//		
-//		
-//	}
+	//
+	// @Test
+	// public void addScheduledSearchJob() {
+	// TwitterListening twitterListening =
+	// twitterService.getListenByIdentificator("Listening Test");
+	// if(twitterListening == null)
+	// {
+	// this.testCreateListening();
+	// twitterListening = twitterService.getListenByIdentificator("Listening Test");
+	// }
+	//
+	// Assert.assertTrue(twitterService.scheduleTwitterListening(twitterListening));
+	//
+	//
+	// }
 }
