@@ -70,6 +70,11 @@ public class AppWebUtils {
 
 	}
 
+	public void addRedirectException(String exception, RedirectAttributes redirect) {
+		redirect.addFlashAttribute("message", exception);
+
+	}
+
 	public String getMessage(String key, String valueDefault) {
 		try {
 			return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());

@@ -158,24 +158,23 @@ public class UserServiceImpl implements UserService {
 			this.userRepository.save(user);
 		} else
 			throw new UserServiceException("Cannot delete user that does not exist");
+	}
 
+	Role getRoleDeveloper() {
+		Role r = new Role();
+		r.setName(Role.Type.ROLE_DEVELOPER.name());
+		r.setIdEnum(Role.Type.ROLE_DEVELOPER);
+		return r;
 	}
 
 	@Override
-	public boolean registerUser(User user) {
+	public void registerUser(User user) {
+		if (this.userExists(user))
+			throw new UserServiceException("This id exists in the system. Please select another id.");
 
-		if (!this.userExists(user)) {
+		user.setRole(getRoleDeveloper());
 
-			Role r = new Role();
-			r.setName(Role.Type.ROLE_USER.name());
-			r.setIdEnum(Role.Type.ROLE_USER);
-			user.setRole(r);
-
-			this.userRepository.save(user);
-			return true;
-		}
-
-		return false;
+		this.userRepository.save(user);
 
 	}
 }
