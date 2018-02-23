@@ -18,6 +18,7 @@ import java.io.IOException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ public class MailServiceTest {
 	public void tearDown() {
 	}
 
+	@Ignore
 	@Test
 	public void testSendMail() {
 		try {
@@ -55,6 +57,7 @@ public class MailServiceTest {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void testSendHtmlMailWithAttachment() {
 		try {
