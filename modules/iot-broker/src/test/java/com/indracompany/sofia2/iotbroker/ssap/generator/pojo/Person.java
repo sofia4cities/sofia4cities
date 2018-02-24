@@ -17,7 +17,7 @@ import com.indracompany.sofia2.persistence.ContextData;
 
 import lombok.Data;
 
-@Data 
+@Data
 public class Person {
 	private ContextData contextData;
 	private String name;

@@ -26,11 +26,11 @@ import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceExceptio
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.SSAPMessageDirection;
-import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 @Component
 public class JoinProcessor implements MessageTypeProcessor {
@@ -42,14 +42,14 @@ public class JoinProcessor implements MessageTypeProcessor {
 	@Override
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws SSAPComplianceException, AuthenticationException {
-		SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
-		SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
+		final SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
+		final SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
 
 		if (StringUtils.isEmpty(join.getBody().getToken())) {
 			throw new SSAPComplianceException(MessageException.ERR_TOKEN_IS_MANDATORY);
 		}
 
-		String sessionKey = securityManager.authenticate(message);
+		final String sessionKey = securityManager.authenticate(message);
 
 		if (!StringUtils.isEmpty(sessionKey)) {
 			response.setDirection(SSAPMessageDirection.RESPONSE);

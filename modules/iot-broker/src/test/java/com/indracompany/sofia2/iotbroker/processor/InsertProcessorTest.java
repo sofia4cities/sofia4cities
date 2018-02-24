@@ -40,10 +40,10 @@ import com.indracompany.sofia2.iotbroker.ssap.generator.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.ssap.generator.pojo.Person;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
-import com.indracompany.sofia2.ssap.SSAPErrorCode;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

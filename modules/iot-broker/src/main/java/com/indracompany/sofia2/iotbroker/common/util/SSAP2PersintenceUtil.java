@@ -16,7 +16,7 @@ package com.indracompany.sofia2.iotbroker.common.util;
 import java.util.Optional;
 
 import com.indracompany.sofia2.persistence.common.AccessMode;
-import com.indracompany.sofia2.ssap.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public class SSAP2PersintenceUtil {
 
@@ -36,7 +36,7 @@ public class SSAP2PersintenceUtil {
 			optional = Optional.of(AccessMode.SELECT);
 			break;
 		}
-		
+
 		return optional;
 	}
 

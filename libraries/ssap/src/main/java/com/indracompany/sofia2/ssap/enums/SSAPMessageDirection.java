@@ -11,10 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.ssap;
+package com.indracompany.sofia2.ssap.enums;
 
-public enum SSAPQueryType {
-	NATIVE,
-	SQL
+public enum SSAPMessageDirection {
+	
+	REQUEST,
+	RESPONSE,
+	ERROR;
 
 }

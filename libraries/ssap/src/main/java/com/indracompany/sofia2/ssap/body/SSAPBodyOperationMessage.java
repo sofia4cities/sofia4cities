@@ -13,9 +13,9 @@
  */
 package com.indracompany.sofia2.ssap.body;
 
-import com.indracompany.sofia2.ssap.SSAPQueryResultFormat;
-import com.indracompany.sofia2.ssap.SSAPQueryType;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryResultFormat;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 public class SSAPBodyOperationMessage extends SSAPBodyMessage {
 
