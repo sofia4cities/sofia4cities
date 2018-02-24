@@ -16,8 +16,8 @@ package com.indracompany.sofia2.plugin.iotbroker.security;
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public interface SecurityPlugin {
 	public String authenticate(SSAPMessage<? extends SSAPBodyMessage> message) throws AuthenticationException;

@@ -29,11 +29,11 @@ import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
-import com.indracompany.sofia2.ssap.SSAPErrorCode;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.util.SSAPMessageGenerator;
 
 @Component
@@ -66,12 +66,12 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 		try {
 
-			Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = validateMessage(message);
+			final Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = validateMessage(message);
 			if (validation.isPresent()) {
 				return validation.get();
 			}
 
-			MessageTypeProcessor processor = proxyProcesor(message);
+			final MessageTypeProcessor processor = proxyProcesor(message);
 
 			processor.validateMessage(message);
 			response = processor.process(message);
@@ -80,22 +80,22 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			response.setMessageType(message.getMessageType());
 			response.setOntology(message.getOntology());
 
-		} catch (SSAPProcessorException e) {
+		} catch (final SSAPProcessorException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
 					String.format(e.getMessage(), message.getMessageType().name()));
-		} catch (AuthorizationException e) {
+		} catch (final AuthorizationException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTHORIZATION,
 					String.format(e.getMessage(), message.getMessageType().name()));
-		} catch (AuthenticationException e) {
+		} catch (final AuthenticationException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTENTICATION,
 					String.format(e.getMessage(), message.getMessageType().name()));
-		} catch (OntologySchemaException e) {
+		} catch (final OntologySchemaException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
 					String.format(e.getMessage(), message.getMessageType().name()));
-		} catch (BaseException e) {
+		} catch (final BaseException e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
 					String.format(e.getMessage(), message.getMessageType().name()));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
 					String.format(e.getMessage(), message.getMessageType().name()));
 		}
@@ -145,9 +145,9 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			throw new SSAPProcessorException(MessageException.ERR_SSAP_MESSAGETYPE_MANDATORY_NOT_NULL);
 		}
 
-		SSAPMessageTypes type = message.getMessageType();
+		final SSAPMessageTypes type = message.getMessageType();
 
-		List<MessageTypeProcessor> filteredProcessors = processors.stream()
+		final List<MessageTypeProcessor> filteredProcessors = processors.stream()
 				.filter(p -> p.getMessageTypes().contains(type)).collect(Collectors.toList());
 
 		if (filteredProcessors.isEmpty()) {

@@ -18,13 +18,13 @@ import java.util.List;
 import com.indracompany.sofia2.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public interface MessageTypeProcessor {
 	SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) throws BaseException, Exception;
 	List<SSAPMessageTypes> getMessageTypes();
 	void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws OntologySchemaException, BaseException, Exception;
-	
+
 }
