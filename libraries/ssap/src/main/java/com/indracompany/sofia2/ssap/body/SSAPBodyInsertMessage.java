@@ -13,30 +13,18 @@
  */
 package com.indracompany.sofia2.ssap.body;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
-import com.indracompany.sofia2.ssap.enums.SSAPQueryResultFormat;
-import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
-public class SSAPBodyOperationMessage extends SSAPBodyMessage {
+public class SSAPBodyInsertMessage extends SSAPBodyMessage {
 
-	private String query;
-	private SSAPQueryType queryType;
-	private SSAPQueryResultFormat resultFormat;
+	private JsonNode data;
 
-	public SSAPQueryType getQueryType() {
-		return queryType;
+	public JsonNode getData() {
+		return data;
 	}
-
-	public void setQueryType(SSAPQueryType queryType) {
-		this.queryType = queryType;
-	}
-
-	public SSAPQueryResultFormat getResultFormat() {
-		return resultFormat;
-	}
-
-	public void setResultFormat(SSAPQueryResultFormat resultFormat) {
-		this.resultFormat = resultFormat;
+	public void setData(JsonNode data) {
+		this.data = data;
 	}
 
 	@Override
@@ -57,14 +45,6 @@ public class SSAPBodyOperationMessage extends SSAPBodyMessage {
 	@Override
 	public boolean isOntologyMandatory() {
 		return true;
-	}
-
-	public String getQuery() {
-		return query;
-	}
-
-	public void setQuery(String query) {
-		this.query = query;
 	}
 
 }

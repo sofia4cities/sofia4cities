@@ -58,7 +58,6 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		// TODO: CHECK AUTHRIZATIONS & PERMISSIONS
 		// TODO: VALIDATE ONTOLOGY SCHEMA IF NECESSARY
 		// TODO: GET PROCESSOR AN PROCESS
-
 		// TODO: POST-PROCESSORS
 		// TODO: RETORNO
 
@@ -66,7 +65,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 		try {
 
-			final Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = validateMessage(message);
+			final Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = this.validateMessage(message);
 			if (validation.isPresent()) {
 				return validation.get();
 			}
@@ -130,6 +129,12 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 		// Check if ontology is present and autorization for ontology
 		if (message.getBody().isOntologyMandatory()) {
+			if(StringUtils.isEmpty(message.getOntology())) {
+				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
+						String.format(MessageException.ERR_ONTOLOGY_SCHEMA, message.getMessageType().name()));
+				return Optional.of(response);
+			}
+
 			securityPluginManager.checkAuthorization(message.getMessageType(), message.getOntology(),
 					message.getSessionKey());
 		}
