@@ -41,7 +41,7 @@ import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.ssap.generator.pojo.Person;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 
@@ -59,7 +59,7 @@ public class InsertProcessorTest {
 	SecurityPluginManager securityPluginManager;
 
 	Person subject = PojoGenerator.generatePerson();
-	SSAPMessage<SSAPBodyOperationMessage> ssapInsertOperation;
+	SSAPMessage<SSAPBodyInsertMessage> ssapInsertOperation;
 
 	@Before
 	public void setUp() throws IOException, Exception {

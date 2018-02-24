@@ -42,7 +42,7 @@ import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.DBStatementParser;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
@@ -66,7 +66,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 			throws BaseException {
 		@SuppressWarnings("unchecked")
 		final
-		SSAPMessage<SSAPBodyOperationMessage> insertMessage = (SSAPMessage<SSAPBodyOperationMessage>) message;
+		SSAPMessage<SSAPBodyInsertMessage> insertMessage = (SSAPMessage<SSAPBodyInsertMessage>) message;
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
 		// TODO: Client Connection in contextData
@@ -114,22 +114,22 @@ public class InsertProcessor implements MessageTypeProcessor {
 	@Override
 	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws AuthorizationException, OntologySchemaException, SSAPProcessorException {
-		final SSAPMessage<SSAPBodyOperationMessage> operationMessage = (SSAPMessage<SSAPBodyOperationMessage>) message;
+		final SSAPMessage<SSAPBodyInsertMessage> operationMessage = (SSAPMessage<SSAPBodyInsertMessage>) message;
 
-		if (operationMessage.getBody().getQueryType() == null) {
-			throw new SSAPProcessorException(String.format(MessageException.ERR_QUERY_TYPE_MANDATORY,
-					operationMessage.getBody().getQueryType()));
-		}
+		//		if (operationMessage.getBody().getQueryType() == null) {
+		//			throw new SSAPProcessorException(String.format(MessageException.ERR_QUERY_TYPE_MANDATORY,
+		//					operationMessage.getBody().getQueryType()));
+		//		}
+		//
+		//		final List<String> collections = this.getOntologies(message.getMessageType(),
+		//				operationMessage.getBody().getQueryType(), operationMessage.getBody().getQuery());
+		//
+		//		if (!collections.contains(operationMessage.getOntology())) {
+		//			collections.add(operationMessage.getOntology());
+		//		}
 
-		final List<String> collections = this.getOntologies(message.getMessageType(),
-				operationMessage.getBody().getQueryType(), operationMessage.getBody().getQuery());
-		if (!collections.contains(operationMessage.getOntology())) {
-			collections.add(operationMessage.getOntology());
-		}
+		securityPluginManager.checkAuthorization(message.getMessageType(), operationMessage.getOntology(), message.getSessionKey());
 
-		for (final String col : collections) {
-			securityPluginManager.checkAuthorization(message.getMessageType(), col, message.getSessionKey());
-		}
 
 		// TODO: Validate ontology Schema. The schema is stored in BDC or cache
 		// validateOntologySchema("", message.getBody().getData().toString());

@@ -14,7 +14,8 @@
 package com.indracompany.sofia2.iotbroker.common;
 
 public class MessageException {
-	public final static String ERR_THINKP_IS_MANDATORY = "Thinkp field is mandatory for %s messages";
+	public final static String ERR_THINKP_IS_MANDATORY = "ClientPlatform field is mandatory for %s messages";
+	public final static String ERR_ONTOLOGY_IS_MANDATORY = "Ontology field is mandatory for %s messages";
 	public final static String ERR_TOKEN_IS_MANDATORY = "Token field is mandatory for %s messages";
 	public final static String ERR_TOKEN_IS_INVALID = "Token invalid - authentication failed";
 	public final static String ERR_PROCESSOR_NOT_FOUND = "Processor for %s messages not found";
