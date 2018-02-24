@@ -63,6 +63,7 @@ public class InsertProcessorTest {
 
 	@Before
 	public void setUp() throws IOException, Exception {
+		//TODO: Make this checks generics
 		if (springDataMongoTemplate.collectionExists(Person.class)) {
 			springDataMongoTemplate.dropCollection(Person.class);
 		}
@@ -86,7 +87,7 @@ public class InsertProcessorTest {
 		// Scenario: SessionKey is an Empty String
 		{
 			ssapInsertOperation.setSessionKey("");
-			SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -96,7 +97,7 @@ public class InsertProcessorTest {
 		// Scenario: SessionKey is null
 		{
 			ssapInsertOperation.setSessionKey(null);
-			SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -109,7 +110,7 @@ public class InsertProcessorTest {
 		// Scenario: Client Platform is an Empty String
 		{
 			ssapInsertOperation.getBody().setClientPlatform("");
-			SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -118,7 +119,7 @@ public class InsertProcessorTest {
 		// Scenario: Client Platform is an null
 		{
 			ssapInsertOperation.getBody().setClientPlatform(null);
-			SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -130,7 +131,7 @@ public class InsertProcessorTest {
 		// Scenario: Client Platform Instance is an Empty String
 		{
 			ssapInsertOperation.getBody().setClientPlatformInstance("");
-			SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -139,7 +140,7 @@ public class InsertProcessorTest {
 		// Scenario: Client Platform Instance is an null
 		{
 			ssapInsertOperation.getBody().setClientPlatformInstance(null);
-			SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -154,9 +155,9 @@ public class InsertProcessorTest {
 		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
 
 		doThrow(new AuthorizationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED)).when(securityPluginManager)
-				.checkSessionKeyActive(any());
+		.checkSessionKeyActive(any());
 
-		SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -171,9 +172,9 @@ public class InsertProcessorTest {
 		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
 
 		doThrow(new AuthorizationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED)).when(securityPluginManager)
-				.checkAuthorization(any(), any(), any());
+		.checkAuthorization(any(), any(), any());
 
-		SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -190,15 +191,15 @@ public class InsertProcessorTest {
 
 		when(securityPluginManager.getUserIdFromSessionKey(anyString())).thenReturn("valid_user_id");
 
-		SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
-		JsonNode data = responseMessage.getBody().getData();
-		String strOid = data.at("/_id/$oid").asText();
-		ObjectId oid = new ObjectId(strOid);
+		final JsonNode data = responseMessage.getBody().getData();
+		final String strOid = data.at("/_id/$oid").asText();
+		final ObjectId oid = new ObjectId(strOid);
 
-		Person savedPerson = springDataMongoTemplate.findById(oid, Person.class);
+		final Person savedPerson = springDataMongoTemplate.findById(oid, Person.class);
 		Assert.assertNotNull(savedPerson);
 		Assert.assertEquals(subject.getTelephone(), savedPerson.getTelephone());
 		Assert.assertEquals("valid_user_id", savedPerson.getContextData().getUser());

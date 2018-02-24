@@ -30,7 +30,7 @@ public class TestSSAPJsonParser {
 	SSAPJsonParser parser = SSAPJsonParser.getInstance();
 	@Test
 	public void test() throws BaseException, SSAPParseException {
-		SSAPMessage<SSAPBodyJoinMessage> message = SSAPMessageGenerator.generateJoinMessage();
+		SSAPMessage<SSAPBodyJoinMessage> message = SSAPMessageGenerator.generateJoinMessageWithToken();
 		String strMessage = parser.serialize(message);
 		
 		SSAPMessage ssapMessage = parser.deserialize(strMessage);

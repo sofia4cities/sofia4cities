@@ -39,7 +39,7 @@ public class TestMessageProcessor {
 	
 	@Test
 	public void test() throws SSAPParseException {
-		SSAPMessage<SSAPBodyJoinMessage> message = SSAPMessageGenerator.generateJoinMessage();
+		SSAPMessage<SSAPBodyJoinMessage> message = SSAPMessageGenerator.generateJoinMessageWithToken();
 		
 		SSAPMessage<SSAPBodyReturnMessage> response =  processor.process(message);
 		

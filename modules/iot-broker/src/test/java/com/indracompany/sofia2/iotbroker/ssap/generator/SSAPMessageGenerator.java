@@ -27,32 +27,33 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
 
 public final class SSAPMessageGenerator {
-	
-	private static final Faker faker = new Faker();
 
-	public static SSAPMessage<SSAPBodyJoinMessage> generateJoinMessage() {
-		SSAPMessage<SSAPBodyJoinMessage> ssapMessage = new SSAPMessage<>();
-		SSAPBodyJoinMessage body = new SSAPBodyJoinMessage();
+	private static final Faker faker = new Faker();
+	private static final ObjectMapper mapper = new ObjectMapper();
+
+	public static SSAPMessage<SSAPBodyJoinMessage> generateJoinMessageWithToken() {
+		final SSAPMessage<SSAPBodyJoinMessage> ssapMessage = new SSAPMessage<>();
+		final SSAPBodyJoinMessage body = new SSAPBodyJoinMessage();
 		ssapMessage.setDirection(SSAPMessageDirection.REQUEST);
 		ssapMessage.setMessageId(UUID.randomUUID().toString());
 		ssapMessage.setMessageType(SSAPMessageTypes.JOIN);
-//		ssapMessage.setOntology(ontology);
+		//		ssapMessage.setOntology(ontology);
 		body.setClientPlatform(faker.name().firstName());
 		body.setClientPlatformInstance(UUID.randomUUID().toString());
 		body.setToken(UUID.randomUUID().toString());
-		
+
 		ssapMessage.setBody(body);
-		
+
 		return ssapMessage;
 	}
-	
+
 	public static SSAPMessage<SSAPBodyOperationMessage> generateInsertMessage(String ontology, Object value) throws Exception, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		SSAPMessage<SSAPBodyOperationMessage> message = new SSAPMessage<SSAPBodyOperationMessage>();
+
+		final SSAPMessage<SSAPBodyOperationMessage> message = new SSAPMessage<>();
 		message.setSessionKey(UUID.randomUUID().toString());
-		
-		SSAPBodyOperationMessage body = new SSAPBodyOperationMessage();
-		JsonNode jsonValue = mapper.readTree(mapper.writeValueAsBytes(value));
+
+		final SSAPBodyOperationMessage body = new SSAPBodyOperationMessage();
+		final JsonNode jsonValue = mapper.readTree(mapper.writeValueAsBytes(value));
 		body.setData(jsonValue);
 		body.setQueryType(SSAPQueryType.NATIVE);
 		message.setBody(body);
@@ -61,4 +62,6 @@ public final class SSAPMessageGenerator {
 		message.setOntology(ontology);
 		return message;
 	}
+
+
 }
