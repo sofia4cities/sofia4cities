@@ -15,7 +15,6 @@ package com.indracompany.sofia2.api.init;
 
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -34,7 +33,6 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
-import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;

@@ -22,6 +22,8 @@ import com.indracompany.sofia2.config.model.ApiOperation;
 
 public interface ApiOperationRepository extends JpaRepository<ApiOperation, String> {
 
+	ApiOperation findById(String id);
+	
 	List<ApiOperation> findByIdentificationIgnoreCase(String identification);
 
 	List<ApiOperation> findByDescription(String description);
@@ -41,6 +43,6 @@ public interface ApiOperationRepository extends JpaRepository<ApiOperation, Stri
 
 	List<ApiOperation> findByApiOrderByOperationDesc(Api api);
 
-	ApiOperation findById(String id);
+	List<ApiOperation> findAllByApi(Api api);
 
 }

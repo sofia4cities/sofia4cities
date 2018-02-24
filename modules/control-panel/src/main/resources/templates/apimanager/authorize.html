@@ -1,0 +1,165 @@
+<!--
+© Indra Sistemas, S.A.
+2013 - 2014  SPAIN
+
+All rights reserved
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+<title th:text="#{consola_web_name}"/>
+<!-- HOJAS DE ESTILO -->
+<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/css/sofia2.css}"/>
+<link rel="stylesheet" type="text/css" media="all" th:href="@{/resources/styles/jquery-ui-1.10.3.custom.min.css}"/>
+ 
+<!-- FINAL HOJAS DE ESTILO -->
+<script th:src="@{/resources/js/jquery/js/jquery-1.9.1.js}"/>
+<script th:src="@{/resources/js/jquery/js/jquery-ui-1.10.3.custom.min.js}"/>
+<script th:src="@{/resources/js/jquery/js/jquery.autocomplete.js}"/>
+<script th:src="@{/resources/js/jquery/js/jquery.dataTables.min.js}"/>
+<script th:src="@{/resources/js/bootstrap.min.js}"/> 
+</head>
+
+<style type="text/css">
+   
+    .dataTables_empty {
+        display: none;
+    }  
+</style>
+
+<script th:inline="javascript">
+//<![CDATA[
+
+    function navigateUrl(url){  
+        window.location.href = url;
+    }
+    
+    function validar(){
+    	var numberOfOptions = $('#campo_api option').size(); 
+    	if (numberOfOptions <= 0){
+    		 document.getElementById("dialog-error").innerHTML=[[#{apimanager_listado_autorizaciones_api_requerido}]];    
+             showErrorDialog();
+    		
+    	} else {
+    		document.getElementById("form_crear_autorizacion").submit();
+    	}
+    }
+    //]]>
+    </script>
+<body>
+              <!-- CONTENIDO -->              
+                    <!-- ***** AQUI VA EL CONTENIDO DE CADA PAGINA***** -->
+                    <div id="form_container" class="wrapper-cotainer">          
+			          
+			          <form id="form_crear_autorizacion" class="formulario form-well row"  method="post" action="authorize.html" th:action="@{/apimanager/authorize}">
+			           
+			            <div >          
+                            <fieldset class="form-group col-sm-6">
+			             
+			                <label class="description" for="campo_nombre_usuario" th:text="#{apimanager_formulario_usuario}"></label>
+			                <div>
+			                  <select  id="campo_nombre_usuario" class="form-control" name="campo_nombre_usuario">
+                                <option th:each="usuario:${usuarios}" th:value="${usuario.id}" th:text="${usuario.identificacion}"></option>
+			                  </select>
+			                </div>
+			            
+			             </fieldset>
+			            <fieldset class="form-group col-sm-6">
+			             
+			                <label class="description" for="api" th:text="#{apimanager_formulario_api}"></label>
+			                <div>
+			                  <select  id="campo_api" class="form-control" name="campo_api">
+			                    <option th:each="api:${apis}" th:value="${api.id}" th:text="${api.identificacion + ' - V' + api.numversion}"></option>
+			                  </select>
+			                </div>
+			             
+			             </fieldset>
+			            
+			           
+			              <div class="button-group col-sm-12">		
+			                <input id="cancelar" class="button_text" type="button" name="cancelar"  th:onclick="'javascript:navigateUrl(\'' + @{/} + '\');'" th:value="#{apimanager_formulario_button_cancelar}"  />
+			                <input id="guardar" class="button_text" type="button"  th:onclick= "'javascript:validar();'" th:value="#{apimanager_formulario_button_guardar}" />
+			              </div>
+			           </div>
+			          </form>
+			          
+			          <!-- Tabla Listado -->
+				    <div id="contenedor-tabla">
+	                  <div id="recuadro-tabla" class = "recuadro-tabla">
+	                    <table id="autorizaciones" dt:table="true" dt:displaylength="10" dt:paginationtype="full_numbers">
+	                      <thead>
+	                        <tr class="cabecera-tabla">	      
+					              <th class="titulo-columnas" th:text="#{apimanager_listado_autorizaciones_header_usuario}"></th>
+		                          <th class="titulo-columnas" th:text="#{apimanager_listado_autorizaciones_header_nombrecompleto}"></th>
+		                          <th class="titulo-columnas" th:text="#{apimanager_listado_autorizaciones_header_api}"></th>
+		                          <th class="titulo-columnas" th:text="#{apimanager_listado_autorizaciones_eliminar}"></th>    	                
+				                  </tr>
+				          </thead>
+				          <tbody th:remove="all-but-first">
+			                <tr th:each="cliente : ${clientes}" pages:paginate="10" class="odd">
+	                            <td th:text="${cliente.usuarioId.identificacion}"></td>
+	                            <td th:text="${cliente.usuarioId.nombrecompleto}"></td>
+	                            <td th:text="${cliente.apiId.identificacion}"></td>
+	                            <td class="icon"><div class="grupo-iconos">
+	                              <ul>
+	                                <li>
+	                                    <form th:id="command + ${cliente.id}" action="list.html" th:action="@{|/apimanager/authorize/list/${cliente.id}|}" method="post">
+	                                        <input type="hidden" name="_method" value="DELETE"/>
+	                                        <p th:title="#{apimanager_listado_autorizaciones_eliminar}" class="iconos-borrar iconos-font glyphicon glyphicon-trash" th:alt="#{apimanager_listado_autorizaciones_eliminar}" th:onclick="'javascript:showConfirmDialog(\'' + 'command' + ${cliente.id} + '\');'"></p>
+	                                    </form>                                                                                                                                                                          
+	                                </li>
+	                              </ul>
+	                            </div></td>
+	                        </tr>
+	                      </tbody>
+	                    </table>
+	                  </div>
+	                </div>
+	                <!-- Fin Tabla Listado de Permisos APIs -->	        
+			        </div>	
+			         <div id="dialog-confirm" title="Confirmación" th:title="#{dialogo_confirm_delete_title}" style="display: none;">
+                        <div th:text="#{dialogo_confirm_delete_text}">¿Desea continuar con la eliminación?</div>
+                    </div>
+			         <div id="dialog-error" title="Error" th:title="#{dialogo_error_title}" style="display: none;">
+                         <div th:text="${Error}"></div>
+                    </div>
+        <script type="text/javascript" th:inline="javascript">
+            //<![CDATA[
+            function showErrorDialog() {
+                $( "#dialog-error" ).dialog({
+                  resizable: false,
+                  height:160,
+                  modal: true,
+                  position: [($(window).width() / 2) - 150, 160],
+                  dialogClass: 'DeleteConfirmDialog',
+                  buttons: {
+                    [[#{dialogo_error_button_ok}]]: function() {
+                      $( this ).dialog( "close" );
+                    }
+                  }
+                });
+              }
+            
+            function showConfirmDialog(formId) {
+                $( "#dialog-confirm" ).dialog({
+                  resizable: false,
+                  height:160,
+                  modal: true,
+                  position: [($(window).width() / 2) - 150, 300],
+                  dialogClass: 'DeleteConfirmDialog',
+                  buttons: {
+                    [[#{dialogo_confirm_delete_button_eliminar}]]: function() {
+                        document.forms[formId].submit();
+                    },
+                    [[#{dialogo_confirm_delete_button_cancelar}]]: function() {
+                      $( this ).dialog( "close" );
+                    }
+                  }
+                });
+              }
+            //]]>
+        </script> 		     
+			    <!-- FIN CONTENIDO -->			 
+    </body>
+</html>
