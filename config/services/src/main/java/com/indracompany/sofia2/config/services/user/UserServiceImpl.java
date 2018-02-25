@@ -169,10 +169,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void registerUser(User user) {
+		// FIXME
+		if (user.getPassword().length() < 7)
+			throw new UserServiceException("Password has to be at least 7 characters");
 		if (this.userExists(user))
-			throw new UserServiceException("This id exists in the system. Please select another id.");
+			throw new UserServiceException(
+					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
 
 		user.setRole(getRoleDeveloper());
+		log.debug("Creating user with Role Developer default");
 
 		this.userRepository.save(user);
 
