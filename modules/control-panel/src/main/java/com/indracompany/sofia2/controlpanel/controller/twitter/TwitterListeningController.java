@@ -131,8 +131,7 @@ public class TwitterListeningController {
 		} else {
 
 			try {
-				Ontology ontology = this.twitterListeningService.createTwitterOntology(ontologyId,
-						DataModel.MainType.SocialMedia.toString());
+				Ontology ontology = this.twitterListeningService.createTwitterOntology(ontologyId);
 				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 				ontology = this.ontologyService.saveOntology(ontology);
 

@@ -165,8 +165,8 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 	}
 
 	@Override
-	public Ontology createTwitterOntology(String ontologyId, String dataModel) {
-		DataModel dataModelTwitter = this.dataModelRepository.findByName(dataModel).get(0);
+	public Ontology createTwitterOntology(String ontologyId) {
+		DataModel dataModelTwitter = this.dataModelRepository.findByName("Twitter").get(0);
 		Ontology ontology = new Ontology();
 		ontology.setIdentification(ontologyId);
 		if (dataModelTwitter.getType().equals(DataModel.MainType.SocialMedia.toString()))
