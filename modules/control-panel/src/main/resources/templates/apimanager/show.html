@@ -64,7 +64,7 @@
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
 						<li><a th:href="@{/apimanager/list}"> <span th:text="#{apimanager.breadcrumb.prev}">Api List</span></a><i class="fa fa-circle"></i></li>
-						<li><span th:text="#{api.breadcrumb.show}">Show User</span></li>
+						<li><span th:text="#{apimanager.breadcrumb.show}">Show User</span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
@@ -80,7 +80,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="la la-users font-grey-gallery"></i>
-									<span class="caption-subject font-grey-gallery uppercase" th:object="${api}" th:text="#{api.template.show} + ' ' + ${api.id}"> Id</span>						
+									<span class="caption-subject font-grey-gallery uppercase" th:object="${api}" th:text="#{apimanager.template.show} + ':' + ' ' + ${api.identification + ' - V' + api.numversion}">Identification</span>						
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -93,7 +93,7 @@
 									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="api_view_form" action="view.html" th:action="@{|/controlpanel/apimanager/${api.id}|}" th:object="${api}" method="post" class="form" enctype="multipart/form-data">
+										<form role="form" id="api_view_form" action="view.html" th:action="@{|/apimanager/update/${api.id}|}" th:object="${api}" method="get" class="form" enctype="multipart/form-data">
 											<div class="form-body">
 												<!-- id, version and category -->
 												<div class="row">
@@ -135,31 +135,33 @@
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
 						                                    <label class="description notAnimate" for="id_limit" th:text="#{apimanager.apilimit}">Requests per minute</label>
-					                                        <p class="form-control-static-block bold" th:text="*{apilimit}">Requests </p>
-					                                        <span><input id="checkboxLimit" name="checkboxLimit" type="checkbox" onchange="ApiCreateController.changeApiLimit();"/></span>
+					                                        <p th:if="${api.apilimit!= null}" class="form-control-static-block bold" th:text="*{apilimit}">Requests </p>
+					                                        <p th:if="${api.apilimit== null}" class="form-control-static-block bold" text=" ">&nbsp;</p>
+					                                        <span><input id="checkboxLimit" name="checkboxLimit" type="checkbox" th:checked="${api.apilimit!= null}" onchange="ApiCreateController.changeApiLimit();"/></span>
 					                                        <label for="checkbox" th:text="#{apimanager.limit}">Limit</label>
 				                                        </div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 						                                    <label class="description notAnimate" for="id_cachetimeout" th:text="#{apimanager.cachetimeout}">Cache Timeout(minutes)</label>
-					                                        <p class="form-control-static-block bold" th:text="*{cachetimeout}">Timeout </p>
-					                                        <span><input id="checkboxCache" name="checkboxCache" type="checkbox" onchange="ApiCreateController.changeCacheTimeout();"/></span>
+					                                        <p th:if="${api.cachetimeout!= null}" class="form-control-static-block bold" th:text="*{cachetimeout}">Timeout </p>
+					                                        <p th:if="${api.cachetimeout== null}" class="form-control-static-block bold" text=" ">&nbsp;</p>
+					                                        <span><input id="checkboxCache" name="checkboxCache" type="checkbox" th:checked="${api.cachetimeout!= null}" onchange="ApiCreateController.changeCacheTimeout();"/></span>
 						                                    <label for="checkbox" th:text="#{apimanager.cache}">Caching of API results</label>
 					                                    </div>
 													</div>
 												</div>
 												<!-- endpoint, image -->												
 												<div class="row">
-													<div class="col-md-6 col-sm-6 col-xs-12">
+													<div class="col-md-8 col-sm-6 col-xs-12">
 														<div class="form-group">
 						                                    <label class="description notAnimate" id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
 						                                    <p class="form-control-static-block bold" th:text="*{endpoint}">EndPoint </p>
 					                                    </div>
 													</div>
-													<div class="col-md-6 col-sm-6 col-xs-12">
-														<label class="description" for="image" th:text="#{apimanager.image}">Imagen</label>
-														<input id="image" class="form-control" type="file" th:field="*{image}" onchange="ApiCreateController.validateImageSize()"/>
+													<div class="col-md-2 col-sm-6 col-xs-12">
+														<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
+														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/resources/images/API.png}" style="height: 60px;" class="pull-right"/>
 													</div>
 												</div>
 												<!-- description -->
@@ -289,20 +291,13 @@
 											<!-- FORM BUTTONS -->
 											<div class="form-actions">
 												<div class="pull-right">
-													<!-- CREATE -->
-													<button th:if="${api.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
-													
 													<!-- UPDATE -->
-													<button th:if="${api.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
-																																						
-													<!-- RESET -->
-													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
-													
-													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+													<button th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+
+													<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))" class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:ApiCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:ApiCreateController.go(\'' + @{/apimanager/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
 										</form>
@@ -431,7 +426,10 @@
 		
 	var operations = /*[[${operations}]]*/;
 	var authenticacion;
-						
+	
+	// REDIRECT URL
+	var navigateUrl = function(url){ window.location.href = url; }
+	
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
 	

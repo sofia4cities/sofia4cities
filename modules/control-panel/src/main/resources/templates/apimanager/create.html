@@ -66,7 +66,7 @@
 						<li><a th:href="@{/apimanager/list}"> <span th:text="#{apimanager.breadcrumb.prev}">Api List</span></a><i class="fa fa-circle"></i></li>
 						<li>
 							<span th:if="${api.id} == null" th:text="#{apimanager.breadcrumb.create}">Show Api</span>
-							<span th:if="${api.id} != null" th:text="#{apimanager.breadcrumb.update}">Update Api</span>
+							<span th:if="${api.id} != null" th:text="#{apimanager.breadcrumb.edit}">Update Api</span>
 						</li>
 					</ul>						
 				</div>
@@ -86,7 +86,7 @@
 									
 									<!-- FORM TITLE -->
 									<span th:if="${api.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.create} + ':'"> New Api</span>
-									<span th:if="${api.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.update} + ' ' + ${api.id} + ':'"> Update Api</span>
+									<span th:if="${api.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.edit} + ':' + ' ' + ${api.identification + ' - V' + api.numversion}"> Update Api</span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -171,13 +171,13 @@
 													<div class="col-md-2 col-sm-6 col-xs-12">
 					                                    <label class="description notAnimate" for="id_limit" th:text="#{apimanager.apilimit}">Requests per minute</label>
 				                                        <input id="id_limit" class="element text medium form-control" type="number" maxlength="10" disabled="disabled" value="5"  th:field="*{apilimit}" />
-				                                        <span><input id="checkboxLimit" name="checkboxLimit" type="checkbox" onchange="ApiCreateController.changeApiLimit();"/></span>
+				                                        <span><input id="checkboxLimit" name="checkboxLimit" type="checkbox" th:checked="${api.apilimit!= null}" onchange="ApiCreateController.changeApiLimit();"/></span>
 				                                        <label for="checkbox" th:text="#{apimanager.limit}">Limit</label>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 					                                    <label class="description notAnimate" for="id_cachetimeout" th:text="#{apimanager.cachetimeout}">Cache Timeout(minutes)</label>
 				                                        <input id="id_cachetimeout" class="element text medium form-control" type="number" maxlength="10" disabled="disabled" value="0" th:field="*{cachetimeout}"/>
-				                                        <span><input id="checkboxCache" name="checkboxCache" type="checkbox" onchange="ApiCreateController.changeCacheTimeout();"/></span>
+				                                        <span><input id="checkboxCache" name="checkboxCache" type="checkbox" th:checked="${api.cachetimeout!= null}" onchange="ApiCreateController.changeCacheTimeout();"/></span>
 					                                    <label for="checkbox" th:text="#{apimanager.cache}">Caching of API results</label>										
 													</div>
 												</div>
@@ -188,9 +188,13 @@
 					                                    <input id="id_endpoint" name="id_endpoint" class="form-control" type="text" maxlength="512" readonly="readonly"/>
 					                                    <input id="id_endpoint_hidden" name="id_endpoint_hidden" type="hidden" th:field="*{endpoint}"/>
 													</div>
-													<div class="col-md-6 col-sm-6 col-xs-12">
+													<div class="col-md-4 col-sm-6 col-xs-12">
 														<label class="description" for="image" th:text="#{apimanager.image}">Imagen</label>
 														<input id="image" class="form-control" type="file" th:field="*{image}" onchange="ApiCreateController.validateImageSize()"/>
+													</div>
+													<div class="col-md-2 col-sm-6 col-xs-12">
+														<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
+														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/resources/images/API.png}" style="height: 60px;" class="pull-right"/>
 													</div>
 												</div>
 												<!-- description -->
@@ -327,7 +331,7 @@
 													<button th:if="${api.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 																																						
 													<!-- RESET -->
-													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+													<button th:if="${api.id} == null" id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
 													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													

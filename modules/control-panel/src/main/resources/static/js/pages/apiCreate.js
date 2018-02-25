@@ -11,7 +11,6 @@ var ApiCreateController = function() {
 	var internalLanguage = 'en';
 	
 	
-	
 	// CONTROLLER PRIVATE FUNCTIONS	
     var calculateVersion = function() {
 
@@ -174,37 +173,6 @@ var ApiCreateController = function() {
 		$('.alert-danger').hide();
 	}
 	
-	// CHECK DATES AND LET THE FORM SUBMMIT
-	var checkCreate = function(){
-		logControl ? console.log('checkCreate() -> ') : '';
-        
-		var dateCreated = $("#datecreated").datepicker('getDate');
-        var dateDeleted = $("#datedeleted").datepicker('getDate');
-		
-		var diff = dateDeleted - dateCreated;
-		var days = diff / 1000 / 60 / 60 / 24;
-				
-		logControl ?  console.log('created: ' + dateCreated + '  deleted: ' + dateDeleted): '';		
-		
-        if (dateDeleted != ""){
-            if (dateCreated > dateDeleted){
-                $.confirm({icon: 'fa fa-warning', title: 'CONFIRM:', theme: 'dark',
-					content: apiCreateReg.validation_dates,
-					draggable: true,
-					dragWindowGap: 100,
-					backgroundDismiss: true,
-					closeIcon: true,
-					buttons: {				
-						close: { text: apiCreateReg.Close, btnClass: 'btn btn-sm btn-default btn-outline', action: function (){} //GENERIC CLOSE.		
-						}
-					}
-				});
-                $("#datedeleted").datepicker('update','');
-            }			           
-        }
-    } 
-	
-	
 	// FORMATDATES: format date to DDBB standard 'yyyy/mm/dd';
 	var formatDates = function(dates){
 		
@@ -238,7 +206,6 @@ var ApiCreateController = function() {
 
 		// all formatted then true;
 		return true;
-		
 	}
 	
 	// FORM VALIDATION
@@ -271,7 +238,8 @@ var ApiCreateController = function() {
             	apiType:			{ required: true},
             	ontology:			{ required: true },
             	id_endpoint:		{ required: true },
-            	descriptionapi:		{ required: true },
+            	apiDescripcion:		{ required: true },
+            	id_metainf:			{ required: true },
 				datecreated:		{ date: true, required: true }
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
@@ -282,7 +250,7 @@ var ApiCreateController = function() {
             errorPlacement: function(error, element) {
                 if 		( element.is(':checkbox'))	{ error.insertAfter(element.closest(".md-checkbox-list, .md-checkbox-inline, .checkbox-list, .checkbox-inline")); }
 				else if ( element.is(':radio'))		{ error.insertAfter(element.closest(".md-radio-list, .md-radio-inline, .radio-list,.radio-inline")); }
-				else { error.insertAfter(element); }
+				else 								{ error.insertAfter(element); }
             },
             highlight: function(element) { // hightlight error inputs
                 $(element).closest('.form-group').addClass('has-error'); 
@@ -299,8 +267,7 @@ var ApiCreateController = function() {
                 error1.hide();
 				// date conversion to DDBB format.
 				if ( formatDates('#datecreated') && validateDescOperations()) {
-					
-					prepararDatos();
+					formatData();
 					form.submit();
 				} 
 				else { 
@@ -311,10 +278,8 @@ var ApiCreateController = function() {
             }
         });
     }
-	
-	
+		
 	function validateDescOperations(){
-	
 		var ontology = $("#ontology option:selected").text();
 	    if ((ontology!=null) && (ontology.length!=0)){
             if ((($('#GET').attr('class')=='op_button_selected')&&($("#description_GET").val()== ""))
@@ -326,6 +291,8 @@ var ApiCreateController = function() {
         		|| (($('#GETOPS').attr('class')=='op_button_selected')&&($("#description_GETOPS").val()== ""))){
             		return false;
             }
+	    } else if (operations.length=0) {
+	    	return false;
 	    }
 		return true;
 	}
@@ -349,20 +316,11 @@ var ApiCreateController = function() {
 		
 		// init datepickers dateCreated and dateDeleted		
 		$("#datecreated").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
-        var dd = $("#datedeleted").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
-		
-		// setting on changeDate to checkDates()
-		dd.on('changeDate', function(e){
-				//gets the full date formated
-				selectedDate = dd.data('datepicker').getFormattedDate(currentFormat);				
-				checkCreate();
-		});
 		
 		// Reset form
 		$('#resetBtn').on('click',function(){ 
-			cleanFields('user_create_form');
+			cleanFields('api_create_form');
 		});
-		
 		
 		// INSERT MODE ACTIONS  (apiCreateReg.actionMode = NULL ) 
 		if ( apiCreateReg.actionMode === null){
@@ -383,27 +341,11 @@ var ApiCreateController = function() {
 			logControl ? console.log('action-mode: UPDATE') : '';
 			var f = new Date(apiCreateReg.dateCreated);
 			regDate = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
-			$('#datecreated').datepicker('update',regDate);
-			
-			// set DATE deleted in EDIT MODE if exists
-			if ( apiCreateReg.dateDeleted !== null ) {
-				console.log('entra?');
-				var d = new Date(apiCreateReg.dateDeleted);
-				regDateDel = (currentLanguage == 'es') ? ('0' + (d.getDate())).slice(-2) + "/" + ('0' + (d.getMonth()+1)).slice(-2) + "/" + d.getFullYear() : ('0' + (d.getMonth()+1)).slice(-2) + "/" + ('0' + (d.getDate())).slice(-2) + "/" + d.getFullYear();
-				$('#datedeleted').datepicker('update',regDateDel);
-			}			
-			
-			// if user deleted (active=false, and dateDeleted=date) active=true -> set datadeleted to null.
-			$('#checkboxactive').on('click', function(){					
-					if (( $('#datedeleted').val() != '' )&&( $(this).is(":checked") )) { $('#datedeleted').datepicker('update',null); $('#datedeleted').prop('disabled',true); }
-					console.log('checked in update with datedeleted: ' + $('#datedeleted').val());				
-			});
-			
+			$('#datecreated').datepicker('update',regDate);	
 		}
-		
 	}
 	
-    function prepararDatos(){
+    function formatData(){
     	$('#id_endpoint_hidden').val($('#id_endpoint').val());
 
         var ontology = $("#ontology option:selected").text();
@@ -532,7 +474,6 @@ var ApiCreateController = function() {
 			logControl ? console.log(LIB_TITLE + ': go()') : '';	
 			navigateUrl(url); 
 		}
-		
 	};
 }();
 
