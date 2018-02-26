@@ -111,7 +111,7 @@
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>															
-																<input id="datamodelid" th:placeholder="#{datamodel.id}" name="datamodelid" class="form-control" type="text" maxlength="70" value=""/>
+																<input id="dataModelId" th:placeholder="#{datamodel.id}" name="dataModelId" class="form-control" type="text" maxlength="70" value=""/>
 															</div>
 														</div>
 													</div>
@@ -146,7 +146,7 @@
 											</div>												
 										</form>								
 									</div>
-									<!-- USER LIST -->
+									<!-- DATAMODEL LIST -->
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene">																						
 											<div>
@@ -155,16 +155,16 @@
 												
 													<thead>
 														<tr class="cabecera-tabla">
-															<th dt:filterable="true" dt:filterCssClass="input-small" dt:selector="userFilter" class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{datamodel.id}">Identification</span></th>
+															<th dt:filterable="false" dt:filterCssClass="input-small" dt:selector="datamodelFilter" class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{datamodel.id}">Identification</span></th>
 															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{datamodel.name}" >Name</span></th>
-															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{datamodel.description}" >Description</span></th>						
-															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{datamodel.type}">Type</span></th>
-															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{datamodel.labels}">Labels </span></th>																
-															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{datamodel.jsonschema">JSON Schema</span></th>															
+															<th class="titulo-columnas" ><span th:text="#{datamodel.description}" >Description</span></th>						
+															<th class="titulo-columnas" ><span th:text="#{datamodel.type}">Type</span></th>
+															<th class="titulo-columnas" ><span th:text="#{datamodel.labels}">Labels </span></th>																
+															<th class="titulo-columnas" ><span th:text="#{datamodel.jsonschema}">JSON Schema</span></th>															
 														</tr>
 													</thead>
 													<tbody th:remove="all-but-first">														
-														<tr th:each="user : ${users}" pages:paginate="10">
+														<tr th:each="datamodel : ${datamodels}" pages:paginate="10">
 															<!-- IDENTIFICATION -->
 															<td class="text-left no-wrap bold internalId" th:text="${datamodel.id}"></td>
 															<!-- NAME -->
@@ -176,7 +176,7 @@
 															<!-- LABELS -->
 															<td class="text-left no-wrap" th:text="${datamodel.labels}"></td>
 															<!-- JSONSCHEMA -->
-															<td class="text-left no-wrap" th:text="${datamodel.jsonschema}"></td>															
+															<td class="text-left no-wrap" th:text="${datamodel.jsonSchema}"></td>															
 														</tr>
 													</tbody>
 												</table>
@@ -256,14 +256,14 @@
 	var description = [[${param.description}]] || '';
 	
 	//GET SEARCH DATA
-	datamodelid ? $('#datamodelid').val(datamodelid) : userid = '';
+	datamodelid ? $('#datamodelid').val(datamodelid) : datamodelid = '';
 	name ? $('#name').val(name) : name = '';
 	description ? $('#description').val(description) : description = '';	
 	
 	console.log('SEARCHING ... [ Identification: ' + datamodelid + ' name: ' + name + ' description: ' +  description +  ']');
 	
 	// OPEN SEARCH FORM IF SEARCH DATA EXISTS.
-	if (( datamodelid != '') || (name != '') || (description != '') { $('.search-toggle').trigger('click'); }
+	if (( datamodelid != '') || (name != '') || (description != '')) { $('.search-toggle').trigger('click'); }
 	
 	// DATATABLES LANGUAJE FROM PROPERTIES.
 	datatable_lang = [[#{datatables_lang}]];	

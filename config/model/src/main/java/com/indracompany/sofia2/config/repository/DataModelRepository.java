@@ -42,7 +42,9 @@ public interface DataModelRepository extends JpaRepository<DataModel, String> {
 			+ "WHERE o.id LIKE %:id% OR "
 			+ 		"o.name LIKE %:name% OR "
 			+ 		"o.description LIKE %:description%")
-	List<DataModel> findByIdOrNameOrDescription(@Param(value = "id") String datamodelId, 
+	List<DataModel> findByIdOrNameOrDescription(
+			@Param(value = "id") String id, 
 			@Param(value = "name") String name, 
-			@Param(value = "description") String description);
+			@Param(value = "description") String description
+	);
 }

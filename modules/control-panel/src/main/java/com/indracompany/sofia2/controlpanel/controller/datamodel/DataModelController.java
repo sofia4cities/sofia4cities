@@ -40,12 +40,7 @@ public class DataModelController {
 	@Autowired
 	private AppWebUtils utils;
 	
-//	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-//	@GetMapping(value = "/create", produces = "text/html")
-//	public String createForm(Model model) {
-//		model.addAttribute("dataModel", new DataModel());
-//		return "/datamodels/create";
-//	}
+
 	
 //	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 //	@DeleteMapping("/{id}")
@@ -71,12 +66,12 @@ public class DataModelController {
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/list", produces = "text/html")
 	public String list(Model model, 
-			@RequestParam(required = false) String datamodelId,
+			@RequestParam(required = false) String dataModelId,
 			@RequestParam(required = false) String name, 
 			@RequestParam(required = false) String description) {
 		
-		if ("".equals(datamodelId)) { 
-			datamodelId = null;
+		if ("".equals(dataModelId)) { 
+			dataModelId = null;
 		}
 		
 		if ("".equals(name)) {
@@ -88,18 +83,24 @@ public class DataModelController {
 		}
 		
 
-		if ((datamodelId == null) && (name == null) && (description == null)) {
+		if ((dataModelId == null) && (name == null) && (description == null)) {
 			log.debug("No params for filtering, loading all Data Models");
 			model.addAttribute("datamodels", this.dataModelService.getAllDataModels());
 
 		} else {
 			log.debug("Params detected, filtering Data Models...");
-			model.addAttribute("users",
-					this.dataModelService.getAllUsersByCriteria(datamodelId, name, description));
+			model.addAttribute("datamodels",
+					this.dataModelService.getDataModelsByCriteria(dataModelId, name, description));
 		}
 
 		return "/datamodels/list";
-
 	}
+	
+//	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+//	@GetMapping(value = "/create", produces = "text/html")
+//	public String createForm(Model model) {
+//		model.addAttribute("dataModel", new DataModel());
+//		return "/datamodels/create";
+//	}
 	
 }
