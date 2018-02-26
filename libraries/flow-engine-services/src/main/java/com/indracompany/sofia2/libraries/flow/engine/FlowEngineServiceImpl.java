@@ -25,8 +25,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.libraries.flow.engine.dto.FlowEngineDomain;
-import com.indracompany.sofia2.libraries.flow.engine.dto.FlowEngineDomainStatus;
+import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
+import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
 
 public class FlowEngineServiceImpl implements FlowEngineService {
 
@@ -61,7 +61,7 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<FlowEngineDomain> domainToStart = new HttpEntity<FlowEngineDomain>(domain, headers);
-			restTemplate.put(restBaseUrl + "/domain/start/", domainToStart);
+			restTemplate.postForObject(restBaseUrl + "/domain/start/", domainToStart, String.class);
 		} catch (Exception e) {
 			// TODO ¿NEW FlowEngineServiceException?
 			throw new RuntimeException(e);
@@ -127,8 +127,12 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
 		List<FlowEngineDomainStatus> response = new ArrayList<>();
 		try {
+			StringBuffer data = new StringBuffer();
+			for (String domId : domainList) {
+				data.append(domId).append(",");
+			}
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(restBaseUrl + "/domain/status")
-					.queryParam("domainList", mapper.writeValueAsString(domainList));
+					.queryParam("domainList", data.toString().substring(0, data.toString().length() - 1));
 
 			ResponseEntity<String> responseHttp = restTemplate.getForEntity(builder.toUriString(), String.class);
 			response = (List<FlowEngineDomainStatus>) FlowEngineDomainStatus

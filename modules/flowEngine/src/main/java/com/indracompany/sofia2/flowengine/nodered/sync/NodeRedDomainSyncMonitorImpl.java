@@ -23,10 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
 import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
 import com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClient;
-import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomainStatus;
 
 import lombok.extern.slf4j.Slf4j;
 

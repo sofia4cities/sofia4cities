@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.config.services.flowdomain;
 
 import com.indracompany.sofia2.config.model.FlowDomain;
+import com.indracompany.sofia2.config.model.User;
 
 public interface FlowDomainService {
 
@@ -24,4 +25,12 @@ public interface FlowDomainService {
 	public void deleteFlowDomainFlows(String domainIdentification);
 
 	public void deleteFlowdomain(String domainIdentification);
+
+	public void createFlowDomain(FlowDomain domain); // TODO: Delete method
+
+	public void createFlowDomain(String identification, User user);
+
+	public boolean flowDomainExists(FlowDomain domain);
+
+	public void updateDomain(FlowDomain domain);
 }

@@ -17,8 +17,8 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.indracompany.sofia2.libraries.flow.engine.dto.FlowEngineDomain;
-import com.indracompany.sofia2.libraries.flow.engine.dto.FlowEngineDomainStatus;
+import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
+import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
 
 public interface FlowEngineService {
 

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.nodered.communication.dto;
+package com.indracompany.sofia2.commons.flow.engine.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -38,5 +38,4 @@ public class FlowEngineDomain {
 	@Getter
 	@Setter
 	private int servicePort;
-
 }

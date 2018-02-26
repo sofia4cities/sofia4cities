@@ -24,5 +24,14 @@ logging:
       com.indra: DEBUG
       org.hibernate: INFO
 
-
+sofia2: #Config Sofia2 FlowEngine specific
+   flowengine:
+         port:
+            domain:
+               min: 8000
+               max: 8500
+            service:
+               min: 7000
+               max: 7500
+         home.base: /tmp/
  

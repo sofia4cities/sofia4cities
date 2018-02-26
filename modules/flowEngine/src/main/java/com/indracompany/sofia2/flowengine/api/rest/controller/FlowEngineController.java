@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
+import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
 import com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClient;
-import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomain;
-import com.indracompany.sofia2.flowengine.nodered.communication.dto.FlowEngineDomainStatus;
 
 @RestController
 @RequestMapping(value = "/flowengine/admin")
