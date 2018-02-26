@@ -22,6 +22,8 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.DataModel;
 
@@ -34,4 +36,13 @@ public interface DataModelRepository extends JpaRepository<DataModel, String> {
 	List<DataModel> findByType(String type);
 
 	long countByType(String type);
+
+	@Query("SELECT o "
+			+ "FROM DataModel AS o "
+			+ "WHERE o.id LIKE %:id% OR "
+			+ 		"o.name LIKE %:name% OR "
+			+ 		"o.description LIKE %:description%")
+	List<DataModel> findByIdOrNameOrDescription(@Param(value = "id") String datamodelId, 
+			@Param(value = "name") String name, 
+			@Param(value = "description") String description);
 }
