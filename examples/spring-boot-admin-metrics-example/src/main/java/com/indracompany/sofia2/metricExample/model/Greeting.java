@@ -11,22 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.metricExample;
+package com.indracompany.sofia2.metricExample.model;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-
-
-
-@SpringBootApplication
-@EnableAutoConfiguration
-@ComponentScan("com.indracompany.sofia2.metricExample")
-public class MetricExampleApplication {
+public class Greeting {
 	
-	public static void main(String[] args) {
-		SpringApplication.run(MetricExampleApplication.class, args);
-	}
+	private final long id;
+    private final String content;
 
+    public Greeting(long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+    
 }

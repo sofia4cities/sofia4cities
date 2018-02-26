@@ -11,22 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.metricExample;
+package com.indracompany.sofia2.serverExample;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+import de.codecentric.boot.admin.config.EnableAdminServer;
 
 
 
-@SpringBootApplication
+@Configuration
 @EnableAutoConfiguration
-@ComponentScan("com.indracompany.sofia2.metricExample")
-public class MetricExampleApplication {
+@EnableAdminServer
+public class AdminServerExample {
 	
 	public static void main(String[] args) {
-		SpringApplication.run(MetricExampleApplication.class, args);
+		SpringApplication.run(AdminServerExample.class, args);
 	}
 
 }
