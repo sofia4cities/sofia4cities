@@ -56,7 +56,10 @@ public class Api extends AuditableEntityWithUUID {
 		CREATED, PUBLISHED, DELETED, DEPRECATED, DEVELOPMENT;
 	}
 	
-
+	public static enum ApiCategories {
+		ALL, ADVERTISING, BUSINESS, COMMUNICATION, EDUCATION, ENTERTAINMENT, MEDIA, MEDICAL, OTHER, SOCIAL, SPORTS, TOOLS, TRAVEL;
+	}
+	
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID")
@@ -72,7 +75,7 @@ public class Api extends AuditableEntityWithUUID {
 	private User user;
 
 	@Basic(fetch = FetchType.LAZY)
-	@Column(name = "IMAGE")
+	@Column(name = "IMAGE", length=100000)
 	@Lob
 	@Type(type = "org.hibernate.type.BinaryType")
 	@Getter
@@ -117,7 +120,8 @@ public class Api extends AuditableEntityWithUUID {
 	@Column(name = "CATEGORY", length = 255)
 	@Getter
 	@Setter
-	private String category;
+	@Enumerated(EnumType.STRING)
+	private ApiCategories category;
 
 	@Column(name = "ENDPOINT", length = 512)
 	@Getter

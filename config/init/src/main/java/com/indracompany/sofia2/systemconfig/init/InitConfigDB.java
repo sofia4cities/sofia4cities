@@ -458,7 +458,7 @@ public class InitConfigDB {
 			log.info("No DataModels ...");
 			DataModel dataModel = new DataModel();
 			dataModel.setName("Alarm");
-			dataModel.setTypeEnum(DataModel.MainType.SmartCities);
+			dataModel.setTypeEnum(DataModel.MainType.General);
 			dataModel.setJsonSchema(loadFromResources("DataModel_Alarm.json"));
 			dataModel.setDescription("Base Alarm: assetId, timestamp, severity, source, details and status..");
 			dataModel.setLabels("Alarm,General,IoT");
@@ -467,7 +467,7 @@ public class InitConfigDB {
 			//
 			dataModel = new DataModel();
 			dataModel.setName("Audit");
-			dataModel.setTypeEnum(DataModel.MainType.SmartCities);
+			dataModel.setTypeEnum(DataModel.MainType.General);
 			dataModel.setJsonSchema(loadFromResources("DataModel_Audit.json"));
 			dataModel.setDescription("Base Audit");
 			dataModel.setLabels("Audit,General,IoT");
@@ -503,7 +503,7 @@ public class InitConfigDB {
 			//
 			dataModel = new DataModel();
 			dataModel.setName("Twitter");
-			dataModel.setTypeEnum(DataModel.MainType.Twitter);
+			dataModel.setTypeEnum(DataModel.MainType.SocialMedia);
 			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter.json"));
 			dataModel.setDescription("Twitter DataModel");
 			dataModel.setLabels("Twitter,Social Media");
@@ -511,11 +511,169 @@ public class InitConfigDB {
 			dataModelRepository.save(dataModel);
 			//
 			dataModel = new DataModel();
-			dataModel.setName("WasteContainer");
+			dataModel.setName("BasicSensor");
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
+			dataModel.setJsonSchema(loadFromResources("DataModel_BasicSensor.json"));
+			dataModel.setDescription("DataModel for sensor sending measures for an assetId");
+			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-AirQualityObserved");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_WasteContainer.json"));
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityObserved.json"));
+			dataModel.setDescription("An observation of air quality conditions at a certain place and time");
+			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-AirQualityStation");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityStation.json"));
+			dataModel.setDescription("Air Quality Station observing quality conditions at a certain place and time");
+			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-AirQualityThreshold");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityThreshold.json"));
+			dataModel.setDescription(
+					"Provides the air quality thresholds in Europe. Air quality thresholds allow to calculate an air quality index (AQI).");
+			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-Device");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Device.json"));
+			dataModel.setDescription(
+					"A Device is a tangible object which contains some logic and is producer and/or consumer of data. A Device is always assumed to be capable of communicating electronically via a network.");
+			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-KPI");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-KPI.json"));
+			dataModel.setDescription(
+					"Key Performance Indicator (KPI) is a type of performance measurement. KPIs evaluate the success of an organization or of a particular activity in which it engages.");
+			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-OffstreetParking");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-OffstreetParking.json"));
+			dataModel.setDescription(
+					"A site, off street, intended to park vehicles, managed independently and with suitable and clearly marked access points (entrances and exits).");
+			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-Road");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Road.json"));
+			dataModel.setDescription("Contains a harmonised geographic and contextual description of a road.");
+			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-StreetLight");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-StreetLight.json"));
+			dataModel.setDescription("GSMA Model that represents an urban streetlight");
+			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-Vehicle");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Vehicle.json"));
+			dataModel.setDescription("A harmonised description of a Vehicle");
+			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-WasteContainer");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WasteContainer.json"));
 			dataModel.setDescription("GSMA WasteContainer");
 			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-WeatherObserved");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WeatherObserved.json"));
+			dataModel.setDescription("An observation of weather conditions at a certain place and time.");
+			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("GSMA-WeatherStation");
+			dataModel.setTypeEnum(DataModel.MainType.GSMA);
+			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WeatherStation.json"));
+			dataModel.setDescription("GSMA Weather Station Model");
+			dataModel.setLabels("General,IoT,Smart Cities");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("Request");
+			dataModel.setTypeEnum(DataModel.MainType.General);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Request.json"));
+			dataModel.setDescription("Request for something.");
+			dataModel.setLabels("General,IoT");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("Response");
+			dataModel.setTypeEnum(DataModel.MainType.General);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Response.json"));
+			dataModel.setDescription("Response for a request.");
+			dataModel.setLabels("General,IoT");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("MobileElement");
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
+			dataModel.setJsonSchema(loadFromResources("DataModel_MobileElement.json"));
+			dataModel.setDescription("Generic Mobile Element representation.");
+			dataModel.setLabels("General,IoT");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("Log");
+			dataModel.setTypeEnum(DataModel.MainType.General);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Log.json"));
+			dataModel.setDescription("Log representation.");
+			dataModel.setLabels("General,IoT");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
+			dataModel.setName("Issue");
+			dataModel.setTypeEnum(DataModel.MainType.General);
+			dataModel.setJsonSchema(loadFromResources("DataModel_Issue.json"));
+			dataModel.setDescription("Issue representation.");
+			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
 			dataModelRepository.save(dataModel);
 			//
