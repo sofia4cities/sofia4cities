@@ -87,9 +87,15 @@ public class FlowDomainController {
 			// Get status info from FlowEngineAdmin
 			try {
 				domainStatusList = this.flowEngineService.getFlowEngineDomainStatus(domainList);
+				model.addAttribute("flowEngineActive", true);
 			} catch (Exception e) {
+				// Flow Engine is either unavailable or not synchronized
 				log.error("Unable to retrieve Flow Domain info. Cause = {}, Message = {}", e.getCause(),
 						e.getMessage());
+				model.addAttribute("flowEngineActive", false);
+				model.addAttribute("message",
+						utils.getMessage("domain.flow.Engine.notstarted", "Flow Engine is temporarily unreachable."));
+				model.addAttribute("messageAlertType", "WARNING");
 			}
 
 			if (domainStatusList != null && !domainStatusList.isEmpty()) {
@@ -165,6 +171,7 @@ public class FlowDomainController {
 
 			// TODO: ask for new status state
 			domainStatus.setState("START");
+			model.addAttribute("flowEngineActive", true);
 		} catch (Exception e) {
 			log.error("Unable to start domain = {}.", domainStatus.getDomain());
 			model.addAttribute("message", utils.getMessage("domain.error.notstarted", "Unable to stop domain"));
