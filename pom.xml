@@ -127,7 +127,6 @@
 			  </dependency>
 			 </dependencies>
 			</plugin>
-			
 			<plugin>
 			  <groupId>com.github.spotbugs</groupId>
 			  <artifactId>spotbugs-maven-plugin</artifactId>
@@ -141,9 +140,8 @@
 				</dependency>
 			  </dependencies>
 			</plugin>
-	
-			
 		</plugins>
+		
 		<resources>
 		  <resource>
 			<directory>src/test/resources</directory>
