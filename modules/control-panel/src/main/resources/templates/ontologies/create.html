@@ -85,9 +85,9 @@
 										</a>												
 										<ul class="dropdown-menu pull-right" role="menu">
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createwizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
+											<!-- <li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../opendataontologies/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../opendataontologies/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../opendataontologies/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li> -->
 										</ul>
 									</div>										
 								</div>
@@ -121,64 +121,7 @@
 														</div>
 													</div>
 												</a>
-												<!-- end ontologia tipo -->
-												<!-- ontología tipo -->
-												<a  sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" onclick="location.href='../ontologies/createjsonschema'" class="col-md-3 col-sm-6  grid__item grid__item--c2">
-													<div class="stack">
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__figure">
-															<img class="stack__img" th:src="@{/static/images/ontologia-json.png}" alt="Image"/>
-														</div>
-													</div>
-													<div class=" col-md-12 grid__item-caption">
-														<h3 class="grid__item-title" th:text="#{ontology.jsonSchema}"> JSON-Schema</h3>																	
-														<div class="col-md-12 column column--right">
-															<span class="column__text" th:text="#{ontology.jsonSchema.desc}">JSON-Schema Description</span>
-														</div>
-													</div>
-												</a>
-												<!-- end ontologia tipo -->
-												<!-- ontología tipo -->
-												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" href="#" onclick="location.href='../ontologiasopendata/create'"  class="col-md-3 col-sm-6  grid__item grid__item--c3">
-													<div class="stack">
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__figure">
-															<img class="stack__img" th:src="@{/static/images/Excel2.png}" alt="Image"/>
-														</div>
-													</div>
-													<div class=" col-md-12 grid__item-caption">
-														<h3 class="grid__item-title" th:text="#{ontology.csv}">CSV/Excel</h3>																	
-														<div class="col-md-12 column column--right">
-															<span class="column__text" th:text="#{ontology.csv.desc}" >Excel/CSV description</span>
-														</div>
-													</div>
-												</a>
-												<!-- end ontologia tipo -->
-												<!-- ontología tipo -->
-												<a sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" href="#" onclick="location.href='../ontologiasopendata/createJSONXML'" class="col-md-3 col-sm-6  grid__item grid__item--c4">
-													<div class="stack">
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__deco"></div>
-														<div class="stack__figure">
-															<img class="stack__img" th:src="@{/static/images/jsonxml-ontologia.png}" alt="Image"/>
-														</div>
-													</div>
-													<div class=" col-md-12 grid__item-caption">
-														<h3 class="grid__item-title" th:text="#{ontology.json_xml}">JSON/XML </h3>																	
-														<div class="col-md-12 column column--right">
-															<span class="column__text" th:text="#{ontology.json_xml.desc}" >JSON/XML Descripcion</span>
-														</div>
-													</div>
-												</a>															
-												<!-- end ontologia tipo -->																									
+												<!-- end ontologia tipo -->																																					
 											</div>
 										</div>												
 									</div><!-- END CONTENEDORES -->																	

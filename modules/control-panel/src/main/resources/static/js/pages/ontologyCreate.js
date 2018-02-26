@@ -109,8 +109,8 @@ var OntologyCreateController = function() {
 		
 		// properties, types and required arrays
 		var updateProperties = $("input[name='property\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
-		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
-		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();		
+		var updateTypes = $("select[name='type\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateRequired = $("select[name='required\\[\\]']").map(function(){return $(this).val();}).get();		
 		
 		var schemaObj = {};
 		

@@ -91,9 +91,9 @@
 										</a>												
 										<ul class="dropdown-menu pull-right" role="menu">
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createwizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
+											<!-- <li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li> -->
 											<li class="divider"> </li>
 											<li><a  onclick="location.href='../ontologies/create'" th:text="#{gen.createBtn}"> New </a></li>
 										</ul>
