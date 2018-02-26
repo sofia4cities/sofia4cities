@@ -52,4 +52,6 @@ public interface OntologyService {
 	
 	void createOntology(Ontology ontology);
 	
+	boolean isOntologyAuthorizedForOthers(String ontologyId);
+	
 }
