@@ -22,7 +22,7 @@ import org.quartz.TriggerKey;
 
 public interface TriggerGenerator {
 
-	Trigger createTrigger(JobDetail jobDetail, TriggerKey triggerKey);
+	Trigger createTrigger(JobDetail jobDetail, TriggerKey triggerKey, Date startAt, Date endAt);
 	
 	Trigger createCronTrigger(String cronExpression, JobDetail jobDetail, TriggerKey triggerKey, Date startAt, Date endAt);
 		

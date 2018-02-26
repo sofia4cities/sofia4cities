@@ -158,24 +158,28 @@ public class UserServiceImpl implements UserService {
 			this.userRepository.save(user);
 		} else
 			throw new UserServiceException("Cannot delete user that does not exist");
+	}
 
+	Role getRoleDeveloper() {
+		Role r = new Role();
+		r.setName(Role.Type.ROLE_DEVELOPER.name());
+		r.setIdEnum(Role.Type.ROLE_DEVELOPER);
+		return r;
 	}
 
 	@Override
-	public boolean registerUser(User user) {
+	public void registerUser(User user) {
+		// FIXME
+		if (user.getPassword().length() < 7)
+			throw new UserServiceException("Password has to be at least 7 characters");
+		if (this.userExists(user))
+			throw new UserServiceException(
+					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
 
-		if (!this.userExists(user)) {
+		user.setRole(getRoleDeveloper());
+		log.debug("Creating user with Role Developer default");
 
-			Role r = new Role();
-			r.setName(Role.Type.ROLE_USER.name());
-			r.setIdEnum(Role.Type.ROLE_USER);
-			user.setRole(r);
-
-			this.userRepository.save(user);
-			return true;
-		}
-
-		return false;
+		this.userRepository.save(user);
 
 	}
 }

@@ -4,31 +4,34 @@
 
 function submitForm()
 {
-	$('#_checkboxnew').val($('#checkboxnew').is(':checked'));
-  existOntology();
-  existClient();
-	if($('input[name=ontologyId]').val()!="")
-	{
-		if(ontologyExist==false && clientExist==false) $('#scheduledsearch_create_form').submit();
-		else
-		{
-			if(ontologyExist==true) 
+	if($('#_checkboxnew').val($('#checkboxnew').is(':checked'))){
+		 existOntology();
+		 existClient();
+		 if($('input[name=ontologyId]').val()!="")
 			{
-				hideErrors();
-				$('.alert-generic').show();
-				$('.alert-exists-text').html("Ontology Exists");
+				if(ontologyExist==false && clientExist==false) $('#scheduledsearch_create_form').submit();
+				else
+				{
+					if(ontologyExist==true) 
+					{
+						hideErrors();
+						$('.alert-generic').show();
+						$('.alert-exists-text').html("Ontology Exists");
+					}
+					else if(clientExist==true)
+					{ 
+						hideErrors();
+						$('.alert-generic').show();
+						$('.alert-exists-text').html("Platform Client Exists");
+					}
+				}
+			}else{
+				$('#scheduledsearch_create_form').submit();
 			}
-			else if(clientExist==true)
-			{ 
-				hideErrors();
-				$('.alert-generic').show();
-				$('.alert-exists-text').html("Platform Client Exists");
-			}
-		}
-	}else{
-		$('#scheduledsearch_create_form').submit();
-	}
 
+	}
+ 
+	
 }
 function existOntology(){
 	var identification = $('input[name=ontologyId]').val();
