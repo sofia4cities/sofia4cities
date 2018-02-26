@@ -348,12 +348,12 @@ var ScheduledSearchController= function()
 
 		// set current language and formats
 		currentLanguage = scheduledSearchCreateReg.language || LANGUAGE[0];
-		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';    
+		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy, h:mm:ss' : 'mm/dd/yyyy ,h:mm:ss';    
 
 		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage) : '';
 
 		// init datepickers dateFrom and dateTo   
-		$("#dateFrom").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
+		$("#dateFrom").datepicker({dateFormat: currentFormat, showButtonPanel: true, sideBySide: true, orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
 		var dd = $("#dateTo").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
 
 		// setting on changeDate to checkDates()
