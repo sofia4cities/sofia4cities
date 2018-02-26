@@ -20,11 +20,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
-import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 public final class SSAPMessageGenerator {
 
@@ -55,7 +54,6 @@ public final class SSAPMessageGenerator {
 		final SSAPBodyInsertMessage body = new SSAPBodyInsertMessage();
 		final JsonNode jsonValue = mapper.readTree(mapper.writeValueAsBytes(value));
 		body.setData(jsonValue);
-		body.setQueryType(SSAPQueryType.NATIVE);
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.INSERT);

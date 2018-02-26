@@ -15,15 +15,9 @@ package com.indracompany.sofia2.iotbroker.processor.impl;
 
 import java.io.IOException;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.loader.SchemaLoader;
-import org.json.JSONException;
-import org.json.JSONTokener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,15 +25,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.common.exception.BaseException;
-import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
-import com.indracompany.sofia2.iotbroker.common.util.SSAP2PersintenceUtil;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.persistence.ContextData;
-import com.indracompany.sofia2.persistence.common.AccessMode;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
-import com.indracompany.sofia2.persistence.interfaces.DBStatementParser;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -47,7 +37,6 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
-import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 @Component
 public class InsertProcessor implements MessageTypeProcessor {
@@ -58,8 +47,8 @@ public class InsertProcessor implements MessageTypeProcessor {
 	ObjectMapper objectMapper;
 	@Autowired
 	SecurityPluginManager securityPluginManager;
-	@Autowired
-	List<DBStatementParser> dbStatementParsers;
+	//	@Autowired
+	//	List<DBStatementParser> dbStatementParsers;
 
 	@Override
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message)
@@ -81,7 +70,6 @@ public class InsertProcessor implements MessageTypeProcessor {
 
 		((ObjectNode) insertMessage.getBody().getData()).set("contextData", objectMapper.valueToTree(contextData));
 
-		// TODO: Dont forget ContextData
 		final String repositoryResponse = repository.insert(insertMessage.getOntology(),
 				insertMessage.getBody().getData().toString());
 
@@ -135,33 +123,33 @@ public class InsertProcessor implements MessageTypeProcessor {
 		// validateOntologySchema("", message.getBody().getData().toString());
 	}
 
-	public void validateOntologySchema(String ontologySchema, String ontologyInstance) throws OntologySchemaException {
-		try {
-			final org.json.JSONObject jsonSchema = new org.json.JSONObject(new JSONTokener(ontologySchema));
+	//	public void validateOntologySchema(String ontologySchema, String ontologyInstance) throws OntologySchemaException {
+	//		try {
+	//			final org.json.JSONObject jsonSchema = new org.json.JSONObject(new JSONTokener(ontologySchema));
+	//
+	//			final org.json.JSONObject jsonSubject = new org.json.JSONObject(new JSONTokener(ontologyInstance));
+	//
+	//			final Schema schema = SchemaLoader.load(jsonSchema);
+	//			schema.validate(jsonSubject);
+	//		} catch (final JSONException e) {
+	//			// TODO: LOG
+	//			throw new OntologySchemaException(String.format(MessageException.ERR_ONTOLOGY_SCHEMA, e.getMessage()));
+	//		}
+	//
+	//	}
 
-			final org.json.JSONObject jsonSubject = new org.json.JSONObject(new JSONTokener(ontologyInstance));
-
-			final Schema schema = SchemaLoader.load(jsonSchema);
-			schema.validate(jsonSubject);
-		} catch (final JSONException e) {
-			// TODO: LOG
-			throw new OntologySchemaException(String.format(MessageException.ERR_ONTOLOGY_SCHEMA, e.getMessage()));
-		}
-
-	}
-
-	private List<String> getOntologies(SSAPMessageTypes messageType, SSAPQueryType queryType, String query)
-			throws AuthorizationException {
-
-		for (final DBStatementParser parser : dbStatementParsers) {
-			if (queryType.equals(parser.getSSAPQueryTypeSupported())) {
-				final Optional<AccessMode> accesType = SSAP2PersintenceUtil.formSSAPMessageType2TableAccesMode(messageType);
-				final List<String> collections = parser.getCollectionList(query, accesType.get());
-				return collections;
-			}
-		}
-		return new ArrayList<>();
-
-	}
+	//	private List<String> getOntologies(SSAPMessageTypes messageType, SSAPQueryType queryType, String query)
+	//			throws AuthorizationException {
+	//
+	//		for (final DBStatementParser parser : dbStatementParsers) {
+	//			if (queryType.equals(parser.getSSAPQueryTypeSupported())) {
+	//				final Optional<AccessMode> accesType = SSAP2PersintenceUtil.formSSAPMessageType2TableAccesMode(messageType);
+	//				final List<String> collections = parser.getCollectionList(query, accesType.get());
+	//				return collections;
+	//			}
+	//		}
+	//		return new ArrayList<>();
+	//
+	//	}
 
 }
