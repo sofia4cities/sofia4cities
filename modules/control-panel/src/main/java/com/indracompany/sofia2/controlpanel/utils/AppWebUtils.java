@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.controlpanel.utils;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriUtils;
 import org.springframework.web.util.WebUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -117,6 +120,20 @@ public class AppWebUtils {
 			return json;
 		}
 
+	}
+	
+	public String encodeUrlPathSegment(final String pathSegment, final HttpServletRequest httpServletRequest) {
+		String enc = httpServletRequest.getCharacterEncoding();
+		String pathSegmentEncode = "";
+		if (enc == null) {
+			enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+		}
+		try {
+			pathSegmentEncode = UriUtils.encodePathSegment(pathSegment, enc);
+		} catch (UnsupportedEncodingException uee) {
+			log.warn("Error encoding path segment " + uee.getMessage());
+		}
+		return pathSegmentEncode;
 	}
 
 }

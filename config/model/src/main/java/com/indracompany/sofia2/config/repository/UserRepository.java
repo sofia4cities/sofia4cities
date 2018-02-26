@@ -51,5 +51,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 			@Param("fullName") String fullName, @Param("email") String email, @Param("role") String role,
 			@Param("active") boolean active);
 	
-
+	@Query("SELECT o FROM User AS o WHERE (o.userId != :userId AND o.role.id != :rolId) ORDER BY o.userId)")
+	List<User> findUserByIdentificationAndNoRol(@Param("userId") String userId, @Param("rolId") String rolId);
 }
