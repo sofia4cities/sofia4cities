@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.libraries.flow.engine.dto;
+package com.indracompany.sofia2.commons.flow.engine.dto;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -23,15 +23,20 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
+
 public class FlowEngineDomainStatus {
 
-	// TODO Change to libraries/COMMONS
 	@Getter
 	@Setter
 	private String domain;

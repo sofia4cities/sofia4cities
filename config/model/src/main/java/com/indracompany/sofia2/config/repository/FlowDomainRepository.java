@@ -13,7 +13,10 @@
  */
 package com.indracompany.sofia2.config.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.indracompany.sofia2.config.model.FlowDomain;
 
@@ -22,6 +25,12 @@ public interface FlowDomainRepository extends JpaRepository<FlowDomain, String> 
 	FlowDomain findByIdentification(String identification);
 
 	FlowDomain findByUser_userId(String userId);
+
+	@Query("SELECT d.port FROM FlowDomain as d")
+	List<Integer> findAllDomainPorts();
+
+	@Query("SELECT d.servicePort FROM FlowDomain as d")
+	List<Integer> findAllServicePorts();
 
 	void deleteByIdentification(String identification);
 }

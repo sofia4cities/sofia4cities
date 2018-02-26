@@ -16,17 +16,34 @@ package com.indracompany.sofia2.config.services.flowdomain;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Flow;
 import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.FlowNode;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
 import com.indracompany.sofia2.config.repository.FlowNodeRepository;
 import com.indracompany.sofia2.config.repository.FlowRepository;
+import com.indracompany.sofia2.config.services.exceptions.FlowDomainServiceException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class FlowDomainServiceImpl implements FlowDomainService {
+
+	@Value("${sofia2.flowengine.port.domain.min:8000}")
+	private int domainPortMin;
+	@Value("${sofia2.flowengine.port.domain.max:8500}")
+	private int domainPortMax;
+	@Value("${sofia2.flowengine.port.service.min:7000}")
+	private int servicePortMin;
+	@Value("${sofia2.flowengine.port.service.max:7500}")
+	private int servicePortMax;
+	@Value("${sofia2.flowengine.home.base:/tmp/}")
+	private String homeBase;
 
 	@Autowired
 	public FlowDomainRepository domainRepository;
@@ -66,6 +83,86 @@ public class FlowDomainServiceImpl implements FlowDomainService {
 	@Override
 	public FlowDomain getFlowDomainByIdentification(String identification) {
 		return this.domainRepository.findByIdentification(identification);
+	}
+
+	@Override
+	public void createFlowDomain(FlowDomain domain) {
+		// TODO Auto-generated method stub
+		if (!flowDomainExists(domain)) {
+			log.debug("Flow domain does no exist, creating...");
+			this.domainRepository.save(domain);
+		} else {
+			throw new FlowDomainServiceException("The requested flow domain already exists in CDB");
+		}
+	}
+
+	@Override
+	public void createFlowDomain(String identification, User user) {
+
+		if (this.domainRepository.findByIdentification(identification) != null) {
+			log.debug("Flow domain {} already exist.", identification);
+			throw new FlowDomainServiceException("The requested flow domain already exists in CDB");
+		}
+
+		FlowDomain domain = new FlowDomain();
+		domain.setIdentification(identification);
+		domain.setActive(true);
+		domain.setDemoMode(false);
+		domain.setState("STOP");
+		domain.setUser(user);
+		domain.setHome(this.homeBase + user.getUserId());
+		// Check free domain ports
+		List<Integer> usedDomainPorts = this.domainRepository.findAllDomainPorts();
+		Integer selectedPort = domainPortMin;
+		boolean portFound = false;
+		while (selectedPort <= domainPortMax && !portFound) {
+			if (!usedDomainPorts.contains(selectedPort)) {
+				portFound = true;
+			} else {
+				selectedPort++;
+			}
+		}
+		if (!portFound) {
+			log.error("No port available found for domain = {}.", identification);
+			throw new FlowDomainServiceException("No port available found for domain " + identification);
+		}
+		domain.setPort(selectedPort);
+		// Check free service ports
+		List<Integer> usedServicePorts = this.domainRepository.findAllServicePorts();
+		Integer selectedServicePort = servicePortMin;
+		boolean servicePortFound = false;
+		while (selectedServicePort <= servicePortMax && !servicePortFound) {
+			if (!usedServicePorts.contains(selectedServicePort)) {
+				servicePortFound = true;
+			} else {
+				selectedServicePort++;
+			}
+		}
+		if (!servicePortFound) {
+			log.error("No service port available found for domain = {}.", identification);
+			throw new FlowDomainServiceException("No service port available found for domain " + identification);
+		}
+		domain.setServicePort(selectedServicePort);
+		this.domainRepository.save(domain);
+	}
+
+	@Override
+	public boolean flowDomainExists(FlowDomain domain) {
+		if (this.domainRepository.findByIdentification(domain.getIdentification()) == null) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void updateDomain(FlowDomain domain) {
+
+		if (!flowDomainExists(domain)) {
+			log.error("Domain not found for identification = {}.", domain.getIdentification());
+			throw new FlowDomainServiceException("Domain " + domain.getIdentification() + " not found.");
+		} else {
+			this.domainRepository.save(domain);
+		}
 	}
 
 }

@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
 
 import lombok.Getter;
 import lombok.Setter;
