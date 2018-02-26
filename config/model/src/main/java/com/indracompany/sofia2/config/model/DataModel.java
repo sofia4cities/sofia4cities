@@ -43,7 +43,7 @@ import lombok.Setter;
 public class DataModel extends AuditableEntityWithUUID {
 
 	public static enum MainType {
-		IoT, SmartCities, General, SocialMedia, Twitter, SmartHome, SmartEnergy, SmartRetail, SmartIndustry, GSMA, FiwareDataModel
+		IoT, SmartCities, General, SocialMedia, SmartHome, SmartEnergy, SmartRetail, SmartIndustry, GSMA, FiwareDataModel
 	}
 
 	@ManyToOne
@@ -111,4 +111,3 @@ public class DataModel extends AuditableEntityWithUUID {
 	}
 
 }
-

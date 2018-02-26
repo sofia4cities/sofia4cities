@@ -53,7 +53,7 @@ public class ApiOperation extends AuditableEntityWithUUID {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "apiId", referencedColumnName = "ID", nullable = false)
+	@JoinColumn(name = "API_ID", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter

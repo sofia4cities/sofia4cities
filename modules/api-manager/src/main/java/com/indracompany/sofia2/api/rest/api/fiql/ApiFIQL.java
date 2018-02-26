@@ -89,7 +89,7 @@ public class ApiFIQL {
 		} else {
 			apiDTO.setType(API_PRIVADA);
 		}
-		apiDTO.setCategory(api.getCategory());
+		apiDTO.setCategory(api.getCategory().toString());
 		if (api.getEndpointExt() != null && !api.getEndpointExt().equals("")) {
 			apiDTO.setExternalApi(true);
 		} else {
@@ -158,7 +158,7 @@ public class ApiFIQL {
 		} else {
 			api.setPublic(false);
 		}
-		api.setCategory(apiDTO.getCategory());
+		api.setCategory(Api.ApiCategories.valueOf(apiDTO.getCategory()));
 
 		if (apiDTO.getOntologyId() != null && !apiDTO.getOntologyId().equals("")) {
 			Ontology ont = ontologyService.getOntologyById(apiDTO.getOntologyId());

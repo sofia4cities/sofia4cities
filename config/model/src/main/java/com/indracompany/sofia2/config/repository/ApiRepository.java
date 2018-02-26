@@ -16,6 +16,8 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.User;
@@ -51,8 +53,23 @@ public interface ApiRepository extends JpaRepository<Api, String> {
 
 	List<Api> findByIdentificationAndNumversion(String identification, Integer apiVersion);
 
+	List<Api> findByIdentificationAndApiType(String identification, String apiType);
+	
 	Api findById(String id);
 
 	List<Api> findByUserAndIsPublicTrue(User userId);
+	
+	@Query("SELECT o FROM Api AS o WHERE (o.user.userId LIKE %:userId% OR o.identification LIKE %:apiId% OR o.state LIKE %:state%)")
+	List<Api> findApisByIdentificationOrStateOrUser(@Param("apiId") String apiId, @Param("state")String state, @Param("userId") String userId);
+	
+	@Query("SELECT o FROM Api AS o WHERE (o.user.userId LIKE %:userId% AND (o.identification LIKE %:apiId% OR o.state LIKE %:state%)) AND o.isPublic IS true")
+	List<Api> findApisByIdentificationOrStateAndUserAndIsPublicTrue(@Param("apiId") String apiId, @Param("state") String state, @Param("userId") String userId);
+	
+	@Query("SELECT a FROM Api as a WHERE a.isPublic = false AND (a.state = 'PUBLISHED' or a.state = 'DEVELOPMENT') ORDER BY a.identification asc")
+	List<Api> findApisNotPublicAndPublishedOrDevelopment();
+	
+	@Query("SELECT a FROM Api as a WHERE a.user.userId = :userId AND a.isPublic = false AND (a.state = 'PUBLISHED' or a.state = 'DEVELOPMENT') ORDER BY a.identification asc")
+	List<Api> findApisByUserNotPublicAndPublishedOrDevelopment(@Param("userId") String userId);
+	
 
 }

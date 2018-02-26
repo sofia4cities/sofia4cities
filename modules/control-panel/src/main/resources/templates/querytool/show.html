@@ -30,13 +30,22 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css}"/>	
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/json/jsoneditor.css}"/>
 		
 		<!-- Funciones AJAX -->
 		<script th:inline="javascript">
-
+		var queryResponse = {};
 		function getQueryExecutedFragment() {
-			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()});
-			$('#query-ontologia-result').text('' + $('#selector_ontologias').val());
+			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()},function(response,status,xhr){
+						
+				queryResponse = $(response);				
+				if ($('#jsoneditor').attr('data-loaded') == 'false') { createEditor(); $('#jsoneditor').attr('data-loaded', true);	}				
+				editor.setText(queryResponse.text());
+				editor.setMode('view');				
+			});		
+			
+			
+			$('#query-ontologia-result').text('' + $('#selector_ontologias').val());		
 			if ($('#result-panel').hasClass('hide')){ $('#result-panel').toggleClass('hide'); } 			
 		} 
 	
@@ -293,9 +302,11 @@
 												
 												<!-- RESPUESTA DE CONSULTA -->
 												<div class="col-md-12 margin-top-10 margin-bottom-20">
-													<div th:fragment="query" id="Canvasrespuesta">														
-													<p th:text="${queryResult}"></p>
-													</div>												
+													<div class="hide" id="Canvasrespuesta">
+														<div id="theQueryResponse" th:fragment="query" th:text="${queryResult}"></div>														
+													</div>
+													<div id="jsoneditor" data-loaded="false"></div>
+													<div class="clearfix"></div>
 												</div>
 												<div id="example" class="col-md-12">
 													
@@ -672,18 +683,12 @@
 			$('#query-ontologia').text('' + idOntologia);		
 		}
 		
-
-		
-
-		
-	   
 		
 		var nextinput = 0;
 		// ARRAY DE CAMPOS DE CADA ONTOLOGIA, SE CARGA CON CADA ONTOLOGIA MEDIANTE OBTENERCAMPOS()
 		var campos = [];
 		
-		
-		
+				
 		//var indexCampo = 0;
 		
 		// FUNCION PARA AGREGAR CAMPOS AL SELECT DE LA CONSULTA 
@@ -1244,9 +1249,42 @@
 			return query;
 		}
 		
+		
+		
+		// CREATE EDITOR FOR JSON SCHEMA 
+		var createEditor = function(){
+			
+			showLog ? console.log('|--->   createEditor()') : '';
+			var container = document.getElementById('jsoneditor');	
+			var options = {
+				mode: 'text',
+				theme: 'bootstrap3',
+				required_by_default: true,
+				modes: ['text', 'tree', 'view'], // allowed modes
+				error: function (err) {
+					$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
+					return false;
+				},
+				onChange: function(){
+					
+					console.log('se modifica el editor en modo:' + editor.mode + ' contenido: ' + editor.getText());
+				}
+			};
+			
+			editor = new jsoneditor.JSONEditor(container, options, "");		
+			
+		}
+		
 		//]]>     
 			  
 	</script> 
+	
+	
+	<!-- JSON EDITOR -->	
+	<script th:src="@{/static/vendor/json/jsoneditor.js}"/>	
+	<script th:src="@{/static/vendor/ace/ace.js}" charset="utf-8"/>
+	<script th:src="@{/static/vendor/ace/mode-json.js}"/>
+	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
 
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
