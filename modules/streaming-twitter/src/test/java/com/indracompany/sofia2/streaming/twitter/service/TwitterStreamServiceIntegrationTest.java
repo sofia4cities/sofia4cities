@@ -60,7 +60,7 @@ public class TwitterStreamServiceIntegrationTest {
 
 	private TwitterConfiguration twitterConfiguration;
 
-	@Spy
+	@Autowired
 	private TwitterStreamListener twitterStreamListener;
 	private String accessToken = "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy";
 	private String accessTokenSecret = "Cmd9XOX9N8xMRvlYUz3Wg49ZCGFnanMJvJPI9QMfTXix2";
@@ -78,9 +78,9 @@ public class TwitterStreamServiceIntegrationTest {
 		List<String> keywords = new ArrayList<String>();
 		keywords.add("Helsinki");
 		keywords.add("Borbones");
-		keywords.add("ARCO");
+		keywords.add("Rajoy");
 
-		twitterStreamListener = Mockito.spy(new TwitterStreamListener());
+		// twitterStreamListener = Mockito.spy(new TwitterStreamListener());
 		twitterStreamListener.setId(UUID.randomUUID().toString());
 		twitterStreamListener.setOntology("TwitterOntology");
 		twitterStreamListener.setClientPlatform("clientPlatform");
@@ -123,17 +123,20 @@ public class TwitterStreamServiceIntegrationTest {
 	public void test_4_onTweet() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
-		doNothing().when(twitterStreamListener).getSibSessionKey();
+		// doNothing().when(twitterStreamListener).getSibSessionKey();
 		// if(this.twitterStreamService.isSubscribe(twitterStreamListener.getId()))
-		this.twitterStreamService.subscribe(twitterStreamListener);
+		Stream stream = this.twitterStreamService.subscribe(twitterStreamListener);
 
-		doNothing().when(twitterStreamListener).insertInstance(any());
+		// doNothing().when(twitterStreamListener).insertInstance(any());
 
-		Thread.sleep(5000);
+		Thread.sleep(10000);
 
 		Tweet lastTweet = twitterStreamListener.getLastTweet();
 		log.info("Last tweet by user:" + lastTweet.getFromUser() + ", text: " + lastTweet.getText());
-
 		Assert.assertTrue(lastTweet.getText() != null && !lastTweet.getText().equals(""));
+		try {
+			stream.close();
+		} catch (Exception e) {
+		}
 	}
 }

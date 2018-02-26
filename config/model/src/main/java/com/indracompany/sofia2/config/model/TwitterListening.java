@@ -45,7 +45,6 @@ public class TwitterListening extends AuditableEntityWithUUID {
 	private Ontology ontology;
 
 	@ManyToOne
-	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Getter
@@ -53,7 +52,6 @@ public class TwitterListening extends AuditableEntityWithUUID {
 	private User user;
 
 	@ManyToOne
-	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "CONFIGURATION_ID", referencedColumnName = "ID")
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Getter

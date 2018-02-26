@@ -170,7 +170,7 @@ public class TwitterStreamListener implements StreamListener {
 			instance = instance.replaceAll("'", "\"");
 			this.sibService.inserOntologyInstanceToMongo(instance, this.getOntology(), this.getClientPlatform(),
 					this.getClientPlatform() + ":twitterStreaming", user);
-			log.info("Called sibservice");
+			
 
 		} catch (Exception e) {
 			log.debug("Error inserting tweet : " + this.getOntology() + ". Cause: " + e.getMessage(), e);
