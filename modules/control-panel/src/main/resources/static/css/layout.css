@@ -207,8 +207,8 @@ Page Header
       opacity: 1 ;
       filter: alpha(opacity=100) ; }
     .page-header.navbar .menu-toggler.sidebar-toggler {
-		float: right;
-		margin: 25.5px -10px 0px 0px;
+		float: left;
+		margin: 25.5px 10px 0px 0px;
 		padding: 3px;
 	}
       .page-sidebar-closed.page-sidebar-closed-hide-logo .page-header.navbar .menu-toggler.sidebar-toggler {

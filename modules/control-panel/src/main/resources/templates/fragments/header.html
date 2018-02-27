@@ -16,14 +16,14 @@
 	<!-- BEGIN HEADER INNER -->
 	<div class="page-header-inner ">
 		<!-- BEGIN LOGO -->
-		<div class="page-logo">
+		<div class="page-logo">			
+			<div class="menu-toggler sidebar-toggler">
+				<span></span>
+			</div>
 			<a th:href="@{/}">
 				<img alt="logo" class="logo-default" th:src="@{/static/images/logo_sofia2_bk_sm.png}"/>
 				<span class="text-logo">Sofia4Cities</span>
 			</a>
-			<div class="menu-toggler sidebar-toggler">
-				<span></span>
-			</div>
 		</div>
 		<!-- END LOGO -->
 		
@@ -173,7 +173,7 @@
 			
 	<!-- HEADER DATA TO SEND TO HEADER CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
-		var errores = [[${errors}]];
+		var errores = [[${message}]];
 		var informacion = [[${info}]];		
 		var headerJson = { 
 			"errores": errores,

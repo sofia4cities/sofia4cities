@@ -79,137 +79,189 @@
 				<div class="row">
 					<div class="col-md-12">						
 						<div class="portlet light bordered">
-							<div class="portlet-title">
+							<div class="portlet-title tabbable-line">
 								<div class="caption">
-									<i class="la la-users font-grey-gallery"></i>
-									<span class="caption-subject font-grey-gallery uppercase" th:object="${ontology}" th:text="#{ontology.template.show} + ' ' + ${ontology.identification}"> Ontology Identification</span>
+									
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
-								</div>									
+								</div>
+								
+								<!-- SECCIONES DE LA ONTOLOGIA TABS -->
+								<ul class="nav nav-tabs pull-left">
+									<li id="tab-datos" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="flaticon-network font-grey-gallery"></i>	<span class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.show} + ' ' + ${ontology.identification}"> Ontology Identification</span></a></li>
+									<li id="tab-autorizaciones" class=""><a href="#tab_2" data-toggle="tab" th:classappend="${ontology?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" >AUTORIZACIONES </span></a></li>
+								</ul>
+								
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
-								<div class="row">
-									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
-									</div>
-									<div class="col-md-12">										
-										<form role="form" id="ontology_view_form" action="show.html" th:object="${ontology}" th:action="@{|/controlpanel/ontologies/${id}|}"  method="post" class="form">
-											<div class="form-body">
-												<!-- ontology, id , identification -->
-												<div class="row">													
-													<div class="col-md-6 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.identification} + ':'">Name</label>
-															<p class="form-control-static-block bold" th:text="*{identification}"> ontology Name </p>
-														</div>
-													</div>
-													<div class="col-md-6 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label"><i class="la la-tags"></i> <span th:text="#{ontology.metainf} + ':'">Meta Information</span></label>
-															<p class="form-control-static-block bold" th:text="*{metainf}"> meta </p>
-														</div>
-													</div>													
-												</div>
-												<!-- Role, created-at, removed-at -->
-												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.datamodel} + ':'">Datamodel Template</label>
-															<p class="form-control-static-block bold" th:text="*{dataModel?.name} "> datamodel </p>
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.datamodel.type} + ':'">Datamodel Type</label>
-															<p class="form-control-static-block bold" th:text="*{dataModel?.type} "> datamodel type </p>
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12" >
-														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.active} + '?'">Active</label>
-															<p class="form-control-static-block form-control-static-no-border bold">
-																<span th:if="*{active}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{active}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
-															</p>
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12" >
-														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.public} + '?'">Public</label>
-															<p class="form-control-static-block form-control-static-no-border bold">
-																<span th:if="*{public}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{public}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
-															</p>
-														</div>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-md-6 col-sm-12 col-xs-12" >
-														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.description} + ':'">Description</label>
-															<p class="form-control-static-block bold" th:text="*{description}"> description </p>
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12" >
-														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.rtdbclean} + '?'">rtdbclean</label>
-															<p class="form-control-static-block form-control-static-no-border bold">
-																<span th:if="*{rtdbClean}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{rtdbClean}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
-															</p>
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12" >
-														<div class="form-group">
-															<label class="control-label" th:text="#{ontology.rtdbtohdb} + '?'">rtdbtohdb</label>
-															<p class="form-control-static-block form-control-static-no-border bold">
-																<span th:if="*{rtdbToHdb}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
-																<span th:if="!*{rtdbToHdb}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
-															</p>
-														</div>
-													</div>
-												</div>
-												<div class="row">																																
-													<div class="col-md-12 col-sm-12 col-xs-12">
-														<div class="form-group">
-															<label class="control-label"><i class="flaticon-network"></i> <span th:text="#{ontology.schema}">Ontology Schema</span></label>														
-															<div id="jsoneditor"></div>	
-														</div>
-													</div>
-												</div>
+								<div class="tab-content">
+									<div class="tab-pane active" id="tab_1">
+									<!-- VIEW -->
+										<div class="row">
+											<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
 											</div>
-											<!-- FORM BUTTONS -->
-											<div class="form-actions">
-												<div class="pull-right">
-													<!-- CREATE -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
-													
-													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${ontology.user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${ontology.user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													
-													<!-- REMOVE -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteOntologyConfirmation(\'' + ${ontology.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
-													
-													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
-													
-													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+											<div class="col-md-12">										
+												<form role="form" id="ontology_view_form" action="show.html" th:object="${ontology}" th:action="@{|/controlpanel/ontologies/${id}|}"  method="post" class="form">
+													<div class="form-body">
+														<!-- ontology, id , identification -->
+														<div class="row">													
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label class="control-label" th:text="#{ontology.identification} + ':'">Name</label>
+																	<p class="form-control-static-block bold" th:text="*{identification}"> ontology Name </p>
+																</div>
+															</div>
+															<div class="col-md-6 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label class="control-label"><i class="la la-tags"></i> <span th:text="#{ontology.metainf} + ':'">Meta Information</span></label>
+																	<p class="form-control-static-block bold" th:text="*{metainf}"> meta </p>
+																</div>
+															</div>													
+														</div>
+														<!-- Role, created-at, removed-at -->
+														<div class="row">
+															<div class="col-md-3 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label class="control-label" th:text="#{ontology.datamodel} + ':'">Datamodel Template</label>
+																	<p class="form-control-static-block bold" th:text="*{dataModel?.name} "> datamodel </p>
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label class="control-label" th:text="#{ontology.datamodel.type} + ':'">Datamodel Type</label>
+																	<p class="form-control-static-block bold" th:text="*{dataModel?.type} "> datamodel type </p>
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-6 col-xs-12" >
+																<div class="form-group">
+																	<label class="control-label" th:text="#{ontology.active} + '?'">Active</label>
+																	<p class="form-control-static-block form-control-static-no-border bold">
+																		<span th:if="*{active}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
+																		<span th:if="!*{active}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
+																	</p>
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-6 col-xs-12" >
+																<div class="form-group">
+																	<label class="control-label" th:text="#{ontology.public} + '?'">Public</label>
+																	<p class="form-control-static-block form-control-static-no-border bold">
+																		<span th:if="*{public}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
+																		<span th:if="!*{public}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
+																	</p>
+																</div>
+															</div>
+														</div>
+														<div class="row">
+															<div class="col-md-6 col-sm-12 col-xs-12" >
+																<div class="form-group">
+																	<label class="control-label" th:text="#{ontology.description} + ':'">Description</label>
+																	<p class="form-control-static-block bold" th:text="*{description}"> description </p>
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-6 col-xs-12" >
+																<div class="form-group">
+																	<label class="control-label" th:text="#{ontology.rtdbclean} + '?'">rtdbclean</label>
+																	<p class="form-control-static-block form-control-static-no-border bold">
+																		<span th:if="*{rtdbClean}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
+																		<span th:if="!*{rtdbClean}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
+																	</p>
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-6 col-xs-12" >
+																<div class="form-group">
+																	<label class="control-label" th:text="#{ontology.rtdbtohdb} + '?'">rtdbtohdb</label>
+																	<p class="form-control-static-block form-control-static-no-border bold">
+																		<span th:if="*{rtdbToHdb}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
+																		<span th:if="!*{rtdbToHdb}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
+																	</p>
+																</div>
+															</div>
+														</div>
+														<div class="row">																																
+															<div class="col-md-12 col-sm-12 col-xs-12">
+																<div class="form-group">
+																	<label class="control-label"><i class="flaticon-network"></i> <span th:text="#{ontology.schema}">Ontology Schema</span></label>														
+																	<div id="jsoneditor"></div>	
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- FORM BUTTONS -->
+													<div class="form-actions">
+														<div class="pull-right">
+															<!-- CREATE -->
+															<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  value="Create" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/} + 'create' + '\');'" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+															
+															<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
+															<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} != ${ontology.user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+															<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${#authentication.name} == ${ontology.user.userId}" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+															<button sec:authorize=" hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/update/} + ${ontology.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
+															
+															<!-- REMOVE -->
+															<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteOntologyConfirmation(\'' + ${ontology.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+															
+															<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+															
+															<!-- CANCEL TO-DO: authentication and control -->
+															<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+															<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+														</div>
+													</div>											
+												</form>
+												
+												<!-- AUXILIAR FORM TO DELETE ontology -->
+												<form id="delete_ontology_form" class="delete-ontology hide"  action=""  method="post">
+													<input type="hidden" name="_method" value="DELETE"/>
+													<input id="delete-ontologyId" type="hidden" name="ontologyId" th:value="*{id}"/>
+												</form>
+											</div>									
+										</div>
+									</div>
+									<div class="tab-pane " id="tab_2">
+									<!-- AUTHORIZATIONS -->
+										<div class="col-md-12">											
+											<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+												<div>
+													<!-- DATATABLE DANDELION CONF. -->												
+													<table id="authorizations" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+														<thead>
+															<tr class="cabecera-tabla">
+																<th class="titulo-columnas" th:text="#{authorization.identification}">Identification</th>
+																<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{authorization.user}" >User</span></th>
+																<th class="titulo-columnas" th:text="#{authorization.ontologyUserAccessType}">Description</th>
+															</tr>
+														</thead>
+														<tbody th:remove="all-but-first">
+															<tr th:each="authorization : ${authorization}" pages:paginate="10">
+																<!-- IDENTIFICATION/NAME -->
+																<td class="text-left no-wrap bold" th:text="${authorization.ontology.identification}"></td>
+																<!-- USER -->
+																<td class="text-center " th:text="${authorization.user.fullName}"></td>
+																<!-- ACCESS TYPE  -->
+																<td class="text-center " th:text="${authorization.ontologyUserAccessType.name}"></td>																
+															</tr>
+														</tbody>
+													</table>												
+													<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
+													<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
+														<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
+															<i class="fa fa-eye"></i> <em th:text="#{gen.columns}">Columns</em> <i class="fa fa-angle-down"></i>
+														</a>
+														<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
+															<label class="toggle-vis" data-column="0" th:text="#{authorization.identification}"> Identification </label>
+															<label class="toggle-vis" data-column="1" th:text="#{authorization.user}"> User </label>
+															<label class="toggle-vis" data-column="2" th:text="#{authorization.ontologyUserAccessType}"> Access Type</label>															
+														</div>
+													</div>												
 												</div>
 											</div>											
-										</form>
-										
-										<!-- AUXILIAR FORM TO DELETE ontology -->
-										<form id="delete_ontology_form" class="delete-ontology hide"  action=""  method="post">
-											<input type="hidden" name="_method" value="DELETE"/>
-											<input id="delete-ontologyId" type="hidden" name="ontologyId" th:value="*{id}"/>
-										</form>
-									</div>									
+										</div>
+									</div>
 								</div>
+								
 							</div>
 						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->						
@@ -285,12 +337,29 @@
 		editor = new jsoneditor.JSONEditor(container, options, jsonSchema);
 		
 		
+		//SHOW/HIDE DATATABLE COLUMNS HANDLER
+		$('label.toggle-vis').on( 'click', function (e) {
+			e.preventDefault(); 
+			// Get the column API object
+			var column = $('#authorizations').DataTable().column( $(this).attr('data-column') ); 
+			// Toggle the visibility
+			column.visible( ! column.visible() );			
+			// toggle Text
+			$(this).toggleClass('text-muted line-through');			
+		});	
+		
+		
+		
 	});
 	 
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
 		// init on load.		
 		showLog ? console.log('SHOW ontology load()...') : '';
+		
+		// SHOW/HIDE DATATABLES COLUMN INIT 		
+		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
+		$('#dataTable-vis-toggle').removeClass('hide');
 			
 	
 	});

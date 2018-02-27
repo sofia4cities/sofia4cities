@@ -105,7 +105,8 @@ public class OntologyController {
 		{
 			log.debug("Cannot create ontology");
 			utils.addRedirectMessage("ontology.create.error", redirect);
-			return "redirect:/ontologies/create";
+			redirect.addFlashAttribute("ontology", ontology);
+			return "redirect:/ontologies/createwizard";
 		}
 		utils.addRedirectMessage("ontology.create.success", redirect);
 		return "redirect:/ontologies/list";
@@ -172,8 +173,10 @@ public class OntologyController {
 	}
 	
 	@GetMapping(value = "/createwizard", produces = "text/html")
-	public String createWizard(Model model) {
-		model.addAttribute("ontology", new Ontology());
+	public String createWizard(Model model, @Valid Ontology ontology, BindingResult bindingResult) {
+		
+		if(bindingResult.hasErrors())
+			model.addAttribute("ontology", new Ontology());
 		this.populateForm(model);
 		return "/ontologies/createwizard";
 	}
