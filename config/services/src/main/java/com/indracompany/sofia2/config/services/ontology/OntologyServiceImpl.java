@@ -264,7 +264,7 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public boolean isOntologyAuthorizedForOthers(String ontologyId) {
+	public boolean hasOntologyUsersAuthorized(String ontologyId) {
 		Ontology ontology = ontologyRepository.findById(ontologyId);
 		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
 		return authorizations != null && authorizations.size() > 0;

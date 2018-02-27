@@ -57,6 +57,6 @@ public interface OntologyService {
 	 * @param ontologyId the id of the ontology.
 	 * @return true if any other user has authorization over the ontology.
 	 */
-	boolean isOntologyAuthorizedForOthers(String ontologyId);
+	boolean hasOntologyUsersAuthorized(String ontologyId);
 	
 }

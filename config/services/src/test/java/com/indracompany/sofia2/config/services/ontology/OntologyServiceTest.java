@@ -48,7 +48,7 @@ public class OntologyServiceTest {
 		ontology.setId(id);
 		when(ontologyRepository.findById(id)).thenReturn(ontology);
 		when(ontologyUserAccessRepository.findByOntology(ontology)).thenReturn(null);
-		assertFalse(service.isOntologyAuthorizedForOthers("1"));
+		assertFalse(service.hasOntologyUsersAuthorized("1"));
 	}
 	
 	@Test
@@ -58,7 +58,7 @@ public class OntologyServiceTest {
 		ontology.setId(id);
 		when(ontologyRepository.findById(id)).thenReturn(ontology);
 		when(ontologyUserAccessRepository.findByOntology(ontology)).thenReturn(new ArrayList<OntologyUserAccess>(1));
-		assertFalse(service.isOntologyAuthorizedForOthers("1"));
+		assertFalse(service.hasOntologyUsersAuthorized("1"));
 	}
 	
 	@Test
@@ -72,7 +72,7 @@ public class OntologyServiceTest {
 		authorizies.add(ontologyUserAccess);
 		when(ontologyRepository.findById(id)).thenReturn(ontology);
 		when(ontologyUserAccessRepository.findByOntology(ontology)).thenReturn(authorizies);
-		assertTrue(service.isOntologyAuthorizedForOthers("1"));
+		assertTrue(service.hasOntologyUsersAuthorized("1"));
 	}
 	
 }
