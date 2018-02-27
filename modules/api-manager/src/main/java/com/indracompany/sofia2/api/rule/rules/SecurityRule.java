@@ -60,16 +60,16 @@ public class SecurityRule extends DefaultRuleBase {
 		User user = (User) data.get(ApiServiceInterface.USER);
 		Api api = (Api) data.get(ApiServiceInterface.API);
 
-		boolean checkLimit = false;
-		boolean checkUser = apiSecurityService.checkUserApiPermission(api, user);
-		if (checkUser == false)
-			stopAllNextRules(facts, "User has no permission to use API");
-
-		else {
-			checkLimit = apiSecurityService.checkApiLimit(api);
-			if (checkLimit == false)
-				stopAllNextRules(facts, "User API Limit Reached");
+		boolean available  = apiSecurityService.checkApiAvailable(api, user);
+		boolean checkUser  = apiSecurityService.checkUserApiPermission(api, user);
+		
+		if (!available) {
+			stopAllNextRules(facts, "API is not Available",DefaultRuleBase.ReasonType.SECURITY);
 		}
+		if (!checkUser) {
+			stopAllNextRules(facts, "User has no permission to use API",DefaultRuleBase.ReasonType.SECURITY);
+		}
+		
 
 	}
 

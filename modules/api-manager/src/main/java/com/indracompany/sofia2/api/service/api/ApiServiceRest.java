@@ -15,9 +15,7 @@ package com.indracompany.sofia2.api.service.api;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +33,8 @@ import com.indracompany.sofia2.api.rest.api.fiql.AuthenticationFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.HeaderFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.OperationFIQL;
 import com.indracompany.sofia2.api.rest.api.fiql.QueryParameterFIQL;
-import com.indracompany.sofia2.api.service.Constants;
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.Api.ApiStates;
 import com.indracompany.sofia2.config.model.ApiAuthentication;
 import com.indracompany.sofia2.config.model.ApiAuthenticationAttribute;
 import com.indracompany.sofia2.config.model.ApiAuthenticationParameter;
@@ -44,8 +42,6 @@ import com.indracompany.sofia2.config.model.ApiHeader;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.ApiQueryParameter;
 import com.indracompany.sofia2.config.model.ApiSuscription;
-import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ApiAuthenticationAttributeRepository;
@@ -105,21 +101,17 @@ public class ApiServiceRest {
 	@Autowired
 	private UserTokenRepository userTokenRepository;
 
-
-	
 	public List<Api> findApisByUser(String userId, String token) {
 		List<Api> apis = null;
 		apis = apiRepository.findByUser(apiSecurityService.getUser(userId));
 		return apis;
 	}
 	
-	
-	
 	public Api getApi(String identificacionApi) {
 		Api api = null;
 		List<Api> apis = apiRepository.findByIdentification(identificacionApi);
 		for (Api apiAux : apis) {
-			if (apiAux.getState().equals("publicada")) {
+			if (apiAux.getState().name().equalsIgnoreCase(Api.ApiStates.PUBLISHED.name())) {
 				api = apiAux;
 			}
 		}
@@ -169,6 +161,23 @@ public class ApiServiceRest {
 		apis = apiRepository.findByIdentification(identificacion);
 		return apis;
 	}
+	
+
+	public Api changeState(String indentifier, ApiStates api, String token) {
+
+		User user = apiSecurityService.getUserByApiToken(token);
+		if (apiSecurityService.isAdmin(user)) {
+			List<Api> apis = apiRepository.findByIdentification(indentifier);
+			if (apis!=null) {
+				Api theApi = apis.get(0);
+				theApi.setState(api);
+				apiRepository.saveAndFlush(theApi);
+				return theApi;
+			}
+			else return null;
+		}
+		return null;
+	}
 
 	public void createApi(ApiDTO apiDTO, String token) {
 		Api api = apiFIQL.copyProperties(apiDTO);
@@ -181,7 +190,6 @@ public class ApiServiceRest {
 			}
 		}
 		if (numVersion >= api.getNumversion()) {
-			Object parametros[] = { numVersion };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.wrongversionMin");
 		}
 
@@ -189,13 +197,9 @@ public class ApiServiceRest {
 
 		api.setUser(user);
 
-		api.setState(Constants.API_STATE_CREATED);
+		api.setState(Api.ApiStates.CREATED);
 		apiRepository.saveAndFlush(api);
-
-		// Se crean las operaciones
 		createOperations(apiDTO.getOperations(), api);
-
-		// Se crea la autenticacion
 		createAutenticacion(apiDTO.getAuthentication(), api);
 	}
 
@@ -208,12 +212,7 @@ public class ApiServiceRest {
 			if (apiSecurityService.authorized(api, token)) {
 				apiUpdate = apiFIQL.copyProperties(apiUpdate, api);
 				apiRepository.saveAndFlush(apiUpdate);
-
-				// Se actualizan las operaciones (se eliminan las antiguas y se crean las
-				// nuevas)
 				updateOperaciones(apiDTO.getOperations(), apiUpdate);
-
-				// Se actualiza la autorizacion y sus operaciones
 				updateAutenticacion(apiDTO.getAuthentication(), apiUpdate);
 
 			} else {
@@ -230,13 +229,8 @@ public class ApiServiceRest {
 			Api apiDelete = apiRepository
 					.findByIdentificationAndNumversion(api.getIdentification(), api.getNumversion()).get(0);
 			if (apiSecurityService.authorized(apiDelete, token)) {
-				// Se eliminan las Operaciones
 				removeOperaciones(apiDelete);
-
-				// Se eliminan la autorizacion
 				removeAutorizacion(apiDelete);
-
-				// Se elimina el api
 				apiRepository.delete(apiDelete);
 			} else {
 				throw new AuthorizationServiceException("com.indra.sofia2.web.api.services.NoPermisosOperacion");
@@ -256,13 +250,8 @@ public class ApiServiceRest {
 		try {
 			Api apiDelete = apiRepository.findByIdentificationAndNumversion(identificacion, version).get(0);
 			if (apiSecurityService.authorized(apiDelete, token)) {
-				// Se eliminan las Operaciones
 				removeOperaciones(apiDelete);
-
-				// Se eliminan la autorizacion
 				removeAutorizacion(apiDelete);
-
-				// Se elimina el api
 				apiRepository.delete(apiDelete);
 			} else {
 				throw new AuthorizationServiceException("com.indra.sofia2.web.api.services.NoPermisosOperacion");
@@ -289,11 +278,10 @@ public class ApiServiceRest {
 			}
 			operacion.setApi(api);
 			apiOperationRepository.saveAndFlush(operacion);
-
-			// Se crean los Headers
-			createHeaders(operacion, operacionDTO.getHeaders());
-			// Se crean los QueryParams
-			createQueryParams(operacion, operacionDTO.getQueryParams());
+			if (operacionDTO.getHeaders()!=null)
+				createHeaders(operacion, operacionDTO.getHeaders());
+			if (operacionDTO.getQueryParams()!=null)
+				createQueryParams(operacion, operacionDTO.getQueryParams());
 		}
 	}
 
@@ -333,12 +321,10 @@ public class ApiServiceRest {
 			authentication.setApi(api);
 			apiAuthenticationRepository.saveAndFlush(authentication);
 
-			// Se crean los parametros
 			for (ArrayList<AutenticacionAtribDTO> parametroDTO : autenticacionDTO.getAuthParameters()) {
 				ApiAuthenticationParameter parameter = new ApiAuthenticationParameter();
 				parameter.setApiAuthentication(authentication);
 				apiAuthenticationParameterRepository.saveAndFlush(parameter);
-				// Se crean los atributos
 				for (AutenticacionAtribDTO atribDTO : parametroDTO) {
 					ApiAuthenticationAttribute autparametroatrib = new ApiAuthenticationAttribute();
 					autparametroatrib.setName(atribDTO.getName());
@@ -362,7 +348,6 @@ public class ApiServiceRest {
 
 	}
 
-	
 	public List<ApiSuscription> findApiSuscriptions(String identificacionApi, String tokenUsuario) {
 		if (identificacionApi==null){
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.IdentificacionApiRequerido");
@@ -380,6 +365,12 @@ public class ApiServiceRest {
 		return suscripciones;
 	}
 	
+	public List<ApiSuscription> findApiSuscriptions(Api api, User user) {		
+		List<ApiSuscription> suscripciones = null;
+		suscripciones = apiSuscriptionRepository.findAllByApiAndUser(api, user);
+		return suscripciones;
+	}
+	
 	public List<ApiSuscription> findApiSuscripcionesUser(String identificacionUsuario) {
 		List<ApiSuscription> suscripciones = null;
 		
@@ -388,23 +379,67 @@ public class ApiServiceRest {
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.IdentificacionApiRequerido");
 		}
 
-		// Se obtiene el usuario suscriptor
 		User suscriber = apiSecurityService.getUser(identificacionUsuario);
 		suscripciones = apiSuscriptionRepository.findAllByUser(suscriber);	
 		return suscripciones;
 	}
 	
-	public void createSuscripcion(ApiSuscription suscripcion) {
-		apiSuscriptionRepository.save(suscripcion);
+	private boolean authorizedOrSuscriptor(Api api, String tokenUsuario, String suscriptor) {
+		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
+		
+		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(api.getUser().getUserId()) || user.getUserId().equals(suscriptor)){
+			return true;
+		} else {
+			throw new AuthorizationServiceException("com.indra.sofia2.web.api.services.NoPermisosOperacionUsuario") ;
+		}
 	}
+	
+	public void createSuscripcion(ApiSuscription suscripcion, String tokenUsuario) {
+		if (authorizedOrSuscriptor(suscripcion.getApi(), tokenUsuario, suscripcion.getUser().getUserId())){
+			try {
+				List<ApiSuscription> apiUpdate = findApiSuscriptions(suscripcion.getApi(), suscripcion.getUser());
+				if (apiUpdate==null ) {
+					apiSuscriptionRepository.save(suscripcion);
+				}
+			} catch (Exception e) {
+				throw new IllegalArgumentException("com.indra.sofia2.web.api.services.SuscripcionNoExiste");
+			}
+		}else {
+			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.NoAutorizado");
+		}
+	}
+	
+	public void updateSuscripcion(ApiSuscription suscripcion, String tokenUsuario) {
+		if (authorizedOrSuscriptor(suscripcion.getApi(), tokenUsuario, suscripcion.getUser().getUserId())){
+			try {
+				List<ApiSuscription> apiUpdate = findApiSuscriptions(suscripcion.getApi(), suscripcion.getUser());
+				if (apiUpdate!=null && apiUpdate.size()>0 ) {
+					apiUpdate.get(0).setIsActive(suscripcion.getIsActive());
+					apiUpdate.get(0).setInitDate(suscripcion.getInitDate());
+					apiUpdate.get(0).setEndDate(suscripcion.getEndDate());
+				}
+				
+				apiSuscriptionRepository.save(apiUpdate.get(0));
+			} catch (Exception e) {
+				throw new IllegalArgumentException("com.indra.sofia2.web.api.services.SuscripcionNoExiste");
+			}
+		}
+	}
+	
+	public void removeSuscripcionByUserAndAPI(ApiSuscription suscripcion, String tokenUsuario) {
+		if (authorizedOrSuscriptor(suscripcion.getApi(), tokenUsuario, suscripcion.getUser().getUserId())){
+			try {
+				List<ApiSuscription> apiUpdate = findApiSuscriptions(suscripcion.getApi(), suscripcion.getUser());
+				if (apiUpdate!=null && apiUpdate.size()>0 ) {
+					apiSuscriptionRepository.delete(apiUpdate.get(0));
+				}
 
-	public void updateSuscripcion(ApiSuscription suscripcion) {
-		apiSuscriptionRepository.save(suscripcion);
+			} catch (Exception e) {
+				throw new IllegalArgumentException("com.indra.sofia2.web.api.services.SuscripcionNoExiste");
+			}
+		}
 	}
-
-	public void removeSuscripcionByUserAndAPI(ApiSuscription suscripcion) {
-		apiSuscriptionRepository.delete(suscripcion);
-	}
+	
 	public UserToken findTokenUserByIdentification(String identificacion, String tokenUsuario) {
 
 		UserToken token = null;
@@ -415,8 +450,34 @@ public class ApiServiceRest {
 		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
 		
 		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(identificacion)){
+			User userToTokenize = apiSecurityService.getUser(identificacion);
+			token = apiSecurityService.getUserToken(userToTokenize);
+		} else {
+			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
+		}
+		return token;
+	}
+	
+	public UserToken addTokenUsuario(String identificacion, String tokenUsuario) {
+		UserToken token = null;
+		if (identificacion==null){
+			throw new IllegalArgumentException("IdentificacionScriptRequerido");
+		}
+
+		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
+		
+		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(identificacion)){
+					
+			User userToTokenize = apiSecurityService.getUser(identificacion);
 			
-			token = apiSecurityService.getUserToken(user);
+			token = apiSecurityService.getUserToken(userToTokenize);
+			if (token==null)
+				token = init_Token(userToTokenize); 
+			else {
+				userTokenRepository.delete(token);
+				token = init_Token(userToTokenize); 
+			}
+				
 		} else {
 			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
 		}
@@ -433,8 +494,12 @@ public class ApiServiceRest {
 		User user = apiSecurityService.getUserByApiToken(tokenUsuario);
 		
 		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(identificacion)){
-						
-			token = init_Token(user);
+					
+			User userToTokenize = apiSecurityService.getUser(identificacion);
+			
+			token = apiSecurityService.getUserToken(userToTokenize);
+			if (token==null)
+				token = init_Token(userToTokenize); 
 				
 		} else {
 			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
@@ -448,32 +513,17 @@ public class ApiServiceRest {
 		return candidateToken;
 	}
 	
-	//TODO CLIENT_PLATFORM
 	public UserToken init_Token(User user) {
-		
-		ClientPlatform client =new ClientPlatform();
-		Set<Token> hashSetTokens = new HashSet<Token>();
 
-		Token token = new Token();
-		token.setClientPlatform(client);
-		token.setToken(generateTokenUsuario());
-		token.setActive(true);
-		hashSetTokens.add(token);
-		client.setTokens(hashSetTokens);
-		tokenRepository.save(token);
-		
-		
 		UserToken userToken = new UserToken();
 		
-		userToken.setToken(token);
+		userToken.setToken(generateTokenUsuario());
 		userToken.setUser(user);
 		userToken.setCreatedAt(Calendar.getInstance().getTime());
-		
-		
+			
 		userTokenRepository.save(userToken);
 		return userToken;
 
 	}
-	
-	
+
 }

@@ -33,12 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class QueryParameterFIQL {
 
-	private static final String API_REQUERIDO = "REQUIRED";
-	private static final String API_OPCIONAL = "OPTIONAL";
-	private static final String API_CONSTANTE = "CONSTANT";
-	private static final String API_NUMBER = "NUMBER";
-	private static final String API_BOOLEAN = "BOOLEAN";
-	private static final String API_STRING = "STRING";
+	
 
 	static Locale locale = LocaleContextHolder.getLocale();
 
@@ -75,18 +70,18 @@ public final class QueryParameterFIQL {
 			Object parametros[] = { apiqueryparamDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamDataTypeRequired");
 		}
-		if (!isValidType(apiqueryparamDTO.getDataType())) {
+		if (!isValidType(apiqueryparamDTO.getDataType().name())) {
 			Object parametros[] = { apiqueryparamDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongDataType");
 		}
 		if (apiqueryparamDTO.getHeaderType() == null || apiqueryparamDTO.getHeaderType().equals("")) {
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamConditionRequired");
 		}
-		if (!isValidCondition(apiqueryparamDTO.getHeaderType())) {
+		if (!isValidHeaderType(apiqueryparamDTO.getHeaderType().name())) {
 			Object parametros[] = { apiqueryparamDTO.getName() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongCondition");
 		}
-		if (!isValidTypeValue(apiqueryparamDTO.getDataType(), apiqueryparamDTO.getValue())) {
+		if (!isValidTypeValue(apiqueryparamDTO.getDataType().name(), apiqueryparamDTO.getValue())) {
 			Object parametros[] = { apiqueryparamDTO.getValue(), apiqueryparamDTO.getName(),
 					apiqueryparamDTO.getDataType() };
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.QueryParamWrongDataTypeValue");
@@ -102,21 +97,15 @@ public final class QueryParameterFIQL {
 		return apiqueryparam;
 	}
 
-	private static boolean isValidConditionValue(String Condition, String Value) {
-		if (Condition.equals(API_CONSTANTE)) {
-			return (Value != null && !Value.equals(""));
-		}
-		return true;
-	}
-
+	
 	private static boolean isValidTypeValue(String DataType, String Value) {
-		if (DataType.equals(API_NUMBER)) {
+		if (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.number.name())) {
 			try {
 				Integer.parseInt(Value);
 			} catch (Exception e) {
 				return false;
 			}
-		} else if (DataType.equals(API_BOOLEAN)) {
+		} else if (DataType.equalsIgnoreCase("boolean")) {
 			try {
 				Boolean.parseBoolean(Value);
 			} catch (Exception e) {
@@ -126,18 +115,25 @@ public final class QueryParameterFIQL {
 		return true;
 	}
 
-	/*
-	 * private static boolean isValidCondition(String DataType) { return
-	 * (DataType.equalsIgnoreCase(API_CONSTANTE)||DataType.equalsIgnoreCase(API_OPCIONAL)||
-	 * DataType.equalsIgnoreCase(API_REQUERIDO)); }
-	 */
 
-	private static boolean isValidCondition(String DataType) {
-		return (DataType.equalsIgnoreCase("query") || DataType.equalsIgnoreCase("path") || DataType.equalsIgnoreCase("body"));
+	private static boolean isValidHeaderType(String DataType) {
+		return (DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.body.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.path.name()) 
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.HeaderType.query.name()));
 	}
 
 	private static boolean isValidType(String DataType) {
-		return (DataType.equalsIgnoreCase(API_STRING) || DataType.equalsIgnoreCase(API_NUMBER)
-				|| DataType.equalsIgnoreCase(API_BOOLEAN));
+		return (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.string.name()) 
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.array.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.date.name())
+				|| DataType.equalsIgnoreCase("boolean")
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.uri.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.password.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.binary.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.email.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.uuid.name())
+				
+				);
 	}
 }
+

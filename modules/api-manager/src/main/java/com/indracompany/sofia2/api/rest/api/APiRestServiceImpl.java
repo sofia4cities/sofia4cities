@@ -25,6 +25,8 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.api.rest.api.dto.ApiDTO;
 import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 import com.indracompany.sofia2.api.service.api.ApiServiceRest;
+import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.Api.ApiStates;
 
 @Component("apiRestServiceImpl")
 public class APiRestServiceImpl implements ApiRestService {
@@ -97,6 +99,17 @@ public class APiRestServiceImpl implements ApiRestService {
 
 	public void setApiFIQL(ApiFIQL apiFIQL) {
 		this.apiFIQL = apiFIQL;
+	}
+
+	@Override
+	public Response create(String indentifier, ApiStates api, String token) throws Exception {
+		Api apiRes = apiService.changeState(indentifier, api, token);
+		if (apiRes!=null) {
+			Object parametros[] = { apiRes };
+			return Response.ok(parametros).type(MediaType.APPLICATION_JSON).build();
+		}
+		else return Response.ok("Cannot Change API STATE").type(MediaType.APPLICATION_JSON).build();
+			
 	}
 
 }

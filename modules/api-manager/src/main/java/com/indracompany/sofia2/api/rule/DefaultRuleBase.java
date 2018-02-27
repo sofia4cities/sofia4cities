@@ -16,10 +16,15 @@ package com.indracompany.sofia2.api.rule;
 import org.jeasy.rules.api.Facts;
 
 public class DefaultRuleBase {
+	
+	public static enum ReasonType {
+		INTERNAL, API_LIMIT, SECURITY, GENERAL, DEVELOPMENT;
+	}
 		
-	protected void stopAllNextRules(Facts facts, String reason) {
+	protected void stopAllNextRules(Facts facts, String reason, ReasonType type) {
 		facts.put(RuleManager.STOP_STATE, true);
 		facts.put(RuleManager.REASON, reason);
+		facts.put(RuleManager.REASON_TYPE, type.name());
 	}
 	
 	protected boolean canExecuteRule(Facts facts) {

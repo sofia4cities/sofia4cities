@@ -53,21 +53,21 @@ public class ApiSuscriptionRestServiceImpl implements ApiSuscriptionRestService 
 	
 	@Override
 	public Response autorize(ApiSuscripcionDTO suscripcion, String tokenUsuario) throws Exception {
-		apiService.createSuscripcion(apiSuscripcionFIQL.copyProperties(suscripcion));
+		apiService.createSuscripcion(apiSuscripcionFIQL.copyProperties(suscripcion),tokenUsuario);
 		Object parametros[]={suscripcion.getApiIdentification(),suscripcion.getUserId()};
 		return Response.ok(parametros).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
 	public Response autorizeUpdate(ApiSuscripcionDTO suscripcion, String tokenUsuario) throws Exception {
-		apiService.updateSuscripcion(apiSuscripcionFIQL.copyProperties(suscripcion));
+		apiService.updateSuscripcion(apiSuscripcionFIQL.copyProperties(suscripcion),tokenUsuario);
 		Object parametros[]={suscripcion.getApiIdentification(),suscripcion.getUserId()};
 		return Response.ok(parametros).type(MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
 	public Response deleteAutorizacion(ApiSuscripcionDTO suscripcion, String tokenUsuario) throws Exception {
-		apiService.removeSuscripcionByUserAndAPI(apiSuscripcionFIQL.copyProperties(suscripcion));
+		apiService.removeSuscripcionByUserAndAPI(apiSuscripcionFIQL.copyProperties(suscripcion),tokenUsuario);
 		Object parametros[]={suscripcion.getApiIdentification(),suscripcion.getUserId()};
 		return Response.ok(parametros).type(MediaType.APPLICATION_JSON).build();
 	}

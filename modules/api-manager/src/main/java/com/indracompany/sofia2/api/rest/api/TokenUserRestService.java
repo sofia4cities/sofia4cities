@@ -32,7 +32,6 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 
 
-@Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/tokenuser")
 @Api(value = "token user rest service")
@@ -61,7 +60,7 @@ public interface TokenUserRestService {
 	@ApiOperation(value = "POST token by ID", 
     notes = "POST token by ID", 
     httpMethod="POST",
-    produces=MediaType.APPLICATION_JSON,
+    produces=MediaType.TEXT_PLAIN,
     consumes=MediaType.APPLICATION_JSON,
     authorizations = @Authorization(value = "token")
   )
@@ -78,8 +77,8 @@ public interface TokenUserRestService {
 	@Path("{identification}/tokenUser")
 	@ApiOperation(value = "PUT token by ID", 
     notes = "PUT token by ID", 
-    httpMethod="POST",
-    produces=MediaType.APPLICATION_JSON,
+    httpMethod="PUT",
+    produces=MediaType.TEXT_PLAIN,
     consumes=MediaType.APPLICATION_JSON,
     authorizations = @Authorization(value = "token")
   )

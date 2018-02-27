@@ -18,13 +18,21 @@ import com.indracompany.sofia2.api.rest.api.dto.TokenUserDTO;
 import com.indracompany.sofia2.config.model.UserToken;
 
 public final class TokenUserFIQL {
-	
-	
 
 	public static TokenUserDTO toTokenUsuarioDTO(UserToken token) throws Exception {
-		TokenUserDTO tokenUsuarioDTO = new TokenUserDTO();
-		tokenUsuarioDTO.setToken(token.getToken().getToken());
-		tokenUsuarioDTO.setUserIdentification(token.getUser().getUserId());
-		return tokenUsuarioDTO;
+
+		if (token != null) {
+			TokenUserDTO tokenUsuarioDTO = new TokenUserDTO();
+			tokenUsuarioDTO.setToken(token.getToken());
+			tokenUsuarioDTO.setUserIdentification(token.getUser().getUserId());
+			return tokenUsuarioDTO;
+		} else {
+			TokenUserDTO tokenUsuarioDTO = new TokenUserDTO();
+			tokenUsuarioDTO.setToken("NO_VALID_TOKEN_FOUND");
+			// FIXME token is null
+			// tokenUsuarioDTO.setUserIdentification(token.getUser().getUserId());
+			return tokenUsuarioDTO;
+		}
+
 	}
 }

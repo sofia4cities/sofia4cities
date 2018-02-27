@@ -1,0 +1,36 @@
+ <restConfiguration component="servlet" 
+		 	apiContextListing="true"
+			enableCORS="true">
+			<dataFormatProperty key="prettyPrint" value="true" />
+		</restConfiguration>
+
+		<!-- defines the rest services using the context-path /user -->
+		<rest path="/imaging/image">
+			<description>Imaging rest service</description>
+			
+			<post uri="/quality">
+				
+				<param name="body" type="body" description="The Quality" />
+				<to uri="direct:quality" />
+
+			</post>
+			
+			<post uri="/recognition">
+				
+				<param name="body" type="body" description="The Recognition" />
+				<to uri="direct:recognition" />
+			</post>
+		</rest>
+		
+		<route id="quality-mock">
+			<from uri="direct:quality" />
+			<to uri="mock:bar" />
+	
+		</route>
+		
+		<route id="recognition-mock">
+			<from uri="direct:recognition" />
+			<to uri="mock:bar" />
+			
+			
+		</route>

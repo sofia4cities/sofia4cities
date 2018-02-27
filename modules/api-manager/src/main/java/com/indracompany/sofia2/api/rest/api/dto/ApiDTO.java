@@ -22,6 +22,8 @@ package com.indracompany.sofia2.api.rest.api.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import com.indracompany.sofia2.config.model.Api.ApiStates;
+
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -86,7 +88,7 @@ public class ApiDTO implements Cloneable, Serializable {
 	@ApiModelProperty(value = "API Status")
 	@Getter
 	@Setter
-	private String status;
+	private ApiStates status;
 
 	@ApiModelProperty(value = "creation Date")
 	@Getter

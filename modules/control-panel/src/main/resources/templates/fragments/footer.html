@@ -1,0 +1,48 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<!-- BEGIN FOOTER -->
+<div th:fragment="footerFragment" id="footerFragment">
+	<div class="row">
+		<div class="col-md-9 col-sm-12 col-xs-12 ">
+			<div>  
+				<span class="m-link m-link--metal"  th:text="#{gen.copyright}">Sofia4Cities Control Panel © 2018 </span>
+				<span class="sep">|</span>
+				<a target="_blank" href="www.indracompany.com" class="m-link m-link--metal" th:text="#{foot.company}">Indra Company</a>
+				<span class="sep">|</span>
+				<a href="#" class="m-link m-link--metal"  th:text="#{foot.legal}" data-toggle="modal" data-target="#termsConditionsPartner" >Legal Conditions</a>					
+				<span class="sep">|</span>
+				<img th:src="@{/static/images/logo_sofia2_invert.png}"/>
+			</div>
+		</div>
+		<div class="col-md-3 col-sm-12 col-xs-12">
+			<ul class="social-icons pull-right">
+				<li><a href="javascript:;" data-original-title="jolicloud" class="jolicloud"> </a></li>
+				<li><a href="javascript:;" data-original-title="youtube" class="youtube"> </a></li>
+				<li><a href="javascript:;" data-original-title="wordpress" class="wordpress"> </a></li>
+				<li><a href="javascript:;" data-original-title="twitter" class="twitter"> </a></li>
+			</ul>				
+		</div>
+	</div>
+	<div class="scroll-to-top" style="display: none;">
+		<i class="la la-arrow-circle-o-up"></i>
+	</div>
+	
+	<!-- MODAL TERMS AND CONDITIONS -->
+	<div id="termsConditionsPartner" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content" >
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="gridSystemModalLabel" th:text="#{foot.legal}">Terms and Conditions</h4>
+				</div>
+				<div class="modal-body"><!-- falta th:include="fragments/condicionesPartner::#contenido" -->
+					Terms and conditions (to-do)
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" th:title="#{foot.close}" th:text="#{foot.close}"></button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- END MODAL TERMS AND CONDITIONS -->
+</div>
+<!-- END FOOTER -->

@@ -1,0 +1,188 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<link href='http://fonts.googleapis.com/css?family=Poppins:400,700' rel='stylesheet' type='text/css'/>
+	<link rel="stylesheet" th:href="@{/static/css/reset.css}"/> <!-- CSS reset -->
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+	<link rel="stylesheet" th:href="@{/static/webjars/sofia2_theme/css/login.css}"/> <!-- sofia2_theme login style -->
+	
+  	
+	<title th:text="#{login.title}">Control Panel Login</title>
+</head>
+<body>
+	<header role="banner">
+		<div id="cd-logo">
+		<a href="#0" style="color: #FFF; font-size: 30px; font-family: 'Poppins';font-weight: 400;text-shadow: 0px 4px 3px rgba(0,0,0,0.4), 0px 8px 13px rgba(0,0,0,0.1), 0px 18px 23px rgba(0,0,0,0.1);"><span style="font-weight: 700">Sofia</span>4<span style="font-weight: 700">Cities</span> <span style="font-size: 15px;font-weight: 400; letter-spacing: 2px">Control Panel</span></a>
+		</div>
+
+		<nav class="main-nav">
+			<ul>
+				<!-- inser more links here -->
+				<li><a class="cd-signin" href="#0">Login</a></li>
+				<li><a class="cd-signup" href="#0" th:text="#{login.new}">New Account</a></li>
+			</ul>
+		</nav>
+	</header>
+	<style>
+	.background {  position: absolute;  display: block;  top: 0;  left: 0;  z-index: 1; } 
+	</style>
+	
+	<div class="cd-user-modal"> <!-- this is the entire modal form, including the background -->
+
+		<div class="cd-user-modal-container"> <!-- this is the container wrapper -->
+			<ul class="cd-switcher">
+				<li><a href="#0">Login</a></li>
+				<li><a href="#0" th:text="#{login.new}">New Account</a></li>
+			</ul>
+
+			<div id="cd-login"> <!-- log in form -->			
+				
+				<div th:if="${param.error}" class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+					<p th:text="#{login.error}">Invalid username and password.</p>
+				</div>
+				
+				<div th:if="${param.logout}" class="alert alert-info alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+					<p th:text="#{login.logout}">You have been logged out.</p>
+				</div>
+				
+				<div th:if="${message} != null ? true" class="alert alert-warning alert-dismissable">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+					<p th:text="${message}">messages</p>
+				</div>
+								
+				<form class="cd-form" th:action="@{/login}" method="post" >
+					<!-- <p class="fieldset">
+						<label class="image-replace cd-email" for="signin-email">E-mail</label>
+						<input class="full-width has-padding has-border" id="signin-email" type="email" placeholder="E-mail"/>
+						<span class="cd-error-message">Error message here!</span>
+					</p> -->
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-username">Username</label>
+						<input class="full-width has-padding has-border" id="username" name="username" type="text" placeholder="Username"/>
+						<span class="cd-error-message">Invalid username</span>
+					</p>
+
+					<p class="fieldset">
+						<label class="image-replace cd-password" for="signin-password">Password</label>
+						<input class="full-width has-padding has-border" id="password" name="password" type="text"  placeholder="Password"/>
+						<a href="#0" class="hide-password">Hide</a>
+						<span class="cd-error-message">Invalid password</span>
+					</p>
+
+					<p class="fieldset">
+						<input type="checkbox" id="remember-me" checked="checked" />
+						<label for="remember-me">Remember me</label>
+					</p>
+
+					<p class="fieldset">
+						<input class="full-width" type="submit" value="Login" />
+					</p>
+				</form>
+				
+				<p class="cd-form-bottom-message"><a href="#0">Forgot your password?</a></p>
+				<!-- <a href="#0" class="cd-close-form">Close</a> -->
+			</div> <!-- cd-login -->
+
+			<div id="cd-signup"> <!-- sign up form -->
+		
+				<form class="cd-form" th:action="@{/users/register}" th:object= "${users}"  method="post">
+				
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-username">Username</label>
+						<input class="full-width has-padding has-border" id="usernameup" th:field="*{userId}" name="usernameup" type="text" placeholder="Username" th:required="true"/>
+						<span class="cd-error-message">Invalid Username</span>
+						
+					</p>
+					
+					<p class="fieldset">
+
+						<label class="image-replace cd-password" for="signup-password">Password</label>
+						<input class="full-width has-padding has-border" id="passwordup" th:field="*{password}" name="passwordup" type="password"  placeholder="Password" th:required="true" title="Must contain at least: one uppercase letter, one lowercase letter and a number or simbol. Password must be between 7 and 20 characters." pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />  
+						<!-- #{login.contrasena.pattern}" -->
+
+						<span class="cd-error-message">Error with password</span>
+						
+					</p>
+					
+					<p class="fieldset">
+						<label class="image-replace cd-username" for="signup-name">Name</label>
+						<input class="full-width has-padding has-border" id="signup-name" th:field="*{fullName}" name="nameup" type="text" placeholder="Name" th:required="true"/>
+						<span class="cd-error-message">Error with Name</span>
+					</p>
+					
+					<p class="fieldset">
+						<label class="image-replace cd-email" for="signup-email">E-mail</label>
+						<input class="full-width has-padding has-border" id="signup-email" th:field="*{email}" name ="emailup" type="email" placeholder="E-mail" th:required="true"/>
+						<span class="cd-error-message">Invalid email</span>
+					</p>
+					<p class="fieldset">
+						<input class="full-width has-padding" type="submit" value="Create account"/>
+					</p>
+				</form>
+				<!-- <a href="#0" class="cd-close-form">Close</a> -->
+			</div> <!-- cd-signup -->
+
+			<div id="cd-reset-password"> <!-- reset password form -->
+				<p class="cd-form-message">Lost your password? Please enter your email address. You will receive a link to create a new password.</p>
+
+				<form class="cd-form">
+					<p class="fieldset">
+						<label class="image-replace cd-email" for="reset-email">E-mail</label>
+						<input class="full-width has-padding has-border" id="reset-email" type="email" placeholder="E-mail"/>
+						<span class="cd-error-message">Error message here!</span>
+					</p>
+
+					<p class="fieldset">
+						<input class="full-width has-padding" type="submit" value="Reset password"/>
+					</p>
+				</form>
+
+				<p class="cd-form-bottom-message"><a href="#0">Back to log-in</a></p>
+			</div> <!-- cd-reset-password -->
+			<a href="#0" class="cd-close-form">Close</a>
+		</div> <!-- cd-user-modal-container -->
+	</div> <!-- cd-user-modal -->
+	
+	<!-- LEGAL INFO -->
+	<div id="legal" style="z-index: 1;color: #FFF; margin: 1em auto; position: absolute; bottom:5%;vertical-align: middle;text-align: center;width: 100%;" class="">Sofia4Cities Minsait © 2018 Indra Company</div>
+	
+	<canvas class="background"></canvas>
+	
+	<!-- MAIN SCRIPTS  -->
+	<script th:src="@{/static/vendor/jquery/jquery.min.js}"></script>	
+	<script th:src="@{/static/vendor/bootstrap/bootstrap.js}"/>
+	<script th:src="@{/static/js/pages/login.js}"></script>
+	<script th:src="@{/static/vendor/modernizr.js}"></script> <!-- Modernizr -->
+	<script th:src="@{/static/vendor/particles.js}"></script>
+	
+	<!-- CORE -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<script>
+	var timer = 0;
+	window.onload = function() {
+		Particles.init({
+		selector: '.background',
+		connectParticles: true,
+		color: "#FFFFFF"
+		});
+		timer = setTimeout(function(){ $('.cd-signin').trigger('click'); }, 1250);
+<<<<<<< HEAD:controlpanel/src/main/resources/templates/login.html
+		$('.hide-password').trigger('click'); 
+		
+		
+=======
+
+		$('.hide-password').trigger('click');
+
+>>>>>>> 5fe1a22fd7095d4cd7dcff9d3cdfe1cafed2cdc2:modules/control-panel/src/main/resources/templates/login.html
+	};
+	</script>
+</body>
+</html>
