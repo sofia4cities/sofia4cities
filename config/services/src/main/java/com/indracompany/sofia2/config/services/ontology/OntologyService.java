@@ -52,6 +52,11 @@ public interface OntologyService {
 	
 	void createOntology(Ontology ontology);
 	
+	/**
+	 * This method checks if an ontology has authorizations for other users different from its owner.
+	 * @param ontologyId the id of the ontology.
+	 * @return true if any other user has authorization over the ontology.
+	 */
 	boolean isOntologyAuthorizedForOthers(String ontologyId);
 	
 }
