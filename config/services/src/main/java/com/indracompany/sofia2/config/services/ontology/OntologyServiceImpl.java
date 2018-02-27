@@ -269,6 +269,24 @@ public class OntologyServiceImpl implements OntologyService {
 		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
 		return authorizations != null && authorizations.size() > 0;
 	}
+
+	@Override
+	public List<OntologyUserAccess> getOntologyUserAccesses(String ontologyId) {
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
+		return authorizations;
+	}
+
+	@Override
+	public void createUserAccess(Ontology ontology, OntologyUserAccess ontologyUserAccess) {
+		Ontology fetchedOntology = ontologyRepository.findById(ontology.getId());
+		if (fetchedOntology != null) {
+			ontologyUserAccess.setOntology(fetchedOntology);
+			ontologyUserAccessRepository.save(ontologyUserAccess);
+		} else {
+			throw new OntologyServiceException("Ontology does not exist");
+		}
+	}
 	
 
 }

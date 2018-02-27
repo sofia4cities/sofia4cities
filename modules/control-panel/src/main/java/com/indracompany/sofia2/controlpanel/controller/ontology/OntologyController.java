@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
@@ -86,6 +87,13 @@ public class OntologyController {
 		model.addAttribute("ontology", new Ontology());
 		this.populateForm(model);
 		return "/ontologies/create";
+	}
+	
+	@GetMapping(value = "/createwizard", produces = "text/html")
+	public String createWizard(Model model) {
+		model.addAttribute("ontology", new Ontology());
+		this.populateForm(model);
+		return "/ontologies/createwizard";
 	}
 	
 	@PostMapping(value = {"/create","/createwizard"})
@@ -171,12 +179,7 @@ public class OntologyController {
 		return "redirect:/ontologies/list";
 	}
 	
-	@GetMapping(value = "/createwizard", produces = "text/html")
-	public String createWizard(Model model) {
-		model.addAttribute("ontology", new Ontology());
-		this.populateForm(model);
-		return "/ontologies/createwizard";
-	}
+
 	
 	
 	@GetMapping("/show/{id}")
@@ -184,10 +187,14 @@ public class OntologyController {
 			RedirectAttributes redirect) {
 		Ontology ontology = this.ontologyService.getOntologyById(id);
 		if(ontology != null) {
-			if(ontology.getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
+			if(ontology.getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator()) {
 				return "/error/403";
+			}
+			List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
 			
 			model.addAttribute("ontology",ontology);
+			model.addAttribute("authorizations", authorizations);
+			
 			return "/ontologies/show";
 		}else
 		{
@@ -205,4 +212,26 @@ public class OntologyController {
 	}
 	
 	
+	@PostMapping(value="/authorization")
+	public String createAuthorization(
+			Model model,
+			@Valid OntologyUserAccess ontologyUserAccess,
+			BindingResult bindingResult,
+			RedirectAttributes redirect) {
+		
+		if(bindingResult.hasErrors()) {
+			log.debug("Some ontologyUserAccess properties missing");
+			utils.addRedirectMessage("ontology.validation.error", redirect);
+			return "/ontology/list";
+		}else {
+			Ontology ontology = ontologyService.getOntologyById(ontologyUserAccess.getOntology().getId());
+			if (ontology.getUser().getUserId().equals(this.utils.getUserId())) {
+				ontologyService.createUserAccess(ontology, ontologyUserAccess);
+			} else {
+				return "/error/403";
+			}
+		}
+		return "/ontology/authorizations/list";
+	}
+
 }
