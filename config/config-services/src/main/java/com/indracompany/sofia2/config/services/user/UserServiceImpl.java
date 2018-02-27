@@ -178,4 +178,14 @@ public class UserServiceImpl implements UserService {
 		return false;
 	
 	}
+	@Override
+	public boolean emailExists(User user) {
+		 	
+		if ( (this.userRepository.findByEmail(user.getEmail())).size() != 0)
+			return true;
+		else
+			return false;
+	}
+	
+
 }

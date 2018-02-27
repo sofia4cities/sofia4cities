@@ -14,6 +14,8 @@
 package com.indracompany.sofia2.controlpanel.controller.user;
 
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
@@ -215,20 +217,32 @@ public class UserController {
 	@RequestMapping(value = "/register" ,  method = RequestMethod.POST)
 	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes)
 	{
+		
 		if(user!=null)
 		{
 			
 			if(user.getUserId() != null && user.getPassword() != null && user.getFullName() != null && user.getEmail() != null && user.isActive() == true )
 			{	
-				if (this.userService.registerUser(user)) {
-					log.debug("User created from login");
-					utils.addRedirectMessage("login.register.created", redirectAttributes);
+			 
+				if(this.userService.emailExists(user)) {
+					log.debug("There is already an user with this email");
+					utils.addRedirectMessage("login.error.email.duplicate", redirectAttributes);
 					return "redirect:/login";
 				}
-				log.debug("This user already exist");
-				utils.addRedirectMessage("login.error.register", redirectAttributes);
-				return "redirect:/login";
-								
+				
+				if(utils.paswordValidation(user.getPassword()) && (this.userService.emailExists(user) ==false) ) {
+					
+					if (this.userService.registerUser(user)) {
+						log.debug("User created from login");
+						utils.addRedirectMessage("login.register.created", redirectAttributes);
+						return "redirect:/login";
+					}
+					
+					log.debug("This user already exist");
+					utils.addRedirectMessage("login.error.register", redirectAttributes);
+					return "redirect:/login";
+				
+				}				
 			}
 		}
 		

@@ -13,6 +13,9 @@
  */
 package com.indracompany.sofia2.controlpanel.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,9 @@ import lombok.extern.slf4j.Slf4j;
 public class AppWebUtils {
 
 	public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
-
+	
+//	public static final String regexp_password = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&]){7,20}$/;
+	
 	@Autowired
 	private MessageSource messageSource;
 
@@ -92,5 +97,14 @@ public class AppWebUtils {
 		}
 		return formattedJson;
 	}
-
+	
+	public boolean paswordValidation(String data) {
+		
+		Pattern pattern = Pattern.compile("(?=^.{7,20}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
+		Matcher matcher = pattern.matcher(data);
+		return matcher.find();
+	
+	}
+	
+		
 }

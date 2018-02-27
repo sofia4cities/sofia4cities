@@ -27,6 +27,7 @@ public interface UserService {
 	public User getUser(UserToken token);
 	public User getUserByToken(String token);
 	public User getUser(String userId);
+	public boolean emailExists(User user);
 	public List<Role> getAllRoles();
 	public UserToken getUserToken(User userId);
 	public List<User> getAllUsers();
