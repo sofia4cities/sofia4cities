@@ -13,12 +13,16 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.ontology;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,6 +36,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
@@ -201,26 +210,61 @@ public class OntologyController {
 	}
 	
 	
-	@PostMapping(value="/authorization")
-	public String createAuthorization(
+	@PostMapping(value="/authorization", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<OntologyUserAccess> createAuthorization(
 			Model model,
-			@Valid OntologyUserAccess ontologyUserAccess,
+			@RequestParam OntologyUserAccess ontologyUserAccess,
 			BindingResult bindingResult,
 			RedirectAttributes redirect) {
 		
 		if(bindingResult.hasErrors()) {
 			log.debug("Some ontologyUserAccess properties missing");
 			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return "/ontology/list";
-		}else {
+			return new ResponseEntity<OntologyUserAccess>(HttpStatus.BAD_REQUEST);
+		} else {
 			Ontology ontology = ontologyService.getOntologyById(ontologyUserAccess.getOntology().getId());
 			if (ontology.getUser().getUserId().equals(this.utils.getUserId())) {
 				ontologyService.createUserAccess(ontology, ontologyUserAccess);
+				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontology.getId(), ontologyUserAccess.getUser().getUserId());
+				return new ResponseEntity<OntologyUserAccess>(ontologyUserAccessCreated, HttpStatus.CREATED);
 			} else {
-				return "/error/403";
+				return new ResponseEntity<OntologyUserAccess>(HttpStatus.FORBIDDEN);
 			}
 		}
-		return "/ontology/authorizations/list";
 	}
+	
+	@PostMapping(value="/authorization/delete")
+	public @ResponseBody ResponseEntity<OntologyUserAccess> deleteAuthorization(@RequestParam String id) {
+		ontologyService.deleteOntologyUserAccess(id);
+		return new ResponseEntity<OntologyUserAccess>(HttpStatus.NO_CONTENT);
+	}
+	
+	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public @ResponseBody ResponseEntity<OntologyUserAccess> updateAuthorization(
+			@RequestParam OntologyUserAccess ontologyUserAccess) {
+		ontologyService.updateOntologyUserAccess(ontologyUserAccess);
+		OntologyUserAccess obtainedAuthorizations = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyUserAccess.getOntology().getId(), ontologyUserAccess.getUser().getUserId());
+		return new ResponseEntity<OntologyUserAccess>(obtainedAuthorizations, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/authorization/{id}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<String> getAuthorizations(@PathVariable("id") String id){
+		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("ontologyUserAccess");
+		FilterProvider filters = new SimpleFilterProvider().addFilter("ontologyUserAccessTypeFilter", filter);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		
+		Ontology ontology = this.ontologyService.getOntologyById(id);
+		List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
+		String jsonAuthorizations = "";
+		try {
+			jsonAuthorizations = mapper.writer(filters).writeValueAsString(authorizations);
+		} catch (JsonProcessingException e) {
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<String>(jsonAuthorizations, HttpStatus.OK);
+	}
+	
 
 }
