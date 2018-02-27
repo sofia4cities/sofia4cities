@@ -341,7 +341,7 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 			BasicDBObject indexKey = new BasicDBObject(index.getKey());
 			IndexOptions nativeIndexOptions = null;
 			if (index.getIndexOptions() != null) {
-				nativeIndexOptions = index.getIndexOptions().toNativeIndexOptions();
+				nativeIndexOptions = index.getIndexOptions();
 			}
 			if (nativeIndexOptions == null)
 				return dbCollection.createIndex(indexKey);
