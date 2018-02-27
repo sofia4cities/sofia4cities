@@ -224,7 +224,7 @@ public class UserController {
 
 			} catch (Exception e) {
 				log.error("Error registering user" + e.getMessage());
-				utils.addRedirectException(e.getMessage(), redirectAttributes);
+				utils.addRedirectException(e, redirectAttributes);
 				return "redirect:/login";
 			}
 		}

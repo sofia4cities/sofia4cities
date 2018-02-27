@@ -147,7 +147,7 @@
 																		<label class="" th:text="#{ontology.name} + ':'">Name</label><span class="required"> (*)</span>
 																		<div class="input-icon ">
 																			<i class="flaticon-network"></i>
-																			<input th:tabindex="1" id="identification" type="text"   th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:classappend="${#fields.hasErrors('identification')} ? hasErrors"  th:placeholder="#{ontology.name}"/>
+																			<input th:tabindex="1" id="identification" type="text"   th:required="true"  maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{ontology.name}"/>
 																		</div>	
 																	</div>
 																</div>
@@ -383,9 +383,9 @@
 													<label class="control-label" >Usuario</label>
 													<select id="users" class="selectpicker form-control" data-live-search="true" data-width="100%" >
 														<!--<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>-->
-														<option value="paco"> Paco</option>
-														<option value="paco2"> Paco 2</option>
-														<option value="paco3"> Paco 3</option>
+														<option value="developer"> Developer</option>
+														<option value="administrator"> Administrator</option>
+														<option value="partner"> Partner</option>
 													</select>
 												</div>
 												<div class="form-group">

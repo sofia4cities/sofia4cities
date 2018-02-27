@@ -809,30 +809,31 @@ var OntologyCreateController = function() {
 	// AJAX AUTHORIZATION FUNCTIONS
 	var authorization = function(action,ontology,user,accesstype,authorization){
 		logControl ? console.log('|---> authorization()') : '';	
-		var insertURL = '/ontology/authorization/';
-		var updateURL = '/ontology/authorization/update';
-		var deleteURL = '/ontology/authorization/delete';
+		var insertURL = '/controlpanel/ontologies/authorization';
+		var updateURL = '/controlpanel/ontologies/authorization/update';
+		var deleteURL = '/controlpanel/ontologies/authorization/delete';
 		var response = {};
 		
 		if (action === 'insert'){
-			console.log('    |---> Inserting... ');
+			console.log('    |---> Inserting... ' + insertURL);
 			//Mock-up
-			response = { "success": 'OK', "id": '342343-2341234-123'};
-			//JSONtoTable arr
+			//response = { "success": 'OK', "id": '342343-2341234-123'};
+			
+				
+			 $.post(insertURL,{ "ontology": ontology, "user": user, "ontologyUserAccessType": accesstype  },function(response,status){					
+				 alert("Insert Data: " + reponse + "\nStatus: " + status);					
+				 // agregar el elemento al authorizationsIds[user] = response.id;
+				 //JSONtoTable arr
 				var propAuth = {"users":user,"accesstypes":accesstype,"id": response.id};
-					authorizationsArr.push(propAuth);
+				authorizationsArr.push(propAuth);
 				// store ids for after actions.	inside callback 				
 				var user_id = user;
 				var auth_id = response.id;
 				var AuthId = {[user_id]:auth_id};
 				authorizationsIds.push(AuthId);
 				console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
-			return response;
-				
-			/* $.post(insertURL,{ "ontology": ontology, "user": user, "ontologyUserAccessType": accesstype  },function(response,status){					
-				 alert("Insert Data: " + data + "\nStatus: " + status);					
-				 // agregar el elemento al authorizationsIds[user] = response.id;			 
-			}); */ 				
+				 return response;
+			});  				
 		}
 		if (action === 'update'){
 			// $.post(updateURL,{ "ontology": ontology, "user": user, "ontologyUserAccessType": accesstype, "id": authorizationsIds[user]  },function(response,status){					
@@ -1097,7 +1098,7 @@ var OntologyCreateController = function() {
 					// AJAX INSERT (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
 					var authorizationObj = authorization('insert',ontologyCreateReg.ontologyId,$('#users').val(),$('#accesstypes').val(),'');
 					
-					console.log('AUTHORIZATION: ' + authorizationObj + ' status: ' + authorizationObj.success + ' authorizationId: ' + authorizationObj.id);
+					console.log('AUTHORIZATION: ' + authorizationObj + ' status: ' + authorizationObj.status + ' authorizationId: ' + authorizationObj.id);
 					
 					
 										

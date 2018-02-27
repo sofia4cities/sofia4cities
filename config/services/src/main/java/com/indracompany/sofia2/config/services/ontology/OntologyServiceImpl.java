@@ -30,10 +30,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
@@ -42,6 +44,8 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
+	@Autowired
+	private OntologyUserAccessRepository ontologyUserAccessRepository;
 	@Autowired
 	private DataModelRepository dataModelRepository;
 	@Autowired
@@ -131,7 +135,8 @@ public class OntologyServiceImpl implements OntologyService {
 		if (this.ontologyRepository.findByIdentification(ontology.getIdentification()) == null)
 			return this.ontologyRepository.save(ontology);
 		else
-			throw new OntologyServiceException("Ontology Exists");
+			throw new OntologyServiceException(
+					"Ontology with identification:" + ontology.getIdentification() + " exists");
 
 	}
 
@@ -174,14 +179,14 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public Map<String,String> getOntologyFields(String identification) throws JsonProcessingException, IOException {
-		Map<String,String> fields = new TreeMap<String,String>();
+	public Map<String, String> getOntologyFields(String identification) throws JsonProcessingException, IOException {
+		Map<String, String> fields = new TreeMap<String, String>();
 		Ontology ontology = this.ontologyRepository.findByIdentification(identification);
 		if (ontology != null) {
 			ObjectMapper mapper = new ObjectMapper();
 
-			//String prefix = mapper.readTree(ontology.getJsonSchema()).get("title").asText();
-		
+			// String prefix =
+			// mapper.readTree(ontology.getJsonSchema()).get("title").asText();
 
 			JsonNode jsonNode = mapper.readTree(ontology.getJsonSchema());
 			// Predefine Path to data properties
@@ -190,15 +195,15 @@ public class OntologyServiceImpl implements OntologyService {
 			String property;
 			while (iterator.hasNext()) {
 				property = iterator.next();
-				
-				if(jsonNode.path(property).get("type").asText().equals("object")) {
+
+				if (jsonNode.path(property).get("type").asText().equals("object")) {
 					this.extractSubFieldsFromJson(fields, jsonNode, property, property, false);
-				}else if(jsonNode.path(property).get("type").asText().equals("array")) {
+				} else if (jsonNode.path(property).get("type").asText().equals("array")) {
 					this.extractSubFieldsFromJson(fields, jsonNode, property, property, true);
-				}else {
-					fields.put(property,jsonNode.path(property).get("type").asText());
+				} else {
+					fields.put(property, jsonNode.path(property).get("type").asText());
 				}
-				
+
 			}
 		}
 		return fields;
@@ -232,31 +237,55 @@ public class OntologyServiceImpl implements OntologyService {
 		this.saveOntology(ontology);
 
 	}
-	
-	public Map<String,String> extractSubFieldsFromJson(Map<String,String> fields, JsonNode jsonNode, String property, String parentField, boolean isPropertyArray) 
-	{
-		if(isPropertyArray)
+
+	public Map<String, String> extractSubFieldsFromJson(Map<String, String> fields, JsonNode jsonNode, String property,
+			String parentField, boolean isPropertyArray) {
+		if (isPropertyArray)
 			jsonNode = jsonNode.path(property).path("items").path("properties");
 		else
 			jsonNode = jsonNode.path(property).path("properties");
 		Iterator<String> iterator = jsonNode.fieldNames();
 		String subProperty;
-		while(iterator.hasNext()) {
+		while (iterator.hasNext()) {
 			subProperty = iterator.next();
-			
-			if(jsonNode.path(subProperty).get("type").equals("object")) {
-				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField+"."+ subProperty, false);
-			}else if(jsonNode.path(subProperty).get("type").equals("array")) {
-				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField+"."+ subProperty, true);
-			}else {
-				fields.put(parentField+"."+ subProperty,jsonNode.path(subProperty).get("type").asText());
+
+			if (jsonNode.path(subProperty).get("type").equals("object")) {
+				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField + "." + subProperty, false);
+			} else if (jsonNode.path(subProperty).get("type").equals("array")) {
+				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField + "." + subProperty, true);
+			} else {
+				fields.put(parentField + "." + subProperty, jsonNode.path(subProperty).get("type").asText());
 			}
 		}
-		
-		
-		
+
 		return fields;
-		
+
 	}
+
+	@Override
+	public boolean hasOntologyUsersAuthorized(String ontologyId) {
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
+		return authorizations != null && authorizations.size() > 0;
+	}
+
+	@Override
+	public List<OntologyUserAccess> getOntologyUserAccesses(String ontologyId) {
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
+		return authorizations;
+	}
+
+	@Override
+	public void createUserAccess(Ontology ontology, OntologyUserAccess ontologyUserAccess) {
+		Ontology fetchedOntology = ontologyRepository.findById(ontology.getId());
+		if (fetchedOntology != null) {
+			ontologyUserAccess.setOntology(fetchedOntology);
+			ontologyUserAccessRepository.save(ontologyUserAccess);
+		} else {
+			throw new OntologyServiceException("Ontology does not exist");
+		}
+	}
+	
 
 }

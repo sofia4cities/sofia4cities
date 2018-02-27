@@ -5,173 +5,173 @@
 	"navigation": [
 		{
 			"title": {
-				"EN": "Ontologies",
-				"ES": "Ontologías"
+				"EN": "DATA MODEL",
+				"ES": "MODELADO DE DATOS"
 			},
 			"icon": "flaticon-network",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "Create Ontology",
-						"ES": "Crear Ontología"
-					},
-					"icon": "",
-					"url": "/controlpanel/ontologies/create"
-				},
-				{
-					"title": {
-						"EN": "My Ontologies",
-						"ES": "Mis Ontologías"
+						"EN": "Models/Ontologies",
+						"ES": "Modelos/Ontologías"
 					},
 					"icon": "",
 					"url": "/controlpanel/ontologies/list"
-				},
-				{
-					"title": {
-						"EN": "Simulator",
-						"ES": "Simulador"
-					},
-					"icon": "",
-					"url": "/controlpanel/simulator/show"
-				},
-				{
-					"title": {
-						"EN": "Authorization",
-						"ES": "Autorizaciones"
-					},
-					"icon": "",
-					"url": "/controlpanel/ontologies/authorization/list"
 				}
 			]
 		},
 		{
 			"title": {
-				"EN": "IoT Clients",
-				"ES": "Clientes IoT"
+				"EN": "DEVICES MODEL",
+				"ES": "MODELADO DE DEVICES"
 			},
 			"icon": "flaticon-share",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "My IoT Clients",
-						"ES": "Mis Clientes IoT"
+						"EN": "Definition of Devices",
+						"ES": "Definición de Devices"
 					},
 					"icon": "",
-					"url": "/controlpanel/clients/list"
+					"url": "/controlpanel/devices/list"
 				},
 				{
 					"title": {
-						"EN": "My DeviceTwins",
-						"ES": "Mis DeviceTwins"
+						"EN": "Devices Simulator",
+						"ES": "Simulador de Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/devicetwins/list"
+					"url": "/controlpanel/simulator/show"
 				},
 				{
 					"title": {
-						"EN": "Status",
-						"ES": "Estado"
+						"EN": "Device Management",
+						"ES": "Gestión de Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/clients/status/list"
+					"url": "/controlpanel/devices/management/list"
 				}
 			]
 		},
 		{
 			"title": {
-				"EN": "Visualization",
-				"ES": "Visualización"
+				"EN": "INGEST & PROCESS",
+				"ES": "INGESTA Y PROCESADO"
+			},
+			"icon": "la la-globe",
+			"url": "",
+			"submenu": [			
+				{
+					"title": {
+						"EN": "Scripting Engine",
+						"ES": "Motor de Scripting"
+					},
+					"icon": "",
+					"url": "/controlpanel/scripts/list"
+				},		
+				{
+					"title": {
+						"EN": "Flow Engine",
+						"ES": "Motor de FLujos"
+					},
+					"icon": "",
+					"url": "/controlpanel/scripts/list"
+				},
+				{
+					"title": {
+						"EN": "Twitter Streams",
+						"ES": "Twitter Streams"
+					},
+					"icon": "",
+					"url": "/controlpanel/twitter/scheduledsearch/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "VISUALIZATION",
+				"ES": "VISUALIZACIÓN"
 			},
 			"icon": "flaticon-dashboard",
 			"url": "",
-			"submenu": [
+			"submenu": [			
 				{
 					"title": {
-						"EN": "My Gadgets",
-						"ES": "Mis Gadgets"
+						"EN": "Dashboards",
+						"ES": "Dashboards"
+					},
+					"icon": "",
+					"url": "/controlpanel/dashboards/list"
+				},
+				{
+					"title": {
+						"EN": "Gadgets",
+						"ES": "Gadgets"
 					},
 					"icon": "",
 					"url": "/controlpanel/gadgets/list"
 				},
 				{
 					"title": {
-						"EN": "My Datasources",
-						"ES": "Mis Datasources"
+						"EN": "Datasources",
+						"ES": "Fuentes de datos"
 					},
 					"icon": "",
 					"url": "/controlpanel/datasources/list"
-				},
-				{
-					"title": {
-						"EN": "My Dashboards",
-						"ES": "Mis Dashboards"
-					},
-					"icon": "",
-					"url": "/controlpanel/dashboards/list"
 				}
 			]
 		},
 		{
 			"title": {
-				"EN": "Tools",
-				"ES": "Herramientas"
-			},
-			"icon": "flaticon-open-box",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Query Tool",
-						"ES": "Consola Consultas"
-					},
-					"icon": "",
-					"url": "/controlpanel/querytool/show"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "Social Media",
-				"ES": "Social Media"
-			},
-			"icon": "la la-globe",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Access Settings",
-						"ES": "Configuración Acceso"
-					},
-					"icon": "",
-					"url": "/controlpanel/social/configuration/list"
-				},
-				{
-					"title": {
-						"EN": "Scheduling Twitter",
-						"ES": "Escucha Twitter"
-					},
-					"icon": "",
-					"url": "/controlpanel/social/twitter/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "Api Manager",
-				"ES": "Api Manager"
+				"EN": "PUB:API MANAGER",
+				"ES": "PUB:API MANAGER"
 			},
 			"icon": "la la-random",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "My Apis",
-						"ES": "Mis Apis"
+						"EN": "APIs Definition",
+						"ES": "Definición de APIs"
 					},
 					"icon": "",
 					"url": "/controlpanel/apimanager/list"
+				},				
+				{
+					"title": {
+						"EN": "APIs Invocation",
+						"ES": "Invocación de APIs"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/list"
+				},	
+				{
+					"title": {
+						"EN": "API Manager Tokens",
+						"ES": "Tokens del API Manager"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "TOOLS",
+				"ES": "HERRAMIENTAS"
+			},
+			"icon": "flaticon-open-box",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Database Query Tool",
+						"ES": "Herramienta Consultas Base Datos"
+					},
+					"icon": "",
+					"url": "/controlpanel/querytool/show"
 				}
 			]
 		}
