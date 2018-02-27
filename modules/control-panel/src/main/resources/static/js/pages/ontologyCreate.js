@@ -820,7 +820,7 @@ var OntologyCreateController = function() {
 			//response = { "success": 'OK', "id": '342343-2341234-123'};
 			
 				
-			 $.post(insertURL,{ "ontology": ontology, "user": user, "ontologyUserAccessType": accesstype  },function(response,status){					
+			 $.post(insertURL,{"ontologyUserAccess":{ "ontology": {"id": ontology}, "user": {"userId": user}, "ontologyUserAccessType": {"name": accesstype}  }},function(response,status){					
 				 alert("Insert Data: " + reponse + "\nStatus: " + status);					
 				 // agregar el elemento al authorizationsIds[user] = response.id;
 				 //JSONtoTable arr

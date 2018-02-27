@@ -216,7 +216,7 @@ public class OntologyController {
 	@PostMapping(value="/authorization", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseEntity<OntologyUserAccess> createAuthorization(
 			Model model,
-			@RequestParam OntologyUserAccess ontologyUserAccess,
+			@Valid OntologyUserAccess ontologyUserAccess,
 			BindingResult bindingResult,
 			RedirectAttributes redirect) {
 		
