@@ -63,5 +63,13 @@ public interface OntologyService {
 	List<OntologyUserAccess> getOntologyUserAccesses(String ontologyId);
 
 	void createUserAccess(Ontology ontology, OntologyUserAccess ontologyUserAccess);
+
+	OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId);
+	
+	OntologyUserAccess getOntologyUserAccessById(String id);
+	
+	void deleteOntologyUserAccess (String id);
+
+	void updateOntologyUserAccess(OntologyUserAccess ontologyUserAccess);
 	
 }
