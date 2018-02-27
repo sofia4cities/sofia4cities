@@ -21,6 +21,11 @@ import lombok.Setter;
 
 public class OperationModel implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static enum Operations {
 		INSERT, UPDATE, DELETE, QUERY, SUBSCRIBE;
 	}
