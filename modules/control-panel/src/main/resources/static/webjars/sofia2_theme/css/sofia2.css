@@ -786,3 +786,17 @@ border-bottom: 1px solid #CCC;
 height: auto;
 display: flex;
  }
+ 
+ .maininfo{
+	 font-family: "Open sans";
+	 font-size: 13px;
+	 line-height: 16px;
+	 margin: 4px;
+	 
+ }
+ 
+ .maininfo-shadow {
+ moz-box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
+-ms-box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
+box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
+ }
