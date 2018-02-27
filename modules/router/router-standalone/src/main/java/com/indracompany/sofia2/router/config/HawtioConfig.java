@@ -11,19 +11,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.config;
+package com.indracompany.sofia2.router.config;
 
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.hawt.config.ConfigFacade;
+import io.hawt.web.AuthenticationFilter;
+
 @Configuration
-@ComponentScan(basePackages = {
-		"com.indracompany.sofia2.config.services.user",
-		"com.indracompany.sofia2.config.services.ontology",
-		"com.indracompany.sofia2.router.service.app.service.crud"
-		})
-public class ServicesConfig {
-
+public class HawtioConfig {
 	
+	@Bean
+	public String init() {
+		System.setProperty(AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED, "false");
+		System.out.println(AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED);
+		return AuthenticationFilter.HAWTIO_AUTHENTICATION_ENABLED;
+	}
 
+	@Bean
+	public ConfigFacade configFacade() {
+		System.setProperty("hawtio.offline", "true");
+		return ConfigFacade.getSingleton();
+	}
+	
 }

@@ -11,19 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.config;
+package com.indracompany.sofia2.router.service.app.service;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 
-@Configuration
-@ComponentScan(basePackages = {
-		"com.indracompany.sofia2.config.services.user",
-		"com.indracompany.sofia2.config.services.ontology",
-		"com.indracompany.sofia2.router.service.app.service.crud"
-		})
-public class ServicesConfig {
-
+public interface AdviceService {
 	
-
+	public NotificationCompositeModel advicePostProcessing(NotificationCompositeModel input) throws Exception;
 }

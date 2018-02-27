@@ -11,19 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.config;
+package com.indracompany.sofia2.router.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@ComponentScan(basePackages = {
-		"com.indracompany.sofia2.config.services.user",
-		"com.indracompany.sofia2.config.services.ontology",
-		"com.indracompany.sofia2.router.service.app.service.crud"
-		})
-public class ServicesConfig {
-
-	
+@Configuration()
+@ComponentScan({ "com.indracompany.sofia2.router.service",
+	             "com.indracompany.sofia2.router.config"})
+public class RouterConfig  {
 
 }

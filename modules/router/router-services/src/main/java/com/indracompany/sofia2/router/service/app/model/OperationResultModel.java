@@ -11,19 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.config;
+package com.indracompany.sofia2.router.service.app.model;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-@Configuration
-@ComponentScan(basePackages = {
-		"com.indracompany.sofia2.config.services.user",
-		"com.indracompany.sofia2.config.services.ontology",
-		"com.indracompany.sofia2.router.service.app.service.crud"
-		})
-public class ServicesConfig {
+import lombok.Getter;
+import lombok.Setter;
 
+
+public class OperationResultModel implements Serializable{
+
+	@Getter
+	@Setter
+	private String result;
+
+	@Getter
+	@Setter
+	private String message;
 	
-
 }
