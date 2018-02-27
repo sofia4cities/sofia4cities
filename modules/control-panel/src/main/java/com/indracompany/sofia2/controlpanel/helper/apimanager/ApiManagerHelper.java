@@ -40,12 +40,14 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserApi;
+import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ApiAuthenticationRepository;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserApiRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
+import com.indracompany.sofia2.config.repository.UserTokenRepository;
 import com.indracompany.sofia2.config.services.apimanager.authentication.AuthenticationJson;
 import com.indracompany.sofia2.config.services.apimanager.operation.HeaderJson;
 import com.indracompany.sofia2.config.services.apimanager.operation.OperationJson;
@@ -67,6 +69,8 @@ public class ApiManagerHelper {
 	ApiOperationRepository apiOperationRepository;
 	@Autowired
 	ApiAuthenticationRepository apiAuthenticationRepository;
+	@Autowired
+	UserTokenRepository userTokenRepository;
 	
 	
 	@Autowired
@@ -291,6 +295,11 @@ public class ApiManagerHelper {
 			List<UserApi> clients = userApiRepository.findByOwner(utils.getUserId());
 			model.addAttribute("clients", clients);
 		}
+	}
+
+	public void populateUserTokenForm(Model model) {
+		User user = this.userService.getUser(utils.getUserId());
+		model.addAttribute("tokens", userTokenRepository.findByUser(user));	
 	}
 
 }
