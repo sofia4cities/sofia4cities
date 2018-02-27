@@ -73,8 +73,8 @@ public class AppWebUtils {
 
 	}
 
-	public void addRedirectException(String exception, RedirectAttributes redirect) {
-		redirect.addFlashAttribute("message", exception);
+	public void addRedirectException(Exception exception, RedirectAttributes redirect) {
+		redirect.addFlashAttribute("message", exception.getMessage());
 
 	}
 
@@ -121,7 +121,7 @@ public class AppWebUtils {
 		}
 
 	}
-	
+
 	public String encodeUrlPathSegment(final String pathSegment, final HttpServletRequest httpServletRequest) {
 		String enc = httpServletRequest.getCharacterEncoding();
 		String pathSegmentEncode = "";

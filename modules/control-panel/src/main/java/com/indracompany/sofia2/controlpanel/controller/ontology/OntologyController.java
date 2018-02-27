@@ -70,8 +70,8 @@ public class OntologyController {
 			if (description.equals(""))
 				description = null;
 		}
-		List<Ontology> ontologies = this.ontologyService.getOntologiesWithDescriptionAndIdentification(utils.getUserId(),
-					identification, description);
+		List<Ontology> ontologies = this.ontologyService
+				.getOntologiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		model.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
 	}
@@ -87,122 +87,109 @@ public class OntologyController {
 		this.populateForm(model);
 		return "/ontologies/create";
 	}
-	
-	@PostMapping(value = {"/create","/createwizard"})
-	public String createOntology(Model model,
-			@Valid Ontology ontology, BindingResult bindingResult,
+
+	@PostMapping(value = { "/create", "/createwizard" })
+	public String createOntology(Model model, @Valid Ontology ontology, BindingResult bindingResult,
 			RedirectAttributes redirect) {
-		if(bindingResult.hasErrors())
-		{
+		if (bindingResult.hasErrors()) {
 			log.debug("Some ontology properties missing");
 			utils.addRedirectMessage("ontology.validation.error", redirect);
 			return "redirect:/ontologies/create";
 		}
-		try{
+		try {
 			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 			this.ontologyService.createOntology(ontology);
-		}catch (OntologyServiceException e)
-		{
-			log.debug("Cannot create ontology");
-			utils.addRedirectMessage("ontology.create.error", redirect);
-			return "redirect:/ontologies/create";
+		} catch (OntologyServiceException e) {
+			log.error("Cannot create ontology because of:" + e.getMessage());
+			utils.addRedirectException(e, redirect);
+			return "redirect:/ontologies/createwizard";
 		}
 		utils.addRedirectMessage("ontology.create.success", redirect);
 		return "redirect:/ontologies/list";
 	}
-	
+
 	@GetMapping(value = "/update/{id}", produces = "text/html")
-	public String update(Model model, @PathVariable ("id") String id) {
+	public String update(Model model, @PathVariable("id") String id) {
 		Ontology ontology = this.ontologyService.getOntologyById(id);
-		if(ontology!=null){
+		if (ontology != null) {
 			if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
 				return "/error/403";
 			model.addAttribute("ontology", ontology);
 			this.populateForm(model);
 			return "/ontologies/createwizard";
-		}else
+		} else
 			return "/ontologies/create";
-		
-		
+
 	}
 
 	@PutMapping(value = "/update/{id}", produces = "text/html")
-	public String updateOntology(Model model, @PathVariable ("id") String id,
-			@Valid Ontology ontology, BindingResult bindingResult,
-			RedirectAttributes redirect) {
-		
-		if(bindingResult.hasErrors())
-		{
+	public String updateOntology(Model model, @PathVariable("id") String id, @Valid Ontology ontology,
+			BindingResult bindingResult, RedirectAttributes redirect) {
+
+		if (bindingResult.hasErrors()) {
 			log.debug("Some ontology properties missing");
 			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return "redirect:/ontologies/update/"+id;
+			return "redirect:/ontologies/update/" + id;
 		}
-		if (!this.ontologyService.hasUserPermissionForInsert(this.utils.getUserId(), ontology.getIdentification()) && !utils.isAdministrator())
+		if (!this.ontologyService.hasUserPermissionForInsert(this.utils.getUserId(), ontology.getIdentification())
+				&& !utils.isAdministrator())
 			return "/error/403";
 		try {
 			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 			this.ontologyService.updateOntology(ontology);
-		}catch (OntologyServiceException e)
-		{
+		} catch (OntologyServiceException e) {
 			log.debug("Cannot update ontology");
 			utils.addRedirectMessage("ontology.update.error", redirect);
 			return "redirect:/ontologies/create";
 		}
-		
+
 		utils.addRedirectMessage("ontology.update.success", redirect);
-		return "redirect:/ontologies/show/"+id;
+		return "redirect:/ontologies/show/" + id;
 	}
-	
+
 	@DeleteMapping("/{id}")
-	public String delete(Model model, @PathVariable ("id") String id,
-			RedirectAttributes redirect) {
-		
-		if(!this.ontologyService.getOntologyById(id).getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
+	public String delete(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
+
+		if (!this.ontologyService.getOntologyById(id).getUser().getUserId().equals(this.utils.getUserId())
+				&& !this.utils.isAdministrator())
 			return "/error/403";
-		try{
+		try {
 			this.entityDeletionService.deleteOntology(id);
-			//TODO ON DELETE CASCADE
-		}catch(Exception e)
-		{
+			// TODO ON DELETE CASCADE
+		} catch (Exception e) {
 			utils.addRedirectMessage("ontology.delete.error", redirect);
 			return "redirect:/ontologies/list";
 		}
-		
+
 		return "redirect:/ontologies/list";
 	}
-	
+
 	@GetMapping(value = "/createwizard", produces = "text/html")
 	public String createWizard(Model model) {
 		model.addAttribute("ontology", new Ontology());
 		this.populateForm(model);
 		return "/ontologies/createwizard";
 	}
-	
-	
+
 	@GetMapping("/show/{id}")
-	public String show(Model model, @PathVariable ("id") String id,
-			RedirectAttributes redirect) {
+	public String show(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
 		Ontology ontology = this.ontologyService.getOntologyById(id);
-		if(ontology != null) {
-			if(ontology.getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
+		if (ontology != null) {
+			if (ontology.getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
 				return "/error/403";
-			
-			model.addAttribute("ontology",ontology);
+
+			model.addAttribute("ontology", ontology);
 			return "/ontologies/show";
-		}else
-		{
+		} else {
 			this.utils.addRedirectMessage("ontology.notfound.error", redirect);
 			return "redirect:/ontologies/list";
 		}
-	
-		
-		
+
 	}
 
 	private void populateForm(Model model) {
 		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
 		model.addAttribute("dataModelTypes", this.ontologyService.getAllDataModelTypes());
 	}
-	
-	
+
 }

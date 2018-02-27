@@ -185,6 +185,14 @@
 			"submenu": [
 				{
 					"title": {
+						"EN": "Monitoring UI",
+						"ES": "ConsolaMonitorización"
+					},
+					"icon": "",
+					"url": "/controlpanel/"
+				},
+				{
+					"title": {
 						"EN": "Data Models",
 						"ES": "Modelos de Datos"
 					},
