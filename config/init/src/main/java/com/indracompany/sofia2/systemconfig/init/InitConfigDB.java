@@ -197,7 +197,7 @@ public class InitConfigDB {
 		log.info("OK init_GeneratorType");
 		// init_InstanceGenerator();
 		//
-		init_ConsoleMenu();
+		init_Menu_ControlPanel();
 		log.info("OK init_ConsoleMenu");
 		init_Configuration();
 		log.info("OK init_Configuration");
@@ -353,42 +353,44 @@ public class InitConfigDB {
 
 	}
 
-	public void init_ConsoleMenu() {
+	public void init_Menu_ControlPanel() {
 		log.info("init ConsoleMenu");
 		List<ConsoleMenu> menus = this.consoleMenuRepository.findAll();
 
-		if (menus.isEmpty()) {
-			log.info("No menu elements found...adding");
-			try {
-				log.info("Adding menu for role ADMIN");
-				ConsoleMenu menu = new ConsoleMenu();
-				menu.setId("1");
-				menu.setJson(loadFromResources("menu_admin.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.ROLE_ADMINISTRATOR.toString()));
-				this.consoleMenuRepository.save(menu);
-			} catch (Exception e) {
-				log.error("Error adding menu for role ADMIN");
-			}
-			try {
-				log.info("Adding menu for role COLLABORATOR");
-				ConsoleMenu menu = new ConsoleMenu();
-				menu.setId("2");
-				menu.setJson(loadFromResources("menu_developer.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
-				this.consoleMenuRepository.save(menu);
-			} catch (Exception e) {
-				log.error("Error adding menu for role COLLABORATOR");
-			}
-			try {
-				log.info("Adding menu for role USER");
-				ConsoleMenu menu = new ConsoleMenu();
-				menu.setId("3");
-				menu.setJson(loadFromResources("menu_user.json"));
-				menu.setRoleType(roleRepository.findById(Role.Type.ROLE_USER.toString()));
-				this.consoleMenuRepository.save(menu);
-			} catch (Exception e) {
-				log.error("Error adding menu for role USER");
-			}
+		if (!menus.isEmpty()) {
+			this.consoleMenuRepository.deleteAll();
+		}
+
+		log.info("No menu elents found...adding");
+		try {
+			log.info("Adding menu for role ADMIN");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("1");
+			menu.setJson(loadFromResources("menu_admin.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_ADMINISTRATOR.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role ADMIN");
+		}
+		try {
+			log.info("Adding menu for role DEVELOPER");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("2");
+			menu.setJson(loadFromResources("menu_developer.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role DEVELOPER");
+		}
+		try {
+			log.info("Adding menu for role USER");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("3");
+			menu.setJson(loadFromResources("menu_user.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_USER.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role USER");
 		}
 	}
 
