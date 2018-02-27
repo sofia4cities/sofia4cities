@@ -31,11 +31,13 @@ import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
+import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
@@ -46,6 +48,8 @@ public class OntologyServiceImpl implements OntologyService {
 	private OntologyRepository ontologyRepository;
 	@Autowired
 	private OntologyUserAccessRepository ontologyUserAccessRepository;
+	@Autowired
+	private OntologyUserAccessTypeRepository ontologyUserAccessTypeRepository;
 	@Autowired
 	private DataModelRepository dataModelRepository;
 	@Autowired
@@ -286,6 +290,47 @@ public class OntologyServiceImpl implements OntologyService {
 			throw new OntologyServiceException("Ontology does not exist");
 		}
 	}
+	
+	@Override
+	public OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId) {
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		User user = this.userService.getUser(userId);
+		List<OntologyUserAccess> userAccess = ontologyUserAccessRepository.findByOntologyIdAndUser(ontology, user);
+		if (userAccess == null || userAccess.size() == 0 || userAccess.size() > 1) {
+			throw new OntologyServiceException("Problem obtaining user data");
+		} else {
+			return userAccess.get(0);
+		}
+	}
+
+	@Override
+	public OntologyUserAccess getOntologyUserAccessById(String id) {
+		return ontologyUserAccessRepository.findById(id);
+	}
+
+	@Override
+	public void deleteOntologyUserAccess(String id) {
+		ontologyUserAccessRepository.delete(id);
+	}
+
+	@Override
+	public void updateOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
+		OntologyUserAccess userAccessDB = ontologyUserAccessRepository.findById(ontologyUserAccess.getId());
+		
+		Ontology ontologyDB = ontologyRepository.findById(ontologyUserAccess.getOntology().getId());
+		OntologyUserAccessType typeDB = ontologyUserAccessTypeRepository.findById(ontologyUserAccess.getOntologyUserAccessType().getId());
+		User userDB = this.userService.getUser(ontologyUserAccess.getUser().getUserId());
+		
+		userAccessDB.setOntology(ontologyDB);
+		userAccessDB.setOntologyUserAccessType(typeDB);
+		userAccessDB.setUser(userDB);
+		
+		ontologyUserAccessRepository.save(userAccessDB);
+	}
+
+
+	
+
 	
 
 }
