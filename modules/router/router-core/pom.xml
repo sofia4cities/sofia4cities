@@ -47,6 +47,12 @@
 			<version>${sofia2.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-advicer-client-rest</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+
 		<!-- JSON -->
 		<dependency>
 			<groupId>org.json</groupId>

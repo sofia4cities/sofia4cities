@@ -281,10 +281,19 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public void createUserAccess(Ontology ontology, OntologyUserAccess ontologyUserAccess) {
-		Ontology fetchedOntology = ontologyRepository.findById(ontology.getId());
-		if (fetchedOntology != null) {
-			ontologyUserAccess.setOntology(fetchedOntology);
+	public void createUserAccess(Ontology ontology, String userId, String typeName) {
+		
+		Ontology managedOntology = ontologyRepository.findById(ontology.getId());
+		List<OntologyUserAccessType> managedTypes = ontologyUserAccessTypeRepository.findByName(typeName);
+		OntologyUserAccessType managedType = managedTypes != null && managedTypes.size() > 0 ? managedTypes.get(0) : null;
+		User managedUser = this.userService.getUser(userId);
+		
+		if (managedOntology != null && managedType != null && managedUser != null) {
+			OntologyUserAccess ontologyUserAccess = new OntologyUserAccess();
+			ontologyUserAccess.setOntology(managedOntology);
+			ontologyUserAccess.setUser(managedUser);
+			ontologyUserAccess.setOntologyUserAccessType(managedType);
+			
 			ontologyUserAccessRepository.save(ontologyUserAccess);
 		} else {
 			throw new OntologyServiceException("Ontology does not exist");
@@ -295,7 +304,7 @@ public class OntologyServiceImpl implements OntologyService {
 	public OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId) {
 		Ontology ontology = ontologyRepository.findById(ontologyId);
 		User user = this.userService.getUser(userId);
-		List<OntologyUserAccess> userAccess = ontologyUserAccessRepository.findByOntologyIdAndUser(ontology, user);
+		List<OntologyUserAccess> userAccess = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
 		if (userAccess == null || userAccess.size() == 0 || userAccess.size() > 1) {
 			throw new OntologyServiceException("Problem obtaining user data");
 		} else {
@@ -314,23 +323,19 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public void updateOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
-		OntologyUserAccess userAccessDB = ontologyUserAccessRepository.findById(ontologyUserAccess.getId());
+	public void updateOntologyUserAccess(String id, String typeName) {
+		OntologyUserAccess userAccessDB = ontologyUserAccessRepository.findById(id);
 		
-		Ontology ontologyDB = ontologyRepository.findById(ontologyUserAccess.getOntology().getId());
-		OntologyUserAccessType typeDB = ontologyUserAccessTypeRepository.findById(ontologyUserAccess.getOntologyUserAccessType().getId());
-		User userDB = this.userService.getUser(ontologyUserAccess.getUser().getUserId());
+		List<OntologyUserAccessType> types = ontologyUserAccessTypeRepository.findByName(typeName);
+		if (types != null && types.size() > 0) {
+			OntologyUserAccessType typeDB = types.get(0);
+			userAccessDB.setOntologyUserAccessType(typeDB);
+			ontologyUserAccessRepository.save(userAccessDB);
+		} else {
+			throw new IllegalStateException("Types of access must have unique name");
+		}
 		
-		userAccessDB.setOntology(ontologyDB);
-		userAccessDB.setOntologyUserAccessType(typeDB);
-		userAccessDB.setUser(userDB);
 		
-		ontologyUserAccessRepository.save(userAccessDB);
 	}
-
-
-	
-
-	
 
 }

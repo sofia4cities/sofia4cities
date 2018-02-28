@@ -27,13 +27,13 @@ import com.netflix.hystrix.HystrixThreadPoolProperties;
 
 
 @Component
-public class RouterClientGateway<T> {
+public class RouterClientGateway<T,R> {
 
 	private  HystrixCommand.Setter config;
 	private  HystrixCommandProperties.Setter commandProperties;
 	private  HystrixThreadPoolProperties.Setter threadPoolProperties;
 	
-	private RouterClientCommand<T> routerClientCommand;
+	private RouterClientCommand<T,R> routerClientCommand;
 
 	@Value("${remoteservice.command.execution.timeout:10000}")
 	private  int executionTimeout;
@@ -118,22 +118,22 @@ public class RouterClientGateway<T> {
 		return config;
 	}
 	
-	public RouterClientGateway (String name,  Setter config, RouterClient<T> routerClient) {
+	public RouterClientGateway (String name,  Setter config, RouterClient<T,R> routerClient) {
 		this.config = config;
-		this.routerClientCommand= new RouterClientCommand<T>(name,config,routerClient);
+		this.routerClientCommand= new RouterClientCommand<T,R>(name,config,routerClient);
 	}
 	
-	public RouterClientGateway (String name, RouterClient<T> routerClient) {
-		this.routerClientCommand= new RouterClientCommand<T>(name,config,routerClient);
+	public RouterClientGateway (String name, RouterClient<T,R> routerClient) {
+		this.routerClientCommand= new RouterClientCommand<T,R>(name,config,routerClient);
 	}
 	
-	public T execute(T input) {
-		routerClientCommand.setNotification(input);
+	public R execute(T input) {
+		routerClientCommand.setInputData(input);
 		return routerClientCommand.execute();
 	}
 	
-	public void setFallback(T input) {
-		routerClientCommand.setFallback(input);
+	public void setFallback(R fallback) {
+		routerClientCommand.setFallback(fallback);
 		
 	}
 	

@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -100,8 +101,10 @@ public class OntologyController {
 
 	
 	@GetMapping(value = "/createwizard", produces = "text/html")
-	public String createWizard(Model model) {
-		model.addAttribute("ontology", new Ontology());
+	public String createWizard(Model model, @Valid Ontology ontology, BindingResult bindingResult) {
+		
+		if(bindingResult.hasErrors())
+			model.addAttribute("ontology", new Ontology());
 		this.populateForm(model);
 		return "/ontologies/createwizard";
 	}
@@ -118,6 +121,7 @@ public class OntologyController {
 		try {
 			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 			this.ontologyService.createOntology(ontology);
+
 		} catch (OntologyServiceException e) {
 			log.error("Cannot create ontology because of:" + e.getMessage());
 			utils.addRedirectException(e, redirect);
@@ -211,60 +215,45 @@ public class OntologyController {
 	
 	
 	@PostMapping(value="/authorization", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<OntologyUserAccess> createAuthorization(
-			Model model,
-			@RequestParam OntologyUserAccess ontologyUserAccess,
-			BindingResult bindingResult,
-			RedirectAttributes redirect) {
+	public ResponseEntity<OntologyUserAccessDTO> createAuthorization(
+			@RequestParam String accesstype, 
+			@RequestParam String ontology,
+			@RequestParam String user
+			) {
 		
-		if(bindingResult.hasErrors()) {
-			log.debug("Some ontologyUserAccess properties missing");
-			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return new ResponseEntity<OntologyUserAccess>(HttpStatus.BAD_REQUEST);
-		} else {
-			Ontology ontology = ontologyService.getOntologyById(ontologyUserAccess.getOntology().getId());
-			if (ontology.getUser().getUserId().equals(this.utils.getUserId())) {
-				ontologyService.createUserAccess(ontology, ontologyUserAccess);
-				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontology.getId(), ontologyUserAccess.getUser().getUserId());
-				return new ResponseEntity<OntologyUserAccess>(ontologyUserAccessCreated, HttpStatus.CREATED);
+			Ontology ontologyDB = ontologyService.getOntologyById(ontology);
+			
+			if (ontologyDB.getUser().getUserId().equals(this.utils.getUserId())) {
+				ontologyService.createUserAccess(ontologyDB, user, accesstype);
+				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyDB.getId(), user);
+				OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
+				return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.CREATED);
 			} else {
-				return new ResponseEntity<OntologyUserAccess>(HttpStatus.FORBIDDEN);
+				return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.FORBIDDEN);
 			}
-		}
+		
 	}
 	
-	@PostMapping(value="/authorization/delete")
-	public @ResponseBody ResponseEntity<OntologyUserAccess> deleteAuthorization(@RequestParam String id) {
+	@PostMapping(value="/authorization/delete", produces=MediaType.APPLICATION_JSON_UTF8_VALUE )
+	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
 		ontologyService.deleteOntologyUserAccess(id);
-		return new ResponseEntity<OntologyUserAccess>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
 	}
 	
-	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public @ResponseBody ResponseEntity<OntologyUserAccess> updateAuthorization(
-			@RequestParam OntologyUserAccess ontologyUserAccess) {
-		ontologyService.updateOntologyUserAccess(ontologyUserAccess);
-		OntologyUserAccess obtainedAuthorizations = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyUserAccess.getOntology().getId(), ontologyUserAccess.getUser().getUserId());
-		return new ResponseEntity<OntologyUserAccess>(obtainedAuthorizations, HttpStatus.OK);
+	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<OntologyUserAccessDTO> updateAuthorization(
+			@RequestParam String id,
+			@RequestParam String accesstype) {
+		ontologyService.updateOntologyUserAccess(id, accesstype);
+		OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id);
+		OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
+		return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.OK);
 	}
 	
 	@GetMapping(value="/authorization/{id}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<String> getAuthorizations(@PathVariable("id") String id){
-		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("ontologyUserAccess");
-		FilterProvider filters = new SimpleFilterProvider().addFilter("ontologyUserAccessTypeFilter", filter);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		
+	public @ResponseBody ResponseEntity<List<OntologyUserAccess>> getAuthorizations(@PathVariable("id") String id){
 		Ontology ontology = this.ontologyService.getOntologyById(id);
 		List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
-		String jsonAuthorizations = "";
-		try {
-			jsonAuthorizations = mapper.writer(filters).writeValueAsString(authorizations);
-		} catch (JsonProcessingException e) {
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-		return new ResponseEntity<String>(jsonAuthorizations, HttpStatus.OK);
+		return new ResponseEntity<List<OntologyUserAccess>>(authorizations, HttpStatus.OK);
 	}
-	
-
 }
