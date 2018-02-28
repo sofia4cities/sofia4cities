@@ -30,6 +30,8 @@ public interface UserService {
 
 	User getUserByToken(String token);
 
+	User getUserByIdentification(String identification);
+
 	User getUser(String userId);
 
 	List<Role> getAllRoles();

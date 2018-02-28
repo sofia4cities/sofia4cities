@@ -13,20 +13,20 @@
  */
 package com.indracompany.sofia2.plugin.iotbroker.security;
 
+import java.util.Optional;
+
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public interface SecurityPlugin {
-	public String authenticate(SSAPMessage<? extends SSAPBodyMessage> message) throws AuthenticationException;
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance) throws AuthenticationException;
 
-	public void closeSession(String sessionKey) throws AuthorizationException;
+	public boolean closeSession(String sessionKey) throws AuthorizationException;
 
-	public void checkSessionKeyActive(String sessionKey) throws AuthorizationException;
+	public boolean checkSessionKeyActive(String sessionKey) throws AuthorizationException;
 
-	public void checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) throws AuthorizationException;
+	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) throws AuthorizationException;
 
-	public String getUserIdFromSessionKey(String sessionKey);
+	public Optional<IoTSession> getSession(String sessionKey);
 }

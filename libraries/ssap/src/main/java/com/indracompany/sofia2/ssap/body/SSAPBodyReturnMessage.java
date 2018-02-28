@@ -49,11 +49,6 @@ public class SSAPBodyReturnMessage extends SSAPBodyMessage{
 	}
 
 	@Override
-	public boolean isClientPlatformMandatory() {
-		return false;
-	}
-
-	@Override
 	public boolean isSessionKeyMandatory() {
 		return false;
 	}

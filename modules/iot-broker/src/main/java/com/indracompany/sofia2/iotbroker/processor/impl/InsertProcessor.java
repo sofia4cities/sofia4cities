@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -60,13 +62,17 @@ public class InsertProcessor implements MessageTypeProcessor {
 
 		// TODO: Client Connection in contextData
 		final ContextData contextData = new ContextData();
-
+		final Optional<IoTSession> session = securityPluginManager.getSession(insertMessage.getSessionKey());
 		contextData.setClientConnection("");
-		contextData.setClientPatform(insertMessage.getBody().getClientPlatform());
-		contextData.setClientPatformInstance(insertMessage.getBody().getClientPlatformInstance());
+
+		session.ifPresent(s -> {
+			contextData.setClientPatform(s.getClientPlatform());
+			contextData.setClientPatformInstance(s.getClientPlatformInstance());
+			contextData.setUser(s.getUserID());
+		});
+
 		contextData.setClientSession(insertMessage.getSessionKey());
 		contextData.setTimezoneId(ZoneId.systemDefault().toString());
-		contextData.setUser(securityPluginManager.getUserIdFromSessionKey(insertMessage.getSessionKey()));
 
 		((ObjectNode) insertMessage.getBody().getData()).set("contextData", objectMapper.valueToTree(contextData));
 
@@ -81,8 +87,6 @@ public class InsertProcessor implements MessageTypeProcessor {
 		responseMessage.setSessionKey(insertMessage.getSessionKey());
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
-		responseMessage.getBody().setClientPlatform(insertMessage.getBody().getClientPlatform());
-		responseMessage.getBody().setClientPlatformInstance(insertMessage.getBody().getClientPlatformInstance());
 
 		try {
 			responseMessage.getBody().setData(objectMapper.readTree(repositoryResponse));

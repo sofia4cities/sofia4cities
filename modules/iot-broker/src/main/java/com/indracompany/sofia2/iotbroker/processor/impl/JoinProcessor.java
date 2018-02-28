@@ -15,6 +15,7 @@ package com.indracompany.sofia2.iotbroker.processor.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,9 @@ import org.springframework.util.StringUtils;
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
+import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
+import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
@@ -49,13 +52,13 @@ public class JoinProcessor implements MessageTypeProcessor {
 			throw new SSAPComplianceException(MessageException.ERR_TOKEN_IS_MANDATORY);
 		}
 
-		final String sessionKey = securityManager.authenticate(message);
+		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(), join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance());
+		session.ifPresent( s -> response.setSessionKey(s.getSessionKey()) );
 
-		if (!StringUtils.isEmpty(sessionKey)) {
+		if ( !StringUtils.isEmpty(response.getSessionKey()) ) {
 			response.setDirection(SSAPMessageDirection.RESPONSE);
 			response.setMessageId(join.getMessageId());
 			response.setMessageType(SSAPMessageTypes.JOIN);
-			response.setSessionKey(sessionKey);
 		} else {
 			throw new AuthenticationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED);
 		}
@@ -69,7 +72,13 @@ public class JoinProcessor implements MessageTypeProcessor {
 	}
 
 	@Override
-	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws SSAPProcessorException {
+		final SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
+
+		if(StringUtils.isEmpty(join.getBody().getClientPlatform()) || StringUtils.isEmpty(join.getBody().getClientPlatformInstance()))
+		{
+			throw new SSAPProcessorException(String.format(MessageException.ERR_THINKP_IS_MANDATORY, join.getMessageType().name()));
+		}
 	}
 
 }

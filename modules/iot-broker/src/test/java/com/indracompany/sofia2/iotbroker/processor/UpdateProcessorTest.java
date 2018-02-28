@@ -74,7 +74,8 @@ public class UpdateProcessorTest {
 	}
 
 	//TODO: Update by ID
-	//TODO: Update by ID that doesnt exists
+	//TODO: Update by ID that doesnt exists or null or empty
+	//TODO: Update with null or empty query
 	//TODO: Update more than one register
 	//TODO: Update where without ocurrences
 	//TODO: Check if update corrupts schema

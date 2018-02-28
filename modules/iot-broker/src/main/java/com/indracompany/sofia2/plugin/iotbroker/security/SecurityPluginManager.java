@@ -15,6 +15,7 @@ package com.indracompany.sofia2.plugin.iotbroker.security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,8 +23,6 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 @Component
@@ -35,54 +34,63 @@ public class SecurityPluginManager implements SecurityPlugin {
 
 	//TODO: Calls with hystrix ... or camel ...
 	@Override
-	public String authenticate(SSAPMessage<? extends SSAPBodyMessage> message) throws AuthenticationException {
-		final List<String> ks = new ArrayList<>();
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance) throws AuthenticationException {
+		final List<IoTSession> sessions = new ArrayList<>();
+
 		for(final SecurityPlugin p : plugins) {
-			ks.add(p.authenticate(message));
+			p.authenticate(token, clientPlatform, clientPlatformInstance).ifPresent(sessions::add);
 		}
 
-		if(!ks.isEmpty()) {
-			return ks.get(0);
+		if(!sessions.isEmpty()) {
+			return Optional.of(sessions.get(0));
 		} else {
 			throw new AuthenticationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED);
 		}
 	}
 
 	@Override
-	public void closeSession(String sessionKey) throws AuthorizationException {
+	public boolean closeSession(String sessionKey) throws AuthorizationException {
+		boolean ret = false;
 		for(final SecurityPlugin p : plugins) {
-			p.closeSession(sessionKey);
+			ret |= p.closeSession(sessionKey);
 		}
+
+		return ret;
 
 	}
 
 	@Override
-	public void checkSessionKeyActive(String sessionKey) throws AuthorizationException {
+	public boolean checkSessionKeyActive(String sessionKey) throws AuthorizationException {
+		boolean ret = false;
 		for(final SecurityPlugin p : plugins) {
-			p.checkSessionKeyActive(sessionKey);
+			ret |= p.checkSessionKeyActive(sessionKey);
 		}
+		return ret;
 
 	}
 
 	@Override
-	public void checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) throws AuthorizationException {
+	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) throws AuthorizationException {
+		boolean ret = false;
 		for(final SecurityPlugin p : plugins) {
-			p.checkAuthorization(messageType, ontology, sessionKey);
+			ret |= p.checkAuthorization(messageType, ontology, sessionKey);
 		}
+		return ret;
 
 	}
 
 	@Override
-	public String getUserIdFromSessionKey(String sessionKey) {
-		final List<String> ks = new ArrayList<>();
+	public Optional<IoTSession> getSession(String sessionKey) {
+
+		final List<IoTSession> ks = new ArrayList<>();
 		for(final SecurityPlugin p : plugins) {
-			ks.add(p.getUserIdFromSessionKey(sessionKey));
+			p.getSession(sessionKey).ifPresent(ks::add);
 		}
 
 		if(!ks.isEmpty()) {
-			return ks.get(0);
+			return Optional.of(ks.get(0));
 		} else {
-			return "";
+			return Optional.empty();
 		}
 	}
 

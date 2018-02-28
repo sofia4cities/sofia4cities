@@ -18,11 +18,6 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 public class SSAPBodyLeaveMessage extends SSAPBodyMessage {
 
 	@Override
-	public boolean isClientPlatformMandatory() {
-		return false;
-	}
-
-	@Override
 	public boolean isSessionKeyMandatory() {
 		return false;
 	}

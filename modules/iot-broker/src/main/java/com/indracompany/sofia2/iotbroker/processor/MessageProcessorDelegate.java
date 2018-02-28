@@ -106,15 +106,6 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			throws AuthorizationException, Exception {
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 
-		// Check presence of Thinkp
-		if (message.getBody().isClientPlatformMandatory() && (StringUtils.isEmpty(message.getBody().getClientPlatform())
-				|| StringUtils.isEmpty(message.getBody().getClientPlatformInstance()))) {
-			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
-					String.format(MessageException.ERR_THINKP_IS_MANDATORY, message.getMessageType().name()));
-
-			return Optional.of(response);
-		}
-
 		// Check presence of sessionKey and authorization of sessionKey
 		if (message.getBody().isSessionKeyMandatory() && StringUtils.isEmpty(message.getSessionKey())) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
@@ -124,7 +115,10 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		}
 
 		if (message.getBody().isAutorizationMandatory()) {
-			securityPluginManager.checkSessionKeyActive(message.getSessionKey());
+			if(!securityPluginManager.checkSessionKeyActive(message.getSessionKey())) {
+				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTENTICATION,
+						String.format(MessageException.ERR_SESSIONKEY_NOT_VALID, message.getMessageType().name()));
+			}
 		}
 
 		// Check if ontology is present and autorization for ontology
@@ -135,8 +129,12 @@ public class MessageProcessorDelegate implements MessageProcessor {
 				return Optional.of(response);
 			}
 
-			securityPluginManager.checkAuthorization(message.getMessageType(), message.getOntology(),
-					message.getSessionKey());
+			if(!securityPluginManager.checkAuthorization(message.getMessageType(), message.getOntology(),
+					message.getSessionKey())) {
+				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTHORIZATION,
+						String.format(MessageException.ERR_ONTOLOGY_AUTH, message.getMessageType().name()));
+				return Optional.of(response);
+			}
 		}
 
 		return Optional.empty();
