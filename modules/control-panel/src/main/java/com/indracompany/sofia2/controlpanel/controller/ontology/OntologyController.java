@@ -13,12 +13,16 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.ontology;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,12 +31,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
@@ -70,8 +81,8 @@ public class OntologyController {
 			if (description.equals(""))
 				description = null;
 		}
-		List<Ontology> ontologies = this.ontologyService.getOntologiesWithDescriptionAndIdentification(utils.getUserId(),
-					identification, description);
+		List<Ontology> ontologies = this.ontologyService
+				.getOntologiesWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		model.addAttribute("ontologies", ontologies);
 		return "/ontologies/list";
 	}
@@ -87,89 +98,7 @@ public class OntologyController {
 		this.populateForm(model);
 		return "/ontologies/create";
 	}
-	
-	@PostMapping(value = {"/create","/createwizard"})
-	public String createOntology(Model model,
-			@Valid Ontology ontology, BindingResult bindingResult,
-			RedirectAttributes redirect) {
-		if(bindingResult.hasErrors())
-		{
-			log.debug("Some ontology properties missing");
-			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return "redirect:/ontologies/create";
-		}
-		try{
-			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
-			this.ontologyService.createOntology(ontology);
-		}catch (OntologyServiceException e)
-		{
-			log.debug("Cannot create ontology");
-			utils.addRedirectMessage("ontology.create.error", redirect);
-			return "redirect:/ontologies/create";
-		}
-		utils.addRedirectMessage("ontology.create.success", redirect);
-		return "redirect:/ontologies/list";
-	}
-	
-	@GetMapping(value = "/update/{id}", produces = "text/html")
-	public String update(Model model, @PathVariable ("id") String id) {
-		Ontology ontology = this.ontologyService.getOntologyById(id);
-		if(ontology!=null){
-			if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
-				return "/error/403";
-			model.addAttribute("ontology", ontology);
-			this.populateForm(model);
-			return "/ontologies/createwizard";
-		}else
-			return "/ontologies/create";
-		
-		
-	}
 
-	@PutMapping(value = "/update/{id}", produces = "text/html")
-	public String updateOntology(Model model, @PathVariable ("id") String id,
-			@Valid Ontology ontology, BindingResult bindingResult,
-			RedirectAttributes redirect) {
-		
-		if(bindingResult.hasErrors())
-		{
-			log.debug("Some ontology properties missing");
-			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return "redirect:/ontologies/update/"+id;
-		}
-		if (!this.ontologyService.hasUserPermissionForInsert(this.utils.getUserId(), ontology.getIdentification()) && !utils.isAdministrator())
-			return "/error/403";
-		try {
-			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
-			this.ontologyService.updateOntology(ontology);
-		}catch (OntologyServiceException e)
-		{
-			log.debug("Cannot update ontology");
-			utils.addRedirectMessage("ontology.update.error", redirect);
-			return "redirect:/ontologies/create";
-		}
-		
-		utils.addRedirectMessage("ontology.update.success", redirect);
-		return "redirect:/ontologies/show/"+id;
-	}
-	
-	@DeleteMapping("/{id}")
-	public String delete(Model model, @PathVariable ("id") String id,
-			RedirectAttributes redirect) {
-		
-		if(!this.ontologyService.getOntologyById(id).getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
-			return "/error/403";
-		try{
-			this.entityDeletionService.deleteOntology(id);
-			//TODO ON DELETE CASCADE
-		}catch(Exception e)
-		{
-			utils.addRedirectMessage("ontology.delete.error", redirect);
-			return "redirect:/ontologies/list";
-		}
-		
-		return "redirect:/ontologies/list";
-	}
 	
 	@GetMapping(value = "/createwizard", produces = "text/html")
 	public String createWizard(Model model) {
@@ -178,25 +107,102 @@ public class OntologyController {
 		return "/ontologies/createwizard";
 	}
 	
-	
-	@GetMapping("/show/{id}")
-	public String show(Model model, @PathVariable ("id") String id,
+	@PostMapping(value = {"/create","/createwizard"})
+	public String createOntology(Model model,
+			@Valid Ontology ontology, BindingResult bindingResult,
 			RedirectAttributes redirect) {
+		if (bindingResult.hasErrors()) {
+			log.debug("Some ontology properties missing");
+			utils.addRedirectMessage("ontology.validation.error", redirect);
+			return "redirect:/ontologies/create";
+		}
+		try {
+			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
+			this.ontologyService.createOntology(ontology);
+		} catch (OntologyServiceException e) {
+			log.error("Cannot create ontology because of:" + e.getMessage());
+			utils.addRedirectException(e, redirect);
+			return "redirect:/ontologies/createwizard";
+		}
+		utils.addRedirectMessage("ontology.create.success", redirect);
+		return "redirect:/ontologies/list";
+	}
+
+	@GetMapping(value = "/update/{id}", produces = "text/html")
+	public String update(Model model, @PathVariable("id") String id) {
 		Ontology ontology = this.ontologyService.getOntologyById(id);
-		if(ontology != null) {
-			if(ontology.getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator())
+		if (ontology != null) {
+			if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
 				return "/error/403";
+			model.addAttribute("ontology", ontology);
+			this.populateForm(model);
+			return "/ontologies/createwizard";
+		} else
+			return "/ontologies/create";
+
+	}
+
+	@PutMapping(value = "/update/{id}", produces = "text/html")
+	public String updateOntology(Model model, @PathVariable("id") String id, @Valid Ontology ontology,
+			BindingResult bindingResult, RedirectAttributes redirect) {
+
+		if (bindingResult.hasErrors()) {
+			log.debug("Some ontology properties missing");
+			utils.addRedirectMessage("ontology.validation.error", redirect);
+			return "redirect:/ontologies/update/" + id;
+		}
+		if (!this.ontologyService.hasUserPermissionForInsert(this.utils.getUserId(), ontology.getIdentification())
+				&& !utils.isAdministrator())
+			return "/error/403";
+		try {
+			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
+			this.ontologyService.updateOntology(ontology);
+		} catch (OntologyServiceException e) {
+			log.debug("Cannot update ontology");
+			utils.addRedirectMessage("ontology.update.error", redirect);
+			return "redirect:/ontologies/create";
+		}
+
+		utils.addRedirectMessage("ontology.update.success", redirect);
+		return "redirect:/ontologies/show/" + id;
+	}
+
+	@DeleteMapping("/{id}")
+	public String delete(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
+
+		if (!this.ontologyService.getOntologyById(id).getUser().getUserId().equals(this.utils.getUserId())
+				&& !this.utils.isAdministrator())
+			return "/error/403";
+		try {
+			this.entityDeletionService.deleteOntology(id);
+			// TODO ON DELETE CASCADE
+		} catch (Exception e) {
+			utils.addRedirectMessage("ontology.delete.error", redirect);
+			return "redirect:/ontologies/list";
+		}
+
+		return "redirect:/ontologies/list";
+	}
+
+	@GetMapping("/show/{id}")
+	public String show(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
+		Ontology ontology = this.ontologyService.getOntologyById(id);
+
+		if(ontology != null) {
+			if(ontology.getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator()) {
+				return "/error/403";
+			}
+			List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
 			
 			model.addAttribute("ontology",ontology);
+			model.addAttribute("authorizations", authorizations);
+			
 			return "/ontologies/show";
-		}else
-		{
+		} else {
 			this.utils.addRedirectMessage("ontology.notfound.error", redirect);
 			return "redirect:/ontologies/list";
 		}
-	
-		
-		
+
 	}
 
 	private void populateForm(Model model) {
@@ -204,5 +210,49 @@ public class OntologyController {
 		model.addAttribute("dataModelTypes", this.ontologyService.getAllDataModelTypes());
 	}
 	
+	
+	@PostMapping(value="/authorization", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<OntologyUserAccess> createAuthorization(
+			Model model,
+			@RequestBody OntologyUserAccess ontologyUserAccess,
+			BindingResult bindingResult,
+			RedirectAttributes redirect) {
+		
+		if(bindingResult.hasErrors()) {
+			log.debug("Some ontologyUserAccess properties missing");
+			utils.addRedirectMessage("ontology.validation.error", redirect);
+			return new ResponseEntity<OntologyUserAccess>(HttpStatus.BAD_REQUEST);
+		} else {
+			Ontology ontology = ontologyService.getOntologyById(ontologyUserAccess.getOntology().getId());
+			if (ontology.getUser().getUserId().equals(this.utils.getUserId())) {
+				ontologyService.createUserAccess(ontology, ontologyUserAccess);
+				//OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontology.getId(), ontologyUserAccess.getUser().getUserId());
+				return new ResponseEntity<OntologyUserAccess>(HttpStatus.CREATED);
+			} else {
+				return new ResponseEntity<OntologyUserAccess>(HttpStatus.FORBIDDEN);
+			}
+		}
+	}
+	
+	@PostMapping(value="/authorization/delete")
+	public @ResponseBody ResponseEntity<OntologyUserAccess> deleteAuthorization(@RequestParam String id) {
+		ontologyService.deleteOntologyUserAccess(id);
+		return new ResponseEntity<OntologyUserAccess>(HttpStatus.NO_CONTENT);
+	}
+	
+	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public @ResponseBody ResponseEntity<OntologyUserAccess> updateAuthorization(
+			@RequestParam OntologyUserAccess ontologyUserAccess) {
+		ontologyService.updateOntologyUserAccess(ontologyUserAccess);
+		OntologyUserAccess obtainedAuthorizations = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyUserAccess.getOntology().getId(), ontologyUserAccess.getUser().getUserId());
+		return new ResponseEntity<OntologyUserAccess>(obtainedAuthorizations, HttpStatus.OK);
+	}
+	
+	@GetMapping(value="/authorization/{id}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<List<OntologyUserAccess>> getAuthorizations(@PathVariable("id") String id){
+		Ontology ontology = this.ontologyService.getOntologyById(id);
+		List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
+		return new ResponseEntity<List<OntologyUserAccess>>(authorizations, HttpStatus.OK);
+	}
 	
 }

@@ -185,7 +185,7 @@ public class UserController {
 		model.addAttribute("user", user);
 		UserToken userToken = null;
 		try {
-			userToken = this.userService.getUserToken(user);
+			userToken = this.userService.getUserToken(user).get(0);
 		} catch (Exception e) {
 			log.debug("No token found for user: " + user);
 		}
@@ -224,7 +224,7 @@ public class UserController {
 
 			} catch (Exception e) {
 				log.error("Error registering user" + e.getMessage());
-				utils.addRedirectException(e.getMessage(), redirectAttributes);
+				utils.addRedirectException(e, redirectAttributes);
 				return "redirect:/login";
 			}
 		}

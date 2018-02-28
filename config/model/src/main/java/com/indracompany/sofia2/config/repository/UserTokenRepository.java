@@ -13,15 +13,19 @@
  */
 package com.indracompany.sofia2.config.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 
 public interface UserTokenRepository extends JpaRepository<UserToken, String> {
+	
+	List<UserToken> findByUser(User user);
 
-	public UserToken findByUser(User user);
+	UserToken findByToken(String token);
 
-	public UserToken findByToken(String token);
+	UserToken findByUserAndToken(String userId, String token);
 
 }

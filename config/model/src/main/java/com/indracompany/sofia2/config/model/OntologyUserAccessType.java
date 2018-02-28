@@ -34,6 +34,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
 import lombok.Getter;
@@ -54,6 +55,7 @@ public class OntologyUserAccessType extends AuditableEntity {
 	@Setter
 	private Integer id;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "ontologyUserAccessType", fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter

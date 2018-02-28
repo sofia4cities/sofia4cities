@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoNativeManageDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,9 @@ public class QueryToolServiceMongoDbImpl implements QueryToolService {
 
 	@Autowired
 	MongoBasicOpsDBRepository mongoRepo = null;
+
+	@Autowired
+	MongoNativeManageDBRepository manageRepo = null;
 	// @Autowired
 	// OntologyService ontologyService;
 
@@ -44,8 +48,17 @@ public class QueryToolServiceMongoDbImpl implements QueryToolService {
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
 		try {
-			return mongoRepo.queryNativeAsJson(ontology, query);
+			if (query.indexOf(".createIndex") != -1) {
+				manageRepo.createIndex(query);
+				return "{'Created index indicated in the query.'}";
+			} else if (query.indexOf(".drop") != -1) {
+				return "{'Drop a collection from QueryTool not supported.'}";
+			}
+
+			else
+				return mongoRepo.queryNativeAsJson(ontology, query);
 		} catch (Exception e) {
+			log.error("Error queryNativeAsJson:" + e.getMessage());
 			throw new DBPersistenceException("Error executing query:" + e.getMessage(), e);
 		}
 	}
