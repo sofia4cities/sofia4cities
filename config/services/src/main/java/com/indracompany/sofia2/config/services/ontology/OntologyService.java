@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 
@@ -51,5 +52,7 @@ public interface OntologyService {
 	void updateOntology(Ontology ontology);
 	
 	void createOntology(Ontology ontology);
+
+	List<Ontology> getOntologiesByClientPlatform(ClientPlatform clientPlatform);
 	
 }

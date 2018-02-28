@@ -20,10 +20,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.RoleRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
@@ -44,6 +46,8 @@ public class UserServiceImpl implements UserService {
 	private UserTokenRepository userTokenRepository;
 	@Autowired
 	private TokenRepository tokenRepository;
+	@Autowired
+	private ClientPlatformRepository clientPlatformRepository;
 
 	@Override
 	public Token getToken(String token) {
@@ -181,5 +185,12 @@ public class UserServiceImpl implements UserService {
 
 		this.userRepository.save(user);
 
+	}
+
+	@Override
+	public List<ClientPlatform> getClientsForUser(User user) {
+		List<ClientPlatform> clients = new ArrayList<ClientPlatform>();
+		clients = this.clientPlatformRepository.findByUser(user);
+		return clients;
 	}
 }
