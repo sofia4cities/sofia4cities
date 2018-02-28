@@ -101,8 +101,10 @@ public class OntologyController {
 
 	
 	@GetMapping(value = "/createwizard", produces = "text/html")
-	public String createWizard(Model model) {
-		model.addAttribute("ontology", new Ontology());
+	public String createWizard(Model model, @Valid Ontology ontology, BindingResult bindingResult) {
+		
+		if(bindingResult.hasErrors())
+			model.addAttribute("ontology", new Ontology());
 		this.populateForm(model);
 		return "/ontologies/createwizard";
 	}
@@ -119,6 +121,7 @@ public class OntologyController {
 		try {
 			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 			this.ontologyService.createOntology(ontology);
+
 		} catch (OntologyServiceException e) {
 			log.error("Cannot create ontology because of:" + e.getMessage());
 			utils.addRedirectException(e, redirect);
@@ -232,9 +235,9 @@ public class OntologyController {
 	}
 	
 	@PostMapping(value="/authorization/delete", produces=MediaType.APPLICATION_JSON_UTF8_VALUE )
-	public ResponseEntity<OntologyUserAccessDTO> deleteAuthorization(@RequestParam String id) {
+	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
 		ontologyService.deleteOntologyUserAccess(id);
-		return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)

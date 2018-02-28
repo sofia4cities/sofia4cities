@@ -350,7 +350,7 @@ var ScheduledSearchController= function()
 		currentLanguage = scheduledSearchCreateReg.language || LANGUAGE[0];
 		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';    
 
-		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage) : '';
+		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage + ' CurrentFormat: ' + currentFormat) : '';
 
 		// init datepickers dateFrom and dateTo   
 		$("#dateFrom").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
