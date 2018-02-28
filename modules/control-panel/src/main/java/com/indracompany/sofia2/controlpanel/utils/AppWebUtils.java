@@ -43,8 +43,6 @@ public class AppWebUtils {
 
 	public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
 	
-//	public static final String regexp_password = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&]){7,20}$/;
-	
 	@Autowired
 	private MessageSource messageSource;
 
@@ -107,7 +105,7 @@ public class AppWebUtils {
 		}
 		return formattedJson;
 	}
-<<<<<<< HEAD:controlpanel/src/main/java/com/indracompany/sofia2/controlpanel/utils/AppWebUtils.java
+
 	
 	public boolean paswordValidation(String data) {
 		
@@ -117,8 +115,7 @@ public class AppWebUtils {
 	
 	}
 	
-		
-=======
+	
 
 	public String beautifyJson(String json) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
@@ -153,5 +150,4 @@ public class AppWebUtils {
 		return pathSegmentEncode;
 	}
 
->>>>>>> 5fe1a22fd7095d4cd7dcff9d3cdfe1cafed2cdc2:modules/control-panel/src/main/java/com/indracompany/sofia2/controlpanel/utils/AppWebUtils.java
 }

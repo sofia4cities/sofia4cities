@@ -232,15 +232,19 @@ public class UserController {
 				
 				if(utils.paswordValidation(user.getPassword()) && (this.userService.emailExists(user) ==false) ) {
 					
-					if (this.userService.registerUser(user)) {
+					
+					try{
+						this.userService.registerUser(user);
 						log.debug("User created from login");
 						utils.addRedirectMessage("login.register.created", redirectAttributes);
 						return "redirect:/login";
+					}catch(UserServiceException e){
+						log.debug("This user already exist");
+						utils.addRedirectMessage("login.error.register", redirectAttributes);
+						return "redirect:/login";
 					}
 					
-					log.debug("This user already exist");
-					utils.addRedirectMessage("login.error.register", redirectAttributes);
-					return "redirect:/login";
+					
 				
 				}				
 			}
@@ -249,3 +253,4 @@ public class UserController {
 	}
 
 }
+
