@@ -211,8 +211,8 @@ public class OntologyController {
 	}
 	
 	
-	@PostMapping(value="/authorization")
-	public ResponseEntity<OntologyUserAccess> createAuthorization(
+	@PostMapping(value="/authorization", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<OntologyUserAccessDTO> createAuthorization(
 			@RequestParam String accesstype, 
 			@RequestParam String ontology,
 			@RequestParam String user
@@ -223,25 +223,28 @@ public class OntologyController {
 			if (ontologyDB.getUser().getUserId().equals(this.utils.getUserId())) {
 				ontologyService.createUserAccess(ontologyDB, user, accesstype);
 				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyDB.getId(), user);
-				return new ResponseEntity<OntologyUserAccess>(ontologyUserAccessCreated, HttpStatus.CREATED);
+				OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
+				return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.CREATED);
 			} else {
-				return new ResponseEntity<OntologyUserAccess>(HttpStatus.FORBIDDEN);
+				return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.FORBIDDEN);
 			}
 		
 	}
 	
-	@PostMapping(value="/authorization/delete")
-	public @ResponseBody ResponseEntity<OntologyUserAccess> deleteAuthorization(@RequestParam String id) {
+	@PostMapping(value="/authorization/delete", produces=MediaType.APPLICATION_JSON_UTF8_VALUE )
+	public ResponseEntity<OntologyUserAccessDTO> deleteAuthorization(@RequestParam String id) {
 		ontologyService.deleteOntologyUserAccess(id);
-		return new ResponseEntity<OntologyUserAccess>(HttpStatus.NO_CONTENT);
+		return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.NO_CONTENT);
 	}
 	
-	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-	public @ResponseBody ResponseEntity<OntologyUserAccess> updateAuthorization(
-			@RequestParam OntologyUserAccess ontologyUserAccess) {
-		ontologyService.updateOntologyUserAccess(ontologyUserAccess);
-		OntologyUserAccess obtainedAuthorizations = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyUserAccess.getOntology().getId(), ontologyUserAccess.getUser().getUserId());
-		return new ResponseEntity<OntologyUserAccess>(obtainedAuthorizations, HttpStatus.OK);
+	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<OntologyUserAccessDTO> updateAuthorization(
+			@RequestParam String id,
+			@RequestParam String accesstype) {
+		ontologyService.updateOntologyUserAccess(id, accesstype);
+		OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id);
+		OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
+		return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.OK);
 	}
 	
 	@GetMapping(value="/authorization/{id}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -249,10 +252,5 @@ public class OntologyController {
 		Ontology ontology = this.ontologyService.getOntologyById(id);
 		List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
 		return new ResponseEntity<List<OntologyUserAccess>>(authorizations, HttpStatus.OK);
-	}
-	
-	@PostMapping(value="/algo")
-	public ResponseEntity<String> createAuthorization(@RequestParam String type ) {
-		return new ResponseEntity<String>("Hola" + type, HttpStatus.OK);
 	}
 }

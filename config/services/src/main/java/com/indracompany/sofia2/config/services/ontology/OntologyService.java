@@ -70,6 +70,6 @@ public interface OntologyService {
 	
 	void deleteOntologyUserAccess (String id);
 
-	void updateOntologyUserAccess(OntologyUserAccess ontologyUserAccess);
+	void updateOntologyUserAccess(String id, String typeName);
 	
 }
