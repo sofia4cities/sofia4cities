@@ -132,8 +132,11 @@
 																			 
 									 </form>	
 									 
-									 <div id="icons" class="container">
-									 
+									 <!-- Aquí irán los iconos de los gráficos -->
+									 <div  class="container">
+									 	<div id="icons" class="row">
+									 					 		
+									 	</div>
 									 </div>							
 									
 												<div class="form-actions">
@@ -146,7 +149,7 @@
 									</div>
 								</div>
 							</div>
-						</div><!-- END PORTLET BASIC LIGHT -->							
+						</div>  <!-- END PORTLET BASIC LIGHT -->							
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->				
 			</div><!-- END CONTENT BODY -->
@@ -172,18 +175,19 @@
 	
 	<script th:inline="javascript">
 	
-	$.each(item, function (char)){
-		var type=item.type;
-		var icon=item.icon;
-		$("icons").append(
+		$.each(item, function (char)){
+			var type=item.type;
+			var icon=item.icon;
+			$("icons").append(
+				
+				 "<div class='col-md-3'>"+ "<div class='card card-01'>" +
+				 "<h4 class='text-center font-title' th:text='#{chart.map}' >Mapa</h4>"+
+			 		//<img class="card-img-top cursor"  src="../static/images/dashboards/bordermap.png"></img>
+			 		"<img class='card-img-top cursor' src="+icon+"></img>"+	
+			  	 "</div> </div>"  )
 			
-		 "<div class='col-md-3'>"+ "<div class='card card-01'>" +
-		 "<h4 class='text-center font-title' th:text='#{chart.map}' >Mapa</h4>"+
-		 		//<img class="card-img-top cursor"  src="../static/images/dashboards/bordermap.png"></img>
-		 		"<img class='card-img-top cursor' src="+icon+"></img>"+	
-		   "</div> </div>"  )
-		
-	}
+		}
+	
 	
 	</script>
 	

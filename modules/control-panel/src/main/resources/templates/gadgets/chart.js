@@ -1,98 +1,95 @@
-var gadgetJson= [
+var gadgetJSON = [ {
+
+	type : "line",
+
+	icon : "../static/images/dashboards/linechart.jpg",
+
+	attributes : [
+
 	{
 
-        type: "line",
+		name : "X axis",
 
-        icon: "../static/images/dashboards/linechart.jpg"
+		types : [ "date", "number" ]
 
-        attributes: [
+	},
 
-            {
+	{
 
-                name:"X axis",
+		name : "Y axis",
 
-                types:["date","number"]
+		types : [ "number" ]
 
-            },
+	}
 
-            {
+	],
 
-                name:"Y axis",
+	series : {
 
-                types:["number"]
+		maxseries : -1,
 
-            }
+		options : {
 
-        ],
+			"title" : "Series options",
 
-        series: {
+			"type" : "object",
 
-            maxseries: -1,
+			"properties" : {
 
-            options: {
+				"Name" : {
 
-                "title": "Series options",
+					"type" : "string",
 
-                "type": "object",
+					"description" : "Serie name"
 
-                "properties": {
+				},
 
-                    "Name": {
+				"Color" : {
 
-                        "type": "string",
+					"type" : "string",
 
-                        "description": "Serie name"
+					"format" : "color",
 
-                    },
+					"title" : "Serie color",
 
-                    "Color": {
+					"default" : "#ffa500"
 
-                        "type": "string",
+				}
 
-                        "format": "color",
+			}
 
-                        "title": "Serie color",
+		}
 
-                        "default": "#ffa500"
+	},
 
-                    }
+	options : {
 
-                }
+		beginToZero : true
 
-            }
+	}
 
-        },
+},
 
-        options:{
+{
+	type : "bar",
+	icon : "../static/images/dashboards/barchart.jpg",
+	options : ""
+},
 
-            beginToZero: true
+{
+	type : "pie",
+	icon : "../static/images/dashboards/piechart.jpg",
+	options : ""
+},
 
-        }
+{
+	type : "map",
+	icon : "../static/images/dashboards/bordermap.png",
+	options : ""
+}, {
+	type : "wordcloud",
+	icon : "../static/images/dashboards/wordchart.jpg",
+	options : ""
+}
 
-    },
-    
-     {
-        type:"bar",
-        icon:"../static/images/dashboards/barchart.jpg",
-        options:""
-       },
-       
-       {
-         type:"pie",
-         icon:"../static/images/dashboards/piechart.jpg",
-         options:""
-        },
-        
-        {
-            type:"map",
-            icon:"../static/images/dashboards/bordermap.png",
-            options:""
-         },
-        {
-            type:"wordcloud",
-            icon:"../static/images/dashboards/wordchart.jpg",
-            options:""
-          },
-          
 ]
-
