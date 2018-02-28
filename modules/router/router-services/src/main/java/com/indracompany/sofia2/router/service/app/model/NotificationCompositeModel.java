@@ -25,13 +25,14 @@ public class NotificationCompositeModel implements Serializable{
 	@Setter
 	NotificationModel notificationModel;
 	
-	@Getter
-	@Setter
-	private OperationResultModel result;
 	
 	@Getter
 	@Setter
 	private String notificationEntityId;
+	
+	@Getter
+	@Setter
+	private String url;
 	
 
 	

@@ -11,25 +11,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.client;
+package com.indracompany.sofia2.router.service.app.service.advice;
 
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.indracompany.sofia2.router.service.app.model.NotificationModel;
+import com.indracompany.sofia2.router.client.RouterClient;
+import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.AdviceService;
 
-@Service("routerClientImpl")
-public class RouterClientImpl implements RouterClient<NotificationModel> {
-	
-	
-	public NotificationModel execute(NotificationModel input) {
+@Service("adviceServiceImpl")
+public class AdviceServiceImpl implements AdviceService, RouterClient<NotificationCompositeModel,OperationResultModel >{
+
+	@Override
+	public OperationResultModel advicePostProcessing(NotificationCompositeModel input)  {
+		return execute(input);
+	}
+
+	@Override
+	public OperationResultModel execute(NotificationCompositeModel input) {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
-		NotificationModel quote = restTemplate.postForObject("http://localhost:19100/router/router/test-operation",input, NotificationModel.class);
+		OperationResultModel quote = restTemplate.postForObject(input.getUrl(),input, OperationResultModel.class);
 		System.out.println(quote.toString());
 		return quote;
 	}
 
+	
 
 }
