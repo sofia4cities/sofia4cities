@@ -234,7 +234,7 @@ public class OntologyController {
 	@PostMapping(value="/authorization/delete", produces=MediaType.APPLICATION_JSON_UTF8_VALUE )
 	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
 		ontologyService.deleteOntologyUserAccess(id);
-		return new ResponseEntity<String>("{'status' : 'ok'}", HttpStatus.OK);
+		return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
