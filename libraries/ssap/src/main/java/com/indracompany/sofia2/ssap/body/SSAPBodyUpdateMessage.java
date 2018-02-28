@@ -13,19 +13,11 @@
  */
 package com.indracompany.sofia2.ssap.body;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public class SSAPBodyUpdateMessage extends SSAPBodyMessage {
 
-	private JsonNode data;
-
-	public JsonNode getData() {
-		return data;
-	}
-	public void setData(JsonNode data) {
-		this.data = data;
-	}
+	private String query;
 
 	@Override
 	public boolean isClientPlatformMandatory() {
@@ -45,6 +37,14 @@ public class SSAPBodyUpdateMessage extends SSAPBodyMessage {
 	@Override
 	public boolean isOntologyMandatory() {
 		return true;
+	}
+
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
 	}
 
 }

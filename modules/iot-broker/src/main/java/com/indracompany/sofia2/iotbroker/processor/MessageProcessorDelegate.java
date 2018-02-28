@@ -103,7 +103,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	}
 
 	public Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
-			throws AuthorizationException {
+			throws AuthorizationException, Exception {
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 
 		// Check presence of Thinkp
