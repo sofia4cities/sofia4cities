@@ -62,7 +62,7 @@ public interface OntologyService {
 
 	List<OntologyUserAccess> getOntologyUserAccesses(String ontologyId);
 
-	void createUserAccess(Ontology ontology, OntologyUserAccess ontologyUserAccess);
+	void createUserAccess(Ontology ontology, String userId, String typeName);
 
 	OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId);
 	
