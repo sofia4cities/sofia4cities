@@ -216,7 +216,7 @@ public class OntologyController {
 		
 			Ontology ontologyDB = ontologyService.getOntologyById(ontology);
 			
-			if (ontologyDB.getUser().getUserId().equals(this.utils.getUserId())) {
+			if (ontologyDB.getUser().getUserId().equals(this.utils.getUserId()) || utils.isAdministrator()) {
 				ontologyService.createUserAccess(ontologyDB, user, accesstype);
 				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyDB.getId(), user);
 				OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
