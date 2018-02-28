@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
@@ -143,7 +144,7 @@ public class FlowDomainController {
 			return "redirect:/flows/create";
 		}
 		utils.addRedirectMessage("domain.create.success", redirect);
-		return "/flows/list";
+		return "redirect:/flows/list";
 	}
 
 	@GetMapping(value = "/create", produces = "text/html")
@@ -176,6 +177,7 @@ public class FlowDomainController {
 			log.error("Unable to start domain = {}.", domainStatus.getDomain());
 			model.addAttribute("message", utils.getMessage("domain.error.notstarted", "Unable to stop domain"));
 			model.addAttribute("messageAlertType", "ERROR");
+			model.addAttribute("flowEngineActive", false);
 		}
 		List<FlowEngineDomainStatus> domainStatusList = new ArrayList<>();
 		domainStatusList.add(domainStatus);
@@ -216,6 +218,11 @@ public class FlowDomainController {
 		model.addAttribute("proxy",
 				"http://localhost:5050/" + domainId + "/?usuario=" + utils.getUserId() + "&password=" + password);
 		return "/flows/show";
+	}
+
+	@GetMapping(value = "/check/{domainId}")
+	public @ResponseBody boolean checkAvailableDomainIdentifier(@PathVariable(value = "domainId") String domainId) {
+		return !domainService.domainExists(domainId);
 	}
 
 }

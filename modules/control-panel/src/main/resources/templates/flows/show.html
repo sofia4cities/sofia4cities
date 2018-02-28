@@ -77,9 +77,22 @@
 				
 				<!-- MAIN ROW -->
 				<div class="row">
-					<div class="col-md-12">						
-						<iframe th:if="${proxy != null}" style="width:100%;height: 100%;" id="iframeNodeRed" th:src="${proxy}">
-						</iframe>												
+					<div class="col-md-12">	
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption hide">
+									<i class="icon-list font-grey-gallery"></i>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{flow.template.list}"> My Flows </span>
+									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse hide" data-original-title="" title=""> </a>
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>
+							</div>
+							<iframe th:if="${proxy != null}" style="width:100%;height: 100%;" id="iframeNodeRed" th:src="${proxy}" frameBorder="0">
+							</iframe>
+						</div>	<!-- END PORTLET -->											
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->
 			</div><!-- END CONTENT BODY -->

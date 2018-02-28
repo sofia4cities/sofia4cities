@@ -19,7 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.FlowNode;
+import com.indracompany.sofia2.config.model.FlowNode.MessageType;
+import com.indracompany.sofia2.config.model.NotificationEntity;
 import com.indracompany.sofia2.config.repository.FlowNodeRepository;
+import com.indracompany.sofia2.config.services.exceptions.FlowNodeServiceException;
 
 @Service
 public class FlowNodeServiceImpl implements FlowNodeService {
@@ -33,8 +36,20 @@ public class FlowNodeServiceImpl implements FlowNodeService {
 	}
 
 	@Override
-	public FlowNode saveFlowNode(FlowNode flowNode) {
-		return nodeRepository.save(flowNode);
+	public FlowNode createFlowNode(FlowNode flowNode) {
+		List<FlowNode> result = nodeRepository.findByNodeRedNodeId(flowNode.getNodeRedNodeId());
+		if (result == null || result.isEmpty()) {
+			return nodeRepository.save(flowNode);
+		} else {
+			throw new FlowNodeServiceException("Flow node already exists.");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<NotificationEntity> getNotificationsByOntologyAndMessageType(String ontology, String messageType) {
+		return (List<NotificationEntity>) (List<? extends NotificationEntity>) nodeRepository
+				.findNotificationByOntologyAndMessageType(ontology, MessageType.valueOf(messageType));
 	}
 
 }

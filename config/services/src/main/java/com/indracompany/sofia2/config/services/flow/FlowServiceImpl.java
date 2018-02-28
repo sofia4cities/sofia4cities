@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Flow;
 import com.indracompany.sofia2.config.repository.FlowRepository;
+import com.indracompany.sofia2.config.services.exceptions.FlowServiceException;
 
 @Service
 public class FlowServiceImpl implements FlowService {
@@ -33,8 +34,13 @@ public class FlowServiceImpl implements FlowService {
 	}
 
 	@Override
-	public Flow saveFlowDomain(Flow flow) {
-		return flowRepository.save(flow);
+	public Flow createFlow(Flow flow) {
+		List<Flow> result = flowRepository.findByIdentification(flow.getIdentification());
+		if (result == null || result.isEmpty()) {
+			return flowRepository.save(flow);
+		} else {
+			throw new FlowServiceException("Flow already exists");
+		}
 	}
 
 	@Override

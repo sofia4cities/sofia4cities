@@ -87,4 +87,7 @@ public class DeployRequestRecord {
 	@Getter
 	@Setter
 	private String pingTimer;
+	@Getter
+	@Setter
+	private String url;
 }

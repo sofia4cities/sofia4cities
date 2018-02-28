@@ -16,8 +16,11 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.FlowNode;
+import com.indracompany.sofia2.config.model.FlowNode.MessageType;
 
 public interface FlowNodeRepository extends JpaRepository<FlowNode, String> {
 
@@ -25,5 +28,10 @@ public interface FlowNodeRepository extends JpaRepository<FlowNode, String> {
 
 	List<FlowNode> findByFlow_NodeRedFlowId(String nodeRedFlowId);
 
-	List<FlowNode> findByflowNodeType_Identification(String flowNodeTypeIdentification);
+	List<FlowNode> findByflowNodeType(String flowNodeType);
+
+	@Query("SELECT N FROM FlowNode N "
+			+ "WHERE N.flowNodeType = 'HTTP_NOTIFIER' AND N.ontology.identification = :ontology AND N.messageType = :messageType")
+	List<FlowNode> findNotificationByOntologyAndMessageType(@Param("ontology") String ontology,
+			@Param("messageType") MessageType messageType);
 }

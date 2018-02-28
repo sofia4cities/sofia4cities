@@ -16,11 +16,14 @@ package com.indracompany.sofia2.config.services.flownode;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.FlowNode;
+import com.indracompany.sofia2.config.model.NotificationEntity;
 
 public interface FlowNodeService {
 
 	public List<FlowNode> getAllFlowNodes();
 
-	public FlowNode saveFlowNode(FlowNode flowNode);
+	public FlowNode createFlowNode(FlowNode flowNode);
+
+	public List<NotificationEntity> getNotificationsByOntologyAndMessageType(String ontology, String messageType);
 
 }

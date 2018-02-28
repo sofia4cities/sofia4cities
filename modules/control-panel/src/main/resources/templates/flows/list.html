@@ -171,7 +171,7 @@
 									<!-- GO TO NodeRed SCREEN -->
 									<div class="col-md-12">
 										<div class="actions margin-right-20">
-											<div class="btn-group">												
+											<div class="btn-group pull-right">												
 												<button th:if="${domains!=null and domains[0].state == 'START' and flowEngineActive == true}" type="button" class="btn grey-mint  btn-outline sbold" th:onclick="'location.href=\''+@{/flows/show/{id}(id=${domains[0].domain})}+'\''" ><i class="fa fa-filter"></i> <span th:text="#{domain.show}">Show Flows</span></button>									
 											</div>										
 										</div>

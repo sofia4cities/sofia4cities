@@ -21,7 +21,7 @@ public interface FlowService {
 
 	public List<Flow> getFlowByDomain(String domainIdentification);
 
-	public Flow saveFlowDomain(Flow flow);
+	public Flow createFlow(Flow flow);
 
 	public Flow getFlowByNodeRedFlowId(String nodeRedFlowId);
 }

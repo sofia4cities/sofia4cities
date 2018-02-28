@@ -13,16 +13,12 @@
  */
 package com.indracompany.sofia2.config.model;
 
-import java.util.Map;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -38,7 +34,15 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "FLOW_NODE")
-public class FlowNode extends AuditableEntityWithUUID {
+public class FlowNode extends AuditableEntityWithUUID implements NotificationEntity {
+
+	public static enum Type {
+		HTTP_NOTIFIER;
+	}
+
+	public static enum MessageType {
+		INSERT, DELETE, UPDATE;
+	}
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
@@ -47,12 +51,12 @@ public class FlowNode extends AuditableEntityWithUUID {
 	@Setter
 	private Flow flow;
 
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JoinColumn(name = "FLOW_NODE_TYPE", referencedColumnName = "ID", nullable = false)
+	@Column(name = "TYPE", length = 20, nullable = false)
+	@NotNull
 	@Getter
 	@Setter
-	private FlowNodeType flowNodeType;
+	@Enumerated(EnumType.STRING)
+	private Type flowNodeType;
 
 	@NotNull
 	@Getter
@@ -60,11 +64,35 @@ public class FlowNode extends AuditableEntityWithUUID {
 	@Column(name = "NODE_RED_NODE_ID", length = 50, unique = true, nullable = false)
 	private String nodeRedNodeId;
 
+	@NotNull
 	@Getter
 	@Setter
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "flowNode", cascade = CascadeType.ALL)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@MapKey(name = "name")
-	private Map<String, FlowNodeProperties> flowNodeProperties;
+	@Column(name = "PARTIAL_URL", length = 50, nullable = false)
+	private String partialUrl;
 
+	@NotNull
+	@Getter
+	@Setter
+	@Column(name = "MESSAGE_TYPE", length = 50, nullable = false)
+	@Enumerated(EnumType.STRING)
+	private MessageType messageType;
+
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
+	@Getter
+	@Setter
+	private Ontology ontology;
+
+	@Override
+	public String getNotificationEntityId() {
+		return getNodeRedNodeId();
+	}
+
+	@Override
+	public String getNotificationUrl() {
+		// TODO check if it is necessary to generate Url with hostname and port
+		String domainId = getFlow().getFlowDomain().getIdentification();
+		return domainId + getPartialUrl();
+	}
 }

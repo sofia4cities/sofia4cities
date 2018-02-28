@@ -26,11 +26,11 @@ public interface FlowDomainService {
 
 	public void deleteFlowdomain(String domainIdentification);
 
-	public void createFlowDomain(FlowDomain domain); // TODO: Delete method
-
-	public void createFlowDomain(String identification, User user);
+	public FlowDomain createFlowDomain(String identification, User user);
 
 	public boolean flowDomainExists(FlowDomain domain);
 
 	public void updateDomain(FlowDomain domain);
+
+	public boolean domainExists(String domainIdentification);
 }

@@ -24,22 +24,22 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
 import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
+import com.indracompany.sofia2.libraries.flow.engine.exception.FlowEngineServiceException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class FlowEngineServiceImpl implements FlowEngineService {
 
 	private HttpComponentsClientHttpRequestFactory httpRequestFactory;
-
-	private ObjectMapper mapper;
 	private String restBaseUrl;
 
 	public FlowEngineServiceImpl(String restBaseUrl, int restRequestTimeout) {
 		httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
 		httpRequestFactory.setConnectTimeout(restRequestTimeout);
 		this.restBaseUrl = restBaseUrl;
-		mapper = new ObjectMapper();
 	}
 
 	@Override
@@ -48,8 +48,8 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 		try {
 			restTemplate.put(restBaseUrl + "/domain/stop/" + domainId, null);
 		} catch (Exception e) {
-			// TODO ¿NEW FlowEngineServiceException?
-			throw new RuntimeException(e);
+			log.error("Unable to stop domain " + domainId);
+			throw new FlowEngineServiceException("Unable to stop domain " + domainId, e);
 		}
 
 	}
@@ -63,8 +63,8 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 			HttpEntity<FlowEngineDomain> domainToStart = new HttpEntity<FlowEngineDomain>(domain, headers);
 			restTemplate.postForObject(restBaseUrl + "/domain/start/", domainToStart, String.class);
 		} catch (Exception e) {
-			// TODO ¿NEW FlowEngineServiceException?
-			throw new RuntimeException(e);
+			log.error("Unable to start domain " + domain.getDomain());
+			throw new FlowEngineServiceException("Unable to start domain " + domain.getDomain(), e);
 		}
 	}
 
@@ -77,8 +77,8 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 			HttpEntity<FlowEngineDomain> newDomain = new HttpEntity<FlowEngineDomain>(domain, headers);
 			restTemplate.postForObject(restBaseUrl + "/domain", newDomain, String.class);
 		} catch (Exception e) {
-			// TODO ¿NEW FlowEngineServiceException?
-			throw new RuntimeException(e);
+			log.error("Unable to create domain " + domain.getDomain());
+			throw new FlowEngineServiceException("Unable to create domain " + domain.getDomain(), e);
 		}
 	}
 
@@ -88,8 +88,8 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 		try {
 			restTemplate.delete(restBaseUrl + "/domain/" + domainId);
 		} catch (Exception e) {
-			// TODO ¿NEW FlowEngineServiceException?
-			throw new RuntimeException(e);
+			log.error("Unable to delete domain " + domainId);
+			throw new FlowEngineServiceException("Unable to delete domain " + domainId, e);
 		}
 
 	}
@@ -101,8 +101,8 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 		try {
 			domain = restTemplate.getForObject(restBaseUrl + "/domain/" + domainId, FlowEngineDomain.class);
 		} catch (Exception e) {
-			// TODO ¿NEW FlowEngineServiceException?
-			throw new RuntimeException(e);
+			log.error("Unable to retrieve domain " + domainId);
+			throw new FlowEngineServiceException("Unable to retrieve domain " + domainId, e);
 		}
 		return domain;
 	}
@@ -116,8 +116,8 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 			response = (List<FlowEngineDomainStatus>) FlowEngineDomainStatus
 					.fromJsonArrayToDomainStatus(responseHttp.getBody());
 		} catch (Exception e) {
-			// TODO ¿NEW FlowEngineServiceException?
-			throw new RuntimeException(e);
+			log.error("Unable to retrieve all domains.");
+			throw new FlowEngineServiceException("Unable to retrieve all domains.", e);
 		}
 		return response;
 	}
@@ -138,8 +138,8 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 			response = (List<FlowEngineDomainStatus>) FlowEngineDomainStatus
 					.fromJsonArrayToDomainStatus(responseHttp.getBody());
 		} catch (Exception e) {
-			// TODO ¿NEW FlowEngineServiceException?
-			throw new RuntimeException(e);
+			log.error("Unable to retrieve domains' status. " + domainList.toString());
+			throw new FlowEngineServiceException("Unable to retrieve domains' status.", e);
 		}
 		return response;
 	}

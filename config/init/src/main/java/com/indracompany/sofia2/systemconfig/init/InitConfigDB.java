@@ -40,7 +40,6 @@ import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DashboardType;
 import com.indracompany.sofia2.config.model.DataModel;
-import com.indracompany.sofia2.config.model.FlowNodeType;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDataModel;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
@@ -64,7 +63,6 @@ import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
-import com.indracompany.sofia2.config.repository.FlowNodeTypeRepository;
 import com.indracompany.sofia2.config.repository.GadgetDataModelRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetQueryRepository;
@@ -140,8 +138,6 @@ public class InitConfigDB {
 	@Autowired
 	ConfigurationTypeRepository configurationTypeRepository;
 	@Autowired
-	FlowNodeTypeRepository flowNodeTypeRepository;
-	@Autowired
 	UserTokenRepository userTokenRepository;
 
 	@PostConstruct
@@ -204,7 +200,7 @@ public class InitConfigDB {
 		log.info("OK init_ConsoleMenu");
 		init_Configuration();
 		log.info("OK init_Configuration");
-		init_FlowNodeTypes();
+
 	}
 
 	private void init_Configuration() {
@@ -1137,23 +1133,6 @@ public class InitConfigDB {
 				userCDBRepository.deleteAll();
 				throw new RuntimeException("Error creating users...ignoring creation rest of Tables");
 			}
-		}
-	}
-
-	public void init_FlowNodeTypes() {
-		try {
-			if (flowNodeTypeRepository.findAll().isEmpty()) {
-				FlowNodeType nodeType = new FlowNodeType();
-				nodeType.setIdentification("ssap-process-request");
-				flowNodeTypeRepository.save(nodeType);
-
-				nodeType = new FlowNodeType();
-				nodeType.setIdentification("script-topic");
-				flowNodeTypeRepository.save(nodeType);
-			}
-		} catch (Exception e) {
-			log.error("Could not create the required flow node types :" + e.getMessage());
-			userCDBRepository.deleteAll();
 		}
 	}
 

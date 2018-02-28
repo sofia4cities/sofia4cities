@@ -16,9 +16,7 @@ package com.indracompany.sofia2.flowengine.api.rest.service.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,15 +29,14 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Flow;
 import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.FlowNode;
-import com.indracompany.sofia2.config.model.FlowNodeProperties;
-import com.indracompany.sofia2.config.model.FlowNodeType;
+import com.indracompany.sofia2.config.model.FlowNode.MessageType;
+import com.indracompany.sofia2.config.model.FlowNode.Type;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.flow.FlowService;
 import com.indracompany.sofia2.config.services.flowdomain.FlowDomainService;
 import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
-import com.indracompany.sofia2.config.services.flownodetype.FlowNodeTypeService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.DeployRequestRecord;
@@ -73,9 +70,6 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	private FlowNodeService nodeService;
 
 	@Autowired
-	private FlowNodeTypeService nodeTypeService;
-
-	@Autowired
 	private OntologyService ontologyService;
 
 	@Autowired
@@ -86,12 +80,10 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 
 	@Override
 	public String deploymentNotification(String json) {
-		// TODO Change Return type??
+		// TODO CHECH EXCEPTION HANDLING AND 500 SERVER ERROR HANDLING ON CLIENT
 		ObjectMapper mapper = new ObjectMapper();
 		FlowDomain domain = null;
 		List<DeployRequestRecord> deployRecords = new ArrayList<>();
-
-		List<FlowNodeType> sofia2NodeTypes = nodeTypeService.getAllFlowNodeTypes();
 
 		try {
 			deployRecords = mapper.readValue(json, new TypeReference<List<DeployRequestRecord>>() {
@@ -106,53 +98,25 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 						log.debug("Deployment record = {}", record.toString());
 						if (record.getType() != null) {
 							if (record.getType().equals("tab")) {
-								// its a FLOW
+								// it is a FLOW
 								Flow newFlow = new Flow();
 								newFlow.setIdentification(record.getLabel());
 								newFlow.setNodeRedFlowId(record.getId());
 								newFlow.setActive(true);
 								newFlow.setFlowDomain(domain);
-								flowService.saveFlowDomain(newFlow);
+								flowService.createFlow(newFlow);
 							} else {
-								// its a regular node.
-								for (FlowNodeType type : sofia2NodeTypes) {
-									// Only Sofia2 Nodes will be persisted
-									if (type.getIdentification().equals(record.getType())) {
-										// Create new node and persist
-										FlowNode node = new FlowNode();
-										FlowNodeProperties nodeProperty;
-										Map<String, FlowNodeProperties> flowNodeProperties = new HashMap<>();
-
-										Flow flow = flowService.getFlowByNodeRedFlowId(record.getZ());
-										node.setNodeRedNodeId(record.getId());
-										node.setFlowNodeType(nodeTypeService.getByIdentification(record.getType()));
-										node.setFlow(flow);
-
-										if (record.getType().equals("ssap-process-request")) {
-											nodeProperty = FlowNodeProperties.builder().flowNode(node).name("direction")
-													.value(record.getDirection()).build();
-											flowNodeProperties.put("direction", nodeProperty);
-											nodeProperty = FlowNodeProperties.builder().flowNode(node)
-													.name("messageType").value(record.getMeassageType()).build();
-											flowNodeProperties.put("messageType", nodeProperty);
-											nodeProperty = FlowNodeProperties.builder().flowNode(node).name("ontology")
-													.value(record.getOntology()).build();
-											flowNodeProperties.put("ontology", nodeProperty);
-											nodeProperty = FlowNodeProperties.builder().flowNode(node).name("thinKp")
-													.value(record.getThinKp()).build();
-											flowNodeProperties.put("thinKp", nodeProperty);
-											nodeProperty = FlowNodeProperties.builder().flowNode(node)
-													.name("kpInstance").value(record.getKpInstance()).build();
-											flowNodeProperties.put("kpInstance", nodeProperty);
-										} else if (record.getType().equals("script-topic")) {
-											nodeProperty = FlowNodeProperties.builder().flowNode(node).name("topic")
-													.value(record.getTopic()).build();
-											flowNodeProperties.put("topic", nodeProperty);
-										}
-
-										node.setFlowNodeProperties(flowNodeProperties);
-										nodeService.saveFlowNode(node);
-									}
+								// It is a node
+								if (record.getType().equals(Type.HTTP_NOTIFIER.toString())) {
+									FlowNode node = new FlowNode();
+									Flow flow = flowService.getFlowByNodeRedFlowId(record.getZ());
+									node.setNodeRedNodeId(record.getId());
+									node.setFlow(flow);
+									node.setFlowNodeType(Type.HTTP_NOTIFIER);
+									node.setMessageType(MessageType.valueOf(record.getMeassageType()));
+									node.setOntology(ontologyService.getOntologyById(record.getOntology()));
+									node.setPartialUrl(record.getUrl());
+									nodeService.createFlowNode(node);
 								}
 							}
 						} else {

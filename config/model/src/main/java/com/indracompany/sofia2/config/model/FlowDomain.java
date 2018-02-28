@@ -77,9 +77,4 @@ public class FlowDomain extends AuditableEntityWithUUID {
 	@Column(name = "ACTIVE", nullable = false)
 	private Boolean active;
 
-	@NotNull
-	@Getter
-	@Setter
-	@Column(name = "DEMO_MODE", nullable = false)
-	private Boolean demoMode;
 }

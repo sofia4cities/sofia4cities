@@ -86,18 +86,7 @@ public class FlowDomainServiceImpl implements FlowDomainService {
 	}
 
 	@Override
-	public void createFlowDomain(FlowDomain domain) {
-		// TODO Auto-generated method stub
-		if (!flowDomainExists(domain)) {
-			log.debug("Flow domain does no exist, creating...");
-			this.domainRepository.save(domain);
-		} else {
-			throw new FlowDomainServiceException("The requested flow domain already exists in CDB");
-		}
-	}
-
-	@Override
-	public void createFlowDomain(String identification, User user) {
+	public FlowDomain createFlowDomain(String identification, User user) {
 
 		if (this.domainRepository.findByIdentification(identification) != null) {
 			log.debug("Flow domain {} already exist.", identification);
@@ -107,7 +96,6 @@ public class FlowDomainServiceImpl implements FlowDomainService {
 		FlowDomain domain = new FlowDomain();
 		domain.setIdentification(identification);
 		domain.setActive(true);
-		domain.setDemoMode(false);
 		domain.setState("STOP");
 		domain.setUser(user);
 		domain.setHome(this.homeBase + user.getUserId());
@@ -144,6 +132,7 @@ public class FlowDomainServiceImpl implements FlowDomainService {
 		}
 		domain.setServicePort(selectedServicePort);
 		this.domainRepository.save(domain);
+		return domain;
 	}
 
 	@Override
@@ -165,4 +154,11 @@ public class FlowDomainServiceImpl implements FlowDomainService {
 		}
 	}
 
+	@Override
+	public boolean domainExists(String domainIdentification) {
+		if (domainRepository.findByIdentification(domainIdentification) != null) {
+			return true;
+		}
+		return false;
+	}
 }
