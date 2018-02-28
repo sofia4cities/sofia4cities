@@ -19,6 +19,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bson.types.ObjectId;
@@ -39,6 +40,7 @@ import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.ssap.generator.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.ssap.generator.pojo.Person;
+import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -81,9 +83,6 @@ public class InsertProcessorTest {
 	@Test
 	public void test_insert_clientplatform_or_sessionkey_not_present() {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
-
 		// Scenario: SessionKey is an Empty String
 		{
 			ssapInsertOperation.setSessionKey("");
@@ -104,55 +103,11 @@ public class InsertProcessorTest {
 			Assert.assertEquals(SSAPErrorCode.PROCESSOR, responseMessage.getBody().getErrorCode());
 		}
 
-		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
-		// Scenario: Client Platform is an Empty String
-		{
-			ssapInsertOperation.getBody().setClientPlatform("");
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
-
-			Assert.assertNotNull(responseMessage);
-			Assert.assertNotNull(responseMessage.getBody());
-			Assert.assertEquals(SSAPErrorCode.PROCESSOR, responseMessage.getBody().getErrorCode());
-		}
-		// Scenario: Client Platform is an null
-		{
-			ssapInsertOperation.getBody().setClientPlatform(null);
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
-
-			Assert.assertNotNull(responseMessage);
-			Assert.assertNotNull(responseMessage.getBody());
-			Assert.assertEquals(SSAPErrorCode.PROCESSOR, responseMessage.getBody().getErrorCode());
-		}
-		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
-		// Scenario: Client Platform Instance is an Empty String
-		{
-			ssapInsertOperation.getBody().setClientPlatformInstance("");
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
-
-			Assert.assertNotNull(responseMessage);
-			Assert.assertNotNull(responseMessage.getBody());
-			Assert.assertEquals(SSAPErrorCode.PROCESSOR, responseMessage.getBody().getErrorCode());
-		}
-		// Scenario: Client Platform Instance is an null
-		{
-			ssapInsertOperation.getBody().setClientPlatformInstance(null);
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
-
-			Assert.assertNotNull(responseMessage);
-			Assert.assertNotNull(responseMessage.getBody());
-			Assert.assertEquals(SSAPErrorCode.PROCESSOR, responseMessage.getBody().getErrorCode());
-		}
 	}
 
 	@Test
 	public void test_insert_sessionkey_invalid() throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
 
 		doThrow(new AuthorizationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED)).when(securityPluginManager)
 		.checkSessionKeyActive(any());
@@ -168,8 +123,6 @@ public class InsertProcessorTest {
 	@Test
 	public void test_insert_unauthorized_operation() throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
 
 		doThrow(new AuthorizationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED)).when(securityPluginManager)
 		.checkAuthorization(any(), any(), any());
@@ -186,10 +139,9 @@ public class InsertProcessorTest {
 	public void test_basic_insert() throws IOException, Exception {
 
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatform(UUID.randomUUID().toString());
-		ssapInsertOperation.getBody().setClientPlatformInstance(UUID.randomUUID().toString());
-
-		when(securityPluginManager.getUserIdFromSessionKey(anyString())).thenReturn("valid_user_id");
+		final IoTSession session = new IoTSession();
+		session.setUserID("valid_user_id");
+		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 

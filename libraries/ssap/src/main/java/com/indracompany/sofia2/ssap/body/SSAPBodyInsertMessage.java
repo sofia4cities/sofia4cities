@@ -28,11 +28,6 @@ public class SSAPBodyInsertMessage extends SSAPBodyMessage {
 	}
 
 	@Override
-	public boolean isClientPlatformMandatory() {
-		return true;
-	}
-
-	@Override
 	public boolean isSessionKeyMandatory() {
 		return true;
 	}

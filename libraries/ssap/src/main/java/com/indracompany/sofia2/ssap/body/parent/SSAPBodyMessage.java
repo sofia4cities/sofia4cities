@@ -15,24 +15,6 @@ package com.indracompany.sofia2.ssap.body.parent;
 
 public abstract class SSAPBodyMessage {
 
-	protected String clientPlatform;
-	protected String clientPlatformInstance;
-
-	public String getClientPlatform() {
-		return clientPlatform;
-	}
-	public void setClientPlatform(String clientPlatform) {
-		this.clientPlatform = clientPlatform;
-	}
-	public String getClientPlatformInstance() {
-		return clientPlatformInstance;
-	}
-	public void setClientPlatformInstance(String clientPlatformInstance) {
-		this.clientPlatformInstance = clientPlatformInstance;
-	}
-
-	public abstract boolean isClientPlatformMandatory();
-
 	public abstract boolean isSessionKeyMandatory();
 
 	public abstract boolean isAutorizationMandatory();

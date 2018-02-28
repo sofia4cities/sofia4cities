@@ -55,8 +55,6 @@ public final class SSAPMessageGenerator {
 		final SSAPBodyInsertMessage body = new SSAPBodyInsertMessage();
 		final JsonNode jsonValue = mapper.readTree(mapper.writeValueAsBytes(value));
 		body.setData(jsonValue);
-		body.setClientPlatform(faker.name().firstName());
-		body.setClientPlatformInstance(UUID.randomUUID().toString());
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.INSERT);
@@ -71,8 +69,6 @@ public final class SSAPMessageGenerator {
 
 		final SSAPBodyUpdateMessage body = new SSAPBodyUpdateMessage();
 		body.setQuery(query);
-		body.setClientPlatform(faker.name().firstName());
-		body.setClientPlatformInstance(UUID.randomUUID().toString());
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.UPDATE);

@@ -20,11 +20,6 @@ public class SSAPBodyUpdateMessage extends SSAPBodyMessage {
 	private String query;
 
 	@Override
-	public boolean isClientPlatformMandatory() {
-		return true;
-	}
-
-	@Override
 	public boolean isSessionKeyMandatory() {
 		return true;
 	}

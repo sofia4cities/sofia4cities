@@ -13,15 +13,15 @@
  */
 package com.indracompany.sofia2.plugin.iotbroker.security.impl;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
+import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
 import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPlugin;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 //TODO: Delete this class
@@ -29,29 +29,41 @@ import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 public class DummyTokenSecurityPlugin implements SecurityPlugin {
 
 	@Override
-	public String authenticate(SSAPMessage<? extends SSAPBodyMessage> message) throws AuthenticationException {
-		return UUID.randomUUID().toString();
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance) throws AuthenticationException {
+		final IoTSession session = new IoTSession();
+		session.setClientPlatform(clientPlatform);
+		session.setClientPlatformInstance(clientPlatformInstance);
+
+		return Optional.of(session);
+
+		//		return UUID.randomUUID().toString();
 	}
 
 	@Override
-	public void closeSession(String sessionKey) throws AuthorizationException {
-
+	public boolean closeSession(String sessionKey) throws AuthorizationException {
+		return true;
 	}
 
 	@Override
-	public void checkSessionKeyActive(String sessionKey) throws AuthorizationException {
-
+	public boolean checkSessionKeyActive(String sessionKey) throws AuthorizationException {
+		return true;
 	}
 
 	@Override
-	public void checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey)
+	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey)
 			throws AuthorizationException {
-
+		return true;
 	}
 
 	@Override
-	public String getUserIdFromSessionKey(String sessionKey) {
-		return UUID.randomUUID().toString();
+	public Optional<IoTSession> getSession(String sessionKey) {
+
+		final IoTSession session = new IoTSession();
+		session.setClientPlatform(UUID.randomUUID().toString());
+		session.setClientPlatform(UUID.randomUUID().toString());
+		session.setClientPlatformInstance(UUID.randomUUID().toString());
+
+		return Optional.of(session);
 	}
 
 }

@@ -11,6 +11,18 @@ server: ## Config Web Server
 spring:
   data.mongodb:
     database: sofia2_s4c # Database name.
+   
+  datasource:
+    url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: 
+  jpa:
+    ## Hibernate Properties
+    # The SQL dialect makes Hibernate generate better SQL for the chosen database
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate.ddl-auto: update
+
   
     
 sofia2: #Config Sofia2 specific
@@ -34,3 +46,5 @@ sofia2: #Config Sofia2 specific
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
+
+  

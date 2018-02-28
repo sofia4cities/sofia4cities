@@ -40,6 +40,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-config-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>	
@@ -57,7 +62,11 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>		
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jsonSchema</artifactId>
+		</dependency>
 	</dependencies>	
 
 	<build>
