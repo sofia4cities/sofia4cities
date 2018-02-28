@@ -187,7 +187,7 @@ public class UserController {
 		model.addAttribute("user", user);
 		UserToken userToken = null;
 		try {
-			userToken = this.userService.getUserToken(user);
+			userToken = this.userService.getUserToken(user).get(0);
 		} catch (Exception e) {
 			log.debug("No token found for user: " + user);
 		}

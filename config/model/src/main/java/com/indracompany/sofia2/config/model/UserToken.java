@@ -16,7 +16,7 @@ package com.indracompany.sofia2.config.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -38,7 +38,7 @@ public class UserToken extends AuditableEntityWithUUID {
 	@Setter
 	String token;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
 	@NotNull
 	@Getter

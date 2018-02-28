@@ -51,8 +51,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserToken getUserToken(String token) {
-		return userTokenRepository.findByToken(token);
+	public UserToken getUserToken(String user, String token) {
+		return userTokenRepository.findByUserAndToken(user, token);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserToken getUserToken(User userId) {
+	public List<UserToken> getUserToken(User userId) {
 		return this.userTokenRepository.findByUser(userId);
 	}
 
@@ -182,6 +182,7 @@ public class UserServiceImpl implements UserService {
 		this.userRepository.save(user);
 
 	}
+
 	@Override
 	public boolean emailExists(User user) {
 		 	
@@ -191,5 +192,9 @@ public class UserServiceImpl implements UserService {
 			return false;
 	}
 	
+	@Override
+	public UserToken getUserToken(String token) {
+		return userTokenRepository.findByToken(token);
+	}
 
 }

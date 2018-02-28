@@ -120,7 +120,7 @@ public class ApiManagerController {
 			String apiId = apiManagerService.createApi(apiManagerHelper.apiMultipartMap(api), operationsObject, authenticationObject);
 			
 			utils.addRedirectMessage("user.create.success", redirect);
-			return "redirect:/apimanager/" + utils.encodeUrlPathSegment(apiId, request);
+			return "redirect:/apimanager/show/" + utils.encodeUrlPathSegment(apiId, request);
 		} catch (ApiManagerServiceException e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
@@ -158,7 +158,6 @@ public class ApiManagerController {
 		}
 	}
 	
-	
 	// AUTHORIZATIONS//
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
@@ -177,7 +176,7 @@ public class ApiManagerController {
 		} catch (Exception e){
 			log.debug("Cannot update authorization that does not exist");
 			utils.addRedirectMessage("api.autn.update.error", redirect);
-			return "redirect:/apimanager/update";
+			return "redirect:/apimanager/authorize/list";
 		}
 	}
 	
@@ -191,6 +190,12 @@ public class ApiManagerController {
         uiModel.asMap().clear();
 		return "redirect:/apimanager/authorize/list";
     }
+	
+	@RequestMapping(value = "/token/list" , produces = "text/html")
+	public String token(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model model, HttpServletRequest request) {
+		apiManagerHelper.populateUserTokenForm(model);
+		return "/apimanager/token";
+	}
 		
 	@RequestMapping(value = "numVersion")
 	public @ResponseBody Integer numVersion(@RequestBody String numversionData){

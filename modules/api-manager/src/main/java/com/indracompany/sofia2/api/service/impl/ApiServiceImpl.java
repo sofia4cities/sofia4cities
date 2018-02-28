@@ -44,8 +44,9 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
-import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
@@ -56,10 +57,9 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	RuleManager ruleManager;
 		
 	@Autowired
-	private QueryToolService queryToolService;
+	private RouterCrudService routerCrudService;
 	
-	@Autowired
-	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
+	
 	
 	static final String ONT_NAME = "contextData";
 	static final String DATABASE = "sofia2_s4c";
@@ -124,50 +124,43 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
 		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
 		
+		OperationModel model = new OperationModel();
+		
+		model.setBody(BODY);
+		model.setObjectId(OBJECT_ID);
+		model.setOntologyId(ontology.getId());
+		model.setOntologyName(ontology.getIdentification());
+		model.setOperationType(METHOD);
+		model.setQueryType(QUERY_TYPE);
+		model.setQuery(QUERY);
+		
 		String OUTPUT="";
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
-			
-			if (QUERY_TYPE !=null)
-			{
-				if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
-					OUTPUT = queryToolService.querySQLAsJson(ontology.getIdentification(), QUERY, 0);
-				}
-				else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
-					OUTPUT = queryToolService.queryNativeAsJson(ontology.getIdentification(), QUERY, 0,0);
-				}
-				else {
-					OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);
-				}
+		
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
+				
+				OperationResultModel result =routerCrudService.query(model);
+				OUTPUT = result.getResult();
 			}
+			
+			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
+				OperationResultModel result =routerCrudService.insert(model);
+				OUTPUT = result.getResult();
+			}
+			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+				OperationResultModel result =routerCrudService.update(model);
+				OUTPUT = result.getResult();
+			}
+			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
+				OperationResultModel result =routerCrudService.delete(model);
+				OUTPUT = result.getResult();	
+			}
+		} catch (Exception e) {
+			
 		}
 		
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
-			OUTPUT = mongoBasicOpsDBRepository.insert(ontology.getIdentification(), BODY);	
-		}
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
-			
-			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontology.getIdentification(), OBJECT_ID, BODY);	
-				OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);	
-			}
-			
-			else {
-				mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), BODY);	
-			}
-	
-		}
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
-			
-			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.deleteNativeById(ontology.getIdentification(), OBJECT_ID);
-			}
-			
-			else {
-				mongoBasicOpsDBRepository.deleteNative(ontology.getIdentification(), BODY);	
-			}
-			
-		}
+		
 			
 		
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);

@@ -77,7 +77,7 @@
 						"ES": "Tokens del API Manager"
 					},
 					"icon": "",
-					"url": "/controlpanel/apimanager/list"
+					"url": "/controlpanel/apimanager/token/list"
 				}
 			]
 		},
