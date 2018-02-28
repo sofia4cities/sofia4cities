@@ -323,23 +323,19 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public void updateOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
-		OntologyUserAccess userAccessDB = ontologyUserAccessRepository.findById(ontologyUserAccess.getId());
+	public void updateOntologyUserAccess(String id, String typeName) {
+		OntologyUserAccess userAccessDB = ontologyUserAccessRepository.findById(id);
 		
-		Ontology ontologyDB = ontologyRepository.findById(ontologyUserAccess.getOntology().getId());
-		OntologyUserAccessType typeDB = ontologyUserAccessTypeRepository.findById(ontologyUserAccess.getOntologyUserAccessType().getId());
-		User userDB = this.userService.getUser(ontologyUserAccess.getUser().getUserId());
+		List<OntologyUserAccessType> types = ontologyUserAccessTypeRepository.findByName(typeName);
+		if (types != null && types.size() > 0) {
+			OntologyUserAccessType typeDB = types.get(0);
+			userAccessDB.setOntologyUserAccessType(typeDB);
+			ontologyUserAccessRepository.save(userAccessDB);
+		} else {
+			throw new IllegalStateException("Types of access must have unique name");
+		}
 		
-		userAccessDB.setOntology(ontologyDB);
-		userAccessDB.setOntologyUserAccessType(typeDB);
-		userAccessDB.setUser(userDB);
 		
-		ontologyUserAccessRepository.save(userAccessDB);
 	}
-
-
-	
-
-	
 
 }

@@ -13,7 +13,7 @@
  */
 package com.indracompany.sofia2.router.client;
 
-public interface RouterClient<T> {
+public interface RouterClient<T,R> {
 
-	public T execute(T input);
+	public R execute(T input);
 }

@@ -14,8 +14,9 @@
 package com.indracompany.sofia2.router.service.app.service;
 
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 public interface AdviceService {
 	
-	public NotificationCompositeModel advicePostProcessing(NotificationCompositeModel input) throws Exception;
+	public OperationResultModel advicePostProcessing(NotificationCompositeModel input);
 }
