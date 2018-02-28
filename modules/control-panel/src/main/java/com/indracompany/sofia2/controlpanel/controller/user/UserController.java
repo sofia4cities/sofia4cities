@@ -220,19 +220,16 @@ public class UserController {
 		
 		if(user!=null)
 		{
-			
-			if(user.getUserId() != null && user.getPassword() != null && user.getFullName() != null && user.getEmail() != null && user.isActive() == true )
-			{	
+					  
+			 	if(this.userService.emailExists(user)) {
 			 
-				if(this.userService.emailExists(user)) {
 					log.debug("There is already an user with this email");
 					utils.addRedirectMessage("login.error.email.duplicate", redirectAttributes);
 					return "redirect:/login";
 				}
 				
 				if(utils.paswordValidation(user.getPassword()) && (this.userService.emailExists(user) ==false) ) {
-					
-					
+				
 					try{
 						this.userService.registerUser(user);
 						log.debug("User created from login");
@@ -244,10 +241,8 @@ public class UserController {
 						return "redirect:/login";
 					}
 					
-					
-				
 				}				
-			}
+
 		}
 		return "redirect:/login?errorRegister";
 	}

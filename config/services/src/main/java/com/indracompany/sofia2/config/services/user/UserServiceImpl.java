@@ -183,6 +183,7 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	 
 	@Override
 	public boolean emailExists(User user) {
 		 	
@@ -191,7 +192,7 @@ public class UserServiceImpl implements UserService {
 		else
 			return false;
 	}
-	
+	 
 	@Override
 	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);

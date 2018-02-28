@@ -103,8 +103,6 @@
 
 						<label class="image-replace cd-password" for="signup-password">Password</label>
 						<input class="full-width has-padding has-border" id="passwordup" th:field="*{password}" name="passwordup" type="password"  placeholder="Password" th:required="true" title="Must contain at least: one uppercase letter, one lowercase letter and a number or simbol. Password must be between 7 and 20 characters." pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />  
-						<!-- #{login.contrasena.pattern}" -->
-
 						<span class="cd-error-message">Error with password</span>
 						
 					</p>
