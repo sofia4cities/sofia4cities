@@ -27,6 +27,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>		
 		
 		<!-- PLUGINS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
 		<!-- JSON EDITOR -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/json/jsoneditor.css}"/>
 		
@@ -161,7 +162,7 @@
 																	<p class="form-control-static-block bold" th:text="*{description}"> description </p>
 																</div>
 															</div>
-															<div class="col-md-3 col-sm-6 col-xs-12" >
+															<!-- <div class="col-md-3 col-sm-6 col-xs-12" >
 																<div class="form-group">
 																	<label class="control-label" th:text="#{ontology.rtdbclean} + '?'">rtdbclean</label>
 																	<p class="form-control-static-block form-control-static-no-border bold">
@@ -178,7 +179,7 @@
 																		<span th:if="!*{rtdbToHdb}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
 																	</p>
 																</div>
-															</div>
+															</div> -->
 														</div>
 														<div class="row">																																
 															<div class="col-md-12 col-sm-12 col-xs-12">
@@ -222,42 +223,44 @@
 									</div>
 									<div class="tab-pane " id="tab_2">
 									<!-- AUTHORIZATIONS -->
-										<div class="col-md-12">											
-											<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
-												<div>
-													<!-- DATATABLE DANDELION CONF. -->												
-													<table id="authorizations" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
-														<thead>
-															<tr class="cabecera-tabla">
-																<th class="titulo-columnas" th:text="#{authorization.identification}">Identification</th>
-																<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{authorization.user}" >User</span></th>
-																<th class="titulo-columnas" th:text="#{authorization.ontologyUserAccessType}">Description</th>
-															</tr>
-														</thead>
-														<tbody th:remove="all-but-first">
-															<tr th:each="authorization : ${authorization}" pages:paginate="10">
-																<!-- IDENTIFICATION/NAME -->
-																<td class="text-left no-wrap bold" th:text="${authorization.ontology.identification}"></td>
-																<!-- USER -->
-																<td class="text-center " th:text="${authorization.user.fullName}"></td>
-																<!-- ACCESS TYPE  -->
-																<td class="text-center " th:text="${authorization.ontologyUserAccessType.name}"></td>																
-															</tr>
-														</tbody>
-													</table>												
-													<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
-													<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
-														<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
-															<i class="fa fa-eye"></i> <em th:text="#{gen.columns}">Columns</em> <i class="fa fa-angle-down"></i>
-														</a>
-														<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-															<label class="toggle-vis" data-column="0" th:text="#{authorization.identification}"> Identification </label>
-															<label class="toggle-vis" data-column="1" th:text="#{authorization.user}"> User </label>
-															<label class="toggle-vis" data-column="2" th:text="#{authorization.ontologyUserAccessType}"> Access Type</label>															
-														</div>
-													</div>												
-												</div>
-											</div>											
+										<div class="row">
+											<div class="col-md-12">											
+												<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+													<div>
+														<!-- DATATABLE DANDELION CONF. -->												
+														<table id="authorizations" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+															<thead>
+																<tr class="cabecera-tabla">
+																	<th class="titulo-columnas" th:text="#{authorization.identification}">Identification</th>
+																	<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{authorization.user}" >User</span></th>
+																	<th class="titulo-columnas" th:text="#{authorization.ontologyUserAccessType}">Description</th>
+																</tr>
+															</thead>
+															<tbody th:remove="all-but-first">
+																<tr th:each="authorization : ${authorizations}" pages:paginate="10">
+																	<!-- IDENTIFICATION/NAME -->
+																	<td class="text-left no-wrap bold" th:text="${authorization.ontology.identification}"></td>
+																	<!-- USER -->
+																	<td class="text-center " th:text="${authorization.user.fullName}"></td>
+																	<!-- ACCESS TYPE  -->
+																	<td class="text-center " th:text="${authorization.ontologyUserAccessType.name}"></td>																
+																</tr>
+															</tbody>
+														</table>												
+														<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
+														<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
+															<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
+																<i class="fa fa-eye"></i> <em th:text="#{gen.columns}">Columns</em> <i class="fa fa-angle-down"></i>
+															</a>
+															<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
+																<label class="toggle-vis" data-column="0" th:text="#{authorization.identification}"> Identification </label>
+																<label class="toggle-vis" data-column="1" th:text="#{authorization.user}"> User </label>
+																<label class="toggle-vis" data-column="2" th:text="#{authorization.ontologyUserAccessType}"> Access Type</label>															
+															</div>
+														</div>												
+													</div>
+												</div>											
+											</div>
 										</div>
 									</div>
 								</div>

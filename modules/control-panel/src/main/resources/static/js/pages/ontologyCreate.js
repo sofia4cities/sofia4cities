@@ -1,6 +1,8 @@
 var authorizationsArr = []; // add authorizations
 var authorizationUpdateArr = []; // get authorizations of the ontology
-var authorizationsIds = []; // get authorizations ids for actions	
+var authorizationsIds = []; // get authorizations ids for actions
+var authorizationObj = {}; // object to receive authorizations responses.
+	
 var OntologyCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
@@ -816,82 +818,87 @@ var OntologyCreateController = function() {
 		
 		if (action === 'insert'){
 			console.log('    |---> Inserting... ' + insertURL);
-			//Mock-up
-			//response = { "success": 'OK', "id": '342343-2341234-123'};
-			
-				
-			 /* $.post(insertURL, dataType: "json", {"ontologyUserAccess":{ "ontology": {"id": ontology}, "user": {"userId": user}, "ontologyUserAccessType": {"name": accesstype}  }},function(response,status){					
-				 alert("Insert Data: " + reponse + "\nStatus: " + status);					
-				 // agregar el elemento al authorizationsIds[user] = response.id;
-				 //JSONtoTable arr
-				var propAuth = {"users":user,"accesstypes":accesstype,"id": response.id};
-				authorizationsArr.push(propAuth);
-				// store ids for after actions.	inside callback 				
-				var user_id = user;
-				var auth_id = response.id;
-				var AuthId = {[user_id]:auth_id};
-				authorizationsIds.push(AuthId);
-				console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
-				 return response;
-			});  */
-			
+						
 			$.ajax({
-			  url:insertURL,
-			  type:"POST",
-			  data:{"ontologyUserAccessType": {"name": accesstype},"ontology": {"id": ontology},"user": {"userId": user}},
-			  contentType:"application/json; charset=utf-8",
-			  dataType:"json",
-			  success: function(response,status){
-					alert("Insert Data: " + reponse + "\nStatus: " + status);					
-					 // agregar el elemento al authorizationsIds[user] = response.id;
-					 //JSONtoTable arr
+				url:insertURL,
+				type:"POST",
+				async: true,
+				data: {"accesstype": accesstype, "ontology": ontology,"user": user},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					
 					var propAuth = {"users":user,"accesstypes":accesstype,"id": response.id};
 					authorizationsArr.push(propAuth);
+					console.log('     |---> JSONtoTable: ' + authorizationsArr.length + ' data: ' + JSON.stringify(authorizationsArr));
 					// store ids for after actions.	inside callback 				
 					var user_id = user;
 					var auth_id = response.id;
 					var AuthId = {[user_id]:auth_id};
 					authorizationsIds.push(AuthId);
 					console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
-					 return response;
+										
+					// TO-HTML
+					if ($('#authorizations').attr('data-loaded') === 'true'){
+						$('#ontology_autthorizations > tbody').html("");
+						$('#ontology_autthorizations > tbody').append(mountableModel2);
+					}
+					console.log('authorizationsArr: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr));
+					$('#ontology_autthorizations').mounTable(authorizationsArr,{
+						model: '.authorization-model',
+						noDebug: false							
+					});
+					
+					// hide info , disable user and show table
+					$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
+					$("#users").selectpicker('deselectAll');
+					$("#users option[value=" + $('#users').val() + "]").prop('disabled', true);
+					$("#users").selectpicker('refresh');
+					$('#authorizations').removeClass('hide');
+					$('#authorizations').attr('data-loaded',true);
+					
 				}
 			});
 
-			
-
-			
+	
 		}
 		if (action === 'update'){
-			// $.post(updateURL,{ "ontology": ontology, "user": user, "ontologyUserAccessType": accesstype, "id": authorizationsIds[user]  },function(response,status){					
-				 // alert("Updated Data: " + response + "\nStatus: " + status);					
-			// });
-			// update object
-			console.log('    |---> Updating... ' + user + ' ' + authorization );
-			response = { "success": 'OK', "id": '342343-234453451234-123'};
-			var updateIndex = foundIndex(user,'users',authorizationsArr);			
-			authorizationsArr[updateIndex]["accesstypes"] = accesstype;
-			console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);
-			return response;
+			
+			$.ajax({url:updateURL, type:"POST", async: true, 
+				data: {"id": authorization, "accesstype": accesstype},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					var updateIndex = foundIndex(user,'users',authorizationsArr);			
+					authorizationsArr[updateIndex]["accesstypes"] = accesstype;
+					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);
+					
+					
+				}
+			});
+			
+			
 		}
 		if (action  === 'delete'){
-			console.log('    |---> Deleting... ' + user + ' ' + authorization );
-			//Mock-up
-			response = { "success": 'OK', "id": '342343-2341234-123'};
+			console.log('    |---> Deleting... ' + user + ' with authId:' + authorization );
 			
-			// remove object
-			var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(response.id);			
-			authorizationsIds.splice(removeIndex, 1);
-			authorizationsArr.splice(removeIndex, 1);
-			
-			console.log('AuthorizationsIDs: ' + JSON.stringify(authorizationsIds));
-			return response;
-			/* $.post(deleteURL,{ "id": authorizationsIds[user] },function(response,status){					
-				 alert("Deleted Data: " + data + "\nStatus: " + status);	
-				
-			}); */
-			
-		}			
-		
+			$.ajax({url:deleteURL, type:"POST", async: true, 
+				data: {"id": authorization},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					
+					// remove object
+					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(response.id);			
+					authorizationsIds.splice(removeIndex, 1);
+					authorizationsArr.splice(removeIndex, 1);
+					
+					console.log('AuthorizationsIDs: ' + JSON.stringify(authorizationsIds));
+					// refresh interface. TO-DO: EL this este fallará
+					if ( response  ){ $(this).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); }
+				}
+			});			
+		}	
 	};
 	
 	// return position to find authId.
@@ -1122,33 +1129,10 @@ var OntologyCreateController = function() {
 				if (($('#users').val() !== '') && ($("#users option:selected").attr('disabled') !== 'disabled') && ($('#accesstypes').val() !== '')){
 					
 					// AJAX INSERT (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
-					var authorizationObj = authorization('insert',ontologyCreateReg.ontologyId,$('#users').val(),$('#accesstypes').val(),'');
-					
-					console.log('AUTHORIZATION: ' + authorizationObj + ' status: ' + authorizationObj.status + ' authorizationId: ' + authorizationObj.id);
-					
-					
-										
-					// TO-HTML
-					if ($('#authorizations').attr('data-loaded') === 'true'){
-						$('#ontology_autthorizations > tbody').html("");
-						$('#ontology_autthorizations > tbody').append(mountableModel2);
-					}
-					console.log('authorizationsArr: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr));
-					$('#ontology_autthorizations').mounTable(authorizationsArr,{
-						model: '.authorization-model',
-						noDebug: false							
-					});
-					
-					// hide info , disable user and show table
-					$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
-					$("#users").selectpicker('deselectAll');
-					$("#users option[value=" + $('#users').val() + "]").prop('disabled', true);
-					$("#users").selectpicker('refresh');
-					$('#authorizations').removeClass('hide');
-					$('#authorizations').attr('data-loaded',true);
-					
-				}				
-			}		
+					authorization('insert',ontologyCreateReg.ontologyId,$('#users').val(),$('#accesstypes').val(),'');
+								
+				}	
+			}
 		},
 		
 		// REMOVE authorization
@@ -1165,10 +1149,7 @@ var OntologyCreateController = function() {
 				
 				console.log('removeAuthorization:' + selAuthorizationId);
 				
-				var authorizationObj = authorization('delete',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId );
-				
-				// refresh interface.
-				if ( authorizationObj.id != ''){ $(obj).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); }
+				authorization('delete',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId );				
 			}
 		},
 		
@@ -1187,11 +1168,9 @@ var OntologyCreateController = function() {
 				console.log('updateAuthorization:' + selAuthorizationId);
 				
 				if (selAccessType !== authorizationsArr[updateIndex]["accesstypes"]){
-					var authorizationObj = authorization('update',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId);
-				} else { console.log('no hay cambios');}
-				
-				
-				
+					authorization('update',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId);
+				} 
+				else { console.log('no hay cambios');}
 			}
 		}	
 	};
