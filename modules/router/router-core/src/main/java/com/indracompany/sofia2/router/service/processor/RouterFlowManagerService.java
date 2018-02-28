@@ -17,9 +17,10 @@ import org.apache.camel.Exchange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
 import com.indracompany.sofia2.router.client.RouterClientGateway;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
-import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
 
@@ -32,20 +33,23 @@ public class RouterFlowManagerService {
 	@Autowired
 	RouterClientGateway<NotificationCompositeModel,OperationResultModel> adviceGateway;
 	
-	NotificationCompositeModel startBrokerFlow(OperationModel model, Exchange exchange) {
-		return null;
+	@Autowired
+	FlowNodeService flowNodeService;
+	
+	public NotificationCompositeModel startBrokerFlow(NotificationModel model, Exchange exchange) {
+		return new NotificationCompositeModel();
 	}
 	
-	NotificationCompositeModel executeCrudOperations(NotificationCompositeModel model, Exchange exchange) {
-		return null;
+	public NotificationCompositeModel executeCrudOperations(NotificationCompositeModel model, Exchange exchange) {
+		return new NotificationCompositeModel();
 	}
 	
-	NotificationCompositeModel getScriptsAndNodereds(NotificationCompositeModel model, Exchange exchange) {
-		return null;
+	public NotificationCompositeModel getScriptsAndNodereds(NotificationCompositeModel model, Exchange exchange) {
+		return new NotificationCompositeModel();
 	}
 	
-	NotificationCompositeModel adviceScriptsAndNodereds(NotificationCompositeModel model, Exchange exchange) {
-		return null;
+	public OperationResultModel adviceScriptsAndNodereds(NotificationCompositeModel model, Exchange exchange) {
+		return new OperationResultModel();
 	}
 	
 	

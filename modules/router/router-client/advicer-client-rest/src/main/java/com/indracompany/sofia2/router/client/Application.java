@@ -42,8 +42,8 @@ public class Application {
         
         RouterClient<NotificationCompositeModel,OperationResultModel> routerClient= new AdviceServiceImpl();
 		RouterClientGateway<NotificationCompositeModel,OperationResultModel> gateway = new RouterClientGateway<NotificationCompositeModel,OperationResultModel>
-				("PEPE",
-				RouterClientGateway.setupDefault(),
+				(
+				RouterClientGateway.setupDefault("PEPE","PEPE"),
 				routerClient);
 		gateway.setFallback(input);
 		input = gateway.execute(model);

@@ -13,10 +13,7 @@
  */
 package com.indracompany.sofia2.router.client;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommand.Setter;
@@ -26,7 +23,6 @@ import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 
 
-@Component
 public class RouterClientGateway<T,R> {
 
 	private  HystrixCommand.Setter config;
@@ -56,7 +52,7 @@ public class RouterClientGateway<T,R> {
 	@Value("${remoteservice.command.key:RouterClientKey}")
 	private  String key;
 
-	@PostConstruct
+	
 	public void autoSetup() {
 		this.config = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey));
 		this.config = config.andCommandKey(HystrixCommandKey.Factory.asKey(key));
@@ -96,13 +92,13 @@ public class RouterClientGateway<T,R> {
 		return config;
 	}
 	
-	public static Setter setupDefault() {
+	public static Setter setupDefault(String groupKey, String key) {
 		HystrixCommand.Setter config;
 		HystrixCommandProperties.Setter commandProperties;
 		HystrixThreadPoolProperties.Setter threadPoolProperties;
 		
-		config = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("RouterClientGroup"));
-		config = config.andCommandKey(HystrixCommandKey.Factory.asKey("RouterClientKey"));
+		config = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey));
+		config = config.andCommandKey(HystrixCommandKey.Factory.asKey(key));
 
 		commandProperties = HystrixCommandProperties.Setter();
 		commandProperties.withExecutionTimeoutInMilliseconds(10000);
@@ -118,14 +114,16 @@ public class RouterClientGateway<T,R> {
 		return config;
 	}
 	
-	public RouterClientGateway (String name,  Setter config, RouterClient<T,R> routerClient) {
+	public RouterClientGateway (Setter config, RouterClient<T,R> routerClient) {
+		super();
 		this.config = config;
-		this.routerClientCommand= new RouterClientCommand<T,R>(name,config,routerClient);
+		this.routerClientCommand= new RouterClientCommand<T,R>(config,routerClient);
 	}
 	
-	public RouterClientGateway (String name, RouterClient<T,R> routerClient) {
-		this.routerClientCommand= new RouterClientCommand<T,R>(name,config,routerClient);
-	}
+	/*public RouterClientGateway (String name, RouterClient<T,R> routerClient) {
+		super();
+		this.routerClientCommand= new RouterClientCommand<T,R>(config,routerClient);
+	}*/
 	
 	public R execute(T input) {
 		routerClientCommand.setInputData(input);

@@ -16,7 +16,6 @@ import com.netflix.hystrix.HystrixCommand;
 
 class RouterClientCommand<T,R> extends HystrixCommand<R> {
 
-    private final String name;
     private RouterClient<T,R> routerClient;
    
     private T input;
@@ -30,9 +29,8 @@ class RouterClientCommand<T,R> extends HystrixCommand<R> {
         this.fallback = fallback;
     }
     
-    RouterClientCommand(final String name, final Setter config, RouterClient<T,R> routerClient) {
+    RouterClientCommand(final Setter config, RouterClient<T,R> routerClient) {
         super(config);
-        this.name = name;
         this.routerClient = routerClient;
     }
 
