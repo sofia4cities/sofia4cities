@@ -820,7 +820,7 @@ var OntologyCreateController = function() {
 			//response = { "success": 'OK', "id": '342343-2341234-123'};
 			
 				
-			 $.post(insertURL,{"ontologyUserAccess":{ "ontology": {"id": ontology}, "user": {"userId": user}, "ontologyUserAccessType": {"name": accesstype}  }},function(response,status){					
+			 /* $.post(insertURL, dataType: "json", {"ontologyUserAccess":{ "ontology": {"id": ontology}, "user": {"userId": user}, "ontologyUserAccessType": {"name": accesstype}  }},function(response,status){					
 				 alert("Insert Data: " + reponse + "\nStatus: " + status);					
 				 // agregar el elemento al authorizationsIds[user] = response.id;
 				 //JSONtoTable arr
@@ -833,7 +833,33 @@ var OntologyCreateController = function() {
 				authorizationsIds.push(AuthId);
 				console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
 				 return response;
-			});  				
+			});  */
+			
+			$.ajax({
+			  url:insertURL,
+			  type:"POST",
+			  data:{"ontologyUserAccessType": {"name": accesstype},"ontology": {"id": ontology},"user": {"userId": user}},
+			  contentType:"application/json; charset=utf-8",
+			  dataType:"json",
+			  success: function(response,status){
+					alert("Insert Data: " + reponse + "\nStatus: " + status);					
+					 // agregar el elemento al authorizationsIds[user] = response.id;
+					 //JSONtoTable arr
+					var propAuth = {"users":user,"accesstypes":accesstype,"id": response.id};
+					authorizationsArr.push(propAuth);
+					// store ids for after actions.	inside callback 				
+					var user_id = user;
+					var auth_id = response.id;
+					var AuthId = {[user_id]:auth_id};
+					authorizationsIds.push(AuthId);
+					console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
+					 return response;
+				}
+			});
+
+			
+
+			
 		}
 		if (action === 'update'){
 			// $.post(updateURL,{ "ontology": ontology, "user": user, "ontologyUserAccessType": accesstype, "id": authorizationsIds[user]  },function(response,status){					

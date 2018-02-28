@@ -78,28 +78,34 @@
 
 	/* breadcrum*/	
 	.page-content-white .page-content .page-bar {
-		border-bottom: 1px solid #dfd6e0;
+		/* border-bottom: 1px solid #dfd6e0;
 		border-top: 1px solid #dfd6e0;
-		background-color: #ede9ef;
+		background-color: #ede9ef; */
+		background-color: #FFF;
 	}
 	.page-content-white .page-bar .page-breadcrumb > li > i, .page-container-bg-solid .page-bar .page-breadcrumb > li > i {
-		color: #8d0f6c;
+		color: #898a92;
 	}
 	.page-content-white .page-bar .page-breadcrumb > li > a, .page-content-white .page-bar .page-breadcrumb > li > span, .page-container-bg-solid .page-bar .page-breadcrumb > li > a, .page-container-bg-solid .page-bar .page-breadcrumb > li > span {
-		color: #675369;
+		color: #2043a8;
+	}
+	.page-bar .page-breadcrumb > li > span {
+    font-size: 13px;
+    text-shadow: none;
 	}
 	.page-content-white .page-bar .page-breadcrumb > li > a {
-		font-size: 14px;
+		font-size: 13px;
 		text-shadow: none;
 		font-family: "Poppins","sans-serif";
-		color: #9434b1;
+		color: #1b1c1e;
 	}
 	
 /* Dropdowns */	
 .dropdown-menu > li:hover > a, .dropdown-menu > li.active > a, .dropdown-menu > li.active:hover > a { background-color: #e9d1ef; }
 
 .page-content {   
-    background-color: #f2f3f8;
+   /*  background-color: #f2f3f8; */
+    background-color: #FFF;
 }
 	
 /* Default Horizontal Menu */
@@ -239,16 +245,16 @@
       color: #868aa8;}
       .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > i,
       .page-sidebar .page-sidebar-menu > li > a > i {
-        color: #606C7D; }
+        color: #b6b9bd; }
       .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > i[class^="icon-"],
       .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > i[class*="icon-"],
       .page-sidebar .page-sidebar-menu > li > a > i[class^="icon-"],
       .page-sidebar .page-sidebar-menu > li > a > i[class*="icon-"] {
-        color: #6b788b; }
+        color: #b6b9bd; }
       .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > .arrow:before, .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > .arrow.open:before,
       .page-sidebar .page-sidebar-menu > li > a > .arrow:before,
       .page-sidebar .page-sidebar-menu > li > a > .arrow.open:before {
-        color: #606C7D; }
+        color: #b6b9bd; }
     .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li.heading > h3,
     .page-sidebar .page-sidebar-menu > li.heading > h3 {
       color: #708096; }
