@@ -14,22 +14,16 @@
 
 package com.indracompany.sofia2.api.rest.api.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class TokenUserDTO {
+	@Getter
+	@Setter
 	private String userIdentification;
+	
+	@Getter
+	@Setter
 	private String token;
-	public String getUserIdentification() {
-		return userIdentification;
-	}
-	public void setUserIdentification(String userIdentification) {
-		this.userIdentification = userIdentification;
-	}
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-
 	
 }

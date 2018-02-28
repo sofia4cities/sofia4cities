@@ -117,71 +117,30 @@
 									</div>
 									<div class="col-md-12 margin-bottom-20">
 									<!-- SEARCH FORM -->
-										<form id="form_create_auth" action="authorize.html" th:action="@{/apimanager/authorize}" class="" role="form" method="post">												
-											<div class="col-md-12 no-space">
-												<h4 data-toggle="collapse" data-target="#authFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" th:attr="data-content=#{apimanager.auth.description},data-original-title=#{apimanager.auth}" th:text="#{apimanager.auth}">Search</span></h4>
-											</div>
-											<div id="authFilter" class="form-body collapse">
-												<div class="row">
-													<div class="col-md-5 col-md-6 col-xs-12">
-														<div class="form-group">															
-															<div class="input-group">
-																<span class="input-group-addon">
-																	<i class="fa fa-tag font-grey-mint"></i>
-																</span>															
-																<select  id="userId" class="form-control" name="userId">
-																	<option value="" disabled="disabled" selected="selected" hidden="true" th:text="#{apimanager.list.auth.user}">User</option>
-				                                					<option th:each="user:${users}" th:value="${user.userId}" th:text="${user.userId}"></option>
-							                  					</select>
-															</div>
-														</div>
-													</div>
-													<div class="col-md-5 col-md-6 col-xs-12">
-														<div class="form-group">															
-															<div class="input-group">
-																<span class="input-group-addon">
-																	<i class="fa fa-tag font-grey-mint"></i>
-																</span>
-											                  	<select  id="apiId" class="form-control" name="apiId">
-											                  		<option value="" disabled="disabled" selected="selected" hidden="hidden" th:text="#{apimanager.list.auth.apiversion}">API - Version</option>
-											                    	<option th:each="api:${apis}" th:value="${api.id}" th:text="${api.identification + ' - V' + api.numversion}"></option>
-											                  	</select>	
-															</div>
-														</div>
-													</div>
-													<div class="col-md-2 col-xs-12">
-														<div class="btn-group">
-															<button type="button" id="create_api" name="create_api" th:title="#{gen.createBtn}" th:value="#{gen.createBtn}" value="Create" class="btn grey-mint  btn-outline sbold" th:onclick= "'javascript:validate();'"><i class="fa fa-search"></i> Create </button>
-															<button type="button" id="reset_api" name="reset_api" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
-														</div>
-													</div>
-												</div>
-											</div>												
-										</form>
+
+
 									</div>
 									<!-- Authorization List -->
 									<div class="col-md-12">											
 										<div id="contenedor-tabla-outside" class="contiene">																						
 											<div>
 												<!-- DATATABLE DANDELION CONF. -->										
-							                    <table id="autorizaciones" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+							                    <table id="tokens" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 							                      <thead>
 							                        <tr class="cabecera-tabla">	      
-											              <th class="titulo-columnas" th:text="#{apimanager.list.auth.user}"></th>
-								                          <th class="titulo-columnas" th:text="#{apimanager.list.auth.username}"></th>
-								                          <th class="titulo-columnas" th:text="#{apimanager.list.auth.apiversion}"></th>
+											              <th class="titulo-columnas" th:text="#{apimanager.token.creationDate}"></th>
+								                          <th class="titulo-columnas" th:text="#{apimanager.token.}"></th>
 								                          <th class="titulo-columnas"></th>    	                
 										                  </tr>
 										          </thead>
 										          <tbody th:remove="all-but-first">
-									                <tr th:each="client : ${clients}" pages:paginate="10" class="odd">
-							                            <td th:text="${client.user.userId}"></td>
-							                            <td th:text="${client.user.fullName}"></td>
-							                            <td th:text="${client.api.identification} + ' - V' +  ${client.api.numversion}"></td>
+									                <tr th:each="token : ${tokens}" pages:paginate="10" class="odd">
+							                            <td th:text="${token.createdAt}"></td>
+							                            <td th:text="${token.token}"></td>
 							                            <td class="icon" style="white-space: nowrap">
-						                                    <form th:id="command + ${client.id}" action="list.html" th:action="@{|/apimanager/authorize/list/${client.id}|}" method="post">
+						                                    <form th:id="command + ${token.id}" action="list.html" th:action="@{|/apimanager/authorize/list/${token.id}|}" method="post">
 						                                        <input type="hidden" name="_method" value="DELETE"/>
-						                                        <span class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:showConfirmDialog(\'' + 'command' + ${client.id} + '\');'"><i class="fa fa-remove"></i></span>
+						                                        <span class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:showConfirmDialog(\'' + 'command' + ${token.id} + '\');'"><i class="fa fa-remove"></i></span>
 						                                    </form>                                                                                                                                                                          
 							                           </td>
 							                        </tr>

@@ -282,9 +282,17 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public void createUserAccess(Ontology ontology, OntologyUserAccess ontologyUserAccess) {
-		Ontology fetchedOntology = ontologyRepository.findById(ontology.getId());
-		if (fetchedOntology != null) {
-			ontologyUserAccess.setOntology(fetchedOntology);
+		
+		Ontology managedOntology = ontologyRepository.findById(ontology.getId());
+		List<OntologyUserAccessType> managedTypes = ontologyUserAccessTypeRepository.findByName(ontologyUserAccess.getOntologyUserAccessType().getName());
+		OntologyUserAccessType managedType = managedTypes != null && managedTypes.size() > 0 ? managedTypes.get(0) : null;
+		User managedUser = this.userService.getUser(ontologyUserAccess.getUser().getUserId());
+		
+		if (managedOntology != null && managedType != null && managedUser != null) {
+			ontologyUserAccess.setOntology(managedOntology);
+			ontologyUserAccess.setUser(managedUser);
+			ontologyUserAccess.setOntologyUserAccessType(managedType);
+			
 			ontologyUserAccessRepository.save(ontologyUserAccess);
 		} else {
 			throw new OntologyServiceException("Ontology does not exist");
@@ -295,7 +303,7 @@ public class OntologyServiceImpl implements OntologyService {
 	public OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId) {
 		Ontology ontology = ontologyRepository.findById(ontologyId);
 		User user = this.userService.getUser(userId);
-		List<OntologyUserAccess> userAccess = ontologyUserAccessRepository.findByOntologyIdAndUser(ontology, user);
+		List<OntologyUserAccess> userAccess = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
 		if (userAccess == null || userAccess.size() == 0 || userAccess.size() > 1) {
 			throw new OntologyServiceException("Problem obtaining user data");
 		} else {

@@ -451,7 +451,7 @@ public class ApiServiceRest {
 		
 		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(identificacion)){
 			User userToTokenize = apiSecurityService.getUser(identificacion);
-			token = apiSecurityService.getUserToken(userToTokenize);
+			token = apiSecurityService.getUserToken(userToTokenize, identificacion);
 		} else {
 			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
 		}
@@ -470,11 +470,10 @@ public class ApiServiceRest {
 					
 			User userToTokenize = apiSecurityService.getUser(identificacion);
 			
-			token = apiSecurityService.getUserToken(userToTokenize);
+			token = apiSecurityService.getUserToken(userToTokenize, tokenUsuario);
 			if (token==null)
 				token = init_Token(userToTokenize); 
 			else {
-				userTokenRepository.delete(token);
 				token = init_Token(userToTokenize); 
 			}
 				
@@ -497,9 +496,9 @@ public class ApiServiceRest {
 					
 			User userToTokenize = apiSecurityService.getUser(identificacion);
 			
-			token = apiSecurityService.getUserToken(userToTokenize);
-			if (token==null)
-				token = init_Token(userToTokenize); 
+			token = apiSecurityService.getUserToken(userToTokenize, tokenUsuario);
+
+			token = init_Token(userToTokenize); 
 				
 		} else {
 			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
