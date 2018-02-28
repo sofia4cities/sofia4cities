@@ -22,6 +22,7 @@ import com.github.javafaker.Faker;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
@@ -54,10 +55,29 @@ public final class SSAPMessageGenerator {
 		final SSAPBodyInsertMessage body = new SSAPBodyInsertMessage();
 		final JsonNode jsonValue = mapper.readTree(mapper.writeValueAsBytes(value));
 		body.setData(jsonValue);
+		body.setClientPlatform(faker.name().firstName());
+		body.setClientPlatformInstance(UUID.randomUUID().toString());
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.INSERT);
 		message.setOntology(ontology);
+		return message;
+	}
+
+	public static SSAPMessage<SSAPBodyUpdateMessage> generateUpdatetMessage(String ontology, String query) throws Exception, IOException {
+
+		final SSAPMessage<SSAPBodyUpdateMessage> message = new SSAPMessage<>();
+		message.setSessionKey(UUID.randomUUID().toString());
+
+		final SSAPBodyUpdateMessage body = new SSAPBodyUpdateMessage();
+		body.setQuery(query);
+		body.setClientPlatform(faker.name().firstName());
+		body.setClientPlatformInstance(UUID.randomUUID().toString());
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.UPDATE);
+		message.setOntology(ontology);
+
 		return message;
 	}
 
