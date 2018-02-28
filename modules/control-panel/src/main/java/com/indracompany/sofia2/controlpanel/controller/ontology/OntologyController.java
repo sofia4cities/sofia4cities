@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -213,7 +214,7 @@ public class OntologyController {
 	@PostMapping(value="/authorization", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseEntity<OntologyUserAccess> createAuthorization(
 			Model model,
-			@RequestParam OntologyUserAccess ontologyUserAccess,
+			@RequestBody OntologyUserAccess ontologyUserAccess,
 			BindingResult bindingResult,
 			RedirectAttributes redirect) {
 		
@@ -225,8 +226,8 @@ public class OntologyController {
 			Ontology ontology = ontologyService.getOntologyById(ontologyUserAccess.getOntology().getId());
 			if (ontology.getUser().getUserId().equals(this.utils.getUserId())) {
 				ontologyService.createUserAccess(ontology, ontologyUserAccess);
-				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontology.getId(), ontologyUserAccess.getUser().getUserId());
-				return new ResponseEntity<OntologyUserAccess>(ontologyUserAccessCreated, HttpStatus.CREATED);
+				//OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontology.getId(), ontologyUserAccess.getUser().getUserId());
+				return new ResponseEntity<OntologyUserAccess>(HttpStatus.CREATED);
 			} else {
 				return new ResponseEntity<OntologyUserAccess>(HttpStatus.FORBIDDEN);
 			}
@@ -248,23 +249,10 @@ public class OntologyController {
 	}
 	
 	@GetMapping(value="/authorization/{id}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<String> getAuthorizations(@PathVariable("id") String id){
-		SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept("ontologyUserAccess");
-		FilterProvider filters = new SimpleFilterProvider().addFilter("ontologyUserAccessTypeFilter", filter);
-		
-		ObjectMapper mapper = new ObjectMapper();
-		
+	public @ResponseBody ResponseEntity<List<OntologyUserAccess>> getAuthorizations(@PathVariable("id") String id){
 		Ontology ontology = this.ontologyService.getOntologyById(id);
 		List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
-		String jsonAuthorizations = "";
-		try {
-			jsonAuthorizations = mapper.writer(filters).writeValueAsString(authorizations);
-		} catch (JsonProcessingException e) {
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-		return new ResponseEntity<String>(jsonAuthorizations, HttpStatus.OK);
+		return new ResponseEntity<List<OntologyUserAccess>>(authorizations, HttpStatus.OK);
 	}
 	
-
 }
