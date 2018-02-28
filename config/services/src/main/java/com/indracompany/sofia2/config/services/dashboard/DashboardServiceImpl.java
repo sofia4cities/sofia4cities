@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.indracompany.sofia2.service.dashboard;
+package com.indracompany.sofia2.config.services.dashboard;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +42,7 @@ public class DashboardServiceImpl implements DashboardService{
 		List<Dashboard> dashboards;
 		User user= this.userRepository.findByUserId(userId);
 		
+		if(user.getRole().getName().equals(DashboardServiceImpl.ADMINISTRATOR))
 		{
 			if(description!=null && identification!=null){
 
@@ -63,19 +64,19 @@ public class DashboardServiceImpl implements DashboardService{
 		{
 			if(description!=null && identification!=null){
 
-				dashboards=this.dashboardRepository.findByUserAndIdentificationContainingAndDescriptionContaining(userId ,identification, description);
+				dashboards=this.dashboardRepository.findByUserAndIdentificationContainingAndDescriptionContaining(user ,identification, description);
 
 			}else if(description==null && identification!=null){
 
-				dashboards=this.dashboardRepository.findByUserAndIdentificationContaining(userId,identification);
+				dashboards=this.dashboardRepository.findByUserAndIdentificationContaining(user,identification);
 
 			}else if(description!=null && identification==null){	
 
-				dashboards=this.dashboardRepository.findByUserAndDescriptionContaining(userId,description);
+				dashboards=this.dashboardRepository.findByUserAndDescriptionContaining(user,description);
 
 			}else{
 
-				dashboards=this.dashboardRepository.findByUser(userId);
+				dashboards=this.dashboardRepository.findByUser(user);
 			}
 		}
 		return dashboards;

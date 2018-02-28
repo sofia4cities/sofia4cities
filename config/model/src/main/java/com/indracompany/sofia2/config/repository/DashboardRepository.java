@@ -25,21 +25,22 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.Dashboard;
+import com.indracompany.sofia2.config.model.User;
 
 public interface DashboardRepository extends JpaRepository<Dashboard, String>{
 
 	Dashboard findById(String id);
-	List<Dashboard> findByUser(String user);
+	List<Dashboard> findByUser(User user);
 	List<Dashboard> findByIdentification(String identification);
 	List<Dashboard> findByDescription(String description);
 	List<Dashboard> findByIdentificationContainingAndDescriptionContaining(String identification,String description);
 	List<Dashboard> findByIdentificationContaining(String identification);
 	List<Dashboard> findByDescriptionContaining(String description);
-	List<Dashboard> findByUserAndIdentificationContainingAndDescriptionContaining(String user ,String identification, String description);
-	List<Dashboard> findByUserAndIdentificationContaining(String user,String identification);
-	List<Dashboard> findByUserAndDescriptionContaining(String user,String description);
+	List<Dashboard> findByUserAndIdentificationContainingAndDescriptionContaining(User user ,String identification, String description);
+	List<Dashboard> findByUserAndIdentificationContaining(User user,String identification);
+	List<Dashboard> findByUserAndDescriptionContaining(User user,String description);
 	List<Dashboard> findAllByOrderByIdentificationAsc();
-	List<Dashboard> findByIdentificationAndDescriptionAndUser(String identification,String description,String user);
+	List<Dashboard> findByIdentificationAndDescriptionAndUser(String identification,String description,User user);
 	List<Dashboard> findByIdentificationAndDescription(String identification, String description);
 
 }

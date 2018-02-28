@@ -38,10 +38,9 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
-import com.indracompany.sofia2.config.model.DashboardPage;
 import com.indracompany.sofia2.config.model.Gadget;
-import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.GadgetDatasource;
+import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.GeneratorType;
 import com.indracompany.sofia2.config.model.InstanceGenerator;
 import com.indracompany.sofia2.config.model.Ontology;
@@ -59,9 +58,8 @@ import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
-import com.indracompany.sofia2.config.repository.DashboardPageRepository;
-import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
+import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.GeneratorTypeRepository;
 import com.indracompany.sofia2.config.repository.InstanceGeneratorRepository;
@@ -101,8 +99,6 @@ public class InitConfigDB {
 	ConsoleMenuRepository consoleMenuRepository;
 	@Autowired
 	DashboardRepository dashboardRepository;
-	@Autowired
-	DashboardPageRepository dashboardPageRepository;
 	@Autowired
 	GadgetMeasureRepository gadgetMeasureRepository;
 	@Autowired
@@ -178,8 +174,6 @@ public class InitConfigDB {
 		//
 		init_Dashboard();
 		log.info("OK init_Dashboard");
-		init_DashboardPage();
-		log.info("OK init_DashboardPage");
 		init_Gadget();
 		log.info("OK init_Gadget");
 		init_GadgetDatasource();
@@ -407,7 +401,6 @@ public class InitConfigDB {
 			Dashboard dashboard = new Dashboard();
 			dashboard.setIdentification("TempDashboard");
 			dashboard.setDescription("Dashboard show temperatures around the country");
-			//dashboard.setUser("518e04c4-898f-4c97-8c0f-5092276078b6");
 			dashboard.setJsoni18n("");
 			dashboard.setCustomcss("");
 			dashboard.setCustomjs("");
@@ -428,7 +421,7 @@ public class InitConfigDB {
 		if (userAdministrator == null)
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
 		return userAdministrator;
-	}
+	}  
 	
 	private Token getTokenAdministrator() {
 		if (tokenAdministrator==null) tokenAdministrator=this.tokenRepository.findByToken("acbca01b-da32-469e-945d-05bb6cd1552e");
@@ -437,7 +430,7 @@ public class InitConfigDB {
 	
 
 	private Ontology getOntologyAdministrator() {
-		if (ontologyAdministrator==null) ontologyAdministrator=this.ontologyRepository.findByIdentification("Ontology Master");
+		if (ontologyAdministrator==null) ontologyAdministrator=this.ontologyRepository.findByIdentification("OntologyMaster");
 		return ontologyAdministrator;
 	}
 	private GadgetDatasource getGadgetDatasourceAdministrator() {
@@ -449,30 +442,6 @@ public class InitConfigDB {
 		if (gadgetAdministrator==null) gadgetAdministrator=this.gadgetRepository.findById("c41a9d92-d08a-4e94-baf8-3679ff5cd347");
 		return gadgetAdministrator;
 		
-	}
-
-	public void init_DashboardPage() {
-
-		log.info("init DashboardPage");
-		List<DashboardPage> dashboardPages = this.dashboardPageRepository.findAll();
-		if (dashboardPages.isEmpty()) {
-			log.info("No dashboardsPages...adding");
-			DashboardPage dashboardpage = new DashboardPage();
-			//ID y fechas se generan "automaticamente". No se introducen a mano.
-			//Las tengo q inicializar?
-			//dashboardpage.setId("1");
-			//Date date = new Date();
-		    //dashboardpage.setCreatedAt(date);
-			//dashboardpage.setUpdatedAt(date);
-			dashboardpage.setIdentification("Temp Page");
-			dashboardpage.setDescription("{}");
-			dashboardpage.setModel("{}");
-			dashboardpage.setPosition(1);
-					
-			dashboardPageRepository.save(dashboardpage);
-
-		}
-
 	}
 
 	
@@ -662,14 +631,7 @@ public class InitConfigDB {
 
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
-		/*
-		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
-		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
-		 * user=new OntologyUserAccess(); user.setUser("6");
-		 * user.setOntology(ontologyRepository.findAll().get(0));
-		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
-		 * this.ontologyUserAccessRepository.save(user); }
-		 */
+		
 	}
 
 	public void init_OntologyUserAccessType() {
@@ -813,6 +775,8 @@ public class InitConfigDB {
 		}
 
 	}
+	
+	
 
 	public void init_User() {
 		log.info("init UserCDB");
@@ -897,7 +861,7 @@ public class InitConfigDB {
 			}
 		}
 	}
-
+	
 	/*
 	 * public void init_Template() { log.info("init template"); List<Template>
 	 * templates= this.templateRepository.findAll();

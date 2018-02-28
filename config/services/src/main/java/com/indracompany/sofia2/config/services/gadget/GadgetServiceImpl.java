@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.gadget;
+package com.indracompany.sofia2.config.services.gadget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ public class GadgetServiceImpl implements GadgetService {
 		List<Gadget> gadgets;
 		User user= this.userRepository.findByUserId(userId);
 		
-		if(user.getRoleTypeId().getName().equals(GadgetServiceImpl.ADMINISTRATOR))
+		if(user.getRole().getName().equals(GadgetServiceImpl.ADMINISTRATOR))
 		{
 			if(description!=null && identification!=null){
 

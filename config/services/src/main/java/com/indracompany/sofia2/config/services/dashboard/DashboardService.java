@@ -11,11 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.service.dashboard;
+package com.indracompany.sofia2.config.services.dashboard;
 
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.Dashboard;
+import com.indracompany.sofia2.config.model.User;
 
 public interface DashboardService {
 
