@@ -214,27 +214,24 @@ public class OntologyController {
 	}
 	
 	
-	@PostMapping(value="/authorization", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<OntologyUserAccess> createAuthorization(
-			Model model,
-			@RequestBody OntologyUserAccess ontologyUserAccess,
-			BindingResult bindingResult,
-			RedirectAttributes redirect) {
+	@PostMapping(value="/authorization")
+	public ResponseEntity<OntologyUserAccess> createAuthorization(
+			@RequestParam String accesstype, 
+			@RequestParam String ontology,
+			@RequestParam String user
+			) {
 		
-		if(bindingResult.hasErrors()) {
-			log.debug("Some ontologyUserAccess properties missing");
-			utils.addRedirectMessage("ontology.validation.error", redirect);
-			return new ResponseEntity<OntologyUserAccess>(HttpStatus.BAD_REQUEST);
-		} else {
-			Ontology ontology = ontologyService.getOntologyById(ontologyUserAccess.getOntology().getId());
-			if (ontology.getUser().getUserId().equals(this.utils.getUserId())) {
-				ontologyService.createUserAccess(ontology, ontologyUserAccess);
+			
+			Ontology ontologyDB = ontologyService.getOntologyById(ontology);
+			
+			if (ontologyDB.getUser().getUserId().equals(this.utils.getUserId())) {
+				ontologyService.createUserAccess(ontologyDB, user, accesstype);
 				//OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontology.getId(), ontologyUserAccess.getUser().getUserId());
 				return new ResponseEntity<OntologyUserAccess>(HttpStatus.CREATED);
 			} else {
 				return new ResponseEntity<OntologyUserAccess>(HttpStatus.FORBIDDEN);
 			}
-		}
+		
 	}
 	
 	@PostMapping(value="/authorization/delete")
@@ -258,4 +255,8 @@ public class OntologyController {
 		return new ResponseEntity<List<OntologyUserAccess>>(authorizations, HttpStatus.OK);
 	}
 	
+	@PostMapping(value="/algo")
+	public ResponseEntity<String> createAuthorization(@RequestParam String type ) {
+		return new ResponseEntity<String>("Hola" + type, HttpStatus.OK);
+	}
 }

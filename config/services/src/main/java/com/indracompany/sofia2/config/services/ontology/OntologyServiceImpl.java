@@ -281,14 +281,15 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public void createUserAccess(Ontology ontology, OntologyUserAccess ontologyUserAccess) {
+	public void createUserAccess(Ontology ontology, String userId, String typeName) {
 		
 		Ontology managedOntology = ontologyRepository.findById(ontology.getId());
-		List<OntologyUserAccessType> managedTypes = ontologyUserAccessTypeRepository.findByName(ontologyUserAccess.getOntologyUserAccessType().getName());
+		List<OntologyUserAccessType> managedTypes = ontologyUserAccessTypeRepository.findByName(typeName);
 		OntologyUserAccessType managedType = managedTypes != null && managedTypes.size() > 0 ? managedTypes.get(0) : null;
-		User managedUser = this.userService.getUser(ontologyUserAccess.getUser().getUserId());
+		User managedUser = this.userService.getUser(userId);
 		
 		if (managedOntology != null && managedType != null && managedUser != null) {
+			OntologyUserAccess ontologyUserAccess = new OntologyUserAccess();
 			ontologyUserAccess.setOntology(managedOntology);
 			ontologyUserAccess.setUser(managedUser);
 			ontologyUserAccess.setOntologyUserAccessType(managedType);
