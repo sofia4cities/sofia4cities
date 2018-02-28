@@ -15742,7 +15742,7 @@ body.stop-scrolling {
     transform: translateY(-120%); }
 
 .mt-element-step .step-line .mt-step-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 400;
   position: relative; }
   .mt-element-step .step-line .mt-step-title:after {

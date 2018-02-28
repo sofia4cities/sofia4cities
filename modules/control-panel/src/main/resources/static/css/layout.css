@@ -79,7 +79,7 @@ Page Header
     display: block;
     width: 235px;
     height: 50px;
-    padding-left: 20px;
+    padding-left: 8px;
     padding-right: 20px; }
     .page-sidebar-closed.page-sidebar-closed-hide-logo .page-header.navbar .page-logo {
       padding: 0; }
