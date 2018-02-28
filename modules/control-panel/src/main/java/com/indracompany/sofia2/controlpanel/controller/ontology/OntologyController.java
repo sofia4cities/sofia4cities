@@ -218,13 +218,12 @@ public class OntologyController {
 			@RequestParam String user
 			) {
 		
-			
 			Ontology ontologyDB = ontologyService.getOntologyById(ontology);
 			
 			if (ontologyDB.getUser().getUserId().equals(this.utils.getUserId())) {
 				ontologyService.createUserAccess(ontologyDB, user, accesstype);
-				//OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontology.getId(), ontologyUserAccess.getUser().getUserId());
-				return new ResponseEntity<OntologyUserAccess>(HttpStatus.CREATED);
+				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyDB.getId(), user);
+				return new ResponseEntity<OntologyUserAccess>(ontologyUserAccessCreated, HttpStatus.CREATED);
 			} else {
 				return new ResponseEntity<OntologyUserAccess>(HttpStatus.FORBIDDEN);
 			}
