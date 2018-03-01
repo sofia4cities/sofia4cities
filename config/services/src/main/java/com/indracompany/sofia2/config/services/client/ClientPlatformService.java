@@ -22,11 +22,9 @@ import com.indracompany.sofia2.config.model.User;
 
 public interface ClientPlatformService {
 
-	public Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform);
+	Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform);
 
-	public ClientPlatform getByIdentification(String identification);
+	ClientPlatform getByIdentification(String identification);
 
-	public List<ClientPlatform> getAllClientPlatforms();
-
-	public List<ClientPlatform> getclientPlatformsByUser(User user);
+	boolean haveAuthorityOverOntology(ClientPlatform clientPlatform, Ontology ontology);
 }

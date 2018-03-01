@@ -192,22 +192,10 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	 
-	@Override
-	public boolean emailExists(User user) {
-		 	
-		if ( (this.userRepository.findByEmail(user.getEmail())).size() != 0)
-			return true;
-		else
-			return false;
-	}
-	 
 	@Override
 	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);
 	}
-
-}
 
 	@Override
 	public User getUserByIdentification(String identification) {

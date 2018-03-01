@@ -1,9 +1,20 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.plugin.iotbroker.security.impl.reference;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,11 +24,9 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.Token;
-import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.token.TokenService;
@@ -37,8 +46,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	UserService userService;
 	@Autowired
 	OntologyService ontologyService;
-	@Autowired
-	OntologyUserAccessRepository ontologyUserAccessRepository;
+
 
 
 	ConcurrentHashMap<String, IoTSession> sessionList = new ConcurrentHashMap<>(200);
@@ -49,7 +57,9 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		if(retrivedToken == null) {
 			return Optional.empty();
 		}
-		if(clientPlatform.equals(retrivedToken.getClientPlatform().getIdentification())) {
+
+		final ClientPlatform clientPlatformDB = retrivedToken.getClientPlatform();
+		if(clientPlatform.equals(clientPlatformDB.getIdentification())) {
 			final IoTSession session = new IoTSession();
 			session.setClientPlatform(clientPlatform);
 			//TODO: What if the instance it is not provied
@@ -58,6 +68,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 			session.setLastAccess(ZonedDateTime.now());
 			session.setSessionKey(UUID.randomUUID().toString());
 			session.setToken(token);
+			session.setClientPlatformID(clientPlatformDB.getId());
 
 			session.setUserID(retrivedToken.getClientPlatform().getUser().getUserId());
 			session.setUserName(retrivedToken.getClientPlatform().getUser().getFullName());
@@ -103,25 +114,15 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey)
 			throws AuthorizationException {
 
-		final boolean ret = false;
 		if(!checkSessionKeyActive(sessionKey)) {
 			return false;
 		}
 
 		final IoTSession session = sessionList.get(sessionKey);
-		final User userDB = userService.getUserByIdentification(session.getUserID());
 		final Ontology ontologyDB = ontologyService.getOntologyByIdentification(ontology);
+		final ClientPlatform clientPlatformDB = clientPlatformService.getByIdentification(session.getClientPlatform());
 
-		final List<OntologyUserAccess> access = ontologyUserAccessRepository.findByOntologyIdAndUser(ontologyDB, userDB);
-		final Iterator<OntologyUserAccess> it = access.iterator();
-		while(it.hasNext()) {
-			final OntologyUserAccess aa = it.next();
-			aa.getOntologyUserAccessType();
-			//TODO: Check permissions
-		}
-
-		return ret;
-
+		return clientPlatformService.haveAuthorityOverOntology(clientPlatformDB, ontologyDB);
 	}
 
 	@Override
