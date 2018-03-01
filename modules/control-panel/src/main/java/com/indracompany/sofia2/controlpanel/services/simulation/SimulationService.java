@@ -6,5 +6,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface SimulationService {
 
-	void simulate(String json) throws JsonProcessingException, IOException;
+	void scheduleSimulation(String identification, int interval, String userId, String json);
+
+	String getDeviceSimulationJson(String clientPlatform, String token, String ontology, String jsonMap)
+			throws JsonProcessingException, IOException;
 }

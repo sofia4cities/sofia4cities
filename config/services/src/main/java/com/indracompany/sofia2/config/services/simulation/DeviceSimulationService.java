@@ -17,6 +17,6 @@ public interface DeviceSimulationService {
 	List<String> getSimulatorTypes();
 	List<DeviceSimulation> getAllSimulators();
 	DeviceSimulation getSimulatorByIdentification(String identification);
-	String getDeviceSimulationJson(int interval,String clientPlatform, String token, String ontology, String jsonMap) throws JsonProcessingException,IOException;
-	void createSimulation(String identification, String json);
+	DeviceSimulation createSimulation(String identification, int interval, String userId, String json);
+	void save(DeviceSimulation simulation);
 }

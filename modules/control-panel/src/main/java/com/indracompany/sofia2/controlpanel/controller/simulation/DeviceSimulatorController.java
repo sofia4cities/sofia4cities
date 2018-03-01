@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.config.model.DeviceSimulation;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.simulation.DeviceSimulationService;
+import com.indracompany.sofia2.controlpanel.services.simulation.SimulationService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 @Controller
@@ -29,14 +30,16 @@ public class DeviceSimulatorController {
 	private OntologyService ontologyService;
 	@Autowired
 	private AppWebUtils utils;
+	@Autowired
+	private SimulationService simulationService;
 
-	@GetMapping("simulate")
+	@GetMapping("create")
 	public String simulate(Model model) {
 		List<String> clients = this.deviceSimulationService.getClientsForUser(this.utils.getUserId());
 		List<String> simulators = this.deviceSimulationService.getSimulatorTypes();
 		model.addAttribute("platformClients", clients);
 		model.addAttribute("simulators", simulators);
-		model.addAttribute("simulator", new DeviceSimulation());
+		model.addAttribute("simulation", new DeviceSimulation());
 		return "/simulator/create";
 	}
 
@@ -44,9 +47,9 @@ public class DeviceSimulatorController {
 	public @ResponseBody String debug(Model model, @RequestParam String identification, @RequestParam String jsonMap,
 			@RequestParam String ontology, @RequestParam String clientPlatform, @RequestParam String token,
 			@RequestParam int interval) throws JsonProcessingException, IOException {
-		
-		this.deviceSimulationService.createSimulation(identification,this.deviceSimulationService.getDeviceSimulationJson(interval, clientPlatform, token,
-				ontology, jsonMap));
+
+		this.simulationService.scheduleSimulation(identification, interval, utils.getUserId(),
+				this.simulationService.getDeviceSimulationJson(clientPlatform, token, ontology, jsonMap));
 		return "{\"message\":\"ok\"}";
 	}
 

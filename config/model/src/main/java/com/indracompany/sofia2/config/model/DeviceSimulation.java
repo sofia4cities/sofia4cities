@@ -5,12 +5,16 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import com.fasterxml.jackson.annotation.JsonRawValue;
@@ -33,6 +37,13 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@NotNull
 	@Setter
 	private String identification;
+	
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@Getter
+	@Setter
+	private User user;
 	
 	@Column(name = "JSON", nullable = false)
 	@NotNull
@@ -58,5 +69,16 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String cron;
+	
+	@Column(name = "ACTIVE")
+	@Getter
+	@Setter
+	@NotNull
+	private boolean active;
+	
+	@Column(name = "JOB_NAME")
+	@Getter
+	@Setter
+	private String jobName;
 	
 }

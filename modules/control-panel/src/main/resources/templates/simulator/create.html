@@ -63,10 +63,10 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/devicesimulator/list}"> <span th:text="#{simulator.breadcrumb.prev}">List</span></a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/devicesimulation/list}"> <span th:text="#{simulation.breadcrumb.prev}">List</span></a><i class="fa fa-circle"></i></li>
 						<li>
-							<span th:if="${simulator.id} == null" th:text="#{simulator.breadcrumb.create}">Create</span>
-							<span th:if="${simulator.id} != null" th:text="#{simulator.breadcrumb.update}">Update</span>
+							<span th:if="${simulation.id} == null" th:text="#{simulation.breadcrumb.create}">Create</span>
+							<span th:if="${simulation.id} != null" th:text="#{simulation.breadcrumb.update}">Update</span>
 						</li>
 					</ul>						
 				</div>
@@ -84,8 +84,8 @@
 								<div class="caption">
 									<i class="la la-users font-grey-gallery"></i>
 									<!-- FORM TITLE -->
-									<span th:if="${simulator.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{simulator.template.create} + ':'"> New</span>
-									<span th:if="${simulator.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{simulator.template.update}"> Update</span>
+									<span th:if="${simulation.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{simulation.template.create} + ':'"> New</span>
+									<span th:if="${simulation.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{simulation.template.update}"> Update</span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -93,8 +93,8 @@
 								</div>
 								<div class="actions">
 									<!-- ACTION INDICATORs -->									
-									<span th:if="${simulator?.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
-									<span th:if="${simulator?.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
+									<span th:if="${simulation?.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${simulation?.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>									
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
@@ -112,13 +112,13 @@
 										</div>								
 									</div>
 									<div class="col-md-12">										
-										<form role="form" id="simulator_create_form" th:object="${simulator}"  method="post" th:action="${simulator.id} == null ? @{/devicesimulation/create} :   " class="form">
+										<form role="form" id="simulation_create_form" th:object="${simulation}"  method="post" class="form">
 											<!-- FORM ACTIONS FOR INSERT-->
-											<input th:if="${simulator.id} == null" type="hidden" name="action" th:value="@{/devicesimulation/create}"/>
+											<input th:if="${simulation.id} == null" type="hidden" name="action" th:value="@{/devicesimulation/create}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->											
-											<input th:if="${simulator.id} != null" type="hidden" name="action" th:value="@{/devicesimulation}"/>
-											<input th:if="${simulator.id} != null" type="hidden" name="_method" value="PUT"/>											
+											<input th:if="${simulation.id} != null" type="hidden" name="action" th:value="@{/devicesimulation}"/>
+											<input th:if="${simulation.id} != null" type="hidden" name="_method" value="PUT"/>											
 											
 											<div class="form-body">
 												
@@ -126,14 +126,14 @@
 												<div class="row" id="row-not-new">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{simulator.identification} + ':'">Identification</label>
-															<input th:required="true" type="text" th:placeholder="#{simulator.identification}" class="form-control" name="identification"/>	
+															<label class="control-label" th:text="#{simulation.identification} + ':'">Identification</label>
+															<input th:required="true" type="text" th:placeholder="#{simulation.identification}" class="form-control" name="identification"/>	
 														</div>
 													</div>													
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{simulator.clientplatform} + ':'">Platform Clients</label>
-															<select th:required="true" th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="selectpicker form-control" data-live-search="true" onload="getTokensAndOntologies()" onchange="getTokensAndOntologies()" th:title="#{simulator.clients}" >
+															<label class="control-label" th:text="#{simulation.clientplatform} + ':'">Platform Clients</label>
+															<select th:required="true" th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="selectpicker form-control" data-live-search="true" onload="getTokensAndOntologies()" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
 																<option th:each=" platformClient : ${platformClients}" th:value="${platformClient}" th:text="${platformClient}"/>																
 															</select>										
 															
@@ -143,8 +143,8 @@
 													<div th:fragment="ontologiesAndTokens" >
 														<div class="col-md-3 col-sm-6 col-xs-12">
 															<div class="form-group">
-																<label class="control-label" th:text="#{simulator.select.tokens} + ':'">Tokens</label>
-																<select th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulator.tokens}"  >
+																<label class="control-label" th:text="#{simulation.select.tokens} + ':'">Tokens</label>
+																<select th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulation.tokens}"  >
 																<option th:each="token : ${tokens}" th:value="${token}" th:text="${token}"/>
 																</select>									
 																									
@@ -152,8 +152,8 @@
 														</div>
 														<div class="col-md-3 col-sm-6 col-xs-12">
 															<div class="form-group">
-																<label class="control-label" th:text="#{simulator.select.ontologies} + ':'">Ontologies</label>
-																<select th:required="true" th:name="ontology" th:title="#{simulator.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
+																<label class="control-label" th:text="#{simulation.select.ontologies} + ':'">Ontologies</label>
+																<select th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
 																<option th:each="ontology : ${ontologies}" th:value="${ontology}" th:text="${ontology}"/>
 																</select>									
 																										
@@ -166,8 +166,8 @@
 												<div class="row" id="interval" style="display:none">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" th:text="#{simulator.interval} + ':'">Interval</label>
-															<input th:required="true" type="number" th:placeholder="#{simulator.interval.placeholder}" class="form-control" name="interval"/>
+															<label class="control-label" th:text="#{simulation.interval} + ':'">Interval</label>
+															<input th:required="true" type="number" th:placeholder="#{simulation.interval.placeholder}" class="form-control" name="interval"/>
 														</div>
 													</div>
 												</div>
@@ -179,7 +179,7 @@
 														<div class="row"  th:fragment="ontologyFields" >
 															<div class="col-md-3 col-sm-6 col-xs-12">
 																<div class="form-group">
-																	<label class="control-label" th:text="#{simulator.fields} + ':'">fields</label>
+																	<label class="control-label" th:text="#{simulation.fields} + ':'">fields</label>
 																</div>
 															</div>									
 														</div>
@@ -191,8 +191,8 @@
 															<div class="col-md-2 col-sm-6 col-xs-12">
 																<div class="form-group">
 																	<label class="control-label" th:text="${field.key} + ':'">fields</label>
-																	<select th:id="${field.key}" th:name="fields" th:title="#{simulator.choose}" data-width="100%" data-live-search="true" class="select form-control" th:onchange="'generateSimulatorFunctionDiv(\''+${field.key}+'\')'" >
-																		<option th:text="#{simulator.choose}"/>
+																	<select th:id="${field.key}" th:name="fields" th:title="#{simulation.choose}" data-width="100%" data-live-search="true" class="select form-control" th:onchange="'generateSimulatorFunctionDiv(\''+${field.key}+'\')'" >
+																		<option th:text="#{simulation.choose}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'string') AND (simulator eq 'NULL' OR #strings.contains(simulator,'STRING')))}" th:value="${simulator}" th:text="${simulator}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'number') AND (simulator == 'NULL' OR #strings.contains(simulator,'NUMBER')))}" th:value="${simulator}" th:text="${simulator}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'date') AND (simulator == 'NULL' OR #strings.contains(simulator,'DATE')))}" th:value="${simulator}" th:text="${simulator}"/>
@@ -215,9 +215,9 @@
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE -->
-												<button th:if="${simulator.id} == null" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" onclick="submitForm('simulator_create_form')"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+												<button th:if="${simulation.id} == null" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" onclick="submitForm('simulation_create_form')"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													<!-- UPDATE -->
-													<button th:if="${simulator.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													<button th:if="${simulation.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 
 													<!-- REMOVE -->
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'ScheduledSearchController.deletetwitterListening(\'' + ${twitterListening?.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
@@ -229,7 +229,7 @@
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulator/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>
 											<input type="hidden" name="jsonMap" id="jsonMap"/>											
@@ -256,76 +256,76 @@
 	<div id="RANDOM_INTEGER" style="display: none">
 		<div class="col-md-2 col-sm-3 col-xs-6" >
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.integer.begin} + ':'"> Begin</label>
-				<input name="from" id="integerBegin" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.integer.begin}"/>		
+				<label class="control-label" th:text="#{simulation.integer.begin} + ':'"> Begin</label>
+				<input name="from" id="integerBegin" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.integer.begin}"/>		
 			</div>
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.integer.begin} + ':'"> End</label>
-				<input name="to" id="integerEnd" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.integer.end}"/>			
+				<label class="control-label" th:text="#{simulation.integer.begin} + ':'"> End</label>
+				<input name="to" id="integerEnd" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.integer.end}"/>			
 			</div>
 		</div>
 	</div>
 	<div id="RANDOM_NUMBER" style="display: none">
 		<div class="col-md-2 col-sm-3 col-xs-6" >
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.number.begin} + ':'"> Begin</label>
-				<input name="from" id="numberBegin" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.number.begin}"/>		
+				<label class="control-label" th:text="#{simulation.number.begin} + ':'"> Begin</label>
+				<input name="from" id="numberBegin" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.number.begin}"/>		
 			</div>
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.number.end} + ':'"> End</label>
-				<input name="to" id="numberEnd" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.number.end}"/>			
+				<label class="control-label" th:text="#{simulation.number.end} + ':'"> End</label>
+				<input name="to" id="numberEnd" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.number.end}"/>			
 			</div>
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.number.precision} + ':'"> Precision</label>
-				<input name="precision" id="numberPrecision" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.number.precision}"/>			
+				<label class="control-label" th:text="#{simulation.number.precision} + ':'"> Precision</label>
+				<input name="precision" id="numberPrecision" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.number.precision}"/>			
 			</div>
 		</div>
 	</div>
 	<div id="FIXED_NUMBER" style="display: none">
 		<div class="col-md-2 col-sm-3 col-xs-6" >
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.number.fixed} + ':'"> Value </label>
-				<input name="value" id="numberValue" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.number.fixed}"/>		
+				<label class="control-label" th:text="#{simulation.number.fixed} + ':'"> Value </label>
+				<input name="value" id="numberValue" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.number.fixed}"/>		
 			</div>		
 		</div>
 	</div>
 	<div id="FIXED_INTEGER" style="display: none">
 		<div class="col-md-2 col-sm-3 col-xs-6" >
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.integer.fixed} + ':'"> Value </label>
-				<input name="value" id="integerValue" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.integer.fixed}"/>		
+				<label class="control-label" th:text="#{simulation.integer.fixed} + ':'"> Value </label>
+				<input name="value" id="integerValue" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.integer.fixed}"/>		
 			</div>		
 		</div>
 	</div>
 	<div id="COSINE_NUMBER" style="display: none">
 		<div class="col-md-2 col-sm-3 col-xs-6" >
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.cosine.base} + ':'"> Base </label>
-				<input name="base" id="cosineBase" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.cosine.base}"/>		
+				<label class="control-label" th:text="#{simulation.cosine.base} + ':'"> Base </label>
+				<input name="base" id="cosineBase" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.base}"/>		
 			</div>
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.cosine.multiplier} + ':'"> Multiplier </label>
-				<input name="multiplier" id="cosineMultiplier" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.cosine.multiplier}"/>			
+				<label class="control-label" th:text="#{simulation.cosine.multiplier} + ':'"> Multiplier </label>
+				<input name="multiplier" id="cosineMultiplier" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.multiplier}"/>			
 			</div>
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.cosine.steps} + ':'"> Steps </label>
-				<input name="steps" id="cosineSteps" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.cosine.steps}"/>			
+				<label class="control-label" th:text="#{simulation.cosine.steps} + ':'"> Steps </label>
+				<input name="steps" id="cosineSteps" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.steps}"/>			
 			</div>
 		</div>
 	</div>
 	<div id="SINE_NUMBER" style="display: none">
 		<div class="col-md-2 col-sm-3 col-xs-6" >
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.sine.base} + ':'"> Base </label>
-				<input name="base" id="sineBase" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.sine.base}"/>		
+				<label class="control-label" th:text="#{simulation.sine.base} + ':'"> Base </label>
+				<input name="base" id="sineBase" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.base}"/>		
 			</div>
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.sine.multiplier} + ':'"> Multiplier </label>
-				<input name="multiplier" id="sineMultiplier" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.sine.multiplier}"/>			
+				<label class="control-label" th:text="#{simulation.sine.multiplier} + ':'"> Multiplier </label>
+				<input name="multiplier" id="sineMultiplier" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.multiplier}"/>			
 			</div>
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.sine.steps} + ':'"> Steps </label>
-				<input name="steps" id="sineSteps" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulator.sine.steps}"/>
+				<label class="control-label" th:text="#{simulation.sine.steps} + ':'"> Steps </label>
+				<input name="steps" id="sineSteps" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.steps}"/>
 			</div>
 		</div>
 	</div>
@@ -334,16 +334,16 @@
 	<div id="RANDOM_STRING" style="display: none"> 
 		<div  class="col-md-3 col-sm-3 col-xs-6" >	
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.string.random} + ':'"> Begin</label>
-				<input name="list" id="stringList" type="text" maxlength="256" class="form-control no-remove" th:placeholder="#{simulator.string.list}"/>		
+				<label class="control-label" th:text="#{simulation.string.random} + ':'"> Begin</label>
+				<input name="list" id="stringList" type="text" maxlength="256" class="form-control no-remove" th:placeholder="#{simulation.string.list}"/>		
 			</div>
 		</div>
 	</div>
 	<div id="FIXED_STRING" style="display: none">
 		<div class="col-md-3 col-sm-3 col-xs-6" >
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.string.fixed} + ':'"> Begin</label>
-				<input name="value" id="stringValue" type="text" maxlength="256" class="form-control no-remove" th:placeholder="#{simulator.string.fixed}"/>		
+				<label class="control-label" th:text="#{simulation.string.fixed} + ':'"> Begin</label>
+				<input name="value" id="stringValue" type="text" maxlength="256" class="form-control no-remove" th:placeholder="#{simulation.string.fixed}"/>		
 			</div>
 		</div>
 	</div>
@@ -351,20 +351,20 @@
 	<div id="RANDOM_DATE" style="display: none"> 
 		<div  class="col-md-3 col-sm-3 col-xs-6" >	
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.date.from} + ':'"> Begin</label>
-				<input name="from" id="dateFrom" type="date" class="form-control no-remove" th:placeholder="#{simulator.date.to}"/>	
+				<label class="control-label" th:text="#{simulation.date.from} + ':'"> Begin</label>
+				<input name="from" id="dateFrom" type="date" class="form-control no-remove" th:placeholder="#{simulation.date.to}"/>	
 			</div>
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.date.to} + ':'"> End</label>
-				<input name="to" id="dateTo" type="date" class="form-control no-remove" th:placeholder="#{simulator.date.to}"/>	
+				<label class="control-label" th:text="#{simulation.date.to} + ':'"> End</label>
+				<input name="to" id="dateTo" type="date" class="form-control no-remove" th:placeholder="#{simulation.date.to}"/>	
 			</div>
 		</div>
 	</div>
 	<div id="FIXED_DATE" style="display: none">
 		<div class="col-md-3 col-sm-3 col-xs-6" >
 			<div class="form-group">
-				<label class="control-label" th:text="#{simulator.string.fixed} + ':'"> Value</label>
-				<input name="value" type="date" class="form-control no-remove" th:placeholder="#{simulator.string.fixed}"/>
+				<label class="control-label" th:text="#{simulation.string.fixed} + ':'"> Value</label>
+				<input name="value" type="date" class="form-control no-remove" th:placeholder="#{simulation.string.fixed}"/>
 			</div>
 		</div>
 	</div>
@@ -404,7 +404,7 @@
 
 	};
 
-	var defaultOption=[[#{simulator.choose}]];
+	var defaultOption=[[#{simulation.choose}]];
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
 	

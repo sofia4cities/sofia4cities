@@ -100,25 +100,30 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 	}
 
 	@Override
-	public String getDeviceSimulationJson(int interval, String clientPlatform, String token, String ontology,
-			String jsonMap) throws JsonProcessingException, IOException {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode rootNode = mapper.createObjectNode();
-		((ObjectNode) rootNode).put("interval", interval);
-		((ObjectNode) rootNode).put("clientPlatform", clientPlatform);
-		((ObjectNode) rootNode).put("token", token);
-		((ObjectNode) rootNode).put("ontology", ontology);
-		((ObjectNode) rootNode).set("fields", mapper.readTree(jsonMap));
-		return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
-	}
+	public DeviceSimulation createSimulation(String identification, int interval, String userId, String json) {
 
-	@Override
-	public void createSimulation(String identification, String json) {
-		
 		DeviceSimulation simulation = new DeviceSimulation();
 		simulation.setIdentification(identification);
 		simulation.setJson(json);
+		int minutes = 0;
+		int seconds = interval;
+		if (interval >= 0) {
+			for (int i = 0; i < (interval / 60); i++) {
+				minutes++;
+				seconds = seconds - 60;
+			}
+		}
+		if (minutes == 0)
+			simulation.setCron("0/" + String.valueOf(seconds) + "* * ? * * *");
+		else
+			simulation.setCron("0/" + String.valueOf(seconds) + " 0/" + String.valueOf(minutes) + "* * ? * * *");
+		simulation.setActive(false);
+		return this.deviceSimulationRepository.save(simulation);
+
+	}
+
+	@Override
+	public void save(DeviceSimulation simulation) {		
 		this.deviceSimulationRepository.save(simulation);
-		
 	}
 }
