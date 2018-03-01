@@ -251,6 +251,6 @@ public class OntologyController {
 	}
 	
 	private boolean isOwnerOrAdministrator(String userId) {
-		return userId.equals(this.utils.getUserId()) || utils.isAdministrator()
+		return userId.equals(this.utils.getUserId()) || utils.isAdministrator();
 	}
 }
