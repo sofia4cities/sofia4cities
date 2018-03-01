@@ -56,7 +56,7 @@
 //
 //@RunWith(SpringRunner.class)
 //@SpringBootTest(classes = StreamingTwitterApp.class)
-//@ContextConfiguration(classes= StreamingTwitterApp.class) 
+//@ContextConfiguration(classes= StreamingTwitterApp.class)
 //public class SibServiceIntegrationTest {
 //
 //	@Autowired

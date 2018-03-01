@@ -16,16 +16,12 @@ package com.indracompany.sofia2.streaming.twitter.sib;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
 public interface SibService {
 
-	String getSessionKey(String token) throws SSAPComplianceException, AuthenticationException;
+	//	String getSessionKey(String token) throws SSAPComplianceException, AuthenticationException;
 	void inserOntologyInstanceToMongo(String instance, String ontology, String clientPlatform, String clientPlatformInstance, String user) throws JsonProcessingException, IOException;
-	SSAPMessage<SSAPBodyReturnMessage> disconnect(String sessionKey);
-	boolean insertOntologyInstance(String instance, String sessionKey,
-			String ontology, String clientPlatform, String clientPlatformInstance) throws JsonProcessingException, IOException;
+	//	SSAPMessage<SSAPBodyReturnMessage> disconnect(String sessionKey);
+	//	boolean insertOntologyInstance(String instance, String sessionKey,
+	//			String ontology, String clientPlatform, String clientPlatformInstance) throws JsonProcessingException, IOException;
 }

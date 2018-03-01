@@ -11,33 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.service.app.model;
+package com.indracompany.sofia2.iotbroker.plugable.interfaces.security;
 
-import java.io.Serializable;
+import java.util.Map;
 
-import lombok.Getter;
-import lombok.Setter;
+public interface IoTSessionStore extends Map<String, IoTSession> {
 
-
-public class NotificationCompositeModel implements Serializable{
-
-	@Getter
-	@Setter
-	NotificationModel notificationModel;
-	
-	@Getter
-	@Setter
-	OperationResultModel operationResultModel;
-
-	
-	@Getter
-	@Setter
-	private String notificationEntityId;
-	
-	@Getter
-	@Setter
-	private String url;
-	
-
-	
 }

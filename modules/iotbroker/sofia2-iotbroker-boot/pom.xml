@@ -52,7 +52,12 @@
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
-		</dependency>	
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.indracompany.sofia2</groupId> -->
+<!-- 			<artifactId>sofia2-router-core</artifactId> -->
+<!-- 			<version>${sofia2.version}</version> -->
+<!-- 		</dependency>	 -->
 		<dependency>
     		<groupId>com.github.javafaker</groupId>
     		<artifactId>javafaker</artifactId>
