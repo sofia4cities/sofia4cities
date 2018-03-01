@@ -60,41 +60,48 @@ public class QueryToolController {
 		}
 		model.addAttribute("ontologies", ontologies);
 
-		return "/querytool/show";
+		return "querytool/show";
 
 	}
 
 	@PostMapping("query")
 	public String runQuery(Model model, @RequestParam String queryType, @RequestParam String query,
-			@RequestParam String ontologyIdentification) throws JsonProcessingException, DBPersistenceException {
-		boolean hasUserPermission;
-		if (this.utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString()))
-			hasUserPermission = true;
-		else
-			hasUserPermission = ontologyService.hasUserPermissionForQuery(utils.getUserId(), ontologyIdentification);
-		if (hasUserPermission) {
-			if (queryType.toUpperCase().equals(QUERY_SQL)) {
-				String queryResult = queryToolService.querySQLAsJson(ontologyIdentification, query, 0);
-				model.addAttribute("queryResult", queryResult);
-				return "/querytool/show :: query";
+			@RequestParam String ontologyIdentification) throws JsonProcessingException {
+		boolean hasUserPermission = false;
+		String queryResult = null;
+		try {
+			if (this.utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString()))
+				hasUserPermission = true;
+			else
+				hasUserPermission = ontologyService.hasUserPermissionForQuery(utils.getUserId(),
+						ontologyIdentification);
+			if (hasUserPermission) {
+				if (queryType.toUpperCase().equals(QUERY_SQL)) {
+					queryResult = queryToolService.querySQLAsJson(ontologyIdentification, query, 0);
+					model.addAttribute("queryResult", queryResult);
+					return "querytool/show :: query";
 
-			} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
-				try {
-					String queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
+				} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
+					queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
 					model.addAttribute("queryResult", utils.getAsObject(queryResult));
-					
-				}catch (Exception e) {
-					model.addAttribute("queryResult", utils.getMessage("querytool.query.native.error", "Error malformed query"));
+					return "querytool/show :: query";
+				} else {
+					return utils.getMessage("querytool.querytype.notselected", "Please select queryType Native or SQL");
 				}
+			} else
+				return utils.getMessage("querytool.ontology.access.denied.json",
+						"You don't have permissions for this ontology");
 
-				return "/querytool/show :: query";
-			} else {
-				return utils.getMessage("querytool.querytype.notselected",
-						"{'message' : 'Please select queryType Native or SQL'}");
-			}
-		} else
-			return utils.getMessage("querytool.ontology.access.denied.json",
-					"{'message' : 'You don't have permissions for this ontology'}");
+		} catch (DBPersistenceException e) {
+			log.error("Error in runQuery", e);
+			model.addAttribute("queryResult", e.getMessage());
+			return "querytool/show :: query";
+		} catch (Exception e) {
+			log.error("Error in runQuery", e);
+			model.addAttribute("queryResult",
+					utils.getMessage("querytool.query.native.error", "Error malformed query"));
+			return "querytool/show :: query";
+		}
 
 	}
 
@@ -103,7 +110,7 @@ public class QueryToolController {
 			throws JsonProcessingException, IOException {
 
 		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification));
-		return "/querytool/show :: fields";
+		return "querytool/show :: fields";
 
 	}
 

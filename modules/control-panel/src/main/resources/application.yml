@@ -39,11 +39,12 @@ spring: ## General Config
    application.name: sofia2-control-panel
    thymeleaf: ## Thymeleaf Config
       cache: false  
-      encoding: UTF-8
-      check-template: true
-      check-template-location: true
-      content-type: text/html
-      enabled: true
+      #encoding: UTF-8
+      #prefix: classpath:/templates/
+      #check-template: true
+      #check-template-location: true
+      #content-type: text/html
+      #enabled: true
       # excluded-view-names:
       # mode: HTML5
       # prefix: /templates/
