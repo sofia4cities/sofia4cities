@@ -70,6 +70,7 @@ spring: ## General Config
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
+      hibernate.temp.use_jdbc_metadata_defaults: false
    boot.admin: #Spring Boot Admin Config    
       url: http://localhost:18090
       username: operations
