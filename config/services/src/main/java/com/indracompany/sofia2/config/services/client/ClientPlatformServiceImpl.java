@@ -23,6 +23,7 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.services.exceptions.ClientPlatformServiceException;
@@ -71,6 +72,16 @@ public class ClientPlatformServiceImpl implements ClientPlatformService{
 	@Override
 	public ClientPlatform getByIdentification(String identification) {
 		return this.clientPlatformRepository.findByIdentification(identification);
+	}
+
+	@Override
+	public List<ClientPlatform> getAllClientPlatforms() {
+		return this.clientPlatformRepository.findAll();
+	}
+
+	@Override
+	public List<ClientPlatform> getclientPlatformsByUser(User user) {
+		return this.clientPlatformRepository.findByUser(user);
 	}
 
 	@Override
