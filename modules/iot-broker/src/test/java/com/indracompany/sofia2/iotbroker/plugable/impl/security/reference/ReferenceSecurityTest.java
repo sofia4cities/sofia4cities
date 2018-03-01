@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.plugin.iotbroker.security.impl.reference;
+package com.indracompany.sofia2.iotbroker.plugable.impl.security.reference;
 
 import java.io.IOException;
 import java.util.Arrays;

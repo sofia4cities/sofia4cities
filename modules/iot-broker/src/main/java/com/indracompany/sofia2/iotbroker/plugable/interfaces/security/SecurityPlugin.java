@@ -15,18 +15,16 @@ package com.indracompany.sofia2.iotbroker.plugable.interfaces.security;
 
 import java.util.Optional;
 
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public interface SecurityPlugin {
-	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance) throws AuthenticationException;
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance);
 
-	public boolean closeSession(String sessionKey) throws AuthorizationException;
+	public boolean closeSession(String sessionKey);
 
-	public boolean checkSessionKeyActive(String sessionKey) throws AuthorizationException;
+	public boolean checkSessionKeyActive(String sessionKey);
 
-	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) throws AuthorizationException;
+	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey);
 
 	public Optional<IoTSession> getSession(String sessionKey);
 }
