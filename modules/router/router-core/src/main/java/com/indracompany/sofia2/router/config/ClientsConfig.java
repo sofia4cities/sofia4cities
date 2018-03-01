@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.indracompany.sofia2.router.client.RouterClient;
 import com.indracompany.sofia2.router.client.RouterClientGateway;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -32,9 +33,10 @@ public class ClientsConfig {
 	@Bean
 	RouterClientGateway<NotificationCompositeModel,OperationResultModel> adviceGateway(AdviceServiceImpl adviceServiceImpl) {
 
-		RouterClientGateway<NotificationCompositeModel,OperationResultModel> gateway = 
-				new RouterClientGateway<NotificationCompositeModel,OperationResultModel>
-				("PEPE",RouterClientGateway.setupDefault(),adviceServiceImpl);
+		
+		RouterClient<NotificationCompositeModel,OperationResultModel> routerClient= (RouterClient<NotificationCompositeModel,OperationResultModel>)adviceServiceImpl;
+		RouterClientGateway<NotificationCompositeModel,OperationResultModel> gateway = 	new RouterClientGateway<NotificationCompositeModel,OperationResultModel>
+				(RouterClientGateway.setupDefault("AdviceService","AdviceServiceGroup"),routerClient);
 		
 		//gateway.setFallback(fallback);
 		
