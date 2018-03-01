@@ -11,11 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.config;
+package com.indracompany.sofia2.router.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.router.client.RouterClient;
 import com.indracompany.sofia2.router.client.RouterClientGateway;
@@ -23,20 +24,20 @@ import com.indracompany.sofia2.router.service.app.model.NotificationCompositeMod
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.advice.AdviceServiceImpl;
 
-@Configuration
-public class ClientsConfig {
+@Service
+public class ClientsConfigFactory {
 	
 	@Autowired
 	private AdviceServiceImpl adviceServiceImpl;
 	
 	
-	@Bean
-	RouterClientGateway<NotificationCompositeModel,OperationResultModel> adviceGateway(AdviceServiceImpl adviceServiceImpl) {
+	
+	public RouterClientGateway<NotificationCompositeModel,OperationResultModel> createAdviceGateway(String key, String keyGroup) {
 
 		
 		RouterClient<NotificationCompositeModel,OperationResultModel> routerClient= (RouterClient<NotificationCompositeModel,OperationResultModel>)adviceServiceImpl;
 		RouterClientGateway<NotificationCompositeModel,OperationResultModel> gateway = 	new RouterClientGateway<NotificationCompositeModel,OperationResultModel>
-				(RouterClientGateway.setupDefault("AdviceService","AdviceServiceGroup"),routerClient);
+				(RouterClientGateway.setupDefault(keyGroup,key),routerClient);
 		
 		//gateway.setFallback(fallback);
 		

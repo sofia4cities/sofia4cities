@@ -39,6 +39,8 @@ public class QueryToolServiceMongoDbImpl implements QueryToolService {
 				throw new Exception("The query " + query + " is not for the ontology selected:" + ontology);
 
 		} else {
+			if (query.indexOf("db.") == -1)
+				return;
 			if (query.indexOf("." + ontology + ".") == -1)
 				throw new DBPersistenceException(
 						"The query " + query + " is not for the ontology selected:" + ontology);
@@ -61,7 +63,7 @@ public class QueryToolServiceMongoDbImpl implements QueryToolService {
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
 		try {
 			checkQueryIs4Ontology(ontology, query, false);
-			if (query.indexOf(".createIndex") != -1) {
+			if (query.indexOf(".createIndex(") != -1) {
 				manageRepo.createIndex(query);
 				return "Created index indicated in the query:" + query;
 			} else if (query.indexOf(".dropIndex(") != -1) {
@@ -73,6 +75,9 @@ public class QueryToolServiceMongoDbImpl implements QueryToolService {
 				return "Drop index indicated in the query:" + query;
 			} else if (query.indexOf(".getIndexes()") != -1) {
 				return manageRepo.getIndexes(ontology);
+			} else if (query.indexOf(".remove(") != -1) {
+				mongoRepo.deleteNative(ontology, query);
+				return "Execute remove on ontology:" + ontology;
 			} else if (query.indexOf(".drop") != -1) {
 				return "Drop a collection from QueryTool not supported.";
 			} else
