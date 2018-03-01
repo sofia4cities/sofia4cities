@@ -30,6 +30,8 @@ public interface UserService {
 
 	User getUserByToken(String token);
 
+	User getUserByIdentification(String identification);
+
 	User getUser(String userId);
 
 	List<Role> getAllRoles();
@@ -52,6 +54,9 @@ public interface UserService {
 
 	void registerUser(User user);
 
+	boolean emailExists(User user);
+
 	UserToken getUserToken(String user, String token);
+
 
 }

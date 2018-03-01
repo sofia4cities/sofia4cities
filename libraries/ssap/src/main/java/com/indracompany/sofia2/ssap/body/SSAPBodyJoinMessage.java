@@ -16,20 +16,28 @@ package com.indracompany.sofia2.ssap.body;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public class SSAPBodyJoinMessage extends SSAPBodyMessage {
-	
+
 	private String token;
-	
+	private String clientPlatform;
+	private String clientPlatformInstance;
+
 	public String getToken() {
 		return token;
 	}
-
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
-	@Override
-	public boolean isClientPlatformMandatory() {
-		return false;
+	public String getClientPlatform() {
+		return clientPlatform;
+	}
+	public void setClientPlatform(String clientPlatform) {
+		this.clientPlatform = clientPlatform;
+	}
+	public String getClientPlatformInstance() {
+		return clientPlatformInstance;
+	}
+	public void setClientPlatformInstance(String clientPlatformInstance) {
+		this.clientPlatformInstance = clientPlatformInstance;
 	}
 
 	@Override
@@ -46,5 +54,5 @@ public class SSAPBodyJoinMessage extends SSAPBodyMessage {
 	public boolean isOntologyMandatory() {
 		return false;
 	}
-	
+
 }

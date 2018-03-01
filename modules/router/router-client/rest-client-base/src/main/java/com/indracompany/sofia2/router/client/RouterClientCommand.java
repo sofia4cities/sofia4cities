@@ -14,35 +14,33 @@
 package com.indracompany.sofia2.router.client;
 import com.netflix.hystrix.HystrixCommand;
 
-class RouterClientCommand<T> extends HystrixCommand<T> {
+class RouterClientCommand<T,R> extends HystrixCommand<R> {
 
-    private final String name;
-    private RouterClient<T> routerClient;
+    private RouterClient<T,R> routerClient;
    
     private T input;
-    private T fallback;
+    private R fallback;
    
-    public void setNotification(T input) {
+    public void setInputData(T input) {
         this.input = input;
     }
     
-    public void setFallback(T fallback) {
+    public void setFallback(R fallback) {
         this.fallback = fallback;
     }
     
-    RouterClientCommand(final String name, final Setter config, RouterClient<T> routerClient) {
+    RouterClientCommand(final Setter config, RouterClient<T,R> routerClient) {
         super(config);
-        this.name = name;
         this.routerClient = routerClient;
     }
 
     @Override
-    protected T run() {
+    protected R run() {
         return routerClient.execute(input);
     }
     
     @Override
-    protected T getFallback() {
+    protected R getFallback() {
         return this.fallback;
     }
 }

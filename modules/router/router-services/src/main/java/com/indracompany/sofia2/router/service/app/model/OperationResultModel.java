@@ -31,4 +31,7 @@ public class OperationResultModel implements Serializable{
 	@Setter
 	private String message;
 	
+	@Getter
+	@Setter
+	private String operation;
 }

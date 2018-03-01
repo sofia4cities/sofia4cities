@@ -211,7 +211,7 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 	}
 
 	@Override
-	public List<String> getIndexes(String ontology) throws DBPersistenceException {
+	public List<String> getListIndexes(String ontology) throws DBPersistenceException {
 		log.debug("getIndexes", ontology);
 		try {
 			List<String> index = new ArrayList<String>();
@@ -219,7 +219,19 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 				return mongoDbConnector.getIndexes_asStrings(database, ontology);
 			}
 			return index;
-		} catch (DBPersistenceException e) {
+		} catch (Exception e) {
+			log.error("getIndexes", e);
+			throw new DBPersistenceException(e);
+		}
+	}
+
+	@Override
+	public String getIndexes(String ontology) throws DBPersistenceException {
+		log.debug("getIndexes", ontology);
+		try {
+			List<MongoDbIndex> list = mongoDbConnector.getIndexes(database, ontology);
+			return objectMapper.writeValueAsString(list);
+		} catch (Exception e) {
 			log.error("getIndexes", e);
 			throw new DBPersistenceException(e);
 		}

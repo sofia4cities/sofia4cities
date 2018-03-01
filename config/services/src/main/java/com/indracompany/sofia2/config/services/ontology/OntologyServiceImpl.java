@@ -338,9 +338,4 @@ public class OntologyServiceImpl implements OntologyService {
 		
 	}
 
-
-	
-
-	
-
 }

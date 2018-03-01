@@ -59,6 +59,10 @@ public class OperationModel implements Serializable{
 	@Setter
 	private String objectId;
 	
+	@Getter
+	@Setter
+	private String token;
+	
 
 	
 }

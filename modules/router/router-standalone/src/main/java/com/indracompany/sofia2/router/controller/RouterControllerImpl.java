@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiOperation;
 public class RouterControllerImpl implements RouterControllerInterface, RouterService {
 		
 	@Autowired
-	@Qualifier("routerServiceProxy")
+	@Qualifier("routerServiceImpl")
 	private RouterService routerService;
 	
 	

@@ -16,7 +16,10 @@ package com.indracompany.sofia2.router.client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.advice.AdviceServiceImpl;
 
 public class Application {
 
@@ -33,16 +36,17 @@ public class Application {
         System.out.println(quote.toString());
         */
         
-    	NotificationModel input = new NotificationModel();
+    	OperationResultModel input = new OperationResultModel();
+    	NotificationCompositeModel model = new NotificationCompositeModel();
       
         
-        RouterClient<NotificationModel> routerClient= new RouterClientImpl();
-		RouterClientGateway<NotificationModel> gateway = new RouterClientGateway<NotificationModel>
-				("PEPE",
-				RouterClientGateway.setupDefault(),
+        RouterClient<NotificationCompositeModel,OperationResultModel> routerClient= new AdviceServiceImpl();
+		RouterClientGateway<NotificationCompositeModel,OperationResultModel> gateway = new RouterClientGateway<NotificationCompositeModel,OperationResultModel>
+				(
+				RouterClientGateway.setupDefault("PEPE","PEPE"),
 				routerClient);
 		gateway.setFallback(input);
-		input = gateway.execute(input);
+		input = gateway.execute(model);
 		
 		
 		
