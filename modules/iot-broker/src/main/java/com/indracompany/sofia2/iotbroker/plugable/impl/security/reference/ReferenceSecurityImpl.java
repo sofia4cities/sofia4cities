@@ -18,12 +18,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -35,6 +36,7 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.SecurityPlugin;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
+@EnableScheduling
 @Component
 public class ReferenceSecurityImpl implements SecurityPlugin {
 
@@ -47,12 +49,10 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	@Autowired
 	OntologyService ontologyService;
 
-
-
 	ConcurrentHashMap<String, IoTSession> sessionList = new ConcurrentHashMap<>(200);
 
 	@Override
-	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance) throws AuthenticationException {
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance) {
 		final Token retrivedToken = tokenService.getTokenByToken(token);
 		if(retrivedToken == null) {
 			return Optional.empty();
@@ -83,13 +83,13 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	}
 
 	@Override
-	public boolean closeSession(String sessionKey) throws AuthorizationException {
+	public boolean closeSession(String sessionKey) {
 		sessionList.remove(sessionKey);
 		return true;
 	}
 
 	@Override
-	public boolean checkSessionKeyActive(String sessionKey) throws AuthorizationException {
+	public boolean checkSessionKeyActive(String sessionKey) {
 		final IoTSession session = sessionList.get(sessionKey);
 
 		if(session == null) {
@@ -111,8 +111,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	}
 
 	@Override
-	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey)
-			throws AuthorizationException {
+	public boolean checkAuthorization(SSAPMessageTypes messageType, String ontology, String sessionKey) {
 
 		if(!checkSessionKeyActive(sessionKey)) {
 			return false;
@@ -134,6 +133,13 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 
 		return Optional.of(session);
 
+	}
+
+	@Scheduled(fixedDelay=60000)
+	private void invalidateExpiredSessions() {
+		final long now = System.currentTimeMillis();
+		final Predicate<IoTSession> delete = s -> (now - s.getLastAccess().toInstant().toEpochMilli()) >= s.getExpiration();
+		sessionList.values().removeIf(delete);
 	}
 
 }

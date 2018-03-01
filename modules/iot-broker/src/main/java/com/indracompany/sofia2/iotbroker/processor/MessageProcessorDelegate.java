@@ -52,20 +52,22 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message) {
 
 		// TODO: PRE-PROCESSORS
-		// TODO: PROCESS
-		// TODO: CHECK SSAP COMPLIANCE
-		// TODO: CHECK CREDENTIALS
-		// TODO: CHECK AUTHRIZATIONS & PERMISSIONS
+		// DONE: PROCESS
+		// DONE: CHECK SSAP COMPLIANCE
+		// DONE: CHECK CREDENTIALS
+		// DONE: CHECK AUTHRIZATIONS & PERMISSIONS
 		// TODO: VALIDATE ONTOLOGY SCHEMA IF NECESSARY
-		// TODO: GET PROCESSOR AN PROCESS
+		// DONE: GET PROCESSOR AN PROCESS
 		// TODO: POST-PROCESSORS
-		// TODO: RETORNO
+		// DONE: RETURN
 
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 
 		try {
 
 			final Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = this.validateMessage(message);
+
+
 			if (validation.isPresent()) {
 				return validation.get();
 			}
@@ -103,7 +105,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	}
 
 	public Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
-			throws AuthorizationException, Exception {
+	{
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 
 		// Check presence of sessionKey and authorization of sessionKey
