@@ -244,10 +244,17 @@ public class OntologyController {
 	public @ResponseBody ResponseEntity<OntologyUserAccessDTO> updateAuthorization(
 			@RequestParam String id,
 			@RequestParam String accesstype) {
-		ontologyService.updateOntologyUserAccess(id, accesstype);
-		OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id);
-		OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
-		return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.OK);
+		
+		OntologyUserAccess access = ontologyService.getOntologyUserAccessById(id);
+		
+		if (isOwnerOrAdministrator(access.getOntology().getUser().getUserId())) {
+			ontologyService.updateOntologyUserAccess(id, accesstype);
+			OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id);
+			OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
+			return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.FORBIDDEN);
+		}
 	}
 	
 	@GetMapping(value="/authorization/{id}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)

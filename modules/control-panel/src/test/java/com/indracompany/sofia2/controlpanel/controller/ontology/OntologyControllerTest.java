@@ -20,13 +20,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -159,6 +162,58 @@ public class OntologyControllerTest {
     	
     	mockMvc.perform(post("/ontologies/authorization/delete")
 						.param("id", access.getId()))
+				.andExpect(status().isForbidden());
+    }
+    
+    @Test
+    public void when__correctParametersAreSentToUpdate__OntologyAccessIsUpdated() throws Exception {
+    	OntologyUserAccess accessOld = ontologyUserAccessCreator("ontologyId", "somebody", "user", "ALL", "accessId");
+    	OntologyUserAccess accessNew = ontologyUserAccessCreator("ontologyId", "somebody", "user", "QUERY", "accessId");
+    	
+    	String sessionUserId = "somebody";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	given(ontologyService.getOntologyUserAccessById(accessOld.getId())).willAnswer(new Answer<OntologyUserAccess>() {
+
+    		private int count = 0;
+			@Override
+			public OntologyUserAccess answer(InvocationOnMock invocation) throws Throwable {
+				switch (count) {
+				case 0:
+					count++;
+					return accessOld;
+				default:
+					return accessNew;
+				}
+			}
+		});
+    	
+    	mockMvc.perform(post("/ontologies/authorization/update")
+    					.param("id", accessOld.getId())
+    					.param("accesstype", accessOld.getOntologyUserAccessType().getName()))
+    			.andExpect(status().isOk())
+    			.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+    			.andExpect(jsonPath("$.id", is(accessNew.getId())))
+				.andExpect(jsonPath("$.userId", is(accessNew.getUser().getUserId())))
+				.andExpect(jsonPath("$.typeName", is(accessNew.getOntologyUserAccessType().getName())));
+    }
+    
+    @Test
+    public void when__sessionUserIsNotAdminOrOwner__ontologyAccessUpdateIsForbidden() throws Exception {
+    	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "somebody", "user", "ALL", "accessId");
+    	
+    	String sessionUserId = "unknown";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	given(ontologyService.getOntologyUserAccessById(access.getId())).willReturn(access);
+    	
+    	mockMvc.perform(post("/ontologies/authorization/update")
+						.param("id", access.getId())
+						.param("accesstype", access.getOntologyUserAccessType().getName()))
 				.andExpect(status().isForbidden());
     }
     
