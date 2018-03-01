@@ -48,6 +48,8 @@ public class UpdateProcessor implements MessageTypeProcessor {
 
 		final SSAPMessage<SSAPBodyUpdateMessage> updateMessage = (SSAPMessage<SSAPBodyUpdateMessage>) message;
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
+		responseMessage.setBody(new SSAPBodyReturnMessage());
+		responseMessage.getBody().setOk(true);
 
 		repository.updateNative(updateMessage.getOntology(), updateMessage.getBody().getQuery());
 

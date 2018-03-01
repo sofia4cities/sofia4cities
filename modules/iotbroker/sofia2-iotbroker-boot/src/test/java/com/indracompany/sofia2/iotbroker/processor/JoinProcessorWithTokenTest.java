@@ -14,7 +14,6 @@
 package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -30,7 +29,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
@@ -73,7 +71,7 @@ public class JoinProcessorWithTokenTest {
 
 	@Test
 	public void test_join_with_invalid_token() throws AuthenticationException {
-		doThrow(new AuthenticationException(MessageException.ERR_TOKEN_IS_INVALID)).when(securityPluginManager).authenticate(anyString(),anyString(),anyString());
+		when(securityPluginManager.authenticate(anyString(),anyString(),anyString())).thenReturn(Optional.empty());
 		ssapJoin.getBody().setToken(UUID.randomUUID().toString());
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin);
 

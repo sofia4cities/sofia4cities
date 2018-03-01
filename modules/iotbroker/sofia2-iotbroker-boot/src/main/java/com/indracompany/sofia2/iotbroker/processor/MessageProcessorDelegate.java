@@ -33,6 +33,7 @@ import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.util.SSAPMessageGenerator;
 
@@ -77,6 +78,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			processor.validateMessage(message);
 			response = processor.process(message);
 
+			response.setDirection(SSAPMessageDirection.RESPONSE);
 			response.setMessageId(message.getMessageId());
 			response.setMessageType(message.getMessageType());
 			response.setOntology(message.getOntology());
