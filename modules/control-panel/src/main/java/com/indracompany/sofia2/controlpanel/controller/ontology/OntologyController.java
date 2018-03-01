@@ -38,6 +38,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
@@ -138,8 +139,12 @@ public class OntologyController {
 			for (OntologyUserAccess authorization : authorizations) {
 				authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
 			}
+			
+			List<User> users = userService.getAllUsers();
+			
 			model.addAttribute("authorizations", authorizationsDTO);
 			model.addAttribute("ontology", ontology);
+			model.addAttribute("users", users);
 			
 			this.populateForm(model);
 			return "/ontologies/createwizard";
@@ -205,8 +210,12 @@ public class OntologyController {
 					authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
 				}
 				
+				List<User> users = userService.getAllUsers();
+				
 				model.addAttribute("ontology",ontology);
 				model.addAttribute("authorizations", authorizationsDTO);
+				model.addAttribute("users", users);
+				
 				return "/ontologies/show";
 			} else {
 				return "/error/403";
