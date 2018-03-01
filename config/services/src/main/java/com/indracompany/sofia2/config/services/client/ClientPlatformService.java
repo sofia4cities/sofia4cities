@@ -26,5 +26,9 @@ public interface ClientPlatformService {
 
 	ClientPlatform getByIdentification(String identification);
 
+	public List<ClientPlatform> getAllClientPlatforms();
+
+	public List<ClientPlatform> getclientPlatformsByUser(User user);
+
 	boolean haveAuthorityOverOntology(ClientPlatform clientPlatform, Ontology ontology);
 }
