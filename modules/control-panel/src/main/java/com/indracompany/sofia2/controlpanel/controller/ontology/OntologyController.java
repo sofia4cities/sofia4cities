@@ -216,7 +216,7 @@ public class OntologyController {
 		
 			Ontology ontologyDB = ontologyService.getOntologyById(ontology);
 			
-			if (ontologyDB.getUser().getUserId().equals(this.utils.getUserId()) || utils.isAdministrator()) {
+			if (isOwnerOrAdministrator(ontologyDB.getUser().getUserId())) {
 				ontologyService.createUserAccess(ontologyDB, user, accesstype);
 				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyDB.getId(), user);
 				OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
@@ -248,5 +248,9 @@ public class OntologyController {
 		Ontology ontology = this.ontologyService.getOntologyById(id);
 		List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
 		return new ResponseEntity<List<OntologyUserAccess>>(authorizations, HttpStatus.OK);
+	}
+	
+	private boolean isOwnerOrAdministrator(String userId) {
+		return userId.equals(this.utils.getUserId()) || utils.isAdministrator()
 	}
 }
