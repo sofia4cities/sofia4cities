@@ -15,8 +15,10 @@ public interface DeviceSimulationService {
 	List<String> getClientTokensIdentification(String clientPlatformId);
 	List<String> getClientOntologiesIdentification(String clientPlatformId);
 	List<String> getSimulatorTypes();
-	List<DeviceSimulation> getAllSimulators();
+	List<DeviceSimulation> getAllSimulations();
 	DeviceSimulation getSimulatorByIdentification(String identification);
-	DeviceSimulation createSimulation(String identification, int interval, String userId, String json);
+	DeviceSimulation createSimulation(String identification, int interval, String userId, String json) throws JsonProcessingException, IOException;
 	void save(DeviceSimulation simulation);
+	DeviceSimulation getSimulationById(String id);
+	List<DeviceSimulation> getSimulationsForUser(String userId);
 }

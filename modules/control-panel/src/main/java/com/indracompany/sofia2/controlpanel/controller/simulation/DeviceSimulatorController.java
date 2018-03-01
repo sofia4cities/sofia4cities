@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.config.model.DeviceSimulation;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.simulation.DeviceSimulationService;
 import com.indracompany.sofia2.controlpanel.services.simulation.SimulationService;
@@ -32,6 +33,19 @@ public class DeviceSimulatorController {
 	private AppWebUtils utils;
 	@Autowired
 	private SimulationService simulationService;
+	
+	@GetMapping("list")
+	public String List(Model model) {
+		
+		List<DeviceSimulation> simulations = new ArrayList<DeviceSimulation>();
+		if(this.utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			simulations= this.deviceSimulationService.getAllSimulations();
+		else
+			simulations= this.deviceSimulationService.getSimulationsForUser(this.utils.getUserId());
+		
+		model.addAttribute("simulations", simulations);
+		return "/simulator/list";
+	}
 
 	@GetMapping("create")
 	public String simulate(Model model) {
@@ -48,7 +62,7 @@ public class DeviceSimulatorController {
 			@RequestParam String ontology, @RequestParam String clientPlatform, @RequestParam String token,
 			@RequestParam int interval) throws JsonProcessingException, IOException {
 
-		this.simulationService.scheduleSimulation(identification, interval, utils.getUserId(),
+		this.simulationService.createSimulation(identification, interval, utils.getUserId(),
 				this.simulationService.getDeviceSimulationJson(clientPlatform, token, ontology, jsonMap));
 		return "{\"message\":\"ok\"}";
 	}
@@ -70,6 +84,20 @@ public class DeviceSimulatorController {
 		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification));
 		model.addAttribute("simulators", this.deviceSimulationService.getSimulatorTypes());
 		return "/simulator/create :: ontologyFields";
+	}
+
+	@PostMapping("startstop")
+	public String startStop(Model model, @RequestParam String id) {
+		DeviceSimulation simulation = this.deviceSimulationService.getSimulationById(id);
+		if (simulation != null) {
+			if (simulation.isActive())
+				this.simulationService.unscheduleSimulation(simulation);
+			else
+				this.simulationService.scheduleSimulation(simulation);
+		}
+		model.addAttribute("simulations", this.deviceSimulationService.getAllSimulations());
+		return "/simulator/list :: simulations";
+		
 	}
 
 }

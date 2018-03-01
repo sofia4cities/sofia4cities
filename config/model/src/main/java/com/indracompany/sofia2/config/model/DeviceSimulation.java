@@ -40,12 +40,38 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
+	@NotNull
 	@Getter
 	@Setter
 	private User user;
 	
-	@Column(name = "JSON", nullable = false)
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID")
+	@NotNull
+	@Getter
+	@Setter
+	private Ontology ontology;
+	
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID")
+	@NotNull
+	@Getter
+	@Setter
+	private ClientPlatform clientPlatform;
+	
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
+	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID")
+	@NotNull
+	@Getter
+	@Setter
+	private Token token;
+	
+	
+	@Column(name = "JSON")
 	@NotNull
 	@Lob
 	@JsonRawValue

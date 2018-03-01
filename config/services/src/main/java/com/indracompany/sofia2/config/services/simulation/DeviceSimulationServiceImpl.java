@@ -89,7 +89,7 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 	}
 
 	@Override
-	public List<DeviceSimulation> getAllSimulators() {
+	public List<DeviceSimulation> getAllSimulations() {
 		List<DeviceSimulation> simulators = this.deviceSimulationRepository.findAll();
 		return simulators;
 	}
@@ -100,11 +100,17 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 	}
 
 	@Override
-	public DeviceSimulation createSimulation(String identification, int interval, String userId, String json) {
+	public DeviceSimulation createSimulation(String identification, int interval, String userId, String json) throws JsonProcessingException, IOException {
 
+		ObjectMapper mapper = new ObjectMapper();
 		DeviceSimulation simulation = new DeviceSimulation();
+		
+		simulation.setOntology(this.ontologyService.getOntologyByIdentification(mapper.readTree(json).path("ontology").asText()));
+		simulation.setClientPlatform(this.clientPlatformRepository.findByIdentification(mapper.readTree(json).path("clientPlatform").asText()));
+		simulation.setToken(this.tokenRepository.findByToken(mapper.readTree(json).path("token").asText()));
 		simulation.setIdentification(identification);
 		simulation.setJson(json);
+		
 		int minutes = 0;
 		int seconds = interval;
 		if (interval >= 0) {
@@ -114,10 +120,11 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 			}
 		}
 		if (minutes == 0)
-			simulation.setCron("0/" + String.valueOf(seconds) + "* * ? * * *");
+			simulation.setCron("0/" + String.valueOf(seconds) + " * * ? * * *");
 		else
-			simulation.setCron("0/" + String.valueOf(seconds) + " 0/" + String.valueOf(minutes) + "* * ? * * *");
+			simulation.setCron("0/" + String.valueOf(seconds) + " 0/" + String.valueOf(minutes) + " * * ? * * *");
 		simulation.setActive(false);
+		simulation.setUser(this.userService.getUser(userId));
 		return this.deviceSimulationRepository.save(simulation);
 
 	}
@@ -125,5 +132,17 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 	@Override
 	public void save(DeviceSimulation simulation) {		
 		this.deviceSimulationRepository.save(simulation);
+	}
+
+	@Override
+	public DeviceSimulation getSimulationById(String id) {
+		
+		return this.deviceSimulationRepository.findById(id);
+	}
+
+	@Override
+	public List<DeviceSimulation> getSimulationsForUser(String userId) {
+		
+		return this.deviceSimulationRepository.findByUser(this.userService.getUser(userId));
 	}
 }

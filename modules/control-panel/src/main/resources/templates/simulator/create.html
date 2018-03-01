@@ -130,7 +130,7 @@
 															<input th:required="true" type="text" th:placeholder="#{simulation.identification}" class="form-control" name="identification"/>	
 														</div>
 													</div>													
-													<div class="col-md-3 col-sm-6 col-xs-12">
+													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{simulation.clientplatform} + ':'">Platform Clients</label>
 															<select th:required="true" th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="selectpicker form-control" data-live-search="true" onload="getTokensAndOntologies()" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
@@ -150,7 +150,7 @@
 																									
 															</div>
 														</div>
-														<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="col-md-2 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label class="control-label" th:text="#{simulation.select.ontologies} + ':'">Ontologies</label>
 																<select th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
@@ -164,7 +164,7 @@
 
 												</div>
 												<div class="row" id="interval" style="display:none">
-													<div class="col-md-3 col-sm-6 col-xs-12">
+													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{simulation.interval} + ':'">Interval</label>
 															<input th:required="true" type="number" th:placeholder="#{simulation.interval.placeholder}" class="form-control" name="interval"/>

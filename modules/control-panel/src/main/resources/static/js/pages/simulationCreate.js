@@ -1,5 +1,6 @@
 var fields;
 
+
 function generateJsonSimulationFields() {
 	//return map
 	var jsonMap = {};
