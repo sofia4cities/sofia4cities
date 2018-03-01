@@ -131,7 +131,16 @@ public class OntologyController {
 		if (ontology != null) {
 			if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
 				return "/error/403";
+			
+			List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId());
+			List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
+			
+			for (OntologyUserAccess authorization : authorizations) {
+				authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
+			}
+			model.addAttribute("authorizations", authorizationsDTO);
 			model.addAttribute("ontology", ontology);
+			
 			this.populateForm(model);
 			return "/ontologies/createwizard";
 		} else
