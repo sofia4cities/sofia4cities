@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.ontology;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -182,20 +183,28 @@ public class OntologyController {
 
 	@GetMapping("/show/{id}")
 	public String show(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
-		Ontology ontology = this.ontologyService.getOntologyById(id);
+		
+		Ontology ontology = ontologyService.getOntologyById(id);
 
-		if(ontology != null) {
-			if(ontology.getUser().getUserId().equals(this.utils.getUserId()) && !this.utils.isAdministrator()) {
+		if (ontology != null) {
+			
+			if (isUserOwnerOrAdministrator(ontology.getUser().getUserId())) {
+				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId());
+				List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
+				
+				for (OntologyUserAccess authorization : authorizations) {
+					authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
+				}
+				
+				model.addAttribute("ontology",ontology);
+				model.addAttribute("authorizations", authorizationsDTO);
+				return "/ontologies/show";
+			} else {
 				return "/error/403";
 			}
-			List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
 			
-			model.addAttribute("ontology",ontology);
-			model.addAttribute("authorizations", authorizations);
-			
-			return "/ontologies/show";
 		} else {
-			this.utils.addRedirectMessage("ontology.notfound.error", redirect);
+			utils.addRedirectMessage("ontology.notfound.error", redirect);
 			return "redirect:/ontologies/list";
 		}
 
@@ -216,7 +225,7 @@ public class OntologyController {
 		
 			Ontology ontologyDB = ontologyService.getOntologyById(ontology);
 			
-			if (isOwnerOrAdministrator(ontologyDB.getUser().getUserId())) {
+			if (isUserOwnerOrAdministrator(ontologyDB.getUser().getUserId())) {
 				ontologyService.createUserAccess(ontologyDB, user, accesstype);
 				OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessByOntologyIdAndUserId(ontologyDB.getId(), user);
 				OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
@@ -232,7 +241,7 @@ public class OntologyController {
 		
 		OntologyUserAccess access = ontologyService.getOntologyUserAccessById(id);
 		
-		if (isOwnerOrAdministrator(access.getOntology().getUser().getUserId())) {
+		if (isUserOwnerOrAdministrator(access.getOntology().getUser().getUserId())) {
 			ontologyService.deleteOntologyUserAccess(id);
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
 		} else {
@@ -247,7 +256,7 @@ public class OntologyController {
 		
 		OntologyUserAccess access = ontologyService.getOntologyUserAccessById(id);
 		
-		if (isOwnerOrAdministrator(access.getOntology().getUser().getUserId())) {
+		if (isUserOwnerOrAdministrator(access.getOntology().getUser().getUserId())) {
 			ontologyService.updateOntologyUserAccess(id, accesstype);
 			OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id);
 			OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
@@ -257,14 +266,23 @@ public class OntologyController {
 		}
 	}
 	
-	@GetMapping(value="/authorization/{id}", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public @ResponseBody ResponseEntity<List<OntologyUserAccess>> getAuthorizations(@PathVariable("id") String id){
-		Ontology ontology = this.ontologyService.getOntologyById(id);
-		List<OntologyUserAccess> authorizations = this.ontologyService.getOntologyUserAccesses(ontology.getId());
-		return new ResponseEntity<List<OntologyUserAccess>>(authorizations, HttpStatus.OK);
+	@GetMapping(value="/authorization", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public @ResponseBody ResponseEntity<List<OntologyUserAccessDTO>> getAuthorizations(@RequestParam("id") String id){
+		
+		Ontology ontology = ontologyService.getOntologyById(id);
+		if (isUserOwnerOrAdministrator(ontology.getUser().getUserId())) {
+			List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId());
+			List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
+			for (OntologyUserAccess authorization : authorizations) {
+				authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
+			}
+			return new ResponseEntity<List<OntologyUserAccessDTO>>(authorizationsDTO, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<List<OntologyUserAccessDTO>>(HttpStatus.FORBIDDEN);
+		}
 	}
 	
-	private boolean isOwnerOrAdministrator(String userId) {
-		return userId.equals(this.utils.getUserId()) || utils.isAdministrator();
+	private boolean isUserOwnerOrAdministrator(String userId) {
+		return userId.equals(utils.getUserId()) || utils.isAdministrator();
 	}
 }
