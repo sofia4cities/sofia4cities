@@ -38,10 +38,6 @@ import com.indracompany.sofia2.persistence.services.QueryToolService;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Luis Miguel Gracia
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -104,6 +100,19 @@ public class QueryToolServiceIntegrationTest {
 	@After
 	public void tearDown() {
 		connect.dropCollection(DATABASE, ONT_NAME);
+	}
+
+	@Test
+	public void test1_remove() {
+		try {
+			String json = queryTool.querySQLAsJson(ONT_NAME, "select count(*) from contextData", 0);
+			Assert.assertTrue(json.indexOf("3") != -1);
+			json = queryTool.queryNativeAsJson(ONT_NAME, "db." + ONT_NAME + ".remove({})");
+			json = queryTool.querySQLAsJson(ONT_NAME, "select count(*) from contextData", 0);
+			Assert.assertTrue(json.indexOf("3") == -1);
+		} catch (Exception e) {
+			Assert.fail("Error test_QueryNative" + e.getMessage());
+		}
 	}
 
 	@Test

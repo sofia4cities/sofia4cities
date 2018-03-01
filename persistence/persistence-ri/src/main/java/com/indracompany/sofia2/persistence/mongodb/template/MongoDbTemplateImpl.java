@@ -643,6 +643,8 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	@Override
 	public void remove(String database, String collection, String query) throws PersistenceException {
 		try {
+			if (query.indexOf("db.") != -1)
+				query = util.getQueryContent(query);
 			remove(database, collection, (BasicDBObject) JSON.parse(query));
 		} catch (JSONParseException e) {
 			String errorMessage = String.format(
