@@ -25,6 +25,8 @@ class OntologyUserAccessDTO {
 		this.typeName = ontologyUserAccessCreated.getOntologyUserAccessType().getName();
 		this.userId = ontologyUserAccessCreated.getUser().getUserId();
 		this.ontologyId = ontologyUserAccessCreated.getOntology().getId();
+		this.userFullName = ontologyUserAccessCreated.getUser().getFullName();
+		this.ontologyIdentification = ontologyUserAccessCreated.getOntology().getIdentification();
 	}
 	
 	@Getter
@@ -42,4 +44,12 @@ class OntologyUserAccessDTO {
 	@Getter
 	@Setter
 	private String ontologyId;
+	
+	@Getter
+	@Setter
+	private String userFullName;
+	
+	@Getter
+	@Setter
+	private String ontologyIdentification;
 }
