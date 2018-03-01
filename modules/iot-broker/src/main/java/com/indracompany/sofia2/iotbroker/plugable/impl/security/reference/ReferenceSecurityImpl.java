@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.plugin.iotbroker.security.impl.reference;
+package com.indracompany.sofia2.iotbroker.plugable.impl.security.reference;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -31,8 +31,8 @@ import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
-import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPlugin;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.SecurityPlugin;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 @Component

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.plugin.iotbroker.security.impl;
+package com.indracompany.sofia2.iotbroker.plugable.impl.security;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
-import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
-import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPlugin;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.SecurityPlugin;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 //TODO: Delete this class

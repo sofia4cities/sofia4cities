@@ -42,7 +42,8 @@ import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
+import com.indracompany.sofia2.iotbroker.plugable.impl.security.reference.ReferenceSecurityImpl;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 @RunWith(SpringRunner.class)

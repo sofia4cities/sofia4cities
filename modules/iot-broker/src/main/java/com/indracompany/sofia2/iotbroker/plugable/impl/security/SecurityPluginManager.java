@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.plugin.iotbroker.security;
+package com.indracompany.sofia2.iotbroker.plugable.impl.security;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +23,8 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.SecurityPlugin;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 @Component

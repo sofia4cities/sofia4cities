@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.gateway;
+package com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

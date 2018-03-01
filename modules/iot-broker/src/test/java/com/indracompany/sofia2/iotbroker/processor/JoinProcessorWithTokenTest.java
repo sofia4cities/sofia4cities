@@ -31,9 +31,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
+import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
-import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
-import com.indracompany.sofia2.plugin.iotbroker.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
