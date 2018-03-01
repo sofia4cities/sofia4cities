@@ -13,10 +13,7 @@
  */
 package com.indracompany.sofia2.router.client;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommand.Setter;
@@ -26,14 +23,13 @@ import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 
 
-@Component
-public class RouterClientGateway<T> {
+public class RouterClientGateway<T,R> {
 
 	private  HystrixCommand.Setter config;
 	private  HystrixCommandProperties.Setter commandProperties;
 	private  HystrixThreadPoolProperties.Setter threadPoolProperties;
 	
-	private RouterClientCommand<T> routerClientCommand;
+	private RouterClientCommand<T,R> routerClientCommand;
 
 	@Value("${remoteservice.command.execution.timeout:10000}")
 	private  int executionTimeout;
@@ -56,7 +52,7 @@ public class RouterClientGateway<T> {
 	@Value("${remoteservice.command.key:RouterClientKey}")
 	private  String key;
 
-	@PostConstruct
+	
 	public void autoSetup() {
 		this.config = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey));
 		this.config = config.andCommandKey(HystrixCommandKey.Factory.asKey(key));
@@ -96,13 +92,13 @@ public class RouterClientGateway<T> {
 		return config;
 	}
 	
-	public static Setter setupDefault() {
+	public static Setter setupDefault(String groupKey, String key) {
 		HystrixCommand.Setter config;
 		HystrixCommandProperties.Setter commandProperties;
 		HystrixThreadPoolProperties.Setter threadPoolProperties;
 		
-		config = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("RouterClientGroup"));
-		config = config.andCommandKey(HystrixCommandKey.Factory.asKey("RouterClientKey"));
+		config = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(groupKey));
+		config = config.andCommandKey(HystrixCommandKey.Factory.asKey(key));
 
 		commandProperties = HystrixCommandProperties.Setter();
 		commandProperties.withExecutionTimeoutInMilliseconds(10000);
@@ -118,22 +114,24 @@ public class RouterClientGateway<T> {
 		return config;
 	}
 	
-	public RouterClientGateway (String name,  Setter config, RouterClient<T> routerClient) {
+	public RouterClientGateway (Setter config, RouterClient<T,R> routerClient) {
+		super();
 		this.config = config;
-		this.routerClientCommand= new RouterClientCommand<T>(name,config,routerClient);
+		this.routerClientCommand= new RouterClientCommand<T,R>(config,routerClient);
 	}
 	
-	public RouterClientGateway (String name, RouterClient<T> routerClient) {
-		this.routerClientCommand= new RouterClientCommand<T>(name,config,routerClient);
-	}
+	/*public RouterClientGateway (String name, RouterClient<T,R> routerClient) {
+		super();
+		this.routerClientCommand= new RouterClientCommand<T,R>(config,routerClient);
+	}*/
 	
-	public T execute(T input) {
-		routerClientCommand.setNotification(input);
+	public R execute(T input) {
+		routerClientCommand.setInputData(input);
 		return routerClientCommand.execute();
 	}
 	
-	public void setFallback(T input) {
-		routerClientCommand.setFallback(input);
+	public void setFallback(R fallback) {
+		routerClientCommand.setFallback(fallback);
 		
 	}
 	

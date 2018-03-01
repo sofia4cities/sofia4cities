@@ -18,10 +18,15 @@ import java.util.List;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.model.User;
 
 public interface ClientPlatformService {
 
-	Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform);
-	
-	ClientPlatform getByIdentification(String identification);
+	public Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform);
+
+	public ClientPlatform getByIdentification(String identification);
+
+	public List<ClientPlatform> getAllClientPlatforms();
+
+	public List<ClientPlatform> getclientPlatformsByUser(User user);
 }
