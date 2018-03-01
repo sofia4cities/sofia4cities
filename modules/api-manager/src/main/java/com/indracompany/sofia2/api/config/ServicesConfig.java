@@ -17,7 +17,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = {"com.indracompany.sofia2.config.services.user","com.indracompany.sofia2.config.services.ontology"})
+@ComponentScan(basePackages = {
+		"com.indracompany.sofia2.config.services.user",
+		"com.indracompany.sofia2.config.services.ontology",
+		"com.indracompany.sofia2.router.service.app.service.crud"
+		})
 public class ServicesConfig {
 
 	

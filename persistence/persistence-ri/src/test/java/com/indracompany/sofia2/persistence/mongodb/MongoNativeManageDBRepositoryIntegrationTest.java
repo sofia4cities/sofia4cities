@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.persistence.mongodb;
 
+import java.util.UUID;
+
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -22,14 +24,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.persistence.ContextData;
+import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Luis Miguel Gracia
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -38,6 +40,12 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 
 	@Autowired
 	ManageDBRepository repository;
+
+	@Autowired
+	MongoDbTemplateImpl connect;
+
+	@Autowired
+	BasicOpsDBRepository basicOps;
 
 	/*
 	 * public void createIndex(String ontology, String attribute) throws
@@ -49,7 +57,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	 * public void dropIndex(String ontology, String indexName) throws
 	 * DBPersistenceException;
 	 * 
-	 * public List<String> getIndexes(String ontology) throws
+	 * public List<String> getListIndexes(String ontology) throws
 	 * DBPersistenceException;
 	 * 
 	 * public void validateIndexes(String ontology, String schema) throws
@@ -88,6 +96,93 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 
 		} catch (Exception e) {
 			Assert.fail("test_createCollection:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void test1_createIndex() {
+		try {
+			if (connect.collectionExists("sofia2_s4c", "contextData"))
+				connect.dropCollection("sofia2_s4c", "contextData");
+			connect.createCollection("sofia2_s4c", "contextData");
+			ContextData data = new ContextData();
+			data.setClientConnection(UUID.randomUUID().toString());
+			data.setClientPatform(UUID.randomUUID().toString());
+			data.setClientSession(UUID.randomUUID().toString());
+			data.setTimezoneId(UUID.randomUUID().toString());
+			data.setUser("user1");
+			ObjectMapper mapper = new ObjectMapper();
+			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			data.setUser("user2");
+			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			Assert.assertEquals(basicOps.count("contextData"), 2);
+			int numIndex = repository.getListIndexes("contextData").size();
+			repository.createIndex("contextData", "user");
+			Assert.assertEquals(basicOps.count("contextData"), 2);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex + 1);
+			connect.dropCollection("sofia2_s4c", "contextData");
+		} catch (Exception e) {
+			Assert.fail("test1_createIndex:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void test2_createAndDropIndex() {
+		try {
+			if (connect.collectionExists("sofia2_s4c", "contextData"))
+				connect.dropCollection("sofia2_s4c", "contextData");
+			connect.createCollection("sofia2_s4c", "contextData");
+			ContextData data = new ContextData();
+			data.setClientConnection(UUID.randomUUID().toString());
+			data.setClientPatform(UUID.randomUUID().toString());
+			data.setClientSession(UUID.randomUUID().toString());
+			data.setTimezoneId(UUID.randomUUID().toString());
+			data.setUser("user1");
+			ObjectMapper mapper = new ObjectMapper();
+			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			data.setUser("user2");
+			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			Assert.assertEquals(basicOps.count("contextData"), 2);
+			int numIndex = repository.getListIndexes("contextData").size();
+			repository.createIndex("contextData", "user_i", "user");
+			Assert.assertEquals(basicOps.count("contextData"), 2);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex + 1);
+			repository.dropIndex("contextDAta", "user_i");
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex);
+			connect.dropCollection("sofia2_s4c", "contextData");
+		} catch (Exception e) {
+			Assert.fail("test1_createIndex:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void test1_createNativeIndex() {
+		try {
+			if (connect.collectionExists("sofia2_s4c", "contextData"))
+				connect.dropCollection("sofia2_s4c", "contextData");
+			connect.createCollection("sofia2_s4c", "contextData");
+			ContextData data = new ContextData();
+			data.setClientConnection(UUID.randomUUID().toString());
+			data.setClientPatform(UUID.randomUUID().toString());
+			data.setClientSession(UUID.randomUUID().toString());
+			data.setTimezoneId(UUID.randomUUID().toString());
+			data.setUser("user1");
+			ObjectMapper mapper = new ObjectMapper();
+			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			data.setUser("user1");
+			basicOps.insert("contextData", mapper.writeValueAsString(data));
+			Assert.assertEquals(basicOps.count("contextData"), 2);
+			int numIndex = repository.getListIndexes("contextData").size();
+			repository.createIndex("db.contextData.createIndex({'user':1},{'name':'user_i'})");
+			Assert.assertEquals(basicOps.count("contextData"), 2);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex + 1);
+			repository.dropIndex("contextData", "user_i");
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex);
+			repository.createIndex("db.contextData.createIndex({'user':1})");
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex + 1);
+			connect.dropCollection("sofia2_s4c", "contextData");
+		} catch (Exception e) {
+			Assert.fail("test1_createNativeIndex:" + e.getMessage());
 		}
 	}
 

@@ -32,11 +32,15 @@ import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
+import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
@@ -45,6 +49,10 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
+	@Autowired
+	private OntologyUserAccessRepository ontologyUserAccessRepository;
+	@Autowired
+	private OntologyUserAccessTypeRepository ontologyUserAccessTypeRepository;
 	@Autowired
 	private DataModelRepository dataModelRepository;
 	@Autowired
@@ -136,7 +144,8 @@ public class OntologyServiceImpl implements OntologyService {
 		if (this.ontologyRepository.findByIdentification(ontology.getIdentification()) == null)
 			return this.ontologyRepository.save(ontology);
 		else
-			throw new OntologyServiceException("Ontology Exists");
+			throw new OntologyServiceException(
+					"Ontology with identification:" + ontology.getIdentification() + " exists");
 
 	}
 
@@ -187,10 +196,12 @@ public class OntologyServiceImpl implements OntologyService {
 
 			// String prefix =
 			// mapper.readTree(ontology.getJsonSchema()).get("title").asText();
+
 			JsonNode jsonNode = null;
 			try {
 
 				jsonNode = mapper.readTree(ontology.getJsonSchema());
+
 
 			} catch (Exception e) {
 				if (ontology.getJsonSchema().contains("'"))
@@ -261,11 +272,13 @@ public class OntologyServiceImpl implements OntologyService {
 			} else if (jsonNode.path(subProperty).get("type").equals("array")) {
 				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField + "." + subProperty, true);
 
+
 			} else {
 				if(subProperty.equals("$date")) 
 					fields.put(parentField, "date");
 				else
 					fields.put(parentField + "." + subProperty, jsonNode.path(subProperty).get("type").asText());
+
 			}
 		}
 
@@ -281,6 +294,78 @@ public class OntologyServiceImpl implements OntologyService {
 			ontologies.add(relation.getOntology());
 		}
 		return ontologies;
+	}
+
+	public boolean hasOntologyUsersAuthorized(String ontologyId) {
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
+		return authorizations != null && authorizations.size() > 0;
+	}
+
+	@Override
+	public List<OntologyUserAccess> getOntologyUserAccesses(String ontologyId) {
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
+		return authorizations;
+	}
+
+	@Override
+	public void createUserAccess(Ontology ontology, String userId, String typeName) {
+		
+		Ontology managedOntology = ontologyRepository.findById(ontology.getId());
+		List<OntologyUserAccessType> managedTypes = ontologyUserAccessTypeRepository.findByName(typeName);
+		OntologyUserAccessType managedType = managedTypes != null && managedTypes.size() > 0 ? managedTypes.get(0) : null;
+		User managedUser = this.userService.getUser(userId);
+		
+		if (managedOntology != null && managedType != null && managedUser != null) {
+			OntologyUserAccess ontologyUserAccess = new OntologyUserAccess();
+			ontologyUserAccess.setOntology(managedOntology);
+			ontologyUserAccess.setUser(managedUser);
+			ontologyUserAccess.setOntologyUserAccessType(managedType);
+			
+			ontologyUserAccessRepository.save(ontologyUserAccess);
+		} else {
+			throw new OntologyServiceException("Ontology does not exist");
+		}
+	}
+	
+	@Override
+	public OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId) {
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		User user = this.userService.getUser(userId);
+		List<OntologyUserAccess> userAccess = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
+		if (userAccess == null || userAccess.size() == 0 || userAccess.size() > 1) {
+			throw new OntologyServiceException("Problem obtaining user data");
+		} else {
+			return userAccess.get(0);
+		}
+	}
+
+	@Override
+	public OntologyUserAccess getOntologyUserAccessById(String id) {
+		return ontologyUserAccessRepository.findById(id);
+	}
+
+	@Override
+	public void deleteOntologyUserAccess(String id) {
+		ontologyUserAccessRepository.delete(id);
+	}
+
+	@Override
+	public void updateOntologyUserAccess(String id, String typeName) {
+		OntologyUserAccess userAccessDB = ontologyUserAccessRepository.findById(id);
+		
+		List<OntologyUserAccessType> types = ontologyUserAccessTypeRepository.findByName(typeName);
+		if (types != null && types.size() > 0) {
+			OntologyUserAccessType typeDB = types.get(0);
+			userAccessDB.setOntologyUserAccessType(typeDB);
+			ontologyUserAccessRepository.save(userAccessDB);
+		} else {
+			throw new IllegalStateException("Types of access must have unique name");
+		}
+		
+		
+
 	}
 
 }

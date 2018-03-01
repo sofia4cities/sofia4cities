@@ -36,6 +36,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UtilMongoDB {
 
+	public String getQueryContent(String query) {
+		if (query.contains("db.")) {
+			String collection = getCollectionName(query);
+			String auxName = query.replace("db." + collection + ".", "");
+			auxName = auxName.substring(auxName.indexOf("(") + 1, auxName.indexOf(")"));
+			return auxName;
+		} else {
+			throw new DBPersistenceException(new Exception("No found db. in sentence"));
+		}
+	}
+
+	public String getCollectionName(String query) {
+		if (query.contains("db.")) {
+			String auxName = query.replace("db.", "");
+			auxName = auxName.substring(0, auxName.indexOf("."));
+			return auxName;
+		} else {
+			throw new DBPersistenceException(new Exception("No found db. in sentence"));
+		}
+	}
+
 	public String getCollectionName(String query, String pattern) {
 		if (query.contains("db.")) {
 			String auxName = query.replace("db.", "");

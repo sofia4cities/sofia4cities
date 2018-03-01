@@ -35,8 +35,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
-import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndexOptions;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
+import com.mongodb.client.model.IndexOptions;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -46,16 +46,18 @@ import lombok.extern.slf4j.Slf4j;
 @Scope("prototype")
 @Lazy
 @Slf4j
-public class MongoNativeManageDBRepository implements ManageDBRepository{
-		
-	@Autowired 
+public class MongoNativeManageDBRepository implements ManageDBRepository {
+
+	@Autowired
 	private UtilMongoDB util;
-	
+
 	@Autowired
 	private MongoDbTemplate mongoDbConnector;
 
 	@Value("${sofia2.database.mongodb.database:#{null}}")
-	@Getter @Setter private String database;
+	@Getter
+	@Setter
+	private String database;
 
 	protected ObjectMapper objectMapper;
 
@@ -67,29 +69,30 @@ public class MongoNativeManageDBRepository implements ManageDBRepository{
 
 	@Override
 	public String createTable4Ontology(String collection, String schema) throws DBPersistenceException {
-		log.debug("createTable4Ontology", collection,schema);
+		log.debug("createTable4Ontology", collection, schema);
 		try {
 			if (collection == null || schema == null)
 				throw new DBPersistenceException(
 						"DAOMongoDBImpl needs a collection and a schema to create a collection into the database");
-			
+
 			/**
 			 * Sino existe la collection la crea
 			 */
-			if(!mongoDbConnector.collectionExists(database, collection)){
+			if (!mongoDbConnector.collectionExists(database, collection)) {
 				mongoDbConnector.createCollection(database, collection);
-			}else{
-				
+			} else {
+
 				/**
-				 * Permitir creación solamente si no tiene elementos: usa la que existe sin registros
+				 * Permitir creación solamente si no tiene elementos: usa la que existe sin
+				 * registros
 				 */
 				long countCollection = mongoDbConnector.count(database, collection, "{}");
-				if (countCollection > 0){
+				if (countCollection > 0) {
 					log.error("createTable4Ontology", "The collection already exists and has records", collection);
 					throw new DBPersistenceException("The collection already exists and has records");
 				}
-			}			
-			
+			}
+
 			// validar que tiene geometry y crear indice en ese caso.
 			validateIndexes(collection, schema);
 			return collection;
@@ -106,7 +109,7 @@ public class MongoNativeManageDBRepository implements ManageDBRepository{
 
 	@Override
 	public List<String> getListOfTables4Ontology(String ontology) throws DBPersistenceException {
-		log.debug("getCollectionNames",ontology);
+		log.debug("getCollectionNames", ontology);
 		List<String> collections = getListOfTables();
 		ArrayList<String> result = new ArrayList<String>();
 		result.add(ontology);
@@ -124,64 +127,73 @@ public class MongoNativeManageDBRepository implements ManageDBRepository{
 		log.debug("removeTable4Ontology", ontology);
 		try {
 			mongoDbConnector.dropCollection(database, ontology);
-		} 
-		catch (javax.persistence.PersistenceException e) {
-			log.error("removeTable4Ontology"+e.getMessage());
+		} catch (javax.persistence.PersistenceException e) {
+			log.error("removeTable4Ontology" + e.getMessage());
 			throw new DBPersistenceException(e);
 		}
 		log.debug("/removeTable4Ontology");
-		
+
 	}
 
 	@Override
-	public List<String> createIndex(String sentence) throws DBPersistenceException {
+	public void createIndex(String sentence) throws DBPersistenceException {
 		log.debug("createIndex", sentence);
-		String collection = util.getCollectionName(sentence, "ensureIndex");
-		String pquery = sentence.trim();
-		pquery = pquery.replace("\n", "");
-		pquery = pquery.replace("\t", "");
-		pquery = pquery.replace("\r", "");
-		pquery = pquery.replace("db." + collection + ".ensureIndex(", "");
-		pquery = pquery.replace(")", "");
-		pquery = pquery.replace(";", "");
+		String pquery = null;
+		String collection = null;
 		Map<String, Integer> indexKeys = null;
-		MongoDbIndexOptions indexOptions = null;
-		
-		if (pquery.contains("},{")) {// complex index
-			String keysOptions[] = pquery.split("},");
-			try {
-				indexKeys = objectMapper.readValue(util.prepareQuotes(keysOptions[0]),
-						new TypeReference<Map<String, Integer>>() {
-						});
-				indexOptions = objectMapper.readValue(util.prepareQuotes(keysOptions[1]), MongoDbIndexOptions.class);
-			} catch (IOException e) {
-				log.error("Invalid index key or index options. Sentence = {}, cause = {}, errorMessage = {}.",
-						sentence, e.getCause(), e.getMessage());
-				throw new DBPersistenceException("Invalid index key or index options", e);
-			}
-		} else {
-			try {
-				indexKeys = objectMapper.readValue(util.prepareQuotes(pquery), new TypeReference<Map<String, Integer>>() {
-				});
-			} catch (IOException e) {
-				log.error("Invalid index key. Sentence = {}, cause = {}, errorMessage = {}.", sentence, e.getCause(),
-						e.getMessage());
-				throw new DBPersistenceException("Invalid index key", e);
-			}
-		}
+		IndexOptions indexOptions = null;
 		try {
+			pquery = sentence.trim();
+			if (pquery.indexOf(".createIndex(") == -1)
+				throw new DBPersistenceException("No db.<collection>.createIndex() found in sentence");
+			if (pquery.indexOf(".createIndex({\"") == -1 && pquery.indexOf(".createIndex({'") == -1)
+				throw new DBPersistenceException(
+						"Please use ' in sentences, example: db.<collection>.createIndex({'<attribute>':1}) ");
+
+			collection = util.getCollectionName(pquery);
+
+			try {
+				pquery = pquery.substring(pquery.indexOf("createIndex(") + 12, pquery.indexOf("})") + 1);
+			} catch (Exception e) {
+				log.error("Query bad formed:" + pquery
+						+ ".Expected db.<collection>.createIndex({<attribute>:1},{name:'name_index',....})");
+				throw new DBPersistenceException("Query bad formed:" + pquery
+						+ ".Expected db.<collection>.createIndex({<attribute>:1},{name:'name_index',....})");
+			}
+			if (pquery.contains("},{")) {// complex index
+				String keysOptions[] = pquery.split(",");
+				try {
+					indexKeys = objectMapper.readValue(util.prepareQuotes(keysOptions[0]),
+							new TypeReference<Map<String, Integer>>() {
+							});
+					indexOptions = objectMapper.readValue(util.prepareQuotes(keysOptions[1]), IndexOptions.class);
+				} catch (IOException e) {
+					log.error("Invalid index key or index options. Sentence = {}, cause = {}, errorMessage = {}.",
+							sentence, e.getCause(), e.getMessage());
+					throw new DBPersistenceException("Invalid index key or index options", e);
+				}
+			} else {
+				try {
+					indexKeys = objectMapper.readValue(util.prepareQuotes(pquery),
+							new TypeReference<Map<String, Integer>>() {
+							});
+				} catch (IOException e) {
+					log.error("Invalid index key. Sentence = {}, cause = {}, errorMessage = {}.", sentence,
+							e.getCause(), e.getMessage());
+					throw new DBPersistenceException("Invalid index key", e);
+				}
+			}
 			mongoDbConnector.createIndex(database, collection, new MongoDbIndex(indexKeys, indexOptions));
 		} catch (DBPersistenceException e) {
-			log.error("removeTable4Ontology"+e.getMessage());
+			log.error("createIndex" + e.getMessage());
 			throw new DBPersistenceException(e);
 		}
-		return getIndexes(collection);
 	}
 
 	@Override
 	public Map<String, Boolean> getStatusDatabase() {
-		Map<String,Boolean> map = new HashMap<>();
-		map.put(database, mongoDbConnector.testConnection());		
+		Map<String, Boolean> map = new HashMap<>();
+		map.put(database, mongoDbConnector.testConnection());
 		return map;
 	}
 
@@ -195,11 +207,11 @@ public class MongoNativeManageDBRepository implements ManageDBRepository{
 				log.error("dropIndex", e, indexName);
 				throw new DBPersistenceException(e);
 			}
-		}		
+		}
 	}
 
 	@Override
-	public List<String> getIndexes(String ontology) throws DBPersistenceException {
+	public List<String> getListIndexes(String ontology) throws DBPersistenceException {
 		log.debug("getIndexes", ontology);
 		try {
 			List<String> index = new ArrayList<String>();
@@ -207,12 +219,23 @@ public class MongoNativeManageDBRepository implements ManageDBRepository{
 				return mongoDbConnector.getIndexes_asStrings(database, ontology);
 			}
 			return index;
-		} catch (DBPersistenceException e) {
+		} catch (Exception e) {
 			log.error("getIndexes", e);
 			throw new DBPersistenceException(e);
 		}
 	}
 
+	@Override
+	public String getIndexes(String ontology) throws DBPersistenceException {
+		log.debug("getIndexes", ontology);
+		try {
+			List<MongoDbIndex> list = mongoDbConnector.getIndexes(database, ontology);
+			return objectMapper.writeValueAsString(list);
+		} catch (Exception e) {
+			log.error("getIndexes", e);
+			throw new DBPersistenceException(e);
+		}
+	}
 
 	@Override
 	public void validateIndexes(String collection, String schema) throws DBPersistenceException {
@@ -252,7 +275,7 @@ public class MongoNativeManageDBRepository implements ManageDBRepository{
 			}
 		}
 	}
-	
+
 	@Override
 	public void createIndex(String ontology, String attribute) throws DBPersistenceException {
 		log.debug("createIndex", attribute, ontology);
@@ -265,5 +288,16 @@ public class MongoNativeManageDBRepository implements ManageDBRepository{
 			throw new DBPersistenceException(e);
 		}
 	}
-	
+
+	@Override
+	public void createIndex(String ontology, String name, String attribute) throws DBPersistenceException {
+		log.debug("createIndex", attribute, name, ontology);
+		try {
+			createIndex("db." + ontology + ".createIndex({'" + attribute + "':1},{'name':'" + name + "'})");
+		} catch (DBPersistenceException e) {
+			log.error("createIndex", e, attribute);
+			throw new DBPersistenceException(e);
+		}
+	}
+
 }

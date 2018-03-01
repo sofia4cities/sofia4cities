@@ -13,15 +13,17 @@
  */
 package com.indracompany.sofia2.ssap.body;
 
-import com.indracompany.sofia2.ssap.SSAPErrorCode;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 
 public class SSAPBodyReturnMessage extends SSAPBodyMessage{
-	
+
 	private boolean ok = true;
 	private String error;
 	private SSAPErrorCode errorCode;
-	
+	private JsonNode data;
+
 	public boolean isOk() {
 		return ok;
 	}
@@ -47,11 +49,6 @@ public class SSAPBodyReturnMessage extends SSAPBodyMessage{
 	}
 
 	@Override
-	public boolean isClientPlatformMandatory() {
-		return false;
-	}
-
-	@Override
 	public boolean isSessionKeyMandatory() {
 		return false;
 	}
@@ -64,6 +61,14 @@ public class SSAPBodyReturnMessage extends SSAPBodyMessage{
 	@Override
 	public boolean isOntologyMandatory() {
 		return false;
+	}
+
+	public JsonNode getData() {
+		return data;
+	}
+
+	public void setData(JsonNode data) {
+		this.data = data;
 	}
 
 }

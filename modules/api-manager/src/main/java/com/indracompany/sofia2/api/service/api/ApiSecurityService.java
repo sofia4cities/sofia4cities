@@ -68,8 +68,8 @@ public class ApiSecurityService {
 		return userService.getUserByToken(token);
 	}
 
-	public UserToken getUserToken(User userId) {
-		return this.userService.getUserToken(userId);
+	public UserToken getUserToken(User userId, String token) {
+		return this.userService.getUserToken(userId.getUserId(), token);
 	}
 	
 /*	public  boolean authorized(Api api, String tokenUsuario, String roleName) {

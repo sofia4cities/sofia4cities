@@ -58,6 +58,7 @@
         <module>libraries/commons</module>
         <module>libraries/mail</module>
         <module>libraries/social</module>
+        <module>libraries/flow-engine-services</module>
 
 		<!--CONFIG -->
 		<module>config/model</module>
@@ -73,13 +74,14 @@
 		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
 		
 		<!--MODULES-->
-		<module>modules/iot-broker</module>		
+		<module>modules/iotbroker</module>		
 		<module>modules/control-panel</module>		
         <module>modules/monitoring-ui</module>
         <module>modules/api-manager</module>
-		<!--        <module>modules/scripting-engine</module-->
+	<!--        <module>modules/scripting-engine</module-->
 		<module>modules/planner</module>
-
+		 <module>modules/router</module>
+        <module>modules/flowEngine</module>
 		<!--
         <module>api-manager</module>
 		-->

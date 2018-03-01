@@ -19,6 +19,7 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -51,7 +52,7 @@ public class ClientPlatform extends AuditableEntityWithUUID {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
-	private Set<ClientPlatformOntology> clientPlatformOntologies;
+	private Set<ClientPlatformOntology> clientPlatformOntologies = new HashSet<>();
 
 	@OneToMany(mappedBy = "clientPlatform", cascade = CascadeType.REMOVE)
 	@OnDelete(action = OnDeleteAction.CASCADE)

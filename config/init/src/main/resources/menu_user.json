@@ -5,123 +5,97 @@
 	"navigation": [
 		{
 			"title": {
-				"EN": "Ontologies",
-				"ES": "Ontologías"
+				"EN": "DATA MODEL",
+				"ES": "MODELADO DE DATOS"
 			},
 			"icon": "flaticon-network",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "My Ontologies",
-						"ES": "Mis Ontologías"
+						"EN": "Models/Ontologies",
+						"ES": "Modelos/Ontologías"
 					},
 					"icon": "",
 					"url": "/controlpanel/ontologies/list"
-				},
-				{
-					"title": {
-						"EN": "Simulator",
-						"ES": "Simulador"
-					},
-					"icon": "",
-					"url": "/controlpanel/simulator/show"
 				}
 			]
 		},
 		{
 			"title": {
-				"EN": "IoT Clients",
-				"ES": "Clientes IoT"
-			},
-			"icon": "flaticon-share",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "My IoT Clients",
-						"ES": "Mis Clientes IoT"
-					},
-					"icon": "",
-					"url": "/controlpanel/clients/list"
-				},
-				{
-					"title": {
-						"EN": "Status",
-						"ES": "Estado"
-					},
-					"icon": "",
-					"url": "/controlpanel/clients/status/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "Visualization",
-				"ES": "Visualización"
+				"EN": "VISUALIZATION",
+				"ES": "VISUALIZACIÓN"
 			},
 			"icon": "flaticon-dashboard",
 			"url": "",
-			"submenu": [
+			"submenu": [			
 				{
 					"title": {
-						"EN": "My Gadgets",
-						"ES": "Mis Gadgets"
+						"EN": "Dashboards",
+						"ES": "Dashboards"
+					},
+					"icon": "",
+					"url": "/controlpanel/dashboards/list"
+				},
+				{
+					"title": {
+						"EN": "Gadgets",
+						"ES": "Gadgets"
 					},
 					"icon": "",
 					"url": "/controlpanel/gadgets/list"
 				},
 				{
 					"title": {
-						"EN": "My Datasources",
-						"ES": "Mis Datasources"
+						"EN": "Datasources",
+						"ES": "Fuentes de datos"
 					},
 					"icon": "",
 					"url": "/controlpanel/datasources/list"
-				},
-				{
-					"title": {
-						"EN": "My Dashboards",
-						"ES": "Mis Dashboards"
-					},
-					"icon": "",
-					"url": "/controlpanel/dashboards/list"
 				}
 			]
 		},
 		{
 			"title": {
-				"EN": "Tools",
-				"ES": "Herramientas"
+				"EN": "PUB:API MANAGER",
+				"ES": "PUB:API MANAGER"
+			},
+			"icon": "la la-random",
+			"url": "",
+			"submenu": [		
+				{
+					"title": {
+						"EN": "APIs Invocation",
+						"ES": "Invocación de APIs"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/list"
+				},	
+				{
+					"title": {
+						"EN": "API Manager Tokens",
+						"ES": "Tokens del API Manager"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/token/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "TOOLS",
+				"ES": "HERRAMIENTAS"
 			},
 			"icon": "flaticon-open-box",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "Query Tool",
-						"ES": "Consola Consultas"
+						"EN": "Database Query Tool",
+						"ES": "Herramienta Consultas Base Datos"
 					},
 					"icon": "",
 					"url": "/controlpanel/querytool/show"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "Api Manager",
-				"ES": "Api Manager"
-			},
-			"icon": "la la-random",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "My Apis",
-						"ES": "Mis Apis"
-					},
-					"icon": "",
-					"url": "/controlpanel/apimanager/list"
 				}
 			]
 		}

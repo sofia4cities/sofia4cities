@@ -341,7 +341,7 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 			BasicDBObject indexKey = new BasicDBObject(index.getKey());
 			IndexOptions nativeIndexOptions = null;
 			if (index.getIndexOptions() != null) {
-				nativeIndexOptions = index.getIndexOptions().toNativeIndexOptions();
+				nativeIndexOptions = index.getIndexOptions();
 			}
 			if (nativeIndexOptions == null)
 				return dbCollection.createIndex(indexKey);
@@ -643,6 +643,8 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	@Override
 	public void remove(String database, String collection, String query) throws PersistenceException {
 		try {
+			if (query.indexOf("db.") != -1)
+				query = util.getQueryContent(query);
 			remove(database, collection, (BasicDBObject) JSON.parse(query));
 		} catch (JSONParseException e) {
 			String errorMessage = String.format(

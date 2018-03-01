@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
 
 public interface OntologyService {
 
@@ -42,17 +43,36 @@ public interface OntologyService {
 	List<DataModel> getAllDataModels();
 
 	List<String> getAllDataModelTypes();
-	
+
 	boolean hasUserPermissionForQuery(String userId, String ontologyIdentification);
-	
+
 	boolean hasUserPermissionForInsert(String userId, String ontologyIdentification);
 	
 	Map<String, String> getOntologyFields(String identification) throws JsonProcessingException, IOException;
 	
 	void updateOntology(Ontology ontology);
-	
+
 	void createOntology(Ontology ontology);
 
 	List<Ontology> getOntologiesByClientPlatform(ClientPlatform clientPlatform);
+	
+	/**
+	 * This method checks if an ontology has authorizations for other users different from its owner.
+	 * @param ontologyId the id of the ontology.
+	 * @return true if any other user has authorization over the ontology.
+	 */
+	boolean hasOntologyUsersAuthorized(String ontologyId);
+
+	List<OntologyUserAccess> getOntologyUserAccesses(String ontologyId);
+
+	void createUserAccess(Ontology ontology, String userId, String typeName);
+
+	OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId);
+	
+	OntologyUserAccess getOntologyUserAccessById(String id);
+	
+	void deleteOntologyUserAccess (String id);
+
+	void updateOntologyUserAccess(String id, String typeName);
 	
 }
