@@ -52,6 +52,9 @@ public interface UserService {
 
 	void registerUser(User user);
 
+	boolean emailExists(User user);
+
 	UserToken getUserToken(String user, String token);
+
 
 }
