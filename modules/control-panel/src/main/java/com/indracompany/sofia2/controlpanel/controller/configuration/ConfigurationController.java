@@ -63,7 +63,7 @@ public class ConfigurationController {
 
 		List<Configuration> configurations = this.configurationService.getAllConfigurations();
 		model.addAttribute("configurations", configurations);
-		return "/configurations/list";
+		return "configurations/list";
 
 	}
 
@@ -76,16 +76,17 @@ public class ConfigurationController {
 		configuration.setUser(this.userService.getUser(this.utils.getUserId()));
 		;
 		model.addAttribute("configuration", configuration);
-		return "/configurations/create";
+		return "configurations/create";
 
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping("/create")
-	public String create(@Valid Configuration configuration, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+	public String create(@Valid Configuration configuration, BindingResult bindingResult,
+			RedirectAttributes redirectAttributes) {
 		if (bindingResult.hasErrors()) {
 			this.utils.addRedirectMessage("configuration.validation.error", redirectAttributes);
-			log.debug("Missing fields");			
+			log.debug("Missing fields");
 			return "redirect:/configurations/create";
 		}
 		this.configurationService.createConfiguration(configuration);
@@ -105,10 +106,10 @@ public class ConfigurationController {
 		} else {
 			// User trying to modify another's config
 			if (!this.utils.getUserId().equals(configuration.getUser().getUserId()) && !utils.isAdministrator())
-				return "/error/403";
+				return "error/403";
 		}
 		model.addAttribute("configuration", configuration);
-		return "/configurations/create";
+		return "configurations/create";
 
 	}
 

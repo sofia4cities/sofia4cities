@@ -58,7 +58,7 @@ public class QueryToolController {
 		}
 		model.addAttribute("ontologies", ontologies);
 
-		return "/querytool/show";
+		return "querytool/show";
 
 	}
 
@@ -77,12 +77,12 @@ public class QueryToolController {
 				if (queryType.toUpperCase().equals(QUERY_SQL)) {
 					queryResult = queryToolService.querySQLAsJson(ontologyIdentification, query, 0);
 					model.addAttribute("queryResult", queryResult);
-					return "/querytool/show :: query";
+					return "querytool/show :: query";
 
 				} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
 					queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
 					model.addAttribute("queryResult", utils.getAsObject(queryResult));
-					return "/querytool/show :: query";
+					return "querytool/show :: query";
 				} else {
 					return utils.getMessage("querytool.querytype.notselected", "Please select queryType Native or SQL");
 				}
@@ -93,12 +93,12 @@ public class QueryToolController {
 		} catch (DBPersistenceException e) {
 			log.error("Error in runQuery", e);
 			model.addAttribute("queryResult", e.getMessage());
-			return "/querytool/show :: query";
+			return "querytool/show :: query";
 		} catch (Exception e) {
 			log.error("Error in runQuery", e);
 			model.addAttribute("queryResult",
 					utils.getMessage("querytool.query.native.error", "Error malformed query"));
-			return "/querytool/show :: query";
+			return "querytool/show :: query";
 		}
 
 	}
@@ -108,7 +108,7 @@ public class QueryToolController {
 			throws JsonProcessingException, IOException {
 
 		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification));
-		return "/querytool/show :: fields";
+		return "querytool/show :: fields";
 
 	}
 
