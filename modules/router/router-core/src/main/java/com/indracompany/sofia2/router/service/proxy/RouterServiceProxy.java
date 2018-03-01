@@ -27,11 +27,13 @@ public class RouterServiceProxy implements RouterService {
 	
 	 @Autowired
 	 CamelContext camelContext;
+	 
+	 private String defaultStartupRoute = "direct:start-broker-flow";
 	
 	public Object nodeRed(Object input) throws Exception {
 		
 		ProducerTemplate t = camelContext.createProducerTemplate();
-		String result = (String)t.requestBody("direct:node-red-proxy", input);
+		String result = (String)t.requestBody(defaultStartupRoute, input);
 		
 		return result;
 		
@@ -40,7 +42,7 @@ public class RouterServiceProxy implements RouterService {
 	public Object scriptingEngine(Object input) throws Exception {
 		
 		ProducerTemplate t = camelContext.createProducerTemplate();
-		String result = (String)t.requestBody("direct:scripting-engine-proxy", input);
+		String result = (String)t.requestBody(defaultStartupRoute, input);
 		
 		return result;
 		

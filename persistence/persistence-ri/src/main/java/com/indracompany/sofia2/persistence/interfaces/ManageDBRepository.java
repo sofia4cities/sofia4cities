@@ -47,7 +47,9 @@ public interface ManageDBRepository {
 
 	public void dropIndex(String ontology, String indexName) throws DBPersistenceException;
 
-	public List<String> getIndexes(String ontology) throws DBPersistenceException;
+	public List<String> getListIndexes(String ontology) throws DBPersistenceException;
+
+	public String getIndexes(String ontology) throws DBPersistenceException;
 
 	public void validateIndexes(String ontology, String schema) throws DBPersistenceException;
 
