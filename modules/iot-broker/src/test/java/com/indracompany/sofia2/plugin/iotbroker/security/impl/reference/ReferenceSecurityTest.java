@@ -1,3 +1,16 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.plugin.iotbroker.security.impl.reference;
 
 import java.io.IOException;
@@ -29,7 +42,6 @@ import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.iotbroker.ssap.generator.pojo.Person;
 import com.indracompany.sofia2.plugin.iotbroker.security.IoTSession;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
@@ -84,7 +96,7 @@ public class ReferenceSecurityTest {
 		ontology.setRtdbToHdb(false);
 		ontology.setUser(subjectUser);
 		ontologyService.createOntology(ontology);
-		subjectOntology = ontologyService.getOntologyByIdentification(ontologyIdentification);
+		subjectOntology = ontologyService.getOntologyByIdentification(ontology.getIdentification());
 
 		final ClientPlatform clientPlatform = new ClientPlatform();
 		final String clientPlatformIdentification = UUID.randomUUID().toString();
@@ -92,6 +104,7 @@ public class ReferenceSecurityTest {
 		clientPlatform.setUser(subjectUser);
 		clientPlatformService.createClientAndToken(Arrays.asList(subjectOntology), clientPlatform);
 		subjectClientPlatform = clientPlatformService.getByIdentification(clientPlatformIdentification);
+
 		tokenService.generateTokenForClient(subjectClientPlatform);
 
 	}
@@ -127,13 +140,23 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
-	public void test_ontology_auth() throws AuthenticationException, AuthorizationException {
+	public void test_ontology_auth_ok() throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
 				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
 
-		final boolean aaaa = security.checkAuthorization(SSAPMessageTypes.INSERT, Person.class.getSimpleName(), session.get().getSessionKey());
+		Assert.assertTrue(security.checkAuthorization(SSAPMessageTypes.INSERT, subjectOntology.getIdentification(), session.get().getSessionKey()));
+	}
+
+	@Test
+	public void test_ontology_auth_not_assigned() throws AuthenticationException, AuthorizationException {
+		final Token t = tokenService.getToken(subjectClientPlatform);
+
+		final Optional<IoTSession> session = security.authenticate(t.getToken(),
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+
+		Assert.assertFalse(security.checkAuthorization(SSAPMessageTypes.INSERT, "NOT_ASSIGNED_ONTOLOGY", session.get().getSessionKey()));
 	}
 
 }

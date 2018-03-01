@@ -23,15 +23,14 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
-import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.services.exceptions.ClientPlatformServiceException;
 import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 import com.indracompany.sofia2.config.services.token.TokenService;
-
 @Service
-public class ClientPlatformServiceImpl implements ClientPlatformService {
+public class ClientPlatformServiceImpl implements ClientPlatformService{
+
 
 	@Autowired
 	private ClientPlatformRepository clientPlatformRepository;
@@ -39,29 +38,34 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
 	private TokenService tokenService;
-	
+
 	@Override
 	public Token createClientAndToken(List<Ontology> ontologies, ClientPlatform clientPlatform)
-			throws TokenServiceException {
-		if (this.clientPlatformRepository.findByIdentification(clientPlatform.getIdentification()) == null) {
-			String encryptionKey = UUID.randomUUID().toString();
+			throws TokenServiceException
+	{
+		if(this.clientPlatformRepository.findByIdentification(clientPlatform.getIdentification())==null)
+		{
+			final String encryptionKey=UUID.randomUUID().toString();
 			clientPlatform.setEncryptionKey(encryptionKey);
 			clientPlatform = this.clientPlatformRepository.save(clientPlatform);
 
-			for (Ontology ontology : ontologies) {
-				ClientPlatformOntology relation = new ClientPlatformOntology();
+
+			for(final Ontology ontology:ontologies)
+			{
+				final ClientPlatformOntology relation = new ClientPlatformOntology();
 				relation.setClientPlatform(clientPlatform);
 				relation.setOntology(ontology);
-				// If relation does not exist then create
-				if (this.clientPlatformOntologyRepository.findByOntologyAndClientPlatform(ontology,
-						clientPlatform) == null)
+				//If relation does not exist then create
+				if(this.clientPlatformOntologyRepository.findByOntologyAndClientPlatform(ontology, clientPlatform)==null) {
 					this.clientPlatformOntologyRepository.save(relation);
+				}
 			}
 
-			Token token = this.tokenService.generateTokenForClient(clientPlatform);
+			final Token token = this.tokenService.generateTokenForClient(clientPlatform);
 			return token;
-		} else
+		} else {
 			throw new ClientPlatformServiceException("Platform Client already exists");
+		}
 	}
 
 	@Override
@@ -70,13 +74,11 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 	}
 
 	@Override
-	public List<ClientPlatform> getAllClientPlatforms() {
-		return this.clientPlatformRepository.findAll();
-	}
+	public boolean haveAuthorityOverOntology(ClientPlatform clientPlatform, Ontology ontology) {
 
-	@Override
-	public List<ClientPlatform> getclientPlatformsByUser(User user) {
-		return this.clientPlatformRepository.findByUser(user);
+		final ClientPlatformOntology clientPlatformOntology = this.clientPlatformOntologyRepository.findByOntologyAndClientPlatform(ontology, clientPlatform);
+
+		return clientPlatformOntology != null;
 	}
 
 }

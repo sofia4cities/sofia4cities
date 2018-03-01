@@ -196,7 +196,6 @@ public class UserServiceImpl implements UserService {
 	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);
 	}
-}
 
 	@Override
 	public User getUserByIdentification(String identification) {
