@@ -85,7 +85,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__correctParametersAreSent__OntologyAccessIsCreated() throws Exception {
+    public void when__correctParametersAreSentToCreate__OntologyAccessIsCreated() throws Exception {
     	
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "administrator", "user", "ALL", "accessId");
     	String sessionUserId = "administrator";
@@ -109,7 +109,7 @@ public class OntologyControllerTest {
     
     
     @Test
-    public void when__sessionUserIsNotAdminOrOwner__creationIsNotAllowed() throws Exception {
+    public void when__sessionUserIsNotAdminOrOwner__ontologyAccessCreationIsForbidden() throws Exception {
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "somebody", "user", "ALL", "accessId");
     	String sessionUserId = "unknown";
     	
@@ -123,7 +123,44 @@ public class OntologyControllerTest {
 						.param("accesstype", access.getOntologyUserAccessType().getName())
 						.param("ontology", access.getOntology().getId())
 						.param("user", access.getUser().getUserId()))
-			.andExpect(status().isForbidden());
+				.andExpect(status().isForbidden());
     }
+    
+    @Test
+    public void when__correctParametersAreSentToDelete__OntologyAccessIsDeleted () throws Exception {
+    	
+    	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "somebody", "user", "ALL", "accessId");
+    	
+    	String sessionUserId = "somebody";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	given(ontologyService.getOntologyUserAccessById(access.getId())).willReturn(access);
+    	
+    	mockMvc.perform(post("/ontologies/authorization/delete")
+						.param("id", access.getId()))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+				.andExpect(jsonPath("$.status", is("ok")));
+    }
+    
+    @Test
+    public void when__sessionUserIsNotAdminOrOwner__ontologyAccessDeleteIsForbidden() throws Exception {
+
+    	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "somebody", "user", "ALL", "accessId");
+    	
+    	String sessionUserId = "unknown";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	given(ontologyService.getOntologyUserAccessById(access.getId())).willReturn(access);
+    	
+    	mockMvc.perform(post("/ontologies/authorization/delete")
+						.param("id", access.getId()))
+				.andExpect(status().isForbidden());
+    }
+    
 
 }

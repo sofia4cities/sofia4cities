@@ -229,8 +229,15 @@ public class OntologyController {
 	
 	@PostMapping(value="/authorization/delete", produces=MediaType.APPLICATION_JSON_UTF8_VALUE )
 	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
-		ontologyService.deleteOntologyUserAccess(id);
-		return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
+		
+		OntologyUserAccess access = ontologyService.getOntologyUserAccessById(id);
+		
+		if (isOwnerOrAdministrator(access.getOntology().getUser().getUserId())) {
+			ontologyService.deleteOntologyUserAccess(id);
+			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>(HttpStatus.FORBIDDEN);
+		}
 	}
 	
 	@PostMapping(value="/authorization/update", produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
