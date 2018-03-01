@@ -15,7 +15,6 @@ package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -35,8 +34,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.javafaker.Faker;
 import com.indracompany.sofia2.common.exception.AuthorizationException;
-import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.ssap.generator.PojoGenerator;
@@ -109,8 +108,8 @@ public class InsertProcessorTest {
 	public void test_insert_sessionkey_invalid() throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 
-		doThrow(new AuthorizationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED)).when(securityPluginManager)
-		.checkSessionKeyActive(any());
+		when(securityPluginManager.checkSessionKeyActive(any())).thenReturn(false);
+
 
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
@@ -124,8 +123,7 @@ public class InsertProcessorTest {
 	public void test_insert_unauthorized_operation() throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 
-		doThrow(new AuthorizationException(MessageException.ERR_SESSIONKEY_NOT_ASSINGED)).when(securityPluginManager)
-		.checkAuthorization(any(), any(), any());
+		when(securityPluginManager.checkAuthorization(any(),anyString(),anyString())).thenReturn(false);
 
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
@@ -141,7 +139,12 @@ public class InsertProcessorTest {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 		final IoTSession session = new IoTSession();
 		session.setUserID("valid_user_id");
+		session.setClientPlatform(Faker.instance().chuckNorris().fact());
+		session.setClientPlatformInstance(Faker.instance().chuckNorris().fact());
+		session.setSessionKey(UUID.randomUUID().toString());
+
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
+		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
 
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
 
