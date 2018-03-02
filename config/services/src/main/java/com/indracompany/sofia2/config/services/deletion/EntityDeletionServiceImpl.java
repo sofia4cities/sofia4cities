@@ -13,24 +13,31 @@
  */
 package com.indracompany.sofia2.config.services.deletion;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.ClientConnection;
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.TwitterListeningRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 
-
 @Service
-public class EntityDeletionServiceImpl implements EntityDeletionService{
-	
+public class EntityDeletionServiceImpl implements EntityDeletionService {
+
 	@Autowired
 	private OntologyRepository ontologyRepository;
 	@Autowired
@@ -40,37 +47,67 @@ public class EntityDeletionServiceImpl implements EntityDeletionService{
 	@Autowired
 	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
+	private ClientConnectionRepository clientConnectionRepository;
+	@Autowired
+	private ClientPlatformRepository clientPlatformRepository;
+	@Autowired
 	private TwitterListeningRepository twitterListeningRepository;
-	
-	
-	
-	
+
 	@Override
 	@Transactional
 	public void deleteOntology(String id) {
 		Ontology ontology = this.ontologyRepository.findById(id);
-		try{
-			if(this.clientPlatformOntologyRepository.findByOntology(ontology) != null) {
+		try {
+			if (this.clientPlatformOntologyRepository.findByOntology(ontology) != null) {
 				this.clientPlatformOntologyRepository.deleteByOntology(ontology);
 			}
-			if(this.ontologyEmulatorRepository.findByOntology(ontology) != null) {
+			if (this.ontologyEmulatorRepository.findByOntology(ontology) != null) {
 				this.ontologyEmulatorRepository.deleteByOntology(ontology);
 			}
-			if(this.ontologyUserAccessRepository.findByOntology(ontology) != null) {
+			if (this.ontologyUserAccessRepository.findByOntology(ontology) != null) {
 				this.ontologyUserAccessRepository.deleteByOntology(ontology);
 			}
-			if(this.twitterListeningRepository.findByOntology(ontology) != null) {
+			if (this.twitterListeningRepository.findByOntology(ontology) != null) {
 				this.twitterListeningRepository.deleteByOntology(ontology);
 			}
 			this.ontologyRepository.deleteById(id);
-		}catch(Exception e){
+		} catch (Exception e) {
 			throw new OntologyServiceException("Couldn't delete ontology");
 		}
 	}
-	
+
 	@Override
 	@Transactional
 	public void deleteTwitterListening(TwitterListening twitterListening) {
 		this.twitterListeningRepository.deleteById(twitterListening.getId());
+	}
+
+	@Override
+	@Transactional
+	public void deleteClient(String id) {
+		try {
+
+			ClientPlatform client = clientPlatformRepository.findByIdentification(id);
+			List<ClientPlatformOntology> cpf = this.clientPlatformOntologyRepository.findByClientPlatform(client);
+			if (cpf != null && cpf.size() > 0) {
+				for (Iterator iterator = cpf.iterator(); iterator.hasNext();) {
+					ClientPlatformOntology clientPlatformOntology = (ClientPlatformOntology) iterator.next();
+					this.clientPlatformOntologyRepository.delete(clientPlatformOntology);
+				}
+
+			}
+			List<ClientConnection> cc = this.clientConnectionRepository.findByClientPlatform(client);
+			if (cc != null && cc.size() > 0) {
+				for (Iterator iterator = cc.iterator(); iterator.hasNext();) {
+					ClientConnection clientConnection = (ClientConnection) iterator.next();
+					this.clientConnectionRepository.delete(clientConnection);
+				}
+			}
+
+			this.clientPlatformRepository.delete(client);
+
+		} catch (Exception e) {
+			throw new OntologyServiceException("Couldn't delete ClientPlatform");
+		}
 	}
 }
