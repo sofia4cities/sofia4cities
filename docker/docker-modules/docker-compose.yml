@@ -2,7 +2,7 @@ version: "2.1"
 
 services:
   controlpanelinstance:
-    image: sofia2/controlpanel:${IMAGETAG}
+    image: ${REPOSITORY}sofia2/controlpanel:${IMAGETAG}
     container_name: controlpanelservice    
     networks:
       - dockerdata_datanetwork
@@ -13,7 +13,7 @@ services:
      - schedulerdb
      - realtimedb    
   iotbrokerinstance:
-    image: sofia2/iotbroker:${IMAGETAG}
+    image: ${REPOSITORY}sofia2/iotbroker:${IMAGETAG}
     container_name: iotbrokerservice    
     networks:
       - dockerdata_datanetwork
@@ -22,7 +22,7 @@ services:
     external_links:
      - configdb
      - schedulerdb
-     - realtimedb      
+     - realtimedb
 networks:
   dockerdata_datanetwork:
     external: true
