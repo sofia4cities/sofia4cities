@@ -92,11 +92,10 @@
 									<a href="" class="collapse" data-original-title="" title=""> </a>
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
 								</div>
-								<div class="actions">
-									<!-- ACTION INDICATORs -->
+								<!-- <div class="actions">									
 									<span th:if="${ontology?.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
 									<span th:if="${ontology?.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
-								</div>
+								</div> -->
 								
 								<!-- SECCIONES DE LA ONTOLOGIA TABS -->
 								<ul class="nav nav-tabs pull-left">
@@ -497,7 +496,8 @@
 		"dataModelEditMode" : [[${ontology.dataModel?.id}]],
 		"dataModelSelection" : [[#{ontology.datamodel.selection}]],
 		"datamodel": [[#{ontology.datamodel}]],
-		"ontologyId": [[${ontology?.id}]]
+		"ontologyId": [[${ontology?.id}]],
+		"authorizations" : [[${authorizations}]]
 	};	
 	
 
