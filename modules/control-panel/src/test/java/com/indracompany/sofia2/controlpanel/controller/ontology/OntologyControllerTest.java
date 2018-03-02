@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -65,39 +64,34 @@ public class OntologyControllerTest {
  
     @Before
     public void setup() {
-        // Process mock annotations
-        MockitoAnnotations.initMocks(this);
         // Setup Spring test in standalone mode
         this.mockMvc = MockMvcBuilders.standaloneSetup(ontologyController).build();
     }
     
-    private Ontology ontologyCreator (String ontologyId, String userId) {
-    	User userOntologyOwner = new User();
-    	userOntologyOwner.setUserId(userId);
+    @Test
+    public void when__sessionUserIsNotAdminOrOwner__showViewIsForbidden () throws Exception {
+    	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
-    	Ontology ontology = new Ontology();  
-    	ontology.setId(ontologyId);
-    	ontology.setUser(userOntologyOwner);
+    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
     	
-    	return ontology;
+    	String sessionUserId = "unknownUser";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	mockMvc.perform(get("/ontologies/show/"+ontology.getId()))
+				.andExpect(status().isOk())
+				.andExpect(view().name("error/403"));
     }
     
-    private OntologyUserAccess ontologyUserAccessCreator(String ontologyId, String userOntologyOwnerId,
-    		String userIdToGiveAccessId, String accessTypeName, String accessId) {
+    @Test
+    public void when__invalidOntologyIdIsProvided__OntologyListViewIsServed() throws Exception {
+    	String id = "invalidOntologyId";
     	
-    	User userAuthorized = new User();
-    	userAuthorized.setUserId(userIdToGiveAccessId);
+    	given(ontologyService.getOntologyById(id)).willReturn(null);
     	
-    	OntologyUserAccessType type = new OntologyUserAccessType();
-    	type.setName(accessTypeName);
-    	
-    	OntologyUserAccess access = new OntologyUserAccess();
-    	access.setId(accessId);
-    	access.setOntology(ontologyCreator(ontologyId, userOntologyOwnerId));
-    	access.setUser(userAuthorized);
-    	access.setOntologyUserAccessType(type);
-    	
-    	return access;
+    	mockMvc.perform(get("/ontologies/show/"+id))
+				.andExpect(redirectedUrl("/ontologies/list"));    
     }
     
     @Test
@@ -105,22 +99,9 @@ public class OntologyControllerTest {
     	
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
-    	User administrator = new User();
-    	administrator.setUserId("administrador");
-    	User user = new User();
-    	user.setUserId("user");
-    	User developer = new User();
-    	developer.setUserId("developer");
-    	List<User> users = new ArrayList<User>();
-    	users.add(administrator);
-    	users.add(user);
-    	users.add(developer);
+    	List<User> users = createUsers();
     	
-    	List<OntologyUserAccess> accesses = new ArrayList<OntologyUserAccess>(2);
-    	OntologyUserAccess access1 = ontologyUserAccessCreator("ontologyId", "userOntology", "user1", "ALL", "accessId1");
-    	OntologyUserAccess access2 = ontologyUserAccessCreator("ontologyId", "userOntology", "user2", "ALL", "accessId2");
-    	accesses.add(access1);
-    	accesses.add(access2);
+    	List<OntologyUserAccess> accesses = createAccesses();
     	
     	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
     	given(ontologyService.getOntologyUserAccesses(ontology.getId())).willReturn(accesses);
@@ -135,10 +116,10 @@ public class OntologyControllerTest {
 				.andExpect(status().isOk())
     			.andExpect(view().name("ontologies/show"))
     			.andExpect(model().attribute("ontology", ontology))
+    			.andExpect(model().attribute("users", users))
     			//authorizations is serialized using OntologyUserAccessDTO, to check the content of 
     			//this attribute, it would be necessary to implement a custom Matcher<OntologyUserAccess>
-    			.andExpect(model().attributeExists("authorizations")); 
-    			
+    			.andExpect(model().attributeExists("authorizations"));     			
     }
     
     @Test
@@ -229,20 +210,9 @@ public class OntologyControllerTest {
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
-    	given(ontologyService.getOntologyUserAccessById(accessOld.getId())).willAnswer(new Answer<OntologyUserAccess>() {
-
-    		private int count = 0;
-			@Override
-			public OntologyUserAccess answer(InvocationOnMock invocation) throws Throwable {
-				switch (count) {
-				case 0:
-					count++;
-					return accessOld;
-				default:
-					return accessNew;
-				}
-			}
-		});
+    	given(ontologyService.getOntologyUserAccessById(accessOld.getId()))
+    		.willReturn(accessOld)
+    		.willReturn(accessNew);
     	
     	mockMvc.perform(post("/ontologies/authorization/update")
     					.param("id", accessOld.getId())
@@ -275,11 +245,9 @@ public class OntologyControllerTest {
     public void when__parametersAreSentToListAuthorizations__OntologyAuthorizationsAreReturned() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
-    	List<OntologyUserAccess> accesses = new ArrayList<OntologyUserAccess>(2);
-    	OntologyUserAccess access1 = ontologyUserAccessCreator("ontologyId", "userOntology", "user1", "ALL", "accessId1");
-    	OntologyUserAccess access2 = ontologyUserAccessCreator("ontologyId", "userOntology", "user2", "ALL", "accessId2");
-    	accesses.add(access1);
-    	accesses.add(access2);
+    	List<OntologyUserAccess> accesses = createAccesses();
+    	
+    	
     	
     	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
     	given(ontologyService.getOntologyUserAccesses(ontology.getId())).willReturn(accesses);
@@ -318,5 +286,57 @@ public class OntologyControllerTest {
     	mockMvc.perform(get("/ontologies/authorization")
 				.param("id", ontology.getId()))
 		.andExpect(status().isForbidden());   	
+    }
+    
+    private Ontology ontologyCreator (String ontologyId, String userId) {
+    	User userOntologyOwner = new User();
+    	userOntologyOwner.setUserId(userId);
+    	
+    	Ontology ontology = new Ontology();  
+    	ontology.setId(ontologyId);
+    	ontology.setUser(userOntologyOwner);
+    	
+    	return ontology;
+    }
+    
+    private OntologyUserAccess ontologyUserAccessCreator(String ontologyId, String userOntologyOwnerId,
+    		String userIdToGiveAccessId, String accessTypeName, String accessId) {
+    	
+    	User userAuthorized = new User();
+    	userAuthorized.setUserId(userIdToGiveAccessId);
+    	
+    	OntologyUserAccessType type = new OntologyUserAccessType();
+    	type.setName(accessTypeName);
+    	
+    	OntologyUserAccess access = new OntologyUserAccess();
+    	access.setId(accessId);
+    	access.setOntology(ontologyCreator(ontologyId, userOntologyOwnerId));
+    	access.setUser(userAuthorized);
+    	access.setOntologyUserAccessType(type);
+    	
+    	return access;
+    }
+    
+    private List<OntologyUserAccess> createAccesses() {
+    	List<OntologyUserAccess> accesses = new ArrayList<OntologyUserAccess>(2);
+    	OntologyUserAccess access1 = ontologyUserAccessCreator("ontologyId", "userOntology", "user1", "ALL", "accessId1");
+    	OntologyUserAccess access2 = ontologyUserAccessCreator("ontologyId", "userOntology", "user2", "ALL", "accessId2");
+    	accesses.add(access1);
+    	accesses.add(access2);
+    	return accesses;
+    }
+    
+    private List<User> createUsers() {
+    	User administrator = new User();
+    	administrator.setUserId("administrador");
+    	User user = new User();
+    	user.setUserId("user");
+    	User developer = new User();
+    	developer.setUserId("developer");
+    	List<User> users = new ArrayList<User>();
+    	users.add(administrator);
+    	users.add(user);
+    	users.add(developer);
+    	return users;
     }
 }
