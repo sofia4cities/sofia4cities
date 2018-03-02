@@ -69,7 +69,9 @@
 		<module>security/security-ui-ri</module>
 		
 		<!--PERSISTENCE-->
-		<module>persistence/persistence-ri</module>				
+		<module>persistence/interfaces</module>	
+		<module>persistence/mongodb-impl</module>		
+		<module>persistence/services</module>				
 		
 		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
 		<module>contributions/spring-boot-admin-server-ui-login</module>

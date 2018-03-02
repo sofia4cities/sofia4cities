@@ -75,12 +75,12 @@ public class QueryToolController {
 						ontologyIdentification);
 			if (hasUserPermission) {
 				if (queryType.toUpperCase().equals(QUERY_SQL)) {
-					queryResult = queryToolService.querySQLAsJson(ontologyIdentification, query, 0);
+					queryResult = queryToolService.querySQLAsJson(utils.getUserId(), ontologyIdentification, query, 0);
 					model.addAttribute("queryResult", queryResult);
 					return "querytool/show :: query";
 
 				} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
-					queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
+					queryResult = queryToolService.queryNativeAsJson(utils.getUserId(), ontologyIdentification, query);
 					model.addAttribute("queryResult", utils.getAsObject(queryResult));
 					return "querytool/show :: query";
 				} else {
