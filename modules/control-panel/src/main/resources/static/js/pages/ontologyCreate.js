@@ -871,9 +871,7 @@ var OntologyCreateController = function() {
 					alert("Insert Data: " + response + "\nStatus: " + status);					
 					var updateIndex = foundIndex(user,'users',authorizationsArr);			
 					authorizationsArr[updateIndex]["accesstypes"] = accesstype;
-					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);
-					
-					
+					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);					
 				}
 			});
 			
@@ -889,7 +887,7 @@ var OntologyCreateController = function() {
 					alert("Insert Data: " + response + "\nStatus: " + status);					
 					
 					// remove object
-					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(response.id);			
+					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(authorization);			
 					authorizationsIds.splice(removeIndex, 1);
 					authorizationsArr.splice(removeIndex, 1);
 					
