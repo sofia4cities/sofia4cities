@@ -133,7 +133,7 @@ public class RestSwaggerReader {
 		String vVersion="v"+version;
 		String identification = apiDto.getIdentification();
 		
-		swagger.setBasePath("/camel/api"+"/"+vVersion+"/"+identification);
+		swagger.setBasePath("/server/api"+"/"+vVersion+"/"+identification);
 
 		swagger.setSchemes(schemes);
 

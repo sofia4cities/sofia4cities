@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.service;
+package com.indracompany.sofia2.api.camel;
 
 import java.util.Map;
 
@@ -23,18 +23,15 @@ import org.apache.camel.spring.boot.CamelConfigurationProperties;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CamelContextHandler implements BeanFactoryAware {
+public class ApiCamelContextHandler implements BeanFactoryAware {
 
   private BeanFactory beanFactory;
-  
-  @Autowired
-  CamelContext camelContextReference;
 
   @Autowired
   private ApplicationContext applicationContext;
@@ -53,12 +50,6 @@ public class CamelContextHandler implements BeanFactoryAware {
   
   public Map<String,SpringCamelContext> findCamelContexts() {
 	 return (Map<String,SpringCamelContext>)applicationContext.getBeansOfType(SpringCamelContext.class);
-  }
-  
-  public Resource loadCamelContextResource(String resourceLocation) {
-	  Resource resource =
-			  applicationContext.getResource(resourceLocation); 
-	  return resource;
   }
 
   public CamelContext getCamelContext(String id) {
@@ -96,7 +87,6 @@ public class CamelContextHandler implements BeanFactoryAware {
     camelContext.setAutoStartup( camelConfigurationProperties.isAutoStartup());
     camelContext.setAllowUseOriginalMessage(camelConfigurationProperties.isAllowUseOriginalMessage());
     
-    ErrorHandlerBuilder ehBuilder= camelContextReference.getErrorHandlerBuilder();
 
     if (camelContext.getManagementStrategy().getManagementAgent() != null) {
     	camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(camelConfigurationProperties.isEndpointRuntimeStatisticsEnabled());
@@ -109,11 +99,11 @@ public class CamelContextHandler implements BeanFactoryAware {
     ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
     configurableBeanFactory.registerSingleton(contextName, camelContext);
 
-   /* try {
+    try {
       camelContext.start();
     } catch (Exception e) {
       // Log error
-    }*/
+    }
     return camelContext;
   }
 

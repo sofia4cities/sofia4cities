@@ -50,7 +50,6 @@ public class RouterFlowManagerService {
 	FlowNodeService flowNodeService;
 	
 	@Autowired
-	@Qualifier("camel-context-reference")
 	CamelContext camelContext;
 	
 	private String executeCrudOperationsRoute = "direct:execute-crud-operations";

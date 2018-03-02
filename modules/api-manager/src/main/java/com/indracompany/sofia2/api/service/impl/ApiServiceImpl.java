@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,7 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
@@ -58,6 +60,9 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		
 	@Autowired
 	private RouterCrudService routerCrudService;
+	
+	@Autowired
+	private RouterService routerService;
 	
 	
 	
