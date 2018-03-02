@@ -57,7 +57,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	 * public void dropIndex(String ontology, String indexName) throws
 	 * DBPersistenceException;
 	 * 
-	 * public List<String> getIndexes(String ontology) throws
+	 * public List<String> getListIndexes(String ontology) throws
 	 * DBPersistenceException;
 	 * 
 	 * public void validateIndexes(String ontology, String schema) throws
@@ -116,10 +116,10 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 			data.setUser("user2");
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
-			int numIndex = repository.getIndexes("contextData").size();
+			int numIndex = repository.getListIndexes("contextData").size();
 			repository.createIndex("contextData", "user");
 			Assert.assertEquals(basicOps.count("contextData"), 2);
-			Assert.assertEquals(repository.getIndexes("contextData").size(), numIndex + 1);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex + 1);
 			connect.dropCollection("sofia2_s4c", "contextData");
 		} catch (Exception e) {
 			Assert.fail("test1_createIndex:" + e.getMessage());
@@ -143,12 +143,12 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 			data.setUser("user2");
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
-			int numIndex = repository.getIndexes("contextData").size();
+			int numIndex = repository.getListIndexes("contextData").size();
 			repository.createIndex("contextData", "user_i", "user");
 			Assert.assertEquals(basicOps.count("contextData"), 2);
-			Assert.assertEquals(repository.getIndexes("contextData").size(), numIndex + 1);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex + 1);
 			repository.dropIndex("contextDAta", "user_i");
-			Assert.assertEquals(repository.getIndexes("contextData").size(), numIndex);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex);
 			connect.dropCollection("sofia2_s4c", "contextData");
 		} catch (Exception e) {
 			Assert.fail("test1_createIndex:" + e.getMessage());
@@ -172,14 +172,14 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 			data.setUser("user1");
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
-			int numIndex = repository.getIndexes("contextData").size();
+			int numIndex = repository.getListIndexes("contextData").size();
 			repository.createIndex("db.contextData.createIndex({'user':1},{'name':'user_i'})");
 			Assert.assertEquals(basicOps.count("contextData"), 2);
-			Assert.assertEquals(repository.getIndexes("contextData").size(), numIndex + 1);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex + 1);
 			repository.dropIndex("contextData", "user_i");
-			Assert.assertEquals(repository.getIndexes("contextData").size(), numIndex);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex);
 			repository.createIndex("db.contextData.createIndex({'user':1})");
-			Assert.assertEquals(repository.getIndexes("contextData").size(), numIndex + 1);
+			Assert.assertEquals(repository.getListIndexes("contextData").size(), numIndex + 1);
 			connect.dropCollection("sofia2_s4c", "contextData");
 		} catch (Exception e) {
 			Assert.fail("test1_createNativeIndex:" + e.getMessage());

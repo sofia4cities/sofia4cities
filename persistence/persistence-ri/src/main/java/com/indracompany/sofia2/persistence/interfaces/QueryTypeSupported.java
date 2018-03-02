@@ -15,7 +15,7 @@ package com.indracompany.sofia2.persistence.interfaces;
 
 import java.util.List;
 
-import com.indracompany.sofia2.ssap.SSAPQueryType;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 public interface QueryTypeSupported {
 	public List<SSAPQueryType> getSSAPQueryTypeSupported();

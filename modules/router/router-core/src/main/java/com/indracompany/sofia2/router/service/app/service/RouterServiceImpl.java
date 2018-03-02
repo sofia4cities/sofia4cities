@@ -13,47 +13,56 @@
  */
 package com.indracompany.sofia2.router.service.app.service;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 @Service("routerServiceImpl")
-public class RouterServiceImpl implements RouterService{
+public class RouterServiceImpl implements RouterService {
+
+	@Autowired
+	CamelContext camelContext;
+	
+	private String defaultStartupRoute = "direct:start-broker-flow";
 
 	@Override
 	public OperationResultModel insert(NotificationModel model) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ProducerTemplate t = camelContext.createProducerTemplate();
+		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		return result;
 	}
 
 	@Override
 	public OperationResultModel update(NotificationModel model) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ProducerTemplate t = camelContext.createProducerTemplate();
+		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		return result;
 	}
 
 	@Override
 	public OperationResultModel delete(NotificationModel model) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ProducerTemplate t = camelContext.createProducerTemplate();
+		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		return result;
 	}
 
 	@Override
 	public OperationResultModel query(NotificationModel model) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ProducerTemplate t = camelContext.createProducerTemplate();
+		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		return result;
 	}
 
 	@Override
 	public OperationResultModel subscribe(NotificationModel model) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+		ProducerTemplate t = camelContext.createProducerTemplate();
+		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		return result;
 	}
-
-	
-	
-	
-	
 
 }

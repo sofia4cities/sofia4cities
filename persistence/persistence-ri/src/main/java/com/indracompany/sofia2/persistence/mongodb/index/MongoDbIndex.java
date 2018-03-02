@@ -76,9 +76,12 @@ public class MongoDbIndex {
 		index.setNamespace(index_asDocument.getString("ns"));
 		IndexOptions indexOptions = new IndexOptions();
 		indexOptions.name(index_asDocument.getString("name"));
-		indexOptions.unique(index_asDocument.getBoolean("unique"));
-		indexOptions.sparse(index_asDocument.getBoolean("sparse"));
-		indexOptions.background(index_asDocument.getBoolean("background"));
+		if (index_asDocument.getBoolean("unique") != null)
+			indexOptions.unique(index_asDocument.getBoolean("unique"));
+		if (index_asDocument.getBoolean("sparse") != null)
+			indexOptions.sparse(index_asDocument.getBoolean("sparse"));
+		if (index_asDocument.getBoolean("background") != null)
+			indexOptions.background(index_asDocument.getBoolean("background"));
 		index.setIndexOptions(indexOptions);
 		return index;
 	}

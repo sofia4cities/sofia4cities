@@ -25,6 +25,7 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,6 +53,12 @@ public class CamelContextHandler implements BeanFactoryAware {
   
   public Map<String,SpringCamelContext> findCamelContexts() {
 	 return (Map<String,SpringCamelContext>)applicationContext.getBeansOfType(SpringCamelContext.class);
+  }
+  
+  public Resource loadCamelContextResource(String resourceLocation) {
+	  Resource resource =
+			  applicationContext.getResource(resourceLocation); 
+	  return resource;
   }
 
   public CamelContext getCamelContext(String id) {

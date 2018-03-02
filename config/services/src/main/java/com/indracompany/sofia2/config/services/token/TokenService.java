@@ -15,13 +15,14 @@ package com.indracompany.sofia2.config.services.token;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Token;
-import com.indracompany.sofia2.config.model.User;
 
 public interface TokenService {
-	
+
 	public Token generateTokenForClient(ClientPlatform clientPlatform);
-	
+
 	public Token getToken(ClientPlatform clientPlatform);
-	
+
+	public Token getTokenByToken(String token);
+
 
 }

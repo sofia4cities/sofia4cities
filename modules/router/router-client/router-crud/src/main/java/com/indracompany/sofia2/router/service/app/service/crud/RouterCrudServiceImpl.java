@@ -87,7 +87,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 			}
 			
 			else {
-				mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);	
+				OUTPUT = ""+mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);	
 			}
 	
 		}
@@ -116,11 +116,11 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.DELETE.name())) {
 			
 			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
+				OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
 			}
 			
 			else {
-				mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);	
+				OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);	
 			}
 			
 		}

@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiOperation;
 public class RouterControllerImpl implements RouterControllerInterface, RouterService {
 		
 	@Autowired
-	@Qualifier("routerServiceProxy")
+	@Qualifier("routerServiceImpl")
 	private RouterService routerService;
 	
 	
@@ -57,7 +57,7 @@ public class RouterControllerImpl implements RouterControllerInterface, RouterSe
 		return routerService.delete(model);
 	}
 
-	@RequestMapping(value = "/query", method = RequestMethod.GET)
+	@RequestMapping(value = "/query", method = RequestMethod.POST)
 	@ApiOperation(value = "query")
 	public OperationResultModel query(@RequestBody NotificationModel model) throws Exception {
 		return routerService.query(model);

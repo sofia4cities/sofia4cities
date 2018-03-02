@@ -42,15 +42,15 @@ public interface OntologyService {
 	List<DataModel> getAllDataModels();
 
 	List<String> getAllDataModelTypes();
-	
+
 	boolean hasUserPermissionForQuery(String userId, String ontologyIdentification);
-	
+
 	boolean hasUserPermissionForInsert(String userId, String ontologyIdentification);
 	
 	Map<String, String> getOntologyFields(String identification) throws JsonProcessingException, IOException;
 	
 	void updateOntology(Ontology ontology);
-	
+
 	void createOntology(Ontology ontology);
 	
 	/**

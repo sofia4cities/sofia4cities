@@ -123,12 +123,12 @@ public class Ontology extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String dataModelVersion;
-	
+
 	@PostLoad
 	protected void trim(){
-	    if(this.identification!=null){
-	        this.identification=this.identification.replaceAll(" ", "");
-	    }
+		if(this.identification!=null){
+			this.identification=this.identification.replaceAll(" ", "");
+		}
 	}
 
 }

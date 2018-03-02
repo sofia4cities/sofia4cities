@@ -20,7 +20,10 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackages = {
 		"com.indracompany.sofia2.config.services.user",
 		"com.indracompany.sofia2.config.services.ontology",
-		"com.indracompany.sofia2.router.service.app.service.crud"
+		"com.indracompany.sofia2.config.services.flownode",
+		"com.indracompany.sofia2.router.service.app.service.crud",
+		"com.indracompany.sofia2.router.service.app.service.advice"
+		
 		})
 public class ServicesConfig {
 

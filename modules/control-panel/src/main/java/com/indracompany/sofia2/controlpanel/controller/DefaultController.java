@@ -37,28 +37,28 @@ public class DefaultController {
 
 	@GetMapping("/home")
 	public String home() {
-		return "/home";
+		return "home";
 	}
 
 	@GetMapping("/login")
 	public String login(Model model) {
 		model.addAttribute("users", new User());
-		return "/login";
+		return "login";
 	}
 
 	@GetMapping("/error")
 	public String error() {
-		return "/error/403";
+		return "error/403";
 	}
 
 	@GetMapping("/403")
 	public String error403() {
-		return "/error/403";
+		return "error/403";
 	}
 
 	@GetMapping("/404")
 	public String error404() {
-		return "/error/404";
+		return "error/404";
 	}
 
 }

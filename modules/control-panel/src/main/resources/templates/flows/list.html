@@ -1,0 +1,238 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+		
+		
+		<!-- BEGIN WEB FONT -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+		
+		<!-- PLUGINS STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
+		
+		<!-- Funciones AJAX -->
+		<script th:inline="javascript">
+
+			var selectedDomain = [[${domains}]];
+			
+			function getDomainStartFragment() {
+				$.ajaxSetup({ global: false, contentType: 'application/json; charset=UTF-8', dataType:'json',type: "POST" });
+				var data = { 'domain': selectedDomain[0].domain, 'port': selectedDomain[0].port,'servicePort' : selectedDomain[0].servicePort, 'home': selectedDomain[0].home, 'cpu':selectedDomain[0].cpu, 'memory':selectedDomain[0].memory, 'state':selectedDomain[0].state};
+				$("#domain").load('/controlpanel/flows/start', JSON.stringify(data));
+			} 
+			
+			function getDomainStopFragment() {
+				$.ajaxSetup({ global: false, contentType: 'application/json; charset=UTF-8', dataType:'json',type: "POST" });
+				var data = { 'domain': selectedDomain[0].domain, 'port': selectedDomain[0].port,'servicePort' : selectedDomain[0].servicePort, 'home': selectedDomain[0].home, 'cpu':selectedDomain[0].cpu, 'memory':selectedDomain[0].memory, 'state':selectedDomain[0].state};
+				$("#domain").load('/controlpanel/flows/stop', JSON.stringify(data));
+			}
+		
+		</script>	
+	</head>	
+	
+	<!-- page-sidebar-closed to start page with collapsed menu -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>		
+			
+		<!-- BEGIN SIDEBAR -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+		
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE HEADER-->
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM -->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/flows/list}"> <span th:text="#{flow.breadcrumb.list}">Flows</span></a><i class="fa fa-circle"></i></li>						
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{flow.template.list}">My Flows </span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">
+					
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-list font-grey-gallery"></i>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{flow.template.list}"> My Flows </span>
+									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>
+								<div class="actions margin-right-20">
+									<div class="btn-group">												
+										<button th:if="${domains==null}" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../flows/create'" ><i class="fa fa-user"></i> <span th:text="#{gen.create}">New </span></button>									
+									</div>										
+								</div>
+							</div>
+							<div th:fragment="domain" id="domain" class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone">
+										<!-- ALERT ZONE -->	
+										<div th:if="${messageAlertType == 'SUCCESS' and message != null}" id="messages" class="alert alert-success alert-dismissable" th:text="${message}">
+										</div>
+										<div th:if="${messageAlertType == 'WARNING' and message != null}" id="messages" class="alert alert-warning alert-dismissable" th:text="${message}">
+										</div>
+										<div th:if="${messageAlertType == 'ERROR' and message != null}" id="messages" class="alert alert-danger alert-dismissable" th:text="${message}">
+										</div>
+										<div th:if="${messageAlertType == 'INFO' and message != null}" id="messages" class="alert alert-info alert-dismissable" th:text="${message}">
+										</div>
+									</div>
+									<!-- DOMAIN LIST -->
+									<div class="col-md-12">											
+										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+											<div>
+												<!-- DATATABLE DANDELION CONF. -->												
+												<table  class="table table-hover table-striped">
+													<thead>
+														<tr class="cabecera-tabla">
+															<th class="titulo-columnas" th:text="#{domain.identification}">Identification</th>
+															<th class="titulo-columnas text-center" th:text="#{domain.state}">State</th>
+															<th class="titulo-columnas text-center" th:text="#{domain.cpu.use}">CPU Use</th>
+															<th class="titulo-columnas text-center" th:text="#{domain.memory}">Memory [MB]</th>
+															<th class="titulo-columnas" ><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
+														</tr>
+													</thead>
+													<tbody th:remove="all-but-first">
+														<tr th:each="domain : ${domains}">
+															<!-- IDENTIFICATION/NAME -->
+															<td class="text-left no-wrap bold" th:text="${domain.domain}"></td>
+															<!-- STATE -->
+															<td class="text-center" th:if="${domain.state == 'START'}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
+															<td class="text-center" th:if="${domain.state != 'START'}"><span class="label label-danger"><i class="fa fa-times-circle"></i></span></td>
+															<!-- CPU USE -->
+															<td class="text-center" th:if="${domain.cpu!=null}"  th:text="${domain.cpu}"></td>
+															<td class="text-center" th:if="${domain.cpu==null}"  th:text="--"></td>
+															<!-- MEMORY -->
+															<td class="text-center" th:if="${domain.memory!=null}"  th:text="${domain.memory}"></td>
+															<td class="text-center" th:if="${domain.memory==null}"  th:text="--"></td>
+															<!-- OPTIONS -->
+															<td class="icon" style="white-space: nowrap">
+																<div class="grupo-iconos">
+																	<!-- START -->															
+																	<span  th:if ="${domain.state == 'STOP'}" th:title="#{domain.start}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{domain.start}" th:onclick="'javascript:getDomainStartFragment();'"><i class="fa fa-play-circle"></i></span>
+																																																			
+																	<!-- STOP -->
+																	<span  th:if ="${domain.state == 'START'}" th:title="#{domain.stop}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{domain.stop}" th:onclick="'javascript:getDomainStopFragment();'"><i class="fa fa-stop-circle"></i></span>
+																	
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>																							
+											</div>
+										</div>											
+									</div>
+									<!-- GO TO NodeRed SCREEN -->
+									<div class="col-md-12">
+										<div class="actions margin-right-20">
+											<div class="btn-group pull-right">												
+												<button th:if="${domains!=null and domains[0].state == 'START' and flowEngineActive == true}" type="button" class="btn grey-mint  btn-outline sbold" th:onclick="'location.href=\''+@{/flows/show/{id}(id=${domains[0].domain})}+'\''" ><i class="fa fa-filter"></i> <span th:text="#{domain.show}">Show Flows</span></button>									
+											</div>										
+										</div>
+									</div>
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC LIGHT -->							
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->				
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>	
+	
+	<!-- CORE CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	
+	
+	<script th:inline="javascript">	
+	
+	// DATATABLES LANGUAJE FROM PROPERTIES.
+	datatable_lang = [[#{datatables_lang}]];	
+	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
+ 
+	</script>
+	
+	<script type="text/javascript">	
+	var optionName = 'FLOWS';
+	
+	//<![CDATA[
+	function navigateUrl(url){  window.location.href = url;	}
+	
+	// MAIN WHEN READY
+	$( document ).ready(function() {
+		
+		// SEARCH FORM
+		$('#search_flows').on('click',function(){ $('#form_domain')[0].submit(); });
+	});
+	 
+	// MAIN WHEN LOAD
+	$(window).load(function(){  
+		
+		// SHOW/HIDE DATATABLES COLUMN INIT 		
+		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
+		$('#dataTable-vis-toggle').removeClass('hide');
+		
+	});
+	
+	//]]>
+	</script>
+	
+</body>
+</html>
+  

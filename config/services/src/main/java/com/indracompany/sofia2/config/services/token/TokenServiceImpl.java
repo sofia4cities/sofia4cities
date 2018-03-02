@@ -26,11 +26,11 @@ import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 @Service
 
 public class TokenServiceImpl implements TokenService{
-	
+
 	@Autowired
 	private TokenRepository tokenRepository;
-	
-	
+
+
 	@Override
 	public Token generateTokenForClient(ClientPlatform clientPlatform)
 	{
@@ -40,16 +40,24 @@ public class TokenServiceImpl implements TokenService{
 			token.setClientPlatform(clientPlatform);
 			token.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
 			token.setActive(true);
-			if(this.tokenRepository.findByToken(token.getToken())==null)
+			if(this.tokenRepository.findByToken(token.getToken())==null) {
 				token=this.tokenRepository.save(token);
-			else
+			} else {
 				throw new TokenServiceException("Token with value "+ token.getToken()+" already exists");
+			}
 		}
 		return token;
 	}
-	
+
 	@Override
 	public Token getToken(ClientPlatform clientPlatform) {
 		return this.tokenRepository.findByClientPlatform(clientPlatform).get(0);
 	}
+
+	@Override
+	public Token getTokenByToken(String token) {
+		return this.tokenRepository.findByToken(token);
+	}
+
+
 }

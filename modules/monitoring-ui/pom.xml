@@ -55,13 +55,30 @@
             <artifactId>spring-boot-admin-server-ui-sofia2</artifactId>
             <version>${spring-boot-admin-server.version}</version>
         </dependency>
+		<!--		
+        <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-server-ui-s2</artifactId>
+            <version>${spring-boot-admin-server.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.indracompany.sofia2</groupId>
+            <artifactId>spring-boot-admin-server-ui-sofia2</artifactId>
+            <version>${spring-boot-admin-server.version}</version>
+        </dependency>
+		-->
+        <dependency>
+            <groupId>com.indracompany.sofia2</groupId>
+            <artifactId>spring-boot-admin-server-ui-login-s2</artifactId>
+            <version>${spring-boot-admin-server.version}</version>
+        </dependency>
 
-        <!--Add login page and logout feature-->
+        <!--Add login page and logout feature
         <dependency>
             <groupId>de.codecentric</groupId>
             <artifactId>spring-boot-admin-server-ui-login</artifactId>
             <version>${spring-boot-admin-server.version}</version>
         </dependency>
+		-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
