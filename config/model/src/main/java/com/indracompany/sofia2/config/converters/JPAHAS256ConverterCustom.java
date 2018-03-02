@@ -14,21 +14,20 @@
 package com.indracompany.sofia2.config.converters;
 
 import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
 
 import com.indracompany.sofia2.commons.security.PasswordEncoder;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Converter
+//@Converter
 @Slf4j
-public class JPAHAS256Converter implements AttributeConverter<String, String> {
+public class JPAHAS256ConverterCustom implements AttributeConverter<String, String> {
 
 	@Override
 	public String convertToDatabaseColumn(String sensitive) {
 		try {
 			return PasswordEncoder.getInstance().encodeSHA256(sensitive);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.error("Error in convertToDatabaseColumn:" + e.getMessage());
 			throw new RuntimeException(e);
 		}

@@ -29,8 +29,6 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.github.javafaker.Faker;
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
@@ -42,7 +40,8 @@ import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.iotbroker.plugable.impl.security.reference.ReferenceSecurityImpl;
+import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
+import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 

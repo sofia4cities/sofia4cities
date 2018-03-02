@@ -25,71 +25,72 @@ import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
 
 @Service
 public class RouterCrudServiceImpl implements RouterCrudService {
-	
+
 	@Autowired
 	private QueryToolService queryToolService;
-	
+
 	@Autowired
 	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
-	
+
 	static final String ONT_NAME = "contextData";
 	static final String DATABASE = "sofia2_s4c";
 
 	@Override
 	public OperationResultModel insert(OperationModel operationModel) throws Exception {
-		
-		OperationResultModel result = new OperationResultModel();
-		
-		String METHOD = operationModel.getOperationType();
-		String BODY = operationModel.getBody();
-		String QUERY = operationModel.getQuery();
-		
-		String QUERY_TYPE = operationModel.getQueryType();
-		String ontologyId = operationModel.getOntologyId();
-		String ontologyName = operationModel.getOntologyName();
 
-		String OBJECT_ID = operationModel.getObjectId();
-		
+		final OperationResultModel result = new OperationResultModel();
+
+		final String METHOD = operationModel.getOperationType();
+		final String BODY = operationModel.getBody();
+		final String QUERY = operationModel.getQuery();
+
+		final String QUERY_TYPE = operationModel.getQueryType();
+		final String ontologyId = operationModel.getOntologyId();
+		final String ontologyName = operationModel.getOntologyName();
+
+		final String OBJECT_ID = operationModel.getObjectId();
+
 		String OUTPUT="";
-		
+
 		if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.INSERT.name())) {
-			OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);	
+			OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);
 		}
 
 		result.setResult(OUTPUT);
 		result.setMessage("OK");
 		return result;
-		
+
 
 	}
 
 	@Override
 	public OperationResultModel update(OperationModel operationModel) throws Exception {
-	OperationResultModel result = new OperationResultModel();
-		
-		String METHOD = operationModel.getOperationType();
-		String BODY = operationModel.getBody();
-		String QUERY = operationModel.getQuery();
-		
-		String QUERY_TYPE = operationModel.getQueryType();
-		
-		String ontologyName = operationModel.getOntologyName();
+		final OperationResultModel result = new OperationResultModel();
 
-		String OBJECT_ID = operationModel.getObjectId();
-		
+		final String METHOD = operationModel.getOperationType();
+		final String BODY = operationModel.getBody();
+		final String QUERY = operationModel.getQuery();
+
+		final String QUERY_TYPE = operationModel.getQueryType();
+
+		final String ontologyName = operationModel.getOntologyName();
+
+		final String OBJECT_ID = operationModel.getObjectId();
+
 		String OUTPUT="";
-		
+
 		if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.UPDATE.name())) {
-			
+
 			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);	
-				OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);	
+				mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);
+				OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
 			}
-			
+
 			else {
-				mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);	
+				final long longOutput = mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);
+				OUTPUT = Long.toString(longOutput);
 			}
-	
+
 		}
 
 		result.setResult(OUTPUT);
@@ -99,30 +100,30 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Override
 	public OperationResultModel delete(OperationModel operationModel) throws Exception {
-		OperationResultModel result = new OperationResultModel();
-		
-		String METHOD = operationModel.getOperationType();
-		String BODY = operationModel.getBody();
-		String QUERY = operationModel.getQuery();
-		
-		String QUERY_TYPE = operationModel.getQueryType();
-		
-		String ontologyName = operationModel.getOntologyName();
+		final OperationResultModel result = new OperationResultModel();
 
-		String OBJECT_ID = operationModel.getObjectId();
-		
-		String OUTPUT="";
-		
+		final String METHOD = operationModel.getOperationType();
+		final String BODY = operationModel.getBody();
+		final String QUERY = operationModel.getQuery();
+
+		final String QUERY_TYPE = operationModel.getQueryType();
+
+		final String ontologyName = operationModel.getOntologyName();
+
+		final String OBJECT_ID = operationModel.getObjectId();
+
+		final String OUTPUT="";
+
 		if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.DELETE.name())) {
-			
+
 			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
 				mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
 			}
-			
+
 			else {
-				mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);	
+				mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);
 			}
-			
+
 		}
 
 		result.setResult(OUTPUT);
@@ -132,22 +133,22 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Override
 	public OperationResultModel query(OperationModel operationModel) throws Exception {
-		OperationResultModel result = new OperationResultModel();
-		
-		String METHOD = operationModel.getOperationType();
-		String BODY = operationModel.getBody();
-		String QUERY = operationModel.getQuery();
-		
-		String QUERY_TYPE = operationModel.getQueryType();
-		String ontologyId = operationModel.getOntologyId();
-		String ontologyName = operationModel.getOntologyName();
+		final OperationResultModel result = new OperationResultModel();
 
-		String OBJECT_ID = operationModel.getObjectId();
-		
+		final String METHOD = operationModel.getOperationType();
+		final String BODY = operationModel.getBody();
+		final String QUERY = operationModel.getQuery();
+
+		final String QUERY_TYPE = operationModel.getQueryType();
+		final String ontologyId = operationModel.getOntologyId();
+		final String ontologyName = operationModel.getOntologyName();
+
+		final String OBJECT_ID = operationModel.getObjectId();
+
 		String OUTPUT="";
-		
+
 		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.QUERY.name())) {
-			
+
 			if (QUERY_TYPE !=null)
 			{
 				if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
@@ -168,14 +169,14 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Override
 	public OperationResultModel subscribe(OperationModel operationModel) throws Exception {
-		
-		OperationResultModel result = new OperationResultModel();
-		
-		
+
+		final OperationResultModel result = new OperationResultModel();
+
+
 		result.setMessage("OK");
 		return result;
 	}
-	
+
 
 	public QueryToolService getQueryToolService() {
 		return queryToolService;
@@ -192,7 +193,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	public void setMongoBasicOpsDBRepository(MongoBasicOpsDBRepository mongoBasicOpsDBRepository) {
 		this.mongoBasicOpsDBRepository = mongoBasicOpsDBRepository;
 	}
-	
-	
+
+
 
 }
