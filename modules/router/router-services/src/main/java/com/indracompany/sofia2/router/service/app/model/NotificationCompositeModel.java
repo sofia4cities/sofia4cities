@@ -25,6 +25,10 @@ public class NotificationCompositeModel implements Serializable{
 	@Setter
 	NotificationModel notificationModel;
 	
+	@Getter
+	@Setter
+	OperationResultModel operationResultModel;
+
 	
 	@Getter
 	@Setter

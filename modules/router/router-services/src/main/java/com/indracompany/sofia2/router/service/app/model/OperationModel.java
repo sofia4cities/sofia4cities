@@ -62,6 +62,13 @@ public class OperationModel implements Serializable{
 	@Getter
 	@Setter
 	private String token;
+
+	@Override
+	public String toString() {
+		return "OperationModel [ontologyId=" + ontologyId + ", ontologyName=" + ontologyName + ", operationType="
+				+ operationType + ", queryType=" + queryType + ", query=" + query + ", body=" + body + ", objectId="
+				+ objectId + ", token=" + token + "]";
+	}
 	
 
 	

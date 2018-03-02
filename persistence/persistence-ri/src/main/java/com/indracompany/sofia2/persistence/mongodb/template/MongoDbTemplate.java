@@ -248,9 +248,9 @@ public interface MongoDbTemplate extends Serializable {
 	 * @param database
 	 * @param collection
 	 * @param query
-	 * @return
+	 * @return number of deletes
 	 */
-	void remove(String database, String collection, String query) throws PersistenceException;
+	long remove(String database, String collection, String query) throws PersistenceException;
 
 	/**
 	 * Runs a db.<collection>.remove(<query>) command on the given database.
@@ -258,8 +258,9 @@ public interface MongoDbTemplate extends Serializable {
 	 * @param database
 	 * @param collection
 	 * @param document
+	 * @return number of deletes
 	 */
-	void remove(String database, String collection, BasicDBObject query) throws PersistenceException;
+	long remove(String database, String collection, BasicDBObject query) throws PersistenceException;
 
 	/**
 	 * Runs a db.<collection>.update(<query>, <update>, {multi: true}) command on
@@ -271,7 +272,7 @@ public interface MongoDbTemplate extends Serializable {
 	 * @param update
 	 * @param multi
 	 */
-	void update(String database, String collection, String query, String update, boolean multi)
+	long update(String database, String collection, String query, String update, boolean multi)
 			throws PersistenceException;
 
 	/**

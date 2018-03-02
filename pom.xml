@@ -72,9 +72,10 @@
 		<module>persistence/persistence-ri</module>				
 		
 		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
+		<module>contributions/spring-boot-admin-server-ui-login</module>
 		
 		<!--MODULES-->
-		<module>modules/iot-broker</module>		
+		<module>modules/iotbroker</module>		
 		<module>modules/control-panel</module>		
         <module>modules/monitoring-ui</module>
         <module>modules/api-manager</module>

@@ -42,11 +42,12 @@ spring: ## General Config
    application.name: sofia2-control-panel
    thymeleaf: ## Thymeleaf Config
       cache: false  
-      encoding: UTF-8
-      check-template: true
-      check-template-location: true
-      content-type: text/html
-      enabled: true
+      #encoding: UTF-8
+      #prefix: classpath:/templates/
+      #check-template: true
+      #check-template-location: true
+      #content-type: text/html
+      #enabled: true
       # excluded-view-names:
       # mode: HTML5
       # prefix: /templates/
@@ -69,6 +70,7 @@ spring: ## General Config
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
+      hibernate.temp.use_jdbc_metadata_defaults: false
    boot.admin: #Spring Boot Admin Config    
       url: http://localhost:18090
       username: operations

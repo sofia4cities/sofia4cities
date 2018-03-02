@@ -13,19 +13,20 @@
  */
 package com.indracompany.sofia2.api.config;
 
+import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.indracompany.sofia2.api.servlet.ApiServletEntryPoint;
-
-//@Configuration
+@Configuration
 public class ServletApiConfig {
 
-    @Bean
-    public ServletRegistrationBean ApiServletEntryPointBean() {
-        ServletRegistrationBean bean = new ServletRegistrationBean(new ApiServletEntryPoint(), "/api/*");
-        bean.setLoadOnStartup(1);
-        return bean;
-    }
+	@Bean
+	public ServletRegistrationBean camelServletRegistrationBean() {
+		ServletRegistrationBean registration = new ServletRegistrationBean(new CamelHttpTransportServlet(), "/server/*");
+		registration.setName("CamelServlet");
+		registration.setAsyncSupported(true);
+		registration.setLoadOnStartup(1);
+		return registration;
+	}
 }

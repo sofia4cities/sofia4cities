@@ -68,7 +68,10 @@ import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.CreateCollectionOptions;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertOneModel;
+import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
+import com.mongodb.client.result.DeleteResult;
+import com.mongodb.client.result.UpdateResult;
 import com.mongodb.util.JSON;
 import com.mongodb.util.JSONParseException;
 
@@ -432,6 +435,15 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 		// MongoIterable<BasicDBObject> res= find(database, collection,
 		// stmt,maxWaitTime);
 
+		if (objectId.indexOf("_id") != -1) {
+			objectId = objectId.replace("{", "");
+			objectId = objectId.replace("}", "");
+			objectId = objectId.replace("\"", "");
+			objectId = objectId.replace("'", "");
+			String[] t = objectId.split(":");
+			objectId = t[t.length - 1];
+		}
+
 		MongoCollection<BasicDBObject> dbCollection = getCollection(database, collection, BasicDBObject.class);
 		FindIterable<BasicDBObject> res = dbCollection.find(new BasicDBObject("_id", new ObjectId(objectId)));
 		if (res != null)
@@ -641,9 +653,11 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	}
 
 	@Override
-	public void remove(String database, String collection, String query) throws PersistenceException {
+	public long remove(String database, String collection, String query) throws PersistenceException {
 		try {
-			remove(database, collection, (BasicDBObject) JSON.parse(query));
+			if (query.indexOf("db.") != -1)
+				query = util.getQueryContent(query);
+			return remove(database, collection, (BasicDBObject) JSON.parse(query));
 		} catch (JSONParseException e) {
 			String errorMessage = String.format(
 					"Unable to parse JSON query. Query = %s, cause = %s, errorMessage = %s.", query, e.getCause(),
@@ -654,11 +668,15 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	}
 
 	@Override
-	public void remove(String database, String collection, BasicDBObject query) throws PersistenceException {
+	public long remove(String database, String collection, BasicDBObject query) throws PersistenceException {
 		log.debug("Removing from MongoDB...Database= {} , collection = {} , query = {}.", database, collection, query);
-		MongoCollection<?> dbCollection = getCollection(database, collection, BasicDBObject.class);
+		MongoQueryAndParams mc = new MongoQueryAndParams();
 		try {
-			dbCollection.deleteMany(query);
+			// mc.parseQuery(query, limit, offset);
+			MongoCollection<?> dbCollection = getCollection(database, collection, BasicDBObject.class);
+			// find()
+			DeleteResult result = dbCollection.deleteMany(query);
+			return result.getDeletedCount();
 		} catch (Throwable e) {
 			String errorMessage = String.format(
 					"Unable to delete from MongoDB. Database = %s, collection = %s , query = %s , writeConcern = %s , cause = %s , errorMessage = %s.",
@@ -684,18 +702,33 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	}
 
 	@Override
-	public void update(String database, String collection, String query, String update, boolean multi)
+	public long update(String database, String collection, String query, String update, boolean multi)
 			throws PersistenceException {
 		log.info("Updating document. Database= {} , collection = {}, document = {} , update = {}.", database,
 				collection, query, update);
+		UpdateResult result = null;
+		List<String> list = new ArrayList<>();
 		try {
+			if (update.indexOf("$set") == -1)
+				update = "{$set:" + update + "}";
 			BasicDBObject parsedQuery = (BasicDBObject) JSON.parse(query);
 			BasicDBObject parsedUpdate = (BasicDBObject) JSON.parse(update);
+
+			// Bson filter = Filters.eq("user", "other");
+			// Bson toUpdate = Filters.eq("user", "developer");
+
 			MongoCollection<?> dbCollection = getCollection(database, collection, BasicDBObject.class);
+
 			if (multi)
-				dbCollection.updateMany(parsedQuery, parsedUpdate);
+				result = dbCollection.updateMany(parsedQuery, parsedUpdate, new UpdateOptions().upsert(true));
 			else
-				dbCollection.updateOne(parsedQuery, parsedUpdate);
+				result = dbCollection.updateOne(parsedQuery, parsedUpdate, new UpdateOptions().upsert(true));
+
+			log.info("Executed update, with " + query + result.getMatchedCount() + " rows found " + "and " + query
+					+ result.getModifiedCount() + " rows updated.");
+
+			return result.getModifiedCount();
+
 		} catch (Throwable e) {
 			String errorMessage = String.format(
 					"Unable to update the document. Database = %s, collection = %s, document = %s, update = %s, cause = %s , errorMessage = %s.",

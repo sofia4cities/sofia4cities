@@ -126,7 +126,7 @@ public class FlowDomainController {
 			List<Flow> flows = flowService.getFlowByDomain(domain.getIdentification());
 			model.addAttribute("flows", flows);
 		}
-		return "/flows/list";
+		return "flows/list";
 	}
 
 	@PostMapping(value = "/create")
@@ -152,7 +152,7 @@ public class FlowDomainController {
 	public String createForm(Model model) {
 		FlowDomain domain = new FlowDomain();
 		model.addAttribute("domain", domain);
-		return "/flows/create";
+		return "flows/create";
 
 	}
 
@@ -183,7 +183,7 @@ public class FlowDomainController {
 		List<FlowEngineDomainStatus> domainStatusList = new ArrayList<>();
 		domainStatusList.add(domainStatus);
 		model.addAttribute("domains", domainStatusList);
-		return "/flows/list :: domain";
+		return "flows/list :: domain";
 
 	}
 
@@ -209,7 +209,7 @@ public class FlowDomainController {
 		List<FlowEngineDomainStatus> domainStatusList = new ArrayList<>();
 		domainStatusList.add(domainStatus);
 		model.addAttribute("domains", domainStatusList);
-		return "/flows/list :: domain";
+		return "flows/list :: domain";
 
 	}
 
