@@ -1,0 +1,17 @@
+version: "2.1"
+
+services:
+  controlpanelinstance:
+    image: sofia2/controlpanel:${IMAGETAG}
+    container_name: controlpanelservice    
+    networks:
+      - dockerdata_datanetwork
+    ports:
+     - "8091:18080"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb    
+networks:
+  dockerdata_datanetwork:
+    external: true
