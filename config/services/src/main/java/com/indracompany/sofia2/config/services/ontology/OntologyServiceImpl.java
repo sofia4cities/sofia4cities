@@ -162,7 +162,7 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public boolean hasUserPermissionForQuery(String userId, String ontologyIdentification) {
 		User user = this.userService.getUser(userId);
-		if (user.getRole().getName().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+		if (userService.isUserAdministrator(user))
 			return true;
 		List<Ontology> ontologies = this.ontologyRepository.findByUserAndOntologyUserAccessAndPermissionsQuery(user);
 		for (Ontology ontology : ontologies) {
@@ -176,7 +176,7 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public boolean hasUserPermissionForInsert(String userId, String ontologyIdentification) {
 		User user = this.userService.getUser(userId);
-		if (user.getRole().getName().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+		if (userService.isUserAdministrator(user))
 			return true;
 		List<Ontology> ontologies = this.ontologyRepository.findByUserAndOntologyUserAccessAndPermissionsInsert(user);
 		for (Ontology ontology : ontologies) {

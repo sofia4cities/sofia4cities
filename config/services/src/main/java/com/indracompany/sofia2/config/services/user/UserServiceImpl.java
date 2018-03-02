@@ -46,6 +46,24 @@ public class UserServiceImpl implements UserService {
 	private TokenRepository tokenRepository;
 
 	@Override
+	public boolean isUserAdministrator(User user) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			return true;
+		if (user.getRole().getRoleParent().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			return true;
+		return false;
+	}
+
+	@Override
+	public boolean isUserDeveloper(User user) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_DEVELOPER.name()))
+			return true;
+		if (user.getRole().getRoleParent().getId().equals(Role.Type.ROLE_DEVELOPER.name()))
+			return true;
+		return false;
+	}
+
+	@Override
 	public Token getToken(String token) {
 		return tokenRepository.findByToken(token);
 	}
@@ -200,7 +218,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean emailExists(User user) {
 
-		if ( (this.userRepository.findByEmail(user.getEmail())).size() != 0) {
+		if ((this.userRepository.findByEmail(user.getEmail())).size() != 0) {
 			return true;
 		} else {
 			return false;
