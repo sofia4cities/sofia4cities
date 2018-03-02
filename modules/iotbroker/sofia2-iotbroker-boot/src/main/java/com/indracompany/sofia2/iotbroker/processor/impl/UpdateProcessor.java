@@ -20,11 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.common.exception.BaseException;
+import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.router.service.app.model.NotificationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -36,7 +39,7 @@ import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 public class UpdateProcessor implements MessageTypeProcessor {
 
 	@Autowired
-	BasicOpsDBRepository repository;
+	private RouterService routerService;
 	@Autowired
 	ObjectMapper objectMapper;
 	@Autowired
@@ -51,7 +54,22 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
 
-		repository.updateNative(updateMessage.getOntology(), updateMessage.getBody().getQuery());
+		final OperationModel model = new OperationModel();
+		model.setOntologyName(updateMessage.getOntology());
+		model.setOperationType("PUT");
+		model.setQueryType("NATIVE");
+		model.setBody(updateMessage.getBody().getQuery());
+
+		final NotificationModel modelNotification= new NotificationModel();
+		modelNotification.setOperationModel(model);
+
+		final OperationResultModel result =routerService.update(modelNotification);
+		final String responseStr = result.getResult();
+
+		final String response = String.format("{\"nModified\":%s}",responseStr);
+		responseMessage.getBody().setData(objectMapper.readTree(response));
+
+		//		repository.updateNative(updateMessage.getOntology(), updateMessage.getBody().getQuery());
 
 		return responseMessage;
 

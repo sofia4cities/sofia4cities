@@ -39,6 +39,7 @@ import com.indracompany.sofia2.config.services.flowdomain.FlowDomainService;
 import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.flowengine.api.rest.pojo.DecodedAuthentication;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.DeployRequestRecord;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineNodeService;
@@ -47,6 +48,7 @@ import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
 import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.services.QueryToolService;
 
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +61,9 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	@Autowired
 	@Qualifier("MongoBasicOpsDBRepository")
 	private BasicOpsDBRepository basicRDBRepository;
+
+	@Autowired
+	private QueryToolService queryToolService;
 
 	@Autowired
 	private FlowDomainService domainService;
@@ -136,15 +141,15 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	}
 
 	@Override
-	public List<String> getOntologyByUser(String userId, String password)
+	public List<String> getOntologyByUser(String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException {
 
 		List<String> response = new ArrayList<>();
-
-		User sofia2User = validateUserCredentials(userId, password);
+		DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
 		List<Ontology> ontologies = null;
-		switch (sofia2User.getRole().getName()) {
+		switch (sofia2User.getRole().getId()) {
 		case "ROLE_ADMINISTRATOR":
 			ontologies = ontologyService.getAllOntologies();
 			break;
@@ -161,15 +166,16 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	}
 
 	@Override
-	public List<String> getClientPlatformByUser(String userId, String password)
+	public List<String> getClientPlatformByUser(String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException {
 
 		List<String> response = new ArrayList<>();
 
-		User sofia2User = validateUserCredentials(userId, password);
+		DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
 		List<ClientPlatform> clientPlatforms = null;
-		switch (sofia2User.getRole().getName()) {
+		switch (sofia2User.getRole().getId()) {
 		case "ROLE_ADMINISTRATOR":
 			clientPlatforms = clientPlatformService.getAllClientPlatforms();
 			break;
@@ -187,10 +193,12 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 
 	@Override
 	public String validateUserDomain(UserDomainValidationRequest request)
-			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException {
+			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException, IllegalArgumentException {
 
 		String response = null;
-		User sofia2User = validateUserCredentials(request.getUserId(), request.getPassword());
+		DecodedAuthentication decodedAuth = decodeAuth(request.getAuthentication());
+		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+
 		if (request.getDomainId() == null) {
 			throw new IllegalArgumentException("DomainId must be specified.");
 		}
@@ -208,7 +216,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			break;
 		default:
 			if (!domain.getUser().getUserId().equals(sofia2User.getUserId())) {
-				throw new NotAllowedException("User " + request.getUserId()
+				throw new NotAllowedException("User " + decodedAuth.getUserId()
 						+ " has no permissions over specified domain " + request.getDomainId());
 			}
 			response = "OK";
@@ -218,31 +226,39 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	}
 
 	@Override
-	public String submitQuery(String ontologyIdentificator, String queryType, String query, String user,
-			String password) throws ResourceNotFoundException, NotAuthorizedException, NotFoundException,
-			JsonProcessingException, DBPersistenceException {
-		// TODO Auto-generated method stub
-		ObjectMapper mapper = new ObjectMapper();
+	public String submitQuery(String ontologyIdentificator, String queryType, String query, String authentication)
+			throws ResourceNotFoundException, NotAuthorizedException, NotFoundException, JsonProcessingException,
+			DBPersistenceException {
+
+		DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+
 		// TODO Change criteria. There should be no conditions harcoded refered
 		// to a certain query language
 		// TODO Throw not authorized Exceptions when needed
-		if ("SQL".equals(queryType)) {
+		if ("sql".equals(queryType.toLowerCase())) {
 			if (query.toLowerCase().startsWith("select")) {
-				if (this.ontologyService.hasUserPermissionForQuery(user, ontologyIdentificator)) {
-					return basicRDBRepository.querySQLAsJson(ontologyIdentificator, query);
+				// TODO: ADMIN has all query permissions ?
+				if (sofia2User.getRole().getId().equals("ROLE_ADMINISTRATOR") || this.ontologyService
+						.hasUserPermissionForQuery(decodedAuth.getUserId(), ontologyIdentificator)) {
+					return queryToolService.querySQLAsJson(ontologyIdentificator, query, 0);
 				} else {
-					log.error("User {} has no QUERY/ALL access over {} ontology.", user, ontologyIdentificator);
+					log.error("User {} has no QUERY/ALL access over {} ontology.", decodedAuth.getUserId(),
+							ontologyIdentificator);
 				}
 			} else if (query.toLowerCase().startsWith("update") || query.toLowerCase().startsWith("insert")) {
-				if (this.ontologyService.hasUserPermissionForInsert(user, ontologyIdentificator)) {
-					return basicRDBRepository.querySQLAsJson(ontologyIdentificator, query);
+				// TODO: ADMIN has all query permissions ?
+				if (sofia2User.getRole().getId().equals("ROLE_ADMINISTRATOR") || this.ontologyService
+						.hasUserPermissionForInsert(decodedAuth.getUserId(), ontologyIdentificator)) {
+					return queryToolService.querySQLAsJson(ontologyIdentificator, query, 0);
 				} else {
-					log.error("User {} has no INSERT/ALL access over {} ontology.", user, ontologyIdentificator);
+					log.error("User {} has no INSERT/ALL access over {} ontology.", decodedAuth.getUserId(),
+							ontologyIdentificator);
 				}
 			}
 		} else if ("native".equals(queryType)) {
 			if (query.toLowerCase().contains(".find")) {
-				return mapper.writeValueAsString(basicRDBRepository.queryNative(ontologyIdentificator, query));
+				return queryToolService.queryNativeAsJson(ontologyIdentificator, query);
 			} else if (query.toLowerCase().contains(".update")) {
 				// TODO: Not implemented in RTDB yet
 				throw new NotImplementedException();
@@ -281,4 +297,18 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		return sofia2User;
 	}
 
+	private DecodedAuthentication decodeAuth(String authentication) throws IllegalArgumentException {
+		try {
+			return new DecodedAuthentication(authentication);
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Authentication is null or cannot be decoded.");
+		}
+	}
+
+	@Override
+	public String submitInsert(String ontology, String data, String authentication)
+			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
+		// TODO Implement internal insert from data = ontologyInstance
+		throw new NotImplementedException();
+	}
 }

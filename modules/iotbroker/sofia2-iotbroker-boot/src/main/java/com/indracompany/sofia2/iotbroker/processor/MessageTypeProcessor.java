@@ -15,7 +15,7 @@ package com.indracompany.sofia2.iotbroker.processor;
 
 import java.util.List;
 
-import com.indracompany.sofia2.common.exception.BaseException;
+import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;

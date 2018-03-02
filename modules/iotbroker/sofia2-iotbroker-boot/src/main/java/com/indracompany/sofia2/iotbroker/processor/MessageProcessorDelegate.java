@@ -22,10 +22,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.common.exception.AuthorizationException;
-import com.indracompany.sofia2.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
+import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
+import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
+import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;

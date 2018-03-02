@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.controlpanel.controller.flow;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -215,8 +216,13 @@ public class FlowDomainController {
 	@GetMapping(value = "/show/{domainId}", produces = "text/html")
 	public String showNodeRedPanelForm(Model model, @PathVariable(value = "domainId") String domainId) {
 		String password = userService.getUser(utils.getUserId()).getPassword();
-		model.addAttribute("proxy",
-				"http://localhost:5050/" + domainId + "/?usuario=" + utils.getUserId() + "&password=" + password);
+		String auth = utils.getUserId() + ":" + password;
+		String authBase64 = Base64.getEncoder().encodeToString(auth.getBytes());
+		/*
+		 * model.addAttribute("proxy", "http://localhost:5050/" + domainId +
+		 * "/?usuario=" + utils.getUserId() + "&password=" + password);
+		 */
+		model.addAttribute("proxy", "http://localhost:5050/" + domainId + "/?authentication=" + authBase64);
 		return "/flows/show";
 	}
 
