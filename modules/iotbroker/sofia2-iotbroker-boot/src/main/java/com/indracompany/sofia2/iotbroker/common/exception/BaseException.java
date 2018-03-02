@@ -11,14 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.common.exception;
+package com.indracompany.sofia2.iotbroker.common.exception;
 
-public class AuthenticationException extends BaseException {
-
+//TODO: Pasar a commons
+public abstract class BaseException extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public AuthenticationException(String message) {
+	public BaseException(String message) {
 		super(message);
 	}
-	
 }
