@@ -23,7 +23,10 @@ import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class RouterCrudServiceImpl implements RouterCrudService {
 	
 	@Autowired
@@ -38,6 +41,8 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	@Override
 	public OperationResultModel insert(OperationModel operationModel) throws Exception {
 		
+		log.info("Router Crud Service Operation "+operationModel.toString());
+		
 		OperationResultModel result = new OperationResultModel();
 		
 		String METHOD = operationModel.getOperationType();
@@ -51,13 +56,19 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		String OBJECT_ID = operationModel.getObjectId();
 		
 		String OUTPUT="";
-		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.INSERT.name())) {
-			OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);	
-		}
-
-		result.setResult(OUTPUT);
 		result.setMessage("OK");
+		
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.INSERT.name())) {
+				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);	
+			}
+		} catch (Exception e) {
+			result.setResult(OUTPUT);
+			result.setMessage(e.getMessage());
+		}
+		
+		result.setResult(OUTPUT);
+		result.setOperation(METHOD);
 		return result;
 		
 
@@ -65,104 +76,128 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Override
 	public OperationResultModel update(OperationModel operationModel) throws Exception {
-	OperationResultModel result = new OperationResultModel();
+		
+		log.info("Router Crud Service Operation "+operationModel.toString());
+		
+		OperationResultModel result = new OperationResultModel();
 		
 		String METHOD = operationModel.getOperationType();
 		String BODY = operationModel.getBody();
 		String QUERY = operationModel.getQuery();
-		
 		String QUERY_TYPE = operationModel.getQueryType();
-		
 		String ontologyName = operationModel.getOntologyName();
-
 		String OBJECT_ID = operationModel.getObjectId();
 		
 		String OUTPUT="";
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.UPDATE.name())) {
-			
-			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);	
-				OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);	
-			}
-			
-			else {
-				mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);	
-			}
-	
-		}
-
-		result.setResult(OUTPUT);
 		result.setMessage("OK");
+		
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.UPDATE.name())) {
+				
+				if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
+					mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);	
+					OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);	
+				}
+				
+				else {
+					OUTPUT = ""+mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);	
+				}
+		
+			}
+		} catch (Exception e) {
+			result.setResult(OUTPUT);
+			result.setMessage(e.getMessage());
+		}
+		
+		result.setResult(OUTPUT);
+		result.setOperation(METHOD);
 		return result;
 	}
 
 	@Override
 	public OperationResultModel delete(OperationModel operationModel) throws Exception {
+		
+		log.info("Router Crud Service Operation "+operationModel.toString());
+		
 		OperationResultModel result = new OperationResultModel();
 		
 		String METHOD = operationModel.getOperationType();
 		String BODY = operationModel.getBody();
 		String QUERY = operationModel.getQuery();
-		
 		String QUERY_TYPE = operationModel.getQueryType();
-		
 		String ontologyName = operationModel.getOntologyName();
-
 		String OBJECT_ID = operationModel.getObjectId();
-		
 		String OUTPUT="";
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.DELETE.name())) {
-			
-			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
-			}
-			
-			else {
-				mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);	
-			}
-			
-		}
-
-		result.setResult(OUTPUT);
 		result.setMessage("OK");
+		
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.DELETE.name())) {
+				
+				if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
+					OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
+				}
+				
+				else {
+					OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);	
+				}
+				
+			}
+		} catch (Exception e) {
+			result.setResult(OUTPUT);
+			result.setMessage(e.getMessage());
+		}
+		
+		result.setResult(OUTPUT);
+		result.setOperation(METHOD);
 		return result;
 	}
 
 	@Override
 	public OperationResultModel query(OperationModel operationModel) throws Exception {
+		
+		log.info("Router Crud Service Operation "+operationModel.toString());
+		
 		OperationResultModel result = new OperationResultModel();
 		
 		String METHOD = operationModel.getOperationType();
 		String BODY = operationModel.getBody();
 		String QUERY = operationModel.getQuery();
-		
 		String QUERY_TYPE = operationModel.getQueryType();
 		String ontologyId = operationModel.getOntologyId();
 		String ontologyName = operationModel.getOntologyName();
-
 		String OBJECT_ID = operationModel.getObjectId();
 		
 		String OUTPUT="";
+		result.setMessage("OK");
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.QUERY.name())) {
-			
-			if (QUERY_TYPE !=null)
-			{
-				if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
-					OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
-				}
-				else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
-					OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.QUERY.name())) {
+				
+				if (QUERY_TYPE !=null)
+				{
+					if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
+						OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
+					}
+					else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
+						OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
+					}
+					else {
+						OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
+					}
 				}
 				else {
 					OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
 				}
 			}
+		} catch (Exception e) {
+			result.setResult(OUTPUT);
+			result.setMessage(e.getMessage());
 		}
+		
 		result.setResult(OUTPUT);
-		result.setMessage("OK");
+		result.setOperation(METHOD);
 		return result;
 	}
 
