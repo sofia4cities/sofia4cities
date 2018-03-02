@@ -4,10 +4,10 @@ LABEL maintainer "plataformasofia2@indra.es"
 
 VOLUME /tmp
 
-ARG JAR_FILE
-
 ADD *-exec.jar app.jar
 
 EXPOSE 19090
+
+ENV JAVA_OPTS=""
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
