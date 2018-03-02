@@ -11,13 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.scheduler.instance;
+package com.indracompany.sofia2.simulator;
 
-public class SchedulerNames {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-	public static final String SCRIPT_SCHEDULER_NAME = "scriptScheduler";
-	public static final String TWITTER_SCHEDULER_NAME = "twitterScheduler";
-	public static final String SIMULATION_SCHEDULER_NAME = "simulationScheduler";
-	
-	private SchedulerNames () {}
+
+@SpringBootApplication
+@ComponentScan("com.indracompany.sofia2")
+public class DeviceSimulatorApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(DeviceSimulatorApplication.class, args);
+	}
 }

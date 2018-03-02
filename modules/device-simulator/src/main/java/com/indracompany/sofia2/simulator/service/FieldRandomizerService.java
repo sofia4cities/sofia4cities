@@ -11,13 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.scheduler.instance;
+package com.indracompany.sofia2.simulator.service;
 
-public class SchedulerNames {
+import com.fasterxml.jackson.databind.JsonNode;
 
-	public static final String SCRIPT_SCHEDULER_NAME = "scriptScheduler";
-	public static final String TWITTER_SCHEDULER_NAME = "twitterScheduler";
-	public static final String SIMULATION_SCHEDULER_NAME = "simulationScheduler";
-	
-	private SchedulerNames () {}
+public interface FieldRandomizerService {
+
+	JsonNode randomizeFields(JsonNode json);
 }

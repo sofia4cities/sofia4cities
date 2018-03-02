@@ -1,3 +1,16 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.controlpanel.controller.simulation;
 
 import java.io.IOException;
@@ -48,7 +61,7 @@ public class DeviceSimulatorController {
 	}
 
 	@GetMapping("create")
-	public String simulate(Model model) {
+	public String createForm(Model model) {
 		List<String> clients = this.deviceSimulationService.getClientsForUser(this.utils.getUserId());
 		List<String> simulators = this.deviceSimulationService.getSimulatorTypes();
 		model.addAttribute("platformClients", clients);
@@ -58,13 +71,13 @@ public class DeviceSimulatorController {
 	}
 
 	@PostMapping("create")
-	public @ResponseBody String debug(Model model, @RequestParam String identification, @RequestParam String jsonMap,
+	public String create(Model model, @RequestParam String identification, @RequestParam String jsonMap,
 			@RequestParam String ontology, @RequestParam String clientPlatform, @RequestParam String token,
 			@RequestParam int interval) throws JsonProcessingException, IOException {
 
 		this.simulationService.createSimulation(identification, interval, utils.getUserId(),
 				this.simulationService.getDeviceSimulationJson(clientPlatform, token, ontology, jsonMap));
-		return "{\"message\":\"ok\"}";
+		return "redirect:/simulator/list";
 	}
 
 	@PostMapping("ontologiesandtokens")

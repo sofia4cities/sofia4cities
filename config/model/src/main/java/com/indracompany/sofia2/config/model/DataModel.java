@@ -87,27 +87,6 @@ public class DataModel extends AuditableEntityWithUUID {
 	@Getter
 	private String labels;
 
-	public String getSchema() {
-		String schema = this.jsonSchema.toString();
-		if (schema != null && schema.length() > 0) {
-			schema = schema.replaceAll("\\<.*?>", "");
-			schema = schema.replaceAll("&nbsp;", "");
-			schema = schema.replaceAll("&amp;", "");
-			schema = schema.replaceAll("&quot;", "\"");
-			schema = schema.replaceAll("\"", "'");
-			schema = schema.replaceAll("\n", "");
-		}
-		return schema;
-	}
-
-	public String prepareSchema(String jsonschema) {
-		String myjsonschema = jsonschema;
-		if (myjsonschema != null) {
-			myjsonschema = myjsonschema.replace("\t", "");
-			myjsonschema = myjsonschema.replace("\r", "");
-			myjsonschema = myjsonschema.replace("\n", "");
-		}
-		return myjsonschema;
-	}
+	
 
 }

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
+import com.indracompany.sofia2.config.repository.DeviceSimulationRepository;
 import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -41,6 +42,8 @@ public class EntityDeletionServiceImpl implements EntityDeletionService{
 	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
 	private TwitterListeningRepository twitterListeningRepository;
+	@Autowired
+	private DeviceSimulationRepository deviceSimulationRepository;
 	
 	
 	
@@ -61,6 +64,10 @@ public class EntityDeletionServiceImpl implements EntityDeletionService{
 			}
 			if(this.twitterListeningRepository.findByOntology(ontology) != null) {
 				this.twitterListeningRepository.deleteByOntology(ontology);
+			}
+			if(this.deviceSimulationRepository.findByOntology(ontology) != null)
+			{
+				this.deviceSimulationRepository.deleteByOntology(ontology);
 			}
 			this.ontologyRepository.deleteById(id);
 		}catch(Exception e){

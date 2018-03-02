@@ -194,8 +194,6 @@ public class OntologyServiceImpl implements OntologyService {
 		if (ontology != null) {
 			ObjectMapper mapper = new ObjectMapper();
 
-			// String prefix =
-			// mapper.readTree(ontology.getJsonSchema()).get("title").asText();
 
 			JsonNode jsonNode = null;
 			try {
