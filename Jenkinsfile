@@ -16,7 +16,7 @@ pipeline {
    environment {          
       // Base sources path 
       SYSTEMCONFIG = 'config/init' 
-      DOCKERCONFIG = 'docker'   
+      DOCKERCONFIG = 'docker/docker-data'   
 	  BRANCHNAME = 'develop'	
    }
    

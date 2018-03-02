@@ -25,9 +25,25 @@ services:
      - MYSQL_PASSWORD=select4cities2018
      - MYSQL_DATABASE=sofia2_s4c
     depends_on:
-     - "realtimedb"     
+     - "realtimedb"
+  schedulerdb:
+    image: mysql/mysql-server
+    container_name: schedulerdb
+    networks:
+      - datanetwork
+    ports:
+      - "3307:3306"
+    environment:
+     - MYSQL_ALLOW_EMPTY_PASSWORD=true
+     - MYSQL_ROOT_HOST=%
+     - MYSQL_ROOT_PASSWORD=
+     - MYSQL_USER=indra
+     - MYSQL_PASSWORD=select4cities2018
+     - MYSQL_DATABASE=sofia2_s4c_scheduler
+    depends_on:
+     - "configdb"           
   quasar:
-    image: ${REPOSITORY}sofia/quasar:${SOFIA2TAG}
+    image: ${REPOSITORY}sofia/quasar:${IMAGETAG}
     container_name: quasar
     networks:
      - datanetwork
