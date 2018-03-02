@@ -23,7 +23,10 @@ import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class RouterCrudServiceImpl implements RouterCrudService {
 	
 	@Autowired
@@ -37,6 +40,8 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Override
 	public OperationResultModel insert(OperationModel operationModel) throws Exception {
+		
+		log.info("Router Crud Service Operation "+operationModel.toString());
 		
 		OperationResultModel result = new OperationResultModel();
 		
@@ -71,16 +76,16 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Override
 	public OperationResultModel update(OperationModel operationModel) throws Exception {
-	OperationResultModel result = new OperationResultModel();
+		
+		log.info("Router Crud Service Operation "+operationModel.toString());
+		
+		OperationResultModel result = new OperationResultModel();
 		
 		String METHOD = operationModel.getOperationType();
 		String BODY = operationModel.getBody();
 		String QUERY = operationModel.getQuery();
-		
 		String QUERY_TYPE = operationModel.getQueryType();
-		
 		String ontologyName = operationModel.getOntologyName();
-
 		String OBJECT_ID = operationModel.getObjectId();
 		
 		String OUTPUT="";
@@ -112,18 +117,17 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Override
 	public OperationResultModel delete(OperationModel operationModel) throws Exception {
+		
+		log.info("Router Crud Service Operation "+operationModel.toString());
+		
 		OperationResultModel result = new OperationResultModel();
 		
 		String METHOD = operationModel.getOperationType();
 		String BODY = operationModel.getBody();
 		String QUERY = operationModel.getQuery();
-		
 		String QUERY_TYPE = operationModel.getQueryType();
-		
 		String ontologyName = operationModel.getOntologyName();
-
 		String OBJECT_ID = operationModel.getObjectId();
-		
 		String OUTPUT="";
 		
 		result.setMessage("OK");
@@ -152,16 +156,17 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Override
 	public OperationResultModel query(OperationModel operationModel) throws Exception {
+		
+		log.info("Router Crud Service Operation "+operationModel.toString());
+		
 		OperationResultModel result = new OperationResultModel();
 		
 		String METHOD = operationModel.getOperationType();
 		String BODY = operationModel.getBody();
 		String QUERY = operationModel.getQuery();
-		
 		String QUERY_TYPE = operationModel.getQueryType();
 		String ontologyId = operationModel.getOntologyId();
 		String ontologyName = operationModel.getOntologyName();
-
 		String OBJECT_ID = operationModel.getObjectId();
 		
 		String OUTPUT="";
