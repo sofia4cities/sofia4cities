@@ -133,7 +133,7 @@ public class OntologyControllerTest {
     	
     	mockMvc.perform(get("/ontologies/show/"+ontology.getId()))
 				.andExpect(status().isOk())
-    			.andExpect(view().name("/ontologies/show"))
+    			.andExpect(view().name("ontologies/show"))
     			.andExpect(model().attribute("ontology", ontology))
     			//authorizations is serialized using OntologyUserAccessDTO, to check the content of 
     			//this attribute, it would be necessary to implement a custom Matcher<OntologyUserAccess>
