@@ -91,9 +91,9 @@
 										</a>												
 										<ul class="dropdown-menu pull-right" role="menu">
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createwizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
+											<!-- <li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
 											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
+											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li> -->
 											<li class="divider"> </li>
 											<li><a  onclick="location.href='../ontologies/create'" th:text="#{gen.createBtn}"> New </a></li>
 										</ul>
@@ -157,6 +157,7 @@
 															<th class="titulo-columnas" th:text="#{ontology.description}">Description</th>
 															<th class="titulo-columnas text-center" th:text="#{ontology.active}">Active</th>
 															<th class="titulo-columnas text-center" th:text="#{ontology.public}">Public</th>
+															<th class="titulo-columnas text-center" th:text="#{ontology.authorizations}">Authorizations</th>
 															<th class="titulo-columnas text-center" th:text="#{ontology.datamodel}">Datamodel</th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{ontology.createdAt}"> Created At </span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
@@ -176,6 +177,10 @@
 															<!-- PUBLIC -->
 															<td class="text-center" th:if="${ontology.public}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
 															<td class="text-center" th:if="${!ontology.public}"></td>
+															<!-- AUTHORIZATIONS -->
+															<!-- th:if="${ontology?.authorizations}" -->
+															<td class="text-center" ><span class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
+															<!-- <td class="text-center" th:if="${!ontology?.authorizations}"></td> -->
 															<!-- DATAMODEL -->
 															<td class="text-center bold" th:text="${ontology.dataModel?.name}"></td>
 															<!-- DATE -->
@@ -208,9 +213,10 @@
 														<label class="toggle-vis" data-column="2" th:text="#{ontology.description}"> Description</label>
 														<label class="toggle-vis" data-column="3" th:text="#{ontology.active}"> Active</label>
 														<label class="toggle-vis" data-column="4" th:text="#{ontology.public}"> Public</label>
-														<label class="toggle-vis" data-column="5" th:text="#{ontology.datamodel}"> Datamodel</label>
-														<label class="toggle-vis" data-column="6" th:text="#{ontology.createdAt}"> Created At</label>
-														<label class="toggle-vis" data-column="7" th:text="#{gen.options}" > Options</label>															
+														<label class="toggle-vis" data-column="5" th:text="#{ontology.authorizations}"> Authorizations</label>
+														<label class="toggle-vis" data-column="6" th:text="#{ontology.datamodel}"> Datamodel</label>
+														<label class="toggle-vis" data-column="7" th:text="#{ontology.createdAt}"> Created At</label>
+														<label class="toggle-vis" data-column="8" th:text="#{gen.options}" > Options</label>															
 													</div>
 												</div>												
 											</div>
@@ -315,6 +321,9 @@
 		// SHOW/HIDE DATATABLES COLUMN INIT 		
 		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
 		$('#dataTable-vis-toggle').removeClass('hide');
+		
+		// HIDE COLUMNS (DeESCRIPTION, DATAMODEL AND CREATEDAT)		
+		$.each([ 2,6,7 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
 		
 	});
 	

@@ -30,11 +30,13 @@ public interface UserService {
 
 	User getUserByToken(String token);
 
+	User getUserByIdentification(String identification);
+
 	User getUser(String userId);
 
 	List<Role> getAllRoles();
 
-	UserToken getUserToken(User userId);
+	List<UserToken> getUserToken(User userId);
 
 	List<User> getAllUsers();
 
@@ -51,5 +53,10 @@ public interface UserService {
 	void deleteUser(String userId);
 
 	void registerUser(User user);
+
+	boolean emailExists(User user);
+
+	UserToken getUserToken(String user, String token);
+
 
 }

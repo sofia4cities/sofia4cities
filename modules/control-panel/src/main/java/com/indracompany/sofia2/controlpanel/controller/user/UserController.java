@@ -56,7 +56,7 @@ public class UserController {
 	public String createForm(Model model) {
 		this.populateFormData(model);
 		model.addAttribute("user", new User());
-		return "/users/create";
+		return "users/create";
 
 	}
 
@@ -72,7 +72,7 @@ public class UserController {
 	public String updateForm(@PathVariable("id") String id, Model model) {
 		// If non admin user tries to update any other user-->forbidden
 		if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
-			return "/error/403";
+			return "error/403";
 
 		this.populateFormData(model);
 		User user = this.userService.getUser(id);
@@ -82,7 +82,7 @@ public class UserController {
 		else
 			model.addAttribute("user", user);
 
-		return "/users/create";
+		return "users/create";
 	}
 
 	@PutMapping(value = "/update/{id}")
@@ -95,7 +95,7 @@ public class UserController {
 		}
 
 		if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
-			return "/error/403";
+			return "error/403";
 		// If the user is not admin, the RoleType is not in the request by default
 		if (!utils.isAdministrator())
 			user.setRole(this.userService.getUserRole(this.utils.getRole()));
@@ -165,7 +165,7 @@ public class UserController {
 					this.userService.getAllUsersByCriteria(userId, fullName, email, roleType, active));
 		}
 
-		return "/users/list";
+		return "users/list";
 
 	}
 
@@ -175,17 +175,17 @@ public class UserController {
 		if (id != null) {
 			// If non admin user tries to update any other user-->forbidden
 			if (!this.utils.getUserId().equals(id) && !utils.isAdministrator())
-				return "/error/403";
+				return "error/403";
 			user = this.userService.getUser(id);
 		}
 		// If user does not exist
 		if (user == null)
-			return "/error/404";
+			return "error/404";
 
 		model.addAttribute("user", user);
 		UserToken userToken = null;
 		try {
-			userToken = this.userService.getUserToken(user);
+			userToken = this.userService.getUserToken(user).get(0);
 		} catch (Exception e) {
 			log.debug("No token found for user: " + user);
 		}
@@ -204,7 +204,7 @@ public class UserController {
 			model.addAttribute("obsolete", false);
 		}
 
-		return "/users/show";
+		return "users/show";
 
 	}
 
@@ -214,19 +214,31 @@ public class UserController {
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
-		if (user.getUserId() != null && user.getPassword() != null && user.getFullName() != null
-				&& user.getEmail() != null && user.isActive() == true) {
-			try {
-				userService.registerUser(user);
-				log.debug("User created from login");
-				utils.addRedirectMessage("login.register.created", redirectAttributes);
-				return "redirect:/login";
 
-			} catch (Exception e) {
-				log.error("Error registering user" + e.getMessage());
-				utils.addRedirectException(e.getMessage(), redirectAttributes);
+		if (user != null) {
+
+			if (this.userService.emailExists(user)) {
+
+				log.debug("There is already an user with this email");
+				utils.addRedirectMessage("login.error.email.duplicate", redirectAttributes);
 				return "redirect:/login";
 			}
+
+			if (utils.paswordValidation(user.getPassword()) && (this.userService.emailExists(user) == false)) {
+
+				try {
+					this.userService.registerUser(user);
+					log.debug("User created from login");
+					utils.addRedirectMessage("login.register.created", redirectAttributes);
+					return "redirect:/login";
+				} catch (UserServiceException e) {
+					log.debug("This user already exist");
+					utils.addRedirectMessage("login.error.register", redirectAttributes);
+					return "redirect:/login";
+				}
+
+			}
+
 		}
 		return "redirect:/login?errorRegister";
 	}

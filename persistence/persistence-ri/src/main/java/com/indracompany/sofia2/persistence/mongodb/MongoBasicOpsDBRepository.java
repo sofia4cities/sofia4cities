@@ -115,33 +115,38 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	}
 
 	@Override
-	public void deleteNative(String collection, String query) throws DBPersistenceException {
-		log.debug("removeInstance", collection, query);
+	public long deleteNative(String collection, String query) throws DBPersistenceException {
+		log.debug("deleteNative", collection, query);
 		try {
-			mongoDbConnector.remove(database, collection, query);
+			return mongoDbConnector.remove(database, collection, query);
 		} catch (javax.persistence.PersistenceException e) {
 			log.error("remove", e);
 			throw new DBPersistenceException(e);
 		}
 	}
-	
-	public void deleteNativeById(String collection , String objectId) throws DBPersistenceException {
+
+	@Override
+	public long delete(String collection) throws DBPersistenceException {
+		return deleteNative(collection, "{}");
+	}
+
+	public long deleteNativeById(String collection, String objectId) throws DBPersistenceException {
 		log.debug("deleteNativeById", collection, objectId);
-		deleteNative(collection, "{\"_id\": { \"$oid\" : \""+objectId+"\" }}");
+		return deleteNative(collection, "{\"_id\": { \"$oid\" : \"" + objectId + "\" }}");
 	}
 
 	@Override
-	public void updateNative(String collection, String updateQuery) throws DBPersistenceException {
+	public long updateNative(String collection, String updateQuery) throws DBPersistenceException {
 		String query = null;
 		String dataToUpdate = null;
 		try {
 			if (updateQuery.indexOf(".update(") != -1) {
 				updateQuery = updateQuery.substring(updateQuery.indexOf(".update(") + 8, updateQuery.length());
-				query = updateQuery.substring(0, updateQuery.indexOf("},") + 1);
-				dataToUpdate = updateQuery.substring(updateQuery.indexOf("},") + 2, updateQuery.length());
 			}
+			query = updateQuery.substring(0, updateQuery.indexOf("},") + 1);
+			dataToUpdate = updateQuery.substring(updateQuery.indexOf("},") + 2, updateQuery.length());
 
-			updateNative(collection, query, dataToUpdate);
+			return updateNative(collection, query, dataToUpdate);
 		} catch (Exception e) {
 			log.error("update", e);
 			throw new PersistenceException(e);
@@ -149,11 +154,11 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	}
 
 	@Override
-	public void updateNative(String collection, String query, String dataToUpdate) throws DBPersistenceException {
+	public long updateNative(String collection, String query, String dataToUpdate) throws DBPersistenceException {
 		try {
 			log.debug("update", collection, query, dataToUpdate);
 
-			mongoDbConnector.update(database, collection, query, dataToUpdate, true);
+			return mongoDbConnector.update(database, collection, query, dataToUpdate, true);
 			//
 			// FIXME: Update contextData
 			/*
@@ -172,10 +177,11 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 			throw new PersistenceException(e);
 		}
 	}
-	
-	public void updateNativeByObjectIdAndBodyData(String collection, String objectId, String bodyData) {
-		String updateQuery = "db."+collection+".update({\"_id\": {\"$oid\" : \""+objectId+"\" }}, {$set:"+bodyData+" })";
-		updateNative(collection, updateQuery);	
+
+	public long updateNativeByObjectIdAndBodyData(String collection, String objectId, String bodyData) {
+		String updateQuery = "db." + collection + ".update({\"_id\": {\"$oid\" : \"" + objectId + "\" }}, {$set:"
+				+ bodyData + " })";
+		return updateNative(collection, updateQuery);
 	}
 
 	/*
@@ -390,6 +396,5 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 			throw new DBPersistenceException("Error executing query in Quasar: " + query, e);
 		}
 	}
-	
 
 }

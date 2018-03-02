@@ -181,7 +181,7 @@
 													<tbody th:remove="all-but-first">														
 														<tr th:each="user : ${users}" pages:paginate="10">
 															<!-- IDENTIFICATION -->
-															<td class="text-left no-wrap bold internalId" th:text="${user.userId}"></td>
+															<td class="text-left no-wrap bold internalId" th:text="${user.userId} ==  ${#authentication.name} ? ${user.userId} + ' (Logged)': ${user.userId} "  th:classappend="${#authentication.name} == ${user.userId} ? bg-info : ''"  ></td>
 															<!-- NAME -->
 															<td class="text-left no-wrap bold" th:text="${user.fullName}"></td>
 															<!-- EMAIL -->

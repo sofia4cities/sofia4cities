@@ -1,3 +1,8 @@
+var authorizationsArr = []; // add authorizations
+var authorizationUpdateArr = []; // get authorizations of the ontology
+var authorizationsIds = []; // get authorizations ids for actions
+var authorizationObj = {}; // object to receive authorizations responses.
+	
 var OntologyCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
@@ -9,9 +14,11 @@ var OntologyCreateController = function() {
 	var internalLanguage = 'en';	
 	var validTypes = ["string","object","number","date","timestamp","array","binary"]; // Valid property types	
 	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
+	var mountableModel2 = $('#ontology_autthorizations').find('tr.authorization-model')[0].outerHTML;
 	var validJsonSchema = false;
 	var validMetaInf = false;
 	var hasId = false; // instance
+
 	
 	
 	
@@ -109,8 +116,8 @@ var OntologyCreateController = function() {
 		
 		// properties, types and required arrays
 		var updateProperties = $("input[name='property\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
-		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
-		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();		
+		var updateTypes = $("select[name='type\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateRequired = $("select[name='required\\[\\]']").map(function(){return $(this).val();}).get();		
 		
 		var schemaObj = {};
 		
@@ -146,7 +153,7 @@ var OntologyCreateController = function() {
 		}
 		
 		// CHANGE TO SCHEMA TAB.
-		 $('.nav-tabs li a[href="#tab_2"]').tab('show');		
+		 $('.nav-tabs li a[href="#tab_4"]').tab('show');		
 	}
 	
 	
@@ -341,14 +348,23 @@ var OntologyCreateController = function() {
 		logControl ? console.log('initTemplateElements() ->  resetForm,  currentLanguage: ' + currentLanguage) : '';
 		
 		// selectpicker validate fix when handleValidation()
-		$('.selectpicker').on('change', function () {
-			$(this).valid();
-		});
+		// $('.selectpicker').on('change', function () {
+			// $(this).valid();
+		// });
 		
 		// tagsinput validate fix when handleValidation()
 		$('#metainf').on('itemAdded', function(event) {
 			
 			if ($(this).val() !== ''){ $('#metainferror').addClass('hide');}
+		});
+		
+		// authorization tab control 
+		$(".nav-tabs a[href='#tab_2']").on("click", function(e) {
+		  if ($(this).hasClass("disabled")) {
+			e.preventDefault();
+			$.alert({title: 'INFO!', type: 'blue' , theme: 'dark', content: 'CREATE ONTOLOGY THEN GIVE AUTHORIZATIONS!'});
+			return false;
+		  }
 		});
 				
 		
@@ -790,12 +806,115 @@ var OntologyCreateController = function() {
             }
         }
         return instance + "]";  
-    }    
+    };    
 	
+	// AJAX AUTHORIZATION FUNCTIONS
+	var authorization = function(action,ontology,user,accesstype,authorization){
+		logControl ? console.log('|---> authorization()') : '';	
+		var insertURL = '/controlpanel/ontologies/authorization';
+		var updateURL = '/controlpanel/ontologies/authorization/update';
+		var deleteURL = '/controlpanel/ontologies/authorization/delete';
+		var response = {};
+		
+		if (action === 'insert'){
+			console.log('    |---> Inserting... ' + insertURL);
+						
+			$.ajax({
+				url:insertURL,
+				type:"POST",
+				async: true,
+				data: {"accesstype": accesstype, "ontology": ontology,"user": user},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					
+					var propAuth = {"users":user,"accesstypes":accesstype,"id": response.id};
+					authorizationsArr.push(propAuth);
+					console.log('     |---> JSONtoTable: ' + authorizationsArr.length + ' data: ' + JSON.stringify(authorizationsArr));
+					// store ids for after actions.	inside callback 				
+					var user_id = user;
+					var auth_id = response.id;
+					var AuthId = {[user_id]:auth_id};
+					authorizationsIds.push(AuthId);
+					console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
+										
+					// TO-HTML
+					if ($('#authorizations').attr('data-loaded') === 'true'){
+						$('#ontology_autthorizations > tbody').html("");
+						$('#ontology_autthorizations > tbody').append(mountableModel2);
+					}
+					console.log('authorizationsArr: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr));
+					$('#ontology_autthorizations').mounTable(authorizationsArr,{
+						model: '.authorization-model',
+						noDebug: false							
+					});
+					
+					// hide info , disable user and show table
+					$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
+					$("#users").selectpicker('deselectAll');
+					$("#users option[value=" + $('#users').val() + "]").prop('disabled', true);
+					$("#users").selectpicker('refresh');
+					$('#authorizations').removeClass('hide');
+					$('#authorizations').attr('data-loaded',true);
+					
+				}
+			});
+
+	
+		}
+		if (action === 'update'){
+			
+			$.ajax({url:updateURL, type:"POST", async: true, 
+				data: {"id": authorization, "accesstype": accesstype},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					var updateIndex = foundIndex(user,'users',authorizationsArr);			
+					authorizationsArr[updateIndex]["accesstypes"] = accesstype;
+					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);
+					
+					
+				}
+			});
+			
+			
+		}
+		if (action  === 'delete'){
+			console.log('    |---> Deleting... ' + user + ' with authId:' + authorization );
+			
+			$.ajax({url:deleteURL, type:"POST", async: true, 
+				data: {"id": authorization},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					
+					// remove object
+					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(response.id);			
+					authorizationsIds.splice(removeIndex, 1);
+					authorizationsArr.splice(removeIndex, 1);
+					
+					console.log('AuthorizationsIDs: ' + JSON.stringify(authorizationsIds));
+					// refresh interface. TO-DO: EL this este fallará
+					if ( response  ){ $(this).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); }
+				}
+			});			
+		}	
+	};
+	
+	// return position to find authId.
+	var foundIndex = function(what,item,arr){
+		var found = '';
+		arr.forEach(function(element, index, array) {
+			if ( what === element[item]){ found = index;  console.log("a[" + index + "] = " + element[item] + ' Founded in position: ' + found ); } 
+			
+		});		
+		return found;
+	}
 	
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
-	return{		
+	return{
+
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
 		load: function(Data) { 
 			logControl ? console.log(LIB_TITLE + ': load()') : '';
@@ -804,7 +923,7 @@ var OntologyCreateController = function() {
 		
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
-			logControl ? console.log(LIB_TITLE + ': init()') : '';			
+			logControl ? console.log(LIB_TITLE + ': init()') : '';				
 			handleValidation();
 			createEditor();
 			initTemplateElements();
@@ -1000,8 +1119,60 @@ var OntologyCreateController = function() {
 		generateInstance: function(){
 			logControl ? console.log(LIB_TITLE + ': generateInstance()') : '';
 			generateOntologyInstance();
-		}
+		},
 		
+		// INSERT AUTHORIZATION
+		insertAuthorization: function(){
+			logControl ? console.log(LIB_TITLE + ': insertAuthorization()') : '';
+			if ( ontologyCreateReg.actionMode !== null){	
+				// UPDATE MODE ONLY AND VALUES on user and accesstype
+				if (($('#users').val() !== '') && ($("#users option:selected").attr('disabled') !== 'disabled') && ($('#accesstypes').val() !== '')){
+					
+					// AJAX INSERT (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
+					authorization('insert',ontologyCreateReg.ontologyId,$('#users').val(),$('#accesstypes').val(),'');
+								
+				}	
+			}
+		},
+		
+		// REMOVE authorization
+		removeAuthorization: function(obj){
+			logControl ? console.log(LIB_TITLE + ': removeAuthorization()') : '';
+			if ( ontologyCreateReg.actionMode !== null){
+				
+				// AJAX REMOVE (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
+				var selUser = $(obj).closest('tr').find("input[name='users\\[\\]']").val();
+				var selAccessType = $(obj).closest('tr').find("select[name='accesstypes\\[\\]']").val();				
+				
+				var removeIndex = foundIndex(selUser,'users',authorizationsArr);				
+				var selAuthorizationId = authorizationsIds[removeIndex][selUser];
+				
+				console.log('removeAuthorization:' + selAuthorizationId);
+				
+				authorization('delete',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId );				
+			}
+		},
+		
+		// UPDATE authorization
+		updateAuthorization: function(obj){
+			logControl ? console.log(LIB_TITLE + ': updateAuthorization()') : '';
+			if ( ontologyCreateReg.actionMode !== null){
+				
+				// AJAX UPDATE (ACTION,ONTOLOGYID,USER,ACCESSTYPE,ID) returns object with data.
+				var selUser = $(obj).closest('tr').find("input[name='users\\[\\]']").val();
+				var selAccessType = $(obj).closest('tr').find("select[name='accesstypes\\[\\]']").val();
+								
+				var updateIndex = foundIndex(selUser,'users',authorizationsArr);				
+				var selAuthorizationId = authorizationsIds[updateIndex][selUser];				
+				
+				console.log('updateAuthorization:' + selAuthorizationId);
+				
+				if (selAccessType !== authorizationsArr[updateIndex]["accesstypes"]){
+					authorization('update',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId);
+				} 
+				else { console.log('no hay cambios');}
+			}
+		}	
 	};
 }();
 
@@ -1012,6 +1183,7 @@ jQuery(document).ready(function() {
 	var editor;
 	var aceEditor;
 	var schema = ''; // current schema json string var
+	
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
 	OntologyCreateController.load(ontologyCreateJson);	

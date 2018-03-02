@@ -41,7 +41,7 @@ public class Token extends AuditableEntityWithUUID {
 
 	@ManyToOne
 	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID")
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Getter
 	@Setter
 	private ClientPlatform clientPlatform;

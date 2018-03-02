@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.controlpanel.services.twitter;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,11 +33,11 @@ public class TwitterControlService {
 	private TaskService taskService;
 
 	public boolean scheduleTwitterListening(TwitterListening twitterListening) {
-		
+
 		TaskInfo task = new TaskInfo();
 		task.setJobName(twitterListening.getId());
 		task.setSchedulerType(SchedulerType.Twitter);
-		
+
 		Map<String, Object> jobContext = new HashMap<String, Object>();
 		jobContext.put("id", twitterListening.getId());
 		jobContext.put("ontology", twitterListening.getOntology().getIdentification());
@@ -44,21 +45,26 @@ public class TwitterControlService {
 		jobContext.put("token", twitterListening.getToken().getToken());
 		jobContext.put("topics", twitterListening.getTopics());
 		jobContext.put("geolocation", false);
+		jobContext.put("userId", twitterListening.getUser().getUserId());
 		jobContext.put("timeout", 2);
 		if (twitterListening.getConfiguration() != null) {
-			jobContext.put("configuration", twitterListening.getConfiguration().getId());
+			jobContext.put("configurationId", twitterListening.getConfiguration().getId());
 		} else {
-			jobContext.put("configuration", null);
+			jobContext.put("configurationId", null);
 		}
-		
+
 		task.setUsername(twitterListening.getUser().getUserId());
 		task.setData(jobContext);
 		task.setSingleton(false);
-		task.setCronExpression("0,30 * 0 ? * * *");
-		task.setStartAt(twitterListening.getDateFrom());
-		task.setEndAt(twitterListening.getDateTo());
+		task.setCronExpression("20 * * ? * * *");
+
+		Calendar end = Calendar.getInstance();
+		end.add(Calendar.MINUTE, 3);
+
+		task.setStartAt(Calendar.getInstance().getTime());// twitterListening.getDateFrom());
+		task.setEndAt(end.getTime());// witterListening.getDateTo());
 		return taskService.addJob(task).isSuccess();
 
 	}
-	
+
 }

@@ -29,15 +29,22 @@ import com.indracompany.sofia2.scheduler.scheduler.generator.TriggerGenerator;
 public class TriggerGeneratorImpl implements TriggerGenerator{
 	
 	@Override
-	public Trigger createTrigger(JobDetail jobDetail, TriggerKey triggerKey) {
+	public Trigger createTrigger(JobDetail jobDetail, TriggerKey triggerKey, Date startAt, Date endAt) {
 		
-		Trigger trigger = TriggerBuilder.newTrigger()
+		TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder.newTrigger()
                 .forJob(jobDetail)
                 .withIdentity(triggerKey)
-                .startNow()
-                .build();
+                .startNow();
+		
+		if (startAt != null) {
+			triggerBuilder.startAt(startAt);
+        }        
         
-        return trigger;
+        if (endAt != null) {
+        	triggerBuilder.endAt(endAt);
+        }
+        
+        return triggerBuilder.build();
 	}
 
 	@Override

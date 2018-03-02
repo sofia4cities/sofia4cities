@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -44,8 +45,11 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
-import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.router.service.app.model.NotificationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
@@ -56,14 +60,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	RuleManager ruleManager;
 		
 	@Autowired
-	private QueryToolService queryToolService;
-	
-	@Autowired
-	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
-	
-	static final String ONT_NAME = "contextData";
-	static final String DATABASE = "sofia2_s4c";
-	
+	private RouterOperationsServiceFacade facade;
+		
 	 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -124,50 +122,46 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
 		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
 		
+		OperationModel model = new OperationModel();
+		
+		model.setBody(BODY);
+		model.setObjectId(OBJECT_ID);
+		model.setOntologyId(ontology.getId());
+		model.setOntologyName(ontology.getIdentification());
+		model.setOperationType(METHOD);
+		model.setQueryType(QUERY_TYPE);
+		model.setQuery(QUERY);
+		
+		NotificationModel modelNotification= new NotificationModel();
+		modelNotification.setOperationModel(model);
+		
 		String OUTPUT="";
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
-			
-			if (QUERY_TYPE !=null)
-			{
-				if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
-					OUTPUT = queryToolService.querySQLAsJson(ontology.getIdentification(), QUERY, 0);
-				}
-				else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
-					OUTPUT = queryToolService.queryNativeAsJson(ontology.getIdentification(), QUERY, 0,0);
-				}
-				else {
-					OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);
-				}
+		
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
+				
+				OperationResultModel result =facade.query(modelNotification);
+				OUTPUT = result.getResult();
 			}
+			
+			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
+				OperationResultModel result =facade.insert(modelNotification);
+				OUTPUT = result.getResult();
+			}
+			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+				OperationResultModel result =facade.update(modelNotification);
+				OUTPUT = result.getResult();
+			}
+			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
+				OperationResultModel result =facade.delete(modelNotification);
+				OUTPUT = result.getResult();	
+			}
+		} catch (Exception e) {
+			
 		}
 		
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
-			OUTPUT = mongoBasicOpsDBRepository.insert(ontology.getIdentification(), BODY);	
-		}
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
-			
-			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontology.getIdentification(), OBJECT_ID, BODY);	
-				OUTPUT = mongoBasicOpsDBRepository.findById(ontology.getIdentification(), OBJECT_ID);	
-			}
-			
-			else {
-				mongoBasicOpsDBRepository.updateNative(ontology.getIdentification(), BODY);	
-			}
-	
-		}
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
-			
-			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.deleteNativeById(ontology.getIdentification(), OBJECT_ID);
-			}
-			
-			else {
-				mongoBasicOpsDBRepository.deleteNative(ontology.getIdentification(), BODY);	
-			}
-			
-		}
+		
 			
 		
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);

@@ -66,17 +66,45 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		if (!connect.collectionExists(DATABASE, ONT_NAME)) {
 			connect.createCollection(DATABASE, ONT_NAME);
 		}
+		// 1º
 		ContextData data = new ContextData();
 		data.setClientConnection(UUID.randomUUID().toString());
 		data.setClientPatform(UUID.randomUUID().toString());
 		data.setClientSession(UUID.randomUUID().toString());
 		data.setTimezoneId(UUID.randomUUID().toString());
-		data.setUser(UUID.randomUUID().toString());
+		data.setUser("user");
 		ObjectMapper mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 		int init = 17;
 		int end = refOid.indexOf("\"}}");
 		refOid = refOid.substring(init, end);
+		// 2º
+		data = new ContextData();
+		data.setClientConnection(UUID.randomUUID().toString());
+		data.setClientPatform(UUID.randomUUID().toString());
+		data.setClientSession(UUID.randomUUID().toString());
+		data.setTimezoneId(UUID.randomUUID().toString());
+		data.setUser("admin");
+		mapper = new ObjectMapper();
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		// 3º
+		data = new ContextData();
+		data.setClientConnection(UUID.randomUUID().toString());
+		data.setClientPatform(UUID.randomUUID().toString());
+		data.setClientSession(UUID.randomUUID().toString());
+		data.setTimezoneId(UUID.randomUUID().toString());
+		data.setUser("other");
+		mapper = new ObjectMapper();
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		// 4º
+		data = new ContextData();
+		data.setClientConnection(UUID.randomUUID().toString());
+		data.setClientPatform(UUID.randomUUID().toString());
+		data.setClientSession(UUID.randomUUID().toString());
+		data.setTimezoneId(UUID.randomUUID().toString());
+		data.setUser("other");
+		mapper = new ObjectMapper();
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 
 	}
 
@@ -95,11 +123,21 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test_count_movie() {
+	public void test_remove() {
 		try {
-			Assert.assertTrue(repository.count("movie") == 0);
+			Assert.assertTrue(repository.deleteNative(ONT_NAME, "{}") == 4);
 		} catch (Exception e) {
-			Assert.fail("Error test_count" + e.getMessage());
+			Assert.fail("Error test_remove" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void test_update() {
+		try {
+			Assert.assertTrue(repository.updateNative(ONT_NAME,
+					"{user:'other'},{clientPlatform:'" + UUID.randomUUID().toString() + "'}") == 2);
+		} catch (Exception e) {
+			Assert.fail("Error test_update" + e.getMessage());
 		}
 	}
 
@@ -109,7 +147,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 			String data = repository.findById(ONT_NAME, refOid);
 			Assert.assertTrue(data != null && data.indexOf("user") != -1);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB");
+			Assert.fail("Error test_getById" + e.getMessage());
 		}
 	}
 
@@ -121,7 +159,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 			Assert.assertTrue(asList.size() > 0);
 			Assert.assertTrue(data.indexOf("clientSession") > 0);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB");
+			Assert.fail("Error test_getAll" + e.getMessage());
 		}
 	}
 

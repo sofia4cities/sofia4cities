@@ -26,7 +26,11 @@
 			<artifactId>sofia2-persistence-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-social-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-planner</artifactId>
@@ -47,7 +51,12 @@
 			<artifactId>sofia2-config-services</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-flow-engine-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>

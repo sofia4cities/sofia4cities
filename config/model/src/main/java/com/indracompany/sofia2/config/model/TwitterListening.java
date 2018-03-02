@@ -37,7 +37,8 @@ import lombok.Setter;
 @Configurable
 public class TwitterListening extends AuditableEntityWithUUID {
 
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
 	@Getter
 	@Setter
@@ -45,18 +46,21 @@ public class TwitterListening extends AuditableEntityWithUUID {
 
 	@ManyToOne
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Getter
 	@Setter
 	private User user;
 
 	@ManyToOne
 	@JoinColumn(name = "CONFIGURATION_ID", referencedColumnName = "ID")
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Getter
 	@Setter
 	private Configuration configuration;
 
 	@ManyToOne
 	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID")
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Getter
 	@Setter
 	private Token token;

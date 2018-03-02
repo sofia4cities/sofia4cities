@@ -82,14 +82,14 @@ public class TwitterListeningController {
 	@GetMapping("/scheduledsearch/list")
 	public String listListenings(Model model) {
 		model.addAttribute("twitterListenings", this.twitterListeningService.getAllListeningsByUser(utils.getUserId()));
-		return "/twitter/scheduledsearch/list";
+		return "twitter/scheduledsearch/list";
 	}
 
 	@GetMapping("/scheduledsearch/create")
 	public String createForm(Model model) {
 		this.loadOntologiesAndConfigurations(model);
 		model.addAttribute("twitterListening", new TwitterListening());
-		return "/twitter/scheduledsearch/create";
+		return "twitter/scheduledsearch/create";
 	}
 
 	@GetMapping("/scheduledsearch/update/{id}")
@@ -100,7 +100,7 @@ public class TwitterListeningController {
 			TwitterListening = new TwitterListening();
 		model.addAttribute("twitterListening", TwitterListening);
 		this.loadOntologiesAndConfigurations(model);
-		return "/twitter/scheduledsearch/create";
+		return "twitter/scheduledsearch/create";
 	}
 
 	@PutMapping("/scheduledsearch/update/{id}")
@@ -222,7 +222,7 @@ public class TwitterListeningController {
 		List<Configuration> configurations = this.configurationService.getConfigurations(
 				ConfigurationType.Type.TwitterConfiguration, this.userService.getUser(this.utils.getUserId()));
 		model.addAttribute("configurations", configurations);
-		return "/configurations/list";
+		return "configurations/list";
 	}
 
 	public void populateFormData(Model model) {

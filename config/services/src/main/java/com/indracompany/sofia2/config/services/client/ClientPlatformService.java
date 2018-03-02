@@ -18,6 +18,7 @@ import java.util.List;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.model.User;
 
 public interface ClientPlatformService {
 
@@ -25,6 +26,12 @@ public interface ClientPlatformService {
 
 	ClientPlatform getByIdentification(String identification);
 
-	List<ClientPlatform> getAllClientPlatformByCriteria(String userId, String identification, String[] ontologies);
+	public List<ClientPlatform> getAllClientPlatforms();
+
+	public List<ClientPlatform> getclientPlatformsByUser(User user);
+
+	boolean haveAuthorityOverOntology(ClientPlatform clientPlatform, Ontology ontology);
+    List<ClientPlatform> getAllClientPlatformByCriteria(String userId, String identification, String[] ontologies);
+
 
 }

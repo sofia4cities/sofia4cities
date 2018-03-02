@@ -28,6 +28,7 @@
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
         </dependency>
+						
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
