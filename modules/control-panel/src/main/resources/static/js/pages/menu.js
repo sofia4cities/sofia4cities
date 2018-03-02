@@ -104,7 +104,7 @@ var MenuController = function() {
 		
 		// CHECK FIRST NAV (HOME) EXCEP.
 		firstMenu = $('.page-sidebar-menu > li.nav-item.start > a.nav-link.nav-toggle');
-		if ( currentPath === firstMenu[0].pathname ){ firstMenu.closest('li.nav-item').addClass('open active'); return false;}
+		if ( currentPath === '/controlpanel/main' ){ firstMenu.closest('li.nav-item').addClass('open active'); return false;} else { firstMenu.closest('li.nav-item').removeClass('open active');}
 		
 		// GET ALL NAVS, THEN CHECK URL vs. CURRENT PATH --> ACTIVE.
 		var allMenus = $('.page-sidebar-menu > li.nav-item > ul.sub-menu  > li.nav-item > a.nav-link.nav-toggle');

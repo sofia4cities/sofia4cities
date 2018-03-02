@@ -166,9 +166,9 @@
 													<tbody th:remove="all-but-first">
 														<tr th:each="ontology : ${ontologies}" pages:paginate="10">
 															<!-- IDENTIFICATION/NAME -->
-															<td class="text-left no-wrap bold" th:text="${ontology.identification}"></td>
+															<td class="text-left no-wrap " th:text="${ontology.identification}"></td>
 															<!-- USER -->
-															<td class="text-center bold" th:text="${ontology.user.userId}"></td>
+															<td class="text-center " th:text="${ontology.user.userId}"></td>
 															<!-- DESCRIPTION -->
 															<td class="text-left text-truncate-sm" th:title="${ontology.description}" th:text="${ontology.description}"></td>
 															<!-- ACTIVE -->
@@ -182,7 +182,7 @@
 															<td class="text-center" ><span class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
 															<!-- <td class="text-center" th:if="${!ontology?.authorizations}"></td> -->
 															<!-- DATAMODEL -->
-															<td class="text-center bold" th:text="${ontology.dataModel?.name}"></td>
+															<td class="text-center " th:text="${ontology.dataModel?.name}"></td>
 															<!-- DATE -->
 															<td class="text-center" th:if="${ontology.createdAt!=null}" th:text="${#dates.format(ontology.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${ontology.createdAt==null}" th:text="${ontology.createdAt}"></td>

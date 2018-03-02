@@ -382,10 +382,7 @@
 												<div class="form-group">
 													<label class="control-label" >Usuario</label>
 													<select id="users" class="selectpicker form-control" data-live-search="true" data-width="100%" >
-														<!--<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>-->
-														<option value="developer"> Developer</option>
-														<option value="administrator"> Administrator</option>
-														<option value="partner"> Partner</option>
+														<option th:each="user :${users}" th:value="${user.userId}" th:text="${user.fullName}" ></option>														
 													</select>
 												</div>
 												<div class="form-group">
