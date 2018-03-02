@@ -45,6 +45,7 @@ import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -54,6 +55,8 @@ public class OntologyControllerTest {
     private OntologyService ontologyService;
 	@Mock
 	private AppWebUtils utils;
+	@Mock
+	private UserService userService;
 	
 	@InjectMocks
     private OntologyController ontologyController;
@@ -102,6 +105,17 @@ public class OntologyControllerTest {
     	
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
+    	User administrator = new User();
+    	administrator.setUserId("administrador");
+    	User user = new User();
+    	user.setUserId("user");
+    	User developer = new User();
+    	developer.setUserId("developer");
+    	List<User> users = new ArrayList<User>();
+    	users.add(administrator);
+    	users.add(user);
+    	users.add(developer);
+    	
     	List<OntologyUserAccess> accesses = new ArrayList<OntologyUserAccess>(2);
     	OntologyUserAccess access1 = ontologyUserAccessCreator("ontologyId", "userOntology", "user1", "ALL", "accessId1");
     	OntologyUserAccess access2 = ontologyUserAccessCreator("ontologyId", "userOntology", "user2", "ALL", "accessId2");
@@ -110,6 +124,7 @@ public class OntologyControllerTest {
     	
     	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
     	given(ontologyService.getOntologyUserAccesses(ontology.getId())).willReturn(accesses);
+    	given(userService.getAllUsers()).willReturn(users);
     	
     	String sessionUserId = "userOntology";
     	
