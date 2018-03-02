@@ -12,6 +12,17 @@ services:
      - configdb
      - schedulerdb
      - realtimedb    
+  iotbrokerinstance:
+    image: sofia2/iotbroker:${IMAGETAG}
+    container_name: iotbrokerservice    
+    networks:
+      - dockerdata_datanetwork
+    ports:
+     - "8092:8081"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb      
 networks:
   dockerdata_datanetwork:
     external: true

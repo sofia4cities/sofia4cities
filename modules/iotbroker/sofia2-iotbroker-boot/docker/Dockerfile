@@ -6,7 +6,7 @@ VOLUME /tmp
 
 ADD *-exec.jar app.jar
 
-EXPOSE 18080
+EXPOSE 8080
 
 ENV JAVA_OPTS=""
 
