@@ -206,7 +206,6 @@
 						</configuration>
 					</execution>
 				</executions>
-<<<<<<< HEAD
 			</plugin>	
 		    <plugin>
 		      <groupId>com.spotify</groupId>
@@ -226,9 +225,6 @@
 		        </resources>
 		      </configuration>
 		    </plugin>					
-=======
-			</plugin>			
->>>>>>> 4f74d8ff5d9797b87153a8ab6c201ada6cbdf4fb
 		</plugins>
 	</build>
 
