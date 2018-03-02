@@ -31,11 +31,11 @@ public interface BasicOpsDBRepository {
 	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)
 			throws DBPersistenceException;
 
-	public void updateNative(String ontology, String updateStmt) throws DBPersistenceException;
+	public long updateNative(String ontology, String updateStmt) throws DBPersistenceException;
 
-	public void updateNative(String collection, String query, String data) throws DBPersistenceException;
+	public long updateNative(String collection, String query, String data) throws DBPersistenceException;
 
-	public void deleteNative(String collection, String query) throws DBPersistenceException;
+	public long deleteNative(String collection, String query) throws DBPersistenceException;
 
 	public List<String> queryNative(String ontology, String query) throws DBPersistenceException;
 
@@ -64,6 +64,8 @@ public interface BasicOpsDBRepository {
 	public List<String> findAll(String ontology, int limit) throws DBPersistenceException;
 
 	public long count(String ontology) throws DBPersistenceException;
+
+	public long delete(String ontology) throws DBPersistenceException;
 
 	public long countNative(String collectionName, String query) throws DBPersistenceException;
 

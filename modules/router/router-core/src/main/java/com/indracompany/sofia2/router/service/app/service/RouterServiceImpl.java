@@ -26,7 +26,6 @@ import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 public class RouterServiceImpl implements RouterService {
 
 	@Autowired
-	@Qualifier("camel-context-reference")
 	CamelContext camelContext;
 	
 	private String defaultStartupRoute = "direct:start-broker-flow";

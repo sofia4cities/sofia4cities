@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -44,9 +45,11 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
@@ -57,13 +60,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	RuleManager ruleManager;
 		
 	@Autowired
-	private RouterCrudService routerCrudService;
-	
-	
-	
-	static final String ONT_NAME = "contextData";
-	static final String DATABASE = "sofia2_s4c";
-	
+	private RouterOperationsServiceFacade facade;
+		
 	 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -134,26 +132,29 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		model.setQueryType(QUERY_TYPE);
 		model.setQuery(QUERY);
 		
+		NotificationModel modelNotification= new NotificationModel();
+		modelNotification.setOperationModel(model);
+		
 		String OUTPUT="";
 		
 		
 		try {
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
 				
-				OperationResultModel result =routerCrudService.query(model);
+				OperationResultModel result =facade.query(modelNotification);
 				OUTPUT = result.getResult();
 			}
 			
 			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
-				OperationResultModel result =routerCrudService.insert(model);
+				OperationResultModel result =facade.insert(modelNotification);
 				OUTPUT = result.getResult();
 			}
 			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
-				OperationResultModel result =routerCrudService.update(model);
+				OperationResultModel result =facade.update(modelNotification);
 				OUTPUT = result.getResult();
 			}
 			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
-				OperationResultModel result =routerCrudService.delete(model);
+				OperationResultModel result =facade.delete(modelNotification);
 				OUTPUT = result.getResult();	
 			}
 		} catch (Exception e) {
