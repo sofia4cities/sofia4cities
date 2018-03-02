@@ -16,8 +16,10 @@ package com.indracompany.sofia2.controlpanel.controller.ontology;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.doThrow;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,6 +44,7 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
@@ -56,6 +58,8 @@ public class OntologyControllerTest {
 	private AppWebUtils utils;
 	@Mock
 	private UserService userService;
+	@Mock
+	private EntityDeletionService entityDeletionService;
 	
 	@InjectMocks
     private OntologyController ontologyController;
@@ -66,6 +70,94 @@ public class OntologyControllerTest {
     public void setup() {
         // Setup Spring test in standalone mode
         this.mockMvc = MockMvcBuilders.standaloneSetup(ontologyController).build();
+    }
+    
+   
+   //TODO test put update using ResultBinding and spring validation 
+    
+    @Test
+    public void when__invalidOntologyIdIsSentToDelete__ExceptionIsThrown() throws Exception {
+    	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
+    	
+    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
+    	doThrow(new RuntimeException()).when(entityDeletionService).deleteOntology(ontology.getId());
+    	
+    	String sessionUserId = "userOntology";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	mockMvc.perform(delete("/ontologies/"+ontology.getId()))
+				.andExpect(redirectedUrl("/ontologies/list"));
+    }
+    
+    @Test
+    public void when__correctParametersAreSentToDelete__OntologyIsDeleted() throws Exception {
+    	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
+    	
+    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
+    	
+    	String sessionUserId = "userOntology";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	mockMvc.perform(delete("/ontologies/"+ontology.getId()))
+				.andExpect(redirectedUrl("/ontologies/list")); 
+    }
+    
+    @Test
+    public void when__sessionUserIsNotAdminOrOwner__showCreateWizardIsForbidden () throws Exception {
+    	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
+    	
+    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
+    	
+    	String sessionUserId = "unknownUser";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	mockMvc.perform(get("/ontologies/update/"+ontology.getId()))
+				.andExpect(status().isOk())
+				.andExpect(view().name("error/403"));
+    }
+    
+    @Test
+    public void when__invalidOntologyIdIsProvidedToUpdate__OntologyCreateViewIsServed() throws Exception {
+    	String id = "invalidOntologyId";
+    	
+    	given(ontologyService.getOntologyById(id)).willReturn(null);
+    	
+    	mockMvc.perform(get("/ontologies/update/"+id))
+				.andExpect(view().name("ontologies/create"));    
+    }
+    
+    @Test
+    public void when__correctParamentersAreSentToUpdate__OntologyCreatewizardViewIsServed() throws Exception {
+    	
+    	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
+    	
+    	List<User> users = createUsers();
+    	
+    	List<OntologyUserAccess> accesses = createAccesses();
+    	
+    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
+    	given(ontologyService.getOntologyUserAccesses(ontology.getId())).willReturn(accesses);
+    	given(userService.getAllUsers()).willReturn(users);
+    	
+    	String sessionUserId = "userOntology";
+    	
+    	given(utils.getUserId()).willReturn(sessionUserId);
+    	given(utils.isAdministrator()).willReturn(false);
+    	
+    	mockMvc.perform(get("/ontologies/update/"+ontology.getId()))
+				.andExpect(status().isOk())
+    			.andExpect(view().name("ontologies/createwizard"))
+    			.andExpect(model().attribute("ontology", ontology))
+    			.andExpect(model().attribute("users", users))
+    			//authorizations is serialized using OntologyUserAccessDTO, to check the content of 
+    			//this attribute, it would be necessary to implement a custom Matcher<OntologyUserAccess>
+    			.andExpect(model().attributeExists("authorizations"));     			
     }
     
     @Test
@@ -85,7 +177,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__invalidOntologyIdIsProvided__OntologyListViewIsServed() throws Exception {
+    public void when__invalidOntologyIdIsProvidedToShow__OntologyListViewIsServed() throws Exception {
     	String id = "invalidOntologyId";
     	
     	given(ontologyService.getOntologyById(id)).willReturn(null);

@@ -128,24 +128,25 @@ public class OntologyController {
 	public String update(Model model, @PathVariable("id") String id) {
 		Ontology ontology = this.ontologyService.getOntologyById(id);
 		if (ontology != null) {
-			if (!this.utils.getUserId().equals(ontology.getUser().getUserId()) && !utils.isAdministrator())
-				return "/error/403";
+			if (isUserOwnerOrAdministrator(ontology.getUser().getUserId())) {
+				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId());
+				List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
 
-			List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId());
-			List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
+				for (OntologyUserAccess authorization : authorizations) {
+					authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
+				}
 
-			for (OntologyUserAccess authorization : authorizations) {
-				authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
+				List<User> users = userService.getAllUsers();
+
+				model.addAttribute("authorizations", authorizationsDTO);
+				model.addAttribute("ontology", ontology);
+				model.addAttribute("users", users);
+
+				this.populateForm(model);
+				return "ontologies/createwizard";
+			} else {
+				return "error/403";
 			}
-
-			List<User> users = userService.getAllUsers();
-
-			model.addAttribute("authorizations", authorizationsDTO);
-			model.addAttribute("ontology", ontology);
-			model.addAttribute("users", users);
-
-			this.populateForm(model);
-			return "ontologies/createwizard";
 		} else
 			return "ontologies/create";
 
@@ -160,37 +161,45 @@ public class OntologyController {
 			utils.addRedirectMessage("ontology.validation.error", redirect);
 			return "redirect:/ontologies/update/" + id;
 		}
-		if (!this.ontologyService.hasUserPermissionForInsert(this.utils.getUserId(), ontology.getIdentification())
-				&& !utils.isAdministrator())
-			return "/error/403";
-		try {
-			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
-			this.ontologyService.updateOntology(ontology);
-		} catch (OntologyServiceException e) {
-			log.debug("Cannot update ontology");
-			utils.addRedirectMessage("ontology.update.error", redirect);
-			return "redirect:/ontologies/create";
+		
+		Ontology ontologyDB = ontologyService.getOntologyById(id);
+		
+		if (isUserOwnerOrAdministrator(ontologyDB.getId())) {
+			try {
+				this.ontologyService.updateOntology(ontology);
+			} catch (OntologyServiceException e) {
+				log.debug("Cannot update ontology");
+				utils.addRedirectMessage("ontology.update.error", redirect);
+				return "redirect:/ontologies/create";
+			}
+			utils.addRedirectMessage("ontology.update.success", redirect);
+			return "redirect:/ontologies/show/" + id;
+		} else {
+			return "error/403";
 		}
-
-		utils.addRedirectMessage("ontology.update.success", redirect);
-		return "redirect:/ontologies/show/" + id;
 	}
 
 	@DeleteMapping("/{id}")
 	public String delete(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
 
-		if (!this.ontologyService.getOntologyById(id).getUser().getUserId().equals(this.utils.getUserId())
-				&& !this.utils.isAdministrator())
-			return "error/403";
-		try {
-			this.entityDeletionService.deleteOntology(id);
-			// TODO ON DELETE CASCADE
-		} catch (Exception e) {
-			utils.addRedirectMessage("ontology.delete.error", redirect);
+		Ontology ontology = ontologyService.getOntologyById(id);
+		if (ontology != null) {
+			if (isUserOwnerOrAdministrator(ontology.getUser().getUserId())) {
+				try {
+					this.entityDeletionService.deleteOntology(id);
+					// TODO ON DELETE CASCADE
+				} catch (Exception e) {
+					utils.addRedirectMessage("ontology.delete.error", redirect);
+					return "redirect:/ontologies/list";
+				}
+	
+				return "redirect:/ontologies/list";
+			} else {
+				return "error/403";
+			}
+		} else {
 			return "redirect:/ontologies/list";
 		}
-
-		return "redirect:/ontologies/list";
 	}
 
 	@GetMapping("/show/{id}")
