@@ -71,7 +71,7 @@
 		<!--PERSISTENCE-->
 		<module>persistence/persistence-ri</module>				
 		
-		<module>contributions/spring-boot-admin-server-ui-s2</module>
+		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
 		<module>contributions/spring-boot-admin-server-ui-login</module>
 		
 		<!--MODULES-->
