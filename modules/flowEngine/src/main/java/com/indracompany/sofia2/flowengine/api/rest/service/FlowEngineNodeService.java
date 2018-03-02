@@ -27,15 +27,18 @@ public interface FlowEngineNodeService {
 
 	public String deploymentNotification(String json);
 
-	public List<String> getOntologyByUser(String userId, String password)
+	public List<String> getOntologyByUser(String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException;
 
-	public List<String> getClientPlatformByUser(String userId, String password)
+	public List<String> getClientPlatformByUser(String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException;
 
 	public String validateUserDomain(UserDomainValidationRequest request)
 			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException;
 
-	public String submitQuery(String ontology, String queryType, String query, String user, String password)
+	public String submitQuery(String ontology, String queryType, String query, String authentication)
+			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException;
+
+	public String submitInsert(String ontology, String data, String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException;
 }

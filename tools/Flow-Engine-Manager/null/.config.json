@@ -1,0 +1,455 @@
+{
+ "nodes": {
+  "node-red": {
+   "name": "node-red",
+   "version": "0.14.6",
+   "nodes": {
+    "twitter": {
+     "name": "twitter",
+     "types": [
+      "twitter-credentials",
+      "twitter in",
+      "twitter out"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/27-twitter.js"
+    },
+    "sentiment": {
+     "name": "sentiment",
+     "types": [
+      "sentiment"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/analysis/72-sentiment.js"
+    },
+    "inject": {
+     "name": "inject",
+     "types": [
+      "inject"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/20-inject.js"
+    },
+    "catch": {
+     "name": "catch",
+     "types": [
+      "catch"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/25-catch.js"
+    },
+    "status": {
+     "name": "status",
+     "types": [
+      "status"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/25-status.js"
+    },
+    "debug": {
+     "name": "debug",
+     "types": [
+      "debug"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/58-debug.js"
+    },
+    "link": {
+     "name": "link",
+     "types": [
+      "link in",
+      "link out"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/60-link.js"
+    },
+    "function": {
+     "name": "function",
+     "types": [
+      "function"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/80-function.js"
+    },
+    "template": {
+     "name": "template",
+     "types": [
+      "template"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/80-template.js"
+    },
+    "delay": {
+     "name": "delay",
+     "types": [
+      "delay"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/89-delay.js"
+    },
+    "trigger": {
+     "name": "trigger",
+     "types": [
+      "trigger"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/89-trigger.js"
+    },
+    "comment": {
+     "name": "comment",
+     "types": [
+      "comment"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/90-comment.js"
+    },
+    "unknown": {
+     "name": "unknown",
+     "types": [
+      "unknown"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/core/98-unknown.js"
+    },
+    "rpi-gpio": {
+     "name": "rpi-gpio",
+     "types": [
+      "rpi-gpio in",
+      "rpi-gpio out",
+      "rpi-mouse",
+      "rpi-keyboard"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/hardware/36-rpi-gpio.js"
+    },
+    "tls": {
+     "name": "tls",
+     "types": [
+      "tls-config"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/io/05-tls.js"
+    },
+    "mqtt": {
+     "name": "mqtt",
+     "types": [
+      "mqtt in",
+      "mqtt out",
+      "mqtt-broker"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/io/10-mqtt.js"
+    },
+    "httpin": {
+     "name": "httpin",
+     "types": [
+      "http in",
+      "http response"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/io/21-httpin.js"
+    },
+    "httprequest": {
+     "name": "httprequest",
+     "types": [
+      "http request"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/io/21-httprequest.js"
+    },
+    "websocket": {
+     "name": "websocket",
+     "types": [
+      "websocket in",
+      "websocket out",
+      "websocket-listener",
+      "websocket-client"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/io/22-websocket.js"
+    },
+    "watch": {
+     "name": "watch",
+     "types": [
+      "watch"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/io/23-watch.js"
+    },
+    "tcpin": {
+     "name": "tcpin",
+     "types": [
+      "tcp in",
+      "tcp out",
+      "tcp request"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/io/31-tcpin.js"
+    },
+    "udp": {
+     "name": "udp",
+     "types": [
+      "udp in",
+      "udp out"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/io/32-udp.js"
+    },
+    "switch": {
+     "name": "switch",
+     "types": [
+      "switch"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/logic/10-switch.js"
+    },
+    "change": {
+     "name": "change",
+     "types": [
+      "change"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/logic/15-change.js"
+    },
+    "range": {
+     "name": "range",
+     "types": [
+      "range"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/logic/16-range.js"
+    },
+    "split": {
+     "name": "split",
+     "types": [
+      "split",
+      "join"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/logic/17-split.js"
+    },
+    "CSV": {
+     "name": "CSV",
+     "types": [
+      "csv"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/parsers/70-CSV.js"
+    },
+    "HTML": {
+     "name": "HTML",
+     "types": [
+      "html"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/parsers/70-HTML.js"
+    },
+    "JSON": {
+     "name": "JSON",
+     "types": [
+      "json"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/parsers/70-JSON.js"
+    },
+    "XML": {
+     "name": "XML",
+     "types": [
+      "xml"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/core/parsers/70-XML.js"
+    },
+    "script-topic": {
+     "name": "script-topic",
+     "types": [
+      "script-topic"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/script-topic.js"
+    },
+    "sofia2-kp-insert": {
+     "name": "sofia2-kp-insert",
+     "types": [
+      "sofia2-kp-insert"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/sofia2-kp-insert.js"
+    },
+    "sofia2-kp-subscribe": {
+     "name": "sofia2-kp-subscribe",
+     "types": [
+      "sofia2-kp-subscribe"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/sofia2-kp-subscribe.js"
+    },
+    "sofia2-query-dinamic": {
+     "name": "sofia2-query-dinamic",
+     "types": [
+      "sofia2-query-dinamic"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/sofia2-query-dinamic.js"
+    },
+    "sofia2-query-static": {
+     "name": "sofia2-query-static",
+     "types": [
+      "sofia2-query-static"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/sofia2-query-static.js"
+    },
+    "ssap-process-request": {
+     "name": "ssap-process-request",
+     "types": [
+      "ssap-process-request"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/ssap-process-request.js"
+    },
+    "weather": {
+     "name": "weather",
+     "types": [
+      "openweathermap",
+      "openweathermap in"
+     ],
+     "enabled": true,
+     "module": "node-red",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/weather.js"
+    }
+   }
+  },
+  "node-red-contrib-freeboard": {
+   "name": "node-red-contrib-freeboard",
+   "version": "0.0.7",
+   "nodes": {
+    "freeboard": {
+     "name": "freeboard",
+     "types": [
+      "freeboard"
+     ],
+     "enabled": true,
+     "module": "node-red-contrib-freeboard",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/node_modules/node-red-contrib-freeboard/freeboard.js"
+    }
+   }
+  },
+  "node-red-node-email": {
+   "name": "node-red-node-email",
+   "version": "0.1.24",
+   "nodes": {
+    "email": {
+     "name": "email",
+     "types": [
+      "e-mail",
+      "e-mail in"
+     ],
+     "enabled": true,
+     "module": "node-red-node-email",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/node_modules/node-red-node-email/61-email.js"
+    }
+   }
+  },
+  "node-red-node-feedparser": {
+   "name": "node-red-node-feedparser",
+   "version": "0.1.8",
+   "nodes": {
+    "feedparse": {
+     "name": "feedparse",
+     "types": [
+      "feedparse"
+     ],
+     "enabled": true,
+     "module": "node-red-node-feedparser",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/node_modules/node-red-node-feedparser/32-feedparse.js"
+    }
+   }
+  },
+  "node-red-node-rbe": {
+   "name": "node-red-node-rbe",
+   "version": "0.1.14",
+   "nodes": {
+    "rbe": {
+     "name": "rbe",
+     "types": [
+      "rbe"
+     ],
+     "enabled": true,
+     "module": "node-red-node-rbe",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/node_modules/node-red-node-rbe/rbe.js"
+    }
+   }
+  },
+  "node-red-node-serialport": {
+   "name": "node-red-node-serialport",
+   "version": "0.2.1",
+   "nodes": {
+    "serialport": {
+     "name": "serialport",
+     "types": [
+      "serial in",
+      "serial out",
+      "serial-port"
+     ],
+     "enabled": true,
+     "module": "node-red-node-serialport",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/node_modules/node-red-node-serialport/25-serial.js"
+    }
+   }
+  },
+  "node-red-node-twitter": {
+   "name": "node-red-node-twitter",
+   "version": "0.1.12",
+   "nodes": {
+    "twitter": {
+     "name": "twitter",
+     "types": [
+      "twitter-credentials",
+      "twitter in",
+      "twitter out"
+     ],
+     "enabled": true,
+     "module": "node-red-node-twitter",
+     "file": "/home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager/node_modules/node-red-sofia/node_modules/node-red-node-twitter/27-twitter.js"
+    }
+   }
+  }
+ }
+}

@@ -77,7 +77,7 @@
 						"ES": "Motor de FLujos"
 					},
 					"icon": "",
-					"url": "/controlpanel/scripts/list"
+					"url": "/controlpanel/flows/list"
 				},
 				{
 					"title": {

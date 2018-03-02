@@ -29,8 +29,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
@@ -77,7 +77,7 @@ public class InitMongoDB {
 		try {
 			log.info("init RestaurantsDataSet");
 			Runtime r = Runtime.getRuntime();
-			String command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/restaurants-dataset.json";
+			String command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/restaurants-dataset.json";
 			p = r.exec(command);
 			log.info("Reading JSON into Database...");
 			if (manageDb.getListOfTables4Ontology("Restaurants").isEmpty()) {
@@ -107,10 +107,11 @@ public class InitMongoDB {
 	public void init_AuditGeneral() {
 		log.info("init AuditGeneral");
 		/*
-		 * db.createCollection("AuditGeneral"); db.AuditGeneral.createIndex({type: 1});
+		 * db.createCollection("AuditGeneral");
+		 * db.AuditGeneral.createIndex({type: 1});
 		 * db.AuditGeneral.createIndex({user: 1});
-		 * db.AuditGeneral.createIndex({ontology: 1}); db.AuditGeneral.createIndex({kp:
-		 * 1});
+		 * db.AuditGeneral.createIndex({ontology: 1});
+		 * db.AuditGeneral.createIndex({kp: 1});
 		 */
 		if (manageDb.getListOfTables4Ontology("AuditGeneral").isEmpty()) {
 			try {
@@ -126,6 +127,7 @@ public class InitMongoDB {
 			}
 		}
 	}
+
 	private String loadFromResources(String name) {
 		try {
 			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
@@ -139,6 +141,4 @@ public class InitMongoDB {
 		}
 	}
 
-
 }
-

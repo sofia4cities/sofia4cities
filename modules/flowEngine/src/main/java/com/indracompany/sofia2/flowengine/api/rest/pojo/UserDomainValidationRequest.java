@@ -29,10 +29,6 @@ public class UserDomainValidationRequest {
 
 	@Getter
 	@Setter
-	@JsonProperty("id_usuario")
-	private String userId;
+	private String authentication;
 
-	@Getter
-	@Setter
-	private String password;
 }
