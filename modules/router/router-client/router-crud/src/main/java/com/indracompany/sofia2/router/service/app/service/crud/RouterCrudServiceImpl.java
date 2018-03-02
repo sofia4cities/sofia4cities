@@ -51,13 +51,19 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		String OBJECT_ID = operationModel.getObjectId();
 		
 		String OUTPUT="";
-		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.INSERT.name())) {
-			OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);	
-		}
-
-		result.setResult(OUTPUT);
 		result.setMessage("OK");
+		
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.INSERT.name())) {
+				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);	
+			}
+		} catch (Exception e) {
+			result.setResult(OUTPUT);
+			result.setMessage(e.getMessage());
+		}
+		
+		result.setResult(OUTPUT);
+		result.setOperation(METHOD);
 		return result;
 		
 
@@ -79,21 +85,28 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		
 		String OUTPUT="";
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.UPDATE.name())) {
-			
-			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);	
-				OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);	
-			}
-			
-			else {
-				OUTPUT = ""+mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);	
-			}
-	
-		}
-
-		result.setResult(OUTPUT);
 		result.setMessage("OK");
+		
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.UPDATE.name())) {
+				
+				if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
+					mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);	
+					OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);	
+				}
+				
+				else {
+					OUTPUT = ""+mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);	
+				}
+		
+			}
+		} catch (Exception e) {
+			result.setResult(OUTPUT);
+			result.setMessage(e.getMessage());
+		}
+		
+		result.setResult(OUTPUT);
+		result.setOperation(METHOD);
 		return result;
 	}
 
@@ -113,20 +126,27 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		
 		String OUTPUT="";
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.DELETE.name())) {
-			
-			if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-				OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
-			}
-			
-			else {
-				OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);	
-			}
-			
-		}
-
-		result.setResult(OUTPUT);
 		result.setMessage("OK");
+		
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.DELETE.name())) {
+				
+				if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
+					OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
+				}
+				
+				else {
+					OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);	
+				}
+				
+			}
+		} catch (Exception e) {
+			result.setResult(OUTPUT);
+			result.setMessage(e.getMessage());
+		}
+		
+		result.setResult(OUTPUT);
+		result.setOperation(METHOD);
 		return result;
 	}
 
@@ -145,24 +165,34 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		String OBJECT_ID = operationModel.getObjectId();
 		
 		String OUTPUT="";
+		result.setMessage("OK");
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.QUERY.name())) {
-			
-			if (QUERY_TYPE !=null)
-			{
-				if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
-					OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
-				}
-				else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
-					OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.QUERY.name())) {
+				
+				if (QUERY_TYPE !=null)
+				{
+					if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
+						OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
+					}
+					else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
+						OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
+					}
+					else {
+						OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
+					}
 				}
 				else {
 					OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
 				}
 			}
+		} catch (Exception e) {
+			result.setResult(OUTPUT);
+			result.setMessage(e.getMessage());
 		}
+		
 		result.setResult(OUTPUT);
-		result.setMessage("OK");
+		result.setOperation(METHOD);
 		return result;
 	}
 
