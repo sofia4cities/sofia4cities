@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @startuml
 
 title Packages - Component Diagram
@@ -82,4 +83,90 @@ PL .. [Ontologies]
 CL -up- ConfigServices
 CL .. [Config Tables]
 
+=======
+@startuml
+
+title Packages - Component Diagram
+
+package "Client" {
+    component [Users] 
+    component [Systems]
+    component [Devices]
+    component [Others] 
+}
+
+cloud AdquisitionNetwork {
+}
+cloud PublicationNetwork {
+}
+  
+node "Adquisition Layer" {
+    [Business Logic] as AdqBL
+    interface IoTBroker
+}   
+node "Publication Layer" {
+    [Business Logic] as PubBL
+    interface APIManager
+} 
+node "Processing Layer" {
+    [Scripting Engine]
+    [Flow Engine]
+    interface StreamingServices
+} 
+node "Security Layer" {
+    [Security Logic] as SL
+    interface SecurityServices
+} 
+node "Persistence Layer" {
+    [Persistence Logic] as PL
+    interface OntologyServices
+} 
+node "Config Layer" {
+    [Config Logic] as CL
+    interface ConfigServices
+} 
+database "RealTimeDB\n" {
+    [Ontologies]
+}
+database "ConfigDB\n" {
+    [Config Tables]
+}
+database "SecurityRepo\n" {
+    [Users & Roles]
+    [Authorizations]
+}
+
+
+[Users] -down-( PublicationNetwork
+[Systems] -down-( PublicationNetwork
+[Devices] -down-( AdquisitionNetwork
+[Systems] -down-( AdquisitionNetwork
+PublicationNetwork -down-( APIManager
+AdquisitionNetwork -down-( IoTBroker
+
+PubBL -up- APIManager
+PubBL -down- SecurityServices
+PubBL -down- OntologyServices
+PubBL -down- ConfigServices
+
+AdqBL -up- IoTBroker
+AdqBL -down- SecurityServices
+AdqBL -down- OntologyServices
+AdqBL -down- ConfigServices
+AdqBL -down- StreamingServices
+
+[Scripting Engine] -down- StreamingServices
+[Flow Engine] -down- StreamingServices
+
+SL -up- SecurityServices
+SL .. [Users & Roles]
+SL .. [Authorizations]
+
+PL -up- OntologyServices
+PL .. [Ontologies]
+
+CL -up- ConfigServices
+CL .. [Config Tables]
+
+>>>>>>> 091f7431200105fd411d0890a749d90743309e84
 @enduml

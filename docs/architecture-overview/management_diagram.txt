@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @startuml
 
 title Packages - Component Diagram
@@ -67,4 +68,75 @@ PL .. [Ontologies]
 CL -up- IConfigServices
 CL .. [Config Tables]
 
+=======
+@startuml
+
+title Packages - Component Diagram
+
+package "Front End" {
+    component [Control\nPanel] as ControlPanel
+    component [Monitoring\nUI] as MonitoringUI
+}
+
+package "Devices & Systems" {
+    component [Java\nAPI] as JavaAPI
+    component [Javascript\nAPI] as JSAPI
+    component [NodeRed\nAPI] as NodeRedAPI
+    component [Other\nAPIs] as OthersAPI
+}
+
+cloud Internet {
+}
+
+node "Management Layer" {
+    [Business Logic] as BL
+    interface IManagementServices
+} 
+
+node "Security Layer" {
+    [Security Logic] as SL
+    interface ISecurityServices
+} 
+ 
+node "Persistence Layer" {
+    [Persistence Logic] as PL
+    interface IOntologyServices
+} 
+node "Config Layer" {
+    [Config Logic] as CL
+    interface IConfigServices
+} 
+
+database "RealTimeDB\n" {
+    [Ontologies]
+}
+database "ConfigDB\n" {
+    [Config Tables]
+}
+
+database "SecurityRepo\n" {
+    [Users & Roles]
+    [Authorizations]
+}
+
+[ControlPanel] -down-> Internet
+[MonitoringUI] -down-> Internet
+Internet -down-( IManagementServices
+
+BL -up- IManagementServices
+BL -down- IOntologyServices
+BL -down- IConfigServices
+BL -down- ISecurityServices
+
+SL -up- ISecurityServices
+SL .. [Users & Roles]
+SL .. [Authorizations]
+
+PL -up- IOntologyServices
+PL .. [Ontologies]
+
+CL -up- IConfigServices
+CL .. [Config Tables]
+
+>>>>>>> 091f7431200105fd411d0890a749d90743309e84
 @enduml
