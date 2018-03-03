@@ -34,11 +34,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
+import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
+import com.indracompany.sofia2.iotbroker.mock.ssap.PojoGenerator;
+import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.iotbroker.ssap.generator.PojoGenerator;
-import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
-import com.indracompany.sofia2.iotbroker.ssap.generator.pojo.Person;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
@@ -112,9 +112,8 @@ public class UpdateProcessorTest {
 	//TODO: Update by ID that doesnt exists or null or empty
 	//TODO: Update with null or empty query
 	//TODO: Update more than one register
-	//TODO: Update where without ocurrences
+	//TODO: Update without ocurrences
 	//TODO: Check if update corrupts schema
 	//TODO: Try too update ontology without permissions
-	//TODO: Update by SQL?
 
 }

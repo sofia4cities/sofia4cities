@@ -11,16 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.ssap.generator.pojo;
+package com.indracompany.sofia2.iotbroker.mock.ssap;
 
-import com.indracompany.sofia2.persistence.ContextData;
+import com.github.javafaker.Faker;
+import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 
-import lombok.Data;
+public class PojoGenerator {
+	public static Person generatePerson() {
+		Person person = new Person();
+		person.setName(Faker.instance().name().firstName());
+		person.setSurname(Faker.instance().name().lastName());
+		person.setTelephone(Faker.instance().phoneNumber().cellPhone());
+		
+		return person;
+	}
 
-@Data
-public class Person {
-	private ContextData contextData;
-	private String name;
-	private String surname;
-	private String telephone;
 }

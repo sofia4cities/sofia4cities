@@ -118,11 +118,8 @@ public class ReferenceSecurityTest {
 
 		Assert.assertTrue(session.isPresent());
 		Assert.assertTrue(!StringUtils.isEmpty(session.get().getSessionKey()));
-
 		Assert.assertTrue(security.checkSessionKeyActive(session.get().getSessionKey()));
-
 		Assert.assertTrue(security.closeSession(session.get().getSessionKey()));
-
 		Assert.assertFalse(security.checkSessionKeyActive(session.get().getSessionKey()));
 	}
 

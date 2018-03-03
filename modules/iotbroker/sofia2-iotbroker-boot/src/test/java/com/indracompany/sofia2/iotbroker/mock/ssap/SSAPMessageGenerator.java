@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.ssap.generator;
+package com.indracompany.sofia2.iotbroker.mock.ssap;
 
 import java.io.IOException;
 import java.util.UUID;
