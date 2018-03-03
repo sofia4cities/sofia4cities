@@ -5,7 +5,7 @@ services:
     image: ${REPOSITORY}sofia2/controlpanel:${IMAGETAG}
     container_name: controlpanelservice    
     networks:
-      - dockerdata_datanetwork
+      - data_datanetwork
     ports:
      - "8091:18080"
     external_links:
@@ -16,13 +16,24 @@ services:
     image: ${REPOSITORY}sofia2/iotbroker:${IMAGETAG}
     container_name: iotbrokerservice    
     networks:
-      - dockerdata_datanetwork
+      - data_datanetwork
     ports:
      - "8092:8081"
     external_links:
      - configdb
      - schedulerdb
      - realtimedb
+  apimanagerinstance:
+    image: ${REPOSITORY}sofia2/apimanager:${IMAGETAG}
+    container_name: apimanagerservice    
+    networks:
+      - data_datanetwork
+    ports:
+     - "8093:19090"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb     
 networks:
-  dockerdata_datanetwork:
+  data_datanetwork:
     external: true

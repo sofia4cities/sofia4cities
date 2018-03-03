@@ -1,6 +1,8 @@
 FROM openjdk:8-jdk-alpine
 
-LABEL maintainer "plataformasofia2@indra.es"
+# Metadata
+LABEL module.maintainer="plataformasofia2@indra.es" \
+	  module.name="controlpanel"	
 
 VOLUME /tmp
 

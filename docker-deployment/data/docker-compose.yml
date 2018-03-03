@@ -2,44 +2,28 @@ version: "2.1"
 
 services:
   realtimedb:
-    image: mongo:latest
+    image: sofia2/realtimedb:latest
     container_name: realtimedb
     networks:
       - datanetwork
     ports:
       - "27017:27017"
-    environment:
-     - MONGO_INITDB_DATABASE=sofia2_s4c
   configdb:
-    image: mysql/mysql-server
+    image: sofia2/configdb:latest
     container_name: configdb
     networks:
       - datanetwork
     ports:
       - "3306:3306"
-    environment:
-     - MYSQL_ALLOW_EMPTY_PASSWORD=true
-     - MYSQL_ROOT_HOST=%
-     - MYSQL_ROOT_PASSWORD=
-     - MYSQL_USER=indra
-     - MYSQL_PASSWORD=select4cities2018
-     - MYSQL_DATABASE=sofia2_s4c
     depends_on:
      - "realtimedb"
   schedulerdb:
-    image: mysql/mysql-server
+    image: sofia2/schedulerdb:latest
     container_name: schedulerdb
     networks:
       - datanetwork
     ports:
       - "3307:3306"
-    environment:
-     - MYSQL_ALLOW_EMPTY_PASSWORD=true
-     - MYSQL_ROOT_HOST=%
-     - MYSQL_ROOT_PASSWORD=
-     - MYSQL_USER=indra
-     - MYSQL_PASSWORD=select4cities2018
-     - MYSQL_DATABASE=sofia2_s4c_scheduler
     depends_on:
      - "configdb"           
   quasar:

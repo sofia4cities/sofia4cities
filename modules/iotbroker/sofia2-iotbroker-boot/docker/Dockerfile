@@ -1,12 +1,14 @@
 FROM openjdk:8-jdk-alpine
 
-LABEL maintainer "plataformasofia2@indra.es"
+# Metadata
+LABEL module.maintainer="plataformasofia2@indra.es" \
+	  module.name="iotbroker"	
 
 VOLUME /tmp
 
 ADD *-exec.jar app.jar
 
-EXPOSE 8080
+EXPOSE 8081
 
 ENV JAVA_OPTS=""
 
