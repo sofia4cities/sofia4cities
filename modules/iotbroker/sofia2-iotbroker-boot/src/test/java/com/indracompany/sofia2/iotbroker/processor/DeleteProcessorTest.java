@@ -19,19 +19,18 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.	SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
@@ -39,27 +38,22 @@ import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UpdateProcessorTest {
-
+public class DeleteProcessorTest {
+	@Autowired
+	MessageProcessorDelegate deleteProcessor;
 	@Autowired
 	ObjectMapper objectMapper;
-
-	@Autowired
-	MessageProcessorDelegate updateProcessor;
-
 	@Autowired
 	BasicOpsDBRepository repository;
-
 	@MockBean
 	SecurityPluginManager securityPluginManager;
 
@@ -69,8 +63,8 @@ public class UpdateProcessorTest {
 	Person subject = PojoGenerator.generatePerson();
 	String subjectId;
 
-	SSAPMessage<SSAPBodyUpdateMessage> ssapUpdate;
-	SSAPMessage<SSAPBodyUpdateByIdMessage> ssapUpdateById;
+	SSAPMessage<SSAPBodyDeleteMessage> ssapDeletetOperation;
+	SSAPMessage<SSAPBodyDeleteByIdMessage> ssapDeleteByIdtOperation;
 
 	private void securityMocks() {
 		final IoTSession session = PojoGenerator.generateSession();
@@ -82,16 +76,14 @@ public class UpdateProcessorTest {
 
 	@Before
 	public void setUp() throws IOException, Exception {
-
 		mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
 		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
 		subjectId = objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();
-		ssapUpdate = SSAPMessageGenerator.generateUpdatetMessage(Person.class.getSimpleName(), "");
-		final Person subjectModified = PojoGenerator.generatePerson();
-		ssapUpdateById = SSAPMessageGenerator.generateUpdateByIdtMessage(Person.class.getSimpleName(), objectMapper.valueToTree(subjectModified));
-		ssapUpdateById.getBody().setId(subjectId);
+
+		ssapDeletetOperation = SSAPMessageGenerator.generateDeleteMessage(Person.class.getSimpleName(), "");
+		ssapDeleteByIdtOperation = SSAPMessageGenerator.generateDeleteByIdMessage(Person.class.getSimpleName(), subjectId);
 
 		securityMocks();
 	}
@@ -102,95 +94,83 @@ public class UpdateProcessorTest {
 	}
 
 	@Test
-	public void test_update_one_ocurrence() {
+	public void test_delete_by_id() {
 
-		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
-
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate);
-
-		Assert.assertNotNull(responseMessage);
-		Assert.assertNotNull(responseMessage.getBody());
-		Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.RESPONSE));
-		Assert.assertNotNull(responseMessage.getBody().getData());
-		Assert.assertEquals(1, responseMessage.getBody().getData().at("/nModified").asInt());
-
-	}
-
-	@Test
-	public void test_upate_more_than_one_ocurrences() throws DBPersistenceException, JsonProcessingException {
-
-		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
-		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
-
-		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
-
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate);
+		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
+		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation);
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
 		Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.RESPONSE));
 		Assert.assertNotNull(responseMessage.getBody().getData());
-		Assert.assertTrue(responseMessage.getBody().getData().at("/nModified").asInt() > 1);
+		Assert.assertEquals(1, responseMessage.getBody().getData().at("/nDeleted").asInt());
+
 	}
 
 	@Test
-	public void test_upate_no_ocurrences() {
+	public void test_delete_by_non_existend_id() {
 
-		repository.delete(Person.class.getSimpleName());
+		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
-		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
-
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate);
+		ssapDeleteByIdtOperation.getBody().setId("5a9b2ef917f81f33589e06d3");
+		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation);
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
 		Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.RESPONSE));
 		Assert.assertNotNull(responseMessage.getBody().getData());
-		Assert.assertEquals(0, responseMessage.getBody().getData().at("/nModified").asInt());
+		Assert.assertEquals(0, responseMessage.getBody().getData().at("/nDeleted").asInt());
+
 	}
 
 	@Test
-	public void test_update_by_id() {
+	public void test_delete_by_query_native() {
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById);
+		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
+		ssapDeletetOperation.getBody().setQuery("db.Person.remove({})");
+		responseMessage = deleteProcessor.process(ssapDeletetOperation);
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
 		Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.RESPONSE));
-		Assert.assertTrue(responseMessage.getBody().isOk());
 		Assert.assertNotNull(responseMessage.getBody().getData());
+		Assert.assertEquals(1, responseMessage.getBody().getData().at("/nDeleted").asInt());
+
 	}
 
 	@Test
-	public void test_update_by_non_existent_id() {
+	public void test_delete_by_query_native_no_ocurrences() {
 
-		ssapUpdateById.getBody().setId("5a9b2ef917f81f33589e06d3");
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById);
+		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
+		ssapDeletetOperation.getBody().setQuery("db.Person.remove({\"name\":\"NO_OCURRENCE_NAME\"})");
+		responseMessage = deleteProcessor.process(ssapDeletetOperation);
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
 		Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.RESPONSE));
-		Assert.assertTrue(responseMessage.getBody().isOk());
 		Assert.assertNotNull(responseMessage.getBody().getData());
+		Assert.assertEquals(0, responseMessage.getBody().getData().at("/nDeleted").asInt());
+
 	}
 
+	//TODO: Driver has to detect malformed queries
+	@Ignore
 	@Test
-	public void test_update_by_malformed_id() {
+	public void test_delete_by_query_native_malformed() {
 
-		ssapUpdateById.getBody().setId(UUID.randomUUID().toString());
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById);
+		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
+		ssapDeletetOperation.getBody().setQuery("db.Person.remov({})");
+		responseMessage = deleteProcessor.process(ssapDeletetOperation);
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
 		Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.ERROR));
 		Assert.assertFalse(responseMessage.getBody().isOk());
+		//		Assert.assertNotNull(responseMessage.getBody().getData());
+		//		Assert.assertEquals(0, responseMessage.getBody().getData().at("/nDeleted").asInt());
+
 	}
 
 
-	//TODO: Check if update corrupts schema by id
-	//TODO: Check if update corrupts schema by query
-	//TODO: Try too update ontology without permissions
-	//TODO: Try too update ontology without permissions in query (query ontology is different from field ontology in protocol)
-	//TODO: Try a not update query
 
 }

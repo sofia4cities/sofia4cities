@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
@@ -38,7 +40,6 @@ public final class SSAPMessageGenerator {
 		ssapMessage.setDirection(SSAPMessageDirection.REQUEST);
 		ssapMessage.setMessageId(UUID.randomUUID().toString());
 		ssapMessage.setMessageType(SSAPMessageTypes.JOIN);
-		//		ssapMessage.setOntology(ontology);
 		body.setClientPlatform(faker.name().firstName());
 		body.setClientPlatformInstance(UUID.randomUUID().toString());
 		body.setToken(UUID.randomUUID().toString());
@@ -60,7 +61,6 @@ public final class SSAPMessageGenerator {
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.INSERT);
-		//		message.setOntology(ontology);
 		return message;
 	}
 
@@ -75,7 +75,6 @@ public final class SSAPMessageGenerator {
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.UPDATE);
-		//		message.setOntology(ontology);
 
 		return message;
 	}
@@ -90,7 +89,34 @@ public final class SSAPMessageGenerator {
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.UPDATE_BY_ID);
-		//		message.setOntology(ontology);
+
+		return message;
+	}
+
+	public static SSAPMessage<SSAPBodyDeleteMessage> generateDeleteMessage(String ontology, String query) {
+		final SSAPMessage<SSAPBodyDeleteMessage> message = new SSAPMessage<>();
+		message.setSessionKey(UUID.randomUUID().toString());
+
+		final SSAPBodyDeleteMessage body = new SSAPBodyDeleteMessage();
+		body.setOntology(ontology);
+		body.setQuery(query);
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.DELETE);
+
+		return message;
+	}
+
+	public static SSAPMessage<SSAPBodyDeleteByIdMessage> generateDeleteByIdMessage(String ontology, String id) {
+		final SSAPMessage<SSAPBodyDeleteByIdMessage> message = new SSAPMessage<>();
+		message.setSessionKey(UUID.randomUUID().toString());
+
+		final SSAPBodyDeleteByIdMessage body = new SSAPBodyDeleteByIdMessage();
+		body.setOntology(ontology);
+		body.setId(id);
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.DELETE_BY_ID);
 
 		return message;
 	}

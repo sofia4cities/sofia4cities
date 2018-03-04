@@ -38,7 +38,17 @@
 		
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-persistence-ri</artifactId>
+			<artifactId>sofia2-persistence-interfaces</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-persistence-mongodb</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-persistence-services</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		

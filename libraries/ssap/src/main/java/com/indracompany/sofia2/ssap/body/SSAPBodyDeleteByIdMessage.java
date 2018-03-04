@@ -12,19 +12,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.ssap.body.parent;
+package com.indracompany.sofia2.ssap.body;
 
-public abstract class SSAPBodyOntologyMessage extends SSAPBodyMessage {
-	protected String ontology;
+import com.indracompany.sofia2.ssap.body.parent.SSAPBodyOntologyMessage;
 
-	public String getOntology() {
-		return ontology;
+public class SSAPBodyDeleteByIdMessage extends SSAPBodyOntologyMessage {
+
+	String id;
+
+	public String getId() {
+		return id;
 	}
 
-	public void setOntology(String ontology) {
-		this.ontology = ontology;
+	public void setId(String id) {
+		this.id = id;
 	}
 
+	@Override
+	public boolean isSessionKeyMandatory() {
+		return true;
+	}
 
+	@Override
+	public boolean isOntologyMandatory() {
+		return true;
+	}
 
 }
