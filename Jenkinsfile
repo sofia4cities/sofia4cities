@@ -16,6 +16,7 @@ pipeline {
    environment {          
       // Base sources path 
       SYSTEMCONFIG = 'config/init' 
+      IMAGEGENPATH = 'docker-deployment'
       DOCKERCONFIG = 'docker-deployment/data'   
 	  BRANCHNAME = 'develop'	
    }
@@ -32,7 +33,12 @@ pipeline {
                 branch "${env.BRANCHNAME}"
             }
 
-	   		steps {	   			
+	   		steps {
+	   			// Generates persistence images only if 
+	   			// they are not present in local Docker registry		   		
+	   		    dir("${env.IMAGEGENPATH}") {
+	   		    	sh "./image-generation.sh -1"
+	   		    }	
 					
 				// Starts configdb, realtimedb and Quasar	
 				dir("${env.DOCKERCONFIG}") {
