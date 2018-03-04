@@ -56,10 +56,11 @@ public final class SSAPMessageGenerator {
 		final SSAPBodyInsertMessage body = new SSAPBodyInsertMessage();
 		final JsonNode jsonValue = mapper.readTree(mapper.writeValueAsBytes(value));
 		body.setData(jsonValue);
+		body.setOntology(ontology);
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.INSERT);
-		message.setOntology(ontology);
+		//		message.setOntology(ontology);
 		return message;
 	}
 
@@ -70,10 +71,11 @@ public final class SSAPMessageGenerator {
 
 		final SSAPBodyUpdateMessage body = new SSAPBodyUpdateMessage();
 		body.setQuery(query);
+		body.setOntology(ontology);
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.UPDATE);
-		message.setOntology(ontology);
+		//		message.setOntology(ontology);
 
 		return message;
 	}
@@ -84,10 +86,11 @@ public final class SSAPMessageGenerator {
 
 		final SSAPBodyUpdateByIdMessage body = new SSAPBodyUpdateByIdMessage();
 		body.setData(data);
+		body.setOntology(ontology);
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.UPDATE_BY_ID);
-		message.setOntology(ontology);
+		//		message.setOntology(ontology);
 
 		return message;
 	}

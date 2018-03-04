@@ -81,7 +81,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 		final OperationModel model = new OperationModel();
 
 		model.setBody(insertMessage.getBody().getData().toString());
-		model.setOntologyName(insertMessage.getOntology());
+		model.setOntologyName(insertMessage.getBody().getOntology());
 		model.setOperationType("POST");
 		model.setQueryType("NATIVE");
 
@@ -96,7 +96,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 			responseMessage.setDirection(SSAPMessageDirection.RESPONSE);
 			responseMessage.setMessageId(insertMessage.getMessageId());
 			responseMessage.setMessageType(insertMessage.getMessageType());
-			responseMessage.setOntology(insertMessage.getOntology());
+			//			responseMessage.setOntology(insertMessage.getOntology());
 			responseMessage.setSessionKey(insertMessage.getSessionKey());
 			responseMessage.setBody(new SSAPBodyReturnMessage());
 			responseMessage.getBody().setOk(true);

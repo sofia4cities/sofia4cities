@@ -25,7 +25,7 @@ public class SSAPUtils {
 		responseMessage.setDirection(SSAPMessageDirection.ERROR);
 		responseMessage.setMessageId(message.getMessageId());
 		responseMessage.setMessageType(message.getMessageType());
-		responseMessage.setOntology(message.getOntology());
+		//		responseMessage.setOntology(message.getOntology());
 		responseMessage.setSessionKey(message.getSessionKey());
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(false);

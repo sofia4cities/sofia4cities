@@ -14,9 +14,9 @@
 package com.indracompany.sofia2.ssap.body;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.body.parent.SSAPBodyOntologyMessage;
 
-public class SSAPBodyInsertMessage extends SSAPBodyMessage {
+public class SSAPBodyInsertMessage extends SSAPBodyOntologyMessage {
 
 	private JsonNode data;
 

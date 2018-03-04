@@ -33,6 +33,7 @@ import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginMa
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.body.parent.SSAPBodyOntologyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
@@ -83,7 +84,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 				response.setDirection(SSAPMessageDirection.RESPONSE);
 				response.setMessageId(message.getMessageId());
 				response.setMessageType(message.getMessageType());
-				response.setOntology(message.getOntology());
+				//				response.setOntology(message.getOntology());
 			}
 
 		} catch (final SSAPProcessorException e) {
@@ -130,13 +131,14 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 		// Check if ontology is present and autorization for ontology
 		if (message.getBody().isOntologyMandatory()) {
-			if(StringUtils.isEmpty(message.getOntology())) {
+			final SSAPBodyOntologyMessage body = (SSAPBodyOntologyMessage) message.getBody();
+			if(StringUtils.isEmpty(body.getOntology())) {
 				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
 						String.format(MessageException.ERR_ONTOLOGY_SCHEMA, message.getMessageType().name()));
 				return Optional.of(response);
 			}
 
-			if(!securityPluginManager.checkAuthorization(message.getMessageType(), message.getOntology(), message.getSessionKey())) {
+			if(!securityPluginManager.checkAuthorization(message.getMessageType(), body.getOntology(), message.getSessionKey())) {
 				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTHORIZATION,
 						String.format(MessageException.ERR_ONTOLOGY_AUTH, message.getMessageType().name()));
 				return Optional.of(response);

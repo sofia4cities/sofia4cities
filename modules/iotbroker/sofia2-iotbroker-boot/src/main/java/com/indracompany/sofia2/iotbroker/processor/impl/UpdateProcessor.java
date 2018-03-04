@@ -79,7 +79,7 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		responseMessage.getBody().setOk(true);
 
 		final OperationModel model = new OperationModel();
-		model.setOntologyName(updateMessage.getOntology());
+		model.setOntologyName(updateMessage.getBody().getOntology());
 		model.setOperationType("PUT");
 		model.setQueryType("NATIVE");
 		model.setBody(updateMessage.getBody().getQuery());
@@ -119,7 +119,7 @@ public class UpdateProcessor implements MessageTypeProcessor {
 
 		final OperationModel model = new OperationModel();
 		model.setObjectId(updateMessage.getBody().getId());
-		model.setOntologyName(updateMessage.getOntology());
+		model.setOntologyName(updateMessage.getBody().getOntology());
 		model.setOperationType("PUT");
 		model.setQueryType("NATIVE");
 		model.setBody(updateMessage.getBody().getData().toString());
