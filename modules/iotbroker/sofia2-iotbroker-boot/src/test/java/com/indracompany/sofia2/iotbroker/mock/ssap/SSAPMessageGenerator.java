@@ -24,10 +24,12 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 public final class SSAPMessageGenerator {
 
@@ -64,7 +66,7 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
-	public static SSAPMessage<SSAPBodyUpdateMessage> generateUpdatetMessage(String ontology, String query) throws Exception, IOException {
+	public static SSAPMessage<SSAPBodyUpdateMessage> generateUpdateMessage(String ontology, String query) throws Exception, IOException {
 
 		final SSAPMessage<SSAPBodyUpdateMessage> message = new SSAPMessage<>();
 		message.setSessionKey(UUID.randomUUID().toString());
@@ -120,6 +122,23 @@ public final class SSAPMessageGenerator {
 
 		return message;
 	}
+
+	public static SSAPMessage<SSAPBodyQueryMessage> generateQueryMessage(String ontology, SSAPQueryType type, String query) {
+		final SSAPMessage<SSAPBodyQueryMessage> message = new SSAPMessage<>();
+		message.setSessionKey(UUID.randomUUID().toString());
+
+		final SSAPBodyQueryMessage body = new SSAPBodyQueryMessage();
+		body.setOntology(ontology);
+		body.setQueryType(type);
+		body.setQuery(query);
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.QUERY);
+
+		return message;
+	}
+
+
 
 
 }

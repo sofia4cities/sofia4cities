@@ -88,7 +88,7 @@ public class UpdateProcessorTest {
 		subject = PojoGenerator.generatePerson();
 		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
 		subjectId = objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();
-		ssapUpdate = SSAPMessageGenerator.generateUpdatetMessage(Person.class.getSimpleName(), "");
+		ssapUpdate = SSAPMessageGenerator.generateUpdateMessage(Person.class.getSimpleName(), "");
 		final Person subjectModified = PojoGenerator.generatePerson();
 		ssapUpdateById = SSAPMessageGenerator.generateUpdateByIdtMessage(Person.class.getSimpleName(), objectMapper.valueToTree(subjectModified));
 		ssapUpdateById.getBody().setId(subjectId);

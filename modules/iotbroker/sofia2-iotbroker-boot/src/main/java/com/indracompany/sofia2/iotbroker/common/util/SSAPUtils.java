@@ -30,7 +30,7 @@ public class SSAPUtils {
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(false);
 		responseMessage.getBody().setErrorCode(code);
-		responseMessage.getBody().setError("error");
+		responseMessage.getBody().setError(error);
 
 		return responseMessage;
 	}
