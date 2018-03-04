@@ -33,11 +33,6 @@ public class SSAPBodyInsertMessage extends SSAPBodyMessage {
 	}
 
 	@Override
-	public boolean isAutorizationMandatory() {
-		return true;
-	}
-
-	@Override
 	public boolean isOntologyMandatory() {
 		return true;
 	}

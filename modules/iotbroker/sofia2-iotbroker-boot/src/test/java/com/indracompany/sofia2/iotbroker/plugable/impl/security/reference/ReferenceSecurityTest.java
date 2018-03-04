@@ -110,6 +110,11 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
+	public void tearDown() {
+		//TODO: Delete created items (depends on JPA configuration)
+	}
+
+	@Test
 	public void test_security_basic() throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 

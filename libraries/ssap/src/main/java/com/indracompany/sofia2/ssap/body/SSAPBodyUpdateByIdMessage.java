@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,19 +12,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.ssap.json.version.one;
+package com.indracompany.sofia2.ssap.body;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
-@JsonTypeInfo(use=Id.NAME)
-//@JsonSubTypes({
-//	@JsonSubTypes.Type(value=SSAPBodyJoinMessage.class),
-//	@JsonSubTypes.Type(value=SSAPBodyEmptyMessage.class),
-//	@JsonSubTypes.Type(value=SSAPBodyLeaveMessage.class),
-//})
-public abstract class OneSSAPBodyMessageMixin {
-	@JsonIgnore public abstract boolean isSessionKeyMandatory();
-	@JsonIgnore public abstract boolean isOntologyMandatory();
+public class SSAPBodyUpdateByIdMessage extends SSAPBodyMessage {
+
+	String id;
+	JsonNode data;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public JsonNode getData() {
+		return data;
+	}
+
+	public void setData(JsonNode data) {
+		this.data = data;
+	}
+
+	@Override
+	public boolean isSessionKeyMandatory() {
+		return true;
+	}
+
+	@Override
+	public boolean isOntologyMandatory() {
+		return true;
+	}
+
 }

@@ -11,19 +11,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.mock.ssap;
+package com.indracompany.sofia2.iotbroker.mock.pojo;
+
+import java.util.UUID;
 
 import com.github.javafaker.Faker;
-import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 
 public class PojoGenerator {
 	public static Person generatePerson() {
-		Person person = new Person();
+		final Person person = new Person();
 		person.setName(Faker.instance().name().firstName());
 		person.setSurname(Faker.instance().name().lastName());
 		person.setTelephone(Faker.instance().phoneNumber().cellPhone());
-		
+
 		return person;
+	}
+
+	public static IoTSession generateSession() {
+		final IoTSession session = new IoTSession();
+		session.setUserID("valid_user_id");
+		session.setClientPlatform(Faker.instance().chuckNorris().fact());
+		session.setClientPlatformInstance(Faker.instance().chuckNorris().fact());
+		session.setSessionKey(UUID.randomUUID().toString());
+		return session;
 	}
 
 }

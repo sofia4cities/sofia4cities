@@ -28,6 +28,7 @@ import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException
 import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
+import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -78,28 +79,30 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			processor.validateMessage(message);
 			response = processor.process(message);
 
-			response.setDirection(SSAPMessageDirection.RESPONSE);
-			response.setMessageId(message.getMessageId());
-			response.setMessageType(message.getMessageType());
-			response.setOntology(message.getOntology());
+			if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+				response.setDirection(SSAPMessageDirection.RESPONSE);
+				response.setMessageId(message.getMessageId());
+				response.setMessageType(message.getMessageType());
+				response.setOntology(message.getOntology());
+			}
 
 		} catch (final SSAPProcessorException e) {
-			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
+			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.PROCESSOR,
 					String.format(e.getMessage(), message.getMessageType().name()));
 		} catch (final AuthorizationException e) {
-			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTHORIZATION,
+			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.AUTHORIZATION,
 					String.format(e.getMessage(), message.getMessageType().name()));
 		} catch (final AuthenticationException e) {
-			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTENTICATION,
+			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.AUTENTICATION,
 					String.format(e.getMessage(), message.getMessageType().name()));
 		} catch (final OntologySchemaException e) {
-			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
+			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.PROCESSOR,
 					String.format(e.getMessage(), message.getMessageType().name()));
 		} catch (final BaseException e) {
-			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
+			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.PROCESSOR,
 					String.format(e.getMessage(), message.getMessageType().name()));
 		} catch (final Exception e) {
-			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
+			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.PROCESSOR,
 					String.format(e.getMessage(), message.getMessageType().name()));
 		}
 
@@ -113,12 +116,12 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		// Check presence of sessionKey and authorization of sessionKey
 		if (message.getBody().isSessionKeyMandatory() && StringUtils.isEmpty(message.getSessionKey())) {
 			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
-					String.format(MessageException.ERR_SESSIONKEY_IS_MANDATORY, message.getMessageType().name()));
+					String.format(MessageException.ERR_FIELD_IS_MANDATORY, "Sessionkey", message.getMessageType().name()));
 
 			return Optional.of(response);
 		}
 
-		if (message.getBody().isAutorizationMandatory()) {
+		if (message.getBody().isSessionKeyMandatory()) {
 			if(!securityPluginManager.checkSessionKeyActive(message.getSessionKey())) {
 				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTENTICATION,
 						String.format(MessageException.ERR_SESSIONKEY_NOT_VALID, message.getMessageType().name()));
@@ -133,8 +136,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 				return Optional.of(response);
 			}
 
-			if(!securityPluginManager.checkAuthorization(message.getMessageType(), message.getOntology(),
-					message.getSessionKey())) {
+			if(!securityPluginManager.checkAuthorization(message.getMessageType(), message.getOntology(), message.getSessionKey())) {
 				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTHORIZATION,
 						String.format(MessageException.ERR_ONTOLOGY_AUTH, message.getMessageType().name()));
 				return Optional.of(response);

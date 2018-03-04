@@ -22,6 +22,7 @@ import com.github.javafaker.Faker;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
@@ -72,6 +73,20 @@ public final class SSAPMessageGenerator {
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.UPDATE);
+		message.setOntology(ontology);
+
+		return message;
+	}
+
+	public static SSAPMessage<SSAPBodyUpdateByIdMessage> generateUpdateByIdtMessage(String ontology, JsonNode data) {
+		final SSAPMessage<SSAPBodyUpdateByIdMessage> message = new SSAPMessage<>();
+		message.setSessionKey(UUID.randomUUID().toString());
+
+		final SSAPBodyUpdateByIdMessage body = new SSAPBodyUpdateByIdMessage();
+		body.setData(data);
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.UPDATE_BY_ID);
 		message.setOntology(ontology);
 
 		return message;

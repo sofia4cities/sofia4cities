@@ -25,6 +25,6 @@ import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 public interface MessageTypeProcessor {
 	SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) throws BaseException, Exception;
 	List<SSAPMessageTypes> getMessageTypes();
-	void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws OntologySchemaException, BaseException, Exception;
+	boolean validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws OntologySchemaException, BaseException, Exception;
 
 }

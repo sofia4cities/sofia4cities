@@ -50,7 +50,8 @@ public class LeaveProcessor implements MessageTypeProcessor {
 	}
 
 	@Override
-	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+	public boolean validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+		return true;
 	}
 
 }
