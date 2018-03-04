@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Copyright Indra Sistemas, S.A.
@@ -81,17 +81,17 @@ if [ -z "$1" ]; then
 fi
 
 # Generates images only if they are not present in local docker registry
-if [ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]; then
+if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
 	cd $homepath/dockerfiles/configdb
 	buildConfigDB latest
 fi
 
-if [ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]; then
+if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
 	cd $homepath/dockerfiles/schedulerdb
 	buildSchedulerDB latest
 fi
 
-if [ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]; then
+if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
 	cd $homepath/dockerfiles/realtimedb
 	buildRealTimeDB latest
 fi
