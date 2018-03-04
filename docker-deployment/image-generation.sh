@@ -52,12 +52,15 @@ echo "# Sofia2 Docker Image generation                                          
 echo "# arg1 (opt) --> -1 if only want to create images for persistence layer                  #"
 echo "#                                                                                        #"
 echo "##########################################################################################"
-echo "Continue? y/n: "
 
-read confirmation
-
-if [ "$confirmation" != "y" ]; then
-	exit 1
+if [ -z "$1" ]; then
+	echo "Continue? y/n: "
+	
+	read confirmation
+	
+	if [ "$confirmation" != "y" ]; then
+		exit 1
+	fi
 fi
 
 homepath=$PWD
