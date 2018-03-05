@@ -167,8 +167,11 @@
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas text-left" text=""></th>
 															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{apimanager.id} + ' - ' + #{apimanager.numversion}">Identification</span></th>
+															<th class="titulo-columnas"  ><i class="la la-credit-card"></i> <span th:text="#{apimanager.description}">Description</span></th>
+															<th class="titulo-columnas text-left"><span th:text="#{gen.public}">Description</span></th>
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Name</span></th>
 															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{apimanager.state}" >State</span></th>
+															<th class="titulo-columnas text-left"><span th:text="#{apimanager.auth}">Description</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
@@ -181,10 +184,18 @@
 															</td>
 															<!-- IDENTIFICATION - VERSION -->
 															<td class="text-left no-wrap" th:text="${api.identification} + ' - V' + ${api.numversion}"></td>
+															<!-- DESCRIPTION -->
+															<td class="text-left no-wrap" th:text="${api.description}"></td>
+															<!-- PUBLIC -->
+															<td class="text-center" th:if="${api.public}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
+															<td class="text-center" th:if="${!api.public}"></td>
 															<!-- OWNER -->
 															<td class="text-left no-wrap bold" th:text="${api.user.userId}"></td>
 															<!-- STATE -->
 															<td class="text-left no-wrap " th:text="#{apimanager.state.__${api.state}__}"></td>
+															<!--  AUTH -->
+															<td class="text-center" th:if="${api.public} OR (${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')"><span class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
+															<td class="text-center" th:if="${!api.public} AND (${#authentication.name} != ${api.user.userId}) AND (${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR')"><span th:each="auth : ${auths}" th:if="${auth.api.id}==${api.id}" class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
 															<!-- OPTIONS -->
 															<td class="icon" style="white-space: nowrap">
 																<!-- VIEW -->															
@@ -193,11 +204,15 @@
 																<!-- EDIT -->
 																<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))"  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/update/${api.id}|} + '\');'"><i class="fa fa-edit"></i></span>
 																
+																<!-- SWAGGER UI -->
+																
+																<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))"  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/update/${api.id}|} + '\');'"><i class="fa fa-edit">SWAGGER</i></span>
+																
 																<!-- ACTIONS -->
-																<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))" style="float: right; background-color: white; color: #01A5E6; padding: 4px; padding-left: 10px; padding-right: 10px; border-radius: 4px; border: solid 2px; font-size: 18px;border-radius:0;" th:text="#{apimanager.state.action.PUBLISH}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/PUBLISHED|} + '\');'"/>
-                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'}))" style="float: right; background-color: white; color: #01A5E6; padding: 4px; padding-left: 10px; padding-right: 10px; border-radius: 4px; border: solid 2px; margin-right: 10px; font-size: 18px;border-radius:0;" th:text="#{apimanager.state.action.DEVELOPMENT}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/DEVELOPMENT|} + '\');'"/>
-                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'PUBLISHED'}))" style="float: right; background-color: white; color: #848484; padding: 4px; padding-left: 10px; padding-right: 10px; border-radius: 4px; border: solid 2px; font-size: 18px;border-radius:0;" th:text="#{apimanager.state.action.DEPRECATE}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/deprecate/${api.id}/DEPRECATED|} + '\');'"/>
-                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'DEPRECATED'}))" style="float: right; background-color: white; color: #FA5858; padding: 4px; padding-left: 8px; padding-right: 8px; border-radius: 4px; border: solid 2px; font-size: 18px;border-radius:0;" th:text="#{apimanager.state.action.DELETE}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/DELETED|} + '\');'"/>										
+																<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{apimanager.state.action.PUBLISH}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/PUBLISHED|} + '\');'"><i class="fa fa-edit" th:text="#{apimanager.state.action.PUBLISH}"></i></span>
+                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'}))" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{apimanager.state.action.DEVELOPMENT}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/DEVELOPMENT|} + '\');'"><i class="fa fa-edit" th:text="#{apimanager.state.action.DEVELOPMENT}"></i></span>
+                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'PUBLISHED'}))" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{apimanager.state.action.DEPRECATE}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/deprecate/${api.id}/DEPRECATED|} + '\');'"><i class="fa fa-edit" th:text="#{apimanager.state.action.DEPRECATE}"></i></span>
+                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'DEPRECATED'}))" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{apimanager.state.action.DELETE}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/DELETED|} + '\');'"><i class="fa fa-edit" th:text="#{apimanager.state.action.DELETE}"></i></span>							
 
                               																			
 															</td>

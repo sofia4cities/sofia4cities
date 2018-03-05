@@ -26,11 +26,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserApi;
 
 public interface UserApiRepository extends JpaRepository<UserApi, String> {
 
 	UserApi findById(String id);
+	
+	List<UserApi> findByUser(User user);
 	
 	@Query("SELECT ua FROM UserApi AS ua WHERE ua.api.id = :api and ua.user.userId = :user")
 	UserApi findByApiIdAndUser(String api, String user);

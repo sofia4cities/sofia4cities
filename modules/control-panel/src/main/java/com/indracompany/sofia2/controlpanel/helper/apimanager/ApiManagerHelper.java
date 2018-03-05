@@ -87,8 +87,11 @@ public class ApiManagerHelper {
 	public void populateApiManagerListForm(Model uiModel) {
 		List<User> users = userRepository.findAll();
 		
+		User user = this.userService.getUser(utils.getUserId());
+		
 		uiModel.addAttribute("users", users);
 		uiModel.addAttribute("states", Api.ApiStates.values());
+		uiModel.addAttribute("auths", userApiRepository.findByUser(user));
 	}
 	
 	// To populate the Create Api Form
