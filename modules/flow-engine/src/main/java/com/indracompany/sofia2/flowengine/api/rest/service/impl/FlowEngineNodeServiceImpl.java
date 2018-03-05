@@ -217,7 +217,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		default:
 			if (!domain.getUser().getUserId().equals(sofia2User.getUserId())) {
 				throw new NotAllowedException("User " + decodedAuth.getUserId()
-				+ " has no permissions over specified domain " + request.getDomainId());
+						+ " has no permissions over specified domain " + request.getDomainId());
 			}
 			response = "OK";
 			break;
@@ -230,8 +230,8 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throws ResourceNotFoundException, NotAuthorizedException, NotFoundException, JsonProcessingException,
 			DBPersistenceException {
 
-		final DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
 		// TODO Change criteria. There should be no conditions harcoded refered
 		// to a certain query language
@@ -250,7 +250,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 				// TODO: ADMIN has all query permissions ?
 				if (sofia2User.getRole().getId().equals("ROLE_ADMINISTRATOR") || this.ontologyService
 						.hasUserPermissionForInsert(decodedAuth.getUserId(), ontologyIdentificator)) {
-					return queryToolService.querySQLAsJson(decodedAuth.getUserId(),ontologyIdentificator, query, 0);
+					return queryToolService.querySQLAsJson(decodedAuth.getUserId(), ontologyIdentificator, query, 0);
 				} else {
 					log.error("User {} has no INSERT/ALL access over {} ontology.", decodedAuth.getUserId(),
 							ontologyIdentificator);
@@ -258,7 +258,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			}
 		} else if ("native".equals(queryType)) {
 			if (query.toLowerCase().contains(".find")) {
-				return queryToolService.queryNativeAsJson(decodedAuth.getUserId(),ontologyIdentificator, query);
+				return queryToolService.queryNativeAsJson(decodedAuth.getUserId(), ontologyIdentificator, query);
 			} else if (query.toLowerCase().contains(".update")) {
 				// TODO: Not implemented in RTDB yet
 				throw new NotImplementedException();
@@ -309,6 +309,11 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	public String submitInsert(String ontology, String data, String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
 		// TODO Implement internal insert from data = ontologyInstance
-		throw new NotImplementedException();
+
+		DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		// TODO: Security througout router crud
+		String result = basicRDBRepository.insert(ontology, data);
+		return result;
 	}
 }

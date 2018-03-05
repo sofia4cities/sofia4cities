@@ -101,7 +101,6 @@ public class FlowEngineNodeServicesController {
 			@RequestParam(required = true) @Size(min = 1) String data,
 			@RequestParam(required = true) String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
-		// TODO One field not used
 		return flowEngineNodeService.submitInsert(ontology, data, authentication);
 	}
 
