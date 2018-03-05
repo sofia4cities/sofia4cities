@@ -99,7 +99,7 @@ public class OntologyController {
 
 		if (bindingResult.hasErrors())
 			model.addAttribute("ontology", new Ontology());
-		this.populateForm(model);
+		populateForm(model);
 		return "ontologies/createwizard";
 	}
 
@@ -112,8 +112,9 @@ public class OntologyController {
 			return "redirect:/ontologies/create";
 		}
 		try {
-			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
-			this.ontologyService.createOntology(ontology);
+			User user = userService.getUser(utils.getUserId());
+			ontology.setUser(user);
+			ontologyService.createOntology(ontology);
 
 		} catch (OntologyServiceException e) {
 			log.error("Cannot create ontology because of:" + e.getMessage());
@@ -126,30 +127,31 @@ public class OntologyController {
 
 	@GetMapping(value = "/update/{id}", produces = "text/html")
 	public String update(Model model, @PathVariable("id") String id) {
-		Ontology ontology = this.ontologyService.getOntologyById(id);
-		if (ontology != null) {
-			if (isUserOwnerOrAdministrator(ontology.getUser().getUserId())) {
-				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId());
+		try {
+			Ontology ontology = this.ontologyService.getOntologyById(id, utils.getUserId());
+			if (ontology != null) {
+				
+				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(), utils.getUserId());
 				List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
-
+	
 				for (OntologyUserAccess authorization : authorizations) {
 					authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
 				}
-
+	
 				List<User> users = userService.getAllUsers();
-
+	
 				model.addAttribute("authorizations", authorizationsDTO);
 				model.addAttribute("ontology", ontology);
 				model.addAttribute("users", users);
-
+	
 				this.populateForm(model);
 				return "ontologies/createwizard";
-			} else {
-				return "error/403";
-			}
-		} else
+		
+			} else
+				return "ontologies/create";
+		} catch (RuntimeException e) {
 			return "ontologies/create";
-
+		}
 	}
 
 	@PutMapping(value = "/update/{id}", produces = "text/html")
@@ -162,41 +164,33 @@ public class OntologyController {
 			return "redirect:/ontologies/update/" + id;
 		}
 		
-		Ontology ontologyDB = ontologyService.getOntologyById(id);
-		
-		if (isUserOwnerOrAdministrator(ontologyDB.getId())) {
-			try {
-				this.ontologyService.updateOntology(ontology);
-			} catch (OntologyServiceException e) {
-				log.debug("Cannot update ontology");
-				utils.addRedirectMessage("ontology.update.error", redirect);
-				return "redirect:/ontologies/create";
-			}
-			utils.addRedirectMessage("ontology.update.success", redirect);
-			return "redirect:/ontologies/show/" + id;
-		} else {
-			return "error/403";
+		try {
+			User user = userService.getUser(utils.getUserId());
+			ontology.setUser(user);
+			this.ontologyService.createOntology(ontology);
+		} catch (OntologyServiceException e) {
+			log.debug("Cannot update ontology");
+			utils.addRedirectMessage("ontology.update.error", redirect);
+			return "redirect:/ontologies/create";
 		}
+		utils.addRedirectMessage("ontology.update.success", redirect);
+		return "redirect:/ontologies/show/" + id;
+
 	}
 
 	@DeleteMapping("/{id}")
 	public String delete(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
 
-		Ontology ontology = ontologyService.getOntologyById(id);
+		Ontology ontology = ontologyService.getOntologyById(id, utils.getUserId());
 		if (ontology != null) {
-			if (isUserOwnerOrAdministrator(ontology.getUser().getUserId())) {
-				try {
-					this.entityDeletionService.deleteOntology(id);
-					// TODO ON DELETE CASCADE
-				} catch (Exception e) {
-					utils.addRedirectMessage("ontology.delete.error", redirect);
-					return "redirect:/ontologies/list";
-				}
-	
+			try {
+				this.entityDeletionService.deleteOntology(id, utils.getUserId());
+				// TODO ON DELETE CASCADE
+			} catch (Exception e) {
+				utils.addRedirectMessage("ontology.delete.error", redirect);
 				return "redirect:/ontologies/list";
-			} else {
-				return "error/403";
 			}
+			return "redirect:/ontologies/list";
 		} else {
 			return "redirect:/ontologies/list";
 		}
@@ -204,13 +198,11 @@ public class OntologyController {
 
 	@GetMapping("/show/{id}")
 	public String show(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
-
-		Ontology ontology = ontologyService.getOntologyById(id);
-
-		if (ontology != null) {
-
-			if (isUserOwnerOrAdministrator(ontology.getUser().getUserId())) {
-				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId());
+		try {
+			Ontology ontology = ontologyService.getOntologyById(id, utils.getUserId());
+			if (ontology != null) {
+				
+				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(), utils.getUserId());
 				List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
 
 				for (OntologyUserAccess authorization : authorizations) {
@@ -224,16 +216,17 @@ public class OntologyController {
 				model.addAttribute("users", users);
 
 				return "ontologies/show";
+				
 			} else {
-				return "error/403";
+				utils.addRedirectMessage("ontology.notfound.error", redirect);
+				return "redirect:/ontologies/list";
 			}
-
-		} else {
-			utils.addRedirectMessage("ontology.notfound.error", redirect);
+		} catch(OntologyServiceException e) {
 			return "redirect:/ontologies/list";
 		}
-
+			
 	}
+		
 
 	private void populateForm(Model model) {
 		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
@@ -244,30 +237,28 @@ public class OntologyController {
 	public ResponseEntity<OntologyUserAccessDTO> createAuthorization(@RequestParam String accesstype,
 			@RequestParam String ontology, @RequestParam String user) {
 
-		Ontology ontologyDB = ontologyService.getOntologyById(ontology);
-
-		if (isUserOwnerOrAdministrator(ontologyDB.getUser().getUserId())) {
-			ontologyService.createUserAccess(ontologyDB, user, accesstype);
+		try {
+			ontologyService.createUserAccess(ontology, user, accesstype, utils.getUserId());
 			OntologyUserAccess ontologyUserAccessCreated = ontologyService
-					.getOntologyUserAccessByOntologyIdAndUserId(ontologyDB.getId(), user);
+					.getOntologyUserAccessByOntologyIdAndUserId(ontology, user, utils.getUserId());
 			OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
 			return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.CREATED);
-		} else {
-			return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.FORBIDDEN);
+
+		}catch (RuntimeException e) {
+			return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.BAD_REQUEST);
 		}
+			
 
 	}
 
 	@PostMapping(value = "/authorization/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
 
-		OntologyUserAccess access = ontologyService.getOntologyUserAccessById(id);
-
-		if (isUserOwnerOrAdministrator(access.getOntology().getUser().getUserId())) {
-			ontologyService.deleteOntologyUserAccess(id);
+		try {
+			ontologyService.deleteOntologyUserAccess(id, utils.getUserId());
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<String>(HttpStatus.FORBIDDEN);
+		} catch(RuntimeException e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -275,35 +266,31 @@ public class OntologyController {
 	public @ResponseBody ResponseEntity<OntologyUserAccessDTO> updateAuthorization(@RequestParam String id,
 			@RequestParam String accesstype) {
 
-		OntologyUserAccess access = ontologyService.getOntologyUserAccessById(id);
-
-		if (isUserOwnerOrAdministrator(access.getOntology().getUser().getUserId())) {
-			ontologyService.updateOntologyUserAccess(id, accesstype);
-			OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id);
+		try {
+			ontologyService.updateOntologyUserAccess(id, accesstype, utils.getUserId());
+			OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id, utils.getUserId());
 			OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
 			return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.FORBIDDEN);
+		} catch(RuntimeException e) {
+			return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@GetMapping(value = "/authorization", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public @ResponseBody ResponseEntity<List<OntologyUserAccessDTO>> getAuthorizations(@RequestParam("id") String id) {
 
-		Ontology ontology = ontologyService.getOntologyById(id);
-		if (isUserOwnerOrAdministrator(ontology.getUser().getUserId())) {
-			List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId());
+		try {
+			Ontology ontology = ontologyService.getOntologyById(id, utils.getUserId());
+		
+			List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(), utils.getUserId());
 			List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
 			for (OntologyUserAccess authorization : authorizations) {
 				authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
 			}
 			return new ResponseEntity<List<OntologyUserAccessDTO>>(authorizationsDTO, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<List<OntologyUserAccessDTO>>(HttpStatus.FORBIDDEN);
+		} catch(RuntimeException e) {
+			return new ResponseEntity<List<OntologyUserAccessDTO>>(HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	private boolean isUserOwnerOrAdministrator(String userId) {
-		return userId.equals(utils.getUserId()) || utils.isAdministrator();
-	}
 }

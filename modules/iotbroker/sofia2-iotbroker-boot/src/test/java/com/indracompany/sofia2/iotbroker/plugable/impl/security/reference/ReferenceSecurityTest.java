@@ -97,7 +97,7 @@ public class ReferenceSecurityTest {
 		ontology.setRtdbToHdb(false);
 		ontology.setUser(subjectUser);
 		ontologyService.createOntology(ontology);
-		subjectOntology = ontologyService.getOntologyByIdentification(ontology.getIdentification());
+		subjectOntology = ontologyService.getOntologyByIdentification(ontology.getIdentification(), subjectUser.getUserId());
 
 		final ClientPlatform clientPlatform = new ClientPlatform();
 		final String clientPlatformIdentification = UUID.randomUUID().toString();

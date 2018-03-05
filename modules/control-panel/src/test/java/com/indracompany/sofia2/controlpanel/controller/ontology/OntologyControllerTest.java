@@ -27,6 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +47,7 @@ import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
+import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
@@ -79,10 +82,12 @@ public class OntologyControllerTest {
     public void when__invalidOntologyIdIsSentToDelete__ExceptionIsThrown() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
-    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
-    	doThrow(new RuntimeException()).when(entityDeletionService).deleteOntology(ontology.getId());
-    	
     	String sessionUserId = "userOntology";
+    	
+    	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId)).willReturn(ontology);
+    	doThrow(new RuntimeException()).when(entityDeletionService).deleteOntology(ontology.getId(), sessionUserId);
+    	
+    	
     	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
@@ -95,9 +100,8 @@ public class OntologyControllerTest {
     public void when__correctParametersAreSentToDelete__OntologyIsDeleted() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
-    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
-    	
     	String sessionUserId = "userOntology";
+    	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId)).willReturn(ontology);
     	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
@@ -109,24 +113,22 @@ public class OntologyControllerTest {
     @Test
     public void when__sessionUserIsNotAdminOrOwner__showCreateWizardIsForbidden () throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
-    	
-    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
-    	
     	String sessionUserId = "unknownUser";
-    	
+    	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId))
+    		.willThrow(new OntologyServiceException("The user is not authorizated"));
+    	    	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
     	mockMvc.perform(get("/ontologies/update/"+ontology.getId()))
-				.andExpect(status().isOk())
-				.andExpect(view().name("error/403"));
+				.andExpect(view().name("ontologies/create"));
     }
     
     @Test
     public void when__invalidOntologyIdIsProvidedToUpdate__OntologyCreateViewIsServed() throws Exception {
     	String id = "invalidOntologyId";
-    	
-    	given(ontologyService.getOntologyById(id)).willReturn(null);
+    	String sessionUserId = "unknownUser";
+    	given(ontologyService.getOntologyById(id, sessionUserId)).willReturn(null);
     	
     	mockMvc.perform(get("/ontologies/update/"+id))
 				.andExpect(view().name("ontologies/create"));    
@@ -141,11 +143,11 @@ public class OntologyControllerTest {
     	
     	List<OntologyUserAccess> accesses = createAccesses();
     	
-    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
-    	given(ontologyService.getOntologyUserAccesses(ontology.getId())).willReturn(accesses);
-    	given(userService.getAllUsers()).willReturn(users);
-    	
     	String sessionUserId = "userOntology";
+    	
+    	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId)).willReturn(ontology);
+    	given(ontologyService.getOntologyUserAccesses(ontology.getId(), sessionUserId)).willReturn(accesses);
+    	given(userService.getAllUsers()).willReturn(users);
     	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
@@ -161,26 +163,28 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__sessionUserIsNotAdminOrOwner__showViewIsForbidden () throws Exception {
+    public void when__sessionUserIsNotAuthorized__showViewIsForbidden () throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
-    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
-    	
     	String sessionUserId = "unknownUser";
+    	
+    	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId))
+    		.willThrow(new OntologyServiceException("The user is not authorized"));
     	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
     	mockMvc.perform(get("/ontologies/show/"+ontology.getId()))
-				.andExpect(status().isOk())
-				.andExpect(view().name("error/403"));
+    		.andExpect(redirectedUrl("/ontologies/list"));
     }
     
     @Test
     public void when__invalidOntologyIdIsProvidedToShow__OntologyListViewIsServed() throws Exception {
     	String id = "invalidOntologyId";
     	
-    	given(ontologyService.getOntologyById(id)).willReturn(null);
+    	String sessionUserId = "unknownUser";
+    	
+    	given(ontologyService.getOntologyById(id, sessionUserId)).willReturn(null);
     	
     	mockMvc.perform(get("/ontologies/show/"+id))
 				.andExpect(redirectedUrl("/ontologies/list"));    
@@ -195,12 +199,12 @@ public class OntologyControllerTest {
     	
     	List<OntologyUserAccess> accesses = createAccesses();
     	
-    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
-    	given(ontologyService.getOntologyUserAccesses(ontology.getId())).willReturn(accesses);
-    	given(userService.getAllUsers()).willReturn(users);
-    	
     	String sessionUserId = "userOntology";
     	
+    	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId)).willReturn(ontology);
+    	given(ontologyService.getOntologyUserAccesses(ontology.getId(), sessionUserId)).willReturn(accesses);
+    	given(userService.getAllUsers()).willReturn(users);
+    	    	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
@@ -223,8 +227,8 @@ public class OntologyControllerTest {
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(true);
     	
-    	given(ontologyService.getOntologyById(access.getOntology().getId())).willReturn(access.getOntology());
-    	given(ontologyService.getOntologyUserAccessByOntologyIdAndUserId(access.getOntology().getId(), access.getUser().getUserId())).willReturn(access);
+    	given(ontologyService.getOntologyById(access.getOntology().getId(), sessionUserId)).willReturn(access.getOntology());
+    	given(ontologyService.getOntologyUserAccessByOntologyIdAndUserId(access.getOntology().getId(), access.getUser().getUserId(), sessionUserId)).willReturn(access);
     	
 		mockMvc.perform(post("/ontologies/authorization")
 							.param("accesstype", access.getOntologyUserAccessType().getName())
@@ -239,21 +243,24 @@ public class OntologyControllerTest {
     
     
     @Test
-    public void when__sessionUserIsNotAdminOrOwner__ontologyAccessCreationIsForbidden() throws Exception {
+    public void when__sessionUserIsNotAuthorizated__ontologyAccessCreationIsForbidden() throws Exception {
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	String sessionUserId = "unknown";
     	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
-    	given(ontologyService.getOntologyById(access.getOntology().getId())).willReturn(access.getOntology());
-    	given(ontologyService.getOntologyUserAccessByOntologyIdAndUserId(access.getOntology().getId(), access.getUser().getUserId())).willReturn(access);
+    	doThrow(new OntologyServiceException("The user is not authorized"))
+    		.when(ontologyService).createUserAccess(access.getOntology().getId(), 
+    											   access.getUser().getUserId(), 
+    											   access.getOntologyUserAccessType().getName(), 
+    											   sessionUserId);
     	
     	mockMvc.perform(post("/ontologies/authorization")
 						.param("accesstype", access.getOntologyUserAccessType().getName())
 						.param("ontology", access.getOntology().getId())
 						.param("user", access.getUser().getUserId()))
-				.andExpect(status().isForbidden());
+				.andExpect(status().isBadRequest());
     }
     
     @Test
@@ -266,7 +273,7 @@ public class OntologyControllerTest {
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
-    	given(ontologyService.getOntologyUserAccessById(access.getId())).willReturn(access);
+    	given(ontologyService.getOntologyUserAccessById(access.getId(), sessionUserId)).willReturn(access);
     	
     	mockMvc.perform(post("/ontologies/authorization/delete")
 						.param("id", access.getId()))
@@ -276,7 +283,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__sessionUserIsNotAdminOrOwner__ontologyAccessDeleteIsForbidden() throws Exception {
+    public void when__sessionUserIsNotAuthorizated__ontologyAccessDeleteIsForbidden() throws Exception {
 
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	
@@ -285,11 +292,12 @@ public class OntologyControllerTest {
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
-    	given(ontologyService.getOntologyUserAccessById(access.getId())).willReturn(access);
+    	doThrow(new OntologyServiceException("The user is not authorized"))
+    		.when(ontologyService).deleteOntologyUserAccess(access.getId(), sessionUserId);
     	
     	mockMvc.perform(post("/ontologies/authorization/delete")
 						.param("id", access.getId()))
-				.andExpect(status().isForbidden());
+				.andExpect(status().isBadRequest());
     }
     
     @Test
@@ -302,8 +310,7 @@ public class OntologyControllerTest {
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
-    	given(ontologyService.getOntologyUserAccessById(accessOld.getId()))
-    		.willReturn(accessOld)
+    	given(ontologyService.getOntologyUserAccessById(accessOld.getId(), sessionUserId))
     		.willReturn(accessNew);
     	
     	mockMvc.perform(post("/ontologies/authorization/update")
@@ -317,7 +324,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__sessionUserIsNotAdminOrOwner__ontologyAccessUpdateIsForbidden() throws Exception {
+    public void when__sessionUserIsNotAuthorizated__ontologyAccessUpdateIsForbidden() throws Exception {
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	
     	String sessionUserId = "unknown";
@@ -325,12 +332,13 @@ public class OntologyControllerTest {
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
-    	given(ontologyService.getOntologyUserAccessById(access.getId())).willReturn(access);
+    	doThrow(new OntologyServiceException("The user is not authorizated"))
+    	.when(ontologyService).updateOntologyUserAccess(access.getUser().getUserId(), "QUERY", sessionUserId);
     	
     	mockMvc.perform(post("/ontologies/authorization/update")
 						.param("id", access.getId())
 						.param("accesstype", access.getOntologyUserAccessType().getName()))
-				.andExpect(status().isForbidden());
+				.andExpect(status().isBadRequest());
     }
     
     @Test
@@ -339,12 +347,10 @@ public class OntologyControllerTest {
     	
     	List<OntologyUserAccess> accesses = createAccesses();
     	
-    	
-    	
-    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
-    	given(ontologyService.getOntologyUserAccesses(ontology.getId())).willReturn(accesses);
-    	
     	String sessionUserId = "userOntology";
+    	
+    	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId)).willReturn(ontology);
+    	given(ontologyService.getOntologyUserAccesses(ontology.getId(), sessionUserId)).willReturn(accesses);
     	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
@@ -365,19 +371,19 @@ public class OntologyControllerTest {
     }
 
     @Test
-    public void when__sessionUserIsNotAdminOrOwner__OntologyAuthorizationsAreNotReturned() throws Exception {
+    public void when__sessionUserIsNotAuthorized__OntologyAuthorizationsAreNotReturned() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
 
-    	given(ontologyService.getOntologyById(ontology.getId())).willReturn(ontology);
-    	
     	String sessionUserId = "unknown";
+    	
+    	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId)).willThrow(new OntologyServiceException("The user is not authorized"));    	    	
     	
     	given(utils.getUserId()).willReturn(sessionUserId);
     	given(utils.isAdministrator()).willReturn(false);
     	
     	mockMvc.perform(get("/ontologies/authorization")
 				.param("id", ontology.getId()))
-		.andExpect(status().isForbidden());   	
+		.andExpect(status().isBadRequest());   	
     }
     
     private Ontology ontologyCreator (String ontologyId, String userId) {

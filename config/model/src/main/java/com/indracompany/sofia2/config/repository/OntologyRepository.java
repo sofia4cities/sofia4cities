@@ -86,4 +86,5 @@ public interface OntologyRepository extends JpaRepository<Ontology, String> {
 	List<Ontology> findByUserAndOntologyUserAccessAndPermissionsInsert(@Param ("user") User user);
 
 	void deleteById(String id);
+
 }
