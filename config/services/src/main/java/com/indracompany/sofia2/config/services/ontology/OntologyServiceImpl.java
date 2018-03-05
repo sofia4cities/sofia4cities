@@ -81,41 +81,15 @@ public class OntologyServiceImpl implements OntologyService {
 		List<Ontology> ontologies;
 		User sessionUser = this.userService.getUser(sessionUserId);
 
+		description = description == null ? "" : description;
+		identification = identification == null ? "" : identification;
+		
 		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
-			if (description != null && identification != null) {
 				ontologies = this.ontologyRepository
 						.findByIdentificationContainingAndDescriptionContaining(identification, description);
-
-			} else if (description == null && identification != null) {
-
-				ontologies = this.ontologyRepository.findByIdentificationContaining(identification);
-
-			} else if (description != null && identification == null) {
-
-				ontologies = this.ontologyRepository.findByDescriptionContaining(description);
-
-			} else {
-
-				ontologies = this.ontologyRepository.findAll();
-			}
 		} else {
-			if (description != null && identification != null) {
-
-				ontologies = this.ontologyRepository.findByUserAndIdentificationContainingAndDescriptionContaining(sessionUser,
-						identification, description);
-
-			} else if (description == null && identification != null) {
-
-				ontologies = this.ontologyRepository.findByUserAndIdentificationContaining(sessionUser, identification);
-
-			} else if (description != null && identification == null) {
-
-				ontologies = this.ontologyRepository.findByUserAndDescriptionContaining(sessionUser, description);
-
-			} else {
-
-				ontologies = this.ontologyRepository.findByUser(sessionUser);
-			}
+			ontologies = ontologyRepository.findByUserAndPermissionsANDIdentificationContainingAndDescriptionContaining(
+					sessionUser, identification, description);
 		}
 		return ontologies;
 	}
@@ -367,7 +341,7 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public void createUserAccess(String sessionUserId, String ontologyId, String userId, String typeName) {
+	public void createUserAccess(String ontologyId, String userId, String typeName, String sessionUserId) {
 	
 		Ontology ontology = ontologyRepository.findById(ontologyId);
 		User sessionUser = userService.getUser(sessionUserId);

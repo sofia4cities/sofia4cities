@@ -44,12 +44,14 @@ public interface OntologyService {
 
 	List<String> getAllDataModelTypes();
 
+	//TODO unify interface
 	boolean hasUserPermissionForQuery(User user, Ontology ontology);
 	boolean hasUserPermissionForQuery(String userId, Ontology ontology);
 	boolean hasUserPermissionForQuery(String userId, String ontologyId);
 
+	//TODO unify interface
 	boolean hasUserPermissionForInsert(User user, Ontology ontology);
-	public boolean hasUserPermissionForInsert(String userId, String ontologyIdentificator);
+	boolean hasUserPermissionForInsert(String userId, String ontologyIdentificator);
 	
 	boolean hasUserPermisionForChangeOntology(User user, Ontology ontology);
 	
