@@ -32,6 +32,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
@@ -78,7 +80,7 @@ public class QueryProcessorTest {
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
 
-		when(ontologyService.hasUserPermissionForQuery(any(), any())).thenReturn(true);
+		when(ontologyService.hasUserPermissionForQuery(any(String.class), any(String.class))).thenReturn(true);
 	}
 
 	@Before

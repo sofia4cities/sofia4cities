@@ -56,59 +56,40 @@ public class OntologyServiceImpl implements OntologyService {
 	private UserService userService;
 
 	@Override
-	public List<Ontology> getAllOntologies() {
-		List<Ontology> ontologies = this.ontologyRepository.findAll();
-
-		return ontologies;
+	public List<Ontology> getAllOntologies(String sessionUserId) {
+		
+		User sessionUser = this.userService.getUser(sessionUserId);
+		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+			return ontologyRepository.findAll();
+		} else {
+			return ontologyRepository
+					.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
+		}
 	}
 
 	@Override
-	public List<Ontology> getOntologiesByUserId(String userId) {
-		return this.ontologyRepository
-				.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(userId));
+	public List<Ontology> getOntologiesByUserId(String sessionUserId) {
+		User sessionUser = this.userService.getUser(sessionUserId);
+		
+		return ontologyRepository
+					.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
 	}
 
 	@Override
-	public List<Ontology> getOntologiesWithDescriptionAndIdentification(String userId, String identification,
+	public List<Ontology> getOntologiesWithDescriptionAndIdentification(String sessionUserId, String identification,
 			String description) {
 		List<Ontology> ontologies;
-		User user = this.userService.getUser(userId);
+		User sessionUser = this.userService.getUser(sessionUserId);
 
-		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
-			if (description != null && identification != null) {
+		description = description == null ? "" : description;
+		identification = identification == null ? "" : identification;
+		
+		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 				ontologies = this.ontologyRepository
 						.findByIdentificationContainingAndDescriptionContaining(identification, description);
-
-			} else if (description == null && identification != null) {
-
-				ontologies = this.ontologyRepository.findByIdentificationContaining(identification);
-
-			} else if (description != null && identification == null) {
-
-				ontologies = this.ontologyRepository.findByDescriptionContaining(description);
-
-			} else {
-
-				ontologies = this.ontologyRepository.findAll();
-			}
 		} else {
-			if (description != null && identification != null) {
-
-				ontologies = this.ontologyRepository.findByUserAndIdentificationContainingAndDescriptionContaining(user,
-						identification, description);
-
-			} else if (description == null && identification != null) {
-
-				ontologies = this.ontologyRepository.findByUserAndIdentificationContaining(user, identification);
-
-			} else if (description != null && identification == null) {
-
-				ontologies = this.ontologyRepository.findByUserAndDescriptionContaining(user, description);
-
-			} else {
-
-				ontologies = this.ontologyRepository.findByUser(user);
-			}
+			ontologies = ontologyRepository.findByUserAndPermissionsANDIdentificationContainingAndDescriptionContaining(
+					sessionUser, identification, description);
 		}
 		return ontologies;
 	}
@@ -125,24 +106,38 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public Ontology getOntologyById(String id) {
-		return this.ontologyRepository.findById(id);
+	public Ontology getOntologyById(String ontologyId, String sessionUserId) {
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		User sessionUser = this.userService.getUser(sessionUserId);
+		if (ontology != null) {
+			if (hasUserPermissionForQuery(sessionUser, ontology)) {
+				return ontology;
+			} else {
+				throw new OntologyServiceException("The user is not authorized");
+			}
+		} else {
+			return null;
+		}
+		
 	}
 
 	@Override
-	public Ontology getOntologyByIdentification(String identification) {
-		return this.ontologyRepository.findByIdentification(identification);
+	public Ontology getOntologyByIdentification(String identification, String sessionUserId) {
+		User sessionUser = this.userService.getUser(sessionUserId);		
+		Ontology ontology = ontologyRepository.findByIdentification(identification);
+		
+		if (ontology != null) {
+			if (hasUserPermissionForQuery(sessionUser, ontology)) {
+				return ontology;
+			} else {
+				throw new OntologyServiceException("The user is not authorized");
+			}
+		} else {
+			return null;
+		}
 	}
 
-	@Override
-	public Ontology saveOntology(Ontology ontology) {
-		if (this.ontologyRepository.findByIdentification(ontology.getIdentification()) == null)
-			return this.ontologyRepository.save(ontology);
-		else
-			throw new OntologyServiceException(
-					"Ontology with identification:" + ontology.getIdentification() + " exists");
-
-	}
+	
 
 	@Override
 	public List<DataModel> getAllDataModels() {
@@ -160,36 +155,73 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public boolean hasUserPermissionForQuery(String userId, String ontologyIdentification) {
-		User user = this.userService.getUser(userId);
-		if (userService.isUserAdministrator(user))
+	public boolean hasUserPermissionForQuery(User user, Ontology ontology) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			return true;
-		List<Ontology> ontologies = this.ontologyRepository.findByUserAndOntologyUserAccessAndPermissionsQuery(user);
-		for (Ontology ontology : ontologies) {
-			if (ontology.getIdentification().equals(ontologyIdentification))
-				return true;
+		} else if (ontology.getUser().getUserId().equals(user.getUserId())) {
+			return true;
+		} else {
+			OntologyUserAccess userAuthorization = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
+			if (userAuthorization != null) {
+				switch (OntologyUserAccessType.Type.valueOf(userAuthorization.getOntologyUserAccessType().getName())) {
+				case ALL:
+				case INSERT:
+				case QUERY:
+					return true;
+				default:
+					return false;
+				}
+			} else {
+				return false;
+			}
 		}
-		return false;
-
+	}
+	
+	@Override
+	public boolean hasUserPermissionForQuery(String userId, Ontology ontology) {
+		User user = userService.getUser(userId);
+		return hasUserPermissionForQuery(user, ontology);
+	}
+	
+	@Override
+	public boolean hasUserPermissionForQuery(String userId, String ontologyIdentificator) {
+		Ontology ontology = ontologyRepository.findByIdentification(ontologyIdentificator);
+		return hasUserPermissionForQuery(userId, ontology);
 	}
 
 	@Override
-	public boolean hasUserPermissionForInsert(String userId, String ontologyIdentification) {
-		User user = this.userService.getUser(userId);
-		if (userService.isUserAdministrator(user))
+	public boolean hasUserPermissionForInsert(User user, Ontology ontology) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			return true;
-		List<Ontology> ontologies = this.ontologyRepository.findByUserAndOntologyUserAccessAndPermissionsInsert(user);
-		for (Ontology ontology : ontologies) {
-			if (ontology.getIdentification().equals(ontologyIdentification))
-				return true;
+		} else if (ontology.getUser().getUserId().equals(user.getUserId())) {
+			return true;
+		} else {
+			OntologyUserAccess userAuthorization = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
+			if (userAuthorization != null) {
+				switch (OntologyUserAccessType.Type.valueOf(userAuthorization.getOntologyUserAccessType().getName())) {
+				case ALL:
+				case INSERT:
+					return true;
+				default:
+					return false;
+				}
+			} else {
+				return false;
+			}
 		}
-		return false;
+	}
+	
+	@Override
+	public boolean hasUserPermissionForInsert(String userId, String ontologyIdentificator) {
+		User user = userService.getUser(userId);
+		Ontology ontology = ontologyRepository.findByIdentification(ontologyIdentificator);
+		return hasUserPermissionForInsert(user, ontology);
 	}
 
 	@Override
-	public Map<String, String> getOntologyFields(String identification) throws JsonProcessingException, IOException {
+	public Map<String, String> getOntologyFields(String identification, String sessionUserId) throws JsonProcessingException, IOException {
 		Map<String, String> fields = new TreeMap<String, String>();
-		Ontology ontology = this.ontologyRepository.findByIdentification(identification);
+		Ontology ontology = getOntologyByIdentification(identification, sessionUserId);
 		if (ontology != null) {
 			ObjectMapper mapper = new ObjectMapper();
 
@@ -218,35 +250,59 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public void updateOntology(Ontology ontology) {
+	public void updateOntology(Ontology ontology, String sessionUserId) {
 		Ontology ontologyDb = this.ontologyRepository.findById(ontology.getId());
-		if (ontologyDb != null) {
-			ontologyDb.setActive(ontology.isActive());
-			ontologyDb.setPublic(ontology.isPublic());
-			ontologyDb.setDescription(ontology.getDescription());
-			ontologyDb.setIdentification(ontology.getIdentification());
-			ontologyDb.setRtdbClean(ontology.isRtdbClean());
-			ontologyDb.setRtdbToHdb(ontology.isRtdbToHdb());
-			if (!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
-				ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
-			ontologyDb.setJsonSchema(ontology.getJsonSchema());
-			ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
-			ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
-			ontologyDb.setMetainf(ontology.getMetainf());
-			this.ontologyRepository.save(ontologyDb);
-
+		User sessionUser = this.userService.getUser(sessionUserId);
+		
+		if (ontologyDb != null) {	
+			if (hasUserPermisionForChangeOntology(sessionUser, ontologyDb)) {
+				ontologyDb.setActive(ontology.isActive());
+				ontologyDb.setPublic(ontology.isPublic());
+				ontologyDb.setDescription(ontology.getDescription());
+				ontologyDb.setIdentification(ontology.getIdentification());
+				ontologyDb.setRtdbClean(ontology.isRtdbClean());
+				ontologyDb.setRtdbToHdb(ontology.isRtdbToHdb());
+				if (!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
+					ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
+				ontologyDb.setJsonSchema(ontology.getJsonSchema());
+				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
+				ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
+				ontologyDb.setMetainf(ontology.getMetainf());
+				this.ontologyRepository.save(ontologyDb);
+			} else {
+				throw new OntologyServiceException("The user is not authorized");
+			}
 		} else
 			throw new OntologyServiceException("Ontology does not exist");
 	}
 
+	//TODO it should be checked that onotologies are assigned to the session user.
 	@Override
 	public void createOntology(Ontology ontology) {
-		ontology.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
-		this.saveOntology(ontology);
-
+		try {
+			if (ontologyRepository.findByIdentification(ontology.getIdentification()) == null) {
+				
+				if (ontology.getDataModel() != null) {
+					DataModel dataModel = dataModelRepository.findById(ontology.getDataModel().getId());
+					ontology.setDataModel(dataModel);
+				}
+				User user = userService.getUser(ontology.getUser().getUserId());
+				if (user != null) {
+					ontology.setUser(user);
+					this.ontologyRepository.save(ontology);
+				} else {
+					throw new OntologyServiceException("Invalid user");
+				}				
+			} else {
+				throw new OntologyServiceException(
+						"Ontology with identification:" + ontology.getIdentification() + " exists");
+			}
+		} catch (Exception e) {
+			throw new OntologyServiceException("Problems creating the ontology", e);
+		}
 	}
 
-	public Map<String, String> extractSubFieldsFromJson(Map<String, String> fields, JsonNode jsonNode, String property,
+	private Map<String, String> extractSubFieldsFromJson(Map<String, String> fields, JsonNode jsonNode, String property,
 			String parentField, boolean isPropertyArray) {
 		if (isPropertyArray)
 			jsonNode = jsonNode.path(property).path("items").path("properties");
@@ -278,68 +334,110 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
-	public List<OntologyUserAccess> getOntologyUserAccesses(String ontologyId) {
-		Ontology ontology = ontologyRepository.findById(ontologyId);
+	public List<OntologyUserAccess> getOntologyUserAccesses(String ontologyId, String sessionUserId) {
+		Ontology ontology = getOntologyById(ontologyId, sessionUserId);
 		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
 		return authorizations;
 	}
 
 	@Override
-	public void createUserAccess(Ontology ontology, String userId, String typeName) {
-
-		Ontology managedOntology = ontologyRepository.findById(ontology.getId());
-		List<OntologyUserAccessType> managedTypes = ontologyUserAccessTypeRepository.findByName(typeName);
-		OntologyUserAccessType managedType = managedTypes != null && managedTypes.size() > 0 ? managedTypes.get(0)
-				: null;
-		User managedUser = this.userService.getUser(userId);
-
-		if (managedOntology != null && managedType != null && managedUser != null) {
-			OntologyUserAccess ontologyUserAccess = new OntologyUserAccess();
-			ontologyUserAccess.setOntology(managedOntology);
-			ontologyUserAccess.setUser(managedUser);
-			ontologyUserAccess.setOntologyUserAccessType(managedType);
-
-			ontologyUserAccessRepository.save(ontologyUserAccess);
+	public void createUserAccess(String ontologyId, String userId, String typeName, String sessionUserId) {
+	
+		Ontology ontology = ontologyRepository.findById(ontologyId);
+		User sessionUser = userService.getUser(sessionUserId);
+		
+		if (hasUserPermisionForChangeOntology(sessionUser, ontology)) {
+			List<OntologyUserAccessType> managedTypes = ontologyUserAccessTypeRepository.findByName(typeName);
+			OntologyUserAccessType managedType = managedTypes != null && managedTypes.size() > 0 ? managedTypes.get(0) : null;
+			User userToBeAutorized = this.userService.getUser(userId);
+			if (ontology != null && managedType != null && userToBeAutorized != null) {
+				OntologyUserAccess ontologyUserAccess = new OntologyUserAccess();
+				ontologyUserAccess.setOntology(ontology);
+				ontologyUserAccess.setUser(userToBeAutorized);
+				ontologyUserAccess.setOntologyUserAccessType(managedType);
+				ontologyUserAccessRepository.save(ontologyUserAccess);
+			} else {
+				throw new OntologyServiceException("Problem creating the authorization");
+			}			
 		} else {
-			throw new OntologyServiceException("Ontology does not exist");
+			throw new OntologyServiceException("The user is not authorized");
 		}
 	}
 
 	@Override
-	public OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId) {
-		Ontology ontology = ontologyRepository.findById(ontologyId);
+	public OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId, String sessionUserId) {
+		Ontology ontology = getOntologyById(ontologyId, sessionUserId);
 		User user = this.userService.getUser(userId);
-		List<OntologyUserAccess> userAccess = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
-		if (userAccess == null || userAccess.size() == 0 || userAccess.size() > 1) {
+		OntologyUserAccess userAccess = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
+		if (userAccess == null) {
 			throw new OntologyServiceException("Problem obtaining user data");
 		} else {
-			return userAccess.get(0);
+			return userAccess;
 		}
 	}
 
 	@Override
-	public OntologyUserAccess getOntologyUserAccessById(String id) {
-		return ontologyUserAccessRepository.findById(id);
+	public OntologyUserAccess getOntologyUserAccessById(String userAccessId, String sessionUserId) {
+		User sessionUser = this.userService.getUser(sessionUserId);
+		OntologyUserAccess userAccess = ontologyUserAccessRepository.findById(userAccessId);
+		if (hasUserPermissionForQuery(sessionUser, userAccess.getOntology())) {
+			return userAccess;
+		} else {
+			throw new OntologyServiceException("The user is not authorized");
+		}
 	}
 
 	@Override
-	public void deleteOntologyUserAccess(String id) {
-		ontologyUserAccessRepository.delete(id);
+	public void deleteOntologyUserAccess(String userAccessId, String sessionUserId) {
+		User sessionUser = this.userService.getUser(sessionUserId);
+		OntologyUserAccess userAccess = ontologyUserAccessRepository.findById(userAccessId);
+		if (hasUserPermisionForChangeOntology(sessionUser, userAccess.getOntology())) {
+			ontologyUserAccessRepository.delete(userAccessId);
+		} else {
+			throw new OntologyServiceException("The user is not authorized");
+		}
 	}
 
 	@Override
-	public void updateOntologyUserAccess(String id, String typeName) {
-		OntologyUserAccess userAccessDB = ontologyUserAccessRepository.findById(id);
-
+	public void updateOntologyUserAccess(String userAccessId, String typeName, String sessionUserId) {
+		User sessionUser = this.userService.getUser(sessionUserId);
+		OntologyUserAccess userAccess = ontologyUserAccessRepository.findById(userAccessId);
 		List<OntologyUserAccessType> types = ontologyUserAccessTypeRepository.findByName(typeName);
 		if (types != null && types.size() > 0) {
-			OntologyUserAccessType typeDB = types.get(0);
-			userAccessDB.setOntologyUserAccessType(typeDB);
-			ontologyUserAccessRepository.save(userAccessDB);
+			if (hasUserPermisionForChangeOntology(sessionUser, userAccess.getOntology())) {
+				OntologyUserAccessType typeDB = types.get(0);
+				userAccess.setOntologyUserAccessType(typeDB);
+				ontologyUserAccessRepository.save(userAccess);
+			} else {
+				throw new OntologyServiceException("The user is not authorized");
+			}			
 		} else {
-			throw new IllegalStateException("Types of access must have unique name");
+			throw new IllegalStateException("Incorrect type of access");
 		}
 
 	}
+	
+	@Override
+	public boolean hasUserPermisionForChangeOntology(User user, Ontology ontology) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+			return true;
+		} else if (ontology.getUser().getUserId().equals(user.getUserId())) {
+			return true;
+		} else {
+			OntologyUserAccess userAuthorization = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
+			
+			if (userAuthorization != null) {
+				switch (OntologyUserAccessType.Type.valueOf(userAuthorization.getOntologyUserAccessType().getName())) {
+				case ALL:
+					return true; 
+				default:
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}	
+	}
+
 
 }

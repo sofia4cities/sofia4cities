@@ -159,11 +159,11 @@
 			                                                <option th:value="iot" th:text="#{apimanager.apiType.rest}">Publish Ontology as REST API</option>
 			                                            </select>
 			                                            <span><input id="checkboxPublic" name="checkboxPublic" type="checkbox" checked="checked" th:field="*{public}" /></span>
-			                                            <label style="margin-left: 8px; padding-bottom: 5px;" for="checkbox" th:text="#{apimanager.public}">Public</label>
+			                                            <label for="checkbox" th:text="#{apimanager.public}">Public</label>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
 					                                    <label id="label-selector-ontologia" class="description notAnimate" for="id_ontology" th:text="#{apimanager.ontology}">Ontology</label>
-					                                    <select  id="ontology" class="form-control" th:field="*{ontology}" disabled="disabled">
+					                                    <select id="ontology" class="form-control" th:field="*{ontology}" disabled="disabled">
 					                                    	<option value=""></option>
 					                                    	<option th:each="ontology:${ontologies}" th:value="${ontology.id}" th:text="${ontology.identification}">ontology</option>
 					                                    </select>
@@ -197,18 +197,16 @@
 														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/resources/images/API.png}" style="height: 60px;" class="pull-right"/>
 													</div>
 												</div>
-												<!-- description -->
 												<div class="row">
-													<div class="col-md-12 col-sm-12 col-xs-12">
+													<!-- description -->
+													<div class="col-md-6 col-sm-12 col-xs-12">
 					                                    <label class="description" for="descripcionapi" th:text="#{apimanager.description}">Descripcion </label>
 					                                    <textarea class="element textarea small form-control" id="apiDescripcion" name="apiDescripcion" maxlength="512" th:field="*{description}"></textarea>
-													</div>
-												</div>												
-												<!-- metainf -->
-												<div class="row">
-													<div class="col-md-12 col-sm-12 col-xs-12">
+													</div>											
+													<!-- metainf -->
+													<div class="col-md-6 col-sm-12 col-xs-12">
 					                                    <label class="description" for="metainf" th:text="#{apimanager.metainf}">Meta-inf</label>
-					                                    <input  id="id_metainf" data-role="tagsinput" class="form-control" type="text" th:field="*{metaInf}"></input>
+					                                    <input id="id_metainf" data-role="tagsinput" class="form-control" type="text" th:field="*{metaInf}"></input>
 													</div>
 												</div>		
 												<!-- operations -->
@@ -298,15 +296,32 @@
 					                                                            <input id="description_GETOPS" name="description_GETOPS" class="form-control" type="text" maxlength="250"/>
 					                                                        </div>
 					                                                     </div>
-					                                                     <div id="divCUSTOMSQLS" style="display:none;"></div>
+					                                                     <div id="divCUSTOMSQLS">
+							                                                 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_GETSQL')}
+							                                                 													AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')}
+							                                                 													AND ${!#strings.endsWith(operation.identification,'_DELETE')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
+							                                                    <div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" style="margin-Top:30px;margin-bottom: 30px">
+							                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOM (query)" th:name="${(operation.identification + 'CUSTOMSQL')}" th:value="#{apimanager_formulario_operation_CUSTOMSQL}" th:onclick="'javascript:showCustomSqlDialog(\'' + ${operation.identification} + '\');'"/>
+							                                                    </div>
+							                                                    <label th:id="${operation.identification + '_LABEL'}" class="description" style="padding-left: 20px;" th:text="${operation.identification}"/>
+						                                                        <input th:id="${operation.identification + '_Edit'}" class="button_text" type="button" th:value="#{apimanager_operationes_editar}" th:name="${operation.identification + '_Edit'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'" />
+						                                                        <input th:id="${operation.identification + '_Eliminar'}" class="button_text" type="button" th:value="#{apimanager_operationes_eliminar}" th:name="${operation.identification + '_Eliminar'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.removeCustomSqlOp(\'' + ${operation.identification} + '\');'"/>
+							                                                    <br/>
+							                                                    <b><span th:id="${operation.identification + '_PATH'}" style="padding-left: 20px; width: 93%;" th:text="${operation.path}"/></b>
+							                                                    <br/>
+							                                                    <b><span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-left: 20px; width: 93%;" th:text="${querystring.value}"/></b>
+							                                                    <br/>
+							                                                    <span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px;" th:text="${operation.description}"/>
+							                                                 </div>
+						                                                 </div>
 					                                                     <div id="divCUSTOMSQL" class="op_div">
 					                                                        <div id="buttonOperationCUSTOMSQL" class="op_button_div">
-					                                                            <input id="CUSTOMSQL" class="op_button" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" data-toggle="modal" data-target="#dialog-customsql"/>
+					                                                            <input id="CUSTOMSQL" class="op_button" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" onclick="ApiCustomOpsController.selectEditCustomOp('')"/>
 					                                                        </div>
 					                                                        <div id="descOperationCUSTOMSQL" class="op_desc_div" style="display:none">
 					                                                            <b><label id ="description_CUSTOMSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_CUSTOMSQL"></label></b>
 					                                                            <br/>
-					                                                            <b><label id ="description_operacion_CUSTOMSQL" class="description" for="description_CUSTOMSQL" th:text="#{apimanager.description}"></label></b>
+					                                                            <b><label id ="description_operation_CUSTOMSQL" class="description" for="description_CUSTOMSQL" th:text="#{apimanager.description}"></label></b>
 					                                                            <input id="description_CUSTOMSQL" name="description_CUSTOMSQL" class="form-control" type="text" maxlength="250"/>
 					                                                        </div>
 					                                                     </div>
@@ -347,57 +362,63 @@
 						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->
-				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager.customsql.dialogtitle}" tabindex="-1" role="dialog" style="text-align:left; display: none;">
-					<div>
-		                <br/>
-		                <label style="margin-left: 20px;" class="description" th:text="#{apimanager.operations.method}"></label>
-		                <select  id="id_type_op_customsql" style="margin-right: 20px;margin-left: 10px;width:14%;display:inline;padding-right:5px;" class="element select small form-control">
-		                     <option value="GETCUSTOMSQL" th:text="#{apimanager.operation.GET}" selected="selected"/>
-		                </select>
-		                <label style="margin-right: 10px;" class="description" th:text="#{apimanager.operations.name}"></label>
-		                <input id="id_name_op_customsql" name="id_name_op_customsql" class="element text medium form-control" style="display:inline;width:60%;" type="text" maxlength="50" onblur="validateName(this);"/>
-		                <br/><br/>
-		                <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.query}"></label>
-		                <input style="margin-left: 20px; margin-right: 20px; width: 95%" id="id_query_op_customsql" name="id_query_op_customsql" class="form-control" type="text" maxlength="512" onblur="loadParamsQuery(this.value);"/>
-		                <br/><br/>
-		                <div class="accordion" id="customsql_paramaccordion" style="width: 95%;margin-left: 20px;">
-		                     <div class="group_top_bg" th:text="#{apimanager.customsql.paramsquery}"/>
-		                     <div style="border:0px">
-		                           <ul style="display: inline-table;padding:10px 0;">
-		                               <div id="customsql_noparam_div">
-		                                   <div>
-		                                      <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.paramquery.nodefined}"></label>
-		                                   </div>
-		                               </div>
-		                               <div id="customsql_params_div" style="display: none; width: 700px">
-		                                   <div id="customsql_paramsquery">
-		                                  </div>
-		                               </div>
-		                           </ul>
-		                     </div>
-		                     <div class="group_top_bg" th:text="#{apimanager.customsql.configuration}"></div>
-		                     <div style="border:0px; padding-top:10px;">
-			                    <div>
-				                    <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.querytype}"></label>
-				                    <select  id="id_customsql_querytype" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:loadParamQuerySQLType();'" >
-				                         <option value="SQLLIKE" th:text="SQLLIKE" selected="selected"/>
-				                         <option value="NATIVE" th:text="NATIVE"/>
-				                    </select>
-				                    <label class="description" th:text="#{apimanager.customsql.targetBD}"></label>
-				                    <select  id="id_customsql_targetBD" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:checkformatresult();'">
-				                         <option value="BDTR" th:text="BDTR"  selected="selected"/>
-				                         <option value="BDH" th:text="BDH"/>
-				                    </select>
-			                        <br/><br/>
-			                        <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.descripcion}"></label>
-			                        <input style="margin-left: 20px; margin-right: 20px; margin-bottom: 10px; width: 95%" id="id_desc_op_customsql" name="id_desc_op_customsql" class="form-control" type="text" maxlength="250"/>
-		                        </div>
-		                     </div>
-						      <div style="border:0px; padding-top:10px;">
+				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager.customsql.dialogtitle}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
+					<div class="modal-dialog">
+					    <!-- Modal content-->
+					    <div class="modal-content">					
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title">Modal Header</h4>
+							</div>
+							<div class="modal-body">
+				                <label class="description" th:text="#{apimanager.operations.method}"></label>
+				                <select id="id_type_op_customsql" style="margin-right: 20px;margin-left: 10px;width:14%;display:inline;padding-right:5px;" class="element select small form-control">
+				                     <option value="GET" th:text="#{apimanager.operation.GET}" selected="selected"/>
+				                </select>
+				                <label class="description" th:text="#{apimanager.operations.name}"></label>
+				                <input id="id_name_op_customsql" name="id_name_op_customsql" class="element text medium form-control" style="display:inline;width:50%;" type="text" maxlength="50" onblur="ApiCustomOpsController.validateName(this);"/>
+				                <br/><br/>
+				                <label class="description" th:text="#{apimanager.customsql.query}"></label>
+				                <input style="margin-left: 10px; margin-right: 20px; width: 95%" id="id_query_op_customsql" name="id_query_op_customsql" class="form-control" type="text" maxlength="512" onblur="ApiCustomOpsController.loadParamsQuery(this.value);"/>
+				                <br/>
+			                     <div class="group_top_bg" th:text="#{apimanager.customsql.paramsquery}"/>
+			                     <div style="border:0px">
+			                           <ul style="display: inline-table;padding:10px 0;">
+			                               <div id="customsql_noparam_div">
+			                                   <div>
+			                                      <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.paramquery.nodefined}"></label>
+			                                   </div>
+			                               </div>
+			                               <div id="customsql_params_div" style="display: none; width: 700px">
+			                                   <div id="customsql_paramsquery">
+			                                  </div>
+			                               </div>
+			                           </ul>
+			                     </div>
+			                     <div class="group_top_bg" th:text="#{apimanager.customsql.configuration}"></div>
+			                     <div style="border:0px; padding-top:10px;">
+				                    <div>
+					                    <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.querytype}"></label>
+					                    <select  id="id_customsql_querytype" style="margin-right: 20px;margin-left: 10px;width: 20%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:loadParamQuerySQLType();'" >
+					                         <option value="SQLLIKE" th:text="SQLLIKE" selected="selected"/>
+					                         <option value="NATIVE" th:text="NATIVE"/>
+					                    </select>
+					                    <label class="description" th:text="#{apimanager.customsql.targetBD}"></label>
+					                    <select  id="id_customsql_targetBD" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:checkformatresult();'">
+					                         <option value="BDTR" th:text="BDTR"  selected="selected"/>
+					                         <option value="BDH" th:text="BDH"/>
+					                    </select>
+				                        <br/><br/>
+				                        <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.description}"></label>
+				                        <input style="margin-left: 20px; margin-right: 20px; margin-bottom: 10px; width: 95%" id="id_desc_op_customsql" name="id_desc_op_customsql" class="form-control" type="text" maxlength="250"/>
+			                        </div>
+			                     </div>					
+							</div>					
+							<div class="modal-footer">
 						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						        <button type="button" class="btn btn-primary">Save changes</button>
-						      </div>
-		                </div>
+						        <button type="button" class="btn btn-primary" th:onclick="'javascript:ApiCustomOpsController.saveCustom()'" >Save changes</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div><!-- END CONTENT BODY -->
@@ -423,11 +444,16 @@
 	<!-- LOADING DEFAULT LANG MESSAGES IF NEEDED -->
 	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}" type="text/javascript"></script>
 		
+	<!-- TEMPLATE CONTROLLER  -->	
+	
+	<script th:src="@{/static/js/pages/apiCustomOps.js}"/>
+	<script th:src="@{/static/js/pages/apiCreate.js}"/>
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	
+	var error="";
 	var operations = /*[[${operations}]]*/;
-	var authenticacion;
+	var authentication;
 	var endpoint = /*[[${endpointBase}]]*/;
 	var currentLanguage = [[${lang}]];	
 	
@@ -442,18 +468,20 @@
 	
 	var apiCustomOpsJson = { 
 		"endpoint" : endpoint,
+		"apimanager_customsql_error_query_params" : [[#{apimanager_customsql_error_query_params}]],
+		"apimanager_customsql_error_query_ontology" : [[#{apimanager_customsql_error_query_ontology}]],
+		"apimanager_customsql_error_query" : [[#{apimanager_customsql_error_query}]],
+		"apimanager_customsql_error_required" : [[#{apimanager_customsql_error_required}]],
+		"apimanager_error_operation_existe" : [[#{apimanager_error_operation_existe}]],
+		"apimanager_error_campos" : [[#{apimanager_error_campos}]],
+		"apimanager_editBtn" : [[#{gen.editBtn}]],
+		"apimanager_deleteBtn" : [[#{gen.deleteBtn}]]
 	};
 						
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
 	
-   
 	</script>	
-		
-	<!-- TEMPLATE CONTROLLER  -->	
-	<script th:src="@{/static/js/pages/apiCreate.js}"/>
-	<script th:src="@{/static/js/pages/apiCustomOps.js}"/>
-		
 
 </body>
 </html>
