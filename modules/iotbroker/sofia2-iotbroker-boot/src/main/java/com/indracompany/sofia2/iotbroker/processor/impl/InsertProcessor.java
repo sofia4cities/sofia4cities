@@ -35,6 +35,8 @@ import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -82,8 +84,9 @@ public class InsertProcessor implements MessageTypeProcessor {
 
 		model.setBody(insertMessage.getBody().getData().toString());
 		model.setOntologyName(insertMessage.getBody().getOntology());
-		model.setOperationType("POST");
-		model.setQueryType("NATIVE");
+		model.setOperationType(OperationType.POST);
+		model.setQueryType(QueryType.NATIVE);
+		model.setUser(session.get().getUserID());
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -101,7 +104,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 			responseMessage.setBody(new SSAPBodyReturnMessage());
 			responseMessage.getBody().setOk(true);
 
-			responseMessage.getBody().setData(objectMapper.readTree(repositoryResponse));
+			responseMessage.getBody().setData(objectMapper.readTree("{\"id\":\""+repositoryResponse+"\"}"));
 
 		} catch (final Exception e1) {
 			// TODO LOG

@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterServiceImpl;
 
@@ -34,10 +36,10 @@ public class Application {
     	
     	String query = "select * from product where name = \"admin\"";
     	model.setOntologyName("product");
-    	model.setQueryType("SQLLIKE");
+    	model.setQueryType(QueryType.SQLLIKE);
     	model.setBody(query);
     	model.setUser("administrator");
-    	model.setOperationType("GET");
+    	model.setOperationType(OperationType.GET);
     	
 		input.setOperationModel(model);
     	
