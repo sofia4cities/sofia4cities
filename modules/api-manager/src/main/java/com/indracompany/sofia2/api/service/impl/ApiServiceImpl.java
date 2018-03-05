@@ -122,6 +122,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
 		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
 		
+		User user = (User) data.get(ApiServiceInterface.USER);
+		
 		OperationModel model = new OperationModel();
 		
 		model.setBody(BODY);
@@ -131,6 +133,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		model.setOperationType(METHOD);
 		model.setQueryType(QUERY_TYPE);
 		model.setQuery(QUERY);
+		model.setUser(user.getUserId());
 		
 		NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
