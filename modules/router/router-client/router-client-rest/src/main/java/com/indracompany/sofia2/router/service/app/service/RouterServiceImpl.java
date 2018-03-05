@@ -84,6 +84,14 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 		return execute(model);
 	}
 
+	public String getRouterStandaloneURL() {
+		return routerStandaloneURL;
+	}
+
+	public void setRouterStandaloneURL(String routerStandaloneURL) {
+		this.routerStandaloneURL = routerStandaloneURL;
+	}
+
 	
 
 }

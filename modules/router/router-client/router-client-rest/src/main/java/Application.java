@@ -27,11 +27,19 @@ public class Application {
 
     public static void main(String args[]) {
     	RouterServiceImpl impl = new RouterServiceImpl();
+    	impl.setRouterStandaloneURL("http://localhost:19100/router/router/");
     	
     	NotificationModel input = new NotificationModel();
-    	OperationModel operationModel = new OperationModel();
+    	OperationModel model = new OperationModel();
     	
-		input.setOperationModel(operationModel);
+    	String query = "select * from product where name = \"admin\"";
+    	model.setOntologyName("product");
+    	model.setQueryType("SQLLIKE");
+    	model.setBody(query);
+    	model.setUser("administrator");
+    	model.setOperationType("GET");
+    	
+		input.setOperationModel(model);
     	
 		OperationResultModel result = impl.execute(input);
 		
