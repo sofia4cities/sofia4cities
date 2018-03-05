@@ -119,7 +119,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 									node.setFlow(flow);
 									node.setFlowNodeType(Type.HTTP_NOTIFIER);
 									node.setMessageType(MessageType.valueOf(record.getMeassageType()));
-									node.setOntology(ontologyService.getOntologyById(record.getOntology()));
+									node.setOntology(ontologyService.getOntologyById(record.getOntology(), domain.getUser().getUserId()));
 									node.setPartialUrl(record.getUrl());
 									nodeService.createFlowNode(node);
 								}
@@ -151,7 +151,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		List<Ontology> ontologies = null;
 		switch (sofia2User.getRole().getId()) {
 		case "ROLE_ADMINISTRATOR":
-			ontologies = ontologyService.getAllOntologies();
+			ontologies = ontologyService.getAllOntologies(sofia2User.getUserId());
 			break;
 		default:
 			// TODO check default criteria. Public ontologies should be included
