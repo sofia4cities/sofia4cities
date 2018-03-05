@@ -30,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Autowired
-	private QueryToolService queryToolService;
+	private QueryToolService  queryToolService;
 
 	@Autowired
 	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
@@ -54,6 +54,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String ontologyName = operationModel.getOntologyName();
 
 		final String OBJECT_ID = operationModel.getObjectId();
+		final String USER = operationModel.getUser();
 
 		String OUTPUT="";
 		result.setMessage("OK");
@@ -87,6 +88,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String QUERY_TYPE = operationModel.getQueryType();
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
+		final String USER = operationModel.getUser();
 
 		String OUTPUT="";
 
@@ -128,6 +130,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String QUERY_TYPE = operationModel.getQueryType();
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
+		final String USER = operationModel.getUser();
 		String OUTPUT="";
 
 		result.setMessage("OK");
@@ -168,6 +171,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String ontologyId = operationModel.getOntologyId();
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
+		final String USER = operationModel.getUser();
 
 		String OUTPUT="";
 		result.setMessage("OK");
@@ -179,11 +183,11 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 				{
 					if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
 						//						OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
-						OUTPUT = queryToolService.querySQLAsJson("", ontologyName, QUERY, 0);
+						OUTPUT = queryToolService.querySQLAsJson(USER, ontologyName, QUERY, 0);
 					}
 					else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
 						//						OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
-						OUTPUT = queryToolService.queryNativeAsJson("", ontologyName, QUERY, 0,0);
+						OUTPUT = queryToolService.queryNativeAsJson(USER, ontologyName, QUERY, 0,0);
 					}
 					else {
 						OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
