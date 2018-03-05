@@ -14,11 +14,11 @@
 
 It is necessary to have installed Docker and Docker Compose, for this you have to follow the instructions from the official Docker website. If Docker is already installed, skip to Step 2.
 
-Docker for Windows: https://docs.docker.com/docker-for-windows/install/
-Docker for Linux: https://docs.docker.com/install/linux/docker-ce/ubuntu/
-Docker for MacOS: https://docs.docker.com/docker-for-mac/
+- Docker for Windows: https://docs.docker.com/docker-for-windows/install/
+- Docker for Linux: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+- Docker for MacOS: https://docs.docker.com/docker-for-mac/
 
-Docker Compose: https://docs.docker.com/compose/install/
+- Docker Compose: https://docs.docker.com/compose/install/
 
 #### <a name="compile"></a>Step 2: Compile the sources with Maven to generate the artifacts (.jar)
 
@@ -41,7 +41,7 @@ To stop the containers: **ctrl + c** and write **docker-compose down**
 
 #### <a name="loaddata"></a>Step 5: Loading tables and data in configdb and realtimedb
 
-Once the containers of the persistence layer have been activated it is necessary to create tables (configdb) and collections (realtimedb) and close them with data, for that in the config / init directory we execute mvn spring-boot: execute
+Once the containers of the persistence layer have been activated it is necessary to create tables (configdb) and collections (realtimedb) and close them with data, for that in the **config/init** directory we execute mvn spring-boot: execute
 
 ![](loaddata.png)
 
