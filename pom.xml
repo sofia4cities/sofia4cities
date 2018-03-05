@@ -79,6 +79,7 @@
         <module>modules/api-manager</module>
 		<!--        <module>modules/scripting-engine</module-->
 		<module>modules/planner</module>
+		<module>modules/dashboard-engine</module>
 
 		<!--
         <module>api-manager</module>
