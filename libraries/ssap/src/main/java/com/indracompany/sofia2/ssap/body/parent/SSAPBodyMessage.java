@@ -13,39 +13,10 @@
  */
 package com.indracompany.sofia2.ssap.body.parent;
 
-import com.fasterxml.jackson.databind.JsonNode; 
-
 public abstract class SSAPBodyMessage {
-	
-	protected JsonNode data;
-	protected String clientPlatform;
-	protected String clientPlatformInstance;
-	
-	public JsonNode getData() {
-		return data;
-	}
-	public void setData(JsonNode data) {
-		this.data = data;
-	}
-	public String getClientPlatform() {
-		return clientPlatform;
-	}
-	public void setClientPlatform(String clientPlatform) {
-		this.clientPlatform = clientPlatform;
-	}
-	public String getClientPlatformInstance() {
-		return clientPlatformInstance;
-	}
-	public void setClientPlatformInstance(String clientPlatformInstance) {
-		this.clientPlatformInstance = clientPlatformInstance;
-	}
-	
-	public abstract boolean isClientPlatformMandatory();
 
 	public abstract boolean isSessionKeyMandatory();
-	
-	public abstract boolean isAutorizationMandatory();
-	
+
 	public abstract boolean isOntologyMandatory();
 
 }

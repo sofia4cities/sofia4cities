@@ -33,8 +33,7 @@ sofia2: #Config Sofia2 specific
     iotbroker: http://localhost:18080
     iotbroker.services: http://localhost:8080/sib/services
    paths:
-    ssap: /ssap
-    
+    ssap: /ssap      
     
 management.security.enabled: false
  
@@ -42,11 +41,12 @@ spring: ## General Config
    application.name: sofia2-control-panel
    thymeleaf: ## Thymeleaf Config
       cache: false  
-      encoding: UTF-8
-      check-template: true
-      check-template-location: true
-      content-type: text/html
-      enabled: true
+      #encoding: UTF-8
+      #prefix: classpath:/templates/
+      #check-template: true
+      #check-template-location: true
+      #content-type: text/html
+      #enabled: true
       # excluded-view-names:
       # mode: HTML5
       # prefix: /templates/
@@ -69,6 +69,7 @@ spring: ## General Config
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
+      hibernate.temp.use_jdbc_metadata_defaults: false
    boot.admin: #Spring Boot Admin Config    
       url: http://localhost:18090
       username: operations
@@ -80,7 +81,7 @@ quartz:
    datasource:
       url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:
+      password: 
       driver-class-name: com.mysql.jdbc.Driver
    jpa:
       ## Hibernate Properties
@@ -91,8 +92,7 @@ quartz:
    autoStartupSchedulers:
       #- scriptScheduler
       #- twitterScheduler  
-     
-      
+           
 ## LOGGING CONF
 logging:
    level:
@@ -100,6 +100,3 @@ logging:
       com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
       org.hibernate: INFO
-
-
- 

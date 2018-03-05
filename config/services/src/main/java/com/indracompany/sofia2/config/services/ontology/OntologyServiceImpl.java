@@ -161,8 +161,10 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public boolean hasUserPermissionForQuery(String userId, String ontologyIdentification) {
-		List<Ontology> ontologies = this.ontologyRepository
-				.findByUserAndOntologyUserAccessAndPermissionsQuery(this.userService.getUser(userId));
+		User user = this.userService.getUser(userId);
+		if (userService.isUserAdministrator(user))
+			return true;
+		List<Ontology> ontologies = this.ontologyRepository.findByUserAndOntologyUserAccessAndPermissionsQuery(user);
 		for (Ontology ontology : ontologies) {
 			if (ontology.getIdentification().equals(ontologyIdentification))
 				return true;
@@ -173,8 +175,10 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public boolean hasUserPermissionForInsert(String userId, String ontologyIdentification) {
-		List<Ontology> ontologies = this.ontologyRepository
-				.findByUserAndOntologyUserAccessAndPermissionsInsert(this.userService.getUser(userId));
+		User user = this.userService.getUser(userId);
+		if (userService.isUserAdministrator(user))
+			return true;
+		List<Ontology> ontologies = this.ontologyRepository.findByUserAndOntologyUserAccessAndPermissionsInsert(user);
 		for (Ontology ontology : ontologies) {
 			if (ontology.getIdentification().equals(ontologyIdentification))
 				return true;
@@ -282,24 +286,25 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public void createUserAccess(Ontology ontology, String userId, String typeName) {
-		
+
 		Ontology managedOntology = ontologyRepository.findById(ontology.getId());
 		List<OntologyUserAccessType> managedTypes = ontologyUserAccessTypeRepository.findByName(typeName);
-		OntologyUserAccessType managedType = managedTypes != null && managedTypes.size() > 0 ? managedTypes.get(0) : null;
+		OntologyUserAccessType managedType = managedTypes != null && managedTypes.size() > 0 ? managedTypes.get(0)
+				: null;
 		User managedUser = this.userService.getUser(userId);
-		
+
 		if (managedOntology != null && managedType != null && managedUser != null) {
 			OntologyUserAccess ontologyUserAccess = new OntologyUserAccess();
 			ontologyUserAccess.setOntology(managedOntology);
 			ontologyUserAccess.setUser(managedUser);
 			ontologyUserAccess.setOntologyUserAccessType(managedType);
-			
+
 			ontologyUserAccessRepository.save(ontologyUserAccess);
 		} else {
 			throw new OntologyServiceException("Ontology does not exist");
 		}
 	}
-	
+
 	@Override
 	public OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId) {
 		Ontology ontology = ontologyRepository.findById(ontologyId);
@@ -325,7 +330,7 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public void updateOntologyUserAccess(String id, String typeName) {
 		OntologyUserAccess userAccessDB = ontologyUserAccessRepository.findById(id);
-		
+
 		List<OntologyUserAccessType> types = ontologyUserAccessTypeRepository.findByName(typeName);
 		if (types != null && types.size() > 0) {
 			OntologyUserAccessType typeDB = types.get(0);
@@ -334,13 +339,7 @@ public class OntologyServiceImpl implements OntologyService {
 		} else {
 			throw new IllegalStateException("Types of access must have unique name");
 		}
-		
-		
+
 	}
-
-
-	
-
-	
 
 }

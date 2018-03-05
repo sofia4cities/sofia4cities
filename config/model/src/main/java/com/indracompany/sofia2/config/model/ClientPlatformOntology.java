@@ -20,6 +20,7 @@
 package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -38,15 +39,15 @@ import lombok.Setter;
 @Configurable
 public class ClientPlatformOntology extends AuditableEntityWithUUID {
 
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
 	@Getter
 	@Setter
 	private ClientPlatform clientPlatform;
 
 	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
 	@Getter
 	@Setter

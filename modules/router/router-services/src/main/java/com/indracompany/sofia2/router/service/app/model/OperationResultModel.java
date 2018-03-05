@@ -31,4 +31,14 @@ public class OperationResultModel implements Serializable{
 	@Setter
 	private String message;
 	
+	@Getter
+	@Setter
+	private String operation;
+
+	@Override
+	public String toString() {
+		return "OperationResultModel [result=" + result + ", message=" + message + ", operation=" + operation + "]";
+	}
+	
+	
 }

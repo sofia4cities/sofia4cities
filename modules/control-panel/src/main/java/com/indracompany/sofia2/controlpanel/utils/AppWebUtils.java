@@ -13,6 +13,9 @@
  */
 package com.indracompany.sofia2.controlpanel.utils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AppWebUtils {
 
 	public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
-
+	
 	@Autowired
 	private MessageSource messageSource;
 
@@ -102,6 +105,17 @@ public class AppWebUtils {
 		}
 		return formattedJson;
 	}
+
+	
+	public boolean paswordValidation(String data) {
+		
+		Pattern pattern = Pattern.compile("(?=^.{7,20}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
+		Matcher matcher = pattern.matcher(data);
+		return matcher.find();
+	
+	}
+	
+	
 
 	public String beautifyJson(String json) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);

@@ -54,9 +54,7 @@
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
 					<p th:text="${message}">messages</p>
 				</div>
-				
-				
-				
+								
 				<form class="cd-form" th:action="@{/login}" method="post" >
 					<!-- <p class="fieldset">
 						<label class="image-replace cd-email" for="signin-email">E-mail</label>
@@ -102,10 +100,11 @@
 					</p>
 					
 					<p class="fieldset">
-						<label for="signup-password" class="image-replace cd-password popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.password.help},data-title=#{user.password}"> <span th:text="#{user.password} + ':'">Password</span> </label>
-						<input class="full-width has-padding has-border" id="passwordup" th:field="*{password}" name="passwordup" type="text"  placeholder="Password" th:required="true"/>
-						<a href="#0" class="hide-password">Hide</a>
+
+						<label class="image-replace cd-password" for="signup-password">Password</label>
+						<input class="full-width has-padding has-border" id="passwordup" th:field="*{password}" name="passwordup" type="password"  placeholder="Password" th:required="true" title="Must contain at least: one uppercase letter, one lowercase letter and a number or simbol. Password must be between 7 and 20 characters." pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />  
 						<span class="cd-error-message">Error with password</span>
+						
 					</p>
 					
 					<p class="fieldset">
@@ -162,7 +161,6 @@
 	<!-- CORE -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
-
 	
 	<script>
 	var timer = 0;
@@ -173,8 +171,8 @@
 		color: "#FFFFFF"
 		});
 		timer = setTimeout(function(){ $('.cd-signin').trigger('click'); }, 1250);
-
 		$('.hide-password').trigger('click');
+
 
 	};
 	</script>

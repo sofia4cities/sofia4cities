@@ -106,7 +106,7 @@
 
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-router-crud</artifactId>
+			<artifactId>sofia2-router-core</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 
@@ -206,7 +206,25 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>	
+		    <plugin>
+		      <groupId>com.spotify</groupId>
+		      <artifactId>docker-maven-plugin</artifactId>   		      
+		      <configuration>
+		        <imageName>sofia2/apimanager</imageName>
+		        <imageTags>
+		           <imageTag>${sofia2.docker.version}</imageTag>
+		        </imageTags>		        
+		        <dockerDirectory>docker</dockerDirectory>
+		        <resources>
+		           <resource>
+		             <targetPath>/</targetPath>
+		             <directory>${project.build.directory}</directory>
+		             <include>${project.build.finalName}-exec.jar</include>
+		           </resource>
+		        </resources>
+		      </configuration>
+		    </plugin>					
 		</plugins>
 	</build>
 

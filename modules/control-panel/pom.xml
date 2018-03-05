@@ -23,12 +23,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-persistence-ri</artifactId>
-			<version>${sofia2.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-iotbroker</artifactId>
+			<artifactId>sofia2-persistence-services</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>
@@ -56,7 +51,12 @@
 			<artifactId>sofia2-config-services</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-flow-engine-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -163,6 +163,24 @@
 					</execution>
 				</executions>
 			</plugin>
+		    <plugin>
+		      <groupId>com.spotify</groupId>
+		      <artifactId>docker-maven-plugin</artifactId>   		      
+		      <configuration>
+		        <imageName>sofia2/controlpanel</imageName>
+		        <imageTags>
+		           <imageTag>${sofia2.docker.version}</imageTag>
+		        </imageTags>		        
+		        <dockerDirectory>docker</dockerDirectory>
+		        <resources>
+		           <resource>
+		             <targetPath>/</targetPath>
+		             <directory>${project.build.directory}</directory>
+		             <include>${project.build.finalName}-exec.jar</include>
+		           </resource>
+		        </resources>
+		      </configuration>
+		    </plugin>			
 		</plugins>
 	</build>
 

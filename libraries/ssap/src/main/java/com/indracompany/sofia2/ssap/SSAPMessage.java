@@ -17,18 +17,20 @@ import java.io.Serializable;
 
 import com.indracompany.sofia2.ssap.body.SSAPBodyEmptyMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public final class SSAPMessage<T extends SSAPBodyMessage>implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	protected String messageId;
 	protected String sessionKey;
-	protected String ontology;
+	//	protected String ontology;
 	protected SSAPMessageDirection direction;
 	protected SSAPMessageTypes messageType;
 	protected T body = (T) new SSAPBodyEmptyMessage();
-	
+
 	public String getMessageId() {
 		return messageId;
 	}
@@ -41,12 +43,12 @@ public final class SSAPMessage<T extends SSAPBodyMessage>implements Serializable
 	public void setSessionKey(String sessionKey) {
 		this.sessionKey = sessionKey;
 	}
-	public String getOntology() {
-		return ontology;
-	}
-	public void setOntology(String ontology) {
-		this.ontology = ontology;
-	}
+	//	public String getOntology() {
+	//		return ontology;
+	//	}
+	//	public void setOntology(String ontology) {
+	//		this.ontology = ontology;
+	//	}
 	public SSAPMessageDirection getDirection() {
 		return direction;
 	}
@@ -65,5 +67,5 @@ public final class SSAPMessage<T extends SSAPBodyMessage>implements Serializable
 	public void setBody(T body) {
 		this.body = body;
 	}
-	
+
 }

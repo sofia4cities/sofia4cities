@@ -13,15 +13,15 @@
  */
 package com.indracompany.sofia2.ssap.util;
 
-import com.indracompany.sofia2.ssap.SSAPErrorCode;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 
 public class SSAPMessageGenerator {
 
-	public static SSAPMessage<SSAPBodyReturnMessage> generateResponseErrorMessage(SSAPMessage<? extends SSAPBodyMessage> message, 
+	public static SSAPMessage<SSAPBodyReturnMessage> generateResponseErrorMessage(SSAPMessage<? extends SSAPBodyMessage> message,
 			SSAPErrorCode errorCode, String errorMessage) {
 		SSAPMessage<SSAPBodyReturnMessage> m = null;
 		m = new SSAPMessage<>();
@@ -32,7 +32,7 @@ public class SSAPMessageGenerator {
 		m.getBody().setOk(false);
 		m.getBody().setErrorCode(errorCode);
 		m.getBody().setError(errorMessage);
-		
+
 		return m;
 	}
 }

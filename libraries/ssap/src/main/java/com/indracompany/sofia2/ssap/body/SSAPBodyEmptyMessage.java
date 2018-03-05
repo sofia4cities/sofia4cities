@@ -18,17 +18,7 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 public class SSAPBodyEmptyMessage extends SSAPBodyMessage {
 
 	@Override
-	public boolean isClientPlatformMandatory() {
-		return false;
-	}
-
-	@Override
 	public boolean isSessionKeyMandatory() {
-		return false;
-	}
-
-	@Override
-	public boolean isAutorizationMandatory() {
 		return false;
 	}
 

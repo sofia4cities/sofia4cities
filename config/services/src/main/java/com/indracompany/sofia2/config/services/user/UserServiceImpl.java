@@ -46,6 +46,26 @@ public class UserServiceImpl implements UserService {
 	private TokenRepository tokenRepository;
 
 	@Override
+	public boolean isUserAdministrator(User user) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			return true;
+		if (user.getRole().getRoleParent() != null
+				&& user.getRole().getRoleParent().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			return true;
+		return false;
+	}
+
+	@Override
+	public boolean isUserDeveloper(User user) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_DEVELOPER.name()))
+			return true;
+		if (user.getRole().getRoleParent() != null
+				&& user.getRole().getRoleParent().getId().equals(Role.Type.ROLE_DEVELOPER.name()))
+			return true;
+		return false;
+	}
+
+	@Override
 	public Token getToken(String token) {
 		return tokenRepository.findByToken(token);
 	}
@@ -62,8 +82,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByToken(String token) {
-		UserToken usertoken = userTokenRepository.findByToken(token);
-		User user = usertoken.getUser();
+		final UserToken usertoken = userTokenRepository.findByToken(token);
+		final User user = usertoken.getUser();
 		return user;
 	}
 
@@ -90,7 +110,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,
 			Boolean active) {
-		List<User> users = new ArrayList<User>();
+		List<User> users = new ArrayList<>();
 
 		if (active != null) {
 			users = this.userRepository.findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(userId, fullName, email,
@@ -109,39 +129,45 @@ public class UserServiceImpl implements UserService {
 			log.debug("User no exist, creating...");
 			user.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
 			this.userRepository.save(user);
-		} else
+		} else {
 			throw new UserServiceException("User already exists in Database");
+		}
 	}
 
 	@Override
 	public boolean userExists(User user) {
-		if (this.userRepository.findByUserId(user.getUserId()) != null)
+		if (this.userRepository.findByUserId(user.getUserId()) != null) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
 	public void updateUser(User user) {
 		if (this.userExists(user)) {
-			User userDb = this.userRepository.findByUserId(user.getUserId());
+			final User userDb = this.userRepository.findByUserId(user.getUserId());
 			userDb.setPassword(user.getPassword());
 			userDb.setEmail(user.getEmail());
 			userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
 
 			// Update dateDeleted for in/active user
-			if (!userDb.isActive() && user.isActive())
+			if (!userDb.isActive() && user.isActive()) {
 				userDb.setDateDeleted(null);
-			if (userDb.isActive() && !user.isActive())
+			}
+			if (userDb.isActive() && !user.isActive()) {
 				userDb.setDateDeleted(new Date());
+			}
 
 			userDb.setActive(user.isActive());
-			if (user.getDateDeleted() != null)
+			if (user.getDateDeleted() != null) {
 				userDb.setDateDeleted(user.getDateDeleted());
+			}
 			userDb.setFullName(user.getFullName());
 			this.userRepository.save(userDb);
-		} else
+		} else {
 			throw new UserServiceException("Cannot update user that does not exist");
+		}
 	}
 
 	@Override
@@ -151,17 +177,18 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteUser(String userId) {
-		User user = this.userRepository.findByUserId(userId);
+		final User user = this.userRepository.findByUserId(userId);
 		if (user != null) {
 			user.setDateDeleted(new Date());
 			user.setActive(false);
 			this.userRepository.save(user);
-		} else
+		} else {
 			throw new UserServiceException("Cannot delete user that does not exist");
+		}
 	}
 
 	Role getRoleDeveloper() {
-		Role r = new Role();
+		final Role r = new Role();
 		r.setName(Role.Type.ROLE_DEVELOPER.name());
 		r.setIdEnum(Role.Type.ROLE_DEVELOPER);
 		return r;
@@ -170,11 +197,13 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void registerUser(User user) {
 		// FIXME
-		if (user.getPassword().length() < 7)
+		if (user.getPassword().length() < 7) {
 			throw new UserServiceException("Password has to be at least 7 characters");
-		if (this.userExists(user))
+		}
+		if (this.userExists(user)) {
 			throw new UserServiceException(
 					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
+		}
 
 		user.setRole(getRoleDeveloper());
 		log.debug("Creating user with Role Developer default");
@@ -186,5 +215,20 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);
+	}
+
+	@Override
+	public boolean emailExists(User user) {
+
+		if ((this.userRepository.findByEmail(user.getEmail())).size() != 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public User getUserByIdentification(String identification) {
+		return userRepository.findByUserId(identification);
 	}
 }

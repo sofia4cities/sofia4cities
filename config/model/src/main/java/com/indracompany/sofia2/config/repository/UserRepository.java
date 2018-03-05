@@ -26,12 +26,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-	List<User> findByEmail(String email);
+	@Query("SELECT o FROM User AS o WHERE o.email=:email")
+	List<User> findByEmail(@Param("email") String email);
 
 	User findByUserId(String userId);
 
@@ -50,7 +50,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 	List<User> findByUserIdOrFullNameOrEmailOrRoleTypeAndActive(@Param("userId") String userId,
 			@Param("fullName") String fullName, @Param("email") String email, @Param("role") String role,
 			@Param("active") boolean active);
-	
+
 	@Query("SELECT o FROM User AS o WHERE (o.userId != :userId AND o.role.id != :rolId) ORDER BY o.userId)")
 	List<User> findUserByIdentificationAndNoRol(@Param("userId") String userId, @Param("rolId") String rolId);
 }
