@@ -173,16 +173,8 @@ public class GadgetDatasourceController {
 		}
 		
 		@GetMapping(value = "/getSampleDatasource/{id}", produces="application/json")
-		public @ResponseBody String getSampleDatasource(@PathVariable("id") String datasourceId) throws Exception{
-			if (!gadgetDatasourceService.hasUserPermission(datasourceId, this.utils.getUserId()))
-				throw new AccessDeniedException("The user is not allowed to perform this operation");
-			try {
-				String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
-				return queryToolService.querySQLAsJson("", sampleQuery, 0);
-			}catch (GadgetDatasourceServiceException e)
-			{
-				log.error("Cannot get gadget datasource query");
-				throw new Exception("There was a problem in data access");
-			}
+		public @ResponseBody String getSampleDatasource(@PathVariable("id") String datasourceId){
+			String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
+			return queryToolService.querySQLAsJson(this.utils.getUserId(),"", sampleQuery, 0);
 		}
 	}

@@ -707,14 +707,14 @@ public class InitConfigDB {
 			log.info("No gadget querys ...");
 			GadgetDatasource gadgetDatasources = new GadgetDatasource();
 			gadgetDatasources.setId("1");
-			gadgetDatasources.setIdentification("My Gadget");
-			gadgetDatasources.setMode("Streaming");
-			gadgetDatasources.setQuery("");
-			gadgetDatasources.setDbtype("BDTR");
+			gadgetDatasources.setIdentification("DsRawRestaurants");
+			gadgetDatasources.setMode("Query");
+			gadgetDatasources.setQuery("select * from Restaurants limit 100");
+			gadgetDatasources.setDbtype("RTDB");
 			gadgetDatasources.setRefresh(0);
-			gadgetDatasources.setOntology(getOntologyAdministrator());
+			gadgetDatasources.setOntology(null);
 			gadgetDatasources.setMaxvalues(150);
-			gadgetDatasources.setConfig("{'name':'Temperature Evolution'}");
+			gadgetDatasources.setConfig("[]");
 			gadgetDatasources.setUser(getUserAdministrator());
 			gadgetDatasourceRepository.save(gadgetDatasources);
 		}
@@ -862,7 +862,15 @@ public class InitConfigDB {
 
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
-		 */	}
+		/*
+		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
+		 * if(users.isEmpty()) { log.info("No users found...adding");
+		 * OntologyUserAccess user=new OntologyUserAccess(); user.setUser("6");
+		 * user.setOntology(ontologyRepository.findAll().get(0));
+		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
+		 * this.ontologyUserAccessRepository.save(user); }
+		 */
+	}
 
 	public void init_OntologyUserAccessType() {
 
