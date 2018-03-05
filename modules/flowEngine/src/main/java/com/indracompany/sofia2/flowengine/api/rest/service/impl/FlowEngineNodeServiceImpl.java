@@ -86,14 +86,14 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	@Override
 	public String deploymentNotification(String json) {
 		// TODO CHECH EXCEPTION HANDLING AND 500 SERVER ERROR HANDLING ON CLIENT
-		ObjectMapper mapper = new ObjectMapper();
+		final ObjectMapper mapper = new ObjectMapper();
 		FlowDomain domain = null;
 		List<DeployRequestRecord> deployRecords = new ArrayList<>();
 
 		try {
 			deployRecords = mapper.readValue(json, new TypeReference<List<DeployRequestRecord>>() {
 			});
-			for (DeployRequestRecord record : deployRecords) {
+			for (final DeployRequestRecord record : deployRecords) {
 				if (record != null) {
 					if (record.getDomain() != null) {
 						log.info("Deployment info from domain = {}", record.getDomain());
@@ -104,7 +104,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 						if (record.getType() != null) {
 							if (record.getType().equals("tab")) {
 								// it is a FLOW
-								Flow newFlow = new Flow();
+								final Flow newFlow = new Flow();
 								newFlow.setIdentification(record.getLabel());
 								newFlow.setNodeRedFlowId(record.getId());
 								newFlow.setActive(true);
@@ -113,8 +113,8 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 							} else {
 								// It is a node
 								if (record.getType().equals(Type.HTTP_NOTIFIER.toString())) {
-									FlowNode node = new FlowNode();
-									Flow flow = flowService.getFlowByNodeRedFlowId(record.getZ());
+									final FlowNode node = new FlowNode();
+									final Flow flow = flowService.getFlowByNodeRedFlowId(record.getZ());
 									node.setNodeRedNodeId(record.getId());
 									node.setFlow(flow);
 									node.setFlowNodeType(Type.HTTP_NOTIFIER);
@@ -131,7 +131,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 					}
 				}
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Change return statement
 			log.error("Unable to save deployment info from NodeRed into CDB. Cause = {}, message = {}", e.getCause(),
 					e.getMessage());
@@ -144,9 +144,9 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	public List<String> getOntologyByUser(String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException {
 
-		List<String> response = new ArrayList<>();
-		DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		final List<String> response = new ArrayList<>();
+		final DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
 		List<Ontology> ontologies = null;
 		switch (sofia2User.getRole().getId()) {
@@ -158,7 +158,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			ontologies = ontologyService.getOntologiesByUserId(sofia2User.getUserId());
 			break;
 		}
-		for (Ontology ontology : ontologies) {
+		for (final Ontology ontology : ontologies) {
 			response.add(ontology.getIdentification());
 		}
 		Collections.sort(response);
@@ -169,10 +169,10 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	public List<String> getClientPlatformByUser(String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException {
 
-		List<String> response = new ArrayList<>();
+		final List<String> response = new ArrayList<>();
 
-		DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		final DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
 		List<ClientPlatform> clientPlatforms = null;
 		switch (sofia2User.getRole().getId()) {
@@ -184,7 +184,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			clientPlatforms = clientPlatformService.getclientPlatformsByUser(sofia2User);
 			break;
 		}
-		for (ClientPlatform clientPlatform : clientPlatforms) {
+		for (final ClientPlatform clientPlatform : clientPlatforms) {
 			response.add(clientPlatform.getIdentification());
 		}
 		Collections.sort(response);
@@ -196,14 +196,14 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException, IllegalArgumentException {
 
 		String response = null;
-		DecodedAuthentication decodedAuth = decodeAuth(request.getAuthentication());
-		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		final DecodedAuthentication decodedAuth = decodeAuth(request.getAuthentication());
+		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
 		if (request.getDomainId() == null) {
 			throw new IllegalArgumentException("DomainId must be specified.");
 		}
 
-		FlowDomain domain = domainService.getFlowDomainByIdentification(request.getDomainId());
+		final FlowDomain domain = domainService.getFlowDomainByIdentification(request.getDomainId());
 
 		if (domain == null) {
 			throw new ResourceNotFoundException(
@@ -217,7 +217,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		default:
 			if (!domain.getUser().getUserId().equals(sofia2User.getUserId())) {
 				throw new NotAllowedException("User " + decodedAuth.getUserId()
-						+ " has no permissions over specified domain " + request.getDomainId());
+				+ " has no permissions over specified domain " + request.getDomainId());
 			}
 			response = "OK";
 			break;
@@ -230,8 +230,8 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throws ResourceNotFoundException, NotAuthorizedException, NotFoundException, JsonProcessingException,
 			DBPersistenceException {
 
-		DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		final DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
 		// TODO Change criteria. There should be no conditions harcoded refered
 		// to a certain query language
@@ -241,7 +241,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 				// TODO: ADMIN has all query permissions ?
 				if (sofia2User.getRole().getId().equals("ROLE_ADMINISTRATOR") || this.ontologyService
 						.hasUserPermissionForQuery(decodedAuth.getUserId(), ontologyIdentificator)) {
-					return queryToolService.querySQLAsJson(ontologyIdentificator, query, 0);
+					return queryToolService.querySQLAsJson(decodedAuth.getUserId(), ontologyIdentificator, query, 0);
 				} else {
 					log.error("User {} has no QUERY/ALL access over {} ontology.", decodedAuth.getUserId(),
 							ontologyIdentificator);
@@ -250,7 +250,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 				// TODO: ADMIN has all query permissions ?
 				if (sofia2User.getRole().getId().equals("ROLE_ADMINISTRATOR") || this.ontologyService
 						.hasUserPermissionForInsert(decodedAuth.getUserId(), ontologyIdentificator)) {
-					return queryToolService.querySQLAsJson(ontologyIdentificator, query, 0);
+					return queryToolService.querySQLAsJson(decodedAuth.getUserId(),ontologyIdentificator, query, 0);
 				} else {
 					log.error("User {} has no INSERT/ALL access over {} ontology.", decodedAuth.getUserId(),
 							ontologyIdentificator);
@@ -258,7 +258,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			}
 		} else if ("native".equals(queryType)) {
 			if (query.toLowerCase().contains(".find")) {
-				return queryToolService.queryNativeAsJson(ontologyIdentificator, query);
+				return queryToolService.queryNativeAsJson(decodedAuth.getUserId(),ontologyIdentificator, query);
 			} else if (query.toLowerCase().contains(".update")) {
 				// TODO: Not implemented in RTDB yet
 				throw new NotImplementedException();
@@ -285,7 +285,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throw new IllegalArgumentException("User or password cannot be empty.");
 		}
 
-		User sofia2User = userService.getUser(userId);
+		final User sofia2User = userService.getUser(userId);
 		if (sofia2User == null) {
 			log.error("Requested user does not exist");
 			throw new ResourceNotFoundException("Requested user does not exist");
@@ -300,7 +300,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	private DecodedAuthentication decodeAuth(String authentication) throws IllegalArgumentException {
 		try {
 			return new DecodedAuthentication(authentication);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new IllegalArgumentException("Authentication is null or cannot be decoded.");
 		}
 	}

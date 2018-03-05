@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
@@ -68,19 +67,15 @@ public class QueryToolController {
 		boolean hasUserPermission = false;
 		String queryResult = null;
 		try {
-			if (this.utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString()))
-				hasUserPermission = true;
-			else
-				hasUserPermission = ontologyService.hasUserPermissionForQuery(utils.getUserId(),
-						ontologyIdentification);
+			hasUserPermission = ontologyService.hasUserPermissionForQuery(utils.getUserId(), ontologyIdentification);
 			if (hasUserPermission) {
 				if (queryType.toUpperCase().equals(QUERY_SQL)) {
-					queryResult = queryToolService.querySQLAsJson(ontologyIdentification, query, 0);
+					queryResult = queryToolService.querySQLAsJson(utils.getUserId(), ontologyIdentification, query, 0);
 					model.addAttribute("queryResult", queryResult);
 					return "querytool/show :: query";
 
 				} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
-					queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
+					queryResult = queryToolService.queryNativeAsJson(utils.getUserId(), ontologyIdentification, query);
 					model.addAttribute("queryResult", utils.getAsObject(queryResult));
 					return "querytool/show :: query";
 				} else {

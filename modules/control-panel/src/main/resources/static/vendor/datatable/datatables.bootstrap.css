@@ -40,12 +40,16 @@ div.dataTables_wrapper div.dataTables_filter input {
 div.dataTables_wrapper div.dataTables_info {
     padding-top: 8px;
     white-space: nowrap;
+	font-family: "Open sans";
+	font-size: 13px;
+	color: #6f767b;
 }
 div.dataTables_wrapper div.dataTables_paginate {
     margin: 0;
     white-space: nowrap;
     text-align: left;
 	float: left !important;
+	font-family: "Open sans";
 }
 div.dataTables_wrapper div.dataTables_paginate ul.pagination {
     margin: 2px 0;

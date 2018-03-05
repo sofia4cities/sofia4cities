@@ -17,8 +17,6 @@ public abstract class SSAPBodyMessage {
 
 	public abstract boolean isSessionKeyMandatory();
 
-	public abstract boolean isAutorizationMandatory();
-
 	public abstract boolean isOntologyMandatory();
 
 }

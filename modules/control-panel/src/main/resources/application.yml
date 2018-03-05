@@ -33,8 +33,7 @@ sofia2: #Config Sofia2 specific
     iotbroker: http://localhost:18080
     iotbroker.services: http://localhost:8080/sib/services
    paths:
-    ssap: /ssap
-    
+    ssap: /ssap      
     
 management.security.enabled: false
  
@@ -93,8 +92,7 @@ quartz:
    autoStartupSchedulers:
       #- scriptScheduler
       #- twitterScheduler  
-     
-      
+           
 ## LOGGING CONF
 logging:
    level:
@@ -102,6 +100,3 @@ logging:
       com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
       org.hibernate: INFO
-
-
- 

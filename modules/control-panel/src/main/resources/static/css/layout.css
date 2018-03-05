@@ -91,7 +91,7 @@ Page Header
 		color: white;
 		font-weight: 400;
 		text-decoration: none;
-		font-size: 1.3rem;
+		font-size: 1.9rem;
 		margin-top: 4px;		
 	}
     .page-header.navbar .page-logo .logo-default {
@@ -981,7 +981,7 @@ Page sidebar
         top: 6px; }
     .page-sidebar .page-sidebar-menu > li > a > .arrow:before,
     .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu > li > a > .arrow:before {
-      top: 8px; }
+      top: 11px; }
     .page-sidebar .page-sidebar-menu .sub-menu,
     .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu .sub-menu {
       list-style: none;
@@ -997,13 +997,15 @@ Page sidebar
         /* 2nd level sub menu */ }
         .page-sidebar .page-sidebar-menu .sub-menu li > a,
         .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu .sub-menu li > a {
-          display: block;
-          margin: 0;
-          padding: 6px 15px 6px 43px;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 300;
-          background: none; }
+        display: block;
+		margin: 0;
+		padding: 6px 15px 6px 43px;
+		padding-left: 43px;
+		text-decoration: none;
+		font-size: 14px;
+		font-weight: 400;
+		background: none;
+		font-family: "Open sans"; }
           .page-sidebar .page-sidebar-menu .sub-menu li > a > i,
           .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover .page-sidebar-menu .sub-menu li > a > i {
             font-size: 14px; }
@@ -1676,7 +1678,7 @@ Page content
   .page-container-bg-solid .page-content {
     background: #eef1f5; }
   .page-content-white .page-content .page-bar {
-    border-bottom: 1px solid #e7ecf1; }
+    border-bottom: none; }
   .page-content-white.page-md .page-content .page-bar,
   .page-container-bg-solid.page-md .page-content .page-bar {
     border-radius: 0 !important; }

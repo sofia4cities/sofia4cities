@@ -1,2 +1,0 @@
-[Domain:DomainTest#Port:8000#Home:/tmp/administrator#servicePort:7000#Estado:START]
-[Domain:DomainTest2#Port:8001#Home:/tmp/developer#servicePort:7001#Estado:START]
