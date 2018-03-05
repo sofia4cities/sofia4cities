@@ -105,7 +105,7 @@
 									</div>
 									<div class="col-md-12 margin-bottom-20">
 									<!-- SEARCH FORM -->
-										<form id="form_user" action="list.html" th:action="@{/apimanager/list}" class="" role="form" method="get">												
+										<form id="form_api" action="list.html" th:action="@{/apimanager/list}" class="" role="form" method="get">												
 											<div class="col-md-12 no-space">
 												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" th:attr="data-content=#{user.search.description},data-original-title=#{gen.search}" th:text="#{gen.search}">Search</span></h4>
 											</div>
@@ -121,36 +121,41 @@
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-md-6 col-xs-12">
+													<div class="col-md-3 col-md-6 col-xs-12">
 														<div class="form-group">															
 															<div class="input-group">
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>
-																<input id="userId" th:placeholder="#{gen.owner}" name="fullName" class="form-control" type="text" maxlength="100" value=""/>
+																<select id="user" name="user" class="form-control" type="text" maxlength="100">
+					                                    			<option value="" th:placeholder="#{gen.owner}" selected="selected" disabled="disabled" hidden="hidden"></option>
+					                                    			<option th:each="user:${users}" th:value="${user.userId}" th:text="${user.userId}">ontology</option>
+					                                    		</select>
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-md-6 col-xs-12">
+													<div class="col-md-3 col-md-6 col-xs-12">
 														<div class="form-group">															
 															<div class="input-group">
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>
-																<input id="state" th:placeholder="#{apimanager.state}" name="state" class="form-control" type="text" maxlength="100" value=""/>
+																<select id="state" name="state" class="form-control" type="text" maxlength="100">
+					                                    			<option value="" th:placeholder="#{apimanager.state}" selected="selected" disabled="disabled" hidden="hidden"></option>
+					                                    			<option th:each="state:${states}" th:value="${state}" th:text="#{apimanager.state.__${state}__}">ontology</option>
+					                                    		</select>
 															</div>
 														</div>
 													</div>
-													<div class="clearfix"></div>
-													<div class="col-md-4 col-xs-12">
+													<div class="col-md-2 col-xs-12">
 														<div class="btn-group">
-															<button type="button" id="search_api" name="search_user" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
-															<button type="button" id="reset_api" name="reset_user" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
+															<button type="button" id="search_api" name="search_api" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="reset_api" name="reset_api" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
 														</div>
 													</div>
 												</div>
 											</div>												
-										</form>
+										</form>								
 									</div>
 									<!-- USER LIST -->
 									<div class="col-md-12">											
@@ -252,7 +257,7 @@
 	</script>
 	
 	<script type="text/javascript">	
-	var optionName = 'USERS';
+	var optionName = 'APIMANAGER';
 	
 	//<![CDATA[
 	function navigateUrl(url){  window.location.href = url;	}
@@ -265,7 +270,7 @@
 		$('label.toggle-vis').on( 'click', function (e) {
 			e.preventDefault(); 
 			// Get the column API object
-			var column = $('#users').DataTable().column( $(this).attr('data-column') ); 
+			var column = $('#apis').DataTable().column( $(this).attr('data-column') ); 
 			// Toggle the visibility
 			column.visible( ! column.visible() );			
 			// toggle Text
@@ -273,13 +278,12 @@
 		});	
 		
 		// SEARCH FORM RESET
-		$('#reset_user').on('click',function(){
-			$('#form_user')[0].reset();
-			$('#form_user')[0].submit();
+		$('#reset_api').on('click',function(){
+			$('#form_api')[0].reset();
 		});
 		
 		// SEARCH FORM
-		$('#search_user').on('click',function(){ $('#form_user')[0].submit(); });
+		$('#search_api').on('click',function(){ $('#form_api')[0].submit(); });
 		
 	});
 	 
