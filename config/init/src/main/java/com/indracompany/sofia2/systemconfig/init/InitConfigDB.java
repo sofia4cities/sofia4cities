@@ -478,10 +478,9 @@ public class InitConfigDB {
 			gadgetDatasources.setIdentification("My Gadget");
 			gadgetDatasources.setMode("Streaming");
 			gadgetDatasources.setQuery("");
-			gadgetDatasources.setBdtype("BDTR");
-			gadgetDatasources.setOntology(getOntologyAdministrator());
-			gadgetDatasources.setToken(getTokenAdministrator());
+			gadgetDatasources.setDbtype("BDTR");
 			gadgetDatasources.setRefresh(0);
+			gadgetDatasources.setOntology(getOntologyAdministrator());
 			gadgetDatasources.setMaxvalues(150);
 			gadgetDatasources.setConfig("{'name':'Temperature Evolution'}");
 			gadgetDatasources.setUser(getUserAdministrator());

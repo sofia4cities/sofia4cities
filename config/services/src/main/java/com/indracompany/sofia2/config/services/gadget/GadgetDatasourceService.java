@@ -23,5 +23,11 @@ public interface GadgetDatasourceService {
 	public List<GadgetDatasource> findGadgetDatasourceWithIdentificationAndDescription(String identification, String description, String user);
 	public List<String> getAllIdentifications();
 	public GadgetDatasource getGadgetDatasourceById(String id);
-	
+	public void createGadgetDatasource(GadgetDatasource gadgetDatasource);
+	public boolean gadgetDatasourceExists(GadgetDatasource gadgetDatasource);
+	public void updateGadgetDatasource(GadgetDatasource gadgetDatasource);
+	public void deleteGadgetDatasource(String gadgetDatasourceId);
+	public boolean hasUserPermission(String id, String userId);
+	public List<GadgetDatasource> getUserGadgetDatasources(String userId);
+	public String getSampleQueryGadgetDatasourceById(String datasourceId);
 }

@@ -34,16 +34,16 @@
 		<!-- Funciones AJAX -->
 		<script th:inline="javascript">
 
-		function getQueryExecutedFragment() {
-			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()})
-		} 
+			function getQueryExecutedFragment() {
+				$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()})
+			} 
+		
 	
-
-		function getOntologyFields() {
-
-			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
-
-		}
+			function getOntologyFields() {
+	
+				$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
+	
+			}
 		
 		</script>
 

@@ -23,8 +23,13 @@ import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
+import com.indracompany.sofia2.config.services.exceptions.GadgetDatasourceServiceException;
+import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class GadgetDatasourceServiceImpl implements GadgetDatasourceService{
 
 	@Autowired
@@ -107,7 +112,82 @@ public class GadgetDatasourceServiceImpl implements GadgetDatasourceService{
 		return gadgetDatasourceRepository.findById(id);
 	}
 
+
+	@Override
+	public void createGadgetDatasource(GadgetDatasource gadgetDatasource) {
+		if (!this.gadgetDatasourceExists(gadgetDatasource)) {
+			log.debug("Gadget datasource no exist, creating...");
+			this.gadgetDatasourceRepository.save(gadgetDatasource);
+		} else
+			throw new UserServiceException("Gadget Datasource already exists in Database");
 	}
+
+	@Override
+	public boolean gadgetDatasourceExists(GadgetDatasource gadgetDatasource) {
+		if (this.gadgetDatasourceRepository.findById(gadgetDatasource.getId()) != null)
+			return true;
+		else
+			return false;
+	}
+
+	@Override
+	public void updateGadgetDatasource(GadgetDatasource gadgetDatasource) {
+		if (this.gadgetDatasourceExists(gadgetDatasource)) {
+			GadgetDatasource gadgetDatasourceDB = this.gadgetDatasourceRepository.findById(gadgetDatasource.getId());
+			gadgetDatasourceDB.setConfig(gadgetDatasource.getConfig());
+			gadgetDatasourceDB.setDbtype(gadgetDatasource.getDbtype());
+			gadgetDatasourceDB.setDescription(gadgetDatasource.getDescription());
+			gadgetDatasourceDB.setMaxvalues(gadgetDatasource.getMaxvalues());
+			gadgetDatasourceDB.setMode(gadgetDatasource.getMode());
+			gadgetDatasourceDB.setOntology(gadgetDatasource.getOntology());
+			gadgetDatasourceDB.setQuery(gadgetDatasource.getQuery());
+			gadgetDatasourceDB.setRefresh(gadgetDatasource.getRefresh());
+			this.gadgetDatasourceRepository.save(gadgetDatasourceDB);
+		} else
+			throw new GadgetDatasourceServiceException("Cannot update GadgetDatasource that does not exist");
+	}
+
+
+	@Override
+	public void deleteGadgetDatasource(String gadgetDatasourceId) {
+		GadgetDatasource gadgetDatasource = this.gadgetDatasourceRepository.findById(gadgetDatasourceId);
+		if (gadgetDatasource != null) {
+			this.gadgetDatasourceRepository.delete(gadgetDatasource);
+		} else
+			throw new GadgetDatasourceServiceException("Cannot delete gadget datasource that does not exist");		
+	}
+
+
+	@Override
+	public boolean hasUserPermission(String id, String userId) {
+		User user = userRepository.findByUserId(userId);
+		if(user.getRole().getName().equals("ROLE_ADMINISTRATOR")) {
+			return true;
+		}
+		else {
+			return gadgetDatasourceRepository.findById(id).getUser().getUserId().equals(userId);
+		}
+	}
+	
+	@Override
+	public List<GadgetDatasource> getUserGadgetDatasources(String userId){
+		User user = userRepository.findByUserId(userId);
+		if(user.getRole().getId().equals("ROLE_ADMINISTRATOR")) {
+			return gadgetDatasourceRepository.findAll();
+		}
+		else {
+			return gadgetDatasourceRepository.findByUser(user);
+		}
+	}
+
+
+	@Override
+	public String getSampleQueryGadgetDatasourceById(String datasourceId) {
+		String query = gadgetDatasourceRepository.findById(datasourceId).getQuery();
+		return "select * from (" + query + ") AS Sample limit 1";
+	}
+
+}
 	
 	
 	

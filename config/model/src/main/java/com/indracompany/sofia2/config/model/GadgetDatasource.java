@@ -20,6 +20,7 @@
 
 package com.indracompany.sofia2.config.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -53,22 +54,17 @@ public class GadgetDatasource extends AuditableEntityWithUUID{
     @Lob
     @Getter @Setter  private String query;
 	
-	@Column(name = "BDTYPE", length = 10, nullable=false)
-	@Getter @Setter private String bdtype;
-	
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "IDENTIFICATION")
-	@Getter @Setter private Ontology ontology;
-	
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID")
-	@Getter @Setter private Token token;
+	@Column(name = "DBTYPE", length = 10, nullable=false)
+	@Getter @Setter private String dbtype;
 	
 	@ManyToOne
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
 	@Getter @Setter private User user;
+	
+	@ManyToOne(cascade = CascadeType.ALL)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = true)
+	@Getter	@Setter	private Ontology ontology;
 	
 	@Column(name = "REFRESH")
 	@Getter @Setter private Integer refresh;

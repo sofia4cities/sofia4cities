@@ -30,9 +30,28 @@
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 		
-		<!-- PLUGINS STYLE SHEETS -->
+		<!-- PLUGINS STYLE SHEETS AND BOOSTRAP-TIMEPICKER -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>
+		
 	</head>	
+	
+	<!-- Funciones AJAX -->
+	<script th:inline="javascript">
+
+		function getQueryExecutedFragment() {
+			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#query").val(), 'queryType': 'SQL', 'ontologyIdentification': ''});
+			$("#dimensionsPanel").show();
+		} 
+	
+
+		function getOntologyFields() {
+
+			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
+
+		}
+	
+	</script>
 	
 	<!-- page-sidebar-closed to start page with collapsed menu -->
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
@@ -63,79 +82,188 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/dashboards/list}"> <span th:text="#{name.visualization}">Visualization</span></a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/dashboards/list}"> <span th:text="#{dashboards.my}">My Dashboards</span></a><i class="fa fa-circle"></i> </li>
-						<li><span th:text="#{dashboards.create}">Create Dashboard</span></li>
+						<li><a th:href="@{/datasources/list}"> <span th:text="#{name.visualization}">Visualization</span></a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/datasources/list}"> <span th:text="#{datasources.my}">My Dashboards</span></a><i class="fa fa-circle"></i> </li>
+						<li><span th:text="#{datasources.create}">Create Datasource</span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{dashboards.new}">New Dashboard</span></h1>
+				<h1 class="page-title hide "><span th:text="#{datasources.new}">New Datasource</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
 				<div class="row">
-					<div class="col-md-12">
-					
+					<div class="col-md-12">						
 						<div class="portlet light bordered">
 							<div class="portlet-title">
 								<div class="caption">
-									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase"> New Dashboard </span>
-									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+									<i class="la la-database font-grey-gallery"></i>						
+									
+									<!-- FORM TITLE -->
+									<span th:if="${datasource.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{datasources.template.create} + ':'"> New Datasource</span>
+									<span th:if="${datasource.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{datasources.template.update} + ' '"> Update Datasource</span><b th:if="${datasource.id} != null" th:text="${datasource.identification} + ':'"></b>
 								</div>									
 								<div class="tools">
-									<!--  <a href="" class="collapse" data-original-title="" title=""> </a>-->
-									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+									<a href="" class="collapse" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>
+								<div class="actions">
+									<!-- ACTION INDICATORs -->									
+									<span th:if="${datasource.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${datasource.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>
 								
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
 								<div class="row">
-									<div class="col-md-12 alert-zone">
-										<!-- ALERT ZONE -->																			
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> 
+											<span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>										
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
 									</div>
-									<div class="col-md-12 margin-bottom-20">
-									<!-- SEARCH FORM -->
-									  	<form id="form_dashboard" class="" role="form" method="get">												
-											<div class="col-md-12 no-space">
-												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" data-content="Búsqueda de dashboards, haga click para desplegar/colapsar el forumulario y Buscar." data-original-title="Filtro de Gadgeys" th:text="#{gen.search}">Search</span></h4>
-											</div>
-											<div id="searchFilter" class="form-body collapse">
+									<div class="col-md-12">										
+										<form role="form" id="datasource_create_form" th:object="${datasource}" method="post" class="form">
+											<!-- FORM ACTIONS FOR INSERT-->
+											<input th:if="${datasource.id} == null" type="hidden" name="action" th:value="@{/datasources/create}"/>
+											
+											<!-- FORM ACTIONS FOR UPDATE -->											
+											<input th:if="${datasource.id} != null" type="hidden" name="action" th:value="@{/datasources/update}"/>
+											<input th:if="${datasource.id} != null" type="hidden" name="_method" value="PUT"/>											
+											
+											<div class="form-body">
+												<!-- user, name and email -->
 												<div class="row">
-													<div class="col-md-4 col-xs-12">
-														<div class="form-group">															
-															<div class="input-group">
-																<span class="input-group-addon">
-																	<i class="fa fa-tag font-grey-mint"></i>
-																</span>															
-																<input id="name" th:placeholder="#{gen.name}" name="name" class="form-control" type="text" maxlength="50" value=""/>
-															</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label"><i class="la la-credit-card"></i> <span th:text="#{gadgets.identification} + ':'">Identification</span> </label>
+															<div class="input-icon ">
+																<i class="la la-credit-card"></i>
+																<input id="identification" type="text" name="identification" th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{gadgets.identification}"  th:readonly="*{identification}" th:classappend="${datasource.id} ? no-remove : ''"  />
+															</div>															
 														</div>
 													</div>
-													<div class="col-md-4 col-xs-12">
-														<div class="form-group">															
-															<div class="input-group">
-																<span class="input-group-addon">
-																	<i class="fa fa-tag font-grey-mint"></i>
-																</span>
-																<input id="type" th:placeholder="#{gen.type}" name="type" class="form-control" type="text" maxlength="45" value=""/>
-															</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label"><i class="la la-level-down"></i> <span th:text="#{datasources.mode} + ':'">Access Mode</span> </label>
+															<div class="input-icon ">
+																<i class="la la-level-down"></i>
+																<select id="mode" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{datasources.mode}" th:field="*{mode}" th:required="true">
+																	<option selected="selected" value="Query">Query</option>
+																</select>
+															</div>	
 														</div>
 													</div>
-													
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label"><i class="la la-database"></i> <span th:text="#{datasources.db} + ':'">source DB</span> </label>
+															<div class="input-icon ">
+																<i class="la la-database"></i>
+																<select id="dbtype" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{datasources.db}" th:field="*{dbtype}" th:required="true">
+																	<option selected="selected" value="RTDB">RTDB</option>
+																</select>
+															</div>	
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label"><i class="la la-list-ol"></i> <span th:text="#{datasources.maxvalue} + ':'">Max register</span></label>
+															<div class="input-icon ">
+																<i class="fa fa-list-ol"></i> 
+																<input th:if="${datasource.id} == null" id="maxvalues" type="number" min="1" max="3000" name="maxvalues" th:required="true"  value="100" th:value="100" class="form-control " th:placeholder="#{datasources.maxvalue}"  />
+																<input th:if="${datasource.id} != null" id="maxvalues" type="number" min="1" max="3000" name="maxvalues" th:required="true"  value="100" th:field="*{maxvalues}" class="form-control " th:placeholder="#{datasources.maxvalue}"  />
+															</div>
+														</div>
+													</div>													
 												</div>
-											</div>												
-										</form>		
-									  											
+												
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label"><i class="la la-history"></i> <span th:text="#{datasources.refresh} + ':'">Refresh time</span></label>
+															<div class="input-icon ">
+																<i class="la la-history"></i>
+																<input th:if="${datasource.id} != null" id="refresh" type="number" min="0" max="99999" name="refresh" value="240" th:field="*{refresh}" class="form-control" th:placeholder="#{datasources.refresh}"  />
+																<input th:if="${datasource.id} == null" id="refresh" type="number" min="0" max="99999" name="refresh" value="240" th:value="0" class="form-control" th:placeholder="#{datasources.refresh}"  />
+															</div>
+														</div>
+													</div>
+													<div class="col-md-9 col-sm-9 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{gen.description}">Comments </label>
+															<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" cols="" rows=""></textarea>
+														</div>
+													</div>
+												</div>
+												<div class="row"> 
+													<div class="pull-left col-md-10 col-sm-8 col-xs-12">
+														<label th:text="#{datasources.query}">Datasource Query </label>
+														<textarea th:if="${datasource.id} == null" id="query" name="query" class="element textarea extra-small form-control">select * from ontology limit 1</textarea>
+														<textarea th:if="${datasource.id} != null" id="query" th:field="*{query}" class="element textarea extra-small form-control"></textarea>
+													</div>											
+													<div class="pull-right col-md-2 col-sm-4 col-xs-12">
+														<div class="btn-group">
+															<button type="button" class="btn btn-sm btn-primary" onclick="javascript:getQueryExecutedFragment()" id="executeQuery"><i class="fa fa-play"></i> Ejecutar Query </button>
+														</div>											
+													</div>
+													<div class="clearfix"></div>
+												</div>
+												<!-- PANEL DE RESULTADOS -->
+												<div class="panel panel-default margin-top-10">
+													<div class="panel-heading panel-sofia2">
+														<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> Datasource Query Results</h3>											
+													</div>
+													<div class="panel-body no-space">
+														<div class="col-md-12 margin-top-10 margin-bottom-20">
+															<div th:fragment="query" id="Canvasrespuesta">														
+															<p th:text="${queryResult}"></p>
+															</div>												
+														</div>
+													</div>
+												</div>
+												
+												<div id="dimensionsPanel" class="row">  
+													<div class="col-md-12 margin-top-10 margin-bottom-20">
+														<div class="form-group">
+															<label class=""><i class="fa fa-sitemap"></i> <span th:text="#{datasources.dimension} + ':'">Dimensions</span></label>
+															<textarea th:if="${datasource.id} != null" th:tabindex="3" class="element textarea small form-control" id="config" name="config" maxlength="512" th:field="*{config}" cols="" rows=""></textarea>
+															<textarea th:if="${datasource.id} == null" th:tabindex="3" class="element textarea small form-control" id="config" name="config" maxlength="512" cols="" rows="">[['mainField_cat1','secondaryField_cat1'],['mainField_cat2,'secondaryField_cat2','tertiaryField_cat2']]</textarea>															
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- FORM BUTTONS -->
+											<div class="form-actions">
+												<div class="pull-right">
+													<!-- CREATE -->
+													<button th:if="${datasource.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													
+													<!-- UPDATE -->
+													<button th:if="${datasource.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													
+													<!-- REMOVE -->
+													<button th:if="${datasource.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'DatasourcesCreateController.deleteGadgetDatasource(\'' + ${datasource.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 																										
-									</div>
+												</div>
+											</div>											
+										</form>
+										
+										<!-- AUXILIAR FORM TO DELETE DATASOURCE -->
+										<form id="delete_datasource_form" class="delete-gadgetDatasource hide"  th:action="@{'/datasources/'+${datasource.id}}"  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="id" th:value="${datasource.id}"/>
+										</form>										
+									</div>									
 								</div>
 							</div>
-						</div><!-- END PORTLET BASIC LIGHT -->							
-					</div><!-- END COL-12 -->						
+						</div><!-- END PORTLET BASIC  -->						
+					</div><!-- END COL-12 -->												
 				</div><!-- END MAIN ROW -->				
 			</div><!-- END CONTENT BODY -->
 		</div><!-- END CONTENT page-content-wrapper -->		
@@ -153,58 +281,12 @@
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/datasourcesCreate.js}"/>
 	
 	
-	<script th:inline="javascript">	
-	
-	// TEMPLATE SEARCH FORM.
-	var search = new Array();
-	var search = [[${param.identification}]] || [];
-	var description = [[${param.description}]] || '';
-	
-	search[0] ? $('#identification').val(search[0]) : search[0] = '';
-	description ? $('#description').val(description) : description = '';
-	console.log('SEARCHING ... [ Identification: ' + search[0] + ' Description: ' + description + ']');
-	if (( search[0] != '') || (description != '')) { $('.search-toggle').trigger('click'); }
-	
-	// DATATABLES LANGUAJE FROM PROPERTIES.
-	datatable_lang = [[#{datatables_lang}]];	
-	var languageJson = JSON.parse(datatable_lang);
-	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
-
-	</script>
-	
-	<script type="text/javascript">	
-	var optionName = 'CREATE DASHBOARDS';
-	
-	//<![CDATA[
-	function navigateUrl(url){  window.location.href = url;	}
-	
-	// MAIN WHEN READY
-	$( document ).ready(function() {
-	
-	
-		// AUTO COMPLETE ON DASHBOARD IDENTIFICATION/NAME
-		$.ajax({ url: "getNamesForAutocomplete", type: 'POST', dataType: 'json', contentType: 'application/json', mimeType: 'application/json',
-			success: function (source) {			 
-						var namesArray = new Array();
-						for( var i = 0; i < source.length; i++ ){
-							namesArray[i] = { value: source[i] , data: source[i]};
-						}
-						
-						// INIT AJAX AUTO COMPLETE
-				$('#identification').autocomplete({ 
-					lookup: namesArray,
-					lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
-						var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
-						return re.test(suggestion.value);
-					}	
-				});
-			}
-		});
-		
-	//]]>
-	</script>
 	
 </body>
 </html> 

@@ -80,7 +80,7 @@
 						<div class="portlet light bordered">
 							<div class="portlet-title">
 								<div class="caption">
-									<i class="icon-list font-grey-gallery"></i>
+									<i class="fa fa-database"></i>
 									<span class="caption-subject bold font-grey-gallery uppercase"> My Datasources </span>
 									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
@@ -90,10 +90,7 @@
 								</div>
 								<div class="actions margin-right-20">
 									<div class="btn-group">												
-										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
-											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
-										</a> 
-										
+										<button type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../datasources/create'" ><i class="fa fa-database"></i> <span th:text="#{gen.create}">New </span></button>
 									</div>										
 								</div>
 							</div>
@@ -151,14 +148,11 @@
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas text-center" th:text="#{gen.name}">Name</th>
 															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
-															<th class="titulo-columnas text-center " th:text="#{gen.ontology}">Ontology</th>	
-															<th class="titulo-columnas text-center" th:text="#{gen.description}">Description</th>
-															
-															<th class="titulo-columnas text-center" th:text="#{gen.mode}">Mode</th>
-															<th class="titulo-columnas " th:text="#{gen.type}">Type</th>	
+															<th class="titulo-columnas text-center" th:text="#{datasources.mode}">Mode</th>
+															<th class="titulo-columnas " th:text="#{datasources.db}">Type</th>	
+															<th class="titulo-columnas text-center " th:text="#{gen.ontology} + '/Query'">Ontology/Query</th>
 															<th class="titulo-columnas " th:text="#{datasources.maxvalue}">Max. Value</th>		
-															<th class="titulo-columnas " th:text="#{datasources.refresh}">Refresh Time</th>	
-																					
+															<th class="titulo-columnas " th:text="#{datasources.refresh} + ' (s)'">Refresh Time</th>		
 															<th class="titulo-columnas" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th> 
 														</tr>
@@ -169,14 +163,13 @@
 															<td class="text-left bold" th:text="${datasource.identification}"></td>
 															<!-- USER -->
 															<td class="text-center bold" th:text="${datasource.user.userId}"></td>
-															<!-- ONTOLOGY -->
-															<td class="text-left text-truncate-sm" th:title="${datasource.ontology.identification}" th:text="${datasource.ontology.identification}"></td>
-															<!-- DESCRIPTION -->
-															<td class="text-left text-truncate-sm" th:title="${datasource.description}" th:text="${datasource.description}"></td>
-														    <!-- MODE -->
+															<!-- MODE -->
 															<td class="text-left text-truncate-sm" th:title="${datasource.mode}" th:text="${datasource.mode}"></td>
 															<!-- TYPE -->
-															<td class="text-left text-truncate-sm" th:title="${datasource.bdtype}" th:text="${datasource.bdtype}"></td>
+															<td class="text-left text-truncate-sm" th:title="${datasource.dbtype}" th:text="${datasource.dbtype}"></td>
+															<!-- ONTOLOGY -->
+															<td th:if="${datasource.ontology!=null}" class="text-left text-truncate-sm" th:title="${datasource.ontology.identification}" th:text="${datasource.ontology.identification}"></td>
+															<td th:if="${datasource.ontology==null}" class="text-left text-truncate-sm" th:title="${datasource.query}" th:text="${datasource.query}"></td>
 															<!-- MAX VALUE -->
 															<td class="text-left text-truncate-sm" th:title="${datasource.maxvalues}" th:text="${datasource.maxvalues}"></td>
 															<!-- REFRESH TIME -->
@@ -189,10 +182,10 @@
 																<div class="grupo-iconos">
 																	<!-- VIEW -->		
 																														
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/datasources/${datasource.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<!-- <span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/datasources/${datasource.id}|} + '\');'"><i class="fa fa-eye"></i></span> -->
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/datasources/${datasource.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/datasources/update/${datasource.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																	
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
@@ -209,13 +202,13 @@
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
 														<label class="toggle-vis" data-column="0" > Name</label>
-														<label class="toggle-vis" data-column="1"  > Owner</label>
-														<label class="toggle-vis" data-column="2" > Ontology</label>
-														<label class="toggle-vis" data-column="3" > Description</label>
-														<label class="toggle-vis" data-column="5" > Mode</label>	
-														<label class="toggle-vis" data-column="5" > Type</label>	
-														<label class="toggle-vis" data-column="6" > Max. Value</label>	
-														<label class="toggle-vis" data-column="7" > Refresh</label>														
+														<label class="toggle-vis" data-column="1" > Owner</label>
+														<label class="toggle-vis" data-column="2" > Mode</label>	
+														<label class="toggle-vis" data-column="3" > Type</label>	
+														<label class="toggle-vis" data-column="4" > Ontology/Query</label>
+														<label class="toggle-vis" data-column="5" > Max. Value</label>	
+														<label class="toggle-vis" data-column="6" > Refresh</label>	
+														<label class="toggle-vis" data-column="7" > Created At</label>
 														<label class="toggle-vis" data-column="8" > Created At</label>
 													<!--  	<label class="toggle-vis" data-column="5" > Options</label>			-->												
 													</div>

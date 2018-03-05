@@ -35,8 +35,6 @@ public interface GadgetDatasourceRepository extends JpaRepository<GadgetDatasour
 	List<GadgetDatasource> findByUser(User user);
 	List<GadgetDatasource> findByIdentificationLike(String identification);
 	List<GadgetDatasource> findByMode(String mode);
-	List<GadgetDatasource> findByOntology(Ontology ontology);
-	List<GadgetDatasource> findByToken(Token token);
 	List<GadgetDatasource> findByIdentificationContainingAndDescriptionContaining(String identification,String description);
 	List<GadgetDatasource> findByIdentificationContaining(String identification);
 	List<GadgetDatasource> findByDescriptionContaining(String description);

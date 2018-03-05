@@ -17,33 +17,52 @@ package com.indracompany.sofia2.controlpanel.controller.gadget;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.GadgetDatasource;
+import com.indracompany.sofia2.config.services.exceptions.GadgetDatasourceServiceException;
 import com.indracompany.sofia2.config.services.gadget.GadgetDatasourceService;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.persistence.services.QueryToolService;
+import org.springframework.security.access.AccessDeniedException;
 
-import groovy.util.logging.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 
 @RequestMapping("/datasources")
 @Controller
 @Slf4j
-
 public class GadgetDatasourceController {
 
 		@Autowired
 		private GadgetDatasourceService gadgetDatasourceService;
 		
 		@Autowired
+		private OntologyService ontologyService; 
+		
+		@Autowired
+		private UserService userService; 
+		
+		@Autowired
+		private QueryToolService queryToolService;
+		
+		@Autowired
 		private AppWebUtils utils;
-		@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+		
 		@RequestMapping(value = "/list", produces = "text/html")
 		public String list (Model uiModel, HttpServletRequest request) {
 					
@@ -60,7 +79,7 @@ public class GadgetDatasourceController {
 					
 		}
 			
-		@RequestMapping(method = RequestMethod.POST, value="getNamesForAutocomplete")
+		@PostMapping( value="getNamesForAutocomplete")
 		public @ResponseBody List<String> getNamesForAutocomplete(){
 			return this.gadgetDatasourceService.getAllIdentifications();
 		}
@@ -70,4 +89,100 @@ public class GadgetDatasourceController {
 			
 		}
 		
+		@GetMapping(value = "/create", produces = "text/html")
+		public String createGadget(Model model) {
+			model.addAttribute("datasource",new GadgetDatasource());
+			model.addAttribute("ontologies", ontologyService.getOntologiesByUserId(utils.getUserId()));
+			return "/datasources/create";
+
+		}
+		
+		@PostMapping(value = {"/create"})
+		public String createOntology(Model model,
+				@Valid GadgetDatasource gadgetDatasource, BindingResult bindingResult,
+				RedirectAttributes redirect) {
+			if(bindingResult.hasErrors())
+			{
+				log.debug("Some gadget datasource properties missing");
+				utils.addRedirectMessage("gadgetDatasource.validation.error", redirect);
+				return "redirect:/datasources/create";
+			}
+			try{
+				gadgetDatasource.setUser(this.userService.getUser(this.utils.getUserId()));
+				this.gadgetDatasourceService.createGadgetDatasource(gadgetDatasource);
+			}catch (GadgetDatasourceServiceException e)
+			{
+				log.debug("Cannot create gadget datasource");
+				utils.addRedirectMessage("gadgetDatasource.create.error", redirect);
+				return "redirect:/datasources/create";
+			}
+			utils.addRedirectMessage("gadgetDatasource.create.success", redirect);
+			return "redirect:/datasources/list";
+		}
+		
+		@GetMapping(value = "/update/{id}", produces = "text/html")
+		public String update(Model model, @PathVariable ("id") String id) {
+			GadgetDatasource gadgetDatasource = this.gadgetDatasourceService.getGadgetDatasourceById(id);
+			if(gadgetDatasource!=null){
+				if (!gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId()))
+					return "/error/403";
+				model.addAttribute("datasource", gadgetDatasource);
+				return "/datasources/create";
+			}else
+				return "/error/404";
+			
+			
+		}
+
+		@PutMapping(value = "/update/{id}", produces = "text/html")
+		public String updateGadgetDatasource(Model model, @PathVariable ("id") String id,
+				@Valid GadgetDatasource gadgetDatasource, BindingResult bindingResult,
+				RedirectAttributes redirect) {
+			
+			if(bindingResult.hasErrors())
+			{
+				log.debug("Some Gadget Datasource properties missing");
+				utils.addRedirectMessage("gadgetDatasource.validation.error", redirect);
+				return "redirect:/datasources/update/"+id;
+			}
+			if (!gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId()))
+				return "/error/403";
+			try {
+				this.gadgetDatasourceService.updateGadgetDatasource(gadgetDatasource);
+			}catch (GadgetDatasourceServiceException e)
+			{
+				log.debug("Cannot update gadget datasource");
+				utils.addRedirectMessage("gadgetDatasource.update.error", redirect);
+				return "redirect:/datasources/create";
+			}
+			
+			utils.addRedirectMessage("gadgetDatasource.update.success", redirect);
+			return "redirect:/datasources/list";
+		}
+		
+		@DeleteMapping("/{id}")
+		public String delete(Model model, @PathVariable("id") String id) {
+
+			this.gadgetDatasourceService.deleteGadgetDatasource(id);
+			return "redirect:/datasources/list";
+		}
+		
+		@GetMapping(value = "/getUserGadgetDatasources", produces="application/json")
+		public @ResponseBody List<GadgetDatasource> getUserGadgetDatasources(){
+			return this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId());
+		}
+		
+		@GetMapping(value = "/getSampleDatasource/{id}", produces="application/json")
+		public @ResponseBody String getSampleDatasource(@PathVariable("id") String datasourceId) throws Exception{
+			if (!gadgetDatasourceService.hasUserPermission(datasourceId, this.utils.getUserId()))
+				throw new AccessDeniedException("The user is not allowed to perform this operation");
+			try {
+				String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
+				return queryToolService.querySQLAsJson("", sampleQuery, 0);
+			}catch (GadgetDatasourceServiceException e)
+			{
+				log.error("Cannot get gadget datasource query");
+				throw new Exception("There was a problem in data access");
+			}
+		}
 	}
