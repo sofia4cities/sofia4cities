@@ -1,7 +1,7 @@
 # Sofia2 Open Suite Development Environment
 ### Steps to launch a deployment of the Platform in local environments with Docker containers
 
-![](/horizontal.png)
+![](horizontal.png)
 
 * [Step 1: Install Docker and Docker Compose](#install)
 * [Step 2: Compile the sources with Maven to generate the artifacts (.jar)](#compile)
