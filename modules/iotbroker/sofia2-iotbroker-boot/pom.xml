@@ -38,11 +38,17 @@
 			<artifactId>sofia2-iotbroker-plugable</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.indracompany.sofia2</groupId> -->
-<!-- 			<artifactId>sofia2-config-services</artifactId> -->
-<!-- 			<version>${sofia2.version}</version> -->
-<!-- 		</dependency> -->
+	<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-config-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-persistence-interfaces</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
@@ -59,17 +65,17 @@
     		<artifactId>javafaker</artifactId>
     		<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-persistence-interfaces</artifactId>
-			<version>${sofia2.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-persistence-mongodb</artifactId>
-			<version>${sofia2.version}</version>
-			<scope>test</scope>
-		</dependency>
+<!-- 	<dependency> -->
+<!-- 		<groupId>com.indracompany.sofia2</groupId> -->
+<!-- 		<artifactId>sofia2-persistence-interfaces</artifactId> -->
+<!-- 		<version>${sofia2.version}</version> -->
+<!-- 	</dependency> -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.indracompany.sofia2</groupId> -->
+<!-- 			<artifactId>sofia2-persistence-mongodb</artifactId> -->
+<!-- 			<version>${sofia2.version}</version> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
