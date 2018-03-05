@@ -15,6 +15,7 @@ package com.indracompany.sofia2.iotbroker.processor.impl;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaExceptio
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -56,14 +58,14 @@ public class QueryProcessor implements MessageTypeProcessor {
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
-
+		final Optional<IoTSession> session = securityPluginManager.getSession(queryMessage.getSessionKey());
 		final OperationModel model = new OperationModel();
 
-		model.setQuery(queryMessage.getBody().getQuery());
+		model.setBody(queryMessage.getBody().getQuery());
 		model.setOntologyName(queryMessage.getBody().getOntology());
-		model.setOperationType("QUERY");
+		model.setOperationType(OperationModel.Operations.QUERY.name());
 		model.setQueryType(queryMessage.getBody().getQueryType().name());
-
+		model.setUser(session.get().getUserID());
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

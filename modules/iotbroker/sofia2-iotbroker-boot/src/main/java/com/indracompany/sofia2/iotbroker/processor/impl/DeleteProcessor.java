@@ -15,6 +15,7 @@ package com.indracompany.sofia2.iotbroker.processor.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaExceptio
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -72,12 +74,13 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
-
+		final Optional<IoTSession> session = securityPluginManager.getSession(message.getSessionKey());
 		final OperationModel model = new OperationModel();
 		model.setObjectId(message.getBody().getId());
 		model.setOntologyName(message.getBody().getOntology());
-		model.setOperationType("DELETE");
+		model.setOperationType(OperationModel.Operations.DELETE.name());
 		model.setQueryType("NATIVE");
+		model.setUser(session.get().getUserID());
 		//		model.setBody(message.getBody().getData().toString());
 
 		final NotificationModel modelNotification= new NotificationModel();
@@ -112,13 +115,14 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
+		final Optional<IoTSession> session = securityPluginManager.getSession(message.getSessionKey());
 
 		final OperationModel model = new OperationModel();
 		model.setOntologyName(message.getBody().getOntology());
-		model.setOperationType("DELETE");
+		model.setOperationType(OperationModel.Operations.DELETE.name());
 		model.setQueryType("NATIVE");
 		model.setBody(message.getBody().getQuery());
-
+		model.setUser(session.get().getUserID());
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
 

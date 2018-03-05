@@ -82,8 +82,9 @@ public class InsertProcessor implements MessageTypeProcessor {
 
 		model.setBody(insertMessage.getBody().getData().toString());
 		model.setOntologyName(insertMessage.getBody().getOntology());
-		model.setOperationType("POST");
+		model.setOperationType(OperationModel.Operations.INSERT.name());
 		model.setQueryType("NATIVE");
+		model.setUser(session.get().getUserID());
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -101,7 +102,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 			responseMessage.setBody(new SSAPBodyReturnMessage());
 			responseMessage.getBody().setOk(true);
 
-			responseMessage.getBody().setData(objectMapper.readTree(repositoryResponse));
+			responseMessage.getBody().setData(objectMapper.readTree("{\"id\":\""+repositoryResponse+"\"}"));
 
 		} catch (final Exception e1) {
 			// TODO LOG
