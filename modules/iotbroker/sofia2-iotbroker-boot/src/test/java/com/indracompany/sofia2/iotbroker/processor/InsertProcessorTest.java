@@ -147,7 +147,7 @@ public class InsertProcessorTest {
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
 		final JsonNode data = responseMessage.getBody().getData();
-		final String strOid = data.at("/_id/$oid").asText();
+		final String strOid = data.at("/id").asText();
 
 		final String created = repository.findById(Person.class.getSimpleName(), strOid);
 		System.out.println(created);
