@@ -97,7 +97,7 @@
                "name":"name",
                "dataType":"string",
                "description":"",
-               "headerType":"query"
+               "headerType":"path"
             }
          ]
       },
