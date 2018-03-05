@@ -47,10 +47,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 		final String METHOD = operationModel.getOperationType();
 		final String BODY = operationModel.getBody();
-		final String QUERY = operationModel.getQuery();
 
-		final String QUERY_TYPE = operationModel.getQueryType();
-		final String ontologyId = operationModel.getOntologyId();
 		final String ontologyName = operationModel.getOntologyName();
 
 		final String OBJECT_ID = operationModel.getObjectId();
@@ -84,7 +81,6 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 		final String METHOD = operationModel.getOperationType();
 		final String BODY = operationModel.getBody();
-		final String QUERY = operationModel.getQuery();
 		final String QUERY_TYPE = operationModel.getQueryType();
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
@@ -126,7 +122,6 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 		final String METHOD = operationModel.getOperationType();
 		final String BODY = operationModel.getBody();
-		final String QUERY = operationModel.getQuery();
 		final String QUERY_TYPE = operationModel.getQueryType();
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
@@ -166,9 +161,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 		final String METHOD = operationModel.getOperationType();
 		final String BODY = operationModel.getBody();
-		final String QUERY = operationModel.getQuery();
 		final String QUERY_TYPE = operationModel.getQueryType();
-		final String ontologyId = operationModel.getOntologyId();
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
 		final String USER = operationModel.getUser();
@@ -183,11 +176,11 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 				{
 					if (QUERY_TYPE.equalsIgnoreCase("SQLLIKE")) {
 						//						OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
-						OUTPUT = queryToolService.querySQLAsJson(USER, ontologyName, QUERY, 0);
+						OUTPUT = queryToolService.querySQLAsJson(USER, ontologyName, BODY, 0);
 					}
 					else if (QUERY_TYPE.equalsIgnoreCase("NATIVE")) {
 						//						OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
-						OUTPUT = queryToolService.queryNativeAsJson(USER, ontologyName, QUERY, 0,0);
+						OUTPUT = queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0,0);
 					}
 					else {
 						OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);

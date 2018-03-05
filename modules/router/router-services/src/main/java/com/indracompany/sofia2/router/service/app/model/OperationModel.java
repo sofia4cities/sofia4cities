@@ -32,10 +32,6 @@ public class OperationModel implements Serializable{
 
 	@Getter
 	@Setter
-	private String ontologyId;
-
-	@Getter
-	@Setter
 	private String ontologyName;
 	
 	@Getter
@@ -46,10 +42,6 @@ public class OperationModel implements Serializable{
 	@Getter
 	@Setter
 	private String queryType;
-	
-	@Getter
-	@Setter
-	private String query;
 	
 	@Getter
 	@Setter
@@ -65,10 +57,11 @@ public class OperationModel implements Serializable{
 
 	@Override
 	public String toString() {
-		return "OperationModel [ontologyId=" + ontologyId + ", ontologyName=" + ontologyName + ", operationType="
-				+ operationType + ", queryType=" + queryType + ", query=" + query + ", body=" + body + ", objectId="
-				+ objectId + ", user=" + user + "]";
+		return "OperationModel [ontologyName=" + ontologyName + ", operationType=" + operationType + ", queryType="
+				+ queryType + ", body=" + body + ", objectId=" + objectId + ", user=" + user + "]";
 	}
+
+	
 
 
 	

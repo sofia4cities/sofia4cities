@@ -128,11 +128,11 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		
 		model.setBody(BODY);
 		model.setObjectId(OBJECT_ID);
-		model.setOntologyId(ontology.getId());
+	//	model.setOntologyId(ontology.getId());
 		model.setOntologyName(ontology.getIdentification());
 		model.setOperationType(METHOD);
 		model.setQueryType(QUERY_TYPE);
-		model.setQuery(QUERY);
+	
 		model.setUser(user.getUserId());
 		
 		NotificationModel modelNotification= new NotificationModel();
@@ -143,7 +143,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		
 		try {
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
-				
+				model.setBody(QUERY);
 				OperationResultModel result =facade.query(modelNotification);
 				OUTPUT = result.getResult();
 			}
