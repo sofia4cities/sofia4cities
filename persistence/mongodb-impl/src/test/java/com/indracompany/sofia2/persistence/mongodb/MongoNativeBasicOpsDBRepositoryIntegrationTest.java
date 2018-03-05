@@ -75,9 +75,6 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		data.setUser("user");
 		ObjectMapper mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
-		int init = 17;
-		int end = refOid.indexOf("\"}}");
-		refOid = refOid.substring(init, end);
 		// 2º
 		data = new ContextData();
 		data.setClientConnection(UUID.randomUUID().toString());

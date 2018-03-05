@@ -73,9 +73,6 @@ public class QueryAsTextMongoDBImplIntegrationTest {
 		data.setUser("user");
 		ObjectMapper mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
-		int init = 17;
-		int end = refOid.indexOf("\"}}");
-		refOid = refOid.substring(init, end);
 		// 2º
 		data = new ContextData();
 		data.setClientConnection(UUID.randomUUID().toString());
@@ -215,4 +212,49 @@ public class QueryAsTextMongoDBImplIntegrationTest {
 			Assert.fail("Error test_QuerySQL" + e.getMessage());
 		}
 	}
+
+	@Test
+	public void test_createAndDropIndex() {
+		try {
+			String result = queryTool.queryNativeAsJson(ONT_NAME,
+					"db.contextData.createIndex({'user':1},{'name':'user_i'})");
+			Assert.assertTrue(result.indexOf("Created index") != -1);
+			result = queryTool.queryNativeAsJson(ONT_NAME, "db.contextData.getIndexes()");
+			Assert.assertTrue(result.indexOf("user_i") != -1);
+			result = queryTool.queryNativeAsJson(ONT_NAME, "db.contextData.dropIndex('user_i')");
+			Assert.assertTrue(result.indexOf("Dropped index") != -1);
+		} catch (Exception e) {
+			Assert.fail("test1_createIndex:" + e.getMessage());
+		}
+	}
+
+	@Test
+	public void test_InsertAndUpdateAndRemove() {
+		try {
+			String result = queryTool.queryNativeAsJson(ONT_NAME, "db.contextData.count()");
+			Assert.assertTrue(result.indexOf("0") == -1);
+			//
+			result = queryTool.queryNativeAsJson(ONT_NAME,
+					"db.contextData.insert({\"user\":\"user_temp_1\",\"clientPatform\":\"1\"})");
+			Assert.assertTrue(result.indexOf("Inserted row") != -1);
+			result = queryTool.queryNativeAsJson(ONT_NAME, "db.contextData.remove({\"user\":\"user_temp_1\"})");
+			Assert.assertTrue(result.indexOf("Deleted 1") != -1);
+			//
+			result = queryTool.queryNativeAsJson(ONT_NAME,
+					"db.contextData.insert({'user':'user_temp_2','clientPatform':'2'})");
+			Assert.assertTrue(result.indexOf("Inserted row") != -1);
+			result = queryTool.queryNativeAsJson(ONT_NAME,
+					"db.contextData.update({'user':'user_temp_2'},{'clientPatform':'3'})");
+			Assert.assertTrue(result.indexOf("Updated 1") != -1);
+			//
+
+			result = queryTool.queryNativeAsJson(ONT_NAME,
+					"db.contextData.remove({'user':'user_temp_2','clientPatform':'3'})");
+			Assert.assertTrue(result.indexOf("Deleted 1") != -1);
+
+		} catch (Exception e) {
+			Assert.fail("test_InsertAndUpdateAndRemove:" + e.getMessage());
+		}
+	}
+
 }

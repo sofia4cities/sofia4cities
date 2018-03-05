@@ -636,7 +636,8 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 					} else {
 						bwResult.setOk(true);
 						if (includeObjectIds)
-							bwResult.setId(util.getObjectIdString(mapDocs.get(i).getObjectId("_id")));
+							// bwResult.setId(util.getObjectIdString(mapDocs.get(i).getObjectId("_id")));
+							bwResult.setId(mapDocs.get(i).getObjectId("_id").toString());
 						bwResults[i] = bwResult;
 					}
 				}

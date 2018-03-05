@@ -91,8 +91,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 		log.debug("insertInstance", ontology, instance);
 		try {
 			ObjectId objectId = mongoDbConnector.insert(database, ontology, util.prepareQuotes(instance));
-			String retorno = util.getObjectIdString(objectId);
-			return retorno;
+			return objectId.toString();
 		} catch (javax.persistence.PersistenceException e) {
 			log.error("insertInstance", e);
 			throw new DBPersistenceException(e);
@@ -253,7 +252,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		log.debug("find", query, ontology);
+		log.debug("queryNativeAsJson", query, ontology);
 		try {
 			return JSON.serialize(queryNative(ontology, query, offset, limit));
 		} catch (javax.persistence.PersistenceException e) {
@@ -275,10 +274,10 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public List<String> queryNative(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		log.debug("find", query, ontology);
+		log.debug("queryNative", query, ontology);
 		List<String> result = new ArrayList<>();
 		try {
-			log.info("mongoDbConnector: executing query:" + query);
+			log.info("executing query:" + query);
 
 			MongoQueryAndParams mc = new MongoQueryAndParams();
 			mc.parseQuery(query, limit, offset);

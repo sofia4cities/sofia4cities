@@ -18,8 +18,8 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
+import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 public class QueryToolServiceImpl implements QueryToolService {
 
 	@Autowired
-	BasicOpsDBRepository basicOps = null;
+	QueryAsTextDBRepository queryOps = null;
 
 	@Autowired
 	ManageDBRepository manageOps = null;
@@ -41,27 +41,12 @@ public class QueryToolServiceImpl implements QueryToolService {
 			throw new Exception("User:" + user + " has nos permission to query ontology " + ontology);
 	}
 
-	private void checkQueryIs4Ontology(String ontology, String query, boolean sql) throws Exception {
-		if (sql == true) {
-			if (query.toLowerCase().indexOf("from " + ontology.toLowerCase()) == -1)
-				throw new Exception("The query " + query + " is not for the ontology selected:" + ontology);
-
-		} else {
-			if (query.indexOf("db.") == -1)
-				return;
-			if (query.indexOf("." + ontology + ".") == -1)
-				throw new DBPersistenceException(
-						"The query " + query + " is not for the ontology selected:" + ontology);
-		}
-	}
-
 	@Override
 	public String queryNativeAsJson(String user, String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
 		try {
-			checkQueryIs4Ontology(ontology, query, false);
 			hasUserPermission(user, ontology);
-			return basicOps.queryNativeAsJson(ontology, query, offset, limit);
+			return queryOps.queryNativeAsJson(ontology, query, offset, limit);
 		} catch (Exception e) {
 			log.error("Error queryNativeAsJson:" + e.getMessage());
 			throw new DBPersistenceException(e);
@@ -71,27 +56,8 @@ public class QueryToolServiceImpl implements QueryToolService {
 	@Override
 	public String queryNativeAsJson(String user, String ontology, String query) throws DBPersistenceException {
 		try {
-			checkQueryIs4Ontology(ontology, query, false);
 			hasUserPermission(user, ontology);
-			if (query.indexOf(".createIndex(") != -1) {
-				manageOps.createIndex(query);
-				return "Created index indicated in the query:" + query;
-			} else if (query.indexOf(".dropIndex(") != -1) {
-				query = query.substring(query.indexOf(".dropIndex(") + 11, query.length());
-				query = query.replace("\"", "");
-				query = query.replace("'", "");
-				String indexName = query.substring(0, query.indexOf(")"));
-				manageOps.dropIndex(ontology, indexName);
-				return "Drop index indicated in the query:" + query;
-			} else if (query.indexOf(".getIndexes()") != -1) {
-				return manageOps.getIndexes(ontology);
-			} else if (query.indexOf(".remove(") != -1) {
-				basicOps.deleteNative(ontology, query);
-				return "Execute remove on ontology:" + ontology;
-			} else if (query.indexOf(".drop") != -1) {
-				return "Drop a collection from QueryTool not supported.";
-			} else
-				return basicOps.queryNativeAsJson(ontology, query);
+			return queryOps.queryNativeAsJson(ontology, query);
 		} catch (Exception e) {
 			log.error("Error queryNativeAsJson:" + e.getMessage());
 			throw new DBPersistenceException(e);
@@ -101,9 +67,8 @@ public class QueryToolServiceImpl implements QueryToolService {
 	@Override
 	public String querySQLAsJson(String user, String ontology, String query, int offset) throws DBPersistenceException {
 		try {
-			checkQueryIs4Ontology(ontology, query, true);
 			hasUserPermission(user, ontology);
-			return basicOps.querySQLAsJson(ontology, query, offset);
+			return queryOps.querySQLAsJson(ontology, query, offset);
 		} catch (Exception e) {
 			log.error("Error querySQLAsJson:" + e.getMessage());
 			throw new DBPersistenceException(e);

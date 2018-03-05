@@ -41,6 +41,8 @@ public class UtilMongoDB {
 			String collection = getCollectionName(query);
 			String auxName = query.replace("db." + collection + ".", "");
 			auxName = auxName.substring(auxName.indexOf("(") + 1, auxName.indexOf(")"));
+			if (auxName.equals(""))
+				auxName = "{}";
 			return auxName;
 		} else {
 			throw new DBPersistenceException(new Exception("No found db. in sentence"));
@@ -227,18 +229,10 @@ public class UtilMongoDB {
 		return result;
 	}
 
-	public String getObjectIdString(ObjectId id) {
-		String strId;
-
-		strId = "{\"_id\":{ \"$oid\":\"" + id.toString() + "\"}}";
-		// if(ThreadLocalProperties.jsonMode.get() == true) {
-		// strId = "{\"_id\":{ \"$oid\":\"" +id.toString() + "\"}}";
-		// }
-		// else {
-		// strId = "{\"_id\":ObjectId(\"" + id.toString() + "\")}";
-		// }
-
-		return strId;
+	public String getObjectIdAsJson(ObjectId id) {
+		if (id == null)
+			return null;
+		return "{\"_id\":{ \"$oid\":\"" + id.toString() + "\"}}";
 	}
 
 }
