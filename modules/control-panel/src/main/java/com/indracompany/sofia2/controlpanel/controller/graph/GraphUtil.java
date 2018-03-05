@@ -62,14 +62,14 @@ public class GraphUtil {
 	@Autowired
 	private AppWebUtils utils;
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	@Value("${sofia2.urls.iotbroker}")
-	String url;
+	private String url;
 
 	@PostConstruct
 	public void init() {
 		// initialize URLS
-		this.urlClientPlatform = this.url + "/controlpanel/platformclients/";
+		this.urlClientPlatform = this.url + "/controlpanel/devices/";
 		this.urlGadget = this.url + "/controlpanel/gadgets/";
 		this.urlDashboard = this.url + "/controlpanel/dashboards/";
 		this.urlOntology = this.url + "/controlpanel/ontologies/";
@@ -85,13 +85,14 @@ public class GraphUtil {
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlOntology + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlOntology + "create"));
 		List<Ontology> ontologies;
-		if(utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+		if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
 			ontologies = ontologyRepository.findAll();
-		else 
-			ontologies = ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(utils.getUserId()));
+		else
+			ontologies = ontologyRepository
+					.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(utils.getUserId()));
 		for (Ontology ont : ontologies) {
-			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology + "list", urlOntology + "show/"+ont.getId(), name,
-					"ontology", name, ont.getIdentification(), "licensing"));
+			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology + "list", urlOntology + "show/" + ont.getId(),
+					name, "ontology", name, ont.getIdentification(), "licensing"));
 		}
 		return arrayLinks;
 	}

@@ -1,3 +1,8 @@
+var authorizationsArr = []; // add authorizations
+var authorizationUpdateArr = []; // get authorizations of the ontology
+var authorizationsIds = []; // get authorizations ids for actions
+var authorizationObj = {}; // object to receive authorizations responses.
+	
 var OntologyCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
@@ -9,8 +14,11 @@ var OntologyCreateController = function() {
 	var internalLanguage = 'en';	
 	var validTypes = ["string","object","number","date","timestamp","array","binary"]; // Valid property types	
 	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
+	var mountableModel2 = $('#ontology_autthorizations').find('tr.authorization-model')[0].outerHTML;
 	var validJsonSchema = false;
 	var validMetaInf = false;
+	var hasId = false; // instance
+
 	
 	
 	
@@ -108,9 +116,8 @@ var OntologyCreateController = function() {
 		
 		// properties, types and required arrays
 		var updateProperties = $("input[name='property\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
-		var updateTypes = $("input[name='type\\[\\]']").map(function(){return $(this).val();}).get();
-		var updateRequired = $("input[name='required\\[\\]']").map(function(){return $(this).val();}).get();
-		
+		var updateTypes = $("select[name='type\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateRequired = $("select[name='required\\[\\]']").map(function(){return $(this).val();}).get();		
 		
 		var schemaObj = {};
 		
@@ -126,42 +133,12 @@ var OntologyCreateController = function() {
 		}else if (typeof schema == 'object') { schemaObj = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
 		
 		/* // compare properties added with properties on current schema
-		baseJson = createJsonProperties(schemaObj);
-				
-		// schema string -> Object --> update --> toString --> to editor.
-		baseArrProperties	= getProperties(baseJson);
-		baseArrRequired 	= getRequired(baseJson);
-		baseArrTypes 		= getTypes(baseJson);
-		// COMPARE BASE WITH CURRENT
-		var toUpdateProperties = [];
-		var toUpdateTypes = [];
-		var toUpdateRequired = [];
-		var i = 0;		
-		
 		// DIFFERENCE BETWEEN BASE vs CURRENT
 		jQuery.grep(updateProperties, function(el) {
 			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
 				i++;
 		});	
 		
-		logControl ? console.log(" |-------------  the difference are " + toUpdateProperties + ' elements: ' + toUpdateProperties.length): '';
-		
-		
-		jQuery.grep(updateTypes, function(el) {
-			if (jQuery.inArray(el, baseArrTypes) == -1) toUpdateTypes.push(el);
-				i++;
-		});	
-		
-		logControl ? console.log(" |-------------  the difference are " + toUpdateTypes + ' elements: ' + toUpdateTypes.length): '';
-		
-		
-		
-		jQuery.grep(updateRequired, function(el) {
-			if (jQuery.inArray(el, baseArrRequired) == -1) toUpdateRequired.push(jQuery.inArray(el, baseArrRequired));
-				i++;
-		});	
-		
-		logControl ? console.log(" |-------------  the difference are " + toUpdateRequired + ' elements: ' + toUpdateRequired.length): '';
 		 */
 		
 		// UPDATE SCHEMA		
@@ -176,7 +153,7 @@ var OntologyCreateController = function() {
 		}
 		
 		// CHANGE TO SCHEMA TAB.
-		 $('.nav-tabs li a[href="#tab_2"]').tab('show');		
+		 $('.nav-tabs li a[href="#tab_4"]').tab('show');		
 	}
 	
 	
@@ -282,7 +259,8 @@ var OntologyCreateController = function() {
 		$('.list-toggle-container').not('.collapsed').trigger('click');
 		$('#template_schema').addClass('hide');
 		
-		
+		// CLEAN SCHEMA DINAMIC TITLE FROM DATAMODEL SEL.
+		$('#schema_title').empty();	
 	}
 	
 	
@@ -370,14 +348,23 @@ var OntologyCreateController = function() {
 		logControl ? console.log('initTemplateElements() ->  resetForm,  currentLanguage: ' + currentLanguage) : '';
 		
 		// selectpicker validate fix when handleValidation()
-		$('.selectpicker').on('change', function () {
-			$(this).valid();
-		});
+		// $('.selectpicker').on('change', function () {
+			// $(this).valid();
+		// });
 		
 		// tagsinput validate fix when handleValidation()
 		$('#metainf').on('itemAdded', function(event) {
 			
 			if ($(this).val() !== ''){ $('#metainferror').addClass('hide');}
+		});
+		
+		// authorization tab control 
+		$(".nav-tabs a[href='#tab_2']").on("click", function(e) {
+		  if ($(this).hasClass("disabled")) {
+			e.preventDefault();
+			$.alert({title: 'INFO!', type: 'blue' , theme: 'dark', content: 'CREATE ONTOLOGY THEN GIVE AUTHORIZATIONS!'});
+			return false;
+		  }
 		});
 				
 		
@@ -452,6 +439,7 @@ var OntologyCreateController = function() {
 		});
 	}
 	
+	
 	// DELETE ONTOLOGY
 	var deleteOntologyConfirmation = function(ontologyId){
 		console.log('deleteOntologyConfirmation() -> formId: '+ ontologyId);
@@ -465,7 +453,7 @@ var OntologyCreateController = function() {
 		HeaderController.showConfirmDialogOntologia('delete_ontology_form');	
 	}
 
-		
+	
 	// CREATE EDITOR FOR JSON SCHEMA 
 	var createEditor = function(){
 		
@@ -500,6 +488,7 @@ var OntologyCreateController = function() {
 		
 		return true;
 	}
+	
 	
 	// JSON SCHEMA VALIDATION PROCESS
 	var validateJsonSchema = function(){
@@ -539,7 +528,7 @@ var OntologyCreateController = function() {
 						//Se comprueba si dispone de un elemento raiz
 						if (ontologia.properties[property] && ontologia.properties[property].$ref){
 						
-							// Se accede al elemento raiz que referencia el objeto
+							// Se accede al elemento raiz que referencia el obj
 							var ref = ontologia.properties[property].$ref;
 							ref = ref.substring(ref.indexOf("/")+1, ref.length);
 							nodo = ontologia[ref];
@@ -616,11 +605,316 @@ var OntologyCreateController = function() {
 	
 	// VALIDATE TAGSINPUT
 	var validateTagsInput = function(){		
-		if ($('#metainf').val() === '') { $('#metainferror').removeClass('hide').addClass('help-block-error'); console.log('metainf ERROR'); return false;  } else { console.log('metainf OK'); return true;} 
+		if ($('#metainf').val() === '') { $('#metainferror').removeClass('hide').addClass('help-block-error font-red'); return false;  } else { return true;} 
 	}
 	
+	
+	// GENERATE DUMMY ONTOLOGY INSTANCE FROM JSON SCHEMA
+	var generateOntologyInstance = function(){
+		logControl ? console.log('|--->   generateOntologyInstance()') : ''; 
+		
+		var instance 		= "";
+		var data 			= "";
+		var ontologyJson 	= {};
+		hasId = false;
+		
+		// check if json-string can be parsed
+		if(IsJsonString(editor.getText())){
+
+			// get JSON
+			var ontologyJson = JSON.parse(editor.getText());
+			
+			instance = instance + "{"
+            // for each property on json.properties
+			for ( var property in ontologyJson.properties ){
+				
+				data = "";
+				// check for root node
+				if ( ontologyJson.properties[property] && ontologyJson.properties[property].$ref ){
+				
+					if ( !hasId ){	instance = instance + "\"" + property + "\":"; } else {	instance = instance + "\"" + property + "\":";	}
+				
+					// access node root reference
+					var ref = ontologyJson.properties[property].$ref;
+					ref = ref.substring(ref.indexOf("/")+1, ref.length);
+					data = ontologyJson[ref].properties;
+				
+					// Se genera la seccion correspondiente a cada propiedad del elemento de referencia
+					instance = instance + "{ ";    
+					for( var propertyName in data ) {
+						instance = generateProperty(propertyName, data[propertyName], instance);
+					}
+					instance = instance.substring(0,instance.length-1);
+					instance = instance + "}";
+				} 
+				else {
+					// if no root node, get from main properties.
+					instance = generateProperty(property, ontologyJson.properties[property], instance);
+					instance = instance.substring(0,instance.length-1);
+				}
+				
+				instance = instance + ",";
+			}
+			
+			instance = instance.substring(0,instance.length-1);  
+			instance = instance + "}";                      
+			document.getElementById("ontology_instance").innerHTML = instance;
+			
+			if (ontologyJson.properties == null ){
+                	document.getElementById("ontology_instance").innerHTML = "";
+			}	
+		
+		}
+		else {
+			// no JSON no fun!
+			$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: 'NO SCHEMA'});
+		}		
+	}
+	
+	
+	// GENERATE EACH PROPERTY FOR ONTOLOGY INSTANCE.
+	var generateProperty = function(propertyName, property, instance){
+    	logControl ? console.log('    |--->   generateProperty()') : '';
+		var thevalue = "";
+		
+		// if has internalID (oid) we generate it.
+        if ( propertyName == "$oid") {
+            hasId = true;
+            if ( property.type == "string") { instance = instance + "\"$oid\":\"53b281b1c91cbd35025e3d91\""; }
+            instance = instance + ",";        
+        }
+		else {
+			// if not oid, we treat the property        	
+            instance = instance + "\"" + propertyName + "\":"; // adding name
+            
+            var tipo = property.type; // adding type
+            if (propertyName == "geometry"){ instance = instance + generateBasicType("geometry", "", "");
+            // adding object type
+            } else if (tipo.toLowerCase() == "object"){ instance = instance + generateObject(property, "", propertyName);
+			// adding array type
+            } else if (tipo.toLowerCase() == "array" ){ instance = instance + generateArray(property, "", propertyName);
+            // else basic type
+            } else {
+                thevalue = "";
+                // if enum type, get first value of enum.
+                if ( property.enum != null ){ thevalue = property.enum[0]; }
+                instance = instance + generateBasicType(tipo, "", "", thevalue);
+            }
+            instance = instance + ",";
+        }
+        return instance;
+    }
+	
+	
+	// GENERARATE PROPERTY TYPES [GEOMETRY, OBJECT, ARRAY OR BASIC]
+	var generateBasicType = function(propType, obj, parent, thevalue){
+		logControl ? console.log('        |--->   generateBasicType()') : '';
+		
+    	// if enum, return enum value
+    	if (thevalue != null && thevalue != ""){ return "\"" + thevalue + "\""; }
+    	// string
+        if (propType == "string") {        	
+        	if 		(parent == "media" && obj == "storageArea")	  { return "\"SERIALIZED\""; } 
+			else if (parent == "media" && obj == "binaryEncoding"){ return "\"Base64\""; }
+			else if (parent == "media" && obj == "name")		  {	return "\"fichero.pdf\""; } 
+			else if (parent == "media" && obj == "mime")		  {	return "\"application/pdf\""; }
+			else{ return "\"string\""; }			
+        }
+		// integer,boolean, object, number and geometry
+		else if ( propType == "integer" ){ return "1" } 		
+		else if ( propType == "boolean" ){ return "true"; }
+		else if ( propType == "object" ){ return "{}"; }
+		else if ( propType == "geometry" || obj =="geometry"){ return "{\"type\":\"Point\", \"coordinates\":[9,19.3]}"; }
+		else if ( propType == "number"   || propType == "numeric" ){	return "28.6" } 		
+    }	
+	
+	
+	// GENERARATE PROPERTY TYPES [GEOMETRY, OBJECT, ARRAY ]
+	var generateObject = function(ontology, instance, parent){
+        logControl ? console.log('        |--->   generateObject()') : '';
+		
+       	instance = "{";       	
+       	if ( ontology.properties ){
+	        for ( var obj in ontology.properties ){
+	            
+				var objtype = ontology.properties[obj].type;
+	             // if obj <> date or geometry, iterates recursive for treatment.
+	             if ((objtype.toLowerCase() == "object") && (obj != "geometry") && ontology.properties[obj].properties && ontology.properties[obj].properties.$date == null ){ 
+	             	instance = instance + "\"" +obj+"\":"+ generateObject(ontology.properties[obj], "", obj);
+	             
+	             }
+				 // date obj
+				 else if ((ontology.properties && ontology.properties.$date != null) || (ontology.properties && ontology.properties[obj] && ontology.properties[obj].properties && ontology.properties[obj].properties.$date!= null)){
+	                 // date root node or date children node
+	            	 if (obj == "$date"){  instance = instance + "\"$date\": \"2014-01-30T17:14:00Z\""; } else { instance = instance + "\"" +obj+"\":"+ "{\"$date\": \"2014-01-30T17:14:00Z\"}"; }
+				 }
+				 // geometry with direct reference to point
+				 else if (ontology[obj] && ontology[obj].properties &&  ontology[obj].properties[propertyName].properties && ontology[obj].properties[propertyName].properties.type && ontology.properties[obj].properties.type.enum[0]== "Point"){
+	                 instance = instance + "\"" +obj+"\":"+ "{\"type\":\"Point\", \"coordinates\":[9,19.3]}";
+	             
+	             }
+				// array
+				 else if (objtype.toLowerCase() == "array"){
+	                    instance = instance + "\""+ obj + "\":" + generateArray(ontology.properties[obj], "", obj);	             
+	             }
+				 // Basic
+				 else {
+	            	 var valor = "";
+	            	 // if enum getr first value
+	                 if (ontology.properties[obj].enum != null){
+	                	  valor = ontology.properties[obj].enum[0];
+	                 }
+	            	 instance = instance + "\""+ obj + "\":" + generateBasicType(objtype, obj, parent, valor);
+	             }
+	             instance = instance + ",";
+	        }
+	        instance = instance.substring(0,instance.length-1);
+	     // if obj is null, generate default
+       	} else {
+       		instance = instance + "\"object\"";
+       	}
+        return instance + "}";
+    }
+		
+	// GENERARATE PROPERTY TYPES [ ARRAY ]
+	var generateArray = function(ontology, instance, parent){
+		 logControl ? console.log('        |--->   generateArray()') : '';
+        var minItems = 1;
+        // Se obtiene el numero minimo de elementos del array
+        if (ontology.minItems != null) {
+            minItems =  ontology.minItems;
+			
+        }
+        instance = instance + "[";        
+        if (ontology.items.type.toLowerCase() == "object"){
+            for (i=1;i<=minItems;i++) {
+                instance = instance + generateObject(ontology.items, "", parent);
+                if (i < minItems){
+                    instance = instance + ",";
+                }
+            }       
+        } else {
+            for (i=1;i<=minItems;i++) {
+                var valor ="";
+                if (ontology.items.enum != null){
+                    valor = ontology.items.enum[0];
+                }
+                instance = instance + generateBasicType(ontology.items.type, "", "", valor);
+                if (i < minItems){
+                    instance = instance + ",";
+                }
+            }
+        }
+        return instance + "]";  
+    };    
+	
+	// AJAX AUTHORIZATION FUNCTIONS
+	var authorization = function(action,ontology,user,accesstype,authorization){
+		logControl ? console.log('|---> authorization()') : '';	
+		var insertURL = '/controlpanel/ontologies/authorization';
+		var updateURL = '/controlpanel/ontologies/authorization/update';
+		var deleteURL = '/controlpanel/ontologies/authorization/delete';
+		var response = {};
+		
+		if (action === 'insert'){
+			console.log('    |---> Inserting... ' + insertURL);
+						
+			$.ajax({
+				url:insertURL,
+				type:"POST",
+				async: true,
+				data: {"accesstype": accesstype, "ontology": ontology,"user": user},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					
+					var propAuth = {"users":user,"accesstypes":accesstype,"id": response.id};
+					authorizationsArr.push(propAuth);
+					console.log('     |---> JSONtoTable: ' + authorizationsArr.length + ' data: ' + JSON.stringify(authorizationsArr));
+					// store ids for after actions.	inside callback 				
+					var user_id = user;
+					var auth_id = response.id;
+					var AuthId = {[user_id]:auth_id};
+					authorizationsIds.push(AuthId);
+					console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
+										
+					// TO-HTML
+					if ($('#authorizations').attr('data-loaded') === 'true'){
+						$('#ontology_autthorizations > tbody').html("");
+						$('#ontology_autthorizations > tbody').append(mountableModel2);
+					}
+					console.log('authorizationsArr: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr));
+					$('#ontology_autthorizations').mounTable(authorizationsArr,{
+						model: '.authorization-model',
+						noDebug: false							
+					});
+					
+					// hide info , disable user and show table
+					$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
+					$("#users").selectpicker('deselectAll');
+					$("#users option[value=" + $('#users').val() + "]").prop('disabled', true);
+					$("#users").selectpicker('refresh');
+					$('#authorizations').removeClass('hide');
+					$('#authorizations').attr('data-loaded',true);
+					
+				}
+			});
+
+	
+		}
+		if (action === 'update'){
+			
+			$.ajax({url:updateURL, type:"POST", async: true, 
+				data: {"id": authorization, "accesstype": accesstype},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					var updateIndex = foundIndex(user,'users',authorizationsArr);			
+					authorizationsArr[updateIndex]["accesstypes"] = accesstype;
+					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);
+					
+					
+				}
+			});
+			
+			
+		}
+		if (action  === 'delete'){
+			console.log('    |---> Deleting... ' + user + ' with authId:' + authorization );
+			
+			$.ajax({url:deleteURL, type:"POST", async: true, 
+				data: {"id": authorization},			 
+				dataType:"json",
+				success: function(response,status){
+					alert("Insert Data: " + response + "\nStatus: " + status);					
+					
+					// remove object
+					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(response.id);			
+					authorizationsIds.splice(removeIndex, 1);
+					authorizationsArr.splice(removeIndex, 1);
+					
+					console.log('AuthorizationsIDs: ' + JSON.stringify(authorizationsIds));
+					// refresh interface. TO-DO: EL this este fallará
+					if ( response  ){ $(this).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); }
+				}
+			});			
+		}	
+	};
+	
+	// return position to find authId.
+	var foundIndex = function(what,item,arr){
+		var found = '';
+		arr.forEach(function(element, index, array) {
+			if ( what === element[item]){ found = index;  console.log("a[" + index + "] = " + element[item] + ' Founded in position: ' + found ); } 
+			
+		});		
+		return found;
+	}
+	
+	
 	// CONTROLLER PUBLIC FUNCTIONS 
-	return{		
+	return{
+
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
 		load: function(Data) { 
 			logControl ? console.log(LIB_TITLE + ': load()') : '';
@@ -629,7 +923,7 @@ var OntologyCreateController = function() {
 		
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
-			logControl ? console.log(LIB_TITLE + ': init()') : '';			
+			logControl ? console.log(LIB_TITLE + ': init()') : '';				
 			handleValidation();
 			createEditor();
 			initTemplateElements();
@@ -817,11 +1111,68 @@ var OntologyCreateController = function() {
 		},
 				
 		// JSON SCHEMA VALIDATION
-		validateJson: function(){
-				
+		validateJson: function(){	
 			validateJsonSchema();			
-		}
+		},
 		
+		// GENERATE DUMMY ONTOLOGY INSTANCES
+		generateInstance: function(){
+			logControl ? console.log(LIB_TITLE + ': generateInstance()') : '';
+			generateOntologyInstance();
+		},
+		
+		// INSERT AUTHORIZATION
+		insertAuthorization: function(){
+			logControl ? console.log(LIB_TITLE + ': insertAuthorization()') : '';
+			if ( ontologyCreateReg.actionMode !== null){	
+				// UPDATE MODE ONLY AND VALUES on user and accesstype
+				if (($('#users').val() !== '') && ($("#users option:selected").attr('disabled') !== 'disabled') && ($('#accesstypes').val() !== '')){
+					
+					// AJAX INSERT (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
+					authorization('insert',ontologyCreateReg.ontologyId,$('#users').val(),$('#accesstypes').val(),'');
+								
+				}	
+			}
+		},
+		
+		// REMOVE authorization
+		removeAuthorization: function(obj){
+			logControl ? console.log(LIB_TITLE + ': removeAuthorization()') : '';
+			if ( ontologyCreateReg.actionMode !== null){
+				
+				// AJAX REMOVE (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
+				var selUser = $(obj).closest('tr').find("input[name='users\\[\\]']").val();
+				var selAccessType = $(obj).closest('tr').find("select[name='accesstypes\\[\\]']").val();				
+				
+				var removeIndex = foundIndex(selUser,'users',authorizationsArr);				
+				var selAuthorizationId = authorizationsIds[removeIndex][selUser];
+				
+				console.log('removeAuthorization:' + selAuthorizationId);
+				
+				authorization('delete',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId );				
+			}
+		},
+		
+		// UPDATE authorization
+		updateAuthorization: function(obj){
+			logControl ? console.log(LIB_TITLE + ': updateAuthorization()') : '';
+			if ( ontologyCreateReg.actionMode !== null){
+				
+				// AJAX UPDATE (ACTION,ONTOLOGYID,USER,ACCESSTYPE,ID) returns object with data.
+				var selUser = $(obj).closest('tr').find("input[name='users\\[\\]']").val();
+				var selAccessType = $(obj).closest('tr').find("select[name='accesstypes\\[\\]']").val();
+								
+				var updateIndex = foundIndex(selUser,'users',authorizationsArr);				
+				var selAuthorizationId = authorizationsIds[updateIndex][selUser];				
+				
+				console.log('updateAuthorization:' + selAuthorizationId);
+				
+				if (selAccessType !== authorizationsArr[updateIndex]["accesstypes"]){
+					authorization('update',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId);
+				} 
+				else { console.log('no hay cambios');}
+			}
+		}	
 	};
 }();
 
@@ -832,6 +1183,7 @@ jQuery(document).ready(function() {
 	var editor;
 	var aceEditor;
 	var schema = ''; // current schema json string var
+	
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
 	OntologyCreateController.load(ontologyCreateJson);	

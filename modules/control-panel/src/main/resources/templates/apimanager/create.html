@@ -1,0 +1,459 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+
+		
+		<!-- WEB FONTs -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND BOOSTRAP-TIMEPICKER  -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>
+		
+	</head>	
+	
+	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>
+			
+		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+			
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+			
+                <div class="alert alert-success display-hide">
+					<span th:text="${globalMessage}"></span>
+				</div>		
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM-->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/apimanager/list}"> <span th:text="#{apimanager.breadcrumb.prev}">Api List</span></a><i class="fa fa-circle"></i></li>
+						<li>
+							<span th:if="${api.id} == null" th:text="#{apimanager.breadcrumb.create}">Show Api</span>
+							<span th:if="${api.id} != null" th:text="#{apimanager.breadcrumb.edit}">Update Api</span>
+						</li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">						
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="la la-users font-grey-gallery"></i>						
+									
+									<!-- FORM TITLE -->
+									<span th:if="${api.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.create} + ':'"> New Api</span>
+									<span th:if="${api.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.edit} + ':' + ' ' + ${api.identification + ' - V' + api.numversion}"> Update Api</span>
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>
+								<div class="actions">
+									<!-- ACTION INDICATORs -->									
+									<span th:if="${api.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${api.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
+								</div>
+								
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> 
+											<span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>										
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
+									</div>
+									<div class="col-md-12">										
+										<form role="form" id="api_create_form" th:object="${api}" method="post" class="form" enctype="multipart/form-data">
+											<!-- FORM ACTIONS FOR INSERT-->
+											<input th:if="${api.id} == null" type="hidden" name="action" th:value="@{/apimanager/create}"/>
+											
+											<!-- FORM ACTIONS FOR UPDATE -->											
+											<input th:if="${api.id} != null" type="hidden" name="action" th:value="@{/apimanager/update}"/>
+											<input th:if="${api.id} != null" type="hidden" name="_method" value="PUT"/>											
+											
+											<div class="form-body">
+												<!-- id, version and category -->
+												<div class="row">
+													<div class="col-md-6 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{apimanager.id} + ':'">Identification</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="identification" type="text" name="identification" th:required="true"  maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{apimanager.id}"  th:readonly="*{identification}" th:classappend="${identification} ? no-remove : ''" th:onchange="'javascript:ApiCreateController.calculateNumVersion();'" />
+															</div>															
+														</div>
+													</div>
+													<div class="col-md-2 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{apimanager.numversion} + ':'">Version<span class="required">*</span></label>
+															<div class="input-icon ">
+																<i class="fa fa-asterisk"></i>
+																<input id="numversion" type="number"  th:required="true" disabled="disabled"  maxlength="50" th:field="*{numversion}" class="form-control " th:placeholder="#{apimanager.numversion}"/>
+															</div>	
+														</div>
+													</div>
+													<div class="col-md-4 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{apimanager.category} + ':'">Category</label>
+															<select id="categories" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{apimanager.category}" th:field="*{category}" th:required="true">
+																<option th:each="category:${categories}" th:value="${category}" th:text="#{apimanager.category.__${category}__}" ></option>
+															</select>
+														</div>
+													</div>
+												</div>
+												<!-- type, ontology, limit and cache -->
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+			                                            <label class="description notAnimate" for="selector-tipo-api" th:text="#{apimanager.apitype}">API</label>
+			                                            <select id="apiType" class="form-control" th:onchange="'javascript:ApiCreateController.calculateNumVersion(this.value);'" th:field="*{apiType}">
+			                                            	<option value=""></option>
+			                                                <option th:value="iot" th:text="#{apimanager.apiType.rest}">Publish Ontology as REST API</option>
+			                                            </select>
+			                                            <span><input id="checkboxPublic" name="checkboxPublic" type="checkbox" checked="checked" th:field="*{public}" /></span>
+			                                            <label style="margin-left: 8px; padding-bottom: 5px;" for="checkbox" th:text="#{apimanager.public}">Public</label>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+					                                    <label id="label-selector-ontologia" class="description notAnimate" for="id_ontology" th:text="#{apimanager.ontology}">Ontology</label>
+					                                    <select  id="ontology" class="form-control" th:field="*{ontology}" disabled="disabled">
+					                                    	<option value=""></option>
+					                                    	<option th:each="ontology:${ontologies}" th:value="${ontology.id}" th:text="${ontology.identification}">ontology</option>
+					                                    </select>
+													</div>
+													<div class="col-md-2 col-sm-6 col-xs-12">
+					                                    <label class="description notAnimate" for="id_limit" th:text="#{apimanager.apilimit}">Requests per minute</label>
+				                                        <input id="id_limit" class="element text medium form-control" type="number" maxlength="10" disabled="disabled" value="5"  th:field="*{apilimit}" />
+				                                        <span><input id="checkboxLimit" name="checkboxLimit" type="checkbox" th:checked="${api.apilimit!= null}" onchange="ApiCreateController.changeApiLimit();"/></span>
+				                                        <label for="checkbox" th:text="#{apimanager.limit}">Limit</label>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+					                                    <label class="description notAnimate" for="id_cachetimeout" th:text="#{apimanager.cachetimeout}">Cache Timeout(minutes)</label>
+				                                        <input id="id_cachetimeout" class="element text medium form-control" type="number" maxlength="10" disabled="disabled" value="0" th:field="*{cachetimeout}"/>
+				                                        <span><input id="checkboxCache" name="checkboxCache" type="checkbox" th:checked="${api.cachetimeout!= null}" onchange="ApiCreateController.changeCacheTimeout();"/></span>
+					                                    <label for="checkbox" th:text="#{apimanager.cache}">Caching of API results</label>										
+													</div>
+												</div>
+												<!-- endpoint, image -->												
+												<div class="row">
+													<div class="col-md-6 col-sm-6 col-xs-12">
+					                                    <label class="description notAnimate" id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
+					                                    <input id="id_endpoint" name="id_endpoint" class="form-control" type="text" maxlength="512" readonly="readonly"/>
+					                                    <input id="id_endpoint_hidden" name="id_endpoint_hidden" type="hidden" th:field="*{endpoint}"/>
+													</div>
+													<div class="col-md-4 col-sm-6 col-xs-12">
+														<label class="description" for="image" th:text="#{apimanager.image}">Imagen</label>
+														<input id="image" class="form-control" type="file" th:field="*{image}" onchange="ApiCreateController.validateImageSize()"/>
+													</div>
+													<div class="col-md-2 col-sm-6 col-xs-12">
+														<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
+														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/resources/images/API.png}" style="height: 60px;" class="pull-right"/>
+													</div>
+												</div>
+												<!-- description -->
+												<div class="row">
+													<div class="col-md-12 col-sm-12 col-xs-12">
+					                                    <label class="description" for="descripcionapi" th:text="#{apimanager.description}">Descripcion </label>
+					                                    <textarea class="element textarea small form-control" id="apiDescripcion" name="apiDescripcion" maxlength="512" th:field="*{description}"></textarea>
+													</div>
+												</div>												
+												<!-- metainf -->
+												<div class="row">
+													<div class="col-md-12 col-sm-12 col-xs-12">
+					                                    <label class="description" for="metainf" th:text="#{apimanager.metainf}">Meta-inf</label>
+					                                    <input  id="id_metainf" data-role="tagsinput" class="form-control" type="text" th:field="*{metaInf}"></input>
+													</div>
+												</div>		
+												<!-- operations -->
+												<div class="row">
+					                                 <div id="ontologyOperations" class="col-md-12">
+					                                     <div class="tabla_peq_description">
+					                                        <h3 class="descripcion_peq" th:text="#{apimanager.operations}">OPERACIONES</h3>
+					                                     </div>
+					                                     <div>
+					                                         <fieldset>
+					                                             <div>
+					                                                 <div id="divGET" class="op_div">
+					                                                    <div id="buttonOperacionGET" class="op_button_div">
+					                                                        <input id="GET" class="op_button" style="width: 80px;" type="button" value="GET" name="GET" th:value="#{apimanager.GET}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                    </div>
+					                                                    <div id="descOperationGET" class="op_desc_div" style="display:none">
+					                                                        <label id ="description_GET_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GET"></label>
+					                                                        <br/>
+					                                                        <label id ="description_operacion_GET" class="description" for="description_GET" th:text="#{apimanager.description}"></label>
+					                                                        <input id="description_GET" name="description_GET" class="form-control" type="text" maxlength="250"/>
+					                                                    </div>
+					                                                 </div>
+					                                                 <div id="operaciones-invalidas-odatav4">
+					                                                     <div id="divGETSQL" class="op_div">
+					                                                        <div id="buttonOperationGETSQL" class="op_button_div">
+					                                                            <input id="GETSQL" class="op_button" style="width: 80px;" type="button" value="GETSQL" name="GETSQL" th:value="#{apimanager.GETSQL}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                        </div>
+					                                                        <div id="descOperationGETSQL" class="op_desc_div" style="display:none">
+					                                                            <b><label id ="description_GETSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETSQL"></label></b>
+					                                                            <br/>
+					                                                            <b><label id ="description_operacion_GETSQL" class="description" for="description_GETSQL" th:text="#{apimanager.description}"></label></b>
+					                                                            <input id="description_GETSQL" name="description_GETSQL" class="form-control" type="text" maxlength="250"/>
+					                                                        </div>
+					                                                     </div>
+					                                                     <div id="divPOST" class="op_div">
+					                                                        <div id="buttonOperationPOST" class="op_button_div">
+					                                                            <input id="POST" class="op_button" style="width: 80px;" type="button" value="POST" name="POST" th:value="#{apimanager.POST}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                        </div>
+					                                                        <div id="descOperationPOST" class="op_desc_div" style="display:none">
+					                                                            <b><label id ="description_POST_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_POST"></label></b>
+					                                                            <br/>
+					                                                            <b><label id ="description_operacion_POST" class="description" for="description_POST" th:text="#{apimanager.description}"></label></b>
+					                                                            <input id="description_POST" name="description_POST" class="form-control" type="text" maxlength="250"/>
+					                                                        </div>
+					                                                     </div>
+					                                                     <div id="divPUT" class="op_div">
+					                                                        <div id="buttonOperationPUT" class="op_button_div">
+					                                                            <input id="PUT" class="op_button" style="width: 80px;" type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                        </div>
+					                                                        <div id="descOperationPUT" class="op_desc_div" style="display:none">
+					                                                            <b><label id ="description_PUT_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_PUT"></label></b>
+					                                                            <br/>
+					                                                            <b><label id ="description_operacion_PUT" class="description" for="description_PUT" th:text="#{apimanager.description}"></label></b>
+					                                                            <input id="description_PUT" name="description_PUT" class="form-control" type="text" maxlength="250"/>
+					                                                        </div>
+					                                                     </div>
+					                                                     <div id="divDELETE" class="op_div">
+					                                                        <div id="buttonOperationDELETE" class="op_button_div">
+					                                                            <input id="DELETE" class="op_button" style="width: 80px;" type="button" value="DELETE" name="DELETE" th:value="#{apimanager.DELETE}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                        </div>
+					                                                        <div id="descOperationDELETE" class="op_desc_div" style="display:none">
+					                                                            <b><label id ="description_DELETE_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETE"></label></b>
+					                                                            <br/>
+					                                                            <b><label id ="description_operacion_DELETE" class="description" for="description_DELETE" th:text="#{apimanager.description}"></label></b>
+					                                                            <input id="description_DELETE" name="description_DELETE" class="form-control" type="text" maxlength="250"/>
+					                                                        </div>
+					                                                     </div>
+					                                                     <div id="divDELETEID" class="op_div">
+					                                                        <div id="buttonOperationDELETEID" class="op_button_div">
+					                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETE}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                        </div>
+					                                                        <div id="descOperationDELETEID" class="op_desc_div" style="display:none">
+					                                                            <b><label id ="description_DELETEID_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
+					                                                            <br/>
+					                                                            <b><label id ="description_operacion_DELETEID" class="description" for="description_DELETEID" th:text="#{apimanager.description}"></label></b>
+					                                                            <input id="description_DELETEID" name="description_DELETEID" class="form-control" type="text" maxlength="250"/>
+					                                                        </div>
+					                                                     </div>
+					                                                     <div id="divGETOPS" class="op_div">
+					                                                        <div id="buttonOperationGETOPS" class="op_button_div">
+					                                                            <input id="GETOPS" class="op_button" style="width: 80px;" type="button" value="GETOPS" name="GETOPS" th:value="#{apimanager.GET}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                        </div>
+					                                                        <div id="descOperationGETOPS" class="op_desc_div" style="display:none">
+					                                                            <b><label id ="description_GETOPS_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETOPS"></label></b>
+					                                                            <br/>
+					                                                            <b><label id ="description_operacion_GETOPS" class="description" for="description_GETOPS" th:text="#{apimanager.description}"></label></b>
+					                                                            <input id="description_GETOPS" name="description_GETOPS" class="form-control" type="text" maxlength="250"/>
+					                                                        </div>
+					                                                     </div>
+					                                                     <div id="divCUSTOMSQLS" style="display:none;"></div>
+					                                                     <div id="divCUSTOMSQL" class="op_div">
+					                                                        <div id="buttonOperationCUSTOMSQL" class="op_button_div">
+					                                                            <input id="CUSTOMSQL" class="op_button" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" data-toggle="modal" data-target="#dialog-customsql"/>
+					                                                        </div>
+					                                                        <div id="descOperationCUSTOMSQL" class="op_desc_div" style="display:none">
+					                                                            <b><label id ="description_CUSTOMSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_CUSTOMSQL"></label></b>
+					                                                            <br/>
+					                                                            <b><label id ="description_operacion_CUSTOMSQL" class="description" for="description_CUSTOMSQL" th:text="#{apimanager.description}"></label></b>
+					                                                            <input id="description_CUSTOMSQL" name="description_CUSTOMSQL" class="form-control" type="text" maxlength="250"/>
+					                                                        </div>
+					                                                     </div>
+					                                                 </div>
+					                                             </div>
+					                                         </fieldset>
+					                                     </div>
+					                                     <input type="hidden" id="operationsObject" name="operationsObject"/>
+					                                     <input type="hidden" id="authenticationObject" name="authenticationObject"/>
+					                                 </div>
+
+												</div>	
+
+											</div>
+											<!-- FORM BUTTONS -->
+											<div class="form-actions">
+												<div class="pull-right">
+													<!-- CREATE -->
+													<button th:if="${api.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													
+													<!-- UPDATE -->
+													<button th:if="${api.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+																																						
+													<!-- RESET -->
+													<button th:if="${api.id} == null" id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+													
+													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+													
+													<!-- CANCEL TO-DO: authentication and control -->
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:ApiCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:ApiCreateController.go(\'' + @{/apimanager/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+												</div>
+											</div>											
+										</form>
+									</div>									
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC  -->						
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->
+				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager.customsql.dialogtitle}" tabindex="-1" role="dialog" style="text-align:left; display: none;">
+					<div>
+		                <br/>
+		                <label style="margin-left: 20px;" class="description" th:text="#{apimanager.operations.method}"></label>
+		                <select  id="id_type_op_customsql" style="margin-right: 20px;margin-left: 10px;width:14%;display:inline;padding-right:5px;" class="element select small form-control">
+		                     <option value="GETCUSTOMSQL" th:text="#{apimanager.operation.GET}" selected="selected"/>
+		                </select>
+		                <label style="margin-right: 10px;" class="description" th:text="#{apimanager.operations.name}"></label>
+		                <input id="id_name_op_customsql" name="id_name_op_customsql" class="element text medium form-control" style="display:inline;width:60%;" type="text" maxlength="50" onblur="validateName(this);"/>
+		                <br/><br/>
+		                <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.query}"></label>
+		                <input style="margin-left: 20px; margin-right: 20px; width: 95%" id="id_query_op_customsql" name="id_query_op_customsql" class="form-control" type="text" maxlength="512" onblur="loadParamsQuery(this.value);"/>
+		                <br/><br/>
+		                <div class="accordion" id="customsql_paramaccordion" style="width: 95%;margin-left: 20px;">
+		                     <div class="group_top_bg" th:text="#{apimanager.customsql.paramsquery}"/>
+		                     <div style="border:0px">
+		                           <ul style="display: inline-table;padding:10px 0;">
+		                               <div id="customsql_noparam_div">
+		                                   <div>
+		                                      <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.paramquery.nodefined}"></label>
+		                                   </div>
+		                               </div>
+		                               <div id="customsql_params_div" style="display: none; width: 700px">
+		                                   <div id="customsql_paramsquery">
+		                                  </div>
+		                               </div>
+		                           </ul>
+		                     </div>
+		                     <div class="group_top_bg" th:text="#{apimanager.customsql.configuration}"></div>
+		                     <div style="border:0px; padding-top:10px;">
+			                    <div>
+				                    <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.querytype}"></label>
+				                    <select  id="id_customsql_querytype" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:loadParamQuerySQLType();'" >
+				                         <option value="SQLLIKE" th:text="SQLLIKE" selected="selected"/>
+				                         <option value="NATIVE" th:text="NATIVE"/>
+				                    </select>
+				                    <label class="description" th:text="#{apimanager.customsql.targetBD}"></label>
+				                    <select  id="id_customsql_targetBD" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:checkformatresult();'">
+				                         <option value="BDTR" th:text="BDTR"  selected="selected"/>
+				                         <option value="BDH" th:text="BDH"/>
+				                    </select>
+			                        <br/><br/>
+			                        <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.descripcion}"></label>
+			                        <input style="margin-left: 20px; margin-right: 20px; margin-bottom: 10px; width: 95%" id="id_desc_op_customsql" name="id_desc_op_customsql" class="form-control" type="text" maxlength="250"/>
+		                        </div>
+		                     </div>
+						      <div style="border:0px; padding-top:10px;">
+						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						        <button type="button" class="btn btn-primary">Save changes</button>
+						      </div>
+		                </div>
+					</div>
+				</div>
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
+	
+	<!-- CORE JS CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	<!-- LOADING DEFAULT DATES IF NEEDED -->
+	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js}" type="text/javascript"></script>
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
+    <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
+	
+	<!-- LOADING DEFAULT LANG MESSAGES IF NEEDED -->
+	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}" type="text/javascript"></script>
+		
+	<!-- MAIN INIT -->
+	<script  th:inline="javascript">
+	
+	var operations = /*[[${operations}]]*/;
+	var authenticacion;
+	var endpoint = /*[[${endpointBase}]]*/;
+	var currentLanguage = [[${lang}]];	
+	
+	var apiCreateJson = { 
+		"endpoint" : endpoint,
+		"validation_dates" : [[#{api.valid.dateDeleted}]],
+		"close" : [[#{gen.closeBtn}]],		
+		"language" : currentLanguage,
+		"actionMode" : [[${api.id}]],
+		"dateCreated" : [[${api.createdAt}]]
+	};
+	
+	var apiCustomOpsJson = { 
+		"endpoint" : endpoint,
+	};
+						
+	// LOAD DATA TO USE IN MENUCONTROLLER
+	// MENU CONTROLLER LOAD AND INIT ITSELF
+	
+   
+	</script>	
+		
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/apiCreate.js}"/>
+	<script th:src="@{/static/js/pages/apiCustomOps.js}"/>
+		
+
+</body>
+</html>

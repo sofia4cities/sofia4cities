@@ -223,7 +223,45 @@ var HeaderController = function() {
 		});		
 	}
 
+	// TWITTERLISTENING-CONFIRM-DIALOG
+	var showTwitterListeningConfirmDialog = function(formId){		
+		logControl ? console.log('showConfirmDialogTwitterlistening()...') : '';
 
+		// i18 labels
+		var Remove = headerReg.btnEliminar;
+		var Close = headerReg.btnCancelar;
+		var Content = headerReg.twitterListeningConfirm;
+		var Title = headerReg.titleConfirm + ':';		
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			type: 'red',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+
+	}
 
 	// ONTOLOGY-CONFIRM-DIALOG
 	var showConfirmDialogOntologia = function(formId){		
@@ -453,7 +491,10 @@ var HeaderController = function() {
 			logControl ? console.log('showConfirmDialogOntologia()...') : '';
 			showConfirmDialogOntologia(formId);
 		},
-
+		showTwitterListeningConfirmDialog: function(formId){		
+			logControl ? console.log('showTwitterListeningConfirmDialog()...') : '';
+			showTwitterListeningConfirmDialog(formId);
+		},
 		// CONFIGURATION-CONFIRM-DIALOG
 		showConfigurationConfirmDialog : function(formId){		
 			logControl ? console.log('showConfigurationConfirmDialog()...') : '';

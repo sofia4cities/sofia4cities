@@ -102,7 +102,7 @@
 					</p>
 					
 					<p class="fieldset">
-						<label class="image-replace cd-password" for="signup-password">Password</label>
+						<label for="signup-password" class="image-replace cd-password popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.password.help},data-title=#{user.password}"> <span th:text="#{user.password} + ':'">Password</span> </label>
 						<input class="full-width has-padding has-border" id="passwordup" th:field="*{password}" name="passwordup" type="text"  placeholder="Password" th:required="true"/>
 						<a href="#0" class="hide-password">Hide</a>
 						<span class="cd-error-message">Error with password</span>
@@ -118,11 +118,6 @@
 						<label class="image-replace cd-email" for="signup-email">E-mail</label>
 						<input class="full-width has-padding has-border" id="signup-email" th:field="*{email}" name ="emailup" type="email" placeholder="E-mail" th:required="true"/>
 						<span class="cd-error-message">Invalid email</span>
-					</p>
-					
-					<p class="fieldset">
-						<input type="checkbox" id="accept-terms" th:field="*{active}" name="active" th:required="true"/>
-						<label for="accept-terms">I agree to the <a href="#0">Terms</a></label>
 					</p>
 					<p class="fieldset">
 						<input class="full-width has-padding" type="submit" value="Create account"/>
@@ -153,7 +148,7 @@
 	</div> <!-- cd-user-modal -->
 	
 	<!-- LEGAL INFO -->
-	<div id="legal" style="z-index: 12;color: #FFF; margin: 1em auto; position: absolute; bottom:5%;vertical-align: middle;text-align: center;width: 100%;" class="">Sofia4Cities Minsait © 2018 Indra Company</div>
+	<div id="legal" style="z-index: 1;color: #FFF; margin: 1em auto; position: absolute; bottom:5%;vertical-align: middle;text-align: center;width: 100%;" class="">Sofia4Cities Minsait © 2018 Indra Company</div>
 	
 	<canvas class="background"></canvas>
 	

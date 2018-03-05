@@ -16,19 +16,19 @@
 	<!-- BEGIN HEADER INNER -->
 	<div class="page-header-inner ">
 		<!-- BEGIN LOGO -->
-		<div class="page-logo">
+		<div class="page-logo">			
+			<div class="menu-toggler sidebar-toggler">
+				<span></span>
+			</div>
 			<a th:href="@{/}">
 				<img alt="logo" class="logo-default" th:src="@{/static/images/logo_sofia2_bk_sm.png}"/>
 				<span class="text-logo">Sofia4Cities</span>
 			</a>
-			<div class="menu-toggler sidebar-toggler">
-				<span></span>
-			</div>
 		</div>
 		<!-- END LOGO -->
 		
-		<!-- BEGIN SEARCH FORM -->
-		<form sec:authorize="!hasAuthority('ROLE_PARTNER')" class="search-form search-docs-form " action="javascript:HeaderController.search();" method="get" >
+		<!-- BEGIN SEARCH FORM DISABLED FOR NOW-->
+		<!-- <form sec:authorize="!hasAuthority('ROLE_PARTNER')" class="search-form search-docs-form " action="javascript:HeaderController.search();" method="get" >
 			<div class="input-group">
 				<input class="form-control"  placeholder="Search" id="search-query" type="text"/>
 				<span class="input-group-btn">
@@ -37,7 +37,7 @@
 					</a>
 				</span>
 			</div>
-		</form>
+		</form> -->
 		<!-- END SEARCH FORM -->
 		
 		<!-- BEGIN RESPONSIVE MENU TOGGLER -->
@@ -102,11 +102,11 @@
 				<!-- END LANGUAGE -->
 				
 				<!-- BEGIN COMMUNICATIONS -->			
-				<!-- <li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
+				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
 					<a id="messages-bell" th:href="@{/comunicaciones/comunicaciones}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Comunicaciones" >
 						<i class="flaticon-bell"></i>  <span class="hidden-sm hidden-xs">Comunicaciones</span>
 					</a>
-				</li> -->
+				</li>
 				<!-- END COMMUNICATIONS -->
 				
 				<!-- BEGIN LOG-OUT -->			
@@ -173,7 +173,7 @@
 			
 	<!-- HEADER DATA TO SEND TO HEADER CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
-		var errores = [[${errors}]];
+		var errores = [[${message}]];
 		var informacion = [[${info}]];		
 		var headerJson = { 
 			"errores": errores,
@@ -183,6 +183,7 @@
 			"btnClose": [[#{gen.closeBtn}]],
 			"titleConfirm":[[#{gen.confirmTitle}]],
 			"userConfirm":[[#{user.delete.confirm}]],
+			"twitterListeningConfirm": [[#{scheduledsearch.delete.confirm}]],
 			"ontologyConfirm":[[#{ontology.delete.confirm}]],
 			"genericConfirm":[[#{dialogo_confirm_delete_text}]],
 			"configurationConfirm":[[#{configuration.del.confirm}]],

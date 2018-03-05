@@ -124,6 +124,11 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 			throw new DBPersistenceException(e);
 		}
 	}
+	
+	public void deleteNativeById(String collection , String objectId) throws DBPersistenceException {
+		log.debug("deleteNativeById", collection, objectId);
+		deleteNative(collection, "{\"_id\": { \"$oid\" : \""+objectId+"\" }}");
+	}
 
 	@Override
 	public void updateNative(String collection, String updateQuery) throws DBPersistenceException {
@@ -166,6 +171,11 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 			log.error("updateNative", e);
 			throw new PersistenceException(e);
 		}
+	}
+	
+	public void updateNativeByObjectIdAndBodyData(String collection, String objectId, String bodyData) {
+		String updateQuery = "db."+collection+".update({\"_id\": {\"$oid\" : \""+objectId+"\" }}, {$set:"+bodyData+" })";
+		updateNative(collection, updateQuery);	
 	}
 
 	/*
@@ -380,5 +390,6 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 			throw new DBPersistenceException("Error executing query in Quasar: " + query, e);
 		}
 	}
+	
 
 }

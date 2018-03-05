@@ -79,8 +79,8 @@
         <module>modules/api-manager</module>
 		<!--        <module>modules/scripting-engine</module-->
 		<module>modules/planner</module>
+		<module>modules/router</module>
 		<module>modules/dashboard-engine</module>
-
 		<!--
         <module>api-manager</module>
 		-->
@@ -128,7 +128,6 @@
 			  </dependency>
 			 </dependencies>
 			</plugin>
-			
 			<plugin>
 			  <groupId>com.github.spotbugs</groupId>
 			  <artifactId>spotbugs-maven-plugin</artifactId>
@@ -142,9 +141,8 @@
 				</dependency>
 			  </dependencies>
 			</plugin>
-	
-			
 		</plugins>
+		
 		<resources>
 		  <resource>
 			<directory>src/test/resources</directory>

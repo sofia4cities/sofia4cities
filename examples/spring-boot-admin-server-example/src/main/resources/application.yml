@@ -1,0 +1,18 @@
+server: ## Config Web Server
+   port: 9999
+
+spring: ## General Config  
+   application.name: sofia2-example-admin-server
+   boot.admin: #Spring Boot Admin Config    
+      routes.endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,customEndPoint
+
+management.security.enabled: false
+
+## LOGGING CONF
+logging:
+   level:
+      org.springframework: INFO
+      com.indra: INFO
+
+
+ 

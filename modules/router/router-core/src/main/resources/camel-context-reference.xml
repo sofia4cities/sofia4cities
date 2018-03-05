@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+	<camelContext id="camel-context-reference" errorHandlerRef="defaultEH" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/spring">
+	
+		<errorHandler id="defaultEH">
+            <redeliveryPolicy maximumRedeliveries="10" retryAttemptedLogLevel="WARN" redeliveryDelay="5000"/>
+        </errorHandler>
+        
+        <errorHandler id="dlc" type="DeadLetterChannel" deadLetterUri="log:DLC">
+            <redeliveryPolicy maximumRedeliveries="5" retryAttemptedLogLevel="INFO" redeliveryDelay="250"
+                              backOffMultiplier="2" useExponentialBackOff="true"/>
+		</errorHandler>
+        
+		
+		<route id="node-red-proxy" errorHandlerRef="defaultEH">
+			<from uri="direct:node-red-proxy" />
+			<to uri="bean:routerServiceImpl?method=nodeRed" />
+		</route>
+		
+		<route id="scripting-engine-proxy" errorHandlerRef="defaultEH">
+			<from uri="direct:scripting-engine-proxy" />
+			<to uri="bean:routerServiceImpl?method=scriptingEngine" />
+		</route>
+		
+	</camelContext>
+	
+	
+
+</beans>

@@ -4,31 +4,34 @@
 
 function submitForm()
 {
-	$('#_checkboxnew').val($('#checkboxnew').is(':checked'));
-  existOntology();
-  existClient();
-	if($('input[name=ontologyId]').val()!="")
-	{
-		if(ontologyExist==false && clientExist==false) $('#scheduledsearch_create_form').submit();
-		else
-		{
-			if(ontologyExist==true) 
+	if($('#_checkboxnew').val($('#checkboxnew').is(':checked'))){
+		 existOntology();
+		 existClient();
+		 if($('input[name=ontologyId]').val()!="")
 			{
-				hideErrors();
-				$('.alert-generic').show();
-				$('.alert-exists-text').html("Ontology Exists");
+				if(ontologyExist==false && clientExist==false) $('#scheduledsearch_create_form').submit();
+				else
+				{
+					if(ontologyExist==true) 
+					{
+						hideErrors();
+						$('.alert-generic').show();
+						$('.alert-exists-text').html("Ontology Exists");
+					}
+					else if(clientExist==true)
+					{ 
+						hideErrors();
+						$('.alert-generic').show();
+						$('.alert-exists-text').html("Platform Client Exists");
+					}
+				}
+			}else{
+				$('#scheduledsearch_create_form').submit();
 			}
-			else if(clientExist==true)
-			{ 
-				hideErrors();
-				$('.alert-generic').show();
-				$('.alert-exists-text').html("Platform Client Exists");
-			}
-		}
-	}else{
-		$('#scheduledsearch_create_form').submit();
-	}
 
+	}
+ 
+	
 }
 function existOntology(){
 	var identification = $('input[name=ontologyId]').val();
@@ -347,7 +350,7 @@ var ScheduledSearchController= function()
 		currentLanguage = scheduledSearchCreateReg.language || LANGUAGE[0];
 		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';    
 
-		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage) : '';
+		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage + ' CurrentFormat: ' + currentFormat) : '';
 
 		// init datepickers dateFrom and dateTo   
 		$("#dateFrom").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
@@ -399,11 +402,11 @@ var ScheduledSearchController= function()
     
     // set action and twitterListeningId to the form
     $('.delete-twitterListening').attr('id',twitterListeningId);
-    $('.delete-twitterListening').attr('action','/controlpanel/twitterListenings/' + twitterListeningId);
-    console.log('deleteconfiugrationConfirmation() -> formAction: ' + $('.delete-twitterListening').attr('action') + ' ID: ' + $('.delete-twitterListening').attr('userId'));
+    $('.delete-twitterListening').attr('action','/controlpanel/twitter/scheduledsearch/' + twitterListeningId);
+    console.log('deletetwitterListeningConfirmation() -> formAction: ' + $('.delete-twitterListening').attr('action') + ' ID: ' + $('.delete-twitterListening').attr('userId'));
     
     // call twitterListening Confirm at header.
-    HeaderController.showtwitterListeningConfirmDialog(twitterListeningId); 
+    HeaderController.showTwitterListeningConfirmDialog(twitterListeningId); 
   }
 
 

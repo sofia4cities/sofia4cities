@@ -21,21 +21,37 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 
 public interface UserService {
-	
-	public Token getToken(String token) ;
-	public UserToken getUserToken(String token);
-	public User getUser(UserToken token);
-	public User getUserByToken(String token);
-	public User getUser(String userId);
-	public List<Role> getAllRoles();
-	public UserToken getUserToken(User userId);
-	public List<User> getAllUsers();
-	public List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType,Boolean active);
-	public void createUser(User user);
-	public boolean userExists(User user);
-	public void updateUser(User user);
-	public Role getUserRole(String role);
-	public void deleteUser(String userId);
-	public boolean registerUser(User user);
+
+	Token getToken(String token);
+
+	UserToken getUserToken(String token);
+
+	User getUser(UserToken token);
+
+	User getUserByToken(String token);
+
+	User getUser(String userId);
+
+	List<Role> getAllRoles();
+
+	List<UserToken> getUserToken(User userId);
+
+	List<User> getAllUsers();
+
+	List<User> getAllUsersByCriteria(String userId, String fullName, String email, String roleType, Boolean active);
+
+	void createUser(User user);
+
+	boolean userExists(User user);
+
+	void updateUser(User user);
+
+	Role getUserRole(String role);
+
+	void deleteUser(String userId);
+
+	void registerUser(User user);
+
+	UserToken getUserToken(String user, String token);
 
 }

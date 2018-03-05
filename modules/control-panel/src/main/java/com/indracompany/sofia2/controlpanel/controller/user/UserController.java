@@ -185,7 +185,7 @@ public class UserController {
 		model.addAttribute("user", user);
 		UserToken userToken = null;
 		try {
-			userToken = this.userService.getUserToken(user);
+			userToken = this.userService.getUserToken(user).get(0);
 		} catch (Exception e) {
 			log.debug("No token found for user: " + user);
 		}
@@ -212,27 +212,23 @@ public class UserController {
 		model.addAttribute("roleTypes", this.userService.getAllRoles());
 	}
 
-	@RequestMapping(value = "/register" ,  method = RequestMethod.POST)
-	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes)
-	{
-		if(user!=null)
-		{
-			
-			if(user.getUserId() != null && user.getPassword() != null && user.getFullName() != null && user.getEmail() != null && user.isActive() == true )
-			{	
-				if (this.userService.registerUser(user)) {
-					log.debug("User created from login");
-					utils.addRedirectMessage("login.register.created", redirectAttributes);
-					return "redirect:/login";
-				}
-				log.debug("This user already exist");
-				utils.addRedirectMessage("login.error.register", redirectAttributes);
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+		if (user.getUserId() != null && user.getPassword() != null && user.getFullName() != null
+				&& user.getEmail() != null && user.isActive() == true) {
+			try {
+				userService.registerUser(user);
+				log.debug("User created from login");
+				utils.addRedirectMessage("login.register.created", redirectAttributes);
 				return "redirect:/login";
-								
+
+			} catch (Exception e) {
+				log.error("Error registering user" + e.getMessage());
+				utils.addRedirectException(e, redirectAttributes);
+				return "redirect:/login";
 			}
 		}
-		
 		return "redirect:/login?errorRegister";
-		
 	}
+
 }

@@ -51,8 +51,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserToken getUserToken(String token) {
-		return userTokenRepository.findByToken(token);
+	public UserToken getUserToken(String user, String token) {
+		return userTokenRepository.findByUserAndToken(user, token);
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserToken getUserToken(User userId) {
+	public List<UserToken> getUserToken(User userId) {
 		return this.userTokenRepository.findByUser(userId);
 	}
 
@@ -158,24 +158,33 @@ public class UserServiceImpl implements UserService {
 			this.userRepository.save(user);
 		} else
 			throw new UserServiceException("Cannot delete user that does not exist");
+	}
+
+	Role getRoleDeveloper() {
+		Role r = new Role();
+		r.setName(Role.Type.ROLE_DEVELOPER.name());
+		r.setIdEnum(Role.Type.ROLE_DEVELOPER);
+		return r;
+	}
+
+	@Override
+	public void registerUser(User user) {
+		// FIXME
+		if (user.getPassword().length() < 7)
+			throw new UserServiceException("Password has to be at least 7 characters");
+		if (this.userExists(user))
+			throw new UserServiceException(
+					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
+
+		user.setRole(getRoleDeveloper());
+		log.debug("Creating user with Role Developer default");
+
+		this.userRepository.save(user);
 
 	}
 
 	@Override
-	public boolean registerUser(User user) {
-
-		if (!this.userExists(user)) {
-
-			Role r = new Role();
-			r.setName(Role.Type.ROLE_USER.name());
-			r.setIdEnum(Role.Type.ROLE_USER);
-			user.setRole(r);
-
-			this.userRepository.save(user);
-			return true;
-		}
-
-		return false;
-
+	public UserToken getUserToken(String token) {
+		return userTokenRepository.findByToken(token);
 	}
 }

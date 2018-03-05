@@ -135,7 +135,7 @@ var GraphController = function() {
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf0e4',	size: 60, color: '#5e738b' }
 			},			
-			Clusterontologias:{
+			Clusterontologies:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf0e8',	size: 60, color: '#5e738b' }
 			},
@@ -149,12 +149,7 @@ var GraphController = function() {
 			},
 			Clusterkps:{
 				shape: 'icon',
-				icon: {
-					face: 'FontAwesome',
-					code: '\uf2db',
-					size: 60,
-					color: '#5e738b'
-				}
+				icon: { face: 'FontAwesome', code: '\uf2db', size: 60, color: '#5e738b'	}
 			},
 			Clusterscripts:{
 				shape: 'icon',
