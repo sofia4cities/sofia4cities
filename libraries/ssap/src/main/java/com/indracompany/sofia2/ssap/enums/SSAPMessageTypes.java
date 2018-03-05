@@ -15,13 +15,15 @@ package com.indracompany.sofia2.ssap.enums;
 
 public enum SSAPMessageTypes {
 	NONE,
-	
+
 	JOIN,
 	LEAVE,
-	
+
 	INSERT,
 	UPDATE,
+	UPDATE_BY_ID,
 	DELETE,
-	
+	DELETE_BY_ID,
+
 	QUERY
 }

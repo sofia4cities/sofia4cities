@@ -88,7 +88,7 @@ public class DataModel extends AuditableEntityWithUUID {
 	private String labels;
 
 	public String getSchema() {
-		String schema = this.jsonSchema.toString();
+		String schema = this.jsonSchema;
 		if (schema != null && schema.length() > 0) {
 			schema = schema.replaceAll("\\<.*?>", "");
 			schema = schema.replaceAll("&nbsp;", "");

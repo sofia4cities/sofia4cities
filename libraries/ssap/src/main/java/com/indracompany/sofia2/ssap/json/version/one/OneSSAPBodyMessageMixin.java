@@ -25,6 +25,5 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 //})
 public abstract class OneSSAPBodyMessageMixin {
 	@JsonIgnore public abstract boolean isSessionKeyMandatory();
-	@JsonIgnore public abstract boolean isAutorizationMandatory();
 	@JsonIgnore public abstract boolean isOntologyMandatory();
 }

@@ -389,7 +389,7 @@ public class OntologyServiceImpl implements OntologyService {
 			throw new OntologyServiceException("The user is not authorized");
 		}
 	}
-	
+
 	@Override
 	public OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId, String sessionUserId) {
 		Ontology ontology = getOntologyById(ontologyId, sessionUserId);
@@ -440,8 +440,7 @@ public class OntologyServiceImpl implements OntologyService {
 		} else {
 			throw new IllegalStateException("Incorrect type of access");
 		}
-		
-		
+
 	}
 	
 	@Override

@@ -35,8 +35,8 @@ public class FlowServiceImpl implements FlowService {
 
 	@Override
 	public Flow createFlow(Flow flow) {
-		List<Flow> result = flowRepository.findByIdentification(flow.getIdentification());
-		if (result == null || result.isEmpty()) {
+		Flow result = flowRepository.findByNodeRedFlowId(flow.getNodeRedFlowId());
+		if (result == null) {
 			return flowRepository.save(flow);
 		} else {
 			throw new FlowServiceException("Flow already exists");

@@ -23,10 +23,6 @@ public class NotificationModel implements Serializable{
 
 	@Getter
 	@Setter
-	BrokerModel brokerModel;
-	
-	@Getter
-	@Setter
 	OperationModel operationModel;
 	
 }

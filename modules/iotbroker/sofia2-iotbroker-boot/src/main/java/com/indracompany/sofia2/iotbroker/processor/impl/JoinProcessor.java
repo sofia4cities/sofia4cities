@@ -21,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.indracompany.sofia2.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
+import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
@@ -49,7 +49,7 @@ public class JoinProcessor implements MessageTypeProcessor {
 		final SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
 
 		if (StringUtils.isEmpty(join.getBody().getToken())) {
-			throw new SSAPComplianceException(MessageException.ERR_TOKEN_IS_MANDATORY);
+			throw new SSAPComplianceException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "token", message.getMessageType().name()));
 		}
 
 		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(), join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance());
@@ -72,13 +72,15 @@ public class JoinProcessor implements MessageTypeProcessor {
 	}
 
 	@Override
-	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws SSAPProcessorException {
+	public boolean validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws SSAPProcessorException {
 		final SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
 
 		if(StringUtils.isEmpty(join.getBody().getClientPlatform()) || StringUtils.isEmpty(join.getBody().getClientPlatformInstance()))
 		{
-			throw new SSAPProcessorException(String.format(MessageException.ERR_THINKP_IS_MANDATORY, join.getMessageType().name()));
+			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "ClientPlatform",join.getMessageType().name()));
 		}
+
+		return true;
 	}
 
 }

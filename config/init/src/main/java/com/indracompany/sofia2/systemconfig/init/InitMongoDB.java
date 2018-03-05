@@ -27,10 +27,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.indracompany.sofia2.commons.OSDetector;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
@@ -65,6 +66,7 @@ public class InitMongoDB {
 	public void init() {
 		init_AuditGeneral();
 		init_RestaurantsDataSet();
+		init_HelsinkiPopulationDataSet();
 	}
 
 	private User getUserDeveloper() {
@@ -73,12 +75,17 @@ public class InitMongoDB {
 	}
 
 	public void init_RestaurantsDataSet() {
-		Process p = null;
 		try {
 			log.info("init RestaurantsDataSet");
 			Runtime r = Runtime.getRuntime();
-			String command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/restaurants-dataset.json";
-			p = r.exec(command);
+			String command = null;
+			if (OSDetector.isWindows()) {
+				command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/restaurants-dataset.json";
+			} else {
+				command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/restaurants-dataset.json";
+
+			}
+			r.exec(command);
 			log.info("Reading JSON into Database...");
 			if (manageDb.getListOfTables4Ontology("Restaurants").isEmpty()) {
 				log.info("No Collection Restaurants, creating...");
@@ -86,7 +93,7 @@ public class InitMongoDB {
 			}
 			if (ontologyRepository.findByIdentification("Restaurants") == null) {
 				Ontology ontology = new Ontology();
-				ontology.setJsonSchema(this.loadFromResources("Restaurants_schema.json"));
+				ontology.setJsonSchema(this.loadFromResources("Restaurants-schema.json"));
 				ontology.setIdentification("Restaurants");
 				ontology.setDescription("Ontology Restaurants for testing");
 				ontology.setActive(true);
@@ -100,7 +107,43 @@ public class InitMongoDB {
 			}
 
 		} catch (Exception e) {
-			log.error("Error creating Restaurants DataSet...ignoring");
+			log.error("Error creating Restaurants DataSet...ignoring", e);
+		}
+	}
+
+	public void init_HelsinkiPopulationDataSet() {
+		try {
+			log.info("init init_HelsinkiPopulationDataSet");
+			Runtime r = Runtime.getRuntime();
+			String command = null;
+			if (OSDetector.isWindows()) {
+				command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/HelsinkiPopulation-dataset.json";
+			} else {
+				command = "mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/HelsinkiPopulation-dataset.json";
+
+			}
+			r.exec(command);
+			log.info("Reading JSON into Database...");
+			if (manageDb.getListOfTables4Ontology("HelsinkiPopulation").isEmpty()) {
+				log.info("No Collection HelsinkiPopulation, creating...");
+				manageDb.createTable4Ontology("HelsinkiPopulation", "{}");
+			}
+			if (ontologyRepository.findByIdentification("HelsinkiPopulation") == null) {
+				Ontology ontology = new Ontology();
+				ontology.setJsonSchema(this.loadFromResources("HelsinkiPopulation-schema.json"));
+				ontology.setIdentification("HelsinkiPopulation");
+				ontology.setDescription("Ontology HelsinkiPopulation for testing");
+				ontology.setActive(true);
+				ontology.setRtdbClean(true);
+				ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
+				ontology.setRtdbToHdb(true);
+				ontology.setPublic(true);
+				ontology.setUser(getUserDeveloper());
+				ontologyRepository.save(ontology);
+			}
+
+		} catch (Exception e) {
+			log.error("Error creating HelsinkiPopulation DataSet...ignoring", e);
 		}
 	}
 
@@ -126,6 +169,7 @@ public class InitMongoDB {
 			}
 		}
 	}
+
 	private String loadFromResources(String name) {
 		try {
 			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
@@ -139,6 +183,4 @@ public class InitMongoDB {
 		}
 	}
 
-
 }
-
