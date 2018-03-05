@@ -81,7 +81,7 @@ public class RouterFlowManagerService {
 		
 		NotificationCompositeModel compositeModel = (NotificationCompositeModel) exchange.getIn().getBody();
 		OperationModel model = compositeModel.getNotificationModel().getOperationModel();
-		String METHOD = model.getOperationType();
+		String METHOD = model.getOperationType().name();
 		
 		OperationResultModel fallback = new OperationResultModel();
 		fallback.setResult("NO_RESULT");
@@ -89,21 +89,21 @@ public class RouterFlowManagerService {
 		compositeModel.setOperationResultModel(fallback);
 		
 		try {
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.QUERY.name())) {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
 				
 				OperationResultModel result =routerCrudService.query(model);
 				compositeModel.setOperationResultModel(result);
 			}
 			
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.INSERT.name())) {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
 				OperationResultModel result =routerCrudService.insert(model);
 				compositeModel.setOperationResultModel(result);
 			}
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.UPDATE.name())) {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
 				OperationResultModel result =routerCrudService.update(model);
 				compositeModel.setOperationResultModel(result);
 			}
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.Operations.DELETE.name())) {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
 				OperationResultModel result =routerCrudService.delete(model);
 				compositeModel.setOperationResultModel(result);
 			}
@@ -122,7 +122,7 @@ public class RouterFlowManagerService {
 		OperationModel model = compositeModel.getNotificationModel().getOperationModel();
 		
 		String ontologyName = model.getOntologyName();
-		String messageType = model.getOperationType();
+		String messageType = model.getOperationType().name();
 		
 		List<NotificationEntity>  listNotifications=null;
 		try {

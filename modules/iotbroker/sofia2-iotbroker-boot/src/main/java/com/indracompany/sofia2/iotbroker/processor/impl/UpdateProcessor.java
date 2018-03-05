@@ -32,6 +32,8 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -80,10 +82,11 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
 		final Optional<IoTSession> session = securityPluginManager.getSession(updateMessage.getSessionKey());
+
 		final OperationModel model = new OperationModel();
 		model.setOntologyName(updateMessage.getBody().getOntology());
-		model.setOperationType(OperationModel.Operations.UPDATE.name());
-		model.setQueryType("NATIVE");
+		model.setOperationType(OperationType.PUT);
+		model.setQueryType(QueryType.NATIVE);
 		model.setBody(updateMessage.getBody().getQuery());
 		model.setUser(session.get().getUserID());
 
@@ -124,8 +127,8 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		final OperationModel model = new OperationModel();
 		model.setObjectId(updateMessage.getBody().getId());
 		model.setOntologyName(updateMessage.getBody().getOntology());
-		model.setOperationType(OperationModel.Operations.UPDATE.name());
-		model.setQueryType("NATIVE");
+		model.setOperationType(OperationType.PUT);
+		model.setQueryType(QueryType.NATIVE);
 		model.setBody(updateMessage.getBody().getData().toString());
 		model.setUser(session.get().getUserID());
 

@@ -32,6 +32,8 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -78,8 +80,8 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		final OperationModel model = new OperationModel();
 		model.setObjectId(message.getBody().getId());
 		model.setOntologyName(message.getBody().getOntology());
-		model.setOperationType(OperationModel.Operations.DELETE.name());
-		model.setQueryType("NATIVE");
+		model.setOperationType(OperationType.DELETE);
+		model.setQueryType(QueryType.NATIVE);
 		model.setUser(session.get().getUserID());
 		//		model.setBody(message.getBody().getData().toString());
 
@@ -119,10 +121,11 @@ public class DeleteProcessor implements MessageTypeProcessor {
 
 		final OperationModel model = new OperationModel();
 		model.setOntologyName(message.getBody().getOntology());
-		model.setOperationType(OperationModel.Operations.DELETE.name());
-		model.setQueryType("NATIVE");
+		model.setOperationType(OperationType.DELETE);
+		model.setQueryType(QueryType.NATIVE);
 		model.setBody(message.getBody().getQuery());
 		model.setUser(session.get().getUserID());
+
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
 

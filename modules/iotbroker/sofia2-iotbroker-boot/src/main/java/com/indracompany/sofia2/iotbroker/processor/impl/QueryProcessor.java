@@ -32,6 +32,8 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -59,13 +61,15 @@ public class QueryProcessor implements MessageTypeProcessor {
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
 		final Optional<IoTSession> session = securityPluginManager.getSession(queryMessage.getSessionKey());
+
 		final OperationModel model = new OperationModel();
 
 		model.setBody(queryMessage.getBody().getQuery());
 		model.setOntologyName(queryMessage.getBody().getOntology());
-		model.setOperationType(OperationModel.Operations.QUERY.name());
-		model.setQueryType(queryMessage.getBody().getQueryType().name());
+		model.setOperationType(OperationType.QUERY);
+		model.setQueryType(QueryType.valueOf(queryMessage.getBody().getQueryType().name()));
 		model.setUser(session.get().getUserID());
+
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -74,7 +78,7 @@ public class QueryProcessor implements MessageTypeProcessor {
 		String responseStr = null;
 		String messageStr= null;
 		try {
-			result = routerService.delete(modelNotification);
+			result = routerService.query(modelNotification);
 			responseStr = result.getResult();
 			messageStr = result.getMessage();
 			responseMessage.getBody().setData(objectMapper.readTree(responseStr));
