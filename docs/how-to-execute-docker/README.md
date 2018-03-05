@@ -22,7 +22,7 @@ It is necessary to have installed Docker and Docker Compose, for this you have t
 
 #### <a name="compile"></a>Step 2: Compile the sources with Maven to generate the artifacts (.jar)
 
-From the root of the project execute: **mvn clean install -Dmaven.test.skip = true** (to display in local we can skip the tests)
+From the root of the project execute: **mvn clean install -Dmaven.test.skip = true** (In this step we can skip the tests)
 
 #### <a name="dockerbuild"></a>Step 3: Generate Docker images of the platform
 
@@ -32,7 +32,7 @@ Within the docker-deployment directory we execute the script **./image-generatio
 
 #### <a name="composedata"></a>Step 4: Launch the execution of containers in the persistence layer
 
-In the **docker-deployment / data** directory, in a shell, we execute docker-compose up, this will raise the persistence layer of the platform
+In the **docker-deployment / data** directory, in a shell, we execute docker-compose up, this will launch the persistence layer of the Platform
 (configdb, schedulerdb, realtimedb and quasar) with Docker containers, once you have finished, go to Step 5.
 
 To stop the containers: **ctrl + c** and write **docker-compose down**
@@ -47,7 +47,7 @@ Once the containers of the persistence layer have been activated it is necessary
 
 #### <a name="composemodules"></a>Step 6: Launch the execution of the containers of the platform modules
 
-In the **docker-deployment / modules** directory we execute, in a different shell, docker-compose up to lift Platform modules (**Control Panel**, **IoT Broker** and **API Manager**)
+In the **docker-deployment / modules** directory we execute, in a different shell, **docker-compose up** to launch Platform modules (**Control Panel**, **IoT Broker** and **API Manager**)
 
 Once the containers of all the modules are up and running, we can access the Control Panel by putting the following url in the web browser: http://localhost:8091/controlpanel
 
