@@ -91,7 +91,7 @@
 	<!--        <module>modules/scripting-engine</module-->
 		<module>modules/planner</module>
 		 <module>modules/router</module>
-        <module>modules/flowEngine</module>
+        <module>modules/flow-engine</module>
 		<!--
         <module>api-manager</module>
 		-->
