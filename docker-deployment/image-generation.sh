@@ -78,6 +78,10 @@ if [ -z "$1" ]; then
 	# API manager image
 	cd $homepath/../modules/api-manager/	
 	buildImage "API Manager"
+	
+	# Flow Engine image
+	cd $homepath/../modules/flow-engine/	
+	buildImage "Flow Engine"	
 fi
 
 # Generates images only if they are not present in local docker registry
