@@ -11,19 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.service.app.service;
+package com.indracompany.sofia2.router.config;
 
-import com.indracompany.sofia2.router.service.app.model.NotificationModel;
-import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
+import com.indracompany.sofia2.router.service.app.service.SuscriptionRepository;
 
-public interface RouterService {
-	
-	public OperationResultModel insert (NotificationModel model)  throws Exception;
-	public OperationResultModel update (NotificationModel model)  throws Exception;
-	public OperationResultModel delete (NotificationModel model)  throws Exception;
-	public OperationResultModel query (NotificationModel model)  throws Exception;
-		
+@Configuration
+public class SuscriptionConfig {
+
+	@Bean
+	SuscriptionRepository<SuscriptionModel> suscriptionRepository(){
+		SuscriptionRepository<SuscriptionModel> bean = new SuscriptionRepository<SuscriptionModel>();
+		return bean;
+	}
+
 }
-
-

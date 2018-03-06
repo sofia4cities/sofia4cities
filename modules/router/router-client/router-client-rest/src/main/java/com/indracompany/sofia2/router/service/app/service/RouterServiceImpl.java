@@ -29,7 +29,7 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 	@Value("${sofia2.flowengine.home.base:http://localhost:19100/router/router/}")
 	private String routerStandaloneURL;
 
-	@Override
+	
 	public OperationResultModel execute(NotificationModel input) {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
@@ -79,10 +79,7 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 		return execute(model);
 	}
 
-	@Override
-	public OperationResultModel subscribe(NotificationModel model) throws Exception {
-		return execute(model);
-	}
+	
 
 	public String getRouterStandaloneURL() {
 		return routerStandaloneURL;
@@ -91,6 +88,8 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 	public void setRouterStandaloneURL(String routerStandaloneURL) {
 		this.routerStandaloneURL = routerStandaloneURL;
 	}
+
+	
 
 	
 
