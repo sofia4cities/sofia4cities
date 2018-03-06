@@ -9,10 +9,40 @@ var ApiCreateController = function() {
 	var currentFormat = '' // date format depends on currentLanguage.
 	var internalFormat = 'yyyy/mm/dd';
 	var internalLanguage = 'en';
+	var reader = new FileReader();
+    
+	reader.onload = function (e) {
+        $('#showedImg').attr('src', e.target.result);
+    }
 	
-	
+
 	// CONTROLLER PRIVATE FUNCTIONS	
-    var calculateVersion = function() {
+    var showGenericErrorDialog= function(dialogTitle, dialogContent){		
+		logControl ? console.log('showErrorDialog()...') : '';
+		var Close = headerReg.btnCancelar;
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-bug',
+			title: dialogTitle,
+			theme: 'dark',
+			content: dialogContent,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {				
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});			
+	}
+	
+	
+	var calculateVersion = function() {
 
         var identification = $('#identification').val();
         var apiType = $('#apiType').val();
@@ -246,7 +276,7 @@ var ApiCreateController = function() {
             rules: {
             	identification:		{ minlength: 5, maxlength: 50, required: true },
             	categories:			{ required: true },
-            	apiType:			{ required: true},
+            	apiType:			{ required: true },
             	ontology:			{ required: true },
             	id_endpoint:		{ required: true },
             	apiDescripcion:		{ required: true },
@@ -277,14 +307,21 @@ var ApiCreateController = function() {
                 success1.show();
                 error1.hide();
 				// date conversion to DDBB format.
-				if ( formatDates('#datecreated') && validateDescOperations()) {
-					formatData();
-					form.submit();
+                var error = "";
+                formatData();
+				if (!formatDates('#datecreated')){
+					error = "";
 				} 
-				else { 
-					success1.hide();
-					error1.show();
-					App.scrollTo(error1, -200);
+				if (error == "" && operations.length==0) {
+					error = apiCreateReg.apimanager_noops_error;
+				}
+				if (error == "" && !validateDescOperations()) {
+					error = apiCreateReg.apimanager_ops_description_error;
+				}
+				if (error == ""){
+					form.submit();
+				} else { 
+					showGenericErrorDialog('ERROR', error);
 				}				
             }
         });
@@ -466,21 +503,27 @@ var ApiCreateController = function() {
             }
             
             $("#operationsObject").val(JSON.stringify(operations));
-            $("#authenticationObject").val(JSON.stringify(authenticacion));
+            $("#authenticationObject").val(JSON.stringify(authentication));
         }
     }
     
     function validateImgSize() {
-        if($('#image').prop('files')[0].size>60*1024){
-        	//$('#dialog-error').innerHTML="[[#{tiposassets_formulario_imagen_error}]]";
-           //showErrorDialog();
+        if ($('#image').prop('files') && $('#image').prop('files')[0].size>60*1024){
+        	showGenericErrorDialog('Error', apiCreateReg.apimanager_image_error);
         	$('#image').val("");
+         } else if ($('#image').prop('files')) {
+        	 reader.readAsDataURL($("#image").prop('files')[0]);
          }
     }
 
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
-	
+		// SHOW ERROR DIALOG
+		showErrorDialog: function(dialogTitle, dialogContent) {
+			logControl ? console.log(LIB_TITLE + ': showErrorDialog(dialogTitle, dialogContent)') : '';
+			showGenericErrorDialog(dialogTitle, dialogContent);
+		},
+		
 		// VALIDATE IMAGE SIZE
 		validateImageSize: function() {
 			logControl ? console.log(LIB_TITLE + ': validateImgSize()') : '';
@@ -515,7 +558,7 @@ var ApiCreateController = function() {
 		// SELECT OPERATIONS
 		existOperation: function(name) {
 			logControl ? console.log(LIB_TITLE + ': existOperation(name)') : '';
-			existOp(name);
+			return existOp(name);
 		},
 		
 		

@@ -141,14 +141,9 @@
 					                                        <label for="checkbox" th:text="#{apimanager.limit}">Limit</label>
 				                                        </div>
 													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-						                                    <label class="description notAnimate" for="id_cachetimeout" th:text="#{apimanager.cachetimeout}">Cache Timeout(minutes)</label>
-					                                        <p th:if="${api.cachetimeout!= null}" class="form-control-static-block bold" th:text="*{cachetimeout}">Timeout </p>
-					                                        <p th:if="${api.cachetimeout== null}" class="form-control-static-block bold" text=" ">&nbsp;</p>
-					                                        <span><input id="checkboxCache" name="checkboxCache" type="checkbox" th:checked="${api.cachetimeout!= null}" onchange="ApiCreateController.changeCacheTimeout();"/></span>
-						                                    <label for="checkbox" th:text="#{apimanager.cache}">Caching of API results</label>
-					                                    </div>
+													<div class="col-md-2 col-sm-6 col-xs-12">
+														<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
+														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/img/API.png}" style="height: 60px;" class="pull-right"/>
 													</div>
 												</div>
 												<!-- endpoint, image -->												
@@ -159,10 +154,7 @@
 						                                    <p class="form-control-static-block bold" th:text="*{endpoint}">EndPoint </p>
 					                                    </div>
 													</div>
-													<div class="col-md-2 col-sm-6 col-xs-12">
-														<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
-														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/resources/images/API.png}" style="height: 60px;" class="pull-right"/>
-													</div>
+
 												</div>
 												<!-- description -->
 												<div class="row">
@@ -274,7 +266,6 @@
 						                                                        		style="width: 110px; margin-left: 25px;" type="button" 
 						                                                        		value="CUSTOM (query)" 
 						                                                        		th:name="${(operation.identification + 'CUSTOMSQL')}" 
-						                                                        		th:value="#{apimanager_formulario_operation_CUSTOMSQL}" 
 						                                                        		th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'"/>
 						                                                    </div>
 						                                                    <label th:id="${operation.identification + '_LABEL'}" class="description" style="padding-left: 20px;" th:text="${operation.identification}"/>
@@ -315,13 +306,13 @@
 						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->
-				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager.customsql.dialogtitle}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
+				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager.CUSTOMSQL}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
 					<div class="modal-dialog">
 					    <!-- Modal content-->
 					    <div class="modal-content">					
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title">Modal Header</h4>
+								<h4 class="modal-title"></h4>
 							</div>
 							<div class="modal-body">
 				                <label class="description" th:text="#{apimanager.operations.method}"></label>
@@ -405,12 +396,14 @@
 		
 	var operations = /*[[${operations}]]*/;
 	var authenticacion;
+	var endpoint = /*[[${endpointBase}]]*/;
+	var currentLanguage = [[${lang}]];	
 	
 	// REDIRECT URL
 	var navigateUrl = function(url){ window.location.href = url; }
 	
 	var apiCustomOpsJson = { 
-			"endpoint" : [[#{apimanager_customsql_error_query_params}]],
+			"endpoint" : endpoint,
 			"apimanager_customsql_error_query_params" : [[#{apimanager_customsql_error_query_params}]],
 			"apimanager_customsql_error_query_ontology" : [[#{apimanager_customsql_error_query_ontology}]],
 			"apimanager_customsql_error_query" : [[#{apimanager_customsql_error_query}]],
