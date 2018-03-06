@@ -118,7 +118,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		}
 
 		final IoTSession session = sessionList.get(sessionKey);
-		final Ontology ontologyDB = ontologyService.getOntologyByIdentification(ontology);
+		final Ontology ontologyDB = ontologyService.getOntologyByIdentification(ontology, session.getUserID());
 		final ClientPlatform clientPlatformDB = clientPlatformService.getByIdentification(session.getClientPlatform());
 
 		return clientPlatformService.haveAuthorityOverOntology(clientPlatformDB, ontologyDB);

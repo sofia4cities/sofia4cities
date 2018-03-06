@@ -55,6 +55,7 @@ public class InitialFactsRule {
 
 		String query = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY, request)).orElse("");
 		String queryType = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY_TYPE, request)).orElse(QueryType.NONE.name());
+		String contentTypeInput= RequestDumpUtil.getContentType(request);
 
 		String headerToken = request.getHeader(ApiServiceInterface.AUTHENTICATION_HEADER);
 		if (headerToken == null) {
@@ -78,6 +79,8 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.TARGET_DB_PARAM, targetDb);
 		data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
 		data.put(ApiServiceInterface.METHOD, method);
+		data.put(ApiServiceInterface.CONTENT_TYPE_INPUT, contentTypeInput);
+		
 		facts.put(RuleManager.ACTION, method);
 		
 		

@@ -265,18 +265,26 @@
 					                                                            <input id="description_GETOPS" name="description_GETOPS" class="form-control" type="text" maxlength="250"/>
 					                                                        </div>
 					                                                     </div>
-					                                                     <div id="divCUSTOMSQLS" style="display:none;"></div>
-					                                                     <div id="divCUSTOMSQL" class="op_div">
-					                                                        <div id="buttonOperationCUSTOMSQL" class="op_button_div">
-					                                                            <input id="CUSTOMSQL" class="op_button" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" onclick="ApiCustomOpsController.showCustomSqlDialog('')"/>
-					                                                        </div>
-					                                                        <div id="descOperationCUSTOMSQL" class="op_desc_div" style="display:none">
-					                                                            <b><label id ="description_CUSTOMSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_CUSTOMSQL"></label></b>
-					                                                            <br/>
-					                                                            <b><label id ="description_operacion_CUSTOMSQL" class="description" for="description_CUSTOMSQL" th:text="#{apimanager.description}"></label></b>
-					                                                            <input id="description_CUSTOMSQL" name="description_CUSTOMSQL" class="form-control" type="text" maxlength="250"/>
-					                                                        </div>
-					                                                     </div>
+						                                                 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_GETSQL')}
+						                                                 													AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')}
+						                                                 													AND ${!#strings.endsWith(operation.identification,'_DELETE')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
+						                                                    <div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" style="margin-Top:30px;margin-bottom: 30px">
+						                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}"
+						                                                        		class="op_button_selected"
+						                                                        		style="width: 110px; margin-left: 25px;" type="button" 
+						                                                        		value="CUSTOM (query)" 
+						                                                        		th:name="${(operation.identification + 'CUSTOMSQL')}" 
+						                                                        		th:value="#{apimanager_formulario_operation_CUSTOMSQL}" 
+						                                                        		th:onclick="'javascript:showCustomSqlDialog(\'' + ${operation.identification} + '\');'"/>
+						                                                    </div>
+						                                                    <label th:id="${operation.identification + '_LABEL'}" class="description" style="padding-left: 20px;" th:text="${operation.identification}"/>
+						                                                    <br/>
+						                                                    <b><span th:id="${operation.identification + '_PATH'}" style="padding-left: 20px; width: 93%;" th:text="${operation.path}"/></b>
+						                                                    <br/>
+						                                                    <b><span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-left: 20px; width: 93%;" th:text="${querystring.value}"/></b>
+						                                                    <br/>
+						                                                    <span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px;" th:text="${operation.description}"/>
+						                                                 </div>
 					                                                 </div>
 					                                             </div>
 					                                         </fieldset>

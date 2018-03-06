@@ -38,6 +38,12 @@ public class RequestDumpUtil {
     	return value;
     	
     }
+    
+ public static String getContentType(HttpServletRequest request ) {
+    	
+	 return request.getContentType();
+    	
+    }
 
     public static void dumpRequest(StringBuilder sb, HttpServletRequest request) {
         sb.append(INDENT).append("[Class] ").append(request.getClass().getName()).append(", instance=" + request.toString().trim()).append(LF);
