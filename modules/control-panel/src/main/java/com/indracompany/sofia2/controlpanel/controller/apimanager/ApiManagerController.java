@@ -191,6 +191,16 @@ public class ApiManagerController {
 		apiManagerHelper.populateUserTokenForm(model);
 		return "apimanager/token";
 	}
+	
+	@GetMapping(value = "/invoke" , produces = "text/html")
+	public String invoker(Model model,	@RequestParam(required = false) String apiId) {		
+		
+//		apiManagerHelper.populateApiManagerListForm(model);
+//		
+//		model.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user));
+		
+		return "apimanager/invoke";
+	}
 		
 	@RequestMapping(value = "numVersion")
 	public @ResponseBody Integer numVersion(@RequestBody String numversionData){
