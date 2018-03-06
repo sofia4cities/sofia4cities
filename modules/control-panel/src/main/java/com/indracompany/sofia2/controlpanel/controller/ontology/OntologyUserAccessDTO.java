@@ -18,7 +18,7 @@ import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import lombok.Getter;
 import lombok.Setter;
 
-class OntologyUserAccessDTO {
+public class OntologyUserAccessDTO {
 	
 	public OntologyUserAccessDTO(OntologyUserAccess ontologyUserAccessCreated) {
 		this.id = ontologyUserAccessCreated.getId();

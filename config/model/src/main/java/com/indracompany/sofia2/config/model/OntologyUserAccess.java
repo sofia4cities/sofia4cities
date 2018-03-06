@@ -21,6 +21,7 @@
 package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -30,6 +31,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
 import lombok.Getter;
@@ -41,6 +43,8 @@ import lombok.Setter;
 @Configurable
 public class OntologyUserAccess extends AuditableEntityWithUUID {
 
+	private static final long serialVersionUID = 1L;
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "ONTOLOGY_USER_ACCESS_TYPE_ID", referencedColumnName = "ID", nullable = false)
@@ -48,8 +52,8 @@ public class OntologyUserAccess extends AuditableEntityWithUUID {
 	@Setter
 	private OntologyUserAccessType ontologyUserAccessType;
 
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID", nullable = false)
 	@Getter
 	@Setter
@@ -61,5 +65,36 @@ public class OntologyUserAccess extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private User user;
+	
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OntologyUserAccess )) return false;
+        OntologyUserAccess that = (OntologyUserAccess) o;
+        return getOntologyUserAccessType() != null && 
+        		getOntologyUserAccessType().equals(that.getOntologyUserAccessType()) &&
+        		getOntology() != null  &&
+        		getOntology().equals(that.getOntology()) &&
+        		getUser() != null &&
+        		getUser().equals(that.getUser());
+    }
+	
+    @Override
+    public int hashCode() {
+    	return java.util.Objects.hash(getOntologyUserAccessType(), getOntology(), getUser());
+    }
+    
+    @Override
+    public String toString() {
+    	String space = "-";
+    	StringBuilder sb = new StringBuilder();
+    	sb.append(getOntology());
+    	sb.append(space);
+    	sb.append(getUser());
+    	sb.append(space);
+    	sb.append(getOntologyUserAccessType());
+    	return sb.toString();
+    }
 
 }
