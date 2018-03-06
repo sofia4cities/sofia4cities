@@ -388,7 +388,7 @@ var ApiCreateController = function() {
             	var operationGET = {identification: nameApi + "_GET", description: $('#description_GET').val() , operation:"GET", path: $('#description_GET_label').text(), querystrings: querystringsGET};
 	            querystringparameter = {name: "id", dataType: "string", headerType: "path", description: ""};
 	            operationGET.querystrings.push(querystringparameter);
-                if (!existOperation(operationGET.identification)){
+                if (!existOp(operationGET.identification)){
                 	operations.push(operationGET);
                 } else {
                     replaceOperation(operationGET);
@@ -405,7 +405,7 @@ var ApiCreateController = function() {
 	            operationGETSQL.querystrings.push(querystringparameter);
 	            querystringparameter = {name: "query", dataType: "string", headerType: "query", description: ""};
 	            operationGETSQL.querystrings.push(querystringparameter);	            
-                if (!existOperation(operationGETSQL.identification)){
+                if (!existOp(operationGETSQL.identification)){
                 	operations.push(operationGETSQL);
                 } else {
                     replaceOperation(operationGETSQL);
@@ -416,7 +416,7 @@ var ApiCreateController = function() {
             	var operationPOST = {identification: nameApi + "_POST", description: $('#description_POST').val() , operation:"POST", path:$('#description_POST_label').text(), querystrings: querystringsPOST};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationPOST.querystrings.push(querystringparameter);
-                if (!existOperation(operationPOST.identification)){
+                if (!existOp(operationPOST.identification)){
                 	operations.push(operacionPOST);
                 } else {
                     replaceOperation(operacionPOST);
@@ -427,7 +427,7 @@ var ApiCreateController = function() {
             	var operationPUT = {identification: nameApi + "_PUT", description: $('#description_PUT').val() , operation:"PUT", path:$('#description_PUT_label').text(), querystrings: querystringsPUT};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationPUT.querystrings.push(querystringparameter);
-                if (!existOperation(operationPUT.identification)){
+                if (!existOp(operationPUT.identification)){
                 	operations.push(operationPUT);
                 } else {
                     replaceOperation(operationPUT);
@@ -438,7 +438,7 @@ var ApiCreateController = function() {
             	var operationDELETE = {identification: nameApi + "_DELETE", description: $('#description_DELETE').val() , operation:"DELETE", path:$('#description_DELETE_label').text(), querystrings: querystringsDELETE};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationDELETE.querystrings.push(querystringparameter);
-                if (!existOperation(operationDELETE.identification)){
+                if (!existOp(operationDELETE.identification)){
                 	operations.push(operationDELETE);
                 } else {
                     replaceOperation(operationDELETE);
@@ -449,7 +449,7 @@ var ApiCreateController = function() {
             	var operationDELETEID = {identification: nameApi + "_DELETEID", description: $('#description_DELETEID').val() , operation:"DELETE", path:$('#description_DELETEID_label').text(), querystrings: querystringsDELETEID};
 	            querystringparameter = {name: "id", dataType: "string", headerType: "path", description: ""};
 	            operationDELETEID.querystrings.push(querystringparameter);
-                if (!existOperation(operationDELETEID.identification)){
+                if (!existOp(operationDELETEID.identification)){
                 	operations.push(operationDELETEID);
                 } else {
                     replaceOperation(operationDELETEID);

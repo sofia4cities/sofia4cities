@@ -118,7 +118,6 @@ var ApiCustomOpsController = function() {
         var newCustomsqlParamFieldSet = document.createElement('fieldset');
         newCustomsqlParamFieldSet.id = "customsql_param_fieldset" + param;
 
-        newCustomsqlParamFieldSet.style.width="40%";
         newCustomsqlParamFieldSet.style.margin="10px";
         newCustomsqlParamFieldSet.style.marginTop="10px";
         newCustomsqlParamFieldSet.style.padding="10px";
@@ -128,7 +127,7 @@ var ApiCustomOpsController = function() {
         var newLabelCustomsqlParam = document.createElement('label');
         newLabelCustomsqlParam.id = param;
         newLabelCustomsqlParam.className="description";
-        newLabelCustomsqlParam.style.marginLeft="20px";
+        newLabelCustomsqlParam.style.marginRight="20px";
         newLabelCustomsqlParam.innerHTML=param;
 
         newCustomsqlParamFieldSet.appendChild(newLabelCustomsqlParam);
