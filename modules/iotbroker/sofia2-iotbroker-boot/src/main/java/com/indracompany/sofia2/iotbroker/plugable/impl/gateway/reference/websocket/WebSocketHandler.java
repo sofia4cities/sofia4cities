@@ -40,21 +40,13 @@ public class WebSocketHandler {
 
 	//public void handleChat(@Payload ChatMessage message, @DestinationVariable("chatRoomId") String chatRoomId, MessageHeaders messageHeaders, Principal user) {
 
-	@MessageMapping("/connect/{token}")
+	@MessageMapping("/message/{token}")
 	public void handleConnect(@Payload SSAPMessage<SSAPBodyJoinMessage> message, @DestinationVariable("token") String token, MessageHeaders messageHeaders) throws MessagingException, JsonProcessingException {
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(message);
 		final ObjectMapper mapper = new ObjectMapper();
 		final String responseStr = "123456789";//mapper.writeValueAsString(response);
-		messagingTemplate.convertAndSend("/topic/connect/"+token, response);
+		messagingTemplate.convertAndSend("/topic/message/"+token, response);
 	}
-
-	@MessageMapping("/message/{sessionkey}")
-	public void handleMessage(@Payload SSAPMessage message, @DestinationVariable("sessionkey") String sessionKey, MessageHeaders messageHeaders) {
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(message);
-		messagingTemplate.convertAndSend("/topic/message/"+sessionKey, response);
-	}
-
-
 
 
 }

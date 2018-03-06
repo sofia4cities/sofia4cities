@@ -81,7 +81,7 @@ public class WebSocketTest {
 	@Before
 	public void setup() {
 		completableFuture = new CompletableFuture<>();
-		URL = "ws://localhost:" + port + "/iotbroker/connect";
+		URL = "ws://localhost:" + port + "/iotbroker/message";
 
 		securityMocks();
 	}
@@ -92,12 +92,12 @@ public class WebSocketTest {
 		final WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
 		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
-		final StompSession stompSession = stompClient.connect(URL, new StompSessionHandlerAdapter() {}).get(1, TimeUnit.SECONDS);
+		final StompSession stompSession = stompClient.connect(URL, new StompSessionHandlerAdapter() {}).get(3, TimeUnit.SECONDS);
 
-		stompSession.subscribe("/topic/connect/" + uuid, new MyStompFrameHandler());
-		stompSession.send("/stomp/connect/" + uuid, SSAPMessageGenerator.generateJoinMessageWithToken());
+		stompSession.subscribe("/topic/message/" + uuid, new MyStompFrameHandler());
+		stompSession.send("/stomp/message/" + uuid, SSAPMessageGenerator.generateJoinMessageWithToken());
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = completableFuture.get(60, TimeUnit.SECONDS);
+		final SSAPMessage<SSAPBodyReturnMessage> response = completableFuture.get(3, TimeUnit.SECONDS);
 		Assert.assertNotNull(response);
 		Assert.assertEquals(SSAPMessageDirection.RESPONSE, response.getDirection());
 		Assert.assertNotNull(response.getSessionKey());
@@ -124,8 +124,5 @@ public class WebSocketTest {
 
 		}
 
-
 	}
-
-
 }
