@@ -39,6 +39,12 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
+buildNginx()
+{
+	echo "NGINX image generation with Docker CLI: "
+	docker build -t sofia2/nginx:$1 .		
+}
+
 pushAllImages2Registry()
 {
 	docker tag sofia2/configdb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/configdb:$1
@@ -60,7 +66,10 @@ pushAllImages2Registry()
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/apimanager:$1	
 	
 	docker tag sofia2/flowengine:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
-	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1						
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
+	
+	docker tag sofia2/nginx:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/nginx:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/nginx:$1							
 }
 
 echo "##########################################################################################"
@@ -122,6 +131,11 @@ fi
 if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
 	cd $homepath/dockerfiles/realtimedb
 	buildRealTimeDB latest
+fi
+
+if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
+	cd $homepath/dockerfiles/nginx
+	buildNginx latest
 fi
 
 echo "Docker images successfully generated!"
