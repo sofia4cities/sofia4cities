@@ -44,7 +44,20 @@ services:
     external_links:
      - configdb
      - schedulerdb
-     - realtimedb         
+     - realtimedb    
+  nginxinstance:
+    image: ${REPOSITORY}sofia2/nginx:latest
+    container_name: nginxservice
+    environment:
+      - SERVER_NAME=${SERVERNAME}
+    networks:
+      - data_datanetwork
+    ports:
+     - "80:80"     
+    links:
+     - controlpanelinstance
+     - iotbrokerinstance
+     - flowengineinstance           
 networks:
   data_datanetwork:
     external: true
