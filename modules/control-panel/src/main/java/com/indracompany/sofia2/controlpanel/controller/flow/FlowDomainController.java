@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.controlpanel.controller.flow;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -125,7 +126,7 @@ public class FlowDomainController {
 			List<Flow> flows = flowService.getFlowByDomain(domain.getIdentification());
 			model.addAttribute("flows", flows);
 		}
-		return "/flows/list";
+		return "flows/list";
 	}
 
 	@PostMapping(value = "/create")
@@ -151,7 +152,7 @@ public class FlowDomainController {
 	public String createForm(Model model) {
 		FlowDomain domain = new FlowDomain();
 		model.addAttribute("domain", domain);
-		return "/flows/create";
+		return "flows/create";
 
 	}
 
@@ -182,7 +183,7 @@ public class FlowDomainController {
 		List<FlowEngineDomainStatus> domainStatusList = new ArrayList<>();
 		domainStatusList.add(domainStatus);
 		model.addAttribute("domains", domainStatusList);
-		return "/flows/list :: domain";
+		return "flows/list :: domain";
 
 	}
 
@@ -208,15 +209,20 @@ public class FlowDomainController {
 		List<FlowEngineDomainStatus> domainStatusList = new ArrayList<>();
 		domainStatusList.add(domainStatus);
 		model.addAttribute("domains", domainStatusList);
-		return "/flows/list :: domain";
+		return "flows/list :: domain";
 
 	}
 
 	@GetMapping(value = "/show/{domainId}", produces = "text/html")
 	public String showNodeRedPanelForm(Model model, @PathVariable(value = "domainId") String domainId) {
 		String password = userService.getUser(utils.getUserId()).getPassword();
-		model.addAttribute("proxy",
-				"http://localhost:5050/" + domainId + "/?usuario=" + utils.getUserId() + "&password=" + password);
+		String auth = utils.getUserId() + ":" + password;
+		String authBase64 = Base64.getEncoder().encodeToString(auth.getBytes());
+		/*
+		 * model.addAttribute("proxy", "http://localhost:5050/" + domainId +
+		 * "/?usuario=" + utils.getUserId() + "&password=" + password);
+		 */
+		model.addAttribute("proxy", "http://localhost:5050/" + domainId + "/?authentication=" + authBase64);
 		return "/flows/show";
 	}
 

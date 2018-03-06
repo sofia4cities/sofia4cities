@@ -13,9 +13,12 @@
  */
 package com.indracompany.sofia2.api.rest.api;
 
+import java.net.InetAddress;
+
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -37,6 +40,9 @@ public class SwaggerGeneratorServiceImpl implements SwaggerGeneratorService {
 	
 	@Autowired
 	private ApiFIQL apiFIQL;
+	
+	@Value("${server.port:19090}")
+	private String port;
 	
 	public Response getApi(String identificacion, String token) throws Exception {
 		
@@ -76,6 +82,31 @@ public class SwaggerGeneratorServiceImpl implements SwaggerGeneratorService {
 
 	public void setApiFIQL(ApiFIQL apiFIQL) {
 		this.apiFIQL = apiFIQL;
+	}
+
+	@Override
+	public Response getApiWithoutToken(String identificacion) throws Exception {
+		ApiDTO apiDto = apiFIQL.toApiDTO(apiService.getApiMaxVersion(identificacion));
+		
+		int version = apiDto.getVersion();
+		String vVersion="v"+version;
+		String hostname = InetAddress.getLocalHost().getHostName();
+		
+		BeanConfig config = new BeanConfig();
+		config.setHost(hostname+":"+port);
+		config.setSchemes(new String[]{"http"});
+		config.setBasePath("/server/api"+"/"+vVersion+"/"+identificacion);
+		
+		RestSwaggerReader reader = new RestSwaggerReader();
+
+		Swagger swagger = reader.read(apiDto, config);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.enable(SerializationFeature.INDENT_OUTPUT);
+		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+		String json = mapper.writeValueAsString(swagger);
+		
+		return Response.ok(json).build();
 	}
 
 }

@@ -21,18 +21,15 @@ import lombok.Setter;
 
 public class OperationModel implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	public static enum Operations {
-		INSERT, UPDATE, DELETE, QUERY, SUBSCRIBE;
+	public static enum OperationType {
+		INSERT, UPDATE, DELETE, QUERY, SUBSCRIBE, GET, PUT, POST;
 	}
-
-	@Getter
-	@Setter
-	private String ontologyId;
+	
+	public static enum QueryType {
+		SQLLIKE,NATIVE,NONE;
+	}
 
 	@Getter
 	@Setter
@@ -40,16 +37,11 @@ public class OperationModel implements Serializable{
 	
 	@Getter
 	@Setter
-	private String operationType;
-	
-	
-	@Getter
-	@Setter
-	private String queryType;
+	private OperationType operationType;
 	
 	@Getter
 	@Setter
-	private String query;
+	private QueryType queryType;
 	
 	@Getter
 	@Setter
@@ -61,7 +53,17 @@ public class OperationModel implements Serializable{
 	
 	@Getter
 	@Setter
-	private String token;
+	private String user;
+
+	@Override
+	public String toString() {
+		return "OperationModel [ontologyName=" + ontologyName + ", operationType=" + operationType + ", queryType="
+				+ queryType + ", body=" + body + ", objectId=" + objectId + ", user=" + user + "]";
+	}
+
+	
+
+
 	
 
 	

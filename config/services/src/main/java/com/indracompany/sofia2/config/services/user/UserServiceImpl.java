@@ -50,6 +50,26 @@ public class UserServiceImpl implements UserService {
 	private ClientPlatformRepository clientPlatformRepository;
 
 	@Override
+	public boolean isUserAdministrator(User user) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			return true;
+		if (user.getRole().getRoleParent() != null
+				&& user.getRole().getRoleParent().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			return true;
+		return false;
+	}
+
+	@Override
+	public boolean isUserDeveloper(User user) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_DEVELOPER.name()))
+			return true;
+		if (user.getRole().getRoleParent() != null
+				&& user.getRole().getRoleParent().getId().equals(Role.Type.ROLE_DEVELOPER.name()))
+			return true;
+		return false;
+	}
+
+	@Override
 	public Token getToken(String token) {
 		return tokenRepository.findByToken(token);
 	}

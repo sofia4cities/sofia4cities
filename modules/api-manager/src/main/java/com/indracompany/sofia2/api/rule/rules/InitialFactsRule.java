@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
 import com.indracompany.sofia2.api.util.RequestDumpUtil;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 
 @Component
 @Rule
@@ -53,7 +54,8 @@ public class InitialFactsRule {
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
 		String query = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY, request)).orElse("");
-		String queryType = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY_TYPE, request)).orElse("");
+		String queryType = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY_TYPE, request)).orElse(QueryType.NONE.name());
+		String contentTypeInput= RequestDumpUtil.getContentType(request);
 
 		String headerToken = request.getHeader(ApiServiceInterface.AUTHENTICATION_HEADER);
 		if (headerToken == null) {
@@ -77,6 +79,8 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.TARGET_DB_PARAM, targetDb);
 		data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
 		data.put(ApiServiceInterface.METHOD, method);
+		data.put(ApiServiceInterface.CONTENT_TYPE_INPUT, contentTypeInput);
+		
 		facts.put(RuleManager.ACTION, method);
 		
 		

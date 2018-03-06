@@ -809,7 +809,7 @@ var OntologyCreateController = function() {
     };    
 	
 	// AJAX AUTHORIZATION FUNCTIONS
-	var authorization = function(action,ontology,user,accesstype,authorization){
+	var authorization = function(action,ontology,user,accesstype,authorization,btn){
 		logControl ? console.log('|---> authorization()') : '';	
 		var insertURL = '/controlpanel/ontologies/authorization';
 		var updateURL = '/controlpanel/ontologies/authorization/update';
@@ -825,8 +825,7 @@ var OntologyCreateController = function() {
 				async: true,
 				data: {"accesstype": accesstype, "ontology": ontology,"user": user},			 
 				dataType:"json",
-				success: function(response,status){
-					alert("Insert Data: " + response + "\nStatus: " + status);					
+				success: function(response,status){							
 					
 					var propAuth = {"users":user,"accesstypes":accesstype,"id": response.id};
 					authorizationsArr.push(propAuth);
@@ -868,12 +867,10 @@ var OntologyCreateController = function() {
 				data: {"id": authorization, "accesstype": accesstype},			 
 				dataType:"json",
 				success: function(response,status){
-					alert("Insert Data: " + response + "\nStatus: " + status);					
+							
 					var updateIndex = foundIndex(user,'users',authorizationsArr);			
 					authorizationsArr[updateIndex]["accesstypes"] = accesstype;
-					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);
-					
-					
+					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);					
 				}
 			});
 			
@@ -885,17 +882,22 @@ var OntologyCreateController = function() {
 			$.ajax({url:deleteURL, type:"POST", async: true, 
 				data: {"id": authorization},			 
 				dataType:"json",
-				success: function(response,status){
-					alert("Insert Data: " + response + "\nStatus: " + status);					
+				success: function(response,status){									
 					
 					// remove object
-					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(response.id);			
+					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(authorization);			
 					authorizationsIds.splice(removeIndex, 1);
 					authorizationsArr.splice(removeIndex, 1);
 					
 					console.log('AuthorizationsIDs: ' + JSON.stringify(authorizationsIds));
-					// refresh interface. TO-DO: EL this este fallará
-					if ( response  ){ $(this).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); }
+					// refresh interface. TO-DO: EL this este fallará					
+					if ( response  ){ 
+						$(this).closest('tr').remove();
+						$("#users option[value=" + $('#users').val() + "]").prop('disabled', false);
+					}
+					else{ 
+						$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); 
+					}
 				}
 			});			
 		}	

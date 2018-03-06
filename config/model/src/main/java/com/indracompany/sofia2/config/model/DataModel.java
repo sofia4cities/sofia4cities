@@ -87,6 +87,5 @@ public class DataModel extends AuditableEntityWithUUID {
 	@Getter
 	private String labels;
 
-	
 
 }

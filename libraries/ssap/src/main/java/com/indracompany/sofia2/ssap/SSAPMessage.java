@@ -26,7 +26,7 @@ public final class SSAPMessage<T extends SSAPBodyMessage>implements Serializable
 
 	protected String messageId;
 	protected String sessionKey;
-	protected String ontology;
+	//	protected String ontology;
 	protected SSAPMessageDirection direction;
 	protected SSAPMessageTypes messageType;
 	protected T body = (T) new SSAPBodyEmptyMessage();
@@ -43,12 +43,12 @@ public final class SSAPMessage<T extends SSAPBodyMessage>implements Serializable
 	public void setSessionKey(String sessionKey) {
 		this.sessionKey = sessionKey;
 	}
-	public String getOntology() {
-		return ontology;
-	}
-	public void setOntology(String ontology) {
-		this.ontology = ontology;
-	}
+	//	public String getOntology() {
+	//		return ontology;
+	//	}
+	//	public void setOntology(String ontology) {
+	//		this.ontology = ontology;
+	//	}
 	public SSAPMessageDirection getDirection() {
 		return direction;
 	}

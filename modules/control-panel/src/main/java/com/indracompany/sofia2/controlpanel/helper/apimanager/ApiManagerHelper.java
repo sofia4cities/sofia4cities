@@ -83,7 +83,18 @@ public class ApiManagerHelper {
 	@Value("${apimanager.services.baseUrl:http://localhost:8080/sib-api}${apimanager.services.apiEndpoint.path:/api}")
 	private String apiManagerBaseUrl;
 	
-	// To populate de Api Create Form
+	// To populate the List Api Form
+	public void populateApiManagerListForm(Model uiModel) {
+		List<User> users = userRepository.findAll();
+		
+		User user = this.userService.getUser(utils.getUserId());
+		
+		uiModel.addAttribute("users", users);
+		uiModel.addAttribute("states", Api.ApiStates.values());
+		uiModel.addAttribute("auths", userApiRepository.findByUser(user));
+	}
+	
+	// To populate the Create Api Form
 	public void populateApiManagerCreateForm(Model uiModel) {
 		List<Ontology> ontologies;
 		User user = this.userService.getUser(utils.getUserId());
@@ -196,6 +207,7 @@ public class ApiManagerHelper {
 				queryStringJson.setDataType(apiQueryParameter.getDataType().toString());
 				queryStringJson.setHeaderType(apiQueryParameter.getHeaderType().toString());
 				queryStringJson.setValue(apiQueryParameter.getValue());
+				queryStringJson.setCondition(apiQueryParameter.getCondition());
 				
 				queryStrings.add(queryStringJson);
 			}
@@ -271,12 +283,6 @@ public class ApiManagerHelper {
 		api.setApiType(apiMultipart.getApiType());
 
 		return api;
-	}
-	
-	
-
-	public void populateApiManagerListForm(Model uiModel) {
-
 	}
 
 	public void populateAutorizationForm(Model model) {

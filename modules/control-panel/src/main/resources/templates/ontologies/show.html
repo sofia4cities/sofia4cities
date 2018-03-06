@@ -239,11 +239,11 @@
 															<tbody th:remove="all-but-first">
 																<tr th:each="authorization : ${authorizations}" pages:paginate="10">
 																	<!-- IDENTIFICATION/NAME -->
-																	<td class="text-left no-wrap bold" th:text="${authorization.ontology.identification}"></td>
+																	<td class="text-left no-wrap bold" th:text="${authorization.userId}"></td>
 																	<!-- USER -->
-																	<td class="text-center " th:text="${authorization.user.fullName}"></td>
+																	<td class="text-center " th:text="${authorization.userFullName}"></td>
 																	<!-- ACCESS TYPE  -->
-																	<td class="text-center " th:text="${authorization.ontologyUserAccessType.name}"></td>																
+																	<td class="text-center " th:text="${authorization.typeName}"></td>																
 																</tr>
 															</tbody>
 														</table>												

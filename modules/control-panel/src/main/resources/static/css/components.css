@@ -7924,7 +7924,7 @@ Portlets
       .portlet.light > .portlet-title > .nav-tabs > li > a {
         margin: 0;
         padding: 12px 13px 13px 13px;
-        font-size: 13px;
+        font-size: 14px;
         color: #666; }
       .portlet.light > .portlet-title > .nav-tabs > li.active > a,
       .portlet.light > .portlet-title > .nav-tabs > li:hover > a {
@@ -12847,6 +12847,7 @@ Customized Bootstrap Tables
 .table th {
   font-size: 14px;
 vertical-align: middle !important;
+font-family: "Open sans";
   }
 
 .table.table-bordered thead > tr > th {
@@ -13026,8 +13027,8 @@ Light Table
     text-transform: uppercase; }
   .table.table-light > thead > tr > th {
     font-weight: 600;
-    font-size: 13px;
-    color: #93a2a9;
+    font-size: 14px;
+	color: #6f767b;
     font-family: "Open Sans", sans-serif;
     border: 0;
     border-bottom: 1px solid #F2F5F8; }
@@ -13036,7 +13037,7 @@ Light Table
   .table.table-light > tbody > tr > td {
     border: 0;
     border-bottom: 1px solid #F2F5F8;
-    color: #8896a0;
+    color: #65686b;
     vertical-align: middle; }
     .table.table-light > tbody > tr > td.fit {
       width: 1px;
@@ -13053,7 +13054,7 @@ Light Table
   .table.table-light.table-hover > tbody > tr > td:hover,
   .table.table-light.table-hover > tbody > tr > th:hover,
   .table.table-light.table-hover > tbody > tr:hover > td {
-    background: #f9fafb !important; }
+    background: #d9dbe0 !important; }
 
 .table-hover > tbody > tr:hover,
 .table-hover > tbody > tr:hover > td {
@@ -15740,7 +15741,7 @@ body.stop-scrolling {
   text-align: center; }
   .mt-element-step .step-line .mt-step-number > i {
     position: relative;
-    top: 50%;
+    top: 15%;
     transform: translateY(-120%); }
 
 .mt-element-step .step-line .mt-step-title {
@@ -15750,7 +15751,7 @@ body.stop-scrolling {
   .mt-element-step .step-line .mt-step-title:after {
     content: '';
     height: 3px;
-    width: 50%;
+    width: 51%;
     position: absolute;
     background-color: #e5e5e5;
     top: -32px;

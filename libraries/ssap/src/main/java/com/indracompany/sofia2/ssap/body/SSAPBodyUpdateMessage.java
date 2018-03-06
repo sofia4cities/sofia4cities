@@ -13,19 +13,14 @@
  */
 package com.indracompany.sofia2.ssap.body;
 
-import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.body.parent.SSAPBodyOntologyMessage;
 
-public class SSAPBodyUpdateMessage extends SSAPBodyMessage {
+public class SSAPBodyUpdateMessage extends SSAPBodyOntologyMessage {
 
 	private String query;
 
 	@Override
 	public boolean isSessionKeyMandatory() {
-		return true;
-	}
-
-	@Override
-	public boolean isAutorizationMandatory() {
 		return true;
 	}
 

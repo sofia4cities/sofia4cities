@@ -84,13 +84,13 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/apimanager/list}"> <span th:text="#{apimanager.breadcrumb.prev}">apis</span></a><i class="fa fa-circle"></i></li>						
+						<li><a th:href="@{/apimanager/list}"> <span th:text="#{apimanager.breadcrumb.token}">apis</span></a><i class="fa fa-circle"></i></li>						
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{apimanager.template.autorizations}">Manage Apis</span></h1>
+				<h1 class="page-title hide "><span th:text="#{apimanager.template.tokens}">Manage Apis</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -101,7 +101,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{apimanager.template.autorizations}"> Authorizations</span>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{apimanager.template.token}"> Authorizations</span>
 									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
 								<div class="tools">
@@ -117,8 +117,21 @@
 									</div>
 									<div class="col-md-12 margin-bottom-20">
 									<!-- SEARCH FORM -->
-
-
+										<form id="form_user" action="list.html" th:action="@{/apimanager/list}" class="" role="form" method="get">												
+											<div class="col-md-12 no-space">
+												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" th:attr="data-content=#{user.search.description},data-original-title=#{gen.search}" th:text="#{gen.search}">Search</span></h4>
+											</div>
+											<div id="searchFilter" class="form-body collapse">
+												<div class="row">
+													<div class="col-md-2 col-xs-12">
+														<div class="btn-group">
+															<button type="button" id="generateToken" name="generateToken" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="reset_api" name="reset_user" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
+														</div>
+													</div>
+												</div>
+											</div>												
+										</form>
 									</div>
 									<!-- Authorization List -->
 									<div class="col-md-12">											
@@ -128,8 +141,8 @@
 							                    <table id="tokens" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 							                      <thead>
 							                        <tr class="cabecera-tabla">	      
-											              <th class="titulo-columnas" th:text="#{apimanager.token.creationDate}"></th>
-								                          <th class="titulo-columnas" th:text="#{apimanager.token.}"></th>
+											              <th class="titulo-columnas" th:text="#{apimanager.token.dateCreated}"></th>
+								                          <th class="titulo-columnas" th:text="#{apimanager.token}"></th>
 								                          <th class="titulo-columnas"></th>    	                
 										                  </tr>
 										          </thead>

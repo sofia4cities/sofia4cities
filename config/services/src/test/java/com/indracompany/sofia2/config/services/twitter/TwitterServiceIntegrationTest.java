@@ -31,6 +31,7 @@ import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
@@ -70,12 +71,14 @@ public class TwitterServiceIntegrationTest {
 			twitterListening.setConfiguration(
 					configurationService.getConfiguration(ConfigurationType.Type.TwitterConfiguration, "ALL", null));
 
-			if (this.ontologyService.getOntologyByIdentification("OntologyTwitter") == null) {
+			User user = userService.getUser("administrator");
+			if (this.ontologyService.getOntologyByIdentification("OntologyTwitter", user.getUserId()) == null) {
 				ontology = twitterListeningService.createTwitterOntology("OntologyTwitter");
-				ontology.setUser(userService.getUser("administrator"));
-				ontology = ontologyService.saveOntology(ontology);
+				ontology.setUser(user);
+				ontologyService.createOntology(ontology);
+				ontology = ontologyService.getOntologyByIdentification(ontology.getIdentification(), user.getUserId());
 			} else
-				ontology = this.ontologyService.getOntologyByIdentification("OntologyTwitter");
+				ontology = this.ontologyService.getOntologyByIdentification("OntologyTwitter", user.getUserId());
 
 			List<Ontology> ontologies = new ArrayList<Ontology>();
 			ontologies.add(ontology);
@@ -97,7 +100,7 @@ public class TwitterServiceIntegrationTest {
 			twitterListening.setDateTo(new Date(System.currentTimeMillis() + 10000000));
 			twitterListening.setIdentificator("Listening Test");
 			twitterListening.setTopics("Helsinki,Madrid");
-			twitterListening = twitterListeningService.createListening(twitterListening);
+			twitterListening = twitterListeningService.createListening(twitterListening, user.getUserId());
 		}
 		twitterListening = twitterListeningService.getListenByIdentificator("Listening Test");
 		Assert.assertTrue(twitterListening.getId() != null);

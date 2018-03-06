@@ -29,8 +29,6 @@ import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.github.javafaker.Faker;
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.common.exception.AuthorizationException;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
@@ -42,7 +40,8 @@ import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.iotbroker.plugable.impl.security.reference.ReferenceSecurityImpl;
+import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
+import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
@@ -97,7 +96,7 @@ public class ReferenceSecurityTest {
 		ontology.setRtdbToHdb(false);
 		ontology.setUser(subjectUser);
 		ontologyService.createOntology(ontology);
-		subjectOntology = ontologyService.getOntologyByIdentification(ontology.getIdentification());
+		subjectOntology = ontologyService.getOntologyByIdentification(ontology.getIdentification(), subjectUser.getUserId());
 
 		final ClientPlatform clientPlatform = new ClientPlatform();
 		final String clientPlatformIdentification = UUID.randomUUID().toString();
@@ -111,6 +110,11 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
+	public void tearDown() {
+		//TODO: Delete created items (depends on JPA configuration)
+	}
+
+	@Test
 	public void test_security_basic() throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
@@ -119,11 +123,8 @@ public class ReferenceSecurityTest {
 
 		Assert.assertTrue(session.isPresent());
 		Assert.assertTrue(!StringUtils.isEmpty(session.get().getSessionKey()));
-
 		Assert.assertTrue(security.checkSessionKeyActive(session.get().getSessionKey()));
-
 		Assert.assertTrue(security.closeSession(session.get().getSessionKey()));
-
 		Assert.assertFalse(security.checkSessionKeyActive(session.get().getSessionKey()));
 	}
 

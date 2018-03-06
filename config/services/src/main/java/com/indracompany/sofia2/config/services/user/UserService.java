@@ -23,6 +23,10 @@ import com.indracompany.sofia2.config.model.UserToken;
 
 public interface UserService {
 
+	boolean isUserAdministrator(User user);
+
+	boolean isUserDeveloper(User user);
+
 	Token getToken(String token);
 
 	UserToken getUserToken(String token);
@@ -60,6 +64,5 @@ public interface UserService {
 	boolean emailExists(User user);
 
 	UserToken getUserToken(String user, String token);
-
 
 }

@@ -62,19 +62,23 @@ public class ValidBodyRule extends DefaultRuleBase {
 
 		String body = (String)data.get(ApiServiceInterface.BODY);
 		
-		boolean valid = isValidJSON(body);
-		boolean validMongo = isValidJSONtoMongo(body);
-		
-		
-		if (valid && validMongo) {
+		if (!"".equals(body)) {
+			boolean valid = isValidJSON(body);
+			boolean validMongo = isValidJSONtoMongo(body);
 			
-			String bodyDepured = depureJSON(body);
-			if (bodyDepured!=null)
-				data.put(ApiServiceInterface.BODY, bodyDepured);
+			
+			if (valid && validMongo) {
+				
+				String bodyDepured = depureJSON(body);
+				if (bodyDepured!=null)
+					data.put(ApiServiceInterface.BODY, bodyDepured);
+			}
+				
+			else 
+				stopAllNextRules(facts, "BODY IS NOT JSON PARSEABLE "+body,DefaultRuleBase.ReasonType.GENERAL);
 		}
-			
-		else 
-			stopAllNextRules(facts, "BODY IS NOT JSON PARSEABLE "+body,DefaultRuleBase.ReasonType.GENERAL);
+		
+		
 
 	}
 	

@@ -38,7 +38,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.indracompany.sofia2.config.converters.JPAHAS256Converter;
+import com.indracompany.sofia2.config.converters.JPAHAS256ConverterCustom;
 import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
 import lombok.Getter;
@@ -75,7 +75,7 @@ public class User extends AuditableEntity {
 	@Getter
 	@Setter
 	// @Convert(converter = JPACryptoConverter.class)
-	@Convert(converter = JPAHAS256Converter.class)
+	@Convert(converter = JPAHAS256ConverterCustom.class)
 	private String password;
 
 	@Column(name = "ACTIVE", nullable = false)

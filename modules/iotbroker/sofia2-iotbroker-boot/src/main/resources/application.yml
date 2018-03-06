@@ -1,3 +1,4 @@
+security.ignored: /**
 app:
   name: iotbroker
   
@@ -9,9 +10,6 @@ server: ## Config Web Server
       basedir: target/tomcat
   
 spring:
-  data.mongodb:
-    database: sofia2_s4c # Database name.
-   
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root

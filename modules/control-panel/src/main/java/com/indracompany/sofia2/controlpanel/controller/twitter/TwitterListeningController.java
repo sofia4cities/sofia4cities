@@ -82,14 +82,14 @@ public class TwitterListeningController {
 	@GetMapping("/scheduledsearch/list")
 	public String listListenings(Model model) {
 		model.addAttribute("twitterListenings", this.twitterListeningService.getAllListeningsByUser(utils.getUserId()));
-		return "/twitter/scheduledsearch/list";
+		return "twitter/scheduledsearch/list";
 	}
 
 	@GetMapping("/scheduledsearch/create")
 	public String createForm(Model model) {
 		this.loadOntologiesAndConfigurations(model);
 		model.addAttribute("twitterListening", new TwitterListening());
-		return "/twitter/scheduledsearch/create";
+		return "twitter/scheduledsearch/create";
 	}
 
 	@GetMapping("/scheduledsearch/update/{id}")
@@ -100,7 +100,7 @@ public class TwitterListeningController {
 			TwitterListening = new TwitterListening();
 		model.addAttribute("twitterListening", TwitterListening);
 		this.loadOntologiesAndConfigurations(model);
-		return "/twitter/scheduledsearch/create";
+		return "twitter/scheduledsearch/create";
 	}
 
 	@PutMapping("/scheduledsearch/update/{id}")
@@ -126,14 +126,15 @@ public class TwitterListeningController {
 		if (!newOntology) {
 			if (twitterListening.getUser() == null)
 				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
-			twitterListening = this.twitterListeningService.createListening(twitterListening);
+			twitterListening = this.twitterListeningService.createListening(twitterListening, this.utils.getUserId());
 
 		} else {
 
 			try {
 				Ontology ontology = this.twitterListeningService.createTwitterOntology(ontologyId);
 				ontology.setUser(this.userService.getUser(this.utils.getUserId()));
-				ontology = this.ontologyService.saveOntology(ontology);
+				ontologyService.createOntology(ontology);
+				ontology = ontologyService.getOntologyByIdentification(ontology.getIdentification(), utils.getUserId());
 
 				ArrayList<Ontology> ontologies = new ArrayList<Ontology>();
 				ontologies.add(ontology);
@@ -147,7 +148,7 @@ public class TwitterListeningController {
 				twitterListening.setOntology(ontology);
 				twitterListening.setToken(token);
 				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
-				this.twitterListeningService.createListening(twitterListening);
+				this.twitterListeningService.createListening(twitterListening, utils.getUserId());
 			} catch (RuntimeException e) {
 				if (e instanceof OntologyServiceException)
 					log.debug("Error creating ontology");
@@ -166,7 +167,7 @@ public class TwitterListeningController {
 
 	@PostMapping("/scheduledsearch/getclients")
 	public @ResponseBody List<String> getClientsOntology(@RequestBody String ontologyId) {
-		return this.twitterListeningService.getClientsFromOntology(ontologyId);
+		return this.twitterListeningService.getClientsFromOntology(ontologyId, utils.getUserId());
 	}
 
 	@PostMapping("/scheduledsearch/gettokens")
@@ -176,7 +177,7 @@ public class TwitterListeningController {
 
 	@PostMapping("/scheduledsearch/existontology")
 	public @ResponseBody boolean existOntology(@RequestBody String identification) {
-		return this.twitterListeningService.existOntology(identification);
+		return this.twitterListeningService.existOntology(identification, utils.getUserId());
 	}
 
 	@PostMapping("/scheduledsearch/existclient")
@@ -189,7 +190,7 @@ public class TwitterListeningController {
 		List<Ontology> ontologies = new ArrayList<Ontology>();
 		if (utils.isAdministrator()) {
 			configurations = this.twitterListeningService.getAllConfigurations();
-			ontologies = this.ontologyService.getAllOntologies();
+			ontologies = this.ontologyService.getAllOntologies(utils.getUserId());
 		} else {
 			configurations = this.twitterListeningService.getConfigurationsByUserId(this.utils.getUserId());
 			for (Ontology ontology : this.ontologyService.getOntologiesByUserId(this.utils.getUserId())) {
@@ -222,7 +223,7 @@ public class TwitterListeningController {
 		List<Configuration> configurations = this.configurationService.getConfigurations(
 				ConfigurationType.Type.TwitterConfiguration, this.userService.getUser(this.utils.getUserId()));
 		model.addAttribute("configurations", configurations);
-		return "/configurations/list";
+		return "configurations/list";
 	}
 
 	public void populateFormData(Model model) {

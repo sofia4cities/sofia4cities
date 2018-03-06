@@ -73,7 +73,7 @@ var ApiCreateController = function() {
         try {
             if ($('#identification').val()!=null){
                 for(var i=0; i<operations.length; i+=1){
-                    if (operations[i].operation!="GETCUSTOMSQL"){
+                    if (isDefaultOp(operations[i].identification)){
                         var id = operations[i].identification;
                         var nameOp = id.substring(id.lastIndexOf("_") + 1);
                         $('#' + nameOp).addClass('op_button_selected').removeClass('op_button');
@@ -89,6 +89,17 @@ var ApiCreateController = function() {
             $('.capa-loading').hide();
         }
     }
+	
+	function isDefaultOp(idOp){
+		if (idOp.endsWith("_GET") || idOp.endsWith("_GETSQL") || 
+			idOp.endsWith("_POST") || idOp.endsWith("_PUT") || 
+			idOp.endsWith("_DELETE") || idOp.endsWith("_DELETEID") || 
+			idOp.endsWith("_GETOPS")){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
     function createOperacionesOntologia () {
         $('#description_GET_label').text("/{id}");
@@ -345,12 +356,30 @@ var ApiCreateController = function() {
 		}
 	}
 	
+    function replaceOperation(newOp){
+        for(var i=0; i<operations.length; i+=1){
+            var operation = operations [i];
+            if (operation.identification == newOp.identification){
+            	operations [i] = newOp;
+            }
+        }
+    }
+	
+    function existOp(op_name){
+        for(var i=0; i<operations.length; i+=1){
+            var operation = operations [i];
+            if (operation.identification == op_name){
+                return true;
+            }
+        }
+        return false;
+    }
+	
     function formatData(){
     	$('#id_endpoint_hidden').val($('#id_endpoint').val());
 
         var ontology = $("#ontology option:selected").text();
         if ((ontology!=null) && (ontology.length!=0)){
-            operations= new Array();
             var nameApi = $('#identification').val();
             
             var querystringparameter;
@@ -359,7 +388,11 @@ var ApiCreateController = function() {
             	var operationGET = {identification: nameApi + "_GET", description: $('#description_GET').val() , operation:"GET", path: $('#description_GET_label').text(), querystrings: querystringsGET};
 	            querystringparameter = {name: "id", dataType: "string", headerType: "path", description: ""};
 	            operationGET.querystrings.push(querystringparameter);
-	            operations.push(operationGET);
+                if (!existOperation(operationGET.identification)){
+                	operations.push(operationGET);
+                } else {
+                    replaceOperation(operationGET);
+                }
             }
             if ($('#GETSQL').attr('class')=='op_button_selected'){
             	var querystringsGETSQL = new Array();
@@ -372,40 +405,64 @@ var ApiCreateController = function() {
 	            operationGETSQL.querystrings.push(querystringparameter);
 	            querystringparameter = {name: "query", dataType: "string", headerType: "query", description: ""};
 	            operationGETSQL.querystrings.push(querystringparameter);	            
-	            operations.push(operationGETSQL);
+                if (!existOperation(operationGETSQL.identification)){
+                	operations.push(operationGETSQL);
+                } else {
+                    replaceOperation(operationGETSQL);
+                }
             }
             if ($('#POST').attr('class')=='op_button_selected'){
             	var querystringsPOST = new Array();
             	var operationPOST = {identification: nameApi + "_POST", description: $('#description_POST').val() , operation:"POST", path:$('#description_POST_label').text(), querystrings: querystringsPOST};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationPOST.querystrings.push(querystringparameter);
-	            operations.push(operationPOST);
+                if (!existOperation(operationPOST.identification)){
+                	operations.push(operacionPOST);
+                } else {
+                    replaceOperation(operacionPOST);
+                }
             }
             if ($('#PUT').attr('class')=='op_button_selected'){
             	var querystringsPUT = new Array();
             	var operationPUT = {identification: nameApi + "_PUT", description: $('#description_PUT').val() , operation:"PUT", path:$('#description_PUT_label').text(), querystrings: querystringsPUT};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationPUT.querystrings.push(querystringparameter);
-	            operations.push(operationPUT);
+                if (!existOperation(operationPUT.identification)){
+                	operations.push(operationPUT);
+                } else {
+                    replaceOperation(operationPUT);
+                }
             }
             if ($('#DELETE').attr('class')=='op_button_selected'){
             	var querystringsDELETE = new Array();
             	var operationDELETE = {identification: nameApi + "_DELETE", description: $('#description_DELETE').val() , operation:"DELETE", path:$('#description_DELETE_label').text(), querystrings: querystringsDELETE};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationDELETE.querystrings.push(querystringparameter);
-	            operations.push(operationDELETE);	            
+                if (!existOperation(operationDELETE.identification)){
+                	operations.push(operationDELETE);
+                } else {
+                    replaceOperation(operationDELETE);
+                }	            
             }
             if ($('#DELETEID').attr('class')=='op_button_selected'){
             	var querystringsDELETEID = new Array();
             	var operationDELETEID = {identification: nameApi + "_DELETEID", description: $('#description_DELETEID').val() , operation:"DELETE", path:$('#description_DELETEID_label').text(), querystrings: querystringsDELETEID};
 	            querystringparameter = {name: "id", dataType: "string", headerType: "path", description: ""};
 	            operationDELETEID.querystrings.push(querystringparameter);
-	            operations.push(operationDELETEID);
+                if (!existOperation(operationDELETEID.identification)){
+                	operations.push(operationDELETEID);
+                } else {
+                    replaceOperation(operationDELETEID);
+                }
             }
             if ($('#GETOPS').attr('class')=='op_button_selected'){
             	var querystringsGETOPS = new Array();
             	var operationGETOPS = {identification: nameApi + "_GETOPS", description: $('#description_GETOPS').val() , operation:"GET", path:$('#description_GETOPS_label').text(), querystrings: querystringsGETOPS};
-	            operations.push(operationGETOPS);
+                if (!existOp(operationGETOPS.identification)){
+                	operations.push(operationGETOPS);
+                } else {
+                    replaceOperation(operationGETOPS);
+                }
             }
             
             $("#operationsObject").val(JSON.stringify(operations));
@@ -453,6 +510,12 @@ var ApiCreateController = function() {
 		selectOp: function(button) {
 			logControl ? console.log(LIB_TITLE + ': selectOp()') : '';
 			selectOperation(button);
+		},
+		
+		// SELECT OPERATIONS
+		existOperation: function(name) {
+			logControl ? console.log(LIB_TITLE + ': existOperation(name)') : '';
+			existOp(name);
 		},
 		
 		

@@ -77,14 +77,14 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	@Autowired
 	ServiceUtils serviceUtils;
 	
-	public List<Api> loadAPISByFilter(String apiId, String userId, String state) {
+	public List<Api> loadAPISByFilter(String apiId, String state, String userId) {
 		List<Api> apis = null;
 		// Gets context User
 		if (serviceUtils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString())){
 			if ((apiId==null || "".equals(apiId)) && (state==null || "".equals(state)) && (userId==null || "".equals(userId))) {
 				apis = apiRepository.findAll();
 			} else {
-				apis = apiRepository.findApisByIdentificationOrStateOrUser(apiId, state, userId);
+				apis = apiRepository.findApisByIdentificationOrStateOrUser(apiId, Api.ApiStates.valueOf(state), userId);
 			}
 		} else {
 				apis = apiRepository.findApisByIdentificationOrStateAndUserAndIsPublicTrue(apiId, state, serviceUtils.getUserId());
@@ -230,6 +230,7 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 			apiQueryParameter.setDataType(ApiQueryParameter.DataType.valueOf(queryStringJson.getDataType()));
 			apiQueryParameter.setHeaderType(ApiQueryParameter.HeaderType.valueOf(queryStringJson.getHeaderType()));
 			apiQueryParameter.setValue(queryStringJson.getValue());
+			apiQueryParameter.setCondition(queryStringJson.getCondition());
 
 			apiQueryParameterRepository.save(apiQueryParameter);
 		}

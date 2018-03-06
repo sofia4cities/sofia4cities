@@ -54,11 +54,6 @@ public class SSAPBodyReturnMessage extends SSAPBodyMessage{
 	}
 
 	@Override
-	public boolean isAutorizationMandatory() {
-		return false;
-	}
-
-	@Override
 	public boolean isOntologyMandatory() {
 		return false;
 	}

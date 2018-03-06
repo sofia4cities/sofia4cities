@@ -19,7 +19,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.common.exception.BaseException;
+import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -50,7 +50,8 @@ public class LeaveProcessor implements MessageTypeProcessor {
 	}
 
 	@Override
-	public void validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+	public boolean validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) {
+		return true;
 	}
 
 }
