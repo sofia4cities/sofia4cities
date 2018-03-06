@@ -175,10 +175,12 @@
 				                                        <label for="checkbox" th:text="#{apimanager.limit}">Limit</label>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
-					                                    <label class="description notAnimate" for="id_cachetimeout" th:text="#{apimanager.cachetimeout}">Cache Timeout(minutes)</label>
-				                                        <input id="id_cachetimeout" class="element text medium form-control" type="number" maxlength="10" disabled="disabled" value="0" th:field="*{cachetimeout}"/>
-				                                        <span><input id="checkboxCache" name="checkboxCache" type="checkbox" th:checked="${api.cachetimeout!= null}" onchange="ApiCreateController.changeCacheTimeout();"/></span>
-					                                    <label for="checkbox" th:text="#{apimanager.cache}">Caching of API results</label>										
+														<label class="description" for="image" th:text="#{apimanager.image}">Imagen</label>
+														<input id="image" class="form-control" type="file" th:field="*{image}" onchange="ApiCreateController.validateImageSize();"/>
+													</div>
+													<div class="col-md-1 col-sm-6 col-xs-12">
+														<img id="showedImg" th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
+														<img id="showedImg" th:if="${#lists.isEmpty(api.image)}" th:src="@{/img/API.png}" style="height: 60px;" class="pull-right"/>
 													</div>
 												</div>
 												<!-- endpoint, image -->												
@@ -188,13 +190,9 @@
 					                                    <input id="id_endpoint" name="id_endpoint" class="form-control" type="text" maxlength="512" readonly="readonly"/>
 					                                    <input id="id_endpoint_hidden" name="id_endpoint_hidden" type="hidden" th:field="*{endpoint}"/>
 													</div>
-													<div class="col-md-4 col-sm-6 col-xs-12">
-														<label class="description" for="image" th:text="#{apimanager.image}">Imagen</label>
-														<input id="image" class="form-control" type="file" th:field="*{image}" onchange="ApiCreateController.validateImageSize()"/>
-													</div>
-													<div class="col-md-2 col-sm-6 col-xs-12">
-														<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
-														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/resources/images/API.png}" style="height: 60px;" class="pull-right"/>
+													<div class="col-md-6 col-sm-6 col-xs-12">
+					                                    <label class="description notAnimate" id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
+					                                    <input id="id_endpoint_swagger" name="id_endpoint" class="form-control" type="text" maxlength="512" readonly="readonly"/>
 													</div>
 												</div>
 												<div class="row">
@@ -301,11 +299,11 @@
 							                                                 													AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')}
 							                                                 													AND ${!#strings.endsWith(operation.identification,'_DELETE')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
 							                                                    <div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" style="margin-Top:30px;margin-bottom: 30px">
-							                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOM (query)" th:name="${(operation.identification + 'CUSTOMSQL')}" th:value="#{apimanager_formulario_operation_CUSTOMSQL}" th:onclick="'javascript:showCustomSqlDialog(\'' + ${operation.identification} + '\');'"/>
+							                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOM (query)" th:name="${(operation.identification + 'CUSTOMSQL')}" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'"/>
 							                                                    </div>
 							                                                    <label th:id="${operation.identification + '_LABEL'}" class="description" style="padding-left: 20px;" th:text="${operation.identification}"/>
-						                                                        <input th:id="${operation.identification + '_Edit'}" class="button_text" type="button" th:value="#{apimanager_operationes_editar}" th:name="${operation.identification + '_Edit'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'" />
-						                                                        <input th:id="${operation.identification + '_Eliminar'}" class="button_text" type="button" th:value="#{apimanager_operationes_eliminar}" th:name="${operation.identification + '_Eliminar'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.removeCustomSqlOp(\'' + ${operation.identification} + '\');'"/>
+						                                                        <input th:id="${operation.identification + '_Edit'}" class="button_text" type="button" th:value="#{gen.editBtn}" th:name="${operation.identification + '_Edit'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'" />
+						                                                        <input th:id="${operation.identification + '_Eliminar'}" class="button_text" type="button" th:value="#{gen.deleteBtn}" th:name="${operation.identification + '_Eliminar'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.removeCustomSqlOp(\'' + ${operation.identification} + '\');'"/>
 							                                                    <br/>
 							                                                    <b><span th:id="${operation.identification + '_PATH'}" style="padding-left: 20px; width: 93%;" th:text="${operation.path}"/></b>
 							                                                    <br/>
@@ -362,13 +360,13 @@
 						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->
-				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager.customsql.dialogtitle}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
+				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager.CUSTOMSQL}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
 					<div class="modal-dialog">
 					    <!-- Modal content-->
 					    <div class="modal-content">					
 							<div class="modal-header">
 								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title">Modal Header</h4>
+								<h4 class="modal-title"></h4>
 							</div>
 							<div class="modal-body">
 				                <label class="description" th:text="#{apimanager.operations.method}"></label>
@@ -399,14 +397,14 @@
 			                     <div style="border:0px; padding-top:10px;">
 				                    <div>
 					                    <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.querytype}"></label>
-					                    <select  id="id_customsql_querytype" style="margin-right: 20px;margin-left: 10px;width: 20%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:loadParamQuerySQLType();'" >
+					                    <select  id="id_customsql_querytype" style="margin-right: 20px;margin-left: 10px;width: 20%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:ApiCustomOpsController.loadParamsQueryType();'" >
 					                         <option value="SQLLIKE" th:text="SQLLIKE" selected="selected"/>
 					                         <option value="NATIVE" th:text="NATIVE"/>
 					                    </select>
 					                    <label class="description" th:text="#{apimanager.customsql.targetBD}"></label>
-					                    <select  id="id_customsql_targetBD" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:checkformatresult();'">
-					                         <option value="BDTR" th:text="BDTR"  selected="selected"/>
-					                         <option value="BDH" th:text="BDH"/>
+					                    <select  id="id_customsql_targetBD" style="margin-right: 20px;margin-left: 10px;width: 25%;padding-right: 5px;display: inline-table;" class="element select small form-control">
+					                         <option value="BDTR" th:text="#{apimanager.customsql.RTBD}"  selected="selected"/>
+					                         <option value="BDH" th:text="#{apimanager.customsql.HBD}"/>
 					                    </select>
 				                        <br/><br/>
 				                        <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.description}"></label>
@@ -463,20 +461,27 @@
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"actionMode" : [[${api.id}]],
-		"dateCreated" : [[${api.createdAt}]]
+		"dateCreated" : [[${api.createdAt}]],
+		"apimanager_image_error" : [[#{apimanager.image.error}]],
+		"apimanager_noops_error" : [[#{apimanager.noops.error}]],
+		"apimanager_ops_description_error" : [[#{apimanager.ops.description.error}]]
+	
 	};
 	
 	var apiCustomOpsJson = { 
 		"endpoint" : endpoint,
-		"apimanager_customsql_error_query_params" : [[#{apimanager_customsql_error_query_params}]],
-		"apimanager_customsql_error_query_ontology" : [[#{apimanager_customsql_error_query_ontology}]],
-		"apimanager_customsql_error_query" : [[#{apimanager_customsql_error_query}]],
-		"apimanager_customsql_error_required" : [[#{apimanager_customsql_error_required}]],
-		"apimanager_error_operation_existe" : [[#{apimanager_error_operation_existe}]],
-		"apimanager_error_campos" : [[#{apimanager_error_campos}]],
+		"apimanager_customsql_error_name_format" : [[#{apimanager.customsql.error.name.format}]],
+		"apimanager_customsql_error_query_params" : [[#{apimanager.customsql.error.query.params}]],
+		"apimanager_customsql_error_query_ontology" : [[#{apimanager.customsql.error.query.ontology}]],
+		"apimanager_customsql_error_query" : [[#{apimanager.customsql.error.query}]],
+		"apimanager_customsql_error_required" : [[#{apimanager.customsql.error.required}]],
+		"apimanager_customsql_error_operation_exists" : [[#{apimanager.customsql.error.operation.exists}]],
+		"apimanager_customsql_error_fields" : [[#{apimanager.customsql.error.fields}]],
 		"apimanager_editBtn" : [[#{gen.editBtn}]],
 		"apimanager_deleteBtn" : [[#{gen.deleteBtn}]]
 	};
+	
+
 						
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
