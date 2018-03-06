@@ -57,7 +57,10 @@ pushAllImages2Registry()
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/iotbroker:$1	
 	
 	docker tag sofia2/apimanager:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/apimanager:$1
-	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/apimanager:$1						
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/apimanager:$1	
+	
+	docker tag sofia2/flowengine:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1						
 }
 
 echo "##########################################################################################"
@@ -99,6 +102,10 @@ if [ -z "$1" ]; then
 	# API manager image
 	cd $homepath/../modules/api-manager/	
 	buildImage "API Manager"
+	
+	# Flow Engine image
+	cd $homepath/../modules/flow-engine/	
+	buildImage "Flow Engine"	
 fi
 
 # Generates images only if they are not present in local docker registry
