@@ -30,7 +30,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
 @Controller
-public class WebSocketHandler {
+public class StompWebSocketHandler {
 
 	@Autowired
 	MessageProcessor processor;

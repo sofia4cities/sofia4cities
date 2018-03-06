@@ -58,7 +58,7 @@ import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@SpringBootTest
-public class WebSocketTest {
+public class StompWebSocketTest {
 	@Value("${local.server.port}")
 	private int port;
 
