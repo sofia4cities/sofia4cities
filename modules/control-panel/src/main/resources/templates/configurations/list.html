@@ -89,7 +89,7 @@
 										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='/controlpanel/configurations/create'" ><i class="flaticon-cogwheel-2"></i> <span th:text="#{gen.create}">New </span></button>
 										<button sec:authorize="!hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../configurations/create'" ><i class="flaticon-cogwheel-2"></i> <span th:text="#{gen.create}">New </span></button>
 									</div>
-								</div>
+								</div>																
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
@@ -169,9 +169,9 @@
 													<thead>
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{configuration.userid}" >Name</span></th>
-															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{configuration.environment}" >Environment</span></th>
-															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configurations.type}" >Configuration Type</span></th>
-															<th class="titulo-columnas" ><i class="la"></i> <span th:text="#{configuration.suffix}">Suffix</span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-credit-card"></i> <span th:text="#{configuration.environment}" >Environment</span></th>
+															<th class="titulo-columnas text-center" ><i class="la"></i> <span th:text="#{configurations.type}" >Configuration Type</span></th>
+															<th class="titulo-columnas text-center" ><i class="la"></i> <span th:text="#{configuration.suffix}">Suffix</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 												
 														</tr>
@@ -179,22 +179,22 @@
 													<tbody th:remove="all-but-first">
 														<tr th:each="configuration : ${configurations}" pages:paginate="10">
 															<!-- USERID -->
-															<td class="text-left no-wrap bold" th:text="${configuration.user.userId}"></td>
+															<td class="text-left no-wrap " th:text="${configuration.user.userId}"></td>
 															<!-- IDENTIFICATION -->
-															<td class="text-left no-wrap bold" th:text="${configuration.environment}"></td>
+															<td class="text-center no-wrap " th:text="${configuration.environment}"></td>
 															<!-- CONFIGURATION TYPE -->														
-															<td class="text-left no-wrap bold" th:text="${configuration.configurationType.description}"></td>
+															<td class="text-left text-truncate-sm no-wrap " th:text="${configuration.configurationType.description}"></td>
 															<!-- DESCRIPTION -->
-															<td class="text-left text-truncate-sm" th:text="${configuration.suffix}"></td>													
+															<td class="text-center no-wrap" th:text="${configuration.suffix}"></td>													
 															
 															<!-- OPTIONS -->
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/configurations/show/${configuration.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/configurations/show/${configuration.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/configurations/update/${configuration.id}|} + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  class="btn btn-warning btn-sm sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/configurations/update/${configuration.id}|} + '\');'"><i class="fa fa-edit"></i></span>
 																</div>
 															</td>
 														</tr>
