@@ -33,7 +33,18 @@ services:
     external_links:
      - configdb
      - schedulerdb
-     - realtimedb     
+     - realtimedb  
+  flowengineinstance:
+    image: ${REPOSITORY}sofia2/flowengine:${IMAGETAG}
+    container_name: flowengineservice    
+    networks:
+      - data_datanetwork
+    ports:
+     - "8094:8082"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb         
 networks:
   data_datanetwork:
     external: true
