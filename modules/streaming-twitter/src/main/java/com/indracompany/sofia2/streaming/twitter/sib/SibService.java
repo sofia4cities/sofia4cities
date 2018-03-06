@@ -19,9 +19,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public interface SibService {
 
-	//	String getSessionKey(String token) throws SSAPComplianceException, AuthenticationException;
-	void inserOntologyInstanceToMongo(String instance, String ontology, String clientPlatform, String clientPlatformInstance, String user) throws JsonProcessingException, IOException;
-	//	SSAPMessage<SSAPBodyReturnMessage> disconnect(String sessionKey);
-	//	boolean insertOntologyInstance(String instance, String sessionKey,
-	//			String ontology, String clientPlatform, String clientPlatformInstance) throws JsonProcessingException, IOException;
+	// String getSessionKey(String token) throws SSAPComplianceException,
+	// AuthenticationException;
+	// void inserOntologyInstanceToMongo(String instance, String ontology,
+	// String clientPlatform, String clientPlatformInstance, String user) throws
+	// JsonProcessingException, IOException;
+	// SSAPMessage<SSAPBodyReturnMessage> disconnect(String sessionKey);
+	void insertOntologyInstance(String instance, String ontology, String user)
+			throws Exception;
 }

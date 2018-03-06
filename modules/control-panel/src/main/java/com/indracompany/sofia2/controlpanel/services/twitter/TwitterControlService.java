@@ -24,6 +24,8 @@ import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.services.twitter.TwitterListeningService;
 import com.indracompany.sofia2.scheduler.SchedulerType;
 import com.indracompany.sofia2.scheduler.scheduler.bean.TaskInfo;
+import com.indracompany.sofia2.scheduler.scheduler.bean.TaskOperation;
+import com.indracompany.sofia2.scheduler.scheduler.bean.response.ScheduleResponseInfo;
 import com.indracompany.sofia2.scheduler.scheduler.service.TaskService;
 
 @Service
@@ -32,7 +34,10 @@ public class TwitterControlService {
 	@Autowired
 	private TaskService taskService;
 
-	public boolean scheduleTwitterListening(TwitterListening twitterListening) {
+	@Autowired
+	private TwitterListeningService twitterListeningService;
+
+	public void scheduleTwitterListening(TwitterListening twitterListening) {
 
 		TaskInfo task = new TaskInfo();
 		task.setJobName(twitterListening.getId());
@@ -56,15 +61,36 @@ public class TwitterControlService {
 		task.setUsername(twitterListening.getUser().getUserId());
 		task.setData(jobContext);
 		task.setSingleton(false);
-		task.setCronExpression("20 * * ? * * *");
+		task.setCronExpression("0/20 * * ? * * *");
 
 		Calendar end = Calendar.getInstance();
-		end.add(Calendar.MINUTE, 3);
+		end.add(Calendar.MINUTE, 2);
 
 		task.setStartAt(Calendar.getInstance().getTime());// twitterListening.getDateFrom());
 		task.setEndAt(end.getTime());// witterListening.getDateTo());
-		return taskService.addJob(task).isSuccess();
+		ScheduleResponseInfo response = taskService.addJob(task);
+		twitterListening.setJobName(response.getJobName());
+		this.twitterListeningService.updateListening(twitterListening);
+		
 
+	}
+
+	public void unscheduleTwitterListening(TwitterListening twitterListening) {
+		TaskOperation operation = new TaskOperation();
+		operation.setJobName(twitterListening.getJobName());
+		if (operation.getJobName() != null) {
+			this.taskService.unscheduled(operation);
+			twitterListening.setJobName(null);
+			this.twitterListeningService.updateListening(twitterListening);
+		}
+			
+	}
+
+	public void updateTwitterListening(TwitterListening twitterListening) {
+		this.twitterListeningService.updateListening(twitterListening);
+		twitterListening = this.twitterListeningService.getListenById(twitterListening.getId());
+		this.unscheduleTwitterListening(twitterListening);
+		this.scheduleTwitterListening(twitterListening);
 	}
 
 }

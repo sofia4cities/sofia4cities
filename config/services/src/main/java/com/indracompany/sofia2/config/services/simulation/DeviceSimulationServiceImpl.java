@@ -118,7 +118,7 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 		ObjectMapper mapper = new ObjectMapper();
 		DeviceSimulation simulation = new DeviceSimulation();
 		
-		simulation.setOntology(this.ontologyService.getOntologyByIdentification(mapper.readTree(json).path("ontology").asText()));
+		simulation.setOntology(this.ontologyService.getOntologyByIdentification(mapper.readTree(json).path("ontology").asText(),userId));
 		simulation.setClientPlatform(this.clientPlatformRepository.findByIdentification(mapper.readTree(json).path("clientPlatform").asText()));
 		simulation.setToken(this.tokenRepository.findByToken(mapper.readTree(json).path("token").asText()));
 		simulation.setIdentification(identification);

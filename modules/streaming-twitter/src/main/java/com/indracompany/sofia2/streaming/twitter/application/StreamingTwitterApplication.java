@@ -22,9 +22,9 @@ import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 
 @SpringBootApplication
 @ComponentScan("com.indracompany.sofia2")
-public class StreamingTwitterApp {
+public class StreamingTwitterApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(StreamingTwitterApp.class, args);
+		SpringApplication.run(StreamingTwitterApplication.class, args);
 	}
 }

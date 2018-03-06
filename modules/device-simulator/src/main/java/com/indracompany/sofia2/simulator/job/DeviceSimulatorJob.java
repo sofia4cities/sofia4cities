@@ -64,7 +64,7 @@ public class DeviceSimulatorJob {
 		String clientPlatformInstance = jsonInstance.get("clientPlatformInstance").asText();
 		String ontology = jsonInstance.get("ontology").asText();
 		
-		String context = mapper.readTree(this.ontologyService.getOntologyByIdentification(ontology).getJsonSchema()).get("properties").fields().next().getKey();
+		String context = mapper.readTree(this.ontologyService.getOntologyByIdentification(ontology,user).getJsonSchema()).get("properties").fields().next().getKey();
 
 		((ObjectNode) instance).set(context, fieldAndValues);
 		this.sibService.inserOntologyInstanceToMongo(instance.toString(), user, clientPlatform, clientPlatformInstance,

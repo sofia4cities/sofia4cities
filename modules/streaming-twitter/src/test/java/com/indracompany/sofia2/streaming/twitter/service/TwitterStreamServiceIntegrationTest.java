@@ -38,15 +38,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
-import com.indracompany.sofia2.streaming.twitter.application.StreamingTwitterApp;
+import com.indracompany.sofia2.streaming.twitter.application.StreamingTwitterApplication;
 import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
 
 import lombok.extern.slf4j.Slf4j;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = StreamingTwitterApp.class)
+@SpringBootTest(classes = StreamingTwitterApplication.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@ContextConfiguration(classes = StreamingTwitterApp.class)
+@ContextConfiguration(classes = StreamingTwitterApplication.class)
 @Slf4j
 public class TwitterStreamServiceIntegrationTest {
 

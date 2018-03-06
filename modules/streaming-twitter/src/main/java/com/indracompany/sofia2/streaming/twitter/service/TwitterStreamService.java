@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
-import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceFactory;
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceSpringSocialImpl;
 import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
@@ -40,8 +39,7 @@ public class TwitterStreamService {
 
 	@Autowired
 	SibService sibService;
-	@Autowired
-	MessageProcessor messageProcessor;
+
 
 	private Map<String, TwitterStreamListener> listenersMap = new HashMap<String, TwitterStreamListener>();
 	private Map<String, Stream> streamMap = new HashMap<String, Stream>();
@@ -76,7 +74,7 @@ public class TwitterStreamService {
 				.createFilterStreaming(keywords, twitterStreamListener);
 		twitterStreamListener.setTwitterStream(stream);
 		twitterStreamListener.getSibSessionKey();
-		log.info("Suscribed stream: " + stream.toString());
+		log.info("Suscribed stream: " + stream.hashCode());
 		listenersMap.put(listenerId, twitterStreamListener);
 		streamMap.put(listenerId, stream);
 		log.debug("Listener registered with id " + listenerId + ", keywords: " + keywords);
@@ -88,8 +86,7 @@ public class TwitterStreamService {
 		TwitterStreamListener listener = listenersMap.get(listenerId);
 
 		if (listener != null) {
-			Stream stream = streamMap.get(listenerId);
-			stream.close();
+			listener.closeStream();
 			listenersMap.remove(listenerId);
 			streamMap.remove(listenerId);
 			listener.deleteSibSessionKey();

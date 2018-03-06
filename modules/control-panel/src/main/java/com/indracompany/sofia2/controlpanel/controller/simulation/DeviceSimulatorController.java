@@ -94,7 +94,7 @@ public class DeviceSimulatorController {
 	public String getOntologyfields(Model model, @RequestParam String ontologyIdentification)
 			throws JsonProcessingException, IOException {
 
-		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification));
+		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification, this.utils.getUserId()));
 		model.addAttribute("simulators", this.deviceSimulationService.getSimulatorTypes());
 		return "/simulator/create :: ontologyFields";
 	}

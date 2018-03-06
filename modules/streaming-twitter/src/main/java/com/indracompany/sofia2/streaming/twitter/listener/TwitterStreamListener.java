@@ -31,9 +31,7 @@ import org.springframework.social.twitter.api.StreamWarningEvent;
 import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
-import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.streaming.twitter.sib.SibService;
 
 import lombok.Getter;
@@ -43,9 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component("prototype")
 @Slf4j
 public class TwitterStreamListener implements StreamListener {
-
-	@Autowired
-	MessageProcessor messageProcessor;
+	
 
 	@Autowired
 	SibService sibService;
@@ -109,7 +105,7 @@ public class TwitterStreamListener implements StreamListener {
 
 	public TwitterStreamListener() {
 
-		log.info("New TwitterListener up");
+		
 		tweetsQueue = new LinkedBlockingQueue<Tweet>();
 		executor = Executors.newFixedThreadPool(THREADS);
 		tweetInsert = defineMonitoringRunnable();
@@ -145,13 +141,11 @@ public class TwitterStreamListener implements StreamListener {
 	@Override
 	public void onDelete(StreamDeleteEvent deleteEvent) {
 		this.twitterStream.close();
-
 	}
 
 	@Override
 	public void onLimit(int numberOfLimitedTweets) {
 		this.twitterStream.close();
-
 	}
 
 	@Override
@@ -168,8 +162,7 @@ public class TwitterStreamListener implements StreamListener {
 			
 			//while we dont have iotbroker
 			instance = instance.replaceAll("'", "\"");
-			this.sibService.inserOntologyInstanceToMongo(instance, this.getOntology(), this.getClientPlatform(),
-					this.getClientPlatform() + ":twitterStreaming", user);
+			this.sibService.insertOntologyInstance(instance, this.getOntology(),  user);
 			
 
 		} catch (Exception e) {
@@ -178,7 +171,7 @@ public class TwitterStreamListener implements StreamListener {
 
 	}
 
-	public void getSibSessionKey() throws SSAPComplianceException, AuthenticationException {
+	public void getSibSessionKey(){
 
 		// this.setSessionKey(sibService.getSessionKey(this.getToken()));
 
@@ -250,6 +243,17 @@ public class TwitterStreamListener implements StreamListener {
 
 	private Runnable defineMonitoringRunnable() {
 		return new ListenerThread();
+	}
+
+	public void closeStream() {
+		try {
+			this.twitterStream.close();
+		}catch(Exception e){
+			
+		}finally{
+			this.twitterStream = null;
+		}
+		
 	}
 
 }
