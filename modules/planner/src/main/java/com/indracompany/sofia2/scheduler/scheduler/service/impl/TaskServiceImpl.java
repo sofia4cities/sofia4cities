@@ -100,8 +100,10 @@ public class TaskServiceImpl implements TaskService {
 							
 							log.info( jobKey.getName() + "[" + triggerState.name() + "]");
 							
+							String status = ("NORMAL".equals(triggerState.name()))?"EXECUTING":triggerState.name();
+							
 							ListTaskInfo info = new ListTaskInfo(jobKey.getName(), jobKey.getGroup(), jobDetail.getDescription(), 
-														 triggerState.name(), cronExpression, 
+														 status, cronExpression, 
 														 SchedulerType.fromString(scheduler.getSchedulerName()).toString(), 
 														 DateUtil.parseDate (trigger.getStartTime()), 
 														 DateUtil.parseDate (trigger.getNextFireTime()), 
@@ -172,6 +174,8 @@ public class TaskServiceImpl implements TaskService {
 												info.isSingleton());
 			
 			scheduledJobService.createScheduledJob(job);
+			
+			log.info("job added");
 			
 		} catch (SchedulerException | BatchSchedulerException| NotFoundException e) {
 			added = false;
