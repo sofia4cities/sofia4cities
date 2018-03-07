@@ -12,16 +12,17 @@
  * limitations under the License.
  */
 /*******************************************************************************
-
  * © Indra Sistemas, S.A.
- * 2013 - 2014  SPAIN
+ * 2013 - 2018  SPAIN
  *
  * All rights reserved
  ******************************************************************************/
 
 package com.indracompany.sofia2.config.repository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,9 +34,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.Gadget;
-import com.indracompany.sofia2.config.model.GadgetMeasure;
-import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.Token;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,53 +43,37 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-
-public class GadgetMeasureIntegrationTest {
-
-	@Autowired
-	GadgetMeasureRepository repository;
-	@Autowired
-	GadgetRepository grepository;
+public class TokenRepositoryIntegrationTest {
 
 	@Autowired
-	UserRepository userRepository;
-
-	private User getUserCollaborator() {
-		return this.userRepository.findByUserId("collaborator");
-	}
+	TokenRepository repository;
+	@Autowired
+	ClientPlatformRepository cpRepository;
 
 	@Before
 	public void setUp() {
-		List<GadgetMeasure> gadgetMeasures = this.repository.findAll();
-		if (gadgetMeasures.isEmpty()) {
-			log.info("No gadget measures ...");
-			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			gadgetMeasure.setAttribute("Attr1");
-			List<Gadget> gadgets = this.grepository.findAll();
-			Gadget gadget;
-			if (gadgets.isEmpty()) {
-				log.info("No gadgets ...");
-				gadget = new Gadget();
-				gadget.setDbType("RTDB");
-				gadget.setUser(getUserCollaborator());
-				gadget.setPublic(true);
-				gadget.setName("Gadget1");
-				gadget.setType("Tipo 1");
+		List<Token> tokens = this.repository.findAll();
+		if (tokens.isEmpty()) {
+			log.info("No Tokens, adding ...");
 
-				grepository.save(gadget);
-			} else {
-				gadget = grepository.findAll().get(0);
-			}
-			gadgetMeasure.setGadget(gadget);
-			repository.save(gadgetMeasure);
+			ClientPlatform client = new ClientPlatform();
+			client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
+			Set<Token> hashSetTokens = new HashSet<Token>();
+
+			Token token = new Token();
+			token.setClientPlatform(client);
+			token.setToken("Token1");
+			token.setActive(true);
+			hashSetTokens.add(token);
+			client.setTokens(hashSetTokens);
+			repository.save(token);
 		}
 	}
 
 	@Test
-	public void test_findByGadgetId() {
-		GadgetMeasure gadgetMeasure = this.repository.findAll().get(0);
-		log.info("Loaded gadget measure with gadget id: " + gadgetMeasure.getGadget().getId());
-		Assert.assertTrue(this.repository.findByGadget(gadgetMeasure.getGadget()).size() > 0);
+	public void given_SomeTokensExist_When_ItIsSearchedByPlatformId_Then_TheCorrectObjectsAreObtained() {
+		Token token = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findByClientPlatform(token.getClientPlatform()).size() > 0);
 	}
 
 }

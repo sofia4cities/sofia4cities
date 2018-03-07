@@ -37,15 +37,11 @@ import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class InstanceGeneratorIntegrationTest {
+public class InstanceGeneratorRepositoryIntegrationTest {
 
 	@Autowired
 	InstanceGeneratorRepository repository;
@@ -85,10 +81,9 @@ public class InstanceGeneratorIntegrationTest {
 	}
 
 	@Test
-	public void test_findById() {
+	public void given_SomeInstanceGeneratorsExist_When_ItIsSearchedById_Then_CorrectObjectIsObtained() {
 		InstanceGenerator generator = this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository.findById(generator.getId()) != null);
-
 	}
 
 }

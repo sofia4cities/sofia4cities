@@ -17,7 +17,6 @@
  *
  * All rights reserved
  ******************************************************************************/
-
 package com.indracompany.sofia2.config.repository;
 
 import java.util.List;
@@ -33,6 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.OntologyEmulator;
 import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +42,13 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
-public class OntologyIntegrationTest {
+public class OntologyEmulatorRepositoryIntegrationTest {
 
 	@Autowired
-	OntologyRepository repository;
+	OntologyRepository orepository;
+	@Autowired
+	OntologyEmulatorRepository repository;
+
 	@Autowired
 	UserRepository userRepository;
 
@@ -55,43 +58,37 @@ public class OntologyIntegrationTest {
 
 	@Before
 	public void setUp() {
-		List<Ontology> ontologies = this.repository.findAll();
-		if (ontologies.isEmpty()) {
-			log.info("No ontologies..adding");
-			Ontology ontology = new Ontology();
-			ontology.setJsonSchema("{}");
-			ontology.setIdentification("Id 1");
-			ontology.setDescription("Description");
-			ontology.setActive(true);
-			ontology.setRtdbClean(true);
-			ontology.setPublic(true);
-			ontology.setUser(getUserCollaborator());
-			repository.save(ontology);
+		List<OntologyEmulator> oes = this.repository.findAll();
+		if (oes.isEmpty()) {
+			log.info("No ontology emulators, adding...");
+			OntologyEmulator oe = new OntologyEmulator();
+			oe.setMeasures("2.5,3.4,4.5");
+			oe.setIdentification("Id 1");
+			oe.setUser(getUserCollaborator());
+			oe.setInsertEvery(5);
+			Ontology o = this.orepository.findAll().get(0);
+			if (o == null) {
+				o = new Ontology();
+				o.setJsonSchema("{}");
+				o.setIdentification("Id 1");
+				o.setDescription("Description");
+				o.setActive(true);
+				o.setRtdbClean(true);
+				o.setPublic(true);
+				orepository.save(o);
 
-			ontology = new Ontology();
-			ontology.setJsonSchema("{Data:,Temperature:}");
-			ontology.setDescription("Description");
-			ontology.setIdentification("Id 2");
-			ontology.setActive(true);
-			ontology.setRtdbClean(true);
-			ontology.setPublic(true);
-			ontology.setUser(getUserCollaborator());
-			repository.save(ontology);
+			}
+			oe.setOntology(o);
+			this.repository.save(oe);
 
 		}
+
 	}
 
 	@Test
-	public void test_findByIdentificationLikeAndDescriptionLike() {
-		Ontology o = this.repository.findAll().get(0);
-		o.isActive();
-		Assert.assertTrue(this.repository
-				.findByIdentificationLikeAndDescriptionLike(o.getIdentification(), o.getDescription()).size() > 0);
-
+	public void given_SomeOntologyEmulatorsExist_When_ItIsSearchedByIdentificationAndUserId_Then_TheCorrectObjectIsObtained() {
+		OntologyEmulator oe = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findByIdentificationAndUser(oe.getIdentification(), oe.getUser()).size() > 0);
 	}
 
-	public void countByIsActiveTrueAndIsPublicTrue() {
-		Assert.assertTrue(this.repository.countByActiveTrueAndIsPublicTrue() == 1L);
-
-	}
 }

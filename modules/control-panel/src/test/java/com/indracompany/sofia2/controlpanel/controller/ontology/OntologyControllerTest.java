@@ -77,7 +77,7 @@ public class OntologyControllerTest {
    //TODO test put update using ResultBinding and spring validation 
     
     @Test
-    public void when__invalidOntologyIdIsSentToDelete__ExceptionIsThrown() throws Exception {
+    public void given_OneOntology_When_AnIncorrectIdIsSentToDeleteOne_TheViewIsRedirectToOntologiesList() throws Exception{
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
     	String sessionUserId = "userOntology";
@@ -95,7 +95,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__correctParametersAreSentToDelete__OntologyIsDeleted() throws Exception {
+    public void given_OneOntology_When_CorrectParamentersAreSentToDelete_Then_TheOntologyIsDeleted() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
     	String sessionUserId = "userOntology";
@@ -109,7 +109,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__sessionUserIsNotAdminOrOwner__showCreateWizardIsForbidden () throws Exception {
+    public void given_OneOntology_When_OneUserWithoutAuthorizationWantsToUpdateIt_Then_TheViewIsRedirectToCreate() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	String sessionUserId = "unknownUser";
     	given(ontologyService.getOntologyById(ontology.getId(), sessionUserId))
@@ -123,7 +123,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__invalidOntologyIdIsProvidedToUpdate__OntologyCreateViewIsServed() throws Exception {
+    public void given_OneOntology_IfInvalidIdIsSentToUpdate_Then_TheViewShowedIsForCreation() throws Exception {
     	String id = "invalidOntologyId";
     	String sessionUserId = "unknownUser";
     	given(ontologyService.getOntologyById(id, sessionUserId)).willReturn(null);
@@ -133,7 +133,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__correctParamentersAreSentToUpdate__OntologyCreatewizardViewIsServed() throws Exception {
+    public void given_OneOntology_WhenCorrectParementersAreSentToUpdate_TheCreateWizardViewIsShowedWithTheCorrectParameters() throws Exception {
     	
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
@@ -161,7 +161,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__sessionUserIsNotAuthorized__showViewIsForbidden () throws Exception {
+    public void given_OneOntology_When_OneUserWithoutAuthorizationWantsToViewDetails_Then_TheListViewIsServed() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
     	String sessionUserId = "unknownUser";
@@ -177,7 +177,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__invalidOntologyIdIsProvidedToShow__OntologyListViewIsServed() throws Exception {
+    public void given_AnyState_When_AnInvalidIdIsProvidedToShowOntologyDetails_Then_TheListViewIsServed() throws Exception {
     	String id = "invalidOntologyId";
     	
     	String sessionUserId = "unknownUser";
@@ -189,7 +189,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__correctParamentersAreSentToShow__OntologyShowsViewIsServed() throws Exception {
+    public void given_OneOntology_When_CorrectParametersAreProvided_Then_TheShowViewIsServedWithTheCorrectAttributes() throws Exception {
     	
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
@@ -217,7 +217,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__correctParametersAreSentToCreate__OntologyAccessIsCreated() throws Exception {
+    public void given_OneOntology_When_CorrectParamentersAreSentToCreateUserAccess_Then_TheUserAccessIsCreatedAndReturnedAsJSON() throws Exception {
     	
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	String sessionUserId = "userOntology";
@@ -241,7 +241,7 @@ public class OntologyControllerTest {
     
     
     @Test
-    public void when__sessionUserIsNotAuthorizated__ontologyAccessCreationIsForbidden() throws Exception {
+    public void given_OneOntology_When_OneNotAuthorizedUserWantsToCreateAUserAccessç_Then_TheUserAccessIsNotCreatedAndABadRequestIsResponsed() throws Exception {
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	String sessionUserId = "unknown";
     	
@@ -262,7 +262,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__correctParametersAreSentToDelete__OntologyAccessIsDeleted () throws Exception {
+    public void given_OneOntologyWithUserAccess_When_CorrectParamentersAreSentToDeleteTheUserAccess_Then_TheUserAccessIsDeletedAndAStatusIsResponsed() throws Exception {
     	
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	
@@ -281,7 +281,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__sessionUserIsNotAuthorizated__ontologyAccessDeleteIsForbidden() throws Exception {
+    public void given_OneOnotologyWithUserAccess_When_OneUserWithoutAuthorizationWantsToDeleteTheUserAccess_Then_TheUserAccessIsNotDeletedAndABadRequestIsResponsed() throws Exception {
 
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	
@@ -299,7 +299,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__correctParametersAreSentToUpdate__OntologyAccessIsUpdated() throws Exception {
+    public void given_OneOntologyWithUserAccess_When_CorrectParametersAreSentToUpdate_Then_TheOntologyUserAccessIsUpdatedAndTheNewValuesAreReturnedAsJSON() throws Exception {
     	OntologyUserAccess accessOld = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	OntologyUserAccess accessNew = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "QUERY", "accessId");
     	
@@ -322,7 +322,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__sessionUserIsNotAuthorizated__ontologyAccessUpdateIsForbidden() throws Exception {
+    public void given_OneOntologyWithUserAccess_When_OneUserWithAuthorizationsWantsToUpdateTheUserAccess_Then_TheUpdateIsNotPerformedAndABadRequestIsResponsed() throws Exception {
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	
     	String sessionUserId = "unknown";
@@ -340,7 +340,7 @@ public class OntologyControllerTest {
     }
     
     @Test
-    public void when__parametersAreSentToListAuthorizations__OntologyAuthorizationsAreReturned() throws Exception {
+    public void given_OneOntologyWithTwoUserAccesses_When_CorrectParametersAreSentToListUserAccesses_Then_TheTwoUserAccessesAreResponsedAsAJSONArray() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
     	
     	List<OntologyUserAccess> accesses = createAccesses();
@@ -369,7 +369,7 @@ public class OntologyControllerTest {
     }
 
     @Test
-    public void when__sessionUserIsNotAuthorized__OntologyAuthorizationsAreNotReturned() throws Exception {
+    public void given_OneOntology_When_OneUserWithoutAuthorizationWantsToObtainTheUserAccesses_Then_ABadRequestIsResponsed() throws Exception {
     	Ontology ontology = ontologyCreator("ontologyId", "userOntology");
 
     	String sessionUserId = "unknown";
