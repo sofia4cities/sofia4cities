@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.config.services.token;
 
+import java.util.List;
+
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Token;
 
@@ -24,5 +26,10 @@ public interface TokenService {
 
 	public Token getTokenByToken(String token);
 
+	public Token getTokenByID(String id);
+
+	public void deactivateToken(Token token, boolean active);
+
+	List<Token> getTokens(ClientPlatform clientPlatform);
 
 }

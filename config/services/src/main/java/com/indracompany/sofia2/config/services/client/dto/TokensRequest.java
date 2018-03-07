@@ -11,34 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.device;
-
-import java.io.Serializable;
-import java.util.Date;
+package com.indracompany.sofia2.config.services.client.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class DeviceDTO implements Serializable {
+public class TokensRequest {
 
 	@Getter
 	@Setter
-	private String id;
-	@Getter
-	@Setter
-	private String identification;
-	@Getter
-	@Setter
-	private String description;
-
-	@Getter
-	@Setter
-	private String ontologies;
-	@Getter
-	@Setter
-	private String user;
-	@Getter
-	@Setter
-	private Date dateCreated;
-
+	private String deviceIdentification;
 }

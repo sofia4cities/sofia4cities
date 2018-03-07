@@ -510,7 +510,12 @@ var HeaderController = function() {
 		showConfirmDialogUsuario : function(formId){		
 			logControl ? console.log('showConfirmDialogUsuario()...') : '';
 			showConfirmDialogUsuario(formId);
-		}		
+		},
+		showConfirmDialogDevice: function(formId){		
+			logControl ? console.log('showConfirmDialogDevice()...') : '';
+			showConfirmDialogDevice(formId);
+		},
+		
 	};
 }();
 

@@ -25,6 +25,7 @@ import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
 import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
@@ -32,6 +33,7 @@ import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
+import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.TwitterListeningRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 
@@ -52,6 +54,8 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 	private ClientPlatformRepository clientPlatformRepository;
 	@Autowired
 	private TwitterListeningRepository twitterListeningRepository;
+	@Autowired
+	private TokenRepository tokenRepository;
 
 	@Override
 	@Transactional
@@ -109,5 +113,16 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 		} catch (Exception e) {
 			throw new OntologyServiceException("Couldn't delete ClientPlatform");
 		}
+	}
+
+	@Override
+	public void deleteToken(String id) {
+		try {
+			Token token = tokenRepository.findById(id);
+			tokenRepository.delete(token);
+		} catch (Exception e) {
+			throw new OntologyServiceException("Couldn't delete Token");
+		}
+
 	}
 }
