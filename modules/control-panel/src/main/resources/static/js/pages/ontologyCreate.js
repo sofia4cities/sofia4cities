@@ -20,8 +20,6 @@ var OntologyCreateController = function() {
 	var hasId = false; // instance
 
 	
-	
-	
 	// CONTROLLER PRIVATE FUNCTIONS	--------------------------------------------------------------------------------
 	
 
@@ -488,8 +486,7 @@ var OntologyCreateController = function() {
 
 	
 	// CREATE EDITOR FOR JSON SCHEMA 
-	var createEditor = function(){
-		
+	var createEditor = function(){		
 		logControl ? console.log('|--->   createEditor()') : '';
 		var container = document.getElementById('jsoneditor');	
 		var options = {
@@ -505,10 +502,8 @@ var OntologyCreateController = function() {
 				
 				console.log('se modifica el editor en modo:' + editor.mode + ' contenido: ' + editor.getText());
 			}
-		};
-		
-		editor = new jsoneditor.JSONEditor(container, options, "");		
-		
+		};		
+		editor = new jsoneditor.JSONEditor(container, options, "");			
 	}
 	
 	
@@ -590,10 +585,7 @@ var OntologyCreateController = function() {
 					$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.noproperties});
 					isValid = false;
 					return isValid;
-				}
-			   
-			   
-				
+				}				
 				//Validaciones sobre propiedas y requeridos
 				else if(nodo.required!=undefined && (nodo.additionalProperties == null || nodo.additionalProperties == false)) {
 
@@ -627,10 +619,7 @@ var OntologyCreateController = function() {
 			$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.noschema});			
 			return isValid;
 			
-		}
-		
-		
-		
+		}	
 		console.log('JSON SCHEMA VALIDATION: ' + isValid);
 		return isValid;
 	}	
@@ -1075,7 +1064,7 @@ var OntologyCreateController = function() {
 			// CHECK IF WE HAVE A DATAMODEL LOADED YET... o-DO: make confirm.
 			if ( $('#datamodel_properties').attr('data-loaded') == 'true' ){		
 			
-				$.confirm({ title: 'CONFIRM!', theme: 'dark', type: 'orange', content: 'IF YOU CHANGE DATAMODEL YOUR PROPERTIES AND SCHEMA CONFIGURATION WILL BE REMOVE AND STARTED AGAIN!',
+				$.confirm({ title: ontologyCreateReg.confirmBtn, theme: 'dark', type: 'orange', content: ontologyCreateReg.validations.datamodelchange,
 					buttons: {
 						confirm: function () {
 						
