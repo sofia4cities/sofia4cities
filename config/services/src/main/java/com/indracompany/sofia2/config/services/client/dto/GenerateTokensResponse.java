@@ -11,16 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.services.deletion;
+package com.indracompany.sofia2.config.services.client.dto;
 
-import com.indracompany.sofia2.config.model.TwitterListening;
+import lombok.Getter;
+import lombok.Setter;
 
-public interface EntityDeletionService {
+public class GenerateTokensResponse {
+	@Getter
+	@Setter
+	private boolean ok;
 
-	void deleteOntology(String id, String userId);
-	
-	void deleteTwitterListening(TwitterListening twitterListening);
-	void deleteClient(String id);
-
-	void deleteToken(String id);
 }
