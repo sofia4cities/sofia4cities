@@ -34,9 +34,6 @@ public class CamelContextHandler implements BeanFactoryAware {
   private BeanFactory beanFactory;
   
   @Autowired
-  CamelContext camelContextReference;
-
-  @Autowired
   private ApplicationContext applicationContext;
 
   @Autowired
@@ -96,14 +93,12 @@ public class CamelContextHandler implements BeanFactoryAware {
     camelContext.setAutoStartup( camelConfigurationProperties.isAutoStartup());
     camelContext.setAllowUseOriginalMessage(camelConfigurationProperties.isAllowUseOriginalMessage());
     
-    ErrorHandlerBuilder ehBuilder= camelContextReference.getErrorHandlerBuilder();
 
     if (camelContext.getManagementStrategy().getManagementAgent() != null) {
     	camelContext.getManagementStrategy().getManagementAgent().setEndpointRuntimeStatisticsEnabled(camelConfigurationProperties.isEndpointRuntimeStatisticsEnabled());
     	camelContext.getManagementStrategy().getManagementAgent().setStatisticsLevel(camelConfigurationProperties.getJmxManagementStatisticsLevel());
     	camelContext.getManagementStrategy().getManagementAgent().setManagementNamePattern(camelConfigurationProperties.getJmxManagementNamePattern());
     	camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(camelConfigurationProperties.isJmxCreateConnector());
-
     }
 
     ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;

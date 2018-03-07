@@ -32,7 +32,7 @@ public class HazelcastConfigIntegrationTest {
     @Autowired private ApplicationContext applicationContext;
 
     @Test
-    public void whenApplicationContextStarts_HazelcastConfigBeanExists() {
+    public void given_TheApplicationContext_When_ItStarts_Then_TheHazelcastBeanIsCreated() {
         assertNotEquals(applicationContext.getBean("hazelcast"), null);
     }
 }

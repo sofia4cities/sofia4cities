@@ -32,8 +32,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/json/jsoneditor.css}"/>
-		
-		
+			
 	</head>	
 
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
@@ -92,11 +91,10 @@
 									<a href="" class="collapse" data-original-title="" title=""> </a>
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
 								</div>
-								<div class="actions">
-									<!-- ACTION INDICATORs -->
+								<!-- <div class="actions">									
 									<span th:if="${ontology?.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
 									<span th:if="${ontology?.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
-								</div>
+								</div> -->
 								
 								<!-- SECCIONES DE LA ONTOLOGIA TABS -->
 								<ul class="nav nav-tabs pull-left">
@@ -382,10 +380,7 @@
 												<div class="form-group">
 													<label class="control-label" >Usuario</label>
 													<select id="users" class="selectpicker form-control" data-live-search="true" data-width="100%" >
-														<!--<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>-->
-														<option value="developer"> Developer</option>
-														<option value="administrator"> Administrator</option>
-														<option value="partner"> Partner</option>
+														<option th:each="user :${users}" th:value="${user.userId}" th:text="${user.fullName}" ></option>														
 													</select>
 												</div>
 												<div class="form-group">
@@ -500,7 +495,8 @@
 		"dataModelEditMode" : [[${ontology.dataModel?.id}]],
 		"dataModelSelection" : [[#{ontology.datamodel.selection}]],
 		"datamodel": [[#{ontology.datamodel}]],
-		"ontologyId": [[${ontology?.id}]]
+		"ontologyId": [[${ontology?.id}]],
+		"authorizations" : [[${authorizations}]]
 	};	
 	
 

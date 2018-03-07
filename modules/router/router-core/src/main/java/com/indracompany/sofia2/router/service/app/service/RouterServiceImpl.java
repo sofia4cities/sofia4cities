@@ -16,17 +16,24 @@ package com.indracompany.sofia2.router.service.app.service;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
+import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel.OperationType;
+import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel.QueryType;
+import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 
 @Service("routerServiceImpl")
-public class RouterServiceImpl implements RouterService {
+public class RouterServiceImpl implements RouterService, RouterSuscriptionService {
 
 	@Autowired
 	CamelContext camelContext;
+	
+	@Autowired
+	SuscriptionModelRepository repository;
 	
 	private String defaultStartupRoute = "direct:start-broker-flow";
 
@@ -59,9 +66,38 @@ public class RouterServiceImpl implements RouterService {
 	}
 
 	@Override
-	public OperationResultModel subscribe(NotificationModel model) throws Exception {
-		ProducerTemplate t = camelContext.createProducerTemplate();
-		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+	public OperationResultModel suscribe(SuscriptionModel model) throws Exception {
+		
+
+		SuscriptionNotificationsModel m = new SuscriptionNotificationsModel();
+		m.setOntologyName(model.getOntologyName());
+		m.setOperationType(OperationType.valueOf(model.getOperationType().name()));
+		m.setQuery(model.getQuery());
+		m.setQueryType(QueryType.valueOf(model.getQueryType().name()));
+		m.setSessionKey(model.getSessionKey());
+		m.setSuscriptionId(model.getSuscriptionId());
+		m.setUser(model.getUser());
+		
+		SuscriptionNotificationsModel saved = repository.save(m);
+		
+		OperationResultModel result = new OperationResultModel();
+		result.setErrorCode("");
+		result.setOperation("SUSCRIBE");
+		result.setResult(saved.getId());
+		result.setMessage("Suscription to "+saved.getOntologyName()+" has "+repository.findAllByOntologyName(model.getOntologyName()).size());
+		return result;
+	}
+
+	@Override
+	public OperationResultModel unSuscribe(SuscriptionModel model) throws Exception {
+		
+		repository.deleteBySuscriptionId(model.getSuscriptionId());
+		
+		OperationResultModel result = new OperationResultModel();
+		result.setErrorCode("");
+		result.setOperation("UNSUSCRIBE");
+		result.setResult("OK");
+		result.setMessage("Suscription to "+model.getOntologyName()+" has "+repository.findAllByOntologyName(model.getOntologyName()).size());
 		return result;
 	}
 

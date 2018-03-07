@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bson.types.ObjectId;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,17 +29,17 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.javafaker.Faker;
-import com.indracompany.sofia2.common.exception.AuthorizationException;
+import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
+import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
+import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
+import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
+import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.iotbroker.ssap.generator.PojoGenerator;
-import com.indracompany.sofia2.iotbroker.ssap.generator.SSAPMessageGenerator;
-import com.indracompany.sofia2.iotbroker.ssap.generator.pojo.Person;
+import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -54,21 +53,20 @@ public class InsertProcessorTest {
 	MessageProcessorDelegate insertProcessor;
 
 	@Autowired
-	MongoTemplate springDataMongoTemplate;
+	BasicOpsDBRepository repository;
 
 	@MockBean
 	SecurityPluginManager securityPluginManager;
+
+	@Autowired
+	MockMongoOntologies mockOntologies;
 
 	Person subject = PojoGenerator.generatePerson();
 	SSAPMessage<SSAPBodyInsertMessage> ssapInsertOperation;
 
 	@Before
 	public void setUp() throws IOException, Exception {
-		//TODO: Make this checks generics
-		if (springDataMongoTemplate.collectionExists(Person.class)) {
-			springDataMongoTemplate.dropCollection(Person.class);
-		}
-		springDataMongoTemplate.createCollection(Person.class);
+		mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
 		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(Person.class.getSimpleName(), subject);
@@ -76,11 +74,11 @@ public class InsertProcessorTest {
 
 	@After
 	public void tearDown() {
-		springDataMongoTemplate.dropCollection(Person.class);
+		mockOntologies.deleteOntology(Person.class);
 	}
 
 	@Test
-	public void test_insert_clientplatform_or_sessionkey_not_present() {
+	public void given_OneInsertProcessor_When_InvalidClientPlatformOrSessionKeyIsNotPresent_Then_TheResponseIndicatesProcessorError() {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 		// Scenario: SessionKey is an Empty String
 		{
@@ -105,7 +103,7 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void test_insert_sessionkey_invalid() throws AuthorizationException {
+	public void given_OneInsertProcessor_When_AnInvalidSessionIsUsed_Then_TheResponseIndicatesAuthorizationError () throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 
 		when(securityPluginManager.checkSessionKeyActive(any())).thenReturn(false);
@@ -120,7 +118,7 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void test_insert_unauthorized_operation() throws AuthorizationException {
+	public void given_OneInsertProcessor_When_AnUnauthorizedOperationIsPerformed_Then_TheResponseIndicatesAnAuthorizationError () throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 
 		when(securityPluginManager.checkAuthorization(any(),anyString(),anyString())).thenReturn(false);
@@ -134,14 +132,10 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void test_basic_insert() throws IOException, Exception {
+	public void given_OneInsertProcessor_When_AnAuthorizedOperationWithCorrectSessionIsPerformed_Then_TheResponseIndicatesTheDataIsInserted() throws IOException, Exception {
 
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
-		final IoTSession session = new IoTSession();
-		session.setUserID("valid_user_id");
-		session.setClientPlatform(Faker.instance().chuckNorris().fact());
-		session.setClientPlatformInstance(Faker.instance().chuckNorris().fact());
-		session.setSessionKey(UUID.randomUUID().toString());
+		final IoTSession session = PojoGenerator.generateSession();
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
@@ -151,17 +145,12 @@ public class InsertProcessorTest {
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
 		final JsonNode data = responseMessage.getBody().getData();
-		final String strOid = data.at("/_id/$oid").asText();
-		final ObjectId oid = new ObjectId(strOid);
+		final String strOid = data.at("/id").asText();
 
-		final Person savedPerson = springDataMongoTemplate.findById(oid, Person.class);
-		Assert.assertNotNull(savedPerson);
-		Assert.assertEquals(subject.getTelephone(), savedPerson.getTelephone());
-		Assert.assertEquals("valid_user_id", savedPerson.getContextData().getUser());
-		Assert.assertNotNull(savedPerson.getContextData().getClientPatform());
-		Assert.assertNotNull(savedPerson.getContextData().getClientPatformInstance());
-		Assert.assertNotNull(savedPerson.getContextData().getClientSession());
-		Assert.assertNotNull(savedPerson.getContextData().getTimezoneId());
+		final String created = repository.findById(Person.class.getSimpleName(), strOid);
+		System.out.println(created);
+		Assert.assertNotNull(created);
+		Assert.assertTrue(created.contains("valid_user_id"));
 
 	}
 

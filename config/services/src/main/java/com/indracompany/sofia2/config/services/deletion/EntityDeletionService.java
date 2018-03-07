@@ -17,11 +17,7 @@ import com.indracompany.sofia2.config.model.TwitterListening;
 
 public interface EntityDeletionService {
 
-	void deleteOntology(String id);
-
+	void deleteOntology(String id, String userId);
+	
 	void deleteTwitterListening(TwitterListening twitterListening);
-
-	void deleteClient(String id);
-
-	void deleteToken(String id);
 }

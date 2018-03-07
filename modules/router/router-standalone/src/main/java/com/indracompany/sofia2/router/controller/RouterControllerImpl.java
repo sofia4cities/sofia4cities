@@ -22,9 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
+import com.indracompany.sofia2.router.service.app.service.AdviceService;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.router.service.app.service.RouterSuscriptionService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -32,11 +36,15 @@ import io.swagger.annotations.ApiOperation;
 @EnableAutoConfiguration
 @CrossOrigin(origins = "*")
 @RequestMapping("router")
-public class RouterControllerImpl implements RouterControllerInterface, RouterService {
+public class RouterControllerImpl implements RouterControllerInterface, RouterService, RouterSuscriptionService, AdviceService {
 		
 	@Autowired
 	@Qualifier("routerServiceImpl")
 	private RouterService routerService;
+	
+	@Autowired
+	@Qualifier("routerServiceImpl")
+	private RouterSuscriptionService routerSuscriptionService;
 	
 	
 	@RequestMapping(value = "/insert", method = RequestMethod.POST)
@@ -63,10 +71,29 @@ public class RouterControllerImpl implements RouterControllerInterface, RouterSe
 		return routerService.query(model);
 	}
 
-	@RequestMapping(value = "/subscribe", method = RequestMethod.PUT)
+	@RequestMapping(value = "/suscribe", method = RequestMethod.POST)
 	@ApiOperation(value = "subscribe")
-	public OperationResultModel subscribe(@RequestBody NotificationModel model) throws Exception {
-		return routerService.subscribe(model);
+	public OperationResultModel suscribe(@RequestBody SuscriptionModel model) throws Exception {
+		return routerSuscriptionService.suscribe(model);
+	}
+
+	@RequestMapping(value = "/unsuscribe", method = RequestMethod.POST)
+	@ApiOperation(value = "subscribe")
+	public OperationResultModel unSuscribe(@RequestBody SuscriptionModel model) throws Exception {
+		return routerSuscriptionService.unSuscribe(model);
+	}
+	
+	@RequestMapping(value = "/advice", method = RequestMethod.POST)
+	@ApiOperation(value = "advice")
+	@Override
+	public OperationResultModel advicePostProcessing(@RequestBody NotificationCompositeModel input) {
+		System.out.println(input.toString());
+		OperationResultModel output= new OperationResultModel();
+		output.setErrorCode("NOUS");
+		output.setMessage("ALL IS OK");
+		output.setOperation("ADVICE");
+		output.setResult("OK");
+		return output;
 	}
 	
 

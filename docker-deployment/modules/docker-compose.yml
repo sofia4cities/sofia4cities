@@ -1,0 +1,63 @@
+version: "2.1"
+
+services:
+  controlpanelinstance:
+    image: ${REPOSITORY}sofia2/controlpanel:${IMAGETAG}
+    container_name: controlpanelservice    
+    networks:
+      - data_datanetwork
+    ports:
+     - "8091:18080"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb    
+  iotbrokerinstance:
+    image: ${REPOSITORY}sofia2/iotbroker:${IMAGETAG}
+    container_name: iotbrokerservice    
+    networks:
+      - data_datanetwork
+    ports:
+     - "8092:8081"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb
+  apimanagerinstance:
+    image: ${REPOSITORY}sofia2/apimanager:${IMAGETAG}
+    container_name: apimanagerservice    
+    networks:
+      - data_datanetwork
+    ports:
+     - "8093:19090"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb  
+  flowengineinstance:
+    image: ${REPOSITORY}sofia2/flowengine:${IMAGETAG}
+    container_name: flowengineservice    
+    networks:
+      - data_datanetwork
+    ports:
+     - "8094:8082"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb    
+  nginxinstance:
+    image: ${REPOSITORY}sofia2/nginx:latest
+    container_name: nginxservice
+    environment:
+      - SERVER_NAME=${SERVERNAME}
+    networks:
+      - data_datanetwork
+    ports:
+     - "80:80"     
+    links:
+     - controlpanelinstance
+     - iotbrokerinstance
+     - flowengineinstance           
+networks:
+  data_datanetwork:
+    external: true

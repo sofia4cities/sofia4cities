@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
@@ -51,11 +50,9 @@ public class QueryToolController {
 	@GetMapping("show")
 	public String show(Model model) {
 		List<Ontology> ontologies = null;
-		if (utils.isAdministrator()) {
-			ontologies = this.ontologyService.getAllOntologies();
-		} else {
-			ontologies = this.ontologyService.getOntologiesByUserId(utils.getUserId());
-		}
+		
+		ontologies = this.ontologyService.getOntologiesByUserId(utils.getUserId());
+		
 		model.addAttribute("ontologies", ontologies);
 
 		return "querytool/show";
@@ -65,22 +62,19 @@ public class QueryToolController {
 	@PostMapping("query")
 	public String runQuery(Model model, @RequestParam String queryType, @RequestParam String query,
 			@RequestParam String ontologyIdentification) throws JsonProcessingException {
-		boolean hasUserPermission = false;
 		String queryResult = null;
+		
+		Ontology ontology = ontologyService.getOntologyByIdentification(ontologyIdentification, utils.getUserId());
+		
 		try {
-			if (this.utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString()))
-				hasUserPermission = true;
-			else
-				hasUserPermission = ontologyService.hasUserPermissionForQuery(utils.getUserId(),
-						ontologyIdentification);
-			if (hasUserPermission) {
+			if (ontologyService.hasUserPermissionForQuery(utils.getUserId(), ontology)) {
 				if (queryType.toUpperCase().equals(QUERY_SQL)) {
-					queryResult = queryToolService.querySQLAsJson(ontologyIdentification, query, 0);
+					queryResult = queryToolService.querySQLAsJson(utils.getUserId(), ontologyIdentification, query, 0);
 					model.addAttribute("queryResult", queryResult);
 					return "querytool/show :: query";
 
 				} else if (queryType.toUpperCase().equals(QUERY_NATIVE)) {
-					queryResult = queryToolService.queryNativeAsJson(ontologyIdentification, query);
+					queryResult = queryToolService.queryNativeAsJson(utils.getUserId(), ontologyIdentification, query);
 					model.addAttribute("queryResult", utils.getAsObject(queryResult));
 					return "querytool/show :: query";
 				} else {
@@ -107,7 +101,7 @@ public class QueryToolController {
 	public String getOntologyFields(Model model, @RequestParam String ontologyIdentification)
 			throws JsonProcessingException, IOException {
 
-		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification));
+		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification, utils.getUserId()));
 		return "querytool/show :: fields";
 
 	}

@@ -34,7 +34,10 @@ sofia2: #Config Sofia2 specific
     iotbroker.services: http://localhost:8080/sib/services
    paths:
     ssap: /ssap
-    
+   flowengine.services:
+    request.timeout.ms: 5000
+    baseurl: http://localhost:8082/sofia2/flowengine/admin   
+    proxyurl: http://localhost:5050/
     
 management.security.enabled: false
  
@@ -93,8 +96,7 @@ quartz:
    autoStartupSchedulers:
       #- scriptScheduler
       #- twitterScheduler  
-     
-      
+           
 ## LOGGING CONF
 logging:
    level:
@@ -102,6 +104,3 @@ logging:
       com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
       org.hibernate: INFO
-
-
- 

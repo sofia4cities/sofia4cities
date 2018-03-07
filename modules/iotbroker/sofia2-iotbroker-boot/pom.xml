@@ -30,13 +30,17 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-websocket</artifactId>
+		</dependency>
+		 
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-messaging</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-persistence-ri</artifactId>
-			<version>${sofia2.version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
@@ -45,7 +49,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-config-services</artifactId>
+			<artifactId>sofia2-router-core</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>
@@ -53,15 +57,15 @@
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.indracompany.sofia2</groupId> -->
-<!-- 			<artifactId>sofia2-router-core</artifactId> -->
-<!-- 			<version>${sofia2.version}</version> -->
-<!-- 		</dependency>	 -->
 		<dependency>
     		<groupId>com.github.javafaker</groupId>
     		<artifactId>javafaker</artifactId>
     		<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-persistence-interfaces</artifactId>
+			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -90,6 +94,24 @@
 			  </execution>
 			</executions>
 		  </plugin>
+		    <plugin>
+		      <groupId>com.spotify</groupId>
+		      <artifactId>docker-maven-plugin</artifactId>   		      
+		      <configuration>
+		        <imageName>sofia2/iotbroker</imageName>
+		        <imageTags>
+		           <imageTag>${sofia2.docker.version}</imageTag>
+		        </imageTags>		        
+		        <dockerDirectory>docker</dockerDirectory>
+		        <resources>
+		           <resource>
+		             <targetPath>/</targetPath>
+		             <directory>${project.build.directory}</directory>
+		             <include>${project.build.finalName}-exec.jar</include>
+		           </resource>
+		        </resources>
+		      </configuration>
+		    </plugin>		  
 		</plugins>
   </build>
 

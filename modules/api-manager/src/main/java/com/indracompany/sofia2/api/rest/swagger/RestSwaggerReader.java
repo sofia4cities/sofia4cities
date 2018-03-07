@@ -64,7 +64,7 @@ public class RestSwaggerReader {
 
 	static List<String> PRODUCES = new ArrayList<String>(
 			Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_ATOM_XML, MediaType.TEXT_PLAIN));
-	static List<String> CONSUMES = new ArrayList<String>(Arrays.asList(MediaType.APPLICATION_JSON));
+	static List<String> CONSUMES = new ArrayList<String>(Arrays.asList(MediaType.APPLICATION_JSON,MediaType.APPLICATION_ATOM_XML));
 
 	static Map<String, Response> responses = new HashMap<String, Response>();
 	static List<Scheme> schemes = new ArrayList<Scheme>();
@@ -201,7 +201,7 @@ public class RestSwaggerReader {
 
 		String method = operation.toLowerCase(Locale.US);
 		Parameter sofia2Api = RestSwaggerReaderHelper.populateParameter(swagger, "X-SOFIA2-APIKey", "X-SOFIA2-APIKey",
-				false, "header", "string", null, null);
+				true, "header", "string", null, null);
 		op.addParameter(sofia2Api);
 		op.setConsumes(CONSUMES);
 		op.setProduces(PRODUCES);
@@ -217,7 +217,7 @@ public class RestSwaggerReader {
 			String value = apiQueryParameterDTO.getValue();
 			String condition = apiQueryParameterDTO.getHeaderType().name();
 
-			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, name, description, false,
+			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, name, description, true,
 					condition, type, null, value);
 			op.addParameter(parameter);
 		}

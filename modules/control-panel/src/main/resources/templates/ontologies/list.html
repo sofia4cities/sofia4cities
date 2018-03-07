@@ -166,9 +166,9 @@
 													<tbody th:remove="all-but-first">
 														<tr th:each="ontology : ${ontologies}" pages:paginate="10">
 															<!-- IDENTIFICATION/NAME -->
-															<td class="text-left no-wrap bold" th:text="${ontology.identification}"></td>
+															<td class="text-left no-wrap " th:text="${ontology.identification}"></td>
 															<!-- USER -->
-															<td class="text-center bold" th:text="${ontology.user.userId}"></td>
+															<td class="text-center " th:text="${ontology.user.userId}"></td>
 															<!-- DESCRIPTION -->
 															<td class="text-left text-truncate-sm" th:title="${ontology.description}" th:text="${ontology.description}"></td>
 															<!-- ACTIVE -->
@@ -178,11 +178,11 @@
 															<td class="text-center" th:if="${ontology.public}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
 															<td class="text-center" th:if="${!ontology.public}"></td>
 															<!-- AUTHORIZATIONS -->
-															<!-- th:if="${ontology?.authorizations}" -->
-															<td class="text-center" ><span class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
-															<!-- <td class="text-center" th:if="${!ontology?.authorizations}"></td> -->
+															<td class="text-center" th:if="${not #lists.isEmpty(ontology.ontologyUserAccesses)}"><span class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
+															<td class="text-center" th:if="${#lists.isEmpty(ontology.ontologyUserAccesses)}"></td>
+															
 															<!-- DATAMODEL -->
-															<td class="text-center bold" th:text="${ontology.dataModel?.name}"></td>
+															<td class="text-center " th:text="${ontology.dataModel?.name}"></td>
 															<!-- DATE -->
 															<td class="text-center" th:if="${ontology.createdAt!=null}" th:text="${#dates.format(ontology.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${ontology.createdAt==null}" th:text="${ontology.createdAt}"></td>
@@ -190,10 +190,10 @@
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/show/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn grey-mint btn-sm btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/show/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  th:if="(${#authentication.name} == ${ontology.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/update/${ontology.id}|} + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  th:if="(${#authentication.name} == ${ontology.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn grey-mint btn-sm btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/update/${ontology.id}|} + '\');'"><i class="fa fa-edit"></i></span>
 																	
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->

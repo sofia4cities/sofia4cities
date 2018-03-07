@@ -1,3 +1,7 @@
+var authorizationsArr = []; // add authorizations
+var authorizationUpdateArr = []; // get authorizations of the api
+var authorizationsIds = []; // get authorizations ids for actions
+var authorizationObj = {}; // object to receive authorizations responses.
 var ApiCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
@@ -9,10 +13,41 @@ var ApiCreateController = function() {
 	var currentFormat = '' // date format depends on currentLanguage.
 	var internalFormat = 'yyyy/mm/dd';
 	var internalLanguage = 'en';
+	var reader = new FileReader();
+	var mountableModel2 = $('#api_authorizations').find('tr.authorization-model')[0].outerHTML;
+    
+	reader.onload = function (e) {
+        $('#showedImg').attr('src', e.target.result);
+    }
 	
-	
+
 	// CONTROLLER PRIVATE FUNCTIONS	
-    var calculateVersion = function() {
+    var showGenericErrorDialog= function(dialogTitle, dialogContent){		
+		logControl ? console.log('showErrorDialog()...') : '';
+		var Close = headerReg.btnCancelar;
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-bug',
+			title: dialogTitle,
+			theme: 'dark',
+			content: dialogContent,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {				
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});			
+	}
+	
+	
+	var calculateVersion = function() {
 
         var identification = $('#identification').val();
         var apiType = $('#apiType').val();
@@ -73,7 +108,7 @@ var ApiCreateController = function() {
         try {
             if ($('#identification').val()!=null){
                 for(var i=0; i<operations.length; i+=1){
-                    if (operations[i].operation!="GETCUSTOMSQL"){
+                    if (isDefaultOp(operations[i].identification)){
                         var id = operations[i].identification;
                         var nameOp = id.substring(id.lastIndexOf("_") + 1);
                         $('#' + nameOp).addClass('op_button_selected').removeClass('op_button');
@@ -89,6 +124,17 @@ var ApiCreateController = function() {
             $('.capa-loading').hide();
         }
     }
+	
+	function isDefaultOp(idOp){
+		if (idOp.endsWith("_GET") || idOp.endsWith("_GETSQL") || 
+			idOp.endsWith("_POST") || idOp.endsWith("_PUT") || 
+			idOp.endsWith("_DELETE") || idOp.endsWith("_DELETEID") || 
+			idOp.endsWith("_GETOPS")){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
     function createOperacionesOntologia () {
         $('#description_GET_label').text("/{id}");
@@ -225,7 +271,7 @@ var ApiCreateController = function() {
             errorElement: 'span', //default input error message container
             errorClass: 'help-block help-block-error', // default input error message class
             focusInvalid: false, // do not focus the last invalid input
-            ignore: ":hidden:not(.selectpicker)", // validate all fields including form hidden input but not selectpicker
+            ignore: ":hidden:not('.selectpicker, .hidden-validation')", // validate all fields including form hidden input but not selectpicker
 			lang: currentLanguage,
 			// custom messages
             messages: {
@@ -235,7 +281,7 @@ var ApiCreateController = function() {
             rules: {
             	identification:		{ minlength: 5, maxlength: 50, required: true },
             	categories:			{ required: true },
-            	apiType:			{ required: true},
+            	apiType:			{ required: true },
             	ontology:			{ required: true },
             	id_endpoint:		{ required: true },
             	apiDescripcion:		{ required: true },
@@ -266,14 +312,21 @@ var ApiCreateController = function() {
                 success1.show();
                 error1.hide();
 				// date conversion to DDBB format.
-				if ( formatDates('#datecreated') && validateDescOperations()) {
-					formatData();
-					form.submit();
+                var error = "";
+                formatData();
+				if (!formatDates('#datecreated')){
+					error = "";
 				} 
-				else { 
-					success1.hide();
-					error1.show();
-					App.scrollTo(error1, -200);
+				if (error == "" && operations.length==0) {
+					error = apiCreateReg.apimanager_noops_error;
+				}
+				if (error == "" && !validateDescOperations()) {
+					error = apiCreateReg.apimanager_ops_description_error;
+				}
+				if (error == ""){
+					form.submit();
+				} else { 
+					showGenericErrorDialog('ERROR', error);
 				}				
             }
         });
@@ -307,7 +360,15 @@ var ApiCreateController = function() {
 			$(this).valid();
 		});
 		
-				
+		// authorization tab control 
+		$(".nav-tabs a[href='#tab_2']").on("click", function(e) {
+		  if ($(this).hasClass("disabled")) {
+			e.preventDefault();
+			$.alert({title: 'INFO!', type: 'blue' , theme: 'dark', content: 'CREATE ONTOLOGY THEN GIVE AUTHORIZATIONS!'});
+			return false;
+		  }
+		});
+		
 		// set current language and formats
 		currentLanguage = apiCreateReg.language || LANGUAGE[0];
 		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';		
@@ -345,12 +406,30 @@ var ApiCreateController = function() {
 		}
 	}
 	
+    function replaceOperation(newOp){
+        for(var i=0; i<operations.length; i+=1){
+            var operation = operations [i];
+            if (operation.identification == newOp.identification){
+            	operations [i] = newOp;
+            }
+        }
+    }
+	
+    function existOp(op_name){
+        for(var i=0; i<operations.length; i+=1){
+            var operation = operations [i];
+            if (operation.identification == op_name){
+                return true;
+            }
+        }
+        return false;
+    }
+	
     function formatData(){
     	$('#id_endpoint_hidden').val($('#id_endpoint').val());
 
         var ontology = $("#ontology option:selected").text();
         if ((ontology!=null) && (ontology.length!=0)){
-            operations= new Array();
             var nameApi = $('#identification').val();
             
             var querystringparameter;
@@ -359,7 +438,11 @@ var ApiCreateController = function() {
             	var operationGET = {identification: nameApi + "_GET", description: $('#description_GET').val() , operation:"GET", path: $('#description_GET_label').text(), querystrings: querystringsGET};
 	            querystringparameter = {name: "id", dataType: "string", headerType: "path", description: ""};
 	            operationGET.querystrings.push(querystringparameter);
-	            operations.push(operationGET);
+                if (!existOp(operationGET.identification)){
+                	operations.push(operationGET);
+                } else {
+                    replaceOperation(operationGET);
+                }
             }
             if ($('#GETSQL').attr('class')=='op_button_selected'){
             	var querystringsGETSQL = new Array();
@@ -372,58 +455,177 @@ var ApiCreateController = function() {
 	            operationGETSQL.querystrings.push(querystringparameter);
 	            querystringparameter = {name: "query", dataType: "string", headerType: "query", description: ""};
 	            operationGETSQL.querystrings.push(querystringparameter);	            
-	            operations.push(operationGETSQL);
+                if (!existOp(operationGETSQL.identification)){
+                	operations.push(operationGETSQL);
+                } else {
+                    replaceOperation(operationGETSQL);
+                }
             }
             if ($('#POST').attr('class')=='op_button_selected'){
             	var querystringsPOST = new Array();
             	var operationPOST = {identification: nameApi + "_POST", description: $('#description_POST').val() , operation:"POST", path:$('#description_POST_label').text(), querystrings: querystringsPOST};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationPOST.querystrings.push(querystringparameter);
-	            operations.push(operationPOST);
+                if (!existOp(operationPOST.identification)){
+                	operations.push(operacionPOST);
+                } else {
+                    replaceOperation(operacionPOST);
+                }
             }
             if ($('#PUT').attr('class')=='op_button_selected'){
             	var querystringsPUT = new Array();
             	var operationPUT = {identification: nameApi + "_PUT", description: $('#description_PUT').val() , operation:"PUT", path:$('#description_PUT_label').text(), querystrings: querystringsPUT};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationPUT.querystrings.push(querystringparameter);
-	            operations.push(operationPUT);
+                if (!existOp(operationPUT.identification)){
+                	operations.push(operationPUT);
+                } else {
+                    replaceOperation(operationPUT);
+                }
             }
             if ($('#DELETE').attr('class')=='op_button_selected'){
             	var querystringsDELETE = new Array();
             	var operationDELETE = {identification: nameApi + "_DELETE", description: $('#description_DELETE').val() , operation:"DELETE", path:$('#description_DELETE_label').text(), querystrings: querystringsDELETE};
 	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
 	            operationDELETE.querystrings.push(querystringparameter);
-	            operations.push(operationDELETE);	            
+                if (!existOp(operationDELETE.identification)){
+                	operations.push(operationDELETE);
+                } else {
+                    replaceOperation(operationDELETE);
+                }	            
             }
             if ($('#DELETEID').attr('class')=='op_button_selected'){
             	var querystringsDELETEID = new Array();
             	var operationDELETEID = {identification: nameApi + "_DELETEID", description: $('#description_DELETEID').val() , operation:"DELETE", path:$('#description_DELETEID_label').text(), querystrings: querystringsDELETEID};
 	            querystringparameter = {name: "id", dataType: "string", headerType: "path", description: ""};
 	            operationDELETEID.querystrings.push(querystringparameter);
-	            operations.push(operationDELETEID);
+                if (!existOp(operationDELETEID.identification)){
+                	operations.push(operationDELETEID);
+                } else {
+                    replaceOperation(operationDELETEID);
+                }
             }
             if ($('#GETOPS').attr('class')=='op_button_selected'){
             	var querystringsGETOPS = new Array();
             	var operationGETOPS = {identification: nameApi + "_GETOPS", description: $('#description_GETOPS').val() , operation:"GET", path:$('#description_GETOPS_label').text(), querystrings: querystringsGETOPS};
-	            operations.push(operationGETOPS);
+                if (!existOp(operationGETOPS.identification)){
+                	operations.push(operationGETOPS);
+                } else {
+                    replaceOperation(operationGETOPS);
+                }
             }
             
             $("#operationsObject").val(JSON.stringify(operations));
-            $("#authenticationObject").val(JSON.stringify(authenticacion));
+            $("#authenticationObject").val(JSON.stringify(authentication));
         }
     }
     
     function validateImgSize() {
-        if($('#image').prop('files')[0].size>60*1024){
-        	//$('#dialog-error').innerHTML="[[#{tiposassets_formulario_imagen_error}]]";
-           //showErrorDialog();
+        if ($('#image').prop('files') && $('#image').prop('files')[0].size>60*1024){
+        	showGenericErrorDialog('Error', apiCreateReg.apimanager_image_error);
         	$('#image').val("");
+         } else if ($('#image').prop('files')) {
+        	 reader.readAsDataURL($("#image").prop('files')[0]);
          }
     }
+    
+    
+	var authorization = function(action,api,user,authorization,btn){
+		logControl ? console.log('|---> authorization()') : '';	
+		var insertURL = apiCreateReg.authorizationsPath + '/authorization';
+		var deleteURL = apiCreateReg.authorizationsPath + '/authorization/delete';
+		var response = {};
+		
+		if (action === 'insert'){
+			console.log('    |---> Inserting... ' + insertURL);
+						
+			$.ajax({
+				url:insertURL,
+				type:"POST",
+				async: true,
+				data: {"api": api,"user": user},			 
+				dataType:"json",
+				success: function(response,status){							
+					
+					var propAuth = {"users":user, "usersFullName": response.userFullName, "id": response.id};
+					authorizationsArr.push(propAuth);
+					console.log('     |---> JSONtoTable: ' + authorizationsArr.length + ' data: ' + JSON.stringify(authorizationsArr));
+					// store ids for after actions.	inside callback 				
+					var user_id = user;
+					var auth_id = response.id;
+					var AuthId = {[user_id]:auth_id};
+					authorizationsIds.push(AuthId);
+					console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
+										
+					// TO-HTML
+					if ($('#authorizations').attr('data-loaded') === 'true'){
+						$('#api_authorizations > tbody').html("");
+						$('#api_authorizations > tbody').append(mountableModel2);
+					}
+					console.log('authorizationsArr: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr));
+					$('#api_authorizations').mounTable(authorizationsArr,{
+						model: '.authorization-model',
+						noDebug: false							
+					});
+					
+					// hide info , disable user and show table
+					$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
+					$("#users").selectpicker('deselectAll');
+					$("#users option[value=" + $('#users').val() + "]").prop('disabled', true);
+					$("#users").selectpicker('refresh');
+					$('#authorizations').removeClass('hide');
+					$('#authorizations').attr('data-loaded',true);
+					
+				}
+			});
+
+	
+		}
+		if (action  === 'delete'){
+			console.log('    |---> Deleting... ' + user + ' with authId:' + authorization );
+			
+			$.ajax({url:deleteURL, type:"POST", async: true, 
+				data: {"id": authorization},			 
+				dataType:"json",
+				success: function(response,status){									
+					
+					// remove object
+					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(authorization);			
+					authorizationsIds.splice(removeIndex, 1);
+					authorizationsArr.splice(removeIndex, 1);
+					
+					console.log('AuthorizationsIDs: ' + JSON.stringify(authorizationsIds));
+					// refresh interface. TO-DO: EL this este fallará					
+					if ( response  ){ 
+						$(btn).closest('tr').remove();
+						$("#users option[value=" + user + "]").prop('disabled', false);
+					}
+					else{ 
+						$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); 
+					}
+				}
+			});			
+		}	
+	};
+	
+	// return position to find authId.
+	var foundIndex = function(what,item,arr){
+		var found = '';
+		arr.forEach(function(element, index, array) {
+			if ( what === element[item]){ found = index;  console.log("a[" + index + "] = " + element[item] + ' Founded in position: ' + found ); } 
+			
+		});		
+		return found;
+	}
 
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
-	
+		// SHOW ERROR DIALOG
+		showErrorDialog: function(dialogTitle, dialogContent) {
+			logControl ? console.log(LIB_TITLE + ': showErrorDialog(dialogTitle, dialogContent)') : '';
+			showGenericErrorDialog(dialogTitle, dialogContent);
+		},
+		
 		// VALIDATE IMAGE SIZE
 		validateImageSize: function() {
 			logControl ? console.log(LIB_TITLE + ': validateImgSize()') : '';
@@ -455,6 +657,12 @@ var ApiCreateController = function() {
 			selectOperation(button);
 		},
 		
+		// SELECT OPERATIONS
+		existOperation: function(name) {
+			logControl ? console.log(LIB_TITLE + ': existOperation(name)') : '';
+			return existOp(name);
+		},
+		
 		
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
 		load: function(Data) { 
@@ -468,6 +676,37 @@ var ApiCreateController = function() {
 			handleValidation();
 			initTemplateElements();		
 			
+		},
+		
+		// INSERT AUTHORIZATION
+		insertAuthorization: function(){
+			logControl ? console.log(LIB_TITLE + ': insertAuthorization()') : '';
+			if ( apiCreateReg.actionMode !== null){	
+				// UPDATE MODE ONLY AND VALUES on user
+				if (($('#users').val() !== '') && ($("#users option:selected").attr('disabled') !== 'disabled')){
+					
+					// AJAX INSERT (ACTION,APIID,USER) returns object with data.
+					authorization('insert',apiCreateReg.apiId,$('#users').val(),'');
+								
+				}	
+			}
+		},
+		
+		// REMOVE authorization
+		removeAuthorization: function(obj){
+			logControl ? console.log(LIB_TITLE + ': removeAuthorization()') : '';
+			if ( apiCreateReg.actionMode !== null){
+				
+				// AJAX REMOVE (ACTION,APIID,USER) returns object with data.
+				var selUser = $(obj).closest('tr').find("input[name='users\\[\\]']").val();
+				
+				var removeIndex = foundIndex(selUser,'users',authorizationsArr);				
+				var selAuthorizationId = authorizationsIds[removeIndex][selUser];
+				
+				console.log('removeAuthorization:' + selAuthorizationId);
+				
+				authorization('delete',apiCreateReg.apiId, selUser, selAuthorizationId, obj);				
+			}
 		},
 		// REDIRECT
 		go: function(url){

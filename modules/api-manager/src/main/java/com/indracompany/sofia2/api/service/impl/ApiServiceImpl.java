@@ -32,7 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -47,9 +46,9 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
-import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
-import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
@@ -122,15 +121,18 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
 		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
 		
+		User user = (User) data.get(ApiServiceInterface.USER);
+		
 		OperationModel model = new OperationModel();
 		
 		model.setBody(BODY);
 		model.setObjectId(OBJECT_ID);
-		model.setOntologyId(ontology.getId());
+	//	model.setOntologyId(ontology.getId());
 		model.setOntologyName(ontology.getIdentification());
-		model.setOperationType(METHOD);
-		model.setQueryType(QUERY_TYPE);
-		model.setQuery(QUERY);
+		model.setOperationType(OperationType.valueOf(METHOD));
+		model.setQueryType(QueryType.valueOf(QUERY_TYPE));
+	
+		model.setUser(user.getUserId());
 		
 		NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -140,7 +142,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		
 		try {
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
-				
+				model.setBody(QUERY);
 				OperationResultModel result =facade.query(modelNotification);
 				OUTPUT = result.getResult();
 			}
