@@ -13,8 +13,6 @@
  */
 package com.indracompany.sofia2.router.service.app.model;
 
-import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
-
 import lombok.Getter;
 import lombok.Setter;
 

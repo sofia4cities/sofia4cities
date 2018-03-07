@@ -17,14 +17,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
-import com.indracompany.sofia2.router.service.app.service.SuscriptionRepository;
+import com.indracompany.sofia2.router.service.app.service.suscription.SuscriptionRepository;
 
 @Configuration
 public class SuscriptionConfig {
 
 	@Bean
-	SuscriptionRepository<SuscriptionModel> suscriptionRepository(){
-		SuscriptionRepository<SuscriptionModel> bean = new SuscriptionRepository<SuscriptionModel>();
+	SuscriptionRepository<String,SuscriptionModel> suscriptionRepository(){
+		SuscriptionRepository<String,SuscriptionModel> bean = new SuscriptionRepository<String,SuscriptionModel>();
 		return bean;
 	}
 

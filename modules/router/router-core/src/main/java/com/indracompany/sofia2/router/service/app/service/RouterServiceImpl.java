@@ -16,12 +16,12 @@ package com.indracompany.sofia2.router.service.app.service;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
+import com.indracompany.sofia2.router.service.app.service.suscription.SuscriptionRepository;
 
 @Service("routerServiceImpl")
 public class RouterServiceImpl implements RouterService, RouterSuscriptionService {
@@ -30,7 +30,7 @@ public class RouterServiceImpl implements RouterService, RouterSuscriptionServic
 	CamelContext camelContext;
 	
 	@Autowired
-	SuscriptionRepository<SuscriptionModel> suscriptionRepository;
+	SuscriptionRepository<String,SuscriptionModel> suscriptionRepository;
 	
 	private String defaultStartupRoute = "direct:start-broker-flow";
 
@@ -64,23 +64,24 @@ public class RouterServiceImpl implements RouterService, RouterSuscriptionServic
 
 	@Override
 	public OperationResultModel suscribe(SuscriptionModel model) throws Exception {
-		suscriptionRepository.add(model, model.getSuscriptionId());
+		SuscriptionModel res = suscriptionRepository.add(model.getOntologyName(), model);
 		OperationResultModel result = new OperationResultModel();
 		result.setErrorCode("");
 		result.setOperation("SUSCRIBE");
-		result.setResult("OK");
-		result.setMessage("Suscription OK");
+		result.setResult(res.getOntologyName());
+		result.setMessage("Suscription to "+res.getOntologyName()+" has "+suscriptionRepository.findById(res.getOntologyName()).size());
 		return result;
 	}
 
 	@Override
 	public OperationResultModel unSuscribe(SuscriptionModel model) throws Exception {
-		suscriptionRepository.delete(model.getSuscriptionId());
+		suscriptionRepository.delete(model.getOntologyName(), model);
 		OperationResultModel result = new OperationResultModel();
 		result.setErrorCode("");
 		result.setOperation("UNSUSCRIBE");
-		result.setResult("OK");
-		result.setMessage("UnSuscription OK");
+		result.setOperation("SUSCRIBE");
+		result.setResult(model.getOntologyName());
+		result.setMessage("Suscription to "+model.getOntologyName()+" has "+suscriptionRepository.findById(model.getOntologyName()).size());
 		return result;
 	}
 
