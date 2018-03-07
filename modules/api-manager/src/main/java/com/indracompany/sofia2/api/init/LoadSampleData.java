@@ -77,6 +77,9 @@ public class LoadSampleData implements ApplicationRunner {
 		init_Ontology();
 		try {
 			loadDataForMongo();
+		} catch (Exception e) {}
+		
+		try {
 			loadDataFromJson();
 		} catch (Exception e) {}
 		

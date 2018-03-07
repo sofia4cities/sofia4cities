@@ -13,26 +13,40 @@
  */
 package com.indracompany.sofia2.resources.config;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl;
 
 @Configuration
-@PropertySource("classpath:integration/integration.yml")
 public class IntegrationResourcesConfig {
 	
 	@Autowired
 	private Environment env;
 	
+
+	@Bean
+	public static Properties YmlProperties() {
+	  YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
+	  yaml.setResources(new ClassPathResource("integration/integration.yml"));
+	  return yaml.getObject();
+	  
+	}
+	
+	
 	@Bean("integrationResourcesService")
-	IntegrationResourcesService IntegrationResourcesService(Environment env) {
+	IntegrationResourcesService IntegrationResourcesService(Environment env) throws IOException {
+		
 		IntegrationResourcesServiceImpl bean = new IntegrationResourcesServiceImpl();
-		bean.setEnv(env);
+		bean.setEnv( YmlProperties());
 		return bean;
 	}
 

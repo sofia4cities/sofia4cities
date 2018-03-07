@@ -20,6 +20,8 @@ sofia2:
       router-standalone:
         base:
           url: http://localhost:19100/
+        advice:
+          url: http://localhost:19100/router/router/advice/
         management:
           url: http://localhost:19100/router/management/
         router:

@@ -11,17 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.service.app.service;
+package com.indracompany.sofia2.config.repository;
 
-import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
-import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
+import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RouterSuscriptionService {
-	
-	public OperationResultModel suscribe (SuscriptionModel model)  throws Exception;
-	public OperationResultModel unSuscribe (SuscriptionModel model)  throws Exception;
-		
+import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
+
+public interface SuscriptionModelRepository extends JpaRepository<SuscriptionNotificationsModel, String> {
+
+	List<SuscriptionNotificationsModel> findAllByOntologyName(String ontologyName);
+
+	void deleteBySuscriptionId(String id);
 }
-
-
