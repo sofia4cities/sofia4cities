@@ -88,6 +88,7 @@
 								<div class="actions margin-right-20">
 									<div class="btn-group">									
 										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="location.href='../apimanager/token/list'"><i class="la la-key"></i> <span th:text="#{apimanager.usertoken}"> Token </span></button>
 										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../apimanager/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
 									</div>										
 								</div>
