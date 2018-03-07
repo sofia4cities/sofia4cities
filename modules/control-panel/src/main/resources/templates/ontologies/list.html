@@ -167,8 +167,7 @@
 															<td class="text-center" th:if="${!ontology.public}"></td>
 															<!-- AUTHORIZATIONS -->
 															<td class="text-center" th:if="${not #lists.isEmpty(ontology.ontologyUserAccesses)}"><span class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
-															<td class="text-center" th:if="${#lists.isEmpty(ontology.ontologyUserAccesses)}"></td>
-															
+															<td class="text-center" th:if="${#lists.isEmpty(ontology.ontologyUserAccesses)}"><span class="label label-danger"><i class="fa fa-times"></i> No Authorizations</span></td>															
 															<!-- DATAMODEL -->
 															<td class="text-center " th:text="${ontology.dataModel?.name}"></td>
 															<!-- DATE -->
