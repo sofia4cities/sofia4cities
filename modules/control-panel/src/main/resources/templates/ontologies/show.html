@@ -231,9 +231,9 @@
 														<table id="authorizations" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 															<thead>
 																<tr class="cabecera-tabla">
-																	<th class="titulo-columnas" th:text="#{authorization.identification}">Identification</th>
-																	<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{authorization.user}" >User</span></th>
-																	<th class="titulo-columnas" th:text="#{authorization.ontologyUserAccessType}">Description</th>
+																	<th class="titulo-columnas text-left" th:text="#{ontology.auth.user}">Identification</th>
+																	<th class="titulo-columnas text-left" ><i class="la la-user"></i> <span th:text="#{ontology.auth.userfullname}" >User</span></th>
+																	<th class="titulo-columnas text-center" th:text="#{ontology.auth.accesstype}">Description</th>
 																</tr>
 															</thead>
 															<tbody th:remove="all-but-first">
@@ -241,7 +241,7 @@
 																	<!-- IDENTIFICATION/NAME -->
 																	<td class="text-left no-wrap bold" th:text="${authorization.userId}"></td>
 																	<!-- USER -->
-																	<td class="text-center " th:text="${authorization.userFullName}"></td>
+																	<td class="text-left " th:text="${authorization.userFullName}"></td>
 																	<!-- ACCESS TYPE  -->
 																	<td class="text-center " th:text="${authorization.typeName}"></td>																
 																</tr>
@@ -253,9 +253,9 @@
 																<i class="fa fa-eye"></i> <em th:text="#{gen.columns}">Columns</em> <i class="fa fa-angle-down"></i>
 															</a>
 															<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-																<label class="toggle-vis" data-column="0" th:text="#{authorization.identification}"> Identification </label>
-																<label class="toggle-vis" data-column="1" th:text="#{authorization.user}"> User </label>
-																<label class="toggle-vis" data-column="2" th:text="#{authorization.ontologyUserAccessType}"> Access Type</label>															
+																<label class="toggle-vis" data-column="0" th:text="#{ontology.auth.user}"> Identification </label>
+																<label class="toggle-vis" data-column="1" th:text="#{ontology.auth.userfullname}"> User </label>
+																<label class="toggle-vis" data-column="2" th:text="#{ontology.auth.accesstype}"> Access Type</label>															
 															</div>
 														</div>												
 													</div>
@@ -298,6 +298,14 @@
 	<script  th:inline="javascript">
 	var showLog = 1; // console.log toggle
     //<![CDATA[ 
+	
+	
+	// DATATABLES LANGUAJE FROM PROPERTIES.
+	datatable_lang = [[#{datatables_lang}]];	
+	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
+	
+	
 	
 	var stringSchema = [[${ontology.jsonSchema}]];
 	var jsonSchema = JSON.parse(stringSchema);

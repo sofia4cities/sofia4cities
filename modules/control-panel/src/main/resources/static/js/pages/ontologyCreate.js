@@ -1,7 +1,7 @@
-var authorizationsArr = []; // add authorizations
-var authorizationUpdateArr = []; // get authorizations of the ontology
-var authorizationsIds = []; // get authorizations ids for actions
-var authorizationObj = {}; // object to receive authorizations responses.
+var authorizationsArr 		= []; // add authorizations
+var authorizationUpdateArr  = []; // get authorizations of the ontology
+var authorizationsIds 		= []; // get authorizations ids for actions
+var authorizationObj 		= {}; // object to receive authorizations responses.
 	
 var OntologyCreateController = function() {
     
@@ -20,10 +20,7 @@ var OntologyCreateController = function() {
 	var hasId = false; // instance
 
 	
-	
-	
-	// CONTROLLER PRIVATE FUNCTIONS	
-	
+	// CONTROLLER PRIVATE FUNCTIONS	--------------------------------------------------------------------------------
 	
 
 	// AUX. DATAMODEL PROPERTIES OBJECT JSON
@@ -124,22 +121,14 @@ var OntologyCreateController = function() {
 		logControl ? console.log('|--- CURRENT: ' + updateProperties + ' types: ' + updateTypes + ' required: ' + updateRequired): '';
 		
 		checkUnique = updateProperties.unique();
-		if (updateProperties.length !== checkUnique.length)  { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'HAY DUPLICADOS, REVISE!'}); return false; } 
+		if (updateProperties.length !== checkUnique.length)  { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: ontologyCreateReg.validations.duplicates}); return false; } 
 				
 		// get current schema 
 		if (typeof schema == 'string'){		
 			schemaObj = JSON.parse(schema);				
 			
-		}else if (typeof schema == 'object') { schemaObj = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
+		}else if (typeof schema == 'object') { schemaObj = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: ontologyCreateReg.validations.tplschema}); return false; }
 		
-		/* // compare properties added with properties on current schema
-		// DIFFERENCE BETWEEN BASE vs CURRENT
-		jQuery.grep(updateProperties, function(el) {
-			if (jQuery.inArray(el, baseArrProperties) == -1) toUpdateProperties.push(el);
-				i++;
-		});	
-		
-		 */
 		
 		// UPDATE SCHEMA		
 		// UPDATE ALL PROPERTIES EACH TIME.
@@ -166,7 +155,7 @@ var OntologyCreateController = function() {
 		
 		
 		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
-		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }		
+		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: ontologyCreateReg.validations.noschema}); return false; }		
 			
 		// SCHEMA MODEL ( PROPERTIES / DATOS) 
 		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; requires = data.datos.required; } else { properties = data.properties;  requires = data.required }
@@ -347,11 +336,6 @@ var OntologyCreateController = function() {
 	var initTemplateElements = function(){
 		logControl ? console.log('initTemplateElements() ->  resetForm,  currentLanguage: ' + currentLanguage) : '';
 		
-		// selectpicker validate fix when handleValidation()
-		// $('.selectpicker').on('change', function () {
-			// $(this).valid();
-		// });
-		
 		// tagsinput validate fix when handleValidation()
 		$('#metainf').on('itemAdded', function(event) {
 			
@@ -362,7 +346,7 @@ var OntologyCreateController = function() {
 		$(".nav-tabs a[href='#tab_2']").on("click", function(e) {
 		  if ($(this).hasClass("disabled")) {
 			e.preventDefault();
-			$.alert({title: 'INFO!', type: 'blue' , theme: 'dark', content: 'CREATE ONTOLOGY THEN GIVE AUTHORIZATIONS!'});
+			$.alert({title: 'INFO!', type: 'blue' , theme: 'dark', content: ontologyCreateReg.validations.authinsert});
 			return false;
 		  }
 		});
@@ -416,13 +400,60 @@ var OntologyCreateController = function() {
 		else {	
 			logControl ? console.log('|---> Action-mode: UPDATE') : '';
 			
+			// if ontology has authorizations we load it!.
+			authorizationsJson = ontologyCreateReg.authorizations;			
+			if (authorizationsJson.length > 0 ){
+				
+				// MOUNTING AUTHORIZATIONS ARRAY
+				var authid_update, accesstype_update , userid_update , authorizationUpdate , authorizationIdUpdate = '';
+				$.each( authorizationsJson, function (key, object){			
+					
+					authid_update 		= object.id; 
+					accesstype_update 	= object.typeName; 
+					userid_update 		= object.userId;					
+					
+					logControl ? console.log('      |----- authorizations object on Update, ID: ' +  authid_update + ' TYPE: ' +  accesstype_update + ' USER: ' +  userid_update  ) : '';
+					
+					// AUTHs-table {"users":user,"accesstypes":accesstype,"id": response.id}
+					authorizationUpdate = {"users": userid_update, "accesstypes": accesstype_update, "id": authid_update};					
+					authorizationsArr.push(authorizationUpdate);
+					
+					// AUTH-Ids {[user_id]:auth_id}
+					authorizationIdUpdate = {[userid_update]:authid_update};
+					authorizationsIds.push(authorizationIdUpdate);
+					
+					// disable this users on users select
+					$("#users option[value=" + userid_update + "]").prop('disabled', true);
+					$("#users").selectpicker('refresh');
+					
+				});
+
+				// TO-HTML
+				if ($('#authorizations').attr('data-loaded') === 'true'){
+					$('#ontology_autthorizations > tbody').html("");
+					$('#ontology_autthorizations > tbody').append(mountableModel2);
+				}
+				logControl ? console.log('authorizationsArr on UPDATE: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr)) : '';
+				$('#ontology_autthorizations').mounTable(authorizationsArr,{
+					model: '.authorization-model',
+					noDebug: false							
+				});
+				
+				// hide info , disable user and show table
+				$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));					
+				$('#authorizations').removeClass('hide');
+				$('#authorizations').attr('data-loaded',true);// TO-HTML
+				$("#users").selectpicker('deselectAll');
+				
+			}		
+			
 			// take schema from ontology and load it
 			schema = ontologyCreateReg.schemaEditMode;			
 			
 			// overwrite datamodel schema with loaded ontology schema generated with this datamodel  template.
 			var theSelectedModel = $("h3[data-model='"+ ontologyCreateReg.dataModelEditMode +"']");
 			var theSelectedModelType = theSelectedModel.closest('div .panel-collapse').parent().find("a").trigger('click');			
-			theSelectedModel.attr('data-schema',schema).trigger('click');
+			theSelectedModel.attr('data-schema',schema).trigger('click');			
 		}		
 	}	
 	
@@ -434,8 +465,8 @@ var OntologyCreateController = function() {
 		datamodels.each(function(ind,elem){ 
 			var templates = $(elem).find('ul.datamodel-template').length;			
 			var typeHref = $(elem).find('a.list-toggle-container > div.list-toggle');
-			$('<span class="pull-right badge badge-default">'+ templates +'</span>').appendTo(typeHref);
-			if (templates == 0 ) { $(elem).find('div.list-toggle').removeClass('bg-grey-mint').addClass('bg-grey-steel font-grey-cascade');	}			
+			$('<span class="pull-right badge badge-success">'+ templates +'</span>').appendTo(typeHref);
+			if (templates == 0 ) { $(elem).find('div.list-toggle').removeClass('bg-blue-hoki font-grey-carrara').addClass('bg-grey-steel font-grey-cascade hide');	}			
 		});
 	}
 	
@@ -445,7 +476,7 @@ var OntologyCreateController = function() {
 		console.log('deleteOntologyConfirmation() -> formId: '+ ontologyId);
 		
 		// no Id no fun!
-		if ( !ontologyId ) {$.alert({title: 'ERROR!', type: 'red' , theme: 'dark', content: 'NO ONTOLOGY-FORM SELECTED!'}); return false; }
+		if ( !ontologyId ) {$.alert({title: 'ERROR!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.validform}); return false; }
 		
 		logControl ? console.log('deleteOntologyConfirmation() -> formAction: ' + $('.delete-ontology').attr('action') + ' ID: ' + $('#delete-ontologyId').attr('ontologyId')) : '';
 		
@@ -455,8 +486,7 @@ var OntologyCreateController = function() {
 
 	
 	// CREATE EDITOR FOR JSON SCHEMA 
-	var createEditor = function(){
-		
+	var createEditor = function(){		
 		logControl ? console.log('|--->   createEditor()') : '';
 		var container = document.getElementById('jsoneditor');	
 		var options = {
@@ -472,10 +502,8 @@ var OntologyCreateController = function() {
 				
 				console.log('se modifica el editor en modo:' + editor.mode + ' contenido: ' + editor.getText());
 			}
-		};
-		
-		editor = new jsoneditor.JSONEditor(container, options, "");		
-		
+		};		
+		editor = new jsoneditor.JSONEditor(container, options, "");			
 	}
 	
 	
@@ -503,13 +531,13 @@ var OntologyCreateController = function() {
 			
 			if((ontologia.properties == undefined && ontologia.required == undefined)){
 			
-				$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: 'REQUIRED OR PROPERTIES NO EXISTS ERROR'});
+				$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.schemaprop});
 				isValid = false;
 				return isValid;
 				
 			}else if( ontologia.properties == undefined && (ontologia.additionalProperties == null || ontologia.additionalProperties == false)){
 			
-				$.alert({title: 'ERROR JSON SCHEMA!', type: 'red' , theme: 'dark', content: 'NO PROPERTIES!'});
+				$.alert({title: 'ERROR JSON SCHEMA!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.schemanoprop});
 				isValid = false;
 				return isValid;
 					
@@ -554,13 +582,10 @@ var OntologyCreateController = function() {
 				// Propiedades no definida y additionarProperteis no esta informado a true     
 				}else  if(  (nodo.properties ==undefined || jQuery.isEmptyObject(nodo.properties))  && (nodo.additionalProperties == null || nodo.additionalProperties == false)){
 					
-					$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: 'PROPERTIES NO DEFINED!'});
+					$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.noproperties});
 					isValid = false;
 					return isValid;
-				}
-			   
-			   
-				
+				}				
 				//Validaciones sobre propiedas y requeridos
 				else if(nodo.required!=undefined && (nodo.additionalProperties == null || nodo.additionalProperties == false)) {
 
@@ -575,12 +600,12 @@ var OntologyCreateController = function() {
 									 propertiesNumber++;
 								  }
 								 if(propertiesNumber==0){
-									$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: 'REQUIRED PROPERTIES ERROR'});
+									$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.schemanoprop});
 									isValid = true;
 								 }
 						}
 						else{
-							$.alert({title: 'JSON SCHEMA !', type: 'red' , theme: 'dark', content: 'NO PROPERTIES!'});
+							$.alert({title: 'JSON SCHEMA !', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.noproperties});
 							isValid = false;
 							return isValid;
 						}			
@@ -591,13 +616,10 @@ var OntologyCreateController = function() {
 		else {
 			// no schema no fun!
 			isValid = false;
-			$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: 'NO SCHEMA'});			
+			$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.noschema});			
 			return isValid;
 			
-		}
-		
-		
-		
+		}	
 		console.log('JSON SCHEMA VALIDATION: ' + isValid);
 		return isValid;
 	}	
@@ -667,7 +689,7 @@ var OntologyCreateController = function() {
 		}
 		else {
 			// no JSON no fun!
-			$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: 'NO SCHEMA'});
+			$.alert({title: 'JSON SCHEMA!', type: 'red' , theme: 'dark', content: ontologyCreateReg.validations.noschema});
 		}		
 	}
 	
@@ -776,6 +798,7 @@ var OntologyCreateController = function() {
         return instance + "}";
     }
 		
+		
 	// GENERARATE PROPERTY TYPES [ ARRAY ]
 	var generateArray = function(ontology, instance, parent){
 		 logControl ? console.log('        |--->   generateArray()') : '';
@@ -807,6 +830,7 @@ var OntologyCreateController = function() {
         }
         return instance + "]";  
     };    
+	
 	
 	// AJAX AUTHORIZATION FUNCTIONS
 	var authorization = function(action,ontology,user,accesstype,authorization,btn){
@@ -870,7 +894,11 @@ var OntologyCreateController = function() {
 							
 					var updateIndex = foundIndex(user,'users',authorizationsArr);			
 					authorizationsArr[updateIndex]["accesstypes"] = accesstype;
-					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);					
+					console.log('ACTUALIZADO: ' + authorizationsArr[updateIndex]["accesstypes"]);
+					
+					// UPDATING STATUS...
+					$(btn).find("i").removeClass('fa fa-spin fa-refresh').addClass('fa fa-edit');
+					$(btn).find("span").text('Update');								
 				}
 			});
 			
@@ -892,16 +920,25 @@ var OntologyCreateController = function() {
 					console.log('AuthorizationsIDs: ' + JSON.stringify(authorizationsIds));
 					// refresh interface. TO-DO: EL this este fallará					
 					if ( response  ){ 
-						$(this).closest('tr').remove();
-						$("#users option[value=" + $('#users').val() + "]").prop('disabled', false);
+						$(btn).closest('tr').remove();
+						$("#users option[value=" + user + "]").prop('disabled', false);						
+						$("#users").selectpicker('deselectAll');
+						$("#users").selectpicker('refresh');
+						if (authorizationsArr.length == 0){
+							$('#alert-authorizations').toggle(!$('#alert-authorizations').is(':visible'));					
+							$('#authorizations').addClass('hide');
+							
+						}
+						
 					}
 					else{ 
-						$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); 
+						$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'NO RESPONSE!'}); 
 					}
 				}
 			});			
 		}	
 	};
+	
 	
 	// return position to find authId.
 	var foundIndex = function(what,item,arr){
@@ -951,7 +988,7 @@ var OntologyCreateController = function() {
 			logControl ? console.log(LIB_TITLE + ': removeProperty()') : '';
 			
 			var remproperty = $(obj).closest('tr').find("input[name='property\\[\\]']").val();		
-			if (( remproperty == '')||( noBaseProperty(remproperty))){ $(obj).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'CAN´T REMOVE A BASE PROPERTY!'}); }
+			if (( remproperty == '')||( noBaseProperty(remproperty))){ $(obj).closest('tr').remove(); } else { $.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: ontologyCreateReg.validations.base}); }
 		},
 		
 		// CHECK FOR NON DUPLICATE PROPERTIES
@@ -960,7 +997,7 @@ var OntologyCreateController = function() {
 			var allProperties = $("input[name='property\\[\\]']").map(function(){return $(this).val();}).get();		
 			areUnique = allProperties.unique();
 			if (allProperties.length !== areUnique.length)  { 
-				$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'DUPLICATE VALUES!'});
+				$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: ontologyCreateReg.validations.duplicates});
 				$(obj).val(''); return false;
 			} 
 			else {
@@ -1000,7 +1037,7 @@ var OntologyCreateController = function() {
 			// JSON-STRING SCHEMA TO JSON 
 			schema = $(objschema).attr('data-schema');
 			if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
-			else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'NO TEMPLATE SCHEMA!'}); return false; }
+			else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: ontologyCreateReg.validations.noschemaontologyCreateReg.validations.noschema}); return false; }
 			
 			// needs Ontology name and description to Run.
 			if (($('#identification').val() == '') || ($('#description').val() == '')){
@@ -1027,7 +1064,7 @@ var OntologyCreateController = function() {
 			// CHECK IF WE HAVE A DATAMODEL LOADED YET... o-DO: make confirm.
 			if ( $('#datamodel_properties').attr('data-loaded') == 'true' ){		
 			
-				$.confirm({ title: 'CONFIRM!', theme: 'dark', type: 'orange', content: 'IF YOU CHANGE DATAMODEL YOUR PROPERTIES AND SCHEMA CONFIGURATION WILL BE REMOVE AND STARTED AGAIN!',
+				$.confirm({ title: ontologyCreateReg.confirmBtn, theme: 'dark', type: 'orange', content: ontologyCreateReg.validations.datamodelchange,
 					buttons: {
 						confirm: function () {
 						
@@ -1133,7 +1170,7 @@ var OntologyCreateController = function() {
 					// AJAX INSERT (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
 					authorization('insert',ontologyCreateReg.ontologyId,$('#users').val(),$('#accesstypes').val(),'');
 								
-				}	
+				} else {  $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: ontologyCreateReg.validations.authuser}); }
 			}
 		},
 		
@@ -1151,7 +1188,7 @@ var OntologyCreateController = function() {
 				
 				console.log('removeAuthorization:' + selAuthorizationId);
 				
-				authorization('delete',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId );				
+				authorization('delete',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId, obj );				
 			}
 		},
 		
@@ -1170,7 +1207,12 @@ var OntologyCreateController = function() {
 				console.log('updateAuthorization:' + selAuthorizationId);
 				
 				if (selAccessType !== authorizationsArr[updateIndex]["accesstypes"]){
-					authorization('update',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId);
+					
+					// UPDATING STATUS...
+					$(obj).find("i").removeClass('fa fa-edit').addClass('fa fa-spin fa-refresh');
+					$(obj).find("span").text('Updating...');
+					
+					authorization('update',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId, obj);
 				} 
 				else { console.log('no hay cambios');}
 			}
