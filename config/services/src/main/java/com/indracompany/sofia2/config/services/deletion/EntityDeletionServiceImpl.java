@@ -13,19 +13,31 @@
  */
 package com.indracompany.sofia2.config.services.deletion;
 
+import java.util.Iterator;
+import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.ClientConnection;
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
+
 import com.indracompany.sofia2.config.repository.DeviceSimulationRepository;
+
+import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
+
 import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
+import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.TwitterListeningRepository;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
@@ -42,6 +54,7 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 	private OntologyUserAccessRepository ontologyUserAccessRepository;
 	@Autowired
 	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
+
 	@Autowired
 	private TwitterListeningRepository twitterListeningRepository;
 	@Autowired
@@ -50,6 +63,14 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 	private OntologyService ontologyService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private ClientConnectionRepository clientConnectionRepository;
+	@Autowired
+	private ClientPlatformRepository clientPlatformRepository;
+	@Autowired
+	private TokenRepository tokenRepository;
+
+
 
 	@Override
 	@Transactional
@@ -98,4 +119,43 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 		this.twitterListeningRepository.deleteById(twitterListening.getId());
 	}
 
+	@Override
+	@Transactional
+	public void deleteClient(String id) {
+		try {
+
+			ClientPlatform client = clientPlatformRepository.findByIdentification(id);
+			List<ClientPlatformOntology> cpf = this.clientPlatformOntologyRepository.findByClientPlatform(client);
+			if (cpf != null && cpf.size() > 0) {
+				for (Iterator iterator = cpf.iterator(); iterator.hasNext();) {
+					ClientPlatformOntology clientPlatformOntology = (ClientPlatformOntology) iterator.next();
+					this.clientPlatformOntologyRepository.delete(clientPlatformOntology);
+				}
+
+			}
+			List<ClientConnection> cc = this.clientConnectionRepository.findByClientPlatform(client);
+			if (cc != null && cc.size() > 0) {
+				for (Iterator iterator = cc.iterator(); iterator.hasNext();) {
+					ClientConnection clientConnection = (ClientConnection) iterator.next();
+					this.clientConnectionRepository.delete(clientConnection);
+				}
+			}
+
+			this.clientPlatformRepository.delete(client);
+
+		} catch (Exception e) {
+			throw new OntologyServiceException("Couldn't delete ClientPlatform");
+		}
+	}
+
+	@Override
+	public void deleteToken(String id) {
+		try {
+			Token token = tokenRepository.findById(id);
+			tokenRepository.delete(token);
+		} catch (Exception e) {
+			throw new OntologyServiceException("Couldn't delete Token");
+		}
+
+	}
 }

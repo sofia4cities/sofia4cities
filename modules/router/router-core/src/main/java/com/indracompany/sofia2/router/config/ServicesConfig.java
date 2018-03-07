@@ -22,7 +22,8 @@ import org.springframework.context.annotation.Configuration;
 		"com.indracompany.sofia2.config.services.ontology",
 		"com.indracompany.sofia2.config.services.flownode",
 		"com.indracompany.sofia2.router.service.app.service.crud",
-		"com.indracompany.sofia2.router.service.app.service.advice"
+		"com.indracompany.sofia2.router.service.app.service.advice",
+		"com.indracompany.sofia2.resources.config"
 		
 		})
 public class ServicesConfig {

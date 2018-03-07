@@ -42,7 +42,7 @@ public class OntologyServiceTest {
 	OntologyServiceImpl service;
 	
 	@Test
-	public void testIsOntologyAuthorizedForOthersNull() {
+	public void given_OneOntologyWithNullUserAccesses_When_IsRequestedIfItHasAnyUserAccess_Then_FalseIsReturned() {
 		String id = "1";
 		Ontology ontology = new Ontology();
 		ontology.setId(id);
@@ -52,7 +52,7 @@ public class OntologyServiceTest {
 	}
 	
 	@Test
-	public void testIsOntologyAuthorizedForOthersEmptyList() {
+	public void given_OneOntologyWithEmptyListOfUserAccesses_When_IsRequestedIfItHasAnyUserAccess_Then_FalseIsReturned() {
 		String id = "1";
 		Ontology ontology = new Ontology();
 		ontology.setId(id);
@@ -62,7 +62,7 @@ public class OntologyServiceTest {
 	}
 	
 	@Test
-	public void testIsOntologyAuthorizedForOthersList() {
+	public void given_OneOntologyWithOneUserAccesses_When_IsRequestedIfItHasAnyUserAccess_Then_TrueIsReturned() {
 		String id = "1";
 		Ontology ontology = new Ontology();
 		ontology.setId(id);

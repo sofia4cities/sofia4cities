@@ -55,7 +55,7 @@ public class JoinProcessorWithTokenTest {
 	}
 
 	@Test
-	public void test_join_with_valid_token() throws AuthenticationException {
+	public void given_OneJoinProcessor_When_OneValidSessionIsUsed_Then_TheResponseIndicatesTheOperationWasPerformed() throws AuthenticationException {
 		final String assignedSessionKey = UUID.randomUUID().toString();
 		final IoTSession session = new IoTSession();
 		session.setUserID("valid_user_id");
@@ -70,7 +70,7 @@ public class JoinProcessorWithTokenTest {
 	}
 
 	@Test
-	public void test_join_with_invalid_token() throws AuthenticationException {
+	public void given_OneJoinProcessor_When_ItUsesAnInvalidToken_Then_TheResponseIndicatesAuthenticationError() throws AuthenticationException {
 		when(securityPluginManager.authenticate(anyString(),anyString(),anyString())).thenReturn(Optional.empty());
 		ssapJoin.getBody().setToken(UUID.randomUUID().toString());
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin);
@@ -81,7 +81,7 @@ public class JoinProcessorWithTokenTest {
 	}
 
 	@Test
-	public void test_join_with_empty_token() {
+	public void given_OneJoinProcessor_When_AnEmptyOrNullTokenIsUsed_Then_TheResponseIndicatesProcessorError() {
 
 		//Token is an Empty string
 		{

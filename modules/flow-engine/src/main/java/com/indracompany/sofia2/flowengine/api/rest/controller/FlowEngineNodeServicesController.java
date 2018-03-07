@@ -50,10 +50,11 @@ public class FlowEngineNodeServicesController {
 
 	@RequestMapping(value = "/user/ontologies", method = RequestMethod.GET, produces = { "application/javascript",
 			"application/json" })
-	public @ResponseBody String getOntologiesByUser(@RequestParam String authentication)
+	public @ResponseBody String getOntologiesByUser(@RequestParam String authentication,
+			@RequestParam("callback") String callbackName)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException {
 		String response = mapper.writeValueAsString(flowEngineNodeService.getOntologyByUser(authentication));
-		return "ontologies(" + response + ")";
+		return callbackName + "(" + response + ")";
 	}
 
 	@RequestMapping(value = "/user/client_platforms", method = RequestMethod.GET, produces = { "application/javascript",
@@ -101,7 +102,6 @@ public class FlowEngineNodeServicesController {
 			@RequestParam(required = true) @Size(min = 1) String data,
 			@RequestParam(required = true) String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
-		// TODO One field not used
 		return flowEngineNodeService.submitInsert(ontology, data, authentication);
 	}
 

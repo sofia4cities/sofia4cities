@@ -22,7 +22,7 @@ public interface RouterCrudService {
 	public OperationResultModel update (OperationModel model)  throws Exception;
 	public OperationResultModel delete (OperationModel model)  throws Exception;
 	public OperationResultModel query (OperationModel model)  throws Exception;
-	public OperationResultModel subscribe (OperationModel model)  throws Exception;
+	public OperationResultModel execute (OperationModel model)  throws Exception;
 		
 }
 

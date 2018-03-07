@@ -121,7 +121,6 @@ public class OntologyController {
 			utils.addRedirectException(e, redirect);
 			return "redirect:/ontologies/createwizard";
 		}
-		utils.addRedirectMessage("ontology.create.success", redirect);
 		return "redirect:/ontologies/list";
 	}
 
@@ -167,13 +166,12 @@ public class OntologyController {
 		try {
 			User user = userService.getUser(utils.getUserId());
 			ontology.setUser(user);
-			this.ontologyService.createOntology(ontology);
+			this.ontologyService.updateOntology(ontology, utils.getUserId());
 		} catch (OntologyServiceException e) {
 			log.debug("Cannot update ontology");
 			utils.addRedirectMessage("ontology.update.error", redirect);
 			return "redirect:/ontologies/create";
 		}
-		utils.addRedirectMessage("ontology.update.success", redirect);
 		return "redirect:/ontologies/show/" + id;
 
 	}

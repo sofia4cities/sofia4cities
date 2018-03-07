@@ -24,7 +24,7 @@ public class OperationModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 
 	public static enum OperationType {
-		INSERT, UPDATE, DELETE, QUERY, SUBSCRIBE, GET, PUT, POST;
+		INSERT, UPDATE, DELETE, QUERY, GET, PUT, POST;
 	}
 	
 	public static enum QueryType {

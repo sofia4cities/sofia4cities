@@ -115,7 +115,7 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
-	public void test_security_basic() throws AuthenticationException, AuthorizationException {
+	public void given_OneValidToken_When_ASessionIsCreatedAndCheckedAndFinallyClosed_TheSessionReturnsTheCorrectParametersAndThenItIsClosed() throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
@@ -129,7 +129,7 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
-	public void test_fail_on_invalid_token() throws AuthenticationException {
+	public void given_OneInvalidToken_When_ASessionIsCreated_Then_ItReturnsAnInvalidSession() throws AuthenticationException {
 		final Optional<IoTSession> session = security.authenticate("INVALID_TOKEN",
 				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
 
@@ -137,12 +137,12 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
-	public void test_fails_on_check_unexisting_sessionkey() throws AuthorizationException {
+	public void given_OneNotValidSessionKey_When_TheSessionIsChecked_Then_ItRetrunsThatTheSessionIsNotAcctive() throws AuthorizationException {
 		Assert.assertFalse(security.checkSessionKeyActive("NOT_EXISTENT_SESSIONKEY"));
 	}
 
 	@Test
-	public void test_ontology_auth_ok() throws AuthenticationException, AuthorizationException {
+	public void given_OneValidClientSessionPlatform_When_ItCreatesASession_Then_ItIsAuthorizedForUsingTheOntologyAssociated() throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
@@ -152,7 +152,7 @@ public class ReferenceSecurityTest {
 	}
 
 	@Test
-	public void test_ontology_auth_not_assigned() throws AuthenticationException, AuthorizationException {
+	public void given_OneValidClientSessionPlatform_When_ItCreatesASession_Then_ItIsNotAuthorizedForUsingNotAuthorizedOntologies()  throws AuthenticationException, AuthorizationException {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),

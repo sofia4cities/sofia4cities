@@ -22,7 +22,6 @@
 
 	<dependencies>
 
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
@@ -32,7 +31,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
-
 
 		<!-- sofia2 -->
 		<dependency>
@@ -49,6 +47,12 @@
 
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-config-resources</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-advicer-client-rest</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
@@ -59,13 +63,22 @@
 			<artifactId>json</artifactId>
 		</dependency>
 
+		<!-- COMMONS -->
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>24.0-jre</version>
+		</dependency>
+
+
+
 		<!-- camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-spring-boot-starter</artifactId>
 			<version>${version.camel}</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -79,14 +92,11 @@
 			<version>${version.camel}</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http-starter</artifactId>
 			<version>${version.camel}</version>
 		</dependency>
-
-
 
 	</dependencies>
 

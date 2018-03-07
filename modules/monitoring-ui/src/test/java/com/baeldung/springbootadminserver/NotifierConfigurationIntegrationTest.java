@@ -35,19 +35,19 @@ public class NotifierConfigurationIntegrationTest {
     @Autowired private ApplicationContext applicationContext;
 
     @Test
-    public void whenApplicationContextStart_ThenNotifierBeanExists() {
+    public void given_TheApplicatonContext_When_ItStarts_Then_NotifierBeanIsCreated() {
         Notifier notifier = (Notifier) applicationContext.getBean("notifier");
         assertNotEquals(notifier, null);
     }
 
     @Test
-    public void whenApplicationContextStart_ThenFilteringNotifierBeanExists() {
+    public void given_TheApplicatonContext_When_ItStarts_Then_FilteringNotifierBeanIsCreated() {
         FilteringNotifier filteringNotifier = (FilteringNotifier) applicationContext.getBean("filteringNotifier");
         assertNotEquals(filteringNotifier, null);
     }
 
     @Test
-    public void whenApplicationContextStart_ThenRemindingNotifierBeanExists() {
+    public void given_TheApplicatonContext_When_ItStarts_Then_RemindingNotifierBeanIsCreated() {
         RemindingNotifier remindingNotifier = (RemindingNotifier) applicationContext.getBean("remindingNotifier");
         assertNotEquals(remindingNotifier, null);
     }

@@ -49,6 +49,8 @@ import lombok.Setter;
 @Configurable
 public class User extends AuditableEntity {
 
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@Column(name = "USER_ID", length = 50, unique = true, nullable = false)
 	@NotNull
@@ -94,5 +96,22 @@ public class User extends AuditableEntity {
 	@Getter
 	@Setter
 	private Date dateDeleted;
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User )) return false;
+        return getUserId() != null && getUserId().equals(((User) o).getUserId());
+    }
+	
+    @Override
+    public int hashCode() {
+    	return java.util.Objects.hash(getUserId());
+    }
+    
+    @Override
+    public String toString() {
+    	return getUserId();
+    }
 
 }

@@ -77,6 +77,9 @@ public class LoadSampleData implements ApplicationRunner {
 		init_Ontology();
 		try {
 			loadDataForMongo();
+		} catch (Exception e) {}
+		
+		try {
 			loadDataFromJson();
 		} catch (Exception e) {}
 		
@@ -148,27 +151,23 @@ public class LoadSampleData implements ApplicationRunner {
 	
 	private void loadDataForMongo() throws DBPersistenceException, JsonProcessingException {
 		
-		List<Ontology> ontologies = this.ontologyRepository.findByIdentificationIgnoreCase(ONT_NAME);
-		if (ontologies.isEmpty()) {
-			// 1º
-						Product data = PojoFactoryLoadData.createProduct("name1");
-						ObjectMapper mapper = new ObjectMapper();
-						
-						System.out.println(mapper.writeValueAsString(data));
-						
-						refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
-						int init = 17;
-						int end = refOid.indexOf("\"}}");
-						refOid = refOid.substring(init, end);
-						// 2º
-						data =  PojoFactoryLoadData.createProduct("admin");
-						mapper = new ObjectMapper();
-						refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
-						// 3º
-						data =  PojoFactoryLoadData.createProduct("other");
-						mapper = new ObjectMapper();
-						refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));	
-		}
+		Product data = PojoFactoryLoadData.createProduct("name1");
+		ObjectMapper mapper = new ObjectMapper();
+		
+		System.out.println(mapper.writeValueAsString(data));
+		
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		int init = 17;
+		int end = refOid.indexOf("\"}}");
+		refOid = refOid.substring(init, end);
+		// 2º
+		data =  PojoFactoryLoadData.createProduct("admin");
+		mapper = new ObjectMapper();
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		// 3º
+		data =  PojoFactoryLoadData.createProduct("other");
+		mapper = new ObjectMapper();
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));	
 			
 		
 	}

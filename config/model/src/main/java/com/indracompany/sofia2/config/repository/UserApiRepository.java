@@ -35,8 +35,11 @@ public interface UserApiRepository extends JpaRepository<UserApi, String> {
 	
 	List<UserApi> findByUser(User user);
 	
+	@Query("SELECT ua FROM UserApi AS ua WHERE ua.api.id = :api")
+	List<UserApi> findByApiId(@Param("api")String api);
+	
 	@Query("SELECT ua FROM UserApi AS ua WHERE ua.api.id = :api and ua.user.userId = :user")
-	UserApi findByApiIdAndUser(String api, String user);
+	UserApi findByApiIdAndUser(@Param("api")String api, @Param("user")String user);
 	
 	@Query("SELECT ua FROM UserApi AS ua WHERE ua.api.user.userId = :userId")
 	List<UserApi> findByOwner(@Param("userId") String userId);

@@ -39,8 +39,6 @@ public interface OntologyService {
 
 	Ontology getOntologyByIdentification(String identification, String sessionUserId);
 
-	//Ontology saveOntology(Ontology ontology, String sessionUserId);
-
 	List<DataModel> getAllDataModels();
 
 	List<String> getAllDataModelTypes();

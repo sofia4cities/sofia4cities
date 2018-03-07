@@ -40,12 +40,9 @@ import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Slf4j
 public class FlowNodeServiceIntegrationTest {
 
 	@Autowired
@@ -88,6 +85,7 @@ public class FlowNodeServiceIntegrationTest {
 		FlowNode node = new FlowNode();
 		node.setFlow(flow);
 		node.setNodeRedNodeId("nodeRedNodeId");
+		node.setIdentification("nodeIdentification");
 		node.setFlowNodeType(Type.HTTP_NOTIFIER);
 		node.setMessageType(MessageType.INSERT);
 		node.setOntology(ontologyService.getOntologyByIdentification(ontologyId, user.getUserId()));
@@ -96,7 +94,7 @@ public class FlowNodeServiceIntegrationTest {
 	}
 
 	@Test
-	public void test1_getNotificationEntities() {
+	public void given_SomeNotificationEntities_When_ItIsSearchedByOntologyIdAndType_Then_TheCorrectNotificationEntitiesAreReturned() {
 		List<NotificationEntity> notificationEntities = nodeService.getNotificationsByOntologyAndMessageType(ontologyId,
 				"INSERT");
 		Assert.assertTrue(notificationEntities != null && !notificationEntities.isEmpty());

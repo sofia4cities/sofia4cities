@@ -44,7 +44,7 @@ public class MongoByQuasarIntegrationTest {
 	QuasarMongoDBbHttpConnector connector;
 
 	@Test
-	public void testQueryAsJson() {
+	public void given_MongoDbAndQuasar_When_AnSQLQueryIsExecuted_Then_MongoDb_ReturnsTheResult() {
 		try {
 			String query = "select * from movie";
 			String result = connector.queryAsJson(query, 0, 100);

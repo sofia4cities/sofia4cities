@@ -78,7 +78,7 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void test_insert_clientplatform_or_sessionkey_not_present() {
+	public void given_OneInsertProcessor_When_InvalidClientPlatformOrSessionKeyIsNotPresent_Then_TheResponseIndicatesProcessorError() {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 		// Scenario: SessionKey is an Empty String
 		{
@@ -103,7 +103,7 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void test_insert_sessionkey_invalid() throws AuthorizationException {
+	public void given_OneInsertProcessor_When_AnInvalidSessionIsUsed_Then_TheResponseIndicatesAuthorizationError () throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 
 		when(securityPluginManager.checkSessionKeyActive(any())).thenReturn(false);
@@ -118,7 +118,7 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void test_insert_unauthorized_operation() throws AuthorizationException {
+	public void given_OneInsertProcessor_When_AnUnauthorizedOperationIsPerformed_Then_TheResponseIndicatesAnAuthorizationError () throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 
 		when(securityPluginManager.checkAuthorization(any(),anyString(),anyString())).thenReturn(false);
@@ -132,12 +132,10 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void test_basic_insert() throws IOException, Exception {
+	public void given_OneInsertProcessor_When_AnAuthorizedOperationWithCorrectSessionIsPerformed_Then_TheResponseIndicatesTheDataIsInserted() throws IOException, Exception {
 
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 		final IoTSession session = PojoGenerator.generateSession();
-
-
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);

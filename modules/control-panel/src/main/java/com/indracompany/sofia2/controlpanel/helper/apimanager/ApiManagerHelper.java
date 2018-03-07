@@ -40,7 +40,6 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserApi;
-import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ApiAuthenticationRepository;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
@@ -53,6 +52,7 @@ import com.indracompany.sofia2.config.services.apimanager.operation.HeaderJson;
 import com.indracompany.sofia2.config.services.apimanager.operation.OperationJson;
 import com.indracompany.sofia2.config.services.apimanager.operation.QueryStringJson;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.controlpanel.controller.apimanager.UserApiDTO;
 import com.indracompany.sofia2.controlpanel.multipart.ApiMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
@@ -115,6 +115,8 @@ public class ApiManagerHelper {
 	
 	// To populate de Api Create Form
 	public void populateApiManagerUpdateForm(Model uiModel, String apiId) {
+		
+		//POPULATE API TAB
 		populateApiManagerCreateForm(uiModel);
 		
 		Api api= apiRepository.findById(apiId);
@@ -127,20 +129,38 @@ public class ApiManagerHelper {
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
+		
+		//POPULATE AUTH TAB
+		
+		uiModel.addAttribute("clients", toUserApiDTO(userApiRepository.findByApiId(apiId)));
+		uiModel.addAttribute("users", userRepository.findUserByIdentificationAndNoRol(utils.getUserId(), Role.Type.ROLE_ADMINISTRATOR.toString()));
 	}
 	
+	private List<UserApiDTO> toUserApiDTO(List<UserApi> findByApiId) {
+		List<UserApiDTO> userApiDTOList= new ArrayList<UserApiDTO>();
+		for (UserApi userApi : findByApiId) {
+			UserApiDTO userApiDTO = new UserApiDTO(userApi);
+			userApiDTOList.add(userApiDTO);
+		}
+		return userApiDTOList;
+	}
+
 	public void populateApiManagerShowForm(Model uiModel, String apiId) {
 		
+		//POPULATE API TAB
 		Api api= apiRepository.findById(apiId);
 		
 		List<ApiAuthentication> apiAuthenticacion = apiAuthenticationRepository.findAllByApi(api);
 		AuthenticationJson authenticacion = populateAuthenticationObject(apiAuthenticacion);
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
-		
+
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
+		
+		//POPULATE AUTH TAB
+		uiModel.addAttribute("clients", userApiRepository.findByApiId(apiId));
 	}
 	
 	private AuthenticationJson populateAuthenticationObject(List<ApiAuthentication> apiAuthentications) {

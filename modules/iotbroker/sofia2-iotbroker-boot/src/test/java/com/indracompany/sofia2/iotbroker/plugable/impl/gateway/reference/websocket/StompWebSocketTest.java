@@ -86,7 +86,7 @@ public class StompWebSocketTest {
 		securityMocks();
 	}
 	@Test
-	public void test_stomp_web_socket_join() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+	public void given_OneWebSocketClientConnection_When_ItSubscribesToATopicAndSendsMessage_Then_ItGetsTheMessage() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
 		final String uuid = UUID.randomUUID().toString();
 
 		final WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));

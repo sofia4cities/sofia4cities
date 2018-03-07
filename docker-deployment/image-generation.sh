@@ -39,6 +39,12 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
+buildNginx()
+{
+	echo "NGINX image generation with Docker CLI: "
+	docker build -t sofia2/nginx:$1 .		
+}
+
 echo "##########################################################################################"
 echo "#                                                                                        #"
 echo "#   _____             _                                                                  #"              
@@ -67,17 +73,33 @@ homepath=$PWD
 
 # Only create persistence layer
 if [ -z "$1" ]; then
-    # Control Panel image
-	cd $homepath/../modules/control-panel/
-	buildImage "Control Panel"
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/control-panel/
+		buildImage "Control Panel"
+	fi	
 	
-	# IoTBroker image
-	cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
-	buildImage "IoT Broker"
+	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
+		buildImage "IoT Broker"
+	fi
 	
-	# API manager image
-	cd $homepath/../modules/api-manager/	
-	buildImage "API Manager"
+	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../modules/api-manager/	
+		buildImage "API Manager"
+	fi
+	
+	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
+		cd $homepath/../modules/flow-engine/
+		buildImage "Flow Engine"
+	fi
+	
+	#cp $homepath/../tools/Flow-Engine-Manager/*.zip $homepath/../modules/flow-engine/docker/nodered.zip
+	#cd $homepath/../modules/flow-engine/docker
+	#unzip nodered.zip		
+	#cd $homepath/../modules/flow-engine/docker
+	#rm -rf Flow-Engine-Manager
+	#rm nodered.zip	
 fi
 
 # Generates images only if they are not present in local docker registry
@@ -94,6 +116,11 @@ fi
 if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
 	cd $homepath/dockerfiles/realtimedb
 	buildRealTimeDB latest
+fi
+
+if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
+	cd $homepath/dockerfiles/nginx
+	buildNginx latest
 fi
 
 echo "Docker images successfully generated!"

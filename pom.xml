@@ -71,6 +71,7 @@
 		<module>config/model</module>
 		<module>config/services</module>
 		<module>config/init</module>
+		<module>config/resources</module>
 		
 		<!--SECURITY-->		
 		<module>security/security-ui-ri</module>
@@ -80,7 +81,7 @@
 		<module>persistence/mongodb-impl</module>		
 		<module>persistence/services</module>				
 		
-		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
+		<module>contributions/spring-boot-admin-server-ui</module>
 		<module>contributions/spring-boot-admin-server-ui-login</module>
 		
 		<!--MODULES-->

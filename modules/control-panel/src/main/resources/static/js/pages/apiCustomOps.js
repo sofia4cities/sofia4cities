@@ -24,8 +24,7 @@ var ApiCustomOpsController = function() {
         if ((field.value.match(RegExPattern))) {
 
         } else {
-			success1.hide();
-			error1.show();
+        	ApiCreateController.showErrorDialog('Error', apiCustomOpsReg.apimanager_customsql_error_name_format);
         }
     }
     
@@ -37,8 +36,7 @@ var ApiCustomOpsController = function() {
        	    clearParams();
        	    showParams(query);
         } else {
-       	    document.getElementById("dialog-error").innerHTML=error;
-       	    showErrorDialog();
+        	ApiCreateController.showErrorDialog('Error', error);
         }
     }
 
@@ -52,8 +50,7 @@ var ApiCustomOpsController = function() {
             if (error==""){
             	showParams(field);
             } else {
-                document.getElementById("dialog-error").innerHTML=error;
-                showErrorDialog();
+            	ApiCreateController.showErrorDialog('Error', error);
             }
         } else {
         	showParams(field);
@@ -88,25 +85,25 @@ var ApiCustomOpsController = function() {
     }
 
     function showParams(query) {
-   	 var param = "";
-   	 customsql_queryparam = new Array();
-   	 while (query.indexOf("{$")>0 && query.indexOf("}")!=-1){
-   		 var param = query.substring(query.indexOf("{$") + 2, query.indexOf("}", query.indexOf("{$")));
-
-   		 if (param.indexOf(":")==-1){
-   			    loadParamQuery(param);
-   			    query = query.substring(query.indexOf("}", query.indexOf("{$")) + 1);
-   		 } else {
-   			    query = query.substring(query.indexOf("{$") + 2, query.length);
-   		 }
-   	 }
-   	 if (customsql_queryparam.length>0){
-		$("#customsql_noparam_div").css({ 'display': "none" });
-		$("#customsql_params_div").css({ 'display': "block" });
-   	 } else {
-     	$("#customsql_params_div").css({ 'display': "none" });
-    	$("#customsql_noparam_div").css({ 'display': "block" });
-   	 }
+		 var param = "";
+		 customsql_queryparam = new Array();
+		 while (query.indexOf("{$")>0 && query.indexOf("}")!=-1){
+			 var param = query.substring(query.indexOf("{$") + 2, query.indexOf("}", query.indexOf("{$")));
+		
+			 if (param.indexOf(":")==-1){
+				 loadParamQuery(param);
+				 query = query.substring(query.indexOf("}", query.indexOf("{$")) + 1);
+			 } else {
+			    query = query.substring(query.indexOf("{$") + 2, query.length);
+			 }
+		 }
+		 if (customsql_queryparam.length>0){
+			$("#customsql_noparam_div").css({ 'display': "none" });
+			$("#customsql_params_div").css({ 'display': "block" });
+		 } else {
+		 	$("#customsql_params_div").css({ 'display': "none" });
+		 	$("#customsql_noparam_div").css({ 'display': "block" });
+		 }
     }
 
     function loadParamQuery(param) {
@@ -118,7 +115,6 @@ var ApiCustomOpsController = function() {
         var newCustomsqlParamFieldSet = document.createElement('fieldset');
         newCustomsqlParamFieldSet.id = "customsql_param_fieldset" + param;
 
-        newCustomsqlParamFieldSet.style.width="40%";
         newCustomsqlParamFieldSet.style.margin="10px";
         newCustomsqlParamFieldSet.style.marginTop="10px";
         newCustomsqlParamFieldSet.style.padding="10px";
@@ -128,7 +124,7 @@ var ApiCustomOpsController = function() {
         var newLabelCustomsqlParam = document.createElement('label');
         newLabelCustomsqlParam.id = param;
         newLabelCustomsqlParam.className="description";
-        newLabelCustomsqlParam.style.marginLeft="20px";
+        newLabelCustomsqlParam.style.marginRight="20px";
         newLabelCustomsqlParam.innerHTML=param;
 
         newCustomsqlParamFieldSet.appendChild(newLabelCustomsqlParam);
@@ -180,8 +176,7 @@ var ApiCustomOpsController = function() {
 
 	                     $('#dialog-customsql').modal('toggle');
 	                 } else {
-	                     document.getElementById("dialog-error").innerHTML=apiCustomOpsReg.apimanager_error_operation_existe;
-	                     //showErrorDialog();
+	                	 ApiCreateController.showErrorDialog('Error', apiCustomOpsReg.apimanager_customsql_error_operation_exists);
 	                 }
 	             } else {
 	                 for(var i=0; i<operations.length; i+=1){
@@ -199,12 +194,10 @@ var ApiCustomOpsController = function() {
 	                 $('#dialog-customsql').modal('toggle');
 	             }
 	         } else {
-	             document.getElementById("dialog-error").innerHTML=errorQuery;
-	             showErrorDialog();
+	        	 ApiCreateController.showErrorDialog('Error', errorQuery);
 	         }
         } else {
-            document.getElementById("dialog-error").innerHTML=apiCustomOpsReg.apimanager_error_campos;
-            showErrorDialog();
+        	ApiCreateController.showErrorDialog('Error', apiCustomOpsReg.apimanager_customsql_error_fields);
         }
     }
 
@@ -414,14 +407,7 @@ var ApiCustomOpsController = function() {
         var operationCustomSqlRemoveDiv = document.getElementById(op_name);
         operationsCustomSqlDiv.removeChild(operationCustomSqlRemoveDiv);
 
-    }
-    
-    $( "#code" ).on('shown', function(){
-        alert("I want this to appear after the modal has opened!");
-    });
-    
-    
-
+    }  
     
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
@@ -461,6 +447,12 @@ var ApiCustomOpsController = function() {
 			logControl ? console.log(LIB_TITLE + ': validateNameOp()') : '';
 			loadParamsFromQuery(field, op_name);
 		},
+		
+		// EXTRACT PARAMS
+		loadParamsQueryType: function(){
+			logControl ? console.log(LIB_TITLE + ': validateNameOp()') : '';
+			loadParamQuerySQLType();
+		},		
 		
 		// SAVE CHANGES
 		saveCustom: function(){
