@@ -181,7 +181,7 @@ public class RouterFlowManagerService {
 				
 		OperationResultModel fallback = new OperationResultModel();
 		fallback.setResult("ERROR");
-		fallback.setMessage("Operation Failed. Returned Default FallBack with :"+entity.getEntityId());
+		fallback.setMessage("Operation Failed. Returned Default FallBack with :"+entity.getEntityId()+" URL: "+compositeModel.getUrl());
 		
 		RouterClientGateway<NotificationCompositeModel, OperationResultModel> adviceGateway =  clientsFactory.createAdviceGateway("advice", "adviceGroup");
 		adviceGateway.setFallback(fallback);
