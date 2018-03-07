@@ -11,23 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.config;
+package com.indracompany.sofia2;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Configuration
-@ComponentScan(basePackages = {
-		"com.indracompany.sofia2.config.services.user",
-		"com.indracompany.sofia2.config.services.ontology",
-		"com.indracompany.sofia2.config.services.flownode",
-		"com.indracompany.sofia2.router.service.app.service.crud",
-		"com.indracompany.sofia2.router.service.app.service.advice",
-		"com.indracompany.sofia2.resources.config"
-		
-		})
-public class ServicesConfig {
+@SpringBootApplication
+public class Sofia2ResourceManagerApplication {
 
+	public static void main(String[] args) {
+		SpringApplication.run(Sofia2ResourceManagerApplication.class, args);
+	}
 	
-
+	
 }

@@ -13,21 +13,19 @@
  */
 package com.indracompany.sofia2.router.config;
 
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@ComponentScan(basePackages = {
-		"com.indracompany.sofia2.config.services.user",
-		"com.indracompany.sofia2.config.services.ontology",
-		"com.indracompany.sofia2.config.services.flownode",
-		"com.indracompany.sofia2.router.service.app.service.crud",
-		"com.indracompany.sofia2.router.service.app.service.advice",
-		"com.indracompany.sofia2.resources.config"
-		
-		})
-public class ServicesConfig {
+import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
+import com.indracompany.sofia2.router.service.app.service.SuscriptionRepository;
 
-	
+@Configuration
+public class SuscriptionConfig {
+
+	@Bean
+	SuscriptionRepository<SuscriptionModel> suscriptionRepository(){
+		SuscriptionRepository<SuscriptionModel> bean = new SuscriptionRepository<SuscriptionModel>();
+		return bean;
+	}
 
 }

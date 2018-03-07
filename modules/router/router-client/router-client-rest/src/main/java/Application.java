@@ -34,7 +34,7 @@ public class Application {
     	NotificationModel input = new NotificationModel();
     	OperationModel model = new OperationModel();
     	
-    	String query = "select * from product where name = \"admin\"";
+    	String query = "select * from product where name = \"name1\"";
     	model.setOntologyName("product");
     	model.setQueryType(QueryType.SQLLIKE);
     	model.setBody(query);

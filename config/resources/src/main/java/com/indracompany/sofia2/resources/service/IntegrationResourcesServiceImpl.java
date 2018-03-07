@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,23 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.config;
+package com.indracompany.sofia2.resources.service;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
-@Configuration
-@ComponentScan(basePackages = {
-		"com.indracompany.sofia2.config.services.user",
-		"com.indracompany.sofia2.config.services.ontology",
-		"com.indracompany.sofia2.config.services.flownode",
-		"com.indracompany.sofia2.router.service.app.service.crud",
-		"com.indracompany.sofia2.router.service.app.service.advice",
-		"com.indracompany.sofia2.resources.config"
-		
-		})
-public class ServicesConfig {
+public class IntegrationResourcesServiceImpl implements IntegrationResourcesService {
 
+	private Environment env;
 	
+	private static String INTEGRATION_PREFIX="sofia2.module.integration.";
+	
+	public String getURL(String serviceKey) {
+		return env.getProperty(INTEGRATION_PREFIX+serviceKey, "RESOURCE_URL_NOT_FOUND");
+	}
+
+	public void setEnv(Environment env) {
+		this.env = env;
+	}
 
 }

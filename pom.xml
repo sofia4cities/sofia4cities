@@ -71,6 +71,7 @@
 		<module>config/model</module>
 		<module>config/services</module>
 		<module>config/init</module>
+		<module>config/resources</module>
 		
 		<!--SECURITY-->		
 		<module>security/security-ui-ri</module>

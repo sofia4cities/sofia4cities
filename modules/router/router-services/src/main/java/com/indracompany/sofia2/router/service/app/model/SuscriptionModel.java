@@ -13,27 +13,20 @@
  */
 package com.indracompany.sofia2.router.service.app.model;
 
-import java.io.Serializable;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 
 import lombok.Getter;
 import lombok.Setter;
 
-
-public class OperationModel implements Serializable{
+public class SuscriptionModel {
 	
-	private static final long serialVersionUID = 1L;
-
 	public static enum OperationType {
-		INSERT, UPDATE, DELETE, QUERY, GET, PUT, POST;
+		SUSCRIBE,UNSUSCRIBE;
 	}
 	
 	public static enum QueryType {
-		SQLLIKE,NATIVE,NONE;
+		SQLLIKE,NATIVE;
 	}
-
-	@Getter
-	@Setter
-	private String ontologyName;
 	
 	@Getter
 	@Setter
@@ -41,30 +34,25 @@ public class OperationModel implements Serializable{
 	
 	@Getter
 	@Setter
+	private String ontologyName;
+	
+	@Getter
+	@Setter
+	private String sessionKey;
+	
+	@Getter
+	@Setter
+	private String suscriptionId;
+	
+	@Getter
+	@Setter
+	private String query;
+	
+	@Getter
+	@Setter
 	private QueryType queryType;
 	
 	@Getter
 	@Setter
-	private String body;
-	
-	@Getter
-	@Setter
-	private String objectId;
-	
-	@Getter
-	@Setter
 	private String user;
-
-	@Override
-	public String toString() {
-		return "OperationModel [ontologyName=" + ontologyName + ", operationType=" + operationType + ", queryType="
-				+ queryType + ", body=" + body + ", objectId=" + objectId + ", user=" + user + "]";
-	}
-
-	
-
-
-	
-
-	
 }

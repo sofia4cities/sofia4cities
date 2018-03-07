@@ -54,8 +54,6 @@ public class RouterFlowManagerService {
 	
 	private String executeCrudOperationsRoute = "direct:execute-crud-operations";
 	
-	
-	
 	public OperationResultModel startBrokerFlow(NotificationModel model, Exchange exchange) {
 		log.debug("startBrokerFlow: Notification Model arrived");
 		NotificationCompositeModel compositeModel = new NotificationCompositeModel();

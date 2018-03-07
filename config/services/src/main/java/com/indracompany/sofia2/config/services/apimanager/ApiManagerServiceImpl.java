@@ -336,17 +336,17 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		updateOperations(apimemory, operationsJson);
 	}
 
-	private void updateAutenticacion(Api apimemory,	AuthenticationJson authenticacionJson) {
+	private void updateAuthentication(Api apimemory, AuthenticationJson authenticationJson) {
 		List<ApiAuthentication> apiAutenticationlist = apiAuthenticationRepository.findAllByApi(apimemory);
 		for (ApiAuthentication apiAuthentication : apiAutenticationlist) {
 			apiAuthenticationRepository.delete(apiAuthentication);
 		}
-		createAuthentication(apimemory, authenticacionJson);
+		createAuthentication(apimemory, authenticationJson);
 	}
 
 	private void updateOperations(Api api, List<OperationJson> operationsJson) {
-		List<ApiOperation> apiOperaciones = apiOperationRepository.findAllByApi(api);
-		for (ApiOperation apiOperation : apiOperaciones) {
+		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
+		for (ApiOperation apiOperation : apiOperations) {
 			for (ApiHeader apiHeader : apiOperation.getApiheaders()) {
 				apiHeaderRepository.delete(apiHeader);
 			}
@@ -374,14 +374,18 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 
 	@Override
 	public void updateAuthorization(String apiId, String userId) {
-		Api api = apiRepository.findById(apiId);
-		User user = userRepository.findByUserId(userId);
-		
-		UserApi userApi = new UserApi();
-		userApi.setApi(api);
-		userApi.setUser(user);
-		
-		userApiRepository.save(userApi);
+		UserApi userApi = userApiRepository.findByApiIdAndUser(apiId, userId);
+
+		if (userApi==null) {
+			Api api = apiRepository.findById(apiId);
+			User user = userRepository.findByUserId(userId);
+			
+			userApi = new UserApi();
+			userApi.setApi(api);
+			userApi.setUser(user);
+			
+			userApiRepository.save(userApi);
+		}
 	}
 
 	@Override

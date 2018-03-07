@@ -67,12 +67,5 @@ public class RouterOperationsServiceFacade implements RouterService {
 		}
 	}
 
-	@Override
-	public OperationResultModel subscribe(NotificationModel model) throws Exception {
-		if (checkRouter()) return routerService.subscribe(model);
-		else {
-			return routerCrudService.subscribe(model.getOperationModel());
-		}
-	}
-
+	
 }

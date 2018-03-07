@@ -22,7 +22,6 @@
 
 	<dependencies>
 
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
@@ -32,7 +31,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
-
 
 		<!-- sofia2 -->
 		<dependency>
@@ -44,6 +42,12 @@
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-router-crud</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-config-resources</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 
@@ -66,7 +70,6 @@
 			<version>${version.camel}</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jackson-starter</artifactId>
@@ -79,14 +82,11 @@
 			<version>${version.camel}</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-http-starter</artifactId>
 			<version>${version.camel}</version>
 		</dependency>
-
-
 
 	</dependencies>
 
