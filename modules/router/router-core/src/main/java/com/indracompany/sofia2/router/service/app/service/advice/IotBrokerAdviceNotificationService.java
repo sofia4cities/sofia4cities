@@ -14,24 +14,26 @@
 package com.indracompany.sofia2.router.service.app.service.advice;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
+import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 import com.indracompany.sofia2.router.service.app.model.AdviceNotificationModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
+import com.indracompany.sofia2.router.service.app.model.SuscriptionModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.SuscriptionModel.QueryType;
 import com.indracompany.sofia2.router.service.app.service.AdviceNotificationService;
-import com.indracompany.sofia2.router.service.app.service.suscription.SuscriptionRepository;
 
 @Service
 public class IotBrokerAdviceNotificationService implements AdviceNotificationService {
 
 	@Autowired
-	SuscriptionRepository<String,SuscriptionModel> suscriptionRepository;
-	
+	SuscriptionModelRepository repository;
+
 	@Autowired
 	IntegrationResourcesService resourcesService;
 	
@@ -40,22 +42,32 @@ public class IotBrokerAdviceNotificationService implements AdviceNotificationSer
 	@Override
 	public List<AdviceNotificationModel> getAdviceNotificationModel(String ontologyName, String messageType) {
 		
-		Collection<SuscriptionModel>  listNotifications=null;
+		List<SuscriptionNotificationsModel>  listNotifications=null;
 		List<AdviceNotificationModel> model =null;
 		String baseUrl = resourcesService.getURL(ADVICE_URL);
 		
 		try {
-			listNotifications = suscriptionRepository.findById(ontologyName);
+			listNotifications = repository.findAllByOntologyName(ontologyName);
 		}catch (Exception e) {}
 		
 		if (listNotifications !=null)
 		{
 			model = new ArrayList<AdviceNotificationModel>();
-			for (SuscriptionModel notificationEntity : listNotifications) {
+			for (SuscriptionNotificationsModel notificationEntity : listNotifications) {
 				AdviceNotificationModel advice = new AdviceNotificationModel();
 				advice.setEntityId(notificationEntity.getSuscriptionId());
 				advice.setUrl(baseUrl);
-				advice.setSuscriptionModel(notificationEntity);
+				
+				SuscriptionModel sus = new SuscriptionModel();
+				sus.setOntologyName(notificationEntity.getOntologyName());
+				sus.setOperationType(OperationType.valueOf(notificationEntity.getOperationType().name()));
+				sus.setQuery(notificationEntity.getQuery());
+				sus.setQueryType(QueryType.valueOf(notificationEntity.getQueryType().name()));
+				sus.setSessionKey(notificationEntity.getSessionKey());
+				sus.setSuscriptionId(notificationEntity.getSuscriptionId());
+				sus.setUser(notificationEntity.getUser());
+				
+				advice.setSuscriptionModel(sus);
 				model.add(advice);
 			}
 		}

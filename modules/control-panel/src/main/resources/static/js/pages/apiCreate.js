@@ -1,3 +1,7 @@
+var authorizationsArr = []; // add authorizations
+var authorizationUpdateArr = []; // get authorizations of the api
+var authorizationsIds = []; // get authorizations ids for actions
+var authorizationObj = {}; // object to receive authorizations responses.
 var ApiCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
@@ -10,6 +14,7 @@ var ApiCreateController = function() {
 	var internalFormat = 'yyyy/mm/dd';
 	var internalLanguage = 'en';
 	var reader = new FileReader();
+	var mountableModel2 = $('#api_authorizations').find('tr.authorization-model')[0].outerHTML;
     
 	reader.onload = function (e) {
         $('#showedImg').attr('src', e.target.result);
@@ -266,7 +271,7 @@ var ApiCreateController = function() {
             errorElement: 'span', //default input error message container
             errorClass: 'help-block help-block-error', // default input error message class
             focusInvalid: false, // do not focus the last invalid input
-            ignore: ":hidden:not(.selectpicker)", // validate all fields including form hidden input but not selectpicker
+            ignore: ":hidden:not('.selectpicker, .hidden-validation')", // validate all fields including form hidden input but not selectpicker
 			lang: currentLanguage,
 			// custom messages
             messages: {
@@ -355,7 +360,15 @@ var ApiCreateController = function() {
 			$(this).valid();
 		});
 		
-				
+		// authorization tab control 
+		$(".nav-tabs a[href='#tab_2']").on("click", function(e) {
+		  if ($(this).hasClass("disabled")) {
+			e.preventDefault();
+			$.alert({title: 'INFO!', type: 'blue' , theme: 'dark', content: 'CREATE ONTOLOGY THEN GIVE AUTHORIZATIONS!'});
+			return false;
+		  }
+		});
+		
 		// set current language and formats
 		currentLanguage = apiCreateReg.language || LANGUAGE[0];
 		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';		
@@ -515,6 +528,95 @@ var ApiCreateController = function() {
         	 reader.readAsDataURL($("#image").prop('files')[0]);
          }
     }
+    
+    
+	var authorization = function(action,api,user,authorization,btn){
+		logControl ? console.log('|---> authorization()') : '';	
+		var insertURL = apiCreateReg.authorizationsPath + '/authorization';
+		var deleteURL = apiCreateReg.authorizationsPath + '/authorization/delete';
+		var response = {};
+		
+		if (action === 'insert'){
+			console.log('    |---> Inserting... ' + insertURL);
+						
+			$.ajax({
+				url:insertURL,
+				type:"POST",
+				async: true,
+				data: {"api": api,"user": user},			 
+				dataType:"json",
+				success: function(response,status){							
+					
+					var propAuth = {"users":user, "usersFullName": response.userFullName, "id": response.id};
+					authorizationsArr.push(propAuth);
+					console.log('     |---> JSONtoTable: ' + authorizationsArr.length + ' data: ' + JSON.stringify(authorizationsArr));
+					// store ids for after actions.	inside callback 				
+					var user_id = user;
+					var auth_id = response.id;
+					var AuthId = {[user_id]:auth_id};
+					authorizationsIds.push(AuthId);
+					console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
+										
+					// TO-HTML
+					if ($('#authorizations').attr('data-loaded') === 'true'){
+						$('#api_authorizations > tbody').html("");
+						$('#api_authorizations > tbody').append(mountableModel2);
+					}
+					console.log('authorizationsArr: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr));
+					$('#api_authorizations').mounTable(authorizationsArr,{
+						model: '.authorization-model',
+						noDebug: false							
+					});
+					
+					// hide info , disable user and show table
+					$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
+					$("#users").selectpicker('deselectAll');
+					$("#users option[value=" + $('#users').val() + "]").prop('disabled', true);
+					$("#users").selectpicker('refresh');
+					$('#authorizations').removeClass('hide');
+					$('#authorizations').attr('data-loaded',true);
+					
+				}
+			});
+
+	
+		}
+		if (action  === 'delete'){
+			console.log('    |---> Deleting... ' + user + ' with authId:' + authorization );
+			
+			$.ajax({url:deleteURL, type:"POST", async: true, 
+				data: {"id": authorization},			 
+				dataType:"json",
+				success: function(response,status){									
+					
+					// remove object
+					var removeIndex = authorizationsIds.map(function(item) { return item[user]; }).indexOf(authorization);			
+					authorizationsIds.splice(removeIndex, 1);
+					authorizationsArr.splice(removeIndex, 1);
+					
+					console.log('AuthorizationsIDs: ' + JSON.stringify(authorizationsIds));
+					// refresh interface. TO-DO: EL this este fallará					
+					if ( response  ){ 
+						$(btn).closest('tr').remove();
+						$("#users option[value=" + user + "]").prop('disabled', false);
+					}
+					else{ 
+						$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); 
+					}
+				}
+			});			
+		}	
+	};
+	
+	// return position to find authId.
+	var foundIndex = function(what,item,arr){
+		var found = '';
+		arr.forEach(function(element, index, array) {
+			if ( what === element[item]){ found = index;  console.log("a[" + index + "] = " + element[item] + ' Founded in position: ' + found ); } 
+			
+		});		
+		return found;
+	}
 
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
@@ -574,6 +676,37 @@ var ApiCreateController = function() {
 			handleValidation();
 			initTemplateElements();		
 			
+		},
+		
+		// INSERT AUTHORIZATION
+		insertAuthorization: function(){
+			logControl ? console.log(LIB_TITLE + ': insertAuthorization()') : '';
+			if ( apiCreateReg.actionMode !== null){	
+				// UPDATE MODE ONLY AND VALUES on user
+				if (($('#users').val() !== '') && ($("#users option:selected").attr('disabled') !== 'disabled')){
+					
+					// AJAX INSERT (ACTION,APIID,USER) returns object with data.
+					authorization('insert',apiCreateReg.apiId,$('#users').val(),'');
+								
+				}	
+			}
+		},
+		
+		// REMOVE authorization
+		removeAuthorization: function(obj){
+			logControl ? console.log(LIB_TITLE + ': removeAuthorization()') : '';
+			if ( apiCreateReg.actionMode !== null){
+				
+				// AJAX REMOVE (ACTION,APIID,USER) returns object with data.
+				var selUser = $(obj).closest('tr').find("input[name='users\\[\\]']").val();
+				
+				var removeIndex = foundIndex(selUser,'users',authorizationsArr);				
+				var selAuthorizationId = authorizationsIds[removeIndex][selUser];
+				
+				console.log('removeAuthorization:' + selAuthorizationId);
+				
+				authorization('delete',apiCreateReg.apiId, selUser, selAuthorizationId, obj);				
+			}
 		},
 		// REDIRECT
 		go: function(url){

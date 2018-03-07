@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.NotificationEntity;
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 import com.indracompany.sofia2.router.service.app.model.AdviceNotificationModel;
@@ -30,6 +32,9 @@ public class NodeRedAdviceNotificationService implements AdviceNotificationServi
 
 	@Autowired
 	FlowNodeService flowNodeService;
+	
+	@Autowired
+	OntologyRepository ontologyRepository;
 	
 	@Autowired
 	IntegrationResourcesService resourcesService;

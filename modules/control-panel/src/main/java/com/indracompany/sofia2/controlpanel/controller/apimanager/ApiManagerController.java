@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +40,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.exceptions.ApiManagerServiceException;
+import com.indracompany.sofia2.controlpanel.controller.ontology.OntologyUserAccessDTO;
 import com.indracompany.sofia2.controlpanel.helper.apimanager.ApiManagerHelper;
 import com.indracompany.sofia2.controlpanel.multipart.ApiMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
@@ -161,6 +167,41 @@ public class ApiManagerController {
 		apiManagerHelper.populateAutorizationForm(model);
 		return "apimanager/authorize";
 	}
+
+	@PostMapping(value = "/authorization", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<UserApiDTO> createAuthorization(@RequestParam String api, @RequestParam String user) {
+
+		try {
+			UserApi userApi = apiManagerService.updateAuthorization(api, user);
+			UserApiDTO userApiDTO = new UserApiDTO(userApi);
+
+			return new ResponseEntity<UserApiDTO>(userApiDTO, HttpStatus.CREATED);
+
+		}catch (RuntimeException e) {
+			return new ResponseEntity<UserApiDTO>(HttpStatus.BAD_REQUEST);
+		}
+			
+	}
+	
+	@PostMapping(value = "/authorization/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
+
+		try {
+			apiManagerService.removeAuthorizationById(id);
+			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
+		} catch(RuntimeException e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@PostMapping(value = "/authorize")

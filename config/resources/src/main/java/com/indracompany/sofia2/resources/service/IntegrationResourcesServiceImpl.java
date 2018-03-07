@@ -14,11 +14,11 @@
  */
 package com.indracompany.sofia2.resources.service;
 
-import org.springframework.core.env.Environment;
+import java.util.Properties;
 
 public class IntegrationResourcesServiceImpl implements IntegrationResourcesService {
 
-	private Environment env;
+	private Properties env;
 	
 	private static String INTEGRATION_PREFIX="sofia2.module.integration.";
 	
@@ -26,7 +26,7 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 		return env.getProperty(INTEGRATION_PREFIX+serviceKey, "RESOURCE_URL_NOT_FOUND");
 	}
 
-	public void setEnv(Environment env) {
+	public void setEnv(Properties env) {
 		this.env = env;
 	}
 
