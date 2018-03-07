@@ -17,7 +17,6 @@
  *
  * All rights reserved
  ******************************************************************************/
-
 package com.indracompany.sofia2.config.repository;
 
 import java.util.List;
@@ -32,48 +31,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.GeneratorType;
+import com.indracompany.sofia2.config.model.DashboardType;
+import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class GeneratorTypeIntegrationTest {
 
-	@Autowired 
-	GeneratorTypeRepository repository;
+public class DashboardTypeRepositoryIntegrationTest {
+
+	@Autowired
+	DashboardTypeRepository repository;
+
+	@Autowired
+	UserRepository userRepository;
+
+	private User getUserCollaborator() {
+		return this.userRepository.findByUserId("collaborator");
+	}
 
 	@Before
-	public void setUp()
-	{
-		List<GeneratorType> types=this.repository.findAll();
-		if(types.isEmpty())
-		{
-
-			log.info("No generator types found..adding");
-			GeneratorType type=new GeneratorType();
-			type.setId(1);
-			type.setIdentification("Random Number");
-			type.setKeyType("desde,number;hasta,number;numdecimal,number");
-			type.setKeyValueDef("desde,100;hasta,10000;numdecimal,0");
-			this.repository.save(type);
+	public void setUp() {
+		List<DashboardType> dashboardTypes = this.repository.findAll();
+		if (dashboardTypes.isEmpty()) {
+			log.info("No dashboards...adding");
+			DashboardType dashboardType = new DashboardType();
+			dashboardType.setId(1);
+			dashboardType.setModel("Model Example");
+			dashboardType.setUser(getUserCollaborator());
+			dashboardType.setPublic(true);
+			dashboardType.setType("Model Type Example");
+			repository.save(dashboardType);
 
 		}
 
 	}
 
 	@Test
-	public void test_findById()
-	{
-		GeneratorType type=this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findById(type.getId())!=null);
-
+	public void given_SomeDashboardTypesExist_When_AllAreSearched_Then_AllAreReturned() {
+		DashboardType dt = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.countByType(dt.getType()) == 1L);
 	}
 
 }

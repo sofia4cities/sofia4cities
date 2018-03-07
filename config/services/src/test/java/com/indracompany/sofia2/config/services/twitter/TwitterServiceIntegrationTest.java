@@ -38,12 +38,9 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Slf4j
 public class TwitterServiceIntegrationTest {
 
 	@Autowired
@@ -60,7 +57,7 @@ public class TwitterServiceIntegrationTest {
 	ConfigurationService configurationService;
 
 	@Test
-	public void testCreateListening() {
+	public void given_ThereIsNotATwitterListening_When_ItIsCreated_Then_ItIsCorrectlyAddedToThePersistenceLayer() {
 		TwitterListening twitterListening;
 		Ontology ontology;
 		Token token;

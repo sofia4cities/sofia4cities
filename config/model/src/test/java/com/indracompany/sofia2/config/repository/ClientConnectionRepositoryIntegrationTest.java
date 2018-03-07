@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class ClientConnectionIntegrationTest {
+public class ClientConnectionRepositoryIntegrationTest {
 
 	@Autowired
 	ClientConnectionRepository repository;
@@ -68,29 +68,25 @@ public class ClientConnectionIntegrationTest {
 	}
 
 	@Test
-	public void test_CountByClientPlatformId() {
+	public void given_SomeClientConnectionsExist_When_AllAreSearched_Then_AllAreReturned() {
 		ClientConnection con = this.repository.findAll().get(0);
-
 		Assert.assertTrue(this.repository.countByClientPlatform(con.getClientPlatform()) > 0);
 	}
 
 	@Test
-	public void test_FindByUserId() {
-
+	public void given_SomeClientConnectionsExist_When_ItIsSearchedByTheUserOfTheClientPlatform_Then_TheCorrectObjectsAreReturned() {
 		ClientConnection con = this.repository.findAll().get(0);
-
 		Assert.assertTrue(this.repository.findByUser(con.getClientPlatform().getUser()).size() > 0);
 	}
 
 	@Test
-	public void test_FindByClientPlatformId() {
+	public void given_SomeClientConnectionsExist_When_ItIsSearchedByClientPlatform_Then_TheCorrectObjectsAreReturned() {
 		ClientConnection con = this.repository.findAll().get(0);
-
 		Assert.assertTrue(this.repository.findByClientPlatform(con.getClientPlatform()).size() > 0);
 	}
 
 	@Test
-	public void test_FindByClientPlatformIdAndIdentification() {
+	public void given_SomeClientConnectionsExist_When_ItIsSearchedByClientPlatformAndIdentification_Then_TheCorrectObjectsAreReturned() {
 		ClientConnection con = this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository
 				.findByClientPlatformAndIdentification(con.getClientPlatform(), con.getIdentification()).size() > 0);

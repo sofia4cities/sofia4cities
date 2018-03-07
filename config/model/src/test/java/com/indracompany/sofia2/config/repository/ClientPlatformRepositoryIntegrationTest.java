@@ -35,15 +35,11 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class ClientPlatformIntegrationTest {
+public class ClientPlatformRepositoryIntegrationTest {
 	@Autowired
 	ClientPlatformRepository repository;
 
@@ -72,7 +68,7 @@ public class ClientPlatformIntegrationTest {
 	}
 
 	@Test
-	public void test1_FindByType() {
+	public void given_SomeClientPlatformsExistWithIdentificationAndDescription_When_ItIsSearchedByIdentificationAndNullDescription_Then_TheClientPlatformWithTheIdentificationIsFound() {
 		List<ClientPlatform> client = this.repository.findByIdentificationAndDescription("GTKP-fjgcornejo", null);
 		Assert.assertTrue(client != null);
 	}

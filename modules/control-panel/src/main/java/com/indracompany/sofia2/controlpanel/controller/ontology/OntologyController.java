@@ -167,7 +167,7 @@ public class OntologyController {
 		try {
 			User user = userService.getUser(utils.getUserId());
 			ontology.setUser(user);
-			this.ontologyService.createOntology(ontology);
+			this.ontologyService.updateOntology(ontology, utils.getUserId());
 		} catch (OntologyServiceException e) {
 			log.debug("Cannot update ontology");
 			utils.addRedirectMessage("ontology.update.error", redirect);

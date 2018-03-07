@@ -12,8 +12,9 @@
  * limitations under the License.
  */
 /*******************************************************************************
+
  * © Indra Sistemas, S.A.
- * 2013 - 2018  SPAIN
+ * 2013 - 2014  SPAIN
  *
  * All rights reserved
  ******************************************************************************/
@@ -32,28 +33,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.GadgetDataModel;
 import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class OntologyUserAccessIntegrationTest {
+public class GadgetDataModelRepositoryIntegrationTest {
 
 	@Autowired
-	OntologyUserAccessTypeRepository ouatRep;
-	@Autowired
-	OntologyUserAccessRepository repository;
-	@Autowired
-	OntologyRepository ontRep;
-
+	GadgetDataModelRepository repository;
 	@Autowired
 	UserRepository userRepository;
 
@@ -63,21 +55,28 @@ public class OntologyUserAccessIntegrationTest {
 
 	@Before
 	public void setUp() {
-		List<OntologyUserAccess> users = this.repository.findAll();
-		if (users.isEmpty()) {
-			log.info("No OntologyUserAccess found...adding");
-			OntologyUserAccess user = new OntologyUserAccess();
-			user.setUser(getUserDeveloper());
-			user.setOntology(ontRep.findAll().get(0));
-			user.setOntologyUserAccessType(ouatRep.findAll().get(0));
-			this.repository.save(user);
+		List<GadgetDataModel> gadgetDataModels = this.repository.findAll();
+		if (gadgetDataModels.isEmpty()) {
+			log.info("No gadget data models ...");
+			GadgetDataModel gadgetDM = new GadgetDataModel();
+			gadgetDM.setIdentification("1");
+			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
+			gadgetDM.setUser(getUserDeveloper());
+			gadgetDM.setPublic(true);
+			repository.save(gadgetDM);
 		}
 	}
 
 	@Test
-	public void findByUserId() {
-		OntologyUserAccess user = this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByUser(user.getUser()).size() > 0);
-
+	public void given_SomeGadgetDataModelsExist_When_ItIsSearchedByUserIdAndIdentificationAndIsPublic_Then_TheCorrectOBjectIsObtained() {
+		GadgetDataModel gadgetDM = this.repository.findAll().get(0);
+		String identification = gadgetDM.getIdentification();
+		
+		Assert.assertTrue(this.repository
+				.findByIdentificationAndUserOrIsPublicTrue(identification, getUserDeveloper()).size() > 0);
+	
+		Assert.assertTrue(
+				this.repository.findByIdentificationAndUserOrIsPublicTrue("000", getUserDeveloper()).size() == 0);
 	}
+
 }

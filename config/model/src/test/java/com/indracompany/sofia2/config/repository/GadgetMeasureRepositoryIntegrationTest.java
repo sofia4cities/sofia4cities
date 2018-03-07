@@ -12,11 +12,13 @@
  * limitations under the License.
  */
 /*******************************************************************************
+
  * © Indra Sistemas, S.A.
- * 2013 - 2018  SPAIN
+ * 2013 - 2014  SPAIN
  *
  * All rights reserved
  ******************************************************************************/
+
 package com.indracompany.sofia2.config.repository;
 
 import java.util.List;
@@ -31,7 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.Gadget;
+import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +43,14 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class DataModelIntegrationTest {
+
+public class GadgetMeasureRepositoryIntegrationTest {
 
 	@Autowired
-	DataModelRepository repository;
+	GadgetMeasureRepository repository;
+	@Autowired
+	GadgetRepository grepository;
+
 	@Autowired
 	UserRepository userRepository;
 
@@ -53,22 +60,36 @@ public class DataModelIntegrationTest {
 
 	@Before
 	public void setUp() {
-		List<DataModel> dataModels = this.repository.findAll();
-		if (dataModels.isEmpty()) {
-			throw new RuntimeException(
-					"There must be DataModels loaded in your dastabase. Please execute systemconfig-init");
+		List<GadgetMeasure> gadgetMeasures = this.repository.findAll();
+		if (gadgetMeasures.isEmpty()) {
+			log.info("No gadget measures ...");
+			GadgetMeasure gadgetMeasure = new GadgetMeasure();
+			gadgetMeasure.setAttribute("Attr1");
+			List<Gadget> gadgets = this.grepository.findAll();
+			Gadget gadget;
+			if (gadgets.isEmpty()) {
+				log.info("No gadgets ...");
+				gadget = new Gadget();
+				gadget.setDbType("RTDB");
+				gadget.setUser(getUserCollaborator());
+				gadget.setPublic(true);
+				gadget.setName("Gadget1");
+				gadget.setType("Tipo 1");
 
+				grepository.save(gadget);
+			} else {
+				gadget = grepository.findAll().get(0);
+			}
+			gadgetMeasure.setGadget(gadget);
+			repository.save(gadgetMeasure);
 		}
 	}
 
 	@Test
-	public void test1_Count() {
-		Assert.assertTrue(this.repository.count() > 0);
-	}
-
-	@Test
-	public void test4_FindByType() {
-		Assert.assertTrue(this.repository.findByType("IoT").size() > 1L);
+	public void given_SomeGadgetMeasuresExist_When_ItIsSearchedByGadget_Then_ItIsObtainedTheCorrectObjects() {
+		GadgetMeasure gadgetMeasure = this.repository.findAll().get(0);
+		log.info("Loaded gadget measure with gadget id: " + gadgetMeasure.getGadget().getId());
+		Assert.assertTrue(this.repository.findByGadget(gadgetMeasure.getGadget()).size() > 0);
 	}
 
 }

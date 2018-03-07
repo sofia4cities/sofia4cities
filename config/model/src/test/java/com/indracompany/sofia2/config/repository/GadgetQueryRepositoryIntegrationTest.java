@@ -12,11 +12,13 @@
  * limitations under the License.
  */
 /*******************************************************************************
+
  * © Indra Sistemas, S.A.
- * 2013 - 2018  SPAIN
+ * 2013 - 2014  SPAIN
  *
  * All rights reserved
  ******************************************************************************/
+
 package com.indracompany.sofia2.config.repository;
 
 import java.util.List;
@@ -31,8 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.OntologyEmulator;
+import com.indracompany.sofia2.config.model.Gadget;
+import com.indracompany.sofia2.config.model.GadgetQuery;
 import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,12 +44,12 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
-public class OntologyEmulatorIntegrationTest {
+public class GadgetQueryRepositoryIntegrationTest {
 
 	@Autowired
-	OntologyRepository orepository;
+	GadgetQueryRepository repository;
 	@Autowired
-	OntologyEmulatorRepository repository;
+	GadgetRepository grepository;
 
 	@Autowired
 	UserRepository userRepository;
@@ -58,39 +60,36 @@ public class OntologyEmulatorIntegrationTest {
 
 	@Before
 	public void setUp() {
-		List<OntologyEmulator> oes = this.repository.findAll();
-		if (oes.isEmpty()) {
-			log.info("No ontology emulators, adding...");
-			OntologyEmulator oe = new OntologyEmulator();
-			oe.setMeasures("2.5,3.4,4.5");
-			oe.setIdentification("Id 1");
-			oe.setUser(getUserCollaborator());
-			oe.setInsertEvery(5);
-			Ontology o = this.orepository.findAll().get(0);
-			if (o == null) {
-				o = new Ontology();
-				o.setJsonSchema("{}");
-				o.setIdentification("Id 1");
-				o.setDescription("Description");
-				o.setActive(true);
-				o.setRtdbClean(true);
-				o.setPublic(true);
-				orepository.save(o);
+		List<GadgetQuery> gadgetQuerys = this.repository.findAll();
+		if (gadgetQuerys.isEmpty()) {
+			log.info("No gadget querys ...");
+			GadgetQuery gadgetQuery = new GadgetQuery();
+			gadgetQuery.setQuery("Query1");
+			List<Gadget> gadgets = this.grepository.findAll();
+			Gadget gadget;
+			if (gadgets.isEmpty()) {
+				log.info("No gadgets ...");
+				gadget = new Gadget();
+				gadget.setDbType("DBC");
+				gadget.setUser(getUserCollaborator());
+				gadget.setPublic(true);
+				gadget.setName("Gadget1");
+				gadget.setType("Tipo 1");
 
+				grepository.save(gadget);
+			} else {
+				gadget = grepository.findAll().get(0);
 			}
-			oe.setOntology(o);
-			this.repository.save(oe);
-
+			gadgetQuery.setGadget(gadget);
+			repository.save(gadgetQuery);
 		}
-
 	}
 
 	@Test
-	public void test_findByIdentificationAndUserId() {
-		OntologyEmulator oe = this.repository.findAll().get(0);
-
-		Assert.assertTrue(this.repository.findByIdentificationAndUser(oe.getIdentification(), oe.getUser()).size() > 0);
-
+	public void given_SomeGadgetQueriesExist_When_ItIsSearchedById_Then_TheCorrectObjectIsReturned() {
+		GadgetQuery gadgetQuery = this.repository.findAll().get(0);
+		log.info("Loaded gadget query with gadget id: " + gadgetQuery.getGadget().getId());
+		Assert.assertTrue(this.repository.findByGadget(gadgetQuery.getGadget()).size() > 0);
 	}
 
 }

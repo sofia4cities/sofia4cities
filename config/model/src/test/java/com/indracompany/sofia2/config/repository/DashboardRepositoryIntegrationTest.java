@@ -35,16 +35,11 @@ import com.indracompany.sofia2.config.model.Dashboard;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-
-public class DashboardIntegrationTest {
+public class DashboardRepositoryIntegrationTest {
 
 	@Autowired
 	DashboardRepository repository;
@@ -70,15 +65,13 @@ public class DashboardIntegrationTest {
 	}
 
 	@Test
-	public void test_countByName() {
-
+	public void given_SomeDashboardsExist_When_AllAreSearched_Then_AllAreReturned() {
 		Dashboard d = this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository.countByName(d.getName()) == 1L);
-
 	}
 
 	@Test
-	public void test_findByNameAndDashboardTypeId() {
+	public void given_SomeDashboardsExist_When_ItIsSearchedByNameAndType_TheCorrectObjectIsReturned() {
 		Dashboard d = this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository.findByNameAndDashboardType(d.getName(), d.getDashboardType()).size() > 0);
 

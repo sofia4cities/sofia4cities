@@ -17,6 +17,7 @@
  *
  * All rights reserved
  ******************************************************************************/
+
 package com.indracompany.sofia2.config.repository;
 
 import java.util.List;
@@ -31,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.DashboardType;
+import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,11 +42,10 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
-public class DashboardTypeIntegrationTest {
+public class OntologyRepositoryIntegrationTest {
 
 	@Autowired
-	DashboardTypeRepository repository;
-
+	OntologyRepository repository;
 	@Autowired
 	UserRepository userRepository;
 
@@ -55,27 +55,42 @@ public class DashboardTypeIntegrationTest {
 
 	@Before
 	public void setUp() {
-		List<DashboardType> dashboardTypes = this.repository.findAll();
-		if (dashboardTypes.isEmpty()) {
-			log.info("No dashboards...adding");
-			DashboardType dashboardType = new DashboardType();
-			dashboardType.setId(1);
-			dashboardType.setModel("Model Example");
-			dashboardType.setUser(getUserCollaborator());
-			dashboardType.setPublic(true);
-			dashboardType.setType("Model Type Example");
-			repository.save(dashboardType);
+		List<Ontology> ontologies = this.repository.findAll();
+		if (ontologies.isEmpty()) {
+			log.info("No ontologies..adding");
+			Ontology ontology = new Ontology();
+			ontology.setJsonSchema("{}");
+			ontology.setIdentification("Id 1");
+			ontology.setDescription("Description");
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setPublic(true);
+			ontology.setUser(getUserCollaborator());
+			repository.save(ontology);
+
+			ontology = new Ontology();
+			ontology.setJsonSchema("{Data:,Temperature:}");
+			ontology.setDescription("Description");
+			ontology.setIdentification("Id 2");
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setPublic(true);
+			ontology.setUser(getUserCollaborator());
+			repository.save(ontology);
 
 		}
-
 	}
 
 	@Test
-	public void test_countByDashboardType() {
-
-		DashboardType dt = this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.countByType(dt.getType()) == 1L);
-
+	public void given_SomeOntologiesExist_WhenItIsSearchedByIdentifycationAndDescriptionUsingLike_Then_TheCorrectObjectIsReturned() {
+		Ontology o = this.repository.findAll().get(0);
+		o.isActive();
+		Assert.assertTrue(this.repository
+				.findByIdentificationLikeAndDescriptionLike(o.getIdentification(), o.getDescription()).size() > 0);
 	}
 
+	public void countByIsActiveTrueAndIsPublicTrue() {
+		Assert.assertTrue(this.repository.countByActiveTrueAndIsPublicTrue() == 1L);
+
+	}
 }

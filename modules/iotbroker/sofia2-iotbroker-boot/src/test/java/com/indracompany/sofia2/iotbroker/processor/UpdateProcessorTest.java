@@ -102,7 +102,7 @@ public class UpdateProcessorTest {
 	}
 
 	@Test
-	public void test_update_one_ocurrence() {
+	public void given_OneUpdateProcessor_When_OneOccurrenceIsUpdated_Then_TheResponseIndicatesItIsUpdated() {
 
 		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
 
@@ -117,7 +117,7 @@ public class UpdateProcessorTest {
 	}
 
 	@Test
-	public void test_upate_more_than_one_ocurrences() throws DBPersistenceException, JsonProcessingException {
+	public void given_OneUpdateProcessor_Then_TwoOccurrencesAreUpdated_ThenTheResponseIndicatesTheTwoOccurrencesWereUpdated() throws DBPersistenceException, JsonProcessingException {
 
 		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
 		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));

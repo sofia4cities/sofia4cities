@@ -20,9 +20,7 @@
 
 package com.indracompany.sofia2.config.repository;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -34,8 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,37 +40,28 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-public class TokenIntegrationTest {
+public class OntologyUserAccessTypeRepositoryIntegrationTest {
 
 	@Autowired
-	TokenRepository repository;
-	@Autowired
-	ClientPlatformRepository cpRepository;
+	OntologyUserAccessTypeRepository repository;
 
 	@Before
 	public void setUp() {
-		List<Token> tokens = this.repository.findAll();
-		if (tokens.isEmpty()) {
-			log.info("No Tokens, adding ...");
-
-			ClientPlatform client = new ClientPlatform();
-			client.setId("06be1962-aa27-429c-960c-d8a324eef6d4");
-			Set<Token> hashSetTokens = new HashSet<Token>();
-
-			Token token = new Token();
-			token.setClientPlatform(client);
-			token.setToken("Token1");
-			token.setActive(true);
-			hashSetTokens.add(token);
-			client.setTokens(hashSetTokens);
-			repository.save(token);
+		List<OntologyUserAccessType> types = this.repository.findAll();
+		if (types.isEmpty()) {
+			log.info("No user access types found...adding");
+			OntologyUserAccessType type = new OntologyUserAccessType();
+			type.setId(1);
+			type.setName("ALL");
+			type.setDescription("Todos los permisos");
+			this.repository.save(type);
 		}
 	}
 
 	@Test
-	public void test_findByClientPlatformId() {
-		Token token = this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByClientPlatform(token.getClientPlatform()).size() > 0);
+	public void given_SomeOntologyUserAccessesExist_When_ItIsSearchedById_Then_TheCorrectObjectIsObtained() {
+		OntologyUserAccessType type = this.repository.findAll().get(0);
+		Assert.assertTrue(this.repository.findById(type.getId()) != null);
 	}
 
 }
