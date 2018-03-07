@@ -18,6 +18,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -35,10 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-/**
-*
-* @author Luis Miguel Gracia
-*/
+@Ignore
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
@@ -87,6 +85,7 @@ public class TwitterServiceIntegrationTest {
 		//stream.open();
 		int attempts = 0;
 		while (attempts < 5 && listener.getLastTweet()==null) {
+			attempts++;
 			try {
 				Thread.sleep(1000);
 	        } catch (InterruptedException e) {
