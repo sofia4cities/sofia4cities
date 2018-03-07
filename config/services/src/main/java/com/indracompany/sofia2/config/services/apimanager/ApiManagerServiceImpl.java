@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -80,14 +81,12 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	public List<Api> loadAPISByFilter(String apiId, String state, String userId) {
 		List<Api> apis = null;
 		// Gets context User
-		if (serviceUtils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString())){
-			if ((apiId==null || "".equals(apiId)) && (state==null || "".equals(state)) && (userId==null || "".equals(userId))) {
-				apis = apiRepository.findAll();
-			} else {
-				apis = apiRepository.findApisByIdentificationOrStateOrUser(apiId, Api.ApiStates.valueOf(state), userId);
-			}
+		if ((apiId==null || "".equals(apiId)) && (state==null || "".equals(state)) && (userId==null || "".equals(userId))) {
+			apis = apiRepository.findAll();
+		} else if (state==null || "".equals(state)){
+			apis = apiRepository.findApisByIdentificationOrUser(apiId, userId);
 		} else {
-				apis = apiRepository.findApisByIdentificationOrStateAndUserAndIsPublicTrue(apiId, state, serviceUtils.getUserId());
+			apis = apiRepository.findApisByIdentificationOrStateOrUser(apiId, Api.ApiStates.valueOf(state), userId);
 		}
 		return apis;
 	}
@@ -312,7 +311,7 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		List<OperationJson> operationsJson = null;
 		
 		try {
-			operationsJson = objectMapper.readValue(operationsObject, new TypeReference<List<OperationJson>>(){});
+			operationsJson = objectMapper.readValue(reformat(operationsObject), new TypeReference<List<OperationJson>>(){});
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -334,6 +333,13 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		}
 		
 		updateOperations(apimemory, operationsJson);
+	}
+
+	private String reformat(String operationsObject) {
+		if (operationsObject.indexOf(",")==0) {
+			operationsObject = operationsObject.substring(1);
+		}
+		return operationsObject;
 	}
 
 	private void updateAuthentication(Api apimemory, AuthenticationJson authenticationJson) {

@@ -25,26 +25,21 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.exceptions.ApiManagerServiceException;
-import com.indracompany.sofia2.controlpanel.controller.ontology.OntologyUserAccessDTO;
 import com.indracompany.sofia2.controlpanel.helper.apimanager.ApiManagerHelper;
 import com.indracompany.sofia2.controlpanel.multipart.ApiMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
@@ -121,8 +116,7 @@ public class ApiManagerController {
 			String authenticationObject = request.getParameter("authenticationObject");
 			
 			String apiId = apiManagerService.createApi(apiManagerHelper.apiMultipartMap(api), operationsObject, authenticationObject);
-			
-			utils.addRedirectMessage("user.create.success", redirect);
+
 			return "redirect:/apimanager/show/" + utils.encodeUrlPathSegment(apiId, request);
 		} catch (ApiManagerServiceException e) {
 			log.debug("Cannot update user that does not exist");
@@ -149,8 +143,7 @@ public class ApiManagerController {
 		try {
 			
 			apiManagerService.updateApi(apiManagerHelper.apiMultipartMap(api), deprecateApis, operationsObject, authenticationObject);
-			
-			utils.addRedirectMessage("api.update.success", redirect);
+
 			return "redirect:/apimanager/show/" + api.getId();
 		} catch (Exception e) {
 			log.debug("Cannot update user that does not exist");
@@ -170,13 +163,11 @@ public class ApiManagerController {
 
 	@PostMapping(value = "/authorization", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<UserApiDTO> createAuthorization(@RequestParam String api, @RequestParam String user) {
-
 		try {
 			UserApi userApi = apiManagerService.updateAuthorization(api, user);
 			UserApiDTO userApiDTO = new UserApiDTO(userApi);
 
 			return new ResponseEntity<UserApiDTO>(userApiDTO, HttpStatus.CREATED);
-
 		}catch (RuntimeException e) {
 			return new ResponseEntity<UserApiDTO>(HttpStatus.BAD_REQUEST);
 		}
@@ -185,7 +176,6 @@ public class ApiManagerController {
 	
 	@PostMapping(value = "/authorization/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
-
 		try {
 			apiManagerService.removeAuthorizationById(id);
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
@@ -193,39 +183,6 @@ public class ApiManagerController {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-	@PostMapping(value = "/authorize")
-	public String update(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model modelMap, HttpServletRequest request, RedirectAttributes redirect){
-		try{
-			apiManagerService.updateAuthorization(request.getParameter("apiId"), request.getParameter("userId"));
-			return "redirect:/apimanager/authorize/list";
-		} catch (Exception e){
-			log.debug("Cannot update authorization that does not exist");
-			utils.addRedirectMessage("api.autn.update.error", redirect);
-			return "redirect:/apimanager/authorize/list";
-		}
-	}
-	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-    @DeleteMapping(value = "authorize/list/{id}")
-    public String remove(@PathVariable("id") String id, @RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
-		try {
-			apiManagerService.removeAuthorizationById(id);
-		} catch (Exception e) {
-		}
-        uiModel.asMap().clear();
-		return "redirect:/apimanager/authorize/list";
-    }
 	
 	@RequestMapping(value = "/token/list" , produces = "text/html")
 	public String token(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model model, HttpServletRequest request) {
@@ -269,7 +226,7 @@ public class ApiManagerController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@GetMapping(value = "/updateState/{id}/{state}")
-	public String publish(@PathVariable("id") String id, @PathVariable("state") String state, Model uiModel){
+	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, Model uiModel){
 		apiManagerService.updateState(id, state);
 		return "redirect:/apimanager/list";
 	}
