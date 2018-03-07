@@ -191,7 +191,7 @@
 															<div class="col-md-2 col-sm-6 col-xs-12">
 																<div class="form-group">
 																	<label class="control-label" th:text="${field.key} + ':'">fields</label>
-																	<select th:id="${field.key}" th:name="fields" th:title="#{simulation.choose}" data-width="100%" data-live-search="true" class="select form-control" th:onchange="'generateSimulatorFunctionDiv(\''+${field.key}+'\')'" >
+																	<select th:id="${#strings.replace(field.key,'.','--')}" th:name="fields" th:title="#{simulation.choose}" data-width="100%" data-live-search="true" class="select form-control" th:onchange="'generateSimulatorFunctionDiv(\''+${#strings.replace(field.key,'.','--')}+'\')'" >
 																		<option th:text="#{simulation.choose}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'string') AND (simulator eq 'NULL' OR #strings.contains(simulator,'STRING')))}" th:value="${simulator}" th:text="${simulator}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'number') AND (simulator == 'NULL' OR #strings.contains(simulator,'NUMBER')))}" th:value="${simulator}" th:text="${simulator}"/>
@@ -201,7 +201,7 @@
 																</div>
 															</div>
 															
-															<div th:id="${field.key}+'Div'" style="display:none">
+															<div th:id="${#strings.replace(field.key,'.','--')}+'Div'" style="display:none">
 															</div>
 																										
 															

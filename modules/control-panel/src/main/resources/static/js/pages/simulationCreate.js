@@ -8,9 +8,10 @@ function generateJsonSimulationFields() {
 	var keys = Object.keys(fields);
 	//For every field
 	for (var i = 0; i < keys.length; i++) {
-		var inputs = $('#'+keys[i]+'Div input');
+		var key = keys[i].replace(/\./g,"--");
+		var inputs = $('#'+key+'Div input');
 		var object = {};
-		var functionSelected = $('#'+keys[i]).val();
+		var functionSelected = $('#'+key).val();
 		if(functionSelected == defaultOption) functionSelected = 'NULL';
 		object['function'] = functionSelected;
 		//For every input get value an add to object
@@ -48,7 +49,7 @@ function submitForm(formId) {
 function generateSimulatorFunctionDiv(field) {
 
 	//Hidden div of the ontology Field
-	var hiddenDiv= field + 'Div';
+	var hiddenDiv= field+ 'Div';
 	//Simulator function selected of the curren ontology field
 	var functionSelected = $('#'+field).val();
 	//If not function NULL

@@ -242,7 +242,11 @@ public class OntologyServiceImpl implements OntologyService {
 					jsonNode = mapper.readTree(ontology.getJsonSchema().replaceAll("'", "\""));
 			}
 			// Predefine Path to data properties
-			jsonNode = jsonNode.path("datos").path("properties");
+			if(!jsonNode.path("datos").path("properties").isMissingNode())
+				jsonNode = jsonNode.path("datos").path("properties");
+			else 
+				jsonNode = jsonNode.path("properties");
+			
 			Iterator<String> iterator = jsonNode.fieldNames();
 			String property;
 			while (iterator.hasNext()) {
@@ -316,8 +320,20 @@ public class OntologyServiceImpl implements OntologyService {
 
 	private Map<String, String> extractSubFieldsFromJson(Map<String, String> fields, JsonNode jsonNode, String property,
 			String parentField, boolean isPropertyArray) {
-		if (isPropertyArray)
-			jsonNode = jsonNode.path(property).path("items").path("properties");
+		if (isPropertyArray) {
+			if(!jsonNode.path(property).path("items").path("properties").isMissingNode())
+				jsonNode = jsonNode.path(property).path("items").path("properties");
+			else {
+				jsonNode = jsonNode.path(property).path("items");
+				int size = jsonNode.size();
+				for(int i=0;i<size;i++) {
+					fields.put(parentField+"."+i, jsonNode.path(i).get("type").asText());
+				}
+				
+				return fields;
+				
+			}
+		}
 		else
 			jsonNode = jsonNode.path(property).path("properties");
 		Iterator<String> iterator = jsonNode.fieldNames();
@@ -325,9 +341,9 @@ public class OntologyServiceImpl implements OntologyService {
 		while (iterator.hasNext()) {
 			subProperty = iterator.next();
 
-			if (jsonNode.path(subProperty).get("type").equals("object")) {
+			if (jsonNode.path(subProperty).get("type").asText().equals("object")) {
 				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField + "." + subProperty, false);
-			} else if (jsonNode.path(subProperty).get("type").equals("array")) {
+			} else if (jsonNode.path(subProperty).get("type").asText().equals("array")) {
 				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField + "." + subProperty, true);
 
 

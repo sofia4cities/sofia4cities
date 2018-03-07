@@ -32,7 +32,7 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.router.service.app.service.RouterService;
-import com.indracompany.sofia2.streaming.twitter.sib.SibService;
+import com.indracompany.sofia2.streaming.twitter.persistence.PeristenceService;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,10 +41,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component("prototype")
 @Slf4j
 public class TwitterStreamListener implements StreamListener {
-	
 
 	@Autowired
-	SibService sibService;
+	PeristenceService peristenceService;
 	@Getter
 	@Setter
 	private List<String> keywords;
@@ -105,7 +104,6 @@ public class TwitterStreamListener implements StreamListener {
 
 	public TwitterStreamListener() {
 
-		
 		tweetsQueue = new LinkedBlockingQueue<Tweet>();
 		executor = Executors.newFixedThreadPool(THREADS);
 		tweetInsert = defineMonitoringRunnable();
@@ -126,8 +124,8 @@ public class TwitterStreamListener implements StreamListener {
 					executor.execute(tweetInsert);
 				}
 			}
-		
-			/*Add to queue*/
+
+			/* Add to queue */
 			if (tweetsQueue.size() < QUEUE_LENGTH) {
 				tweetsQueue.add(tweet);
 			}
@@ -140,12 +138,12 @@ public class TwitterStreamListener implements StreamListener {
 
 	@Override
 	public void onDelete(StreamDeleteEvent deleteEvent) {
-		this.twitterStream.close();
+		// TODO
 	}
 
 	@Override
 	public void onLimit(int numberOfLimitedTweets) {
-		this.twitterStream.close();
+		// TODO
 	}
 
 	@Override
@@ -156,30 +154,12 @@ public class TwitterStreamListener implements StreamListener {
 
 	public void insertInstance(String instance) {
 		try {
-			// this.sibService.insertOntologyInstance(instance,
-			// this.getSessionKey(), this.getOntology(),
-			// this.getClientPlatform(), this.getConfigurationId());
-			
-			//while we dont have iotbroker
 			instance = instance.replaceAll("'", "\"");
-			this.sibService.insertOntologyInstance(instance, this.getOntology(),  user);
-			
-
+			this.peristenceService.insertOntologyInstance(instance, this.getOntology(), user, this.clientPlatform,
+					this.clientPlatform + ":twitterStream");
 		} catch (Exception e) {
 			log.debug("Error inserting tweet : " + this.getOntology() + ". Cause: " + e.getMessage(), e);
 		}
-
-	}
-
-	public void getSibSessionKey(){
-
-		// this.setSessionKey(sibService.getSessionKey(this.getToken()));
-
-	}
-
-	public void deleteSibSessionKey() {
-
-		// this.sibService.disconnect(this.getSessionKey());
 
 	}
 
@@ -248,12 +228,12 @@ public class TwitterStreamListener implements StreamListener {
 	public void closeStream() {
 		try {
 			this.twitterStream.close();
-		}catch(Exception e){
-			
-		}finally{
+		} catch (Exception e) {
+
+		} finally {
 			this.twitterStream = null;
 		}
-		
+
 	}
 
 }

@@ -17,7 +17,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-iotbroker-boot</artifactId>
+			<artifactId>sofia2-router-core</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 
 @Service
 public class FieldRandomizerServiceImpl implements FieldRandomizerService {
@@ -48,29 +49,46 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 	private static final String NULL = "NULL";
 
 	@Override
-	public JsonNode randomizeFields(JsonNode json) {
+	public JsonNode randomizeFields(JsonNode json, JsonNode schema) {
 		ObjectMapper mapper = new ObjectMapper();
-		
-		JsonNode map = mapper.createObjectNode() ;
-		
+
+		JsonNode map = schema;
+		String context = schema.fields().next().getKey();
 		Iterator<String> fields = json.fieldNames();
 		while (fields.hasNext()) {
 			String field = fields.next();
 			String function = json.path(field).get("function").asText();
+			String finalField = null;
+			String path = "/" + context;
+			// if field is embbed object
+			if (field.contains(".")) {
+				String array[] = field.split("\\.");
+				finalField = array[array.length - 1];
+				for (int s = 0; s < array.length - 1; s++) {
+					path = path + "/" + array[s];
+				}
+
+			} else {
+				finalField = field;
+				//path= path + "/"+ field;
+			}
 
 			switch (function) {
 			case FIXED_NUMBER:
-				((ObjectNode) map).put(field, json.path(field).get("value").asDouble());
+				((ObjectNode) map.at(path)).put(finalField,
+						json.path(field).get("value").asDouble());
 				break;
 			case FIXED_INTEGER:
-				((ObjectNode) map).put(field, json.path(field).get("value").asInt());
+				((ObjectNode) map.at(path)).put(finalField,
+						json.path(field).get("value").asInt());
 				break;
 			case RANDOM_NUMBER:
-				((ObjectNode) map).put(field, this.randomizeDouble(json.path(field).get("from").asDouble(),
-						json.path(field).get("to").asDouble(), json.path(field).get("precision").asInt()));
+				((ObjectNode) map.at(path)).put(finalField,
+						this.randomizeDouble(json.path(field).get("from").asDouble(),
+								json.path(field).get("to").asDouble(), json.path(field).get("precision").asInt()));
 				break;
 			case RANDOM_INTEGER:
-				((ObjectNode) map).put(field,
+				((ObjectNode) map.at(path)).put(finalField,
 						this.randomizeInt(json.path(field).get("from").asInt(), json.path(field).get("to").asInt()));
 				break;
 			case COSINE_NUMBER:
@@ -78,10 +96,12 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 			case SINE_NUMBER:
 				break;
 			case FIXED_STRING:
-				((ObjectNode) map).put(field, (String) json.path(field).get("value").asText());
+				((ObjectNode) map.at(path)).put(finalField,
+						(String) json.path(field).get("value").asText());
 				break;
 			case RANDOM_STRING:
-				((ObjectNode) map).put(field, (String) this.randomizeStrings(json.path(field).get("list").asText()));
+				((ObjectNode) map.at(path)).put(finalField,
+						(String) this.randomizeStrings(json.path(field).get("list").asText()));
 				break;
 			case FIXED_DATE:
 				Date date;
@@ -92,13 +112,13 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				}
 				JsonNode dateJson = mapper.createObjectNode();
 				((ObjectNode) dateJson).put("$date", date.getTime());
-				((ObjectNode) map).set(field, dateJson);
+				((ObjectNode) map.at(path)).set(finalField, dateJson);
 
 				break;
 			case RANDOM_DATE:
 				break;
 			case NULL:
-				((ObjectNode) map).set(field, null);
+				((ObjectNode) map.at(path)).set(finalField, null);
 				break;
 
 			}
@@ -111,7 +131,7 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 	public String randomizeStrings(String list) {
 		List<String> words = new ArrayList<String>(Arrays.asList(list.split(",")));
 		if (words.size() >= 1) {
-			int selection = this.randomizeInt(0, words.size()-1);
+			int selection = this.randomizeInt(0, words.size() - 1);
 			return words.get(selection);
 		} else
 			return list;

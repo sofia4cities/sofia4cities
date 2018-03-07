@@ -77,7 +77,7 @@ public class DeviceSimulatorController {
 
 		this.simulationService.createSimulation(identification, interval, utils.getUserId(),
 				this.simulationService.getDeviceSimulationJson(clientPlatform, token, ontology, jsonMap));
-		return "redirect:/simulator/list";
+		return "redirect:/devicesimulation/list";
 	}
 
 	@PostMapping("ontologiesandtokens")

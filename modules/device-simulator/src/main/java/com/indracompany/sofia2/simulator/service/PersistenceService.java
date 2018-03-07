@@ -13,12 +13,9 @@
  */
 package com.indracompany.sofia2.simulator.service;
 
-import java.io.IOException;
+public interface PersistenceService {
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-public interface SibService {
-	
-	void inserOntologyInstanceToMongo(String instance, String user, String clientPlatform, String clientPlatformInstance, String ontology) throws JsonProcessingException, IOException;
+	void insertOntologyInstance(String instance, String ontology, String user, String clientPlatform,
+			String clientPlatformInstance) throws Exception;
 
 }

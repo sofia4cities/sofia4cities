@@ -13,46 +13,40 @@
  */
 package com.indracompany.sofia2.simulator.service;
 
-import java.io.IOException;
 import java.time.ZoneId;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.persistence.ContextData;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.router.service.app.model.NotificationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class SibServiceImpl implements SibService {
+public class PersistenceServiceImpl implements PersistenceService {
 
 	@Autowired
-	private BasicOpsDBRepository repository;
-	@Autowired
-	private MongoTemplate springDataMongoTemplate;
-	
+	private RouterService routerService;
+
+
+
+
 	@Override
-	public void inserOntologyInstanceToMongo(String instance, String user, String clientPlatform, String clientPlatformInstance, String ontology) throws JsonProcessingException, IOException {
-		final ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode rootNode = objectMapper.readTree(instance);
-		
-		
-		
-		
-		if (!springDataMongoTemplate.collectionExists(ontology)) {
-			springDataMongoTemplate.createCollection(ontology);
-			log.debug("Ontology collection created");
-		}
+	public void insertOntologyInstance(String instance, String ontology, String user, String clientPlatform,
+			String clientPlatformInstance) throws Exception {
 
-	
-		
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode json = mapper.readTree(instance);
 
 		final ContextData contextData = new ContextData();
 
@@ -61,12 +55,20 @@ public class SibServiceImpl implements SibService {
 		contextData.setClientPatformInstance(clientPlatformInstance);
 		contextData.setTimezoneId(ZoneId.systemDefault().toString());
 		contextData.setUser(user);
+		((ObjectNode) json).set("contextData", mapper.valueToTree(contextData));
 
-		((ObjectNode) rootNode).set("contextData", objectMapper.valueToTree(contextData));
+		final OperationModel model = new OperationModel();
+		model.setBody(json.toString());
+		model.setOntologyName(ontology);
+		model.setUser(user);
+		model.setOperationType(OperationType.POST);
+		model.setQueryType(QueryType.NATIVE);
 
-		repository.insert(ontology,
-				rootNode.toString());
+		final NotificationModel modelNotification = new NotificationModel();
+		modelNotification.setOperationModel(model);
 
+		final OperationResultModel response = routerService.insert(modelNotification);
+		log.debug("Response from router: " + response);
 	}
 
 }

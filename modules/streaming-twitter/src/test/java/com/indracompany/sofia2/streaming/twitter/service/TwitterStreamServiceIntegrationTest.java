@@ -91,7 +91,7 @@ public class TwitterStreamServiceIntegrationTest {
 	public void test_1_subscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
-		doNothing().when(twitterStreamListener).getSibSessionKey();
+		
 		Assert.assertNotNull(this.twitterStreamService.subscribe(twitterStreamListener));
 
 	}
@@ -99,7 +99,7 @@ public class TwitterStreamServiceIntegrationTest {
 	public void test_2_isSubscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
-		doNothing().when(twitterStreamListener).getSibSessionKey();
+
 		// this.twitterStreamService.subscribe(twitterStreamListener);
 		Assert.assertTrue(this.twitterStreamService.isSubscribe(twitterStreamListener.getId()));
 
@@ -108,12 +108,11 @@ public class TwitterStreamServiceIntegrationTest {
 	public void test_3_unsubscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
-		doNothing().when(twitterStreamListener).getSibSessionKey();
+	
 		if (this.twitterStreamService.isSubscribe(twitterStreamListener.getId())) {
 			this.twitterStreamService.unsubscribe(twitterStreamListener.getId());
 		}
 
-		doNothing().when(twitterStreamListener).deleteSibSessionKey();
 
 	}
 

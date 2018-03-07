@@ -26,7 +26,7 @@ import com.indracompany.sofia2.config.services.configuration.ConfigurationServic
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceFactory;
 import com.indracompany.sofia2.libraries.social.twitter.TwitterServiceSpringSocialImpl;
 import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
-import com.indracompany.sofia2.streaming.twitter.sib.SibService;
+import com.indracompany.sofia2.streaming.twitter.persistence.PeristenceService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,9 +36,6 @@ public class TwitterStreamService {
 
 	@Autowired
 	private ConfigurationService configurationService;
-
-	@Autowired
-	SibService sibService;
 
 
 	private Map<String, TwitterStreamListener> listenersMap = new HashMap<String, TwitterStreamListener>();
@@ -73,7 +70,7 @@ public class TwitterStreamService {
 		Stream stream = this.getTwitterConfiguration(twitterStreamListener.getConfigurationId())
 				.createFilterStreaming(keywords, twitterStreamListener);
 		twitterStreamListener.setTwitterStream(stream);
-		twitterStreamListener.getSibSessionKey();
+	
 		log.info("Suscribed stream: " + stream.hashCode());
 		listenersMap.put(listenerId, twitterStreamListener);
 		streamMap.put(listenerId, stream);
@@ -89,7 +86,7 @@ public class TwitterStreamService {
 			listener.closeStream();
 			listenersMap.remove(listenerId);
 			streamMap.remove(listenerId);
-			listener.deleteSibSessionKey();
+		
 		} else
 			throw new Exception("Error listener not found");
 	}
