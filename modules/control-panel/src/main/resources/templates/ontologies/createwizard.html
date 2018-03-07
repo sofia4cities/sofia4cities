@@ -381,6 +381,7 @@
 												<div class="form-group">
 													<label class="control-label" >Usuario</label>
 													<select id="users" class="selectpicker form-control" data-live-search="true" data-width="100%" >
+														<option value=""> Seleccionar usuario...</option>
 														<option th:each="user :${users}" th:value="${user.userId}" th:text="${user.fullName}" ></option>														
 													</select>
 												</div>
@@ -425,8 +426,8 @@
 																		</select>
 																	</td>																
 																	<td width="150px" class="no-wrap text-center">																	
-																		<button type="button" class="btn btn-sm btn-default yellow-casablanca btn-outline btn-mountable-authorization-update" onclick="OntologyCreateController.updateAuthorization(this)">Update</button>
-																		<button type="button" class="btn btn-sm btn-default red-sunglo btn-outline btn-mountable-authorization-remove" onclick="OntologyCreateController.removeAuthorization(this)">Remove</button>
+																		<button type="button" class="btn btn-sm btn-default yellow-casablanca btn-outline btn-mountable-authorization-update" onclick="OntologyCreateController.updateAuthorization(this)"><i class="fa fa-edit"></i> Update</button>
+																		<button type="button" class="btn btn-sm btn-default red-sunglo btn-outline btn-mountable-authorization-remove" onclick="OntologyCreateController.removeAuthorization(this)"><i class="fa fa-trash"></i> Remove</button>
 																	</td>			
 																</tr>
 															</tbody>														
