@@ -34,12 +34,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Slf4j
 public class UserIntegrationTest {
 
 	@Autowired
@@ -58,22 +55,22 @@ public class UserIntegrationTest {
 	}
 
 	@Test
-	public void test1_Count() {
+	public void given_SomeUsersExist_When_TheyAreCounted_Then_TheCorrectNumberIsObtained() {
 		Assert.assertTrue(this.repository.count() > 6);
 	}
 
 	@Test
-	public void test3_FindUserNoAdmin() {
+	public void given_SomeUsersExist_When_TheyAreSearchedByUsersThatAreNotAdministrator_Then_TheCorrectUsersAreReturned() {
 		Assert.assertTrue(this.repository.findUsersNoAdmin().size() > 5);
 	}
 
 	@Test
-	public void test4_FindByEmail() {
+	public void given_SomeUsersExist_When_TheyAreSearchedByEmail_Then_TheCorrectUsersAreReturned() {
 		Assert.assertTrue(this.repository.findByEmail("administrator@sofia2.com").size() == 1);
 	}
 
 	@Test
-	public void test5_createAndDeleteUser() {
+	public void given_ANumberOfUsers_When_OneUserIsCreatedAndThenDeleted_Then_TheNumberOfUsersIsTheSame() {
 		long count = this.repository.count();
 		User type = new User();
 		type.setUserId("lmgracia1");

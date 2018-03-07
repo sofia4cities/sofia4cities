@@ -30,12 +30,9 @@ import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Slf4j
 public class MongoNativeManageDBRepositoryIntegrationTest {
 
 	@Autowired
@@ -65,7 +62,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	 */
 
 	@Test
-	public void test1_getStatusDatabase() {
+	public void given_MongoDb_When_StatusIsRequested_Then_TheStatusOfSofia2DatabaseIsOk() {
 		try {
 			Assert.assertEquals(repository.getStatusDatabase().get("sofia2_s4c"), Boolean.TRUE);
 		} catch (Exception e) {
@@ -74,7 +71,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test3_getListOfTables4Ontology() {
+	public void given_MongoDb_When_TablesForMensajesPlataformaOntologyAreRequested_Then_OneIsReturned() {
 		try {
 			Assert.assertEquals(repository.getListOfTables4Ontology("MensajesPlataforma").size(), 1);
 		} catch (Exception e) {
@@ -83,7 +80,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test1_createCollection() {
+	public void given_MongoDb_When_OneCollectionIsCreated_Then_TheCollectionIsCreated() {
 		try {
 			int size1 = repository.getListOfTables().size();
 			repository.createTable4Ontology("ONT_TODELETE_1",
@@ -100,7 +97,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test1_createIndex() {
+	public void given_MongoDb_When_AnIndexIsCreatedForACollection_Then_TheIndexIsCreated() {
 		try {
 			if (connect.collectionExists("sofia2_s4c", "contextData"))
 				connect.dropCollection("sofia2_s4c", "contextData");
@@ -127,7 +124,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test2_createAndDropIndex() {
+	public void given_MongoDb_When_AnIndexIsCreatedAndThenDroped_Then_TheIndexIsCreatedAndFinallyDropped() {
 		try {
 			if (connect.collectionExists("sofia2_s4c", "contextData"))
 				connect.dropCollection("sofia2_s4c", "contextData");
@@ -156,7 +153,7 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test1_createNativeIndex() {
+	public void given_MongoDb_WhenOneNativeIndexIsCreated_Then_TheIndexIsCreated() {
 		try {
 			if (connect.collectionExists("sofia2_s4c", "contextData"))
 				connect.dropCollection("sofia2_s4c", "contextData");

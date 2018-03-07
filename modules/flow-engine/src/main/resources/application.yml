@@ -28,7 +28,7 @@ sofia2: #Config Sofia2 specific
       admin.url: http://localhost:10000
       node.path: node4
       launcher:
-         path: /home/rtvachet/bin/nodeRed/Node-RED/Flow-Engine-Manager
+         path: /opt/nodeRed/Flow-Engine-Manager/
          job: app.js
          debbugin: true
          log: /tmp/logs/flowEngine
