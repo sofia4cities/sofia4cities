@@ -115,6 +115,8 @@ public class ApiManagerHelper {
 	
 	// To populate de Api Create Form
 	public void populateApiManagerUpdateForm(Model uiModel, String apiId) {
+		
+		//POPULATE API TAB
 		populateApiManagerCreateForm(uiModel);
 		
 		Api api= apiRepository.findById(apiId);
@@ -127,20 +129,28 @@ public class ApiManagerHelper {
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
+		
+		//POPULATE AUTH TAB
+		uiModel.addAttribute("clients", userApiRepository.findByApiId(apiId));
+		uiModel.addAttribute("users", userRepository.findUserByIdentificationAndNoRol(utils.getUserId(), Role.Type.ROLE_ADMINISTRATOR.toString()));
 	}
 	
 	public void populateApiManagerShowForm(Model uiModel, String apiId) {
 		
+		//POPULATE API TAB
 		Api api= apiRepository.findById(apiId);
 		
 		List<ApiAuthentication> apiAuthenticacion = apiAuthenticationRepository.findAllByApi(api);
 		AuthenticationJson authenticacion = populateAuthenticationObject(apiAuthenticacion);
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
-		
+
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
+		
+		//POPULATE AUTH TAB
+		uiModel.addAttribute("clients", userApiRepository.findByApiId(apiId));
 	}
 	
 	private AuthenticationJson populateAuthenticationObject(List<ApiAuthentication> apiAuthentications) {

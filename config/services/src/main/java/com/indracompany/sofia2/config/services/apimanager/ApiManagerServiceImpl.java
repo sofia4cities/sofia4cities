@@ -373,7 +373,7 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	}
 
 	@Override
-	public void updateAuthorization(String apiId, String userId) {
+	public UserApi updateAuthorization(String apiId, String userId) {
 		UserApi userApi = userApiRepository.findByApiIdAndUser(apiId, userId);
 
 		if (userApi==null) {
@@ -386,6 +386,7 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 			
 			userApiRepository.save(userApi);
 		}
+		return userApi;
 	}
 
 	@Override
