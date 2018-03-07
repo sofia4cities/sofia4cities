@@ -286,7 +286,7 @@
 							                                                     </div>
 							                                                     <div id="divDELETEID" class="op_div">
 							                                                        <div id="buttonOperationDELETEID" class="op_button_div">
-							                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETE}" onclick="ApiCreateController.selectOp(this)"/>
+							                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETEID}" onclick="ApiCreateController.selectOp(this)"/>
 							                                                        </div>
 							                                                        <div id="descOperationDELETEID" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_DELETEID_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
@@ -297,7 +297,7 @@
 							                                                     </div>
 							                                                     <div id="divGETOPS" class="op_div">
 							                                                        <div id="buttonOperationGETOPS" class="op_button_div">
-							                                                            <input id="GETOPS" class="op_button" style="width: 80px;" type="button" value="GETOPS" name="GETOPS" th:value="#{apimanager.GET}" onclick="ApiCreateController.selectOp(this)"/>
+							                                                            <input id="GETOPS" class="op_button" style="width: 80px;" type="button" value="GETOPS" name="GETOPS" th:value="#{apimanager.GETOPS}" onclick="ApiCreateController.selectOp(this)"/>
 							                                                        </div>
 							                                                        <div id="descOperationGETOPS" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_GETOPS_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETOPS"></label></b>
@@ -401,7 +401,7 @@
 															</thead>
 															<tbody>
 																<tr class="authorization-model">
-																	<td><input type="text" name="users[]" readonly="readonly"   class="form-control"/></td>
+																	<td><input type="text" name="users[]" readonly="readonly" class="form-control"/></td>
 																	<td><input type="text" name="usersFullName[]" readonly="readonly"   class="form-control"/></td>																
 																	<td width="150px" class="no-wrap text-center">																	
 																		<button type="button" class="btn btn-sm btn-default red-sunglo btn-outline btn-mountable-authorization-remove" onclick="ApiCreateController.removeAuthorization(this)">Remove</button>
@@ -532,8 +532,7 @@
 		"apimanager_ops_description_error" : [[#{apimanager.ops.description.error}]],
 		"apiId": [[${api?.id}]],
 		"authorizations" : [[${clients}]],
-		"authorizationsPath" : [[@{/apimanager}]]
-		
+		"authorizationsPath" : [[@{/apimanager}]]		
 	};
 	
 	var apiCustomOpsJson = { 

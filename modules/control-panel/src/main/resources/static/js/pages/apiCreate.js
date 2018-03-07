@@ -402,8 +402,10 @@ var ApiCreateController = function() {
 			logControl ? console.log('action-mode: UPDATE') : '';
 			var f = new Date(apiCreateReg.dateCreated);
 			regDate = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
-			$('#datecreated').datepicker('update',regDate);	
-		}
+			$('#datecreated').datepicker('update',regDate);
+			
+			initAuthorization(apiCreateReg.authorizations);
+		}initAuthorization
 	}
 	
     function replaceOperation(newOp){
@@ -529,6 +531,42 @@ var ApiCreateController = function() {
          }
     }
     
+    function initAuthorization(authorizationArray){
+    	
+    	for(var i=0; i<authorizationArray.length; i+=1){
+            var authElement = authorizationArray [i];
+       
+			var propAuth = {"users": authElement.userId, "usersFullName": authElement.userFullName, "id": authElement.id};
+			authorizationsArr.push(propAuth);
+			console.log('     |---> JSONtoTable: ' + authorizationsArr.length + ' data: ' + JSON.stringify(authorizationsArr));
+			// store ids for after actions.	inside callback 				
+			var user_id = authElement.userId;
+			var auth_id = authElement.id;
+			var AuthId = {[user_id]:auth_id};
+			authorizationsIds.push(AuthId);
+			console.log('     |---> Auths: ' + authorizationsIds.length + ' data: ' + JSON.stringify(authorizationsIds));
+								
+			// TO-HTML
+			if ($('#authorizations').attr('data-loaded') === 'true'){
+				$('#api_authorizations > tbody').html("");
+				$('#api_authorizations > tbody').append(mountableModel2);
+			}
+			console.log('authorizationsArr: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr));
+			$('#api_authorizations').mounTable(authorizationsArr,{
+				model: '.authorization-model',
+				noDebug: false							
+			});
+			
+			// hide info , disable user and show table
+			$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
+			$("#users").selectpicker('deselectAll');
+			$("#users").selectpicker('refresh');
+			$('#authorizations').removeClass('hide');
+			$('#authorizations').attr('data-loaded',true);
+    	}
+    }
+    
+    
     
 	var authorization = function(action,api,user,authorization,btn){
 		logControl ? console.log('|---> authorization()') : '';	
@@ -571,7 +609,6 @@ var ApiCreateController = function() {
 					// hide info , disable user and show table
 					$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
 					$("#users").selectpicker('deselectAll');
-					$("#users option[value=" + $('#users').val() + "]").prop('disabled', true);
 					$("#users").selectpicker('refresh');
 					$('#authorizations').removeClass('hide');
 					$('#authorizations').attr('data-loaded',true);
@@ -598,7 +635,6 @@ var ApiCreateController = function() {
 					// refresh interface. TO-DO: EL this este fallará					
 					if ( response  ){ 
 						$(btn).closest('tr').remove();
-						$("#users option[value=" + user + "]").prop('disabled', false);
 					}
 					else{ 
 						$.alert({title: 'ALERT!', theme: 'dark', type: 'orange', content: 'VACIO!!'}); 
