@@ -121,7 +121,6 @@ public class OntologyController {
 			utils.addRedirectException(e, redirect);
 			return "redirect:/ontologies/createwizard";
 		}
-		utils.addRedirectMessage("ontology.create.success", redirect);
 		return "redirect:/ontologies/list";
 	}
 
@@ -173,7 +172,6 @@ public class OntologyController {
 			utils.addRedirectMessage("ontology.update.error", redirect);
 			return "redirect:/ontologies/create";
 		}
-		utils.addRedirectMessage("ontology.update.success", redirect);
 		return "redirect:/ontologies/show/" + id;
 
 	}
