@@ -86,6 +86,7 @@ public class FlowNodeServiceIntegrationTest {
 		FlowNode node = new FlowNode();
 		node.setFlow(flow);
 		node.setNodeRedNodeId("nodeRedNodeId");
+		node.setIdentification("nodeIdentification");
 		node.setFlowNodeType(Type.HTTP_NOTIFIER);
 		node.setMessageType(MessageType.INSERT);
 		node.setOntology(ontologyService.getOntologyByIdentification(ontologyId));

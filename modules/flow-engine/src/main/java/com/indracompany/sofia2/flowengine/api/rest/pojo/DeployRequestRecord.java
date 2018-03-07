@@ -53,7 +53,7 @@ public class DeployRequestRecord {
 	private String direction;
 	@Getter
 	@Setter
-	@JsonProperty("tipomensaje")
+	@JsonProperty("operationType")
 	private String meassageType;
 	@Getter
 	@Setter
