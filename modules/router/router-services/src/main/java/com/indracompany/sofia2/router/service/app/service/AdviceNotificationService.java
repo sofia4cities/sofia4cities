@@ -11,21 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.config;
+package com.indracompany.sofia2.router.service.app.service;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.util.List;
 
-import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
-import com.indracompany.sofia2.router.service.app.service.suscription.SuscriptionRepository;
+import com.indracompany.sofia2.router.service.app.model.AdviceNotificationModel;
 
-@Configuration
-public class SuscriptionConfig {
-
-	@Bean
-	SuscriptionRepository<String,SuscriptionModel> suscriptionRepository(){
-		SuscriptionRepository<String,SuscriptionModel> bean = new SuscriptionRepository<String,SuscriptionModel>();
-		return bean;
-	}
+public interface AdviceNotificationService {
+	
+	public List<AdviceNotificationModel> getAdviceNotificationModel(String ontology, String messageType);
 
 }

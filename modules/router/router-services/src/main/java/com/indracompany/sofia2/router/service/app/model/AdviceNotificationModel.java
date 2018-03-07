@@ -11,21 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.config;
+package com.indracompany.sofia2.router.service.app.model;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import lombok.Getter;
+import lombok.Setter;
 
-import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
-import com.indracompany.sofia2.router.service.app.service.suscription.SuscriptionRepository;
+public class AdviceNotificationModel {
 
-@Configuration
-public class SuscriptionConfig {
-
-	@Bean
-	SuscriptionRepository<String,SuscriptionModel> suscriptionRepository(){
-		SuscriptionRepository<String,SuscriptionModel> bean = new SuscriptionRepository<String,SuscriptionModel>();
-		return bean;
-	}
-
+	@Getter
+	@Setter
+	private String entityId;
+	
+	@Getter
+	@Setter
+	private String url;
+	
+	@Getter
+	@Setter
+	private SuscriptionModel suscriptionModel;
 }
