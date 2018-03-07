@@ -507,7 +507,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Twitter");
 			dataModel.setTypeEnum(DataModel.MainType.SocialMedia);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter.json"));
+			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter_Temp.json"));
 			dataModel.setDescription("Twitter DataModel");
 			dataModel.setLabels("Twitter,Social Media");
 			dataModel.setUser(getUserAdministrator());
