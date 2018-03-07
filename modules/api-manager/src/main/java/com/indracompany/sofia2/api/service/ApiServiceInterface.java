@@ -24,6 +24,7 @@ public interface ApiServiceInterface {
 	public static final String TARGET_DB_PARAM="targetdb";
 	public static final String FORMAT_RESULT="formatResult";
 	public static final String QUERY_TYPE="queryType";
+
 	public static final String QUERY="query";
 	public static final String DUMP="DUMP";
 	public static final String BODY="BODY";
@@ -35,6 +36,7 @@ public interface ApiServiceInterface {
 	public static final String ONTOLOGY="ONTOLOGY";
 	public static final String OUTPUT="OUTPUT";
 	public static final String CONTENT_TYPE="CONTENT_TYPE";
+	public static final String CONTENT_TYPE_INPUT="CONTENT_TYPE_INPUT";
 	
 	
 	public static final String USER="USER";

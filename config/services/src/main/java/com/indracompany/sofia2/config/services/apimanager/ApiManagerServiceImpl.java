@@ -77,14 +77,14 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	@Autowired
 	ServiceUtils serviceUtils;
 	
-	public List<Api> loadAPISByFilter(String apiId, String userId, String state) {
+	public List<Api> loadAPISByFilter(String apiId, String state, String userId) {
 		List<Api> apis = null;
 		// Gets context User
 		if (serviceUtils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString())){
 			if ((apiId==null || "".equals(apiId)) && (state==null || "".equals(state)) && (userId==null || "".equals(userId))) {
 				apis = apiRepository.findAll();
 			} else {
-				apis = apiRepository.findApisByIdentificationOrStateOrUser(apiId, state, userId);
+				apis = apiRepository.findApisByIdentificationOrStateOrUser(apiId, Api.ApiStates.valueOf(state), userId);
 			}
 		} else {
 				apis = apiRepository.findApisByIdentificationOrStateAndUserAndIsPublicTrue(apiId, state, serviceUtils.getUserId());
@@ -230,6 +230,7 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 			apiQueryParameter.setDataType(ApiQueryParameter.DataType.valueOf(queryStringJson.getDataType()));
 			apiQueryParameter.setHeaderType(ApiQueryParameter.HeaderType.valueOf(queryStringJson.getHeaderType()));
 			apiQueryParameter.setValue(queryStringJson.getValue());
+			apiQueryParameter.setCondition(queryStringJson.getCondition());
 
 			apiQueryParameterRepository.save(apiQueryParameter);
 		}
@@ -335,17 +336,17 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		updateOperations(apimemory, operationsJson);
 	}
 
-	private void updateAutenticacion(Api apimemory,	AuthenticationJson authenticacionJson) {
+	private void updateAuthentication(Api apimemory, AuthenticationJson authenticationJson) {
 		List<ApiAuthentication> apiAutenticationlist = apiAuthenticationRepository.findAllByApi(apimemory);
 		for (ApiAuthentication apiAuthentication : apiAutenticationlist) {
 			apiAuthenticationRepository.delete(apiAuthentication);
 		}
-		createAuthentication(apimemory, authenticacionJson);
+		createAuthentication(apimemory, authenticationJson);
 	}
 
 	private void updateOperations(Api api, List<OperationJson> operationsJson) {
-		List<ApiOperation> apiOperaciones = apiOperationRepository.findAllByApi(api);
-		for (ApiOperation apiOperation : apiOperaciones) {
+		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
+		for (ApiOperation apiOperation : apiOperations) {
 			for (ApiHeader apiHeader : apiOperation.getApiheaders()) {
 				apiHeaderRepository.delete(apiHeader);
 			}
@@ -373,14 +374,18 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 
 	@Override
 	public void updateAuthorization(String apiId, String userId) {
-		Api api = apiRepository.findById(apiId);
-		User user = userRepository.findByUserId(userId);
-		
-		UserApi userApi = new UserApi();
-		userApi.setApi(api);
-		userApi.setUser(user);
-		
-		userApiRepository.save(userApi);
+		UserApi userApi = userApiRepository.findByApiIdAndUser(apiId, userId);
+
+		if (userApi==null) {
+			Api api = apiRepository.findById(apiId);
+			User user = userRepository.findByUserId(userId);
+			
+			userApi = new UserApi();
+			userApi.setApi(api);
+			userApi.setUser(user);
+			
+			userApiRepository.save(userApi);
+		}
 	}
 
 	@Override

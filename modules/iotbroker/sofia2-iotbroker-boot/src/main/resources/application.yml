@@ -1,3 +1,4 @@
+security.ignored: /**
 app:
   name: iotbroker
   

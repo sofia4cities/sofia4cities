@@ -133,7 +133,7 @@ public class Api extends AuditableEntityWithUUID {
 	@Setter
 	private String endpointExt;
 
-	@Column(name = "STATE", length = 10, nullable = false)
+	@Column(name = "STATE", length = 20, nullable = false)
 	@NotNull
 	@Getter
 	@Setter

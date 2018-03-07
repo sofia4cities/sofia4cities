@@ -1,0 +1,42 @@
+#Integration Resources
+sofia2:
+  module:
+    integration:
+      iot-broker:
+        base:
+          url: http://localhost:8081/
+        advice:
+          url: http://localhost:8081/iotbroker/advice
+      scripting-engine:
+        base:
+          url: 
+        advice:
+          url: 
+      node-red:
+        base:
+          url: http://localhost:8082/
+        advice:
+          url: http://localhost:8082/sofia2/advice
+      router-standalone:
+        base:
+          url: http://localhost:19100/
+        management:
+          url: http://localhost:19100/router/management/
+        router:
+          url: http://localhost:19100/router/router/
+        hawtio:
+          url: http://localhost:19101/hawtio/index.html
+        swagger-ui:
+          url: http://localhost:19100/router/swagger-ui.html
+      api-manager:
+        base:
+          url: http://localhost:19090/
+        api:
+          url: http://localhost:19090/server/api/
+        swagger-ui:
+          url: http://localhost:19090/services/management/api-docs?url=
+        swagger-ui-management:
+          url: http://localhost:19090/services/management/api-docs?url=/services/management/swagger.json
+        swagger-json:
+          url: http://localhost:19090/services/management/swagger/
+          

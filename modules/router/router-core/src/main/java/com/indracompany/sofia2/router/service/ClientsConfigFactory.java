@@ -30,11 +30,8 @@ public class ClientsConfigFactory {
 	@Autowired
 	private AdviceServiceImpl adviceServiceImpl;
 	
-	
-	
 	public RouterClientGateway<NotificationCompositeModel,OperationResultModel> createAdviceGateway(String key, String keyGroup) {
 
-		
 		RouterClient<NotificationCompositeModel,OperationResultModel> routerClient= (RouterClient<NotificationCompositeModel,OperationResultModel>)adviceServiceImpl;
 		RouterClientGateway<NotificationCompositeModel,OperationResultModel> gateway = 	new RouterClientGateway<NotificationCompositeModel,OperationResultModel>
 				(RouterClientGateway.setupDefault(keyGroup,key),routerClient);

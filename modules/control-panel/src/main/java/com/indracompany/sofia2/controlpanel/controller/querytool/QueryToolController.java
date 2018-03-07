@@ -50,11 +50,9 @@ public class QueryToolController {
 	@GetMapping("show")
 	public String show(Model model) {
 		List<Ontology> ontologies = null;
-		if (utils.isAdministrator()) {
-			ontologies = this.ontologyService.getAllOntologies();
-		} else {
-			ontologies = this.ontologyService.getOntologiesByUserId(utils.getUserId());
-		}
+		
+		ontologies = this.ontologyService.getOntologiesByUserId(utils.getUserId());
+		
 		model.addAttribute("ontologies", ontologies);
 
 		return "querytool/show";
@@ -64,11 +62,12 @@ public class QueryToolController {
 	@PostMapping("query")
 	public String runQuery(Model model, @RequestParam String queryType, @RequestParam String query,
 			@RequestParam String ontologyIdentification) throws JsonProcessingException {
-		boolean hasUserPermission = false;
 		String queryResult = null;
+		
+		Ontology ontology = ontologyService.getOntologyByIdentification(ontologyIdentification, utils.getUserId());
+		
 		try {
-			hasUserPermission = ontologyService.hasUserPermissionForQuery(utils.getUserId(), ontologyIdentification);
-			if (hasUserPermission) {
+			if (ontologyService.hasUserPermissionForQuery(utils.getUserId(), ontology)) {
 				if (queryType.toUpperCase().equals(QUERY_SQL)) {
 					queryResult = queryToolService.querySQLAsJson(utils.getUserId(), ontologyIdentification, query, 0);
 					model.addAttribute("queryResult", queryResult);
@@ -102,7 +101,7 @@ public class QueryToolController {
 	public String getOntologyFields(Model model, @RequestParam String ontologyIdentification)
 			throws JsonProcessingException, IOException {
 
-		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification));
+		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification, utils.getUserId()));
 		return "querytool/show :: fields";
 
 	}

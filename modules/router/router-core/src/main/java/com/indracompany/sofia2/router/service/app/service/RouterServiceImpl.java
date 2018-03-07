@@ -21,12 +21,16 @@ import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 
 @Service("routerServiceImpl")
-public class RouterServiceImpl implements RouterService {
+public class RouterServiceImpl implements RouterService, RouterSuscriptionService {
 
 	@Autowired
 	CamelContext camelContext;
+	
+	@Autowired
+	SuscriptionRepository<SuscriptionModel> suscriptionRepository;
 	
 	private String defaultStartupRoute = "direct:start-broker-flow";
 
@@ -59,9 +63,24 @@ public class RouterServiceImpl implements RouterService {
 	}
 
 	@Override
-	public OperationResultModel subscribe(NotificationModel model) throws Exception {
-		ProducerTemplate t = camelContext.createProducerTemplate();
-		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+	public OperationResultModel suscribe(SuscriptionModel model) throws Exception {
+		suscriptionRepository.add(model, model.getSuscriptionId());
+		OperationResultModel result = new OperationResultModel();
+		result.setErrorCode("");
+		result.setOperation("SUSCRIBE");
+		result.setResult("OK");
+		result.setMessage("Suscription OK");
+		return result;
+	}
+
+	@Override
+	public OperationResultModel unSuscribe(SuscriptionModel model) throws Exception {
+		suscriptionRepository.delete(model.getSuscriptionId());
+		OperationResultModel result = new OperationResultModel();
+		result.setErrorCode("");
+		result.setOperation("UNSUSCRIBE");
+		result.setResult("OK");
+		result.setMessage("UnSuscription OK");
 		return result;
 	}
 

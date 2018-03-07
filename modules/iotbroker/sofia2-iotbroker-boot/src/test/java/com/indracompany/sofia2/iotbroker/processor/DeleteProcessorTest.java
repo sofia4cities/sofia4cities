@@ -80,8 +80,8 @@ public class DeleteProcessorTest {
 
 		subject = PojoGenerator.generatePerson();
 		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
-		subjectId = objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();
-
+		//		subjectId = objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();
+		subjectId = subjectInsertResult;
 		ssapDeletetOperation = SSAPMessageGenerator.generateDeleteMessage(Person.class.getSimpleName(), "");
 		ssapDeleteByIdtOperation = SSAPMessageGenerator.generateDeleteByIdMessage(Person.class.getSimpleName(), subjectId);
 

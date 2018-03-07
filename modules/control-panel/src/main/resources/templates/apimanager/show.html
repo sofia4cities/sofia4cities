@@ -141,14 +141,9 @@
 					                                        <label for="checkbox" th:text="#{apimanager.limit}">Limit</label>
 				                                        </div>
 													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-						                                    <label class="description notAnimate" for="id_cachetimeout" th:text="#{apimanager.cachetimeout}">Cache Timeout(minutes)</label>
-					                                        <p th:if="${api.cachetimeout!= null}" class="form-control-static-block bold" th:text="*{cachetimeout}">Timeout </p>
-					                                        <p th:if="${api.cachetimeout== null}" class="form-control-static-block bold" text=" ">&nbsp;</p>
-					                                        <span><input id="checkboxCache" name="checkboxCache" type="checkbox" th:checked="${api.cachetimeout!= null}" onchange="ApiCreateController.changeCacheTimeout();"/></span>
-						                                    <label for="checkbox" th:text="#{apimanager.cache}">Caching of API results</label>
-					                                    </div>
+													<div class="col-md-2 col-sm-6 col-xs-12">
+														<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
+														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/img/API.png}" style="height: 60px;" class="pull-right"/>
 													</div>
 												</div>
 												<!-- endpoint, image -->												
@@ -159,10 +154,7 @@
 						                                    <p class="form-control-static-block bold" th:text="*{endpoint}">EndPoint </p>
 					                                    </div>
 													</div>
-													<div class="col-md-2 col-sm-6 col-xs-12">
-														<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
-														<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/resources/images/API.png}" style="height: 60px;" class="pull-right"/>
-													</div>
+
 												</div>
 												<!-- description -->
 												<div class="row">
@@ -189,7 +181,7 @@
 					                                             <div>
 					                                                 <div id="divGET" class="op_div">
 					                                                    <div id="buttonOperacionGET" class="op_button_div">
-					                                                        <input id="GET" class="op_button" style="width: 80px;" type="button" value="GET" name="GET" th:value="#{apimanager.GET}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                        <input id="GET" class="op_button" style="width: 80px;" type="button" value="GET" name="GET" th:value="#{apimanager.GET}" />
 					                                                    </div>
 					                                                    <div id="descOperationGET" class="op_desc_div" style="display:none">
 					                                                        <label id ="description_GET_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GET"></label>
@@ -201,7 +193,7 @@
 					                                                 <div id="operaciones-invalidas-odatav4">
 					                                                     <div id="divGETSQL" class="op_div">
 					                                                        <div id="buttonOperationGETSQL" class="op_button_div">
-					                                                            <input id="GETSQL" class="op_button" style="width: 80px;" type="button" value="GETSQL" name="GETSQL" th:value="#{apimanager.GETSQL}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                            <input id="GETSQL" class="op_button" style="width: 80px;" type="button" value="GETSQL" name="GETSQL" th:value="#{apimanager.GETSQL}" />
 					                                                        </div>
 					                                                        <div id="descOperationGETSQL" class="op_desc_div" style="display:none">
 					                                                            <b><label id ="description_GETSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETSQL"></label></b>
@@ -212,7 +204,7 @@
 					                                                     </div>
 					                                                     <div id="divPOST" class="op_div">
 					                                                        <div id="buttonOperationPOST" class="op_button_div">
-					                                                            <input id="POST" class="op_button" style="width: 80px;" type="button" value="POST" name="POST" th:value="#{apimanager.POST}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                            <input id="POST" class="op_button" style="width: 80px;" type="button" value="POST" name="POST" th:value="#{apimanager.POST}" />
 					                                                        </div>
 					                                                        <div id="descOperationPOST" class="op_desc_div" style="display:none">
 					                                                            <b><label id ="description_POST_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_POST"></label></b>
@@ -223,7 +215,7 @@
 					                                                     </div>
 					                                                     <div id="divPUT" class="op_div">
 					                                                        <div id="buttonOperationPUT" class="op_button_div">
-					                                                            <input id="PUT" class="op_button" style="width: 80px;" type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                            <input id="PUT" class="op_button" style="width: 80px;" type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT}" />
 					                                                        </div>
 					                                                        <div id="descOperationPUT" class="op_desc_div" style="display:none">
 					                                                            <b><label id ="description_PUT_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_PUT"></label></b>
@@ -234,7 +226,7 @@
 					                                                     </div>
 					                                                     <div id="divDELETE" class="op_div">
 					                                                        <div id="buttonOperationDELETE" class="op_button_div">
-					                                                            <input id="DELETE" class="op_button" style="width: 80px;" type="button" value="DELETE" name="DELETE" th:value="#{apimanager.DELETE}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                            <input id="DELETE" class="op_button" style="width: 80px;" type="button" value="DELETE" name="DELETE" th:value="#{apimanager.DELETE}" />
 					                                                        </div>
 					                                                        <div id="descOperationDELETE" class="op_desc_div" style="display:none">
 					                                                            <b><label id ="description_DELETE_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETE"></label></b>
@@ -245,7 +237,7 @@
 					                                                     </div>
 					                                                     <div id="divDELETEID" class="op_div">
 					                                                        <div id="buttonOperationDELETEID" class="op_button_div">
-					                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETE}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETE}" />
 					                                                        </div>
 					                                                        <div id="descOperationDELETEID" class="op_desc_div" style="display:none">
 					                                                            <b><label id ="description_DELETEID_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
@@ -256,7 +248,7 @@
 					                                                     </div>
 					                                                     <div id="divGETOPS" class="op_div">
 					                                                        <div id="buttonOperationGETOPS" class="op_button_div">
-					                                                            <input id="GETOPS" class="op_button" style="width: 80px;" type="button" value="GETOPS" name="GETOPS" th:value="#{apimanager.GET}" onclick="ApiCreateController.selectOp(this)"/>
+					                                                            <input id="GETOPS" class="op_button" style="width: 80px;" type="button" value="GETOPS" name="GETOPS" th:value="#{apimanager.GET}" />
 					                                                        </div>
 					                                                        <div id="descOperationGETOPS" class="op_desc_div" style="display:none">
 					                                                            <b><label id ="description_GETOPS_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETOPS"></label></b>
@@ -265,18 +257,25 @@
 					                                                            <input id="description_GETOPS" name="description_GETOPS" class="form-control" type="text" maxlength="250"/>
 					                                                        </div>
 					                                                     </div>
-					                                                     <div id="divCUSTOMSQLS" style="display:none;"></div>
-					                                                     <div id="divCUSTOMSQL" class="op_div">
-					                                                        <div id="buttonOperationCUSTOMSQL" class="op_button_div">
-					                                                            <input id="CUSTOMSQL" class="op_button" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" onclick="ApiCustomOpsController.showCustomSqlDialog('')"/>
-					                                                        </div>
-					                                                        <div id="descOperationCUSTOMSQL" class="op_desc_div" style="display:none">
-					                                                            <b><label id ="description_CUSTOMSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_CUSTOMSQL"></label></b>
-					                                                            <br/>
-					                                                            <b><label id ="description_operacion_CUSTOMSQL" class="description" for="description_CUSTOMSQL" th:text="#{apimanager.description}"></label></b>
-					                                                            <input id="description_CUSTOMSQL" name="description_CUSTOMSQL" class="form-control" type="text" maxlength="250"/>
-					                                                        </div>
-					                                                     </div>
+						                                                 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_GETSQL')}
+						                                                 													AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')}
+						                                                 													AND ${!#strings.endsWith(operation.identification,'_DELETE')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
+						                                                    <div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" style="margin-Top:30px;margin-bottom: 30px">
+						                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}"
+						                                                        		class="op_button_selected"
+						                                                        		style="width: 110px; margin-left: 25px;" type="button" 
+						                                                        		value="CUSTOM (query)" 
+						                                                        		th:name="${(operation.identification + 'CUSTOMSQL')}" 
+						                                                        		th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'"/>
+						                                                    </div>
+						                                                    <label th:id="${operation.identification + '_LABEL'}" class="description" style="padding-left: 20px;" th:text="${operation.identification}"/>
+						                                                    <br/>
+						                                                    <b><span th:id="${operation.identification + '_PATH'}" style="padding-left: 20px; width: 93%;" th:text="${operation.path}"/></b>
+						                                                    <br/>
+						                                                    <b><span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-left: 20px; width: 93%;" th:text="${querystring.value}"/></b>
+						                                                    <br/>
+						                                                    <span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px;" th:text="${operation.description}"/>
+						                                                 </div>
 					                                                 </div>
 					                                             </div>
 					                                         </fieldset>
@@ -307,94 +306,62 @@
 						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->
-				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager_customsql_dialogtitle}" style="text-align:left; display: none;">
-					<div>
-		                <br/>
-		                <label style="margin-left: 20px;" class="description" th:text="#{apimanager_operaciones_metodo}"></label>
-		                <select  id="id_tipo_op_customsql" style="margin-right: 20px;margin-left: 10px;width:14%;display:inline;padding-right:5px;" class="element select small form-control">
-		                     <option value="GETCUSTOMSQL" th:text="#{apimanager_formulario_operacion_GET}" selected="selected"/>
-		                </select>
-		                <label style="margin-right: 10px;" class="description" th:text="#{apimanager_operaciones_nombre}"></label>
-		                <input id="id_nombre_op_customsql" name="id_nombre_op_customsql" class="element text medium form-control" style="display:inline;width:60%;" type="text" maxlength="50" onblur="validateName(this);"/>
-		                <br/><br/>
-		                <label style="margin-left: 20px;" class="description" th:text="#{apimanager_customsql_query}"></label>
-		                <input style="margin-left: 20px; margin-right: 20px; width: 95%" id="id_query_op_customsql" name="id_query_op_customsql" class="form-control" type="text" maxlength="512" onblur="loadParamsQuery(this.value);"/>
-		                <br/><br/>
-		                <div class="accordion" id="customsql_paramaccordion" style="width: 95%;margin-left: 20px;">
-		                     <div class="group_top_bg" th:text="#{apimanager_customsql_paramsquery}"/>
-		                     <div style="border:0px">
-		                           <ul style="display: inline-table;padding:10px 0;">
-		                               <div id="customsql_noparam_div">
-		                                   <div>
-		                                      <label style="margin-left: 20px;" class="description" th:text="#{apimanager_customsql_paramquery_nodefinidos}"></label>
-		                                   </div>
-		                               </div>
-		                               <div id="customsql_params_div" style="display: none; width: 700px">
-		                                   <div id="customsql_paramsquery">
-		                                  </div>
-		                               </div>
-		                           </ul>
-		                     </div>
-		                     <div class="group_top_bg" th:text="#{apimanager_customsql_configuracion}"></div>
-		                     <div style="border:0px; padding-top:10px;">
-			                    <div>
-				                    <label style="margin-left: 20px;" class="description" th:text="#{apimanager_customsql_querytype}"></label>
-					                    <select  id="id_customsql_querytype" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:loadParamQuerySQLType();'" >
+				<div id="dialog-customsql" title="CustomSql" th:title="#{apimanager.CUSTOMSQL}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
+					<div class="modal-dialog">
+					    <!-- Modal content-->
+					    <div class="modal-content">					
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title"></h4>
+							</div>
+							<div class="modal-body">
+				                <label class="description" th:text="#{apimanager.operations.method}"></label>
+				                <select id="id_type_op_customsql" style="margin-right: 20px;margin-left: 10px;width:14%;display:inline;padding-right:5px;" class="element select small form-control">
+				                     <option value="GET" th:text="#{apimanager.operation.GET}" selected="selected"/>
+				                </select>
+				                <label class="description" th:text="#{apimanager.operations.name}"></label>
+				                <input id="id_name_op_customsql" name="id_name_op_customsql" class="element text medium form-control" style="display:inline;width:50%;" type="text" maxlength="50" onblur="ApiCustomOpsController.validateName(this);"/>
+				                <br/><br/>
+				                <label class="description" th:text="#{apimanager.customsql.query}"></label>
+				                <input style="margin-left: 10px; margin-right: 20px; width: 95%" id="id_query_op_customsql" name="id_query_op_customsql" class="form-control" type="text" maxlength="512" onblur="ApiCustomOpsController.loadParamsQuery(this.value);"/>
+				                <br/>
+			                     <div class="group_top_bg" th:text="#{apimanager.customsql.paramsquery}"/>
+			                     <div style="border:0px">
+			                           <ul style="display: inline-table;padding:10px 0;">
+			                               <div id="customsql_noparam_div">
+			                                   <div>
+			                                      <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.paramquery.nodefined}"></label>
+			                                   </div>
+			                               </div>
+			                               <div id="customsql_params_div" style="display: none; width: 700px">
+			                                   <div id="customsql_paramsquery">
+			                                  </div>
+			                               </div>
+			                           </ul>
+			                     </div>
+			                     <div class="group_top_bg" th:text="#{apimanager.customsql.configuration}"></div>
+			                     <div style="border:0px; padding-top:10px;">
+				                    <div>
+					                    <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.querytype}"></label>
+					                    <select  id="id_customsql_querytype" style="margin-right: 20px;margin-left: 10px;width: 20%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:loadParamQuerySQLType();'" >
 					                         <option value="SQLLIKE" th:text="SQLLIKE" selected="selected"/>
 					                         <option value="NATIVE" th:text="NATIVE"/>
 					                    </select>
-				                    <label class="description" th:text="#{apimanager_customsql_targetBD}"></label>
+					                    <label class="description" th:text="#{apimanager.customsql.targetBD}"></label>
 					                    <select  id="id_customsql_targetBD" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:checkformatresult();'">
 					                         <option value="BDTR" th:text="BDTR"  selected="selected"/>
 					                         <option value="BDH" th:text="BDH"/>
 					                    </select>
-				                    <label class="description" th:text="#{apimanager_customsql_formatresult}" ></label>
-					                    <select  id="id_customsql_formatresult" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control">
-					                         <option value="JSON" th:text="JSON" selected="selected"/>
-					                         <option value="XML" th:text="XML"/>
-					                         <option id="ID_JSON_DEPRECATED" value="JSON_DEPRECATED" th:text="JSON_DEPRECATED"/>
-					                         <option value="CSV" th:text="CSV"/>
-					                    </select>
-			                        <br/><br/>
-			                        <label style="margin-left: 20px;" class="description" th:text="#{apimanager_customsql_descripcion}"></label>
-			                        <input style="margin-left: 20px; margin-right: 20px; margin-bottom: 10px; width: 95%" id="id_desc_op_customsql" name="id_desc_op_customsql" class="form-control" type="text" maxlength="250"/>
-		                        </div>
-		                     </div>
-		                     <div class="group_top_bg" th:text="#{apimanager_customsql_postprocesado}"></div>
-		                     <div style="border:0px; padding-top:10px;">
-		                           <li>
-		                            <div id="operaciones">
-		                                <div class="definicion-ontologiasgrupo-izq">
-		
-		                                    <fieldset style="width: 100%; padding-left: 0;">
-		                                    	<div>
-			                                     	<label style="font-size: 100%;" class="description" for="id_campo_nombre" th:text="#{scripts_formulario_operaciones_disponibles}">Operaciones</label>
-			                                        <select  id="operacionesSelect" class="form-control" name="operacionesDisponibles" onchange="cargarMetodosOperacion()">
-			                                            <option th:each="operacionS:${operacionesToSelect}" th:value="${operacionS.id}" th:text="${operacionS.identificacion}"></option>
-			                                        </select>
-												</div>
-												<div>
-			                                        <label style="font-size: 100%;margin-right:10px;margin-top:10px;" for="id_metodos" th:text="#{scripts_formulario_button_buscar}">buscar</label>
-			                                        <input style="display: inline;width:100%;" id="metodos" name="metodos" class="element text medium form-control" type="text" maxlength="50"/>
-		                                        </div>
-		
-		                                        <select  style="margin-top: 3%;" id="metodosSelect" class="form-control" name="metodos" onchange="limpiarInput()">		
-		                                        </select>
-		
-		                                        <div class="definicion-ontologiasgrupo-der" style="padding-top: 18px;width: 100%;padding: 0;margin-top: 10px;padding:0;">
-		                                        <fieldset  style="width: 100%;">
-		                                            <textarea id="comments" style="width:100%" class="element textarea medium" disabled="disabled"/>
-		                                        </fieldset>
-		                                        </div>
-		
-		                                        <input style="margin-top: 3%;" id="anadir" class="button_text pull-right" type="button" name="anadir" th:value="#{scripts_formulario_anadir}" value="Anadir" th:onclick="'javascript:anadirCodigo();'"/>
-		
-		                                    </fieldset>
-		                                </div>
-		                            </div>
-		                           </li>
-		                     </div>
-		                </div>
+				                        <br/><br/>
+				                        <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.description}"></label>
+				                        <input style="margin-left: 20px; margin-right: 20px; margin-bottom: 10px; width: 95%" id="id_desc_op_customsql" name="id_desc_op_customsql" class="form-control" type="text" maxlength="250"/>
+			                        </div>
+			                     </div>					
+							</div>					
+							<div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div><!-- END CONTENT BODY -->
@@ -419,16 +386,33 @@
 	
 	<!-- LOADING DEFAULT LANG MESSAGES IF NEEDED -->
 	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}" type="text/javascript"></script>
-		
+	
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/apiCustomOps.js}"/>
+	
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	//<![CDATA[
 		
 	var operations = /*[[${operations}]]*/;
 	var authenticacion;
+	var endpoint = /*[[${endpointBase}]]*/;
+	var currentLanguage = [[${lang}]];	
 	
 	// REDIRECT URL
 	var navigateUrl = function(url){ window.location.href = url; }
+	
+	var apiCustomOpsJson = { 
+			"endpoint" : endpoint,
+			"apimanager_customsql_error_query_params" : [[#{apimanager_customsql_error_query_params}]],
+			"apimanager_customsql_error_query_ontology" : [[#{apimanager_customsql_error_query_ontology}]],
+			"apimanager_customsql_error_query" : [[#{apimanager_customsql_error_query}]],
+			"apimanager_customsql_error_required" : [[#{apimanager_customsql_error_required}]],
+			"apimanager_error_operation_existe" : [[#{apimanager_error_operation_existe}]],
+			"apimanager_error_campos" : [[#{apimanager_error_campos}]],
+			"apimanager_editBtn" : [[#{gen.editBtn}]],
+			"apimanager_deleteBtn" : [[#{gen.deleteBtn}]]
+		};
 	
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF

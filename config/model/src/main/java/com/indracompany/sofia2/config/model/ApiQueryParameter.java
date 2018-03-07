@@ -43,11 +43,11 @@ import lombok.Setter;
 public class ApiQueryParameter extends AuditableEntityWithUUID {
 	
 	public static enum HeaderType {
-		body, formData, header,path,query;
+		body, formData,header,path,query;
 	}
 	
 	public static enum DataType {
-		string, array, date,password,binary,email,uuid,uri,hostname,number;
+		string,array,date,password,binary,email,uuid,uri,hostname,number;
 	}
 	  
 	

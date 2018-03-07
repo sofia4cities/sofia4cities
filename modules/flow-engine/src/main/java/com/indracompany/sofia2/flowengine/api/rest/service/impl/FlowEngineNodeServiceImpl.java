@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.hibernate.cfg.beanvalidation.GroupsPerOperation.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +48,8 @@ import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
 import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
-import com.indracompany.sofia2.router.service.app.model.OperationModel.Operations;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
 
@@ -128,7 +128,8 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 									node.setFlow(flow);
 									node.setFlowNodeType(Type.HTTP_NOTIFIER);
 									node.setMessageType(MessageType.valueOf(record.getMeassageType()));
-									node.setOntology(ontologyService.getOntologyByIdentification(record.getOntology()));
+									node.setOntology(ontologyService.getOntologyByIdentification(record.getOntology(),
+											domain.getUser().getUserId()));
 									node.setPartialUrl(record.getUrl());
 									nodeService.createFlowNode(node);
 								}
@@ -160,7 +161,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		List<Ontology> ontologies = null;
 		switch (sofia2User.getRole().getId()) {
 		case "ROLE_ADMINISTRATOR":
-			ontologies = ontologyService.getAllOntologies();
+			ontologies = ontologyService.getAllOntologies(sofia2User.getUserId());
 			break;
 		default:
 			// TODO check default criteria. Public ontologies should be included
@@ -245,17 +246,17 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		OperationModel operationModel = new OperationModel();
 		operationModel.setUser(sofia2User.getUserId());
 		operationModel.setOntologyName(ontologyIdentificator);
-		operationModel.setOperationType(Operations.QUERY.name());
+		operationModel.setOperationType(OperationType.QUERY);
 		if ("sql".equals(queryType.toLowerCase())) {
-			operationModel.setQueryType("SQLLIKE");
+			operationModel.setQueryType(QueryType.SQLLIKE);
 		} else if ("native".equals(queryType)) {
-			operationModel.setQueryType("NATIVE");
+			operationModel.setQueryType(QueryType.NATIVE);
 		} else {
 			log.error("Invalid value {} for queryType. Possible values are: SQL, NATIVE.", queryType);
 			throw new IllegalArgumentException(
 					"Invalid value " + queryType + " for queryType. Possible values are: SQL, NATIVE.");
 		}
-		operationModel.setQuery(query);
+		operationModel.setBody(query);
 
 		OperationResultModel result = null;
 		try {
@@ -310,7 +311,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		operationModel.setUser(sofia2User.getUserId());
 		operationModel.setBody(data);
 		operationModel.setOntologyName(ontology);
-		operationModel.setOperationType(Operation.INSERT.toString());
+		operationModel.setOperationType(OperationType.INSERT);
 
 		OperationResultModel result = null;
 
