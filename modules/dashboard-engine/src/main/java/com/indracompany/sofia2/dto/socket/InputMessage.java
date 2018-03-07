@@ -11,16 +11,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2;
+package com.indracompany.sofia2.dto.socket;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.util.List;
 
-@SpringBootApplication
-public class Application {
+import lombok.Getter;
+import lombok.Setter;
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+@Getter
+@Setter
+public class InputMessage {
 
+    private String ds;
+    private List<String> group;
+    private List<FilterStt> filter;
+    private List<ProjectStt> project;
+    
+    public InputMessage() {};
+    
+    public InputMessage (String ds, List<String> group, List<FilterStt> filter, List<ProjectStt> project) {
+    	this.ds = ds;
+    	this.group = group;
+    	this.filter = filter;
+    	this.project = project;
     }
 }

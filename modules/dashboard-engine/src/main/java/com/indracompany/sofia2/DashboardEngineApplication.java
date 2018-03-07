@@ -11,15 +11,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.security;
+package com.indracompany.sofia2;
 
-import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * This is required to enable springSecurityFilterChain.
- *
- * Remember that Spring Security utilizes filters to intercept and manage requests
- * according to the specified authorization and authentication rules
- */
+@SpringBootApplication
+public class DashboardEngineApplication {
 
-public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplicationInitializer {}
+    public static void main(String[] args) {
+        SpringApplication.run(DashboardEngineApplication.class, args);
+
+    }
+}

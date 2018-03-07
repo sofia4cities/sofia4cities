@@ -30,4 +30,5 @@ public interface GadgetDatasourceService {
 	public boolean hasUserPermission(String id, String userId);
 	public List<GadgetDatasource> getUserGadgetDatasources(String userId);
 	public String getSampleQueryGadgetDatasourceById(String datasourceId);
+	public GadgetDatasource getDatasourceByIdentification(String dsIdentification);
 }

@@ -11,22 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package filter;
+package com.indracompany.sofia2.dto.socket;
 
-import java.io.IOException;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-
-import org.springframework.web.filter.GenericFilterBean;
-
-public class CustomFilter extends GenericFilterBean {
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        chain.doFilter(request, response);
+@Getter
+@Setter
+public class FilterStt {
+    private String field;
+    private String op;
+    private String exp;
+    
+    public FilterStt() {};
+    
+    public FilterStt(String field, String op, String exp) {
+    	this.field = field;
+    	this.op = op;
+    	this.exp = exp;
     }
-
 }

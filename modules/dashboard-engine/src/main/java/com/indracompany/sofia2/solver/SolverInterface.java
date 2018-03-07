@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,23 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.dto.socket;
+package com.indracompany.sofia2.solver;
 
-public class Message {
+import java.util.List;
 
-    private String from;
-    private String text;
+import com.indracompany.sofia2.dto.socket.FilterStt;
+import com.indracompany.sofia2.dto.socket.ProjectStt;
 
-    public String getFrom() {
-        return from;
-    }
-    public void setFrom(String from) {
-        this.from = from;
-    }
-    public String getText() {
-        return text;
-    }
-    public void setText(String text) {
-        this.text = text;
-    }
+public interface SolverInterface {
+	
+	public String buildQueryAndSolve(String query, int maxreg , List<FilterStt> where, List<ProjectStt> project, List<String> group);
 }

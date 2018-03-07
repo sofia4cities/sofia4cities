@@ -11,20 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.dto.socket;
+package com.indracompany.sofia2.filter;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.io.IOException;
 
-@Getter
-@Setter
-public class OutputMessage {
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
-	private String data;
-    private String time;
+import org.springframework.web.filter.GenericFilterBean;
 
-    public OutputMessage(final String data, final String time) {
-        this.data = data;
-        this.time = time;
+public class CustomFilter extends GenericFilterBean {
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        chain.doFilter(request, response);
     }
+
 }

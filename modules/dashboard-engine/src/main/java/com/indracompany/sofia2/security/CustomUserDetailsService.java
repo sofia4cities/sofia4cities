@@ -14,7 +14,8 @@
 package com.indracompany.sofia2.security;
 
 import com.indracompany.sofia2.bean.*;
-import com.indracompany.sofia2.dto.CustomUserDetails;
+import com.indracompany.sofia2.security.user.CustomUserDetails;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;

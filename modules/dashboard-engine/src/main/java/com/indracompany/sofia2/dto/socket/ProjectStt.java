@@ -18,13 +18,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OutputMessage {
-
-	private String data;
-    private String time;
-
-    public OutputMessage(final String data, final String time) {
-        this.data = data;
-        this.time = time;
+public class ProjectStt {
+    private String field;
+    private String op;
+    
+    public ProjectStt() {}
+    
+    public ProjectStt(String field, String op, String exp) {
+    	this.field = field;
+    	this.op = op;
     }
 }

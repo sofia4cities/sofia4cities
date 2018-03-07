@@ -186,6 +186,11 @@ public class GadgetDatasourceServiceImpl implements GadgetDatasourceService{
 		String query = gadgetDatasourceRepository.findById(datasourceId).getQuery();
 		return "select * from (" + query + ") AS Sample limit 1";
 	}
+	
+	@Override
+	public GadgetDatasource getDatasourceByIdentification(String dsIdentification) {
+		return gadgetDatasourceRepository.findByIdentification(dsIdentification);
+	}
 
 }
 	

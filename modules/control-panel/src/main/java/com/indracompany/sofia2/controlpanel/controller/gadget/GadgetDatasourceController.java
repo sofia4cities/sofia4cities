@@ -172,9 +172,24 @@ public class GadgetDatasourceController {
 			return this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId());
 		}
 		
+		@GetMapping(value = "/getDatasourceByIdentification/{id}", produces="application/json")
+		public @ResponseBody GadgetDatasource getDatasourceByIdentification(@PathVariable("id") String id){
+			if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {
+				return this.gadgetDatasourceService.getDatasourceByIdentification(id);
+			}
+			else {
+				return null;
+			}
+		}
+		
 		@GetMapping(value = "/getSampleDatasource/{id}", produces="application/json")
 		public @ResponseBody String getSampleDatasource(@PathVariable("id") String datasourceId){
-			String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
-			return queryToolService.querySQLAsJson(this.utils.getUserId(),"", sampleQuery, 0);
+			if (gadgetDatasourceService.hasUserPermission(datasourceId, this.utils.getUserId())) {
+				String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
+				return queryToolService.querySQLAsJson(this.utils.getUserId(),"", sampleQuery, 0);
+			}
+			else{
+				return "403";
+			}
 		}
 	}

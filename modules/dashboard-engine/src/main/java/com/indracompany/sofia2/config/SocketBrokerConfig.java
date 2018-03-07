@@ -28,13 +28,13 @@ public class SocketBrokerConfig extends AbstractWebSocketMessageBrokerConfigurer
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/secured/history");
+        config.enableSimpleBroker("/dsengine/broker");
         //config.setApplicationDestinationPrefixes("/dashboard-engine");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/secured/chat").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/dsengine/solver").setAllowedOrigins("*").withSockJS();
     }
 }
 
