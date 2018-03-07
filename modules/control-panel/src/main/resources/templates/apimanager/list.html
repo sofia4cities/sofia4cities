@@ -173,7 +173,7 @@
 															<!-- IMAGE -->
 															<td class="text-center no-wrap">
 																<img class="img-responsive thumbnail" style="max-width: 125px" th:if="${not #lists.isEmpty(api.image)}" th:src="@{${api.id} + '/getImage'}" />
-																<img class="img-responsive thumbnail" style="max-width: 125px" th:if="${#lists.isEmpty(api.image)}" th:src="@{/resources/images/API.png}" />
+																<img class="img-responsive thumbnail" style="max-width: 125px" th:if="${#lists.isEmpty(api.image)}" th:src="@{/img/API.png}" />
 															</td>
 															<!-- IDENTIFICATION - VERSION -->
 															<td class="text-left bold no-wrap" th:text="${api.identification} + ' - V' + ${api.numversion}"></td>

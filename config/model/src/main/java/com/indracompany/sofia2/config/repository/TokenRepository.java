@@ -33,4 +33,6 @@ public interface TokenRepository extends JpaRepository<Token, String> {
 
 	Token findByToken(String token);
 
+	Token findById(String id);
+
 }
