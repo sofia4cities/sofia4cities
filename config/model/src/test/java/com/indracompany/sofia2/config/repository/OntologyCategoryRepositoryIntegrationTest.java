@@ -35,16 +35,12 @@ import com.indracompany.sofia2.config.model.OntologyCategory;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Javier Gomez-Cornejo
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
-public class OntologyCategoryIntegrationTest {
+public class OntologyCategoryRepositoryIntegrationTest {
 
 
 	@Autowired
@@ -66,11 +62,9 @@ public class OntologyCategoryIntegrationTest {
 	}
 
 	@Test
-	public void test_findById()
-	{
+	public void given_SomeOntologyCategoriesExist_When_ItIsSearchedById_Then_TheCorrectObjectIsObtained() {
 		OntologyCategory category=this.repository.findAll().get(0);
 		Assert.assertTrue(this.repository.findById(category.getId())!=null);
 	}
-
 }
 

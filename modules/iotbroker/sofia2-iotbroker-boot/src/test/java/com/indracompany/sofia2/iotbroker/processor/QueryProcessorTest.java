@@ -32,8 +32,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
@@ -103,7 +101,7 @@ public class QueryProcessorTest {
 	}
 
 	@Test
-	public void test_basic_native_query() {
+	public void given_OneQueryProcessor_When_ACorrectNativeQueryIsUsed_Then_TheResponseReturnsTheResults() {
 		ssapQuery.getBody().setQuery("db.Person.find({})");
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage;
 		responseMessage = queryProcessor.process(ssapQuery);

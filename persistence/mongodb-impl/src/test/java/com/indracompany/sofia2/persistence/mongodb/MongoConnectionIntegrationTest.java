@@ -54,15 +54,16 @@ public class MongoConnectionIntegrationTest {
 	static final String DATABASE = "sofia2_s4c";
 			
 	@Test
-	public void test1_MongoDbCredentials() {
+	public void given_MongoDbCredentials_When_AuthenticationIsChecked_Then_ItIsCheckedTheAuthenticationIsDissabled() {
 		try {
 			Assert.assertEquals(credentials.getAuthenticationDatabase(),"");			
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB");
 		}
 	}		
+	
 	@Test
-	public void test2_getConnection() {
+	public void given_MongoDbConnection_When_DatabasesAreRequested_Then_TheExistenDatabasesAreReturned() {
 		try {
 			Assert.assertTrue(connect.getConnection().listDatabaseNames().first()!=null);			
 		} 
@@ -70,9 +71,10 @@ public class MongoConnectionIntegrationTest {
 			Assert.fail("No connection with MongoDB");
 		}
 	}		
+	
 	@Test
 	@Ignore
-	public void test3_SpringData_getConnection() {
+	public void given_OneMongoDbDatabase_When_CollectionsAreRequested_Then_TheyAreReturned() {
 		try {
 			MongoDatabase database = client.getDatabase(client.listDatabaseNames().first());
 			

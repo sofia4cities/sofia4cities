@@ -59,8 +59,7 @@ public class UserControllerTest {
     }
 
 	@Test
-	public void testCreateUser() throws Exception
-	{
+	public void given_AnyState_When_APortToUserCreateIsRequestedWithTheCorrectParamenters_Then_TheUserIsCreatedAndTheViewIsRedirected() throws Exception {
 		User user= this.mockUser();
 		//mock userService
 		userService= Mockito.mock(UserService.class);

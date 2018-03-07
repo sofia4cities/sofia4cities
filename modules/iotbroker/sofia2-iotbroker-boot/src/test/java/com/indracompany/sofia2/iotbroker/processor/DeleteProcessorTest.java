@@ -94,7 +94,7 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void test_delete_by_id() {
+	public void given_OneDeleteProcessor_When_ItProcessesOneValidDeleteById_Then_TheResponseIndicatesTheOperationWasPerformed() {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation);
@@ -108,7 +108,7 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void test_delete_by_non_existend_id() {
+	public void given_OneDeleteProcessor_When_ItProccessesOneInvalidId_Then_TheResponseIndicatesTheOperationWasNotPerformed() {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
@@ -120,11 +120,10 @@ public class DeleteProcessorTest {
 		Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.RESPONSE));
 		Assert.assertNotNull(responseMessage.getBody().getData());
 		Assert.assertEquals(0, responseMessage.getBody().getData().at("/nDeleted").asInt());
-
 	}
 
 	@Test
-	public void test_delete_by_query_native() {
+	public void given_OneDeleteProcessor_When_ItProccessesOneValidNativeQuery_TheResponseIndicatesTheOperationWasPerformed() {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remove({})");
@@ -139,7 +138,7 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void test_delete_by_query_native_no_ocurrences() {
+	public void given_OneDeleteProcessor_When_OneNativeQueryIsPerformedAndNoOccurrencesExist_Then_TheResponseIndicatesThatNoDeletionWasPerformed() {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remove({\"name\":\"NO_OCURRENCE_NAME\"})");
@@ -156,7 +155,7 @@ public class DeleteProcessorTest {
 	//TODO: Driver has to detect malformed queries
 	@Ignore
 	@Test
-	public void test_delete_by_query_native_malformed() {
+	public void given_OneDeleteProcessor_When_OneMalFormedQueryIsProccesed_Then_TheResponseIndicatesThatNotDeletionWasPerformed() {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remov({})");

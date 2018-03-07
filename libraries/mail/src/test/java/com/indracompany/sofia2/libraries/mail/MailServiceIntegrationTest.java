@@ -30,9 +30,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest()
 @SpringBootApplication
-public class MailServiceTest {
+public class MailServiceIntegrationTest {
 	public static void main(String[] args) {
-		SpringApplication.run(MailServiceTest.class, args);
+		SpringApplication.run(MailServiceIntegrationTest.class, args);
 	}
 
 	@Autowired
@@ -48,7 +48,7 @@ public class MailServiceTest {
 
 	@Ignore
 	@Test
-	public void testSendMail() {
+	public void given_OneValidEmailAddress_When_OneTextMessageIsSent_Then_TheMessageIsSent() {
 		try {
 			mail.sendMail("lmgracia@indra.es", "Test", "Test");
 		} catch (Exception e) {
@@ -59,7 +59,7 @@ public class MailServiceTest {
 
 	@Ignore
 	@Test
-	public void testSendHtmlMailWithAttachment() {
+	public void given_OneValidEmailAddress_When_OneHTMLMessageIsSent_Then_TheMessageIsSent() {
 		try {
 			String htmlMail = "<html><body>Here is application.yml<body></html>";
 			mail.sendHtmlMail("lmgracia@indra.es", "Test", htmlMail, "application.yml");

@@ -19,6 +19,8 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
@@ -31,38 +33,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.ClientPlatformOntology;
-
-import lombok.extern.slf4j.Slf4j;
+import com.indracompany.sofia2.config.model.Role;
+import com.indracompany.sofia2.config.model.Role.Type;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Slf4j
-public class ClientPlatformOntologyIntegrationTest {
+public class RoleTypeRepositoryIntegrationTest {
 
 	@Autowired
-	ClientPlatformOntologyRepository repository;
-	@Autowired
-	ClientPlatformRepository cprepository;
-	@Autowired
-	OntologyRepository orepository;
+	RoleRepository repository;
 
 	@Before
 	public void setUp() {
-
-		List<ClientPlatformOntology> cpos = this.repository.findAll();
-		if (cpos.isEmpty())
-			throw new RuntimeException("There must be at least one ClientPlatform in our ConfigDB");
+		List<Type> types = new ArrayList<Type>(Arrays.asList(Role.Type.values()));
+		if (types.isEmpty()) {
+			// log.info("No types en tabla.Adding...");
+			throw new RuntimeException("No role types in class Role...");
+		}
 	}
 
 	@Test
-	public void test_findByOntologyIdAndClientPlatformId() {
-		ClientPlatformOntology cpo = this.repository.findAll().get(0);
+	public void given_SomeRoleTypesExist_When_TheyAreCounted_Then_TheCorrectNumberIsObtained() {
+		Assert.assertTrue(this.repository.findAll().size() == 8);
+		Assert.assertTrue(this.repository.count() == 8);
+	}
 
-		Assert.assertTrue(
-				this.repository.findByOntologyAndClientPlatform(cpo.getOntology(), cpo.getClientPlatform()) != null);
+	@Test
+	public void given_SomeRoleTypesExist_When_TheyAreCountedById_Then_OneIsReturned() {
+		Assert.assertTrue(this.repository.countById("ROLE_ADMINISTRATOR") == 1L);
+	}
 
+	@Test
+	public void given_SomeRoleTypesExist_When_ItIsSearchedByName_Then_TheCorrectObjectIsObtained() {
+		Assert.assertTrue(this.repository.findById("ROLE_ADMINISTRATOR").getName().equals("Administrator"));
 	}
 
 }
