@@ -74,7 +74,7 @@ public class Ontology extends AuditableEntityWithUUID {
 
 
 	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "DATA_MODEL_ID", referencedColumnName = "ID")
 	@Getter
 	@Setter
