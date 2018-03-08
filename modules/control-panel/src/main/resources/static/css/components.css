@@ -22908,6 +22908,9 @@ Custom color buttons
       margin-left: 20px;
       border: 1px solid red; }
 
+.flow-description {
+	    margin: 5% 5% 5% 5%;
+}
 @media (max-width: 767px) {
   /* 767px */
   .mt-content-row {
