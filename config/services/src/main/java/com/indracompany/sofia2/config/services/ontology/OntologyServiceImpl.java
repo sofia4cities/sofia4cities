@@ -75,9 +75,14 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public List<Ontology> getOntologiesByUserId(String sessionUserId) {
 		User sessionUser = this.userService.getUser(sessionUserId);
-		
-		return ontologyRepository
+		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+			return ontologyRepository
+					.findAll();
+		}else {
+			return ontologyRepository
 					.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
+		}
+		
 	}
 
 	@Override

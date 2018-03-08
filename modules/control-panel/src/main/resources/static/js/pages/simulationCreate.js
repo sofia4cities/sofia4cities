@@ -32,10 +32,32 @@ function getTokensAndOntologies() {
 }
 	
 function getOntologyFields() {
-	$("#ontologyFields").load('/controlpanel/devicesimulation/ontologyfields', { 'ontologyIdentification': $("#ontologies").val()});
+	$("#ontologyFields").load('/controlpanel/devicesimulation/ontologyfields', { 'ontologyIdentification': $("#ontologies").val()}, function(data){editFieldParameters()});
 	$("#ontologyFields").show();
 }
 
+function editFieldParameters() {
+	
+	if(simulationJson != null)
+	{
+		var keys = Object.keys(fields);
+		for (var i = 0; i < keys.length; i++) {
+			var key = keys[i].replace(/\./g,"--");
+			var hiddenDiv= key+ 'Div';
+			$('#'+key).val(simulationJson['fields'][keys[i]]['function']);
+			var functionSelected = $('#'+key).val();
+			$('#'+hiddenDiv).html($('#'+functionSelected).html());;
+			var inputs = $('#'+key+'Div input');
+
+			for (var j = 0; j < inputs.length; j++) {
+				inputs.get(j).value = simulationJson['fields'][keys[i]][inputs.get(j).name];
+			}
+
+			$('#'+hiddenDiv).show();
+			
+		}
+	}
+}
 function setFieldSimulator(field) {
 	$("[name="+field+"]").val($("#simulator"+field).val());
 }
@@ -69,3 +91,57 @@ function generateSimulatorFunctionDiv(field) {
 	}
 
 }
+
+var  deleteSimulation= function (id){
+		console.log('deleteSimulationConfirmation() -> id: '+ id);
+		
+		// no Id no fun!
+		if ( !id ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO SIMULATION SELECTED!'}); return false; }
+		
+		// call  Confirm 
+		showConfirmDeleteDialog(id);	
+	} 
+	
+	
+	var showConfirmDeleteDialog = function(id){	
+
+		//i18 labels
+		var Close = headerReg.btnCancelar;
+		var Remove = headerReg.btnEliminar;
+		var Content = headerReg.deviceSimulationConfirm;
+		var Title = headerReg.titleConfirm + ':';
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						console.log(id);
+						$.ajax({
+						    url: '/controlpanel/devicesimulation/'+id,
+						    type: 'DELETE',						  
+						    success: function(result) {
+						    	if(result == 'ok') {navigateUrl('/controlpanel/devicesimulation/list');}
+						    }
+						});
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+	}	
