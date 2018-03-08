@@ -47,4 +47,9 @@ public class DataModelServiceImpl implements DataModelService{
 		return dataModelRepository.findByIdOrNameOrDescription(id, name, description);
 	}
 
+	@Override
+	public DataModel getDataModelById(String dataModelId) {
+		return dataModelRepository.findById(dataModelId);
+	}
+
 }

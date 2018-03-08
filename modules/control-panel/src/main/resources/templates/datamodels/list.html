@@ -79,17 +79,11 @@
 								<div class="caption">
 									<i class="icon-list font-grey-gallery"></i>
 									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{datamodel.template.list}"> Manage Data Models</span>
-									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
-								</div>
-								<div class="actions margin-right-20">
-									<div class="btn-group">
-										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../datamodels/create'" ><i class="fa fa-user"></i> <span th:text="#{gen.create}">New </span></button>									
-									</div>										
-								</div>
+								</div>								
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
@@ -156,27 +150,38 @@
 													<thead>
 														<tr class="cabecera-tabla">
 															<th dt:filterable="false" dt:filterCssClass="input-small" dt:selector="datamodelFilter" class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{datamodel.id}">Identification</span></th>
-															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{datamodel.name}" >Name</span></th>
+															<th class="titulo-columnas" > <span th:text="#{datamodel.name}" >Name</span></th>
 															<th class="titulo-columnas" ><span th:text="#{datamodel.description}" >Description</span></th>						
 															<th class="titulo-columnas" ><span th:text="#{datamodel.type}">Type</span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{datamodel.userId}" >Owner</span></th>
 															<th class="titulo-columnas" ><span th:text="#{datamodel.labels}">Labels </span></th>																
-															<th class="titulo-columnas" ><span th:text="#{datamodel.jsonschema}">JSON Schema</span></th>															
+															<th class="titulo-columnas" ><span th:text="#{datamodel.jsonschema}">JSON Schema</span></th>
+															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>															
 														</tr>
 													</thead>
 													<tbody th:remove="all-but-first">														
-														<tr th:each="datamodel : ${datamodels}" pages:paginate="10">
+														<tr th:each="datamodel : ${dataModels}" pages:paginate="10">
 															<!-- IDENTIFICATION -->
-															<td class="text-left no-wrap bold internalId" th:text="${datamodel.id}"></td>
+															<td class="text-left no-wrap internalId" th:text="${datamodel.id}"></td>
 															<!-- NAME -->
-															<td class="text-left no-wrap bold" th:text="${datamodel.name}"></td>
+															<td class="text-left no-wrap" th:text="${datamodel.name}"></td>
 															<!-- DESCRIPTION -->
-															<td class="text-left no-wrap" th:text="${datamodel.description}"></td>
-															<!-- TYPE -->
-															<td class="text-left no-wrap" th:text="${datamodel.type}"></td>
+															<td class="text-left text-truncate-sm" th:title="${datamodel.description}" th:text="${datamodel.description}"></td>
+															<!-- TYPE -->						
+															<td class="text-left" th:text="${datamodel.type}"></td>
+															<!-- USER -->
+															<td class="text-center " th:text="${datamodel.user.userId}"></td>															
 															<!-- LABELS -->
-															<td class="text-left no-wrap" th:text="${datamodel.labels}"></td>
+															<td class="text-left " th:text="${datamodel.labels}"></td>
 															<!-- JSONSCHEMA -->
-															<td class="text-left no-wrap" th:text="${datamodel.jsonSchema}"></td>															
+															<td class="text-left text-truncate-sm" th:text="${datamodel.jsonSchema}"></td>		
+															<!-- OPTIONS -->
+															<td class="icon" style="white-space: nowrap">
+																<div class="grupo-iconos">
+																	<!-- VIEW -->															
+																	<span th:title="#{gen.view}" class="btn grey-mint btn-sm btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/datamodels/show/${datamodel.id}|} + '\');'"><i class="fa fa-eye"></i></span>																			
+																</div>
+															</td>													
 														</tr>
 													</tbody>
 												</table>
@@ -188,6 +193,7 @@
 														<table id="filteringTable" class="hide">
 																<tr id="filtering" class="hide" role="row">
 																	<th id="datamodelFilter" class="dtFilter"></th>
+																	<th></th>
 																	<th></th>
 																	<th></th>
 																	<th></th>
@@ -217,8 +223,9 @@
 														<label class="toggle-vis" data-column="1" th:text="#{datamodel.name}"> Name</label>
 														<label class="toggle-vis" data-column="2" th:text="#{datamodel.description}"> Description</label>
 														<label class="toggle-vis" data-column="3" th:text="#{datamodel.type}"> Type</label>
-														<label class="toggle-vis" data-column="4" th:text="#{datamodel.labels}"> Labels</label>														
-														<label class="toggle-vis" data-column="5" th:text="#{datamodel.jsonschema}"> JSON Schema</label>														
+														<label class="toggle-vis" data-column="4" th:text="#{datamodel.userId}"> Owner</label>
+														<label class="toggle-vis" data-column="5" th:text="#{datamodel.labels}"> Labels</label>														
+														<label class="toggle-vis" data-column="6" th:text="#{datamodel.jsonschema}"> JSON Schema</label>														
 													</div>													
 												</div>											
 											</div>
@@ -406,7 +413,7 @@
 		handleSingleSelection('datamodels');
 		
 		// HIDE COLUMNS 4,5,6 (DETELEDAT,CREATEDAT,ACTIVE)		
-		$.each([ 4,5,6 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
+		$.each([ 6 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
 				
 		
 	});

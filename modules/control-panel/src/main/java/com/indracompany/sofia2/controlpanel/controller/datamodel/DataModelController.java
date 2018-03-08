@@ -17,11 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.services.datamodel.DataModelService;
@@ -41,27 +41,6 @@ public class DataModelController {
 	private AppWebUtils utils;
 	
 
-	
-//	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-//	@DeleteMapping("/{id}")
-//	public String delete(Model model, @PathVariable("id") String id) {
-//		this.dataModelService.deleteDataModel(id);
-//		return "redirect:/datamodels/list";
-//	}
-	
-//	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-//	public String updateForm(@PathVariable("id") String id, Model model) {
-//		this.populateFormData(model);
-//		DataModel dataModel = this.dataModelService.getDataModel(id);
-//		
-//		if (dataModel == null) {
-//			return "redirect:/datamodels/create";
-//		} else {
-//			model.addAttribute("dataModel", dataModel);
-//		}
-//		
-//		return "/datamodels/create";
-//	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/list", produces = "text/html")
@@ -85,22 +64,36 @@ public class DataModelController {
 
 		if ((dataModelId == null) && (name == null) && (description == null)) {
 			log.debug("No params for filtering, loading all Data Models");
-			model.addAttribute("datamodels", this.dataModelService.getAllDataModels());
+			model.addAttribute("dataModels", this.dataModelService.getAllDataModels());
 
 		} else {
 			log.debug("Params detected, filtering Data Models...");
-			model.addAttribute("datamodels",
+			model.addAttribute("dataModels",
 					this.dataModelService.getDataModelsByCriteria(dataModelId, name, description));
 		}
 
-		return "/datamodels/list";
+		return "datamodels/list";
 	}
 	
-//	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
-//	@GetMapping(value = "/create", produces = "text/html")
-//	public String createForm(Model model) {
-//		model.addAttribute("dataModel", new DataModel());
-//		return "/datamodels/create";
-//	}
+	@GetMapping("/show/{id}")
+	public String show(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
+		try {
+			DataModel dataModel = dataModelService.getDataModelById(id);
+			if (dataModel != null) {
+
+				model.addAttribute("dataModel", dataModel);
+				return "datamodels/show";
+				
+			} else {
+				utils.addRedirectMessage("datamodel.notfound.error", redirect);
+				return "redirect:/datamodels/list";
+			}
+		} catch(RuntimeException e) {
+			return "redirect:/datamodels/list";
+		}
+			
+	}
+	
+
 	
 }

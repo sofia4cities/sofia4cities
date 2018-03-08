@@ -25,6 +25,8 @@ public interface DataModelService {
 
 	List<DataModel> getAllDataModels();
 
-	List<DataModel> getDataModelsByCriteria(String datamodelId, String name, String description);
+	List<DataModel> getDataModelsByCriteria(String dataModelId, String name, String description);
+	
+	DataModel getDataModelById(String dataModelId);
 
 }

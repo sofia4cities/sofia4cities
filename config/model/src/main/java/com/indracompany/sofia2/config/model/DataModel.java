@@ -42,6 +42,8 @@ import lombok.Setter;
 @Configurable
 public class DataModel extends AuditableEntityWithUUID {
 
+	private static final long serialVersionUID = 1L;
+
 	public static enum MainType {
 		IoT, SmartCities, General, SocialMedia, SmartHome, SmartEnergy, SmartRetail, SmartIndustry, GSMA, FiwareDataModel
 	}
