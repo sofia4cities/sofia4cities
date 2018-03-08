@@ -32,6 +32,9 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.Role;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.scheduler.SchedulerType;
 import com.indracompany.sofia2.scheduler.domain.ScheduledJob;
 import com.indracompany.sofia2.scheduler.exception.BatchSchedulerException;
@@ -67,6 +70,9 @@ public class TaskServiceImpl implements TaskService {
 	
 	@Autowired
 	private ScheduledJobService scheduledJobService;
+	
+	@Autowired
+	private UserService userService;
 	
 	
 	@Override
@@ -120,11 +126,21 @@ public class TaskServiceImpl implements TaskService {
 			log.error("Error listing task", e);
 		}
 		
-		List<ScheduledJob> userJobs = scheduledJobService.getScheduledJobsByUsername(username);
-		List<String> userJobsId = userJobs.stream().map(x -> x.getJobName()).collect(Collectors.toList());
+		User user = this.userService.getUser(username);
 		
-		list = list.stream().filter(x -> userJobsId.contains(x.getJobName())).collect(Collectors.toList());
+		if (user == null) {
+			log.error("The user doesnt exists so return empty list");
+			list = new ArrayList<>();
+		} else {
 		
+			if (!user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+				//if the user is not administrator we have to filter the jobs
+				List<ScheduledJob> userJobs = scheduledJobService.getScheduledJobsByUsername(username);
+				List<String> userJobsId = userJobs.stream().map(x -> x.getJobName()).collect(Collectors.toList());
+				
+				list = list.stream().filter(x -> userJobsId.contains(x.getJobName())).collect(Collectors.toList());
+			} 
+		}
 		return list;
 	}
 	
