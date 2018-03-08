@@ -13,8 +13,6 @@
  */
 package com.indracompany.sofia2.flowengine.api.rest.controller;
 
-import javax.validation.constraints.Size;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.flowengine.api.rest.pojo.InsertRequest;
+import com.indracompany.sofia2.flowengine.api.rest.pojo.FlowEngineInsertRequest;
+import com.indracompany.sofia2.flowengine.api.rest.pojo.FlowEngineQueryRequest;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineNodeService;
 import com.indracompany.sofia2.flowengine.exception.NotAllowedException;
@@ -86,20 +85,17 @@ public class FlowEngineNodeServicesController {
 		return response.toString();
 	}
 
-	@RequestMapping(value = "/user/query", method = RequestMethod.GET, produces = { "application/javascript",
+	@RequestMapping(value = "/user/query", method = RequestMethod.POST, produces = { "application/javascript",
 			"application/json" })
-	public @ResponseBody String submitQuery(@RequestParam(required = true) String ontology,
-			@RequestParam(required = true) String targetDB, @RequestParam(required = true) String queryType,
-			@RequestParam(required = true) @Size(min = 1) String query,
-			@RequestParam(required = true) String authentication)
+	public @ResponseBody String submitQuery(@RequestBody FlowEngineQueryRequest queryRequest)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
-		// TODO One field not used
-		return flowEngineNodeService.submitQuery(ontology, queryType, query, authentication);
+		return flowEngineNodeService.submitQuery(queryRequest.getOntology(), queryRequest.getQueryType(),
+				queryRequest.getQuery(), queryRequest.getAuthentication());
 	}
 
 	@RequestMapping(value = "/user/insert", method = RequestMethod.POST, produces = { "application/javascript",
 			"application/json" })
-	public @ResponseBody String submitInsert(@RequestBody InsertRequest insertRequest)
+	public @ResponseBody String submitInsert(@RequestBody FlowEngineInsertRequest insertRequest)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
 		return flowEngineNodeService.submitInsert(insertRequest.getOntology(), insertRequest.getData(),
 				insertRequest.getAuthentication());
