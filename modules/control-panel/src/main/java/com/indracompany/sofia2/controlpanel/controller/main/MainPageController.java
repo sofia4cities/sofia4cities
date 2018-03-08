@@ -21,7 +21,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.indracompany.sofia2.config.repository.ApiRepository;
+import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
+import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.services.menu.MenuService;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.simulation.DeviceSimulationService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
@@ -38,6 +43,18 @@ public class MainPageController {
 	@Autowired
 	private UserService userService;
 
+	// TEMPORAL
+	@Autowired
+	private DashboardRepository dashboardRepository;
+	@Autowired
+	private DeviceSimulationService deviceSimulationServicve;
+	@Autowired
+	private OntologyService ontologyService;
+	@Autowired
+	private ClientPlatformRepository clientPlatformRepository;
+	@Autowired
+	private ApiRepository apiRepository;
+
 	@Value("${sofia2.urls.iotbroker}")
 	String url;
 
@@ -48,6 +65,14 @@ public class MainPageController {
 		// Remove PrettyPrinted
 		String menu = utils.validateAndReturnJson(jsonMenu);
 		utils.setSessionAttribute(request, "menu", menu);
+		
+		//FLOW
+		model.addAttribute("hasOntology", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()).size() > 0 ? true : false);
+		model.addAttribute("hasDevice", this.clientPlatformRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
+		model.addAttribute("hasDashboard",this.dashboardRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : null);
+		model.addAttribute("hasSimulation", this.deviceSimulationServicve.getSimulationsForUser(this.utils.getUserId()).size() > 0 ? true : false);
+		model.addAttribute("hasApi", this.apiRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
+		
 		return "main";
 	}
 

@@ -56,45 +56,45 @@
 				<div class="main-block mt-element-step">
 					<div class="row step-line">					
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col first ">
-							<div class="mt-step-number bg-dark font-grey">
+							<span th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasOntology} ? bg-green : bg-red">
 							  <i class="flaticon-interface-9"></i> 
-							</div>
-							<div class="mt-step-title uppercase bold font-grey-steel">Modela el dato</div>
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel" th:text="#{flow.ontology}">Modela el dato</div>
 							<div class="mt-step-content bold font-grey-steel">...</div>
 						</div>
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
-							<div class="mt-step-number bg-dark font-grey">
+							<span th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasDevice} ? bg-green : bg-red">
 							  <i class="flaticon-share"></i> 
-							</div>
-							<div class="mt-step-title uppercase bold font-grey-steel">Crea tu device</div>
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel" th:text="#{flow.device}">Crea tu device</div>
 							<div class="mt-step-content font-grey-steel">...</div>
 						</div>
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
-							<div class="mt-step-number bg-dark font-grey">
+							<span  th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasSimulation} ? bg-green : bg-red">
 							  <i class="flaticon-analytics "></i>
-							</div>
-							<div class="mt-step-title uppercase bold font-grey-steel">Simula y prueba</div>
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel" th:text="#{flow.simulate}">Simula y prueba</div>
 							<div class="mt-step-content font-grey-steel">...</div>
 						</div>
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
-							<div class="mt-step-number bg-dark font-grey">
+							<span  th:onclick="'javascript:navigateUrl(\'' + @{/dashboards/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasDashboard} ? bg-green : bg-red">
 							  <i class="flaticon-dashboard"></i> 
-							</div>
-							<div class="mt-step-title uppercase bold font-grey-steel">Visualiza</div>
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel" th:text="#{flow.visualize}">Visualiza</div>
 							<div class="mt-step-content font-grey-steel">...</div>
 						</div>
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
-							<div class="mt-step-number bg-dark font-grey">
+							<span th:onclick="'javascript:navigateUrl(\'' + @{/devices/management/list} + '\');'" class="btn mt-step-number bg-blue font-grey">
 							  <i class="flaticon-multimedia-1"></i> 
-							</div>
-							<div class="mt-step-title uppercase bold font-grey-steel">Conecta tu Dispositivo</div>
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel" th:text="#{flow.connect}">Conecta tu Dispositivo</div>
 							<div class="mt-step-content font-grey-steel">...</div>
 						</div>
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col last">
-							<div class="mt-step-number bg-dark font-grey-steel">
+							<span th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'" class="btn mt-step-number font-grey-steel" th:classappend="${hasApi} ? bg-green : bg-red">
 							  <i class="flaticon-layers"></i>  
-							</div>
-							<div class="mt-step-title uppercase font-grey-steel">Crea tu API</div>
+							</span>
+							<div class="mt-step-title uppercase font-grey-steel" th:text="#{flow.api}">Crea tu API</div>
 							<div class="mt-step-content font-grey-steel">...</div>
 						</div>
 					</div>
@@ -130,6 +130,7 @@
 		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
+	function navigateUrl(url){  window.location.href = url;	}
 	var showLog = 0; // console.log toggle
     //<![CDATA[ 	
 		
