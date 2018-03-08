@@ -21,10 +21,8 @@ RUN mkdir -p /opt/nodeRed &&\
 ADD *-exec.jar app.jar
 ADD Flow-Engine-Manager /opt/nodeRed/Flow-Engine-Manager
 
-EXPOSE 10000 8082
+EXPOSE 10000 8082 5050
 
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
-
-#ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=docker","-jar","/app.jar"]
