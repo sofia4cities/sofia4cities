@@ -1,10 +1,10 @@
 sofia2:
    database.mongodb:
       servers: realtimedb:27017 
-   flowengine:
-      services:
-         baseurl: http://flowengineservice:8082/sofia2/flowengine/admin
-         proxyurl: http://localhost/nodered/         
+   flowengine.services:
+    request.timeout.ms: 5000
+    baseurl: http://flowengineservice:8082/sofia2/flowengine/admin   
+    proxyurl: http://localhost/nodered/             
 
 spring:
    datasource:  
