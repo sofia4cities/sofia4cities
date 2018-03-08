@@ -1007,7 +1007,7 @@ var OntologyCreateController = function() {
 		
 		// UPDATE HIDDEN INPUT--> IF USER WANTS TO CHANGE ONTOLOGY TITLE FOR EXAMPLE
 		updateJsonschemaInput: function(){	
-			$('#jsonschema').val($('#jsoneditor textarea').val());
+			$('#jsonschema').val(editor.getText());
 		},		
 		
 		

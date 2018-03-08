@@ -221,8 +221,7 @@ public class OntologyController {
 			}
 		} catch(OntologyServiceException e) {
 			return "redirect:/ontologies/list";
-		}
-			
+		}			
 	}
 		
 

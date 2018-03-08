@@ -1,7 +1,6 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,28 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.api.rest.pojo;
+package com.indracompany.sofia2.config.services.datamodel;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.indracompany.sofia2.config.model.DataModel;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class FlowEngineQueryRequest {
-	@Getter
-	@Setter
-	private String ontology;
-	@Getter
-	@Setter
-	private String queryType;
-	@Getter
-	@Setter
-	private String query;
-	@Getter
-	@Setter
-	private String targetDB;
-	@Getter
-	@Setter
-	private String authentication;
+public interface DataModelService {
+
+	void deleteDataModel(String id);
+	
+	void createDataModel(DataModel dataModel);
+
+	List<DataModel> getAllDataModels();
+
+	List<DataModel> getDataModelsByCriteria(String dataModelId, String name, String description);
+	
+	DataModel getDataModelById(String dataModelId);
+
 }
