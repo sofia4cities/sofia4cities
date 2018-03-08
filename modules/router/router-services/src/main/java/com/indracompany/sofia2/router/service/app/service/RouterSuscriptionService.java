@@ -16,6 +16,7 @@ package com.indracompany.sofia2.router.service.app.service;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 
+
 public interface RouterSuscriptionService {
 	
 	public OperationResultModel suscribe (SuscriptionModel model)  throws Exception;

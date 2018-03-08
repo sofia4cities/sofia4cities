@@ -20,6 +20,7 @@ import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -204,12 +205,28 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	}
 
 	@Override
-	public OperationResultModel subscribe(OperationModel operationModel) throws Exception {
+	public OperationResultModel execute(OperationModel operationModel) throws Exception {
 
-		final OperationResultModel result = new OperationResultModel();
-
-
-		result.setMessage("OK");
+		String METHOD = operationModel.getOperationType().name();
+		
+		OperationResultModel result = new OperationResultModel();
+	
+		try {
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
+				 result =query(operationModel);
+			}
+			
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
+				result =insert(operationModel);
+			}
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
+				result =update(operationModel);
+			}
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
+				result =delete(operationModel);
+			}
+		} catch (Exception e) {
+		}
 		return result;
 	}
 

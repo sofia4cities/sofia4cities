@@ -19,6 +19,7 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -38,6 +39,19 @@ import lombok.Setter;
 @Table(name = "CLIENT_PLATFORM_ONTOLOGY")
 @Configurable
 public class ClientPlatformOntology extends AuditableEntityWithUUID {
+
+	public static enum AccessType {
+		ALL, QUERY, INSERT;
+	}
+
+	@Column(name = "ACCESS")
+	@Getter
+	@Setter
+	private String access;
+
+	public void setAccesEnum(ClientPlatformOntology.AccessType access) {
+		this.access = access.toString();
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.NO_ACTION)

@@ -16,9 +16,11 @@ package com.indracompany.sofia2.config.services.client;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.ClientPlatformOntology.AccessType;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.client.dto.DeviceCreateDTO;
 
 public interface ClientPlatformService {
 
@@ -31,4 +33,12 @@ public interface ClientPlatformService {
 	public List<ClientPlatform> getclientPlatformsByUser(User user);
 
 	boolean haveAuthorityOverOntology(ClientPlatform clientPlatform, Ontology ontology);
+
+	List<ClientPlatform> getAllClientPlatformByCriteria(String userId, String identification, String[] ontologies);
+
+	List<AccessType> getClientPlatformOntologyAccessLevel();
+
+	void createClientPlatform(ClientPlatform clientPlatform);
+
+	void updateDevice(DeviceCreateDTO clientPlatform);
 }

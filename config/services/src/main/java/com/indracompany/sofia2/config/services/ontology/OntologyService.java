@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
@@ -58,6 +59,8 @@ public interface OntologyService {
 	void updateOntology(Ontology ontology, String sessionUserId);
 
 	void createOntology(Ontology ontology);
+
+	List<Ontology> getOntologiesByClientPlatform(ClientPlatform clientPlatform);
 	
 	/**
 	 * This method checks if an ontology has authorizations for other users different from its owner.

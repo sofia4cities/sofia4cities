@@ -37,8 +37,6 @@ public interface TwitterListeningService {
 
 	List<String> getTokensFromClient(String clientPlatformId);
 
-	void updateListen(TwitterListening twitterListener);
-
 	boolean existOntology(String identification, String userSessionId);
 
 	boolean existClientPlatform(String identification);
@@ -46,5 +44,9 @@ public interface TwitterListeningService {
 	Ontology createTwitterOntology(String ontologyId);
 
 	TwitterListening createListening(TwitterListening TwitterListening, String userSessionId);
+
+	void updateListening(TwitterListening twitterListening);
+
+	TwitterListening getListeningByJobName(String jobName);
 
 }

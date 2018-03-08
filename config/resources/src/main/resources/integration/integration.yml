@@ -14,12 +14,14 @@ sofia2:
           url: 
       node-red:
         base:
-          url: http://localhost:8082/
+          url: http://localhost:8082/sofia2/flowengine/admin
         advice:
-          url: http://localhost:8082/sofia2/advice
+          url: http://localhost:5050/
       router-standalone:
         base:
           url: http://localhost:19100/
+        advice:
+          url: http://localhost:19100/router/router/advice/
         management:
           url: http://localhost:19100/router/management/
         router:

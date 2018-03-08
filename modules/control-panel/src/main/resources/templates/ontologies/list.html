@@ -83,22 +83,13 @@
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
-								</div>
+								</div>								
 								<div class="actions margin-right-20">
-									<div class="btn-group">												
-										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
-											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
-										</a>												
-										<ul class="dropdown-menu pull-right" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createwizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<!-- <li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologies/createjsonschema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li> -->
-											<li class="divider"> </li>
-											<li><a  onclick="location.href='../ontologies/create'" th:text="#{gen.createBtn}"> New </a></li>
-										</ul>
+									<div class="btn-group">									
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../ontologies/createwizard'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
 									</div>										
-								</div>
+								</div>								
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
@@ -108,11 +99,8 @@
 									</div>
 									<div class="col-md-12 margin-bottom-20">
 									<!-- SEARCH FORM -->
-										<form id="form_ontology" class="" role="form" method="get">												
-											<div class="col-md-12 no-space">
-												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" data-content="Búsqueda de Ontologías, haga click para desplegar/colapsar el forumulario y Buscar." data-original-title="Filtro de Ontologías" th:text="#{gen.search}">Search</span></h4>
-											</div>
-											<div id="searchFilter" class="form-body collapse">
+										<form id="form_ontology" class="" role="form" method="get">											
+											<div id="searchFilter" class="form-body hide" style="border-bottom: 1px solid #eef1f5;">
 												<div class="row">
 													<div class="col-md-4 col-xs-12">
 														<div class="form-group">															
@@ -179,8 +167,7 @@
 															<td class="text-center" th:if="${!ontology.public}"></td>
 															<!-- AUTHORIZATIONS -->
 															<td class="text-center" th:if="${not #lists.isEmpty(ontology.ontologyUserAccesses)}"><span class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
-															<td class="text-center" th:if="${#lists.isEmpty(ontology.ontologyUserAccesses)}"></td>
-															
+															<td class="text-center" th:if="${#lists.isEmpty(ontology.ontologyUserAccesses)}"><span class="label label-danger"><i class="fa fa-times"></i> No Authorizations</span></td>															
 															<!-- DATAMODEL -->
 															<td class="text-center " th:text="${ontology.dataModel?.name}"></td>
 															<!-- DATE -->
@@ -190,10 +177,10 @@
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-sm btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/show/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/show/${ontology.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  th:if="(${#authentication.name} == ${ontology.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn grey-mint btn-sm btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/update/${ontology.id}|} + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  th:if="(${#authentication.name} == ${ontology.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/ontologies/update/${ontology.id}|} + '\');'"><i class="fa fa-edit"></i></span>
 																	
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
@@ -255,7 +242,7 @@
 	search[0] ? $('#identification').val(search[0]) : search[0] = '';
 	description ? $('#description').val(description) : description = '';
 	console.log('SEARCHING ... [ Identification: ' + search[0] + ' Description: ' + description + ']');
-	if (( search[0] != '') || (description != '')) { $('.search-toggle').trigger('click'); }
+	if (( search[0] != '') || (description != '')) { $('#search-toggle').trigger('click'); }
 	
 	// DATATABLES LANGUAJE FROM PROPERTIES.
 	datatable_lang = [[#{datatables_lang}]];	

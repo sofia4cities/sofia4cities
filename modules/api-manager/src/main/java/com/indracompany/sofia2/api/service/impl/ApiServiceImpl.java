@@ -143,15 +143,18 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		try {
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
 				model.setBody(QUERY);
+				model.setOperationType(OperationType.QUERY);
 				OperationResultModel result =facade.query(modelNotification);
 				OUTPUT = result.getResult();
 			}
 			
 			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
+				model.setOperationType(OperationType.INSERT);
 				OperationResultModel result =facade.insert(modelNotification);
 				OUTPUT = result.getResult();
 			}
 			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+				model.setOperationType(OperationType.UPDATE);
 				OperationResultModel result =facade.update(modelNotification);
 				OUTPUT = result.getResult();
 			}

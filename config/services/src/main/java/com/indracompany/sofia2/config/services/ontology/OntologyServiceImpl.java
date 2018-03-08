@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.model.Ontology;
@@ -34,6 +36,7 @@ import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -52,6 +55,8 @@ public class OntologyServiceImpl implements OntologyService {
 	private OntologyUserAccessTypeRepository ontologyUserAccessTypeRepository;
 	@Autowired
 	private DataModelRepository dataModelRepository;
+	@Autowired
+	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 	@Autowired
 	private UserService userService;
 
@@ -225,12 +230,23 @@ public class OntologyServiceImpl implements OntologyService {
 		if (ontology != null) {
 			ObjectMapper mapper = new ObjectMapper();
 
-			// String prefix =
-			// mapper.readTree(ontology.getJsonSchema()).get("title").asText();
 
-			JsonNode jsonNode = mapper.readTree(ontology.getJsonSchema());
+			JsonNode jsonNode = null;
+			try {
+
+				jsonNode = mapper.readTree(ontology.getJsonSchema());
+
+
+			} catch (Exception e) {
+				if (ontology.getJsonSchema().contains("'"))
+					jsonNode = mapper.readTree(ontology.getJsonSchema().replaceAll("'", "\""));
+			}
 			// Predefine Path to data properties
-			jsonNode = jsonNode.path("datos").path("properties");
+			if(!jsonNode.path("datos").path("properties").isMissingNode())
+				jsonNode = jsonNode.path("datos").path("properties");
+			else 
+				jsonNode = jsonNode.path("properties");
+			
 			Iterator<String> iterator = jsonNode.fieldNames();
 			String property;
 			while (iterator.hasNext()) {
@@ -304,8 +320,20 @@ public class OntologyServiceImpl implements OntologyService {
 
 	private Map<String, String> extractSubFieldsFromJson(Map<String, String> fields, JsonNode jsonNode, String property,
 			String parentField, boolean isPropertyArray) {
-		if (isPropertyArray)
-			jsonNode = jsonNode.path(property).path("items").path("properties");
+		if (isPropertyArray) {
+			if(!jsonNode.path(property).path("items").path("properties").isMissingNode())
+				jsonNode = jsonNode.path(property).path("items").path("properties");
+			else {
+				jsonNode = jsonNode.path(property).path("items").path("items");
+				int size = jsonNode.size();
+				for(int i=0;i<size;i++) {
+					fields.put(parentField+"."+i, jsonNode.path(i).get("type").asText());
+				}
+				
+				return fields;
+				
+			}
+		}
 		else
 			jsonNode = jsonNode.path(property).path("properties");
 		Iterator<String> iterator = jsonNode.fieldNames();
@@ -313,12 +341,18 @@ public class OntologyServiceImpl implements OntologyService {
 		while (iterator.hasNext()) {
 			subProperty = iterator.next();
 
-			if (jsonNode.path(subProperty).get("type").equals("object")) {
+			if (jsonNode.path(subProperty).get("type").asText().equals("object")) {
 				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField + "." + subProperty, false);
-			} else if (jsonNode.path(subProperty).get("type").equals("array")) {
+			} else if (jsonNode.path(subProperty).get("type").asText().equals("array")) {
 				this.extractSubFieldsFromJson(fields, jsonNode, subProperty, parentField + "." + subProperty, true);
+
+
 			} else {
-				fields.put(parentField + "." + subProperty, jsonNode.path(subProperty).get("type").asText());
+				if(subProperty.equals("$date")) 
+					fields.put(parentField, "date");
+				else
+					fields.put(parentField + "." + subProperty, jsonNode.path(subProperty).get("type").asText());
+
 			}
 		}
 
@@ -327,6 +361,15 @@ public class OntologyServiceImpl implements OntologyService {
 	}
 
 	@Override
+	public List<Ontology> getOntologiesByClientPlatform(ClientPlatform clientPlatform) {
+		List<Ontology> ontologies = new ArrayList<Ontology>();
+		for (ClientPlatformOntology relation : this.clientPlatformOntologyRepository
+				.findByClientPlatform(clientPlatform)) {
+			ontologies.add(relation.getOntology());
+		}
+		return ontologies;
+	}
+
 	public boolean hasOntologyUsersAuthorized(String ontologyId) {
 		Ontology ontology = ontologyRepository.findById(ontologyId);
 		List<OntologyUserAccess> authorizations = ontologyUserAccessRepository.findByOntology(ontology);
@@ -414,6 +457,7 @@ public class OntologyServiceImpl implements OntologyService {
 		} else {
 			throw new IllegalStateException("Incorrect type of access");
 		}
+
 
 	}
 	

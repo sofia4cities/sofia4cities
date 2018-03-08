@@ -31,10 +31,8 @@ import org.springframework.social.twitter.api.StreamWarningEvent;
 import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
-import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
-import com.indracompany.sofia2.streaming.twitter.sib.SibService;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.streaming.twitter.persistence.PeristenceService;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -45,10 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TwitterStreamListener implements StreamListener {
 
 	@Autowired
-	MessageProcessor messageProcessor;
-
-	@Autowired
-	SibService sibService;
+	PeristenceService peristenceService;
 	@Getter
 	@Setter
 	private List<String> keywords;
@@ -109,7 +104,6 @@ public class TwitterStreamListener implements StreamListener {
 
 	public TwitterStreamListener() {
 
-		log.info("New TwitterListener up");
 		tweetsQueue = new LinkedBlockingQueue<Tweet>();
 		executor = Executors.newFixedThreadPool(THREADS);
 		tweetInsert = defineMonitoringRunnable();
@@ -130,8 +124,8 @@ public class TwitterStreamListener implements StreamListener {
 					executor.execute(tweetInsert);
 				}
 			}
-		
-			/*Add to queue*/
+
+			/* Add to queue */
 			if (tweetsQueue.size() < QUEUE_LENGTH) {
 				tweetsQueue.add(tweet);
 			}
@@ -144,14 +138,12 @@ public class TwitterStreamListener implements StreamListener {
 
 	@Override
 	public void onDelete(StreamDeleteEvent deleteEvent) {
-		this.twitterStream.close();
-
+		// TODO
 	}
 
 	@Override
 	public void onLimit(int numberOfLimitedTweets) {
-		this.twitterStream.close();
-
+		// TODO
 	}
 
 	@Override
@@ -162,31 +154,12 @@ public class TwitterStreamListener implements StreamListener {
 
 	public void insertInstance(String instance) {
 		try {
-			// this.sibService.insertOntologyInstance(instance,
-			// this.getSessionKey(), this.getOntology(),
-			// this.getClientPlatform(), this.getConfigurationId());
-			
-			//while we dont have iotbroker
 			instance = instance.replaceAll("'", "\"");
-			this.sibService.inserOntologyInstanceToMongo(instance, this.getOntology(), this.getClientPlatform(),
-					this.getClientPlatform() + ":twitterStreaming", user);
-			
-
+			this.peristenceService.insertOntologyInstance(instance, this.getOntology(), user, this.clientPlatform,
+					this.clientPlatform + ":twitterStream");
 		} catch (Exception e) {
 			log.debug("Error inserting tweet : " + this.getOntology() + ". Cause: " + e.getMessage(), e);
 		}
-
-	}
-
-	public void getSibSessionKey() throws SSAPComplianceException, AuthenticationException {
-
-		// this.setSessionKey(sibService.getSessionKey(this.getToken()));
-
-	}
-
-	public void deleteSibSessionKey() {
-
-		// this.sibService.disconnect(this.getSessionKey());
 
 	}
 
@@ -250,6 +223,17 @@ public class TwitterStreamListener implements StreamListener {
 
 	private Runnable defineMonitoringRunnable() {
 		return new ListenerThread();
+	}
+
+	public void closeStream() {
+		try {
+			this.twitterStream.close();
+		} catch (Exception e) {
+
+		} finally {
+			this.twitterStream = null;
+		}
+
 	}
 
 }

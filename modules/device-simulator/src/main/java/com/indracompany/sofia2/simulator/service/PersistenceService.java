@@ -11,20 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.streaming.twitter.application;
+package com.indracompany.sofia2.simulator.service;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
+public interface PersistenceService {
 
+	void insertOntologyInstance(String instance, String ontology, String user, String clientPlatform,
+			String clientPlatformInstance) throws Exception;
 
-@SpringBootApplication
-@ComponentScan("com.indracompany.sofia2")
-public class StreamingTwitterApp {
-
-	public static void main(String[] args) {
-		SpringApplication.run(StreamingTwitterApp.class, args);
-	}
 }
