@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,16 +47,16 @@ public class DeviceSimulatorController {
 	private AppWebUtils utils;
 	@Autowired
 	private SimulationService simulationService;
-	
+
 	@GetMapping("list")
 	public String List(Model model) {
-		
+
 		List<DeviceSimulation> simulations = new ArrayList<DeviceSimulation>();
-		if(this.utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
-			simulations= this.deviceSimulationService.getAllSimulations();
+		if (this.utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			simulations = this.deviceSimulationService.getAllSimulations();
 		else
-			simulations= this.deviceSimulationService.getSimulationsForUser(this.utils.getUserId());
-		
+			simulations = this.deviceSimulationService.getSimulationsForUser(this.utils.getUserId());
+
 		model.addAttribute("simulations", simulations);
 		return "/simulator/list";
 	}
@@ -67,6 +68,24 @@ public class DeviceSimulatorController {
 		model.addAttribute("platformClients", clients);
 		model.addAttribute("simulators", simulators);
 		model.addAttribute("simulation", new DeviceSimulation());
+		return "/simulator/create";
+	}
+
+	@GetMapping("update/{id}")
+	public String updateForm(Model model, @PathVariable("id") String id) {
+		List<String> clients = this.deviceSimulationService.getClientsForUser(this.utils.getUserId());
+		List<String> simulators = this.deviceSimulationService.getSimulatorTypes();
+		DeviceSimulation simulation = this.deviceSimulationService.getSimulationById(id);
+		model.addAttribute("platformClient", simulation.getClientPlatform());
+		model.addAttribute("ontology", simulation.getOntology());
+		model.addAttribute("token", simulation.getToken());
+		model.addAttribute("platformClients", clients);
+		model.addAttribute("simulators", simulators);
+		model.addAttribute("simulation", simulation);
+		model.addAttribute("ontologies", this.deviceSimulationService
+				.getClientOntologiesIdentification(simulation.getClientPlatform().getIdentification()));
+		model.addAttribute("tokens", this.deviceSimulationService
+				.getClientTokensIdentification(simulation.getClientPlatform().getIdentification()));
 		return "/simulator/create";
 	}
 
@@ -94,7 +113,8 @@ public class DeviceSimulatorController {
 	public String getOntologyfields(Model model, @RequestParam String ontologyIdentification)
 			throws JsonProcessingException, IOException {
 
-		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification, this.utils.getUserId()));
+		model.addAttribute("fields",
+				this.ontologyService.getOntologyFields(ontologyIdentification, this.utils.getUserId()));
 		model.addAttribute("simulators", this.deviceSimulationService.getSimulatorTypes());
 		return "/simulator/create :: ontologyFields";
 	}
@@ -110,7 +130,7 @@ public class DeviceSimulatorController {
 		}
 		model.addAttribute("simulations", this.deviceSimulationService.getAllSimulations());
 		return "/simulator/list :: simulations";
-		
+
 	}
 
 }

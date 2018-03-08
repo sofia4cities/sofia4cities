@@ -131,10 +131,11 @@
 																<td class="icon" style="white-space: nowrap">
 																	<div class="grupo-iconos">		
 																		<!-- START/STOP -->
-																		<span  th:if="${simulation.active}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:onclick="'javascript:startStopSimulation(\'' + ${simulation.id} + '\');'"><i class="fa fa-stop"></i></span>
-																		<span  th:if="!${simulation.active}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:startStopSimulation(\'' + ${simulation.id} + '\');'"><i class="fa fa-play"></i></span>
+																		<span  th:if="${simulation.active}" class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.stop}" th:data-original-title="#{gen.stop}" th:onclick="'javascript:startStopSimulation(\'' + ${simulation.id} + '\');'"><i class="fa fa-stop"></i></span>
+																		<span  th:if="!${simulation.active}" class="btn btn-sm green-sharp sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.play}" th:data-original-title="#{gen.play}" th:onclick="'javascript:startStopSimulation(\'' + ${simulation.id} + '\');'"><i class="fa fa-play"></i></span>
 																		<!-- EDIT -->
-																		<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/devicesimulation/update/${simulation.id}|} + '\');'"><i class="fa fa-edit"></i></span>
+																		<span th:if="${simulation.active == false}" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/devicesimulation/update/${simulation.id}|} + '\');'" ><i class="fa fa-edit"></i></span>
+
 																	</div>
 																</td>
 															</tr>

@@ -23,6 +23,7 @@ public class SSAPBodyQueryMessage  extends SSAPBodyOntologyMessage {
 	private String query;
 	private SSAPQueryType queryType;
 	private SSAPQueryResultFormat resultFormat;
+	private long cacheTime;
 
 	public String getQuery() {
 		return query;
@@ -46,6 +47,14 @@ public class SSAPBodyQueryMessage  extends SSAPBodyOntologyMessage {
 
 	public void setResultFormat(SSAPQueryResultFormat resultFormat) {
 		this.resultFormat = resultFormat;
+	}
+
+	public long getCacheTime() {
+		return cacheTime;
+	}
+
+	public void setCacheTime(long cacheTime) {
+		this.cacheTime = cacheTime;
 	}
 
 	@Override

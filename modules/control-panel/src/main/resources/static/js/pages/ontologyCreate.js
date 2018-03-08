@@ -1005,6 +1005,14 @@ var OntologyCreateController = function() {
 			}
 		},
 		
+		// UPDATE HIDDEN INPUT--> IF USER WANTS TO CHANGE ONTOLOGY TITLE FOR EXAMPLE
+		updateJsonschemaInput: function(){	
+			$('#jsonschema').val(editor.getText());
+		},		
+		
+		
+		
+		
 		// CHECK PROPERTIES TYPE
 		checkType: function(obj){	
 			logControl ? console.log(LIB_TITLE + ': checkType()') : '';
