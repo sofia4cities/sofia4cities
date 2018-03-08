@@ -123,6 +123,7 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 		simulation.setToken(this.tokenRepository.findByToken(mapper.readTree(json).path("token").asText()));
 		simulation.setIdentification(identification);
 		simulation.setJson(json);
+		simulation.setInterval(interval);
 		
 		int minutes = 0;
 		int seconds = interval;
@@ -135,11 +136,37 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 		if (minutes == 0)
 			simulation.setCron("0/" + String.valueOf(seconds) + " * * ? * * *");
 		else
-			simulation.setCron("0/" + String.valueOf(seconds) + " 0/" + String.valueOf(minutes) + " * * ? * * *");
+			simulation.setCron("0/" + String.valueOf(seconds) + " 0/" + String.valueOf(minutes) + " * ? * * *");
 		simulation.setActive(false);
 		simulation.setUser(this.userService.getUser(userId));
 		return this.deviceSimulationRepository.save(simulation);
 
+	}
+	
+	@Override
+	public DeviceSimulation updateSimulation(String identification, int interval, String json, DeviceSimulation simulation) throws JsonProcessingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		simulation.setOntology(this.ontologyService.getOntologyByIdentification(mapper.readTree(json).path("ontology").asText(),simulation.getUser().getUserId()));
+		simulation.setClientPlatform(this.clientPlatformRepository.findByIdentification(mapper.readTree(json).path("clientPlatform").asText()));
+		simulation.setToken(this.tokenRepository.findByToken(mapper.readTree(json).path("token").asText()));
+		simulation.setIdentification(identification);
+		simulation.setJson(json);
+		simulation.setInterval(interval);
+		
+		int minutes = 0;
+		int seconds = interval;
+		if (interval >= 0) {
+			for (int i = 0; i < (interval / 60); i++) {
+				minutes++;
+				seconds = seconds - 60;
+			}
+		}
+		if (minutes == 0)
+			simulation.setCron("0/" + String.valueOf(seconds) + " * * ? * * *");
+		else
+			simulation.setCron("0/" + String.valueOf(seconds) + " 0/" + String.valueOf(minutes) + " * ? * * *");
+		simulation.setActive(false);
+		return this.deviceSimulationRepository.save(simulation);
 	}
 
 	@Override
@@ -158,4 +185,6 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 		
 		return this.deviceSimulationRepository.findByUser(this.userService.getUser(userId));
 	}
+
+
 }

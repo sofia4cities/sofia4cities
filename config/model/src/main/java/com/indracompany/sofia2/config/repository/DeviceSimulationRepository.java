@@ -34,4 +34,6 @@ public interface DeviceSimulationRepository extends JpaRepository<DeviceSimulati
 
 	void deleteByOntology(Ontology ontology);
 
+	void deleteById(String id);
+
 }

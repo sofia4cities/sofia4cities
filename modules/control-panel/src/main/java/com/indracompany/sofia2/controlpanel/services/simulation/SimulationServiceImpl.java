@@ -102,4 +102,10 @@ public class SimulationServiceImpl implements SimulationService {
 
 	}
 
+	@Override
+	public void updateSimulation(String identification, int interval, String json, DeviceSimulation simulation) throws JsonProcessingException, IOException {
+		this.deviceSimulationService.updateSimulation(identification, interval,	json, simulation);
+		
+	}
+
 }

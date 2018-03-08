@@ -20,16 +20,20 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.config.model.DeviceSimulation;
 import com.indracompany.sofia2.config.model.Role;
+import com.indracompany.sofia2.config.services.deletion.EntityDeletionService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.simulation.DeviceSimulationService;
 import com.indracompany.sofia2.controlpanel.services.simulation.SimulationService;
@@ -47,6 +51,8 @@ public class DeviceSimulatorController {
 	private AppWebUtils utils;
 	@Autowired
 	private SimulationService simulationService;
+	@Autowired
+	private EntityDeletionService entityDeletionService;
 
 	@GetMapping("list")
 	public String List(Model model) {
@@ -133,4 +139,44 @@ public class DeviceSimulatorController {
 
 	}
 
+	@PutMapping("update/{id}")
+	public String update(Model model, @PathVariable("id") String id, @RequestParam String identification,
+			@RequestParam String jsonMap, @RequestParam String ontology, @RequestParam String clientPlatform,
+			@RequestParam String token, @RequestParam int interval, RedirectAttributes redirect) throws JsonProcessingException, IOException {
+
+		DeviceSimulation simulation = this.deviceSimulationService.getSimulationById(id);
+		if (simulation != null) {
+			if (!simulation.isActive()) {
+				this.simulationService.updateSimulation(identification, interval,
+						this.simulationService.getDeviceSimulationJson(clientPlatform, token, ontology, jsonMap),
+						simulation);
+				return "redirect:/devicesimulation/list";
+			} else {
+				this.utils.addRedirectMessage("simulation.update.isactive", redirect);
+				return "redirect:/devicesimulation/update/" + id;
+			}
+				
+		} else{
+			this.utils.addRedirectMessage("simulation.update.error", redirect);
+			return "redirect:/devicesimulation/update/" + id;
+		}
+			
+	}
+
+	@DeleteMapping("{id}")
+	public @ResponseBody String delete(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
+		DeviceSimulation simulation = this.deviceSimulationService.getSimulationById(id);
+		if (simulation != null) {
+			try {
+				this.entityDeletionService.deleteDeviceSimulation(simulation);
+			} catch (Exception e) {
+				this.utils.addRedirectException(e, redirect);
+				return "error";
+			}
+			return "ok";
+		} else {
+			this.utils.addRedirectMessage("simulation.exists.false", redirect);
+			return "error";
+		}
+	}
 }

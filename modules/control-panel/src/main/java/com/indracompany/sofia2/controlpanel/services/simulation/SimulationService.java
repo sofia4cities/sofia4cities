@@ -28,4 +28,6 @@ public interface SimulationService {
 	void scheduleSimulation(DeviceSimulation deviceSimulation);
 
 	void unscheduleSimulation(DeviceSimulation deviceSimulation);
+	
+	void updateSimulation(String identification, int interval, String json, DeviceSimulation simulation) throws JsonProcessingException, IOException;
 }
