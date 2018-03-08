@@ -96,5 +96,53 @@
 <!-- 		</plugins> -->
 <!-- 	</build> -->
 
+	<build>
+		<plugins>
+			<plugin>
+	          <groupId>org.jacoco</groupId>
+	          <artifactId>jacoco-maven-plugin</artifactId>
+	          <version>0.8.0</version>
+	          <executions>
+	            <execution>
+	              <id>default-prepare-agent</id>
+	              <goals>
+	                <goal>prepare-agent</goal>
+	              </goals>
+	            </execution>
+	            <execution>
+	              <id>default-report</id>
+	              <phase>prepare-package</phase>
+	              <goals>
+	                <goal>report</goal>
+	              </goals>
+	            </execution>
+	          </executions>
+	        </plugin>
+		</plugins>
+	</build>
+	
+	<profiles>
+		<profile>
+	        <id>sonar</id>
+	        <activation>
+	            <activeByDefault>true</activeByDefault>
+	        </activation>
+	        <properties>
+	            <sonar.host.url>
+	              https://s4cities-sf2.northeurope.cloudapp.azure.com/sonar
+	            </sonar.host.url>
+	            <sonar.login>
+	              7545a5f93579b95e8ff25b8a5538e4adeaba7de0
+	            </sonar.login>
+	            <sonar.projectKey>
+	              com.indracompany.sofia2:sofia2-persistence-mongodb-module
+	            </sonar.projectKey>
+	            <sonar.junit.reportPaths>
+	              target/surefire-reports
+	            </sonar.junit.reportPaths>
+	        </properties>
+	    </profile>
+	</profiles>
+
 
 </project>
