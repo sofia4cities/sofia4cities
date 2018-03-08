@@ -36,7 +36,6 @@ import com.indracompany.sofia2.config.model.ApiQueryParameter;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
-import com.indracompany.sofia2.ssap.SSAPQueryType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,21 +58,21 @@ public class ApiManagerService {
 	}
 
 	public Api getApi(String pathInfo, User user) {
-		String apitipo = null;
-		String apiVersion = this.getApiVersion(pathInfo);
-		String apiIdentifier = this.getApiIdentifier(pathInfo);
+		final String apitipo = null;
+		final String apiVersion = this.getApiVersion(pathInfo);
+		final String apiIdentifier = this.getApiIdentifier(pathInfo);
 
-		Api api = getApi(apiIdentifier, Integer.parseInt(apiVersion), apitipo);
+		final Api api = getApi(apiIdentifier, Integer.parseInt(apiVersion), apitipo);
 		return api;
 	}
 
 	public String getApiVersion(String pathInfo) throws BadRequestException {
 
 		String version = "1";
-		Pattern pattern = Pattern.compile("(.*)/api/v(.*)/");
-		Matcher matcher = pattern.matcher(pathInfo);
+		final Pattern pattern = Pattern.compile("(.*)/api/v(.*)/");
+		final Matcher matcher = pattern.matcher(pathInfo);
 		if (matcher.find()) {
-			String param = matcher.group(2);
+			final String param = matcher.group(2);
 			version = param.substring(0, param.indexOf("/"));
 			return version;
 		}
@@ -85,7 +84,7 @@ public class ApiManagerService {
 				version = version.substring(1);
 			}
 
-			int slashIndex = version.indexOf('/');
+			final int slashIndex = version.indexOf('/');
 
 			if (slashIndex == -1) {
 				throw new BadRequestException("com.indra.sofia2.api.service.notvalidformat");
@@ -106,7 +105,7 @@ public class ApiManagerService {
 
 	public String getApiIdentifier(String pathInfo) throws BadRequestException {
 
-		String apiVersion = this.getApiVersion(pathInfo);
+		final String apiVersion = this.getApiVersion(pathInfo);
 
 		String apiIdentifier = pathInfo.substring(pathInfo.indexOf(apiVersion + "/") + (apiVersion + "/").length());
 
@@ -138,8 +137,8 @@ public class ApiManagerService {
 
 	public boolean isPathQuery(String pathInfo) {
 
-		String apiIdentifier = this.getApiIdentifier(pathInfo);
-		String objectId = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
+		final String apiIdentifier = this.getApiIdentifier(pathInfo);
+		final String objectId = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 
 		if (objectId.length() == 0 || !objectId.startsWith("/")) {
 			return false;
@@ -150,14 +149,14 @@ public class ApiManagerService {
 
 	public ApiOperation getCustomSQL(String pathInfo, Api api, String operation) {
 
-		String apiIdentifier = this.getApiIdentifier(pathInfo);
+		final String apiIdentifier = this.getApiIdentifier(pathInfo);
 
 		String opIdentifier = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 		if (opIdentifier.startsWith("\\") || opIdentifier.startsWith("/")) {
 			opIdentifier = opIdentifier.substring(1);
 		}
 
-		List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
+		final List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
 
 		String match = apiIdentifier + "_" + operation;
 
@@ -165,7 +164,7 @@ public class ApiManagerService {
 			match += "_" + opIdentifier;
 		}
 
-		for (ApiOperation operacion : operaciones) {
+		for (final ApiOperation operacion : operaciones) {
 			if (operacion.getIdentification().equals(match)) {
 				return operacion;
 			}
@@ -176,8 +175,8 @@ public class ApiManagerService {
 	public HashMap<String, String> getCustomParametersValues(HttpServletRequest request, String body,
 			HashSet<ApiQueryParameter> queryParametersCustomQuery) {
 
-		HashMap<String, String> customqueryparametersvalues = new HashMap<String, String>();
-		for (ApiQueryParameter customqueryparameter : queryParametersCustomQuery) {
+		final HashMap<String, String> customqueryparametersvalues = new HashMap<>();
+		for (final ApiQueryParameter customqueryparameter : queryParametersCustomQuery) {
 			String paramvalue = request.getParameter(customqueryparameter.getName());
 			if (paramvalue == null) {
 				if (customqueryparameter.getHeaderType().name()
@@ -188,11 +187,11 @@ public class ApiManagerService {
 				if (customqueryparameter.getDataType().name()
 						.equalsIgnoreCase(ApiQueryParameter.DataType.date.name())) {
 					try {
-						DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+						final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 						df.parse(paramvalue);
 						paramvalue = "\"" + paramvalue + "\"";
-					} catch (Exception e) {
-						Object parametros[] = { "$" + customqueryparameter.getName(), "Date" };
+					} catch (final Exception e) {
+						final Object parametros[] = { "$" + customqueryparameter.getName(), "Date" };
 						throw new BadRequestException(
 								"com.indra.sofia2.api.service.wrongparametertype " + parametros[0]);
 					}
@@ -201,8 +200,8 @@ public class ApiManagerService {
 					try {
 						paramvalue.toString();
 						paramvalue = "\"" + paramvalue + "\"";
-					} catch (Exception e) {
-						Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
+					} catch (final Exception e) {
+						final Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
 						throw new BadRequestException(
 								"com.indra.sofia2.api.service.wrongparametertype" + parametros[0]);
 					}
@@ -210,14 +209,14 @@ public class ApiManagerService {
 						.equalsIgnoreCase(ApiQueryParameter.DataType.number.name())) {
 					try {
 						Double.parseDouble(paramvalue);
-					} catch (Exception e) {
-						Object parametros[] = { "$" + customqueryparameter.getName(), "Integer" };
+					} catch (final Exception e) {
+						final Object parametros[] = { "$" + customqueryparameter.getName(), "Integer" };
 						throw new BadRequestException(
 								"com.indra.sofia2.api.service.wrongparametertype" + parametros[0]);
 					}
 				} else if (customqueryparameter.getDataType().name().equalsIgnoreCase("boolean")) {
 					if (!paramvalue.equalsIgnoreCase("true") && !paramvalue.equalsIgnoreCase("false")) {
-						Object parametros[] = { "$" + customqueryparameter.getName(), "Boolean" };
+						final Object parametros[] = { "$" + customqueryparameter.getName(), "Boolean" };
 						throw new BadRequestException(
 								"com.indra.sofia2.api.service.wrongparametertype" + parametros[0]);
 					}
@@ -229,8 +228,8 @@ public class ApiManagerService {
 	}
 
 	public String buildQuery(String queryDb, HashMap<String, String> queryParametersValues) {
-		for (String param : queryParametersValues.keySet()) {
-			String value = queryParametersValues.get(param);
+		for (final String param : queryParametersValues.keySet()) {
+			final String value = queryParametersValues.get(param);
 			queryDb = queryDb.replace("{$" + param + "}", queryParametersValues.get(param));
 		}
 		return queryDb;
@@ -238,7 +237,7 @@ public class ApiManagerService {
 
 	public String getObjectidFromPathQuery(String pathInfo) {
 
-		String apiIdentifier = this.getApiIdentifier(pathInfo);
+		final String apiIdentifier = this.getApiIdentifier(pathInfo);
 
 		String objectId = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 
@@ -249,7 +248,7 @@ public class ApiManagerService {
 		objectId = objectId.substring(1);
 
 		int slashIndex = objectId.indexOf('/');
-		int parentIndex = objectId.indexOf('(');
+		final int parentIndex = objectId.indexOf('(');
 		if (slashIndex == -1) {
 			slashIndex = objectId.length();
 		}
@@ -264,13 +263,13 @@ public class ApiManagerService {
 
 	public boolean isSQLLIKE(String query, String queryType) {
 		if (query != null && query.length() > 0 && queryType != null && queryType.length() > 0) {
-			return queryType.equals(SSAPQueryType.SQL.name());
+			return queryType.startsWith("SQL");
 		}
 		return false;
 	}
 
 	public String readPayload(HttpServletRequest request) {
-		StringBuilder buffer = new StringBuilder();
+		final StringBuilder buffer = new StringBuilder();
 		BufferedReader reader;
 		try {
 			reader = request.getReader();
@@ -279,7 +278,7 @@ public class ApiManagerService {
 				buffer.append(line);
 			}
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		return buffer.toString();

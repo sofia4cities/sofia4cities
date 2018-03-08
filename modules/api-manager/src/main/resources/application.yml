@@ -7,6 +7,10 @@ server: ## Config Web Server
       access_log_enabled: true
       basedir: target/tomcat
 
+
+spring.security.enabled: false
+management.security.enabled: false
+security.basic.enabled: false
 # all access to actuator endpoints without security
 management:
   security:
@@ -46,10 +50,10 @@ sofia2: #Config Sofia2 specific
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
     
 #Security Config
-security:
-    user:
-       name: admin
-       password: admin
+#security:
+#    user:
+#       name: admin
+#       password: admin
    
 spring: ## General Config  
    application.name: sofia2-api-manager

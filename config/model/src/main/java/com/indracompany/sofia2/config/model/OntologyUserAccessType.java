@@ -30,10 +30,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
 import lombok.Getter;
@@ -43,6 +42,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "ONTOLOGY_USER_ACCES_TYPE")
 public class OntologyUserAccessType extends AuditableEntity {
+
+	private static final long serialVersionUID = 1L;
 
 	public static enum Type {
 		ALL, QUERY, INSERT;
@@ -54,8 +55,8 @@ public class OntologyUserAccessType extends AuditableEntity {
 	@Setter
 	private Integer id;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "ontologyUserAccessType", fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
 	@Setter
 	private Set<OntologyUserAccess> ontologyUserAccess;
@@ -75,4 +76,20 @@ public class OntologyUserAccessType extends AuditableEntity {
 	@Setter
 	private String description;
 
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof OntologyUserAccessType )) return false;
+        return getName() != null && getName().equals(((OntologyUserAccessType) o).getName());
+    }
+	
+    @Override
+    public int hashCode() {
+    	return java.util.Objects.hash(getName());
+    }
+    
+    @Override
+    public String toString() {
+    	return getName();
+    }
 }

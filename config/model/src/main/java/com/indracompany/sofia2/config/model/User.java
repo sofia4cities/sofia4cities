@@ -38,7 +38,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.indracompany.sofia2.config.converters.JPAHAS256Converter;
+import com.indracompany.sofia2.config.converters.JPAHAS256ConverterCustom;
 import com.indracompany.sofia2.config.model.base.AuditableEntity;
 
 import lombok.Getter;
@@ -48,6 +48,8 @@ import lombok.Setter;
 @Table(name = "USER")
 @Configurable
 public class User extends AuditableEntity {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "USER_ID", length = 50, unique = true, nullable = false)
@@ -75,7 +77,7 @@ public class User extends AuditableEntity {
 	@Getter
 	@Setter
 	// @Convert(converter = JPACryptoConverter.class)
-	@Convert(converter = JPAHAS256Converter.class)
+	@Convert(converter = JPAHAS256ConverterCustom.class)
 	private String password;
 
 	@Column(name = "ACTIVE", nullable = false)
@@ -94,5 +96,22 @@ public class User extends AuditableEntity {
 	@Getter
 	@Setter
 	private Date dateDeleted;
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User )) return false;
+        return getUserId() != null && getUserId().equals(((User) o).getUserId());
+    }
+	
+    @Override
+    public int hashCode() {
+    	return java.util.Objects.hash(getUserId());
+    }
+    
+    @Override
+    public String toString() {
+    	return getUserId();
+    }
 
 }

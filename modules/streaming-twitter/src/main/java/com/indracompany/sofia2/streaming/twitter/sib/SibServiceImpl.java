@@ -24,19 +24,33 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.indracompany.sofia2.common.exception.AuthenticationException;
-import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
-import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.SSAPMessageDirection;
-import com.indracompany.sofia2.ssap.SSAPMessageTypes;
-import com.indracompany.sofia2.ssap.SSAPQueryType;
-import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
+
+//import java.io.IOException;
+//import java.time.ZoneId;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.data.mongodb.core.MongoTemplate;
+//import org.springframework.stereotype.Service;
+//
+//import com.fasterxml.jackson.core.JsonProcessingException;
+//import com.fasterxml.jackson.databind.JsonNode;
+//import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.node.ObjectNode;
+//import com.indracompany.sofia2.common.exception.AuthenticationException;
+//import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
+//import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
+//import com.indracompany.sofia2.persistence.ContextData;
+//import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+//import com.indracompany.sofia2.ssap.SSAPMessage;
+//import com.indracompany.sofia2.ssap.SSAPMessageDirection;
+//import com.indracompany.sofia2.ssap.SSAPMessageTypes;
+//import com.indracompany.sofia2.ssap.SSAPQueryType;
+//import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+//import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
+//import com.indracompany.sofia2.ssap.body.SSAPBodyOperationMessage;
+//import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,84 +58,84 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SibServiceImpl implements SibService {
 
-	@Autowired
-	private MessageProcessor messageProcessor;
+	//	@Autowired
+	//	private MessageProcessor messageProcessor;
 	@Autowired
 	BasicOpsDBRepository repository;
 	@Autowired
 	MongoTemplate springDataMongoTemplate;
-
-	@Override
-	public String getSessionKey(String token) throws SSAPComplianceException, AuthenticationException {
-
-		String sessionKey = null;
-
-		SSAPBodyJoinMessage joinMessage = new SSAPBodyJoinMessage();
-		joinMessage.setToken(token);
-
-		SSAPMessage<SSAPBodyJoinMessage> message = new SSAPMessage<SSAPBodyJoinMessage>();
-		message.setMessageType(SSAPMessageTypes.JOIN);
-		message.setDirection(SSAPMessageDirection.REQUEST);
-		message.setBody(joinMessage);
-
-		SSAPMessage<SSAPBodyReturnMessage> responseJoin = messageProcessor.process(message);
-		
-			sessionKey = responseJoin.getSessionKey();
-		if (sessionKey != null) {
-			log.debug("Connected to SIB with token: " + responseJoin.getSessionKey() + " session key: "
-					+ responseJoin.getSessionKey());
-		} else
-			log.debug("Can't connect to IoT Broker");
-
-		return sessionKey;
-	}
-
-	@Override
-	public SSAPMessage<SSAPBodyReturnMessage> disconnect(String sessionKey) {
-		SSAPMessage<SSAPBodyReturnMessage> response = null;
-		SSAPMessage<SSAPBodyLeaveMessage> message = new SSAPMessage<SSAPBodyLeaveMessage>();
-		message.setDirection(SSAPMessageDirection.REQUEST);
-		message.setBody(new SSAPBodyLeaveMessage());
-		message.setMessageType(SSAPMessageTypes.LEAVE);
-		message.setSessionKey(sessionKey);
-
-		try {
-			response = messageProcessor.process(message);
-			log.debug("Disconnected from SIB");
-		} catch (Exception e) {
-			log.debug("Couldn't disconnect from SIB");
-		}
-		
-		return response;
-	}
-
-	@Override
-	public boolean insertOntologyInstance(String instance, String sessionKey, String ontology, String clientPlatform,
-			String clientPlatformInstance) throws JsonProcessingException, IOException {
-
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode json = mapper.readTree(instance);
-
-		SSAPMessage<SSAPBodyOperationMessage> message = new SSAPMessage<SSAPBodyOperationMessage>();
-		message.setDirection(SSAPMessageDirection.REQUEST);
-		message.setMessageType(SSAPMessageTypes.INSERT);
-		message.setSessionKey(sessionKey);
-		message.setOntology(ontology);
-		SSAPBodyOperationMessage operationMessage = new SSAPBodyOperationMessage();
-		operationMessage.setClientPlatform(clientPlatform);
-		operationMessage.setClientPlatformInstance(clientPlatformInstance);
-		operationMessage.setData(json);
-		operationMessage.setQueryType(SSAPQueryType.NATIVE);
-		message.setBody(operationMessage);
-		
-		SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(message);
-		if (response.getBody().isOk())
-			log.debug("Ontology instance inserted");
-		else
-			log.debug("Couldn't insert instance");
-
-		return response.getBody().isOk();
-	}
+	//
+	//	@Override
+	//	public String getSessionKey(String token) throws SSAPComplianceException, AuthenticationException {
+	//
+	//		String sessionKey = null;
+	//
+	//		SSAPBodyJoinMessage joinMessage = new SSAPBodyJoinMessage();
+	//		joinMessage.setToken(token);
+	//
+	//		SSAPMessage<SSAPBodyJoinMessage> message = new SSAPMessage<SSAPBodyJoinMessage>();
+	//		message.setMessageType(SSAPMessageTypes.JOIN);
+	//		message.setDirection(SSAPMessageDirection.REQUEST);
+	//		message.setBody(joinMessage);
+	//
+	//		SSAPMessage<SSAPBodyReturnMessage> responseJoin = messageProcessor.process(message);
+	//
+	//			sessionKey = responseJoin.getSessionKey();
+	//		if (sessionKey != null) {
+	//			log.debug("Connected to SIB with token: " + responseJoin.getSessionKey() + " session key: "
+	//					+ responseJoin.getSessionKey());
+	//		} else
+	//			log.debug("Can't connect to IoT Broker");
+	//
+	//		return sessionKey;
+	//	}
+	//
+	//	@Override
+	//	public SSAPMessage<SSAPBodyReturnMessage> disconnect(String sessionKey) {
+	//		SSAPMessage<SSAPBodyReturnMessage> response = null;
+	//		SSAPMessage<SSAPBodyLeaveMessage> message = new SSAPMessage<SSAPBodyLeaveMessage>();
+	//		message.setDirection(SSAPMessageDirection.REQUEST);
+	//		message.setBody(new SSAPBodyLeaveMessage());
+	//		message.setMessageType(SSAPMessageTypes.LEAVE);
+	//		message.setSessionKey(sessionKey);
+	//
+	//		try {
+	//			response = messageProcessor.process(message);
+	//			log.debug("Disconnected from SIB");
+	//		} catch (Exception e) {
+	//			log.debug("Couldn't disconnect from SIB");
+	//		}
+	//
+	//		return response;
+	//	}
+	//
+	//	@Override
+	//	public boolean insertOntologyInstance(String instance, String sessionKey, String ontology, String clientPlatform,
+	//			String clientPlatformInstance) throws JsonProcessingException, IOException {
+	//
+	//		ObjectMapper mapper = new ObjectMapper();
+	//		JsonNode json = mapper.readTree(instance);
+	//
+	//		SSAPMessage<SSAPBodyOperationMessage> message = new SSAPMessage<SSAPBodyOperationMessage>();
+	//		message.setDirection(SSAPMessageDirection.REQUEST);
+	//		message.setMessageType(SSAPMessageTypes.INSERT);
+	//		message.setSessionKey(sessionKey);
+	//		message.setOntology(ontology);
+	//		SSAPBodyOperationMessage operationMessage = new SSAPBodyOperationMessage();
+	//		operationMessage.setClientPlatform(clientPlatform);
+	//		operationMessage.setClientPlatformInstance(clientPlatformInstance);
+	//		operationMessage.setData(json);
+	//		operationMessage.setQueryType(SSAPQueryType.NATIVE);
+	//		message.setBody(operationMessage);
+	//
+	//		SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(message);
+	//		if (response.getBody().isOk())
+	//			log.debug("Ontology instance inserted");
+	//		else
+	//			log.debug("Couldn't insert instance");
+	//
+	//		return response.getBody().isOk();
+	//	}
 
 	@Override
 	public void inserOntologyInstanceToMongo(String instance, String ontology, String clientPlatform, String clientPlatformInstance, String user) throws JsonProcessingException, IOException {
@@ -129,23 +143,23 @@ public class SibServiceImpl implements SibService {
 			springDataMongoTemplate.createCollection(ontology);
 			log.debug("Ontology collection created");
 		}
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode jsonNode = objectMapper.readTree(instance);
-		
-		ContextData contextData = new ContextData();
+
+		final ObjectMapper objectMapper = new ObjectMapper();
+		final JsonNode jsonNode = objectMapper.readTree(instance);
+
+		final ContextData contextData = new ContextData();
 
 		contextData.setClientConnection("");
 		contextData.setClientPatform(clientPlatform);
 		contextData.setClientPatformInstance(clientPlatformInstance);
 		contextData.setTimezoneId(ZoneId.systemDefault().toString());
 		contextData.setUser(user);
-		
+
 		((ObjectNode) jsonNode).set("contextData", objectMapper.valueToTree(contextData));
-		
+
 		repository.insert(ontology,
 				jsonNode.toString());
-		
+
 	}
 
 }

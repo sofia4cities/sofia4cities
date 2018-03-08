@@ -52,11 +52,52 @@
 			<!-- BEGIN CONTENT BODY -->
 			<div class="page-content">
 				
-				<!-- BEGIN PAGE BAR AND BREADCRUM-->
-				<div class="page-bar margin-bottom-20">					
-					<ul class="page-breadcrumb">
-						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>							
-					</ul>						
+				<!-- BEGIN PAGE -->
+				<div class="main-block mt-element-step">
+					<div class="row step-line">					
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col first ">
+							<div class="mt-step-number bg-dark font-grey">
+							  <i class="flaticon-interface-9"></i> 
+							</div>
+							<div class="mt-step-title uppercase bold font-grey-steel">Modela el dato</div>
+							<div class="mt-step-content bold font-grey-steel">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
+							<div class="mt-step-number bg-dark font-grey">
+							  <i class="flaticon-share"></i> 
+							</div>
+							<div class="mt-step-title uppercase bold font-grey-steel">Crea tu device</div>
+							<div class="mt-step-content font-grey-steel">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
+							<div class="mt-step-number bg-dark font-grey">
+							  <i class="flaticon-analytics "></i>
+							</div>
+							<div class="mt-step-title uppercase bold font-grey-steel">Simula y prueba</div>
+							<div class="mt-step-content font-grey-steel">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
+							<div class="mt-step-number bg-dark font-grey">
+							  <i class="flaticon-dashboard"></i> 
+							</div>
+							<div class="mt-step-title uppercase bold font-grey-steel">Visualiza</div>
+							<div class="mt-step-content font-grey-steel">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
+							<div class="mt-step-number bg-dark font-grey">
+							  <i class="flaticon-multimedia-1"></i> 
+							</div>
+							<div class="mt-step-title uppercase bold font-grey-steel">Conecta tu Dispositivo</div>
+							<div class="mt-step-content font-grey-steel">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col last">
+							<div class="mt-step-number bg-dark font-grey-steel">
+							  <i class="flaticon-layers"></i>  
+							</div>
+							<div class="mt-step-title uppercase font-grey-steel">Crea tu API</div>
+							<div class="mt-step-content font-grey-steel">...</div>
+						</div>
+					</div>
 				</div>
 				<!-- END PAGE BAR -->
 				
@@ -64,44 +105,13 @@
 				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
 				<!-- END PAGE TITLE-->			
 				
-				
-				<!-- BEGIN GRAPH INCLUDE -->
-				<div sec:authorize="hasAnyAuthority('ROLE_DEVELOPER','ROLE_DATASCIENTIST','ROLE_ADMINISTRATOR')" th:include="fragments/graph::#graphFragment" class="margin-bottom-10"></div>
-				<!-- END GRAPH -->
-				
 				<!-- MAIN ROW -->
-				<div class="row">
-					<div class="col-md-12">						
-						<div class="portlet light bordered">
-							<div class="portlet-title">
-								<div class="caption">
-									<i class="flaticon-layers font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{name.sofia2}"> Sofia4Cities </span>
-								</div>									
-								<div class="tools">
-									<a href="" class="collapse" data-original-title="" title=""> </a>																			
-									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
-								</div>									
-							</div>
-							<div class="portlet-body" style="display: block; height: auto;">
-								
-								<div class="row">
-									<div class="col-md-12 alert-zone">
-										<!-- ALERTS ZONE -->
-										<div class="alert alert-info alert-dismissable">
-											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-											<i class="fa fa-info-circle"></i> <strong>Info!</strong> Sofia4Cities System information alert.
-										</div>								
-									</div>
-									<div class="col-md-12">										
-										<form th:action="@{/logout}" method="post">
-											<input class="btn btn-sm btn-danger " type="submit" value="Sign Out"/>
-										</form>
-									</div>									
-								</div>
-							</div>
-						</div><!-- END PORTLET BASIC  -->						
-					</div><!-- END COL-12 -->						
+				<div class="row">					
+					<div class="col-md-12 col-sm-12">
+						<!-- BEGIN GRAPH INCLUDE -->
+						<div sec:authorize="hasAnyAuthority('ROLE_DEVELOPER','ROLE_DATASCIENTIST','ROLE_ADMINISTRATOR')" th:include="fragments/graph::#graphFragment" class="margin-bottom-10"></div>
+						<!-- END GRAPH -->
+					</div>
 				</div><!-- END MAIN ROW -->
 			</div><!-- END CONTENT BODY -->
 		</div><!-- END CONTENT page-content-wrapper -->		
@@ -113,7 +123,10 @@
 	
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
-	<script th:src="@{/static/js/layout.js}"/>	
+	<script th:src="@{/static/js/layout.js}"/>
+
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/jquery-matchHeight/jquery.matchHeight-min.js}"/>
 		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
@@ -124,6 +137,15 @@
 	$( document ).ready(function() {
 		// init when Document is ready
 		showLog ? console.log('INDEX ready()...') : '';
+		
+		var mainGuide = $('div.thumbnail');
+		mainGuide.matchHeight({
+			byRow: true,
+			property: 'height',
+			target: null,
+			remove: false
+		});
+		
 	});
 	 
 	// MAIN WHEN LOAD

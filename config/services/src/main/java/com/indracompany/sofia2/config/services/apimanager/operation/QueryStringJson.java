@@ -44,4 +44,8 @@ public class QueryStringJson {
 	@Setter
     private String value;
 	
+	@Getter
+	@Setter
+    private String condition;
+	
 }

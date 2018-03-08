@@ -12,6 +12,7 @@
 	
 	<properties>	
 		<sofia2.version>5.0.0-SNAPSHOT</sofia2.version>
+		<sofia2.docker.version>v1.0.0</sofia2.docker.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -23,6 +24,7 @@
         <spring-boot-admin-server.version>1.5.6</spring-boot-admin-server.version>
         <spring-boot-admin-starter-client.version>1.5.6</spring-boot-admin-starter-client.version>	
 		<httpclient.version>4.5.2</httpclient.version>
+		<docker-spotify.version>1.0.0</docker-spotify.version>
 		<!--LICENSE INFO -->
         <license.dir>${basedir}</license.dir>
         <project.name>Sofia4Cities by Sofia2</project.name>
@@ -45,7 +47,12 @@
 		    	<artifactId>javafaker</artifactId>
 		    	<version>${javafaker.version}</version>
 		    	<scope>test</scope>
-			</dependency>			 
+			</dependency>
+            <dependency>
+		    	<groupId>com.spotify</groupId>
+		    	<artifactId>docker-maven-plugin</artifactId>
+		    	<version>${docker-spotify.version}</version>
+			</dependency>						 
 		</dependencies>
 	</dependencyManagement>
 	
@@ -58,28 +65,34 @@
         <module>libraries/commons</module>
         <module>libraries/mail</module>
         <module>libraries/social</module>
+        <module>libraries/flow-engine-services</module>
 
 		<!--CONFIG -->
 		<module>config/model</module>
 		<module>config/services</module>
 		<module>config/init</module>
+		<module>config/resources</module>
 		
 		<!--SECURITY-->		
 		<module>security/security-ui-ri</module>
 		
 		<!--PERSISTENCE-->
-		<module>persistence/persistence-ri</module>				
+		<module>persistence/interfaces</module>	
+		<module>persistence/mongodb-impl</module>		
+		<module>persistence/services</module>				
 		
-		<module>contributions/spring-boot-admin-server-ui-sofia2</module>
+		<module>contributions/spring-boot-admin-server-ui</module>
+		<module>contributions/spring-boot-admin-server-ui-login</module>
 		
 		<!--MODULES-->
-		<module>modules/iot-broker</module>		
+		<module>modules/iotbroker</module>		
 		<module>modules/control-panel</module>		
         <module>modules/monitoring-ui</module>
         <module>modules/api-manager</module>
-		<!--        <module>modules/scripting-engine</module-->
+	<!--        <module>modules/scripting-engine</module-->
 		<module>modules/planner</module>
-
+		 <module>modules/router</module>
+        <module>modules/flow-engine</module>
 		<!--
         <module>api-manager</module>
 		-->

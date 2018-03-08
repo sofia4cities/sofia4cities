@@ -148,7 +148,7 @@ public class ApiFIQL {
 		return apiDTO;
 	}
 
-	public Api copyProperties(ApiDTO apiDTO) {
+	public Api copyProperties(ApiDTO apiDTO, User user) {
 		Api api = new Api();
 
 		api.setIdentification(apiDTO.getIdentification());
@@ -161,7 +161,7 @@ public class ApiFIQL {
 		api.setCategory(Api.ApiCategories.valueOf(apiDTO.getCategory()));
 
 		if (apiDTO.getOntologyId() != null && !apiDTO.getOntologyId().equals("")) {
-			Ontology ont = ontologyService.getOntologyById(apiDTO.getOntologyId());
+			Ontology ont = ontologyService.getOntologyById(apiDTO.getOntologyId(), user.getUserId());
 			api.setOntology(ont);
 		}
 
@@ -180,9 +180,9 @@ public class ApiFIQL {
 		}
 
 		if (apiDTO.getUserId() != null) {
-			User user = userService.getUser(apiDTO.getUserId());
-			if (user != null) {
-				api.setUser(user);
+			User userApiDTO = userService.getUser(apiDTO.getUserId());
+			if (userApiDTO != null) {
+				api.setUser(userApiDTO);
 			}
 		}
 

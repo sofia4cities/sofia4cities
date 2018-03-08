@@ -13,39 +13,37 @@
  */
 package com.indracompany.sofia2.ssap.body.parent;
 
-import com.fasterxml.jackson.databind.JsonNode; 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyEmptyMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 
+@JsonTypeInfo(use=Id.NAME)
+@JsonSubTypes({
+	@JsonSubTypes.Type(SSAPBodyDeleteByIdMessage.class),
+	@JsonSubTypes.Type(SSAPBodyDeleteMessage.class),
+	@JsonSubTypes.Type(SSAPBodyEmptyMessage.class),
+	@JsonSubTypes.Type(SSAPBodyInsertMessage.class),
+	@JsonSubTypes.Type(SSAPBodyJoinMessage.class),
+	@JsonSubTypes.Type(SSAPBodyLeaveMessage.class),
+	@JsonSubTypes.Type(SSAPBodyQueryMessage.class),
+	@JsonSubTypes.Type(SSAPBodyReturnMessage.class),
+	@JsonSubTypes.Type(SSAPBodyUpdateByIdMessage.class),
+	@JsonSubTypes.Type(SSAPBodyUpdateMessage.class)
+})
 public abstract class SSAPBodyMessage {
-	
-	protected JsonNode data;
-	protected String clientPlatform;
-	protected String clientPlatformInstance;
-	
-	public JsonNode getData() {
-		return data;
-	}
-	public void setData(JsonNode data) {
-		this.data = data;
-	}
-	public String getClientPlatform() {
-		return clientPlatform;
-	}
-	public void setClientPlatform(String clientPlatform) {
-		this.clientPlatform = clientPlatform;
-	}
-	public String getClientPlatformInstance() {
-		return clientPlatformInstance;
-	}
-	public void setClientPlatformInstance(String clientPlatformInstance) {
-		this.clientPlatformInstance = clientPlatformInstance;
-	}
-	
-	public abstract boolean isClientPlatformMandatory();
 
 	public abstract boolean isSessionKeyMandatory();
-	
-	public abstract boolean isAutorizationMandatory();
-	
+
 	public abstract boolean isOntologyMandatory();
 
 }

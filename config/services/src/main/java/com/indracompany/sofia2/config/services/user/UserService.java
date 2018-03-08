@@ -22,6 +22,10 @@ import com.indracompany.sofia2.config.model.UserToken;
 
 public interface UserService {
 
+	boolean isUserAdministrator(User user);
+
+	boolean isUserDeveloper(User user);
+
 	Token getToken(String token);
 
 	UserToken getUserToken(String token);
@@ -30,11 +34,13 @@ public interface UserService {
 
 	User getUserByToken(String token);
 
+	User getUserByIdentification(String identification);
+
 	User getUser(String userId);
 
 	List<Role> getAllRoles();
 
-	UserToken getUserToken(User userId);
+	List<UserToken> getUserToken(User userId);
 
 	List<User> getAllUsers();
 
@@ -51,5 +57,9 @@ public interface UserService {
 	void deleteUser(String userId);
 
 	void registerUser(User user);
+
+	boolean emailExists(User user);
+
+	UserToken getUserToken(String user, String token);
 
 }

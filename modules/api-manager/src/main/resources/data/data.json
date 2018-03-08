@@ -2,7 +2,7 @@
    "identification":"APIPRODUCT",
    "version":1,
    "type":"iot",
-   "category":"publicidad",
+   "category":"EDUCATION",
    "externalApi":false,
    "ontologyId":"f8420a03-f733-4dfd-9699-b16ccf1835e0",
    "endpoint":"https://sofia2.com/sib-api/api/v1/TEST2",
@@ -97,7 +97,7 @@
                "name":"name",
                "dataType":"string",
                "description":"",
-               "headerType":"query"
+               "headerType":"path"
             }
          ]
       },

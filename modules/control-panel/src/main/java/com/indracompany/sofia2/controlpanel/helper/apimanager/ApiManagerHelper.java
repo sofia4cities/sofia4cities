@@ -40,12 +40,14 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserApi;
+import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ApiAuthenticationRepository;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserApiRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
+import com.indracompany.sofia2.config.repository.UserTokenRepository;
 import com.indracompany.sofia2.config.services.apimanager.authentication.AuthenticationJson;
 import com.indracompany.sofia2.config.services.apimanager.operation.HeaderJson;
 import com.indracompany.sofia2.config.services.apimanager.operation.OperationJson;
@@ -67,6 +69,8 @@ public class ApiManagerHelper {
 	ApiOperationRepository apiOperationRepository;
 	@Autowired
 	ApiAuthenticationRepository apiAuthenticationRepository;
+	@Autowired
+	UserTokenRepository userTokenRepository;
 	
 	
 	@Autowired
@@ -79,7 +83,18 @@ public class ApiManagerHelper {
 	@Value("${apimanager.services.baseUrl:http://localhost:8080/sib-api}${apimanager.services.apiEndpoint.path:/api}")
 	private String apiManagerBaseUrl;
 	
-	// To populate de Api Create Form
+	// To populate the List Api Form
+	public void populateApiManagerListForm(Model uiModel) {
+		List<User> users = userRepository.findAll();
+		
+		User user = this.userService.getUser(utils.getUserId());
+		
+		uiModel.addAttribute("users", users);
+		uiModel.addAttribute("states", Api.ApiStates.values());
+		uiModel.addAttribute("auths", userApiRepository.findByUser(user));
+	}
+	
+	// To populate the Create Api Form
 	public void populateApiManagerCreateForm(Model uiModel) {
 		List<Ontology> ontologies;
 		User user = this.userService.getUser(utils.getUserId());
@@ -100,6 +115,8 @@ public class ApiManagerHelper {
 	
 	// To populate de Api Create Form
 	public void populateApiManagerUpdateForm(Model uiModel, String apiId) {
+		
+		//POPULATE API TAB
 		populateApiManagerCreateForm(uiModel);
 		
 		Api api= apiRepository.findById(apiId);
@@ -112,20 +129,28 @@ public class ApiManagerHelper {
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
+		
+		//POPULATE AUTH TAB
+		uiModel.addAttribute("clients", userApiRepository.findByApiId(apiId));
+		uiModel.addAttribute("users", userRepository.findUserByIdentificationAndNoRol(utils.getUserId(), Role.Type.ROLE_ADMINISTRATOR.toString()));
 	}
 	
 	public void populateApiManagerShowForm(Model uiModel, String apiId) {
 		
+		//POPULATE API TAB
 		Api api= apiRepository.findById(apiId);
 		
 		List<ApiAuthentication> apiAuthenticacion = apiAuthenticationRepository.findAllByApi(api);
 		AuthenticationJson authenticacion = populateAuthenticationObject(apiAuthenticacion);
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
-		
+
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
+		
+		//POPULATE AUTH TAB
+		uiModel.addAttribute("clients", userApiRepository.findByApiId(apiId));
 	}
 	
 	private AuthenticationJson populateAuthenticationObject(List<ApiAuthentication> apiAuthentications) {
@@ -192,6 +217,7 @@ public class ApiManagerHelper {
 				queryStringJson.setDataType(apiQueryParameter.getDataType().toString());
 				queryStringJson.setHeaderType(apiQueryParameter.getHeaderType().toString());
 				queryStringJson.setValue(apiQueryParameter.getValue());
+				queryStringJson.setCondition(apiQueryParameter.getCondition());
 				
 				queryStrings.add(queryStringJson);
 			}
@@ -268,12 +294,6 @@ public class ApiManagerHelper {
 
 		return api;
 	}
-	
-	
-
-	public void populateApiManagerListForm(Model uiModel) {
-
-	}
 
 	public void populateAutorizationForm(Model model) {
 		model.addAttribute("userapi", new UserApi());
@@ -291,6 +311,11 @@ public class ApiManagerHelper {
 			List<UserApi> clients = userApiRepository.findByOwner(utils.getUserId());
 			model.addAttribute("clients", clients);
 		}
+	}
+
+	public void populateUserTokenForm(Model model) {
+		User user = this.userService.getUser(utils.getUserId());
+		model.addAttribute("tokens", userTokenRepository.findByUser(user));	
 	}
 
 }

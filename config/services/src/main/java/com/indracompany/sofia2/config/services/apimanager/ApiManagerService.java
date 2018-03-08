@@ -16,6 +16,7 @@ package com.indracompany.sofia2.config.services.apimanager;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.UserApi;
 
 public interface ApiManagerService {
 	
@@ -27,7 +28,7 @@ public interface ApiManagerService {
 
 	public void updateApi(Api apiMultipartMap, String deprecateApis, String operationsObject, String authenticationObject);
 
-	public void updateAuthorization(String apiId, String userId);
+	public UserApi updateAuthorization(String apiId, String userId);
 
 	public void removeAuthorizationById(String id);
 

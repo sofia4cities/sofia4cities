@@ -180,7 +180,8 @@ public class ApiServiceRest {
 	}
 
 	public void createApi(ApiDTO apiDTO, String token) {
-		Api api = apiFIQL.copyProperties(apiDTO);
+		User user = apiSecurityService.getUserByApiToken(token);
+		Api api = apiFIQL.copyProperties(apiDTO, user);
 
 		Integer numVersion = 0;
 		List<Api> apis = apiRepository.findByIdentification(api.getIdentification());
@@ -193,7 +194,6 @@ public class ApiServiceRest {
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.wrongversionMin");
 		}
 
-		User user = apiSecurityService.getUserByApiToken(token);
 
 		api.setUser(user);
 
@@ -205,7 +205,8 @@ public class ApiServiceRest {
 
 	public void updateApi(ApiDTO apiDTO, String token) {
 		try {
-			Api api = apiFIQL.copyProperties(apiDTO);
+			User user = apiSecurityService.getUserByApiToken(token);
+			Api api = apiFIQL.copyProperties(apiDTO, user);
 
 			Api apiUpdate = apiRepository
 					.findByIdentificationAndNumversion(api.getIdentification(), api.getNumversion()).get(0);
@@ -225,7 +226,8 @@ public class ApiServiceRest {
 
 	public void removeApi(ApiDTO apiDTO, String token) {
 		try {
-			Api api = apiFIQL.copyProperties(apiDTO);
+			User user = apiSecurityService.getUserByApiToken(token);
+			Api api = apiFIQL.copyProperties(apiDTO, user);
 			Api apiDelete = apiRepository
 					.findByIdentificationAndNumversion(api.getIdentification(), api.getNumversion()).get(0);
 			if (apiSecurityService.authorized(apiDelete, token)) {
@@ -451,7 +453,7 @@ public class ApiServiceRest {
 		
 		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(identificacion)){
 			User userToTokenize = apiSecurityService.getUser(identificacion);
-			token = apiSecurityService.getUserToken(userToTokenize);
+			token = apiSecurityService.getUserToken(userToTokenize, identificacion);
 		} else {
 			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;
 		}
@@ -470,11 +472,10 @@ public class ApiServiceRest {
 					
 			User userToTokenize = apiSecurityService.getUser(identificacion);
 			
-			token = apiSecurityService.getUserToken(userToTokenize);
+			token = apiSecurityService.getUserToken(userToTokenize, tokenUsuario);
 			if (token==null)
 				token = init_Token(userToTokenize); 
 			else {
-				userTokenRepository.delete(token);
 				token = init_Token(userToTokenize); 
 			}
 				
@@ -497,9 +498,9 @@ public class ApiServiceRest {
 					
 			User userToTokenize = apiSecurityService.getUser(identificacion);
 			
-			token = apiSecurityService.getUserToken(userToTokenize);
-			if (token==null)
-				token = init_Token(userToTokenize); 
+			token = apiSecurityService.getUserToken(userToTokenize, tokenUsuario);
+
+			token = init_Token(userToTokenize); 
 				
 		} else {
 			throw new AuthorizationServiceException("NoPermisosOperacionUsuario") ;

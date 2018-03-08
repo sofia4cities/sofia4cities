@@ -10,29 +10,22 @@ var ApiCustomOpsController = function() {
 	var internalFormat = 'yyyy/mm/dd';
 	var internalLanguage = 'en';
 	
+	var name_op_edit_customsql=''
+	
 	// CONTROLLER PRIVATE FUNCTIONS	
 	
-    function openCustomSqlDialog(nombre_op) {
-//    	checkformatresult();
-//    	$("#customsql_paramaccordion").accordion("option", "active", 1);
-//    	loadCustomSqlOperacion(nombre_op);
+    function selectEditOp(field) {
+		name_op_edit_customsql = field;
+		loadCustomSql (name_op_edit_customsql);
+    }
 	
-    	$( "#dialog-customsql" ).dialog({
-    		resizable: false,
-    		height:"auto",
-    		width:800,
-    		modal: true,
-    		position: [($(window).width() / 2) - 340, 50],
-    		dialogClass: 'DeleteConfirmDialog',
-    		buttons: {
-    			"GUARDAR": function() {
-    				guardarOperacionCustomsql(this, nombre_op);
-    			},
-    			"CANCELAR": function() {
-    				$( this ).dialog( "close" );
-    			}
-    		}
-    	});
+    function validateNameOp(field) {
+        var RegExPattern = /^[a-zA-Z0-9._-]*$/;
+        if ((field.value.match(RegExPattern))) {
+
+        } else {
+        	ApiCreateController.showErrorDialog('Error', apiCustomOpsReg.apimanager_customsql_error_name_format);
+        }
     }
     
     function loadParamQuerySQLType() {
@@ -41,81 +34,77 @@ var ApiCustomOpsController = function() {
         error = isValidQuery(query);
         if (error==""){
        	    clearParams();
-       	    mostrarParametros(query);
+       	    showParams(query);
         } else {
-       	    document.getElementById("dialog-error").innerHTML=error;
-       	    showErrorDialog();
+        	ApiCreateController.showErrorDialog('Error', error);
         }
     }
 
-    function loadParamsQuery(campo, nombre_op) {
+    function loadParamsFromQuery(field, op_name) {
         clearParams();
-        if (nombre_op==null || nombre_op==""){
+        if (op_name==null || op_name==""){
             var error = "";
-            if (campo != null && campo !=""){
-                error = isValidQuery(campo);
+            if (field != null && field !=""){
+                error = isValidQuery(field);
             }
             if (error==""){
-                mostrarParametros(campo);
+            	showParams(field);
             } else {
-                document.getElementById("dialog-error").innerHTML=error;
-                showErrorDialog();
+            	ApiCreateController.showErrorDialog('Error', error);
             }
         } else {
-            mostrarParametros(campo);
+        	showParams(field);
         }
     }
-
-//    function isValidQuery(campo){
-//        if (campo != null && campo !=""){
-//            if (((campo.toUpperCase().indexOf("SELECT")>=0)&&(document.getElementById("id_customsql_querytype").value=="SQLLIKE"))||
-//                ((campo.toUpperCase().indexOf("DB.")>=0)&&(document.getElementById("id_customsql_querytype").value=="NATIVE"))){
-//                if (campo.indexOf($("#id_campo_ontologia option:selected").text())>=0){
-//               	 if (((campo.split("{$").length - 1)==(campo.split("}").length - 1) || (document.getElementById("id_customsql_querytype").value=="NATIVE"))){
-//                          return "";
-//                    } else {
-//                          return ([[#{apimanager_customsql_error_query_params}]]);
-//                    }
-//                } else {
-//                       return ([[#{apimanager_customsql_error_query_ontology}]]);
-//                }
-//            } else {
-//                   return ([[#{apimanager_customsql_error_query}]]);
-//            }
-//        } else {
-//            return ([[#{apimanager_customsql_error_required}]]);
-//        }
-//    }
+    
+    function isValidQuery(field){
+    	if (field != null && field !=""){
+    		if (((field.toUpperCase().indexOf("SELECT")>=0)&&($('#id_customsql_querytype').val()=="SQLLIKE"))||
+    			((field.toUpperCase().indexOf("DB.")>=0)&&($('#id_customsql_querytype').val()=="NATIVE"))){
+    			if ($("#ontology option:selected").text()!= "" && field.indexOf($("#ontology option:selected").text())>=0){
+    				if (((field.split("{$").length - 1)==(field.split("}").length - 1) || ($('#id_customsql_querytype').val()=="NATIVE"))){
+    					return "";
+    				} else {
+    					return (apiCustomOpsReg.apimanager_customsql_error_query_params);
+    				}
+    			} else {
+    				return (apiCustomOpsReg.apimanager_customsql_error_query_ontology);
+    			}
+    		} else {
+    			return (apiCustomOpsReg.apimanager_customsql_error_query);
+    		}
+    	} else {
+    		return (apiCustomOpsReg.apimanager_customsql_error_required);
+    	}
+    }
 
     function clearParams() {
-   	 document.getElementById("customsql_paramsquery").innerHTML = '';
-   	 document.getElementById("customsql_params_div").style.display="none";
-   	 document.getElementById("customsql_noparam_div").style.display="block";
+    	$("#customsql_paramsquery").html("");
+    	$("#customsql_params_div").css({ 'display': "none" });
+    	$("#customsql_noparam_div").css({ 'display': "block" });
     }
 
-    function mostrarParametros(query) {
-   	 var param = "";
-   	 customsql_queryparam = new Array();
-   	 while (query.indexOf("{$")>0 && query.indexOf("}")!=-1){
-   		 var param = query.substring(query.indexOf("{$") + 2, query.indexOf("}", query.indexOf("{$")));
-
-   		 if (param.indexOf(":")==-1){
-   			    loadParamQuery(param);
-   			    query = query.substring(query.indexOf("}", query.indexOf("{$")) + 1);
-   		 } else {
-   			    query = query.substring(query.indexOf("{$") + 2, query.length);
-   		 }
-   	 }
-   	 if (customsql_queryparam.length>0){
-   		 document.getElementById("customsql_params_div").style.display="block";
-   		 document.getElementById("customsql_noparam_div").style.display="none";
-   	 } else {
-   		 document.getElementById("customsql_params_div").style.display="none";
-   		 document.getElementById("customsql_noparam_div").style.display="block";
-   	 }
-
+    function showParams(query) {
+		 var param = "";
+		 customsql_queryparam = new Array();
+		 while (query.indexOf("{$")>0 && query.indexOf("}")!=-1){
+			 var param = query.substring(query.indexOf("{$") + 2, query.indexOf("}", query.indexOf("{$")));
+		
+			 if (param.indexOf(":")==-1){
+				 loadParamQuery(param);
+				 query = query.substring(query.indexOf("}", query.indexOf("{$")) + 1);
+			 } else {
+			    query = query.substring(query.indexOf("{$") + 2, query.length);
+			 }
+		 }
+		 if (customsql_queryparam.length>0){
+			$("#customsql_noparam_div").css({ 'display': "none" });
+			$("#customsql_params_div").css({ 'display': "block" });
+		 } else {
+		 	$("#customsql_params_div").css({ 'display': "none" });
+		 	$("#customsql_noparam_div").css({ 'display': "block" });
+		 }
     }
-
 
     function loadParamQuery(param) {
         var customsqlParamaDiv=document.getElementById("customsql_paramsquery");
@@ -126,7 +115,6 @@ var ApiCustomOpsController = function() {
         var newCustomsqlParamFieldSet = document.createElement('fieldset');
         newCustomsqlParamFieldSet.id = "customsql_param_fieldset" + param;
 
-        newCustomsqlParamFieldSet.style.width="40%";
         newCustomsqlParamFieldSet.style.margin="10px";
         newCustomsqlParamFieldSet.style.marginTop="10px";
         newCustomsqlParamFieldSet.style.padding="10px";
@@ -136,7 +124,7 @@ var ApiCustomOpsController = function() {
         var newLabelCustomsqlParam = document.createElement('label');
         newLabelCustomsqlParam.id = param;
         newLabelCustomsqlParam.className="description";
-        newLabelCustomsqlParam.style.marginLeft="20px";
+        newLabelCustomsqlParam.style.marginRight="20px";
         newLabelCustomsqlParam.innerHTML=param;
 
         newCustomsqlParamFieldSet.appendChild(newLabelCustomsqlParam);
@@ -146,311 +134,280 @@ var ApiCustomOpsController = function() {
         newInputCustomsqlParam.style.cssFloat="right";
 
         var optionString = document.createElement( 'option' );
-        optionString.value = optionString.text = "STRING"
+        optionString.value = "string"; 
+        optionString.text = "STRING";
         newInputCustomsqlParam.add(optionString);
         var optionNumber = document.createElement( 'option' );
-        optionNumber.value = optionNumber.text = "NUMBER"
+        optionNumber.value = "number"; 
+        optionNumber.text = "NUMBER";
         newInputCustomsqlParam.add(optionNumber);
-        var optionBoolean = document.createElement( 'option' );
-        optionBoolean.value = optionBoolean.text = "BOOLEAN"
-        newInputCustomsqlParam.add(optionBoolean);
         var optionDate = document.createElement( 'option' );
-        optionDate.value = optionDate.text = "DATE"
+        optionDate.value = "date"; 
+        optionDate.text = "DATE";
         newInputCustomsqlParam.add(optionDate);
 
         newCustomsqlParamFieldSet.appendChild(newInputCustomsqlParam);
 
         customsqlParamaDiv.appendChild(newCustomsqlParamFieldSet);
 
-        var parameter = {nombre: param, condicion: "REQUIRED", tipo: document.getElementById("customsqlParamType_" + param).value, valor: document.getElementById("customsqlParamType_" + param).value  ,descripcion: ""};
+        var parameter = {name: param, condition: "REQUIRED", dataType: document.getElementById("customsqlParamType_" + param).value, value: document.getElementById("customsqlParamType_" + param).value  ,description: ""};
         customsql_queryparam.push(parameter);
     }
 
-//    function guardarOperacionCustomsql(dialog, nombre_op_editar_customsql){
-//        var tipo_op_customsql = document.getElementById("id_tipo_op_customsql").value;
-//        var nombre_op_customsql = document.getElementById("id_nombre_op_customsql").value;
-//        var errorQuery = isValidQuery(document.getElementById("id_query_op_customsql").value);
-//
-//        var desc_op_customsql = document.getElementById("id_desc_op_customsql").value;
-//        if (tipo_op_customsql!=null && tipo_op_customsql!="" && nombre_op_customsql!=null && nombre_op_customsql!="" && desc_op_customsql!=null && desc_op_customsql!=""){
-//       	 if (errorQuery!=null && errorQuery==""){
-//	             if (nombre_op_editar_customsql==null || nombre_op_editar_customsql==""){
-//	                 if (!existeOperacion(nombre_op_customsql)){
-//	                     var querystrings = new Array();
-//	                     var headers = new Array();
-//	                     var operacion = {identificacion: nombre_op_customsql, descripcion: desc_op_customsql , operacion: tipo_op_customsql, endpoint: "", path: "", querystrings: querystrings, headers: headers};
-//
-//	                     guardarScriptCustomsql(operacion);
-//	                     guardarParamQueryCustomsql(operacion);
-//
-//	                     addOperacionCustomsql(operacion);
-//
-//
-//	                     operaciones.push(operacion);
-//
-//	                     $( dialog ).dialog( "close" );
-//	                 } else {
-//	                     document.getElementById("dialog-error").innerHTML=[[#{apimanager_error_operacion_existe}]];
-//	                     showErrorDialog();
-//	                 }
-//	             } else {
-//	                 for(var i=0; i<operaciones.length; i+=1){
-//	                     if (operaciones [i].identificacion == nombre_op_editar_customsql){
-//	                         operaciones [i].descripcion=desc_op_customsql;
-//	                         operaciones [i].operacion=tipo_op_customsql;
-//
-//	                         operaciones [i].querystrings = new Array();
-//	                         guardarScriptCustomsql(operaciones [i]);
-//
-//	                         guardarParamQueryCustomsql(operaciones [i]);
-//	                         break;
-//	                     }
-//	                 }
-//	                 updateCustomSqlOperacion(operaciones[i]);
-//	                 $( dialog ).dialog( "close" );
-//	             }
-//	         } else {
-//	             document.getElementById("dialog-error").innerHTML=errorQuery;
-//	             showErrorDialog();
-//	         }
-//        } else {
-//            document.getElementById("dialog-error").innerHTML=[[#{apimanager_error_campos}]];
-//            showErrorDialog();
-//        }
-//    }
+    function saveCustomsqlOperation(){
+        var id_type_op_customsql = $('#id_type_op_customsql').val();
+        var id_name_op_customsql = $('#id_name_op_customsql').val();
+        var errorQuery = isValidQuery($('#id_query_op_customsql').val());
 
-    function guardarScriptCustomsql(operacion){
-   	 var condicion = editors[0].getValue().trim();
-   	 var ifthen = editors[1].getValue().trim();
+        var desc_op_customsql = $('#id_desc_op_customsql').val();
+        if (id_type_op_customsql!=null && id_type_op_customsql!="" && id_name_op_customsql!=null && id_name_op_customsql!="" && desc_op_customsql!=null && desc_op_customsql!=""){
+       	 if (errorQuery!=null && errorQuery==""){
+	             if (name_op_edit_customsql==null || name_op_edit_customsql==""){
+	                 if (!ApiCreateController.existOperation(id_name_op_customsql)){
+	                     var querystrings = new Array();
+	                     var headers = new Array();
+	                     var operation = {identification: id_name_op_customsql, description: desc_op_customsql , operation: id_type_op_customsql, path: "", querystrings: querystrings, headers: headers};
 
-   	 if (condicion != null && condicion != "" && ifthen != null && ifthen != ""){
-   		 var script = {condicion: condicion, ifthen: ifthen};
-   	     operacion.script=script;
-   	 } else {
-   		  if(operacion.script){
-   			  delete operacion["script"];
-   		  }
-   	 }
+	                     saveParamQueryCustomsql(operation);
+
+	                     addOperationCustomsql(operation);
+
+	                     operations.push(operation);
+
+	                     $('#dialog-customsql').modal('toggle');
+	                 } else {
+	                	 ApiCreateController.showErrorDialog('Error', apiCustomOpsReg.apimanager_customsql_error_operation_exists);
+	                 }
+	             } else {
+	                 for(var i=0; i<operations.length; i+=1){
+	                     if (operations [i].identification == name_op_edit_customsql){
+	                    	 operations [i].description=desc_op_customsql;
+	                    	 operations [i].operation=id_type_op_customsql;
+
+	                    	 operations [i].querystrings = new Array();
+
+	                         saveParamQueryCustomsql(operations [i]);
+	                         break;
+	                     }
+	                 }
+	                 updateCustomSqlOperation(operations[i]);
+	                 $('#dialog-customsql').modal('toggle');
+	             }
+	         } else {
+	        	 ApiCreateController.showErrorDialog('Error', errorQuery);
+	         }
+        } else {
+        	ApiCreateController.showErrorDialog('Error', apiCustomOpsReg.apimanager_customsql_error_fields);
+        }
     }
 
-    function guardarParamQueryCustomsql(operacion){
-   	 var queryParameter = {nombre: "$query", condicion: "CONSTANT", tipo: "STRING", valor: document.getElementById("id_query_op_customsql").value , descripcion: ""};
-   	 operacion.querystrings.push(queryParameter);
-        var targetBDParameter = {nombre: "$targetdb", condicion: "CONSTANT", tipo: "STRING", valor: document.getElementById("id_customsql_targetBD").value , descripcion: ""};
-        operacion.querystrings.push(targetBDParameter);
-        var formatresultParameter = {nombre: "$formatResult", condicion: "CONSTANT", tipo: "STRING", valor: document.getElementById("id_customsql_formatresult").value , descripcion: ""};
-        operacion.querystrings.push(formatresultParameter);
-        var querytypeBDParameter = {nombre: "$queryType", condicion: "CONSTANT", tipo: "STRING", valor: document.getElementById("id_customsql_querytype").value , descripcion: ""};
-        operacion.querystrings.push(querytypeBDParameter);
-        var path = "\\" + operacion.identificacion;
+    function saveParamQueryCustomsql(operation){
+   	 	var queryParameter = {name: "$query", condition: "CONSTANT", dataType: "string", value: $('#id_query_op_customsql').val() , description: "", headerType: "query"};
+   	 	operation.querystrings.push(queryParameter);
+        var targetBDParameter = {name: "$targetdb", condition: "CONSTANT", dataType: "string", value: $('#id_customsql_targetBD').val() , description: "", headerType: "query"};
+        operation.querystrings.push(targetBDParameter);
+        var querytypeBDParameter = {name: "$queryType", condition: "CONSTANT", dataType: "string", value: $('#id_customsql_querytype').val() , description: "", headerType: "query"};
+        operation.querystrings.push(querytypeBDParameter);
+        var path = "\\" + operation.identification;
         if (customsql_queryparam.length>0){
-       	 path=path + "?";
+       	 	path=path + "?";
         }
         for (var i = 0; i < customsql_queryparam.length; i++) {
-       	customsql_queryparam [i].valor = document.getElementById("customsqlParamType_" + customsql_queryparam [i].nombre).value;
-       	customsql_queryparam [i].tipo = document.getElementById("customsqlParamType_" + customsql_queryparam [i].nombre).value;
-       	operacion.querystrings.push(customsql_queryparam [i]);
-       	path = path + "$" + customsql_queryparam [i].nombre + "={" + customsql_queryparam [i].nombre +"}";
-       	if (i < customsql_queryparam.length-1){
-       		path = path + "&";
-       	}
+	       	customsql_queryparam [i].value = $('#customsqlParamType_' + customsql_queryparam [i].name).val();
+	       	customsql_queryparam [i].dataType = $('#customsqlParamType_' + customsql_queryparam [i].name).val();
+	       	customsql_queryparam [i].headerType = "query";
+	       	operation.querystrings.push(customsql_queryparam [i]);
+	       	path = path + "$" + customsql_queryparam [i].name + "={" + customsql_queryparam [i].name +"}";
+	       	if (i < customsql_queryparam.length-1){
+	       		path = path + "&";
+	       	}
         }
-        operacion.path = path;
+        operation.path = path;
     }
 
 
-//    function addOperacionCustomsql(operacion){
-//   	 var customsqlOpsDiv=document.getElementById("divCUSTOMSQLS");
-//
-//        var newCustomsqlParamDiv = document.createElement('div');
-//        newCustomsqlParamDiv.id= operacion.identificacion;
-//        newCustomsqlParamDiv.className= "op_div_selected";
-//
-//        var newInputCustomsqlOperacionDiv = document.createElement('div');
-//        newInputCustomsqlOperacionDiv.className= "op_button_div";
-//        newInputCustomsqlOperacionDiv.style.marginTop="30px";
-//        newInputCustomsqlOperacionDiv.style.marginBottom="30px";
-//
-//        var newInputCustomsqlOperacion = document.createElement('input');
-//        newInputCustomsqlOperacion.id=operacion.identificacion + "_OPERATION";
-//        newInputCustomsqlOperacion.className="op_button_selected";
-//        newInputCustomsqlOperacion.style.width="110px";
-//        newInputCustomsqlOperacion.style.marginLeft="25px";
-//        newInputCustomsqlOperacion.type="reset";
-//        newInputCustomsqlOperacion.value="CUSTOM (query)";
-//        newInputCustomsqlOperacion.name="CUSTOM_SQL";
-//        newInputCustomsqlOperacion.disabled="disabled";
-//
-//        newInputCustomsqlOperacionDiv.appendChild(newInputCustomsqlOperacion);
-//        newCustomsqlParamDiv.appendChild(newInputCustomsqlOperacionDiv);
-//
-//        var newLabelCustomsqlOperacion = document.createElement('label');
-//        newLabelCustomsqlOperacion.id=operacion.identificacion + "_LABEL";
-//        newLabelCustomsqlOperacion.className="description";
-//        newLabelCustomsqlOperacion.style.paddingLeft="20px";
-//        newLabelCustomsqlOperacion.innerHTML=operacion.identificacion;
-//
-//        newCustomsqlParamDiv.appendChild(newLabelCustomsqlOperacion);
-//
-//        var newInputEditCustomsqlOperacion = document.createElement('input');
-//        newInputEditCustomsqlOperacion.id=operacion.identificacion + "_Edit";
-//        newInputEditCustomsqlOperacion.className="button_text";
-//        newInputEditCustomsqlOperacion.style.cssFloat="right";
-//        newInputEditCustomsqlOperacion.type="button";
-//        newInputEditCustomsqlOperacion.style.marginTop="30px";
-//        newInputEditCustomsqlOperacion.value=[[#{apimanager_autenticacion_editar}]];
-//        newInputEditCustomsqlOperacion.name=operacion.identificacion + "_Edit";
-//        newInputEditCustomsqlOperacion.onclick = function() {
-//       	 showCustomSqlDialog(operacion.identificacion);
-//        };
-//
-//        newCustomsqlParamDiv.appendChild(newInputEditCustomsqlOperacion);
-//
-//        var newInputEliminarCustomsqlOperacion = document.createElement('input');
-//        newInputEliminarCustomsqlOperacion.id=operacion.identificacion + "_Eliminar";
-//        newInputEliminarCustomsqlOperacion.className="button_text";
-//        newInputEliminarCustomsqlOperacion.style.cssFloat="right";
-//        newInputEliminarCustomsqlOperacion.type="button";
-//        newInputEliminarCustomsqlOperacion.style.marginTop="30px";
-//        newInputEliminarCustomsqlOperacion.value=[[#{apimanager_autenticacion_eliminar}]];
-//        newInputEliminarCustomsqlOperacion.name=operacion.identificacion + "_Eliminar";
-//        newInputEliminarCustomsqlOperacion.onclick = function() {
-//       	 removeCustomSqlOperacion(operacion.identificacion);
-//        };
-//
-//        newCustomsqlParamDiv.appendChild(newInputEliminarCustomsqlOperacion);
-//
-//        newCustomsqlParamDiv.appendChild(document.createElement('br'));
-//        newCustomsqlParamDiv.appendChild(document.createElement('br'));
-//
-//        var newInputPathOperacionCustomsql = document.createElement('span');
-//        newInputPathOperacionCustomsql.id=operacion.identificacion + "_PATH";
-//        newInputPathOperacionCustomsql.className="element text large";
-//        newInputPathOperacionCustomsql.style.paddingLeft="20px";
-//        newInputPathOperacionCustomsql.style.width="93%";
-//        newInputPathOperacionCustomsql.innerHTML="<b>" + operacion.path + "</b>";
-//        newInputPathOperacionCustomsql.name=operacion.path + "_PATH";
-//
-//        newCustomsqlParamDiv.appendChild(newInputPathOperacionCustomsql);
-//
-//        newCustomsqlParamDiv.appendChild(document.createElement('br'));
-//        newCustomsqlParamDiv.appendChild(document.createElement('br'));
-//
-//        for (var i = 0; i < operacion.querystrings.length; i++) {
-//            if (operacion.querystrings[i].nombre=="$query"){
-//                var newInputQueryOperacionCustomsql = document.createElement('span');
-//                newInputQueryOperacionCustomsql.id=operacion.identificacion + "_QUERY";
-//                newInputQueryOperacionCustomsql.className="element text large";
-//                newInputQueryOperacionCustomsql.style.paddingLeft="20px";
-//                newInputQueryOperacionCustomsql.style.width="93%";
-//                newInputQueryOperacionCustomsql.innerHTML="<b>" + operacion.querystrings[i].valor + "</b>";
-//                newInputQueryOperacionCustomsql.name=operacion.identificacion + "_QUERY";
-//
-//                newCustomsqlParamDiv.appendChild(newInputQueryOperacionCustomsql);
-//            }
-//        }
-//
-//        newCustomsqlParamDiv.appendChild(document.createElement('br'));
-//
-//        var newInputDescOperacionCustomsql = document.createElement('span');
-//        newInputDescOperacionCustomsql.id=operacion.identificacion + "_DESC";
-//        newInputDescOperacionCustomsql.className="element text large";
-//        newInputDescOperacionCustomsql.style.paddingLeft="20px";
-//        newInputDescOperacionCustomsql.innerHTML=operacion.descripcion;
-//        newInputDescOperacionCustomsql.name=operacion.identificacion + "_DESC";
-//
-//        newCustomsqlParamDiv.appendChild(newInputDescOperacionCustomsql);
-//
-//        customsqlOpsDiv.appendChild(newCustomsqlParamDiv);
-//
-//        document.getElementById("divCUSTOMSQLS").style.display="block";
-//    }
+    function addOperationCustomsql(operation){
+   	 var customsqlOpsDiv=document.getElementById("divCUSTOMSQLS");
 
-    function loadCustomSqlOperacion(nombre_op){
-        if (nombre_op!=null && nombre_op!=""){
-            var operacion;
-            for(var i=0; i<operaciones.length; i+=1){
-                var op = operaciones [i];
-                if (op.identificacion == nombre_op){
-                    operacion=op;
+        var newCustomsqlParamDiv = document.createElement('div');
+        newCustomsqlParamDiv.id= operation.identification;
+        newCustomsqlParamDiv.className= "op_div_selected";
+
+        var newInputCustomsqlOperationDiv = document.createElement('div');
+        newInputCustomsqlOperationDiv.className= "op_button_div";
+        newInputCustomsqlOperationDiv.style.marginTop="30px";
+        newInputCustomsqlOperationDiv.style.marginBottom="30px";
+
+        var newInputCustomsqlOperation = document.createElement('input');
+        newInputCustomsqlOperation.id=operation.identification + "_OPERATION";
+        newInputCustomsqlOperation.className="op_button_selected";
+        newInputCustomsqlOperation.style.width="110px";
+        newInputCustomsqlOperation.style.marginLeft="25px";
+        newInputCustomsqlOperation.type="reset";
+        newInputCustomsqlOperation.value="CUSTOM (query)";
+        newInputCustomsqlOperation.name="CUSTOM_SQL";
+        newInputCustomsqlOperation.disabled="disabled";
+
+        newInputCustomsqlOperationDiv.appendChild(newInputCustomsqlOperation);
+        newCustomsqlParamDiv.appendChild(newInputCustomsqlOperationDiv);
+
+        var newLabelCustomsqlOperation = document.createElement('label');
+        newLabelCustomsqlOperation.id=operation.identification + "_LABEL";
+        newLabelCustomsqlOperation.className="description";
+        newLabelCustomsqlOperation.style.paddingLeft="20px";
+        newLabelCustomsqlOperation.innerHTML=operation.identification;
+
+        newCustomsqlParamDiv.appendChild(newLabelCustomsqlOperation);
+
+        var newInputEditCustomsqlOperation = document.createElement('input');
+        newInputEditCustomsqlOperation.id=operation.identification + "_Edit";
+        newInputEditCustomsqlOperation.className="button_text";
+        newInputEditCustomsqlOperation.style.cssFloat="right";
+        newInputEditCustomsqlOperation.type="button";
+        newInputEditCustomsqlOperation.style.marginTop="30px";
+        newInputEditCustomsqlOperation.value=apiCustomOpsReg.apimanager_editBtn;
+        newInputEditCustomsqlOperation.name=operation.identification + "_Edit";
+        newInputEditCustomsqlOperation.onclick = function() {
+        	ApiCustomOpsController.selectEditCustomOp(operation.identification);
+        };
+
+        newCustomsqlParamDiv.appendChild(newInputEditCustomsqlOperation);
+
+        var newInputEliminarCustomsqlOperation = document.createElement('input');
+        newInputEliminarCustomsqlOperation.id=operation.identification + "_Eliminar";
+        newInputEliminarCustomsqlOperation.className="button_text";
+        newInputEliminarCustomsqlOperation.style.cssFloat="right";
+        newInputEliminarCustomsqlOperation.type="button";
+        newInputEliminarCustomsqlOperation.style.marginTop="30px";
+        newInputEliminarCustomsqlOperation.value=apiCustomOpsReg.apimanager_deleteBtn;
+        newInputEliminarCustomsqlOperation.name=operation.identification + "_Eliminar";
+        newInputEliminarCustomsqlOperation.onclick = function() {
+        	ApiCustomOpsController.removeCustomSqlOp(operation.identification);
+        };
+
+        newCustomsqlParamDiv.appendChild(newInputEliminarCustomsqlOperation);
+
+        newCustomsqlParamDiv.appendChild(document.createElement('br'));
+        newCustomsqlParamDiv.appendChild(document.createElement('br'));
+
+        var newInputPathOperationCustomsql = document.createElement('span');
+        newInputPathOperationCustomsql.id=operation.identification + "_PATH";
+        newInputPathOperationCustomsql.className="element text large";
+        newInputPathOperationCustomsql.style.paddingLeft="20px";
+        newInputPathOperationCustomsql.style.width="93%";
+        newInputPathOperationCustomsql.innerHTML="<b>" + operation.path + "</b>";
+        newInputPathOperationCustomsql.name=operation.path + "_PATH";
+
+        newCustomsqlParamDiv.appendChild(newInputPathOperationCustomsql);
+
+        newCustomsqlParamDiv.appendChild(document.createElement('br'));
+        newCustomsqlParamDiv.appendChild(document.createElement('br'));
+
+        for (var i = 0; i < operation.querystrings.length; i++) {
+            if (operation.querystrings[i].name=="$query"){
+                var newInputQueryOperationCustomsql = document.createElement('span');
+                newInputQueryOperationCustomsql.id=operation.identification + "_QUERY";
+                newInputQueryOperationCustomsql.className="element text large";
+                newInputQueryOperationCustomsql.style.paddingLeft="20px";
+                newInputQueryOperationCustomsql.style.width="93%";
+                newInputQueryOperationCustomsql.innerHTML="<b>" + operation.querystrings[i].value + "</b>";
+                newInputQueryOperationCustomsql.name=operation.identification + "_QUERY";
+
+                newCustomsqlParamDiv.appendChild(newInputQueryOperationCustomsql);
+            }
+        }
+
+        newCustomsqlParamDiv.appendChild(document.createElement('br'));
+
+        var newInputDescOperationCustomsql = document.createElement('span');
+        newInputDescOperationCustomsql.id=operation.identification + "_DESC";
+        newInputDescOperationCustomsql.className="element text large";
+        newInputDescOperationCustomsql.style.paddingLeft="20px";
+        newInputDescOperationCustomsql.innerHTML=operation.description;
+        newInputDescOperationCustomsql.name=operation.identification + "_DESC";
+
+        newCustomsqlParamDiv.appendChild(newInputDescOperationCustomsql);
+
+        customsqlOpsDiv.appendChild(newCustomsqlParamDiv);
+
+        document.getElementById("divCUSTOMSQLS").style.display="block";
+    }
+
+    function loadCustomSql (op_name){
+        if (op_name!=null && op_name!=""){
+            var operation;
+            for(var i=0; i<operations.length; i+=1){
+                var op = operations [i];
+                if (op.identification == op_name){
+                	operation=op;
                 }
             }
-            document.getElementById("id_nombre_op_customsql").value=operacion.identificacion;
-            document.getElementById("id_desc_op_customsql").value=operacion.descripcion;
-            if (operacion.script){
-           	 document.getElementById("ifTextarea").value=operacion.script.condicion;
-           	 document.getElementById("thenTextarea").value=operacion.script.ifthen;
-            } else {
-           	 document.getElementById("ifTextarea").value="";
-                document.getElementById("thenTextarea").value="";
+            $('#id_name_op_customsql').val(operation.identification);
+            $('#id_desc_op_customsql').val(operation.description);
 
-            }
-
-            for (var i = 0; i < operacion.querystrings.length; i++) {
-                if (operacion.querystrings [i].nombre == "$query" ){
-                    document.getElementById("id_query_op_customsql").value = operacion.querystrings [i].valor;
-                    loadParamsQuery(operacion.querystrings [i].valor, nombre_op);
+            for (var i = 0; i < operation.querystrings.length; i++) {
+                if (operation.querystrings [i].name == "$query" ){
+                	$('#id_query_op_customsql').val(operation.querystrings [i].value);
+                	loadParamsFromQuery(operation.querystrings [i].value, op_name);
                 }
             }
 
-            loadParamsQueryValues(operacion.querystrings);
+            loadParamsQueryValues(operation.querystrings);
 
-            document.getElementById("id_nombre_op_customsql").disabled=true;
+            $('#id_name_op_customsql').prop('disabled', true);
         } else {
-            document.getElementById("id_nombre_op_customsql").value="";
-            document.getElementById("id_query_op_customsql").value="";
-            document.getElementById("id_desc_op_customsql").value="";
-            document.getElementById("ifTextarea").value="";
-            document.getElementById("thenTextarea").value="";
-            loadParamsQuery("", "");
+        	$('#id_name_op_customsql').val("");
+        	$('#id_query_op_customsql').val("");
+        	$('#id_desc_op_customsql').val("");
+        			
+        	loadParamsFromQuery("", "");
 
-            document.getElementById("id_nombre_op_customsql").disabled=false;
+            $('#id_name_op_customsql').prop('disabled', false);
 
         }
-        loadPostProcesado();
+        $('#dialog-customsql').modal('toggle');
     }
 
 
     function loadParamsQueryValues(querystrings){
         for (var i = 0; i < querystrings.length; i++) {
-       	 if (querystrings [i].nombre == "$query" ){
-            } else if (querystrings [i].nombre == "$targetdb" ){
-       		 document.getElementById("id_customsql_targetBD").value = querystrings [i].valor;
-       	 } else if (querystrings [i].nombre == "$formatResult" ){
-       		 document.getElementById("id_customsql_formatresult").value = querystrings [i].valor;
-       	 } else if (querystrings [i].nombre == "$queryType" ){
-       		 document.getElementById("id_customsql_querytype").value = querystrings [i].valor;
-       	 } else {
-       		 document.getElementById("customsqlParamType_" + querystrings [i].nombre).value = querystrings [i].valor;
-       	 }
+	       	 if (querystrings [i].name == "$query" ){
+            } else if (querystrings [i].name == "$targetdb" ){
+            	$('#id_customsql_targetBD').val(querystrings [i].value);
+       	 	} else if (querystrings [i].name == "$formatResult" ){
+       		 	$('#"id_customsql_formatresult').val(querystrings [i].value);
+       	 	} else if (querystrings [i].name == "$queryType" ){
+       		 	$('#id_customsql_querytype').val(querystrings [i].value);
+       	 	} else {
+       		 $('#customsqlParamType_' + querystrings [i].name).val(querystrings [i].value);
+        	}
          }
     }
 
-    function updateCustomSqlOperacion(operacion){
-        document.getElementById(operacion.identificacion + "_PATH").innerHTML="<b>" + operacion.path+ "</b>";
+    function updateCustomSqlOperation(operation){
+    	$('#operation.identification' + "_PATH").html("<b>" + operation.path+ "</b>");
 
-        for (var i = 0; i < operacion.querystrings.length; i++) {
-            if (operacion.querystrings [i].nombre == "$query" ){
-              document.getElementById(operacion.identificacion + "_QUERY").innerHTML=operacion.querystrings [i].valor;
+        for (var i = 0; i < operation.querystrings.length; i++) {
+            if (operation.querystrings [i].name == "$query" ){
+            	$('#' + operation.identification + '_QUERY').html(operation.querystrings [i].value);
             }
         }
 
-        document.getElementById(operacion.identificacion + "_DESC").innerHTML=operacion.descripcion;
+        $('#' + operation.identification + "_DESC").html(operation.description);
     }
 
-    function removeCustomSqlOperacion(nombre_op){
-        for(var i=0; i<operaciones.length; i+=1){
-            var operacion = operaciones [i];
-            if (operacion.identificacion == nombre_op){
-                operaciones.splice(i, 1);
+    function removeCustomOp(op_name){
+        for(var i=0; i<operations.length; i+=1){
+            var operation = operations [i];
+            if (operation.identification == op_name){
+            	operations.splice(i, 1);
             }
         }
-        var operacionesCustomSqlDiv=document.getElementById("divCUSTOMSQLS");
-        var operacionCustomSqlEliminarDiv = document.getElementById(nombre_op);
-        operacionesCustomSqlDiv.removeChild(operacionCustomSqlEliminarDiv);
+        var operationsCustomSqlDiv=document.getElementById("divCUSTOMSQLS");
+        var operationCustomSqlRemoveDiv = document.getElementById(op_name);
+        operationsCustomSqlDiv.removeChild(operationCustomSqlRemoveDiv);
 
-    }    
-    
+    }  
     
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
@@ -467,21 +424,49 @@ var ApiCustomOpsController = function() {
 			
 		},
 		
-		// OPEN DIALOG
-		showCustomSqlDialog: function(nombre_op) {
-			logControl ? console.log(LIB_TITLE + ': changeCacheTimeout()') : '';
-			openCustomSqlDialog(nombre_op);
+		// SELECTS EDIT OPERATION
+		selectEditCustomOp: function(field) {
+			logControl ? console.log(LIB_TITLE + ': selectEditCustomOp(field)') : '';
+			selectEditOp(field);
 		},
 		
+		// REMOVES EDIT OPERATION
+		removeCustomSqlOp: function(field) {
+			logControl ? console.log(LIB_TITLE + ': selectEditCustomOp(field)') : '';
+			removeCustomOp(field);
+		},
+		
+		// VALIDATE OP NAME
+		validateName: function(field) {
+			logControl ? console.log(LIB_TITLE + ': validateNameOp()') : '';
+			validateNameOp(field);
+		},
+		
+		// EXTRACT PARAMS
+		loadParamsQuery: function(field, op_name){
+			logControl ? console.log(LIB_TITLE + ': validateNameOp()') : '';
+			loadParamsFromQuery(field, op_name);
+		},
+		
+		// EXTRACT PARAMS
+		loadParamsQueryType: function(){
+			logControl ? console.log(LIB_TITLE + ': validateNameOp()') : '';
+			loadParamQuerySQLType();
+		},		
+		
+		// SAVE CHANGES
+		saveCustom: function(){
+			logControl ? console.log(LIB_TITLE + ': saveCustom()') : '';
+			saveCustomsqlOperation();
+		}
 	};
 }();
-
 // AUTO INIT CONTROLLER WHEN READY
 jQuery(document).ready(function() {
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
-	ApiCustomOpsController.load(apiCustomOpsJson);	
-		
+	ApiCustomOpsController.load(apiCustomOpsJson);
 	// AUTO INIT CONTROLLER.
 	ApiCustomOpsController.init();
-});
+});	
+

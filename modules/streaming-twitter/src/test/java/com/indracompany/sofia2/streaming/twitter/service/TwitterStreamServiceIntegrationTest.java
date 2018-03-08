@@ -27,8 +27,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,7 +40,6 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
 import com.indracompany.sofia2.streaming.twitter.application.StreamingTwitterApp;
 import com.indracompany.sofia2.streaming.twitter.listener.TwitterStreamListener;
-import com.indracompany.sofia2.streaming.twitter.service.TwitterStreamService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,10 +59,10 @@ public class TwitterStreamServiceIntegrationTest {
 
 	@Autowired
 	private TwitterStreamListener twitterStreamListener;
-	private String accessToken = "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy";
-	private String accessTokenSecret = "Cmd9XOX9N8xMRvlYUz3Wg49ZCGFnanMJvJPI9QMfTXix2";
-	private String consumerKey = "PWgCyepuon5U8X9HqfUtNpntq";
-	private String consumerSecret = "zo6rbSh6J470t7CCz4ZtXhHEFhpt36TMPKYolJgIiLOpEW9oc4";
+	private final String accessToken = "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy";
+	private final String accessTokenSecret = "Cmd9XOX9N8xMRvlYUz3Wg49ZCGFnanMJvJPI9QMfTXix2";
+	private final String consumerKey = "PWgCyepuon5U8X9HqfUtNpntq";
+	private final String consumerSecret = "zo6rbSh6J470t7CCz4ZtXhHEFhpt36TMPKYolJgIiLOpEW9oc4";
 
 	@Before
 	public void setUp() {
@@ -75,7 +72,7 @@ public class TwitterStreamServiceIntegrationTest {
 		this.twitterConfiguration.setConsumerKey(consumerKey);
 		this.twitterConfiguration.setConsumerSecret(consumerSecret);
 
-		List<String> keywords = new ArrayList<String>();
+		final List<String> keywords = new ArrayList<>();
 		keywords.add("Helsinki");
 		keywords.add("Borbones");
 		keywords.add("Rajoy");
@@ -112,8 +109,9 @@ public class TwitterStreamServiceIntegrationTest {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
 		doNothing().when(twitterStreamListener).getSibSessionKey();
-		if (this.twitterStreamService.isSubscribe(twitterStreamListener.getId()))
+		if (this.twitterStreamService.isSubscribe(twitterStreamListener.getId())) {
 			this.twitterStreamService.unsubscribe(twitterStreamListener.getId());
+		}
 
 		doNothing().when(twitterStreamListener).deleteSibSessionKey();
 
@@ -125,18 +123,18 @@ public class TwitterStreamServiceIntegrationTest {
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
 		// doNothing().when(twitterStreamListener).getSibSessionKey();
 		// if(this.twitterStreamService.isSubscribe(twitterStreamListener.getId()))
-		Stream stream = this.twitterStreamService.subscribe(twitterStreamListener);
+		final Stream stream = this.twitterStreamService.subscribe(twitterStreamListener);
 
 		// doNothing().when(twitterStreamListener).insertInstance(any());
 
 		Thread.sleep(10000);
 
-		Tweet lastTweet = twitterStreamListener.getLastTweet();
+		final Tweet lastTweet = twitterStreamListener.getLastTweet();
 		log.info("Last tweet by user:" + lastTweet.getFromUser() + ", text: " + lastTweet.getText());
 		Assert.assertTrue(lastTweet.getText() != null && !lastTweet.getText().equals(""));
 		try {
 			stream.close();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 		}
 	}
 }

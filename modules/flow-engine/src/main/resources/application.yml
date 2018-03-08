@@ -1,0 +1,85 @@
+app:
+  name: flowengine
+server:
+  port: 8082
+  contextPath: /sofia2
+  
+spring:
+  profiles: 
+    active: common
+    include: dummy-dev, localtest
+  ## JPA Config
+  datasource:
+    url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: 
+  jpa:
+    ## Hibernate Properties
+    # The SQL dialect makes Hibernate generate better SQL for the chosen database
+    properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    # Hibernate ddl auto (create, create-drop, validate, update)
+    hibernate.ddl-auto: update
+
+sofia2: #Config Sofia2 specific
+   flowengine:
+      sync.monitor:
+         interval.sec: 30
+         initial.delay.sec: 20
+      admin.url: http://localhost:10000
+      node.path: node4
+      launcher:
+         path: /opt/nodeRed/Flow-Engine-Manager/
+         job: app.js
+         debbugin: true
+         log: /tmp/logs/flowEngine
+         failsbeforestop:
+            max: 10
+            time.millis: 60000
+         reboot.delay.seconds: 10
+         port:
+            domain:
+               min: 8000
+               max: 8500
+            service:
+               min: 7000
+               max: 7500
+      services:
+         domain:
+            status: /getDomainStatusMF
+            getall: /getAllDomainMF
+            get: /getDomainMF
+            create: /createDomainMF
+            delete: /deleteDomainMF
+            start: /startDomainMF
+            stop: /stopDomainMF
+         stop.admin: /stopMF
+         sync: /synchronizeMF
+         request.timeout.ms: 5000
+   database.mongodb:
+      database: sofia2_s4c
+      authenticationDatabase:  #admin
+      servers: localhost:27017
+      autoConnectRetry: true
+      socketTimeout: 5000
+      maxAutoConnectRetryTime: 5000
+      maxWaitTime: 5000
+      useAuth: false
+      username: #username
+      password: #password
+      readFromSecondaries: false
+      queries.executionTimeout: 5000
+      queries.defaultLimit: 150
+      queries.maxConcurrentQueries: 3
+      writeConcern: UNACKNOWLEDGED
+      tools.mongoexport.path: mongoexport
+      tools.mongoimport.path: mongoimport
+      tools.mongoshell.path: mongo
+      tools.useSequentialOps: true
+      
+## LOGGING CONF
+logging:
+   level:
+      org.springframework: INFO
+      com.example.boot.thymeleaf: INFO
+      com.indra: DEBUG
+      org.hibernate: INFO

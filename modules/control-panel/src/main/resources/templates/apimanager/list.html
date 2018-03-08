@@ -105,7 +105,7 @@
 									</div>
 									<div class="col-md-12 margin-bottom-20">
 									<!-- SEARCH FORM -->
-										<form id="form_user" action="list.html" th:action="@{/apimanager/list}" class="" role="form" method="get">												
+										<form id="form_api" action="list.html" th:action="@{/apimanager/list}" class="" role="form" method="get">												
 											<div class="col-md-12 no-space">
 												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" th:attr="data-content=#{user.search.description},data-original-title=#{gen.search}" th:text="#{gen.search}">Search</span></h4>
 											</div>
@@ -121,31 +121,36 @@
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-md-6 col-xs-12">
+													<div class="col-md-3 col-md-6 col-xs-12">
 														<div class="form-group">															
 															<div class="input-group">
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>
-																<input id="userId" th:placeholder="#{gen.owner}" name="fullName" class="form-control" type="text" maxlength="100" value=""/>
+																<select id="user" name="user" class="form-control" type="text" maxlength="100">
+					                                    			<option value="" th:placeholder="#{gen.owner}" selected="selected" disabled="disabled" hidden="hidden"></option>
+					                                    			<option th:each="user:${users}" th:value="${user.userId}" th:text="${user.userId}">ontology</option>
+					                                    		</select>
 															</div>
 														</div>
 													</div>
-													<div class="col-md-4 col-md-6 col-xs-12">
+													<div class="col-md-3 col-md-6 col-xs-12">
 														<div class="form-group">															
 															<div class="input-group">
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>
-																<input id="state" th:placeholder="#{apimanager.state}" name="state" class="form-control" type="text" maxlength="100" value=""/>
+																<select id="state" name="state" class="form-control" type="text" maxlength="100">
+					                                    			<option value="" th:placeholder="#{apimanager.state}" selected="selected" disabled="disabled" hidden="hidden"></option>
+					                                    			<option th:each="state:${states}" th:value="${state}" th:text="#{apimanager.state.__${state}__}">ontology</option>
+					                                    		</select>
 															</div>
 														</div>
 													</div>
-													<div class="clearfix"></div>
-													<div class="col-md-4 col-xs-12">
+													<div class="col-md-2 col-xs-12">
 														<div class="btn-group">
-															<button type="button" id="search_api" name="search_user" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
-															<button type="button" id="reset_api" name="reset_user" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
+															<button type="button" id="search_api" name="search_api" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="reset_api" name="reset_api" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
 														</div>
 													</div>
 												</div>
@@ -162,8 +167,11 @@
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas text-left" text=""></th>
 															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{apimanager.id} + ' - ' + #{apimanager.numversion}">Identification</span></th>
+															<th class="titulo-columnas"  ><i class="la la-credit-card"></i> <span th:text="#{apimanager.description}">Description</span></th>
+															<th class="titulo-columnas text-left"><span th:text="#{gen.public}">Description</span></th>
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Name</span></th>
 															<th class="titulo-columnas" ><i class="la la-envelope-o"></i> <span th:text="#{apimanager.state}" >State</span></th>
+															<th class="titulo-columnas text-left"><span th:text="#{apimanager.auth}">Description</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
@@ -176,10 +184,18 @@
 															</td>
 															<!-- IDENTIFICATION - VERSION -->
 															<td class="text-left no-wrap" th:text="${api.identification} + ' - V' + ${api.numversion}"></td>
+															<!-- DESCRIPTION -->
+															<td class="text-left no-wrap" th:text="${api.description}"></td>
+															<!-- PUBLIC -->
+															<td class="text-center" th:if="${api.public}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
+															<td class="text-center" th:if="${!api.public}"></td>
 															<!-- OWNER -->
 															<td class="text-left no-wrap bold" th:text="${api.user.userId}"></td>
 															<!-- STATE -->
 															<td class="text-left no-wrap " th:text="#{apimanager.state.__${api.state}__}"></td>
+															<!--  AUTH -->
+															<td class="text-center" th:if="${api.public} OR (${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')"><span class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
+															<td class="text-center" th:if="${!api.public} AND (${#authentication.name} != ${api.user.userId}) AND (${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR')"><span th:each="auth : ${auths}" th:if="${auth.api.id}==${api.id}" class="label label-success"><i class="fa fa-check-circle"></i> Authorizations</span></td>
 															<!-- OPTIONS -->
 															<td class="icon" style="white-space: nowrap">
 																<!-- VIEW -->															
@@ -188,11 +204,15 @@
 																<!-- EDIT -->
 																<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))"  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/update/${api.id}|} + '\');'"><i class="fa fa-edit"></i></span>
 																
+																<!-- SWAGGER UI -->
+																
+																<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))"  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/update/${api.id}|} + '\');'"><i class="fa fa-edit">SWAGGER</i></span>
+																
 																<!-- ACTIONS -->
-																<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))" style="float: right; background-color: white; color: #01A5E6; padding: 4px; padding-left: 10px; padding-right: 10px; border-radius: 4px; border: solid 2px; font-size: 18px;border-radius:0;" th:text="#{apimanager.state.action.PUBLISH}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/PUBLISHED|} + '\');'"/>
-                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'}))" style="float: right; background-color: white; color: #01A5E6; padding: 4px; padding-left: 10px; padding-right: 10px; border-radius: 4px; border: solid 2px; margin-right: 10px; font-size: 18px;border-radius:0;" th:text="#{apimanager.state.action.DEVELOPMENT}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/DEVELOPMENT|} + '\');'"/>
-                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'PUBLISHED'}))" style="float: right; background-color: white; color: #848484; padding: 4px; padding-left: 10px; padding-right: 10px; border-radius: 4px; border: solid 2px; font-size: 18px;border-radius:0;" th:text="#{apimanager.state.action.DEPRECATE}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/deprecate/${api.id}/DEPRECATED|} + '\');'"/>
-                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'DEPRECATED'}))" style="float: right; background-color: white; color: #FA5858; padding: 4px; padding-left: 8px; padding-right: 8px; border-radius: 4px; border: solid 2px; font-size: 18px;border-radius:0;" th:text="#{apimanager.state.action.DELETE}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/DELETED|} + '\');'"/>										
+																<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{apimanager.state.action.PUBLISH}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/PUBLISHED|} + '\');'"><i class="fa fa-edit" th:text="#{apimanager.state.action.PUBLISH}"></i></span>
+                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'}))" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{apimanager.state.action.DEVELOPMENT}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/DEVELOPMENT|} + '\');'"><i class="fa fa-edit" th:text="#{apimanager.state.action.DEVELOPMENT}"></i></span>
+                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'PUBLISHED'}))" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{apimanager.state.action.DEPRECATE}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/deprecate/${api.id}/DEPRECATED|} + '\');'"><i class="fa fa-edit" th:text="#{apimanager.state.action.DEPRECATE}"></i></span>
+                              									<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'DEPRECATED'}))" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{apimanager.state.action.DELETE}" th:onclick="'javascript:navigateUrl(\'' + @{|/apimanager/updateState/${api.id}/DELETED|} + '\');'"><i class="fa fa-edit" th:text="#{apimanager.state.action.DELETE}"></i></span>							
 
                               																			
 															</td>
@@ -252,7 +272,7 @@
 	</script>
 	
 	<script type="text/javascript">	
-	var optionName = 'USERS';
+	var optionName = 'APIMANAGER';
 	
 	//<![CDATA[
 	function navigateUrl(url){  window.location.href = url;	}
@@ -265,7 +285,7 @@
 		$('label.toggle-vis').on( 'click', function (e) {
 			e.preventDefault(); 
 			// Get the column API object
-			var column = $('#users').DataTable().column( $(this).attr('data-column') ); 
+			var column = $('#apis').DataTable().column( $(this).attr('data-column') ); 
 			// Toggle the visibility
 			column.visible( ! column.visible() );			
 			// toggle Text
@@ -273,13 +293,12 @@
 		});	
 		
 		// SEARCH FORM RESET
-		$('#reset_user').on('click',function(){
-			$('#form_user')[0].reset();
-			$('#form_user')[0].submit();
+		$('#reset_api').on('click',function(){
+			$('#form_api')[0].reset();
 		});
 		
 		// SEARCH FORM
-		$('#search_user').on('click',function(){ $('#form_user')[0].submit(); });
+		$('#search_api').on('click',function(){ $('#form_api')[0].submit(); });
 		
 	});
 	 

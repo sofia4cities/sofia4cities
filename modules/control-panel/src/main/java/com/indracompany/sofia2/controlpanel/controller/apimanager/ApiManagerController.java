@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,12 +35,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.exceptions.ApiManagerServiceException;
+import com.indracompany.sofia2.controlpanel.controller.ontology.OntologyUserAccessDTO;
 import com.indracompany.sofia2.controlpanel.helper.apimanager.ApiManagerHelper;
 import com.indracompany.sofia2.controlpanel.multipart.ApiMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
@@ -61,8 +68,8 @@ public class ApiManagerController {
 	public String createForm(Model model) {
 		
 		apiManagerHelper.populateApiManagerCreateForm(model);
-		
-		return "/apimanager/create";
+
+		return "apimanager/create";
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
@@ -71,28 +78,24 @@ public class ApiManagerController {
 
 		apiManagerHelper.populateApiManagerUpdateForm(model, id);
 
-		return "/apimanager/create";
+		return "apimanager/create";
 	}
 	
 	@GetMapping(value = "/show/{id}", produces = "text/html")
 	public String show(@PathVariable("id") String id, Model model) {
 		
 		apiManagerHelper.populateApiManagerShowForm(model, id);
-		
+
 		return "apimanager/show";
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-	@RequestMapping(value = "/list" , produces = "text/html")
-	public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel, HttpServletRequest request) {
+	@GetMapping(value = "/list" , produces = "text/html")
+	public String list(Model model,	@RequestParam(required = false) String apiId, @RequestParam(required = false) String state, @RequestParam(required = false) String user) {		
 		
-		apiManagerHelper.populateApiManagerListForm(uiModel);
-
-		String apiId = request.getParameter("apiId");
-		String state = request.getParameter("state");
-		String user = request.getParameter("user");
+		apiManagerHelper.populateApiManagerListForm(model);
 		
-		uiModel.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user));
+		model.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user));
 		
 		return "apimanager/list";
 	}
@@ -120,7 +123,7 @@ public class ApiManagerController {
 			String apiId = apiManagerService.createApi(apiManagerHelper.apiMultipartMap(api), operationsObject, authenticationObject);
 			
 			utils.addRedirectMessage("user.create.success", redirect);
-			return "redirect:/apimanager/" + utils.encodeUrlPathSegment(apiId, request);
+			return "redirect:/apimanager/show/" + utils.encodeUrlPathSegment(apiId, request);
 		} catch (ApiManagerServiceException e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
@@ -128,8 +131,9 @@ public class ApiManagerController {
 		}
 	}
 	
-	@PutMapping(value="/update/{id}")
-	public String update(@PathVariable("id") String id, ApiMultipart api, BindingResult bindingResult, HttpServletRequest request, RedirectAttributes redirect) {
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+	@PutMapping(value="/update/{id}", produces = "text/html")
+	public String update(@PathVariable("id") String id, ApiMultipart api, BindingResult bindingResult, @RequestParam(required = false) String operationsObject, @RequestParam(required = false) String authenticationObject, @RequestParam(required = false) String deprecateApis, RedirectAttributes redirect) {
 
 		if (bindingResult.hasErrors()) {
 			utils.addRedirectMessage("api.update.error", redirect);
@@ -143,14 +147,11 @@ public class ApiManagerController {
 //		}
 		
 		try {
-			String operationsObject = request.getParameter("operationsObject");
-			String authenticationObject = request.getParameter("authenticationObject");
-			String deprecateApis = request.getParameter("deprecateApis");
 			
 			apiManagerService.updateApi(apiManagerHelper.apiMultipartMap(api), deprecateApis, operationsObject, authenticationObject);
 			
 			utils.addRedirectMessage("api.update.success", redirect);
-			return "redirect:/apimanager/" + utils.encodeUrlPathSegment(api.getId(), request);
+			return "redirect:/apimanager/show/" + api.getId();
 		} catch (Exception e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("api.update.error", redirect);
@@ -158,15 +159,49 @@ public class ApiManagerController {
 		}
 	}
 	
-	
 	// AUTHORIZATIONS//
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@RequestMapping(value = "/authorize/list", produces = "text/html")
 	public String index(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model model) {
 		apiManagerHelper.populateAutorizationForm(model);
-		return "/apimanager/authorize";
+		return "apimanager/authorize";
 	}
+
+	@PostMapping(value = "/authorization", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<UserApiDTO> createAuthorization(@RequestParam String api, @RequestParam String user) {
+
+		try {
+			UserApi userApi = apiManagerService.updateAuthorization(api, user);
+			UserApiDTO userApiDTO = new UserApiDTO(userApi);
+
+			return new ResponseEntity<UserApiDTO>(userApiDTO, HttpStatus.CREATED);
+
+		}catch (RuntimeException e) {
+			return new ResponseEntity<UserApiDTO>(HttpStatus.BAD_REQUEST);
+		}
+			
+	}
+	
+	@PostMapping(value = "/authorization/delete", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<String> deleteAuthorization(@RequestParam String id) {
+
+		try {
+			apiManagerService.removeAuthorizationById(id);
+			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
+		} catch(RuntimeException e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@PostMapping(value = "/authorize")
@@ -177,7 +212,7 @@ public class ApiManagerController {
 		} catch (Exception e){
 			log.debug("Cannot update authorization that does not exist");
 			utils.addRedirectMessage("api.autn.update.error", redirect);
-			return "redirect:/apimanager/update";
+			return "redirect:/apimanager/authorize/list";
 		}
 	}
 	
@@ -191,6 +226,22 @@ public class ApiManagerController {
         uiModel.asMap().clear();
 		return "redirect:/apimanager/authorize/list";
     }
+	
+	@RequestMapping(value = "/token/list" , produces = "text/html")
+	public String token(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model model, HttpServletRequest request) {
+		apiManagerHelper.populateUserTokenForm(model);
+		return "apimanager/token";
+	}
+	
+	@GetMapping(value = "/invoke" , produces = "text/html")
+	public String invoker(Model model,	@RequestParam(required = false) String apiId) {		
+		
+//		apiManagerHelper.populateApiManagerListForm(model);
+//		
+//		model.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user));
+		
+		return "apimanager/invoke";
+	}
 		
 	@RequestMapping(value = "numVersion")
 	public @ResponseBody Integer numVersion(@RequestBody String numversionData){
@@ -199,8 +250,8 @@ public class ApiManagerController {
 	
 	@RequestMapping(value="/{id}/getImage")
 	public void showImg(@PathVariable("id") String id, HttpServletResponse response) {
-		byte[] buffer= apiManagerService.getImgBytes(id);
-		if(buffer.length>0){
+		byte[] buffer = apiManagerService.getImgBytes(id);
+		if (buffer.length > 0) {
 			OutputStream output = null;
 			try {
 				output = response.getOutputStream();
