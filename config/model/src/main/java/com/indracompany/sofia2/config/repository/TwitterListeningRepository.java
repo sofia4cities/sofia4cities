@@ -35,4 +35,6 @@ public interface TwitterListeningRepository extends JpaRepository<TwitterListeni
 
 	void deleteById(String id);
 
+	TwitterListening findByJobName(String jobName);
+
 }

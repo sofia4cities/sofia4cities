@@ -103,6 +103,7 @@ public class RouterFlowManagerService {
 			
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
 				OperationResultModel result =routerCrudService.insert(model);
+				model.setObjectId(result.getResult());
 				compositeModel.setOperationResultModel(result);
 			}
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
@@ -162,7 +163,7 @@ public class RouterFlowManagerService {
 		if (model!=null)
 		{
 			OperationModel operationModel = new OperationModel();
-			operationModel.setBody(model.getQuery());
+			operationModel.setBody(appendOIDForSQL(model.getQuery(),compositeModel.getNotificationModel().getOperationModel().getObjectId()));
 			operationModel.setOntologyName(model.getOntologyName());
 			operationModel.setQueryType(QueryType.valueOf(model.getQueryType().name()));
 			operationModel.setUser(model.getUser());
@@ -181,7 +182,7 @@ public class RouterFlowManagerService {
 				
 		OperationResultModel fallback = new OperationResultModel();
 		fallback.setResult("ERROR");
-		fallback.setMessage("Operation Failed. Returned Default FallBack with :"+entity.getEntityId());
+		fallback.setMessage("Operation Failed. Returned Default FallBack with :"+entity.getEntityId()+" URL: "+compositeModel.getUrl());
 		
 		RouterClientGateway<NotificationCompositeModel, OperationResultModel> adviceGateway =  clientsFactory.createAdviceGateway("advice", "adviceGroup");
 		adviceGateway.setFallback(fallback);
@@ -191,6 +192,10 @@ public class RouterFlowManagerService {
 		return ret;
 		
 		
+	}
+	
+	private String appendOIDForSQL(String query, String objectId) {
+		return query + " AND _id = OID '"+objectId+"'";
 	}
 	
 	

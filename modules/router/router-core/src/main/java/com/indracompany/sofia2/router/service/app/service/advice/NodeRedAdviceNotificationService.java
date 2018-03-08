@@ -48,11 +48,8 @@ public class NodeRedAdviceNotificationService implements AdviceNotificationServi
 		List<AdviceNotificationModel> model =null;
 		String baseUrl = resourcesService.getURL(ADVICE_URL);
 		
-		Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
-		String ontologyId = ontology.getId();
-		
 		try {
-			listNotifications = flowNodeService.getNotificationsByOntologyAndMessageType(ontologyId, messageType);
+			listNotifications = flowNodeService.getNotificationsByOntologyAndMessageType(ontologyName, messageType);
 		}catch (Exception e) {}
 		
 		if (listNotifications !=null)

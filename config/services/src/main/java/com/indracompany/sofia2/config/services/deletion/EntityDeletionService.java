@@ -20,4 +20,7 @@ public interface EntityDeletionService {
 	void deleteOntology(String id, String userId);
 	
 	void deleteTwitterListening(TwitterListening twitterListening);
+	void deleteClient(String id);
+
+	void deleteToken(String id);
 }

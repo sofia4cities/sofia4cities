@@ -133,7 +133,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 
 	@Override
 
-	public void updateListen(TwitterListening twitterListening) {
+	public void updateListening(TwitterListening twitterListening) {
 		TwitterListening newTwitterListening = this.twitterListeningRepository.findById(twitterListening.getId());
 		if (newTwitterListening != null) {
 			newTwitterListening.setIdentificator(twitterListening.getIdentificator());
@@ -142,7 +142,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 			newTwitterListening.setTopics(twitterListening.getTopics());
 			newTwitterListening.setDateFrom(twitterListening.getDateFrom());
 			newTwitterListening.setDateTo(twitterListening.getDateTo());
-
+			newTwitterListening.setJobName(twitterListening.getJobName());
 			this.twitterListeningRepository.save(newTwitterListening);
 		}
 
@@ -171,7 +171,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		ontology.setIdentification(ontologyId);
 		if (dataModelTwitter.getType().equals(DataModel.MainType.SocialMedia.toString()))
 			ontology.setDescription("Ontology created for tweet recollection");
-		ontology.setJsonSchema(dataModelTwitter.getSchema());
+		ontology.setJsonSchema(dataModelTwitter.getJsonSchema());
 		ontology.setActive(true);
 		ontology.setPublic(false);
 		ontology.setRtdbClean(false);
@@ -179,5 +179,12 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		return ontology;
 
 	}
+
+	@Override
+	public TwitterListening getListeningByJobName(String jobName) {
+		return this.twitterListeningRepository.findByJobName(jobName);
+	}
+	
+	
 
 }

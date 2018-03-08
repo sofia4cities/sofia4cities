@@ -107,7 +107,7 @@ public class TwitterListeningController {
 	public String update(Model model, @PathVariable("id") String id, @ModelAttribute TwitterListening twitterListener) {
 
 		if (twitterListener != null)
-			this.twitterListeningService.updateListen(twitterListener);
+			this.twitterControlService.updateTwitterListening(twitterListener);
 		return "redirect:/twitter/scheduledsearch/update/" + id;
 	}
 
@@ -209,7 +209,8 @@ public class TwitterListeningController {
 		TwitterListening listening = this.twitterListeningService.getListenById(id);
 		if (listening != null) {
 			this.entityDeletionService.deleteTwitterListening(listening);
-			this.utils.addRedirectMessage("scheduledsearch.delete.success", redirect);
+			this.twitterControlService.unscheduleTwitterListening(listening);
+			
 		} else
 			this.utils.addRedirectMessage("scheduledsearch.delete.fail", redirect);
 

@@ -96,7 +96,7 @@
 									<span th:if="${ontology?.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div> -->
 								
-								<!-- SECCIONES DE LA ONTOLOGIA TABS -->
+								<!-- ONTOLOGIA TABS SECTIONS -->
 								<ul class="nav nav-tabs pull-left">
 									<li id="tab-datos" class="active">
 										<a href="#tab_1" data-toggle="tab" aria-expanded="false">
@@ -106,7 +106,7 @@
 											<span th:if="${ontology?.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{ontology.template.update} + ' ' + ${ontology.identification}"> Update Ontology </span>
 										</a>
 									</li>																	
-									<li id="tab-autorizaciones" class=""><a href="#tab_2" data-toggle="tab" th:classappend="${ontology?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" >AUTORIZACIONES </span></a></li>
+									<li id="tab-autorizaciones" class=""><a href="#tab_2" data-toggle="tab" th:classappend="${ontology?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.authorizations}" >AUTORIZACIONES </span></a></li>
 								</ul>
 								
 							</div>
@@ -214,7 +214,7 @@
 															</div>
 														</div>											
 														
-														<!-- SECCIONE DE ONTOLOGIA -->
+														<!-- ONTOLOGY SELECTION -->
 														<div class="row" id="secciones" >
 															<div class="col-md-12">
 																<div class="portlet light ">
@@ -223,13 +223,19 @@
 																			<a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
 																			<a href="" class="fullscreen" data-original-title="" title=""> </a>
 																		</div>
-																		<!-- SECCIONES DE LA ONTOLOGIA TABS -->
+																		<!-- ONTOLOGY TABS -->
 																		<ul class="nav nav-tabs pull-left">
 																			<li id="tab-plantilla" class="active"><a href="#tab_3" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span class="uppercase font-md" th:text="#{ontology.section.templates}">Ontology Templates</span></a></li>																	
 																			<li id="tab-esquema" class=""><a href="#tab_4" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.section.schema}">Schema Generator and JSON Instances</span></a></li>
 																		</ul>
 																	</div>
 																	<div class="portlet-body">
+																		<div class="alert alert-info alert-dismissable">
+																			<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+																			<i class="fa fa-info-circle"></i> <strong th:text="#{ontology.datamodel}">DATAMODEL SCHEMA</strong> 
+																			<span th:text="#{ontology.datamodel.info}"> info.</span>
+																			<!-- <a href="" class="alert-link"> Documentation: Create a Ontology </a> -->
+																		</div>
 																		<div class="col-md-12 margin-top-10 ">
 																			<div class="tab-content">
 																			
@@ -247,7 +253,8 @@
 																								<div class="mt-list-container list-default ext-1 group" style="padding:0;">
 																									<div th:each="datamodeltype,iter : ${dataModelTypes}" class="datamodel-types" th:attr="data-datamodeltype=${datamodeltype}" >
 																										<a data-toggle="collapse" th:href="'#type-'+ ${datamodeltype}" aria-expanded="false" class="list-toggle-container collapsed">
-																											<div class="list-toggle bg-grey-mint uppercase"><span th:text="${iter.index} + 1 + '.- '"></span> <span th:text="${datamodeltype}">DatamodelType</span></div>
+																											<!-- <span th:text="${iter.index} + 1 + '.- '"></span>  -->
+																											<div class="list-toggle bg-blue-hoki font-grey-carrara uppercase"><span th:text="${datamodeltype}">DatamodelType</span></div>
 																										</a>
 																										<div class="panel-collapse collapse" aria-expanded="false"  th:id="'type-'+ ${datamodeltype}">
 																											<ul th:each="datamodel : ${dataModels}" th:id="${datamodel.name}" th:if="${datamodel.type} == ${datamodeltype}"  class="datamodel-template" >
@@ -270,11 +277,11 @@
 																								<table class="table" id="datamodel_properties" data-loaded="false">
 																									<thead>
 																										<tr class="cabecera-tabla" role="row" >
-																											<th class="titulo-columnas">Propiedad</th>
-																											<th class="titulo-columnas">T.datos</th>
-																											<th class="titulo-columnas">Requerido</th>
-																											<th class="titulo-columnas">Descripción</th>																															
-																											<th class="titulo-columnas">Options</th>
+																											<th class="titulo-columnas" th:text="#{ontology.property}">Property</th>
+																											<th class="titulo-columnas" th:text="#{ontology.type.property}">Data type</th>
+																											<th class="titulo-columnas" th:text="#{ontology.required.property}">Required </th>
+																											<th class="titulo-columnas" th:text="#{ontology.description}">Description</th>																															
+																											<th class="titulo-columnas" th:text="#{gen.options}">Options</th>
 																										</tr>
 																									</thead>
 																									<tbody>
@@ -287,6 +294,7 @@
 																													<option value="object">object</option>
 																													<option value="timestamp">timestamp</option>
 																													<option value="binary">binary</option>																											
+																													<option value="array">array</option>
 																												</select>
 																											</td>
 																											<td width="125px">
@@ -297,15 +305,15 @@
 																												</select>
 																																												</td>
 																											<td><input type="text" name="descriptions[]" class="form-control"/></td>																									
-																											<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="OntologyCreateController.removeProperty(this)">Remove</button></td>			
+																											<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="OntologyCreateController.removeProperty(this)" th:text="#{gen.deleteBtn}">Remove</button></td>			
 																										</tr>
 																									</tbody>
 																									<tfoot>
 																										<tr>
 																											<td colspan="4">
 																												<div class="btn-group">
-																													<button type="button" class="btn btn-sm btn-default green-haze btn-outline" id="button2">Add a new Property</button>
-																													<button type="button" class="btn btn-sm btn-default yellow-casablanca btn-outline " id="btn-updateSchema">Update Schema</button>
+																													<button type="button" class="btn btn-sm btn-default uppercase sbold green-haze btn-outline" id="button2" th:text="#{ontology.addproperty}">Add a new Property</button>
+																													<button type="button" class="btn btn-sm btn-default uppercase sbold yellow-casablanca btn-outline " id="btn-updateSchema" th:text="#{ontology.updateschema}">Update Schema</button>
 																												</div>
 																											</td>
 																										</tr>
@@ -323,7 +331,7 @@
 																					<div class="clearfix"></div>
 																					<div class="pull-right margin-right-10 margin-top-30 margin-bottom-30">
 																						<div class="btn-group">
-																							<button type="button" class="btn grey-mint  btn-outline sbold" onclick="OntologyCreateController.generateInstance()"><i class="flaticon-network"></i> <span>Generar Instancia</span></button>									
+																							<button type="button" class="btn grey-mint  btn-outline sbold" onclick="OntologyCreateController.generateInstance()"><i class="flaticon-network"></i> <span th:text="#{ontology.generate.instance}">Generate instance</span></button>									
 																						</div>
 																					</div>
 																					<div class="clearfix"></div>
@@ -343,10 +351,10 @@
 													<div class="form-actions">
 														<div class="pull-right">
 															<!-- CREATE -->
-															<button th:if="${ontology?.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+															<button th:if="${ontology?.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create" onclick="OntologyCreateController.updateJsonschemaInput()"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 															
 															<!-- UPDATE -->
-															<button th:if="${ontology?.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+															<button th:if="${ontology?.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  onclick="OntologyCreateController.updateJsonschemaInput()" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 															
 															<!-- REMOVE -->
 															<button th:if="${ontology?.id} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
@@ -378,39 +386,38 @@
 											<div class="col-md-4 col-sm-6 col-xs-12">
 											<!-- USER SELECTION -->
 												<div class="form-group">
-													<label class="control-label" >Usuario</label>
+													<label class="control-label" th:text="#{ontology.user}">User</label>
 													<select id="users" class="selectpicker form-control" data-live-search="true" data-width="100%" >
+														<option value="" th:text="#{ontology.userselect}"> Select User...</option>
 														<option th:each="user :${users}" th:value="${user.userId}" th:text="${user.fullName}" ></option>														
 													</select>
 												</div>
 												<div class="form-group">
-													<label class="control-label">Tipos:</label>
-													<select id="accesstypes" class="selectpicker form-control" data-live-search="true" data-width="100%" >
-														<!--<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>-->
+													<label class="control-label" th:text="#{ontology.auth.accesstypes}">Access types:</label>
+													<select id="accesstypes" class="selectpicker form-control" data-live-search="true" data-width="100%" >														
 														<option value="ALL">ALL</option>
 														<option value="QUERY">QUERY</option>
 														<option value="INSERT">INSERT</option>
 													</select>
 												</div>
 												<div class="form-group">
-													<button type="button" class="btn btn-sm btn-default green-haze btn-outline" onclick="OntologyCreateController.insertAuthorization()">Insert Ontology Authorization</button>																		
-												</div>
-												
+													<button type="button" class="btn btn-sm btn-default green-haze uppercase sbold btn-outline" onclick="OntologyCreateController.insertAuthorization()" th:text="#{ontology.insertauthorization}">Insert Ontology Authorization</button>																		
+												</div>												
 											</div>
 											<div class="col-md-8 col-sm-6 col-xs-12">
 											<!-- AUTHORIZATION ONTOLOGY-USER-TYPE -->
 												<div class="form-group">
-													<label class="control-label">Autorizaciones sobre la Ontología:</label>
+													<label class="control-label" th:text="#{ontology.auth.title} + ':'">Ontologies Authorizations</label>
 													<div id="alert-authorizations" class="alert alert-info">
-														<i class="fa fa-info-circle"></i><span> Seleccione un usuario, elija el tipo de Acceso que quiere darle para la ontología y agreguelo a las Autorizaciones. Repita tantas veces como usuarios quiera autorizar.</span>
+														<i class="fa fa-info-circle"></i> <span th:text="#{ontology.auth.info}"> Select a user, choose the type of Access you want to give to the ontology and add it to the Authorizations. Repeat as many times as users want to authorize.</span>
 													</div>
 													<div id="authorizations" class="margin-bottom-20 hide">
 														<table class="table" id="ontology_autthorizations" data-loaded="false">
 															<thead>
 																<tr class="cabecera-tabla" role="row" >
-																	<th class="titulo-columnas">Usuario</th>
-																	<th class="titulo-columnas">Tipo</th>
-																	<th class="titulo-columnas text-center">Options</th>
+																	<th class="titulo-columnas" th:text="#{ontology.user}">User</th>
+																	<th class="titulo-columnas" th:text="#{ontology.auth.accesstypes}">Access type</th>
+																	<th class="titulo-columnas text-center" th:text="#{gen.options}">Options</th>
 																</tr>
 															</thead>
 															<tbody>
@@ -424,8 +431,8 @@
 																		</select>
 																	</td>																
 																	<td width="150px" class="no-wrap text-center">																	
-																		<button type="button" class="btn btn-sm btn-default yellow-casablanca btn-outline btn-mountable-authorization-update" onclick="OntologyCreateController.updateAuthorization(this)">Update</button>
-																		<button type="button" class="btn btn-sm btn-default red-sunglo btn-outline btn-mountable-authorization-remove" onclick="OntologyCreateController.removeAuthorization(this)">Remove</button>
+																		<button type="button" class="btn btn-sm btn-default uppercase sbold yellow-casablanca btn-outline btn-mountable-authorization-update" onclick="OntologyCreateController.updateAuthorization(this)"><i class="fa fa-edit"></i> <span>Update</span></button>
+																		<button type="button" class="btn btn-sm btn-default uppercase sbold red-sunglo btn-outline btn-mountable-authorization-remove" onclick="OntologyCreateController.removeAuthorization(this)"><i class="fa fa-trash"></i> Remove</button>
 																	</td>			
 																</tr>
 															</tbody>														
@@ -496,14 +503,29 @@
 		"dataModelSelection" : [[#{ontology.datamodel.selection}]],
 		"datamodel": [[#{ontology.datamodel}]],
 		"ontologyId": [[${ontology?.id}]],
-		"authorizations" : [[${authorizations}]]
+		"authorizations" : [[${authorizations}]],
+		"confirmBtn" : [[#{gen.confirmBtn}]],
+		"removeBtn" : [[#{gen.deleteBtn}]],
+		"addpropertyBtn" : [[#{ontology.addproperty}]],
+		"updateSchemaBtn" : [[#{ontology.updateschema}]],
+		"validations" : {
+			"duplicates": [[#{ontology.valid.duplicates}]],
+			"tplschema": [[#{ontology.valid.tplschema}]],
+			"noschema": [[#{ontology.valid.noschema}]],
+			"authinsert": [[#{ontology.valid.authinsert}]],
+			"validform": [[#{ontology.validform}]],
+			"schemaprop": [[#{ontology.valid.schemaprop}]],
+			"schemanoprop": [[#{ontology.valid.schemanoprop}]],			
+			"nonode": [[#{ontology.valid.nonode}]],
+			"norequired": [[#{ontology.valid.norequired}]],
+			"noproperties": [[#{ontology.valid.noproperties}]],
+			"base": [[#{ontology.valid.base}]],
+			"authuser": [[#{ontology.valid.auths.user}]],
+			"datamodelchange" : [[#{ontology.confirm.datamodel}]]
+		}
 	};	
-	
-
 	// LOAD DATA TO USE IN CREATE WIZARD CONTROLLER
-	// CREATE WIZARD CONTROLLER LOAD AND INIT ITSELF
-	
-
+	// CREATE WIZARD CONTROLLER LOAD AND INIT ITSELF	
 	</script>	
 </body>
 </html>

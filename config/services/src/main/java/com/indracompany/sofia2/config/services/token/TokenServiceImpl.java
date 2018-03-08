@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.config.services.token;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,25 +26,22 @@ import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 
 @Service
 
-public class TokenServiceImpl implements TokenService{
+public class TokenServiceImpl implements TokenService {
 
 	@Autowired
 	private TokenRepository tokenRepository;
 
-
 	@Override
-	public Token generateTokenForClient(ClientPlatform clientPlatform)
-	{
+	public Token generateTokenForClient(ClientPlatform clientPlatform) {
 		Token token = new Token();
-		if(clientPlatform.getId()!=null)
-		{
+		if (clientPlatform.getId() != null) {
 			token.setClientPlatform(clientPlatform);
 			token.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
 			token.setActive(true);
-			if(this.tokenRepository.findByToken(token.getToken())==null) {
-				token=this.tokenRepository.save(token);
+			if (this.tokenRepository.findByToken(token.getToken()) == null) {
+				token = this.tokenRepository.save(token);
 			} else {
-				throw new TokenServiceException("Token with value "+ token.getToken()+" already exists");
+				throw new TokenServiceException("Token with value " + token.getToken() + " already exists");
 			}
 		}
 		return token;
@@ -59,5 +57,21 @@ public class TokenServiceImpl implements TokenService{
 		return this.tokenRepository.findByToken(token);
 	}
 
+	@Override
+	public void deactivateToken(Token token, boolean active) {
+		token.setActive(active);
+		this.tokenRepository.save(token);
+
+	}
+
+	@Override
+	public Token getTokenByID(String id) {
+		return this.tokenRepository.findById(id);
+	}
+
+	@Override
+	public List<Token> getTokens(ClientPlatform clientPlatform) {
+		return this.tokenRepository.findByClientPlatform(clientPlatform);
+	}
 
 }
