@@ -275,7 +275,7 @@ public class ApiServiceRest {
 				}
 
 				else {
-					operacion.setIdentification(api.getIdentification()+"_"+operacion.getOperation());
+					operacion.setIdentification(api.getIdentification()+"_"+operacion.getOperation()+"_"+path.replace("/", "").replace("?", ""));
 				}
 			}
 			operacion.setApi(api);
