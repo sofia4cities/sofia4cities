@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.flowengine.api.rest.pojo.InsertRequest;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineNodeService;
 import com.indracompany.sofia2.flowengine.exception.NotAllowedException;
@@ -96,13 +97,12 @@ public class FlowEngineNodeServicesController {
 		return flowEngineNodeService.submitQuery(ontology, queryType, query, authentication);
 	}
 
-	@RequestMapping(value = "/user/insert", method = RequestMethod.GET, produces = { "application/javascript",
+	@RequestMapping(value = "/user/insert", method = RequestMethod.POST, produces = { "application/javascript",
 			"application/json" })
-	public @ResponseBody String submitInsert(@RequestParam(required = true) String ontology,
-			@RequestParam(required = true) @Size(min = 1) String data,
-			@RequestParam(required = true) String authentication)
+	public @ResponseBody String submitInsert(@RequestBody InsertRequest insertRequest)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
-		return flowEngineNodeService.submitInsert(ontology, data, authentication);
+		return flowEngineNodeService.submitInsert(insertRequest.getOntology(), insertRequest.getData(),
+				insertRequest.getAuthentication());
 	}
 
 }

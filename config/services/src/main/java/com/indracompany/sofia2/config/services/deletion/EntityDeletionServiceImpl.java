@@ -15,6 +15,7 @@ package com.indracompany.sofia2.config.services.deletion;
 
 import java.util.Iterator;
 import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,11 @@ import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
-import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
-
-import com.indracompany.sofia2.config.repository.DeviceSimulationRepository;
-
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
-
+import com.indracompany.sofia2.config.repository.DeviceSimulationRepository;
 import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -58,8 +56,8 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 	@Autowired
 	private TwitterListeningRepository twitterListeningRepository;
 	@Autowired
-
 	private DeviceSimulationRepository deviceSimulationRepository;
+	@Autowired
 	private OntologyService ontologyService;
 	@Autowired
 	private UserService userService;
@@ -69,8 +67,6 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 	private ClientPlatformRepository clientPlatformRepository;
 	@Autowired
 	private TokenRepository tokenRepository;
-
-
 
 	@Override
 	@Transactional
