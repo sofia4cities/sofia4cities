@@ -2,7 +2,7 @@ sofia2:
    flowengine:
       node.path: node
       launcher:
-         path: /opt/flowengine/Flow-Engine-Manager
+         path: /opt/nodeRed/Flow-Engine-Manager
    database.mongodb:
       servers: realtimedb:27017    
 
