@@ -63,14 +63,9 @@ public class MongoDbDate implements Serializable {
 	
 	@Override
 	public boolean equals(Object other) {
-		if (this == other) return true;
-		if (!(other instanceof MongoDbDate)) return false;
-		MongoDbDate that = (MongoDbDate) other;
-		return this.$date.equals(that.$date);
-	}
-	
-	@Override
-	public int hashCode() {
-		return java.util.Objects.hash($date);
+		if (!(other instanceof MongoDbDate))
+			return false;
+		MongoDbDate date = (MongoDbDate) other;
+		return this.$date.equals(date.$date);
 	}
 }

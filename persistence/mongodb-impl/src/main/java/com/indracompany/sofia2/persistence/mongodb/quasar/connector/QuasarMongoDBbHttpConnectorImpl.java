@@ -111,8 +111,8 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 	 */
 
 	private String invokeQuasar(String endpoint, String accept) throws Exception {
-		try (CloseableHttpClient httpClient = new DefaultHttpClient(this.cm, this.httpParams)) {
-			
+		try {
+			CloseableHttpClient httpClient = new DefaultHttpClient(this.cm, this.httpParams);
 			httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
 
 			HttpGet httpGet = null;
