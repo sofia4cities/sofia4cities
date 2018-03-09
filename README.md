@@ -14,7 +14,7 @@ The platform provides an open, feature-rich toolkit for the IoT/Smart product de
 
 For the quick start with Sofia4Cities platform check out [Getting Started]({{root_url}}docs/) guide.
 
-You can deploy Sofia4Cities into your own environment with Docker [following these steps]({{root_url}}docs/how-to-execute-docker/README.md)
+You can deploy Sofia4Cities into your own environment with Docker [following these steps](docs/how-to-execute-docker/README.md)
 
 ## Getting help
 
