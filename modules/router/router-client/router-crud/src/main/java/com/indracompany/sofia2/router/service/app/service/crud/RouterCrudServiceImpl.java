@@ -14,13 +14,14 @@
 package com.indracompany.sofia2.router.service.app.service.crud;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
-import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -157,6 +158,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	}
 
 	@Override
+	@Cacheable("books")
 	public OperationResultModel query(OperationModel operationModel) throws Exception {
 
 		log.info("Router Crud Service Operation "+operationModel.toString());

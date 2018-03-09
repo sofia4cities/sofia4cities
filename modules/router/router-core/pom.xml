@@ -29,7 +29,22 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+
+		<!-- CACHE -->
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.hazelcast</groupId>
+			<artifactId>hazelcast-spring</artifactId>
 		</dependency>
 
 		<!-- sofia2 -->
@@ -70,8 +85,6 @@
 			<artifactId>guava</artifactId>
 			<version>24.0-jre</version>
 		</dependency>
-
-
 
 		<!-- camel -->
 		<dependency>

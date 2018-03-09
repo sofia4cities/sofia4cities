@@ -16,6 +16,8 @@ package com.indracompany.sofia2.router.service.app.service;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
