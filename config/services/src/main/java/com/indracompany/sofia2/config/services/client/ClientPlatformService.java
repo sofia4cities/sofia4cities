@@ -32,7 +32,7 @@ public interface ClientPlatformService {
 
 	public List<ClientPlatform> getclientPlatformsByUser(User user);
 
-	boolean haveAuthorityOverOntology(ClientPlatform clientPlatform, Ontology ontology);
+	boolean haveAuthorityOverOntology(String clientPlatformId, String ontologyId);
 
 	List<ClientPlatform> getAllClientPlatformByCriteria(String userId, String identification, String[] ontologies);
 

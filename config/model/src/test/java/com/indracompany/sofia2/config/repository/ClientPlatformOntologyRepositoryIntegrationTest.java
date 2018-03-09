@@ -58,7 +58,8 @@ public class ClientPlatformOntologyRepositoryIntegrationTest {
 	public void given_SomeClientPlatformOntologysExist_When_ItIsSearchedByOntologyAndClientPlatform_Then_TheCorrectObjectIsReturned() {
 		ClientPlatformOntology cpo = this.repository.findAll().get(0);
 		Assert.assertTrue(
-				this.repository.findByOntologyAndClientPlatform(cpo.getOntology(), cpo.getClientPlatform()) != null);
+				this.repository.findByOntologyAndClientPlatform(cpo.getOntology().getIdentification(), 
+																cpo.getClientPlatform().getIdentification()) != null);
 
 	}
 
