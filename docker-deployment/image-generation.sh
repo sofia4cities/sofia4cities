@@ -45,6 +45,18 @@ buildNginx()
 	docker build -t sofia2/nginx:$1 .		
 }
 
+buildQuasar()
+{
+	echo "Quasar image generation with Docker CLI: "
+	echo "Step 1: download quasar binary file"
+	wget https://github.com/quasar-analytics/quasar/releases/download/v14.2.6-quasar-web/quasar-web-assembly-14.2.6.jar
+	
+	echo "Step 2: build quasar image"
+	docker build -t sofia2/quasar:$1 .	
+	
+	rm quasar-web-assembly*.jar
+}
+
 prepareNodeRED()
 {
 	cp $homepath/../tools/Flow-Engine-Manager/*.zip $homepath/../modules/flow-engine/docker/nodered.zip
@@ -135,6 +147,11 @@ fi
 if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
 	cd $homepath/dockerfiles/nginx
 	buildNginx latest
+fi
+
+if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
+	cd $homepath/dockerfiles/quasar
+	buildQuasar latest
 fi
 
 echo "Docker images successfully generated!"
