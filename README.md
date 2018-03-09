@@ -21,20 +21,27 @@ You can discover the modules of the platform in the [Architecture Overview](docs
 The project follows this skeleton:
 
 * [Client Libraries](client-libraries/) contains the source code of the SDKs for access the platform from different languages (Java, Javascript, Android, Python,...) 
-*  [Config](config/): source code for everything related to the configuration of the platform (JPA Entities, initialization of the database, Services for the acccess to the persistence)
+
 *  [Contributions](contributions/) contains the open-source project that we have personalized.
 *  [Docker-deployment](docker-deployment/) with the Dockerfiles, docker-compose.yml and scripts to generate images for all the modules.
-*  [Docs](docs/) contains the open documentation of the platform.
+*  [Docs](docs/) contains the open documenta
+*  [Config](config/) source code for everything related to the configuration of the platform (JPA Entities, initialization of the database, Services for the acccess to the configuration of the platform).
 *  [Examples](examples/) contains different examples that help us to develop with and to extend the platform.
-*  
-## Getting started
+*  [Libraries](libraries/) source code to different utilities and services of the platform used on the differente deployable modules (mail, twitter, commons,...)
+*  [Modules](modules/) source code of the different modules of the platform (API Manager, IoTBroker, Control Panel, ...)
+* [Persistence](persistence/) source code for everything related to the persistence in the platform (Mongo as RI Persistence, abstraction services,...)
+* [Security](security/) source code for everything related to the security in the platform. We include reference implementations based on ConfigDB.
+ 
+ 
+  
+## Getting started with the platform
 
 
-For the quick start with Sofia4Cities platform check out [Getting Started](docs/) guide.
+For the quick start with Sofia4Cities platform you can:
 
-## Deploy the Platform
 
-You can deploy Sofia4Cities into your own environment with Docker [following these steps](docs/how-to-execute-docker/README.md)
+* Compile and Execute the Plataform in the Development Environment [this way](docs/how-to-execute-windows)
+* You can deploy Sofia4Cities into your own environment with Docker [following these steps](docs/how-to-execute-docker/README.md)
 
 ## Getting help
 
