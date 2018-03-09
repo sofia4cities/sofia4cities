@@ -93,6 +93,7 @@
 		<module>modules/planner</module>
 		 <module>modules/router</module>
         <module>modules/flow-engine</module>
+		<module>modules/dashboard-engine</module>
 		<!--
         <module>api-manager</module>
 		-->

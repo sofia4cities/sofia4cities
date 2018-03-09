@@ -38,12 +38,10 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
-import com.indracompany.sofia2.config.model.DashboardType;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Gadget;
-import com.indracompany.sofia2.config.model.GadgetDataModel;
+import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
-import com.indracompany.sofia2.config.model.GadgetQuery;
 import com.indracompany.sofia2.config.model.GeneratorType;
 import com.indracompany.sofia2.config.model.InstanceGenerator;
 import com.indracompany.sofia2.config.model.Ontology;
@@ -61,11 +59,9 @@ import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
-import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
-import com.indracompany.sofia2.config.repository.GadgetDataModelRepository;
+import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
-import com.indracompany.sofia2.config.repository.GadgetQueryRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.GeneratorTypeRepository;
 import com.indracompany.sofia2.config.repository.InstanceGeneratorRepository;
@@ -90,6 +86,10 @@ public class InitConfigDB {
 
 	private static User userCollaborator = null;
 	private static User userAdministrator = null;
+	private static Token tokenAdministrator=null;
+	private static Ontology ontologyAdministrator=null;
+	private static GadgetDatasource gadgetDatasourceAdministrator=null;
+	private static Gadget gadgetAdministrator=null;
 
 	@Autowired
 	ClientConnectionRepository clientConnectionRepository;
@@ -100,17 +100,13 @@ public class InitConfigDB {
 	@Autowired
 	ConsoleMenuRepository consoleMenuRepository;
 	@Autowired
-	DashboardRepository dashboardRepository;
-	@Autowired
-	DashboardTypeRepository dashboardTypeRepository;
-	@Autowired
 	DataModelRepository dataModelRepository;
 	@Autowired
-	GadgetDataModelRepository gadgetDataModelRepository;
+	DashboardRepository dashboardRepository;
 	@Autowired
 	GadgetMeasureRepository gadgetMeasureRepository;
 	@Autowired
-	GadgetQueryRepository gadgetQueryRepository;
+	GadgetDatasourceRepository gadgetDatasourceRepository;
 	@Autowired
 	GadgetRepository gadgetRepository;
 	@Autowired
@@ -181,18 +177,16 @@ public class InitConfigDB {
 		init_UserToken();
 		log.info("OK USER_Token");
 		//
-		init_DashboardType();
-		log.info("OK init_DashboardType");
 		init_Dashboard();
 		log.info("OK init_Dashboard");
-		init_GadgetDataModel();
-		log.info("OK init_GadgetDataModel");
-		init_GadgetMeasure();
-		log.info("OK init_GadgetMeasure");
-		init_GadgetQuery();
-		log.info("OK init_GadgetQuery");
 		init_Gadget();
 		log.info("OK init_Gadget");
+		init_GadgetDatasource();
+		log.info("OK init_GadgetDatasource");
+		init_GadgetMeasure();
+		log.info("OK init_GadgetMeasure");
+		
+		
 		init_GeneratorType();
 		log.info("OK init_GeneratorType");
 		// init_InstanceGenerator();
@@ -414,14 +408,17 @@ public class InitConfigDB {
 		if (dashboards.isEmpty()) {
 			log.info("No dashboards...adding");
 			Dashboard dashboard = new Dashboard();
-			dashboard.setId("1");
-			dashboard.setModel("Model Dashboard Master");
-			dashboard.setUser(getUserDeveloper());
-			dashboard.setName("Dashboard Master");
-			dashboard.setDashboardType(this.dashboardTypeRepository.findAll().get(0));
+			dashboard.setIdentification("TempDashboard");
+			dashboard.setDescription("Dashboard show temperatures around the country");
+			dashboard.setJsoni18n("");
+			dashboard.setCustomcss("");
+			dashboard.setCustomjs("");
+			dashboard.setPublic(true);
+			dashboard.setUser(getUserAdministrator());
+					
 			dashboardRepository.save(dashboard);
 		}
-	}
+	}	
 
 	private User getUserDeveloper() {
 		if (userCollaborator == null)
@@ -433,24 +430,27 @@ public class InitConfigDB {
 		if (userAdministrator == null)
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
 		return userAdministrator;
+	}  
+	
+	private Token getTokenAdministrator() {
+		if (tokenAdministrator==null) tokenAdministrator=this.tokenRepository.findByToken("acbca01b-da32-469e-945d-05bb6cd1552e");
+		return tokenAdministrator;
 	}
+	
 
-	public void init_DashboardType() {
-
-		log.info("init DashboardType");
-		List<DashboardType> dashboardTypes = this.dashboardTypeRepository.findAll();
-		if (dashboardTypes.isEmpty()) {
-			log.info("No dashboards...adding");
-			DashboardType dashboardType = new DashboardType();
-			dashboardType.setId(1);
-			dashboardType.setModel("Modelo 1");
-			dashboardType.setUser(getUserDeveloper());
-			dashboardType.setPublic(true);
-			dashboardType.setType("Tipo de modelo 1");
-			dashboardTypeRepository.save(dashboardType);
-
-		}
-
+	private Ontology getOntologyAdministrator() {
+		if (ontologyAdministrator==null) ontologyAdministrator=this.ontologyRepository.findByIdentification("OntologyMaster");
+		return ontologyAdministrator;
+	}
+	private GadgetDatasource getGadgetDatasourceAdministrator() {
+		if (gadgetDatasourceAdministrator==null) gadgetDatasourceAdministrator=this.gadgetDatasourceRepository.findById("942b6983-286c-43aa-bbc1-e46038de4181");
+		return gadgetDatasourceAdministrator;
+	}
+	
+	private Gadget getGadgetAdministrator() {
+		if (gadgetAdministrator==null) gadgetAdministrator=this.gadgetRepository.findById("c41a9d92-d08a-4e94-baf8-3679ff5cd347");
+		return gadgetAdministrator;
+		
 	}
 
 	public void init_DataModel() {
@@ -679,28 +679,49 @@ public class InitConfigDB {
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
 			dataModelRepository.save(dataModel);
-			//
+		}
+	}
 
+	public void init_Gadget() {
+		log.info("init Gadget");
+		List<Gadget> gadgets = this.gadgetRepository.findAll();
+		if (gadgets.isEmpty()) {
+			log.info("No gadgets ...");
+			Gadget gadget = new Gadget();
+			
+			
+			gadget.setIdentification("My Gadget");
+		    gadget.setPublic(true);
+			gadget.setDescription("This is my new RT gadget for temperature evolution");
+			gadget.setType("Area");
+			gadget.setConfig("");
+			gadget.setUser(getUserAdministrator());
+			gadgetRepository.save(gadget);
+		}
+	}
+
+	public void init_GadgetDatasource() {
+
+		log.info("init GadgetDatasource");
+		List<GadgetDatasource> gadgetDatasource = this.gadgetDatasourceRepository.findAll();
+		if (gadgetDatasource.isEmpty()) {
+			log.info("No gadget querys ...");
+			GadgetDatasource gadgetDatasources = new GadgetDatasource();
+			gadgetDatasources.setId("1");
+			gadgetDatasources.setIdentification("DsRawRestaurants");
+			gadgetDatasources.setMode("Query");
+			gadgetDatasources.setQuery("select * from Restaurants limit 100");
+			gadgetDatasources.setDbtype("RTDB");
+			gadgetDatasources.setRefresh(0);
+			gadgetDatasources.setOntology(null);
+			gadgetDatasources.setMaxvalues(150);
+			gadgetDatasources.setConfig("[]");
+			gadgetDatasources.setUser(getUserAdministrator());
+			gadgetDatasourceRepository.save(gadgetDatasources);
 		}
 
 	}
-
-	public void init_GadgetDataModel() {
-
-		log.info("init GadgetDataModel");
-		List<GadgetDataModel> gadgetDataModels = this.gadgetDataModelRepository.findAll();
-		if (gadgetDataModels.isEmpty()) {
-			log.info("No gadget data models ...");
-			GadgetDataModel gadgetDM = new GadgetDataModel();
-			gadgetDM.setIdentification("1");
-			gadgetDM.setImage("ea02 2293 e344 8e16 df15 86b6".getBytes());
-			gadgetDM.setUser(getUserDeveloper());
-			gadgetDM.setPublic(true);
-			gadgetDataModelRepository.save(gadgetDM);
-		}
-
-	}
-
+	
 	public void init_GadgetMeasure() {
 
 		log.info("init GadgetMeasure");
@@ -708,71 +729,12 @@ public class InitConfigDB {
 		if (gadgetMeasures.isEmpty()) {
 			log.info("No gadget measures ...");
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			gadgetMeasure.setAttribute("Attr1");
-			List<Gadget> gadgets = this.gadgetRepository.findAll();
-			Gadget gadget;
-			if (gadgets.isEmpty()) {
-				log.info("No gadgets ...");
-				gadget = new Gadget();
-				gadget.setDbType("DBC");
-				gadget.setUser(getUserDeveloper());
-				gadget.setPublic(true);
-				gadget.setName("Gadget1");
-				gadget.setType("Tipo 1");
-
-				gadgetRepository.save(gadget);
-			} else {
-				gadget = gadgetRepository.findAll().get(0);
-			}
-			gadgetMeasure.setGadget(gadget);
+			//inicializo el id?
+			//gadgetMeasure.setId("1");
+			gadgetMeasure.setDatasource(getGadgetDatasourceAdministrator());
+			gadgetMeasure.setConfig("'field':'temperature','transformation':''}],'name':'Avg. Temperature'");
+			gadgetMeasure.setGadget(getGadgetAdministrator());
 			gadgetMeasureRepository.save(gadgetMeasure);
-		}
-
-	}
-
-	public void init_GadgetQuery() {
-
-		log.info("init GadgetQuery");
-		List<GadgetQuery> gadgetQuerys = this.gadgetQueryRepository.findAll();
-		if (gadgetQuerys.isEmpty()) {
-			log.info("No gadget querys ...");
-			GadgetQuery gadgetQuery = new GadgetQuery();
-			gadgetQuery.setQuery("Query1");
-			List<Gadget> gadgets = this.gadgetRepository.findAll();
-			Gadget gadget;
-			if (gadgets.isEmpty()) {
-				log.info("No gadgets ...");
-				gadget = new Gadget();
-				gadget.setDbType("DBC");
-				gadget.setUser(getUserDeveloper());
-				gadget.setPublic(true);
-				gadget.setName("Gadget1");
-				gadget.setType("Tipo 1");
-
-				gadgetRepository.save(gadget);
-			} else {
-				gadget = gadgetRepository.findAll().get(0);
-			}
-			gadgetQuery.setGadget(gadget);
-			gadgetQueryRepository.save(gadgetQuery);
-		}
-
-	}
-
-	public void init_Gadget() {
-
-		log.info("init Gadget");
-		List<Gadget> gadgets = this.gadgetRepository.findAll();
-		if (gadgets.isEmpty()) {
-			log.info("No gadgets ...");
-			Gadget gadget = new Gadget();
-			gadget.setDbType("RTDB");
-			gadget.setUser(getUserDeveloper());
-			gadget.setPublic(true);
-			gadget.setName("Gadget Example");
-			gadget.setType("Type 1");
-
-			gadgetRepository.save(gadget);
 		}
 
 	}
@@ -1052,6 +1014,8 @@ public class InitConfigDB {
 		}
 
 	}
+	
+	
 
 	public void init_User() {
 		log.info("init UserCDB");
@@ -1136,7 +1100,7 @@ public class InitConfigDB {
 			}
 		}
 	}
-
+	
 	/*
 	 * public void init_Template() { log.info("init template"); List<Template>
 	 * templates= this.templateRepository.findAll();

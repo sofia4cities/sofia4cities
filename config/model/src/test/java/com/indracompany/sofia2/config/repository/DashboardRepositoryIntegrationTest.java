@@ -43,8 +43,6 @@ public class DashboardRepositoryIntegrationTest {
 
 	@Autowired
 	DashboardRepository repository;
-	@Autowired
-	DashboardTypeRepository dashboardTypeRepo;
 
 	@Autowired
 	UserRepository userRep;
@@ -57,8 +55,7 @@ public class DashboardRepositoryIntegrationTest {
 			Dashboard dashboard = new Dashboard();
 			dashboard.setModel("Modelo 1");
 			dashboard.setUser(this.userRep.findByUserId("collaborator"));
-			dashboard.setName("Nombre del modelo 1");
-			dashboard.setDashboardType(this.dashboardTypeRepo.findAll().get(0));
+			dashboard.setIdentification("Nombre del modelo 1");
 			repository.save(dashboard);
 		}
 
@@ -67,13 +64,13 @@ public class DashboardRepositoryIntegrationTest {
 	@Test
 	public void given_SomeDashboardsExist_When_AllAreSearched_Then_AllAreReturned() {
 		Dashboard d = this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.countByName(d.getName()) == 1L);
+		Assert.assertTrue(this.repository.countByIdentification(d.getIdentification()) == 1L);
 	}
 
 	@Test
-	public void given_SomeDashboardsExist_When_ItIsSearchedByNameAndType_TheCorrectObjectIsReturned() {
+	public void given_SomeDashboardsExist_When_ItIsSearchedByName_TheCorrectObjectIsReturned() {
 		Dashboard d = this.repository.findAll().get(0);
-		Assert.assertTrue(this.repository.findByNameAndDashboardType(d.getName(), d.getDashboardType()).size() > 0);
+		Assert.assertTrue(this.repository.findByIdentification(d.getIdentification()).size() > 0);
 
 	}
 
