@@ -109,6 +109,11 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@Setter
 	private String cron;
 	
+	@Column(name= "INTERVAL_SECONDS")
+	@Getter
+	@Setter
+	private int interval;
+	
 	@Column(name = "ACTIVE")
 	@Getter
 	@Setter

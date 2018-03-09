@@ -37,6 +37,9 @@ public interface ApiServiceInterface {
 	public static final String OUTPUT="OUTPUT";
 	public static final String CONTENT_TYPE="CONTENT_TYPE";
 	public static final String CONTENT_TYPE_INPUT="CONTENT_TYPE_INPUT";
+	public static final String CONTENT_TYPE_OUTPUT="CONTENT_TYPE_OUTPUT";
+	
+	
 	
 	
 	public static final String USER="USER";

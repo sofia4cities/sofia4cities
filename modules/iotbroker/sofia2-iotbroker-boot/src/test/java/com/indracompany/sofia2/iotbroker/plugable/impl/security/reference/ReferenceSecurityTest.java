@@ -42,6 +42,7 @@ import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
+import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
@@ -49,7 +50,7 @@ import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 @SpringBootTest
 public class ReferenceSecurityTest {
 	@Autowired
-	ReferenceSecurityImpl security;
+	SecurityPluginManager security;
 
 	@Autowired
 	UserService userService;
@@ -109,7 +110,7 @@ public class ReferenceSecurityTest {
 
 	}
 
-	@Test
+	@Before
 	public void tearDown() {
 		//TODO: Delete created items (depends on JPA configuration)
 	}

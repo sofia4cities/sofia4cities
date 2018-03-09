@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
+import com.indracompany.sofia2.config.model.DeviceSimulation;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
@@ -52,7 +53,6 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 	private OntologyUserAccessRepository ontologyUserAccessRepository;
 	@Autowired
 	private ClientPlatformOntologyRepository clientPlatformOntologyRepository;
-
 	@Autowired
 	private TwitterListeningRepository twitterListeningRepository;
 	@Autowired
@@ -153,5 +153,15 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 			throw new OntologyServiceException("Couldn't delete Token");
 		}
 
+	}
+
+	@Override
+	@Transactional
+	public void deleteDeviceSimulation(DeviceSimulation simulation) throws Exception {
+		if(!simulation.isActive())
+			this.deviceSimulationRepository.deleteById(simulation.getId());
+		else
+			throw new Exception("Simulation is currently running");
+		
 	}
 }

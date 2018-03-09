@@ -85,10 +85,10 @@ public class OntologyRule extends DefaultRuleBase {
 			ODataDTO odata=null;
 			
 			ApiOperation customSQL = apiManagerService.getCustomSQL(pathInfo, api,method);
-			Boolean isPathQuery = apiManagerService.isPathQuery(pathInfo);
+			
 			
 			String objectId=apiManagerService.getObjectidFromPathQuery(pathInfo);
-			if (!objectId.equals("")) {
+			if (!objectId.equals("") && (queryType.equals("") || queryType.equals("NONE") )) {
 				queryDb = "db."+ontology.getIdentification()+".find({\"_id\":ObjectId('"+objectId+"')})";
 				data.put(ApiServiceInterface.QUERY,queryDb);
 			}
@@ -122,7 +122,6 @@ public class OntologyRule extends DefaultRuleBase {
 			
 			data.put(ApiServiceInterface.QUERY_TYPE, queryType);
 			data.put(ApiServiceInterface.QUERY, queryDb);
-			data.put(ApiServiceInterface.QUERY_TYPE, queryType);
 			data.put(ApiServiceInterface.TARGET_DB_PARAM, targetDb);
 			data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
 			
