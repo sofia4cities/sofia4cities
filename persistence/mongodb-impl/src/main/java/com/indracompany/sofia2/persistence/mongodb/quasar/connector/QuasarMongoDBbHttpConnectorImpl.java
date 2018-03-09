@@ -17,17 +17,21 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -57,17 +61,30 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 	@Value("${sofia2.database.mongodb.database:sofia2_s4c}")
 	private String database;
 
-	private PoolingHttpClientConnectionManager cm;
-	private RequestConfig config;
+	// private PoolingHttpClientConnectionManager cm1;
+	// private RequestConfig config;
+	private PoolingClientConnectionManager cm;
+	private BasicHttpParams httpParams;
 
 	@PostConstruct
 	public void init() {
-		this.cm = new PoolingHttpClientConnectionManager();
+		/**
+		 * Using the new way we obtain a java.io.EOFException: Unexpected end of ZLIB
+		 * input stream It must be a bug in HttpClient
+		 */
+		// this.cm1 = new PoolingHttpClientConnectionManager();
+		// this.cm1.setMaxTotal(maxHttpConnections);
+		// this.cm1.setDefaultMaxPerRoute(maxHttpConnectionsPerRoute);
+		// this.cm1.closeIdleConnections(0, TimeUnit.SECONDS);
+		// config = RequestConfig.custom().setConnectTimeout(connectionTimeout).build();
+		// config =
+		// RequestConfig.custom().setConnectTimeout(connectionTimeout).setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(connectionTimeout).build();
+
+		this.cm = new PoolingClientConnectionManager();
+		this.httpParams = new BasicHttpParams();
 		this.cm.setMaxTotal(maxHttpConnections);
 		this.cm.setDefaultMaxPerRoute(maxHttpConnectionsPerRoute);
-
-		config = RequestConfig.custom().setConnectTimeout(connectionTimeout)
-				.setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(connectionTimeout).build();
+		HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
 	}
 
 	@Override
@@ -124,9 +141,14 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 		HttpGet httpGet = null;
 		CloseableHttpClient httpClient = null;
 		HttpResponse httpResponse = null;
-		// .getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
+		String output = null;
 		try {
-			HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+			// httpClient = HttpClientBuilder.create().setConnectionManager(cm1).build();
+			// httpClient =
+			// HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+			httpClient = new DefaultHttpClient(this.cm, this.httpParams);
+			httpClient = HttpClientBuilder.create().build();
+			httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
 			httpGet = createHttpGetRequest(endpoint, accept, null);
 		} catch (Exception e) {
 			log.error("Unable to send message: error detected while building POST request.", e);
@@ -145,9 +167,10 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 					log.error("Error notifying message to endpoint: {}. Malformed HTTP response.", endpoint);
 				}
 				HttpEntity en = httpResponse.getEntity();
-				String data = EntityUtils.toString(en);
-				// Header[] headers = httpResponse.getHeaders(CONTENT_TYPE_HEADER);
-				return data;
+				Header[] headers = httpResponse.getHeaders(CONTENT_TYPE_HEADER);
+				output = EntityUtils.toString(en);
+				return output;
+
 			} catch (HttpHostConnectException e) {
 				log.error("Error notifing message to endpoint: {}", endpoint, e);
 				throw new DBPersistenceException(e);
@@ -158,7 +181,9 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 				httpGet.releaseConnection();
 			}
 
-		} else {
+		} else
+
+		{
 			log.warn("Cannot notify message: the HTTPPost request cannot be build.");
 			throw new DBPersistenceException("Cannot notify message: the HTTPPost request cannot be build.");
 		}
