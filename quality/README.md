@@ -12,6 +12,13 @@ As we use Spring Boot for development we use the capabilities the Testing framew
 - Spring Test & Spring Boot Test :Utilities and integration test support for Spring Boot applications) 
 - Mockito: A Java mocking framework. 
 
+## Code Quality
+We do continuous inspection of the code, not only to show health of the platform  but also to highlight issues newly introduced. 
+
+With a Quality Gate in place the development team fix the leak and improve code quality systematically.
+
+We use SonarQube for this labour, we have a SonarQube Server hosted in [https://www.sofia4cities.com/sonar  ](https://www.sofia4cities.com/sonar) that monitorice each day the quality of the code of the platform.
+
 ## Continuous Integration and Continuous Delivery
 Each night using CI & CD we generate and deploy a new version of the platform with the snapshot of the day-work.
 
