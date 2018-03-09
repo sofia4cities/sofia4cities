@@ -53,7 +53,7 @@ Sofia4Cities documentation is a part of Sofia4Cities source code and is located 
 
 ## How to contribute
 
-To contribute to Sofia4Cities platform, please visit [How to contribute]({{root_url}}docs/how-to-contribute/README.md) guide.
+To contribute to Sofia4Cities platform, please visit [How to contribute](docs/how-to-contribute/README.md) guide.
 
 ## Where to report issues
 
