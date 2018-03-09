@@ -45,6 +45,18 @@ buildNginx()
 	docker build -t sofia2/nginx:$1 .		
 }
 
+buildQuasar()
+{
+	echo "Quasar image generation with Docker CLI: "
+	echo "Step 1: download quasar binary file"
+	wget https://github.com/quasar-analytics/quasar/releases/download/v14.2.6-quasar-web/quasar-web-assembly-14.2.6.jar
+	
+	echo "Step 2: build quasar image"
+	docker build -t sofia2/quasar:$1 .	
+	
+	rm quasar-web-assembly*.jar
+}
+
 prepareNodeRED()
 {
 	cp $homepath/../tools/Flow-Engine-Manager/*.zip $homepath/../modules/flow-engine/docker/nodered.zip
@@ -106,14 +118,15 @@ if [ -z "$1" ]; then
 		buildImage "API Manager"
 	fi
 	
-	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then
- 		prepareNodeRED		
-	
-		cd $homepath/../modules/flow-engine/
-		buildImage "Flow Engine"
-		
-		removeNodeRED
+	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/dashboard-engine/
+		buildImage "Dashboard Engine"
 	fi
+	
+	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../modules/api-manager/	
+		buildImage "API Manager"
+	fi	
 fi
 
 # Generates images only if they are not present in local docker registry
@@ -135,6 +148,11 @@ fi
 if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
 	cd $homepath/dockerfiles/nginx
 	buildNginx latest
+fi
+
+if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
+	cd $homepath/dockerfiles/quasar
+	buildQuasar latest
 fi
 
 echo "Docker images successfully generated!"

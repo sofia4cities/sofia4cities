@@ -46,9 +46,20 @@ services:
     external_links:
      - configdb
      - schedulerdb
-     - realtimedb    
+     - realtimedb
+  dashboardinstance:
+    image: ${REPOSITORY}sofia2/dashboard:${IMAGETAG}
+    container_name: dashboardservice       
+    networks:
+      - data_datanetwork
+    ports:
+     - "8095:8089"
+    external_links:
+     - configdb
+     - schedulerdb
+     - realtimedb          
   loadbalancerservice:
-    image: ${REPOSITORY}sofia2/nginx:latest
+    image: ${REPOSITORY}sofia2/nginx:${IMAGETAG}
     container_name: loadbalancerservice
     environment:
       - SERVER_NAME=${SERVERNAME}
@@ -60,6 +71,7 @@ services:
      - controlpanelinstance
      - iotbrokerinstance
      - flowengineinstance
+     - apimanagerinstance
     depends_on:
      - "controlpanelinstance"
      - "iotbrokerinstance"

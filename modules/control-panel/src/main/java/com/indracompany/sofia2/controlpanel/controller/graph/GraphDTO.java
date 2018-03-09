@@ -84,7 +84,7 @@ public class GraphDTO implements Serializable {
 	@JsonRawValue
 	@JsonIgnore
 	public String toString()
-	{
+	{   
 		ObjectMapper mapper = new ObjectMapper();
 		String result=null;
 		try {

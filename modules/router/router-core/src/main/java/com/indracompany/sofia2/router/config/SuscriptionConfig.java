@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 import com.indracompany.sofia2.router.service.app.service.suscription.SuscriptionRepository;
 
-@Configuration
+//@Configuration
 public class SuscriptionConfig {
 
 	@Bean

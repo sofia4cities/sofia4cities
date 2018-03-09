@@ -29,14 +29,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Dashboard;
-import com.indracompany.sofia2.config.model.DashboardType;
+
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
-import com.indracompany.sofia2.config.repository.DashboardTypeRepository;
+
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -57,8 +57,6 @@ public class GraphUtil {
 	private ClientPlatformRepository clientPlatformRepository;
 	@Autowired
 	private GadgetRepository gadgetRepository;
-	@Autowired
-	private DashboardTypeRepository dashboardTypeRepository;
 	@Autowired
 	private DashboardRepository dashboardRepository;
 	@Autowired
@@ -109,8 +107,7 @@ public class GraphUtil {
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlClientPlatform + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlClientPlatform + "create"));
 
-		List<ClientPlatform> clientPlatforms = clientPlatformRepository
-				.findByUser(this.userService.getUser(utils.getUserId()));
+		List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUser(this.userService.getUser(utils.getUserId()));
 
 		for (ClientPlatform clientPlatform : clientPlatforms) {
 			// Creación de enlaces
@@ -137,7 +134,7 @@ public class GraphUtil {
 	private List<GraphDTO> constructGraphWithGadgets(String visualizationId, String visualizationName) {
 
 		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
-		String name = utils.getMessage("name.gadgets", "GADGETS");
+		/*String name = utils.getMessage("name.gadgets", "GADGETS");
 
 		// carga de nodo gadget dependiente de visualizacion
 		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlGadget + "list", visualizationId, name,
@@ -149,24 +146,18 @@ public class GraphUtil {
 			for (Gadget gadget : gadgets) {
 				// Creación de enlaces
 				arrayLinks.add(new GraphDTO(name, gadget.getId(), urlGadget + "list", urlDashboard + gadget.getId(),
-						name, "gadget", name, gadget.getName(), "licensing"));
-				if (gadget.getToken() != null) {
-					// si tiene token , tiene kp
-					arrayLinks.add(new GraphDTO(gadget.getToken().getClientPlatform().getId(), gadget.getId(),
-							urlClientPlatform + gadget.getToken().getClientPlatform().getId(),
-							urlDashboard + gadget.getId(), "clientplatform", "gadget",
-							gadget.getToken().getClientPlatform().getIdentification(), gadget.getName(), "suit"));
-				}
+						name, "gadget", name, gadget.getIdentification(), "licensing"));
+				
 			}
 			gadgets.clear();
-		}
+		}*/
 		return arrayLinks;
 	}
 
 	private List<GraphDTO> constructGraphWithDashboard(String visualizationId, String visualizationName) {
 
 		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
-		String name = utils.getMessage("name.dashboards", "DASHBOARDS");
+		/*String name = utils.getMessage("name.dashboards", "DASHBOARDS");
 
 		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlDashboard + "list", visualizationId, name,
 				visualizationName, name, "suit", null, urlDashboard + "creategroup?"));
@@ -195,7 +186,7 @@ public class GraphUtil {
 				}
 			}
 			dashboards.clear();
-		}
+		}*/
 
 		return arrayLinks;
 	}

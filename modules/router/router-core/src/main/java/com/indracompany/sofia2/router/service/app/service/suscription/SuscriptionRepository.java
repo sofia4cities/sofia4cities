@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-@Service
+//@Service
 public class SuscriptionRepository<K,T> {
    // private ConcurrentHashMap<String , T> storage = new ConcurrentHashMap<String , T>();
 	Multimap<K, T> storage = ArrayListMultimap.create();

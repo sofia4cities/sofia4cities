@@ -75,6 +75,7 @@ public class RouterFlowManagerService {
 		else {
 			OperationResultModel output = new OperationResultModel();
 			output.setResult("ERROR");
+			output.setStatus(false);
 			output.setMessage("Input Model Integrity Check Failed");
 			return output;
 		}
@@ -91,6 +92,7 @@ public class RouterFlowManagerService {
 		
 		OperationResultModel fallback = new OperationResultModel();
 		fallback.setResult("NO_RESULT");
+		fallback.setStatus(false);
 		fallback.setMessage("Operation Not Executed due to lack of OperationType");
 		compositeModel.setOperationResultModel(fallback);
 		
@@ -153,6 +155,9 @@ public class RouterFlowManagerService {
 	}
 	
 	public OperationResultModel adviceScriptsAndNodereds(@Header(value = "theBody") Object header, Exchange exchange) {
+		
+		log.debug("adviceScriptsAndNodereds: Begin");
+		
 		NotificationCompositeModel compositeModel = (NotificationCompositeModel) header;
 		AdviceNotificationModel entity = (AdviceNotificationModel)exchange.getIn().getBody();
 		
@@ -182,6 +187,7 @@ public class RouterFlowManagerService {
 				
 		OperationResultModel fallback = new OperationResultModel();
 		fallback.setResult("ERROR");
+		fallback.setStatus(false);
 		fallback.setMessage("Operation Failed. Returned Default FallBack with :"+entity.getEntityId()+" URL: "+compositeModel.getUrl());
 		
 		RouterClientGateway<NotificationCompositeModel, OperationResultModel> adviceGateway =  clientsFactory.createAdviceGateway("advice", "adviceGroup");
@@ -189,13 +195,19 @@ public class RouterFlowManagerService {
 		
 		OperationResultModel ret = adviceGateway.execute(compositeModel);
 		
+		log.debug("adviceScriptsAndNodereds: END");
 		return ret;
 		
 		
 	}
 	
 	private String appendOIDForSQL(String query, String objectId) {
-		return query + " AND _id = OID '"+objectId+"'";
+		if (query.toUpperCase().contains("WHERE")) {
+			return query + " AND _id = OID '"+objectId+"'";
+		}
+		else 
+			return query + " WHERE _id = OID '"+objectId+"'";
+		
 	}
 	
 	

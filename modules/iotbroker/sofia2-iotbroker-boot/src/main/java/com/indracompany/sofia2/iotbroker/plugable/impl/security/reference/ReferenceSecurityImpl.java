@@ -118,10 +118,22 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		}
 
 		final IoTSession session = sessionList.get(sessionKey);
-		final Ontology ontologyDB = ontologyService.getOntologyByIdentification(ontology, session.getUserID());
-		final ClientPlatform clientPlatformDB = clientPlatformService.getByIdentification(session.getClientPlatform());
-
-		return clientPlatformService.haveAuthorityOverOntology(clientPlatformDB, ontologyDB);
+		
+		boolean clientHasAuthority = clientPlatformService.haveAuthorityOverOntology(session.getClientPlatform(), ontology);
+		
+		if (!clientHasAuthority) {
+			
+			if (SSAPMessageTypes.INSERT.equals(messageType) || SSAPMessageTypes.UPDATE.equals(messageType) ||
+				SSAPMessageTypes.UPDATE_BY_ID.equals(messageType) || 
+				SSAPMessageTypes.DELETE.equals(messageType) || SSAPMessageTypes.DELETE_BY_ID.equals(messageType)) {
+				clientHasAuthority = ontologyService.hasUserPermissionForInsert(session.getUserID(), ontology);
+			} else if (SSAPMessageTypes.QUERY.equals(messageType)) {
+				clientHasAuthority = ontologyService.hasUserPermissionForQuery(session.getUserID(), ontology);
+			} 
+		
+		}
+		
+		return clientHasAuthority;
 	}
 
 	@Override
