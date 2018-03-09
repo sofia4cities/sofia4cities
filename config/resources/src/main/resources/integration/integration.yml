@@ -27,7 +27,7 @@ sofia2:
         router:
           url: http://localhost:19100/router/router/
         hawtio:
-          url: http://localhost:19101/hawtio/index.html
+          url: http://localhost:19100/hawtio/index.html
         swagger-ui:
           url: http://localhost:19100/router/swagger-ui.html
       api-manager:

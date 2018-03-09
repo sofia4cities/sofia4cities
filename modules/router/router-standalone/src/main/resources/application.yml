@@ -9,12 +9,14 @@ server: ## Config Web Server
       
 spring.application.name : smartstore
 
-
+spring.security.enabled: false
+management.security.enabled: false
+security.basic.enabled: false
 # all access to actuator endpoints without security
 management:
   security:
     enabled : false
-  port: 19101
+  port: 19100
 # turn on actuator health check
 endpoints:
   health:
