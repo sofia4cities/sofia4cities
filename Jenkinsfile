@@ -55,6 +55,8 @@ pipeline {
 					
 		    	// Run maven build
 	        	sh "mvn clean install"
+				
+				sh "mvn sonar:sonar"
 	   		}
 	   }	 
    
