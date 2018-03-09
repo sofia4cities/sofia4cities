@@ -69,7 +69,7 @@ public class QueryProcessor implements MessageTypeProcessor {
 		model.setOperationType(OperationType.QUERY);
 		model.setQueryType(QueryType.valueOf(queryMessage.getBody().getQueryType().name()));
 		model.setUser(session.get().getUserID());
-
+		model.setClientPlatformId(session.get().getClientPlatform());
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

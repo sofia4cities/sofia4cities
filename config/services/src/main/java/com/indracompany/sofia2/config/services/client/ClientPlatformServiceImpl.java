@@ -98,15 +98,6 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 	}
 
 	@Override
-	public boolean haveAuthorityOverOntology(String clientPlatformId, String ontologyId) {
-
-		final ClientPlatformOntology clientPlatformOntology = this.clientPlatformOntologyRepository
-				.findByOntologyAndClientPlatform(ontologyId, clientPlatformId);
-
-		return clientPlatformOntology != null;
-	}
-
-	@Override
 	public List<ClientPlatform> getAllClientPlatformByCriteria(String userId, String identification,
 			String[] ontologies) {
 		List<ClientPlatform> clients = new ArrayList<ClientPlatform>();

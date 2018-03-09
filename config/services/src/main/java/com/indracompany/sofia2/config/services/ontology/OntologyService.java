@@ -56,6 +56,10 @@ public interface OntologyService {
 	boolean hasUserPermissionForInsert(String userId, String ontologyIdentificator);
 
 	boolean hasUserPermisionForChangeOntology(User user, Ontology ontology);
+	
+	boolean hasClientPlatformPermisionForInsert(String clientPlatformId, String ontologyId);
+	
+	boolean hasClientPlatformPermisionForQuery(String clientPlatformId, String ontologyId);
 
 	void updateOntology(Ontology ontology, String sessionUserId);
 

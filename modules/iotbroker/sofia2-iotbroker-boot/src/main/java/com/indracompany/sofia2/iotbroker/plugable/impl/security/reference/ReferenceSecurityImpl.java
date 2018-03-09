@@ -119,19 +119,22 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 
 		final IoTSession session = sessionList.get(sessionKey);
 		
-		boolean clientHasAuthority = clientPlatformService.haveAuthorityOverOntology(session.getClientPlatform(), ontology);
+		boolean clientHasAuthority = false;
 		
-		if (!clientHasAuthority) {
+		if (SSAPMessageTypes.INSERT.equals(messageType) || SSAPMessageTypes.UPDATE.equals(messageType) ||
+			SSAPMessageTypes.UPDATE_BY_ID.equals(messageType) || 
+			SSAPMessageTypes.DELETE.equals(messageType) || SSAPMessageTypes.DELETE_BY_ID.equals(messageType)) {
+		
 			
-			if (SSAPMessageTypes.INSERT.equals(messageType) || SSAPMessageTypes.UPDATE.equals(messageType) ||
-				SSAPMessageTypes.UPDATE_BY_ID.equals(messageType) || 
-				SSAPMessageTypes.DELETE.equals(messageType) || SSAPMessageTypes.DELETE_BY_ID.equals(messageType)) {
-				clientHasAuthority = ontologyService.hasUserPermissionForInsert(session.getUserID(), ontology);
-			} else if (SSAPMessageTypes.QUERY.equals(messageType)) {
-				clientHasAuthority = ontologyService.hasUserPermissionForQuery(session.getUserID(), ontology);
-			} 
+			clientHasAuthority = (ontologyService.hasClientPlatformPermisionForInsert(session.getClientPlatform(), ontology)) || 
+								 (ontologyService.hasUserPermissionForInsert(session.getUserID(), ontology));
 		
-		}
+		} else if (SSAPMessageTypes.QUERY.equals(messageType)) {
+			
+			clientHasAuthority = (ontologyService.hasClientPlatformPermisionForQuery(session.getClientPlatform(), ontology) ||
+								 (ontologyService.hasUserPermissionForQuery(session.getUserID(), ontology)));
+		} 
+		
 		
 		return clientHasAuthority;
 	}

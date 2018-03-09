@@ -40,6 +40,11 @@ public class QueryToolServiceImpl implements QueryToolService {
 		if (!ontologyService.hasUserPermissionForQuery(user, ontology))
 			throw new Exception("User:" + user + " has nos permission to query ontology " + ontology);
 	}
+	
+	private void hasClientPlatformPermisionForQuery(String clientPlatform, String ontology) throws Exception{
+		if (!ontologyService.hasClientPlatformPermisionForQuery(clientPlatform, ontology))
+			throw new Exception("Client Platform:" + clientPlatform + " has nos permission to query ontology " + ontology);
+	}
 
 	@Override
 	public String queryNativeAsJson(String user, String ontology, String query, int offset, int limit)
@@ -71,6 +76,31 @@ public class QueryToolServiceImpl implements QueryToolService {
 			return queryOps.querySQLAsJson(ontology, query, offset);
 		} catch (Exception e) {
 			log.error("Error querySQLAsJson:" + e.getMessage());
+			throw new DBPersistenceException(e);
+		}
+	}
+
+	@Override
+	public String queryNativeAsJsonForPlatformClient(String clientPlatform, String ontology, String query, int offset,
+			int limit) throws DBPersistenceException {
+
+		try {
+			hasClientPlatformPermisionForQuery(clientPlatform, ontology);
+			return queryOps.queryNativeAsJson(ontology, query, offset, limit);
+		} catch (Exception e) {
+			log.error("Error queryNativeAsJsonForPlatformClient:" + e.getMessage());
+			throw new DBPersistenceException(e);
+		}
+	}
+
+	@Override
+	public String querySQLAsJsonForPlatformClient(String clientPlatform, String ontology, String query, int offset)
+			throws DBPersistenceException {
+		try {
+			hasClientPlatformPermisionForQuery(clientPlatform, ontology);
+			return queryOps.querySQLAsJson(ontology, query, offset);
+		} catch (Exception e) {
+			log.error("Error querySQLAsJsonForPlatformClient:" + e.getMessage());
 			throw new DBPersistenceException(e);
 		}
 	}
