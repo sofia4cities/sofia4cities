@@ -179,9 +179,7 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 				httpGet.releaseConnection();
 			}
 
-		} else
-
-		{
+		} else {
 			log.warn("Cannot notify message: the HTTPPost request cannot be build.");
 			throw new DBPersistenceException("Cannot notify message: the HTTPPost request cannot be build.");
 		}
