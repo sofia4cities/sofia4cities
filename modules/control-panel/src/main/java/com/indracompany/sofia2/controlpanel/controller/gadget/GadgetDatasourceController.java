@@ -172,6 +172,16 @@ public class GadgetDatasourceController {
 			return this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId());
 		}
 		
+		@GetMapping(value = "/getDatasourceById/{id}", produces="application/json")
+		public @ResponseBody GadgetDatasource getDatasourceById(@PathVariable("id") String id){
+			if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {
+				return this.gadgetDatasourceService.getGadgetDatasourceById(id);
+			}
+			else {
+				return null;
+			}
+		}
+		
 		@GetMapping(value = "/getDatasourceByIdentification/{id}", produces="application/json")
 		public @ResponseBody GadgetDatasource getDatasourceByIdentification(@PathVariable("id") String id){
 			if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {

@@ -30,6 +30,8 @@ public interface GadgetRepository extends JpaRepository<Gadget,String>{
 	
 	Gadget findById(String Id);
 	List<Gadget> findByUser(User user);
+	List<Gadget> findByType(String type);
+	List<Gadget> findByUserAndType(User user, String type);
 	List<Gadget> findByUserAndIdentificationContaining(User user, String identification);
 	List<Gadget> findByUserAndDescriptionContaining(User user, String description);
 	List<Gadget> findByIdentificationAndTypeAndUser(String identification, String type, User user);

@@ -64,13 +64,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    /*@Bean
     public DaoAuthenticationProvider authenticationProvider() {
         final DaoAuthenticationProvider bean = new CustomDaoAuthenticationProvider();
         bean.setUserDetailsService(customUserDetailsService);
         bean.setPasswordEncoder(encoder());
         return bean;
-    }
+    }*/
     
     @Bean
     public Sofia2ConfigDBAuthenticationProvider authenticationProviderSofia2() {
@@ -113,10 +113,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         
     }
 
-    @Override
+    /*@Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
-    }
+    }*/
 
     @Override
     public void configure(WebSecurity web) throws Exception {

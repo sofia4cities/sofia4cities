@@ -22,11 +22,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.indracompany.sofia2.config.model.Gadget;
+import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.services.gadget.GadgetDatasourceService;
 import com.indracompany.sofia2.config.services.gadget.GadgetService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
@@ -69,6 +71,20 @@ public class GadgetController {
 		return this.gadgetService.getAllIdentifications();
 	}
 	
+	@GetMapping(value="getUserGadgetsByType/{type}")
+	public @ResponseBody List<Gadget> getUserGadgetsByType(@PathVariable("type") String type){
+		return this.gadgetService.getUserGadgetsByType(utils.getUserId(), type);
+	}
+	
+	@GetMapping(value="getGadgetConfigById/{gadgetId}")
+	public @ResponseBody Gadget getGadgetConfigById(@PathVariable("gadgetId") String gadgetId){
+		return this.gadgetService.getGadgetById(utils.getUserId(), gadgetId);
+	}
+	
+	@GetMapping(value="getGadgetMeasuresByGadgetId/{gadgetId}")
+	public @ResponseBody List<GadgetMeasure> getGadgetMeasuresByGadgetId(@PathVariable("gadgetId") String gadgetId){
+		return this.gadgetService.getGadgetMeasuresByGadgetId(utils.getUserId(), gadgetId);
+	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/create", produces = "text/html")

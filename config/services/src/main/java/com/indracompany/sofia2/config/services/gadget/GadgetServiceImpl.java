@@ -20,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Gadget;
+import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 
@@ -29,6 +31,10 @@ public class GadgetServiceImpl implements GadgetService {
 	
 	@Autowired
 	private GadgetRepository gadgetRepository;
+	
+	@Autowired
+	private GadgetMeasureRepository gadgetMeasureRepository;
+	
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -102,8 +108,13 @@ public class GadgetServiceImpl implements GadgetService {
 	}
 	
 	@Override
-	public Gadget getGadgetById(String id) {
-		return gadgetRepository.findById(id);
+	public Gadget getGadgetById(String userID, String gadgetId) {
+		User user = userRepository.findByUserId(userID);
+		Gadget gadget = gadgetRepository.findById(gadgetId);
+		if(user.getRole().getId().equals("ROLE_ADMINISTRATOR") || gadget.getUser().getUserId().equals(userID)) {
+			return gadget;
+		}
+		return null;
 	}
 	
 	@Override
@@ -115,6 +126,27 @@ public class GadgetServiceImpl implements GadgetService {
 		
 	}
 
+	@Override
+	public List<Gadget> getUserGadgetsByType(String userID, String type) {
+		User user = userRepository.findByUserId(userID);
+		if(user.getRole().getId().equals("ROLE_ADMINISTRATOR")) {
+			return gadgetRepository.findByType(type);
+		}
+		else {
+			return gadgetRepository.findByUserAndType(user, type);
+		}
+	}
+
+	@Override
+	public List<GadgetMeasure> getGadgetMeasuresByGadgetId(String userID, String gadgetId) {
+		User user = userRepository.findByUserId(userID);
+		Gadget gadget = gadgetRepository.findById(gadgetId);
+		List<GadgetMeasure> lgm = gadgetMeasureRepository.findByGadget(gadgetRepository.findById(gadgetId));
+		if(user.getRole().getId().equals("ROLE_ADMINISTRATOR") || gadget.getUser().getUserId().equals(userID)) {
+			return lgm;
+		}
+		return null;
+	}	
 }
 
 
