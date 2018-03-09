@@ -97,6 +97,9 @@ pushAllImages2Registry()
 	docker tag sofia2/flowengine:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
 	
+	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
+	
 	docker tag sofia2/nginx:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/nginx:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/nginx:$1		
 	
@@ -147,6 +150,11 @@ if [ -z "$1" ]; then
 		cd $homepath/../modules/api-manager/	
 		buildImage "API Manager"
 	fi
+	
+	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/dashboard-engine/
+		buildImage "Dashboard Engine"
+	fi	
 	
 	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
  		prepareNodeRED		
