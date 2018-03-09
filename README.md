@@ -1,18 +1,38 @@
 <p align="center">
   <a src='https://www.select4cities.com/'>
-    <img src='img/s4c_grisdegradado.png'/>
+    <img src='s4c_grisdegradado.png'/>
   </a>
 </p>
 
 Sofia4Cities Open-Source Platform [![Build Status](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/buildStatus/icon?job=select4cities/develop)](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/view/SELECT4CITIES/job/select4cities/job/develop/)
 ============================
 
-Sofia4Cities is a open-source, production-ready, multi-purpose platform for building complete end-to-end solutions, connected applications, and smart products. 
-The platform provides an open, feature-rich toolkit for the IoT/Smart product development and thus dramatically reduces associated cost, risks, and time-to-market. 
+Sofia4Cities is an multi-purpose, enterprise and open-source platform for building complete end-to-end solutions, connected applications, and smart products. 
+The platform provides an open toolkit for the IoT/Smart product development that reduces associated cost, risks, and time-to-market. 
 
+## Technology
+
+Sofia4Cities IoT Platform is built mainly on Java technology, developed as a  Spring-powered microservices architecture and deploy by Spring Boot.
+
+You can discover the modules of the platform in the [Architecture Overview](docs/architecture-overview/) 
+
+## Project Structure
+
+The project follows this skeleton:
+
+* [Client Libraries](client-libraries/) contains the source code of the SDKs for access the platform from different languages (Java, Javascript, Android, Python,...) 
+*  [Config](config/): source code for everything related to the configuration of the platform (JPA Entities, initialization of the database, Services for the acccess to the persistence)
+*  [Contributions](contributions/) contains the open-source project that we have personalized.
+*  [Docker-deployment](docker-deployment/) with the Dockerfiles, docker-compose.yml and scripts to generate images for all the modules.
+*  [Docs](docs/) contains the open documentation of the platform.
+*  [Examples](examples/) contains different examples that help us to develop with and to extend the platform.
+*  
 ## Getting started
 
+
 For the quick start with Sofia4Cities platform check out [Getting Started](docs/) guide.
+
+## Deploy the Platform
 
 You can deploy Sofia4Cities into your own environment with Docker [following these steps](docs/how-to-execute-docker/README.md)
 
