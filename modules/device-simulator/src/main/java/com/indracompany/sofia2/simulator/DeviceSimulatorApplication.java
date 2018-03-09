@@ -14,15 +14,32 @@
 package com.indracompany.sofia2.simulator;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
+import org.springframework.boot.actuate.endpoint.MetricsEndpointMetricReader;
+import org.springframework.boot.actuate.endpoint.PublicMetrics;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 
 @SpringBootApplication
+@EnableAutoConfiguration
 @ComponentScan("com.indracompany.sofia2")
 public class DeviceSimulatorApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(DeviceSimulatorApplication.class, args);
 	}
+	
+
+	/**
+	 * Exports the all endpoint metrics like those implementing
+	 * {@link PublicMetrics}.
+	 */
+	@Bean
+	public MetricsEndpointMetricReader metricsEndpointMetricReader(MetricsEndpoint metricsEndpoint) {
+		return new MetricsEndpointMetricReader(metricsEndpoint);
+	}
+	
 }

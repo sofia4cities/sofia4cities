@@ -28,8 +28,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
 
@@ -38,52 +36,41 @@ import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 import lombok.Getter;
 import lombok.Setter;
 
-@Configurable
 @Entity
-@Table(name = "DASHBOARD")
-public class Dashboard extends AuditableEntityWithUUID {
+@Table(name= "DASHBOARD")
+@Configurable
 
-	@Column(name = "MODEL", nullable = false)
-	@NotNull
+public class Dashboard extends AuditableEntityWithUUID{
+		
+	@Column(name = "IDENTIFICATION", length = 100,nullable = false)
+    @NotNull
+    @Getter @Setter private String identification;
+	
+	@Column(name = "DESCRIPTION", length = 100,nullable = false)
+    @NotNull
+    @Getter @Setter private String description;
+	
+	@ManyToOne
+	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
+	@Getter @Setter private User user;
+	
+	@Column(name = "JSON18N")
 	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	@Getter
-	@Setter
-	private String model;
-	/*
-	 * @OneToMany(mappedBy = "dashboardId", cascade = CascadeType.ALL)
-	 * 
-	 * @OnDelete(action = OnDeleteAction.CASCADE)
-	 * 
-	 * @ForeignKey(name = "FK_GRUPOSDASHBOARD_DASHBOARDID") private
-	 * Set<Gruposdashboard> gruposdashboards;
-	 * 
-	 * public Set<Gruposdashboard> getGruposdashboards() { return gruposdashboards;
-	 * }
-	 * 
-	 * public void setGruposdashboards(Set<Gruposdashboard> gruposdashboards) {
-	 * this.gruposdashboards = gruposdashboards; }
-	 */
-
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
-	@Getter
-	@Setter
-	private User user;
-
-	@Column(name = "NAME", length = 100, nullable = false)
-	@NotNull
-	@Getter
-	@Setter
-	private String name;
-
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JoinColumn(name = "DASHBOARD_TYPE_ID", referencedColumnName = "ID", nullable = false)
-	@NotNull
-	@Getter
-	@Setter
-	private DashboardType dashboardType;
-
+    @Type(type = "org.hibernate.type.TextType")
+    @Getter @Setter private String jsoni18n;
+	
+	@Column(name = "CUSTOMCSS")
+    @Getter @Setter private String customcss;
+	
+	@Column(name = "CUSTOMJS")
+    @Getter @Setter private String customjs;
+	
+		
+	@Column(name = "PUBLIC")
+    @Getter @Setter private boolean isPublic;
+	
+	@Column(name = "MODEL")
+	@Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Getter @Setter private String model;
 }
