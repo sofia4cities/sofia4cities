@@ -20,6 +20,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.Api;
+import com.indracompany.sofia2.config.model.Api.ApiStates;
 import com.indracompany.sofia2.config.model.User;
 
 public interface ApiRepository extends JpaRepository<Api, String> {
@@ -59,8 +60,11 @@ public interface ApiRepository extends JpaRepository<Api, String> {
 
 	List<Api> findByUserAndIsPublicTrue(User userId);
 	
-	@Query("SELECT o FROM Api AS o WHERE (o.user.userId LIKE %:userId% OR o.identification LIKE %:apiId% OR o.state LIKE %:state%)")
-	List<Api> findApisByIdentificationOrStateOrUser(@Param("apiId") String apiId, @Param("state")String state, @Param("userId") String userId);
+	@Query("SELECT o FROM Api AS o WHERE (o.user.userId = :userId OR o.identification LIKE %:apiId%)")
+	List<Api> findApisByIdentificationOrUser(@Param("apiId") String apiId, @Param("userId") String userId);
+	
+	@Query("SELECT o FROM Api AS o WHERE (o.user.userId = :userId OR o.identification LIKE %:apiId% OR o.state = :state)")
+	List<Api> findApisByIdentificationOrStateOrUser(@Param("apiId") String apiId, @Param("state") ApiStates state, @Param("userId") String userId);
 	
 	@Query("SELECT o FROM Api AS o WHERE (o.user.userId LIKE %:userId% AND (o.identification LIKE %:apiId% OR o.state LIKE %:state%)) AND o.isPublic IS true")
 	List<Api> findApisByIdentificationOrStateAndUserAndIsPublicTrue(@Param("apiId") String apiId, @Param("state") String state, @Param("userId") String userId);

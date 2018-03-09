@@ -20,4 +20,8 @@ public class OntologyServiceException extends RuntimeException {
 	public OntologyServiceException(String message) {
 		super(message);
 	}
+	
+	public OntologyServiceException(String message, Throwable e) {
+		super(message, e);
+	}
 }

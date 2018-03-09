@@ -17,25 +17,20 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-
-import com.indracompany.sofia2.config.converters.JPACryptoConverterCustom;
-import com.indracompany.sofia2.config.converters.JPAHAS256ConverterCustom;
 
 
 
-@SpringBootApplication(scanBasePackages="com.indracompany.sofia2.iotbroker")
+@SpringBootApplication(scanBasePackages="com.indracompany.sofia2")
 
-@ComponentScan(basePackages = {
-		"com.indracompany.sofia2.config.services",
-		"com.indracompany.sofia2.router.config.repository",
-		"com.indracompany.sofia2.router.service.app.service.crud"
-},
-excludeFilters = {
-		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-				classes = {JPACryptoConverterCustom.class, JPAHAS256ConverterCustom.class})}
-		)
+//@ComponentScan(basePackages = {
+//		"com.indracompany.sofia2.config.services",
+//		"com.indracompany.sofia2.router.config.repository",
+//		"com.indracompany.sofia2.router.service.app.service.crud"
+//},
+//excludeFilters = {
+//		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+//				classes = {JPACryptoConverterCustom.class, JPAHAS256ConverterCustom.class})}
+//		)
 
 @EnableAutoConfiguration(exclude = {HibernateJpaAutoConfiguration.class})
 

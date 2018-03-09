@@ -1,0 +1,420 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+
+		
+		<!-- WEB FONTs -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND CODEMIRROR  -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+
+		
+				
+	</head>	
+	
+	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>
+			
+		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+			
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM-->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/devicesimulation/list}"> <span th:text="#{simulation.breadcrumb.prev}">List</span></a><i class="fa fa-circle"></i></li>
+						<li>
+							<span th:if="${simulation.id} == null" th:text="#{simulation.breadcrumb.create}">Create</span>
+							<span th:if="${simulation.id} != null" th:text="#{simulation.breadcrumb.update}">Update</span>
+						</li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">						
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="la la-users font-grey-gallery"></i>
+									<!-- FORM TITLE -->
+									<span th:if="${simulation.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{simulation.template.create} + ':'"> New</span>
+									<span th:if="${simulation.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{simulation.template.update}"> Update</span>
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>
+								<div class="actions">
+									<!-- ACTION INDICATORs -->									
+									<span th:if="${simulation?.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+									<span th:if="${simulation?.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
+								</div>									
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>		
+										<div class="alert alert-generic display-hide">
+											<button class="close" data-close="alert"></button><span class="alert-exists-text"></span>
+										</div>								
+									</div>
+									<div class="col-md-12">										
+										<form role="form" id="simulation_create_form" th:object="${simulation}"  method="post" class="form">
+											<!-- FORM ACTIONS FOR INSERT-->
+											<input th:if="${simulation.id} == null" type="hidden" name="action" th:value="@{/devicesimulation/create}"/>
+											
+											<!-- FORM ACTIONS FOR UPDATE -->											
+											<input th:if="${simulation.id} != null" type="hidden" name="action" th:value="@{/devicesimulation/update/}"/>
+											<input th:if="${simulation.id} != null" type="hidden" name="_method" value="PUT"/>											
+											
+											<div class="form-body">
+												
+												<!-- Ontologies,ClientPlatform,Tokens-->
+												<div class="row" id="row-not-new">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{simulation.identification} + ':'">Identification</label>
+															<input th:required="true" type="text" th:placeholder="#{simulation.identification}" class="form-control" name="identification" th:value="${simulation.identification}"/>	
+														</div>
+													</div>													
+													<div class="col-md-2 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{simulation.clientplatform} + ':'">Platform Clients</label>
+															<select th:required="true" th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="form-control" th:classappend="${simulation.id != null} ? select:selectpicker" data-live-search="true" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
+																<option th:each=" platformClient : ${platformClients}" th:value="${platformClient}" th:text="${platformClient}"/>																
+															</select>										
+															
+														</div>
+													</div>
+													<div  class="row" id="ontologiesAndTokens"  th:style="${simulation.ontology?.id == null}  ? 'display:none'">
+													<div th:fragment="ontologiesAndTokens" >
+														<div class="col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<label class="control-label" th:text="#{simulation.select.tokens} + ':'">Tokens</label>
+																<select th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulation.tokens}"  >
+																<option th:each="token : ${tokens}" th:value="${token}" th:text="${token}"/>
+																</select>									
+																									
+															</div>
+														</div>
+														<div class="col-md-2 col-sm-6 col-xs-12">
+															<div class="form-group">
+																<label class="control-label" th:text="#{simulation.select.ontologies} + ':'">Ontologies</label>
+																<select th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
+																<option th:each="ontology : ${ontologies}" th:value="${ontology}" th:text="${ontology}"/>
+																</select>									
+																										
+															</div>
+														</div>														
+													</div>
+												</div>
+
+												</div>
+												<div class="row" id="interval" th:style="${simulation.id == null}  ? 'display:none'">
+													<div class="col-md-2 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{simulation.interval} + ':'">Interval</label>
+															<input th:required="true" type="number" th:placeholder="#{simulation.interval.placeholder}" class="form-control" name="interval" th:value="${simulation.interval}"/>
+														</div>
+													</div>
+												</div>
+												
+											
+												<div id="ontologyFields" style="display:none" class="form-body">
+												
+												<div th:fragment="ontologyFields">
+														<div class="row"  th:fragment="ontologyFields" >
+															<div class="col-md-3 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label class="control-label" th:text="#{simulation.fields} + ':'">fields</label>
+																</div>
+															</div>									
+														</div>
+														<div th:each="field : ${fields}" class="row" >
+															<script th:inline="javascript">
+																fields = "[[${fields}]]";
+																fields = JSON.parse(fields.replace(/'/g,"\""));
+															</script>
+															<div class="col-md-2 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label class="control-label" th:text="${field.key} + ':'">fields</label>
+																	<select th:id="${#strings.replace(field.key,'.','--')}" th:name="fields" th:title="#{simulation.choose}" data-width="100%" data-live-search="true" class="select form-control" th:onchange="'generateSimulatorFunctionDiv(\''+${#strings.replace(field.key,'.','--')}+'\')'" >
+																		<option th:text="#{simulation.choose}"/>
+																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'string') AND (simulator eq 'NULL' OR #strings.contains(simulator,'STRING')))}" th:value="${simulator}" th:text="${simulator}"/>
+																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'number') AND (simulator == 'NULL' OR #strings.contains(simulator,'NUMBER')))}" th:value="${simulator}" th:text="${simulator}"/>
+																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'date') AND (simulator == 'NULL' OR #strings.contains(simulator,'DATE')))}" th:value="${simulator}" th:text="${simulator}"/>
+																	</select>
+																	<input type="hidden" th:value="simulator+${field.key}"/>																	
+																</div>
+															</div>
+															
+															<div th:id="${#strings.replace(field.key,'.','--')}+'Div'" style="display:none">
+															</div>
+																										
+															
+															
+														</div>
+												</div>
+												</div>
+											</div>
+											
+											<!-- FORM BUTTONS -->
+											<div class="form-actions">
+												<div class="pull-right">
+													<!-- CREATE -->
+												<button th:if="${simulation.id} == null" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" onclick="submitForm('simulation_create_form')"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													<!-- UPDATE -->
+													<button th:if="${simulation.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" onclick="submitForm('simulation_create_form')" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+
+													<!-- REMOVE -->
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteSimulation(\''+ ${simulation.id}+'\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													
+													
+													
+													
+													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+													
+													<!-- CANCEL TO-DO: authentication and control -->
+													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+												</div>
+											</div>
+											<input type="hidden" name="jsonMap" id="jsonMap"/>											
+										</form>
+										
+										<!-- AUXILIAR FORM TO DELETE USER -->
+										<form id="delete_twitterListening_form" class="delete-twitterListening hide"  action=""  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="userId" th:value="*{id}"/>
+										</form>
+									</div>									
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC  -->						
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	<!-- AUXILIAR FORMS -->
+
+		<!-- NUMBERS -->
+	<div id="RANDOM_INTEGER" style="display: none">
+		<div class="col-md-2 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.integer.begin} + ':'"> Begin</label>
+				<input name="from" id="integerBegin" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.integer.begin}"/>		
+			</div>
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.integer.begin} + ':'"> End</label>
+				<input name="to" id="integerEnd" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.integer.end}"/>			
+			</div>
+		</div>
+	</div>
+	<div id="RANDOM_NUMBER" style="display: none">
+		<div class="col-md-2 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.number.begin} + ':'"> Begin</label>
+				<input name="from" id="numberBegin" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.number.begin}"/>		
+			</div>
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.number.end} + ':'"> End</label>
+				<input name="to" id="numberEnd" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.number.end}"/>			
+			</div>
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.number.precision} + ':'"> Precision</label>
+				<input name="precision" id="numberPrecision" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.number.precision}"/>			
+			</div>
+		</div>
+	</div>
+	<div id="FIXED_NUMBER" style="display: none">
+		<div class="col-md-2 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.number.fixed} + ':'"> Value </label>
+				<input name="value" id="numberValue" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.number.fixed}"/>		
+			</div>		
+		</div>
+	</div>
+	<div id="FIXED_INTEGER" style="display: none">
+		<div class="col-md-2 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.integer.fixed} + ':'"> Value </label>
+				<input name="value" id="integerValue" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.integer.fixed}"/>		
+			</div>		
+		</div>
+	</div>
+	<div id="COSINE_NUMBER" style="display: none">
+		<div class="col-md-2 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.cosine.base} + ':'"> Base </label>
+				<input name="base" id="cosineBase" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.base}"/>		
+			</div>
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.cosine.multiplier} + ':'"> Multiplier </label>
+				<input name="multiplier" id="cosineMultiplier" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.multiplier}"/>			
+			</div>
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.cosine.steps} + ':'"> Steps </label>
+				<input name="steps" id="cosineSteps" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.steps}"/>			
+			</div>
+		</div>
+	</div>
+	<div id="SINE_NUMBER" style="display: none">
+		<div class="col-md-2 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.sine.base} + ':'"> Base </label>
+				<input name="base" id="sineBase" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.base}"/>		
+			</div>
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.sine.multiplier} + ':'"> Multiplier </label>
+				<input name="multiplier" id="sineMultiplier" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.multiplier}"/>			
+			</div>
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.sine.steps} + ':'"> Steps </label>
+				<input name="steps" id="sineSteps" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.steps}"/>
+			</div>
+		</div>
+	</div>
+
+		<!-- STRINGS -->
+	<div id="RANDOM_STRING" style="display: none"> 
+		<div  class="col-md-3 col-sm-3 col-xs-6" >	
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.string.random} + ':'"> Begin</label>
+				<input name="list" id="stringList" type="text" maxlength="256" class="form-control no-remove" th:placeholder="#{simulation.string.list}"/>		
+			</div>
+		</div>
+	</div>
+	<div id="FIXED_STRING" style="display: none">
+		<div class="col-md-3 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.string.fixed} + ':'"> Begin</label>
+				<input name="value" id="stringValue" type="text" maxlength="256" class="form-control no-remove" th:placeholder="#{simulation.string.fixed}"/>		
+			</div>
+		</div>
+	</div>
+		<!-- DATES -->
+	<div id="RANDOM_DATE" style="display: none"> 
+		<div  class="col-md-3 col-sm-3 col-xs-6" >	
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.date.from} + ':'"> Begin</label>
+				<input name="from" id="dateFrom" type="date" class="form-control no-remove" th:placeholder="#{simulation.date.to}"/>	
+			</div>
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.date.to} + ':'"> End</label>
+				<input name="to" id="dateTo" type="date" class="form-control no-remove" th:placeholder="#{simulation.date.to}"/>	
+			</div>
+		</div>
+	</div>
+	<div id="FIXED_DATE" style="display: none">
+		<div class="col-md-3 col-sm-3 col-xs-6" >
+			<div class="form-group">
+				<label class="control-label" th:text="#{simulation.string.fixed} + ':'"> Value</label>
+				<input name="value" type="date" class="form-control no-remove" th:placeholder="#{simulation.string.fixed}"/>
+			</div>
+		</div>
+	</div>
+
+	<!-- END AUXILIAR DIVS -->
+	<!-- FOOTER INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
+	
+	<!-- CORE JS CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+
+	
+	
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
+    <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
+	
+		
+	<!-- TEMPLATE CONTROLLER  -->	
+
+	<!-- CUSTOM FUNCTIONS FOR SIMULATION PAGE -->
+	<script th:src="@{/static/js/pages/simulationCreate.js}" type="text/javascript"></script>
+		
+	<!-- MAIN INIT -->
+	<script  th:inline="javascript">
+	var simulationJson = JSON.parse([[${simulation.json}]]) ;
+
+	var currentLanguage = [[${lang}]];	
+	
+	
+	var ScheduledSearchCreateJson = { 
+		"close" : [[#{gen.closeBtn}]],		
+		"language" : currentLanguage
+
+	};
+
+	var defaultOption=[[#{simulation.choose}]];
+	// LOAD DATA TO USE IN MENUCONTROLLER
+	// MENU CONTROLLER LOAD AND INIT ITSELF
+	$( document ).ready(function() {
+		if(simulationJson !=null)
+		{
+			getOntologyFields();
+		}
+	});
+   
+	</script>	
+
+</body>
+</html>

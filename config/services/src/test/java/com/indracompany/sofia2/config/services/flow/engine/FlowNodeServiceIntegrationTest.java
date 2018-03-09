@@ -33,18 +33,16 @@ import com.indracompany.sofia2.config.model.FlowNode;
 import com.indracompany.sofia2.config.model.FlowNode.MessageType;
 import com.indracompany.sofia2.config.model.FlowNode.Type;
 import com.indracompany.sofia2.config.model.NotificationEntity;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.flow.FlowService;
 import com.indracompany.sofia2.config.services.flowdomain.FlowDomainService;
 import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 
-import lombok.extern.slf4j.Slf4j;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Slf4j
 public class FlowNodeServiceIntegrationTest {
 
 	@Autowired
@@ -71,7 +69,8 @@ public class FlowNodeServiceIntegrationTest {
 		ontologyId = "OntologyTest";
 		domainIdentification = "DomainTest_" + UUID.randomUUID().toString().substring(0, 30);
 
-		FlowDomain domain = domainService.createFlowDomain(domainIdentification, userService.getUser("developer"));
+		User user = userService.getUser("developer");
+		FlowDomain domain = domainService.createFlowDomain(domainIdentification, user);
 
 		Flow flow = new Flow();
 		flow.setActive(true);
@@ -86,15 +85,16 @@ public class FlowNodeServiceIntegrationTest {
 		FlowNode node = new FlowNode();
 		node.setFlow(flow);
 		node.setNodeRedNodeId("nodeRedNodeId");
+		node.setIdentification("nodeIdentification");
 		node.setFlowNodeType(Type.HTTP_NOTIFIER);
 		node.setMessageType(MessageType.INSERT);
-		node.setOntology(ontologyService.getOntologyByIdentification(ontologyId));
+		node.setOntology(ontologyService.getOntologyByIdentification(ontologyId, user.getUserId()));
 		node.setPartialUrl("/notificationPoint");
 		nodeService.createFlowNode(node);
 	}
 
 	@Test
-	public void test1_getNotificationEntities() {
+	public void given_SomeNotificationEntities_When_ItIsSearchedByOntologyIdAndType_Then_TheCorrectNotificationEntitiesAreReturned() {
 		List<NotificationEntity> notificationEntities = nodeService.getNotificationsByOntologyAndMessageType(ontologyId,
 				"INSERT");
 		Assert.assertTrue(notificationEntities != null && !notificationEntities.isEmpty());

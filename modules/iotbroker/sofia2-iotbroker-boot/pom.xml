@@ -30,6 +30,15 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-websocket</artifactId>
+		</dependency>
+		 
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-messaging</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
@@ -38,12 +47,6 @@
 			<artifactId>sofia2-iotbroker-plugable</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.indracompany.sofia2</groupId> -->
-<!-- 			<artifactId>sofia2-config-services</artifactId> -->
-<!-- 			<version>${sofia2.version}</version> -->
-<!-- 		</dependency> -->
-
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-router-core</artifactId>
@@ -63,12 +66,6 @@
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-interfaces</artifactId>
 			<version>${sofia2.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-persistence-mongodb</artifactId>
-			<version>${sofia2.version}</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

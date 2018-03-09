@@ -36,8 +36,6 @@ import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  *
  * @author Luis Miguel Gracia
@@ -45,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Slf4j
 public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 
 	@Autowired
@@ -111,7 +108,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test_count() {
+	public void given_MongoDbRepositoryWithOntologies_When_TheNumberOfOntologiesAreRequested_Then_TheyAreReturned() {
 		try {
 			Assert.assertTrue(repository.count(ONT_NAME) > 0);
 		} catch (Exception e) {
@@ -120,7 +117,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test_remove() {
+	public void given_MongoDbRepositoryWithOntologies_When_SomeAreDeleted_Then_TheyAreDeletedOnTheDatabase() {
 		try {
 			Assert.assertTrue(repository.deleteNative(ONT_NAME, "{}") == 4);
 		} catch (Exception e) {
@@ -129,7 +126,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test_update() {
+	public void given_MongoDbRepositoryWithOntologies_When_SomeOntologiesAreUpdated_TheyAreUpdatedOnTheDatabase() {
 		try {
 			Assert.assertTrue(repository.updateNative(ONT_NAME,
 					"{user:'other'},{clientPlatform:'" + UUID.randomUUID().toString() + "'}") == 2);
@@ -139,7 +136,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test_getById() {
+	public void given_MongoDbRepositoryWithOntologies_When_OneIsSearchedByAValidId_Then_TheOntologyIsReturned() {
 		try {
 			String data = repository.findById(ONT_NAME, refOid);
 			Assert.assertTrue(data != null && data.indexOf("user") != -1);
@@ -149,7 +146,7 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 	}
 
 	@Test
-	public void test_getAll() {
+	public void given_MongoDbRepositoryWithOntologies_When_AllAreRequested_Then_AllOntologiesAreReturned() {
 		try {
 			String data = repository.findAllAsJson(ONT_NAME);
 			List<String> asList = repository.findAll(ONT_NAME);

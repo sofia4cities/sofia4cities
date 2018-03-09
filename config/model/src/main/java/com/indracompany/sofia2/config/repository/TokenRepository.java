@@ -32,4 +32,6 @@ public interface TokenRepository extends JpaRepository<Token, String> {
 	List<Token> findByClientPlatform(ClientPlatform clientPlatform);
 	Token findByToken(String token);
 
+	Token findById(String id);
+
 }

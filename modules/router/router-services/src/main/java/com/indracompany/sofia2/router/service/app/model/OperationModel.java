@@ -21,13 +21,14 @@ import lombok.Setter;
 
 public class OperationModel implements Serializable{
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-	public static enum Operations {
-		INSERT, UPDATE, DELETE, QUERY, SUBSCRIBE;
+	public static enum OperationType {
+		INSERT, UPDATE, DELETE, QUERY, GET, PUT, POST;
+	}
+	
+	public static enum QueryType {
+		SQLLIKE,NATIVE,NONE;
 	}
 
 	@Getter
@@ -36,12 +37,11 @@ public class OperationModel implements Serializable{
 	
 	@Getter
 	@Setter
-	private String operationType;
-	
+	private OperationType operationType;
 	
 	@Getter
 	@Setter
-	private String queryType;
+	private QueryType queryType;
 	
 	@Getter
 	@Setter

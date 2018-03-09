@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterServiceImpl;
 
@@ -27,11 +29,19 @@ public class Application {
 
     public static void main(String args[]) {
     	RouterServiceImpl impl = new RouterServiceImpl();
+    	impl.setRouterStandaloneURL("http://localhost:19100/router/router/");
     	
     	NotificationModel input = new NotificationModel();
-    	OperationModel operationModel = new OperationModel();
+    	OperationModel model = new OperationModel();
     	
-		input.setOperationModel(operationModel);
+    	String query = "select * from product where name = \"name1\"";
+    	model.setOntologyName("product");
+    	model.setQueryType(QueryType.SQLLIKE);
+    	model.setBody(query);
+    	model.setUser("administrator");
+    	model.setOperationType(OperationType.GET);
+    	
+		input.setOperationModel(model);
     	
 		OperationResultModel result = impl.execute(input);
 		

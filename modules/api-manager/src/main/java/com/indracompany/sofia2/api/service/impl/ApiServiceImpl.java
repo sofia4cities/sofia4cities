@@ -32,7 +32,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -47,9 +46,9 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
-import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
-import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
 
@@ -70,9 +69,11 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	public void process(Exchange exchange) throws Exception {
 		
 		HttpServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
+		HttpServletResponse response = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_RESPONSE, HttpServletResponse.class);
 	
 		Facts facts = new Facts();
 		facts.put(RuleManager.REQUEST, request);
+		facts.put(RuleManager.RESPONSE, response);
 		
 		Map<String,Object> dataFact=new HashMap<String,Object>();
 		dataFact.put(ApiServiceInterface.BODY, exchange.getIn().getBody());
@@ -130,8 +131,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		model.setObjectId(OBJECT_ID);
 	//	model.setOntologyId(ontology.getId());
 		model.setOntologyName(ontology.getIdentification());
-		model.setOperationType(METHOD);
-		model.setQueryType(QUERY_TYPE);
+		model.setOperationType(OperationType.valueOf(METHOD));
+		model.setQueryType(QueryType.valueOf(QUERY_TYPE));
 	
 		model.setUser(user.getUserId());
 		
@@ -144,15 +145,18 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		try {
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
 				model.setBody(QUERY);
+				model.setOperationType(OperationType.QUERY);
 				OperationResultModel result =facade.query(modelNotification);
 				OUTPUT = result.getResult();
 			}
 			
 			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
+				model.setOperationType(OperationType.INSERT);
 				OperationResultModel result =facade.insert(modelNotification);
 				OUTPUT = result.getResult();
 			}
 			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+				model.setOperationType(OperationType.UPDATE);
 				OperationResultModel result =facade.update(modelNotification);
 				OUTPUT = result.getResult();
 			}
@@ -163,10 +167,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		} catch (Exception e) {
 			
 		}
-		
-		
-			
-		
+
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
 		exchange.getIn().setBody(data);
 		return data;
@@ -186,33 +187,34 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			OUTPUT="{\"RESULT\":\"NO_DATA\"}";
 		}
 		
+		if (FORMAT_RESULT.equals("")) {
+			CONTENT_TYPE = (String)data.get(ApiServiceInterface.CONTENT_TYPE_OUTPUT);
+		}
+		
 		JSONObject jsonObj = toJSONObject(OUTPUT);
 		JSONArray jsonArray = toJSONArray(OUTPUT);
 		
 		String xmlOrCsv=OUTPUT;
 		
-		if (FORMAT_RESULT.equalsIgnoreCase("JSON")) {
+		if (FORMAT_RESULT.equalsIgnoreCase("JSON") || CONTENT_TYPE.equalsIgnoreCase("application/json") ) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "application/json");
 			CONTENT_TYPE = "application/json";
 		}
-		else if (FORMAT_RESULT.equalsIgnoreCase("XML")) {
+		else if (FORMAT_RESULT.equalsIgnoreCase("XML") || CONTENT_TYPE.equalsIgnoreCase("application/atom+xml")) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "application/atom+xml");
 			
 			if (jsonObj!=null) xmlOrCsv = XML.toString(jsonObj);
 			if (jsonArray!=null) xmlOrCsv = XML.toString(jsonArray);
 			CONTENT_TYPE = "application/atom+xml";
 		}	
-		else if (FORMAT_RESULT.equalsIgnoreCase("CSV")) {
+		else if (FORMAT_RESULT.equalsIgnoreCase("CSV") ) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
 			
 			if (jsonObj!=null) xmlOrCsv = CDL.toString(new JSONArray("[" + jsonObj + "]"));
 			if (jsonArray!=null) xmlOrCsv = CDL.toString(jsonArray);
 			CONTENT_TYPE = "text/plain";
 		}
-		else {
-			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
-			CONTENT_TYPE = "text/plain";
-		}
+		
 		
 		data.put(ApiServiceInterface.OUTPUT, xmlOrCsv);
 		exchange.getIn().setHeader(ApiServiceInterface.CONTENT_TYPE, CONTENT_TYPE);

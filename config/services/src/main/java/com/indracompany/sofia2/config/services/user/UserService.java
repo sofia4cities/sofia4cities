@@ -15,6 +15,7 @@ package com.indracompany.sofia2.config.services.user;
 
 import java.util.List;
 
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
@@ -57,6 +58,8 @@ public interface UserService {
 	void deleteUser(String userId);
 
 	void registerUser(User user);
+	
+	List<ClientPlatform> getClientsForUser(User user);
 
 	boolean emailExists(User user);
 

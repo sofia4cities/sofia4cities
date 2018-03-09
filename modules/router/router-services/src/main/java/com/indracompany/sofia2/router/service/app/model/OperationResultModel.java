@@ -22,7 +22,8 @@ import lombok.Setter;
 
 
 public class OperationResultModel implements Serializable{
-
+	
+	
 	@Getter
 	@Setter
 	private String result;
@@ -33,12 +34,18 @@ public class OperationResultModel implements Serializable{
 	
 	@Getter
 	@Setter
+	private String errorCode;
+	
+	@Getter
+	@Setter
 	private String operation;
 
 	@Override
 	public String toString() {
-		return "OperationResultModel [result=" + result + ", message=" + message + ", operation=" + operation + "]";
+		return "OperationResultModel [result=" + result + ", message=" + message + ", errorCode=" + errorCode
+				+ ", operation=" + operation + "]";
 	}
+
 	
 	
 }

@@ -35,6 +35,8 @@ public interface ClientPlatformRepository extends JpaRepository<ClientPlatform, 
 	List<ClientPlatform> findByUserAndIdentificationAndDescription(User user, String identification,
 			String description);
 
+	ClientPlatform findByUserAndIdentification(User user, String identification);
+
 	long countByIdentification(String identification);
 
 	List<ClientPlatform> countByIdentificationLike(String identification);

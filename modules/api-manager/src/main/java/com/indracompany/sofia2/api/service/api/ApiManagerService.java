@@ -36,7 +36,6 @@ import com.indracompany.sofia2.config.model.ApiQueryParameter;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ApiOperationRepository;
 import com.indracompany.sofia2.config.repository.ApiRepository;
-import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -264,7 +263,7 @@ public class ApiManagerService {
 
 	public boolean isSQLLIKE(String query, String queryType) {
 		if (query != null && query.length() > 0 && queryType != null && queryType.length() > 0) {
-			return queryType.equals(SSAPQueryType.SQL.name());
+			return queryType.startsWith("SQL");
 		}
 		return false;
 	}

@@ -37,12 +37,28 @@ import lombok.Setter;
 public class FlowNode extends AuditableEntityWithUUID implements NotificationEntity {
 
 	public static enum Type {
-		HTTP_NOTIFIER;
+		HTTP_NOTIFIER("sofia-notification-endpoint");
+
+		private String exposedName;
+
+		Type(String exposedName) {
+			this.exposedName = exposedName;
+		}
+
+		public String getName() {
+			return exposedName;
+		}
 	}
 
 	public static enum MessageType {
 		INSERT, DELETE, UPDATE;
 	}
+
+	@NotNull
+	@Getter
+	@Setter
+	@Column(name = "IDENTIFICATION", length = 200, nullable = true)
+	private String identification;
 
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)

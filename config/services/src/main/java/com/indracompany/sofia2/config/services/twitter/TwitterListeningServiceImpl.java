@@ -96,8 +96,8 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 	}
 
 	@Override
-	public List<String> getClientsFromOntology(String ontologyId) {
-		Ontology ontology = this.ontologyService.getOntologyByIdentification(ontologyId);
+	public List<String> getClientsFromOntology(String ontologyId, String userSessionId) {
+		Ontology ontology = this.ontologyService.getOntologyByIdentification(ontologyId, userSessionId);
 		List<String> clients = new ArrayList<String>();
 		for (ClientPlatformOntology clientPlatform : this.clientPlatformOntologyRepository.findByOntology(ontology)) {
 			clients.add(clientPlatform.getClientPlatform().getIdentification());
@@ -116,10 +116,10 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 	}
 
 	@Override
-	public TwitterListening createListening(TwitterListening twitterListening) {
+	public TwitterListening createListening(TwitterListening twitterListening, String userSessionId) {
 		if (twitterListening.getOntology().getId() == null)
 			twitterListening.setOntology(this.ontologyService
-					.getOntologyByIdentification(twitterListening.getOntology().getIdentification()));
+					.getOntologyByIdentification(twitterListening.getOntology().getIdentification(), userSessionId));
 		if (twitterListening.getToken().getId() == null)
 			twitterListening.setToken(this.tokenRepository.findByToken(twitterListening.getToken().getToken()));
 		if (twitterListening.getConfiguration().getId() == null)
@@ -133,7 +133,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 
 	@Override
 
-	public void updateListen(TwitterListening twitterListening) {
+	public void updateListening(TwitterListening twitterListening) {
 		TwitterListening newTwitterListening = this.twitterListeningRepository.findById(twitterListening.getId());
 		if (newTwitterListening != null) {
 			newTwitterListening.setIdentificator(twitterListening.getIdentificator());
@@ -142,15 +142,15 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 			newTwitterListening.setTopics(twitterListening.getTopics());
 			newTwitterListening.setDateFrom(twitterListening.getDateFrom());
 			newTwitterListening.setDateTo(twitterListening.getDateTo());
-
+			newTwitterListening.setJobName(twitterListening.getJobName());
 			this.twitterListeningRepository.save(newTwitterListening);
 		}
 
 	}
 
 	@Override
-	public boolean existOntology(String identification) {
-		if (this.ontologyService.getOntologyByIdentification(identification) != null)
+	public boolean existOntology(String identification, String userSessionId) {
+		if (this.ontologyService.getOntologyByIdentification(identification, userSessionId) != null)
 			return true;
 		else
 			return false;
@@ -171,7 +171,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		ontology.setIdentification(ontologyId);
 		if (dataModelTwitter.getType().equals(DataModel.MainType.SocialMedia.toString()))
 			ontology.setDescription("Ontology created for tweet recollection");
-		ontology.setJsonSchema(dataModelTwitter.getSchema());
+		ontology.setJsonSchema(dataModelTwitter.getJsonSchema());
 		ontology.setActive(true);
 		ontology.setPublic(false);
 		ontology.setRtdbClean(false);
@@ -179,5 +179,12 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		return ontology;
 
 	}
+
+	@Override
+	public TwitterListening getListeningByJobName(String jobName) {
+		return this.twitterListeningRepository.findByJobName(jobName);
+	}
+	
+	
 
 }

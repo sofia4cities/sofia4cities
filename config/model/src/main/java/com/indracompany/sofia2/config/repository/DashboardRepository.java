@@ -42,5 +42,6 @@ public interface DashboardRepository extends JpaRepository<Dashboard, String>{
 	List<Dashboard> findAllByOrderByIdentificationAsc();
 	List<Dashboard> findByIdentificationAndDescriptionAndUser(String identification,String description,User user);
 	List<Dashboard> findByIdentificationAndDescription(String identification, String description);
-
+	
+	long countByIdentification(String identification);
 }

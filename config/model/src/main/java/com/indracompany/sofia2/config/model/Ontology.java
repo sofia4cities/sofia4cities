@@ -20,11 +20,17 @@
 
 package com.indracompany.sofia2.config.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -43,6 +49,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "ONTOLOGY")
 public class Ontology extends AuditableEntityWithUUID {
+
+	private static final long serialVersionUID = 1L;
 
 	@Column(name = "JSON_SCHEMA", nullable = false)
 	@NotNull
@@ -66,7 +74,7 @@ public class Ontology extends AuditableEntityWithUUID {
 
 
 	@ManyToOne
-	@OnDelete(action = OnDeleteAction.CASCADE)
+	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "DATA_MODEL_ID", referencedColumnName = "ID")
 	@Getter
 	@Setter
@@ -123,6 +131,25 @@ public class Ontology extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String dataModelVersion;
+	
+	@OneToMany(
+			mappedBy = "ontology",  
+			cascade = CascadeType.ALL, 
+			orphanRemoval = true,
+			fetch=FetchType.LAZY)
+	@Getter
+	@Setter
+	private Set<OntologyUserAccess> ontologyUserAccesses = new HashSet<OntologyUserAccess>();
+	
+	public void addOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
+		ontologyUserAccess.setOntology(this);
+		ontologyUserAccesses.add(ontologyUserAccess);
+	}
+	
+	public void removeOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
+		ontologyUserAccesses.remove(ontologyUserAccess);
+		ontologyUserAccess.setOntology(null);
+	}
 
 	@PostLoad
 	protected void trim(){
@@ -130,5 +157,22 @@ public class Ontology extends AuditableEntityWithUUID {
 			this.identification=this.identification.replaceAll(" ", "");
 		}
 	}
+	
+	@Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ontology )) return false;
+        return getIdentification() != null && getIdentification().equals(((Ontology) o).getId());
+    }
+	
+    @Override
+    public int hashCode() {
+    	return java.util.Objects.hash(getIdentification());
+    }
+    
+    @Override
+    public String toString() {
+    	return getIdentification();
+    }
 
 }

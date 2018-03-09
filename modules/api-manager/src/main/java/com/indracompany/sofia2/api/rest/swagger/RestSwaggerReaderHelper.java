@@ -120,6 +120,7 @@ public class RestSwaggerReaderHelper {
             // set schema on body parameter
             if (parameter instanceof BodyParameter) {
                 BodyParameter bp = (BodyParameter) parameter;
+              
 
                 if (dataType != null) {
                     if (dataType.endsWith("[]")) {
@@ -137,7 +138,7 @@ public class RestSwaggerReaderHelper {
                             bp.setSchema(new RefModel(ref));
                         }
                         else {
-                        	 ArrayModel arrayModel = new ArrayModel();
+                        	 StringModel arrayModel = new StringModel();
                              //arrayModel.setItems(prop);
                              bp.setSchema(arrayModel);
                         	// bp.setSchema(new RefModel("#/definitions/String"));

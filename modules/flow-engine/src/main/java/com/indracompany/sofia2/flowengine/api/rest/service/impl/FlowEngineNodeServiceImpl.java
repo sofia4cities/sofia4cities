@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -43,27 +42,35 @@ import com.indracompany.sofia2.flowengine.api.rest.pojo.DecodedAuthentication;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.DeployRequestRecord;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineNodeService;
+import com.indracompany.sofia2.flowengine.exception.NodeRedAdminServiceException;
 import com.indracompany.sofia2.flowengine.exception.NotAllowedException;
 import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
 import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
-import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
 
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 @Service
 @Slf4j
 public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 
-	@Autowired
-	@Qualifier("MongoBasicOpsDBRepository")
-	private BasicOpsDBRepository basicRDBRepository;
+	/*
+	 * @Autowired
+	 * 
+	 * @Qualifier("MongoBasicOpsDBRepository") private BasicOpsDBRepository
+	 * basicRDBRepository;
+	 * 
+	 * @Autowired private QueryToolService queryToolService;
+	 */
 
 	@Autowired
-	private QueryToolService queryToolService;
+	private RouterCrudService routerCrudService;
 
 	@Autowired
 	private FlowDomainService domainService;
@@ -96,6 +103,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			for (final DeployRequestRecord record : deployRecords) {
 				if (record != null) {
 					if (record.getDomain() != null) {
+
 						log.info("Deployment info from domain = {}", record.getDomain());
 						domain = domainService.getFlowDomainByIdentification(record.getDomain());
 						domainService.deleteFlowDomainFlows(record.getDomain());
@@ -112,14 +120,16 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 								flowService.createFlow(newFlow);
 							} else {
 								// It is a node
-								if (record.getType().equals(Type.HTTP_NOTIFIER.toString())) {
+								if (record.getType().equals(Type.HTTP_NOTIFIER.getName())) {
 									final FlowNode node = new FlowNode();
 									final Flow flow = flowService.getFlowByNodeRedFlowId(record.getZ());
+									node.setIdentification(record.getName());
 									node.setNodeRedNodeId(record.getId());
 									node.setFlow(flow);
 									node.setFlowNodeType(Type.HTTP_NOTIFIER);
 									node.setMessageType(MessageType.valueOf(record.getMeassageType()));
-									node.setOntology(ontologyService.getOntologyById(record.getOntology()));
+									node.setOntology(ontologyService.getOntologyByIdentification(record.getOntology(),
+											domain.getUser().getUserId()));
 									node.setPartialUrl(record.getUrl());
 									nodeService.createFlowNode(node);
 								}
@@ -151,7 +161,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		List<Ontology> ontologies = null;
 		switch (sofia2User.getRole().getId()) {
 		case "ROLE_ADMINISTRATOR":
-			ontologies = ontologyService.getAllOntologies();
+			ontologies = ontologyService.getAllOntologies(sofia2User.getUserId());
 			break;
 		default:
 			// TODO check default criteria. Public ontologies should be included
@@ -217,7 +227,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		default:
 			if (!domain.getUser().getUserId().equals(sofia2User.getUserId())) {
 				throw new NotAllowedException("User " + decodedAuth.getUserId()
-				+ " has no permissions over specified domain " + request.getDomainId());
+						+ " has no permissions over specified domain " + request.getDomainId());
 			}
 			response = "OK";
 			break;
@@ -230,52 +240,37 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throws ResourceNotFoundException, NotAuthorizedException, NotFoundException, JsonProcessingException,
 			DBPersistenceException {
 
-		final DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
-		// TODO Change criteria. There should be no conditions harcoded refered
-		// to a certain query language
-		// TODO Throw not authorized Exceptions when needed
+		OperationModel operationModel = new OperationModel();
+		operationModel.setUser(sofia2User.getUserId());
+		operationModel.setOntologyName(ontologyIdentificator);
+		operationModel.setOperationType(OperationType.QUERY);
 		if ("sql".equals(queryType.toLowerCase())) {
-			if (query.toLowerCase().startsWith("select")) {
-				// TODO: ADMIN has all query permissions ?
-				if (sofia2User.getRole().getId().equals("ROLE_ADMINISTRATOR") || this.ontologyService
-						.hasUserPermissionForQuery(decodedAuth.getUserId(), ontologyIdentificator)) {
-					return queryToolService.querySQLAsJson(decodedAuth.getUserId(), ontologyIdentificator, query, 0);
-				} else {
-					log.error("User {} has no QUERY/ALL access over {} ontology.", decodedAuth.getUserId(),
-							ontologyIdentificator);
-				}
-			} else if (query.toLowerCase().startsWith("update") || query.toLowerCase().startsWith("insert")) {
-				// TODO: ADMIN has all query permissions ?
-				if (sofia2User.getRole().getId().equals("ROLE_ADMINISTRATOR") || this.ontologyService
-						.hasUserPermissionForInsert(decodedAuth.getUserId(), ontologyIdentificator)) {
-					return queryToolService.querySQLAsJson(decodedAuth.getUserId(),ontologyIdentificator, query, 0);
-				} else {
-					log.error("User {} has no INSERT/ALL access over {} ontology.", decodedAuth.getUserId(),
-							ontologyIdentificator);
-				}
-			}
+			operationModel.setQueryType(QueryType.SQLLIKE);
 		} else if ("native".equals(queryType)) {
-			if (query.toLowerCase().contains(".find")) {
-				return queryToolService.queryNativeAsJson(decodedAuth.getUserId(),ontologyIdentificator, query);
-			} else if (query.toLowerCase().contains(".update")) {
-				// TODO: Not implemented in RTDB yet
-				throw new NotImplementedException();
-			} else if (query.toLowerCase().contains(".remove")) {
-				// TODO: Not implemented in RTDB yet
-				throw new NotImplementedException();
-			} else if (query.toLowerCase().contains(".insert")) {
-				// TODO: Not implemented in RTDB yet
-				throw new NotImplementedException();
-			}
+			operationModel.setQueryType(QueryType.NATIVE);
 		} else {
 			log.error("Invalid value {} for queryType. Possible values are: SQL, NATIVE.", queryType);
 			throw new IllegalArgumentException(
 					"Invalid value " + queryType + " for queryType. Possible values are: SQL, NATIVE.");
 		}
-		log.error("Query could not be parsed. Query = {}", query);
-		throw new IllegalArgumentException("Unrecognized query format.");
+		operationModel.setBody(query);
+
+		OperationResultModel result = null;
+		try {
+			result = routerCrudService.query(operationModel);
+		} catch (Exception e) {
+
+			log.error("Error executing query. Ontology={}, QueryType ={}, Query = {}. Cause = {}, Message = {}.",
+					ontologyIdentificator, queryType, query, e.getCause(), e.getMessage());
+			throw new NodeRedAdminServiceException("Error executing query. Ontology=" + ontologyIdentificator
+					+ ", QueryType =" + queryType + ", Query = " + query + ". Cause = " + e.getCause() + ", Message = "
+					+ e.getMessage() + ".");
+		}
+		// TODO: Check response state
+		return result.getResult();
 	}
 
 	private User validateUserCredentials(String userId, String password)
@@ -308,7 +303,26 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	@Override
 	public String submitInsert(String ontology, String data, String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
-		// TODO Implement internal insert from data = ontologyInstance
-		throw new NotImplementedException();
+
+		DecodedAuthentication decodedAuth = decodeAuth(authentication);
+		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+
+		OperationModel operationModel = new OperationModel();
+		operationModel.setUser(sofia2User.getUserId());
+		operationModel.setBody(data);
+		operationModel.setOntologyName(ontology);
+		operationModel.setOperationType(OperationType.INSERT);
+
+		OperationResultModel result = null;
+
+		try {
+			result = routerCrudService.insert(operationModel);
+		} catch (Exception e) {
+			log.error("Error inserting data. Ontology={}, Data = {}. Cause = {}, Message = {}.", ontology, data,
+					e.getCause(), e.getMessage());
+			throw new NodeRedAdminServiceException("Error executing query. Ontology=" + ontology + ", Data = " + data
+					+ ". Cause = " + e.getCause() + ", Message = " + e.getMessage() + ".");
+		}
+		return result.getResult();
 	}
 }

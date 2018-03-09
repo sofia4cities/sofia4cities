@@ -55,8 +55,11 @@ public class FlowDomainController {
 	@Value("${sofia2.flowengine.services.request.timeout.ms:5000}")
 	private int restRequestTimeout;
 
-	@Value("${sofia2.flowengine.services.request.timeout.ms:http://localhost:8082/sofia2/flowengine/admin}")
+	@Value("${sofia2.flowengine.services.baseurl:http://localhost:8082/sofia2/flowengine/admin}")
 	private String baseUrl;
+	
+	@Value("${sofia2.flowengine.services.proxyurl:http://localhost:5050/}")
+	private String proxyUrl;
 
 	@Autowired
 	private FlowDomainService domainService;
@@ -222,8 +225,8 @@ public class FlowDomainController {
 		 * model.addAttribute("proxy", "http://localhost:5050/" + domainId +
 		 * "/?usuario=" + utils.getUserId() + "&password=" + password);
 		 */
-		model.addAttribute("proxy", "http://localhost:5050/" + domainId + "/?authentication=" + authBase64);
-		return "/flows/show";
+		model.addAttribute("proxy", this.proxyUrl + domainId + "/?authentication=" + authBase64);
+		return "flows/show";
 	}
 
 	@GetMapping(value = "/check/{domainId}")

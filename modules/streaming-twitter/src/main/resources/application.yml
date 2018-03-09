@@ -1,3 +1,5 @@
+server: ## Config Web Server
+   port: 18088
 spring:
    data.mongodb:
       database: sofia2_s4c # Database name.

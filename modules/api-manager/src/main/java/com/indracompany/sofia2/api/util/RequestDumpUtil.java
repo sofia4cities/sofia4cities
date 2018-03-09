@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class RequestDumpUtil {
@@ -36,6 +37,18 @@ public class RequestDumpUtil {
     		value = request.getHeader("$"+key);
     	
     	return value;
+    	
+    }
+    
+ public static String getContentType(HttpServletRequest request ) {
+    	
+	 return request.getContentType();
+    	
+    }
+ 
+ public static String getContentType(HttpServletResponse request ) {
+ 	
+	 return request.getContentType();
     	
     }
 

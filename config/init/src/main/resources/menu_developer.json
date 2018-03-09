@@ -172,6 +172,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/querytool/show"
+				},
+				{
+					"title": {
+						"EN": "Planned Tasks",
+						"ES": "Tareas Planificadas"
+					},
+					"icon": "",
+					"url": "/controlpanel/planner/list"
 				}
 			]
 		}

@@ -18,6 +18,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -35,10 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-/**
-*
-* @author Luis Miguel Gracia
-*/
+@Ignore
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
@@ -57,19 +55,19 @@ public class TwitterServiceIntegrationTest {
 	}
 	
 	@Test
-	public void test4_getFollowers() {
+	public void given_Sofia2TwitterAccount_When_FollowerNumberIsRequested_Then_TheNumberOfFollowersAreReturned() {
 		List<TwitterProfile> followers = twitterS.getFollowers("SOFIA2_Platform");
 		Assert.assertTrue(followers.size()>1);		
 	}
 	
 	@Test
-	public void test2_findSimple() {
+	public void given_TwitterService_When_TweetsAboutMadridAreRequested_Then_SeveralTweetsAreReturned() {
 		SearchResults results = twitterS.search("madrid");
 		Assert.assertTrue(results.getTweets().size()>0);		
 	}
 	
 	@Test
-	public void test3_findAdvanced() {
+	public void given_twitterService_When_ComplexSearchesWithServeralParametersAreRequested_Then_TheResponseOntainTweets() {
 		SearchParameters params = new SearchParameters("madrid")
         .geoCode(new GeoCode(52.379241, 4.900846, 100, GeoCode.Unit.MILE))
         .lang("es")
@@ -81,13 +79,15 @@ public class TwitterServiceIntegrationTest {
 	}
 	
 	@Test 
-	public void test1_Streaming() {
+	public void given_TwitterService_When_AFilterStreamingIsCreatedForMadrid_Then_TheResultObtainTweetsAboutMadrid() {
 		TestTwitterStreamListener listener = new TestTwitterStreamListener();
 		Stream stream = twitterS.createFilterStreaming("madrid", listener);
 		//stream.open();
-		while (listener.getLastTweet()==null) {
+		int attempts = 0;
+		while (attempts < 5 && listener.getLastTweet()==null) {
+			attempts++;
 			try {
-				Thread.currentThread().sleep(1000);
+				Thread.sleep(1000);
 	        } catch (InterruptedException e) {
 	            //e.printStackTrace();
 	        }

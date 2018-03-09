@@ -17,6 +17,7 @@ public class SchedulerNames {
 
 	public static final String SCRIPT_SCHEDULER_NAME = "scriptScheduler";
 	public static final String TWITTER_SCHEDULER_NAME = "twitterScheduler";
+	public static final String SIMULATION_SCHEDULER_NAME = "simulationScheduler";
 	
 	private SchedulerNames () {}
 }

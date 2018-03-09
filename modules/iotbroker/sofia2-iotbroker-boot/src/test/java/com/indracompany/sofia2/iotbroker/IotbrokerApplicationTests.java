@@ -23,7 +23,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class IotbrokerApplicationTests {
 
 	@Test
-	public void contextLoads() {
+	public void given_AnIoTBrokerContext_When_ItIsLoaded_Then_ItWillDoNothing() {
+	
 	}
 
 }

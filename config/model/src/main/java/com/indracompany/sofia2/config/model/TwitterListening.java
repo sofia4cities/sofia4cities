@@ -93,5 +93,10 @@ public class TwitterListening extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String cron;
+	
+	@Column(name = "JOB_NAME", length = 512)
+	@Getter
+	@Setter
+	private String jobName;
 
 }

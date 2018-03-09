@@ -78,7 +78,7 @@ public class QueryProcessorTest {
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
 
-		when(ontologyService.hasUserPermissionForQuery(any(), any())).thenReturn(true);
+		when(ontologyService.hasUserPermissionForQuery(any(String.class), any(String.class))).thenReturn(true);
 	}
 
 	@Before
@@ -88,7 +88,7 @@ public class QueryProcessorTest {
 
 		subject = PojoGenerator.generatePerson();
 		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
-		subjectId = objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();
+		subjectId = subjectInsertResult;
 		ssapQuery = SSAPMessageGenerator.generateQueryMessage(Person.class.getSimpleName(), SSAPQueryType.NATIVE, "");
 
 
@@ -101,7 +101,7 @@ public class QueryProcessorTest {
 	}
 
 	@Test
-	public void test_basic_native_query() {
+	public void given_OneQueryProcessor_When_ACorrectNativeQueryIsUsed_Then_TheResponseReturnsTheResults() {
 		ssapQuery.getBody().setQuery("db.Person.find({})");
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage;
 		responseMessage = queryProcessor.process(ssapQuery);

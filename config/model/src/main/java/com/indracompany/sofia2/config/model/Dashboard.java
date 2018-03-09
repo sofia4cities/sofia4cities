@@ -68,5 +68,9 @@ public class Dashboard extends AuditableEntityWithUUID{
 		
 	@Column(name = "PUBLIC")
     @Getter @Setter private boolean isPublic;
-			
-    }
+	
+	@Column(name = "MODEL")
+	@Lob
+    @Type(type = "org.hibernate.type.TextType")
+    @Getter @Setter private String model;
+}

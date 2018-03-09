@@ -180,7 +180,8 @@ public class ApiServiceRest {
 	}
 
 	public void createApi(ApiDTO apiDTO, String token) {
-		Api api = apiFIQL.copyProperties(apiDTO);
+		User user = apiSecurityService.getUserByApiToken(token);
+		Api api = apiFIQL.copyProperties(apiDTO, user);
 
 		Integer numVersion = 0;
 		List<Api> apis = apiRepository.findByIdentification(api.getIdentification());
@@ -193,7 +194,6 @@ public class ApiServiceRest {
 			throw new IllegalArgumentException("com.indra.sofia2.web.api.services.wrongversionMin");
 		}
 
-		User user = apiSecurityService.getUserByApiToken(token);
 
 		api.setUser(user);
 
@@ -205,7 +205,8 @@ public class ApiServiceRest {
 
 	public void updateApi(ApiDTO apiDTO, String token) {
 		try {
-			Api api = apiFIQL.copyProperties(apiDTO);
+			User user = apiSecurityService.getUserByApiToken(token);
+			Api api = apiFIQL.copyProperties(apiDTO, user);
 
 			Api apiUpdate = apiRepository
 					.findByIdentificationAndNumversion(api.getIdentification(), api.getNumversion()).get(0);
@@ -225,7 +226,8 @@ public class ApiServiceRest {
 
 	public void removeApi(ApiDTO apiDTO, String token) {
 		try {
-			Api api = apiFIQL.copyProperties(apiDTO);
+			User user = apiSecurityService.getUserByApiToken(token);
+			Api api = apiFIQL.copyProperties(apiDTO, user);
 			Api apiDelete = apiRepository
 					.findByIdentificationAndNumversion(api.getIdentification(), api.getNumversion()).get(0);
 			if (apiSecurityService.authorized(apiDelete, token)) {
@@ -273,7 +275,7 @@ public class ApiServiceRest {
 				}
 
 				else {
-					operacion.setIdentification(api.getIdentification()+"_"+operacion.getOperation());
+					operacion.setIdentification(api.getIdentification()+"_"+operacion.getOperation()+"_"+path.replace("/", "").replace("?", ""));
 				}
 			}
 			operacion.setApi(api);
