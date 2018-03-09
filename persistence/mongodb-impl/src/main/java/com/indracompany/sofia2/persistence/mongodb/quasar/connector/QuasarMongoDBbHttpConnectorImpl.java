@@ -28,7 +28,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -147,7 +146,6 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 			// httpClient =
 			// HttpClientBuilder.create().setDefaultRequestConfig(config).build();
 			httpClient = new DefaultHttpClient(this.cm, this.httpParams);
-			httpClient = HttpClientBuilder.create().build();
 			httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
 			httpGet = createHttpGetRequest(endpoint, accept, null);
 		} catch (Exception e) {
