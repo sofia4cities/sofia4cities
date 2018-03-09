@@ -30,3 +30,4 @@ You can see one of the jenkins_pipelines at [Jenkins Pipelines](jenkins_pipeline
 We use [Katalon](https://www.katalon.com) as a automation tool for the Web ControlPanel. 
 Katalon has a friendly UI for users to quickly create, execute and maintain tests without programming.
 You can see one of the automated tests for Katalon at [ControlPanel-AutomatedTest](ControlPanel-AutomatedTest/)  
+Here you can find an example of a report with a problem in one of the steps: [Report Example](ControlPanel-AutomatedTest](ControlPanel-AutomatedTest/20180309_174733.pdf)
