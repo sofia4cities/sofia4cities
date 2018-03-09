@@ -12,7 +12,7 @@ The platform provides an open, feature-rich toolkit for the IoT/Smart product de
 
 ## Getting started
 
-For the quick start with Sofia4Cities platform check out [Getting Started]({{root_url}}docs/) guide.
+For the quick start with Sofia4Cities platform check out [Getting Started](docs/) guide.
 
 You can deploy Sofia4Cities into your own environment with Docker [following these steps](docs/how-to-execute-docker/README.md)
 
@@ -22,11 +22,11 @@ If you face some troubles with Sofia4Cities platform you can create an issue  in
 
 ## Documentation
 
-Sofia4Cities documentation is a part of Sofia4Cities source code and is located in the [`docs/`](docs) folder. You can find the web version [here](https://github.com/sofia4cities/docs/).
+Sofia4Cities documentation is a part of Sofia4Cities source code and is located in the [`docs/`](docs) folder. 
 
 ## How to contribute
 
-To contribute to Sofia4Cities platform, please visit [How to contribute]({{root_url}}docs/how-to-contribute/index.md) guide.
+To contribute to Sofia4Cities platform, please visit [How to contribute]({{root_url}}docs/how-to-contribute/README.md) guide.
 
 ## Where to report issues
 
