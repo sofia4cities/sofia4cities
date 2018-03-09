@@ -1,0 +1,12 @@
+{
+  "server": {
+    "port": 10800
+  },
+  "mountings": {
+    "/": {
+      "mongodb": {
+        "connectionUri": "mongodb://${REALTIMEDB}:27017/"
+      }
+    }
+  }
+}
