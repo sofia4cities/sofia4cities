@@ -58,7 +58,9 @@ security:
    
 spring: ## General Config  
    application.name: sofia2-router
-   boot.admin: #Spring Boot Admin Config    
+   boot.admin: #Spring Boot Admin Config  
+      client: 
+        enabled: false
       url: http://localhost:18090
       username: operations
       password: changeIt!
