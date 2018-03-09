@@ -64,16 +64,15 @@ public class GadgetMeasureRepositoryIntegrationTest {
 		if (gadgetMeasures.isEmpty()) {
 			log.info("No gadget measures ...");
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			gadgetMeasure.setAttribute("Attr1");
+			gadgetMeasure.setConfig("Attr1");
 			List<Gadget> gadgets = this.grepository.findAll();
 			Gadget gadget;
 			if (gadgets.isEmpty()) {
 				log.info("No gadgets ...");
 				gadget = new Gadget();
-				gadget.setDbType("RTDB");
 				gadget.setUser(getUserCollaborator());
 				gadget.setPublic(true);
-				gadget.setName("Gadget1");
+				gadget.setIdentification("Gadget1");
 				gadget.setType("Tipo 1");
 
 				grepository.save(gadget);
