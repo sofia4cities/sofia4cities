@@ -34,6 +34,9 @@ pipeline {
             }
 
 	   		steps {
+		    	// Only compile and generate artifacts
+	        	sh "mvn clean install -DskipTests"	   		
+	   		
 	   			// Generates persistence images only if 
 	   			// they are not present in local Docker registry		   		
 	   		    dir("${env.IMAGEGENPATH}") {
@@ -51,10 +54,11 @@ pipeline {
 					sleep 10
 						
 					sh "mvn spring-boot:run"	  			
-	   			}					
+	   			}		
+	   			
+	   			// Execute tests
+	   			sh "mvn surefire:test"			
 					
-		    	// Run maven build
-	        	sh "mvn clean install"
 	   		}
 	   }	 
    
