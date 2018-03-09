@@ -266,18 +266,19 @@ public class ApiServiceRest {
 	private void createOperations(ArrayList<OperacionDTO> operaciones, Api api) {
 		for (OperacionDTO operacionDTO : operaciones) {
 			ApiOperation operacion = OperationFIQL.copyProperties(operacionDTO);
-			if (operacion.getIdentification()==null || "".equals(operacion.getIdentification()) ) {
-				String path = operacion.getPath();
-				if (path!=null && path.contains("?")) {
-					path = path.substring(0, path.indexOf("?"));
-					if  ("".equals(path)==false)
-						operacion.setIdentification(api.getIdentification()+"_"+operacion.getOperation()+"_"+path.replace("/", ""));
-				}
-
-				else {
-					operacion.setIdentification(api.getIdentification()+"_"+operacion.getOperation()+"_"+path.replace("/", "").replace("?", ""));
-				}
-			}
+			operacion.setIdentification(operacionDTO.getIdentification());
+//			if (operacion.getIdentification()==null || "".equals(operacion.getIdentification()) ) {
+//				String path = operacion.getPath();
+//				if (path!=null && path.contains("?")) {
+//					path = path.substring(0, path.indexOf("?"));
+//					if  ("".equals(path)==false)
+//						operacion.setIdentification(api.getIdentification()+"_"+operacion.getOperation()+"_"+path.replace("/", ""));
+//				}
+//
+//				else {
+//					operacion.setIdentification(api.getIdentification()+"_"+operacion.getOperation()+"_"+path.replace("/", "").replace("?", ""));
+//				}
+//			}
 			operacion.setApi(api);
 			apiOperationRepository.saveAndFlush(operacion);
 			if (operacionDTO.getHeaders()!=null)

@@ -1,0 +1,263 @@
+
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+	    <meta name="description" content="Gadget list template"/>
+		<meta name="keywords" content="sofia2,smart,cities,platform,Indra"/>
+		<meta name="author" content="Indra Sistemas, S.A."/>
+		
+		<!-- BEGIN WEB FONT -->
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/gadgets.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+		
+		<!-- PLUGINS STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+	</head>	
+	
+	<!-- page-sidebar-closed to start page with collapsed menu -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>		
+			
+		<!-- BEGIN SIDEBAR -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+		
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE HEADER-->
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM -->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/gadgets/list}"> <span th:text="#{name.visualization}">Visualization</span></a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/gadgets/list}"> <span th:text="#{gadgets.my}">My Gadgets</span></a><i class="fa fa-circle"></i> </li>
+						<li><span th:text="#{gadgets.create}">Create Gadget</span></li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{gadgets.new}">New Gadget</span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">
+					
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-list font-grey-gallery"></i>
+									<span class="caption-subject bold font-grey-gallery uppercase"> New Gadget </span>
+									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+								</div>									
+								<div class="tools">
+									<!--  <a href="" class="collapse" data-original-title="" title=""> </a>-->
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>
+								
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone">
+										<!-- ALERT ZONE -->																			
+									</div>		
+																	
+									<div class="col-md-12 margin-bottom-20">
+									
+									  
+									  <form role="form" id="gadget_create_form" th:object="${gadgets}" method="post" class="form">
+									  <!-- FORM ACTIONS FOR INSERT-->
+								 														  									  
+											<div class="form-body">
+									 			<div class="row">
+									 			<div class="form-group">
+									 			 	<div class="col-md-6">
+														<i class="fa fa-credit-card"></i>  <label class="control-label"  th:text="#{gen.name} + ':'">Name</label>
+																<div class="input-icon ">
+																	<i class="fa fa-credit-card"></i>
+																	<input id="identification" type="text" name="identification"  th:required="true"   maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{gen.name}" />
+															    </div>															
+														</div>	
+														<div class="col-md-6"> 
+														
+														<div class="form-group">
+															<i class="fa fa-database"></i>  <label class="control-label" th:text="#{datasources.name} + ':'">Datasource</label>
+															<div class="input-icon ">
+																<i class="la la-database"></i>
+															<select id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:field="*{identification}" th:required="true">
+																<option value="none"></option> 
+																<i class="fa fa-database"></i><option th:each="datasource:${datasources}" th:value="${datasource}" th:text="${datasource}" ></option>
+															</select>
+														</div>
+														</div>
+												    		</div>
+																											
+														</div>
+													</div>
+									 			</div>
+									
+																		 
+									 </form>	
+									 
+									 <!-- Aquí irán los iconos de los gráficos -->
+									 <div  class="container">
+									 	<div id="icons" class="row">
+									 	 									 	
+									 					 		
+									 	</div>
+									 </div>							
+									
+												<div class="form-actions">
+													<div class="pull-right">
+														<!-- CREATE -->
+															<button th:if="${gadgets.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success btn-lg" name="create"  th:value="#{gadgets.create}" > <span th:text="#{gadgets.create}"> Create</span></button>
+										
+													</div>
+												</div>					
+																										
+									</div>
+								</div>
+							</div>
+						</div>  <!-- END PORTLET BASIC LIGHT -->							
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->				
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	  </div>
+	 
+</body>
+
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>	
+	
+	<!-- CORE CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	
+	<script th:inline="javascript">
+		
+	//De momento pruebo sin parámetros. Añado en JSON en la función..
+	function showGadgetSelect(){
+		$("#icons").empty();
+		
+		var gadget= [ {
+			type : "line",
+			icon : "../static/images/dashboards/linechart.jpg",
+
+			attributes : [ {
+				name : "X axis",
+				types : [ "date", "number" ]
+			}, {
+				name : "Y axis",
+				types : [ "number" ]
+			} ],
+			series : {
+				maxseries : -1,
+				options : {
+					"title" : "Series options",
+					"type" : "object",
+					"properties" : {
+						"Name" : {
+							"type" : "string",
+							"description" : "Serie name"
+						},
+						"Color" : {
+							"type" : "string",
+							"format" : "color",
+							"title" : "Serie color",
+							"default" : "#ffa500"
+						}
+					}
+				}
+			},
+			options : {
+				beginToZero : true
+			}
+		}, {
+			type : "bar",
+			icon : "../static/images/dashboards/barchart.jpg",
+			options : ""
+		},
+
+		{
+			type : "pie",
+			icon : "../static/images/dashboards/piechart.jpg",
+			options : ""
+		},
+
+		{
+			type : "map",
+			icon : "../static/images/dashboards/bordermap.png",
+			options : ""
+		}, {
+			type : "wordcloud",
+			icon : "../static/images/dashboards/wordchart.jpg",
+			options : ""
+		}
+
+		];	
+		
+		if(($("#datasources").val())!="none"){ 
+		
+		
+		$.each(gadget, function() {
+						var Type = this.type;
+						var Icon = this.icon;
+							//Esto está mal. Nunca lo coge como vacía por lo tanto mal referenciado
+						
+										
+						   //Problema: no muestra imágenes pero sí los nombres (type). 
+						$("#icons").append('<div class="col-md-3"> <div class="card card-01"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
+					} )}
+	}
+    </script>
+	
+
+</html> 

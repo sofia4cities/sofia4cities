@@ -70,17 +70,15 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 
 			} else {
 				finalField = field;
-				//path= path + "/"+ field;
+				// path= path + "/"+ field;
 			}
 
 			switch (function) {
 			case FIXED_NUMBER:
-				((ObjectNode) map.at(path)).put(finalField,
-						json.path(field).get("value").asDouble());
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asDouble());
 				break;
 			case FIXED_INTEGER:
-				((ObjectNode) map.at(path)).put(finalField,
-						json.path(field).get("value").asInt());
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asInt());
 				break;
 			case RANDOM_NUMBER:
 				((ObjectNode) map.at(path)).put(finalField,
@@ -92,12 +90,17 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 						this.randomizeInt(json.path(field).get("from").asInt(), json.path(field).get("to").asInt()));
 				break;
 			case COSINE_NUMBER:
+				double angleCos = Math.toRadians(json.path(field).get("angle").asDouble());
+				double multiplierCos = json.path(field).get("multiplier").asDouble();
+				((ObjectNode) map.at(path)).put(finalField, Math.cos(angleCos) * multiplierCos);
 				break;
 			case SINE_NUMBER:
+				double angleSin = Math.toRadians(json.path(field).get("angle").asDouble());
+				double multiplierSin = json.path(field).get("multiplier").asDouble();
+				((ObjectNode) map.at(path)).put(finalField, Math.sin(angleSin) * multiplierSin);
 				break;
 			case FIXED_STRING:
-				((ObjectNode) map.at(path)).put(finalField,
-						(String) json.path(field).get("value").asText());
+				((ObjectNode) map.at(path)).put(finalField, (String) json.path(field).get("value").asText());
 				break;
 			case RANDOM_STRING:
 				((ObjectNode) map.at(path)).put(finalField,
@@ -151,4 +154,5 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				.doubleValue();
 		return randomDoubleTruncated;
 	}
+
 }

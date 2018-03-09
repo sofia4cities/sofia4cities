@@ -165,7 +165,7 @@ public class ApiManagerService {
 		}
 
 		for (final ApiOperation operacion : operaciones) {
-			if (operacion.getIdentification().equals(match)) {
+			if (operacion.getIdentification().equals(opIdentifier)) {
 				return operacion;
 			}
 		}

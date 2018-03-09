@@ -53,7 +53,7 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 	private int maxHttpConnectionsPerRoute;
 	@Value("${sofia2.database.mongodb.quasar.connectionTimeout.millis:10000}")
 	private int connectionTimeout;
-	@Value("${sofia2.database.mongodb.quasar.connector.http.endpoint:http://localhost:18200/query/fs}")
+	@Value("${sofia2.database.mongodb.quasar.connector.http.endpoint:http://localhost:18200/query/fs/}")
 	private String quasarEndpoint;
 	@Value("${sofia2.database.mongodb.database:sofia2_s4c}")
 	private String database;

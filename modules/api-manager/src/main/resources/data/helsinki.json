@@ -15,6 +15,7 @@
      
       {
          "description":"getTotalPopulation",
+         "identification":"getTotalPopulation",
          "operation":"GET",
          "path":"/getTotalPopulation",
          "queryParams":[
@@ -37,6 +38,7 @@
       },
       {
          "description":"getWomenPopulation",
+          "identification":"getWomenPopulation",
          "operation":"GET",
          "path":"/getWomenPopulation",
          "queryParams":[
@@ -58,6 +60,7 @@
       },
       {
          "description":"getMenPopulation",
+            "identification":"getMenPopulation",
          "operation":"GET",
          "path":"/getMenPopulation",
          "queryParams":[
@@ -80,6 +83,7 @@
       ,
       {
          "description":"getPopulation",
+          "identification":"getPopulation",
          "operation":"GET",
          "path":"/getPopulation",
          "queryParams":[
@@ -102,6 +106,7 @@
        ,
       {
          "description":"getPopulationByYear",
+          "identification":"getPopulationByYear",
          "operation":"GET",
          "path":"/getPopulationByYear",
          "queryParams":[
@@ -131,6 +136,7 @@
        
       {
          "description":"POST_DESC",
+          "identification":"POST_DESC",
          "operation":"POST",
          "path":"/",
          "queryParams":[
@@ -146,17 +152,35 @@
       
       {
          "description":"GET_ID",
+          "identification":"GET_ID",
          "operation":"GET",
          "path":"/{id}",
          "queryParams":[
             {
                "headerType":"path",
-               "description":"",
+               "description":"the identification",
                "name":"id",
                "dataType":"string"
             }
          ]
       }
+      
+      ,
+      
+      { "description":"DELETE_ID",
+      "identification":"DELETE_ID",
+         "operation":"DELETE",
+         "path":"/{id}",
+         "queryParams":[
+            {
+               "headerType":"path",
+               "description":"the identification",
+               "name":"id",
+               "dataType":"string"
+            }
+         ]
+      }
+      
     
       
    ]

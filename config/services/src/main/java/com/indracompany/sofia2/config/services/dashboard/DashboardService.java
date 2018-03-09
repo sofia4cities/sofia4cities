@@ -11,30 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*******************************************************************************
- * © Indra Sistemas, S.A.
- * 2013 - 2018  SPAIN
- *
- * All rights reserved
- ******************************************************************************/
-
-package com.indracompany.sofia2.config.repository;
+package com.indracompany.sofia2.config.services.dashboard;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.indracompany.sofia2.config.model.DashboardType;
+import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.User;
 
-public interface DashboardTypeRepository extends JpaRepository<DashboardType, Integer> {
+public interface DashboardService {
 
-	List<DashboardType> findByUser(User user);
-
-	List<DashboardType> findByType(String type);
-
-	List<DashboardType> findById(Integer id);
-
-	long countByType(String type);
-
+	List<Dashboard> findAllDashboard();
+	List<Dashboard> findDashboardWithIdentificationAndDescription(String identification, String description, String user);
+	List<String> getAllIdentifications();
+	Dashboard getDashboardById(String id);
+	
 }

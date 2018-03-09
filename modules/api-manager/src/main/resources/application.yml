@@ -15,7 +15,7 @@ security.basic.enabled: false
 management:
   security:
     enabled : false
-  port: 19091
+  port: 19090
 # turn on actuator health check
 endpoints:
   health:

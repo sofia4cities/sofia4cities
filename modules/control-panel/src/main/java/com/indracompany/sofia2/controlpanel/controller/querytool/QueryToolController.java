@@ -101,7 +101,7 @@ public class QueryToolController {
 	public String getOntologyFields(Model model, @RequestParam String ontologyIdentification)
 			throws JsonProcessingException, IOException {
 
-		model.addAttribute("fields", this.ontologyService.getOntologyFields(ontologyIdentification, utils.getUserId()));
+		model.addAttribute("fields", this.ontologyService.getOntologyFieldsQueryTool(ontologyIdentification, utils.getUserId()));
 		return "querytool/show :: fields";
 
 	}
