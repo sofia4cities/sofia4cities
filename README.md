@@ -1,6 +1,6 @@
 <p align="center">
-  <a src='https://www.select4cities.com/'>
-    <img src='s4c_grisdegradado.png'/>
+  <a src='https://www.sofia4cities.com/'>
+    <img src='s4c.png'/>
   </a>
 </p>
 
@@ -21,7 +21,6 @@ You can discover the modules of the platform in the [Architecture Overview](docs
 The project follows this skeleton:
 
 * [Client Libraries](client-libraries/) contains the source code of the SDKs for access the platform from different languages (Java, Javascript, Android, Python,...) 
-
 *  [Contributions](contributions/) contains the open-source project that we have personalized.
 *  [Docker-deployment](docker-deployment/) with the Dockerfiles, docker-compose.yml and scripts to generate images for all the modules.
 *  [Docs](docs/) contains the open documenta
@@ -30,6 +29,7 @@ The project follows this skeleton:
 *  [Libraries](libraries/) source code to different utilities and services of the platform used on the differente deployable modules (mail, twitter, commons,...)
 *  [Modules](modules/) source code of the different modules of the platform (API Manager, IoTBroker, Control Panel, ...)
 * [Persistence](persistence/) source code for everything related to the persistence in the platform (Mongo as RI Persistence, abstraction services,...)
+* [Quality](quality/) projects, configurations, reports for all quality labours, including automated tests for the ControlPanel UI
 * [Security](security/) source code for everything related to the security in the platform. We include reference implementations based on ConfigDB.
  
  

@@ -1,4 +1,4 @@
-Welcome to the Sofia4Cities community!!!!
+Welcome to the Sofia4Cities community
 ============================
 
 
