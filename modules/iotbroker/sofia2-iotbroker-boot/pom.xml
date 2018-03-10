@@ -76,7 +76,38 @@
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-jsonSchema</artifactId>
 		</dependency>
+		
+<!-- 		COMMON BROKER	 -->
+		<dependency>
+		      <groupId>io.moquette</groupId>
+		      <artifactId>moquette-broker</artifactId>
+		      <version>0.10</version>
+		</dependency>
+		
+		<dependency>
+        <groupId>org.eclipse.paho</groupId>
+        <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+        <version>1.2.0</version>
+    </dependency>
+		
 	</dependencies>	
+	
+	<repositories>
+  <repository>
+    <id>bintray</id>
+    <url>https://jcenter.bintray.com</url>
+    <releases>
+      <enabled>true</enabled>
+    </releases>
+    <snapshots>
+      <enabled>false</enabled>
+    </snapshots>
+  </repository>
+  <repository>
+        <id>Eclipse Paho Repo</id>
+        <url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
+    </repository>
+</repositories>
 
 	<build>
 		<plugins>

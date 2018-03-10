@@ -43,9 +43,10 @@ public class StompWebSocketHandler {
 	@MessageMapping("/message/{token}")
 	public void handleConnect(@Payload SSAPMessage<SSAPBodyJoinMessage> message, @DestinationVariable("token") String token, MessageHeaders messageHeaders) throws MessagingException, JsonProcessingException {
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(message);
+		messagingTemplate.setSendTimeout(1000);
 		final ObjectMapper mapper = new ObjectMapper();
-		final String responseStr = "123456789";//mapper.writeValueAsString(response);
-		messagingTemplate.convertAndSend("/topic/message/"+token, response);
+		messagingTemplate.convertAndSend("/topic/message/" + token, response);
+		
 	}
 
 
