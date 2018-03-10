@@ -13,12 +13,18 @@
  */
 package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.websocket;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
+@ConditionalOnProperty(
+		prefix="sofia2.iotbroker.plugbable.gateway.stomp",
+		name="enable",
+		havingValue=""
+		)
 @Configuration
 @EnableWebSocketMessageBroker
 public class StompWebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {

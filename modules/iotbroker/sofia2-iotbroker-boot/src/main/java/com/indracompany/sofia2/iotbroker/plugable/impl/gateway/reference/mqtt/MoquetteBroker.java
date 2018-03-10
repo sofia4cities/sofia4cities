@@ -25,6 +25,7 @@ import javax.annotation.PreDestroy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
@@ -44,6 +45,11 @@ import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
 
+@ConditionalOnProperty(
+		prefix="sofia2.iotbroker.plugbable.gateway.moquette",
+		name="enable",
+		havingValue=""
+		)
 @Slf4j
 @Component
 public class MoquetteBroker {

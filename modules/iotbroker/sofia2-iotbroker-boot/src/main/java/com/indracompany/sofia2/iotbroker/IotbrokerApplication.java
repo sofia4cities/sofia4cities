@@ -18,22 +18,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
-
-
 @SpringBootApplication(scanBasePackages="com.indracompany.sofia2")
-
-//@ComponentScan(basePackages = {
-//		"com.indracompany.sofia2.config.services",
-//		"com.indracompany.sofia2.router.config.repository",
-//		"com.indracompany.sofia2.router.service.app.service.crud"
-//},
-//excludeFilters = {
-//		@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-//				classes = {JPACryptoConverterCustom.class, JPAHAS256ConverterCustom.class})}
-//		)
-
 @EnableAutoConfiguration(exclude = {HibernateJpaAutoConfiguration.class})
-
 public class IotbrokerApplication {
 
 	public static void main(String[] args) {

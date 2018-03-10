@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.websocket;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -29,6 +30,11 @@ import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
+@ConditionalOnProperty(
+		prefix="sofia2.iotbroker.plugbable.gateway.stomp",
+		name="enable",
+		havingValue=""
+		)
 @Controller
 public class StompWebSocketHandler {
 
@@ -46,7 +52,7 @@ public class StompWebSocketHandler {
 		messagingTemplate.setSendTimeout(1000);
 		final ObjectMapper mapper = new ObjectMapper();
 		messagingTemplate.convertAndSend("/topic/message/" + token, response);
-		
+
 	}
 
 
