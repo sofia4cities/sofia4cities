@@ -33,7 +33,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 @ConditionalOnProperty(
 		prefix="sofia2.iotbroker.plugbable.gateway.stomp",
 		name="enable",
-		havingValue=""
+		havingValue="true"
 		)
 @Controller
 public class StompWebSocketHandler {

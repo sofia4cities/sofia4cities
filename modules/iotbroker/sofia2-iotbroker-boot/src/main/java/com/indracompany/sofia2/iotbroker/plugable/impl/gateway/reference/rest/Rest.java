@@ -15,6 +15,7 @@ package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -47,11 +48,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-//@ConditionalOnProperty(
-//		prefix="sofia2.iotbroker.plugbable.gateway.rest",
-//		name="enable",
-//		havingValue=""
-//		)
+@ConditionalOnProperty(
+		prefix="sofia2.iotbroker.plugbable.gateway.rest",
+		name="enable",
+		havingValue="true"
+		)
 @Controller
 @RequestMapping(path="/rest"
 //produces="application/json",

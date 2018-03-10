@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,11 +25,12 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-//@ConditionalOnProperty(
-//		prefix="sofia2.iotbroker.plugbable.gateway.rest",
-//		name="enable",
-//		havingValue=""
-//		)
+
+@ConditionalOnProperty(
+		prefix="sofia2.iotbroker.plugbable.gateway.rest",
+		name="enable",
+		havingValue="true"
+		)
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {

@@ -60,7 +60,7 @@ public class MoquetteBrokerTest {
 	String topic        = "/message";
 	String content      = "Message from MqttPublishSample";
 	int qos             = 2;
-	String broker_url       = "tcp://localhost:1888";
+	String broker_url       = "tcp://localhost:1883";
 	String clientId     = "JavaSample";
 	MemoryPersistence persistence = new MemoryPersistence();
 

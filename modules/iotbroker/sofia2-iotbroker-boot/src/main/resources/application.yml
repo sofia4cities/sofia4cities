@@ -6,10 +6,6 @@ app:
 server: ## Config Web Server
    port: 8081
    contextPath: /iotbroker
-#   tomcat:
-#      access_log_enabled: true
-#      basedir: target/tomcat
-  
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
@@ -21,8 +17,6 @@ spring:
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
-
-  
     
 sofia2: #Config Sofia2 specific
   database.mongodb:
@@ -49,10 +43,10 @@ sofia2: #Config Sofia2 specific
   iotbroker.plugbable:
     gateway:
       stomp:
-        enable: false
+        enable: true
       moquette:
-        enable: false
-        port: 1888
+        enable: true
+        port: 1883
         pool: 10
         host: localhost
         store: moquette_store_bin.mapdb

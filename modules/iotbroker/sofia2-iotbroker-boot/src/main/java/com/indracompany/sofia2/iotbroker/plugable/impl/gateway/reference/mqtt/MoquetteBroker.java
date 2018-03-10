@@ -48,7 +48,7 @@ import lombok.extern.slf4j.Slf4j;
 @ConditionalOnProperty(
 		prefix="sofia2.iotbroker.plugbable.gateway.moquette",
 		name="enable",
-		havingValue=""
+		havingValue="true"
 		)
 @Slf4j
 @Component

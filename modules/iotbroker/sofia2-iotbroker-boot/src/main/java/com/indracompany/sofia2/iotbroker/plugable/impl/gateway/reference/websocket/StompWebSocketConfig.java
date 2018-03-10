@@ -23,7 +23,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 @ConditionalOnProperty(
 		prefix="sofia2.iotbroker.plugbable.gateway.stomp",
 		name="enable",
-		havingValue=""
+		havingValue="true"
 		)
 @Configuration
 @EnableWebSocketMessageBroker
