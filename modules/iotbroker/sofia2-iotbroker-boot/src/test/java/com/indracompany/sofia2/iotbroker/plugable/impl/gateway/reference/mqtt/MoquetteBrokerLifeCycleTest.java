@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MoquetteBrokerLifeCycleTest {
 
+
 	@Test
 	public void given_OneMoquetteBroker_When_InitIsInvoked_Then_ItIsAbleToAccetoConnections() throws MqttException {
 		final MoquetteBroker broker = new MoquetteBroker();
@@ -45,7 +46,6 @@ public class MoquetteBrokerLifeCycleTest {
 		connOpts.setCleanSession(true);
 		client.connect(connOpts);
 
-		//		Assert.assertTrue(broker.getServer().getConnectionsManager().getSessions().size() > 0);
 
 		broker.stopServer();
 	}
