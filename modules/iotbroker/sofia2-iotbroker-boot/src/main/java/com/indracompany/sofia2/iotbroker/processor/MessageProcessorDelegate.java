@@ -37,6 +37,8 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyOntologyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
+import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 import com.indracompany.sofia2.ssap.util.SSAPMessageGenerator;
 
 @Component
@@ -110,6 +112,26 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return response;
 	}
 
+	@Override
+	public String process(String message) {
+		SSAPMessage<SSAPBodyReturnMessage> response = null;
+		SSAPMessage request = null;
+
+		try {
+			request = SSAPJsonParser.getInstance().deserialize(message);
+			response = this.process(request);
+		} catch (final SSAPParseException e) {
+			response = SSAPUtils.generateErrorMessage(request, SSAPErrorCode.PROCESSOR, "Request message is not parseable" + e.getMessage());
+		}
+
+		try {
+			return SSAPJsonParser.getInstance().serialize(response);
+		} catch (final SSAPParseException e) {
+			return "kk";
+		}
+
+	}
+
 	public Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
 	{
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
@@ -169,5 +191,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return filteredProcessors.get(0);
 
 	}
+
+
 
 }
