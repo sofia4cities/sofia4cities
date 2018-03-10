@@ -1,3 +1,4 @@
+#logging.level.org.hibernate.SQL: DEBUG
 security.ignored: /**
 app:
   name: iotbroker
@@ -47,10 +48,12 @@ sofia2: #Config Sofia2 specific
  
   iotbroker.plugbable:
     gateway.moquette:
-      port: 1883
+      port: 1888
       pool: 10
       host: localhost
       store: moquette_store_bin.mapdb
+      outbound_topic: /topic/message
+      inbound_topic: /queue/message
    
       
   
