@@ -37,13 +37,15 @@ public class QueryToolServiceImpl implements QueryToolService {
 	OntologyService ontologyService = null;
 
 	private void hasUserPermission(String user, String ontology) throws Exception {
-		//		if (!ontologyService.hasUserPermissionForQuery(user, ontology))
-		//			throw new Exception("User:" + user + " has nos permission to query ontology " + ontology);
+		if (!ontologyService.hasUserPermissionForQuery(user, ontology)) {
+			throw new Exception("User:" + user + " has nos permission to query ontology " + ontology);
+		}
 	}
 
 	private void hasClientPlatformPermisionForQuery(String clientPlatform, String ontology) throws Exception{
-		//		if (!ontologyService.hasClientPlatformPermisionForQuery(clientPlatform, ontology))
-		//			throw new Exception("Client Platform:" + clientPlatform + " has nos permission to query ontology " + ontology);
+		if (!ontologyService.hasClientPlatformPermisionForQuery(clientPlatform, ontology)) {
+			throw new Exception("Client Platform:" + clientPlatform + " has nos permission to query ontology " + ontology);
+		}
 	}
 
 	@Override
