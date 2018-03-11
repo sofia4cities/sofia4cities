@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.hibernate.cfg.AccessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -539,6 +540,46 @@ public class OntologyServiceImpl implements OntologyService {
 			} else {
 				return false;
 			}
+		}
+	}
+
+	@Override
+	public boolean hasClientPlatformPermisionForInsert(String clientPlatformId, String ontologyId) {
+		ClientPlatformOntology clientPlatformOntology = this.clientPlatformOntologyRepository
+				.findByOntologyAndClientPlatform(ontologyId, clientPlatformId);
+
+		if (clientPlatformOntology != null) {
+			
+				switch (ClientPlatformOntology.AccessType.valueOf(clientPlatformOntology.getAccess())) {
+				case ALL:
+				case INSERT:
+					return true;
+				default:
+					return false;
+				} 
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean hasClientPlatformPermisionForQuery(String clientPlatformId, String ontologyId) {
+		
+		ClientPlatformOntology clientPlatformOntology = this.clientPlatformOntologyRepository
+				.findByOntologyAndClientPlatform(ontologyId, clientPlatformId);
+
+		if (clientPlatformOntology != null) {
+			
+				switch (ClientPlatformOntology.AccessType.valueOf(clientPlatformOntology.getAccess())) {
+				case ALL:
+				case INSERT:
+				case QUERY:
+					return true;
+				default:
+					return false;
+				} 
+		} else {
+			return false;
 		}
 	}
 

@@ -19,5 +19,6 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public interface MessageProcessor {
 	<T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message);
+	String process(String message);
 
 }

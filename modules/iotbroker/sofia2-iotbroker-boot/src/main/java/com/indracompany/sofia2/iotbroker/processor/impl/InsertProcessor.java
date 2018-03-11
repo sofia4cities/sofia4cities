@@ -87,6 +87,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 		model.setOperationType(OperationType.POST);
 		model.setQueryType(QueryType.NATIVE);
 		model.setUser(session.get().getUserID());
+		model.setClientPlatformId(session.get().getClientPlatform());
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

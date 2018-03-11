@@ -16,7 +16,6 @@ package com.indracompany.sofia2.persistence.mongodb;
 import org.json.JSONArray;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -37,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 // @ContextConfiguration(classes = EmbeddedMongoConfiguration.class)
-@Ignore
+// @Ignore
 public class MongoByQuasarIntegrationTest {
 
 	@Autowired
@@ -46,8 +45,9 @@ public class MongoByQuasarIntegrationTest {
 	@Test
 	public void given_MongoDbAndQuasar_When_AnSQLQueryIsExecuted_Then_MongoDb_ReturnsTheResult() {
 		try {
-			String query = "select * from movie";
+			String query = "select * from HelsinkiPopulation";
 			String result = connector.queryAsJson(query, 0, 100);
+			log.info("Returned:" + result);
 			JSONArray jsonResult = new JSONArray(result);
 			Assert.assertTrue(jsonResult.length() > 0);
 		} catch (Exception e) {
@@ -58,7 +58,7 @@ public class MongoByQuasarIntegrationTest {
 	// @Test
 	public void testQueryAsTable() {
 		try {
-			String query = "select * from movie";
+			String query = "select * from HelsinkiPopulation";
 			String result = connector.queryAsTable(query, 0, 100);
 
 			Assert.assertTrue(result.indexOf("|") != -1);

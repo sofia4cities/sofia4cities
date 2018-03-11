@@ -32,6 +32,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -64,7 +65,6 @@ public class StompWebSocketTest {
 
 	private CompletableFuture<SSAPMessage<SSAPBodyReturnMessage>> completableFuture;
 	private String URL;
-
 	@MockBean
 	SecurityPluginManager securityPluginManager;
 
@@ -95,9 +95,10 @@ public class StompWebSocketTest {
 		final StompSession stompSession = stompClient.connect(URL, new StompSessionHandlerAdapter() {}).get(3, TimeUnit.SECONDS);
 
 		stompSession.subscribe("/topic/message/" + uuid, new MyStompFrameHandler());
+
 		stompSession.send("/stomp/message/" + uuid, SSAPMessageGenerator.generateJoinMessageWithToken());
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = completableFuture.get(3, TimeUnit.SECONDS);
+		final SSAPMessage<SSAPBodyReturnMessage> response = completableFuture.get(120, TimeUnit.SECONDS);
 		Assert.assertNotNull(response);
 		Assert.assertEquals(SSAPMessageDirection.RESPONSE, response.getDirection());
 		Assert.assertNotNull(response.getSessionKey());

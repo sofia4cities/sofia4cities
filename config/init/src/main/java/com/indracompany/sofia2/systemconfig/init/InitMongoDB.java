@@ -77,16 +77,18 @@ public class InitMongoDB {
 	public void init_RestaurantsDataSet() {
 		try {
 			log.info("init RestaurantsDataSet");
-			Runtime r = Runtime.getRuntime();
-			String command = null;
-			if (OSDetector.isWindows()) {
-				command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/restaurants-dataset.json";
-			} else {
-				command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/restaurants-dataset.json";
+			if (basicOps.count("Restaurants") == 0) {
+				Runtime r = Runtime.getRuntime();
+				String command = null;
+				if (OSDetector.isWindows()) {
+					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/restaurants-dataset.json";
+				} else {
+					command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/restaurants-dataset.json";
 
+				}
+				r.exec(command);
+				log.info("Reading JSON into Database...");
 			}
-			r.exec(command);
-			log.info("Reading JSON into Database...");
 			if (manageDb.getListOfTables4Ontology("Restaurants").isEmpty()) {
 				log.info("No Collection Restaurants, creating...");
 				manageDb.createTable4Ontology("restaurants", "{}");
@@ -114,16 +116,18 @@ public class InitMongoDB {
 	public void init_HelsinkiPopulationDataSet() {
 		try {
 			log.info("init init_HelsinkiPopulationDataSet");
-			Runtime r = Runtime.getRuntime();
-			String command = null;
-			if (OSDetector.isWindows()) {
-				command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/HelsinkiPopulation-dataset.json";
-			} else {
-				command = "mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/HelsinkiPopulation-dataset.json";
+			if (basicOps.count("HelsinkiPopulation") == 0) {
+				Runtime r = Runtime.getRuntime();
+				String command = null;
+				if (OSDetector.isWindows()) {
+					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/HelsinkiPopulation-dataset.json";
+				} else {
+					command = "mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/HelsinkiPopulation-dataset.json";
 
+				}
+				r.exec(command);
+				log.info("Reading JSON into Database...");
 			}
-			r.exec(command);
-			log.info("Reading JSON into Database...");
 			if (manageDb.getListOfTables4Ontology("HelsinkiPopulation").isEmpty()) {
 				log.info("No Collection HelsinkiPopulation, creating...");
 				manageDb.createTable4Ontology("HelsinkiPopulation", "{}");
