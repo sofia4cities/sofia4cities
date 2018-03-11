@@ -86,10 +86,10 @@ public class InitConfigDB {
 
 	private static User userCollaborator = null;
 	private static User userAdministrator = null;
-	private static Token tokenAdministrator=null;
-	private static Ontology ontologyAdministrator=null;
-	private static GadgetDatasource gadgetDatasourceAdministrator=null;
-	private static Gadget gadgetAdministrator=null;
+	private static Token tokenAdministrator = null;
+	private static Ontology ontologyAdministrator = null;
+	private static GadgetDatasource gadgetDatasourceAdministrator = null;
+	private static Gadget gadgetAdministrator = null;
 
 	@Autowired
 	ClientConnectionRepository clientConnectionRepository;
@@ -185,8 +185,7 @@ public class InitConfigDB {
 		log.info("OK init_GadgetDatasource");
 		init_GadgetMeasure();
 		log.info("OK init_GadgetMeasure");
-		
-		
+
 		init_GeneratorType();
 		log.info("OK init_GeneratorType");
 		// init_InstanceGenerator();
@@ -415,10 +414,10 @@ public class InitConfigDB {
 			dashboard.setCustomjs("");
 			dashboard.setPublic(true);
 			dashboard.setUser(getUserAdministrator());
-					
+
 			dashboardRepository.save(dashboard);
 		}
-	}	
+	}
 
 	private User getUserDeveloper() {
 		if (userCollaborator == null)
@@ -430,27 +429,31 @@ public class InitConfigDB {
 		if (userAdministrator == null)
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
 		return userAdministrator;
-	}  
-	
+	}
+
 	private Token getTokenAdministrator() {
-		if (tokenAdministrator==null) tokenAdministrator=this.tokenRepository.findByToken("acbca01b-da32-469e-945d-05bb6cd1552e");
+		if (tokenAdministrator == null)
+			tokenAdministrator = this.tokenRepository.findByToken("acbca01b-da32-469e-945d-05bb6cd1552e");
 		return tokenAdministrator;
 	}
-	
 
 	private Ontology getOntologyAdministrator() {
-		if (ontologyAdministrator==null) ontologyAdministrator=this.ontologyRepository.findByIdentification("OntologyMaster");
+		if (ontologyAdministrator == null)
+			ontologyAdministrator = this.ontologyRepository.findByIdentification("OntologyMaster");
 		return ontologyAdministrator;
 	}
+
 	private GadgetDatasource getGadgetDatasourceAdministrator() {
-		if (gadgetDatasourceAdministrator==null) gadgetDatasourceAdministrator=this.gadgetDatasourceRepository.findById("942b6983-286c-43aa-bbc1-e46038de4181");
+		if (gadgetDatasourceAdministrator == null)
+			gadgetDatasourceAdministrator = this.gadgetDatasourceRepository.findAll().get(0);
 		return gadgetDatasourceAdministrator;
 	}
-	
+
 	private Gadget getGadgetAdministrator() {
-		if (gadgetAdministrator==null) gadgetAdministrator=this.gadgetRepository.findById("c41a9d92-d08a-4e94-baf8-3679ff5cd347");
+		if (gadgetAdministrator == null)
+			gadgetAdministrator = this.gadgetRepository.findAll().get(0);
 		return gadgetAdministrator;
-		
+
 	}
 
 	public void init_DataModel() {
@@ -688,10 +691,9 @@ public class InitConfigDB {
 		if (gadgets.isEmpty()) {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
-			
-			
+
 			gadget.setIdentification("My Gadget");
-		    gadget.setPublic(true);
+			gadget.setPublic(true);
 			gadget.setDescription("This is my new RT gadget for temperature evolution");
 			gadget.setType("Area");
 			gadget.setConfig("");
@@ -721,7 +723,7 @@ public class InitConfigDB {
 		}
 
 	}
-	
+
 	public void init_GadgetMeasure() {
 
 		log.info("init GadgetMeasure");
@@ -729,8 +731,8 @@ public class InitConfigDB {
 		if (gadgetMeasures.isEmpty()) {
 			log.info("No gadget measures ...");
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			//inicializo el id?
-			//gadgetMeasure.setId("1");
+			// inicializo el id?
+			// gadgetMeasure.setId("1");
 			gadgetMeasure.setDatasource(getGadgetDatasourceAdministrator());
 			gadgetMeasure.setConfig("'field':'temperature','transformation':''}],'name':'Avg. Temperature'");
 			gadgetMeasure.setGadget(getGadgetAdministrator());
@@ -740,14 +742,12 @@ public class InitConfigDB {
 	}
 
 	public void init_GeneratorType() {
-
 		log.info("init GeneratorType");
 		List<GeneratorType> types = this.generatorTypeRepository.findAll();
 		if (types.isEmpty()) {
-
 			log.info("No generator types found..adding");
 			GeneratorType type = new GeneratorType();
-			type.setId(1);
+			type.setId(GeneratorType.RANDOM_NUMBER);
 			type.setIdentification("Random Number");
 			type.setKeyType("desde,number;hasta,number;numdecimal,number");
 			type.setKeyValueDef("desde,100;hasta,10000;numdecimal,0");
@@ -767,15 +767,7 @@ public class InitConfigDB {
 			generator.setId(1);
 			generator.setValues("desde,0;hasta,400");
 			generator.setIdentification("Integer 0 a 400");
-			GeneratorType type = this.generatorTypeRepository.findById(4);
-			if (type == null) {
-				type = new GeneratorType();
-				type.setId(1);
-				type.setIdentification("Random Number");
-				type.setKeyType("desde,number;hasta,number;numdecimal,number");
-				type.setKeyValueDef("desde,100;hasta,10000;numdecimal,0");
-				this.generatorTypeRepository.save(type);
-			}
+			GeneratorType type = this.generatorTypeRepository.findById(GeneratorType.RANDOM_NUMBER);
 			generator.setGeneratorType(type);
 			this.instanceGeneratorRepository.save(generator);
 
@@ -1014,8 +1006,6 @@ public class InitConfigDB {
 		}
 
 	}
-	
-	
 
 	public void init_User() {
 		log.info("init UserCDB");
@@ -1100,7 +1090,7 @@ public class InitConfigDB {
 			}
 		}
 	}
-	
+
 	/*
 	 * public void init_Template() { log.info("init template"); List<Template>
 	 * templates= this.templateRepository.findAll();
