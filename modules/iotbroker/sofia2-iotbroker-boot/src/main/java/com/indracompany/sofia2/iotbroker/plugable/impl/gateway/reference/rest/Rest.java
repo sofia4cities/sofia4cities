@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
@@ -65,6 +68,14 @@ public class Rest {
 
 	@Autowired
 	MessageProcessor processor;
+
+	@Autowired
+	GatewayNotifier subscriptor;
+
+	@PostConstruct
+	private void init() {
+		subscriptor.addSubscriptionListener("rest_gateway",  (s) -> System.out.println("rest_gateway fake processing") );
+	}
 
 	@ApiOperation(value = "Logs a client device into Sofia4Cities with token.\nReturns a sessionKey to use in further operations")
 	@RequestMapping(value="/client/join", method=RequestMethod.GET)

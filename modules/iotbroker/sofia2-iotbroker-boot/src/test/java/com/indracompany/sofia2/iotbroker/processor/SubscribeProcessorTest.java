@@ -29,7 +29,6 @@ import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class SubscribeProcessorTest {
@@ -39,6 +38,10 @@ public class SubscribeProcessorTest {
 
 	@MockBean
 	SecurityPluginManager securityPluginManager;
+
+	//	@Autowired
+	//	SuscriptionModelRepository repositoy;
+
 
 	SSAPMessage<SSAPBodySubscribeMessage> ssapSbuscription;
 
@@ -52,6 +55,7 @@ public class SubscribeProcessorTest {
 
 	@Before
 	public void setUp() throws IOException, Exception {
+		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
 		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), SSAPQueryType.SQL, "select * from Person");
 
 		securityMocks();

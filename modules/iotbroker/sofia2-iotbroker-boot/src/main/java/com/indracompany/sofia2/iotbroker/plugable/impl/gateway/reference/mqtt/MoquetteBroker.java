@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
 
@@ -80,6 +81,8 @@ public class MoquetteBroker {
 	private final Server server = new Server();
 	private Properties m_properties;
 
+	@Autowired
+	GatewayNotifier subscriptor;
 
 	public Server getServer() {
 		return server;
@@ -94,6 +97,9 @@ public class MoquetteBroker {
 
 		@Override
 		public void onPublish(InterceptPublishMessage msg) {
+
+			subscriptor.addSubscriptionListener("mqtt_gateway",  (s) -> System.out.println("mqtt_gateway fake processing") );
+
 			final ByteBuf byteBuf = msg.getPayload();
 			final String playload = new String(ByteBufUtil.getBytes(byteBuf), Charset.forName("UTF-8"));
 			final SSAPJsonParser parser = new SSAPJsonParser();

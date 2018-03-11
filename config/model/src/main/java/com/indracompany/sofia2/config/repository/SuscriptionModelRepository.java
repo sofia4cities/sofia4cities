@@ -22,6 +22,7 @@ import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
 public interface SuscriptionModelRepository extends JpaRepository<SuscriptionNotificationsModel, String> {
 
 	List<SuscriptionNotificationsModel> findAllByOntologyName(String ontologyName);
-
+	List<SuscriptionNotificationsModel> findAllBySuscriptionId(String suscriptionId);
 	void deleteBySuscriptionId(String id);
+	void deleteByOntologyName(String ontologyName);
 }
