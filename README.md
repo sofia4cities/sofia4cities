@@ -23,7 +23,7 @@ The project follows this skeleton:
 * [Client Libraries](client-libraries/) contains the source code of the SDKs for access the platform from different languages (Java, Javascript, Android, Python,...) 
 *  [Contributions](contributions/) contains the open-source project that we have personalized.
 *  [Docker-deployment](docker-deployment/) with the Dockerfiles, docker-compose.yml and scripts to generate images for all the modules.
-*  [Docs](docs/) contains the open documenta
+*  [Docs](docs/) contains the open documentation of the platform.
 *  [Config](config/) source code for everything related to the configuration of the platform (JPA Entities, initialization of the database, Services for the acccess to the configuration of the platform).
 *  [Examples](examples/) contains different examples that help us to develop with and to extend the platform.
 *  [Libraries](libraries/) source code to different utilities and services of the platform used on the differente deployable modules (mail, twitter, commons,...)
