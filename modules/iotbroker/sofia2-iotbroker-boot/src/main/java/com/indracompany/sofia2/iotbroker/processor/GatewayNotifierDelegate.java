@@ -52,5 +52,4 @@ public class GatewayNotifierDelegate implements GatewayNotifier {
 				);
 
 	}
-
 }
