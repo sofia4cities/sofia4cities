@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.User;
 
@@ -62,32 +61,15 @@ public class GadgetMeasureRepositoryIntegrationTest {
 	public void setUp() {
 		List<GadgetMeasure> gadgetMeasures = this.repository.findAll();
 		if (gadgetMeasures.isEmpty()) {
-			log.info("No gadget measures ...");
-			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			gadgetMeasure.setConfig("Attr1");
-			List<Gadget> gadgets = this.grepository.findAll();
-			Gadget gadget;
-			if (gadgets.isEmpty()) {
-				log.info("No gadgets ...");
-				gadget = new Gadget();
-				gadget.setUser(getUserCollaborator());
-				gadget.setPublic(true);
-				gadget.setIdentification("Gadget1");
-				gadget.setType("Tipo 1");
-
-				grepository.save(gadget);
-			} else {
-				gadget = grepository.findAll().get(0);
-			}
-			gadgetMeasure.setGadget(gadget);
-			repository.save(gadgetMeasure);
+			log.error("You must use InitConfigDB to populate master data. Only use this method for testing");
+			Assert.fail("You must use InitConfigDB to populate master data. Only use this method for testing");
 		}
 	}
 
 	@Test
 	public void given_SomeGadgetMeasuresExist_When_ItIsSearchedByGadget_Then_ItIsObtainedTheCorrectObjects() {
 		GadgetMeasure gadgetMeasure = this.repository.findAll().get(0);
-		log.info("Loaded gadget measure with gadget id: " + gadgetMeasure.getGadget().getId());
+		log.info("Loaded gadget measure with id: " + gadgetMeasure.getId());
 		Assert.assertTrue(this.repository.findByGadget(gadgetMeasure.getGadget()).size() > 0);
 	}
 
