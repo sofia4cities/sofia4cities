@@ -1,3 +1,16 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.any;
@@ -47,7 +60,7 @@ import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class IndicationProcessotTest {
+public class IndicationProcessorTest {
 	private MockMvc mockMvc;
 	@Autowired
 	private WebApplicationContext wac;
@@ -92,6 +105,7 @@ public class IndicationProcessotTest {
 	@Before
 	public void setUp() throws IOException, Exception {
 		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
+		securityMocks();
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 		mockOntologies.createOntology(Person.class);
 		//
@@ -100,7 +114,7 @@ public class IndicationProcessotTest {
 		subject = PojoGenerator.generatePerson();
 		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(Person.class.getSimpleName(), subject);
 		//
-		securityMocks();
+
 	}
 
 	@After
@@ -140,7 +154,7 @@ public class IndicationProcessotTest {
 		final OperationResultModel result = mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
 				OperationResultModel.class);
 
-		indication = completableFuture.get(100, TimeUnit.SECONDS);
+		indication = completableFuture.get(3, TimeUnit.SECONDS);
 		Assert.assertNotNull(indication);
 		Assert.assertEquals(session.getSessionKey(), indication.getSessionKey());
 		Assert.assertTrue(SSAPMessageDirection.REQUEST.equals(indication.getDirection()));
