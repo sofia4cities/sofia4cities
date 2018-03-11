@@ -1,0 +1,18 @@
+route:
+  repeat_interval: 5h
+  routes:
+  - match:
+      action: up
+    receiver: "scale-up"
+  - match:
+      action: down
+    receiver: "scale-down"
+receivers:
+- name: "scale-up"
+  webhook_configs:
+  - url: https://s4cities-sf2.northeurope.cloudapp.azure.com/v1-webhooks/endpoint?key=AhjKXQzjN5mRR1N0q2pOVsGcN7idcVK2zxt496Vq&projectId=1a5
+    send_resolved: true
+- name: "scale-down"
+  webhook_configs:
+  - url: https://s4cities-sf2.northeurope.cloudapp.azure.com/v1-webhooks/endpoint?key=jM8VG6o6xlxZpVZgaqglaTci2qarGF7SPKCXEyhu&projectId=1a5
+    send_resolved: true
