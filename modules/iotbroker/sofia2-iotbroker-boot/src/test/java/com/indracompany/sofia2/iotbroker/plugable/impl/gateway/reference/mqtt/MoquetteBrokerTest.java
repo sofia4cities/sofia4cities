@@ -16,6 +16,7 @@ package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.mqtt;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -39,15 +40,28 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
+import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyIndicationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
 import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
@@ -64,6 +78,15 @@ public class MoquetteBrokerTest {
 	String clientId     = "JavaSample";
 	MemoryPersistence persistence = new MemoryPersistence();
 
+	private MockMvc mockMvc;
+	@Autowired
+	private WebApplicationContext wac;
+	private ResultActions resultAction;
+	private final String URL_BASE_PATH  = "/advice";
+	@Autowired
+	ObjectMapper mapper;
+
+
 	@Value("${local.server.port}")
 	private int port;
 
@@ -73,9 +96,11 @@ public class MoquetteBrokerTest {
 	@MockBean
 	SecurityPluginManager securityPluginManager;
 
-	private CompletableFuture<String> completableFuture;
+	private CompletableFuture<String> completableFutureMessage;
+	private CompletableFuture<String> completableFutureIndication;
 	private IoTSession session = null;
 
+	Person subject;
 
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
@@ -89,13 +114,89 @@ public class MoquetteBrokerTest {
 
 	@Before
 	public void setup() {
-		completableFuture = new CompletableFuture<>();
+		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+
+		subject = PojoGenerator.generatePerson();
+		completableFutureMessage = new CompletableFuture<>();
+		completableFutureIndication = new CompletableFuture<>();
 		securityMocks();
 	}
 
 
 	@Test
-	public void given_OneMqttClientConnection_When_ItSubscribesToATopicAndSendsMessage_Then_ItGetsTheMessage() throws InterruptedException, SSAPParseException, ExecutionException, TimeoutException, MqttPersistenceException, MqttException {
+	public void given_OneMqttClientConnection_When_ItSubscribesToATopicAndSendsMessage_Then_ItGetsTheMessage() throws Exception {
+
+		final MqttClient client = new MqttClient(broker_url, clientId, persistence);
+		final MqttConnectOptions connOpts = new MqttConnectOptions();
+
+		connOpts.setCleanSession(true);
+		client.connect(connOpts);
+
+
+		client.subscribe("/topic/message/" + client.getClientId(), new IMqttMessageListener() {
+			@Override
+			public void messageArrived(String topic, MqttMessage message) throws Exception {
+				final String response = new String(message.getPayload());
+				completableFutureMessage.complete(response);
+			}
+		});
+
+		client.subscribe("/topic/subscription/" + session.getSessionKey(), new IMqttMessageListener() {
+			@Override
+			public void messageArrived(String topic, MqttMessage message) throws Exception {
+				final String response = new String(message.getPayload());
+				completableFutureIndication.complete(response);
+			}
+		});
+
+		//Send join message
+		completableFutureMessage = new CompletableFuture<>();
+		final SSAPMessage<SSAPBodyJoinMessage> join = SSAPMessageGenerator.generateJoinMessageWithToken();
+		final String joinStr = SSAPJsonParser.getInstance().serialize(join);
+		MqttMessage message = new MqttMessage(joinStr.getBytes());
+		message.setQos(qos);
+		client.publish(topic, message);
+
+		//Get join message response
+		String responseStr = completableFutureMessage.get();
+		SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(responseStr);
+		Assert.assertNotNull(response);
+
+		//Send subscription message
+		completableFutureMessage = new CompletableFuture<>();
+		final SSAPMessage<SSAPBodySubscribeMessage> subscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), session.getSessionKey(), SSAPQueryType.SQL, "SELECT * FROM Person");
+		final String subscriptionStr = SSAPJsonParser.getInstance().serialize(subscription);
+		message = new MqttMessage(subscriptionStr.getBytes());
+		message.setQos(qos);
+		client.publish(topic, message);
+
+		//Get subscription message response
+		responseStr = completableFutureMessage.get();
+		response = SSAPJsonParser.getInstance().deserialize(responseStr);
+		Assert.assertNotNull(response);
+
+		//Avice indication simulated by calling advice IotBroker rest service
+		final NotificationCompositeModel model = RouterServiceGenerator.generateNotificationCompositeModel(response.getBody().getData().at("/subscriptionId").asText(), subject, session);
+		final String content = mapper.writeValueAsString(model);
+		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(URL_BASE_PATH)
+				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
+				.content(content)
+				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
+
+		resultAction.andExpect(status().is2xxSuccessful());
+		final OperationResultModel result = mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
+				OperationResultModel.class);
+
+		//Waits to recieve indication
+		final String indicationStr = completableFutureIndication.get();
+		final SSAPMessage<SSAPBodyIndicationMessage> indication = SSAPJsonParser.getInstance().deserialize(indicationStr);
+		Assert.assertNotNull(indication);
+
+		client.disconnect();
+	}
+
+	@Test
+	public void given_OneMqttClientConnection_When_ItSendsAsubscribeMessagaAndIndicationOccurs_Then_ItGetsTheIndication() throws InterruptedException, SSAPParseException, ExecutionException, TimeoutException, MqttPersistenceException, MqttException {
 
 		final SSAPMessage<SSAPBodyJoinMessage> request = SSAPMessageGenerator.generateJoinMessageWithToken();
 		final String requestStr = SSAPJsonParser.getInstance().serialize(request);
@@ -107,9 +208,17 @@ public class MoquetteBrokerTest {
 
 		client.subscribe("/topic/message/" + client.getClientId(), new IMqttMessageListener() {
 			@Override
-			public void messageArrived(String arg0, MqttMessage message) throws Exception {
+			public void messageArrived(String topic, MqttMessage message) throws Exception {
 				final String response = new String(message.getPayload());
-				completableFuture.complete(response);
+				completableFutureMessage.complete(response);
+			}
+		});
+
+		client.subscribe("/topic/subscription/" + client.getClientId(), new IMqttMessageListener() {
+			@Override
+			public void messageArrived(String topic, MqttMessage message) throws Exception {
+				final String response = new String(message.getPayload());
+				completableFutureMessage.complete(response);
 			}
 		});
 
@@ -117,7 +226,7 @@ public class MoquetteBrokerTest {
 		message.setQos(qos);
 		client.publish(topic, message);
 
-		final String responseStr = completableFuture.get(300, TimeUnit.SECONDS);
+		final String responseStr = completableFutureMessage.get(300, TimeUnit.SECONDS);
 		final SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(responseStr);
 
 		Assert.assertNotNull(responseStr);
@@ -127,9 +236,6 @@ public class MoquetteBrokerTest {
 
 
 		client.disconnect();
-
-
-
 	}
 
 

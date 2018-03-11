@@ -80,9 +80,6 @@ public class StompWebSocketTest {
 	@Value("${local.server.port}")
 	private int port;
 
-	@Autowired
-	MessageProcessor processor;
-
 	private MockMvc mockMvc;
 	@Autowired
 	private WebApplicationContext wac;
@@ -164,7 +161,7 @@ public class StompWebSocketTest {
 		//final SSAPMessage<SSAPBodyInsertMessage> insert = SSAPMessageGenerator.generateInsertMessage(Person.class.getName(), subject);
 		//response = processor.process(insert);
 
-		final SSAPMessage<SSAPBodyIndicationMessage> indication = completableFutureIndication.get(10000, TimeUnit.SECONDS);
+		final SSAPMessage<SSAPBodyIndicationMessage> indication = completableFutureIndication.get(3, TimeUnit.SECONDS);
 
 		Assert.assertNotNull(indication);
 	}
