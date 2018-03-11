@@ -138,15 +138,7 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/apimanager/list"
-				},				
-				{
-					"title": {
-						"EN": "APIs Invocation",
-						"ES": "Invocación de APIs"
-					},
-					"icon": "",
-					"url": "/controlpanel/apimanager/authorize/list"
-				},	
+				},
 				{
 					"title": {
 						"EN": "API Manager Tokens",

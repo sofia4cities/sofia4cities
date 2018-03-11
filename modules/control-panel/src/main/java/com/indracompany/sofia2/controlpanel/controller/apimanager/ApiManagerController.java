@@ -190,12 +190,10 @@ public class ApiManagerController {
 		return "apimanager/token";
 	}
 	
-	@GetMapping(value = "/invoke" , produces = "text/html")
-	public String invoker(Model model,	@RequestParam(required = false) String apiId) {		
+	@GetMapping(value = "/invoke/{id}" , produces = "text/html")
+	public String invoker(Model model, @PathVariable("id") String apiId) {
 		
-//		apiManagerHelper.populateApiManagerListForm(model);
-//		
-//		model.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user));
+		apiManagerHelper.populateApiManagerInvokeForm(model, apiId);
 		
 		return "apimanager/invoke";
 	}
