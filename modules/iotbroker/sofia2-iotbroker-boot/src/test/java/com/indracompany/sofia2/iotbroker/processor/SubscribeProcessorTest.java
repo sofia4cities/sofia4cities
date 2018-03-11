@@ -44,9 +44,10 @@ public class SubscribeProcessorTest {
 
 
 	SSAPMessage<SSAPBodySubscribeMessage> ssapSbuscription;
+	IoTSession session;
 
 	private void securityMocks() {
-		final IoTSession session = PojoGenerator.generateSession();
+		session = PojoGenerator.generateSession();
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
@@ -56,7 +57,7 @@ public class SubscribeProcessorTest {
 	@Before
 	public void setUp() throws IOException, Exception {
 		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
-		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), SSAPQueryType.SQL, "select * from Person");
+		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), session.getSessionKey(), SSAPQueryType.SQL, "select * from Person");
 
 		securityMocks();
 	}

@@ -95,7 +95,7 @@ public class IndicationProcessotTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 		mockOntologies.createOntology(Person.class);
 		//
-		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), SSAPQueryType.SQL, "select * from Person");
+		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), session.getSessionKey(), SSAPQueryType.SQL, "select * from Person");
 		//
 		subject = PojoGenerator.generatePerson();
 		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(Person.class.getSimpleName(), subject);
@@ -111,7 +111,7 @@ public class IndicationProcessotTest {
 	}
 
 	@Test
-	public void given_OneIndicationThenItsProcessedAndDeliveredToClient() throws Exception {
+	public void given_OneIndication_When_ItIsDelivered_Then_ItsProcessedAndDeliveredToClient() throws Exception {
 		final CompletableFuture<SSAPMessage<SSAPBodyIndicationMessage>> completableFuture = new CompletableFuture<>();
 		SSAPMessage<SSAPBodyIndicationMessage> indication = new SSAPMessage<>();
 
@@ -149,6 +149,7 @@ public class IndicationProcessotTest {
 		Assert.assertTrue(indication.getBody().getData().size() == 1);
 	}
 
+	//TODO: Internal advice webservice it's not accesible in test context execution
 	@Ignore
 	@Test
 	public void given_OneSubsctiptionToOntologyThenWhenAninsertOccursThenAnIndicationIsReceived() {

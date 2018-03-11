@@ -51,13 +51,15 @@ public class StompWebSocketHandler {
 
 	@PostConstruct
 	public void init() {
-		subscriptor.addSubscriptionListener("stomp_gateway",  (s) -> System.out.println("stomp_gateway fake processing") );
+		subscriptor.addSubscriptionListener("stomp_gateway",
+				(s) -> {
+					messagingTemplate.convertAndSend("/topic/subscription/" + s.getSessionKey(), s);
+				});
 	}
 
 	@MessageMapping("/message/{token}")
 	public void handleConnect(@Payload SSAPMessage<SSAPBodyJoinMessage> message, @DestinationVariable("token") String token, MessageHeaders messageHeaders) throws MessagingException, JsonProcessingException {
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(message);
-		messagingTemplate.setSendTimeout(1000);
 		final ObjectMapper mapper = new ObjectMapper();
 		messagingTemplate.convertAndSend("/topic/message/" + token, response);
 

@@ -139,9 +139,9 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
-	public static SSAPMessage<SSAPBodySubscribeMessage> generateSubscriptionMessage(String ontology, SSAPQueryType queryType, String query) {
+	public static SSAPMessage<SSAPBodySubscribeMessage> generateSubscriptionMessage(String ontology, String sessionKey,SSAPQueryType queryType, String query) {
 		final SSAPMessage<SSAPBodySubscribeMessage> message = new SSAPMessage<>();
-		message.setSessionKey(UUID.randomUUID().toString());
+		message.setSessionKey(sessionKey);
 
 		final SSAPBodySubscribeMessage body = new SSAPBodySubscribeMessage();
 		body.setOntology(ontology);

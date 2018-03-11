@@ -43,7 +43,7 @@ sofia2: #Config Sofia2 specific
   iotbroker.plugbable:
     gateway:
       stomp:
-        enable: false
+        enable: true
       moquette:
         enable: false
         port: 1883
