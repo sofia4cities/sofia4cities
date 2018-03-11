@@ -43,9 +43,9 @@ sofia2: #Config Sofia2 specific
   iotbroker.plugbable:
     gateway:
       stomp:
-        enable: true
+        enable: false
       moquette:
-        enable: true
+        enable: false
         port: 1883
         pool: 10
         host: localhost
@@ -53,7 +53,7 @@ sofia2: #Config Sofia2 specific
         outbound_topic: /topic/message
         inbound_topic: /queue/message
       rest:
-        enable: true
+        enable: false
         swaggerhost: localhost
    
       

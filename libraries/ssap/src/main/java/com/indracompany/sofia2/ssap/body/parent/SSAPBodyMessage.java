@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.ssap.body.parent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
@@ -41,9 +42,9 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 	@JsonSubTypes.Type(SSAPBodyUpdateMessage.class)
 })
 public abstract class SSAPBodyMessage {
-
+	@JsonIgnore
 	public abstract boolean isSessionKeyMandatory();
-
+	@JsonIgnore
 	public abstract boolean isOntologyMandatory();
 
 }

@@ -25,6 +25,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
@@ -134,6 +135,21 @@ public final class SSAPMessageGenerator {
 		message.setBody(body);
 		message.setDirection(SSAPMessageDirection.REQUEST);
 		message.setMessageType(SSAPMessageTypes.QUERY);
+
+		return message;
+	}
+
+	public static SSAPMessage<SSAPBodySubscribeMessage> generateSubscriptionMessage(String ontology, SSAPQueryType queryType, String query) {
+		final SSAPMessage<SSAPBodySubscribeMessage> message = new SSAPMessage<>();
+		message.setSessionKey(UUID.randomUUID().toString());
+
+		final SSAPBodySubscribeMessage body = new SSAPBodySubscribeMessage();
+		body.setOntology(ontology);
+		body.setQueryType(queryType);
+		body.setQuery(query);
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.SUBSCRIBE);
 
 		return message;
 	}
