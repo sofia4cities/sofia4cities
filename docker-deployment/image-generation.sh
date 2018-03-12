@@ -123,6 +123,11 @@ if [ -z "$1" ]; then
 		buildImage "Dashboard Engine"
 	fi
 	
+	if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/device-simulator/
+		buildImage "Device Simulator"
+	fi	
+	
 	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
  		prepareNodeRED		
 	
