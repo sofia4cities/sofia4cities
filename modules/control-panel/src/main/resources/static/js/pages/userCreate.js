@@ -194,18 +194,13 @@ var UserCreateController = function() {
 		// init datepickers dateCreated and dateDeleted		
 		$("#datecreated").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
         
-			// datetimepicker
-		   $('#datedeleted').datetimepicker({
-				locale: currentLanguage,
-		   });
-		
-		//var dd = $("#datedeleted").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
+		var dd = $("#datedeleted").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
 		
 		// setting on changeDate to checkDates()
-		// dd.on('changeDate', function(e){				
-				// selectedDate = dd.data('datepicker').getFormattedDate(currentFormat);				
-				// checkCreate();
-		// });
+		dd.on('changeDate', function(e){				
+			selectedDate = dd.data('datepicker').getFormattedDate(currentFormat);				
+			checkCreate();
+		});
 		
 		// Reset form
 		$('#resetBtn').on('click',function(){ 
