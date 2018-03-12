@@ -25,6 +25,7 @@ import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 @Component
@@ -40,8 +41,14 @@ public class LeaveProcessor implements MessageTypeProcessor {
 
 		securityManager.closeSession(sessionKey);
 
-		// return sessionKey;
-		return null;
+		final SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
+		response.setBody(new SSAPBodyReturnMessage());
+		response.setDirection(SSAPMessageDirection.RESPONSE);
+		response.setMessageType(SSAPMessageTypes.LEAVE);
+		response.setSessionKey(sessionKey);
+		response.getBody().setOk(true);
+
+		return response;
 	}
 
 	@Override
