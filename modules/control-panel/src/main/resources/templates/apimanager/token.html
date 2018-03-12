@@ -84,6 +84,11 @@
 									<a href="" class="collapse" data-original-title="" title=""> </a>
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
 								</div>
+								<div class="actions margin-right-20">
+									<div class="btn-group">									
+										<button id="generate" type="button" class="btn grey-mint sbold btn-outline"	onclick="generateToken()"><i class="la la-key"></i><span th:text="#{device.generate.token}">Generate Token</span></button>
+									</div>										
+								</div>
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
@@ -183,6 +188,52 @@
         function showConfirmDialog(formId) {
             document.forms[formId].submit();
         }
+		
+		
+	    var showGenericErrorDialog = function(dialogTitle, dialogContent){		
+			var Close = headerReg.btnCancelar;
+
+			// jquery-confirm DIALOG SYSTEM.
+			$.confirm({
+				icon: 'fa fa-bug',
+				title: dialogTitle,
+				theme: 'dark',
+				content: dialogContent,
+				draggable: true,
+				dragWindowGap: 100,
+				backgroundDismiss: true,
+				closeIcon: true,
+				buttons: {				
+					close: {
+						text: Close,
+						btnClass: 'btn btn-sm btn-default btn-outline',
+						action: function (){} //GENERIC CLOSE.		
+					}
+				}
+			});			
+		}
+		
+		var generateToken = function() {
+			$.ajax({
+				url : "/controlpanel/apimanager/generateToken",
+				type : 'POST',
+				dataType : 'json',
+				data : '',
+				contentType : 'application/json',
+				mimeType : 'application/json',
+				success : function(data) {
+					if (data.ok) {
+						navigateUrl("/controlpanel/apimanager/token");
+					} else {
+						showGenericErrorDialog("error", "error");
+					}
+				},
+				error : function(data, status, er) {
+					showGenericErrorDialog("error", "error");
+				}
+			});
+		}
+		
         
 		// SEARCH FORM RESET
 		$('#reset_api').on('click',function(){

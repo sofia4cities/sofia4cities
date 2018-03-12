@@ -36,7 +36,7 @@ import com.indracompany.sofia2.config.services.user.UserService;
 
 @Component
 @Rule
-public class DerivedFactsRule extends DefaultRuleBase {
+public class UserAndAPIRule extends DefaultRuleBase {
 	
 	@Autowired
 	private ApiManagerService apiManagerService;
