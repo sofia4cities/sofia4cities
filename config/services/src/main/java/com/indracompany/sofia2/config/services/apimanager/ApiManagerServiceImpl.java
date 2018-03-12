@@ -423,10 +423,22 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 
 	@Override
 	public void generateToken(String userId) throws Exception {
-		
 		User user = this.userService.getUser(userId);
 		
 		userTokenService.generateToken(user);
-		
 	}
+
+	@Override
+	public void removeToken(String userId, String tokenJson) throws Exception {
+		String token;
+		Map<String, String> obj;
+		
+		obj = new ObjectMapper().readValue(tokenJson, new TypeReference<Map<String, String>>(){});
+		token = obj.get("token");
+		
+		User user = this.userService.getUser(userId);
+			
+		userTokenService.removeToken(user, token);		
+	}
+
 }

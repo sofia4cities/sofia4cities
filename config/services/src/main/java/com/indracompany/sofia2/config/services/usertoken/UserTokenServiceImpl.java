@@ -71,4 +71,12 @@ public class UserTokenServiceImpl implements UserTokenService {
 		return this.userTokenRepository.findByUser(user);
 	}
 
+	@Override
+	public void removeToken(User user, String token) {
+		UserToken userToken = this.userTokenRepository.findByUserAndToken(user, token);
+		if (userToken != null) {
+			this.userTokenRepository.delete(userToken);
+		}
+	}
+
 }
