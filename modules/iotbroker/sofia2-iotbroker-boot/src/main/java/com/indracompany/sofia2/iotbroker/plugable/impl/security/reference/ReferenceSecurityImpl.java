@@ -66,7 +66,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 			session.setClientPlatform(clientPlatform);
 			//TODO: What if the instance it is not provied
 			session.setClientPlatformInstance(clientPlatformInstance);
-			session.setExpiration(60*1000*1000);
+			session.setExpiration(60*1000*1000l);
 			session.setLastAccess(ZonedDateTime.now());
 			session.setSessionKey(UUID.randomUUID().toString());
 			session.setToken(token);
