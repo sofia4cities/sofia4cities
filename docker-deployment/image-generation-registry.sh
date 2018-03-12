@@ -78,7 +78,7 @@ pushAllImages2Registry()
 {
 	docker tag sofia2/configdb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/configdb:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/configdb:$1	
-	
+
 	docker tag sofia2/schedulerdb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/schedulerdb:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/schedulerdb:$1	
 	
@@ -96,6 +96,9 @@ pushAllImages2Registry()
 	
 	docker tag sofia2/flowengine:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
+
+	docker tag sofia2/devicesimulator:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	
 	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
@@ -105,6 +108,16 @@ pushAllImages2Registry()
 	
 	docker tag sofia2/quasar:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/quasar:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/quasar:$1							
+}
+
+pushImage2Registry()
+{
+	echo "¿Deploy "$1 " image to registry y/n: "
+	read confirmation
+	if [ "$confirmation" == "y" ]; then
+		docker tag sofia2/$1:$2 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/$1:$2
+		docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/$1:$2	
+	fi	
 }
 
 echo "##########################################################################################"
@@ -154,6 +167,11 @@ if [ -z "$1" ]; then
 	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
 		cd $homepath/../modules/dashboard-engine/
 		buildImage "Dashboard Engine"
+	fi
+	
+	if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/device-simulator/
+		buildImage "Device Simulator"
 	fi	
 	
 	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
@@ -196,6 +214,18 @@ echo "Docker images successfully generated!"
 
 echo "Push Sofia2 images to private registry"
 
-pushAllImages2Registry latest
+pushImage2Registry configdb latest 
+pushImage2Registry schedulerdb latest 
+pushImage2Registry realtimedb latest 
+pushImage2Registry controlpanel latest 
+pushImage2Registry iotbroker latest 
+pushImage2Registry apimanager latest 
+pushImage2Registry flowengine latest 
+pushImage2Registry devicesimulator latest 
+pushImage2Registry dashboard latest 
+pushImage2Registry nginx latest
+pushImage2Registry quasar latest 
+
+# pushAllImages2Registry latest
 
 exit 0

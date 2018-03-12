@@ -1,0 +1,10 @@
+sofia2:
+   database.mongodb:
+      servers: realtimedb:27017            
+
+spring:
+   datasource:  
+      url: jdbc:mysql://configdb:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false            
+quartz:
+    datasource:
+      url: jdbc:mysql://schedulerdb:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
