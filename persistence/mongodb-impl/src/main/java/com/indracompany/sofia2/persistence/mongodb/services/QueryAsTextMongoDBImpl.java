@@ -39,9 +39,9 @@ public class QueryAsTextMongoDBImpl implements QueryAsTextDBRepository {
 
 	private void checkQueryIs4Ontology(String ontology, String query, boolean sql) throws Exception {
 		if (sql == true) {
-			if (query.toLowerCase().indexOf("from " + ontology.toLowerCase()) == -1)
+			if (query.toLowerCase().indexOf("from " + ontology.toLowerCase()) == -1
+					&& query.toLowerCase().indexOf("join " + ontology.toLowerCase()) == -1)
 				throw new Exception("The query " + query + " is not for the ontology selected:" + ontology);
-
 		} else {
 			if (query.indexOf("db.") == -1)
 				return;

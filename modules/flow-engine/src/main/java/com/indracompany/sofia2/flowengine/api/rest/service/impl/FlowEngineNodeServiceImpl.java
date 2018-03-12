@@ -47,11 +47,12 @@ import com.indracompany.sofia2.flowengine.exception.NotAllowedException;
 import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
 import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
+import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
-import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -69,8 +70,8 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	 * @Autowired private QueryToolService queryToolService;
 	 */
 
-	@Autowired
-	private RouterCrudService routerCrudService;
+	@Autowired(required = false)
+	private RouterService routerService;
 
 	@Autowired
 	private FlowDomainService domainService;
@@ -260,7 +261,9 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 
 		OperationResultModel result = null;
 		try {
-			result = routerCrudService.query(operationModel);
+			NotificationModel notificationModel = new NotificationModel();
+			notificationModel.setOperationModel(operationModel);
+			result = routerService.query(notificationModel);
 		} catch (Exception e) {
 
 			log.error("Error executing query. Ontology={}, QueryType ={}, Query = {}. Cause = {}, Message = {}.",
@@ -316,7 +319,9 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		OperationResultModel result = null;
 
 		try {
-			result = routerCrudService.insert(operationModel);
+			NotificationModel notificationModel = new NotificationModel();
+			notificationModel.setOperationModel(operationModel);
+			result = routerService.insert(notificationModel);
 		} catch (Exception e) {
 			log.error("Error inserting data. Ontology={}, Data = {}. Cause = {}, Message = {}.", ontology, data,
 					e.getCause(), e.getMessage());

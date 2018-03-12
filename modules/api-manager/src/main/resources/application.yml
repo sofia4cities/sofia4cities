@@ -2,7 +2,7 @@
 ##security.require_ssl: true
 server: ## Config Web Server
    port: 19090
-   contextPath: /
+   contextPath: /api-manager
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat

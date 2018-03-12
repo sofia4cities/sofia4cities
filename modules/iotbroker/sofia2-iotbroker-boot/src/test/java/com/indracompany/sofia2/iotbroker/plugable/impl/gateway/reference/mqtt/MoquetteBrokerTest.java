@@ -82,9 +82,11 @@ public class MoquetteBrokerTest {
 	@Autowired
 	private WebApplicationContext wac;
 	private ResultActions resultAction;
-	private final String URL_BASE_PATH  = "/advice";
+	private final String URL_ADVICE_PATH  = "/advice";
+	private final String URL_COMMAND_PATH  = "/commandAsync";
 	@Autowired
 	ObjectMapper mapper;
+
 
 
 	@Value("${local.server.port}")
@@ -98,6 +100,7 @@ public class MoquetteBrokerTest {
 
 	private CompletableFuture<String> completableFutureMessage;
 	private CompletableFuture<String> completableFutureIndication;
+	private CompletableFuture<String> completableFutureCommand;
 	private IoTSession session = null;
 
 	Person subject;
@@ -119,9 +122,67 @@ public class MoquetteBrokerTest {
 		subject = PojoGenerator.generatePerson();
 		completableFutureMessage = new CompletableFuture<>();
 		completableFutureIndication = new CompletableFuture<>();
+		completableFutureCommand = new CompletableFuture<>();
 		securityMocks();
 	}
 
+	@Test
+	public void given_OneMqttClientConnection_When_ACommandIsTrigger_Then_ItGetsTheCommand() throws Exception {
+
+		final MqttClient client = new MqttClient(broker_url, clientId, persistence);
+		final MqttConnectOptions connOpts = new MqttConnectOptions();
+
+		connOpts.setCleanSession(true);
+		client.connect(connOpts);
+
+
+		client.subscribe("/topic/message/" + client.getClientId(), new IMqttMessageListener() {
+			@Override
+			public void messageArrived(String topic, MqttMessage message) throws Exception {
+				final String response = new String(message.getPayload());
+				completableFutureMessage.complete(response);
+			}
+		});
+
+		client.subscribe("/topic/command/" + session.getSessionKey(), new IMqttMessageListener() {
+			@Override
+			public void messageArrived(String topic, MqttMessage message) throws Exception {
+				final String response = new String(message.getPayload());
+				completableFutureCommand.complete(response);
+			}
+		});
+
+		//Send join message
+		completableFutureMessage = new CompletableFuture<>();
+		final SSAPMessage<SSAPBodyJoinMessage> join = SSAPMessageGenerator.generateJoinMessageWithToken();
+		final String joinStr = SSAPJsonParser.getInstance().serialize(join);
+		final MqttMessage message = new MqttMessage(joinStr.getBytes());
+		message.setQos(qos);
+		client.publish(topic, message);
+
+		//Get join message response
+		final String responseStr = completableFutureMessage.get();
+		final SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(responseStr);
+		Assert.assertNotNull(response);
+
+
+		completableFutureCommand = new CompletableFuture<>();
+
+		//Command indication simulated by calling advice IotBroker rest service
+		final StringBuilder url = new StringBuilder(URL_COMMAND_PATH);
+		url.append("/test_command/?sessionKey="+session.getSessionKey());
+
+		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(url.toString())
+				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
+				.content("{}")
+				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
+
+		final String responseCommandStr = completableFutureCommand.get(10000, TimeUnit.SECONDS);
+		final SSAPMessage<SSAPBodyIndicationMessage> responseCommand = SSAPJsonParser.getInstance().deserialize(responseCommandStr);
+		Assert.assertNotNull(responseCommand);
+
+
+	}
 
 	@Test
 	public void given_OneMqttClientConnection_When_ItSubscribesToATopicAndSendsMessage_Then_ItGetsTheMessage() throws Exception {
@@ -178,7 +239,7 @@ public class MoquetteBrokerTest {
 		//Avice indication simulated by calling advice IotBroker rest service
 		final NotificationCompositeModel model = RouterServiceGenerator.generateNotificationCompositeModel(response.getBody().getData().at("/subscriptionId").asText(), subject, session);
 		final String content = mapper.writeValueAsString(model);
-		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(URL_BASE_PATH)
+		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(URL_ADVICE_PATH)
 				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
 				.content(content)
 				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
