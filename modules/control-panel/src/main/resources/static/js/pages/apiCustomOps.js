@@ -316,9 +316,8 @@ var ApiCustomOpsController = function() {
 
         var newInputDescOperationCustomsql = document.createElement('span');
         newInputDescOperationCustomsql.id=operation.identification + "_DESC";       
-        newInputDescOperationCustomsql.style = "padding-left: 20px; display: inline-block";
-		newInputDescOperationCustomsql.className = "text-truncate-lg";
-        newInputDescOperationCustomsql.innerHTML=operation.description;
+        newInputDescOperationCustomsql.style = "padding-left: 20px; display: inline-block";		
+        newInputDescOperationCustomsql.innerHTML = '<span class="label label-info "><small>DESC.</small></span> <span class="text-truncate-lg">' +operation.description + '</span>';
         newInputDescOperationCustomsql.name=operation.identification + "_DESC";
 
         //newCustomsqlParamDiv.appendChild(newInputDescOperationCustomsql);
