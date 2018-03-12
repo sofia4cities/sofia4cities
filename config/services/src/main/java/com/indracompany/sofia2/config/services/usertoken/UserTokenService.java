@@ -11,21 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.router.config;
+package com.indracompany.sofia2.config.services.usertoken;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import java.util.List;
 
-import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
-import com.indracompany.sofia2.router.service.app.service.suscription.SuscriptionRepository;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserToken;
 
-//@Configuration
-public class SuscriptionConfig {
+public interface UserTokenService {
 
-	@Bean
-	SuscriptionRepository<String,SuscriptionModel> suscriptionRepository(){
-		SuscriptionRepository<String,SuscriptionModel> bean = new SuscriptionRepository<String,SuscriptionModel>();
-		return bean;
-	}
+	public UserToken generateToken(User user) throws Exception;
+
+	public UserToken getToken(User user);
+
+	public UserToken getTokenByToken(String token);
+
+	public UserToken getTokenByID(String id);
+
+	public void deactivateToken(UserToken token, boolean active);
+
+	List<UserToken> getTokens(User user);
 
 }

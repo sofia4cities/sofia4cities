@@ -79,14 +79,6 @@
 			<artifactId>json</artifactId>
 		</dependency>
 
-		<!-- COMMONS -->
-
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>24.0-jre</version>
-		</dependency>
-
 		<!-- camel -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>

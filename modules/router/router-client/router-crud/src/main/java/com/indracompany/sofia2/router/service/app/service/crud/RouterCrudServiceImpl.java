@@ -192,12 +192,12 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 				{
 					if (QUERY_TYPE.equalsIgnoreCase(QueryType.SQLLIKE.name())) {
 						//						OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
-						OUTPUT = (!"".equals(CLIENTPLATFORM))?queryToolService.querySQLAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0):
+						OUTPUT = (!NullString(CLIENTPLATFORM))?queryToolService.querySQLAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0):
 															  queryToolService.querySQLAsJson(USER, ontologyName, BODY, 0);
 					}
 					else if (QUERY_TYPE.equalsIgnoreCase(QueryType.NATIVE.name())) {
 						//						OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
-						OUTPUT = (!"".equals(CLIENTPLATFORM))?queryToolService.queryNativeAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0, 0):
+						OUTPUT = (!NullString(CLIENTPLATFORM))?queryToolService.queryNativeAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0, 0):
 															  queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0,0);
 					}
 					else {
@@ -263,6 +263,10 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		this.mongoBasicOpsDBRepository = mongoBasicOpsDBRepository;
 	}
 
-
+	public static boolean NullString(String l) {
+		if (l==null) return true;
+		else if (l!=null && l.equalsIgnoreCase("")) return true;
+		else return false;
+	}
 
 }
