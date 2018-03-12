@@ -13,20 +13,29 @@
  */
 package com.indracompany.sofia2.router.service.app.service.advice;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.router.client.RouterClient;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.AdviceService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service("adviceServiceImpl")
-public class AdviceServiceImpl implements AdviceService, RouterClient<NotificationCompositeModel,OperationResultModel >{
+public class AdviceServiceImpl
+		implements AdviceService, RouterClient<NotificationCompositeModel, OperationResultModel> {
 
 	@Override
-	public OperationResultModel advicePostProcessing(NotificationCompositeModel input)  {
+	public OperationResultModel advicePostProcessing(NotificationCompositeModel input) {
 		return execute(input);
 	}
 
@@ -34,11 +43,25 @@ public class AdviceServiceImpl implements AdviceService, RouterClient<Notificati
 	public OperationResultModel execute(NotificationCompositeModel input) {
 		RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
-		OperationResultModel quote = restTemplate.postForObject(input.getUrl(),input, OperationResultModel.class);
-		System.out.println(quote.toString());
-		return quote;
-	}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.TEXT_PLAIN);
+		ObjectMapper mapper = new ObjectMapper();
+		HttpEntity<String> domainToStart;
+		try {
+			domainToStart = new HttpEntity<String>(mapper.writeValueAsString(input), headers);
+			OperationResultModel quote = restTemplate.postForObject(input.getUrl(), domainToStart,
+					OperationResultModel.class);
+			log.debug(quote.toString());
+			return quote;
+		} catch (JsonProcessingException e) {
+			log.error("Error while sending notification. Unable to parse notification to JSON. Cause = {}, message={}.",
+					e.getCause(), e.getMessage());
+			OperationResultModel resultModel = new OperationResultModel();
+			resultModel.setErrorCode("500");
+			resultModel.setMessage("Error while sending notification. Unable to parse notification to JSON.");
+			return resultModel;
+		}
 
-	
+	}
 
 }
