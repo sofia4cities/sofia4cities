@@ -249,10 +249,10 @@
 																				<input id="GET" class="op_button"  type="button" value="GET" name="GET" th:value="#{apimanager.GET.button}" onclick="ApiCreateController.selectOp(this)"/>
 																				</div>
 																				<div id="descOperationGET" class="op_desc_div" style="display:none">
-																				<label id ="description_GET_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GET"></label>
-																				<br/>
-																				<label id ="description_operacion_GET" class="description" for="description_GET" th:text="#{apimanager.description}"></label>
-																				<input id="description_GET" name="description_GET" class="form-control" type="text" maxlength="250"/>
+																					<label id ="description_GET_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GET"></label>
+																					<br/>
+																					<label id ="description_operacion_GET" class="description" for="description_GET" th:text="#{apimanager.description}"></label>
+																					<input id="description_GET" name="description_GET" class="form-control" type="text" maxlength="250"/>
 																				</div>
 																			</div>
 
@@ -261,10 +261,10 @@
 																				<input id="POST" class="op_button"  type="button" value="POST" name="POST" th:value="#{apimanager.POST.button}" onclick="ApiCreateController.selectOp(this)"/>
 																				</div>
 																				<div id="descOperationPOST" class="op_desc_div" style="display:none">
-																				<b><label id ="description_POST_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_POST"></label></b>
-																				<br/>
-																				<b><label id ="description_operacion_POST" class="description" for="description_POST" th:text="#{apimanager.description}"></label></b>
-																				<input id="description_POST" name="description_POST" class="form-control" type="text" maxlength="250"/>
+																					<b><label id ="description_POST_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_POST"></label></b>
+																					<br/>
+																					<b><label id ="description_operacion_POST" class="description" for="description_POST" th:text="#{apimanager.description}"></label></b>
+																					<input id="description_POST" name="description_POST" class="form-control" type="text" maxlength="250"/>
 																				</div>
 																			</div>
 																			
@@ -273,10 +273,10 @@
 																				<input id="PUT" class="op_button"  type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT.button}" onclick="ApiCreateController.selectOp(this)"/>
 																				</div>
 																				<div id="descOperationPUT" class="op_desc_div" style="display:none">
-																				<b><label id ="description_PUT_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_PUT"></label></b>
-																				<br/>
-																				<b><label id ="description_operacion_PUT" class="description" for="description_PUT" th:text="#{apimanager.description}"></label></b>
-																				<input id="description_PUT" name="description_PUT" class="form-control" type="text" maxlength="250"/>
+																					<b><label id ="description_PUT_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_PUT"></label></b>
+																					<br/>
+																					<b><label id ="description_operacion_PUT" class="description" for="description_PUT" th:text="#{apimanager.description}"></label></b>
+																					<input id="description_PUT" name="description_PUT" class="form-control" type="text" maxlength="250"/>
 																				</div>
 																			</div>
 																			
@@ -285,10 +285,10 @@
 																				<input id="DELETEID" class="op_button"  type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETEID.button}" onclick="ApiCreateController.selectOp(this)"/>
 																				</div>
 																				<div id="descOperationDELETEID" class="op_desc_div" style="display:none">
-																				<b><label id ="description_DELETEID_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
-																				<br/>
-																				<b><label id ="description_operacion_DELETEID" class="description" for="description_DELETEID" th:text="#{apimanager.description}"></label></b>
-																				<input id="description_DELETEID" name="description_DELETEID" class="form-control" type="text" maxlength="250"/>
+																					<b><label id ="description_DELETEID_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
+																					<br/>
+																					<b><label id ="description_operacion_DELETEID" class="description" for="description_DELETEID" th:text="#{apimanager.description}"></label></b>
+																					<input id="description_DELETEID" name="description_DELETEID" class="form-control" type="text" maxlength="250"/>
 																				</div>
 																			</div>
 																			
@@ -297,21 +297,20 @@
 																					<div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" >
 																						<input th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected"  type="button" th:value="#{apimanager.GETCUSTOM.button}" th:name="${(operation.identification + 'CUSTOMSQL')}" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'"/>
 																					</div>
-																					<label th:id="${operation.identification + '_LABEL'}" class="description" style="padding-left: 20px;" th:text="${operation.identification}"/>
-																					<input th:id="${operation.identification + '_Edit'}" class="button_text" type="button" th:value="#{gen.editBtn}" th:name="${operation.identification + '_Edit'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'" />
-																					<input th:id="${operation.identification + '_Eliminar'}" class="button_text" type="button" th:value="#{gen.deleteBtn}" th:name="${operation.identification + '_Eliminar'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.removeCustomSqlOp(\'' + ${operation.identification} + '\');'"/>
-																					<br/>
-																					<b><span th:id="${operation.identification + '_PATH'}" style="padding-left: 20px; width: 93%;" th:text="${operation.path}"/></b>
-																					<br/>
-																					<b><span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-left: 20px; width: 93%;" th:text="${querystring.value}"/></b>
-																					<br/>
-																					<span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px;" th:text="${operation.description}"/>
+																					<div class="op_desc_div">
+																						<label th:id="${operation.identification + '_LABEL'}" class="description bold" style="font-size: 14px; color: rgb(34, 48, 77); padding-right:15px; min-width: 200px;display: inline-block;" th:text="${operation.identification}"/>
+																						<input th:id="${operation.identification + '_Edit'}" class="btn btn-sm blue-hoki" type="button" th:value="#{gen.editBtn}" th:name="${operation.identification + '_Edit'}" style="float: right; position: relative;top: -40px;" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'" />
+																						<input th:id="${operation.identification + '_Eliminar'}" class="btn btn-sm red-sunglo" type="button" th:value="#{gen.deleteBtn}" th:name="${operation.identification + '_Eliminar'}" style="float: right;  margin-right: 4px;position: relative;top: -40px;" th:onclick="'javascript:ApiCustomOpsController.removeCustomSqlOp(\'' + ${operation.identification} + '\');'"/>
+																						<span th:id="${operation.identification + '_PATH'}" style="padding-right:15px; min-width: 250px;display: inline-block;"><span class="label label-success "><small>ENDPOINT</small></span> <span class="bold" th:text="${operation.path}">path</span></span>
+																						<span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-right: 30px; min-width: 150px; display: inline-block;"><span class="label label-info "><small>QUERY</small></span> <span class="bold" th:text="${querystring.value}"> query </span></span>
+																						<span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px; display: inline-block;"><span class="label label-info "><small>DESC.</small></span> <span class="text-truncate-lg" th:text="${operation.description}"> Description </span></span>
+																					</div>
 																				</div>
 																			</div>
 																			
 																			<div id="divCUSTOMSQL" class="op_div">
 																				<div id="buttonOperationCUSTOMSQL" class="op_button_div">
-																				<input id="CUSTOMSQL" class="op_button" type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" onclick="ApiCustomOpsController.selectEditCustomOp('')"/>
+																				<input id="CUSTOMSQL" class="btn btn-outline blue-hoki sbold " type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" onclick="ApiCustomOpsController.selectEditCustomOp('')"/>
 																				</div>
 																				<div id="descOperationCUSTOMSQL" class="op_desc_div" style="display:none">
 																					<b><label id ="description_CUSTOMSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_CUSTOMSQL"></label></b>
