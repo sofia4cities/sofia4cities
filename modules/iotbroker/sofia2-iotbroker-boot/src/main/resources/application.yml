@@ -52,6 +52,7 @@ sofia2: #Config Sofia2 specific
         store: moquette_store_bin.mapdb
         outbound_topic: /topic/message
         subscription_topic: /topic/subscription
+        command_topic: /topic/command
         inbound_topic: /queue/message
       rest:
         enable: true

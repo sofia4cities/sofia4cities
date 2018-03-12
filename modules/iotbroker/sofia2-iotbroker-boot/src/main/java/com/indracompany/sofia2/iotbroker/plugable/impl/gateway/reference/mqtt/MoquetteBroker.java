@@ -77,6 +77,11 @@ public class MoquetteBroker {
 	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.subscription_topic:/topic/subscription}")
 	private String subscription_topic;
 
+	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.command_topic:/topic/command}")
+	private String command_topic;
+
+
+
 	@Autowired
 	protected MessageProcessor processor;
 
@@ -136,6 +141,25 @@ public class MoquetteBroker {
 						MoquetteBroker.this.getServer().internalPublish(message, s.getSessionKey());
 					});
 
+			subscriptor.addCommandListener("mqtt_gateway",
+
+					(s) -> {
+						String playload="";
+						try {
+							playload = SSAPJsonParser.getInstance().serialize(s);
+						} catch (final SSAPParseException e) {
+							log.error("Error serializing indicator message" + e.getMessage());
+						}
+						final MqttPublishMessage message = MqttMessageBuilders.publish()
+								.topicName(command_topic + "/" + s.getSessionKey())
+								.retained(false)
+								.qos(MqttQoS.EXACTLY_ONCE)
+								.payload(Unpooled.copiedBuffer(playload.getBytes()))
+								.build();
+
+						MoquetteBroker.this.getServer().internalPublish(message, s.getSessionKey());
+						return null;
+					});
 
 			final Properties brokerProperties = new Properties();
 			brokerProperties.put(BrokerConstants.PERSISTENT_STORE_PROPERTY_NAME, store);
