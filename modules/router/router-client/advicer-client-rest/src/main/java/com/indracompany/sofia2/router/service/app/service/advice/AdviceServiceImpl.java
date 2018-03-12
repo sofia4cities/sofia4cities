@@ -20,7 +20,6 @@ import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.router.client.RouterClient;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
@@ -53,7 +52,7 @@ public class AdviceServiceImpl
 					OperationResultModel.class);
 			log.debug(quote.toString());
 			return quote;
-		} catch (JsonProcessingException e) {
+		} catch (Exception e) {
 			log.error("Error while sending notification. Unable to parse notification to JSON. Cause = {}, message={}.",
 					e.getCause(), e.getMessage());
 			OperationResultModel resultModel = new OperationResultModel();
