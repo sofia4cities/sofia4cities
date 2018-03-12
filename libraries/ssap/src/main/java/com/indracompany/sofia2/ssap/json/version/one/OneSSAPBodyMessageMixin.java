@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyEmptyMessage;
@@ -43,7 +44,8 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 	@JsonSubTypes.Type(SSAPBodyUpdateByIdMessage.class),
 	@JsonSubTypes.Type(SSAPBodyUpdateMessage.class),
 	@JsonSubTypes.Type(SSAPBodySubscribeMessage.class),
-	@JsonSubTypes.Type(SSAPBodyIndicationMessage.class)
+	@JsonSubTypes.Type(SSAPBodyIndicationMessage.class),
+	@JsonSubTypes.Type(SSAPBodyCommandMessage.class)
 })
 public abstract class OneSSAPBodyMessageMixin {
 	@JsonIgnore public abstract boolean isSessionKeyMandatory();
