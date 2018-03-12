@@ -28,5 +28,7 @@ public enum SSAPMessageTypes {
 	QUERY,
 
 	SUBSCRIBE,
-	INDICATION
+	INDICATION,
+
+	COMMAND
 }

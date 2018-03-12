@@ -36,4 +36,6 @@ public interface ApiManagerService {
 
 	public void updateState(String id, String state);
 
+	public void generateToken(String userId) throws Exception;
+
 }
