@@ -13,23 +13,26 @@
  */
 package com.indracompany.sofia2.iotbroker.processor;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyIndicationMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
 @Component
 public class GatewayNotifierDelegate implements GatewayNotifier {
 
-	Map<String, Consumer<SSAPMessage<SSAPBodyIndicationMessage>>> subscriptions = new HashMap<>();
+	ConcurrentHashMap<String, Consumer<SSAPMessage<SSAPBodyIndicationMessage>>> subscriptions = new ConcurrentHashMap<>(10);
+	ConcurrentHashMap<String,Function<SSAPMessage<SSAPBodyCommandMessage>, SSAPMessage<SSAPBodyReturnMessage>>> commands = new ConcurrentHashMap<>(10);
 
 	private ExecutorService executor;
 
@@ -46,10 +49,42 @@ public class GatewayNotifierDelegate implements GatewayNotifier {
 	}
 
 	@Override
+	public void addCommandListener(String key, Function<SSAPMessage<SSAPBodyCommandMessage>, SSAPMessage<SSAPBodyReturnMessage>> command) {
+		commands.put(key, command);
+
+	}
+
+	@Override
 	public void notify(SSAPMessage<SSAPBodyIndicationMessage> indication) {
 		executor.submit(
 				() -> subscriptions.values().stream().forEach(s -> s.accept(indication))
 				);
-
 	}
+
+	@Override
+	public void sendCommandAsync(SSAPMessage<SSAPBodyCommandMessage> command) {
+		executor.submit(
+				() -> commands.values().stream().forEach(s -> s.apply(command)));
+	}
+
+
+
+	//	@Override
+	//	public SSAPMessage<SSAPBodyReturnMessage> sendCommandSync(SSAPMessage<SSAPBodyCommandMessage> cmd) {
+	//
+	//		final List<CompletableFuture<SSAPMessage<SSAPBodyReturnMessage>>> f = commands.values().stream().map(
+	//				c -> CompletableFuture.supplyAsync(() -> c.apply(cmd)))
+	//				.collect(Collectors.toList());
+	//
+	//		final CompletableFuture<Object> future = CompletableFuture.anyOf((CompletableFuture<?>[]) f.toArray());
+	//
+	//		try {
+	//			final SSAPMessage<SSAPBodyReturnMessage> result = (SSAPMessage<SSAPBodyReturnMessage>) future.get(5, TimeUnit.SECONDS);
+	//			return result;
+	//		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+	//			// TODO Auto-generated catch block
+	//			e.printStackTrace();
+	//		}
+	//		return null;
+	//	}
 }

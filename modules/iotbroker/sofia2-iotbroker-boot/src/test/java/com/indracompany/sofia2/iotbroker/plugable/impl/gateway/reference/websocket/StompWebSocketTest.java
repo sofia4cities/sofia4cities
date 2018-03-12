@@ -63,10 +63,10 @@ import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyIndicationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
@@ -84,13 +84,15 @@ public class StompWebSocketTest {
 	@Autowired
 	private WebApplicationContext wac;
 	private ResultActions resultAction;
-	private final String URL_BASE_PATH  = "/advice";
+	private final String URL_ADVICE_PATH  = "/advice";
+	private final String URL_COMMAND_PATH  = "/commandAsync";
 	@Autowired
 	ObjectMapper mapper;
 
 
 	private CompletableFuture<SSAPMessage<SSAPBodyReturnMessage>> completableFutureMessage;
 	private CompletableFuture<SSAPMessage<SSAPBodyIndicationMessage>> completableFutureIndication;
+	private CompletableFuture<SSAPMessage<SSAPBodyCommandMessage>> completableFutureCommand;
 	private String URL;
 	@MockBean
 	SecurityPluginManager securityPluginManager;
@@ -122,6 +124,41 @@ public class StompWebSocketTest {
 	}
 
 	@Test
+	public void given_OneWebSocketConnection_When_ACommandIsSend_Then_CommandIsNotifiedToWebSocket() throws Exception {
+		final String uuid = UUID.randomUUID().toString();
+		final WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
+		stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+
+		final StompSession stompSession = stompClient.connect(URL, new StompSessionHandlerAdapter() {}).get(3, TimeUnit.SECONDS);
+		//Subscription to message response
+		stompSession.subscribe("/topic/message/" + uuid, new MyStompFrameHandler());
+		//Subscription for indication on SSAPCommand
+		stompSession.subscribe("/topic/command/" + session.getSessionKey(), new MyStompCommandHandler());
+
+		//Sends Joins message and waits for response
+		completableFutureMessage = new CompletableFuture<>();
+		stompSession.send("/stomp/message/" + uuid, SSAPMessageGenerator.generateJoinMessageWithToken());
+		final SSAPMessage<SSAPBodyReturnMessage> response = completableFutureMessage.get();
+
+		completableFutureCommand = new CompletableFuture<>();
+
+		//Command indication simulated by calling advice IotBroker rest service
+		final StringBuilder url = new StringBuilder(URL_COMMAND_PATH);
+		url.append("/test_command/?sessionKey="+session.getSessionKey());
+
+
+		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(url.toString())
+				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
+				.content("{}")
+				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
+
+
+		final SSAPMessage<SSAPBodyCommandMessage> responseCommand = completableFutureCommand.get(10, TimeUnit.SECONDS);
+		Assert.assertNotNull(response);
+
+	}
+
+	@Test
 	public void given_OneWebSocketConnection_When_ItsubscribesToOntologyAndInsertionOccurs_Then_iTGetsNotification() throws IOException, Exception {
 		final String uuid = UUID.randomUUID().toString();
 		final WebSocketStompClient stompClient = new WebSocketStompClient(new SockJsClient(createTransportClient()));
@@ -147,7 +184,7 @@ public class StompWebSocketTest {
 		//Avice indication simulated by calling advice IotBroker rest service
 		final NotificationCompositeModel model = RouterServiceGenerator.generateNotificationCompositeModel(response.getBody().getData().at("/subscriptionId").asText(), subject, session);
 		final String content = mapper.writeValueAsString(model);
-		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(URL_BASE_PATH)
+		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(URL_ADVICE_PATH)
 				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
 				.content(content)
 				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
@@ -195,6 +232,21 @@ public class StompWebSocketTest {
 		public void handleFrame(StompHeaders headers, Object payload) {
 			final SSAPMessage<SSAPBodyReturnMessage> message = (SSAPMessage<SSAPBodyReturnMessage>) payload;
 			completableFutureMessage.complete(message);
+
+		}
+
+	}
+
+	private class MyStompCommandHandler implements StompFrameHandler {
+		@Override
+		public Type getPayloadType(StompHeaders stompHeaders) {
+			return SSAPMessage.class;
+		}
+
+		@Override
+		public void handleFrame(StompHeaders headers, Object payload) {
+			final SSAPMessage<SSAPBodyCommandMessage> message = (SSAPMessage<SSAPBodyCommandMessage>) payload;
+			completableFutureCommand.complete(message);
 
 		}
 
