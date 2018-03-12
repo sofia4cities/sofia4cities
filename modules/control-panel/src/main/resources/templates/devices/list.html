@@ -249,7 +249,7 @@
 																<div class="grupo-iconos">
 																	<!-- VIEW -->
 																	<span th:title="#{gen.view}"
-																		class="btn grey-mint btn-xs btn-outline sbold tooltips"
+																		class="btn btn-sm blue-sharp sbold tooltips"
 																		data-container="body" data-placement="bottom"
 																		th:data-original-title="#{gen.view}"
 																		th:onclick="'javascript:navigateUrl(\'' + @{|/devices/show/${device.identification}|} + '\');'"><i
@@ -257,14 +257,14 @@
 
 																	<!-- EDIT -->
 																	<span
-																		class="btn grey-mint btn-xs btn-outline sbold tooltips"
+																		class="btn btn-sm btn-warning sbold tooltips"
 																		data-container="body" data-placement="bottom"
 																		th:title="#{gen.edit}"
 																		th:data-original-title="#{gen.edit}"
 																		th:onclick="'javascript:navigateUrl(\'' + @{|/devices/update/${device.identification}|} + '\');'"><i
 																		class="fa fa-edit"></i></span>
-
-																	<!-- DELETE -->
+													
+																	<!-- DELETE Not in this UI
 																	<button id="deleteBtn" type="button"
 																		class="btn btn-square btn-danger" name="delete"
 																		value="Remove"
@@ -272,6 +272,7 @@
 																		<i class="la la-trash"></i> <span
 																			th:text="#{gen.deleteBtn}"> Delete </span>
 																	</button>
+																	-->
 																</div>
 															</td>
 
