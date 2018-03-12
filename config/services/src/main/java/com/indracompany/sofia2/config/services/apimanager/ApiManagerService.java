@@ -38,4 +38,6 @@ public interface ApiManagerService {
 
 	public void generateToken(String userId) throws Exception;
 
+	public void removeToken(String userId, String token) throws Exception;
+
 }

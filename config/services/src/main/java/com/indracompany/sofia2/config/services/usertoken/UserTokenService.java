@@ -30,6 +30,8 @@ public interface UserTokenService {
 
 	public void deactivateToken(UserToken token, boolean active);
 
-	List<UserToken> getTokens(User user);
+	public List<UserToken> getTokens(User user);
+
+	public void removeToken(User user, String tokenIdJson);
 
 }
