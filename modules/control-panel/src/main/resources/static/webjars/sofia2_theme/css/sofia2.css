@@ -824,4 +824,58 @@ background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
 background: linear-gradient(to right, #75b8f3, #9353e6);
 } 
  
- 
+/*** APIMANAGER OPERATIONS  ***/ 
+
+.op_div{ margin-bottom: 10px; padding: 10px; border: 1px solid #F5F5F5; border-radius: 5px; }
+.op_div_selected{ margin-bottom: 20px; border: 1px solid #CCC; padding: 10px; background: #f7f7f7; border-radius: 5px; }
+.op_button{ 
+
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;			
+	cursor: pointer;			
+	background-image: none;
+	border: 1px solid transparent;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
+	border-radius: 4px;	
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;			
+
+
+}
+.op_button_selected{
+
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;			
+	cursor: pointer;			
+	background-image: none;
+	border: 1px solid transparent;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
+	border-radius: 4px;	
+	color: #FFF;
+	background-color: #526781;
+	border-color: #4e627b;	
+}
+.op_desc_div{
+	padding: 10px;
+}
