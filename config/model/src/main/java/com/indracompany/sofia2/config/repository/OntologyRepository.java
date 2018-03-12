@@ -76,26 +76,20 @@ public interface OntologyRepository extends JpaRepository<Ontology, String> {
 
 	long countByActiveTrueAndIsPublicTrueAndMetainfIsNull();
 
-	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user) AND o.active=true")
-	List<Ontology> findByUserAndOntologyUserAccessAndAllPermissions(@Param ("user") User user);
-	
-	@Query("SELECT o " + 
-		   "FROM Ontology AS o " + 
-		   "WHERE (o.user=:user OR " + 
-		          "o.id IN (SELECT uo.ontology.id " + 
-			               "FROM OntologyUserAccess AS uo " + 
-			               "WHERE uo.user=:user)) AND " + 
-				  "(o.identification like %:identification% AND o.description like %:description%)")
-	List<Ontology> findByUserAndPermissionsANDIdentificationContainingAndDescriptionContaining(
-			@Param("user") User user, 
-			@Param("identification") String identification,  
-			@Param("description") String description);
-	
+	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.public=true OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user) AND o.active=true")
+	List<Ontology> findByUserAndOntologyUserAccessAndAllPermissions(@Param("user") User user);
+
+	@Query("SELECT o " + "FROM Ontology AS o " + "WHERE (o.user=:user OR " + "o.id IN (SELECT uo.ontology.id "
+			+ "FROM OntologyUserAccess AS uo " + "WHERE uo.user=:user)) AND "
+			+ "(o.identification like %:identification% AND o.description like %:description%)")
+	List<Ontology> findByUserAndPermissionsANDIdentificationContainingAndDescriptionContaining(@Param("user") User user,
+			@Param("identification") String identification, @Param("description") String description);
+
 	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user AND (uo.ontologyUserAccessType='ALL' OR uo.ontologyUserAccessType='QUERY')) AND o.active=true")
-	List<Ontology> findByUserAndOntologyUserAccessAndPermissionsQuery(@Param ("user") User user);
-	
+	List<Ontology> findByUserAndOntologyUserAccessAndPermissionsQuery(@Param("user") User user);
+
 	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user AND (uo.ontologyUserAccessType='ALL' OR uo.ontologyUserAccessType='INSERT')) AND o.active=true")
-	List<Ontology> findByUserAndOntologyUserAccessAndPermissionsInsert(@Param ("user") User user);
+	List<Ontology> findByUserAndOntologyUserAccessAndPermissionsInsert(@Param("user") User user);
 
 	void deleteById(String id);
 
