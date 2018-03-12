@@ -6,8 +6,6 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
-	<bean id="resultsAggregationStrategy" class="com.indracompany.sofia2.router.service.processor.ResultsAggregator" />
-
 	<camelContext id="camel-context-reference" errorHandlerRef="defaultEH" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/spring">
 	
 		<errorHandler id="defaultEH">
