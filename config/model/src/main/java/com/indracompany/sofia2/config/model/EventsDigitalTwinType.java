@@ -43,7 +43,6 @@ public class EventsDigitalTwinType extends AuditableEntityWithUUID{
 	
 	@ManyToOne
 	@JoinColumn(name = "TYPE_ID", referencedColumnName = "ID", nullable = false)
-	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Getter
 	@Setter
 	private DigitalTwinType typeId;

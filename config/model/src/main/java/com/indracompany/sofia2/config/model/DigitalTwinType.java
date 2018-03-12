@@ -14,17 +14,11 @@
  */
 package com.indracompany.sofia2.config.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -49,36 +43,6 @@ public class DigitalTwinType extends AuditableEntityWithUUID{
 	public static enum MainType {
 		thing
 	}
-	
-	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter
-	@Setter
-	private Set<PropertyDigitalTwinType> propertyDigitalTwinTypes = new HashSet<>();
-	
-	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter
-	@Setter
-	private Set<ActionsDigitalTwinType> actionDigitalTwinTypes = new HashSet<>();
-	
-	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter
-	@Setter
-	private Set<EventsDigitalTwinType> eventDigitalTwinTypes = new HashSet<>();
-	
-	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter
-	@Setter
-	private Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
-	
-	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@Getter
-	@Setter
-	private Set<DigitalTwinDevice> digitalTwinDevices = new HashSet<>();
 	
 	@Column(name = "NAME", length = 50, unique = true, nullable = false)
 	@NotNull
