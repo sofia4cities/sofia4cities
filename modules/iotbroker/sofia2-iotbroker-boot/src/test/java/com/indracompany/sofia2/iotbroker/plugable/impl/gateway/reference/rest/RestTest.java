@@ -83,11 +83,6 @@ public class RestTest {
 
 		//		final String a = (String) result.getBody();
 		System.out.println(result);
-
-
-
-
-
 	}
 
 
