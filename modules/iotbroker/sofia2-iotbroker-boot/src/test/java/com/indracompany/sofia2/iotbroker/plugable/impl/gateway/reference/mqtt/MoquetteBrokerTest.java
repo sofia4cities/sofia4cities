@@ -108,7 +108,7 @@ public class MoquetteBrokerTest {
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
 
-		when(securityPluginManager.authenticate(any(), any(), any())).thenReturn(Optional.of(session));
+		when(securityPluginManager.authenticate(any(), any(), any(), any())).thenReturn(Optional.of(session));
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
