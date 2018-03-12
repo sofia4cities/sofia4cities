@@ -150,7 +150,7 @@ var ApiCustomOpsController = function() {
 
         customsqlParamaDiv.appendChild(newCustomsqlParamFieldSet);
 
-        var parameter = {name: param, condition: "REQUIRED", dataType: document.getElementById("customsqlParamType_" + param).value, value: document.getElementById("customsqlParamType_" + param).value  ,description: ""};
+        var parameter = {name: param, condition: "REQUIRED", dataType: document.getElementById("customsqlParamType_" + param).value, description: ""};
         customsql_queryparam.push(parameter);
     }
 
@@ -202,18 +202,17 @@ var ApiCustomOpsController = function() {
     }
 
     function saveParamQueryCustomsql(operation){
-   	 	var queryParameter = {name: "$query", condition: "CONSTANT", dataType: "string", value: $('#id_query_op_customsql').val() , description: "", headerType: "query"};
+   	 	var queryParameter = {name: "query", condition: "CONSTANT", dataType: "string", value: $('#id_query_op_customsql').val() , description: "", headerType: "query"};
    	 	operation.querystrings.push(queryParameter);
-        var targetBDParameter = {name: "$targetdb", condition: "CONSTANT", dataType: "string", value: $('#id_customsql_targetBD').val() , description: "", headerType: "query"};
+        var targetBDParameter = {name: "targetdb", condition: "CONSTANT", dataType: "string", value: $('#id_customsql_targetBD').val() , description: "", headerType: "query"};
         operation.querystrings.push(targetBDParameter);
-        var querytypeBDParameter = {name: "$queryType", condition: "CONSTANT", dataType: "string", value: $('#id_customsql_querytype').val() , description: "", headerType: "query"};
+        var querytypeBDParameter = {name: "queryType", condition: "CONSTANT", dataType: "string", value: $('#id_customsql_querytype').val() , description: "", headerType: "query"};
         operation.querystrings.push(querytypeBDParameter);
         var path = "\\" + operation.identification;
         if (customsql_queryparam.length>0){
        	 	path=path + "?";
         }
         for (var i = 0; i < customsql_queryparam.length; i++) {
-	       	customsql_queryparam [i].value = $('#customsqlParamType_' + customsql_queryparam [i].name).val();
 	       	customsql_queryparam [i].dataType = $('#customsqlParamType_' + customsql_queryparam [i].name).val();
 	       	customsql_queryparam [i].headerType = "query";
 	       	operation.querystrings.push(customsql_queryparam [i]);
@@ -304,7 +303,7 @@ var ApiCustomOpsController = function() {
         newCustomsqlParamDiv.appendChild(document.createElement('br'));
 
         for (var i = 0; i < operation.querystrings.length; i++) {
-            if (operation.querystrings[i].name=="$query"){
+            if (operation.querystrings[i].name=="query"){
                 var newInputQueryOperationCustomsql = document.createElement('span');
                 newInputQueryOperationCustomsql.id=operation.identification + "_QUERY";
                 newInputQueryOperationCustomsql.className="element text large";
@@ -346,7 +345,7 @@ var ApiCustomOpsController = function() {
             $('#id_desc_op_customsql').val(operation.description);
 
             for (var i = 0; i < operation.querystrings.length; i++) {
-                if (operation.querystrings [i].name == "$query" ){
+                if (operation.querystrings [i].name == "query" ){
                 	$('#id_query_op_customsql').val(operation.querystrings [i].value);
                 	loadParamsFromQuery(operation.querystrings [i].value, op_name);
                 }
@@ -371,12 +370,12 @@ var ApiCustomOpsController = function() {
 
     function loadParamsQueryValues(querystrings){
         for (var i = 0; i < querystrings.length; i++) {
-	       	 if (querystrings [i].name == "$query" ){
-            } else if (querystrings [i].name == "$targetdb" ){
+	       	 if (querystrings [i].name == "query" ){
+            } else if (querystrings [i].name == "targetdb" ){
             	$('#id_customsql_targetBD').val(querystrings [i].value);
-       	 	} else if (querystrings [i].name == "$formatResult" ){
+       	 	} else if (querystrings [i].name == "formatResult" ){
        		 	$('#"id_customsql_formatresult').val(querystrings [i].value);
-       	 	} else if (querystrings [i].name == "$queryType" ){
+       	 	} else if (querystrings [i].name == "queryType" ){
        		 	$('#id_customsql_querytype').val(querystrings [i].value);
        	 	} else {
        		 $('#customsqlParamType_' + querystrings [i].name).val(querystrings [i].value);
@@ -388,7 +387,7 @@ var ApiCustomOpsController = function() {
     	$('#' + operation.identification + "_PATH").html("<b>" + operation.path+ "</b>");
 
         for (var i = 0; i < operation.querystrings.length; i++) {
-            if (operation.querystrings [i].name == "$query" ){
+            if (operation.querystrings [i].name == "query" ){
             	$('#' + operation.identification + '_QUERY').html(operation.querystrings [i].value);
             }
         }
