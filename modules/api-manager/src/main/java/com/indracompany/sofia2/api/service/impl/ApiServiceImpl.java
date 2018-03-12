@@ -122,6 +122,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		String QUERY = (String) data.get(ApiServiceInterface.QUERY);
 		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
 		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
+		String CACHEABLE = (String) data.get(ApiServiceInterface.CACHEABLE);
 		
 		User user = (User) data.get(ApiServiceInterface.USER);
 		
@@ -135,6 +136,13 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		model.setQueryType(QueryType.valueOf(QUERY_TYPE));
 		model.setClientPlatformId("");
 		model.setUser(user.getUserId());
+		
+		if ("true".equalsIgnoreCase(CACHEABLE)) {
+			model.setCacheable(true);
+		}
+		else {
+			model.setCacheable(false);
+		}
 		
 		NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
