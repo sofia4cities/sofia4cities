@@ -14,8 +14,11 @@
 package com.indracompany.sofia2.controlpanel.controller.graph;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
@@ -30,13 +33,14 @@ import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Dashboard;
 
+import com.indracompany.sofia2.config.model.Device;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
-import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 
+import com.indracompany.sofia2.config.repository.DeviceRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -49,8 +53,9 @@ public class GraphUtil {
 	private String urlDashboard;
 	private String urlGadget;
 	private String urlOntology;
+	private String urlImages;
 	private String genericUserName = "USER";
-	private User user;
+
 	@Autowired
 	private OntologyRepository ontologyRepository;
 	@Autowired
@@ -60,11 +65,23 @@ public class GraphUtil {
 	@Autowired
 	private DashboardRepository dashboardRepository;
 	@Autowired
+	private DeviceRepository deviceRepository;
+	@Autowired
 	private AppWebUtils utils;
 	@Autowired
 	private UserService userService;
 	@Value("${sofia2.urls.iotbroker}")
 	private String url;
+
+	private Integer MAX_TIME_UPDATE_IN_MINUTES = 5;
+	private String ACTIVE = "active";
+	private String INACTIVE = "inactive";
+	private String ERROR = "error";
+	private String IMAGE_DEVICE_ACTIVE = "Hardware-My-PDA-02-icon.png";
+	private String IMAGE_DEVICE_INACTIVE = "Hardware-My-PDA-02-icon.png";
+	private String IMAGE_DEVICE_ERROR = "Hardware-My-PDA-02-icon.png";
+	private String IMAGE_CLIENT_PLATFORMS = "Network-Pipe-icon.png";
+	private String IMAGE_CLIENT = "Network-Pipe-icon.png";
 
 	@PostConstruct
 	public void init() {
@@ -73,7 +90,7 @@ public class GraphUtil {
 		this.urlGadget = this.url + "/controlpanel/gadgets/";
 		this.urlDashboard = this.url + "/controlpanel/dashboards/";
 		this.urlOntology = this.url + "/controlpanel/ontologies/";
-
+		this.urlImages = this.url + "/controlpanel/static/images/";
 	}
 
 	public List<GraphDTO> constructGraphWithOntologies() {
@@ -83,7 +100,7 @@ public class GraphUtil {
 		String description = utils.getMessage("tooltip_ontologies", null);
 		// carga de nodo ontologia con link a crear y con titulo
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlOntology + "list", genericUserName, name,
-				utils.getUserId(), name, "suit", description, urlOntology + "create"));
+				utils.getUserId(), name, "suit", description, urlOntology + "create", null, null, null));
 		List<Ontology> ontologies;
 		if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
 			ontologies = ontologyRepository.findAll();
@@ -92,7 +109,7 @@ public class GraphUtil {
 					.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(utils.getUserId()));
 		for (Ontology ont : ontologies) {
 			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology + "list", urlOntology + "show/" + ont.getId(),
-					name, "ontology", name, ont.getIdentification(), "licensing"));
+					name, "ontology", name, ont.getIdentification(), "licensing", null, null, null, null, null));
 		}
 		return arrayLinks;
 	}
@@ -105,7 +122,7 @@ public class GraphUtil {
 
 		// carga de nodo clientPlatform
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlClientPlatform + "list", genericUserName, name,
-				utils.getUserId(), name, "suit", description, urlClientPlatform + "create"));
+				utils.getUserId(), name, "suit", description, urlClientPlatform + "create", null, null, null));
 
 		List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUser(this.userService.getUser(utils.getUserId()));
 
@@ -113,7 +130,7 @@ public class GraphUtil {
 			// Creación de enlaces
 			arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), urlClientPlatform + "list",
 					urlClientPlatform + clientPlatform.getId(), name, "clientplatform", name,
-					clientPlatform.getIdentification(), "licensing"));
+					clientPlatform.getIdentification(), "licensing", null, null, null, null, null));
 
 			if (clientPlatform.getClientPlatformOntologies() != null) {
 				List<ClientPlatformOntology> clientPlatformOntologies = new LinkedList<ClientPlatformOntology>(
@@ -121,10 +138,10 @@ public class GraphUtil {
 				for (ClientPlatformOntology clientPlatformOntology : clientPlatformOntologies) {
 					Ontology ontology = clientPlatformOntology.getOntology();
 					// Crea link entre ontologia y clientPlatform
-					arrayLinks
-							.add(new GraphDTO(ontology.getId(), clientPlatform.getId(), urlOntology + ontology.getId(),
-									urlClientPlatform + clientPlatform.getId(), "ontology", "clientplatform",
-									ontology.getIdentification(), clientPlatform.getIdentification(), "licensing"));
+					arrayLinks.add(new GraphDTO(ontology.getId(), clientPlatform.getId(),
+							urlOntology + ontology.getId(), urlClientPlatform + clientPlatform.getId(), "ontology",
+							"clientplatform", ontology.getIdentification(), clientPlatform.getIdentification(),
+							"licensing", null, null, null, null, null));
 				}
 			}
 		}
@@ -138,7 +155,7 @@ public class GraphUtil {
 
 		// carga de nodo gadget dependiente de visualizacion
 		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlGadget + "list", visualizationId, name,
-				visualizationName, name, "suit", null, urlGadget + "selectWizard"));
+				visualizationName, name, "suit", null, urlGadget + "selectWizard", null, null, null));
 
 		List<Gadget> gadgets = gadgetRepository.findByUser(this.userService.getUser(utils.getUserId()));
 
@@ -146,8 +163,15 @@ public class GraphUtil {
 			for (Gadget gadget : gadgets) {
 				// Creación de enlaces
 				arrayLinks.add(new GraphDTO(name, gadget.getId(), urlGadget + "list", urlDashboard + gadget.getId(),
-						name, "gadget", name, gadget.getIdentification(), "licensing"));
-				
+						name, "gadget", name, gadget.getName(), "licensing", null, null, null, null, null));
+				if (gadget.getToken() != null) {
+					// si tiene token , tiene kp
+					arrayLinks.add(new GraphDTO(gadget.getToken().getClientPlatform().getId(), gadget.getId(),
+							urlClientPlatform + gadget.getToken().getClientPlatform().getId(),
+							urlDashboard + gadget.getId(), "clientplatform", "gadget",
+							gadget.getToken().getClientPlatform().getIdentification(), gadget.getName(), "suit", null,
+							null, null, null, null));
+				}
 			}
 			gadgets.clear();
 		}*/
@@ -160,7 +184,7 @@ public class GraphUtil {
 		/*String name = utils.getMessage("name.dashboards", "DASHBOARDS");
 
 		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlDashboard + "list", visualizationId, name,
-				visualizationName, name, "suit", null, urlDashboard + "creategroup?"));
+				visualizationName, name, "suit", null, urlDashboard + "creategroup?", null, null, null));
 
 		// dashboardTipo---> son los dashboard
 		List<DashboardType> dashboardTypes = dashboardTypeRepository
@@ -171,7 +195,7 @@ public class GraphUtil {
 			List<Dashboard> dashboards = dashboardRepository.findByDashboardType(dashboardType);
 			arrayLinks.add(new GraphDTO(name, Integer.toString(dashboardType.getId()), urlDashboard + "list",
 					urlDashboard + Integer.toString(dashboardType.getId()), name, "dashboard", null,
-					dashboardType.getType(), "licensing"));
+					dashboardType.getType(), "licensing", null, null, null, null, null));
 
 			for (Dashboard dashboard : dashboards) {
 				try {
@@ -179,7 +203,7 @@ public class GraphUtil {
 					for (String gadget : gadgetIds) {
 						arrayLinks.add(new GraphDTO(gadget, Integer.toString(dashboardType.getId()),
 								urlDashboard + gadget, urlDashboard + dashboardType.getId(), "gadget", "dashboard",
-								null, dashboardType.getType(), "licensing"));
+								null, dashboardType.getType(), "licensing", null, null, null, null, null));
 					}
 				} catch (Exception e) {
 
@@ -198,7 +222,7 @@ public class GraphUtil {
 		String description = utils.getMessage("tooltip_visualization", null);
 		// carga de nodo gadget
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, null, genericUserName, name, utils.getUserId(), name,
-				"suit", description, null));
+				"suit", description, null, null, null, null));
 
 		arrayLinks.addAll(constructGraphWithGadgets(name, name));
 
@@ -226,6 +250,129 @@ public class GraphUtil {
 
 		}
 		return gadgetIds;
+
+	}
+
+	public List<GraphDTO> constructGraphWithClientPlatformsForDevice(String id) {
+
+		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		String name = utils.getMessage("name.clients", "PLATFORM CLIENTS");
+		String description = utils.getMessage("tooltip_clients", null);
+
+		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlClientPlatform + "list", genericUserName, name,
+				utils.getUserId(), name, "suit", description, urlClientPlatform + "create", null, null, null));
+
+		ClientPlatform clientPlatform = clientPlatformRepository.findById(id);
+
+		arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), urlClientPlatform + "list",
+				urlClientPlatform + clientPlatform.getId(), name, "clientplatform", name,
+				clientPlatform.getIdentification(), "licensing", null, null, null, null, null));
+
+		List<Device> listDevice = deviceRepository.findByClientPlatform(id);
+		if (listDevice != null && listDevice.size() > 0) {
+			for (Iterator iterator = listDevice.iterator(); iterator.hasNext();) {
+				Device device = (Device) iterator.next();
+				String state = "inactive";
+				if (device.isConnected()) {
+					state = "active";
+					if (device.getStatus() != null && device.getStatus().trim().length() > 0) {
+						if (!device.getStatus().equals("ok")) {
+							state = "error";
+						}
+					}
+				} else {
+					state = "inactive";
+					if (device.getStatus() != null && device.getStatus().trim().length() > 0) {
+						if (!device.getStatus().equals("ok")) {
+							state = "error";
+						}
+					}
+				}
+
+				arrayLinks.add(new GraphDTO(clientPlatform.getId(), device.getId(), urlClientPlatform + device.getId(),
+						urlClientPlatform + clientPlatform.getId(), "clientplatform", "clientplatform",
+						clientPlatform.getIdentification(), device.getIdentification(), state, null, null, null, null,
+						null));
+			}
+
+		}
+
+		return arrayLinks;
+	}
+
+	public List<GraphDTO> constructGraphWithClientPlatformsForUser() {
+
+		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		String name = utils.getMessage("name.clients", "PLATFORM CLIENTS");
+		String description = utils.getMessage("tooltip_clients", null);
+
+		arrayLinks.add(new GraphDTO(genericUserName, name, null, null, genericUserName, name, utils.getUserId(), name,
+				"suit", this.urlImages + IMAGE_CLIENT_PLATFORMS, null, null, null, null));
+
+		List<ClientPlatform> clientPlatforms = null;
+		if (utils.isAdministrator()) {
+			clientPlatforms = clientPlatformRepository.findAll();
+
+		} else {
+			clientPlatforms = clientPlatformRepository.findByUser(this.userService.getUser(utils.getUserId()));
+
+		}
+
+		for (ClientPlatform clientPlatform : clientPlatforms) {
+
+			arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), null, null, name, "clientplatform", name,
+					clientPlatform.getIdentification(), "licensing", this.urlImages + IMAGE_CLIENT, null, null, null,
+					null));
+
+			List<Device> listDevice = deviceRepository.findByClientPlatform(clientPlatform.getId());
+			if (listDevice != null && listDevice.size() > 0) {
+				for (Iterator iterator = listDevice.iterator(); iterator.hasNext();) {
+					Device device = (Device) iterator.next();
+					String state = INACTIVE;
+					String image = IMAGE_DEVICE_INACTIVE;
+					if (device.isConnected() && !maximunTimeUpdatingExceeded(device.getUpdatedAt())) {
+						state = ACTIVE;
+						image = IMAGE_DEVICE_ACTIVE;
+						if (device.getStatus() != null && device.getStatus().trim().length() > 0) {
+							if (!device.getStatus().equals(Device.StatusType.OK.toString())) {
+								state = ERROR;
+								image = IMAGE_DEVICE_ERROR;
+							}
+						}
+					} else {
+						state = INACTIVE;
+						image = IMAGE_DEVICE_INACTIVE;
+						if (device.getStatus() != null && device.getStatus().trim().length() > 0) {
+							if (!device.getStatus().equals(Device.StatusType.OK.toString())) {
+								state = ERROR;
+								image = IMAGE_DEVICE_ERROR;
+							}
+						}
+					}
+
+					arrayLinks.add(new GraphDTO(clientPlatform.getId(), device.getId(), device.getDescription(),
+							device.getJsonActions(), "clientplatform", "clientplatform",
+							clientPlatform.getIdentification(), device.getIdentification(), state,
+							this.urlImages + image, device.getStatus(), String.valueOf(device.isConnected()),
+							device.getSessionKey(), device.getUpdatedAt()));
+				}
+
+			}
+		}
+		return arrayLinks;
+	}
+
+	private boolean maximunTimeUpdatingExceeded(Date lastUpdate) {
+		Date currentDate = new Date();
+		long diff = currentDate.getTime() - lastUpdate.getTime();
+
+		long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+		if (minutes >= MAX_TIME_UPDATE_IN_MINUTES) {
+			return true;
+
+		} else {
+			return false;
+		}
 
 	}
 
