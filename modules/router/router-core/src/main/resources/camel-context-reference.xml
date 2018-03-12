@@ -51,7 +51,7 @@
 					<choice>
 						<when>
 							<header>endpoints</header>
-							<split parallelProcessing="true" streaming="true" strategyRef="resultsAggregationStrategy">
+							<split parallelProcessing="true" streaming="true">
 								<simple>${in.header.endpoints}</simple>
 								<log message="Context: Call ${header.CamelSplitIndex} Advicer" />
 								<to uri="direct:advice-scripts-and-nodereds" />

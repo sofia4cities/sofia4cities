@@ -133,7 +133,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		model.setOntologyName(ontology.getIdentification());
 		model.setOperationType(OperationType.valueOf(METHOD));
 		model.setQueryType(QueryType.valueOf(QUERY_TYPE));
-	
+		model.setClientPlatformId("");
 		model.setUser(user.getUserId());
 		
 		NotificationModel modelNotification= new NotificationModel();
