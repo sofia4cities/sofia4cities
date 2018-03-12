@@ -114,7 +114,7 @@ public class GridFSConnectorImpl implements GridFSConnector {
 					});
 			return new Document(parsedMetadata);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error parsing metadata", e);
 			return new Document();
 		}
 	}

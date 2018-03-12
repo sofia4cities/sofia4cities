@@ -21,6 +21,7 @@ package com.indracompany.sofia2.persistence.mongodb;
 
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -63,9 +64,14 @@ public class MongoDbDate implements Serializable {
 	
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof MongoDbDate))
-			return false;
-		MongoDbDate date = (MongoDbDate) other;
-		return this.$date.equals(date.$date);
+		if (other == null) return false;
+		if (!(other instanceof MongoDbDate)) return false;
+		MongoDbDate that = (MongoDbDate) other;
+		return this.$date.equals(that.$date);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash($date);
 	}
 }
