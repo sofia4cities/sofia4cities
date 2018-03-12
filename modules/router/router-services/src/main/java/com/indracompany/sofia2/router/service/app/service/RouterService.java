@@ -18,12 +18,13 @@ import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 
 public interface RouterService {
-	
+
 	public OperationResultModel insert (NotificationModel model)  throws Exception;
 	public OperationResultModel update (NotificationModel model)  throws Exception;
 	public OperationResultModel delete (NotificationModel model)  throws Exception;
 	public OperationResultModel query (NotificationModel model)  throws Exception;
-		
+	public OperationResultModel suscribe(SuscriptionModel model) throws Exception;
+
 }
 
 

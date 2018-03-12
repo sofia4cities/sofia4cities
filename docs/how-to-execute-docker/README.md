@@ -1,4 +1,5 @@
-# Sofia2 Open Suite Development Environment
+# How to execute Sofia4Cities IoT Platform with Docker
+
 ### Steps to launch a deployment of the Platform in local environments with Docker containers
 
 * [Step 1: Install Docker and Docker Compose](#install)
@@ -41,7 +42,7 @@ To stop the containers: **ctrl + c** and write **docker-compose down**
 
 #### <a name="loaddata"></a>Step 5: Loading tables and data in configdb and realtimedb
 
-Once the containers of the persistence layer have been activated it is necessary to create tables (configdb) and collections (realtimedb) and close them with data, for that in the **config/init** directory we execute mvn spring-boot: execute
+Once the containers of the persistence layer have been activated it is necessary to create tables (configdb) and collections (realtimedb) and close them with data, for that in the **config/init** directory we execute >**mvn spring-boot:execute**
 
 ![](loaddata.png)
 
@@ -49,6 +50,6 @@ Once the containers of the persistence layer have been activated it is necessary
 
 In the **docker-deployment / modules** directory we execute, in a different shell, **docker-compose up** to launch Platform modules (**Control Panel**, **IoT Broker** and **API Manager**)
 
-Once the containers of all the modules are up and running, we can access the Control Panel by putting the following url in the web browser: http://localhost:8091/controlpanel
+Once the containers of all the modules are up and running, we can access the Control Panel by putting the following url in the web browser: **[http://localhost:8091/controlpanel](http://localhost:8091/controlpanel)**
 
 ![](login.png)

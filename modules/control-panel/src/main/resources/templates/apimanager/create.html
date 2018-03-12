@@ -204,7 +204,7 @@
 															</div>
 															<div class="col-md-6 col-sm-6 col-xs-12">
 							                                    <label class="description notAnimate" id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
-							                                    <input id="id_endpoint_swagger" name="id_endpoint_swagger" class="form-control" type="text" maxlength="512" readonly="readonly"/>
+							                                    <input id="id_endpoint_swagger" name="id_endpoint_swagger" class="form-control" type="text" maxlength="512" readonly="readonly" th:value="${endpointBase} + '/services/management/api-docs?url=/services/management/swagger/' + ${api.identification} + '/swagger.json'"/>
 															</div>
 														</div>
 														<div class="row">
@@ -230,7 +230,7 @@
 							                                             <div>
 							                                                 <div id="divGET" class="op_div">
 							                                                    <div id="buttonOperacionGET" class="op_button_div">
-							                                                        <input id="GET" class="op_button" style="width: 80px;" type="button" value="GET" name="GET" th:value="#{apimanager.GET}" onclick="ApiCreateController.selectOp(this)"/>
+							                                                        <input id="GET" class="op_button" style="width: 80px;" type="button" value="GET" name="GET" th:value="#{apimanager.GET.button}" onclick="ApiCreateController.selectOp(this)"/>
 							                                                    </div>
 							                                                    <div id="descOperationGET" class="op_desc_div" style="display:none">
 							                                                        <label id ="description_GET_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GET"></label>
@@ -240,20 +240,9 @@
 							                                                    </div>
 							                                                 </div>
 							                                                 <div id="operaciones-invalidas-odatav4">
-							                                                     <div id="divGETSQL" class="op_div">
-							                                                        <div id="buttonOperationGETSQL" class="op_button_div">
-							                                                            <input id="GETSQL" class="op_button" style="width: 80px;" type="button" value="GETSQL" name="GETSQL" th:value="#{apimanager.GETSQL}" onclick="ApiCreateController.selectOp(this)"/>
-							                                                        </div>
-							                                                        <div id="descOperationGETSQL" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_GETSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETSQL"></label></b>
-							                                                            <br/>
-							                                                            <b><label id ="description_operacion_GETSQL" class="description" for="description_GETSQL" th:text="#{apimanager.description}"></label></b>
-							                                                            <input id="description_GETSQL" name="description_GETSQL" class="form-control" type="text" maxlength="250"/>
-							                                                        </div>
-							                                                     </div>
 							                                                     <div id="divPOST" class="op_div">
 							                                                        <div id="buttonOperationPOST" class="op_button_div">
-							                                                            <input id="POST" class="op_button" style="width: 80px;" type="button" value="POST" name="POST" th:value="#{apimanager.POST}" onclick="ApiCreateController.selectOp(this)"/>
+							                                                            <input id="POST" class="op_button" style="width: 80px;" type="button" value="POST" name="POST" th:value="#{apimanager.POST.button}" onclick="ApiCreateController.selectOp(this)"/>
 							                                                        </div>
 							                                                        <div id="descOperationPOST" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_POST_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_POST"></label></b>
@@ -264,7 +253,7 @@
 							                                                     </div>
 							                                                     <div id="divPUT" class="op_div">
 							                                                        <div id="buttonOperationPUT" class="op_button_div">
-							                                                            <input id="PUT" class="op_button" style="width: 80px;" type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT}" onclick="ApiCreateController.selectOp(this)"/>
+							                                                            <input id="PUT" class="op_button" style="width: 80px;" type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT.button}" onclick="ApiCreateController.selectOp(this)"/>
 							                                                        </div>
 							                                                        <div id="descOperationPUT" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_PUT_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_PUT"></label></b>
@@ -273,20 +262,9 @@
 							                                                            <input id="description_PUT" name="description_PUT" class="form-control" type="text" maxlength="250"/>
 							                                                        </div>
 							                                                     </div>
-							                                                     <div id="divDELETE" class="op_div">
-							                                                        <div id="buttonOperationDELETE" class="op_button_div">
-							                                                            <input id="DELETE" class="op_button" style="width: 80px;" type="button" value="DELETE" name="DELETE" th:value="#{apimanager.DELETE}" onclick="ApiCreateController.selectOp(this)"/>
-							                                                        </div>
-							                                                        <div id="descOperationDELETE" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_DELETE_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETE"></label></b>
-							                                                            <br/>
-							                                                            <b><label id ="description_operacion_DELETE" class="description" for="description_DELETE" th:text="#{apimanager.description}"></label></b>
-							                                                            <input id="description_DELETE" name="description_DELETE" class="form-control" type="text" maxlength="250"/>
-							                                                        </div>
-							                                                     </div>
 							                                                     <div id="divDELETEID" class="op_div">
 							                                                        <div id="buttonOperationDELETEID" class="op_button_div">
-							                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETEID}" onclick="ApiCreateController.selectOp(this)"/>
+							                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETEID.button}" onclick="ApiCreateController.selectOp(this)"/>
 							                                                        </div>
 							                                                        <div id="descOperationDELETEID" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_DELETEID_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
@@ -295,23 +273,11 @@
 							                                                            <input id="description_DELETEID" name="description_DELETEID" class="form-control" type="text" maxlength="250"/>
 							                                                        </div>
 							                                                     </div>
-							                                                     <div id="divGETOPS" class="op_div">
-							                                                        <div id="buttonOperationGETOPS" class="op_button_div">
-							                                                            <input id="GETOPS" class="op_button" style="width: 80px;" type="button" value="GETOPS" name="GETOPS" th:value="#{apimanager.GETOPS}" onclick="ApiCreateController.selectOp(this)"/>
-							                                                        </div>
-							                                                        <div id="descOperationGETOPS" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_GETOPS_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETOPS"></label></b>
-							                                                            <br/>
-							                                                            <b><label id ="description_operacion_GETOPS" class="description" for="description_GETOPS" th:text="#{apimanager.description}"></label></b>
-							                                                            <input id="description_GETOPS" name="description_GETOPS" class="form-control" type="text" maxlength="250"/>
-							                                                        </div>
-							                                                     </div>
 							                                                     <div id="divCUSTOMSQLS">
-									                                                 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_GETSQL')}
-									                                                 													AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')}
-									                                                 													AND ${!#strings.endsWith(operation.identification,'_DELETE')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
+									                                                 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_POST')} 
+									                                                 													AND ${!#strings.endsWith(operation.identification,'_PUT')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
 									                                                    <div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" style="margin-Top:30px;margin-bottom: 30px">
-									                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOM (query)" th:name="${(operation.identification + 'CUSTOMSQL')}" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'"/>
+									                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected" style="width: 110px; margin-left: 25px;" type="button" th:value="#{apimanager.GETCUSTOM.button}" th:name="${(operation.identification + 'CUSTOMSQL')}" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'"/>
 									                                                    </div>
 									                                                    <label th:id="${operation.identification + '_LABEL'}" class="description" style="padding-left: 20px;" th:text="${operation.identification}"/>
 								                                                        <input th:id="${operation.identification + '_Edit'}" class="button_text" type="button" th:value="#{gen.editBtn}" th:name="${operation.identification + '_Edit'}" style="float: right; margin-top: 30px;" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'" />
@@ -326,13 +292,13 @@
 								                                                 </div>
 							                                                     <div id="divCUSTOMSQL" class="op_div">
 							                                                        <div id="buttonOperationCUSTOMSQL" class="op_button_div">
-							                                                            <input id="CUSTOMSQL" class="op_button" style="width: 110px; margin-left: 25px;" type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" onclick="ApiCustomOpsController.selectEditCustomOp('')"/>
+							                                                            <input id="CUSTOMSQL" class="op_button" style="width: 110px;" type="button" value="CUSTOMSQL" name="CUSTOMSQL" th:value="#{apimanager.CUSTOMSQL}" onclick="ApiCustomOpsController.selectEditCustomOp('')"/>
 							                                                        </div>
 							                                                        <div id="descOperationCUSTOMSQL" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_CUSTOMSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_CUSTOMSQL"></label></b>
 							                                                            <br/>
 							                                                            <b><label id ="description_operation_CUSTOMSQL" class="description" for="description_CUSTOMSQL" th:text="#{apimanager.description}"></label></b>
-							                                                            <input id="description_CUSTOMSQL" name="description_CUSTOMSQL" class="form-control" type="text" maxlength="250"/>
+							                                                            <input id="description_CUSTOMSQL" name="description_CUSTOMSQL" class="form-control" type="text" maxlength="250" th:value="#{apimanager.GETCUSTOM.button}"/>
 							                                                        </div>
 							                                                     </div>
 							                                                 </div>
@@ -544,6 +510,7 @@
 		"apimanager_customsql_error_required" : [[#{apimanager.customsql.error.required}]],
 		"apimanager_customsql_error_operation_exists" : [[#{apimanager.customsql.error.operation.exists}]],
 		"apimanager_customsql_error_fields" : [[#{apimanager.customsql.error.fields}]],
+		"apimanager_customBtn" : [[#{apimanager.GETCUSTOM.button}]],
 		"apimanager_editBtn" : [[#{gen.editBtn}]],
 		"apimanager_deleteBtn" : [[#{gen.deleteBtn}]]
 	};

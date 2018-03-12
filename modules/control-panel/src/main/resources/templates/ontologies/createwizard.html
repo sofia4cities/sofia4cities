@@ -351,10 +351,10 @@
 													<div class="form-actions">
 														<div class="pull-right">
 															<!-- CREATE -->
-															<button th:if="${ontology?.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+															<button th:if="${ontology?.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create" onclick="OntologyCreateController.updateJsonschemaInput()"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 															
 															<!-- UPDATE -->
-															<button th:if="${ontology?.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+															<button th:if="${ontology?.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  onclick="OntologyCreateController.updateJsonschemaInput()" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 															
 															<!-- REMOVE -->
 															<button th:if="${ontology?.id} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'OntologyCreateController.deleteOntology(\'' + ${ontology.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>

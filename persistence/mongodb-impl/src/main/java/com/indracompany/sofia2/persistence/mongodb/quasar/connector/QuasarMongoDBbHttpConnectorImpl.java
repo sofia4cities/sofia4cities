@@ -36,6 +36,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -53,35 +55,59 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 	private int maxHttpConnectionsPerRoute;
 	@Value("${sofia2.database.mongodb.quasar.connectionTimeout.millis:10000}")
 	private int connectionTimeout;
-	@Value("${sofia2.database.mongodb.quasar.connector.http.endpoint:http://localhost:18200/query/fs}")
+	@Value("${sofia2.database.mongodb.quasar.connector.http.endpoint:http://localhost:18200/query/fs/}")
 	private String quasarEndpoint;
 	@Value("${sofia2.database.mongodb.database:sofia2_s4c}")
 	private String database;
 
+	// private PoolingHttpClientConnectionManager cm1;
+	// private RequestConfig config;
 	private PoolingClientConnectionManager cm;
-
 	private BasicHttpParams httpParams;
 
 	@PostConstruct
 	public void init() {
+		/**
+		 * Using the new way we obtain a java.io.EOFException: Unexpected end of ZLIB
+		 * input stream It must be a bug in HttpClient
+		 */
+		// this.cm1 = new PoolingHttpClientConnectionManager();
+		// this.cm1.setMaxTotal(maxHttpConnections);
+		// this.cm1.setDefaultMaxPerRoute(maxHttpConnectionsPerRoute);
+		// this.cm1.closeIdleConnections(0, TimeUnit.SECONDS);
+		// config = RequestConfig.custom().setConnectTimeout(connectionTimeout).build();
+		// config =
+		// RequestConfig.custom().setConnectTimeout(connectionTimeout).setConnectionRequestTimeout(connectionTimeout).setSocketTimeout(connectionTimeout).build();
+
 		this.cm = new PoolingClientConnectionManager();
 		this.httpParams = new BasicHttpParams();
-
 		this.cm.setMaxTotal(maxHttpConnections);
 		this.cm.setDefaultMaxPerRoute(maxHttpConnectionsPerRoute);
 		HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
 	}
 
 	@Override
-	public String queryAsJson(String query, int offset, int limit) throws Exception {
-		String url = buildUrl(query, offset, limit);
+	public String queryAsJson(String query, int offset, int limit) throws DBPersistenceException {
+		String url;
+		try {
+			url = buildUrl(query, offset, limit);
+		} catch (UnsupportedEncodingException e) {
+			log.error("Error building URL", e);
+			throw new DBPersistenceException("Error building URL", e);
+		}
 		String result = invokeQuasar(url, ACCEPT_APPLICATION_JSON);
 		return result;
 	}
 
 	@Override
-	public String queryAsTable(String query, int offset, int limit) throws Exception {
-		String url = buildUrl(query, offset, limit);
+	public String queryAsTable(String query, int offset, int limit) throws DBPersistenceException {
+		String url;
+		try {
+			url = buildUrl(query, offset, limit);
+		} catch (UnsupportedEncodingException e) {
+			log.error("Error building URL", e);
+			throw new DBPersistenceException("Error building URL", e);
+		}
 		String result = invokeQuasar(url, ACCEPT_TEXT_CSV);
 		return result;
 
@@ -110,52 +136,52 @@ public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnec
 	 * return response; }
 	 */
 
-	private String invokeQuasar(String endpoint, String accept) throws Exception {
+	private String invokeQuasar(String endpoint, String accept) throws DBPersistenceException {
+		HttpGet httpGet = null;
+		CloseableHttpClient httpClient = null;
+		HttpResponse httpResponse = null;
+		String output = null;
 		try {
-			CloseableHttpClient httpClient = new DefaultHttpClient(this.cm, this.httpParams);
+			// httpClient = HttpClientBuilder.create().setConnectionManager(cm1).build();
+			// httpClient =
+			// HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+			httpClient = new DefaultHttpClient(this.cm, this.httpParams);
 			httpClient.getConnectionManager().closeIdleConnections(0, TimeUnit.SECONDS);
-
-			HttpGet httpGet = null;
-			try {
-				httpGet = createHttpGetRequest(endpoint, accept, null);
-			} catch (Exception e) {
-				log.error("Unable to send message: error detected while building POST request.", e);
-			}
-			if (httpGet != null) {
-				HttpResponse httpResponse = null;
-				try {
-					log.info("Send message: to {}.", endpoint);
-					httpResponse = httpClient.execute(httpGet);
-					if (httpResponse != null && httpResponse.getStatusLine() != null) {
-						int httpStatusCode = httpResponse.getStatusLine().getStatusCode();
-						if (httpStatusCode != 200) {
-							log.warn("Error notifying message to endpoint: {}. HTTP status code {}.", endpoint,
-									httpStatusCode);
-						}
-					} else {
-						log.error("Error notifying message to endpoint: {}. Malformed HTTP response.", endpoint);
-					}
-					HttpEntity en = httpResponse.getEntity();
-					String data = EntityUtils.toString(en);
-					Header[] headers = httpResponse.getHeaders(CONTENT_TYPE_HEADER);
-					return data;
-				} catch (HttpHostConnectException e) {
-					log.error("Error notifing message to endpoint: {}", endpoint, e);
-					throw e;
-				} catch (Exception e) {
-					log.error("Error notifing message to endpoint: {}", endpoint, e);
-					throw e;
-				} finally {
-					httpGet.releaseConnection();
-				}
-
-			} else {
-				log.warn("Cannot notify message: the HTTPPost request cannot be build.");
-				throw new Exception("Cannot notify message: the HTTPPost request cannot be build.");
-			}
+			httpGet = createHttpGetRequest(endpoint, accept, null);
 		} catch (Exception e) {
-			log.warn("Error notifing message to endpoint: {}", endpoint, e);
-			throw e;
+			log.error("Unable to send message: error detected while building POST request.", e);
+		}
+		if (httpGet != null) {
+			try {
+				log.info("Send message: to {}.", endpoint);
+				httpResponse = httpClient.execute(httpGet);
+				if (httpResponse != null && httpResponse.getStatusLine() != null) {
+					int httpStatusCode = httpResponse.getStatusLine().getStatusCode();
+					if (httpStatusCode != 200) {
+						log.warn("Error notifying message to endpoint: {}. HTTP status code {}.", endpoint,
+								httpStatusCode);
+					}
+				} else {
+					log.error("Error notifying message to endpoint: {}. Malformed HTTP response.", endpoint);
+				}
+				HttpEntity en = httpResponse.getEntity();
+				Header[] headers = httpResponse.getHeaders(CONTENT_TYPE_HEADER);
+				output = EntityUtils.toString(en);
+				return output;
+
+			} catch (HttpHostConnectException e) {
+				log.error("Error notifing message to endpoint: {}", endpoint, e);
+				throw new DBPersistenceException(e);
+			} catch (Exception e) {
+				log.error("Error notifing message to endpoint: {}", endpoint, e);
+				throw new DBPersistenceException(e);
+			} finally {
+				httpGet.releaseConnection();
+			}
+
+		} else {
+			log.warn("Cannot notify message: the HTTPPost request cannot be build.");
+			throw new DBPersistenceException("Cannot notify message: the HTTPPost request cannot be build.");
 		}
 	}
 

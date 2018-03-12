@@ -2,14 +2,14 @@ version: "2.1"
 
 services:
   realtimedb:
-    image: sofia2/realtimedb:latest
+    image: ${REPOSITORY}sofia2/realtimedb:${IMAGETAG}
     container_name: realtimedb
     networks:
       - datanetwork
     ports:
       - "27017:27017"
   configdb:
-    image: sofia2/configdb:latest
+    image: ${REPOSITORY}sofia2/configdb:${IMAGETAG}
     container_name: configdb
     networks:
       - datanetwork
@@ -18,7 +18,7 @@ services:
     depends_on:
      - "realtimedb"
   schedulerdb:
-    image: sofia2/schedulerdb:latest
+    image: ${REPOSITORY}sofia2/schedulerdb:${IMAGETAG}
     container_name: schedulerdb
     networks:
       - datanetwork
@@ -27,7 +27,7 @@ services:
     depends_on:
      - "configdb"           
   quasar:
-    image: ${REPOSITORY}sofia/quasar:${IMAGETAG}
+    image: ${REPOSITORY}sofia2/quasar:${IMAGETAG}
     container_name: quasar
     networks:
      - datanetwork

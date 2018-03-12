@@ -79,6 +79,7 @@ public class QueryProcessorTest {
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
 
 		when(ontologyService.hasUserPermissionForQuery(any(String.class), any(String.class))).thenReturn(true);
+		when(ontologyService.hasClientPlatformPermisionForQuery(any(String.class), any(String.class))).thenReturn(true);
 	}
 
 	@Before

@@ -15,6 +15,7 @@ package com.indracompany.sofia2.ssap;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.indracompany.sofia2.ssap.body.SSAPBodyEmptyMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
@@ -49,15 +50,19 @@ public final class SSAPMessage<T extends SSAPBodyMessage>implements Serializable
 	//	public void setOntology(String ontology) {
 	//		this.ontology = ontology;
 	//	}
+	@JsonProperty(required=true)
 	public SSAPMessageDirection getDirection() {
 		return direction;
 	}
+	@JsonProperty(required=true)
 	public void setDirection(SSAPMessageDirection direction) {
 		this.direction = direction;
 	}
+	@JsonProperty(required=true)
 	public SSAPMessageTypes getMessageType() {
 		return messageType;
 	}
+	@JsonProperty(required=true)
 	public void setMessageType(SSAPMessageTypes messageType) {
 		this.messageType = messageType;
 	}

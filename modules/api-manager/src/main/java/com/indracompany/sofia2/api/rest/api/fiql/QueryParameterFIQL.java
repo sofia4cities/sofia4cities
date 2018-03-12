@@ -99,19 +99,7 @@ public final class QueryParameterFIQL {
 
 	
 	private static boolean isValidTypeValue(String DataType, String Value) {
-		if (DataType.equalsIgnoreCase(ApiQueryParameter.DataType.number.name())) {
-			try {
-				Integer.parseInt(Value);
-			} catch (Exception e) {
-				return false;
-			}
-		} else if (DataType.equalsIgnoreCase("boolean")) {
-			try {
-				Boolean.parseBoolean(Value);
-			} catch (Exception e) {
-				return false;
-			}
-		}
+
 		return true;
 	}
 
@@ -129,6 +117,7 @@ public final class QueryParameterFIQL {
 				|| DataType.equalsIgnoreCase("boolean")
 				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.uri.name())
 				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.password.name())
+				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.number.name())
 				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.binary.name())
 				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.email.name())
 				|| DataType.equalsIgnoreCase(ApiQueryParameter.DataType.uuid.name())

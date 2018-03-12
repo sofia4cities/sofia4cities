@@ -12,7 +12,7 @@ body {
   padding: 0px !important;
   margin: 0px !important;
   direction: "ltr";
-  font-size: 14px; }
+  font-size: 12px; }
   
   
 /* ICON FONTS */  
@@ -20307,7 +20307,7 @@ Custom color buttons
   border-right-color: #94A0B2 !important; }
 
 .bg-green {
-  background: #32c5d2 !important; }
+  background: #32d279 !important; }
 
 .bg-green-opacity {
   background: rgba(50, 197, 210, 0.8) !important; }
@@ -21333,7 +21333,7 @@ Custom color buttons
   border-right-color: #525e64 !important; }
 
 .bg-red {
-  background: #e7505a !important; }
+  background: #ff0011 !important; }
 
 .bg-red-opacity {
   background: rgba(231, 80, 90, 0.8) !important; }
@@ -22908,6 +22908,9 @@ Custom color buttons
       margin-left: 20px;
       border: 1px solid red; }
 
+.flow-description {
+	    margin: 5% 5% 5% 5%;
+}
 @media (max-width: 767px) {
   /* 767px */
   .mt-content-row {

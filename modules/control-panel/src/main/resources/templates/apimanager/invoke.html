@@ -67,7 +67,7 @@
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{apimanager.template.show}">Manage Apis</span></h1>
+				<h1 class="page-title hide "><span th:text="#{apimanager.template.invoke} + ' ' + ${api.identification}">Invoke Apis</span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -78,7 +78,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{apimanager.template.list}"> Manage Apis</span>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{apimanager.template.invoke} + ' ' + ${api.identification}">Invoke Apis</span>
 									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
 								<div class="tools">
@@ -86,13 +86,12 @@
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
 								</div>
 							</div>
-							<div class="portlet-body" style="display: block; height: auto;">
-								
-
-
-
-
-
+							<div class="portlet-body" style="display: block;">
+								<div class="row">
+									<div class="col-md-12 col-sm-12 col-xs-12 margin-bottom-20">
+										<iframe th:src="${endpointBase} + '/services/management/api-docs?url=/services/management/swagger/' + ${api.identification} + '/swagger.json'" width="100%" height="100%"></iframe>
+									</div>
+								</div>
 							</div>
 						</div><!-- END PORTLET BASIC LIGHT -->							
 					</div><!-- END COL-12 -->						
@@ -161,14 +160,6 @@
 			// toggle Text
 			$(this).toggleClass('text-muted line-through');			
 		});	
-		
-		// SEARCH FORM RESET
-		$('#reset_api').on('click',function(){
-			$('#form_api')[0].reset();
-		});
-		
-		// SEARCH FORM
-		$('#search_api').on('click',function(){ $('#form_api')[0].submit(); });
 		
 	});
 	 

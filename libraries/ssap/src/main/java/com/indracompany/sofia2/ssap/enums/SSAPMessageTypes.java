@@ -25,5 +25,8 @@ public enum SSAPMessageTypes {
 	DELETE,
 	DELETE_BY_ID,
 
-	QUERY
+	QUERY,
+
+	SUBSCRIBE,
+	INDICATION
 }

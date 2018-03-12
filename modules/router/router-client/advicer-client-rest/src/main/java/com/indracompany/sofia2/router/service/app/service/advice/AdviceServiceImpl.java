@@ -32,13 +32,13 @@ public class AdviceServiceImpl implements AdviceService, RouterClient<Notificati
 
 	@Override
 	public OperationResultModel execute(NotificationCompositeModel input) {
-		RestTemplate restTemplate = new RestTemplate();
+		final RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
-		OperationResultModel quote = restTemplate.postForObject(input.getUrl(),input, OperationResultModel.class);
+		final OperationResultModel quote = restTemplate.postForObject(input.getUrl(),input, OperationResultModel.class);
 		System.out.println(quote.toString());
 		return quote;
 	}
 
-	
+
 
 }

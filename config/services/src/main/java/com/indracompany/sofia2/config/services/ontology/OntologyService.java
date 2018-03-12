@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
@@ -42,26 +43,36 @@ public interface OntologyService {
 
 	List<String> getAllDataModelTypes();
 
-	//TODO unify interface
+	// TODO unify interface
 	boolean hasUserPermissionForQuery(User user, Ontology ontology);
+
 	boolean hasUserPermissionForQuery(String userId, Ontology ontology);
+
 	boolean hasUserPermissionForQuery(String userId, String ontologyId);
 
-	//TODO unify interface
+	// TODO unify interface
 	boolean hasUserPermissionForInsert(User user, Ontology ontology);
+
 	boolean hasUserPermissionForInsert(String userId, String ontologyIdentificator);
-	
+
 	boolean hasUserPermisionForChangeOntology(User user, Ontology ontology);
 	
-	Map<String, String> getOntologyFields(String identification, String sessionUserId) throws JsonProcessingException, IOException;
+	boolean hasClientPlatformPermisionForInsert(String clientPlatformId, String ontologyId);
 	
+	boolean hasClientPlatformPermisionForQuery(String clientPlatformId, String ontologyId);
+
 	void updateOntology(Ontology ontology, String sessionUserId);
 
 	void createOntology(Ontology ontology);
-	
+
+	List<Ontology> getOntologiesByClientPlatform(ClientPlatform clientPlatform);
+
 	/**
-	 * This method checks if an ontology has authorizations for other users different from its owner.
-	 * @param ontologyId the id of the ontology.
+	 * This method checks if an ontology has authorizations for other users
+	 * different from its owner.
+	 * 
+	 * @param ontologyId
+	 *            the id of the ontology.
 	 * @return true if any other user has authorization over the ontology.
 	 */
 	boolean hasOntologyUsersAuthorized(String ontologyId);
@@ -70,12 +81,19 @@ public interface OntologyService {
 
 	void createUserAccess(String ontologyId, String userId, String typeName, String sessionUserId);
 
-	OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId, String sessionUserId);
-	
+	OntologyUserAccess getOntologyUserAccessByOntologyIdAndUserId(String ontologyId, String userId,
+			String sessionUserId);
+
 	OntologyUserAccess getOntologyUserAccessById(String userAccessId, String sessionUserId);
-	
-	void deleteOntologyUserAccess (String userAccessId, String sessionUserId);
+
+	void deleteOntologyUserAccess(String userAccessId, String sessionUserId);
 
 	void updateOntologyUserAccess(String userAccessId, String typeName, String sessionUserId);
+
+	Map<String, String> getOntologyFieldsQueryTool(String identification, String sessionUserId)
+			throws JsonProcessingException, IOException;
+
+	Map<String, String> getOntologyFields(String identification, String sessionUserId)
+			throws JsonProcessingException, IOException;
 
 }
