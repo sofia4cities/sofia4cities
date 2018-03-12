@@ -83,6 +83,7 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		model.setOperationType(OperationType.DELETE);
 		model.setQueryType(QueryType.NATIVE);
 		model.setUser(session.get().getUserID());
+		model.setClientPlatformId(session.get().getClientPlatform());
 		//		model.setBody(message.getBody().getData().toString());
 
 		final NotificationModel modelNotification= new NotificationModel();
@@ -125,6 +126,7 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		model.setQueryType(QueryType.NATIVE);
 		model.setBody(message.getBody().getQuery());
 		model.setUser(session.get().getUserID());
+		model.setClientPlatformId(session.get().getClientPlatform());
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

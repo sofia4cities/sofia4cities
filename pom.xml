@@ -25,6 +25,7 @@
         <spring-boot-admin-starter-client.version>1.5.6</spring-boot-admin-starter-client.version>	
 		<httpclient.version>4.5.2</httpclient.version>
 		<docker-spotify.version>1.0.0</docker-spotify.version>
+		<springfox-swagger2.version>2.8.0</springfox-swagger2.version>
 		<!--LICENSE INFO -->
         <license.dir>${basedir}</license.dir>
         <project.name>Sofia4Cities by Sofia2</project.name>
@@ -48,6 +49,18 @@
 		    	<version>${javafaker.version}</version>
 		    	<scope>test</scope>
 			</dependency>
+			<dependency>
+			    <groupId>io.springfox</groupId>
+			    <artifactId>springfox-swagger2</artifactId>
+			    <version>${springfox-swagger2.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${springfox-swagger2.version}</version>
+			</dependency>
+	
+		
             <dependency>
 		    	<groupId>com.spotify</groupId>
 		    	<artifactId>docker-maven-plugin</artifactId>
@@ -93,6 +106,7 @@
 		<module>modules/planner</module>
 		 <module>modules/router</module>
         <module>modules/flow-engine</module>
+		<module>modules/dashboard-engine</module>
 		<!--
         <module>api-manager</module>
 		-->

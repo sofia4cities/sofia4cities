@@ -118,7 +118,12 @@ if [ -z "$1" ]; then
 		buildImage "API Manager"
 	fi
 	
-	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then
+	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/dashboard-engine/
+		buildImage "Dashboard Engine"
+	fi
+	
+	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
  		prepareNodeRED		
 	
 		cd $homepath/../modules/flow-engine/

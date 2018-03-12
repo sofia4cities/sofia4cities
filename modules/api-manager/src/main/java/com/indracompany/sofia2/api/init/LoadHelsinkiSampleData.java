@@ -62,7 +62,7 @@ public class LoadHelsinkiSampleData implements ApplicationRunner {
 	UserRepository userCDBRepository;
 	
 	static final String ONT_NAME = "HelsinkiPopulation";
-	static final String APINAME = "HelsinkiPopulationAPI100";
+	static final String APINAME = "HelsinkiPopulationAPI";
 	static final String DATABASE = "sofia2_s4c";
 	static User userCollaborator = null;
 	static User userAdministrator = null;

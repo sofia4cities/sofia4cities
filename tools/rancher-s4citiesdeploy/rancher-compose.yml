@@ -1,0 +1,26 @@
+version: '2'
+services:
+  iotbrokerservice:
+    scale: 1
+    start_on_create: true
+  loadbalancerservice:
+    scale: 1
+    start_on_create: true
+  quasar:
+    scale: 1
+    start_on_create: true
+  schedulerdb:
+    scale: 1
+    start_on_create: true
+  flowengineservice:
+    scale: 1
+    start_on_create: true
+  configdb:
+    scale: 1
+    start_on_create: true
+  controlpanelservice:
+    scale: 1
+    start_on_create: true
+  realtimedb:
+    scale: 1
+    start_on_create: true

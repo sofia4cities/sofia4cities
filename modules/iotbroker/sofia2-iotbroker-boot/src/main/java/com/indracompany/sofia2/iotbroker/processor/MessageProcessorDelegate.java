@@ -37,6 +37,8 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyOntologyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
+import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 import com.indracompany.sofia2.ssap.util.SSAPMessageGenerator;
 
 @Component
@@ -84,7 +86,6 @@ public class MessageProcessorDelegate implements MessageProcessor {
 				response.setDirection(SSAPMessageDirection.RESPONSE);
 				response.setMessageId(message.getMessageId());
 				response.setMessageType(message.getMessageType());
-				//				response.setOntology(message.getOntology());
 			}
 
 		} catch (final SSAPProcessorException e) {
@@ -110,7 +111,27 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return response;
 	}
 
-	public Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
+	@Override
+	public String process(String message) {
+		SSAPMessage<SSAPBodyReturnMessage> response = null;
+		SSAPMessage request = null;
+
+		try {
+			request = SSAPJsonParser.getInstance().deserialize(message);
+			response = this.process(request);
+		} catch (final SSAPParseException e) {
+			response = SSAPUtils.generateErrorMessage(request, SSAPErrorCode.PROCESSOR, "Request message is not parseable" + e.getMessage());
+		}
+
+		try {
+			return SSAPJsonParser.getInstance().serialize(response);
+		} catch (final SSAPParseException e) {
+			return "kk";
+		}
+
+	}
+
+	private Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
 	{
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 
@@ -149,7 +170,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 	}
 
-	public MessageTypeProcessor proxyProcesor(SSAPMessage<? extends SSAPBodyMessage> message)
+	private MessageTypeProcessor proxyProcesor(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws SSAPProcessorException {
 
 		if (null == message.getMessageType()) {
@@ -169,5 +190,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return filteredProcessors.get(0);
 
 	}
+
+
 
 }

@@ -22,6 +22,8 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
@@ -29,7 +31,11 @@ import com.indracompany.sofia2.config.model.Ontology;
 
 public interface ClientPlatformOntologyRepository extends JpaRepository<ClientPlatformOntology, String> {
 
-	ClientPlatformOntology findByOntologyAndClientPlatform(Ontology ontology, ClientPlatform clientPlatform);
+	@Query("SELECT o "
+			+ "FROM ClientPlatformOntology AS o "
+			+ "WHERE o.ontology.identification = :ontologId AND "
+			+ 		"o.clientPlatform.identification = :clientPlatformId")
+	ClientPlatformOntology findByOntologyAndClientPlatform(@Param("ontologId")String ontologId, @Param("clientPlatformId")String clientPlatformId);
 
 	List<ClientPlatformOntology> findByClientPlatform(ClientPlatform clientPlatform);
 

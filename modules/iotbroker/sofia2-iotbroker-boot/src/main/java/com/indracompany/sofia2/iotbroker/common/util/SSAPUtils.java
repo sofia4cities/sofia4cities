@@ -21,12 +21,31 @@ import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 public class SSAPUtils {
 
 	public static SSAPMessage<SSAPBodyReturnMessage> generateErrorMessage(SSAPMessage message, SSAPErrorCode code, String error) {
+		if(message == null) {
+			return generateErrorMessage(code, error);
+		}
+
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		responseMessage.setDirection(SSAPMessageDirection.ERROR);
 		responseMessage.setMessageId(message.getMessageId());
 		responseMessage.setMessageType(message.getMessageType());
 		//		responseMessage.setOntology(message.getOntology());
 		responseMessage.setSessionKey(message.getSessionKey());
+		responseMessage.setBody(new SSAPBodyReturnMessage());
+		responseMessage.getBody().setOk(false);
+		responseMessage.getBody().setErrorCode(code);
+		responseMessage.getBody().setError(error);
+
+		return responseMessage;
+	}
+
+	public static SSAPMessage<SSAPBodyReturnMessage> generateErrorMessage(SSAPErrorCode code, String error) {
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
+		responseMessage.setDirection(SSAPMessageDirection.ERROR);
+		//		responseMessage.setMessageId(message.getMessageId());
+		//		responseMessage.setMessageType(message.getMessageType());
+		//		responseMessage.setOntology(message.getOntology());
+		//		responseMessage.setSessionKey(message.getSessionKey());
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(false);
 		responseMessage.getBody().setErrorCode(code);

@@ -1,20 +1,47 @@
 <p align="center">
-  <a src='https://www.select4cities.com/'>
-    <img src='img/s4c_grisdegradado.png'/>
+  <a src='https://www.sofia4cities.com/'>
+    <img src='s4c.png'/>
   </a>
 </p>
 
 Sofia4Cities Open-Source Platform [![Build Status](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/buildStatus/icon?job=select4cities/develop)](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/view/SELECT4CITIES/job/select4cities/job/develop/)
 ============================
 
-Sofia4Cities is a open-source, production-ready, multi-purpose platform for building complete end-to-end solutions, connected applications, and smart products. 
-The platform provides an open, feature-rich toolkit for the IoT/Smart product development and thus dramatically reduces associated cost, risks, and time-to-market. 
+Sofia4Cities is an multi-purpose, enterprise and open-source platform for building complete end-to-end solutions, connected applications, and smart products. 
+The platform provides an open toolkit for the IoT/Smart product development that reduces associated cost, risks, and time-to-market. 
 
-## Getting started
+## Technology
 
-For the quick start with Sofia4Cities platform check out [Getting Started]({{root_url}}docs/) guide.
+Sofia4Cities IoT Platform is built mainly on Java technology, developed as a  Spring-powered microservices architecture and deploy by Spring Boot.
 
-You can deploy Sofia4Cities into your own environment [following these steps]({{root_url}}docs/how-to-execute-docker/index.md) 
+You can discover the modules of the platform in the [Architecture Overview](docs/architecture-overview/) 
+
+## Project Structure
+
+The project follows this skeleton:
+
+* [Client Libraries](client-libraries/) contains the source code of the SDKs for access the platform from different languages (Java, Javascript, Android, Python,...) 
+*  [Contributions](contributions/) contains the open-source project that we have personalized.
+*  [Docker-deployment](docker-deployment/) with the Dockerfiles, docker-compose.yml and scripts to generate images for all the modules.
+*  [Docs](docs/) contains the open documentation of the platform.
+*  [Config](config/) source code for everything related to the configuration of the platform (JPA Entities, initialization of the database, Services for the acccess to the configuration of the platform).
+*  [Examples](examples/) contains different examples that help us to develop with and to extend the platform.
+*  [Libraries](libraries/) source code to different utilities and services of the platform used on the differente deployable modules (mail, twitter, commons,...)
+*  [Modules](modules/) source code of the different modules of the platform (API Manager, IoTBroker, Control Panel, ...)
+* [Persistence](persistence/) source code for everything related to the persistence in the platform (Mongo as RI Persistence, abstraction services,...)
+* [Quality](quality/) projects, configurations, reports for all quality labours, including automated tests for the ControlPanel UI
+* [Security](security/) source code for everything related to the security in the platform. We include reference implementations based on ConfigDB.
+ 
+ 
+  
+## Getting started with the platform
+
+
+For the quick start with Sofia4Cities platform you can:
+
+
+* Compile and Execute the Plataform in the Development Environment [this way](docs/how-to-execute-windows)
+* You can deploy Sofia4Cities into your own environment with Docker [following these steps](docs/how-to-execute-docker/README.md)
 
 ## Getting help
 
@@ -22,11 +49,11 @@ If you face some troubles with Sofia4Cities platform you can create an issue  in
 
 ## Documentation
 
-Sofia4Cities documentation is a part of Sofia4Cities source code and is located in the [`docs/`](docs) folder. You can find the web version [here](https://github.com/sofia4cities/docs/).
+Sofia4Cities documentation is a part of Sofia4Cities source code and is located in the [`docs/`](docs) folder. 
 
 ## How to contribute
 
-To contribute to Sofia4Cities platform, please visit [How to contribute]({{root_url}}docs/how-to-contribute/index.md) guide.
+To contribute to Sofia4Cities platform, please visit [How to contribute](docs/how-to-contribute/README.md) guide.
 
 ## Where to report issues
 

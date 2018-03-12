@@ -82,13 +82,15 @@ var ApiCreateController = function() {
         apiName = $('#identification').val();
         apiVersion = $('#numversion').val();
         apiEndPoint = $('#id_endpoint');
+        apiSwagger = $('#id_endpoint_swagger');
         
         switch (apiType) {
             case 'iot':
             	apiEndPoint.val(endpoint + "/v" + apiVersion + "/" + apiName);
+//            	apiSwagger.val(endpoint + "/services/management/api-docs?url=/services/management/swagger" + "/v" + apiVersion + "/" + apiName + "/swagger.json");
+            	apiSwagger.val(endpoint + "/services/management/api-docs?url=/services/management/swagger" + "/" + apiName + "/swagger.json");
                 break;
         }
-
         // --- configurar panel operaciones
         ontologySelector = $('#ontology');
         ontologyOperations = $('#operacionesOntologia');
@@ -126,10 +128,7 @@ var ApiCreateController = function() {
     }
 	
 	function isDefaultOp(idOp){
-		if (idOp.endsWith("_GET") || idOp.endsWith("_GETSQL") || 
-			idOp.endsWith("_POST") || idOp.endsWith("_PUT") || 
-			idOp.endsWith("_DELETE") || idOp.endsWith("_DELETEID") || 
-			idOp.endsWith("_GETOPS")){
+		if (idOp.endsWith("_GET") || idOp.endsWith("_POST") || idOp.endsWith("_PUT") || idOp.endsWith("_DELETEID")){
 			return true;
 		} else {
 			return false;
@@ -138,12 +137,9 @@ var ApiCreateController = function() {
 	
     function createOperacionesOntologia () {
         $('#description_GET_label').text("/{id}");
-        $('#description_GETSQL_label').text("?$filter={query}&$targetdb={targetdb}&$queryType={queryType}&$formatResult={formatResult}");
         $('#description_POST_label').text("/");
         $('#description_PUT_label').text("/");
-        $('#description_DELETE_label').text("/");
         $('#description_DELETEID_label').text("/{id}");
-        $('#description_GETOPS_label').text("?$query={query}&$queryType={queryType}");
         $('#ontologyOperations input[type="text"]').val('').show();
     }
     
@@ -336,12 +332,9 @@ var ApiCreateController = function() {
 		var ontology = $("#ontology option:selected").text();
 	    if ((ontology!=null) && (ontology.length!=0)){
             if ((($('#GET').attr('class')=='op_button_selected')&&($("#description_GET").val()== ""))
-        		|| (($('#GETSQL').attr('class')=='op_button_selected')&&($("#description_GETSQL").val()== ""))
         		|| (($('#POST').attr('class')=='op_button_selected')&&($("#description_POST").val()== ""))
         		|| (($('#PUT').attr('class')=='op_button_selected')&&($("#description_PUT").val()== ""))
-        		|| (($('#DELETE').attr('class')=='op_button_selected')&&($("#description_DELETE").val()== ""))
-        		|| (($('#DELETEID').attr('class')=='op_button_selected')&&($("#description_DELETEID").val()== ""))
-        		|| (($('#GETOPS').attr('class')=='op_button_selected')&&($("#description_GETOPS").val()== ""))){
+        		|| (($('#DELETEID').attr('class')=='op_button_selected')&&($("#description_DELETEID").val()== ""))){
             		return false;
             }
 	    } else if (operations.length=0) {
@@ -446,23 +439,6 @@ var ApiCreateController = function() {
                     replaceOperation(operationGET);
                 }
             }
-            if ($('#GETSQL').attr('class')=='op_button_selected'){
-            	var querystringsGETSQL = new Array();
-            	var operationGETSQL = {identification: nameApi + "_GETSQL", description: $('#description_GETSQL').val() , operation:"GET", path:$('#description_GETSQL_label').text(), querystrings: querystringsGETSQL};
-	            querystringparameter = {name: "queryType", dataType: "string", headerType: "query", description: ""};
-	            operationGETSQL.querystrings.push(querystringparameter);
-	            querystringparameter = {name: "targetdb", dataType: "string", headerType: "query", description: ""};
-	            operationGETSQL.querystrings.push(querystringparameter);
-	            querystringparameter = {name: "formatResult", dataType: "string", headerType: "query", description: ""};
-	            operationGETSQL.querystrings.push(querystringparameter);
-	            querystringparameter = {name: "query", dataType: "string", headerType: "query", description: ""};
-	            operationGETSQL.querystrings.push(querystringparameter);	            
-                if (!existOp(operationGETSQL.identification)){
-                	operations.push(operationGETSQL);
-                } else {
-                    replaceOperation(operationGETSQL);
-                }
-            }
             if ($('#POST').attr('class')=='op_button_selected'){
             	var querystringsPOST = new Array();
             	var operationPOST = {identification: nameApi + "_POST", description: $('#description_POST').val() , operation:"POST", path:$('#description_POST_label').text(), querystrings: querystringsPOST};
@@ -485,17 +461,6 @@ var ApiCreateController = function() {
                     replaceOperation(operationPUT);
                 }
             }
-            if ($('#DELETE').attr('class')=='op_button_selected'){
-            	var querystringsDELETE = new Array();
-            	var operationDELETE = {identification: nameApi + "_DELETE", description: $('#description_DELETE').val() , operation:"DELETE", path:$('#description_DELETE_label').text(), querystrings: querystringsDELETE};
-	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
-	            operationDELETE.querystrings.push(querystringparameter);
-                if (!existOp(operationDELETE.identification)){
-                	operations.push(operationDELETE);
-                } else {
-                    replaceOperation(operationDELETE);
-                }	            
-            }
             if ($('#DELETEID').attr('class')=='op_button_selected'){
             	var querystringsDELETEID = new Array();
             	var operationDELETEID = {identification: nameApi + "_DELETEID", description: $('#description_DELETEID').val() , operation:"DELETE", path:$('#description_DELETEID_label').text(), querystrings: querystringsDELETEID};
@@ -505,15 +470,6 @@ var ApiCreateController = function() {
                 	operations.push(operationDELETEID);
                 } else {
                     replaceOperation(operationDELETEID);
-                }
-            }
-            if ($('#GETOPS').attr('class')=='op_button_selected'){
-            	var querystringsGETOPS = new Array();
-            	var operationGETOPS = {identification: nameApi + "_GETOPS", description: $('#description_GETOPS').val() , operation:"GET", path:$('#description_GETOPS_label').text(), querystrings: querystringsGETOPS};
-                if (!existOp(operationGETOPS.identification)){
-                	operations.push(operationGETOPS);
-                } else {
-                    replaceOperation(operationGETOPS);
                 }
             }
             
@@ -615,8 +571,6 @@ var ApiCreateController = function() {
 					
 				}
 			});
-
-	
 		}
 		if (action  === 'delete'){
 			console.log('    |---> Deleting... ' + user + ' with authId:' + authorization );

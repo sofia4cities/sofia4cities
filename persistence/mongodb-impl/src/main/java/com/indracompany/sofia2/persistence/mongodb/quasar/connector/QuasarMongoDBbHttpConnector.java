@@ -13,10 +13,12 @@
  */
 package com.indracompany.sofia2.persistence.mongodb.quasar.connector;
 
+import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
+
 public interface QuasarMongoDBbHttpConnector {
 
-	String queryAsJson(String query, int offset, int limit) throws Exception;
+	String queryAsJson(String query, int offset, int limit) throws DBPersistenceException;
 
-	String queryAsTable(String query, int offset, int limit) throws Exception;
+	String queryAsTable(String query, int offset, int limit) throws DBPersistenceException;
 
 }

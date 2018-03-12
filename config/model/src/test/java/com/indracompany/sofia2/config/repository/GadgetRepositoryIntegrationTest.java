@@ -59,10 +59,9 @@ public class GadgetRepositoryIntegrationTest {
 		if (gadgets.isEmpty()) {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
-			gadget.setDbType("DBC");
 			gadget.setUser(getUserCollaborator());
 			gadget.setPublic(true);
-			gadget.setName("Gadget1");
+			gadget.setIdentification("Gadget1");
 			gadget.setType("Tipo 1");
 
 			repository.save(gadget);

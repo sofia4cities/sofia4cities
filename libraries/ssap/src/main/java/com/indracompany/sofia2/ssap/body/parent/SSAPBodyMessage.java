@@ -13,17 +13,20 @@
  */
 package com.indracompany.sofia2.ssap.body.parent;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyEmptyMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyIndicationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 
@@ -38,12 +41,14 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 	@JsonSubTypes.Type(SSAPBodyQueryMessage.class),
 	@JsonSubTypes.Type(SSAPBodyReturnMessage.class),
 	@JsonSubTypes.Type(SSAPBodyUpdateByIdMessage.class),
-	@JsonSubTypes.Type(SSAPBodyUpdateMessage.class)
+	@JsonSubTypes.Type(SSAPBodyUpdateMessage.class),
+	@JsonSubTypes.Type(SSAPBodySubscribeMessage.class),
+	@JsonSubTypes.Type(SSAPBodyIndicationMessage.class)
 })
 public abstract class SSAPBodyMessage {
-
+	@JsonIgnore
 	public abstract boolean isSessionKeyMandatory();
-
+	@JsonIgnore
 	public abstract boolean isOntologyMandatory();
 
 }

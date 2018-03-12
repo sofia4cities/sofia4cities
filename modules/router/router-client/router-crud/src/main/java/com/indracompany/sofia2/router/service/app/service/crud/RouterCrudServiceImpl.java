@@ -179,6 +179,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
 		final String USER = operationModel.getUser();
+		final String CLIENTPLATFORM = operationModel.getClientPlatformId();
 
 		String OUTPUT="";
 		result.setMessage("OK");
@@ -191,11 +192,13 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 				{
 					if (QUERY_TYPE.equalsIgnoreCase(QueryType.SQLLIKE.name())) {
 						//						OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
-						OUTPUT = queryToolService.querySQLAsJson(USER, ontologyName, BODY, 0);
+						OUTPUT = (!"".equals(CLIENTPLATFORM))?queryToolService.querySQLAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0):
+															  queryToolService.querySQLAsJson(USER, ontologyName, BODY, 0);
 					}
 					else if (QUERY_TYPE.equalsIgnoreCase(QueryType.NATIVE.name())) {
 						//						OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
-						OUTPUT = queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0,0);
+						OUTPUT = (!"".equals(CLIENTPLATFORM))?queryToolService.queryNativeAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0, 0):
+															  queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0,0);
 					}
 					else {
 						OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
@@ -225,19 +228,20 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	
 		try {
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
-				 result =query(operationModel);
+				 result = query(operationModel);
 			}
 			
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				result =insert(operationModel);
+				result = insert(operationModel);
 			}
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
-				result =update(operationModel);
+				result = update(operationModel);
 			}
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
-				result =delete(operationModel);
+				result = delete(operationModel);
 			}
 		} catch (Exception e) {
+			log.error("error executin operation model ", e);
 		}
 		return result;
 	}

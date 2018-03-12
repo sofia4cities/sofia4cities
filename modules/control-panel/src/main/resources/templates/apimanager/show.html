@@ -205,7 +205,7 @@
 							                                             <div>
 							                                                 <div id="divGET" class="op_div">
 							                                                    <div id="buttonOperacionGET" class="op_button_div">
-							                                                        <input id="GET" class="op_button" style="width: 80px;" type="button" value="GET" name="GET" th:value="#{apimanager.GET}" />
+							                                                        <input id="GET" class="op_button" style="width: 80px;" type="button" value="GET" name="GET" th:value="#{apimanager.GET.button}" />
 							                                                    </div>
 							                                                    <div id="descOperationGET" class="op_desc_div" style="display:none">
 							                                                        <label id ="description_GET_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GET"></label>
@@ -214,21 +214,9 @@
 							                                                        <input id="description_GET" name="description_GET" class="form-control" type="text" maxlength="250"/>
 							                                                    </div>
 							                                                 </div>
-							                                                 <div id="operaciones-invalidas-odatav4">
-							                                                     <div id="divGETSQL" class="op_div">
-							                                                        <div id="buttonOperationGETSQL" class="op_button_div">
-							                                                            <input id="GETSQL" class="op_button" style="width: 80px;" type="button" value="GETSQL" name="GETSQL" th:value="#{apimanager.GETSQL}" />
-							                                                        </div>
-							                                                        <div id="descOperationGETSQL" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_GETSQL_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETSQL"></label></b>
-							                                                            <br/>
-							                                                            <b><label id ="description_operacion_GETSQL" class="description" for="description_GETSQL" th:text="#{apimanager.description}"></label></b>
-							                                                            <input id="description_GETSQL" name="description_GETSQL" class="form-control" type="text" maxlength="250"/>
-							                                                        </div>
-							                                                     </div>
-							                                                     <div id="divPOST" class="op_div">
+						                                                     <div id="divPOST" class="op_div">
 							                                                        <div id="buttonOperationPOST" class="op_button_div">
-							                                                            <input id="POST" class="op_button" style="width: 80px;" type="button" value="POST" name="POST" th:value="#{apimanager.POST}" />
+							                                                            <input id="POST" class="op_button" style="width: 80px;" type="button" value="POST" name="POST" th:value="#{apimanager.POST.button}" />
 							                                                        </div>
 							                                                        <div id="descOperationPOST" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_POST_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_POST"></label></b>
@@ -239,7 +227,7 @@
 							                                                     </div>
 							                                                     <div id="divPUT" class="op_div">
 							                                                        <div id="buttonOperationPUT" class="op_button_div">
-							                                                            <input id="PUT" class="op_button" style="width: 80px;" type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT}" />
+							                                                            <input id="PUT" class="op_button" style="width: 80px;" type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT.button}" />
 							                                                        </div>
 							                                                        <div id="descOperationPUT" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_PUT_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_PUT"></label></b>
@@ -248,20 +236,9 @@
 							                                                            <input id="description_PUT" name="description_PUT" class="form-control" type="text" maxlength="250"/>
 							                                                        </div>
 							                                                     </div>
-							                                                     <div id="divDELETE" class="op_div">
-							                                                        <div id="buttonOperationDELETE" class="op_button_div">
-							                                                            <input id="DELETE" class="op_button" style="width: 80px;" type="button" value="DELETE" name="DELETE" th:value="#{apimanager.DELETE}" />
-							                                                        </div>
-							                                                        <div id="descOperationDELETE" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_DELETE_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETE"></label></b>
-							                                                            <br/>
-							                                                            <b><label id ="description_operacion_DELETE" class="description" for="description_DELETE" th:text="#{apimanager.description}"></label></b>
-							                                                            <input id="description_DELETE" name="description_DELETE" class="form-control" type="text" maxlength="250"/>
-							                                                        </div>
-							                                                     </div>
 							                                                     <div id="divDELETEID" class="op_div">
 							                                                        <div id="buttonOperationDELETEID" class="op_button_div">
-							                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETEID}" />
+							                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETEID.button}" />
 							                                                        </div>
 							                                                        <div id="descOperationDELETEID" class="op_desc_div" style="display:none">
 							                                                            <b><label id ="description_DELETEID_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
@@ -270,25 +247,13 @@
 							                                                            <input id="description_DELETEID" name="description_DELETEID" class="form-control" type="text" maxlength="250"/>
 							                                                        </div>
 							                                                     </div>
-							                                                     <div id="divGETOPS" class="op_div">
-							                                                        <div id="buttonOperationGETOPS" class="op_button_div">
-							                                                            <input id="GETOPS" class="op_button" style="width: 80px;" type="button" value="GETOPS" name="GETOPS" th:value="#{apimanager.GETOPS}" />
-							                                                        </div>
-							                                                        <div id="descOperationGETOPS" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_GETOPS_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GETOPS"></label></b>
-							                                                            <br/>
-							                                                            <b><label id ="description_operacion_GETOPS" class="description" for="description_GETOPS" th:text="#{apimanager.description}"></label></b>
-							                                                            <input id="description_GETOPS" name="description_GETOPS" class="form-control" type="text" maxlength="250"/>
-							                                                        </div>
-							                                                     </div>
-								                                                 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_GETSQL')}
-								                                                 													AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')}
-								                                                 													AND ${!#strings.endsWith(operation.identification,'_DELETE')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
+								                                                 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_POST')} 
+								                                                 													AND ${!#strings.endsWith(operation.identification,'_PUT')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
 								                                                    <div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" style="margin-Top:30px;margin-bottom: 30px">
 								                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}"
 								                                                        		class="op_button_selected"
 								                                                        		style="width: 110px; margin-left: 25px;" type="button" 
-								                                                        		value="CUSTOM (query)" 
+								                                                        		th:value="#{apimanager.GETCUSTOM.button}" 
 								                                                        		th:name="${(operation.identification + 'CUSTOMSQL')}" 
 								                                                        		th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'"/>
 								                                                    </div>
@@ -301,7 +266,6 @@
 								                                                    <span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px;" th:text="${operation.description}"/>
 								                                                 </div>
 							                                                 </div>
-							                                             </div>
 							                                         </fieldset>
 							                                     </div>
 							                                     <input type="hidden" id="operationsObject" name="operationsObject"/>

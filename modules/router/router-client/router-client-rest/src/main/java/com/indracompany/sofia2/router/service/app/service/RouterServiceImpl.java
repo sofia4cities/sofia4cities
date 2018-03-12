@@ -22,6 +22,7 @@ import com.indracompany.sofia2.router.client.RouterClient;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 
 @Service("routerServiceImpl")
 public class RouterServiceImpl implements RouterService, RouterClient<NotificationModel,OperationResultModel >{
@@ -29,31 +30,32 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 	@Value("${sofia2.flowengine.home.base:http://localhost:19100/router/router/}")
 	private String routerStandaloneURL;
 
-	
+
+	@Override
 	public OperationResultModel execute(NotificationModel input) {
-		RestTemplate restTemplate = new RestTemplate();
+		final RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
-		
-		OperationModel model = input.getOperationModel();
-		String operation = model.getOperationType().name();
-		
+
+		final OperationModel model = input.getOperationModel();
+		final String operation = model.getOperationType().name();
+
 		OperationResultModel quote=new OperationResultModel();
-		
+
 		if (operation.equalsIgnoreCase("POST") || operation.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
 			quote = restTemplate.postForObject(routerStandaloneURL+"/insert",input, OperationResultModel.class);
 		}
 		else if  (operation.equalsIgnoreCase("PUT") || operation.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
 			restTemplate.put(routerStandaloneURL+"/update", input);
 		}
-		
+
 		else if  (operation.equalsIgnoreCase("DELETE") || operation.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
 			restTemplate.delete(routerStandaloneURL+"/delete",input);
 		}
-		
+
 		else if  (operation.equalsIgnoreCase("GET") || operation.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
 			quote = restTemplate.postForObject(routerStandaloneURL+"/query",input, OperationResultModel.class);
 		}
-		
+
 		//OperationResultModel quote = restTemplate.postForObject(routerStandaloneURL,input, OperationResultModel.class);
 		System.out.println(quote.toString());
 		return quote;
@@ -79,7 +81,7 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 		return execute(model);
 	}
 
-	
+
 
 	public String getRouterStandaloneURL() {
 		return routerStandaloneURL;
@@ -89,8 +91,14 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 		this.routerStandaloneURL = routerStandaloneURL;
 	}
 
-	
+	@Override
+	public OperationResultModel suscribe(SuscriptionModel model) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	
+
+
+
 
 }
