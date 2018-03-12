@@ -85,6 +85,7 @@ public class MQTTClient {
 					final String response = new String(message.getPayload());
 					log.debug("Message arrived " + response);
 					completableFutureMessage.complete(response);
+					completableFutureMessage = new CompletableFuture<>();
 				}
 			});
 
@@ -96,7 +97,6 @@ public class MQTTClient {
 
 			// GET JOIN RESPONSE
 			String joinResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
-			completableFutureMessage = new CompletableFuture<>();
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(joinResponse);
 			if (response.getSessionKey() != null)
 				this.sessionKey = response.getSessionKey();
@@ -125,6 +125,18 @@ public class MQTTClient {
 		return this.sessionKey;
 	}
 
+	/**
+	 * Publishes a message through MQTT session.
+	 *
+	 * @param ontology
+	 *            Ontology associated with the message
+	 * @param jsonData
+	 *            Ontology message payload
+	 * @param timeout
+	 *            Time in seconds for waiting response from Broker
+	 * 
+	 */
+
 	@SuppressWarnings("unchecked")
 	public void publish(String ontology, String jsonData, int timeout) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -148,13 +160,12 @@ public class MQTTClient {
 			log.info("Publishing message for insert to IoT broker...");
 
 			String insertResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
-			completableFutureMessage = new CompletableFuture<>();
+
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(insertResponse);
-			if(response.getBody().isOk())
+			if (response.getBody().isOk())
 				log.info("Message published");
 			else
 				log.error("Could not publish message");
-			
 
 		} catch (JsonProcessingException e) {
 			log.error("Could not read json data, invalid format");
