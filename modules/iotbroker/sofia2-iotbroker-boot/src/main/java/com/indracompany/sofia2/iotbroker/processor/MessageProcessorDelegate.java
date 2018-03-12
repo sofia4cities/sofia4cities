@@ -18,7 +18,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -30,6 +29,7 @@ import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaExceptio
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
@@ -50,11 +50,8 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	@Autowired
 	List<MessageTypeProcessor> processors;
 
-	@Autowired
-	private ApplicationContext context;
-
 	@Override
-	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message) {
+	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message, GatewayInfo info) {
 
 		// TODO: PRE-PROCESSORS
 		// DONE: PROCESS
@@ -112,13 +109,13 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	}
 
 	@Override
-	public String process(String message) {
+	public String process(String message, GatewayInfo info) {
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 		SSAPMessage request = null;
 
 		try {
 			request = SSAPJsonParser.getInstance().deserialize(message);
-			response = this.process(request);
+			response = this.process(request, info);
 		} catch (final SSAPParseException e) {
 			response = SSAPUtils.generateErrorMessage(request, SSAPErrorCode.PROCESSOR, "Request message is not parseable" + e.getMessage());
 		}
