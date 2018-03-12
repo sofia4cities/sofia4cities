@@ -46,7 +46,7 @@ public class RestSwaggerReader {
 	public static String SWAGGER_VERSION = "2.0";
 
 	public static String INFO_VERSION = "Apache 2.0 License";
-	public static String INFO_TITLE = "Sofia2Open API Manager";
+	public static String INFO_TITLE = "Sofia2Cities API Manager";
 	public static String INFO_DESCRIPTION = "Select4Cities ";
 
 	public static String LICENSE_NAME = "1.0.0";
@@ -54,7 +54,7 @@ public class RestSwaggerReader {
 	//public static String BASE_PATH = "/api";
 
 	public static String CONTACT_NAME = "The Sofia2 Select4Cities Team";
-	public static String CONTACT_URL = "http://sofia2.com";
+	public static String CONTACT_URL = "https://www.sofia4cities.com";
 	public static String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
 
 	public static String SCHEMES = "http";
