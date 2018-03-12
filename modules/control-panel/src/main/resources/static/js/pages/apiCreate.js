@@ -63,7 +63,7 @@ var ApiCreateController = function() {
                 success: function(data) {
                     if(data != null && data != "") {
                         $('#numversion').val(data);
-                        createOperacionesOntologia ();
+                        createOperacionesOntologia();
                         // VISUAL-UPDATE
                         configurarApi();
                     }
@@ -135,7 +135,8 @@ var ApiCreateController = function() {
 		}
 	}
 	
-    function createOperacionesOntologia () {
+    function createOperacionesOntologia() {
+		console.log('createOperacionesOntologia() -->');
         $('#description_GET_label').text("/{id}");
         $('#description_POST_label').text("/");
         $('#description_PUT_label').text("/");
@@ -143,7 +144,7 @@ var ApiCreateController = function() {
         $('#ontologyOperations input[type="text"]').val('').show();
     }
     
-    function limpiarOperacionesOntologia () {
+    function limpiarOperacionesOntologia() {
         // desactivar operaciones
         $('#ontologyOperations input.op_button_selected').removeClass('op_button_selected').addClass('op_button');
         // eliminar descripciones y ocultarlas
