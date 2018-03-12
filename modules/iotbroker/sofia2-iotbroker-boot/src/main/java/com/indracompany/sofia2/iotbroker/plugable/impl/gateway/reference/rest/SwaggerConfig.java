@@ -42,7 +42,8 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest"))
+				//				.apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest"))
+				.apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.iotbroker"))
 				.paths(PathSelectors.any())
 				.build()
 				//				.host(host)

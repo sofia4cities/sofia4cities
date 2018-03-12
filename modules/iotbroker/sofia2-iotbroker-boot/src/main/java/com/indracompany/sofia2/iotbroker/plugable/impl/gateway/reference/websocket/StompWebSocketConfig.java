@@ -31,10 +31,7 @@ public class StompWebSocketConfig extends AbstractWebSocketMessageBrokerConfigur
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		//		config.enableStompBrokerRelay("/topic/message")
-		//		.setRelayHost("localhost")
-		//		.setRelayPort(1884);
-		config.enableSimpleBroker("/topic/message");
+		config.enableSimpleBroker("/topic/message", "/topic/subscription");
 		config.setApplicationDestinationPrefixes("/stomp");
 	}
 
@@ -43,41 +40,4 @@ public class StompWebSocketConfig extends AbstractWebSocketMessageBrokerConfigur
 		registry.addEndpoint("/message");
 		registry.addEndpoint("/message").setAllowedOrigins("*").withSockJS();
 	}
-
-	//	@Bean
-	//	public MessagingTemplate messageTemplate() {
-	//		final MessageChannel m = new MessageChannel() {
-	//
-	//			@Override
-	//			public boolean send(Message<?> message, long timeout) {
-	//				// TODO Auto-generated method stub
-	//				return false;
-	//			}
-	//
-	//			@Override
-	//			public boolean send(Message<?> message) {
-	//				// TODO Auto-generated method stub
-	//				return false;
-	//			}
-	//		};
-	//
-	//		final MessagingTemplate messagingTemplate = new MessagingTemplate(m);
-	//
-	//		MessageChannel defaultDestination = new MessageChannel() {
-	//
-	//			@Override
-	//			public boolean send(Message<?> message, long timeout) {
-	//				// TODO Auto-generated method stub
-	//				return false;
-	//			}
-	//
-	//			@Override
-	//			public boolean send(Message<?> message) {
-	//				// TODO Auto-generated method stub
-	//				return false;
-	//			}
-	//		};
-	//		messagingTemplate.setDefaultDestination(defaultDestination );
-	//		return messagingTemplate;
-	//	}
 }

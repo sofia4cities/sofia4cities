@@ -86,7 +86,6 @@ public class MessageProcessorDelegate implements MessageProcessor {
 				response.setDirection(SSAPMessageDirection.RESPONSE);
 				response.setMessageId(message.getMessageId());
 				response.setMessageType(message.getMessageType());
-				//				response.setOntology(message.getOntology());
 			}
 
 		} catch (final SSAPProcessorException e) {
@@ -132,7 +131,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 	}
 
-	public Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
+	private Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
 	{
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 
@@ -171,7 +170,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 	}
 
-	public MessageTypeProcessor proxyProcesor(SSAPMessage<? extends SSAPBodyMessage> message)
+	private MessageTypeProcessor proxyProcesor(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws SSAPProcessorException {
 
 		if (null == message.getMessageType()) {

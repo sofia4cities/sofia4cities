@@ -28,8 +28,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
+import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
 import io.moquette.BrokerConstants;
 import io.moquette.interception.AbstractInterceptHandler;
@@ -66,13 +68,14 @@ public class MoquetteBroker {
 	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.store:moquette_store.mapdb}")
 	private String store;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.outbound_topic:}")
+	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.outbound_topic:/topic/message}")
 	private String outbound_topic;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.store:moquette_store.inbound_topic}")
+	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.inbound_topic:/queue/message}")
 	private String inbound_topic;
 
-
+	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.subscription_topic:/topic/subscription}")
+	private String subscription_topic;
 
 	@Autowired
 	protected MessageProcessor processor;
@@ -80,6 +83,8 @@ public class MoquetteBroker {
 	private final Server server = new Server();
 	private Properties m_properties;
 
+	@Autowired
+	GatewayNotifier subscriptor;
 
 	public Server getServer() {
 		return server;
@@ -96,7 +101,6 @@ public class MoquetteBroker {
 		public void onPublish(InterceptPublishMessage msg) {
 			final ByteBuf byteBuf = msg.getPayload();
 			final String playload = new String(ByteBufUtil.getBytes(byteBuf), Charset.forName("UTF-8"));
-			final SSAPJsonParser parser = new SSAPJsonParser();
 			final String response = MoquetteBroker.this.processor.process(playload);
 
 			final MqttPublishMessage message = MqttMessageBuilders.publish()
@@ -107,13 +111,31 @@ public class MoquetteBroker {
 					.build();
 
 			MoquetteBroker.this.getServer().internalPublish(message, msg.getClientID());
-			System.out.println(response);
 		}
 	}
 
 	@PostConstruct
 	public void init() {
 		try {
+
+			subscriptor.addSubscriptionListener("mqtt_gateway",
+					(s) ->{
+						String playload="";
+						try {
+							playload = SSAPJsonParser.getInstance().serialize(s);
+						} catch (final SSAPParseException e) {
+							log.error("Error serializing indicator message" + e.getMessage());
+						}
+						final MqttPublishMessage message = MqttMessageBuilders.publish()
+								.topicName(subscription_topic + "/" + s.getSessionKey())
+								.retained(false)
+								.qos(MqttQoS.EXACTLY_ONCE)
+								.payload(Unpooled.copiedBuffer(playload.getBytes()))
+								.build();
+
+						MoquetteBroker.this.getServer().internalPublish(message, s.getSessionKey());
+					});
+
 
 			final Properties brokerProperties = new Properties();
 			brokerProperties.put(BrokerConstants.PERSISTENT_STORE_PROPERTY_NAME, store);

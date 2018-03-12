@@ -51,10 +51,9 @@ sofia2: #Config Sofia2 specific
         host: localhost
         store: moquette_store_bin.mapdb
         outbound_topic: /topic/message
+        subscription_topic: /topic/subscription
         inbound_topic: /queue/message
       rest:
         enable: true
-        swaggerhost: localhost
-   
-      
+        swaggerhost: localhost      
   

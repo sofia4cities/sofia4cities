@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.websocket;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.messaging.MessageHeaders;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
@@ -37,6 +40,8 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 		)
 @Controller
 public class StompWebSocketHandler {
+	@Autowired
+	GatewayNotifier subscriptor;
 
 	@Autowired
 	MessageProcessor processor;
@@ -44,12 +49,17 @@ public class StompWebSocketHandler {
 	@Autowired
 	SimpMessagingTemplate messagingTemplate;
 
-	//public void handleChat(@Payload ChatMessage message, @DestinationVariable("chatRoomId") String chatRoomId, MessageHeaders messageHeaders, Principal user) {
+	@PostConstruct
+	public void init() {
+		subscriptor.addSubscriptionListener("stomp_gateway",
+				(s) -> {
+					messagingTemplate.convertAndSend("/topic/subscription/" + s.getSessionKey(), s);
+				});
+	}
 
 	@MessageMapping("/message/{token}")
 	public void handleConnect(@Payload SSAPMessage<SSAPBodyJoinMessage> message, @DestinationVariable("token") String token, MessageHeaders messageHeaders) throws MessagingException, JsonProcessingException {
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(message);
-		messagingTemplate.setSendTimeout(1000);
 		final ObjectMapper mapper = new ObjectMapper();
 		messagingTemplate.convertAndSend("/topic/message/" + token, response);
 
