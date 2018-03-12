@@ -99,7 +99,7 @@ public class DeviceController {
 		this.pupulateClientList(model, this.clientPlatformService.getAllClientPlatformByCriteria(utils.getUserId(),
 				identification, ontologies));
 
-		return "/devices/list";
+		return "devices/list";
 
 	}
 
@@ -139,15 +139,15 @@ public class DeviceController {
 			ClientPlatform device = clientPlatformService.getByIdentification(id);
 			if (!this.utils.getUserId().equals(device.getUser().getUserId()) && !utils.isAdministrator()) {
 				utils.addRedirectMessage("device.delete.error", redirect);
-				return "/controlpanel/devices/list";
+				return "controlpanel/devices/list";
 			}
 			this.entityDeletionService.deleteClient(id);
 		} catch (Exception e) {
 			utils.addRedirectMessage("device.delete.error", redirect);
-			return "/controlpanel/devices/list";
+			return "controlpanel/devices/list";
 		}
 
-		return "/controlpanel/devices/list";
+		return "controlpanel/devices/list";
 	}
 
 	@GetMapping(value = "/create")
@@ -156,7 +156,7 @@ public class DeviceController {
 		model.addAttribute("ontologies",
 				ontologyService.getOntologiesWithDescriptionAndIdentification(utils.getUserId(), null, null));
 		model.addAttribute("accessLevel", clientPlatformService.getClientPlatformOntologyAccessLevel());
-		return "/devices/create";
+		return "devices/create";
 	}
 
 	@PostMapping(value = { "/create" })
