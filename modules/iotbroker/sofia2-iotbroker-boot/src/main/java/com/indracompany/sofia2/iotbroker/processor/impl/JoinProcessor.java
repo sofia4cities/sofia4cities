@@ -66,7 +66,17 @@ public class JoinProcessor implements MessageTypeProcessor {
 		}
 
 		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(), join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance());
-		session.ifPresent( s -> response.setSessionKey(s.getSessionKey()) );
+		session.ifPresent( s -> {
+			response.setSessionKey(s.getSessionKey());
+			try {
+				response.getBody().setData(mapper.readTree("{\"sessionKey\":\""+s.getSessionKey()+"\"}"));
+			} catch (final IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+		} );
 
 		if ( !StringUtils.isEmpty(response.getSessionKey()) ) {
 			response.setDirection(SSAPMessageDirection.RESPONSE);
