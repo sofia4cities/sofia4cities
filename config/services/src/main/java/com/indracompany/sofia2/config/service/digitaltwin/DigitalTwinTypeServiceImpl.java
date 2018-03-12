@@ -1,3 +1,4 @@
+
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -64,7 +66,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Override
 	public DigitalTwinType getDigitalTwinTypeById(String id) {
 		return digitalTwinTypeRepo.findById(id);
@@ -140,7 +142,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 			String[] actions = httpServletRequest.getParameterValues("acciones");
 			String[] events = httpServletRequest.getParameterValues("eventos");
 			String logic = httpServletRequest.getParameter("logic");
-			
+
 			Set<PropertyDigitalTwinType> propertyDigitalTwinTypes = new HashSet<>();
 			Set<ActionsDigitalTwinType> actionDigitalTwinTypes = new HashSet<>();
 			Set<EventsDigitalTwinType> eventDigitalTwinTypes = new HashSet<>();
@@ -206,6 +208,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 				log.error("Invalid user");
 			}				
 			
+
 		} catch (Exception e) {
 			throw new OntologyServiceException("Problems creating the digital twin type", e);
 		}

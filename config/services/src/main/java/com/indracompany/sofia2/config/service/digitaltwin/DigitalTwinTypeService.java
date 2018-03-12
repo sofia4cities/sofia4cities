@@ -35,4 +35,5 @@ public interface DigitalTwinTypeService {
 	void getDigitalTwinToUpdate(Model model, String id);
 	void updateDigitalTwinType(DigitalTwinType digitalTwinType, HttpServletRequest httpServletRequest);
 	public void deleteDigitalTwinType(DigitalTwinType digitalTwinType);
+
 }
