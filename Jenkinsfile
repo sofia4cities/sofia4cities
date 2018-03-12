@@ -34,9 +34,6 @@ pipeline {
             }
 
 	   		steps {
-		    	// Only compile and generate artifacts
-	        	sh "mvn clean install -DskipTests"	   		
-	   		
 	   			// Generates persistence images only if 
 	   			// they are not present in local Docker registry		   		
 	   		    dir("${env.IMAGEGENPATH}") {
@@ -47,7 +44,10 @@ pipeline {
 				dir("${env.DOCKERCONFIG}") {
 					sh "docker-compose up -d || true"
 				}
-					
+				
+		    	// Only compile and generate artifacts
+	        	sh "mvn clean install -DskipTests"	   		
+	   							
 				// Load Sofia2 CDB and BDTR					
 	   			dir("${env.SYSTEMCONFIG}") {
 					// Wait until configdb and realtimedb are up and running
