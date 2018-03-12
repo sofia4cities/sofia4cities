@@ -158,7 +158,7 @@ public class MoquetteBroker {
 			try {
 				Thread.sleep(2000);
 			} catch (final InterruptedException e) {
-				// TODO Auto-generated catch block
+				Thread.currentThread().interrupt();
 				e.printStackTrace();
 			}
 
@@ -171,10 +171,6 @@ public class MoquetteBroker {
 
 	@PreDestroy
 	public  void stopServer()  {
-		if (this.server == null) {
-			log.warn("The Moquette server has already been stopped.");
-			return;
-		}
 		log.info("Stopping Moquette server...");
 		try {
 			this.server.stopServer();
