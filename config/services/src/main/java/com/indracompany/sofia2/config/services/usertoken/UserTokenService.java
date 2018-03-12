@@ -11,23 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.repository;
+package com.indracompany.sofia2.config.services.usertoken;
 
 import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 
-public interface UserTokenRepository extends JpaRepository<UserToken, String> {
-	
-	List<UserToken> findByUser(User user);
+public interface UserTokenService {
 
-	UserToken findByToken(String token);
-	
-	UserToken findById(String id);
+	public UserToken generateToken(User user) throws Exception;
 
-	UserToken findByUserAndToken(String userId, String token);
+	public UserToken getToken(User user);
+
+	public UserToken getTokenByToken(String token);
+
+	public UserToken getTokenByID(String id);
+
+	public void deactivateToken(UserToken token, boolean active);
+
+	List<UserToken> getTokens(User user);
 
 }

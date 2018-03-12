@@ -108,7 +108,7 @@ public class ApiManagerHelper {
 		uiModel.addAttribute("endpointBase", apiManagerBaseUrl);
 		
 		uiModel.addAttribute("categories", Api.ApiCategories.values());
-		uiModel.addAttribute("operations", new ArrayList());
+		uiModel.addAttribute("operations", new ArrayList<String>());
 		uiModel.addAttribute("ontologies", ontologies);
 		uiModel.addAttribute("api", new Api());
 	}
