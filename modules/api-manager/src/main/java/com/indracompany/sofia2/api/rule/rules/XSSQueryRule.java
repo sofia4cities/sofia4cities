@@ -37,11 +37,6 @@ import com.indracompany.sofia2.api.service.api.ApiSecurityService;
 @Rule
 public class XSSQueryRule extends DefaultRuleBase {
 	
-	@Autowired
-	private ApiSecurityService apiSecurityService;
-	@Autowired
-	private ApiManagerService apiManagerService;
-
 	@Priority
 	public int getPriority() {
 		return 5;

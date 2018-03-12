@@ -55,6 +55,12 @@ public class StompWebSocketHandler {
 				(s) -> {
 					messagingTemplate.convertAndSend("/topic/subscription/" + s.getSessionKey(), s);
 				});
+
+		subscriptor.addCommandListener("stomp_gateway",
+				(c) -> {
+					messagingTemplate.convertAndSend("/topic/command/" + c.getSessionKey(), c);
+					return new SSAPMessage<>();
+				});
 	}
 
 	@MessageMapping("/message/{token}")

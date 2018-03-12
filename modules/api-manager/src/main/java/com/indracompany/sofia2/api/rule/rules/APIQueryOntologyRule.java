@@ -41,7 +41,7 @@ import com.indracompany.sofia2.config.model.User;
 
 @Component
 @Rule
-public class OntologyRule extends DefaultRuleBase {
+public class APIQueryOntologyRule extends DefaultRuleBase {
 	
 	@Autowired
 	private ApiSecurityService apiSecurityService;

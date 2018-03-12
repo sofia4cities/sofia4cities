@@ -61,11 +61,8 @@ public class InitialFactsRule {
 		String contentTypeInput= RequestDumpUtil.getContentType(request);
 		String contentTypeOutput= Optional.ofNullable(RequestDumpUtil.getValueFromRequest("accept", request)).orElse("");
 
-		String headerToken = request.getHeader(ApiServiceInterface.AUTHENTICATION_HEADER);
-		if (headerToken == null) {
-			headerToken = request.getParameter(ApiServiceInterface.AUTHENTICATION_HEADER);
-		}
-
+		String headerToken = RequestDumpUtil.getValue(ApiServiceInterface.AUTHENTICATION_HEADER, request);
+		
 		headerToken = Optional.ofNullable(headerToken).orElse("");
 		
 		String method = request.getMethod();
