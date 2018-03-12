@@ -80,8 +80,12 @@ public class ApiManagerHelper {
 	@Autowired
 	AppWebUtils utils;
 
-	@Value("${apimanager.services.baseUrl:http://localhost:19090}${apimanager.services.apiEndpoint.path:}")
+	@Value("${apimanager.services.baseUrl:http://localhost:19090/api-manager}")
 	private String apiManagerBaseUrl;
+	
+	@Value("${apimanager.services.api:/api-manager/services}")
+	private String apiServices;
+	
 	
 	// To populate the List Api Form
 	public void populateApiManagerListForm(Model uiModel) {
@@ -106,6 +110,7 @@ public class ApiManagerHelper {
 		}
 		
 		uiModel.addAttribute("endpointBase", apiManagerBaseUrl);
+		uiModel.addAttribute("apiServices", apiServices);
 		
 		uiModel.addAttribute("categories", Api.ApiCategories.values());
 		uiModel.addAttribute("operations", new ArrayList<String>());
@@ -126,6 +131,8 @@ public class ApiManagerHelper {
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
 		
+		uiModel.addAttribute("endpointBase", apiManagerBaseUrl);
+		uiModel.addAttribute("apiServices", apiServices);
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
@@ -155,6 +162,8 @@ public class ApiManagerHelper {
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
 
+		uiModel.addAttribute("endpointBase", apiManagerBaseUrl);
+		uiModel.addAttribute("apiServices", apiServices);
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
 		uiModel.addAttribute("api", api);
@@ -333,6 +342,7 @@ public class ApiManagerHelper {
 		
 		model.addAttribute("api", api);
 		model.addAttribute("endpointBase", apiManagerBaseUrl);
+		model.addAttribute("apiServices", apiServices);
 	}
 
 }

@@ -177,8 +177,8 @@
 															</div>
 															<div class="col-md-6 col-sm-6 col-xs-12">
 																<div class="form-group">
-								                                    <label class="description notAnimate" id="id_endpoint_swagger_label" for="id_endpoint_swagger" th:text="#{apimanager.endpoint}">EndPoint</label>
-								                                    <p class="form-control-static-block bold">EndPoint Swagger</p>
+								                                    <label class="description notAnimate" id="id_endpoint_swagger_label" for="id_endpoint_swagger" >EndPoint Swagger</label>
+								                                    <p class="form-control-static-block bold" th:text="${endpointBase} + '/api-ui.html?url='+ ${apiServices} +'/management/swagger/' + ${api.identification} + '/swagger.json'">EndPoint Swagger</p>
 							                                    </div>
 															</div>
 														</div>
