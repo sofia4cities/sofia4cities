@@ -38,10 +38,6 @@ import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Luis Miguel Gracia
- */
 @Slf4j
 @Component
 @ConditionalOnProperty(name = "sofia2.init.mongodb")
@@ -60,13 +56,16 @@ public class InitMongoDB {
 	OntologyRepository ontologyRepository;
 	@Autowired
 	UserRepository userCDBRepository;
+	
+	private final String USER_DIR = "user.dir";
 
 	@PostConstruct
 	@Test
 	public void init() {
+		String userDir = System.getProperty(USER_DIR);
 		init_AuditGeneral();
-		init_RestaurantsDataSet();
-		init_HelsinkiPopulationDataSet();
+		init_RestaurantsDataSet(userDir);
+		init_HelsinkiPopulationDataSet(userDir);
 	}
 
 	private User getUserDeveloper() {
@@ -74,16 +73,17 @@ public class InitMongoDB {
 		return userCollaborator;
 	}
 
-	public void init_RestaurantsDataSet() {
+	public void init_RestaurantsDataSet(String path) {
 		try {
 			log.info("init RestaurantsDataSet");
 			if (basicOps.count("Restaurants") == 0) {
 				Runtime r = Runtime.getRuntime();
 				String command = null;
+				
 				if (OSDetector.isWindows()) {
-					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/restaurants-dataset.json";
+					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file "+path+"/src/main/resources/restaurants-dataset.json";
 				} else {
-					command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/restaurants-dataset.json";
+					command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file "+path+"/src/main/resources/restaurants-dataset.json";
 
 				}
 				r.exec(command);
@@ -113,16 +113,16 @@ public class InitMongoDB {
 		}
 	}
 
-	public void init_HelsinkiPopulationDataSet() {
+	public void init_HelsinkiPopulationDataSet(String path) {
 		try {
 			log.info("init init_HelsinkiPopulationDataSet");
 			if (basicOps.count("HelsinkiPopulation") == 0) {
 				Runtime r = Runtime.getRuntime();
 				String command = null;
 				if (OSDetector.isWindows()) {
-					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file s:/sources/sofia2-s4c/config/init/src/main/resources/HelsinkiPopulation-dataset.json";
+					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file "+path+"/src/main/resources/HelsinkiPopulation-dataset.json";
 				} else {
-					command = "mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file /home/rtvachet/gitRepos/s4c_sofia2/config/init/src/main/resources/HelsinkiPopulation-dataset.json";
+					command = "mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file "+path+"/src/main/resources/HelsinkiPopulation-dataset.json";
 
 				}
 				r.exec(command);
