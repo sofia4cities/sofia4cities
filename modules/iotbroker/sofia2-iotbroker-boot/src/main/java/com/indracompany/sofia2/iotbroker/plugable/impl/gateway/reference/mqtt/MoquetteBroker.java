@@ -16,8 +16,6 @@ package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.mqtt;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -35,7 +33,7 @@ import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
 import io.moquette.BrokerConstants;
 import io.moquette.interception.AbstractInterceptHandler;
-import io.moquette.interception.InterceptHandler;
+//import io.moquette.interception.InterceptHandler;
 import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.server.Server;
 import io.moquette.server.config.MemoryConfig;
@@ -81,7 +79,6 @@ public class MoquetteBroker {
 	protected MessageProcessor processor;
 
 	private final Server server = new Server();
-	private Properties m_properties;
 
 	@Autowired
 	GatewayNotifier subscriptor;
@@ -151,7 +148,6 @@ public class MoquetteBroker {
 
 
 			final MemoryConfig memoryConfig = new MemoryConfig(brokerProperties);
-			final List<? extends InterceptHandler> messsageHandlers = Collections.singletonList(new PublisherListener());
 			server.startServer(memoryConfig);
 			server.addInterceptHandler(new PublisherListener());
 
@@ -159,12 +155,11 @@ public class MoquetteBroker {
 				Thread.sleep(2000);
 			} catch (final InterruptedException e) {
 				Thread.currentThread().interrupt();
-				e.printStackTrace();
+				log.warn("Error initializing MoquetteBroker", e);
 			}
 
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error initializing MoquetteBroker", e);
 		}
 
 	}
