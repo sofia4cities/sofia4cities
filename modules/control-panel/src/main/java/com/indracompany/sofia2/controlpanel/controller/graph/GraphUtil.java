@@ -73,15 +73,18 @@ public class GraphUtil {
 	@Value("${sofia2.urls.iotbroker}")
 	private String url;
 
-	private Integer MAX_TIME_UPDATE_IN_MINUTES = 5;
+	@Value("${sofia2.devices.timeout_devices_inseconds:300}")
+	private int MAX_TIME_UPDATE_IN_SECONDS;
+
 	private String ACTIVE = "active";
 	private String INACTIVE = "inactive";
-	private String ERROR = "error";
-	private String IMAGE_DEVICE_ACTIVE = "Hardware-My-PDA-02-icon.png";
-	private String IMAGE_DEVICE_INACTIVE = "Hardware-My-PDA-02-icon.png";
-	private String IMAGE_DEVICE_ERROR = "Hardware-My-PDA-02-icon.png";
-	private String IMAGE_CLIENT_PLATFORMS = "Network-Pipe-icon.png";
-	private String IMAGE_CLIENT = "Network-Pipe-icon.png";
+
+	private String IMAGE_DEVICE_ACTIVE = "deviceActive.png";
+	private String IMAGE_DEVICE_INACTIVE = "deviceInactive.png";
+	private String IMAGE_DEVICE_ERROR = "deviceError.png";
+	private String IMAGE_CLIENT_PLATFORMS = "clientPlat.png";
+	private String IMAGE_CLIENT = "client.png";
+	private String IMAGE_CLIENT_ERROR = "clientError.png";
 
 	@PostConstruct
 	public void init() {
@@ -320,11 +323,22 @@ public class GraphUtil {
 
 		for (ClientPlatform clientPlatform : clientPlatforms) {
 
+			List<Device> listDevice = deviceRepository.findByClientPlatform(clientPlatform.getId());
+
+			String clientImage = IMAGE_CLIENT;
+			if (listDevice != null && listDevice.size() > 0) {
+				for (Iterator iterator = listDevice.iterator(); iterator.hasNext();) {
+					Device device = (Device) iterator.next();
+					if (!device.getStatus().equals(Device.StatusType.OK.toString())) {
+						clientImage = IMAGE_CLIENT_ERROR;
+					}
+				}
+			}
+
 			arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), null, null, name, "clientplatform", name,
-					clientPlatform.getIdentification(), "licensing", this.urlImages + IMAGE_CLIENT, null, null, null,
+					clientPlatform.getIdentification(), "licensing", this.urlImages + clientImage, null, null, null,
 					null));
 
-			List<Device> listDevice = deviceRepository.findByClientPlatform(clientPlatform.getId());
 			if (listDevice != null && listDevice.size() > 0) {
 				for (Iterator iterator = listDevice.iterator(); iterator.hasNext();) {
 					Device device = (Device) iterator.next();
@@ -335,7 +349,7 @@ public class GraphUtil {
 						image = IMAGE_DEVICE_ACTIVE;
 						if (device.getStatus() != null && device.getStatus().trim().length() > 0) {
 							if (!device.getStatus().equals(Device.StatusType.OK.toString())) {
-								state = ERROR;
+
 								image = IMAGE_DEVICE_ERROR;
 							}
 						}
@@ -344,7 +358,7 @@ public class GraphUtil {
 						image = IMAGE_DEVICE_INACTIVE;
 						if (device.getStatus() != null && device.getStatus().trim().length() > 0) {
 							if (!device.getStatus().equals(Device.StatusType.OK.toString())) {
-								state = ERROR;
+
 								image = IMAGE_DEVICE_ERROR;
 							}
 						}
@@ -353,8 +367,8 @@ public class GraphUtil {
 					arrayLinks.add(new GraphDTO(clientPlatform.getId(), device.getId(), device.getDescription(),
 							device.getJsonActions(), "clientplatform", "clientplatform",
 							clientPlatform.getIdentification(), device.getIdentification(), state,
-							this.urlImages + image, device.getStatus(), String.valueOf(device.isConnected()),
-							device.getSessionKey(), device.getUpdatedAt()));
+							this.urlImages + image, device.getStatus(), state, device.getSessionKey(),
+							device.getUpdatedAt()));
 				}
 
 			}
@@ -366,8 +380,8 @@ public class GraphUtil {
 		Date currentDate = new Date();
 		long diff = currentDate.getTime() - lastUpdate.getTime();
 
-		long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
-		if (minutes >= MAX_TIME_UPDATE_IN_MINUTES) {
+		long seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
+		if (seconds >= MAX_TIME_UPDATE_IN_SECONDS) {
 			return true;
 
 		} else {
