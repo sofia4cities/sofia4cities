@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
@@ -80,9 +81,9 @@ public class Rest {
 	@ApiOperation(value = "Logs a client device into Sofia4Cities with token.\nReturns a sessionKey to use in further operations")
 	@RequestMapping(value="/client/join", method=RequestMethod.GET)
 	public ResponseEntity<?> join(
-			@ApiParam(value = "Token asociated to client platform", required = true) String token,
-			@ApiParam(value = "Client Platform asociated to token", required = true) String clientPlatform,
-			@ApiParam(value = "Desired ClientPlatform id. the value is chosen from user", required = true) String clientPlatformId) {
+			@ApiParam(value = "Token asociated to client platform", required = true) @RequestParam(name="token") String token,
+			@ApiParam(value = "Client Platform asociated to token", required = true) @RequestParam(name="clientPlatform") String clientPlatform,
+			@ApiParam(value = "Desired ClientPlatform id. the value is chosen from user", required = true) @RequestParam(name="clientPlatformId") String clientPlatformId) {
 
 		final SSAPMessage<SSAPBodyJoinMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyJoinMessage());
@@ -129,9 +130,9 @@ public class Rest {
 	@RequestMapping(value="/ontology/{ontology}", method=RequestMethod.GET)
 	public ResponseEntity<?> list(
 			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Examples:\n\tNATIVE: db.temperature.find({})\n\tSQL: select * from temperature; ", required = true) String query,
-			@ApiParam(value = "OPTIONS: NATIVE or SQL", required=true) SSAPQueryType queryType) {
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") @RequestParam(name="ontology") String ontology,
+			@ApiParam(value = "Examples:\n\tNATIVE: db.temperature.find({})\n\tSQL: select * from temperature; ", required = true) @RequestParam(name="query") String query,
+			@ApiParam(value = "OPTIONS: NATIVE or SQL", required=true) @RequestParam(name="queryType") SSAPQueryType queryType) {
 
 		final SSAPMessage<SSAPBodyQueryMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyQueryMessage());
@@ -158,7 +159,7 @@ public class Rest {
 	@RequestMapping(value="/ontology/{ontology}", method=RequestMethod.POST)
 	public ResponseEntity<?> create(
 			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology")  String ontology,
 			@ApiParam(value = "Json data representing ontology instance", required = true) @RequestBody JsonNode data) {
 
 		final SSAPMessage<SSAPBodyInsertMessage> request = new SSAPMessage<>();
@@ -185,7 +186,7 @@ public class Rest {
 			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
 			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
 			@ApiParam(value = "Ontology identification to perform operation", required=true) @PathVariable("id") String id,
-			@ApiParam(value = "Json data representing ontology instance", required = true) @RequestBody JsonNode data) {
+			@ApiParam(value = "Json data representing ontology instance", required = true)  @RequestBody JsonNode data) {
 
 		final SSAPMessage<SSAPBodyUpdateByIdMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyUpdateByIdMessage());
@@ -211,7 +212,7 @@ public class Rest {
 	public ResponseEntity<?> updateByQuery(
 			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
 			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Examples: NATIVE: db.temperature.update({\"location\":\"Helsinki\"}, { $set:{\"value\":15}})", required = true) String query) {
+			@ApiParam(value = "Examples: NATIVE: db.temperature.update({\"location\":\"Helsinki\"}, { $set:{\"value\":15}})", required = true) @RequestParam(name="query") String query) {
 
 		final SSAPMessage<SSAPBodyUpdateMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyUpdateMessage());
@@ -236,7 +237,7 @@ public class Rest {
 	public ResponseEntity<?> deleteByQuery(
 			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
 			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Examples: NATIVE: db.temperature.update({\"value\":15})", required=true) String query) {
+			@ApiParam(value = "Examples: NATIVE: db.temperature.update({\"value\":15})", required=true) @RequestParam(name="query") String query) {
 
 		final SSAPMessage<SSAPBodyDeleteMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyDeleteMessage());
