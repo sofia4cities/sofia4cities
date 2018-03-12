@@ -68,8 +68,8 @@ public class QueryProcessor implements MessageTypeProcessor {
 		model.setOntologyName(queryMessage.getBody().getOntology());
 		model.setOperationType(OperationType.QUERY);
 		model.setQueryType(QueryType.valueOf(queryMessage.getBody().getQueryType().name()));
-		model.setUser(session.get().getUserID());
-		model.setClientPlatformId(session.get().getClientPlatform());
+		session.ifPresent(s -> model.setUser(s.getUserID()));
+		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

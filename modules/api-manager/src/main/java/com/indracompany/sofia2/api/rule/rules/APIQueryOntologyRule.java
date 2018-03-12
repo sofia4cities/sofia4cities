@@ -107,7 +107,7 @@ public class APIQueryOntologyRule extends DefaultRuleBase {
 					if (matchParameter(name,ApiServiceInterface.QUERY)) queryDb=value;
 					else if (matchParameter(name,ApiServiceInterface.QUERY_TYPE)) queryType=value;
 					else if (matchParameter(name,ApiServiceInterface.TARGET_DB_PARAM)) targetDb=value;
-					else if (matchParameter(name,ApiServiceInterface.FORMAT_RESULT)) formatResult=value;
+					//else if (matchParameter(name,ApiServiceInterface.FORMAT_RESULT)) formatResult=value;
 					else queryParametersCustomQuery.add(queryparameter);
 					
 				}
@@ -123,7 +123,7 @@ public class APIQueryOntologyRule extends DefaultRuleBase {
 			data.put(ApiServiceInterface.QUERY_TYPE, queryType);
 			data.put(ApiServiceInterface.QUERY, queryDb);
 			data.put(ApiServiceInterface.TARGET_DB_PARAM, targetDb);
-			data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
+			//data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
 			
 			data.put(ApiServiceInterface.OBJECT_ID, objectId);
 			data.put(ApiServiceInterface.ONTOLOGY, ontology);

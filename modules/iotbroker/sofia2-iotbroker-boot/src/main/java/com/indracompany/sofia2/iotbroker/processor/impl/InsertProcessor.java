@@ -45,6 +45,9 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class InsertProcessor implements MessageTypeProcessor {
 
@@ -86,8 +89,8 @@ public class InsertProcessor implements MessageTypeProcessor {
 		model.setOntologyName(insertMessage.getBody().getOntology());
 		model.setOperationType(OperationType.POST);
 		model.setQueryType(QueryType.NATIVE);
-		model.setUser(session.get().getUserID());
-		model.setClientPlatformId(session.get().getClientPlatform());
+		session.ifPresent(s -> model.setUser(s.getUserID()));
+		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -108,8 +111,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 			responseMessage.getBody().setData(objectMapper.readTree("{\"id\":\""+repositoryResponse+"\"}"));
 
 		} catch (final Exception e1) {
-			// TODO LOG
-			e1.printStackTrace();
+			log.error("Error processing Insert", e1);
 			throw new SSAPProcessorException("Response from repository on insert is not JSON compliant");
 		}
 
