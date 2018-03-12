@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.controlpanel.controller.graph;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRawValue;
@@ -25,24 +26,65 @@ import lombok.Setter;
 
 public class GraphDTO implements Serializable {
 
-	@Getter @Setter private String source;
-	@Getter @Setter private String target;
+	@Getter
+	@Setter
+	private String source;
+	@Getter
+	@Setter
+	private String target;
+	@Getter
+	@Setter
+	private String image;
+	@Getter
+	@Setter
+	private String title;
+	@Getter
+	@Setter
+	private String linkCreate;
+	@Getter
+	@Setter
+	private String linkSource;
+	@Getter
+	@Setter
+	private String linkTarget;
 
-	@Getter @Setter private String title;
-	@Getter @Setter private String linkCreate;
-	@Getter @Setter private String linkSource;
-	@Getter @Setter private String linkTarget;
+	@Getter
+	@Setter
+	private String classSource;
+	@Getter
+	@Setter
+	private String classTarget;
 
-	@Getter @Setter private String classSource;
-	@Getter @Setter private String classTarget;
+	@Getter
+	@Setter
+	private String nameSource;
+	@Getter
+	@Setter
+	private String nameTarget;
 
-	@Getter @Setter private String nameSource;
-	@Getter @Setter private String nameTarget;
+	@Getter
+	@Setter
+	private String status;
 
-	@Getter @Setter private String type;
-	
+	@Getter
+	@Setter
+	private String connected;
+
+	@Getter
+	@Setter
+	private String type;
+
+	@Getter
+	@Setter
+	private String sessionKey;
+
+	@Getter
+	@Setter
+	private Date updateAt;
+
 	public GraphDTO(String source, String target, String linkSource, String linkTarget, String classSource,
-			String classTarget, String nameSource, String nameTarget, String type) {
+			String classTarget, String nameSource, String nameTarget, String type, String image, String status,
+			String connected, String sessionKey, Date updateAt) {
 		this.source = source;
 		this.target = target;
 		this.linkSource = linkSource;
@@ -52,10 +94,16 @@ public class GraphDTO implements Serializable {
 		this.nameSource = nameSource;
 		this.nameTarget = nameTarget;
 		this.type = type;
+		this.image = image;
+		this.status = status;
+		this.connected = connected;
+		this.sessionKey = sessionKey;
+		this.updateAt = updateAt;
 	}
-	
+
 	public GraphDTO(String source, String target, String linkSource, String linkTarget, String classSource,
-			String classTarget,String nameSource, String nameTarget, String type,String title, String linkCreate) {
+			String classTarget, String nameSource, String nameTarget, String type, String title, String linkCreate,
+			String image, String status, String connected, String sessionKey, Date updateAt) {
 		super();
 		this.source = source;
 		this.target = target;
@@ -68,31 +116,38 @@ public class GraphDTO implements Serializable {
 		this.nameSource = nameSource;
 		this.nameTarget = nameTarget;
 		this.type = type;
+		this.image = image;
+		this.status = status;
+		this.connected = connected;
+		this.sessionKey = sessionKey;
+		this.updateAt = updateAt;
 	}
-	
 
-	public static GraphDTO constructSingleNode(String source,String linkSource,String classSource,String nameSource){
-		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource, null);
+	public static GraphDTO constructSingleNode(String source, String linkSource, String classSource, String nameSource,
+			String image, String status, String connected) {
+		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource,
+				null, null, null, null, null, null);
 	}
-	
-	public static GraphDTO constructSingleNodeWithTitleAndCreateLink(String source,String linkSource,String classSource,String nameSource,String title,String linkCreate){
-		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource, null,title,linkCreate);
+
+	public static GraphDTO constructSingleNodeWithTitleAndCreateLink(String source, String linkSource,
+			String classSource, String nameSource, String title, String linkCreate, String image, String status,
+			String connected) {
+		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource,
+				null, title, linkCreate, null, null, null, null, null);
 	}
-	
-	
+
 	@Override
 	@JsonRawValue
 	@JsonIgnore
-	public String toString()
-	{   
+	public String toString() {
 		ObjectMapper mapper = new ObjectMapper();
-		String result=null;
+		String result = null;
 		try {
-			result=mapper.writeValueAsString(this);
+			result = mapper.writeValueAsString(this);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return result;
-		
+
 	}
 }
