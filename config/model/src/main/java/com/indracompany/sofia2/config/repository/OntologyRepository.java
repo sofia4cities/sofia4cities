@@ -76,7 +76,7 @@ public interface OntologyRepository extends JpaRepository<Ontology, String> {
 
 	long countByActiveTrueAndIsPublicTrueAndMetainfIsNull();
 
-	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.public=true OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user) AND o.active=true")
+	@Query("SELECT o FROM Ontology AS o WHERE o.user=:user OR o.isPublic=true OR o.id IN (SELECT uo.ontology.id FROM OntologyUserAccess AS uo WHERE uo.user=:user) AND o.active=true")
 	List<Ontology> findByUserAndOntologyUserAccessAndAllPermissions(@Param("user") User user);
 
 	@Query("SELECT o " + "FROM Ontology AS o " + "WHERE (o.user=:user OR " + "o.id IN (SELECT uo.ontology.id "
