@@ -66,7 +66,7 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/digitaltwintypes/list}"> <span th:text="#{digitaltwintype.breadcrumb.list}">Digital Twin </span></a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/digitaltwintype/list}"> <span th:text="#{digitaltwintype.breadcrumb.list}">Digital Twin </span></a><i class="fa fa-circle"></i></li>
 						<li>
 							<span th:if="${digitaltwintype?.id} == null" th:text="#{digitaltwintype.breadcrumb.create}">Show Digital Twin</span>
 							<span th:if="${digitaltwintype?.id} != null" th:text="#{digitaltwintype.breadcrumb.update}">Update Digital Twin</span>
@@ -103,7 +103,7 @@
 											<i class="flaticon-network font-grey-gallery"></i>									
 											<!-- FORM TITLE -->
 											<span th:if="${digitaltwintype?.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{digitaltwintype.template.create}"> New Digital Twin Type</span>
-											<span th:if="${digitaltwintype?.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{digitaltwintype.template.update} + ' ' + ${digitaltwintype.name}"> Update Digital Twin Type </span>
+											<span th:if="${digitaltwintype?.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{digitaltwintype.template.update} + ' ' + ${digitaltwintype.identification}"> Update Digital Twin Type </span>
 										</a>
 									</li>
 								</ul>
@@ -150,7 +150,7 @@
 																	<label class="" th:text="#{digitaltwintype.type} + ':'">Type</label><span class="required"> (*)</span>
 																	<div class="input-icon ">
 																		<i class="flaticon-network"></i>
-																		<select id="type" class="form-control" >
+																		<select id="type" class="form-control" >																																																		<option value="string">string</option>
 																			<option value="thing">thing</option>
 																		</select>
 																		<input type="hidden" id="digitalType" th:field="*{type}" th:required="true"/>
@@ -204,7 +204,7 @@
 																							<tr class="mountable-model">
 																								<td><input type="text" name="property[]"  onblur="DigitalTwinCreateController.checkProperty(this)" class="form-control"/></td>
 																								<td>
-																									<select name="typeProp[]" class="form-control">																																																				
+																									<select name="typeProp[]" class="form-control">																																																				<option value="string">string</option>
 																										<option value="number">number</option>
 																										<option value="object">object</option>
 																										<option value="date">date</option>
@@ -285,9 +285,9 @@
 																							<tbody>
 																								<tr class="mountable-model">
 																									<td><input type="text" name="event[]"  onblur="DigitalTwinCreateController.checkEvent(this)" class="form-control"/></td>
-																									<td nowrap="nowrap"><input id="status" class="form-control no-remove"  name="status[]" value="status" type="checkbox"/></td>
+																									<td><input id="status" class="form-control no-remove"  name="status" type="checkbox"/></td>
 																									<td>
-																										<select name="typeEvent[]" class="form-control" >
+																										<select name="typeEvent[]" class="form-control" >																																																				<option value="string">string</option>
 																											<option value="update_shadow">UPDATE_SHADOW</option>
 																											<option value="notebook">NOTEBOOK</option>
 																											<option value="rule">RULE</option>
@@ -341,20 +341,14 @@
 														<div class="pull-right">
 															<!-- CREATE -->
 															<button th:if="${digitaltwintype?.id} == null" id="createBtn" class="btn btn-square btn-success" name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
-															<!-- UPDATE -->
-															<button th:if="${digitaltwintype?.id} != null" id="updateBtn" class="btn btn-square btn-warning" name="update" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
-															<!-- REMOVE -->
-															<button th:if="${digitaltwintype?.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'DigitalTwinCreateController.deleteDigitalTwinType(\'' + ${digitaltwintype.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 															
-															<!-- CANCEL -->
-															<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:DigitalTwinCreateController.go(\'' + @{/digitaltwintypes/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 														</div>
 													</div>
 												
 												</form>
 												
 												<!-- AUXILIAR FORM TO DELETE ONTOLOGY -->
-												<form id="delete_digitaltwintype_form" class="delete-digital hide"  th:action="@{'/digitaltwintypes/'+${digitaltwintype.id}}"  method="post">
+												<form id="delete_ontology_form" class="delete-ontology hide"  th:action="@{'/digitaltwintypes/'+${digitaltwintype.id}}"  method="post">
 													<input type="hidden" name="_method" value="DELETE"/>
 													<input id="delete-digitaltwintypeId" type="hidden" name="digitaltwintypeId" th:value="${digitaltwintype.id}"/>
 												</form>
@@ -412,21 +406,14 @@
 	<script  th:inline="javascript">
 	
 	var currentLanguage = [[${lang}]];	
-	var digitalTwinCreateJson = { 	
-		"actionMode" : [[${digitaltwintype?.id}]],
+	var digitalTwinCreateJson = { 		
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"confirmBtn" : [[#{gen.confirmBtn}]],
 		"removeBtn" : [[#{gen.deleteBtn}]],
-		"properties" : [[${propiedades}]],
-		"actions" : [[${acciones}]],
-		"events" : [[${eventos}]],
-		"logic" : [[${logica}]],
-		"json"  :  [[${digitaltwintype?.json}]], 
 		"validations" : {
 			"duplicates": [[#{digitaltwintype.valid.duplicates}]],
-			"schema" : [[#{digitaltwintype.error.esquema}]],
-			"validform": [[#{digitaltwintype.validform}]]
+			"schema" : [[#{digitaltwintype.error.esquema}]]
 		}
 	};
 	

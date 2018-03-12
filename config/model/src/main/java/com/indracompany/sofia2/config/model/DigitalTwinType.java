@@ -14,6 +14,7 @@
  */
 package com.indracompany.sofia2.config.model;
 
+<<<<<<< HEAD
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,6 +26,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+=======
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+>>>>>>> Add creation of digital twin types
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -50,6 +58,7 @@ public class DigitalTwinType extends AuditableEntityWithUUID{
 		thing
 	}
 	
+<<<<<<< HEAD
 	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@Getter
@@ -74,6 +83,8 @@ public class DigitalTwinType extends AuditableEntityWithUUID{
 	@Setter
 	private Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
 	
+=======
+>>>>>>> Add creation of digital twin types
 	@Column(name = "NAME", length = 50, unique = true, nullable = false)
 	@NotNull
 	@Getter
