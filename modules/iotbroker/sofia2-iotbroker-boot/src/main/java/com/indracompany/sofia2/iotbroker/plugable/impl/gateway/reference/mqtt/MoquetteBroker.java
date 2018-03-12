@@ -16,8 +16,6 @@ package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.mqtt;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -35,7 +33,7 @@ import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
 import io.moquette.BrokerConstants;
 import io.moquette.interception.AbstractInterceptHandler;
-import io.moquette.interception.InterceptHandler;
+//import io.moquette.interception.InterceptHandler;
 import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.server.Server;
 import io.moquette.server.config.MemoryConfig;
@@ -77,11 +75,15 @@ public class MoquetteBroker {
 	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.subscription_topic:/topic/subscription}")
 	private String subscription_topic;
 
+	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.command_topic:/topic/command}")
+	private String command_topic;
+
+
+
 	@Autowired
 	protected MessageProcessor processor;
 
 	private final Server server = new Server();
-	private Properties m_properties;
 
 	@Autowired
 	GatewayNotifier subscriptor;
@@ -136,6 +138,25 @@ public class MoquetteBroker {
 						MoquetteBroker.this.getServer().internalPublish(message, s.getSessionKey());
 					});
 
+			subscriptor.addCommandListener("mqtt_gateway",
+
+					(s) -> {
+						String playload="";
+						try {
+							playload = SSAPJsonParser.getInstance().serialize(s);
+						} catch (final SSAPParseException e) {
+							log.error("Error serializing indicator message" + e.getMessage());
+						}
+						final MqttPublishMessage message = MqttMessageBuilders.publish()
+								.topicName(command_topic + "/" + s.getSessionKey())
+								.retained(false)
+								.qos(MqttQoS.EXACTLY_ONCE)
+								.payload(Unpooled.copiedBuffer(playload.getBytes()))
+								.build();
+
+						MoquetteBroker.this.getServer().internalPublish(message, s.getSessionKey());
+						return null;
+					});
 
 			final Properties brokerProperties = new Properties();
 			brokerProperties.put(BrokerConstants.PERSISTENT_STORE_PROPERTY_NAME, store);
@@ -151,30 +172,24 @@ public class MoquetteBroker {
 
 
 			final MemoryConfig memoryConfig = new MemoryConfig(brokerProperties);
-			final List<? extends InterceptHandler> messsageHandlers = Collections.singletonList(new PublisherListener());
 			server.startServer(memoryConfig);
 			server.addInterceptHandler(new PublisherListener());
 
 			try {
 				Thread.sleep(2000);
 			} catch (final InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Thread.currentThread().interrupt();
+				log.warn("Error initializing MoquetteBroker", e);
 			}
 
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error initializing MoquetteBroker", e);
 		}
 
 	}
 
 	@PreDestroy
 	public  void stopServer()  {
-		if (this.server == null) {
-			log.warn("The Moquette server has already been stopped.");
-			return;
-		}
 		log.info("Stopping Moquette server...");
 		try {
 			this.server.stopServer();

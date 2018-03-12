@@ -19,6 +19,8 @@
  ******************************************************************************/
 package com.indracompany.sofia2.persistence.mongodb;
 
+import java.util.Objects;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.ContextData;
@@ -28,9 +30,11 @@ import lombok.Setter;
 
 public class MongoDbContextData  {
 
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 1L;
 
 	@Getter @Setter private ContextData contextData;
+	
 	private MongoDbDate timestamp;
 	
 	public MongoDbContextData(){}
@@ -67,9 +71,14 @@ public class MongoDbContextData  {
 	
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof MongoDbContextData))
-			return false;
-		MongoDbContextData contextData = (MongoDbContextData) other;
-		return super.equals(other) && this.timestamp.equals(contextData.timestamp);
+		if (other == null) return false;
+		if (!(other instanceof MongoDbContextData)) return false;
+		MongoDbContextData that = (MongoDbContextData) other;
+		return this.timestamp.equals(that.timestamp) && this.contextData.equals(that.contextData);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(timestamp, contextData);
 	}
 }

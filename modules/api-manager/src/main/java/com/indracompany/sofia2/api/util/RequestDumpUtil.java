@@ -36,6 +36,9 @@ public class RequestDumpUtil {
     	if (value==null)
     		value = request.getHeader("$"+key);
     	
+    	if (value==null)
+    		return getValue(key,request);
+    	
     	return value;
     	
     }

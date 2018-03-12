@@ -20,6 +20,7 @@
 package com.indracompany.sofia2.persistence;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.persistence.util.CalendarAdapter;
@@ -78,12 +79,19 @@ public class ContextData implements Serializable {
 	
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof ContextData)) {
-			return false;
-		}
-		ContextData contextData = (ContextData) other;
-		return this.clientPatformInstance.equals(contextData.clientPatformInstance) && this.clientPatform.equals(contextData.clientPatform) && this.clientConnection.equals(contextData.clientConnection)
-				&& this.clientSession.equals(contextData.clientSession) && this.timezoneId.equals(contextData.timezoneId)
-				&& this.user.equals(contextData.user);
+		if (other == null) return false;
+		if (!(other instanceof ContextData)) return false;
+		ContextData that = (ContextData) other;
+		return Objects.equals(this.user, that.user) &&
+				Objects.equals(this.clientPatformInstance, that.clientPatformInstance) && 
+				Objects.equals(this.clientPatform, that.clientPatform) && 
+				Objects.equals(this.clientConnection, that.clientConnection) && 
+				Objects.equals(this.clientSession, that.clientSession) && 
+				Objects.equals(this.timezoneId, that.timezoneId);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(user, clientPatform, clientPatformInstance, clientConnection, clientSession, timezoneId);
 	}
 }

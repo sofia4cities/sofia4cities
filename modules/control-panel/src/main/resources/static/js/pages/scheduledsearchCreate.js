@@ -167,7 +167,7 @@ var ScheduledSearchController= function()
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.
 	var currentFormat = '' // date format depends on currentLanguage.
-		var internalFormat = 'yyyy/mm/dd';
+	var internalFormat = 'yyyy/mm/dd';
 	var internalLanguage = 'en';
 
 
@@ -353,15 +353,15 @@ var ScheduledSearchController= function()
 		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage + ' CurrentFormat: ' + currentFormat) : '';
 
 		// init datepickers dateFrom and dateTo   
-		$("#dateFrom").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
-		var dd = $("#dateTo").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
+		/* $("#dateFrom").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage});
+		var dd = $("#dateTo").datepicker({dateFormat: currentFormat, showButtonPanel: true,  orientation: "bottom auto", todayHighlight: true, todayBtn: "linked", clearBtn: true, language: currentLanguage}); */
 
 		// setting on changeDate to checkDates()
-		dd.on('changeDate', function(e){
+		/* dd.on('changeDate', function(e){
 			//gets the full date formated
 			selectedDate = dd.data('datepicker').getFormattedDate(currentFormat);       
 			checkCreate();
-		});
+		}); */
 
 		// Reset form
 		$('#resetBtn').on('click',function(){ 
@@ -371,9 +371,24 @@ var ScheduledSearchController= function()
 		//set TODAY to dateFrom depends on language INSERT-MODE ONLY   
 		if ( scheduledSearchCreateReg.actionMode === null){
 			logControl ? console.log('action-mode: INSERT') : '';
-			var f = new Date();         
+			
+			/* var f = new Date();         
 			today = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
-			$('#dateFrom').datepicker('update',today);
+			$('#dateFrom').datepicker('update',today); */
+			
+			
+			$('#dateFrom').datetimepicker({
+				locale: currentLanguage,
+				useCurrent: true
+			});
+			
+			$('#dateTo').datetimepicker({
+				locale: currentLanguage,
+				useCurrent: true
+			});
+		   
+		   
+			
 		}
 		else {
 			// set DATE created in EDIT MODE
