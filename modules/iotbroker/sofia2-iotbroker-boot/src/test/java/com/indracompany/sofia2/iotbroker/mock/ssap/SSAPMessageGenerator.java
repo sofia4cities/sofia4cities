@@ -16,10 +16,12 @@ package com.indracompany.sofia2.iotbroker.mock.ssap;
 import java.io.IOException;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -154,7 +156,18 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
+	public static SSAPMessage<SSAPBodyCommandMessage> generateCommandMessage(String sessionKey) throws JsonProcessingException, IOException {
+		final SSAPMessage<SSAPBodyCommandMessage> message = new SSAPMessage<>();
+		message.setSessionKey(sessionKey);
 
+		final SSAPBodyCommandMessage body = new SSAPBodyCommandMessage();
+		body.setCommand("COMMAND");
+		body.setCommandId(UUID.randomUUID().toString());
+		body.setParams(mapper.readTree("{}"));
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.COMMAND);
 
-
+		return message;
+	}
 }

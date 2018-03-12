@@ -14,14 +14,25 @@
 package com.indracompany.sofia2.iotbroker.processor;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyIndicationMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
 public interface GatewayNotifier {
 
-	void addSubscriptionListener(String key, Consumer<SSAPMessage<SSAPBodyIndicationMessage>> c);
+	void addSubscriptionListener(String key, Consumer<SSAPMessage<SSAPBodyIndicationMessage>> indication);
+
+	void addCommandListener(String key, Function<SSAPMessage<SSAPBodyCommandMessage>, SSAPMessage<SSAPBodyReturnMessage>> command);
 
 	void notify(SSAPMessage<SSAPBodyIndicationMessage> indication);
+
+	void sendCommandAsync(SSAPMessage<SSAPBodyCommandMessage> command);
+
+	//	SSAPMessage<SSAPBodyReturnMessage> sendCommandSync(SSAPMessage<SSAPBodyCommandMessage> cmd);
+
+
 
 }
