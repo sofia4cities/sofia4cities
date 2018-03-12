@@ -86,8 +86,8 @@ public class InsertProcessor implements MessageTypeProcessor {
 		model.setOntologyName(insertMessage.getBody().getOntology());
 		model.setOperationType(OperationType.POST);
 		model.setQueryType(QueryType.NATIVE);
-		model.setUser(session.get().getUserID());
-		model.setClientPlatformId(session.get().getClientPlatform());
+		session.ifPresent(s -> model.setUser(s.getUserID()));
+		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
