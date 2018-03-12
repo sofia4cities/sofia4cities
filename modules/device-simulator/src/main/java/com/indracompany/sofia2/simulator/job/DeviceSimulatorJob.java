@@ -64,24 +64,19 @@ public class DeviceSimulatorJob {
 		ObjectMapper mapper = new ObjectMapper();
 
 		JsonNode jsonInstance = mapper.readTree(json);
-		
+
 		String clientPlatform = jsonInstance.get("clientPlatform").asText();
 		String clientPlatformInstance = jsonInstance.get("clientPlatformInstance").asText();
 		String ontology = jsonInstance.get("ontology").asText();
-		
-		JsonNode ontologySchema= this.generateJsonSchema(ontology, user);
-		JsonNode fieldAndValues = this.fieldRandomizerService.randomizeFields(jsonInstance.path("fields"),ontologySchema);
-		
 
-		
+		JsonNode ontologySchema = this.generateJsonSchema(ontology, user);
+		JsonNode fieldAndValues = this.fieldRandomizerService.randomizeFields(jsonInstance.path("fields"),
+				ontologySchema);
 
-		
-		 this.persistenceService.insertOntologyInstance(fieldAndValues.toString(),
-		 ontology, user, clientPlatform,
-		 clientPlatformInstance);
+		log.debug("Inserted ontology: "+fieldAndValues.toString());
+		this.persistenceService.insertOntologyInstance(fieldAndValues.toString(), ontology, user, clientPlatform,
+				clientPlatformInstance);
 	}
-
-
 
 	public JsonNode generateJsonSchema(String ontology, String user) throws JsonProcessingException, IOException {
 
@@ -182,8 +177,8 @@ public class DeviceSimulatorJob {
 
 			}
 
-		}else if (!fieldNode.path("items").path("items").isMissingNode()) {
-			
+		} else if (!fieldNode.path("items").path("items").isMissingNode()) {
+
 			fieldNode = fieldNode.path("items").path("items");
 			Iterator<String> fields = fieldNode.fieldNames();
 
@@ -199,14 +194,13 @@ public class DeviceSimulatorJob {
 				}
 
 			}
-			
-		}else if (fieldNode.path("items").isArray()) {
+
+		} else if (fieldNode.path("items").isArray()) {
 			fieldNode = fieldNode.path("items");
 			int size = fieldNode.size();
-			
 
-			for (int i=0; i<size;i++) {
-				
+			for (int i = 0; i < size; i++) {
+
 				if (fieldNode.path(i).get("type").asText().equals("string"))
 					((ObjectNode) objectNode).put(String.valueOf(i), "");
 				else if (fieldNode.path(i).get("type").asText().equals("number"))
@@ -217,9 +211,9 @@ public class DeviceSimulatorJob {
 				}
 
 			}
-			
+
 		}
-		
+
 		return objectNode;
 	}
 

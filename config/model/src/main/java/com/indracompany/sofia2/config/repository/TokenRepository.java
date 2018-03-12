@@ -30,7 +30,6 @@ import com.indracompany.sofia2.config.model.Token;
 public interface TokenRepository extends JpaRepository<Token, String> {
 
 	List<Token> findByClientPlatform(ClientPlatform clientPlatform);
-
 	Token findByToken(String token);
 
 	Token findById(String id);

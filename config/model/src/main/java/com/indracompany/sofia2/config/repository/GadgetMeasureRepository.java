@@ -27,10 +27,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 
-public interface GadgetMeasureRepository extends JpaRepository<GadgetMeasure, String> {
+public interface GadgetMeasureRepository extends JpaRepository<GadgetMeasure,String>{
 
-	List<GadgetMeasure> findByGadget(Gadget gadgetId);
-
+	List<GadgetMeasure> findByGadget(Gadget gadget);
 	List<GadgetMeasure> findById(String id);
-
+	List<GadgetMeasure> findByDatasource(String datasource);
 }

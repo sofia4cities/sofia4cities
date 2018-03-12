@@ -25,6 +25,8 @@ public interface UserTokenRepository extends JpaRepository<UserToken, String> {
 	List<UserToken> findByUser(User user);
 
 	UserToken findByToken(String token);
+	
+	UserToken findById(String id);
 
 	UserToken findByUserAndToken(String userId, String token);
 

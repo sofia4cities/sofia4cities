@@ -46,16 +46,16 @@ public class RestSwaggerReader {
 	public static String SWAGGER_VERSION = "2.0";
 
 	public static String INFO_VERSION = "Apache 2.0 License";
-	public static String INFO_TITLE = "Sofia2Open API Manager";
-	public static String INFO_DESCRIPTION = "The API MANAGER DESCRIPTION";
+	public static String INFO_TITLE = "Sofia2Cities API Manager";
+	public static String INFO_DESCRIPTION = "Select4Cities ";
 
 	public static String LICENSE_NAME = "1.0.0";
 	public static String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
 	//public static String BASE_PATH = "/api";
 
-	public static String CONTACT_NAME = "The Sofia2Open team";
-	public static String CONTACT_URL = "http://sofia2.com";
-	public static String CONTACT_EMAIL = "ljsantos@indra.es";
+	public static String CONTACT_NAME = "The Sofia2 Select4Cities Team";
+	public static String CONTACT_URL = "https://www.sofia4cities.com";
+	public static String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
 
 	public static String SCHEMES = "http";
 
@@ -92,6 +92,7 @@ public class RestSwaggerReader {
 		responses.put("200", r5);
 
 		schemes.add(Scheme.HTTP);
+		schemes.add(Scheme.HTTPS);
 
 		/*
 		 * Parameter sofia2Header = new HeaderParameter();
@@ -132,6 +133,8 @@ public class RestSwaggerReader {
 		int version = apiDto.getVersion();
 		String vVersion="v"+version;
 		String identification = apiDto.getIdentification();
+		
+		info.setDescription(INFO_DESCRIPTION + "- "+identification);
 		
 		swagger.setBasePath("/server/api"+"/"+vVersion+"/"+identification);
 
@@ -217,7 +220,7 @@ public class RestSwaggerReader {
 			String value = apiQueryParameterDTO.getValue();
 			String condition = apiQueryParameterDTO.getHeaderType().name();
 
-			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, name, description, true,
+			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, name, desc, true,
 					condition, type, null, value);
 			op.addParameter(parameter);
 		}

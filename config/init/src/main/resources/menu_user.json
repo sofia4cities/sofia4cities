@@ -65,12 +65,12 @@
 			"submenu": [		
 				{
 					"title": {
-						"EN": "APIs Invocation",
-						"ES": "Invocación de APIs"
+						"EN": "APIs Definition",
+						"ES": "Definición de APIs"
 					},
 					"icon": "",
 					"url": "/controlpanel/apimanager/list"
-				},	
+				},
 				{
 					"title": {
 						"EN": "API Manager Tokens",

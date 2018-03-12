@@ -69,8 +69,8 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 				relation.setClientPlatform(clientPlatform);
 				relation.setOntology(ontology);
 				// If relation does not exist then create
-				if (this.clientPlatformOntologyRepository.findByOntologyAndClientPlatform(ontology,
-						clientPlatform) == null) {
+				if (this.clientPlatformOntologyRepository.findByOntologyAndClientPlatform(ontology.getIdentification(),
+						clientPlatform.getIdentification()) == null) {
 					this.clientPlatformOntologyRepository.save(relation);
 				}
 			}
@@ -98,15 +98,6 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 	}
 
 	@Override
-	public boolean haveAuthorityOverOntology(ClientPlatform clientPlatform, Ontology ontology) {
-
-		final ClientPlatformOntology clientPlatformOntology = this.clientPlatformOntologyRepository
-				.findByOntologyAndClientPlatform(ontology, clientPlatform);
-
-		return clientPlatformOntology != null;
-	}
-
-	@Override
 	public List<ClientPlatform> getAllClientPlatformByCriteria(String userId, String identification,
 			String[] ontologies) {
 		List<ClientPlatform> clients = new ArrayList<ClientPlatform>();
@@ -129,7 +120,7 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 						Ontology o = ontologyRepository.findByIdentification(ontologies[i]);
 						if (o != null) {
 							ClientPlatformOntology clpo = clientPlatformOntologyRepository
-									.findByOntologyAndClientPlatform(o, k);
+									.findByOntologyAndClientPlatform(o.getIdentification(), k.getIdentification());
 							if (clpo != null) {
 								if (!clientPlatformAdd.contains(k)) {
 									clientPlatformAdd.add(k);
@@ -159,7 +150,7 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 						Ontology o = ontologyRepository.findByIdentification(ontologies[i]);
 						if (o != null) {
 							ClientPlatformOntology clpo = clientPlatformOntologyRepository
-									.findByOntologyAndClientPlatform(o, k);
+									.findByOntologyAndClientPlatform(o.getIdentification(), k.getIdentification());
 							if (clpo != null) {
 								if (!clientPlatformAdd.contains(k)) {
 									clientPlatformAdd.add(k);

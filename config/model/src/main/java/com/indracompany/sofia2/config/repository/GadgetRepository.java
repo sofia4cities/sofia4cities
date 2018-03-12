@@ -26,14 +26,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.User;
 
-public interface GadgetRepository extends JpaRepository<Gadget, String> {
-
+public interface GadgetRepository extends JpaRepository<Gadget,String>{
+	
+	Gadget findById(String Id);
 	List<Gadget> findByUser(User user);
-
-	List<Gadget> findByUserAndType(User user, String type);
-
-	List<Gadget> findByNameLike(String name);
-
 	List<Gadget> findByType(String type);
-
+	List<Gadget> findByUserAndType(User user, String type);
+	List<Gadget> findByUserAndIdentificationContaining(User user, String identification);
+	List<Gadget> findByUserAndDescriptionContaining(User user, String description);
+	List<Gadget> findByIdentificationAndTypeAndUser(String identification, String type, User user);
+	List<Gadget> findByIdentificationAndType(String identification, String type);
+	List<Gadget> findAllByOrderByIdentificationAsc();
+	List<Gadget> findByIdentificationContainingAndDescriptionContaining(String identification, String description);
+	List<Gadget> findByIdentificationContaining(String identification);
+	List<Gadget> findByDescriptionContaining(String description);
+	List<Gadget> findByUserAndIdentificationContainingAndDescriptionContaining(User user ,String identification,String description);
+    Gadget findByIdentification(String identification);
+	
 }

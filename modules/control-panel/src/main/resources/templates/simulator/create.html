@@ -117,7 +117,7 @@
 											<input th:if="${simulation.id} == null" type="hidden" name="action" th:value="@{/devicesimulation/create}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->											
-											<input th:if="${simulation.id} != null" type="hidden" name="action" th:value="@{/devicesimulation}"/>
+											<input th:if="${simulation.id} != null" type="hidden" name="action" th:value="@{/devicesimulation/update/}"/>
 											<input th:if="${simulation.id} != null" type="hidden" name="_method" value="PUT"/>											
 											
 											<div class="form-body">
@@ -127,24 +127,24 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{simulation.identification} + ':'">Identification</label>
-															<input th:required="true" type="text" th:placeholder="#{simulation.identification}" class="form-control" name="identification"/>	
+															<input th:required="true" type="text" th:placeholder="#{simulation.identification}" class="form-control" name="identification" th:value="${simulation.identification}"/>	
 														</div>
 													</div>													
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{simulation.clientplatform} + ':'">Platform Clients</label>
-															<select th:required="true" th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="selectpicker form-control" data-live-search="true" onload="getTokensAndOntologies()" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
+															<select th:required="true" th:field="*{clientPlatform.identification}" th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="form-control" th:classappend="${simulation.id != null} ? select:selectpicker" data-live-search="true" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
 																<option th:each=" platformClient : ${platformClients}" th:value="${platformClient}" th:text="${platformClient}"/>																
 															</select>										
 															
 														</div>
 													</div>
-													<div  class="row" id="ontologiesAndTokens"  th:style="${simulation.ontology?.id != null ? display:none}">
+													<div  class="row" id="ontologiesAndTokens"  th:style="${simulation.ontology?.id == null}  ? 'display:none'">
 													<div th:fragment="ontologiesAndTokens" >
 														<div class="col-md-3 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label class="control-label" th:text="#{simulation.select.tokens} + ':'">Tokens</label>
-																<select th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulation.tokens}"  >
+																<select th:field="*{token.token}" th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulation.tokens}"  >
 																<option th:each="token : ${tokens}" th:value="${token}" th:text="${token}"/>
 																</select>									
 																									
@@ -153,7 +153,7 @@
 														<div class="col-md-2 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label class="control-label" th:text="#{simulation.select.ontologies} + ':'">Ontologies</label>
-																<select th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
+																<select th:field="*{ontology.identification}" th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
 																<option th:each="ontology : ${ontologies}" th:value="${ontology}" th:text="${ontology}"/>
 																</select>									
 																										
@@ -163,11 +163,11 @@
 												</div>
 
 												</div>
-												<div class="row" id="interval" style="display:none">
+												<div class="row" id="interval" th:style="${simulation.id == null}  ? 'display:none'">
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{simulation.interval} + ':'">Interval</label>
-															<input th:required="true" type="number" th:placeholder="#{simulation.interval.placeholder}" class="form-control" name="interval"/>
+															<input th:required="true" type="number" th:placeholder="#{simulation.interval.placeholder}" class="form-control" name="interval" th:value="${simulation.interval}"/>
 														</div>
 													</div>
 												</div>
@@ -217,14 +217,13 @@
 													<!-- CREATE -->
 												<button th:if="${simulation.id} == null" id="createBtn" type="button" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" onclick="submitForm('simulation_create_form')"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 													<!-- UPDATE -->
-													<button th:if="${simulation.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													<button th:if="${simulation.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" onclick="submitForm('simulation_create_form')" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 
 													<!-- REMOVE -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'ScheduledSearchController.deletetwitterListening(\'' + ${twitterListening?.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteSimulation(\''+ ${simulation.id}+'\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 													
 													
-													<!-- RESET -->
-													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+													
 													
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
@@ -301,32 +300,36 @@
 		<div class="col-md-2 col-sm-3 col-xs-6" >
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.cosine.base} + ':'"> Base </label>
-				<input name="base" id="cosineBase" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.base}"/>		
+				<input name="angle" id="cosineAngle" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.base}"/>		
 			</div>
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.cosine.multiplier} + ':'"> Multiplier </label>
 				<input name="multiplier" id="cosineMultiplier" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.multiplier}"/>			
 			</div>
+			<!--
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.cosine.steps} + ':'"> Steps </label>
 				<input name="steps" id="cosineSteps" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.cosine.steps}"/>			
 			</div>
+			-->
 		</div>
 	</div>
 	<div id="SINE_NUMBER" style="display: none">
 		<div class="col-md-2 col-sm-3 col-xs-6" >
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.sine.base} + ':'"> Base </label>
-				<input name="base" id="sineBase" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.base}"/>		
+				<input name="angle" id="sineAngle" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.base}"/>		
 			</div>
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.sine.multiplier} + ':'"> Multiplier </label>
 				<input name="multiplier" id="sineMultiplier" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.multiplier}"/>			
 			</div>
+			<!--
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.sine.steps} + ':'"> Steps </label>
 				<input name="steps" id="sineSteps" type="number" maxlength="7" class="form-control no-remove" th:placeholder="#{simulation.sine.steps}"/>
 			</div>
+			-->
 		</div>
 	</div>
 
@@ -394,9 +397,10 @@
 		
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
+	var simulationJson = JSON.parse([[${simulation.json}]]) ;
 
 	var currentLanguage = [[${lang}]];	
-		
+	
 	
 	var ScheduledSearchCreateJson = { 
 		"close" : [[#{gen.closeBtn}]],		
@@ -407,7 +411,12 @@
 	var defaultOption=[[#{simulation.choose}]];
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
-	
+	$( document ).ready(function() {
+		if(simulationJson !=null)
+		{
+			getOntologyFields();
+		}
+	});
    
 	</script>	
 

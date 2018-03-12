@@ -44,6 +44,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-starter-client</artifactId>
+			<version> ${spring-boot-admin-starter-client.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-servlet-starter</artifactId>
 			<version>${version.camel}</version>

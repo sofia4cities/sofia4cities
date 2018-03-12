@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages="com.indracompany.sofia2.router.config")
 @EnableAutoConfiguration(exclude = {CamelAutoConfiguration.class})
+
 public class RouterApplication {
 
 	public static void main(String[] args) {

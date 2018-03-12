@@ -53,7 +53,7 @@ public class ClientPlatformOntology extends AuditableEntityWithUUID {
 		this.access = access.toString();
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
 	@Getter

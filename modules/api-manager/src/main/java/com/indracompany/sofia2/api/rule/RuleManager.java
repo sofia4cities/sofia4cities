@@ -36,6 +36,7 @@ public class RuleManager implements ApplicationContextAware{
 
 	public static final String FACTS="facts";
 	public static final String REQUEST = "request";
+	public static final String RESPONSE = "response";
 	public static final String ACTION = "action";
 	public static final String REASON = "reason";
 	public static final String REASON_TYPE = "REASON_TYPE";

@@ -41,7 +41,7 @@ public class AdviceServiceImpl
 
 	@Override
 	public OperationResultModel execute(NotificationCompositeModel input) {
-		RestTemplate restTemplate = new RestTemplate();
+		final RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.TEXT_PLAIN);

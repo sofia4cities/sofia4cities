@@ -244,7 +244,7 @@ var ApiCustomOpsController = function() {
         newInputCustomsqlOperation.style.width="110px";
         newInputCustomsqlOperation.style.marginLeft="25px";
         newInputCustomsqlOperation.type="reset";
-        newInputCustomsqlOperation.value="CUSTOM (query)";
+        newInputCustomsqlOperation.value=apiCustomOpsReg.apimanager_customBtn;
         newInputCustomsqlOperation.name="CUSTOM_SQL";
         newInputCustomsqlOperation.disabled="disabled";
 
@@ -385,7 +385,7 @@ var ApiCustomOpsController = function() {
     }
 
     function updateCustomSqlOperation(operation){
-    	$('#operation.identification' + "_PATH").html("<b>" + operation.path+ "</b>");
+    	$('#' + operation.identification + "_PATH").html("<b>" + operation.path+ "</b>");
 
         for (var i = 0; i < operation.querystrings.length; i++) {
             if (operation.querystrings [i].name == "$query" ){

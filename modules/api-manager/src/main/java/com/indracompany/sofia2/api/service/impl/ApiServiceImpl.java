@@ -69,9 +69,11 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	public void process(Exchange exchange) throws Exception {
 		
 		HttpServletRequest request = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_REQUEST, HttpServletRequest.class);
+		HttpServletResponse response = exchange.getIn().getHeader(Exchange.HTTP_SERVLET_RESPONSE, HttpServletResponse.class);
 	
 		Facts facts = new Facts();
 		facts.put(RuleManager.REQUEST, request);
+		facts.put(RuleManager.RESPONSE, response);
 		
 		Map<String,Object> dataFact=new HashMap<String,Object>();
 		dataFact.put(ApiServiceInterface.BODY, exchange.getIn().getBody());
@@ -131,7 +133,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		model.setOntologyName(ontology.getIdentification());
 		model.setOperationType(OperationType.valueOf(METHOD));
 		model.setQueryType(QueryType.valueOf(QUERY_TYPE));
-	
+		model.setClientPlatformId("");
 		model.setUser(user.getUserId());
 		
 		NotificationModel modelNotification= new NotificationModel();
@@ -165,10 +167,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		} catch (Exception e) {
 			
 		}
-		
-		
-			
-		
+
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
 		exchange.getIn().setBody(data);
 		return data;
@@ -188,33 +187,34 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			OUTPUT="{\"RESULT\":\"NO_DATA\"}";
 		}
 		
+		if (FORMAT_RESULT.equals("")) {
+			CONTENT_TYPE = (String)data.get(ApiServiceInterface.CONTENT_TYPE_OUTPUT);
+		}
+		
 		JSONObject jsonObj = toJSONObject(OUTPUT);
 		JSONArray jsonArray = toJSONArray(OUTPUT);
 		
 		String xmlOrCsv=OUTPUT;
 		
-		if (FORMAT_RESULT.equalsIgnoreCase("JSON")) {
+		if (FORMAT_RESULT.equalsIgnoreCase("JSON") || CONTENT_TYPE.equalsIgnoreCase("application/json") ) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "application/json");
 			CONTENT_TYPE = "application/json";
 		}
-		else if (FORMAT_RESULT.equalsIgnoreCase("XML")) {
+		else if (FORMAT_RESULT.equalsIgnoreCase("XML") || CONTENT_TYPE.equalsIgnoreCase("application/atom+xml")) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "application/atom+xml");
 			
 			if (jsonObj!=null) xmlOrCsv = XML.toString(jsonObj);
 			if (jsonArray!=null) xmlOrCsv = XML.toString(jsonArray);
 			CONTENT_TYPE = "application/atom+xml";
 		}	
-		else if (FORMAT_RESULT.equalsIgnoreCase("CSV")) {
+		else if (FORMAT_RESULT.equalsIgnoreCase("CSV") ) {
 			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
 			
 			if (jsonObj!=null) xmlOrCsv = CDL.toString(new JSONArray("[" + jsonObj + "]"));
 			if (jsonArray!=null) xmlOrCsv = CDL.toString(jsonArray);
 			CONTENT_TYPE = "text/plain";
 		}
-		else {
-			data.put(ApiServiceInterface.CONTENT_TYPE, "text/plain");
-			CONTENT_TYPE = "text/plain";
-		}
+		
 		
 		data.put(ApiServiceInterface.OUTPUT, xmlOrCsv);
 		exchange.getIn().setHeader(ApiServiceInterface.CONTENT_TYPE, CONTENT_TYPE);

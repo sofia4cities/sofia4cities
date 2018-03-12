@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jeasy.rules.annotation.Action;
 import org.jeasy.rules.annotation.Condition;
@@ -51,17 +52,17 @@ public class InitialFactsRule {
 	@Action
 	public void setFirstDerivedData(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
+		
+		
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
 		String query = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY, request)).orElse("");
 		String queryType = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY_TYPE, request)).orElse(QueryType.NONE.name());
 		String contentTypeInput= RequestDumpUtil.getContentType(request);
+		String contentTypeOutput= Optional.ofNullable(RequestDumpUtil.getValueFromRequest("accept", request)).orElse("");
 
-		String headerToken = request.getHeader(ApiServiceInterface.AUTHENTICATION_HEADER);
-		if (headerToken == null) {
-			headerToken = request.getParameter(ApiServiceInterface.AUTHENTICATION_HEADER);
-		}
-
+		String headerToken = RequestDumpUtil.getValue(ApiServiceInterface.AUTHENTICATION_HEADER, request);
+		
 		headerToken = Optional.ofNullable(headerToken).orElse("");
 		
 		String method = request.getMethod();
@@ -80,6 +81,7 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.FORMAT_RESULT, formatResult);
 		data.put(ApiServiceInterface.METHOD, method);
 		data.put(ApiServiceInterface.CONTENT_TYPE_INPUT, contentTypeInput);
+		data.put(ApiServiceInterface.CONTENT_TYPE_OUTPUT, contentTypeOutput);
 		
 		facts.put(RuleManager.ACTION, method);
 		

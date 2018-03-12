@@ -17,5 +17,5 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public abstract class OneSSAPMessageMixin {
-	@JsonProperty(required=true, defaultValue="NONE") public abstract SSAPMessageTypes getMessageType();
+	@JsonProperty(required=true) public abstract SSAPMessageTypes getMessageType();
 }

@@ -80,7 +80,7 @@ public class ApiManagerHelper {
 	@Autowired
 	AppWebUtils utils;
 
-	@Value("${apimanager.services.baseUrl:http://localhost:8080/sib-api}${apimanager.services.apiEndpoint.path:/api}")
+	@Value("${apimanager.services.baseUrl:http://localhost:19090}${apimanager.services.apiEndpoint.path:}")
 	private String apiManagerBaseUrl;
 	
 	// To populate the List Api Form
@@ -108,7 +108,7 @@ public class ApiManagerHelper {
 		uiModel.addAttribute("endpointBase", apiManagerBaseUrl);
 		
 		uiModel.addAttribute("categories", Api.ApiCategories.values());
-		uiModel.addAttribute("operations", new ArrayList());
+		uiModel.addAttribute("operations", new ArrayList<String>());
 		uiModel.addAttribute("ontologies", ontologies);
 		uiModel.addAttribute("api", new Api());
 	}
@@ -326,6 +326,13 @@ public class ApiManagerHelper {
 	public void populateUserTokenForm(Model model) {
 		User user = this.userService.getUser(utils.getUserId());
 		model.addAttribute("tokens", userTokenRepository.findByUser(user));	
+	}
+
+	public void populateApiManagerInvokeForm(Model model, String apiId) {
+		Api api= apiRepository.findById(apiId);
+		
+		model.addAttribute("api", api);
+		model.addAttribute("endpointBase", apiManagerBaseUrl);
 	}
 
 }

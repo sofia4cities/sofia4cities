@@ -23,5 +23,10 @@ public interface QueryToolService {
 	String queryNativeAsJson(String user, String ontology, String query) throws DBPersistenceException;
 
 	String querySQLAsJson(String user, String ontology, String query, int offset) throws DBPersistenceException;
+	
+	String queryNativeAsJsonForPlatformClient(String clientplatform, String ontology, String query, int offset, int limit)
+			throws DBPersistenceException;
+	
+	String querySQLAsJsonForPlatformClient(String clientplatform, String ontology, String query, int offset) throws DBPersistenceException;
 
 }

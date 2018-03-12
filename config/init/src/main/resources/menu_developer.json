@@ -5,7 +5,7 @@
 	"navigation": [
 		{
 			"title": {
-				"EN": "DATA MODEL",
+				"EN": "DATA MODELling",
 				"ES": "MODELADO DE DATOS"
 			},
 			"icon": "flaticon-network",
@@ -23,8 +23,8 @@
 		},
 		{
 			"title": {
-				"EN": "DEVICES MODEL",
-				"ES": "MODELADO DE DEVICES"
+				"EN": "DEVICES",
+				"ES": "DISPOSITIVOS"
 			},
 			"icon": "flaticon-share",
 			"url": "",
@@ -62,19 +62,11 @@
 			},
 			"icon": "la la-globe",
 			"url": "",
-			"submenu": [			
-				{
-					"title": {
-						"EN": "Scripting Engine",
-						"ES": "Motor de Scripting"
-					},
-					"icon": "",
-					"url": "/controlpanel/scripts/list"
-				},		
+			"submenu": [	
 				{
 					"title": {
 						"EN": "Flow Engine",
-						"ES": "Motor de FLujos"
+						"ES": "Motor de Flujos"
 					},
 					"icon": "",
 					"url": "/controlpanel/flows/list"
@@ -82,7 +74,7 @@
 				{
 					"title": {
 						"EN": "Twitter Streams",
-						"ES": "Twitter Streams"
+						"ES": "Escucha en Twitter"
 					},
 					"icon": "",
 					"url": "/controlpanel/twitter/scheduledsearch/list"
@@ -125,8 +117,8 @@
 		},
 		{
 			"title": {
-				"EN": "PUB:API MANAGER",
-				"ES": "PUB:API MANAGER"
+				"EN": "API MANAGER",
+				"ES": "API MANAGER"
 			},
 			"icon": "la la-random",
 			"url": "",
@@ -138,15 +130,7 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/apimanager/list"
-				},				
-				{
-					"title": {
-						"EN": "APIs Invocation",
-						"ES": "Invocación de APIs"
-					},
-					"icon": "",
-					"url": "/controlpanel/apimanager/authorize/list"
-				},	
+				},
 				{
 					"title": {
 						"EN": "API Manager Tokens",
@@ -168,7 +152,7 @@
 				{
 					"title": {
 						"EN": "Database Query Tool",
-						"ES": "Herramienta Consultas Base Datos"
+						"ES": "Herramienta Consultas"
 					},
 					"icon": "",
 					"url": "/controlpanel/querytool/show"

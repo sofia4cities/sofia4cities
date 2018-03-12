@@ -1,0 +1,103 @@
+version: '2'
+services:
+  iotbrokerservice:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/iotbroker:latest
+    stdin_open: true
+    tty: true
+    links:
+    - realtimedb:realtimedb
+    - schedulerdb:schedulerdb
+    - configdb:configdb
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+  loadbalancerservice:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/nginx:latest
+    environment:
+      SERVER_NAME: sofia2-benchmarks.westeurope.cloudapp.azure.com
+    stdin_open: true
+    tty: true
+    links:
+    - flowengineservice:flowengineservice
+    - iotbrokerservice:iotbrokerservice
+    - controlpanelservice:controlpanelservice
+    ports:
+    - 80:80/tcp
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+  quasar:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/quasar:latest
+    stdin_open: true
+    tty: true
+    links:
+    - realtimedb:realtimedb
+    ports:
+    - 18200:10800/tcp
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+  schedulerdb:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/schedulerdb:latest
+    stdin_open: true
+    volumes:
+    - /datadrive/schedulerdb:/var/lib/mysql:rw
+    tty: true
+    ports:
+    - 3307:3306/tcp
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+  flowengineservice:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:latest
+    environment:
+      SERVERNAME: sofia2-benchmarks.westeurope.cloudapp.azure.com
+    stdin_open: true
+    volumes:
+    - /datadrive/flowengine:/tmp/administrator:rw
+    tty: true
+    links:
+    - realtimedb:realtimedb
+    - schedulerdb:schedulerdb
+    - configdb:configdb
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+  configdb:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/configdb:latest
+    stdin_open: true
+    volumes:
+    - /datadrive/configdb:/var/lib/mysql:rw
+    tty: true
+    ports:
+    - 3306:3306/tcp
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+  controlpanelservice:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:latest
+    environment:
+      SERVER_NAME: sofia2-benchmarks.westeurope.cloudapp.azure.com
+    stdin_open: true
+    tty: true
+    links:
+    - quasar:quasar
+    - realtimedb:realtimedb
+    - schedulerdb:schedulerdb
+    - configdb:configdb
+    ports:
+    - 11080:18080/tcp
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+  realtimedb:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/realtimedb:latest
+    stdin_open: true
+    volumes:
+    - /datadrive/realtimedb:/data/db:rw
+    tty: true
+    ports:
+    - 27017:27017/tcp
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1

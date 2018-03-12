@@ -101,13 +101,14 @@
 				</li>
 				<!-- END LANGUAGE -->
 				
-				<!-- BEGIN COMMUNICATIONS 		
-				<li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;">
-					<a id="messages-bell" th:href="@{/comunicaciones/comunicaciones}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Comunicaciones" >
-						<i class="flaticon-bell"></i>  <span class="hidden-sm hidden-xs">Comunicaciones</span>
-					</a>
-				</li>
-				-->	
+
+				<!-- BEGIN COMMUNICATIONS -->			
+				<!-- <li sec:authorize="!hasAuthority('ROLE_PARTNER')" class="dropdown dropdown-rest-toggler"  style="padding-right:8px !important;"> -->
+					<!-- <a id="messages-bell" th:href="@{/comunicaciones/comunicaciones}" class="dropdown-toggle tooltips" data-container="body" data-placement="bottom" data-original-title="Comunicaciones" > -->
+						<!-- <i class="flaticon-bell"></i>  <span class="hidden-sm hidden-xs">Comunicaciones</span> -->
+					<!-- </a> -->
+				<!-- </li> -->
+
 				<!-- END COMMUNICATIONS -->
 				
 				<!-- BEGIN LOG-OUT -->			
@@ -188,8 +189,10 @@
 			"ontologyConfirm":[[#{ontology.delete.confirm}]],
 			"genericConfirm":[[#{dialogo_confirm_delete_text}]],
 			"configurationConfirm":[[#{configuration.del.confirm}]],
+			"gadgetDatasourceConfirm":[[#{datasources.del.confirm}]],
 			"scheduledSearchConfirm":[[#{scheduledsearch.del.confirm}]],
 			"deviceConfirm":[[#{device.delete.confirm}]],
+			"deviceSimulationConfirm" : [[#{simulation.delete.confirm}]],
 			"menu": [[${menu}]]
 		};
 		// LOAD DATA TO USE IN HEADERCONTROLLER

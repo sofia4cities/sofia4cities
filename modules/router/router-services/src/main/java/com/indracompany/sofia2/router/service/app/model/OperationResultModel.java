@@ -39,6 +39,10 @@ public class OperationResultModel implements Serializable{
 	@Getter
 	@Setter
 	private String operation;
+	
+	@Getter
+	@Setter
+	private boolean status;
 
 	@Override
 	public String toString() {

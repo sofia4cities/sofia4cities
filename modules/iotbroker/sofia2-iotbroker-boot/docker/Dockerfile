@@ -8,8 +8,9 @@ VOLUME /tmp
 
 ADD *-exec.jar app.jar
 
-EXPOSE 8081
+EXPOSE 8081 1883
 
-ENV JAVA_OPTS=""
+ENV JAVA_OPTS="" \
+    SERVER_NAME=localhost
 
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=docker","-jar","/app.jar"]

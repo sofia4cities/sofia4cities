@@ -16,6 +16,7 @@ package com.indracompany.sofia2.config.services.client;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology.AccessType;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -31,8 +32,6 @@ public interface ClientPlatformService {
 	public List<ClientPlatform> getAllClientPlatforms();
 
 	public List<ClientPlatform> getclientPlatformsByUser(User user);
-
-	boolean haveAuthorityOverOntology(ClientPlatform clientPlatform, Ontology ontology);
 
 	List<ClientPlatform> getAllClientPlatformByCriteria(String userId, String identification, String[] ontologies);
 

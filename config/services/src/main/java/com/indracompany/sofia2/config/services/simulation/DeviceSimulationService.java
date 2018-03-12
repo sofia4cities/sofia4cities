@@ -25,13 +25,25 @@ import com.indracompany.sofia2.config.model.Token;
 public interface DeviceSimulationService {
 
 	List<String> getClientsForUser(String userId);
+
 	List<String> getClientTokensIdentification(String clientPlatformId);
+
 	List<String> getClientOntologiesIdentification(String clientPlatformId);
+
 	List<String> getSimulatorTypes();
+
 	List<DeviceSimulation> getAllSimulations();
+
 	DeviceSimulation getSimulatorByIdentification(String identification);
-	DeviceSimulation createSimulation(String identification, int interval, String userId, String json) throws JsonProcessingException, IOException;
+
+	DeviceSimulation createSimulation(String identification, int interval, String userId, String json)
+			throws JsonProcessingException, IOException;
+
 	void save(DeviceSimulation simulation);
+
 	DeviceSimulation getSimulationById(String id);
+
 	List<DeviceSimulation> getSimulationsForUser(String userId);
+	
+	DeviceSimulation updateSimulation(String identification, int interval, String json, DeviceSimulation simulation) throws JsonProcessingException, IOException;
 }
