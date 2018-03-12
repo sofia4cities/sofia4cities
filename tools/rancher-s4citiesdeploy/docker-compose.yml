@@ -8,21 +8,36 @@ services:
     - realtimedb:realtimedb
     - schedulerdb:schedulerdb
     - configdb:configdb
+    ports:
+    - 1883:1883/tcp
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+  apimanagerservice:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/apimanager:latest
+    stdin_open: true
+    tty: true
+    links:
+    - realtimedb:realtimedb
+    - schedulerdb:schedulerdb
+    - configdb:configdb
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
   loadbalancerservice:
     image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/nginx:latest
     environment:
-      SERVER_NAME: sofia2-benchmarks.westeurope.cloudapp.azure.com
+      SERVER_NAME: rancher.sofia4cities.com
     stdin_open: true
     tty: true
     links:
     - flowengineservice:flowengineservice
     - iotbrokerservice:iotbrokerservice
     - controlpanelservice:controlpanelservice
+    - apimanagerservice:apimanagerservice
     ports:
     - 80:80/tcp
+    - 443:443/tcp
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
@@ -48,10 +63,21 @@ services:
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
+  devicesimulator:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:latest
+    stdin_open: true
+    tty: true
+    links:
+    - realtimedb:realtimedb
+    - schedulerdb:schedulerdb
+    - configdb:configdb
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
   flowengineservice:
     image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:latest
     environment:
-      SERVERNAME: sofia2-benchmarks.westeurope.cloudapp.azure.com
+      SERVERNAME: rancher.sofia4cities.com
     stdin_open: true
     volumes:
     - /datadrive/flowengine:/tmp/administrator:rw
@@ -77,7 +103,7 @@ services:
   controlpanelservice:
     image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:latest
     environment:
-      SERVER_NAME: sofia2-benchmarks.westeurope.cloudapp.azure.com
+      SERVER_NAME: rancher.sofia4cities.com
     stdin_open: true
     tty: true
     links:

@@ -11,24 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.processor;
+package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -38,81 +35,74 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
-import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 
-@Ignore
 @RunWith(SpringRunner.class)
-@SpringBootTest
-public class CommandProcessorTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class RestTest {
+	@Value("${local.server.port}")
+	private int port;
+
 	private MockMvc mockMvc;
 	@Autowired
 	private WebApplicationContext wac;
 	private ResultActions resultAction;
-	private final String URL_COMMAND_PATH  = "/commandAsync";
+	private final String URL_PATH  = "/rest";
 	@Autowired
 	ObjectMapper mapper;
 
-	@Autowired
-	GatewayNotifier notifier;
-
 	@MockBean
 	SecurityPluginManager securityPluginManager;
+	Person subject;
 
 	IoTSession session;
-
-	SSAPMessage<SSAPBodyCommandMessage> ssapCommand;
-
-	CompletableFuture<SSAPMessage<SSAPBodyCommandMessage>> completableFutureCommand;
-
 
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
 
+		when(securityPluginManager.authenticate(any(), any(), any())).thenReturn(Optional.of(session));
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
 	}
 
+
 	@Before
-	public void setUp() throws IOException, Exception {
-		completableFutureCommand = new CompletableFuture<>();
-		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
-		securityMocks();
+	public void setup() {
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
-		ssapCommand = SSAPMessageGenerator.generateCommandMessage(session.getSessionKey());
-
+		subject = PojoGenerator.generatePerson();
+		securityMocks();
 	}
 
 	@Test
-	public void given_AGateway_When_ACommandArrivesInPlatform_Then_TheGatewayReceivesIt() throws Exception {
-		completableFutureCommand = new CompletableFuture<>();
-		notifier.addCommandListener("test_gateway", (c) -> {
-			completableFutureCommand.complete(c);
-			return new SSAPMessage<>();
-		});
+	public void test_join() throws Exception {
 
-		final StringBuilder url = new StringBuilder(URL_COMMAND_PATH);
-		url.append("/test_command/?sessionKey="+session.getSessionKey());
-
-		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(url.toString())
+		final StringBuilder url = new StringBuilder(URL_PATH);
+		url.append("/client/join?token=2382c702758c4f26ad1d38d1309335d0&clientPlatform=GTKP-Example&clientPlatformId=1111");
+		resultAction = mockMvc.perform(MockMvcRequestBuilders.get(url.toString())
 				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
-				.content("{}")
 				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
 
 		resultAction.andExpect(status().is2xxSuccessful());
-		//		final Boolean result = mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
-		//				Boolean.class);
+		final JsonNode result = mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
+				JsonNode.class);
+		Assert.assertNotNull(result);
 
-		final SSAPMessage<SSAPBodyCommandMessage> response = completableFutureCommand.get(10, TimeUnit.SECONDS);
-		Assert.assertNotNull(response);
+		//		final String a = (String) result.getBody();
+		System.out.println(result);
+
+
+
+
+
 	}
+
 
 
 }
