@@ -92,6 +92,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.jeasy</groupId>
 			<artifactId>easy-rules-core</artifactId>
 			<version>${version.easyrules}</version>
@@ -206,25 +211,25 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>	
-		    <plugin>
-		      <groupId>com.spotify</groupId>
-		      <artifactId>docker-maven-plugin</artifactId>   		      
-		      <configuration>
-		        <imageName>sofia2/apimanager</imageName>
-		        <imageTags>
-		           <imageTag>${sofia2.docker.version}</imageTag>
-		        </imageTags>		        
-		        <dockerDirectory>docker</dockerDirectory>
-		        <resources>
-		           <resource>
-		             <targetPath>/</targetPath>
-		             <directory>${project.build.directory}</directory>
-		             <include>${project.build.finalName}-exec.jar</include>
-		           </resource>
-		        </resources>
-		      </configuration>
-		    </plugin>					
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+					<imageName>sofia2/apimanager</imageName>
+					<imageTags>
+						<imageTag>${sofia2.docker.version}</imageTag>
+					</imageTags>
+					<dockerDirectory>docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}-exec.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
