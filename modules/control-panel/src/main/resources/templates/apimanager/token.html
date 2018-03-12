@@ -26,70 +26,11 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 		
 		<!-- PLUGINS STYLE SHEETS -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>		
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
 		
 	</head>	
-
-	<script th:inline="javascript">
-	//<![CDATA[
 	
-	    function navigateUrl(url){  
-	        window.location.href = url;
-	    }
-
-        function showConfirmDialog(formId) {
-            document.forms[formId].submit();
-        }
-		
-	    var showGenericErrorDialog= function(dialogTitle, dialogContent){		
-			var Close = headerReg.btnCancelar;
-
-			// jquery-confirm DIALOG SYSTEM.
-			$.confirm({
-				icon: 'fa fa-bug',
-				title: dialogTitle,
-				theme: 'dark',
-				content: dialogContent,
-				draggable: true,
-				dragWindowGap: 100,
-				backgroundDismiss: true,
-				closeIcon: true,
-				buttons: {				
-					close: {
-						text: Close,
-						btnClass: 'btn btn-sm btn-default btn-outline',
-						action: function (){} //GENERIC CLOSE.		
-					}
-				}
-			});			
-		}
-		
-		var generateToken = function() {
-			$.ajax({
-				url : "/controlpanel/apimanager/generateToken",
-				type : 'POST',
-				dataType : 'json',
-				data : '',
-				contentType : 'application/json',
-				mimeType : 'application/json',
-				success : function(data) {
-					if (data.ok) {
-						navigateUrl("/controlpanel/apimanager/token");
-					} else {
-						showGenericErrorDialog("error", "error");
-					}
-				},
-				error : function(data, status, er) {
-					showGenericErrorDialog("error", "error");
-				}
-			});
-		}
-	    //]]>
-	</script>
-
-
 	<!-- page-sidebar-closed to start page with collapsed menu -->
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
 	
@@ -182,18 +123,18 @@
 							                      <thead>
 							                        <tr class="cabecera-tabla">	      
 											              <th class="titulo-columnas" th:text="#{apimanager.token.dateCreated}"></th>
-								                          <th class="titulo-columnas" th:text="#{apimanager.token}"></th>
-								                          <th class="titulo-columnas"></th>    	                
+								                          <th class="titulo-columnas text-center" th:text="#{apimanager.token}"></th>
+								                          <th class="titulo-columnas" th:text="#{gen.options}"></th>    	                
 										                  </tr>
 										          </thead>
 										          <tbody th:remove="all-but-first">
 									                <tr th:each="token : ${tokens}" pages:paginate="10" class="odd">
 							                            <td th:text="${token.createdAt}"></td>
-							                            <td th:text="${token.token}"></td>
+							                            <td class="text-center no-wrap"><span class="label bg-grey-mint font-grey-steel"><i class="fa fa-credit-card"></i> <span th:text="${token.token}">tokenId</span></span></td>
 							                            <td class="icon" style="white-space: nowrap">
 						                                    <form th:id="command + ${token.id}" action="list.html" th:action="@{|/apimanager/authorize/list/${token.id}|}" method="post">
 						                                        <input type="hidden" name="_method" value="DELETE"/>
-						                                        <span class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:showConfirmDialog(\'' + 'command' + ${token.id} + '\');'"><i class="fa fa-remove"></i></span>
+						                                        <span class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:showConfirmDialog(\'' + 'command' + ${token.id} + '\');'"><i class="fa fa-remove"></i></span>
 						                                    </form>                                                                                                                                                                          
 							                           </td>
 							                        </tr>
@@ -228,7 +169,79 @@
 	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
     <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
 	
-							
+	<script th:inline="javascript">
+	//<![CDATA[
+	// DATATABLES LANGUAJE FROM PROPERTIES.
+	datatable_lang = [[#{datatables_lang}]];	
+	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
+		
+	
+	    function navigateUrl(url){  
+	        window.location.href = url;
+	    }
+	    
+	    function validate(){
+    		document.getElementById("form_create_auth").submit();
+	    }
+	    
+        function showConfirmDialog(formId) {
+            document.forms[formId].submit();
+        }
+		
+		
+	    var showGenericErrorDialog = function(dialogTitle, dialogContent){		
+			var Close = headerReg.btnCancelar;
+
+			// jquery-confirm DIALOG SYSTEM.
+			$.confirm({
+				icon: 'fa fa-bug',
+				title: dialogTitle,
+				theme: 'dark',
+				content: dialogContent,
+				draggable: true,
+				dragWindowGap: 100,
+				backgroundDismiss: true,
+				closeIcon: true,
+				buttons: {				
+					close: {
+						text: Close,
+						btnClass: 'btn btn-sm btn-default btn-outline',
+						action: function (){} //GENERIC CLOSE.		
+					}
+				}
+			});			
+		}
+		
+		var generateToken = function() {
+			$.ajax({
+				url : "/controlpanel/apimanager/generateToken",
+				type : 'POST',
+				dataType : 'json',
+				data : '',
+				contentType : 'application/json',
+				mimeType : 'application/json',
+				success : function(data) {
+					if (data.ok) {
+						navigateUrl("/controlpanel/apimanager/token");
+					} else {
+						showGenericErrorDialog("error", "error");
+					}
+				},
+				error : function(data, status, er) {
+					showGenericErrorDialog("error", "error");
+				}
+			});
+		}
+		
+        
+		// SEARCH FORM RESET
+		$('#reset_api').on('click',function(){
+			$('#form_create_auth')[0].reset();
+		});
+		
+	    //]]>	
+	</script>	
 
 </body>
 </html>
