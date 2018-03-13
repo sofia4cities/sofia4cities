@@ -66,8 +66,15 @@ public class DeleteProcessorTest {
 	SSAPMessage<SSAPBodyDeleteMessage> ssapDeletetOperation;
 	SSAPMessage<SSAPBodyDeleteByIdMessage> ssapDeleteByIdtOperation;
 
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
+
 	private void securityMocks() {
 		final IoTSession session = PojoGenerator.generateSession();
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
@@ -97,7 +104,7 @@ public class DeleteProcessorTest {
 	public void given_OneDeleteProcessor_When_ItProcessesOneValidDeleteById_Then_TheResponseIndicatesTheOperationWasPerformed() {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
-		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation);
+		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -113,7 +120,7 @@ public class DeleteProcessorTest {
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
 		ssapDeleteByIdtOperation.getBody().setId("5a9b2ef917f81f33589e06d3");
-		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation);
+		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -127,7 +134,7 @@ public class DeleteProcessorTest {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remove({})");
-		responseMessage = deleteProcessor.process(ssapDeletetOperation);
+		responseMessage = deleteProcessor.process(ssapDeletetOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -142,7 +149,7 @@ public class DeleteProcessorTest {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remove({\"name\":\"NO_OCURRENCE_NAME\"})");
-		responseMessage = deleteProcessor.process(ssapDeletetOperation);
+		responseMessage = deleteProcessor.process(ssapDeletetOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -159,7 +166,7 @@ public class DeleteProcessorTest {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remov({})");
-		responseMessage = deleteProcessor.process(ssapDeletetOperation);
+		responseMessage = deleteProcessor.process(ssapDeletetOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());

@@ -11,16 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.processor;
+package com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway;
 
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
-import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import lombok.Data;
 
-public interface DeviceManager {
-
-	public <T extends SSAPBodyMessage>boolean registerActivity(SSAPMessage<T> request, SSAPMessage<SSAPBodyReturnMessage> response, IoTSession session, GatewayInfo info);
-
+@Data
+public class GatewayInfo {
+	private String name;
+	private String protocol;
 }

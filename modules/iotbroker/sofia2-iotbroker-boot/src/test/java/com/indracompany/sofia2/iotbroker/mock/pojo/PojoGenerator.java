@@ -16,6 +16,7 @@ package com.indracompany.sofia2.iotbroker.mock.pojo;
 import java.util.UUID;
 
 import com.github.javafaker.Faker;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 
 public class PojoGenerator {
@@ -35,6 +36,14 @@ public class PojoGenerator {
 		session.setClientPlatformInstance(Faker.instance().chuckNorris().fact());
 		session.setSessionKey(UUID.randomUUID().toString());
 		return session;
+	}
+
+	public static GatewayInfo generateGatewayInfo() {
+		final GatewayInfo info = new GatewayInfo();
+		info.setName("testGateway");
+		info.setProtocol("testProtocol");
+
+		return info;
 	}
 
 }

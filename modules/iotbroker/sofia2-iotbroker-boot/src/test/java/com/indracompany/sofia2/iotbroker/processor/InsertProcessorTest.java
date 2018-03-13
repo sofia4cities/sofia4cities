@@ -64,9 +64,16 @@ public class InsertProcessorTest {
 	Person subject = PojoGenerator.generatePerson();
 	SSAPMessage<SSAPBodyInsertMessage> ssapInsertOperation;
 
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
+
 	@Before
 	public void setUp() throws IOException, Exception {
 		mockOntologies.createOntology(Person.class);
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 
 		subject = PojoGenerator.generatePerson();
 		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(Person.class.getSimpleName(), subject);
@@ -83,7 +90,7 @@ public class InsertProcessorTest {
 		// Scenario: SessionKey is an Empty String
 		{
 			ssapInsertOperation.setSessionKey("");
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -93,7 +100,7 @@ public class InsertProcessorTest {
 		// Scenario: SessionKey is null
 		{
 			ssapInsertOperation.setSessionKey(null);
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -109,7 +116,7 @@ public class InsertProcessorTest {
 		when(securityPluginManager.checkSessionKeyActive(any())).thenReturn(false);
 
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -123,7 +130,7 @@ public class InsertProcessorTest {
 
 		when(securityPluginManager.checkAuthorization(any(),anyString(),anyString())).thenReturn(false);
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -140,7 +147,7 @@ public class InsertProcessorTest {
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());

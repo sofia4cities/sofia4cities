@@ -36,10 +36,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.indracompany.sofia2.android.s4candroidapi.protocols.implementations.RESTClient;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,13 +68,12 @@ public class TrackingService extends Service implements LocationListener, Google
     public static final String ACTION_FRAME_GEN = "TrackingService-FGen";
     public static final String TAG = "TrackingService";
 
-    //private final static String TOKEN = "e2c1734d1d7b4f12a53480d12ed112c2";
-    //private final static String KP_INSTANCE = "demo_sofia2IoT_androidKP:demo_sofia2IoT_androidKP_01";
-    //private final static String ONTOLOGY_NAME = "demo_sofia2IoT_beaconFrame";
 
     private final static String TOKEN = "2837830c15b04b7f87bdc817021e67af";
-    private final static String KP_INSTANCE = "KPWizinkDemo:KPWizinkDemo_01";
-    private final static String ONTOLOGY_NAME = "WIZINK_DEMO";
+    private final static String ONTOLOGY_NAME = "androidIoTFrame";
+    private final static String CLIENT_PLATFORM = "androidIoTDevice";
+
+    private final static String SERVICE_URL ="http://192.168.1.13:8081/iotbroker/rest/";
 
     private final int OFFLINE_MODE = 0;
     private final int ONLINE_MODE = 1;
@@ -102,7 +107,7 @@ public class TrackingService extends Service implements LocationListener, Google
 
     private LinkedList<String> bufferFrames = new LinkedList<String>();
 
-    SIBProxyRest sbr = new SIBProxyRest();
+    RESTClient IoTBrokerProxyRest = null;
 
     int bufferFramesLength = 20;
 
@@ -296,7 +301,16 @@ public class TrackingService extends Service implements LocationListener, Google
         super.onCreate();
         preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         loadPreferences();
-        //TODO Uncomment the following lines to obtain IMEI from the smartphone and send it to Sofia2
+
+        try {
+            IoTBrokerProxyRest =  new RESTClient(SERVICE_URL,pref_token,pref_thinkp,"Device_01");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+
         /*mngr = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
         IMEI = mngr.getDeviceId();*/
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -417,7 +431,6 @@ public class TrackingService extends Service implements LocationListener, Google
         }
     }
 
-    //TODO Modify this method to update the message to insert in the ontology
     private String composeFrame(Location location, boolean event){
         if(location!=null){
             return "{ \""+pref_ontology+"\": { \"geometry\": { \"coordinates\": [ "+
@@ -439,6 +452,8 @@ public class TrackingService extends Service implements LocationListener, Google
         }
 
     }
+
+
 
     public File getStorageDir(String albumName){
         File file = new File(Environment.getExternalStoragePublicDirectory(
@@ -482,7 +497,12 @@ public class TrackingService extends Service implements LocationListener, Google
                     if(bufferFramesLength<bufferFrames.size()){
                         bufferFrames.removeFirst();
                     }
-                    sbr.send(context,pref_token,pref_thinkp,pref_ontology,bufferFrames);
+
+                    if(IoTBrokerProxyRest.join() == HttpURLConnection.HTTP_OK){
+                        while(bufferFrames.size()>0) {
+                            IoTBrokerProxyRest.insert(pref_ontology, bufferFrames.getFirst());
+                        }
+                    }
                 }
                 catch( Exception ex ) {
                     Log.i(TAG, "sending ERROR\n" + ex.getMessage() );
@@ -499,7 +519,7 @@ public class TrackingService extends Service implements LocationListener, Google
                 Sofia2BeaconMAC);
         pref_email = preferences.getString(getString(R.string.pref_email),"mbriceno@minsait.com");
         pref_ontology = preferences.getString(getString(R.string.pref_ontology),ONTOLOGY_NAME);
-        pref_thinkp = preferences.getString(getString(R.string.pref_thinkp),KP_INSTANCE);
+        pref_thinkp = preferences.getString(getString(R.string.pref_thinkp),CLIENT_PLATFORM);
         pref_token = preferences.getString(getString(R.string.pref_token),TOKEN);
 
     }
