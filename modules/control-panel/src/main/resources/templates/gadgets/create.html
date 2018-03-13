@@ -189,7 +189,7 @@
 										 <div id="measures">
 										   
 										 </div>
-										 <button id="addMore" style="display:none;margin-top:10px" class="btn btn-success pull-right" onclick="addFormSttByType(true)">Add measure</button>
+										 <button id="addMore" style="display:none;margin-top:10px" class="btn btn-success pull-right" onclick="addFormSttByType(event,true)">Add measure</button>
 									 </div>
 									<div id="viewer" style="height:300px; width:100%;display:inline-block">
 										<div id="gapp" ng-app="s2DashboardFramework">
@@ -442,7 +442,10 @@
 	
 	var stt;
 	
-	function addFormSttByType(loadOptions){
+	function addFormSttByType(e,loadOptions){
+		if(e){
+			e.preventDefault();	
+		}
 		var measure = "";
 		var division;
 		switch (stt.attributes.length){
