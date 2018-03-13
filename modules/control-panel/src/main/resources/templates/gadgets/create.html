@@ -23,6 +23,20 @@
             }
           });
 		</script>
+		
+		<script>
+		    window.__env = window.__env || {};
+		    window.__env.socketEndpointConnect = '/dashboardengine/dsengine/solver';
+		    window.__env.socketEndpointSend = '/dsengine/solver';
+		    window.__env.socketEndpointSubscribe = '/dsengine/broker';
+		    window.__env.endpointSofia2ControlPanel = '/controlpanel';
+		    window.__env.endpointSofia2DashboardEngine = '/dashboardengine';
+		    window.__env.dashboardEngineUsername = 'administrator';
+		    window.__env.dashboardEnginePassword = 'changeIt!';
+		    window.__env.dashboardEngineLoginRest = '/loginRest';
+		    window.__env.enableDebug = false;
+		
+		</script>
 
 		<!-- STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
@@ -34,7 +48,15 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 		
 		<!-- PLUGINS STYLE SHEETS -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
+		
+		<!-- Dashboard styles -->
+		
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/vendor.css"/>
+	
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>
+	
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>	
 	</head>	
 	
 	<!-- page-sidebar-closed to start page with collapsed menu -->
@@ -113,10 +135,11 @@
 											<input th:if="${gadget.id} != null" type="hidden" name="action" th:value="@{/gadgets/update}"/>
 											<input th:if="${gadget.id} != null" type="hidden" name="_method" value="PUT"/>
 								 			
-								 			<input type="hidden" th:field="*{config}"/>
-								 			<input type="hidden" th:field="*{type}"/>
-								 			<input type="hidden" th:field="*{description}"/>
-								 			<input type="hidden" th:field="*{public}"/>	
+								 			<input type="hidden" id="config" th:field="*{config}"/>
+								 			<input type="hidden" id="type" th:field="*{type}"/>
+								 			<input type="hidden" id="description" th:field="*{description}"/>
+								 			<input type="hidden" id="public" th:field="*{public}"/>
+								 			<input type="hidden" id="id" th:field="*{id}"/>	
 								 										  
 											<div class="form-body">
 									 			<div class="row">
@@ -134,7 +157,7 @@
 															<i class="fa fa-database"></i>  <label class="control-label" th:text="#{datasources.name} + ':'">Datasource</label>
 															<div class="input-icon ">
 																<i class="la la-database"></i>
-															<select id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:required="true">
+															<select th:readonly="${gadget.id} != null" readonly="readonly" id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:required="true">
 																<option value="none"></option> 
 																<option th:each="datasource:${datasources}" th:value="${datasource.id}" th:text="${datasource.identification}"></option>
 															</select>
@@ -159,20 +182,35 @@
 									 </div>		
 									 
 									 <!-- Aquí el select de datasource -->
-									 <div class="col-md-12 row">
+									 <div id="measuresContainer" style="display:none" class="col-md-12 row" >
+									 	 <h3>Measures</h3>
 										 <div id="measures">
 										   
 										 </div>
-										 <button id="addMore" class="btn btn-success pull-right" onclick="addFormSttByType()">Add measure</button>
-									 </div>				
-									
-												<div class="form-actions">
-													<div class="pull-right">
-														<!-- CREATE -->
-															<button th:if="${gadget.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success btn-lg" name="create"  th:value="#{gadgets.create}" > <span th:text="#{gadgets.create}"> Create</span></button>
+										 <button id="addMore" style="display:none;margin-top:10px" class="btn btn-success pull-right" onclick="addFormSttByType(true)">Add measure</button>
+									 </div>
+									<div id="viewer" style="height:300px; width:100%;display:inline-block">
+										<div id="gapp" ng-app="s2DashboardFramework">
+										<gadget style="height:300px;width:100%;display:inline-block" class="flex layout-column"></gadget>
+										</div>
 										
-													</div>
-												</div>					
+										<script src="/controlpanel/static/dashboards/scripts/vendor.js"></script>
+										
+										<script src="/controlpanel/static/dashboards/gridster.js"></script>
+										
+										<!-- Angular Material Fileinput -->
+										<link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/>
+										<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>
+										
+										<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
+									</div>
+									<div style="margin-top:20px" class="form-actions">
+										<div class="pull-right">
+											<!-- CREATE -->
+												<button th:if="${gadget.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success btn-lg" name="create"  th:value="#{gadgets.create}" > <span th:text="#{gadgets.create}"> Create</span></button>
+							
+										</div>
+									</div>					
 																										
 									</div>
 								</div>
@@ -205,7 +243,7 @@
 
 	var gadget= [ {
 		type : "line",
-		icon : "../static/images/dashboards/linechart.jpg",
+		icon : "/controlpanel/images/dashboards/linechart.jpg",
 
 		attributes : [ {
 			name : "X axis",
@@ -238,7 +276,7 @@
 		}
 	}, {
 		type : "bar",
-		icon : "../static/images/dashboards/barchart.jpg",
+		icon : "/controlpanel/static/images/dashboards/barchart.jpg",
 		attributes : [ {
 			name : "X axis",
 			types : [ "date", "number", "string" ]
@@ -270,7 +308,7 @@
 
 	{
 		type : "pie",
-		icon : "../static/images/dashboards/piechart.jpg",
+		icon : "/controlpanel/static/images/dashboards/piechart.jpg",
 		attributes : [ {
 			name : "X axis",
 			types : [ "date", "number", "string" ]
@@ -302,7 +340,7 @@
 
 	{
 		type : "map",
-		icon : "../static/images/dashboards/bordermap.png",
+		icon : "/controlpanel/static/images/dashboards/bordermap.png",
 		attributes : [ {
 			name : "Latitude",
 			types : [ "number" ]
@@ -328,7 +366,7 @@
 		}
 	}, {
 		type : "wordcloud",
-		icon : "../static/images/dashboards/wordchart.jpg",
+		icon : "/controlpanel/static/images/dashboards/wordchart.jpg",
 		attributes : [ {
 			name : "Words",
 			types : [ "number", "string" ]
@@ -349,18 +387,18 @@
 		$("#icons").empty();
 		$("#vercamposdatasource").empty();
 		
-	
+		$("#measuresContainer").show();
 		
 		if(($("#datasources").val())!="none"){ 
 		
 		
 		$.each(gadget, function() {
-						var Type = this.type;
-						var Icon = this.icon;
-							
-						$("#icons").append('<div class="col-md-3"> <div class="card card-01" onclick="showMeasures(\'' + Type + '\')"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
-						
-					} )
+				var Type = this.type;
+				var Icon = this.icon;
+					
+				$("#icons").append('<div class="col-md-3"> <div class="card card-01" id="' + Type + '" onclick="showMeasures(\'' + Type + '\')"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
+				
+			} )
 		  }
 		
 	}
@@ -380,7 +418,7 @@
 	// <![CDATA[
 	var stt;
 	
-	function addFormSttByType(){
+	function addFormSttByType(loadOptions){
 		var measure = "";
 		var division;
 		switch (stt.attributes.length){
@@ -395,16 +433,22 @@
 			var atr = stt.attributes[i];
 			mhtml += '<div class="form-group ' + division + '">';
 			mhtml += '<label class="control-label"> ' + atr.name + ' </label>';
-			mhtml += '<select ' + (atr.multi?'multiple=multiple':'') + ' onchange="refreshGadget()" class="form-control ' + atr.types.join(" ") + '" data-live-search="true" data-width="100%"></select>';
+			mhtml += '<select id="s_' + $(".gserie").length + '_' + i + '" ' + (atr.multi?'multiple=multiple':'') + ' onchange="refreshGadget()" class="form-control ' + atr.types.join(" ") + '" data-live-search="true" data-width="100%">';
+			if(loadOptions){
+				for(var o = 0 ; o < gfields.length;o++){
+					mhtml += '<option value="' + gfields[o].field + '">' + gfields[o].field + '</option>'
+				}
+			}
+			mhtml += '</select>';
 			mhtml	+= '</div>'
 		}
 		
 		mhtml += '<div class="form-group ' + division + '">';
 		mhtml += '<label class="control-label"> Name </label>';
-		mhtml += '<input class="form-control" data-live-search="true" data-width="100%"/>'
+		mhtml += '<input onchange="refreshGadget()" id="n_' + $(".gserie").length + '" class="form-control" data-live-search="true" data-width="100%"/>'
 		mhtml += '</div>'
-		if(!($(".gserie").length == 0 && stt.series.maxseries == 1)){
-			mhtml += '<button class="btn btn-danger" onclick="removeMeasure(' + $(".gserie").length + ')">Remove measure</button>'
+		if($(".gserie").length > 0 && (stt.series.maxseries > (1 + $(".gserie").length) || stt.series.maxseries == -1)){
+			mhtml += '<button class="btn btn-danger" style="margin-top:10px" onclick="removeMeasure(' + $(".gserie").length + ')">Remove measure</button>'
 		}
 		mhtml += '</div>'
 		
@@ -415,28 +459,128 @@
 		else{
 			$("#addMore").show();
 		}
+		if(loadOptions){
+			refreshGadget()
+		}
 	}
-	// ]]>
+	
+	function isNormalInteger(str) {
+	    var n = Math.floor(Number(str));
+	    return n !== Infinity && String(n) === str && n >= 0;
+	}
+	
+	function generateMeasuresArray(){
+		measures = [];
+		for(var s =0 ;s < $(".gserie").length; s++){
+			var selects = $($(".gserie").get(s)).find("select");
+			var config = {fields:[],name:""};
+			for(var sel = 0;sel < selects.length;sel++){
+				var fieldAux = $("#s_" + s + "_" + sel).val();
+				if(typeof fieldAux !== "object"){
+					var pathFields = fieldAux.split(".");
+					var realField = pathFields[0];
+					for(var i=1;i<pathFields.length;i++){
+						if(isNormalInteger(pathFields[i])){
+							pathFields[i] = "[" + pathFields[i] + "]"
+							realField += pathFields[i];
+						}
+						else{
+							realField += "." + pathFields[i];
+						}
+					}
+					config.fields.push(realField);
+				}
+				else{
+					for(var fi = 0; fi < fieldAux.length; fi++){
+						var pathFields = fieldAux[fi].split(".");
+						var realField = pathFields[0];
+						for(var i=1;i<pathFields.length;i++){
+							if(isNormalInteger(pathFields[i])){
+								pathFields[i] = "[" + pathFields[i] + "]"
+								realField += pathFields[i];
+							}
+							else{
+								realField += "." + pathFields[i];
+							}
+						}
+						config.fields.push(realField);
+					}
+				}
+			}
+			config.name = $("#n_" + s).val();			
+			measures.push({config:JSON.stringify(config)});
+		}
+	}
+	
 	function refreshGadget(){
-		//Update live gadget
+		generateMeasuresArray();
+		if(measures.length > 0){
+	        var scope = angular.element(document.getElementsByTagName('gadget')[0]).scope();
+			scope.$$childHead.vm.config = {config:"{}",type:gtype};			
+			scope.$$childHead.vm.measures = measures;
+			scope.$$childHead.vm.ds = $("#datasources").val();
+			scope.$$childHead.reloadContent();
+		}
 	}
 	
 	function removeMeasure(index){
 		$(".gserie")[index].remove();
 		$("#addMore").show();
+		refreshGadget();
 	}
 	
+	var measures=[];
+	var gtype = "";
+	var gfields = [];
 	function showMeasures(type){
+		gtype =type;
 		$.get("/controlpanel/datasources/getSampleDatasource/" + $("#datasources").val(), function (jsonString){
-			var fields = iterate(jsonString[0],"", []);
+			gfields = iterate(jsonString[0],"", []);
 		    stt = gadget.filter(function(g){return g.type == type})[0];
-		    $("#measures").empty().append(addFormSttByType());
-		    debugger;
-			for (var i in fields){
-		    	$('.' + fields[i].type).append('<option value="' + fields[i].field + '">' + fields[i].field + '</option>');
+		    if(measures.length == 0){
+		    	$("#measures").empty().append(addFormSttByType());
 		    }
+		    else{
+		    	$("#measures").empty();
+		    	for(var i=0;i<measures.length;i++){
+					$("#measures").append(addFormSttByType());
+		    	}
+		    }
+		    
+			for (var i in gfields){
+		    	$('.' + gfields[i].type).append('<option value="' + gfields[i].field + '">' + gfields[i].field + '</option>');
+		    }
+			for(var i=0;i<measures.length;i++){
+				var config = JSON.parse(measures[i].config);
+				var fields = config.fields;
+				for(var f=0;f<fields.length;f++){
+					var fieldAux = fields[f].replace("[",".").replace("]","");
+					if($("#s_" + i + "_" + f).attr("multiple")){
+						var values=fields.slice(f);
+						$("#s_" + i + "_" + f).val(values);
+						break;
+					}
+					else{
+						$("#s_" + i + "_" + f).val(fieldAux);
+					}
+				}
+				$("#n_" + i).val(config.name);
+			}
+			
+			refreshGadget();
 		});		
 	}
+	// ]]>
+	$(document).ready(
+		function(){
+			if($("#id").val()){
+				measures = /*[[${measures}]]*/ [];
+				$("#datasources").val(measures[0].datasource.id);
+				$("#datasources").change();
+				$("#" + $("#type").val() + "").click();
+			}
+		}
+	)
 	
 	</script>
 	

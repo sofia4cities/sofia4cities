@@ -130,8 +130,9 @@ public class GadgetController {
 	
 	@GetMapping(value = "/edit/{gadgetId}", produces = "text/html")
 	public String createGadget(Model model, @PathVariable("gadgetId") String gadgetId) {
-		model.addAttribute("gadgets",this.gadgetService.getGadgetById(utils.getUserId(), gadgetId));
-		model.addAttribute("datasources",this.gadgetDatasourceService.getAllIdentifications());
+		model.addAttribute("gadget",this.gadgetService.getGadgetById(utils.getUserId(), gadgetId));
+		model.addAttribute("measures",this.gadgetService.getGadgetMeasuresByGadgetId(utils.getUserId(), gadgetId));
+		model.addAttribute("datasources",this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
 		return "/gadgets/create";
 	}
 	
