@@ -29,3 +29,19 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     testCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'maven'
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://sofia2.org/nexus/content/repositories/releases/") {
+                authentication(userName: "admin", password: "Indra2014!")
+                pom.groupId = "com.indracompany.sofia2"
+                pom.artifactId = "s4candroidapi"
+                pom.version = '1.0.0'
+            }
+        }
+    }
+}
+

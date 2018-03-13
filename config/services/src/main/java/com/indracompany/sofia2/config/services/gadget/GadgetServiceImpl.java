@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.config.services.gadget;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
@@ -171,7 +174,10 @@ public class GadgetServiceImpl implements GadgetService {
 		if(hasUserPermission(gadgetId, userId)) {
 			Gadget gadget = this.gadgetRepository.findById(gadgetId);
 			if (gadget != null) {
-				gadgetMeasureRepository.deleteByGadget(gadget);
+				List<GadgetMeasure> lgmeasure = gadgetMeasureRepository.findByGadget(gadget);
+				for(GadgetMeasure gm : lgmeasure) {
+					this.gadgetMeasureRepository.delete(gm);
+				}
 				this.gadgetRepository.delete(gadget);
 			} else
 				throw new GadgetDatasourceServiceException("Cannot delete gadget that does not exist");
@@ -180,23 +186,58 @@ public class GadgetServiceImpl implements GadgetService {
 	}
 
 	@Override
-	public void updateGadget(Gadget gadget, List<String> gadgetDatasourceIds, List<String> jsonMeasures) {
-		gadgetMeasureRepository.deleteByGadget(gadget);
+	public void updateGadget(Gadget gadget, String gadgetDatasourceIds, String jsonMeasures) {
+		List<GadgetMeasure> lgmeasure = gadgetMeasureRepository.findByGadget(gadget);
+		for(GadgetMeasure gm : lgmeasure) {
+			this.gadgetMeasureRepository.delete(gm);
+		}
+		Gadget gadgetDB = this.gadgetRepository.findById(gadget.getId());
+		gadget.setId(gadgetDB.getId());
+		gadget.setIdentification(gadgetDB.getIdentification());
+		gadget.setUser(gadgetDB.getUser());
 		saveGadgetAndMeasures(gadget, gadgetDatasourceIds, jsonMeasures);
 	}
 
 	@Override
-	public void createGadget(Gadget gadget, List<String> gadgetDatasourceIds, List<String> jsonMeasures) {
+	public void createGadget(Gadget gadget, String gadgetDatasourceIds, String jsonMeasures) {
 		saveGadgetAndMeasures(gadget, gadgetDatasourceIds, jsonMeasures);
 	}
 	
-	private void saveGadgetAndMeasures(Gadget g, List<String> gadgetDatasourceIds, List<String> jsonMeasures) {
-		gadgetRepository.save(g);
-		for (int i=0; i< jsonMeasures.size(); i++) {
+	private List<MeasureDto> fromJSONMeasuresStringToListString(String inputStr){
+		ObjectMapper objectMapper = new ObjectMapper();
+		TypeFactory typeFactory = objectMapper.getTypeFactory();
+		List<MeasureDto> listStr = null;
+		try {
+			listStr = objectMapper.readValue(inputStr, typeFactory.constructCollectionType(List.class, MeasureDto.class));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listStr;
+	}
+	
+	private List<String> fromStringToListString(String inputStr){
+		ObjectMapper objectMapper = new ObjectMapper();
+		TypeFactory typeFactory = objectMapper.getTypeFactory();
+		List<String> listStr = null;
+		try {
+			listStr = objectMapper.readValue(inputStr, typeFactory.constructCollectionType(List.class, String.class));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return listStr;
+	}
+ 	
+	private void saveGadgetAndMeasures(Gadget g, String gadgetDatasourceIds, String jsonMeasures) {
+		g = gadgetRepository.save(g);
+		List<MeasureDto> listJsonMeasures = fromJSONMeasuresStringToListString(jsonMeasures);
+		List<String> listDatasources = fromStringToListString(gadgetDatasourceIds);
+		for (int i=0; i< listJsonMeasures.size(); i++) {
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
 			gadgetMeasure.setGadget(g);
-			gadgetMeasure.setDatasource(gadgetDatasourceService.getGadgetDatasourceById(gadgetDatasourceIds.get(i)));
-			gadgetMeasure.setConfig(jsonMeasures.get(i));
+			gadgetMeasure.setDatasource(gadgetDatasourceService.getGadgetDatasourceById(listDatasources.get(i)));
+			gadgetMeasure.setConfig(listJsonMeasures.get(i).getConfig());
 			gadgetMeasureRepository.save(gadgetMeasure);
 		}
 	}
