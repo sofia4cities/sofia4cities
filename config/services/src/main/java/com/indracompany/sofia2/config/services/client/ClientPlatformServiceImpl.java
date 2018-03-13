@@ -67,6 +67,7 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 			for (final Ontology ontology : ontologies) {
 				final ClientPlatformOntology relation = new ClientPlatformOntology();
 				relation.setClientPlatform(clientPlatform);
+				relation.setAccess(AccessType.ALL.name());
 				relation.setOntology(ontology);
 				// If relation does not exist then create
 				if (this.clientPlatformOntologyRepository.findByOntologyAndClientPlatform(ontology.getIdentification(),
