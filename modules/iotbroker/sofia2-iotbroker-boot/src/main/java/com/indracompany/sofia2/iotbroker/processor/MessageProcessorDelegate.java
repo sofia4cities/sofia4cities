@@ -29,8 +29,8 @@ import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaExceptio
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
@@ -93,7 +93,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			final Optional<IoTSession> session = securityPluginManager.getSession(response.getSessionKey());
 
 			session.ifPresent((s) -> {
-				deviceManager.registerActivity(message, resp, s);
+				deviceManager.registerActivity(message, resp, s, info);
 			});
 
 

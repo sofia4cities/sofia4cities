@@ -73,7 +73,7 @@ public class InsertProcessorTest {
 	@Before
 	public void setUp() throws IOException, Exception {
 		mockOntologies.createOntology(Person.class);
-		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 
 		subject = PojoGenerator.generatePerson();
 		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(Person.class.getSimpleName(), subject);

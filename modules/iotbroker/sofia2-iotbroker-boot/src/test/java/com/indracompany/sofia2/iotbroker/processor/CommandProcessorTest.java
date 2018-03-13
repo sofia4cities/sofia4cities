@@ -78,7 +78,7 @@ public class CommandProcessorTest {
 
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
-		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);

@@ -80,7 +80,7 @@ public class UpdateProcessorTest {
 
 	private void securityMocks() {
 		final IoTSession session = PojoGenerator.generateSession();
-		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);

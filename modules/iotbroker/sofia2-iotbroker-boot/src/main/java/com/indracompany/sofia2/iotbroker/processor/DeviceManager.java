@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.iotbroker.processor;
 
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -20,6 +21,6 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public interface DeviceManager {
 
-	public <T extends SSAPBodyMessage>boolean registerActivity(SSAPMessage<T> request, SSAPMessage<SSAPBodyReturnMessage> response, IoTSession session);
+	public <T extends SSAPBodyMessage>boolean registerActivity(SSAPMessage<T> request, SSAPMessage<SSAPBodyReturnMessage> response, IoTSession session, GatewayInfo info);
 
 }

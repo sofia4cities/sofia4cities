@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.config.model.Device;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.device.DeviceService;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -50,7 +51,8 @@ public class DeviceManagerDelegate implements DeviceManager {
 	public <T extends SSAPBodyMessage> boolean registerActivity(
 			SSAPMessage<T> request,
 			SSAPMessage<SSAPBodyReturnMessage> response,
-			IoTSession session) {
+			IoTSession session,
+			GatewayInfo info) {
 
 		final List<Device> devices= deviceService.getByClientPlatformIdAndIdentification(session.getClientPlatformID(), session.getClientPlatformInstance());
 		Device device = null;
@@ -62,18 +64,19 @@ public class DeviceManagerDelegate implements DeviceManager {
 			device = new Device();
 			device.setClientPlatform(session.getClientPlatformID());
 			device.setIdentification(session.getClientPlatformInstance());
+			device.setDescription("PROTOCOL: " + info.getProtocol());
 
 		}
 
 		switch(request.getMessageType()) {
 		case JOIN:
-			touchDevice(device, session, true);
+			touchDevice(device, session, true, info);
 			break;
 		case LEAVE:
-			touchDevice(device, session, false);
+			touchDevice(device, session, false, info);
 			break;
 		default:
-			touchDevice(device, session, true);
+			touchDevice(device, session, true, info);
 			break;
 		}
 
@@ -104,7 +107,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 		deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, true, c.getTime());
 	}
 
-	private void touchDevice(Device device, IoTSession session, boolean connected) {
+	private void touchDevice(Device device, IoTSession session, boolean connected, GatewayInfo info) {
 		device.setAccesEnum(Device.StatusType.OK);
 		device.setClientPlatform(session.getClientPlatformID());
 		device.setIdentification(session.getClientPlatformInstance());
@@ -112,6 +115,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 		device.setStatus("OK");
 		device.setConnected(connected);
 		device.setDisabled(false);
+		device.setDescription("PROTOCOL: " + info.getProtocol());
 		deviceService.updateDevice(device);
 	}
 
