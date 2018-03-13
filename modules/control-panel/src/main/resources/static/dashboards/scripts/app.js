@@ -7,6 +7,89 @@
 (function () {
   'use strict';
 
+  LiveHTMLController.$inject = ["$log", "$scope", "$element", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService"];
+  angular.module('s2DashboardFramework')
+    .component('livehtml', {
+      templateUrl: 'app/components/view/liveHTMLComponent/livehtml.html',
+      controller: LiveHTMLController,
+      controllerAs: 'vm',
+      bindings:{
+        livecontent:"<",
+        datasource:"<"
+      }
+    });
+
+  /** @ngInject */
+  function LiveHTMLController($log, $scope, $element, $mdCompiler, $compile, datasourceSolverService,sofia2HttpService) {
+    var vm = this;
+    $scope.ds = [];
+
+    vm.$onInit = function(){
+      compileContent();
+    }
+
+    vm.$onChanges = function(changes,c,d,e) {
+      if("datasource" in changes && changes["datasource"].currentValue){
+        refreshSubscriptionDatasource(changes.datasource.currentValue, changes.datasource.previousValue)
+      }
+      else{
+        compileContent();
+      }
+    };
+
+    vm.insertSofia2Http = function(token, clientPlatform, clientPlatformId, ontology, data){
+      sofia2HttpService.insertSofia2Http(token, clientPlatform, clientPlatformId, ontology, data).then(
+        function(e){
+          console.log("OK Rest: " + JSON.stringify(e));
+        }).catch(function(e){
+          console.log("Fail Rest: " + JSON.stringify(e));
+        });
+    }
+
+    vm.$onDestroy = function(){
+      if($scope.unsubscribeHandler){
+        $scope.unsubscribeHandler();
+        $scope.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
+      }
+    }
+
+    function compileContent(){
+      var parentElement = $element[0];
+      $mdCompiler.compile({
+        template: vm.livecontent
+      }).then(function (compileData) {
+        compileData.link($scope);
+        $element.empty();
+        $element.prepend(compileData.element)
+      });
+    }
+
+    function refreshSubscriptionDatasource(newDatasource, oldDatasource) {
+      if($scope.unsubscribeHandler){
+        $scope.unsubscribeHandler();
+        $scope.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
+      }
+      $scope.unsubscribeHandler = $scope.$on(newDatasource.name,function(event,data){
+        $scope.ds = data;
+      });
+
+      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
+        {
+          type: newDatasource.type,
+          name: newDatasource.name,
+          refresh: newDatasource.refresh,
+          triggers: [{params:{filter:[],group:[],project:[]},emiter:newDatasource.name}]
+        }
+      );
+    };
+  }
+})();
+
+(function () {
+  'use strict';
+
   PageController.$inject = ["$log", "$scope", "$mdSidenav", "$mdDialog", "datasourceSolverService"];
   angular.module('s2DashboardFramework')
     .component('page', {
@@ -75,376 +158,6 @@
     };
 
 
-  }
-})();
-
-(function () {
-  'use strict';
-
-  LiveHTMLController.$inject = ["$log", "$scope", "$element", "$mdCompiler", "$compile", "datasourceSolverService"];
-  angular.module('s2DashboardFramework')
-    .component('livehtml', {
-      templateUrl: 'app/components/view/liveHTMLComponent/livehtml.html',
-      controller: LiveHTMLController,
-      controllerAs: 'vm',
-      bindings:{
-        livecontent:"<",
-        datasource:"<"
-      }
-    });
-
-  /** @ngInject */
-  function LiveHTMLController($log, $scope, $element, $mdCompiler, $compile, datasourceSolverService) {
-    var vm = this;
-    $scope.ds = [];
-
-    vm.$onInit = function(){
-      compileContent();
-    }
-
-    vm.$onChanges = function(changes,c,d,e) {
-      if("datasource" in changes && changes["datasource"].currentValue){
-        refreshSubscriptionDatasource(changes.datasource.currentValue, changes.datasource.previousValue)
-      }
-      else{
-        compileContent();
-      }
-    };
-
-    vm.$onDestroy = function(){
-      if($scope.unsubscribeHandler){
-        $scope.unsubscribeHandler();
-        $scope.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
-      }
-    }
-
-    function compileContent(){
-      var parentElement = $element[0];
-      $mdCompiler.compile({
-        template: vm.livecontent
-      }).then(function (compileData) {
-        compileData.link($scope);
-        $element.empty();
-        $element.prepend(compileData.element)
-      });
-    }
-
-    function refreshSubscriptionDatasource(newDatasource, oldDatasource) {
-      if($scope.unsubscribeHandler){
-        $scope.unsubscribeHandler();
-        $scope.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
-      }
-      $scope.unsubscribeHandler = $scope.$on(newDatasource.name,function(event,data){
-        $scope.ds = data;
-      });
-
-      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
-        {
-          type: newDatasource.type,
-          name: newDatasource.name,
-          refresh: newDatasource.refresh,
-          triggers: [{params:{filter:[],group:[],project:[]},emiter:newDatasource.name}]
-        }
-      );
-    };
-  }
-})();
-
-(function () {
-  'use strict';
-
-  GadgetController.$inject = ["$log", "$scope", "$element", "$window", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService"];
-  angular.module('s2DashboardFramework')
-    .component('gadget', {
-      templateUrl: 'app/components/view/gadgetComponent/gadget.html',
-      controller: GadgetController,
-      controllerAs: 'vm',
-      bindings:{
-        id:"<?",
-        gconfig:"=?",
-        gmeasures:"=?",
-        gdatasourceid:"=?"
-      }
-    });
-
-  /** @ngInject */
-  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService) {
-    var vm = this;
-    vm.ds = [];
-    vm.type = "loading";
-    vm.config = {};//Gadget database config
-    vm.measures = [];
-
-    vm.$onInit = function(){
-      $scope.reloadContent();
-    }
-
-    $scope.reloadContent = function(){
-      /*Gadget Editor Mode*/
-      if(!vm.id){
-        //vm.config = vm.gconfig;//gadget config
-        if(!vm.config.config){
-          return;//Init editor triggered
-        }
-        vm.config.config = JSON.parse(vm.config.config);
-        //vm.measures = vm.gmeasures;//gadget config
-        var projects = [];
-        for(var index=0; index < vm.measures.length; index++){
-          var jsonConfig = JSON.parse(vm.measures[index].config);
-          for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-            if(!isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
-              projects.push({op:"",field:jsonConfig.fields[indexF]});
-            }
-          }
-          vm.measures[index].config = jsonConfig;
-        }
-        sofia2HttpService.getDatasourceById(vm.ds).then(
-          function(datasource){
-            subscriptionDatasource(datasource.data, [], projects, []);
-          }
-        )
-      }
-      else{
-      /*View Mode*/
-        sofia2HttpService.getGadgetConfigById(
-          vm.id
-        ).then(
-          function(config){
-            vm.config=config.data;
-            vm.config.config = JSON.parse(vm.config.config);
-            return sofia2HttpService.getGadgetMeasuresByGadgetId(vm.id);
-          }
-        ).then(
-          function(measures){
-            vm.measures = measures.data;
-
-            var projects = [];
-            for(var index=0; index < vm.measures.length; index++){
-              var jsonConfig = JSON.parse(vm.measures[index].config);
-              for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-                if(!isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
-                  projects.push({op:"",field:jsonConfig.fields[indexF]});
-                }
-              }
-              vm.measures[index].config = jsonConfig;
-            }
-            sofia2HttpService.getDatasourceById(vm.measures[0].datasource.id).then(
-              function(datasource){
-                subscriptionDatasource(datasource.data, [], projects, []);
-              }
-            )
-          }
-        )
-      }
-    }
-
-    function isSameJsonInArray(json,arrayJson){
-      for(var index = 0; index < arrayJson.length; index ++){
-        var equals = true;
-        for(var key in arrayJson[index]){
-          if(arrayJson[index][key] != json[key]){
-            equals = false;
-            break;
-          }
-        }
-        if(equals){
-          return true;
-        }
-      }
-      return false;
-    }
-
-    vm.$onChanges = function(changes) {
-
-    };
-
-    vm.$onDestroy = function(){
-      if(vm.unsubscribeHandler){
-        vm.unsubscribeHandler();
-        vm.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(vm.measures[0].datasource);
-      }
-    }
-
-    function subscriptionDatasource(datasource, filter, project, group) {
-      vm.unsubscribeHandler = $scope.$on(vm.id,function(event,data){
-        if(data.length!=0){
-          processDataToGadget(data);
-        }
-        else{
-          vm.type="nodata";
-        }
-      });
-
-      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
-        {
-          type: datasource.mode,
-          name: datasource.identification,
-          refresh: datasource.refresh,
-          triggers: [{params:{filter:filter, group:group, project:project},emiter:vm.id}]
-        }
-      );
-    };
-
-    function processDataToGadget(data){ //With dynamic loading this will change
-      switch(vm.config.type){
-        case "line":
-        case "bar":
-        case "pie":
-          //Group X axis values
-          var allLabelsField = [];
-          for(var index=0; index < vm.measures.length; index++){
-            allLabelsField = allLabelsField.concat(data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)}));
-          }
-          allLabelsField = sort_unique(allLabelsField);
-
-          //Match Y values
-          var allDataField = [];//Data values sort by labels
-          for(var index=0; index < vm.measures.length; index++){
-            var dataRawSerie = data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[1],ind)});
-            var labelRawSerie = data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)});
-            var sortedArray = [];
-            for(var indexf = 0; indexf < dataRawSerie.length; indexf++){
-              sortedArray[allLabelsField.indexOf(labelRawSerie[indexf])] = dataRawSerie[indexf];
-            }
-            allDataField.push(sortedArray);
-          }
-
-          vm.labels = allLabelsField;
-          vm.series = vm.measures.map (function(m){return m.config.name});
-
-          if(vm.config.type == "pie"){
-            vm.data = allDataField[0];
-          }
-          else{
-            vm.data = allDataField;
-          }
-          vm.optionsChart = {legend: {display: true}, maintainAspectRatio: false, responsive: true, responsiveAnimationDuration:500};
-          break;
-        case 'wordcloud':
-          //Get data in an array
-          var arrayWordSplited = data.reduce(function(a,b){return a.concat(b.value.split(" "))},[])//data.flatMap(function(d){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0]).split(" ")})
-          var hashWords = {};
-          var counterArray = []
-          for(var index = 0; index < arrayWordSplited.length; index++){
-            var word = arrayWordSplited[index];
-            if(word in hashWords){
-              counterArray[hashWords[word]].count++;
-            }
-            else{
-              hashWords[word]=counterArray.length;
-              counterArray.push({text:word,count:1});
-            }
-          }
-
-          vm.counterArray = counterArray.sort(function(a, b){
-            return b.count - a.count;
-          })
-          redrawWordCloud();
-          $scope.$on("$resize",redrawWordCloud);
-          break;
-        case "map":
-          vm.center = vm.config.config.center;
-          vm.markers = data.map(
-            function(d){
-              return {
-                lat: getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
-                lng: getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
-                message: vm.measures[0].config.fields.slice(2).reduce(
-                  function(a, b){
-                    return a + "<b>" + b + ":</b>&nbsp;" + getJsonValueByJsonPath(d,b) + "<br/>";
-                  }
-                  ,""
-                )
-              }
-            }
-          )
-          redrawLeafletMap();
-          $scope.$on("$resize",redrawLeafletMap);
-          break;
-      }
-
-      vm.type = vm.config.type;//Activate gadget
-      if(!$scope.$$phase) {
-        $scope.$applyAsync();
-      }
-    }
-
-    function redrawWordCloud(){
-      var element = $element[0];
-      var height = element.offsetHeight;
-      var width = element.offsetWidth;
-      var maxCount = vm.counterArray[0].count;
-      var minCount = vm.counterArray[vm.counterArray.length - 1].count;
-      var maxWordSize = width * 0.15;
-      var minWordSize = maxWordSize / 5;
-      var spread = maxCount - minCount;
-      if (spread <= 0) spread = 1;
-      var step = (maxWordSize - minWordSize) / spread;
-      vm.words = vm.counterArray.map(function(word) {
-          return {
-              text: word.text,
-              size: Math.round(maxWordSize - ((maxCount - word.count) * step)),
-              tooltipText: word.count + ' ocurrences'
-          }
-      })
-      vm.width = width;
-      vm.height = height;
-    }
-
-    function redrawLeafletMap(){
-      var element = $element[0];
-      var height = element.offsetHeight;
-      var width = element.offsetWidth;
-      vm.width = width;
-      vm.height = height;
-    }
-
-    //Access json by string dot path
-    function multiIndex(obj,is,pos) {  // obj,['1','2','3'] -> ((obj['1'])['2'])['3']
-      if(is.length && !(is[0] in obj)){
-        return obj[is[is.length-1]];
-      }
-      return is.length ? multiIndex(obj[is[0]],is.slice(1),pos) : obj
-    }
-
-    function getJsonValueByJsonPath(obj,is,pos) {
-      //special case for array access, return key is 0, 1
-      var matchArray = is.match(/\[[0-9]\]*$/);
-      if(matchArray){
-        //Get de match in is [0] and get return field name
-        return obj[pos];
-      }
-      return multiIndex(obj,is.split('.'))
-    }
-
-    //array transform to sorted and unique values
-    function sort_unique(arr) {
-      if (arr.length === 0) return arr;
-      var sortFn;
-      if(typeof arr[0] === "string"){//String sort
-        sortFn = function (a, b) {
-          if(a < b) return -1;
-          if(a > b) return 1;
-          return 0;
-        }
-      }
-      else{//Number and date sort
-        sortFn = function (a, b) {
-          return a*1 - b*1;
-        }
-      }
-      arr = arr.sort(sortFn);
-      var ret = [arr[0]];
-      for (var i = 1; i < arr.length; i++) { //Start loop at 1: arr[0] can never be a duplicate
-        if (arr[i-1] !== arr[i]) {
-          ret.push(arr[i]);
-        }
-      }
-      return ret;
-    }
   }
 })();
 
@@ -1907,6 +1620,302 @@
 (function () {
   'use strict';
 
+  GadgetController.$inject = ["$log", "$scope", "$element", "$window", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService"];
+  angular.module('s2DashboardFramework')
+    .component('gadget', {
+      templateUrl: 'app/components/view/gadgetComponent/gadget.html',
+      controller: GadgetController,
+      controllerAs: 'vm',
+      bindings:{
+        id:"<?",
+        gconfig:"=?",
+        gmeasures:"=?",
+        gdatasourceid:"=?"
+      }
+    });
+
+  /** @ngInject */
+  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService) {
+    var vm = this;
+    vm.ds = [];
+    vm.type = "loading";
+    vm.config = {};//Gadget database config
+    vm.measures = [];
+
+    vm.$onInit = function(){
+      $scope.reloadContent();
+    }
+
+    $scope.reloadContent = function(){
+      /*Gadget Editor Mode*/
+      if(!vm.id){
+        //vm.config = vm.gconfig;//gadget config
+        if(!vm.config.config){
+          return;//Init editor triggered
+        }
+        vm.config.config = JSON.parse(vm.config.config);
+        //vm.measures = vm.gmeasures;//gadget config
+        var projects = [];
+        for(var index=0; index < vm.measures.length; index++){
+          var jsonConfig = JSON.parse(vm.measures[index].config);
+          for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
+            if(!isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
+              projects.push({op:"",field:jsonConfig.fields[indexF]});
+            }
+          }
+          vm.measures[index].config = jsonConfig;
+        }
+        sofia2HttpService.getDatasourceById(vm.ds).then(
+          function(datasource){
+            subscriptionDatasource(datasource.data, [], projects, []);
+          }
+        )
+      }
+      else{
+      /*View Mode*/
+        sofia2HttpService.getGadgetConfigById(
+          vm.id
+        ).then(
+          function(config){
+            vm.config=config.data;
+            vm.config.config = JSON.parse(vm.config.config);
+            return sofia2HttpService.getGadgetMeasuresByGadgetId(vm.id);
+          }
+        ).then(
+          function(measures){
+            vm.measures = measures.data;
+
+            var projects = [];
+            for(var index=0; index < vm.measures.length; index++){
+              var jsonConfig = JSON.parse(vm.measures[index].config);
+              for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
+                if(!isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
+                  projects.push({op:"",field:jsonConfig.fields[indexF]});
+                }
+              }
+              vm.measures[index].config = jsonConfig;
+            }
+            sofia2HttpService.getDatasourceById(vm.measures[0].datasource.id).then(
+              function(datasource){
+                subscriptionDatasource(datasource.data, [], projects, []);
+              }
+            )
+          }
+        )
+      }
+    }
+
+    function isSameJsonInArray(json,arrayJson){
+      for(var index = 0; index < arrayJson.length; index ++){
+        var equals = true;
+        for(var key in arrayJson[index]){
+          if(arrayJson[index][key] != json[key]){
+            equals = false;
+            break;
+          }
+        }
+        if(equals){
+          return true;
+        }
+      }
+      return false;
+    }
+
+    vm.$onChanges = function(changes) {
+
+    };
+
+    vm.$onDestroy = function(){
+      if(vm.unsubscribeHandler){
+        vm.unsubscribeHandler();
+        vm.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(vm.measures[0].datasource);
+      }
+    }
+
+    function subscriptionDatasource(datasource, filter, project, group) {
+      vm.unsubscribeHandler = $scope.$on(vm.id,function(event,data){
+        if(data.length!=0){
+          processDataToGadget(data);
+        }
+        else{
+          vm.type="nodata";
+        }
+      });
+
+      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
+        {
+          type: datasource.mode,
+          name: datasource.identification,
+          refresh: datasource.refresh,
+          triggers: [{params:{filter:filter, group:group, project:project},emiter:vm.id}]
+        }
+      );
+    };
+
+    function processDataToGadget(data){ //With dynamic loading this will change
+      switch(vm.config.type){
+        case "line":
+        case "bar":
+        case "pie":
+          //Group X axis values
+          var allLabelsField = [];
+          for(var index=0; index < vm.measures.length; index++){
+            allLabelsField = allLabelsField.concat(data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)}));
+          }
+          allLabelsField = sort_unique(allLabelsField);
+
+          //Match Y values
+          var allDataField = [];//Data values sort by labels
+          for(var index=0; index < vm.measures.length; index++){
+            var dataRawSerie = data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[1],ind)});
+            var labelRawSerie = data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)});
+            var sortedArray = [];
+            for(var indexf = 0; indexf < dataRawSerie.length; indexf++){
+              sortedArray[allLabelsField.indexOf(labelRawSerie[indexf])] = dataRawSerie[indexf];
+            }
+            allDataField.push(sortedArray);
+          }
+
+          vm.labels = allLabelsField;
+          vm.series = vm.measures.map (function(m){return m.config.name});
+
+          if(vm.config.type == "pie"){
+            vm.data = allDataField[0];
+          }
+          else{
+            vm.data = allDataField;
+          }
+          vm.optionsChart = {legend: {display: true}, maintainAspectRatio: false, responsive: true, responsiveAnimationDuration:500};
+          break;
+        case 'wordcloud':
+          //Get data in an array
+          var arrayWordSplited = data.reduce(function(a,b){return a.concat(b.value.split(" "))},[])//data.flatMap(function(d){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0]).split(" ")})
+          var hashWords = {};
+          var counterArray = []
+          for(var index = 0; index < arrayWordSplited.length; index++){
+            var word = arrayWordSplited[index];
+            if(word in hashWords){
+              counterArray[hashWords[word]].count++;
+            }
+            else{
+              hashWords[word]=counterArray.length;
+              counterArray.push({text:word,count:1});
+            }
+          }
+
+          vm.counterArray = counterArray.sort(function(a, b){
+            return b.count - a.count;
+          })
+          redrawWordCloud();
+          $scope.$on("$resize",redrawWordCloud);
+          break;
+        case "map":
+          vm.center = vm.config.config.center;
+          vm.markers = data.map(
+            function(d){
+              return {
+                lat: getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
+                lng: getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
+                message: vm.measures[0].config.fields.slice(2).reduce(
+                  function(a, b){
+                    return a + "<b>" + b + ":</b>&nbsp;" + getJsonValueByJsonPath(d,b) + "<br/>";
+                  }
+                  ,""
+                )
+              }
+            }
+          )
+          redrawLeafletMap();
+          $scope.$on("$resize",redrawLeafletMap);
+          break;
+      }
+
+      vm.type = vm.config.type;//Activate gadget
+      if(!$scope.$$phase) {
+        $scope.$applyAsync();
+      }
+    }
+
+    function redrawWordCloud(){
+      var element = $element[0];
+      var height = element.offsetHeight;
+      var width = element.offsetWidth;
+      var maxCount = vm.counterArray[0].count;
+      var minCount = vm.counterArray[vm.counterArray.length - 1].count;
+      var maxWordSize = width * 0.15;
+      var minWordSize = maxWordSize / 5;
+      var spread = maxCount - minCount;
+      if (spread <= 0) spread = 1;
+      var step = (maxWordSize - minWordSize) / spread;
+      vm.words = vm.counterArray.map(function(word) {
+          return {
+              text: word.text,
+              size: Math.round(maxWordSize - ((maxCount - word.count) * step)),
+              tooltipText: word.count + ' ocurrences'
+          }
+      })
+      vm.width = width;
+      vm.height = height;
+    }
+
+    function redrawLeafletMap(){
+      var element = $element[0];
+      var height = element.offsetHeight;
+      var width = element.offsetWidth;
+      vm.width = width;
+      vm.height = height;
+    }
+
+    //Access json by string dot path
+    function multiIndex(obj,is,pos) {  // obj,['1','2','3'] -> ((obj['1'])['2'])['3']
+      if(is.length && !(is[0] in obj)){
+        return obj[is[is.length-1]];
+      }
+      return is.length ? multiIndex(obj[is[0]],is.slice(1),pos) : obj
+    }
+
+    function getJsonValueByJsonPath(obj,is,pos) {
+      //special case for array access, return key is 0, 1
+      var matchArray = is.match(/\[[0-9]\]*$/);
+      if(matchArray){
+        //Get de match in is [0] and get return field name
+        return obj[pos];
+      }
+      return multiIndex(obj,is.split('.'))
+    }
+
+    //array transform to sorted and unique values
+    function sort_unique(arr) {
+      if (arr.length === 0) return arr;
+      var sortFn;
+      if(typeof arr[0] === "string"){//String sort
+        sortFn = function (a, b) {
+          if(a < b) return -1;
+          if(a > b) return 1;
+          return 0;
+        }
+      }
+      else{//Number and date sort
+        sortFn = function (a, b) {
+          return a*1 - b*1;
+        }
+      }
+      arr = arr.sort(sortFn);
+      var ret = [arr[0]];
+      for (var i = 1; i < arr.length; i++) { //Start loop at 1: arr[0] can never be a duplicate
+        if (arr[i-1] !== arr[i]) {
+          ret.push(arr[i]);
+        }
+      }
+      return ret;
+    }
+  }
+})();
+
+(function () {
+  'use strict';
+
   ElementController.$inject = ["$log", "$scope", "$mdDialog", "$sanitize", "$sce", "$rootScope"];
   angular.module('s2DashboardFramework')
     .component('element', {
@@ -3045,6 +3054,15 @@
       vm.getDashboardModel = function(id){
         return $http.get(__env.endpointSofia2ControlPanel + '/dashboards/model/' + id);
       }
+
+      vm.insertSofia2Http = function(token, clientPlatform, clientPlatformId, ontology, data){
+        return $http.get(__env.sofia2RestUrl + "/join?token=" + token + "&clientPlatform=" + clientPlatform + "&clientPlatformId=" + clientPlatformId).then(
+          function(e){
+            $http.post(__env.sofia2RestUrl + "/ontology/" + ontology,{
+              headers: {'Authorization': e.data.sessionkey}},data);
+          }
+        )
+      }
   };
 })();
 
@@ -3351,6 +3369,7 @@ else{//Default config
   env.dashboardEngineUsername = '';
   env.dashboardEnginePassword = '';
   env.dashboardEngineLoginRest = '/loginRest';
+  env.sofia2RestUrl = 'http://rancher.sofia4cities.com/iotbroker/rest/client';
 }
 
 angular.module('s2DashboardFramework').constant('__env', env);
@@ -3653,7 +3672,7 @@ $templateCache.put('app/partials/edit/pagesDialog.html','<md-dialog aria-label=P
 $templateCache.put('app/partials/view/header.html','<md-toolbar ng-if=vm.dashboard.header.enable layout=row class=md-hue-2 layout-align="space-between center" ng-style="{\'height\': + vm.dashboard.header.height + \'px\', \'background\': vm.dashboard.header.backgroundColor}"><md-headline layout=row layout-align="start center" class=left-margin-10><img ng-if=vm.dashboard.header.logo.filedata ng-src={{vm.dashboard.header.logo.filedata}} ng-style="{\'height\': + vm.dashboard.header.logo.height + \'px\'}"><span ng-style="{\'color\': vm.dashboard.header.textColor}">{{\'&nbsp;\' + vm.dashboard.header.title}}</span><md-icon ng-style="{\'color\': vm.dashboard.header.iconColor}" ng-if=vm.dashboard.navigation.showBreadcrumbIcon>keyboard_arrow_right</md-icon><span ng-style="{\'color\': vm.dashboard.header.pageColor}" ng-if=vm.dashboard.navigation.showBreadcrumb>{{vm.dashboard.pages[vm.selectedpage].title}}</span></md-headline><md-button class=md-icon-button aria-label="Open Menu" ng-click=vm.sidenav.toggle();><md-tooltip md-direction=left>Toggle Menu</md-tooltip><md-icon>reorder</md-icon></md-button></md-toolbar>');
 $templateCache.put('app/partials/view/sidenav.html','<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id=left><header class=nav-header></header><md-content flex="" role=navigation class="_md flex"><md-subheader class=md-no-sticky>Pages</md-subheader><md-list class=md-hue-2><span ng-repeat="page in vm.dashboard.pages"><md-list-item md-colors="{background: ($index===vm.selectedpage ? \'primary\' : \'grey-A100\')}" ng-click=vm.setIndex($index) flex><md-icon>{{page.icon}}</md-icon><p>{{page.title}}</p></md-list-item></span></md-list></md-content></md-sidenav>');
 $templateCache.put('app/components/edit/editDashboardComponent/edit.dashboard.html','<ng-include src="\'app/partials/edit/editDashboardButtons.html\'"></ng-include><ng-include src="\'app/partials/edit/editDashboardSidenav.html\'"></ng-include>');
-$templateCache.put('app/components/view/gadgetComponent/gadget.html','<div ng-if="vm.type == \'loading\'" layout=row layout-sm=column layout-align=space-around><md-progress-circular md-diameter=60></md-progress-circular></div><div ng-if="vm.type == \'nodata\'" layout=row layout-sm=column layout-align=space-around><h3>No data found</h3></div><canvas ng-if="vm.type == \'line\'" class="chart chart-line" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'bar\'" class="chart chart-bar" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'pie\'" class="chart chart-doughnut" chart-data=vm.data chart-labels=vm.labels chart-options=vm.optionsChart></canvas><word-cloud ng-if="vm.type == \'wordcloud\'" words=vm.words width=vm.width height=vm.height padding=0 use-tooltip=false use-transition=true></word-cloud><leaflet ng-if="vm.type == \'map\'" lf-center=vm.center markers=vm.markers height={{vm.height}} width=100%></leaflet>');
 $templateCache.put('app/components/view/elementComponent/element.html','<gridster-item item=vm.element ng-style="{ \'border-width\': vm.element.border.width + \'px\', \'border-color\': vm.element.border.color, \'border-radius\': vm.element.border.radius + \'px\', \'border-style\': \'solid\'}"><div class="element-container fullcontainer"><md-toolbar ng-if=vm.element.header.enable class="widget-header md-hue-2" ng-style="{\'background\':vm.element.header.backgroundColor, \'height\': vm.element.header.height + \'px\'}"><div class=md-toolbar-tools><md-icon ng-style="{\'color\':vm.element.header.title.iconColor}">{{vm.element.header.title.icon}}</md-icon><h5 flex ng-style="{\'color\':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5><md-button ng-if=vm.editmode ng-click=vm.openEditContainerDialog() class=md-icon-button aria-label="Edit Container"><md-icon>format_paint</md-icon><md-tooltip>Edit container</md-tooltip></md-button><md-button ng-if="vm.editmode && vm.element.type == \'livehtml\'" ng-click=vm.openEditGadgetDialog() class=md-icon-button aria-label="Gadget Editor"><md-icon>mode_edit</md-icon><md-tooltip>Edit Gadget definition</md-tooltip></md-button><md-button ng-if=vm.editmode class="drag-handler md-icon-button"><md-icon>open_with</md-icon><md-tooltip>Move</md-tooltip></md-button><md-button ng-if=vm.editmode class="remove-button md-icon-button" ng-click=vm.deleteElement()><md-icon>delete</md-icon><md-tooltip>Remove</md-tooltip></md-button></div></md-toolbar><div ng-if="vm.editmode && !vm.element.header.enable" class=item-buttons><md-button ng-click=vm.openEditContainerDialog() class="md-raised md-icon-button" aria-label="Edit Container"><md-icon>format_paint</md-icon></md-button><md-button ng-click=vm.openEditGadgetDialog() ng-if="vm.element.type == \'livehtml\'" class="md-raised md-icon-button" aria-label="Gadget Editor"><md-icon>mode_edit</md-icon></md-button><md-button ng-if=vm.editmode class="drag-handler md-raised md-icon-button"><md-icon>open_with</md-icon></md-button><md-button ng-if=vm.editmode class="remove-button md-raised md-icon-button" ng-click=vm.deleteElement()><md-icon>delete</md-icon><md-tooltip>Remove</md-tooltip></md-button></div><livehtml ng-style="{\'background-color\':vm.element.backgroundColor, \'padding\': vm.element.padding + \'px\', \'height\': vm.calcHeight()}" ng-if="vm.element.type == \'livehtml\'" livecontent=vm.element.content datasource=vm.element.datasource></livehtml><gadget ng-style="{\'background-color\':vm.element.backgroundColor, \'padding\': vm.element.padding + \'px\', \'display\': \'inline-block\', \'width\':\'100%\', \'height\': vm.calcHeight()}" ng-if="vm.element.type != \'livehtml\'" id=vm.element.id></gadget></div></gridster-item>');
 $templateCache.put('app/components/view/liveHTMLComponent/livehtml.html','<div id=testhtml>{{1+1}}</div>');
+$templateCache.put('app/components/view/gadgetComponent/gadget.html','<div ng-if="vm.type == \'loading\'" layout=row layout-sm=column layout-align=space-around><md-progress-circular md-diameter=60></md-progress-circular></div><div ng-if="vm.type == \'nodata\'" layout=row layout-sm=column layout-align=space-around><h3>No data found</h3></div><canvas ng-if="vm.type == \'line\'" class="chart chart-line" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'bar\'" class="chart chart-bar" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'pie\'" class="chart chart-doughnut" chart-data=vm.data chart-labels=vm.labels chart-options=vm.optionsChart></canvas><word-cloud ng-if="vm.type == \'wordcloud\'" words=vm.words width=vm.width height=vm.height padding=0 use-tooltip=false use-transition=true></word-cloud><leaflet ng-if="vm.type == \'map\'" lf-center=vm.center markers=vm.markers height={{vm.height}} width=100%></leaflet>');
 $templateCache.put('app/components/view/pageComponent/page.html','<div class=page-dashboard-container ng-style="{\'background-image\':\'url(\' + vm.page.background.filedata + \')\'}"><span ng-repeat="layer in vm.page.layers"><gridster ng-if="(vm.page.combinelayers || vm.page.selectedlayer == $index) " options=vm.gridoptions class=flex><element ng-style="{\'z-index\':$parent.$index*500+1}" ng-if=item.id element=item editmode=vm.editmode ng-repeat="item in layer.gridboard"></element></gridster></span></div>');}]);
