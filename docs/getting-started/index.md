@@ -52,6 +52,9 @@ Complete the following information for your new *Ontology*:
 
 ### Creating a Device
 
+After defining the ontology it is possible to define devices that work with the ontology.
+These devices will generate or consume data.
+
 
 
 ### Creating a Simulator
