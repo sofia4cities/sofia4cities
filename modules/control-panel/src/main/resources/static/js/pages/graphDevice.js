@@ -81,7 +81,7 @@ var GraphDeviceController = function() {
             hierarchical: {
             	enabled:true,
                 levelSeparation: 150,
-                nodeSpacing: 100,
+                nodeSpacing: 150,
                 treeSpacing: 200,
                 blockShifting: true,
                 edgeMinimization: true,
@@ -583,7 +583,7 @@ var GraphDeviceController = function() {
 	        		
 	        		//UPDATE DATA
 	        		graphData.nodes.update(graph.nodes);
-	        		//graphData.edges.update(graph.edges);
+	        		graphData.edges.update(graph.edges);
 	        		
 	        		
 	        		// Selected Node
