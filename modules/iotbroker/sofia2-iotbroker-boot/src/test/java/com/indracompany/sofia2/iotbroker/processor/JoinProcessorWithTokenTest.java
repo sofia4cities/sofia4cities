@@ -54,18 +54,21 @@ public class JoinProcessorWithTokenTest {
 	@MockBean
 	DeviceManager deviceManager;
 
+	IoTSession session = new IoTSession();
+
 
 	@Before
 	public void setup() {
+		session = new IoTSession();
 		ssapJoin = SSAPMessageGenerator.generateJoinMessageWithToken();
 		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
+		when(securityPluginManager.getSession(any())).thenReturn(Optional.of(session));
 
 	}
 
 	@Test
 	public void given_OneJoinProcessor_When_OneValidSessionIsUsed_Then_TheResponseIndicatesTheOperationWasPerformed() throws AuthenticationException {
 		final String assignedSessionKey = UUID.randomUUID().toString();
-		final IoTSession session = new IoTSession();
 		session.setUserID("valid_user_id");
 		session.setSessionKey(assignedSessionKey);
 		when(securityPluginManager.authenticate(anyString(),anyString(),anyString(), anyString())).thenReturn(Optional.of(session));
