@@ -1,6 +1,5 @@
-Java Client Library:
+Sofia4Cities Java Client Library
 ============================
-
 
 ## Compile and use the library:
 

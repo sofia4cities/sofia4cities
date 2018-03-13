@@ -7,9 +7,9 @@ services:
     stdin_open: true
     tty: true
     links:
-    - realtimedb:realtimedb
     - schedulerdb:schedulerdb
     - configdb:configdb
+    - realtimedb:realtimedb
     ports:
     - 1883:1883/tcp
     labels:
@@ -22,9 +22,9 @@ services:
     stdin_open: true
     tty: true
     links:
-    - realtimedb:realtimedb
     - schedulerdb:schedulerdb
     - configdb:configdb
+    - realtimedb:realtimedb
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
@@ -37,9 +37,7 @@ services:
     links:
     - flowengineservice:flowengineservice
     - iotbrokerservice:iotbrokerservice
-    - controlpanelservice:controlpanelservice
     - apimanagerservice:apimanagerservice
-    - monitoringuiservice:monitoringuiservice
     ports:
     - 80:80/tcp
     - 443:443/tcp
@@ -73,17 +71,20 @@ services:
     stdin_open: true
     tty: true
     links:
-    - realtimedb:realtimedb
     - schedulerdb:schedulerdb
     - configdb:configdb
+    - realtimedb:realtimedb
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
-  monitoringuiservice:
-    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:latest
+  dashboardengineservice:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:latest
     stdin_open: true
     tty: true
     links:
+    - realtimedb:realtimedb
+    - quasar:quasar
+    - schedulerdb:schedulerdb
     - configdb:configdb
     labels:
       io.rancher.container.pull_image: always
@@ -97,9 +98,10 @@ services:
     - /datadrive/flowengine:/tmp:rw
     tty: true
     links:
-    - realtimedb:realtimedb
     - schedulerdb:schedulerdb
     - configdb:configdb
+    - realtimedb:realtimedb
+    - quasar:quasar
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
@@ -121,12 +123,10 @@ services:
     stdin_open: true
     tty: true
     links:
-    - quasar:quasar
     - realtimedb:realtimedb
+    - quasar:quasar
     - schedulerdb:schedulerdb
     - configdb:configdb
-    ports:
-    - 11080:18080/tcp
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
