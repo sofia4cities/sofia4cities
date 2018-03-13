@@ -30,6 +30,7 @@ import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaExceptio
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
@@ -53,6 +54,9 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	@Autowired
 	private ApplicationContext context;
 
+	@Autowired
+	private DeviceManager deviceManager;
+
 	@Override
 	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message) {
 
@@ -72,7 +76,6 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 			final Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = this.validateMessage(message);
 
-
 			if (validation.isPresent()) {
 				return validation.get();
 			}
@@ -82,11 +85,22 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			processor.validateMessage(message);
 			response = processor.process(message);
 
+
 			if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 				response.setDirection(SSAPMessageDirection.RESPONSE);
 				response.setMessageId(message.getMessageId());
 				response.setMessageType(message.getMessageType());
 			}
+
+			final SSAPMessage<SSAPBodyReturnMessage> resp = response;
+			final Optional<IoTSession> session = securityPluginManager.getSession(response.getSessionKey());
+
+			session.ifPresent((s) -> {
+				deviceManager.registerActivity(message, resp, s);
+			});
+
+
+
 
 		} catch (final SSAPProcessorException e) {
 			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.PROCESSOR,

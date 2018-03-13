@@ -117,7 +117,7 @@ public class RouterFlowManagerService {
 				compositeModel.setOperationResultModel(result);
 			}
 		} catch (Exception e) {
-			
+			log.debug("executeCrudOperations: Exception "+e.getMessage());
 		}
 		
 		exchange.getIn().setBody(compositeModel);

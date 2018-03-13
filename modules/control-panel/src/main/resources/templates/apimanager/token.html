@@ -132,10 +132,7 @@
 							                            <td th:text="${token.createdAt}"></td>
 							                            <td class="text-center no-wrap"><span class="label bg-grey-mint font-grey-steel"><i class="fa fa-credit-card"></i> <span th:text="${token.token}">tokenId</span></span></td>
 							                            <td class="icon" style="white-space: nowrap">
-						                                    <form th:id="command + ${token.id}" action="list.html" th:action="@{|/apimanager/authorize/list/${token.id}|}" method="post">
-						                                        <input type="hidden" name="_method" value="DELETE"/>
-						                                        <span class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:showConfirmDialog(\'' + 'command' + ${token.id} + '\');'"><i class="fa fa-remove"></i></span>
-						                                    </form>                                                                                                                                                                          
+					                                        <span class="btn btn-sm btn-danger sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:calculateVersion(\'' + ${token.token} + '\');'"><i class="fa fa-remove"></i></span>                                                                                                                                                                         
 							                           </td>
 							                        </tr>
 							                      </tbody>
@@ -222,8 +219,8 @@
 				contentType : 'application/json',
 				mimeType : 'application/json',
 				success : function(data) {
-					if (data.ok) {
-						navigateUrl("/controlpanel/apimanager/token");
+					if (data.status=="ok") {
+						navigateUrl("/controlpanel/apimanager/token/list");
 					} else {
 						showGenericErrorDialog("error", "error");
 					}
@@ -234,6 +231,24 @@
 			});
 		}
 		
+		var calculateVersion = function (token) {
+            $.ajax({
+                url: '/controlpanel/apimanager/removeToken',
+                type: 'POST',
+                data: JSON.stringify({"token":token}),
+                dataType: 'text',
+                contentType: 'text/plain',
+                mimeType: 'text/plain',
+                success: function(data) {
+                    if(data != null && data != "") {
+                    	navigateUrl("/controlpanel/apimanager/token/list");
+                    }
+                },
+                error: function(data,status,er) {
+                	showGenericErrorDialog("error", "error");
+                }
+            });
+		}
         
 		// SEARCH FORM RESET
 		$('#reset_api').on('click',function(){

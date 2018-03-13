@@ -64,7 +64,7 @@ public class DeviceSimulatorController {
 			simulations = this.deviceSimulationService.getSimulationsForUser(this.utils.getUserId());
 
 		model.addAttribute("simulations", simulations);
-		return "/simulator/list";
+		return "simulator/list";
 	}
 
 	@GetMapping("create")
@@ -74,7 +74,7 @@ public class DeviceSimulatorController {
 		model.addAttribute("platformClients", clients);
 		model.addAttribute("simulators", simulators);
 		model.addAttribute("simulation", new DeviceSimulation());
-		return "/simulator/create";
+		return "simulator/create";
 	}
 
 	@GetMapping("update/{id}")
@@ -92,7 +92,7 @@ public class DeviceSimulatorController {
 				.getClientOntologiesIdentification(simulation.getClientPlatform().getIdentification()));
 		model.addAttribute("tokens", this.deviceSimulationService
 				.getClientTokensIdentification(simulation.getClientPlatform().getIdentification()));
-		return "/simulator/create";
+		return "simulator/create";
 	}
 
 	@PostMapping("create")
@@ -112,7 +112,7 @@ public class DeviceSimulatorController {
 				this.deviceSimulationService.getClientOntologiesIdentification(clientPlatformId));
 		model.addAttribute("tokens", this.deviceSimulationService.getClientTokensIdentification(clientPlatformId));
 
-		return "/simulator/create :: ontologiesAndTokens";
+		return "simulator/create :: ontologiesAndTokens";
 	}
 
 	@PostMapping("ontologyfields")
@@ -122,7 +122,7 @@ public class DeviceSimulatorController {
 		model.addAttribute("fields",
 				this.ontologyService.getOntologyFields(ontologyIdentification, this.utils.getUserId()));
 		model.addAttribute("simulators", this.deviceSimulationService.getSimulatorTypes());
-		return "/simulator/create :: ontologyFields";
+		return "simulator/create :: ontologyFields";
 	}
 
 	@PostMapping("startstop")
@@ -135,7 +135,7 @@ public class DeviceSimulatorController {
 				this.simulationService.scheduleSimulation(simulation);
 		}
 		model.addAttribute("simulations", this.deviceSimulationService.getAllSimulations());
-		return "/simulator/list :: simulations";
+		return "simulator/list :: simulations";
 
 	}
 

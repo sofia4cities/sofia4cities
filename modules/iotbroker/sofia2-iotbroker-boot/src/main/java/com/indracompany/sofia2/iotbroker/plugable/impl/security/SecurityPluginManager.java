@@ -33,11 +33,11 @@ public class SecurityPluginManager implements SecurityPlugin {
 
 	//TODO: Calls with hystrix ... or camel ...
 	@Override
-	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance)  {
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance, String sessionKey)  {
 		final List<IoTSession> sessions = new ArrayList<>();
 
 		for(final SecurityPlugin p : plugins) {
-			p.authenticate(token, clientPlatform, clientPlatformInstance).ifPresent(sessions::add);
+			p.authenticate(token, clientPlatform, clientPlatformInstance, sessionKey).ifPresent(sessions::add);
 		}
 
 		if(!sessions.isEmpty()) {

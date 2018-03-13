@@ -233,6 +233,10 @@ var DeviceCreateController = function() {
 			document.getElementById("parameter_metaInfo").value = nombre + '='
 					+ valor;
 		}
+		
+		// remove values of meta info name and value to add new more...
+		$('#name_metainfo').val('');
+		$('#value_metainfo').val('');
 
 	}
 
@@ -285,7 +289,7 @@ var DeviceCreateController = function() {
 								+ ontoSelected
 								+ '</td><td >'
 								+ levelSelected
-								+ '</td><td><button type="button" data-property="" class="btn btn-square btn-danger" onclick="DeviceCreateController.removeOntology(this)" th:text="#{device.ontology.remove}"><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button></td></tr>');
+								+ '</td><td><button type="button" data-property="" class="btn btn-sm btn-square btn-danger" onclick="DeviceCreateController.removeOntology(this)" th:text="#{device.ontology.remove}"><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button></td></tr>');
 		$(".onto select option:selected").remove();
 		$('.onto').selectpicker('refresh');
 	}
@@ -305,7 +309,7 @@ var DeviceCreateController = function() {
 										+ onto.id
 										+ '</td><td >'
 										+ onto.access
-										+ '</td><td><button type="button" data-property="" class="btn btn-square btn-danger" onclick="DeviceCreateController.removeOntology(this)" th:text="#{device.ontology.remove}"><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button></td></tr>');
+										+ '</td><td><button type="button" data-property="" class="btn btn-sm btn-square btn-danger" onclick="DeviceCreateController.removeOntology(this)" th:text="#{device.ontology.remove}"><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button></td></tr>');
 			}
 			$(".onto select option:selected").remove();
 			$('.onto').selectpicker('refresh');

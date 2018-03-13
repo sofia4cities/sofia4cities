@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 
+@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CommandProcessorTest {

@@ -40,7 +40,7 @@ public class GraphDTO implements Serializable {
 	@Getter @Setter private String nameTarget;
 
 	@Getter @Setter private String type;
-	
+
 	public GraphDTO(String source, String target, String linkSource, String linkTarget, String classSource,
 			String classTarget, String nameSource, String nameTarget, String type) {
 		this.source = source;
@@ -53,7 +53,7 @@ public class GraphDTO implements Serializable {
 		this.nameTarget = nameTarget;
 		this.type = type;
 	}
-	
+
 	public GraphDTO(String source, String target, String linkSource, String linkTarget, String classSource,
 			String classTarget,String nameSource, String nameTarget, String type,String title, String linkCreate) {
 		super();
@@ -69,30 +69,30 @@ public class GraphDTO implements Serializable {
 		this.nameTarget = nameTarget;
 		this.type = type;
 	}
-	
+
 
 	public static GraphDTO constructSingleNode(String source,String linkSource,String classSource,String nameSource){
 		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource, null);
 	}
-	
+
 	public static GraphDTO constructSingleNodeWithTitleAndCreateLink(String source,String linkSource,String classSource,String nameSource,String title,String linkCreate){
 		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource, null,title,linkCreate);
 	}
-	
-	
+
+
 	@Override
 	@JsonRawValue
 	@JsonIgnore
 	public String toString()
-	{   
-		ObjectMapper mapper = new ObjectMapper();
+	{
+		final ObjectMapper mapper = new ObjectMapper();
 		String result=null;
 		try {
 			result=mapper.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
+		} catch (final JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return result;
-		
+
 	}
 }

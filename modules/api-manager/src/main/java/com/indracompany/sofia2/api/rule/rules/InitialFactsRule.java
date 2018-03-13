@@ -71,6 +71,7 @@ public class InitialFactsRule {
 		String queryDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FILTER_PARAM, request)).orElse("");
 		String targetDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.TARGET_DB_PARAM, request)).orElse("");
 		String formatResult = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FORMAT_RESULT, request)).orElse("");
+		String cacheable = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.CACHEABLE, request)).orElse("");
 
 		data.put(ApiServiceInterface.QUERY, query);
 		data.put(ApiServiceInterface.QUERY_TYPE, queryType);
@@ -82,6 +83,7 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.METHOD, method);
 		data.put(ApiServiceInterface.CONTENT_TYPE_INPUT, contentTypeInput);
 		data.put(ApiServiceInterface.CONTENT_TYPE_OUTPUT, contentTypeOutput);
+		data.put(ApiServiceInterface.CACHEABLE, cacheable);
 		
 		facts.put(RuleManager.ACTION, method);
 		
