@@ -89,7 +89,7 @@
 							<div class="portlet-body" style="display: block;">
 								<div class="row">
 									<div class="col-md-12 col-sm-12 col-xs-12 margin-bottom-20">
-										<iframe th:src="${endpointBase} + '/services/management/api-docs?url=/services/management/swagger/' + ${api.identification} + '/swagger.json'" width="100%" height="100%"></iframe>
+										<iframe th:src="${endpointBase} + 'swagger-ui.html?url=' + ${apiServices} + '/management/swagger/' + ${api.identification} + '/swagger.json'" width="100%" height="100%"></iframe>
 									</div>
 								</div>
 							</div>

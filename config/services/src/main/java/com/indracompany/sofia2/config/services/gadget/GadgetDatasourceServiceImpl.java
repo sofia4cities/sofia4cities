@@ -149,12 +149,15 @@ public class GadgetDatasourceServiceImpl implements GadgetDatasourceService{
 
 
 	@Override
-	public void deleteGadgetDatasource(String gadgetDatasourceId) {
-		GadgetDatasource gadgetDatasource = this.gadgetDatasourceRepository.findById(gadgetDatasourceId);
-		if (gadgetDatasource != null) {
-			this.gadgetDatasourceRepository.delete(gadgetDatasource);
-		} else
-			throw new GadgetDatasourceServiceException("Cannot delete gadget datasource that does not exist");		
+	public void deleteGadgetDatasource(String gadgetDatasourceId, String userId) {
+		if(hasUserPermission(gadgetDatasourceId, userId)) {
+			GadgetDatasource gadgetDatasource = this.gadgetDatasourceRepository.findById(gadgetDatasourceId);
+			if (gadgetDatasource != null) {
+				this.gadgetDatasourceRepository.delete(gadgetDatasource);
+			} else
+				throw new GadgetDatasourceServiceException("Cannot delete gadget datasource that does not exist");
+		}
+				
 	}
 
 

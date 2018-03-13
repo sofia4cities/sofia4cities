@@ -28,15 +28,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
-import com.indracompany.sofia2.config.model.Dashboard;
-
-import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
-
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -49,7 +45,7 @@ public class GraphUtil {
 	private String urlDashboard;
 	private String urlGadget;
 	private String urlOntology;
-	private String genericUserName = "USER";
+	private final String genericUserName = "USER";
 	private User user;
 	@Autowired
 	private OntologyRepository ontologyRepository;
@@ -78,19 +74,20 @@ public class GraphUtil {
 
 	public List<GraphDTO> constructGraphWithOntologies() {
 
-		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
-		String name = utils.getMessage("name.ontologies", "ONTOLOGIES");
-		String description = utils.getMessage("tooltip_ontologies", null);
+		final List<GraphDTO> arrayLinks = new LinkedList<>();
+		final String name = utils.getMessage("name.ontologies", "ONTOLOGIES");
+		final String description = utils.getMessage("tooltip_ontologies", null);
 		// carga de nodo ontologia con link a crear y con titulo
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlOntology + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlOntology + "create"));
 		List<Ontology> ontologies;
-		if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+		if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
 			ontologies = ontologyRepository.findAll();
-		else
+		} else {
 			ontologies = ontologyRepository
 					.findByUserAndOntologyUserAccessAndAllPermissions(this.userService.getUser(utils.getUserId()));
-		for (Ontology ont : ontologies) {
+		}
+		for (final Ontology ont : ontologies) {
 			arrayLinks.add(new GraphDTO(name, ont.getId(), urlOntology + "list", urlOntology + "show/" + ont.getId(),
 					name, "ontology", name, ont.getIdentification(), "licensing"));
 		}
@@ -99,32 +96,32 @@ public class GraphUtil {
 
 	public List<GraphDTO> constructGraphWithClientPlatforms() {
 
-		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
-		String name = utils.getMessage("name.clients", "PLATFORM CLIENTS");
-		String description = utils.getMessage("tooltip_clients", null);
+		final List<GraphDTO> arrayLinks = new LinkedList<>();
+		final String name = utils.getMessage("name.clients", "PLATFORM CLIENTS");
+		final String description = utils.getMessage("tooltip_clients", null);
 
 		// carga de nodo clientPlatform
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlClientPlatform + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlClientPlatform + "create"));
 
-		List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUser(this.userService.getUser(utils.getUserId()));
+		final List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUser(this.userService.getUser(utils.getUserId()));
 
-		for (ClientPlatform clientPlatform : clientPlatforms) {
+		for (final ClientPlatform clientPlatform : clientPlatforms) {
 			// Creación de enlaces
 			arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), urlClientPlatform + "list",
 					urlClientPlatform + clientPlatform.getId(), name, "clientplatform", name,
 					clientPlatform.getIdentification(), "licensing"));
 
 			if (clientPlatform.getClientPlatformOntologies() != null) {
-				List<ClientPlatformOntology> clientPlatformOntologies = new LinkedList<ClientPlatformOntology>(
+				final List<ClientPlatformOntology> clientPlatformOntologies = new LinkedList<>(
 						clientPlatform.getClientPlatformOntologies());
-				for (ClientPlatformOntology clientPlatformOntology : clientPlatformOntologies) {
-					Ontology ontology = clientPlatformOntology.getOntology();
+				for (final ClientPlatformOntology clientPlatformOntology : clientPlatformOntologies) {
+					final Ontology ontology = clientPlatformOntology.getOntology();
 					// Crea link entre ontologia y clientPlatform
 					arrayLinks
-							.add(new GraphDTO(ontology.getId(), clientPlatform.getId(), urlOntology + ontology.getId(),
-									urlClientPlatform + clientPlatform.getId(), "ontology", "clientplatform",
-									ontology.getIdentification(), clientPlatform.getIdentification(), "licensing"));
+					.add(new GraphDTO(ontology.getId(), clientPlatform.getId(), urlOntology + ontology.getId(),
+							urlClientPlatform + clientPlatform.getId(), "ontology", "clientplatform",
+							ontology.getIdentification(), clientPlatform.getIdentification(), "licensing"));
 				}
 			}
 		}
@@ -133,7 +130,7 @@ public class GraphUtil {
 
 	private List<GraphDTO> constructGraphWithGadgets(String visualizationId, String visualizationName) {
 
-		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		final List<GraphDTO> arrayLinks = new LinkedList<>();
 		/*String name = utils.getMessage("name.gadgets", "GADGETS");
 
 		// carga de nodo gadget dependiente de visualizacion
@@ -147,7 +144,7 @@ public class GraphUtil {
 				// Creación de enlaces
 				arrayLinks.add(new GraphDTO(name, gadget.getId(), urlGadget + "list", urlDashboard + gadget.getId(),
 						name, "gadget", name, gadget.getIdentification(), "licensing"));
-				
+
 			}
 			gadgets.clear();
 		}*/
@@ -156,7 +153,7 @@ public class GraphUtil {
 
 	private List<GraphDTO> constructGraphWithDashboard(String visualizationId, String visualizationName) {
 
-		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		final List<GraphDTO> arrayLinks = new LinkedList<>();
 		/*String name = utils.getMessage("name.dashboards", "DASHBOARDS");
 
 		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlDashboard + "list", visualizationId, name,
@@ -193,9 +190,9 @@ public class GraphUtil {
 
 	public List<GraphDTO> constructGraphWithVisualization() {
 
-		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
-		String name = utils.getMessage("name_visualization", "VISUALIZATION");
-		String description = utils.getMessage("tooltip_visualization", null);
+		final List<GraphDTO> arrayLinks = new LinkedList<>();
+		final String name = utils.getMessage("name_visualization", "VISUALIZATION");
+		final String description = utils.getMessage("tooltip_visualization", null);
 		// carga de nodo gadget
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, null, genericUserName, name, utils.getUserId(), name,
 				"suit", description, null));
@@ -208,14 +205,14 @@ public class GraphUtil {
 	}
 
 	public List<String> getGadgetIdsFromModel(String modelJson) throws JsonProcessingException, IOException {
-		List<String> gadgetIds = new LinkedList<String>();
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode jsonNode = objectMapper.readTree(modelJson);
-		int rows = jsonNode.path("rows").size();
+		final List<String> gadgetIds = new LinkedList<>();
+		final ObjectMapper objectMapper = new ObjectMapper();
+		final JsonNode jsonNode = objectMapper.readTree(modelJson);
+		final int rows = jsonNode.path("rows").size();
 		for (int i = 0; i < rows; i++) {
-			int columns = jsonNode.path("rows").path(i).path("columns").size();
+			final int columns = jsonNode.path("rows").path(i).path("columns").size();
 			for (int j = 0; j < columns; j++) {
-				int widgets = jsonNode.path("rows").path(i).path("columns").path(j).path("widgets").size();
+				final int widgets = jsonNode.path("rows").path(i).path("columns").path(j).path("widgets").size();
 				for (int k = 0; k < widgets; k++) {
 					String gadgetId = jsonNode.path("rows").path(i).path("columns").path(j).path("widgets").path(k)
 							.path("config").get("gadgetId").asText();

@@ -43,7 +43,7 @@
 						"ES": "Simulador de Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/simulator/show"
+					"url": "/controlpanel/devicesimulation/list"
 				},
 				{
 					"title": {
@@ -51,7 +51,7 @@
 						"ES": "Gestión de Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/devices/management/list"
+					"url": "/controlpanel/devices/management/show"
 				}
 			]
 		},
@@ -60,7 +60,7 @@
 				"EN": "INGEST & PROCESS",
 				"ES": "INGESTA Y PROCESADO"
 			},
-			"icon": "la la-globe",
+			"icon": "flaticon-analytics",
 			"url": "",
 			"submenu": [	
 				{
@@ -120,7 +120,7 @@
 				"EN": "API MANAGER",
 				"ES": "API MANAGER"
 			},
-			"icon": "la la-random",
+			"icon": "flaticon-layers",
 			"url": "",
 			"submenu": [
 				{

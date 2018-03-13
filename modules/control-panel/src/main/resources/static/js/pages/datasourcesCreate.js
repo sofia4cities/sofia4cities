@@ -2,7 +2,7 @@ var DatasourcesCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
-	var LIB_TITLE = 'Ontology Controller';	
+	var LIB_TITLE = 'Datasource Controller';	
     var logControl = 1;
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.	
@@ -14,7 +14,7 @@ var DatasourcesCreateController = function() {
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
 	
-	// DELETE USER
+	// DELETE DATASOURCE
 	var deleteDatasourceConfirmation = function(datasourceId){
 		console.log('deleteGadgetDatasourceConfirmation() -> formId: '+ datasourceId);
 		

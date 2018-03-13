@@ -29,10 +29,9 @@
 
 		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND BOOSTRAP-TIMEPICKER  -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css}"/>
-		
+				
 	</head>	
 	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
@@ -141,44 +140,45 @@
 														<div class="row">
 															<div class="col-md-3 col-sm-6 col-xs-12">
 																<div class="form-group">
-						                                            <label class="description notAnimate" for="selector-tipo-api" th:text="#{apimanager.apitype}">API</label>
-						                                            <p class="form-control-static-block bold" th:text="#{apimanager.apiType.rest}"> API Type </p>
-						                                            <span><input id="checkboxPublic" name="checkboxPublic" type="checkbox" checked="checked" th:field="*{public}" /></span>
-						                                            <label style="margin-left: 8px; padding-bottom: 5px;" for="checkbox" th:text="#{apimanager.public}">Public</label>
+						                                            <label class="description " for="selector-tipo-api" th:text="#{apimanager.apitype}">API</label>
+						                                            <p class="form-control-static-block bold" th:text="#{apimanager.apiType.rest}"> API Type </p>						                                           
 					                                            </div>
 															</div>
 															<div class="col-md-3 col-sm-6 col-xs-12">
 																<div class="form-group">
-								                                    <label id="label-selector-ontologia" class="description notAnimate" for="id_ontology" th:text="#{apimanager.ontology}">Ontology</label>
+								                                    <label id="label-selector-ontologia" class="description " for="id_ontology" th:text="#{apimanager.ontology}">Ontology</label>
 								                                    <p class="form-control-static-block bold" th:text="*{ontology.identification}">Ontology </p>
 							                                    </div>
 															</div>
 															<div class="col-md-2 col-sm-6 col-xs-12">
 																<div class="form-group">
-								                                    <label class="description notAnimate" for="id_limit" th:text="#{apimanager.apilimit}">Requests per minute</label>
+								                                    <label class="description " for="id_limit" th:text="#{apimanager.apilimit}">Requests per minute</label>
 							                                        <p th:if="${api.apilimit!= null}" class="form-control-static-block bold" th:text="*{apilimit}">Requests </p>
-							                                        <p th:if="${api.apilimit== null}" class="form-control-static-block bold" text=" ">&nbsp;</p>
-							                                        <span><input id="checkboxLimit" name="checkboxLimit" type="checkbox" th:checked="${api.apilimit!= null}" onchange="ApiCreateController.changeApiLimit();"/></span>
-							                                        <label for="checkbox" th:text="#{apimanager.limit}">Limit</label>
+							                                        <p th:if="${api.apilimit== null}" class="form-control-static-block bold">&nbsp;</p>							                                      
 						                                        </div>
 															</div>
-															<div class="col-md-2 col-sm-6 col-xs-12">
-																<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" style="height: 60px; width:100px; margin-top: 20px; margin-right: 40px;"/>
-																<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/img/API.png}" style="height: 60px;" class="pull-right"/>
-															</div>
+															<div class="col-md-4 col-sm-6 col-xs-12">
+																<div class="form-group">
+																<label class="control-label" th:text="#{apimanager.public} + '?'">Active</label>
+																	<p class="form-control-static-block form-control-static-no-border bold">
+																		<span th:if="*{public}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
+																		<span th:if="!*{public}" class="label label-sm label-danger"><i class="fa fa-warning"></i></span>
+																	</p>
+																</div>
+															</div>															
 														</div>
 														<!-- endpoint -->												
 														<div class="row">
 															<div class="col-md-6 col-sm-6 col-xs-12">
 																<div class="form-group">
-								                                    <label class="description notAnimate" id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
+								                                    <label class="description " id="id_endpoint_label" for="id_endpoint" th:text="#{apimanager.endpoint}">EndPoint</label>
 								                                    <p class="form-control-static-block bold" th:text="*{endpoint}">EndPoint </p>
 							                                    </div>
 															</div>
 															<div class="col-md-6 col-sm-6 col-xs-12">
 																<div class="form-group">
-								                                    <label class="description notAnimate" id="id_endpoint_swagger_label" for="id_endpoint_swagger" th:text="#{apimanager.endpoint}">EndPoint</label>
-								                                    <p class="form-control-static-block bold">EndPoint Swagger</p>
+								                                    <label class="description " id="id_endpoint_swagger_label" for="id_endpoint_swagger" >EndPoint Swagger</label>
+								                                    <p class="form-control-static-block bold" th:text="${endpointBase} + 'api-ui.html?url='+ ${apiServices} +'/management/swagger/' + ${api.identification} + '/swagger.json'">EndPoint Swagger</p>
 							                                    </div>
 															</div>
 														</div>
@@ -190,36 +190,41 @@
 															</div>
 															<!-- metainf -->
 															<div class="col-md-6 col-sm-12 col-xs-12">
-							                                    <label class="description" for="metainf" th:text="#{apimanager.metainf}">Meta-inf</label>
-							                                    <input  id="id_metainf" data-role="tagsinput" class="form-control" type="text" th:field="*{metaInf}" disabled="disabled"></input>
+																<div class="form-group">
+																	<label class="description" for="metainf" th:text="#{apimanager.metainf}">Meta-inf</label>
+																	<input  id="id_metainf" data-role="tagsinput" class="form-control" type="text" th:field="*{metaInf}" disabled="disabled"></input>
+																</div>
+																<div class="form-group">
+																	<label class="description" for="image" th:text="#{apimanager.image}">Image</label>
+																	<img th:if="${not #lists.isEmpty(api.image)}" th:src="@{/apimanager/} + ${api.id + '/getImage'}" class="img-responsive thumbnail" style="height: 60px; position: relative; float: right; top: 15px;"/>
+																	<img th:if="${#lists.isEmpty(api.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="height: 60px; position: relative; float: right; top: 15px;"/>
+																</div>															
 															</div>
 														</div>													
 														<!-- operations -->
 														<div class="row">
 							                                 <div id="ontologyOperations" class="col-md-12">
-							                                     <div class="tabla_peq_description">
-							                                        <h3 class="descripcion_peq" th:text="#{apimanager.operations}">OPERACIONES</h3>
-							                                     </div>
+							                                     <h4 class="margin-bottom-20"><i class="la la-random"></i> <span th:text="#{apimanager.operations}">OPERACIONES</span></h4>
 							                                     <div>
 							                                         <fieldset>
 							                                             <div>
-							                                                 <div id="divGET" class="op_div">
-							                                                    <div id="buttonOperacionGET" class="op_button_div">
-							                                                        <input id="GET" class="op_button" style="width: 80px;" type="button" value="GET" name="GET" th:value="#{apimanager.GET.button}" />
-							                                                    </div>
-							                                                    <div id="descOperationGET" class="op_desc_div" style="display:none">
-							                                                        <label id ="description_GET_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GET"></label>
-							                                                        <br/>
-							                                                        <label id ="description_operacion_GET" class="description" for="description_GET" th:text="#{apimanager.description}"></label>
-							                                                        <input id="description_GET" name="description_GET" class="form-control" type="text" maxlength="250"/>
-							                                                    </div>
-							                                                 </div>
-						                                                     <div id="divPOST" class="op_div">
+																				 <div id="divGET" class="op_div">
+																					<div id="buttonOperacionGET" class="op_button_div">
+																						<input id="GET" class="op_button"  type="button" value="GET" name="GET" th:value="#{apimanager.GET.button}" />
+																					</div>
+																					<div id="descOperationGET" class="op_desc_div" style="display:none">
+																						<label id ="description_GET_label" class="description " style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_GET"></label>
+																						<br/>
+																						<label id ="description_operacion_GET" class="description" for="description_GET" th:text="#{apimanager.description}"></label>
+																						<input id="description_GET" name="description_GET" class="form-control" type="text" maxlength="250"/>
+																					</div>
+																				 </div>
+																				<div id="divPOST" class="op_div">
 							                                                        <div id="buttonOperationPOST" class="op_button_div">
-							                                                            <input id="POST" class="op_button" style="width: 80px;" type="button" value="POST" name="POST" th:value="#{apimanager.POST.button}" />
+							                                                            <input id="POST" class="op_button"  type="button" value="POST" name="POST" th:value="#{apimanager.POST.button}" />
 							                                                        </div>
 							                                                        <div id="descOperationPOST" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_POST_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_POST"></label></b>
+							                                                            <b><label id ="description_POST_label" class="description " style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_POST"></label></b>
 							                                                            <br/>
 							                                                            <b><label id ="description_operacion_POST" class="description" for="description_POST" th:text="#{apimanager.description}"></label></b>
 							                                                            <input id="description_POST" name="description_POST" class="form-control" type="text" maxlength="250"/>
@@ -227,10 +232,10 @@
 							                                                     </div>
 							                                                     <div id="divPUT" class="op_div">
 							                                                        <div id="buttonOperationPUT" class="op_button_div">
-							                                                            <input id="PUT" class="op_button" style="width: 80px;" type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT.button}" />
+							                                                            <input id="PUT" class="op_button"  type="button" value="PUT" name="PUT" th:value="#{apimanager.PUT.button}" />
 							                                                        </div>
 							                                                        <div id="descOperationPUT" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_PUT_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_PUT"></label></b>
+							                                                            <b><label id ="description_PUT_label" class="description " style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_PUT"></label></b>
 							                                                            <br/>
 							                                                            <b><label id ="description_operacion_PUT" class="description" for="description_PUT" th:text="#{apimanager.description}"></label></b>
 							                                                            <input id="description_PUT" name="description_PUT" class="form-control" type="text" maxlength="250"/>
@@ -238,17 +243,17 @@
 							                                                     </div>
 							                                                     <div id="divDELETEID" class="op_div">
 							                                                        <div id="buttonOperationDELETEID" class="op_button_div">
-							                                                            <input id="DELETEID" class="op_button" style="width: 80px;" type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETEID.button}" />
+							                                                            <input id="DELETEID" class="op_button"  type="button" value="DELETEID" name="DELETEID" th:value="#{apimanager.DELETEID.button}" />
 							                                                        </div>
 							                                                        <div id="descOperationDELETEID" class="op_desc_div" style="display:none">
-							                                                            <b><label id ="description_DELETEID_label" class="description notAnimate" style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
+							                                                            <b><label id ="description_DELETEID_label" class="description " style="padding-top: 5px; padding-bottom: 5px; font-weight: bold;" for="description_DELETEID"></label></b>
 							                                                            <br/>
 							                                                            <b><label id ="description_operacion_DELETEID" class="description" for="description_DELETEID" th:text="#{apimanager.description}"></label></b>
 							                                                            <input id="description_DELETEID" name="description_DELETEID" class="form-control" type="text" maxlength="250"/>
 							                                                        </div>
 							                                                     </div>
-								                                                 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_POST')} 
-								                                                 													AND ${!#strings.endsWith(operation.identification,'_PUT')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
+																				 
+								                                                 <!-- <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
 								                                                    <div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" style="margin-Top:30px;margin-bottom: 30px">
 								                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}"
 								                                                        		class="op_button_selected"
@@ -264,7 +269,18 @@
 								                                                    <b><span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-left: 20px; width: 93%;" th:text="${querystring.value}"/></b>
 								                                                    <br/>
 								                                                    <span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px;" th:text="${operation.description}"/>
-								                                                 </div>
+								                                                 </div> -->
+																				 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
+																					<div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" >
+																						<input th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected"  type="button" th:value="#{apimanager.GETCUSTOM.button}" th:name="${(operation.identification + 'CUSTOMSQL')}" />
+																					</div>
+																					<div class="op_desc_div">
+																						<label th:id="${operation.identification + '_LABEL'}" class="description bold" style="font-size: 14px; color: rgb(34, 48, 77); padding-right:15px; min-width: 200px;display: inline-block;" th:text="${operation.identification}"/>
+																						<span th:id="${operation.identification + '_PATH'}" style="padding-right:15px; min-width: 250px;display: inline-block;"><span class="label label-success "><small>ENDPOINT</small></span> <span class="bold" th:text="${operation.path}">path</span></span>
+																						<span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-right: 30px; min-width: 150px; display: inline-block;"><span class="label label-info "><small>QUERY</small></span> <span class="bold" th:text="${querystring.value}"> query </span></span>
+																						<span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px; display: inline-block;"><span class="label label-info "><small>DESC.</small></span> <span class="text-truncate-lg" th:text="${operation.description}"> Description </span></span>
+																					</div>
+																				</div>																				 
 							                                                 </div>
 							                                         </fieldset>
 							                                     </div>
@@ -318,9 +334,9 @@
 																<i class="fa fa-eye"></i> <em th:text="#{gen.columns}">Columns</em> <i class="fa fa-angle-down"></i>
 															</a>
 															<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-																<label class="toggle-vis" data-column="0" th:text="#{authorization.identification}"> Identification </label>
-																<label class="toggle-vis" data-column="1" th:text="#{authorization.user}"> User </label>
-																<label class="toggle-vis" data-column="2" th:text="#{authorization.ontologyUserAccessType}"> Access Type</label>															
+																<label class="toggle-vis" data-column="0" th:text="#{apimanager.list.auth.user}"> Identification </label>
+																<label class="toggle-vis" data-column="1" th:text="#{apimanager.list.auth.username}"> fullName </label>
+																<label class="toggle-vis" data-column="2" th:text="#{apimanager.list.auth.apiversion}"> API Version</label>															
 															</div>
 														</div>												
 													</div>
@@ -401,33 +417,22 @@
 	
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
-	<script th:src="@{/static/js/layout.js}"/>
-	
-	<!-- PLUGINS -->
-	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
-	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
-	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
-	<!-- LOADING DEFAULT DATES IF NEEDED -->
-	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js}" type="text/javascript"></script>
-	
-	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
-    <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
-	
-	<!-- LOADING DEFAULT LANG MESSAGES IF NEEDED -->
-	<script th:if="${lang} == 'es'" th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}" type="text/javascript"></script>
-	
+	<script th:src="@{/static/js/layout.js}"/>	
+		
 	<script th:src="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js}" type="text/javascript"></script>
-	<script th:src="@{/static/vendor/json/mountable.min.js}" type="text/javascript"></script>
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>		
 	
-	<!-- INPUTMASK -->
-	<script th:src="@{/static/vendor/jquery-inputmask/dist/min/jquery.inputmask.bundle.min.js}"/>
 	
-	<!-- TEMPLATE CONTROLLER  -->	
-	<script th:src="@{/static/js/pages/apiCustomOps.js}"/>
 	
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	//<![CDATA[
+	
+	// DATATABLES LANGUAJE FROM PROPERTIES.
+	datatable_lang = [[#{datatables_lang}]];	
+	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
 		
 	var operations = /*[[${operations}]]*/;
 	var authenticacion;
@@ -458,7 +463,7 @@
                  if (operations[i].operation!="GETCUSTOMSQL"){
                      var id = operations[i].identification;
                      var nameOp = id.substring(id.lastIndexOf("_") + 1);
-                     $('#' + nameOp).addClass('op_button_selected').removeClass('op_button');
+                     //$('#' + nameOp).addClass('op_button_selected').removeClass('op_button');
                      $('#description_' + nameOp).val(operations[i].description);
                      $('#descOperation' + nameOp).show();
                      $('#description_' + nameOp + '_label').text(operations[i].path);
@@ -473,8 +478,30 @@
 	
    	$( document ).ready(function() {
    		loadOperations();
+		
+		//SHOW/HIDE DATATABLE COLUMNS HANDLER
+		$('label.toggle-vis').on( 'click', function (e) {
+			e.preventDefault(); 
+			// Get the column API object
+			var column = $('#authorizations').DataTable().column( $(this).attr('data-column') ); 
+			// Toggle the visibility
+			column.visible( ! column.visible() );			
+			// toggle Text
+			$(this).toggleClass('text-muted line-through');			
+		});			
+		
    	});
-  	//]]>
+	
+	// MAIN WHEN LOAD
+	$(window).load(function(){  
+		// init on load.			
+		// SHOW/HIDE DATATABLES COLUMN INIT 		
+		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
+		$('#dataTable-vis-toggle').removeClass('hide');	
+	
+	});
+	
+	//]]>
 	</script>		
 
 </body>

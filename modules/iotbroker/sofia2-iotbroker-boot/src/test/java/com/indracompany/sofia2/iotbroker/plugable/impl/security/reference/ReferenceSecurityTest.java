@@ -134,7 +134,7 @@ public class ReferenceSecurityTest {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
-				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
 		Assert.assertTrue(session.isPresent());
 		Assert.assertTrue(!StringUtils.isEmpty(session.get().getSessionKey()));
@@ -146,7 +146,7 @@ public class ReferenceSecurityTest {
 	@Test
 	public void given_OneInvalidToken_When_ASessionIsCreated_Then_ItReturnsAnInvalidSession() throws AuthenticationException {
 		final Optional<IoTSession> session = security.authenticate("INVALID_TOKEN",
-				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
 		Assert.assertFalse(session.isPresent());
 	}
@@ -161,7 +161,7 @@ public class ReferenceSecurityTest {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
-				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
 		Assert.assertTrue(security.checkAuthorization(SSAPMessageTypes.INSERT, subjectOntology.getIdentification(), session.get().getSessionKey()));
 	}
@@ -171,7 +171,7 @@ public class ReferenceSecurityTest {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
-				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
 		Assert.assertFalse(security.checkAuthorization(SSAPMessageTypes.INSERT, "NOT_ASSIGNED_ONTOLOGY", session.get().getSessionKey()));
 	}

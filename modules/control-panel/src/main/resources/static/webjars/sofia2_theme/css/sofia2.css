@@ -818,10 +818,105 @@ box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
  
 .main-block{
 background: #564FC1;
-padding: 30px 30px 20px 30px;
+padding: 30px 30px 0px 30px;
  margin-left: -20px;margin-right: -20px;
 background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
 background: linear-gradient(to right, #75b8f3, #9353e6);
 } 
  
- 
+/*** APIMANAGER OPERATIONS  ***/ 
+
+.op_div{ margin-bottom: 10px; padding: 10px; border: 1px solid #F5F5F5; border-radius: 5px; }
+.op_div_selected{ margin-bottom: 20px; border: 1px solid #CCC; padding: 10px; background: #f7f7f7; border-radius: 5px; }
+.op_button{ 
+
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;			
+	cursor: pointer;			
+	background-image: none;
+	border: 1px solid transparent;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
+	border-radius: 4px;	
+	color: #333;
+	background-color: #fff;
+	border-color: #ccc;			
+
+
+}
+.op_button_div {  } 
+
+.op_button_selected{
+
+	display: inline-block;
+	padding: 6px 12px;
+	margin-bottom: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.42857143;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;			
+	cursor: pointer;			
+	background-image: none;
+	border: 1px solid transparent;
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	border-left-color: transparent;
+	border-radius: 4px;	
+	color: #FFF;
+	background-color: #526781;
+	border-color: #4e627b;	
+}
+.op_desc_div{
+	padding: 10px;
+}
+
+/*  Devices */
+#id_parameter_metaInfo {
+	height: auto;
+	box-shadow: none;
+	min-height: 100px;
+}
+
+.metainfo {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.metainfo p {
+	margin: 0px;
+}
+
+.metainfo p span {
+	margin-left: 5px;
+}
+
+/* main */
+
+.main-block-toggle{
+	position: absolute;
+	top: 60px;
+	z-index: 1;
+	right: 86px;
+ -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;	
+}
+.hide-main-block{
+	position: relative;
+	right: 58px;
+	top: -10px;	
+}
+

@@ -82,6 +82,7 @@ public class CommandsLauncher {
 	}
 }
 
+@Slf4j
 class StreamGobbler extends Thread {
 	InputStream is;
 	String type;
@@ -105,7 +106,7 @@ class StreamGobbler extends Thread {
 			}
 
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			log.error("Error reading data", ioe);
 		}
 	}
 

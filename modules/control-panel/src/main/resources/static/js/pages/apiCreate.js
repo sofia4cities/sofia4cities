@@ -63,7 +63,7 @@ var ApiCreateController = function() {
                 success: function(data) {
                     if(data != null && data != "") {
                         $('#numversion').val(data);
-                        createOperacionesOntologia ();
+                        createOperationsOntology ();
                         // VISUAL-UPDATE
                         configurarApi();
                     }
@@ -93,16 +93,16 @@ var ApiCreateController = function() {
         }
         // --- configurar panel operaciones
         ontologySelector = $('#ontology');
-        ontologyOperations = $('#operacionesOntologia');
+        ontologyOperations = $('#ontologyOperations');
 
-        limpiarOperacionesOntologia();
+        cleanOperationsOntology();
         // empieza con la operaciones limpias
         // borrarOperaciones();
 
         if (apiType && apiType.startsWith('iot')) {
             // api sobre ontologias
         	ontologySelector.prop('disabled', false);
-            createOperacionesOntologia();
+            createOperationsOntology();
         }
     }
 	
@@ -135,7 +135,7 @@ var ApiCreateController = function() {
 		}
 	}
 	
-    function createOperacionesOntologia () {
+    function createOperationsOntology () {
         $('#description_GET_label').text("/{id}");
         $('#description_POST_label').text("/");
         $('#description_PUT_label').text("/");
@@ -143,7 +143,7 @@ var ApiCreateController = function() {
         $('#ontologyOperations input[type="text"]').val('').show();
     }
     
-    function limpiarOperacionesOntologia () {
+    function cleanOperationsOntology () {
         // desactivar operaciones
         $('#ontologyOperations input.op_button_selected').removeClass('op_button_selected').addClass('op_button');
         // eliminar descripciones y ocultarlas
@@ -187,8 +187,19 @@ var ApiCreateController = function() {
     		$('#description_' + button.name).val("");
     		$('#descOperation' + button.name).hide();
     		$('#div' + button.name).prop('className', 'op_div');
+    		removeOp(button);
     	}
     } 
+    
+    function removeOp(button){
+    	var op_name = $('#identification').val() + "_" + button.name;
+        for(var i=0; i<operations.length; i+=1){
+            var operation = operations [i];
+            if (operation.identification == op_name){
+            	operations.splice(i, 1);
+            }
+        }
+    }  
     
 	// REDIRECT URL
 	var navigateUrl = function(url){ window.location.href = url; }
@@ -280,7 +291,7 @@ var ApiCreateController = function() {
             	apiType:			{ required: true },
             	ontology:			{ required: true },
             	id_endpoint:		{ required: true },
-            	apiDescripcion:		{ required: true },
+            	apiDescription:		{ required: true },
             	id_metainf:			{ required: true },
 				datecreated:		{ date: true, required: true }
             },
@@ -442,18 +453,18 @@ var ApiCreateController = function() {
             if ($('#POST').attr('class')=='op_button_selected'){
             	var querystringsPOST = new Array();
             	var operationPOST = {identification: nameApi + "_POST", description: $('#description_POST').val() , operation:"POST", path:$('#description_POST_label').text(), querystrings: querystringsPOST};
-	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
+	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: ""};
 	            operationPOST.querystrings.push(querystringparameter);
                 if (!existOp(operationPOST.identification)){
-                	operations.push(operacionPOST);
+                	operations.push(operationPOST);
                 } else {
-                    replaceOperation(operacionPOST);
+                    replaceOperation(operationPOST);
                 }
             }
             if ($('#PUT').attr('class')=='op_button_selected'){
             	var querystringsPUT = new Array();
             	var operationPUT = {identification: nameApi + "_PUT", description: $('#description_PUT').val() , operation:"PUT", path:$('#description_PUT_label').text(), querystrings: querystringsPUT};
-	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: "#/definitions/String"};
+	            querystringparameter = {name: "body", dataType: "string", headerType: "body", description: "", value: ""};
 	            operationPUT.querystrings.push(querystringparameter);
                 if (!existOp(operationPUT.identification)){
                 	operations.push(operationPUT);

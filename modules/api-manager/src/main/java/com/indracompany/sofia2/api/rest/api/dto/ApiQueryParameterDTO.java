@@ -54,5 +54,10 @@ public class ApiQueryParameterDTO implements Cloneable, Serializable {
 	@Getter
 	@Setter
 	private HeaderType headerType;
+	
+	@ApiModelProperty(value = "Tipo de Parametro")
+	@Getter
+	@Setter
+	private String condition;
 
 }

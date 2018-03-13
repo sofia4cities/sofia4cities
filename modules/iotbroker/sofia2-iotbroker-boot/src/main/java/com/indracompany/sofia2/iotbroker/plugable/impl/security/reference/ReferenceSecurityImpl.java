@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Token;
@@ -54,7 +55,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	ConcurrentHashMap<String, IoTSession> sessionList = new ConcurrentHashMap<>(200);
 
 	@Override
-	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance) {
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance, String sessionKey) {
 		final Token retrivedToken = tokenService.getTokenByToken(token);
 		if(retrivedToken == null) {
 			return Optional.empty();
@@ -68,12 +69,19 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 			session.setClientPlatformInstance(clientPlatformInstance);
 			session.setExpiration(60*1000*1000l);
 			session.setLastAccess(ZonedDateTime.now());
-			session.setSessionKey(UUID.randomUUID().toString());
 			session.setToken(token);
 			session.setClientPlatformID(clientPlatformDB.getId());
 
 			session.setUserID(retrivedToken.getClientPlatform().getUser().getUserId());
 			session.setUserName(retrivedToken.getClientPlatform().getUser().getFullName());
+
+			if(!StringUtils.isEmpty(sessionKey)) {
+				this.closeSession(sessionKey);
+				session.setSessionKey(sessionKey);
+			}
+			else {
+				session.setSessionKey(UUID.randomUUID().toString());
+			}
 
 			sessionList.put(session.getSessionKey(), session);
 
@@ -106,6 +114,11 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		if(time > session.getExpiration()) {
 			sessionList.remove(sessionKey);
 			return false;
+		}
+		else {
+			//renew session on activity
+			session.setLastAccess(now);
+			sessionList.put(sessionKey, session);
 		}
 
 		return true;
@@ -149,6 +162,9 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 
 	@Override
 	public Optional<IoTSession> getSession(String sessionKey) {
+		if(StringUtils.isEmpty(sessionKey)) {
+			return Optional.empty();
+		}
 		final IoTSession session = sessionList.get(sessionKey);
 		if(session == null) {
 			return Optional.empty();
@@ -163,6 +179,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		final long now = System.currentTimeMillis();
 		final Predicate<IoTSession> delete = s -> now - s.getLastAccess().toInstant().toEpochMilli() >= s.getExpiration();
 		sessionList.values().removeIf(delete);
+		log.info("Deleting expired session");
 	}
 
 }

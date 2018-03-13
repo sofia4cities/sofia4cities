@@ -16,6 +16,7 @@ package com.indracompany.sofia2.router.service.app.service.crud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.ApiOperation;
@@ -31,13 +32,18 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@CacheConfig(cacheNames={"queries"})
 public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Autowired
 	private QueryToolService  queryToolService;
-
+	
 	@Autowired
 	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
+	
+	
+	//@Autowired
+	//RouterCrudServiceImpl me;
 
 	@Override
 	public OperationResultModel insert(OperationModel operationModel) {
@@ -166,10 +172,29 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	}
 
 	@Override
-	@Cacheable("queries")
 	public OperationResultModel query(OperationModel operationModel) {
 
 		log.info("Router Crud Service Operation "+operationModel.toString());
+		OperationResultModel result=null;
+		final boolean cacheable = operationModel.isCacheable();
+		if (cacheable) {
+			log.info("DO CACHE OPERATION "+operationModel.toString());
+			result= queryCache(operationModel);
+			
+		}
+		else {
+			log.info("NOT CACHING, GO TO SOURCE "+operationModel.toString());
+			result = queryNoCache(operationModel);
+		}
+			
+		return result;	
+
+	}
+	
+	
+	public OperationResultModel queryNoCache(OperationModel operationModel) {
+
+		log.info("Router NO CACHING Crud Service Operation "+operationModel.toString());
 
 		final OperationResultModel result = new OperationResultModel();
 
@@ -217,6 +242,16 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		result.setResult(OUTPUT);
 		result.setOperation(METHOD);
 		return result;
+	}
+	
+	
+	@Cacheable("queries")
+	public OperationResultModel queryCache(OperationModel operationModel) {
+		
+		log.info("Router CACHE EXPLICIT Crud Service Operation "+operationModel.toString());
+		OperationResultModel result = queryNoCache(operationModel);
+		return result;
+
 	}
 
 	@Override
@@ -268,5 +303,6 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		else if (l!=null && l.equalsIgnoreCase("")) return true;
 		else return false;
 	}
+	
 
 }

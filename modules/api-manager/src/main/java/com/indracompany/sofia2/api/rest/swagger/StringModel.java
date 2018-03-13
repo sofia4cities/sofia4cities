@@ -28,7 +28,7 @@ public class StringModel extends AbstractModel {
     private Integer maxItems;
 
     public StringModel() {
-        this.type = "string";
+        this.type = "";
     }
 
     public StringModel description(String description) {
