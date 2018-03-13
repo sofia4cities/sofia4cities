@@ -25,43 +25,21 @@ import lombok.Setter;
 
 public class GraphDTO implements Serializable {
 
-	@Getter
-	@Setter
-	private String source;
-	@Getter
-	@Setter
-	private String target;
+	@Getter @Setter private String source;
+	@Getter @Setter private String target;
 
-	@Getter
-	@Setter
-	private String title;
-	@Getter
-	@Setter
-	private String linkCreate;
-	@Getter
-	@Setter
-	private String linkSource;
-	@Getter
-	@Setter
-	private String linkTarget;
+	@Getter @Setter private String title;
+	@Getter @Setter private String linkCreate;
+	@Getter @Setter private String linkSource;
+	@Getter @Setter private String linkTarget;
 
-	@Getter
-	@Setter
-	private String classSource;
-	@Getter
-	@Setter
-	private String classTarget;
+	@Getter @Setter private String classSource;
+	@Getter @Setter private String classTarget;
 
-	@Getter
-	@Setter
-	private String nameSource;
-	@Getter
-	@Setter
-	private String nameTarget;
+	@Getter @Setter private String nameSource;
+	@Getter @Setter private String nameTarget;
 
-	@Getter
-	@Setter
-	private String type;
+	@Getter @Setter private String type;
 
 	public GraphDTO(String source, String target, String linkSource, String linkTarget, String classSource,
 			String classTarget, String nameSource, String nameTarget, String type) {
@@ -77,7 +55,7 @@ public class GraphDTO implements Serializable {
 	}
 
 	public GraphDTO(String source, String target, String linkSource, String linkTarget, String classSource,
-			String classTarget, String nameSource, String nameTarget, String type, String title, String linkCreate) {
+			String classTarget,String nameSource, String nameTarget, String type,String title, String linkCreate) {
 		super();
 		this.source = source;
 		this.target = target;
@@ -92,27 +70,26 @@ public class GraphDTO implements Serializable {
 		this.type = type;
 	}
 
-	public static GraphDTO constructSingleNode(String source, String linkSource, String classSource,
-			String nameSource) {
-		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource,
-				null);
+
+	public static GraphDTO constructSingleNode(String source,String linkSource,String classSource,String nameSource){
+		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource, null);
 	}
 
-	public static GraphDTO constructSingleNodeWithTitleAndCreateLink(String source, String linkSource,
-			String classSource, String nameSource, String title, String linkCreate) {
-		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource,
-				null, title, linkCreate);
+	public static GraphDTO constructSingleNodeWithTitleAndCreateLink(String source,String linkSource,String classSource,String nameSource,String title,String linkCreate){
+		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource, null,title,linkCreate);
 	}
+
 
 	@Override
 	@JsonRawValue
 	@JsonIgnore
-	public String toString() {
-		ObjectMapper mapper = new ObjectMapper();
-		String result = null;
+	public String toString()
+	{
+		final ObjectMapper mapper = new ObjectMapper();
+		String result=null;
 		try {
-			result = mapper.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
+			result=mapper.writeValueAsString(this);
+		} catch (final JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return result;
