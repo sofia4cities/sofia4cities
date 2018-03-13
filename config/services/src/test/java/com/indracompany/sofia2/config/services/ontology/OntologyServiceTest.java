@@ -27,6 +27,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
+import com.indracompany.sofia2.config.model.Role;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 
@@ -73,6 +75,31 @@ public class OntologyServiceTest {
 		when(ontologyRepository.findById(id)).thenReturn(ontology);
 		when(ontologyUserAccessRepository.findByOntology(ontology)).thenReturn(authorizies);
 		assertTrue(service.hasOntologyUsersAuthorized("1"));
+	}
+	
+	@Test
+	public void given_OneOntologyIsPublic_When_AnyUserAsksForQueryAccess_Then_TrueItIsReturned() {
+		String id = "1";
+		User ontologyUser = createUser("owner", "normal");	
+		Ontology ontology = new Ontology();
+		ontology.setId(id);
+		ontology.setPublic(true);
+		ontology.setUser(ontologyUser);
+		
+		User sessionUser = createUser("any", "any");
+		
+		assertTrue("Any user should have query access to a public ontology", service.hasUserPermissionForQuery(sessionUser, ontology));
+	}
+	
+	private User createUser(String userId, String roleId) {
+		Role role = new Role();
+		role.setId(roleId);
+		
+		User user = new User();
+		user.setUserId(userId);
+		user.setRole(role);
+		
+		return user;
 	}
 	
 }
