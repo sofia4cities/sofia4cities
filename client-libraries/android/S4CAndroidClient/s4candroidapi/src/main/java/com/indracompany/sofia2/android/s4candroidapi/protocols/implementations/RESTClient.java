@@ -79,7 +79,7 @@ public class RESTClient {
         }
 
         int responseCode = -1;
-        URL leaveUrl = new URL(baseUri.toString() + "/iotbroker/rest/client/leave");
+        URL leaveUrl = new URL(baseUri.toString() + "client/leave");
 
         HttpURLConnection connection = getAuth(leaveUrl, sessionKey);
         responseCode = connection.getResponseCode();

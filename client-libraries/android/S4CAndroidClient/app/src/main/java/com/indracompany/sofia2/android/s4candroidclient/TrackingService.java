@@ -493,15 +493,9 @@ public class TrackingService extends Service implements LocationListener, Google
                     framesGen++;
                     mIntent.putExtra("frame_generated", String.valueOf(framesGen));
                     mLocalBroadcastManager.sendBroadcast(mIntent);
-                    bufferFrames.add(frame);
-                    if(bufferFramesLength<bufferFrames.size()){
-                        bufferFrames.removeFirst();
-                    }
 
                     if(IoTBrokerProxyRest.join() == HttpURLConnection.HTTP_OK){
-                        while(bufferFrames.size()>0) {
-                            IoTBrokerProxyRest.insert(pref_ontology, bufferFrames.getFirst());
-                        }
+                        IoTBrokerProxyRest.insert(pref_ontology,frame);
                     }
                 }
                 catch( Exception ex ) {
