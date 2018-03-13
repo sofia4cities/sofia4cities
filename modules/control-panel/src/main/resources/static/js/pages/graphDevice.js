@@ -479,9 +479,9 @@ var GraphDeviceController = function() {
 					var dataJson;
 					if(Node.image===null){
 					
-						dataJson = {'id':Node.target, 'label':Node.nameTarget, 'source':Node.source, 'type':Node.type || 'suit', 'linkTarget':Node.linkTarget, 'nameSource':Node.nameSource, 'group':Node.classTarget, 'title':Node.title, 'linkCreate': Node.linkSource, 'status':Node.status,'connected':Node.connected,'sessionKey':Node.sessionKey };
+						dataJson = {'id':Node.target, 'label':Node.nameTarget, 'source':Node.source, 'type':Node.type || 'suit', 'linkTarget':Node.linkTarget, 'nameSource':Node.nameSource, 'group':Node.classTarget, 'title':Node.title, 'linkCreate': Node.linkSource, 'status':Node.status,'connected':Node.connected,'sessionKey':Node.sessionKey,'updateAt':new Date(Node.updateAt).toLocaleString() };
 					}else{
-						dataJson = {'id':Node.target, 'label':Node.nameTarget, 'source':Node.source, 'image': Node.image, shape: 'image', 'type':Node.type || 'suit', 'linkTarget':Node.linkTarget, 'nameSource':Node.nameSource, 'group':Node.classTarget, 'title':Node.title, 'linkCreate': Node.linkSource, 'status':Node.status,'connected':Node.connected,'sessionKey':Node.sessionKey  };
+						dataJson = {'id':Node.target, 'label':Node.nameTarget, 'source':Node.source, 'image': Node.image, shape: 'image', 'type':Node.type || 'suit', 'linkTarget':Node.linkTarget, 'nameSource':Node.nameSource, 'group':Node.classTarget, 'title':Node.title, 'linkCreate': Node.linkSource, 'status':Node.status,'connected':Node.connected,'sessionKey':Node.sessionKey,'updateAt':new Date(Node.updateAt).toLocaleString()  };
 					}
 					group 	= dataJson.group.toLowerCase();
 					type	= dataJson.type.toLowerCase();
@@ -580,10 +580,11 @@ var GraphDeviceController = function() {
 	        			}
 					}
 	        		
-	        		
+	        		graphData.nodes.clear();
+	        		graphData.edges.clear();	
 	        		//UPDATE DATA
-	        		graphData.nodes.update(graph.nodes);
-	        		graphData.edges.update(graph.edges);
+	        		graphData.nodes.add(graph.nodes);
+	        		graphData.edges.add(graph.edges);
 	        		
 	        		
 	        		// Selected Node
@@ -639,7 +640,7 @@ var GraphDeviceController = function() {
 	}
 	
 	var setIntervalRefresh = function(){		
-		interval = setInterval(function(){ refresh(); }, 5000);
+		interval = setInterval(function(){ refresh(); }, 10000);
 	}
 	
 	var refresh =  function (){
