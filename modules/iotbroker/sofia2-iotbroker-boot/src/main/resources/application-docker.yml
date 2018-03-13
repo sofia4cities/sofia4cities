@@ -1,6 +1,7 @@
 sofia2:
    database.mongodb:
       servers: realtimedb:27017
+      quasar.connector.http.endpoint: http://quasar:10800/query/fs/       
    iotbroker.plugbable:
      gateway:
        rest:
