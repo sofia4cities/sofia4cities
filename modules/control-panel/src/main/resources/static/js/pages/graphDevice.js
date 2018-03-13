@@ -579,6 +579,7 @@ var GraphDeviceController = function() {
 	        				graphData.nodes.remove({id:oldIds[i]});
 	        			}
 					}
+	        		var selectedId = network.getSelection().nodes;
 	        		
 	        		graphData.nodes.clear();
 	        		graphData.edges.clear();	
@@ -588,7 +589,9 @@ var GraphDeviceController = function() {
 	        		
 	        		
 	        		// Selected Node
-					var selectedId = network.getSelection().nodes;
+	        		if(selectedId.length>0){
+	        			network.selectNodes(selectedId);
+	        		}
 					var currentNode = graphData.nodes.get(selectedId);
 					
 					if( currentNode[0] != undefined ){
@@ -640,7 +643,7 @@ var GraphDeviceController = function() {
 	}
 	
 	var setIntervalRefresh = function(){		
-		interval = setInterval(function(){ refresh(); }, 10000);
+		interval = setInterval(function(){ refresh(); }, 5000);
 	}
 	
 	var refresh =  function (){
