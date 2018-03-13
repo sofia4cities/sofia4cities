@@ -34,6 +34,7 @@ You are free to change them or to create more users.
 Please, use **administrator** login and **changeIt!** password to go into the platform with administrator role.
 
 ### Creating an Ontology
+
 The first step it to model the data that we want to use.
 To do that, go to the *DATA MODELLING -> Models / Ontologies* menu option ![Ontology Menu Option](./images/Ontology_menu.png).
 
@@ -63,15 +64,72 @@ Complete the following information for the new *Device*:
 - Identification: provide a unique name for the *Device*.
 - Description: add a description for the *Device*.
 - Ontologies: it is possible to configure access to several ontologies.
-    - Ontology: ontology identification.
-    - Access Level: the type of access configured.
-- Meta Information:
-    - name:
-    - value:
-
+  - Ontology: ontology identification.
+  - Access Level: the type of access configured.
+- Meta Information: Additional information about the device. The information will be added as key values pairs.
+  - name: the name of the key.
+  - value: the value of the property.
 
 ### Creating a Simulator
 
+It is possible de define simulators for the device to help test the ontology and to generate data to aid in development.
+To do that, go to the *DEVICES -> Devices Simulator* menu option and use the **Create** button placed in the right upper corner to define a new *Device Simulator*.
+
+Complete the following information for the new *Device Simulator*:
+
+- Identification: Choose a unique name for the *Device Simulator*.
+- Device: choose one of the available *Devices*.
+- Token: choose one of the tokens defined in the *Device*.
+- Ontology: choose one of the ontologies in which the device has insert authorization.
+- Time between inserts: indicate the time in seconds between each insert in the ontology.
+- Ontology Properties: fulfil the information required to generate values for each field of the ontology.
+
+Finally, it is necessary to save the simulator by using the **New** button.
+
 ### Creating a Dashboard
 
-### Creating an API
+### Creating an A
+
+It is possible to publish operations over your *Ontologies* using creating APIs REST.
+
+To use the created APIs, it is necessary to start up a new service called *API Manager*.
+Execute S:\start.bat, go to S:\sources\sofia2-s4c\modules\api-manager and run:
+
+```sh
+mvn spring-boot:run
+```
+
+After the *API Manager* server starts go back to the *Control Panel* web application and use the *API MANAGER -> APIs Definition* menu option. Once this is done, use the **Create** button.
+
+You have to provide several information to create the API:
+
+- Identification: select a unique name for your API.
+- API type: currently only expose an *Ontology* as API REST is available.
+- Ontology: choose the *Ontology* used in the API.
+- Description: provide a description for the API.
+- Category: choose the category that better match your API.
+- Public: if marked, this API will be visible for all the users and all the user will be able to use it.
+- Meta-inf: provide the meta information that you want for your API.
+- Image: if you want to use an image for the representation of your API.
+- Operations: then you have to choose the operations that you want to expose in your API. There are several pre created operations. Additionally, you can provide any other operation based on queries.
+  - QUERY(ID): if selected, it allows to use get data by id operation from the *Ontology*.
+  - INSERT: if selected, it allows to perform insert operations to the *Ontology*.
+  - UPDATE: if selected, it allows to perform update operations to the *Ontology*.
+  - DELETE(ID): if selected, it allows to perform delete operations by the id of the data stored in the *Ontology*.
+  - QUERY CUSTOM: this option allows to define all the required operations that could be required based on database queries. For example, the next query with SQLLIKE syntax will return all the data from an *Ontology* named *<ontology_name>*: 
+
+  ```SQL
+  select * from <ontology_name>
+  ```
+
+  Finally, use the **Edit** button to save the API data.
+
+  The next step is to create an *API Manager Token*. These tokens are used to authorize the REST operations.
+
+  To test the API you can use the integrated *swagger* client.
+  Go to the *API MANAGER -> APIs Definition* menu option, and use the **SWAGGER** option of the API that you want to test.
+  This opens a form with all the operations of the API.
+  You have to provide valid parameters for the operations and in the **X-SOFIA2-APIKey** you have to provide a valid *API Token* generated as it is explained above.
+
+  The same test can be done with an external REST client, for instance Postman.
+  This is done by including in the header of the HTTP requests one parameter with key **X-SOFIA2-APIKey** and the token as value.

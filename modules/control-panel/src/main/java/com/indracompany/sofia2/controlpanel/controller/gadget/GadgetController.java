@@ -74,7 +74,7 @@ public class GadgetController {
 		List<Gadget> gadget=this.gadgetService.findGadgetWithIdentificationAndDescription( identification, description, utils.getUserId());
 				//gadgets: tiene que coincidir con el del list
 		uiModel.addAttribute("gadgets", gadget);
-		return "/gadgets/list";
+		return "gadgets/list";
 				
 	}
 		
@@ -102,7 +102,7 @@ public class GadgetController {
 	public String createGadget(Model model) {
 		model.addAttribute("gadget",new Gadget());
 		model.addAttribute("datasources",this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
-		return "/gadgets/create";
+		return "gadgets/create";
 
 	}
 	
@@ -134,7 +134,7 @@ public class GadgetController {
 		model.addAttribute("gadget",this.gadgetService.getGadgetById(utils.getUserId(), gadgetId));
 		model.addAttribute("measures",this.gadgetService.getGadgetMeasuresByGadgetId(utils.getUserId(), gadgetId));
 		model.addAttribute("datasources",this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
-		return "/gadgets/create";
+		return "gadgets/create";
 	}
 	
 	@DeleteMapping("/{id}")
@@ -153,7 +153,7 @@ public class GadgetController {
 			return "redirect:/gadgets/update/"+id;
 		}
 		if (!gadgetService.hasUserPermission(id, this.utils.getUserId()))
-			return "/error/403";
+			return "error/403";
 		try {
 			this.gadgetService.updateGadget(gadget,datasourcesMeasures, jsonMeasures);
 		}catch (GadgetServiceException e)
