@@ -1,7 +1,13 @@
 Java Client Library:
-
 ============================
-To use this library add following dependency to your project.:
+
+
+## Compile and use the library:
+
+To use this library you need to:
+1. Compile the platform, this generates en your local Maven Repository: \com\indracompany\sofia2\sofia2-ssap\5.0.0-SNAPSHOT\sofia2-ssap-5.0.0-SNAPSHOT.jar
+2. Compile the client library, this generates \com\indracompany\sofia2\sofia2-java-clients\5.0.0-SNAPSHOT\sofia2-java-clients-5.0.0-SNAPSHOT.jar
+3.   Add following dependency to your project:
 ```
 <dependency>
 	<groupId>com.indracompany.sofia2</groupId>
@@ -10,7 +16,8 @@ To use this library add following dependency to your project.:
 </dependency>
 ```
 
-## MQTT Connection
+
+## MQTT Example
 
 MQTTClient allows your application to connect and send data to the IoT Broker, using MQTT as the transport protocol.
 
