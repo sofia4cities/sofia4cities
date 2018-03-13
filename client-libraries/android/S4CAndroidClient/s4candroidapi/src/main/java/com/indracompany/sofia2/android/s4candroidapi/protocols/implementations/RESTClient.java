@@ -44,7 +44,7 @@ public class RESTClient {
     public int join() throws IOException, JSONException {
         int responseCode = -1;
 
-        URL joinUrl = new URL(baseUri.toString() + "/iotbroker/rest/client/join" +
+        URL joinUrl = new URL(baseUri.toString() + "client/join" +
                 "?token="+token+"&clientPlatform="+clientPlatform+"&clientPlatformId="+clientPlatformId);
         HttpURLConnection connection = get(joinUrl);
 
@@ -105,13 +105,12 @@ public class RESTClient {
             return msg;
         }
 
-        URL leaveUrl = new URL(baseUri.toString() + "/iotbroker/rest/ontology/"+ontology);
+        URL leaveUrl = new URL(baseUri.toString() + "ontology/"+ontology);
 
         HttpURLConnection connection = postAuth(leaveUrl,sessionKey);
 
         DataOutputStream dStream = new DataOutputStream(connection.getOutputStream());
-        String insertFrame = message.replaceAll("\\\"","\\\\\"");
-        dStream.writeBytes(insertFrame);
+        dStream.writeBytes(message);
         dStream.flush();
         dStream.close();
 

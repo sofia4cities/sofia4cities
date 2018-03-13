@@ -4,7 +4,9 @@ sofia2:
       launcher:
          path: /opt/nodeRed/Flow-Engine-Manager
    database.mongodb:
-      servers: realtimedb:27017    
+      servers: realtimedb:27017 
+      quasar.connector.http.endpoint: http://quasar:10800/query/fs/       
+         
 
 spring:
    datasource:  

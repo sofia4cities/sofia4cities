@@ -2,6 +2,8 @@ version: '2'
 services:
   iotbrokerservice:
     image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/iotbroker:latest
+    environment:
+      SERVER_NAME: rancher.sofia4cities.com
     stdin_open: true
     tty: true
     links:
@@ -15,6 +17,8 @@ services:
       io.rancher.scheduler.affinity:host_label: node=worker-1
   apimanagerservice:
     image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/apimanager:latest
+    environment:
+      SERVER_NAME: rancher.sofia4cities.com
     stdin_open: true
     tty: true
     links:
@@ -35,6 +39,7 @@ services:
     - iotbrokerservice:iotbrokerservice
     - controlpanelservice:controlpanelservice
     - apimanagerservice:apimanagerservice
+    - monitoringuiservice:monitoringuiservice
     ports:
     - 80:80/tcp
     - 443:443/tcp
@@ -74,13 +79,22 @@ services:
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
+  monitoringuiservice:
+    image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:latest
+    stdin_open: true
+    tty: true
+    links:
+    - configdb:configdb
+    labels:
+      io.rancher.container.pull_image: always
+      io.rancher.scheduler.affinity:host_label: node=worker-1
   flowengineservice:
     image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:latest
     environment:
       SERVERNAME: rancher.sofia4cities.com
     stdin_open: true
     volumes:
-    - /datadrive/flowengine:/tmp/administrator:rw
+    - /datadrive/flowengine:/tmp:rw
     tty: true
     links:
     - realtimedb:realtimedb

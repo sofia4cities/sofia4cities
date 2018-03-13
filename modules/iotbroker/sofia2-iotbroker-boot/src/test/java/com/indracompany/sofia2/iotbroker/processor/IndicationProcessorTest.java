@@ -93,8 +93,15 @@ public class IndicationProcessorTest {
 
 	String subjectSubscriptionId;
 
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
+
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
@@ -138,7 +145,7 @@ public class IndicationProcessorTest {
 		ssapSbuscription.getBody().setQuery("db.Person.find({})");
 		ssapSbuscription.getBody().setQueryType(SSAPQueryType.NATIVE);
 		ssapSbuscription.setSessionKey(session.getSessionKey());
-		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription);
+		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
 		final String subscriptionId = responseSubscription.getBody().getData().at("/subscriptionId").asText();
 		subjectSubscriptionId = subscriptionId;
 
@@ -172,8 +179,8 @@ public class IndicationProcessorTest {
 
 		ssapSbuscription.getBody().setQuery("db.Person.find({})");
 		ssapSbuscription.getBody().setQueryType(SSAPQueryType.NATIVE);
-		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription);
-		final SSAPMessage<SSAPBodyReturnMessage> responseInsert = processor.process(ssapInsertOperation);
+		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseInsert = processor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 		try {
 			Thread.sleep(600000);
