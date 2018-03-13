@@ -1,8 +1,9 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
 		
 		<!-- BEGIN WEB FONT -->
@@ -81,20 +82,11 @@
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
-								</div>
+								</div>								
 								<div class="actions margin-right-20">
-									<div class="btn-group">												
-										<a href="javascript:;" data-toggle="dropdown"  aria-expanded="false" class="btn btn-square btn-default ">
-											<i class="flaticon-add"></i> <span th:text="#{gen.create}"> Create </span> <i class="fa fa-angle-down"></i>
-										</a> 
-										<!--  												
-										<ul class="dropdown-menu" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
-											<li class="divider"> </li>
-										</ul>-->
+									<div class="btn-group">									
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../dashboards/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
 									</div>										
 								</div>
 							</div>
@@ -107,10 +99,8 @@
 									<div class="col-md-12 margin-bottom-20">
 									<!-- SEARCH FORM -->
 										<form id="form_dashboard" class="" role="form" method="get">												
-											<div class="col-md-12 no-space">
-												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" data-content="Búsqueda de Dashboards, haga click para desplegar/colapsar el forumulario y Buscar." data-original-title="Filtro de Gadgeys" th:text="#{gen.search}">Search</span></h4>
-											</div>
-											<div id="searchFilter" class="form-body collapse">
+											
+											<div id="searchFilter" class="form-body hide" style="border-bottom: 1px solid #eef1f5;">
 												<div class="row">
 													<div class="col-md-4 col-xs-12">
 														<div class="form-group">															
@@ -134,9 +124,9 @@
 													</div>
 													<div class="col-md-4 col-xs-12">
 														<div class="btn-group">
-															<button type="submit" id="search_dashboard" name="search_dashboard" th:title="#{gen.search}" th:value="#{dashboard_search_button_form}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
-															<!--  <button type="button" id="reset_ontology" name="reset_ontology" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
-														-->
+															<button type="button" id="search_dashboard" name="search_dashboard" th:title="#{gen.search}" th:value="#{dashboard_search_button_form}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="reset_dashboard" name="reset_dashboard" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
+													
 														</div>
 													</div>
 												</div>
@@ -145,18 +135,18 @@
 									</div>
 									<!-- DASHBOARD LIST -->
 									<div class="col-md-12">											
-										<div id="contenedor-tabla-outside" class="contiene">																						
-											<div  class ="table-scrollable table-scrollable-borderless">
+										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+											<div>
 												<!-- DATATABLE DANDELION CONF. -->												
 												<table id="dashboards" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas" th:text="#{gen.name}">Name</th>
-															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
 															<th class="titulo-columnas" th:text="#{gen.description}">Description</th>
 															<!--  <th class="titulo-columnas text-center" th:text="#{gen.active}">Active</th> -->	
 															<th class="titulo-columnas text-center" th:text="#{gen.public}">Public</th>															
-															<th class="titulo-columnas" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
@@ -179,10 +169,10 @@
 																<div class="grupo-iconos">
 																	<!-- VIEW -->		
 																														
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																	
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
@@ -235,14 +225,13 @@
 	<script th:inline="javascript">	
 	
 	// TEMPLATE SEARCH FORM.
-	var search = new Array();
-	var search = [[${param.identification}]] || [];
-	var description = [[${param.description}]] || '';
+	var sname = [[${param.name}]] || '';
+	var stype = [[${param.type}]] || '';
 	
-	search[0] ? $('#identification').val(search[0]) : search[0] = '';
-	description ? $('#description').val(description) : description = '';
-	console.log('SEARCHING ... [ Identification: ' + search[0] + ' Description: ' + description + ']');
-	if (( search[0] != '') || (description != '')) { $('.search-toggle').trigger('click'); }
+	sname ? $('#name').val(sname) : sname = '';
+	stype ? $('#type').val(stype) : stype = '';
+	console.log('SEARCHING ... [ Name: ' + sname + ' Type: ' + stype + ']');
+	if (( sname != '') || (stype != '')) { $('#search-toggle').trigger('click'); }
 	
 	// DATATABLES LANGUAJE FROM PROPERTIES.
 	datatable_lang = [[#{datatables_lang}]];	
@@ -296,6 +285,12 @@
 			$('#form_dashboard')[0].reset();
 			$('#form_dashboard')[0].submit();
 		});
+		
+		// SEARCH FORM
+		$('#search_dashboard').on('click',function(){ $('#form_dashboard')[0].submit(); });
+		
+		
+		
 	});
 	 
 	// MAIN WHEN LOAD
