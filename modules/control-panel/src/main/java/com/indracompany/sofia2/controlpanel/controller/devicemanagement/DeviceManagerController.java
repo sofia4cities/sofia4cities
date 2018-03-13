@@ -32,8 +32,6 @@ import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.client.dto.DeviceDTO;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
-import com.indracompany.sofia2.controlpanel.controller.graph.GraphDTO;
-import com.indracompany.sofia2.controlpanel.controller.graph.GraphUtil;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +49,7 @@ public class DeviceManagerController {
 	private OntologyService ontologyService;
 
 	@Autowired
-	private GraphUtil graphUtil;
+	private GraphDeviceUtil graphDeviceUtil;
 
 	@GetMapping(value = "/list", produces = "text/html")
 	public String list(Model model, @RequestParam(required = false) String identification,
@@ -110,9 +108,9 @@ public class DeviceManagerController {
 	@GetMapping("/getgraph")
 	public @ResponseBody String getGraph(Model model) {
 
-		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+		List<GraphDeviceDTO> arrayLinks = new LinkedList<GraphDeviceDTO>();
 
-		arrayLinks.addAll(graphUtil.constructGraphWithClientPlatformsForUser());
+		arrayLinks.addAll(graphDeviceUtil.constructGraphWithClientPlatformsForUser());
 
 		return arrayLinks.toString();
 	}

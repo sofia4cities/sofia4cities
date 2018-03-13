@@ -38,8 +38,7 @@ public class GraphController {
 	public @ResponseBody String getGraph(Model model) {
 		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
 
-		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName, null, genericUserName, utils.getUserId(), null,
-				null, null));
+		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName, null, genericUserName, utils.getUserId()));
 		arrayLinks.addAll(graphUtil.constructGraphWithOntologies());
 		arrayLinks.addAll(graphUtil.constructGraphWithClientPlatforms());
 		arrayLinks.addAll(graphUtil.constructGraphWithVisualization());

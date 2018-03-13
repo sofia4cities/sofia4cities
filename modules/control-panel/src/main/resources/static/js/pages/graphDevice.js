@@ -24,10 +24,9 @@ var GraphDeviceController = function() {
 	// GRAPH OPTIONS DEFAULTS
 	options = {	
 		manipulation: false,		
-		interaction: { dragNodes: false, dragView: true, hover:true , navigationButtons: true,keyboard: true},		
+		interaction: { dragNodes: false, dragView: true, hover:false , navigationButtons: true,keyboard: true},		
 		physics: {
-		    forceAtlas2Based: { gravitationalConstant: -70 },
-		    solver: "forceAtlas2Based"
+			enabled: false
 		},
 		nodes: {
 			shadow: false,		  
@@ -76,118 +75,21 @@ var GraphDeviceController = function() {
 			user:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf2be', size: 60, color: '#4B77BE' }
-			},
-			gadgets:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf1e6',	size: 40, color: '#525e64' }
-			},
-			visualization:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf080',	size: 50, color: '#525e64' }
-			},
-			analytics:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf0c3',	size: 50, color: '#525e64' }
-			},
-			platform_clients:{
-				shape: 'icon',
-				icon: {	face: 'FontAwesome', code: '\uf2db', size: 40, color: '#5e738b' }
-			},			
-			notebooks:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf02d', size: 40, color: '#5e738b' }
-			},
-			dashboards:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome',	code: '\uf0e4', size: 40, color: '#5e738b' }
-			},
-			scripts:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf0b0', size: 40, color: '#5e738b' }
-			},
-			proyectos:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf07b', size: 40, color: '#5e738b' }
-			},
-			pipelines:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf15b',	size: 40, color: '#5e738b' }
-			},
-			project:{
-				shape: 'icon',
-				icon:{face: 'FontAwesome', code: '\uf114', size: 30, color: '#c49f47' }
-			},
-			gadget:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf1fe', size: 30, color: '#c49f47' }
-			},
-			script:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome',	code: '\uf1c9',	size: 30, color: '#5e738b' }
-			},			
-			dashboard:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf1fe', size: 30, color: '#c49f47' }
-			},
-			ontologies:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf0e8', size: 30, color: '#333333' }
-			},
-			kp:{
-				shape: 'icon',
-				icon: { face: 'FontAwesome', code: '\uf10b', size: 35, color: '#c49f47' }
-			},
-			notebook:{
-				shape: 'icon',
-				icon: { face: 'FontAwesome', code: '\uf0f2', size: 30, color: '#c49f47'	}
-			},
-			Clusterproyectos:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf07b', size: 60, color: '#5e738b' }
-			},
-			Clusterdashboards:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf0e4',	size: 60, color: '#5e738b' }
-			},			
-			Clusterontologies:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf0e8',	size: 60, color: '#5e738b' }
-			},
-			Clusternotebooks:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf02d',	size: 60, color: '#5e738b' }
-			},
-			Clusterpipelines:{
-				shape: 'icon',
-				icon:{face: 'FontAwesome', code: '\uf15b', size: 60, color: '#5e738b' }
-			},
-			Clusterkps:{
-				shape: 'icon',
-				icon: { face: 'FontAwesome', code: '\uf2db', size: 60, color: '#5e738b'	}
-			},
-			Clusterscripts:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome',	code: '\uf0b0',	size: 60, color: '#5e738b' }
-			},
-			Clustergadgets:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf1e6', size: 60, color: '#525e64' }
-			},
-			Clusterlicensing:{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome', code: '\uf2d0', size: 60, color: '#c49f47' }
-			},
-			Clusterresolved :{
-				shape: 'icon',
-				icon:{ face: 'FontAwesome',	code: '\uf2d2',	size: 60, color: '#ed6b75' }
 			}
 		},
 		layout: {
             hierarchical: {
-                direction: 'UD',
-                sortMethod : 'directed'
+            	enabled:true,
+                levelSeparation: 150,
+                nodeSpacing: 100,
+                treeSpacing: 200,
+                blockShifting: true,
+                edgeMinimization: true,
+                parentCentralization: true,
+                direction: 'UD',        // UD, DU, LR, RL
+                sortMethod: 'directed'   // hubsize, directed
             }
-        },
+        }
 		
 	};
 	
@@ -610,6 +512,9 @@ var GraphDeviceController = function() {
 				}
 			});
 			
+			
+			
+			
 			// retrieving nodes and relations
 			graphDataObj.nodes = ArrayNodes;
 			graphDataObj.edges = ArrayEdges;
@@ -678,15 +583,17 @@ var GraphDeviceController = function() {
 	        		
 	        		//UPDATE DATA
 	        		graphData.nodes.update(graph.nodes);
-	        		graphData.edges.update(graph.edges);
+	        		//graphData.edges.update(graph.edges);
+	        		
 	        		
 	        		// Selected Node
 					var selectedId = network.getSelection().nodes;
 					var currentNode = graphData.nodes.get(selectedId);
+					
 					if( currentNode[0] != undefined ){
 						drawGraphInfo(currentNode[0]);
 					}else{
-						$('#TableInfoNetwork').fadeToggle() ;
+						$('#TableInfoNetwork').hide() ;
 					}
 	        		
 	        		

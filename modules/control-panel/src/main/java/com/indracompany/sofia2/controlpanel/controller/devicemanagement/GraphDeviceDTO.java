@@ -11,9 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controlpanel.controller.graph;
+package com.indracompany.sofia2.controlpanel.controller.devicemanagement;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRawValue;
@@ -23,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
 
-public class GraphDTO implements Serializable {
+public class GraphDeviceDTO implements Serializable {
 
 	@Getter
 	@Setter
@@ -31,7 +32,9 @@ public class GraphDTO implements Serializable {
 	@Getter
 	@Setter
 	private String target;
-
+	@Getter
+	@Setter
+	private String image;
 	@Getter
 	@Setter
 	private String title;
@@ -61,10 +64,27 @@ public class GraphDTO implements Serializable {
 
 	@Getter
 	@Setter
+	private String status;
+
+	@Getter
+	@Setter
+	private String connected;
+
+	@Getter
+	@Setter
 	private String type;
 
-	public GraphDTO(String source, String target, String linkSource, String linkTarget, String classSource,
-			String classTarget, String nameSource, String nameTarget, String type) {
+	@Getter
+	@Setter
+	private String sessionKey;
+
+	@Getter
+	@Setter
+	private Date updateAt;
+
+	public GraphDeviceDTO(String source, String target, String linkSource, String linkTarget, String classSource,
+			String classTarget, String nameSource, String nameTarget, String type, String image, String status,
+			String connected, String sessionKey, Date updateAt) {
 		this.source = source;
 		this.target = target;
 		this.linkSource = linkSource;
@@ -74,10 +94,16 @@ public class GraphDTO implements Serializable {
 		this.nameSource = nameSource;
 		this.nameTarget = nameTarget;
 		this.type = type;
+		this.image = image;
+		this.status = status;
+		this.connected = connected;
+		this.sessionKey = sessionKey;
+		this.updateAt = updateAt;
 	}
 
-	public GraphDTO(String source, String target, String linkSource, String linkTarget, String classSource,
-			String classTarget, String nameSource, String nameTarget, String type, String title, String linkCreate) {
+	public GraphDeviceDTO(String source, String target, String linkSource, String linkTarget, String classSource,
+			String classTarget, String nameSource, String nameTarget, String type, String title, String linkCreate,
+			String image, String status, String connected, String sessionKey, Date updateAt) {
 		super();
 		this.source = source;
 		this.target = target;
@@ -90,18 +116,24 @@ public class GraphDTO implements Serializable {
 		this.nameSource = nameSource;
 		this.nameTarget = nameTarget;
 		this.type = type;
+		this.image = image;
+		this.status = status;
+		this.connected = connected;
+		this.sessionKey = sessionKey;
+		this.updateAt = updateAt;
 	}
 
-	public static GraphDTO constructSingleNode(String source, String linkSource, String classSource,
-			String nameSource) {
-		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource,
-				null);
+	public static GraphDeviceDTO constructSingleNode(String source, String linkSource, String classSource, String nameSource,
+			String image, String status, String connected) {
+		return new GraphDeviceDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource,
+				null, null, null, null, null, null);
 	}
 
-	public static GraphDTO constructSingleNodeWithTitleAndCreateLink(String source, String linkSource,
-			String classSource, String nameSource, String title, String linkCreate) {
-		return new GraphDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource,
-				null, title, linkCreate);
+	public static GraphDeviceDTO constructSingleNodeWithTitleAndCreateLink(String source, String linkSource,
+			String classSource, String nameSource, String title, String linkCreate, String image, String status,
+			String connected) {
+		return new GraphDeviceDTO(source, source, linkSource, linkSource, classSource, classSource, nameSource, nameSource,
+				null, title, linkCreate, null, null, null, null, null);
 	}
 
 	@Override
