@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.hibernate.cfg.AccessType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -165,6 +164,8 @@ public class OntologyServiceImpl implements OntologyService {
 		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			return true;
 		} else if (ontology.getUser().getUserId().equals(user.getUserId())) {
+			return true;
+		} else if (ontology.isPublic()) {
 			return true;
 		} else {
 			OntologyUserAccess userAuthorization = ontologyUserAccessRepository.findByOntologyAndUser(ontology, user);
