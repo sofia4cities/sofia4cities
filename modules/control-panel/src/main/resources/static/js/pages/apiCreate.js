@@ -63,7 +63,7 @@ var ApiCreateController = function() {
                 success: function(data) {
                     if(data != null && data != "") {
                         $('#numversion').val(data);
-                        createOperationsOntologia ();
+                        createOperationsOntology ();
                         // VISUAL-UPDATE
                         configurarApi();
                     }

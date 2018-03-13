@@ -103,6 +103,9 @@ pushAllImages2Registry()
 	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
 	
+	docker tag sofia2/monitoringui:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1		
+	
 	docker tag sofia2/nginx:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/nginx:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/nginx:$1		
 	
@@ -174,6 +177,11 @@ if [ -z "$1" ]; then
 		buildImage "Device Simulator"
 	fi	
 	
+	if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/monitoring-ui/
+		buildImage "Monitoring UI"
+	fi		
+	
 	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
  		prepareNodeRED		
 	
@@ -223,6 +231,7 @@ pushImage2Registry apimanager latest
 pushImage2Registry flowengine latest 
 pushImage2Registry devicesimulator latest 
 pushImage2Registry dashboard latest 
+pushImage2Registry monitoringui latest 
 pushImage2Registry nginx latest
 pushImage2Registry quasar latest 
 

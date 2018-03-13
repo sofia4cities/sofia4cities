@@ -1,7 +1,7 @@
 var sofia2Config = {
-    "sibBasePath":"https://${SERVERNAME}",
-    "scriptBasePath":"https://${SERVERNAME}",
-	"consoleBasePath":"https://${SERVERNAME}"
+    "sibBasePath":"http://iotbrokerservice:8081",
+    "scriptBasePath":"http://localhost:8082",
+    "consoleBasePath":"http://controlpanelservice:18080"
 }
 
 module.exports = sofia2Config;
