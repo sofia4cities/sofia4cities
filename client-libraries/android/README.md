@@ -1,10 +1,6 @@
-<p align="center">
-  <a src='https://www.sofia4cities.com/'>
-    <img src='s4c.png'/>
-  </a>
-</p>
+Sofia4Cities Android Client API
+============================
 
-Sofia4Cities Open-Source Platform
 ## Android API documentation
 
 S4CAndroidClient folder contains a full-working Android Studio project designed to showcase inherent IoT capabilities within Sofia4Cities Open-Source Platform. 
