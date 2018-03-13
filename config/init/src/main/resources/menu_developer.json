@@ -51,7 +51,7 @@
 						"ES": "Gestión de Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/devices/management/list"
+					"url": "/controlpanel/devices/management/show"
 				}
 			]
 		},

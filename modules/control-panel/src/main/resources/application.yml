@@ -9,6 +9,8 @@ server: ## Config Web Server
 
 sofia2: #Config Sofia2 specific
    encription.key: sofia2
+   devices:
+      timeout_devices_inseconds:300
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
