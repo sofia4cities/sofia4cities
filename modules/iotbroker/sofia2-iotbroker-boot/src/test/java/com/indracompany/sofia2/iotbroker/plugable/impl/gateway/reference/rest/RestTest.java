@@ -41,6 +41,7 @@ import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.iotbroker.processor.DeviceManager;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -62,8 +63,15 @@ public class RestTest {
 
 	IoTSession session;
 
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
+
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.authenticate(any(), any(), any(), any())).thenReturn(Optional.of(session));
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
@@ -96,11 +104,6 @@ public class RestTest {
 
 		//		final String a = (String) result.getBody();
 		System.out.println(result);
-
-
-
-
-
 	}
 
 
