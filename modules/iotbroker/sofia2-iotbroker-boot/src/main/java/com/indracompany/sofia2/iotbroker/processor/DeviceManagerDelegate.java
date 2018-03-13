@@ -47,7 +47,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 
 	//TODO: Make async event processing
 	@Override
-	public <T extends SSAPBodyMessage> void registerActivity(
+	public <T extends SSAPBodyMessage> boolean registerActivity(
 			SSAPMessage<T> request,
 			SSAPMessage<SSAPBodyReturnMessage> response,
 			IoTSession session) {
@@ -76,6 +76,8 @@ public class DeviceManagerDelegate implements DeviceManager {
 			touchDevice(device, session, true);
 			break;
 		}
+
+		return true;
 	}
 
 	@Scheduled(fixedDelay=60000)

@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.iotbroker.processor;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -29,6 +30,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
+import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
@@ -49,9 +51,15 @@ public class JoinProcessorWithTokenTest {
 
 	SSAPMessage<SSAPBodyJoinMessage> ssapJoin;
 
+	@MockBean
+	DeviceManager deviceManager;
+
+
 	@Before
 	public void setup() {
 		ssapJoin = SSAPMessageGenerator.generateJoinMessageWithToken();
+		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
+
 	}
 
 	@Test
@@ -62,7 +70,7 @@ public class JoinProcessorWithTokenTest {
 		session.setSessionKey(assignedSessionKey);
 		when(securityPluginManager.authenticate(anyString(),anyString(),anyString(), anyString())).thenReturn(Optional.of(session));
 		ssapJoin.getBody().setToken(UUID.randomUUID().toString());
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -73,7 +81,7 @@ public class JoinProcessorWithTokenTest {
 	public void given_OneJoinProcessor_When_ItUsesAnInvalidToken_Then_TheResponseIndicatesAuthenticationError() throws AuthenticationException {
 		when(securityPluginManager.authenticate(anyString(),anyString(),anyString(),anyString())).thenReturn(Optional.empty());
 		ssapJoin.getBody().setToken(UUID.randomUUID().toString());
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -86,7 +94,7 @@ public class JoinProcessorWithTokenTest {
 		//Token is an Empty string
 		{
 			ssapJoin.getBody().setToken("");
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin, PojoGenerator.generateGatewayInfo());
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -97,7 +105,7 @@ public class JoinProcessorWithTokenTest {
 		//Token is NULL
 		{
 			ssapJoin.getBody().setToken(null);
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin);
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin, PojoGenerator.generateGatewayInfo());
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());

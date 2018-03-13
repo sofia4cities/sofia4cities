@@ -70,9 +70,15 @@ public class CommandProcessorTest {
 
 	CompletableFuture<SSAPMessage<SSAPBodyCommandMessage>> completableFutureCommand;
 
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
 
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
+		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);

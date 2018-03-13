@@ -72,8 +72,15 @@ public class UpdateProcessorTest {
 	SSAPMessage<SSAPBodyUpdateMessage> ssapUpdate;
 	SSAPMessage<SSAPBodyUpdateByIdMessage> ssapUpdateById;
 
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
+
 	private void securityMocks() {
 		final IoTSession session = PojoGenerator.generateSession();
+		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
@@ -106,7 +113,7 @@ public class UpdateProcessorTest {
 
 		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -124,7 +131,7 @@ public class UpdateProcessorTest {
 
 		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -140,7 +147,7 @@ public class UpdateProcessorTest {
 
 		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -152,7 +159,7 @@ public class UpdateProcessorTest {
 	@Test
 	public void test_update_by_id() {
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -165,7 +172,7 @@ public class UpdateProcessorTest {
 	public void test_update_by_non_existent_id() {
 
 		ssapUpdateById.getBody().setId("5a9b2ef917f81f33589e06d3");
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -178,7 +185,7 @@ public class UpdateProcessorTest {
 	public void test_update_by_malformed_id() {
 
 		ssapUpdateById.getBody().setId(UUID.randomUUID().toString());
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById);
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());

@@ -70,9 +70,15 @@ public class QueryProcessorTest {
 	String subjectId;
 
 	SSAPMessage<SSAPBodyQueryMessage> ssapQuery;
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
 
 	private void securityMocks() {
 		final IoTSession session = PojoGenerator.generateSession();
+		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
@@ -105,7 +111,7 @@ public class QueryProcessorTest {
 	public void given_OneQueryProcessor_When_ACorrectNativeQueryIsUsed_Then_TheResponseReturnsTheResults() {
 		ssapQuery.getBody().setQuery("db.Person.find({})");
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage;
-		responseMessage = queryProcessor.process(ssapQuery);
+		responseMessage = queryProcessor.process(ssapQuery, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());

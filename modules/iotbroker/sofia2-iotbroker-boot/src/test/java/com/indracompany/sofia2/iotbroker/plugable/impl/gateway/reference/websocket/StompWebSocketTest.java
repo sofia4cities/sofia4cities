@@ -63,6 +63,7 @@ import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.iotbroker.processor.DeviceManager;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -101,8 +102,15 @@ public class StompWebSocketTest {
 
 	IoTSession session;
 
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
+
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
+		when(deviceManager.registerActivity(any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.authenticate(any(), any(), any(), any())).thenReturn(Optional.of(session));
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
