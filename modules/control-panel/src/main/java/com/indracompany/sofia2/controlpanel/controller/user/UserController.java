@@ -90,7 +90,6 @@ public class UserController {
 			RedirectAttributes redirect) {
 		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
-			utils.addRedirectMessage("user.validation.error", redirect);
 			return "redirect:/users/update/";
 		}
 
