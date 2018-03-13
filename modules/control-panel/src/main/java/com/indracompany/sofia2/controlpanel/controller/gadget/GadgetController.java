@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.Gadget;
+import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.services.exceptions.GadgetDatasourceServiceException;
 import com.indracompany.sofia2.config.services.exceptions.GadgetServiceException;
@@ -73,7 +74,7 @@ public class GadgetController {
 		List<Gadget> gadget=this.gadgetService.findGadgetWithIdentificationAndDescription( identification, description, utils.getUserId());
 				//gadgets: tiene que coincidir con el del list
 		uiModel.addAttribute("gadgets", gadget);
-		return "/gadgets/list";
+		return "gadgets/list";
 				
 	}
 		
@@ -101,13 +102,13 @@ public class GadgetController {
 	public String createGadget(Model model) {
 		model.addAttribute("gadget",new Gadget());
 		model.addAttribute("datasources",this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
-		return "/gadgets/create";
+		return "gadgets/create";
 
 	}
 	
 	@PostMapping(value = "/create", produces = "text/html")
 	public String saveGadget(@Valid Gadget gadget, BindingResult bindingResult,
-			List<String> jsonMeasures, List<String> datasources, Model uiModel, HttpServletRequest httpServletRequest, RedirectAttributes redirect) {
+			String jsonMeasures, String datasourcesMeasures, Model uiModel, HttpServletRequest httpServletRequest, RedirectAttributes redirect) {
 		if(bindingResult.hasErrors())
 		{
 			log.debug("Some gadget properties missing");
@@ -116,7 +117,7 @@ public class GadgetController {
 		}
 		try{
 			gadget.setUser(this.userService.getUser(this.utils.getUserId()));
-			this.gadgetService.createGadget(gadget,datasources,jsonMeasures);
+			this.gadgetService.createGadget(gadget,datasourcesMeasures,jsonMeasures);
 		}catch (GadgetDatasourceServiceException e)
 		{
 			log.debug("Cannot create gadget datasource");
@@ -128,12 +129,12 @@ public class GadgetController {
 
 	}
 	
-	@GetMapping(value = "/edit/{gadgetId}", produces = "text/html")
+	@GetMapping(value = "/update/{gadgetId}", produces = "text/html")
 	public String createGadget(Model model, @PathVariable("gadgetId") String gadgetId) {
 		model.addAttribute("gadget",this.gadgetService.getGadgetById(utils.getUserId(), gadgetId));
 		model.addAttribute("measures",this.gadgetService.getGadgetMeasuresByGadgetId(utils.getUserId(), gadgetId));
 		model.addAttribute("datasources",this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
-		return "/gadgets/create";
+		return "gadgets/create";
 	}
 	
 	@DeleteMapping("/{id}")
@@ -142,10 +143,8 @@ public class GadgetController {
 		return "redirect:/gadgets/list";
 	}
 	
-	@PutMapping(value = "/update", produces = "text/html")
-	public String updateGadget(@Valid Gadget gadget, BindingResult bindingResult, List<String> jsonMeasures, 		List<String> datasources, Model uiModel, HttpServletRequest httpServletRequest, RedirectAttributes redirect) {
-		
-		String id = gadget.getId();
+	@PutMapping(value = "/update/{id}", produces = "text/html")
+	public String updateGadget(Model model, @PathVariable ("id") String id, @Valid Gadget gadget, String jsonMeasures, String datasourcesMeasures, BindingResult bindingResult, RedirectAttributes redirect) {
 		
 		if(bindingResult.hasErrors())
 		{
@@ -154,9 +153,9 @@ public class GadgetController {
 			return "redirect:/gadgets/update/"+id;
 		}
 		if (!gadgetService.hasUserPermission(id, this.utils.getUserId()))
-			return "/error/403";
+			return "error/403";
 		try {
-			this.gadgetService.updateGadget(gadget,datasources, jsonMeasures);
+			this.gadgetService.updateGadget(gadget,datasourcesMeasures, jsonMeasures);
 		}catch (GadgetServiceException e)
 		{
 			log.debug("Cannot update gadget datasource");

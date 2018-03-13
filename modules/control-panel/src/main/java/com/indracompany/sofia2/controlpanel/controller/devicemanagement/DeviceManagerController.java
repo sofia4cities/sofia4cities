@@ -67,7 +67,7 @@ public class DeviceManagerController {
 		this.pupulateClientList(model, this.clientPlatformService.getAllClientPlatformByCriteria(utils.getUserId(),
 				identification, ontologies));
 
-		return "/devices/management/list";
+		return "devices/management/list";
 
 	}
 

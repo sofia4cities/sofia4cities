@@ -75,7 +75,7 @@ public class GadgetDatasourceController {
 			List<GadgetDatasource> datasource=this.gadgetDatasourceService.findGadgetDatasourceWithIdentificationAndDescription( identification, description, utils.getUserId());
 					
 			uiModel.addAttribute("datasources", datasource);
-			return "/datasources/list";
+			return "datasources/list";
 					
 		}
 			
@@ -93,7 +93,7 @@ public class GadgetDatasourceController {
 		public String createGadget(Model model) {
 			model.addAttribute("datasource",new GadgetDatasource());
 			model.addAttribute("ontologies", ontologyService.getOntologiesByUserId(utils.getUserId()));
-			return "/datasources/create";
+			return "datasources/create";
 
 		}
 		
@@ -125,11 +125,11 @@ public class GadgetDatasourceController {
 			GadgetDatasource gadgetDatasource = this.gadgetDatasourceService.getGadgetDatasourceById(id);
 			if(gadgetDatasource!=null){
 				if (!gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId()))
-					return "/error/403";
+					return "error/403";
 				model.addAttribute("datasource", gadgetDatasource);
-				return "/datasources/create";
+				return "datasources/create";
 			}else
-				return "/error/404";
+				return "error/404";
 			
 			
 		}
@@ -146,7 +146,7 @@ public class GadgetDatasourceController {
 				return "redirect:/datasources/update/"+id;
 			}
 			if (!gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId()))
-				return "/error/403";
+				return "error/403";
 			try {
 				this.gadgetDatasourceService.updateGadgetDatasource(gadgetDatasource);
 			}catch (GadgetDatasourceServiceException e)

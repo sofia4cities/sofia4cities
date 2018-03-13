@@ -27,10 +27,10 @@ import org.springframework.stereotype.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
-import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
 @ConditionalOnProperty(
@@ -64,12 +64,18 @@ public class StompWebSocketHandler {
 	}
 
 	@MessageMapping("/message/{token}")
-	public void handleConnect(@Payload SSAPMessage<SSAPBodyJoinMessage> message, @DestinationVariable("token") String token, MessageHeaders messageHeaders) throws MessagingException, JsonProcessingException {
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(message);
+	public void handleConnect(@Payload SSAPMessage message, @DestinationVariable("token") String token, MessageHeaders messageHeaders) throws MessagingException, JsonProcessingException {
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(message, getGatewayInfo());
 		final ObjectMapper mapper = new ObjectMapper();
 		messagingTemplate.convertAndSend("/topic/message/" + token, response);
 
 	}
 
+	private GatewayInfo getGatewayInfo() {
+		final GatewayInfo info = new GatewayInfo();
+		info.setName("stomp_gateway");
+		info.setProtocol("WEBSOCKET");
 
+		return info;
+	}
 }

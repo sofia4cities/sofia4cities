@@ -18,18 +18,18 @@
             android:key="@string/pref_ontology"
             android:title="@string/pref_ontology_name"
             android:summary="@string/pref_ontology_summary"
-            android:defaultValue="YOUR_ONTOLOGY"/>
+            android:defaultValue="androidIoTFrame"/>
 
         <EditTextPreference
             android:key="@string/pref_thinkp"
             android:title="@string/pref_thinkp_name"
             android:summary="@string/pref_thinkp_summary"
-            android:defaultValue="YOUR_THINKP:YOUR_THINKP_01"/>
+            android:defaultValue="androidIoTDevice"/>
         <EditTextPreference
             android:key="@string/pref_token"
             android:title="@string/pref_token_name"
             android:summary="@string/pref_token_summary"
-            android:defaultValue="YOUR_TOKEN"/>
+            android:defaultValue="fb3521092ebb4edfac1a8b22b72f51a4"/>
         
     </PreferenceCategory>
 </PreferenceScreen>

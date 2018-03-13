@@ -1,6 +1,9 @@
 sofia2:
    database.mongodb:
       servers: realtimedb:27017 
+      quasar.connector.http.endpoint: http://quasar:10800/query/fs/  
+   urls:
+    iotbroker: https://${SERVER_NAME}           
    flowengine.services:
     request.timeout.ms: 5000
     baseurl: http://flowengineservice:8082/sofia2/flowengine/admin   

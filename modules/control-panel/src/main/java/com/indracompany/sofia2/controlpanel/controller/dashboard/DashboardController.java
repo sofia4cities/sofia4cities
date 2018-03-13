@@ -66,7 +66,7 @@ public class DashboardController {
 		List<Dashboard> dashboard=this.dashboardService.findDashboardWithIdentificationAndDescription(identification, description, utils.getUserId());
 				
 		uiModel.addAttribute("dashboards", dashboard);
-		return "/dashboards/list";
+		return "dashboards/list";
 				
 	}
 	
@@ -80,7 +80,7 @@ public class DashboardController {
 	public String editorDashboard(Model model, @PathVariable ("id") String id) {
 		model.addAttribute("dashboard", dashboardService.getDashboardById(id, utils.getUserId()));
 		model.addAttribute("credentials", dashboardService.getCredentialsString(utils.getUserId()));
-		return "/dashboards/editor";
+		return "dashboards/editor";
 		
 	}
 	
@@ -94,7 +94,7 @@ public class DashboardController {
 		model.addAttribute("dashboard", dashboardService.getDashboardById(id, utils.getUserId()));
 		model.addAttribute("credentials", dashboardService.getCredentialsString(utils.getUserId()));
 		model.addAttribute("edition",true);
-		return "/dashboards/view";
+		return "dashboards/view";
 	}
 	
 	@GetMapping(value = "/view/{id}", produces = "text/html")
@@ -102,7 +102,7 @@ public class DashboardController {
 		model.addAttribute("dashboard", dashboardService.getDashboardById(id, utils.getUserId()));
 		model.addAttribute("credentials", dashboardService.getCredentialsString(utils.getUserId()));
 		model.addAttribute("edition",false);
-		return "/dashboards/view";
+		return "dashboards/view";
 	}
 	
 	@PutMapping(value = "/save/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
