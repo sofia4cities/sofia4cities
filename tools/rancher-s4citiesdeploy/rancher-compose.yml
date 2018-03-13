@@ -18,7 +18,7 @@ services:
   devicesimulator:
     scale: 1
     start_on_create: true
-  monitoringuiservice:
+  dashboardengineservice:
     scale: 1
     start_on_create: true
   flowengineservice:
