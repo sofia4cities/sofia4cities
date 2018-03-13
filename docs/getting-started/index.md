@@ -35,7 +35,7 @@ Please, use **administrator** login and **changeIt!** password to go into the pl
 
 ### Creating an Ontology
 The first step it to model the data that we want to use.
-To do that, go to the DATA MODELLING -> Models / Ontologies menu option ![Ontology Menu Option](./images/Ontology_menu.png).
+To do that, go to the *DATA MODELLING -> Models / Ontologies* menu option ![Ontology Menu Option](./images/Ontology_menu.png).
 
 This option shows the available ontologies.
 Use the **Create** option at the right upper corner to create a new *Ontology*.
@@ -52,9 +52,22 @@ Complete the following information for your new *Ontology*:
 
 ### Creating a Device
 
-After defining the ontology it is possible to define devices that work with the ontology.
-These devices will generate or consume data.
+After defining the ontology it is possible to define *Devices* that work with the ontology.
+A *Device* is the representation of a physical device into the platform.
+These *Devices* will generate or consume data.
+To do that, go to the *DEVICES -> Definition of Devices* menu option.
+Use the **Create** button placed in the right upper corner to define a new *Device*.
 
+Complete the following information for the new *Device*:
+
+- Identification: provide a unique name for the *Device*.
+- Description: add a description for the *Device*.
+- Ontologies: it is possible to configure access to several ontologies.
+    - Ontology: ontology identification.
+    - Access Level: the type of access configured.
+- Meta Information:
+    - name:
+    - value:
 
 
 ### Creating a Simulator
