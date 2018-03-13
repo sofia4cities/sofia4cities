@@ -128,6 +128,11 @@ if [ -z "$1" ]; then
 		buildImage "Device Simulator"
 	fi	
 	
+	if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/monitoring-ui/
+		buildImage "Monitoring UI"
+	fi	
+	
 	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
  		prepareNodeRED		
 	
