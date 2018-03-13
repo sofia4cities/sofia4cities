@@ -1,10 +1,8 @@
 <p align="center">
   <a src='https://www.sofia4cities.com/'>
-    <img src='s4c.png'/>
+    <img src='s4c_logo.png'/>
   </a>
 </p>
-<p align="center"><b>Sofia4Cities IoT Platform</b></p>
-<p align="center">(Powered by Sofia2)</p>
 
 Sofia4Cities Open-Source Platform [![Build Status](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/buildStatus/icon?job=select4cities/develop)](http://sofia2-devops.westeurope.cloudapp.azure.com/jenkins/view/SELECT4CITIES/job/select4cities/job/develop/)
 ============================
