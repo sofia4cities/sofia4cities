@@ -24,7 +24,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+<<<<<<< HEAD
 
+=======
+>>>>>>> Add update/list/remove of digital twin type
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +39,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.Ontology;
+<<<<<<< HEAD
 
+=======
+>>>>>>> Add update/list/remove of digital twin type
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.service.digitaltwin.DigitalTwinTypeService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
@@ -124,6 +130,45 @@ public class DigitalTwinTypeController {
 	@PutMapping(value = "/update/{id}", produces = "text/html")
 	public String updateDigitalTwinType(Model model, @PathVariable("id") String id, @Valid DigitalTwinType digitalTwinType,
 			BindingResult bindingResult, RedirectAttributes redirect, HttpServletRequest httpServletRequest) {
+<<<<<<< HEAD
+=======
+
+		if (bindingResult.hasErrors()) {
+			log.debug("Some digital twin type properties missing");
+			utils.addRedirectMessage("ontology.validation.error", redirect);
+			return "redirect:/digitaltwintypes/update/" + id;
+		}
+		
+		try {
+			User user = userService.getUser(utils.getUserId());
+			digitalTwinType.setUser(user);
+			this.digitalTwinTypeService.updateDigitalTwinType(digitalTwinType, httpServletRequest);
+		} catch (OntologyServiceException e) {
+			log.debug("Cannot update Digital Twin Type");
+			utils.addRedirectMessage("ontology.update.error", redirect);
+			return "redirect:/digitaltwintypes/create";
+		}
+		return "redirect:/digitaltwintypes/list";
+
+	}
+	
+	@DeleteMapping("/{id}")
+	public String delete(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
+
+		DigitalTwinType digitalTwinType = digitalTwinTypeService.getDigitalTwinTypeById(id);
+		if (digitalTwinType != null) {
+			try {
+				this.digitalTwinTypeService.deleteDigitalTwinType(digitalTwinType);
+			} catch (Exception e) {
+				utils.addRedirectMessage("ontology.delete.error", redirect);
+				return "redirect:/digitaltwintypes/list";
+			}
+			return "redirect:/digitaltwintypes/list";
+		} else {
+			return "redirect:/digitaltwintypes/list";
+		}
+	}
+>>>>>>> Add update/list/remove of digital twin type
 
 		if (bindingResult.hasErrors()) {
 			log.debug("Some digital twin type properties missing");

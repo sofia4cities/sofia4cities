@@ -20,87 +20,27 @@ var DigitalTwinCreateController = function() {
 	var mountablePropModel = $('#properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableActModel = $('#actions').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableEventModel = $('#events').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
+<<<<<<< HEAD
 	// CONTROLLER PRIVATE FUNCTIONS	--------------------------------------------------------------------------------
 
+=======
+>>>>>>> Add update/list/remove of digital twin type
 	// CONTROLLER PRIVATE FUNCTIONS	--------------------------------------------------------------------------------
-    
-	$('#properties').mounTable(jsonProperties,{
-		model: '.mountable-model',
-		noDebug: false,
-		addLine:{				
-			button: "#button2",					
-			onClick: function (element){
-				console.log('Property added!');				
-				return true;
-			}
-		}			
-	});
 	
-	$('#actions').mounTable(jsonActions,{
-		model: '.mountable-model',
-		noDebug: false,
-		addLine:{				
-			button: "#button3",					
-			onClick: function (element){
-				console.log('Action added!');
-				return true;
-			}
-		}			
-	});
 	
-	$('#events').mounTable(jsonEvents,{
-		model: '.mountable-model',
-		noDebug: false,
-		addLine:{				
-			button: "#button4",					
-			onClick: function (element){
-				console.log('Event added!');				
-				return true;
-			}
-		}			
-	});
-	
-	// UPDATE TITLE TYPE AND DESCRIPTION IF CHANGED 
-	$('#identification').on('change', function(){
-		var jsonFromEditor = {};
-		var datamodelLoaded = $('#properties').attr('data-loaded');
-		if (datamodelLoaded){			
-			if (IsJsonString(editor.getText())){				
-				jsonFromEditor = editor.get();
-				jsonFromEditor["title"] = $(this).val();
-				jsonFromEditor["links"] = {};
-				editor.set(jsonFromEditor);
-			}			
-		}		
-	});
-	
-	$('#description').on('change', function(){
-		var jsonFromEditor = {};
-		var datamodelLoaded = $('#properties').attr('data-loaded');
-		if (datamodelLoaded){			
-			if (IsJsonString(editor.getText())){				
-				jsonFromEditor = editor.get();
-				jsonFromEditor["description"] = $(this).val();
-				editor.set(jsonFromEditor);
-			}			
-		}	
-		
-	});
-	
-	$('#type').on('change', function(){
-		var jsonFromEditor = {};
-		var datamodelLoaded = $('#properties').attr('data-loaded');
-		if (datamodelLoaded){			
-			if (IsJsonString(editor.getText())){				
-				jsonFromEditor = editor.get();
-				jsonFromEditor["type"] = $(this).val();
-				editor.set(jsonFromEditor);
-			}			
-		}	
-		
-	});
 	var generateSchema=false
 	$("#createBtn").on('click',function(){
+		if(generateSchema){
+			if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined)
+				DigitalTwinCreateController.submitform();
+		}else{
+			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: digitalTwinCreateJson.validations.schema});
+			return false;
+		}
+		
+	});
+	
+	$("#updateBtn").on('click',function(){
 		if(generateSchema){
 			if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined)
 				DigitalTwinCreateController.submitform();
@@ -282,7 +222,10 @@ var DigitalTwinCreateController = function() {
 		var updateDescription = $("input[name='descriptionsEvents\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();	
 		var updateTypes = $("select[name='typeEvent\\[\\]']").map(function(){return $(this).val();}).get();
 		var updateStatus = $("input[name='status\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).is(":checked"); }}).get();
+<<<<<<< HEAD
 
+=======
+>>>>>>> Add update/list/remove of digital twin type
 		
 		var schemaObj = {};
 		
@@ -374,6 +317,10 @@ var DigitalTwinCreateController = function() {
 		},
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
+<<<<<<< HEAD
+=======
+			
+>>>>>>> Add update/list/remove of digital twin type
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
 			$('#properties').mounTable(jsonProperties,{
@@ -580,7 +527,10 @@ var DigitalTwinCreateController = function() {
 				}
 				AceEditor.setValue(logica);
 			}
+<<<<<<< HEAD
 			
+=======
+>>>>>>> Add update/list/remove of digital twin type
 		},
 		
 		// REDIRECT

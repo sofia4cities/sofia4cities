@@ -14,7 +14,6 @@
  */
 package com.indracompany.sofia2.config.model;
 
-<<<<<<< HEAD
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,7 +25,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
