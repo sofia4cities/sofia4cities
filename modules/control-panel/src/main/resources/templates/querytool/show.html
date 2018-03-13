@@ -35,12 +35,26 @@
 		<!-- Funciones AJAX -->
 		<script th:inline="javascript">
 		var queryResponse = {};
+		var queryErrorResponse = {};
 		function getQueryExecutedFragment() {
+		
+			        
 			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()},function(response,status,xhr){
-						
+				
 				queryResponse = $(response);				
+				
+				// check for valid json, or server string error like java.lang.Exception...
+				var IS_JSON = true;
+				try{ var json = $.parseJSON(queryResponse.text());	} catch(err){ IS_JSON = false; }
+				
+				if (!IS_JSON){
+					var text=""+queryResponse.text();
+					// Our own JSON string to mark non JSON ERRORs
+					queryErrorResponse = '{ "error":{ "status": "Proccessing Error", "detail": { "message" : "'+text+'" }}}';											
+				}
+				
 				if ($('#jsoneditor').attr('data-loaded') == 'false') { createEditor(); $('#jsoneditor').attr('data-loaded', true);	}				
-				editor.setText(queryResponse.text());
+				if (IS_JSON) { editor.setText(queryResponse.text()); }else { editor.setText(queryErrorResponse); } 
 				editor.setMode('view');				
 			});		
 			
