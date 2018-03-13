@@ -94,20 +94,26 @@ public class DeviceManagerDelegate implements DeviceManager {
 	}
 
 	private void updatingDevices() {
+		log.info("Start Updating all devices");
 		final Calendar c = Calendar.getInstance();
-		long millis = c.getTimeInMillis() - 5*60*1000;
+		long millis = c.getTimeInMillis() - 5*60*1000l;
 		c.setTimeInMillis(millis);
 
 		//Setting connected false when 5 minutes without activity
-		deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, false, c.getTime());
+		int n = deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, false, c.getTime());
+		log.info("End Updating all devices:" + n + " disconected");
 
 		//Setting disabled a true when 1 day witout activity
-		millis = c.getTimeInMillis() - 24*60*60*1000;
+		millis = c.getTimeInMillis() - 24*60*60*1000l;
 		c.setTimeInMillis(millis);
-		deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, true, c.getTime());
+		n = deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, true, c.getTime());
+		log.info("End Updating all devices:" + n + " disabled");
+
+
 	}
 
 	private void touchDevice(Device device, IoTSession session, boolean connected, GatewayInfo info) {
+		log.info("Start Updating device " + device.getIdentification());
 		device.setAccesEnum(Device.StatusType.OK);
 		device.setClientPlatform(session.getClientPlatformID());
 		device.setIdentification(session.getClientPlatformInstance());
@@ -117,6 +123,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 		device.setDisabled(false);
 		device.setDescription("PROTOCOL: " + info.getProtocol());
 		deviceService.updateDevice(device);
+		log.info("End Updating device " + device.getIdentification());
 	}
 
 }
