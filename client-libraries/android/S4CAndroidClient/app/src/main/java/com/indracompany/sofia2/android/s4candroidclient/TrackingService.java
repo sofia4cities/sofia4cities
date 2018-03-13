@@ -69,11 +69,11 @@ public class TrackingService extends Service implements LocationListener, Google
     public static final String TAG = "TrackingService";
 
 
-    private final static String TOKEN = "2837830c15b04b7f87bdc817021e67af";
+    private final static String TOKEN = "fb3521092ebb4edfac1a8b22b72f51a4";
     private final static String ONTOLOGY_NAME = "androidIoTFrame";
     private final static String CLIENT_PLATFORM = "androidIoTDevice";
 
-    private final static String SERVICE_URL ="http://192.168.1.13:8081/iotbroker/rest/";
+    private final static String SERVICE_URL ="http://rancher.sofia4cities.com/iotbroker/rest/";
 
     private final int OFFLINE_MODE = 0;
     private final int ONLINE_MODE = 1;

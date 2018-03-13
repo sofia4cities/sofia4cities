@@ -29,7 +29,7 @@ public interface GadgetService {
 	public List<Gadget> getUserGadgetsByType(String userID, String type);
 	public List<GadgetMeasure> getGadgetMeasuresByGadgetId(String userID, String gadgetId);
 	public boolean hasUserPermission(String id, String userId);
-	public void updateGadget(Gadget gadget, List<String> gadgetDatasourceIds, List<String> jsonMeasures);
-	public void createGadget(Gadget gadget, List<String> gadgetDatasourceIds, List<String> jsonMeasures);
+	public void updateGadget(Gadget gadget, String gadgetDatasourceIds, String jsonMeasures);
+	public void createGadget(Gadget gadget, String gadgetDatasourceIds, String jsonMeasures);
 	public void deleteGadget(String gadgetId, String userId);
 }
