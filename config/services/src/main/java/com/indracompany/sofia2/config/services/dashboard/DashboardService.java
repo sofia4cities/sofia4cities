@@ -16,13 +16,19 @@ package com.indracompany.sofia2.config.services.dashboard;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.Dashboard;
-import com.indracompany.sofia2.config.model.User;
 
 public interface DashboardService {
 
 	List<Dashboard> findAllDashboard();
 	List<Dashboard> findDashboardWithIdentificationAndDescription(String identification, String description, String user);
 	List<String> getAllIdentifications();
-	Dashboard getDashboardById(String id);
+	void deleteDashboard(String id, String userId);
+	void saveDashboard(String id, Dashboard dashboard, String userId);
+	Dashboard getDashboardById(String id, String userId);
+	String getCredentialsString(String userId);
+	String createNewDashboard(String identification, String userId);
+	boolean hasUserPermission(String id, String userId);
+	boolean dashboardExists(String identification);
+	void saveDashboardModel(String id, String model, boolean visible, String userId);
 	
 }

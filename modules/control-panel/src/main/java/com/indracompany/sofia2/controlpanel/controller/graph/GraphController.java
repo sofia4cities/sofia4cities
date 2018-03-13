@@ -26,23 +26,22 @@ import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 @Controller
 public class GraphController {
-	
-	private String genericUserName="USER";
+
+	private String genericUserName = "USER";
 	@Autowired
 	private GraphUtil graphUtil;
 
-	@Autowired 
+	@Autowired
 	private AppWebUtils utils;
-	
-	@GetMapping("/getgraph")
-	public @ResponseBody String getGraph(Model model)
-	{
-		List<GraphDTO> arrayLinks=new LinkedList<GraphDTO>();
 
-		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName,null,genericUserName,utils.getUserId()));
+	@GetMapping("/getgraph")
+	public @ResponseBody String getGraph(Model model) {
+		List<GraphDTO> arrayLinks = new LinkedList<GraphDTO>();
+
+		arrayLinks.add(GraphDTO.constructSingleNode(genericUserName, null, genericUserName, utils.getUserId()));
 		arrayLinks.addAll(graphUtil.constructGraphWithOntologies());
 		arrayLinks.addAll(graphUtil.constructGraphWithClientPlatforms());
-		arrayLinks.addAll(graphUtil.constructGraphWithVisualization());		
+		arrayLinks.addAll(graphUtil.constructGraphWithVisualization());
 		return arrayLinks.toString();
 	}
 

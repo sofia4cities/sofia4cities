@@ -3,6 +3,9 @@ services:
   iotbrokerservice:
     scale: 1
     start_on_create: true
+  apimanagerservice:
+    scale: 1
+    start_on_create: true
   loadbalancerservice:
     scale: 1
     start_on_create: true
@@ -10,6 +13,9 @@ services:
     scale: 1
     start_on_create: true
   schedulerdb:
+    scale: 1
+    start_on_create: true
+  devicesimulator:
     scale: 1
     start_on_create: true
   flowengineservice:

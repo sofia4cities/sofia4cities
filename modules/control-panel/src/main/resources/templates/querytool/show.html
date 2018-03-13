@@ -35,12 +35,26 @@
 		<!-- Funciones AJAX -->
 		<script th:inline="javascript">
 		var queryResponse = {};
+		var queryErrorResponse = {};
 		function getQueryExecutedFragment() {
+		
+			        
 			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()},function(response,status,xhr){
-						
+				
 				queryResponse = $(response);				
+				
+				// check for valid json, or server string error like java.lang.Exception...
+				var IS_JSON = true;
+				try{ var json = $.parseJSON(queryResponse.text());	} catch(err){ IS_JSON = false; }
+				
+				if (!IS_JSON){
+					var text=""+queryResponse.text();
+					// Our own JSON string to mark non JSON ERRORs
+					queryErrorResponse = '{ "error":{ "status": "Proccessing Error", "detail": { "message" : "'+text+'" }}}';											
+				}
+				
 				if ($('#jsoneditor').attr('data-loaded') == 'false') { createEditor(); $('#jsoneditor').attr('data-loaded', true);	}				
-				editor.setText(queryResponse.text());
+				if (IS_JSON) { editor.setText(queryResponse.text()); }else { editor.setText(queryErrorResponse); } 
 				editor.setMode('view');				
 			});		
 			
@@ -128,7 +142,7 @@
 									<div class="col-md-12 margin-bottom-20">								
 										<div class="form-group">										
 											<div class="input-group input-group-sm">
-												<span class="input-group-addon" th:value="#{database.ontologies}" > ONTOLOGÍAS</span>
+												<span class="input-group-addon" th:text="#{database.ontology}" > ONTOLOGIES </span>
 												<select class="selectpicker  select show-tick form-control" id="selector_ontologias" data-live-search="true" data-width="100%" onchange="cambioConsulta()" th:title="#{database.ontologies} +'...'">
 												  <optgroup th:label="#{database.generic}">
 													<option th:each="ontology : ${ontologies}" th:id="${ontology.user.userId}" th:data-description="${ontology.description}" data-type="general" th:value="${ontology.identification}" th:text="${ontology.identification}"  ></option>
@@ -144,7 +158,7 @@
 									<div id="query-panel" class="col-md-12 hide ">									
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-sitemap"></i> Consultas sobre <span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-sitemap"></i> <span th:text="#{database.queryonto}">Consultas sobre </span><span id="query-ontologia" class="bold uppercase">ontología</span></h3>											
 											</div>
 											<div class="panel-body no-space">	
 												<div class="panel-tools">	
@@ -268,7 +282,7 @@
 												<div class="pull-right col-md-2 col-sm-4 col-xs-12">
 													<div class="btn-group">
 														<!-- <button type="button" class="btn btn-sm btn-primary" onClick="createQuery()"><i class="fa fa-edit"></i> Generar Query</button> no hace falta cuando todo haga refresh -->
-														<button type="button" class="btn btn-sm btn-primary" onclick="getQueryExecutedFragment()" id="executeQuery"><i class="fa fa-play"></i> Ejecutar Query </button>
+														<button type="button" class="btn btn-sm btn-primary" onclick="getQueryExecutedFragment()" id="executeQuery"><i class="fa fa-play"></i> <span th:text="#{database.execQuery}">Ejecutar Query</span> </button>
 													</div>											
 												</div>
 												<div class="clearfix"></div>
@@ -282,7 +296,7 @@
 										<!-- PANEL DE RESULTADOS -->
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> Resultados  sobre <span id="query-ontologia-result" class="bold uppercase">ontología</span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> <span th:text="#{database.results}">Resultados sobre </span> <span id="query-ontologia-result" class="bold uppercase">ontología</span></h3>											
 											</div>
 											<div class="panel-body no-space">
 											<!-- CONTENEDOR DE RESULTADOS , AQUI SE CREAN LOS DIVS PARA LA SALIDA DE LA CONSULTA A HTML,TABLE O JSON. -->
@@ -1030,13 +1044,13 @@
 			if( orderby.length == 1){ hayOrderBy = true; queryOrderBy = orderby[0].getAttribute("name"); }
 			
 			// CAMPOS (SELECT)		
-			if( campos.length == 1 ){ queryCampos = campos[0].getAttribute("name");	if( queryCampos == "Todos los campos"){ todosCampos = true;	}}
+			if( campos.length == 1 ){ queryCampos = campos[0].getAttribute("name");	if(( queryCampos == "Todos los campos")||(queryCampos == "All fields")){ todosCampos = true;}}
 			else if( campos.length == 0){ 
 				todosCampos = true; 
 			}
 			else{			
 				for( i=0; i < campos.length; i++){
-					if( campos[i].getAttribute("name") == "Todos los campos"){ 
+					if(( campos[i].getAttribute("name") == "Todos los campos")||( campos[i].getAttribute("name") == "All fields" )){ 
 						todosCampos = true; 
 					}
 					else{					

@@ -83,6 +83,11 @@
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>
+								<div class="actions margin-right-20">
+									<div class="btn-group">									
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+									</div>										
 								</div>								
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
@@ -91,13 +96,10 @@
 									<div class="col-md-12 alert-zone">
 										<!-- ALERT ZONE -->																			
 									</div>
-									<div class="col-md-12 margin-bottom-20">
+									<div class="col-md-12">
 									<!-- SEARCH FORM -->
 										<form id="form_datamodel" action="list.html" th:action="@{/datamodels/list}" class="" role="form" method="get">												
-											<div class="col-md-12 no-space">
-												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" th:attr="data-content=#{datamodel.search.description},data-original-title=#{gen.search}" th:text="#{gen.search}">Search</span></h4>
-											</div>
-											<div id="searchFilter" class="form-body collapse">
+											<div id="searchFilter" class="form-body hide" style="border-bottom: 1px solid #eef1f5;">
 												<div class="row">
 													<div class="col-md-3 col-md-6 col-xs-12">
 														<div class="form-group">															
@@ -128,11 +130,10 @@
 																<input id="description" th:placeholder="#{datamodel.description}" name="description" class="form-control" type="text" maxlength="100" value=""/>
 															</div>
 														</div>
-													</div>							
-													<div class="clearfix"></div>
-													<div class="col-md-4 col-xs-12">
+													</div>													
+													<div class="col-md-3 col-xs-12">
 														<div class="btn-group">
-															<button type="button" id="search_datamodel" name="search_datamodel" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="search_datamodel" name="search_datamodel" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search</span> </button>
 															<button type="button" id="reset_datamodel" name="reset_datamodel" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
 														</div>
 													</div>
@@ -149,10 +150,10 @@
 												
 													<thead>
 														<tr class="cabecera-tabla">
-															<th dt:filterable="false" dt:filterCssClass="input-small" dt:selector="datamodelFilter" class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{datamodel.id}">Identification</span></th>
-															<th class="titulo-columnas" > <span th:text="#{datamodel.name}" >Name</span></th>
+															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{datamodel.id}">Identification</span></th>
+															<th dt:filterable="true" dt:sortInitDirection="asc" dt:filterCssClass="input-small" dt:selector="datamodelFilter" class="titulo-columnas" > <span th:text="#{datamodel.name}" >Name</span></th>
 															<th class="titulo-columnas" ><span th:text="#{datamodel.description}" >Description</span></th>						
-															<th class="titulo-columnas" ><span th:text="#{datamodel.type}">Type</span></th>
+															<th id="roleType" dt:filterable="true" dt:filterType="select" dt:selector="roleFilter" dt:filterCssClass="input-small" class="titulo-columnas" ><span th:text="#{datamodel.type}">Type</span></th>
 															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{datamodel.userId}" >Owner</span></th>
 															<th class="titulo-columnas" ><span th:text="#{datamodel.labels}">Labels </span></th>																
 															<th class="titulo-columnas" ><span th:text="#{datamodel.jsonschema}">JSON Schema</span></th>
@@ -179,7 +180,7 @@
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span th:title="#{gen.view}" class="btn grey-mint btn-sm btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/datamodels/show/${datamodel.id}|} + '\');'"><i class="fa fa-eye"></i></span>																			
+																	<span th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/datamodels/show/${datamodel.id}|} + '\');'"><i class="fa fa-eye"></i></span>																			
 																</div>
 															</td>													
 														</tr>
@@ -192,10 +193,10 @@
 														<!-- TABLE FILTERS AUX. ROW -->
 														<table id="filteringTable" class="hide">
 																<tr id="filtering" class="hide" role="row">
+																	<th></th>
 																	<th id="datamodelFilter" class="dtFilter"></th>
 																	<th></th>
-																	<th></th>
-																	<th></th>
+																	<th id="roleFilter" class="dtFilter"></th>
 																	<th></th>
 																	<th></th>
 																	<th></th>
@@ -210,12 +211,10 @@
 												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
 												
 													<!-- CLEAR-FILTERS, TOGGLE-SELECTION AND DELETE-SELECTED -->
-													<button id="clearFilters" th:value="#{gen.resetBtn}" class="btn purple-plum btn-outline sbold" style="padding: 7px 10px;"><i class="fa fa-times"></i></button>  													
-													<button id="BtnToggleSel" class="btn purple-plum btn-outline sbold" style="padding: 7px 10px;"><i class="fa fa-check"></i></button>
-													<button id="BtnRemoveSel" th:value="#{gen.deleteBtn}" class="btn btn-outline sbold red-sunglo" data-elements="" style="padding: 7px 10px;"><i class="fa fa-trash"></i></button>
-													
+													<button id="clearFilters" th:value="#{gen.resetBtn}" class="btn grey-mint btn-outline sbold" style="padding: 7px 10px;"><i class="fa fa-times"></i></button>  													
+																										
 													<!-- COLUMNS TOGGLE -->
-													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn purple-plum btn-sm btn-outline">
+													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn grey-mint btn-sm btn-outline">
 														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
@@ -258,19 +257,19 @@
 	<script th:inline="javascript">	
 	
 	// TEMPLATE SEARCH FORM
-	var datamodelid = [[${param.datamodelid}]] || '';
+	var datamodelid = [[${param.dataModelId}]] || '';
 	var name = [[${param.name}]] || '';
 	var description = [[${param.description}]] || '';
 	
 	//GET SEARCH DATA
-	datamodelid ? $('#datamodelid').val(datamodelid) : datamodelid = '';
+	datamodelid ? $('#dataModelId').val(datamodelid) : datamodelid = '';
 	name ? $('#name').val(name) : name = '';
 	description ? $('#description').val(description) : description = '';	
 	
 	console.log('SEARCHING ... [ Identification: ' + datamodelid + ' name: ' + name + ' description: ' +  description +  ']');
 	
 	// OPEN SEARCH FORM IF SEARCH DATA EXISTS.
-	if (( datamodelid != '') || (name != '') || (description != '')) { $('.search-toggle').trigger('click'); }
+	if (( datamodelid != '') || (name != '') || (description != '')) { $('#search-toggle').trigger('click'); }
 	
 	// DATATABLES LANGUAJE FROM PROPERTIES.
 	datatable_lang = [[#{datatables_lang}]];	
@@ -413,7 +412,7 @@
 		handleSingleSelection('datamodels');
 		
 		// HIDE COLUMNS 4,5,6 (DETELEDAT,CREATEDAT,ACTIVE)		
-		$.each([ 6 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
+		$.each([ 0,2,6 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
 				
 		
 	});

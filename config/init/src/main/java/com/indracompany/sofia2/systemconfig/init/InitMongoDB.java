@@ -56,7 +56,7 @@ public class InitMongoDB {
 	OntologyRepository ontologyRepository;
 	@Autowired
 	UserRepository userCDBRepository;
-	
+
 	private final String USER_DIR = "user.dir";
 
 	@PostConstruct
@@ -79,11 +79,13 @@ public class InitMongoDB {
 			if (basicOps.count("Restaurants") == 0) {
 				Runtime r = Runtime.getRuntime();
 				String command = null;
-				
+
 				if (OSDetector.isWindows()) {
-					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file "+path+"/src/main/resources/restaurants-dataset.json";
+					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file "
+							+ path + "/src/main/resources/restaurants-dataset.json";
 				} else {
-					command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file "+path+"/src/main/resources/restaurants-dataset.json";
+					command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file " + path
+							+ "/src/main/resources/restaurants-dataset.json";
 
 				}
 				r.exec(command);
@@ -120,9 +122,11 @@ public class InitMongoDB {
 				Runtime r = Runtime.getRuntime();
 				String command = null;
 				if (OSDetector.isWindows()) {
-					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file "+path+"/src/main/resources/HelsinkiPopulation-dataset.json";
+					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file "
+							+ path + "/src/main/resources/HelsinkiPopulation-dataset.json";
 				} else {
-					command = "mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file "+path+"/src/main/resources/HelsinkiPopulation-dataset.json";
+					command = "mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file " + path
+							+ "/src/main/resources/HelsinkiPopulation-dataset.json";
 
 				}
 				r.exec(command);
@@ -141,7 +145,7 @@ public class InitMongoDB {
 				ontology.setRtdbClean(true);
 				ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
 				ontology.setRtdbToHdb(true);
-				ontology.setPublic(true);
+				ontology.setPublic(false);
 				ontology.setUser(getUserDeveloper());
 				ontologyRepository.save(ontology);
 			}

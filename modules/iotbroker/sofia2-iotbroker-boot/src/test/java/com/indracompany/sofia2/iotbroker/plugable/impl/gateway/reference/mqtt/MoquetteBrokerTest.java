@@ -108,7 +108,7 @@ public class MoquetteBrokerTest {
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
 
-		when(securityPluginManager.authenticate(any(), any(), any())).thenReturn(Optional.of(session));
+		when(securityPluginManager.authenticate(any(), any(), any(), any())).thenReturn(Optional.of(session));
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
@@ -161,7 +161,7 @@ public class MoquetteBrokerTest {
 		client.publish(topic, message);
 
 		//Get join message response
-		final String responseStr = completableFutureMessage.get();
+		final String responseStr = completableFutureMessage.get(5, TimeUnit.SECONDS);
 		final SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(responseStr);
 		Assert.assertNotNull(response);
 
@@ -177,7 +177,7 @@ public class MoquetteBrokerTest {
 				.content("{}")
 				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
 
-		final String responseCommandStr = completableFutureCommand.get(10000, TimeUnit.SECONDS);
+		final String responseCommandStr = completableFutureCommand.get(5, TimeUnit.SECONDS);
 		final SSAPMessage<SSAPBodyIndicationMessage> responseCommand = SSAPJsonParser.getInstance().deserialize(responseCommandStr);
 		Assert.assertNotNull(responseCommand);
 
@@ -219,7 +219,7 @@ public class MoquetteBrokerTest {
 		client.publish(topic, message);
 
 		//Get join message response
-		String responseStr = completableFutureMessage.get();
+		String responseStr = completableFutureMessage.get(5, TimeUnit.SECONDS);
 		SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(responseStr);
 		Assert.assertNotNull(response);
 
@@ -232,7 +232,7 @@ public class MoquetteBrokerTest {
 		client.publish(topic, message);
 
 		//Get subscription message response
-		responseStr = completableFutureMessage.get();
+		responseStr = completableFutureMessage.get(5, TimeUnit.SECONDS);
 		response = SSAPJsonParser.getInstance().deserialize(responseStr);
 		Assert.assertNotNull(response);
 
@@ -249,7 +249,7 @@ public class MoquetteBrokerTest {
 				OperationResultModel.class);
 
 		//Waits to recieve indication
-		final String indicationStr = completableFutureIndication.get();
+		final String indicationStr = completableFutureIndication.get(5, TimeUnit.SECONDS);
 		final SSAPMessage<SSAPBodyIndicationMessage> indication = SSAPJsonParser.getInstance().deserialize(indicationStr);
 		Assert.assertNotNull(indication);
 
@@ -287,7 +287,7 @@ public class MoquetteBrokerTest {
 		message.setQos(qos);
 		client.publish(topic, message);
 
-		final String responseStr = completableFutureMessage.get(300, TimeUnit.SECONDS);
+		final String responseStr = completableFutureMessage.get(5, TimeUnit.SECONDS);
 		final SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(responseStr);
 
 		Assert.assertNotNull(responseStr);

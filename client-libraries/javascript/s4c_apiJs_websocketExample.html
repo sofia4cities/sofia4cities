@@ -1,0 +1,418 @@
+<html>
+    <head>
+        <title>Chat WebSocket</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript">
+            
+			function SofiaClient() {
+			
+				var _this = this;
+				var config = null;
+				var stompClient;
+				var sessionKey;
+				var queuePromises;
+				var version = "";
+				var status;
+				
+				
+				this.configure = function (config) {
+					_this.config = config;
+				}
+				
+				this.onConnect = function (frame) {
+					console.log('Connected: ' + frame);
+					_this.status = 'CONNECTED';
+				}
+				
+				this.onError = function (error) {
+					console.log('error: ' + error);
+				}
+				
+				this.connect = function () {
+				
+					if (this.config === null) {
+						throw Error('Configuration required!');
+					}
+					
+					_this.status = 'CONNECTING';
+					_this.queuePromises = [];
+					
+					var dfd = $.Deferred();
+					
+					var socket = new SockJS(this.config.url);
+					
+					this.stompClient = Stomp.over(socket);
+					
+					if (this.config.debug) {
+						socket.debug = function(str) {
+							console.log(str);
+						};
+						
+						this.stompClient.debug = function (str) {
+							console.log(str);
+						};
+						
+					}else {
+						this.stompClient.debug = false;
+					}
+					
+					this.stompClient.connect({}, 
+							function (frame) {	
+								dfd.resolve(_this.onConnect(frame));
+							}, 
+							function (err) {
+								dfd.reject(_this.onError(err));
+								
+						    }
+					);
+
+					return dfd.promise();
+				}
+				
+				var parseResponse = function (response, callback) {
+				
+					console.log("parse "+Json.stringify(response));
+				
+					response.body = response.body.replace(/"{/g, '{');
+					response.body = response.body.replace(/}\"/g, '}');
+					response.body = response.body.replace(/\\"/g, '"');
+					
+					body = JSON.parse(response.body);
+					
+					if(body.messageType =="JOIN"){
+						sessionKey = body.sessionKey;
+					}
+					
+					if(callback)
+					  return (callback(body));
+					else
+					  return body;
+					  
+					susbcription.unsubscribe();  
+				}
+				
+				var sendMessage = function (message, callback) {
+				
+					var UUID = (new Date()).getTime();
+					
+					var dfd = $.Deferred();
+					
+					var susbcription = _this.stompClient.subscribe('/topic/message/' + UUID, function(response) {					
+							dfd.resolve(parseResponse(response,callback));
+					});
+
+					_this.stompClient.send("/stomp/message/" + UUID, {}, message);
+					
+					return dfd.promise();	
+				}
+				
+				this.join = function (callback) {
+				
+					messageId = "";
+					var joinMessage = '{'
+									+ '"messageId":"' 
+									+ messageId
+									+ '","sessionKey":' 
+									+ ((this.sessionKey != null)?'"' + this.sessionKey + '"': null)
+									+ ',"direction":"REQUEST","messageType":"JOIN"'
+									+ ',"body": {'
+									+ '"@type": "SSAPBodyJoinMessage",'
+									+ '"token":"'
+									+ this.config.token
+									+ '","clientPlatform":"'
+									+ this.config.clientPlatform
+									+ '","clientPlatformInstance":"'
+									+ this.config.clientPlatformInstance
+									+ '"'
+									+ '}'
+									+ '}';
+					
+					return sendMessage(joinMessage, callback);
+					
+				};
+				
+				this.leave = function () {
+				
+					if(stompClient != null) {
+						stompClient.disconnect();
+					}
+					//setConnected(false);
+					console.log("Disconnected");
+				};
+				
+				this.query = function (ontology, query, queryType, callback) {
+					messageId = "";
+					var queryMessage = '{'
+									+ '"messageId":"' 
+									+ messageId
+									+ '","sessionKey":' 
+									+ ((sessionKey != null)?'"' + sessionKey + '"': null)
+									+ ',"direction":"REQUEST","messageType":"QUERY"'
+									+ ',"body": {'
+									+ '"@type": "SSAPBodyQueryMessage",'
+									+ '"ontology":"'
+									+ ontology
+									+ '","query":"'
+									+ query
+									+ '","queryType":"'
+									+ queryType
+									+ '"'
+									+ '}'
+									+ '}';
+									
+					return sendMessage(queryMessage, callback);
+					
+				}
+				
+				this.insert = function (ontology, data, callback) {
+					messageId = "";
+					var insertMessage = '{'
+									+ '"messageId":"' 
+									+ messageId
+									+ '","sessionKey":' 
+									+ ((sessionKey != null)?'"' + sessionKey + '"': null)
+									+ ',"direction":"REQUEST","messageType":"INSERT"'
+									+ ',"body": {'
+									+ '"@type": "SSAPBodyInsertMessage",'
+									+ '"ontology":"'
+									+ ontology
+									+ '","data":'
+									+ data
+									+ ''
+									+ '}'
+									+ '}';
+													
+					return sendMessage(insertMessage, callback);
+				};
+				
+				this.update = function (ontology, query, callback) {
+				
+					messageId = "";
+					var updateMessage = '{'
+										+ '"messageId":"' 
+										+ messageId
+										+ '","sessionKey":' 
+										+ ((sessionKey != null)?'"' + sessionKey + '"': null)
+										+ ',"direction":"REQUEST","messageType":"UPDATE"'
+										+ ',"body": {'
+										+ '"@type": "SSAPBodyUpdateMessage",'
+										+ '"ontology":"'
+										+ ontology
+										+ '","query":'
+										+ query
+										+ '}'
+										+ '}';
+									
+									
+					return sendMessage(updateMessage, callback);
+					
+				};
+				
+				this.updateById = function (ontology, id, data, callback) {
+
+					messageId = "";
+					var updateMessage = '{'
+										+ '"messageId":"' 
+										+ messageId
+										+ '","sessionKey":' 
+										+ ((sessionKey != null)?'"' + sessionKey + '"': null)
+										+ ',"direction":"REQUEST","messageType":"UPDATE_BY_ID"'
+										+ ',"body": {'
+										+ '"@type": "SSAPBodyUpdateByIdMessage",'
+										+ '"ontology":"'
+										+ ontology
+										+ '","id":"'
+										+ id
+										+ '","data":'
+										+ data
+										+ ''
+										+ '}'
+										+ '}';
+																	
+					return sendMessage(updateMessage, callback);
+				};
+				
+				this.remove = function (ontology, query, callback) {
+					
+					messageId = "";
+					var deleteMessage = '{'
+										+ '"messageId":"' 
+										+ messageId
+										+ '","sessionKey":' 
+										+ ((sessionKey != null)?'"' + sessionKey + '"': null)
+										+ ',"direction":"REQUEST","messageType":"DELETE"'
+										+ ',"body": {'
+										+ '"@type": "SSAPBodyDeleteMessage",'
+										+ '"ontology":"'
+										+ ontology
+										+ '","query":"'
+										+ query
+										+ '"'
+										+ ''
+										+ '}'
+										+ '}';
+																	
+					return sendMessage(deleteMessage, callback);
+				};
+				
+				this.removeById = function (ontology, id, callback) {
+					
+					messageId = "";
+					var deleteMessage = '{'
+										+ '"messageId":"' 
+										+ messageId
+										+ '","sessionKey":' 
+										+ ((sessionKey != null)?'"' + sessionKey + '"': null)
+										+ ',"direction":"REQUEST","messageType":"DELETE_BY_ID"'
+										+ ',"body": {'
+										+ '"@type": "SSAPBodyDeleteByIdMessage",'
+										+ '"ontology":"'
+										+ ontology
+										+ '","id":"'
+										+ id
+										+ '"'
+										+ '}'
+										+ '}';
+																	
+					return sendMessage(deleteMessage, callback);
+				};
+				
+			}
+			
+			config = {"url":"http://localhost:8081/iotbroker/message", "debug" : true,
+					  "token":"e19384f0d82642deb9c8514d51dcb45b", "clientPlatform": "GTKP-Example", "clientPlatformInstance":"kp01"};
+					  
+			client = new SofiaClient();
+			client.configure(config);
+			
+			client.connect().then(function(val) {
+				console.log("aqui");
+			});
+			
+			function connectTestMulti(){
+				
+				i=0;
+				while (i< 100){
+					if (i%2 == 0){
+						/*client.join(function (response) {
+							console.log("" + JSON.stringify(response));
+						});*/
+						client.join().then(function (response){
+							console.log("par -> " + JSON.stringify(response));
+						});
+					}else{
+						/*client.join(function (response) {
+							console.log("impar -> " + JSON.stringify(response));
+						});
+						*/
+						client.join().then(function (response){
+							console.log("imppar -> " + JSON.stringify(response));
+						});
+					}
+					
+					i++;
+				}
+			}
+			
+			function connectTest(){
+						client.join().then(function (response){
+							console.log("test join " + response.sessionKey);
+						});
+			}
+			
+			function sendQueryTest(){
+				var ontology = "testrober";
+				var query = "db.testrober.find()";
+				var queryType = "NATIVE";
+				client.query(ontology, query, queryType,
+					function (response) {
+						console.log("response" + response.body);					
+				});
+
+			}
+			
+			function sendInsertTest () {
+				var ontology = "testrober";
+				var query = "db.testrober.find()";
+				var queryType = "NATIVE";
+				client.query(ontology, query, queryType,
+					function (response) {
+						console.log("response" + response.body);					
+				});
+				
+				data = {"EmptyBase" : { "test" : "3" } };
+				
+				client.insert(ontology, JSON.stringify(data), function (response) {
+					console.log("test insert "+ response.body);
+				});	
+			}
+			function sendUpdate () {
+				var ontology = "testrober";
+				
+				client.update(ontology, "db.testrober.update({\"test\":\"3\"},{$set: { \"test\": \"update4\" }})", function (response){
+					console.log("test update" + response.body);
+				});
+				
+			}
+			
+			function sendUpdateByIdTest(){
+				var ontology = "testrober";
+				
+				data = {"EmptyBase" : { "test" : "testupdate3" } };
+				
+				client.updateById(ontology, "5aa2471d1aa1da2bbc83fbc9", JSON.stringify(data), function (response){
+					console.log("test updateById " + response.body);
+				});
+			}
+			
+			function sendRemoveByIdTest(){
+				var ontology = "testrober";
+				
+				client.removeById(ontology, "5aa2471d1aa1da2bbc83fbc9", function (response){
+					console.log("test remove byId " + response.body);
+				});
+			}
+			
+			function sendRemoveTest(){
+				var ontology = "testrober";
+				
+				client.remove(ontology, "5aa2471d1aa1da2bbc83fbc9", function (response){
+					console.log("test remove" + response.body);
+				});
+			}
+			
+			
+
+        </script>
+    </head>
+    <body >
+        <div>
+            <div>
+                <input type="text" id="from" placeholder="Choose a nickname"/>
+            </div>
+            <br />
+            <div>
+                <button id="connect" onclick="connectTest();">Connect</button>
+				<button id="connect" onclick="connectTestMulti();">Connect Multi</button>
+				
+                <button id="disconnect" disabled="disabled" onclick="disconnect();">
+                    Disconnect
+                </button>
+            </div>
+            <br />
+            <div id="conversationDiv">
+                <input type="text" id="text" placeholder="Write a message..."/>
+                <button id="sendMessage" onclick="sendQueryTest()">Test query</button>
+				<button id="sendMessageUpdate" onclick="sendUpdateByIdTest()">Test updateById</button>
+				<button id="sendMessageUpdate" onclick="sendUpdate()">Test update</button>
+				<button id="sendMessageDelete" onclick="sendRemoveByIdTest()">Test deleteById</button>
+				<button id="sendMessageDelete" onclick="sendRemoveTest()">Test delete</button>
+                <p id="response"></p>
+            </div>
+			
+        </div>
+ 
+    </body>
+</html>

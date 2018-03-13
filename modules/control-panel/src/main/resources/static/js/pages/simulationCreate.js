@@ -1,6 +1,5 @@
 var fields;
 
-
 function generateJsonSimulationFields() {
 	//return map
 	var jsonMap = {};
@@ -49,8 +48,17 @@ function editFieldParameters() {
 			$('#'+hiddenDiv).html($('#'+functionSelected).html());;
 			var inputs = $('#'+key+'Div input');
 
-			for (var j = 0; j < inputs.length; j++) {
-				inputs.get(j).value = simulationJson['fields'][keys[i]][inputs.get(j).name];
+			
+			
+			if(functionSelected.toLowerCase().indexOf("date") != -1) {
+				setDateTimePicker(inputs);
+				for (var j = 0; j < inputs.length; j++) {
+					inputs.get(j).value = simulationJson['fields'][keys[i]][inputs.get(j).name];
+				}
+			}else {
+				for (var j = 0; j < inputs.length; j++) {
+					inputs.get(j).value = simulationJson['fields'][keys[i]][inputs.get(j).name];
+				}
 			}
 
 			$('#'+hiddenDiv).show();
@@ -65,8 +73,15 @@ function navigateUrl(url){  window.location.href = url;	}
 
 	
 function submitForm(formId) {
-	generateJsonSimulationFields();
-	$("#"+formId).submit()
+	if($('#interval input').val()!=0){
+		generateJsonSimulationFields();
+		$("#"+formId).submit()
+	}else {
+		$('.alert-danger').show();
+		$('.alert-generic').show();
+		$('.alert-exists-text').html("Interval time cannot be 0");
+		document.location.href="#alerts";
+	}
 }
 function generateSimulatorFunctionDiv(field) {
 
@@ -79,11 +94,14 @@ function generateSimulatorFunctionDiv(field) {
 		//html insert Auxiliar Div of the selected simulator function
 		$('#'+hiddenDiv).html($('#'+functionSelected).html());
 		//Assing unique ID to each input of the hiddenDiv
-		var inputs = $('#'+hiddenDiv+' inputs');
+		var inputs = $('#'+hiddenDiv+' input');
 		for (var i = 0; i < inputs.length; i++) {
 			inputs.get(i).id = field + inputs.get(i).id;
 		}
 		//show
+		if(functionSelected.toLowerCase().indexOf("date") != -1) {
+			setDateTimePicker($('#'+hiddenDiv+' input'));
+		}
 		$('#'+hiddenDiv).show();
 	}else {
 		//IF NULL THEN DELETE INNER HTML

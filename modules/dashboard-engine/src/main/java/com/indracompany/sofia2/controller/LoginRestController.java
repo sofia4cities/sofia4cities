@@ -23,6 +23,6 @@ public class LoginRestController {
 	@CrossOrigin
     @RequestMapping("/loginRest")
     public String login() {
-        return "Ok";
+        return "{\"Ok\":true}";
     }
 }

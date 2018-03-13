@@ -43,7 +43,7 @@
 						"ES": "Simulador de Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/simulator/show"
+					"url": "/controlpanel/devicesimulation/list"
 				},
 				{
 					"title": {
@@ -51,7 +51,7 @@
 						"ES": "Gestión de Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/devices/management/list"
+					"url": "/controlpanel/devices/management/show"
 				}
 			]
 		},

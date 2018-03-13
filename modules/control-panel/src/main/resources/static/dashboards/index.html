@@ -1,0 +1,52 @@
+<!doctype html>
+<html ng-app="s2DashboardFramework">
+<head>
+  <meta charset="utf-8">
+  <title>Sofia2 Dashboard Framework</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width">
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+  <style>
+    [ng-cloak] {
+      display: none !important;
+    }
+  </style>
+  <script src="../env/env.js"></script>
+  <script>
+    window.__env = window.__env || {};
+    window.__env.socketEndpointConnect = '/dashboardengine/dsengine/solver';
+    window.__env.socketEndpointSend = '/dsengine/solver';
+    window.__env.socketEndpointSubscribe = '/dsengine/broker';
+    window.__env.endpointSofia2ControlPanel = '/controlpanel';
+    window.__env.endpointSofia2DashboardEngine = '/dashboardengine';
+    window.__env.dashboardEngineUsername = 'administrator';
+    window.__env.dashboardEnginePassword = 'changeIt!';
+    window.__env.dashboardEngineLoginRest = '/loginRest';
+    window.__env.enableDebug = false;
+
+  </script>
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles/vendor.css">
+
+  <link rel="stylesheet" href="gridster.css">
+
+  <link rel="stylesheet" href="styles/app.css">
+</head>
+<body class="layout-column" ng-cloak>
+<s2dashboard editmode="false" selectedpage="0" id="1" public="false" class="flex layout-column"></s2dashboard>
+
+<script src="scripts/vendor.js"></script>
+
+<!-- Angular Material Fileinput -->
+<link rel="stylesheet" href="./app/resources/lf-ng-md-file-input.min.css">
+<script src="./app/resources/lf-ng-md-file-input.min.js"></script>
+
+<script src="gridster.js"></script>
+
+<script src="scripts/app.js"></script>
+
+</body>
+</html>

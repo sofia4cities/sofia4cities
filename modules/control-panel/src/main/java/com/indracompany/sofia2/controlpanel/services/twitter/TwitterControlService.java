@@ -63,11 +63,11 @@ public class TwitterControlService {
 		task.setSingleton(false);
 		task.setCronExpression("0/20 * * ? * * *");
 
-		Calendar end = Calendar.getInstance();
-		end.add(Calendar.MINUTE, 2);
+//		Calendar end = Calendar.getInstance();
+//		end.add(Calendar.MINUTE, 2);
 
-		task.setStartAt(Calendar.getInstance().getTime());// twitterListening.getDateFrom());
-		task.setEndAt(end.getTime());// witterListening.getDateTo());
+		task.setStartAt(twitterListening.getDateFrom());// twitterListening.getDateFrom());
+		task.setEndAt(twitterListening.getDateTo());// witterListening.getDateTo());
 		ScheduleResponseInfo response = taskService.addJob(task);
 		twitterListening.setJobName(response.getJobName());
 		this.twitterListeningService.updateListening(twitterListening);

@@ -60,7 +60,7 @@ public class JoinProcessorWithTokenTest {
 		final IoTSession session = new IoTSession();
 		session.setUserID("valid_user_id");
 		session.setSessionKey(assignedSessionKey);
-		when(securityPluginManager.authenticate(anyString(),anyString(),anyString())).thenReturn(Optional.of(session));
+		when(securityPluginManager.authenticate(anyString(),anyString(),anyString(), anyString())).thenReturn(Optional.of(session));
 		ssapJoin.getBody().setToken(UUID.randomUUID().toString());
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin);
 
@@ -71,7 +71,7 @@ public class JoinProcessorWithTokenTest {
 
 	@Test
 	public void given_OneJoinProcessor_When_ItUsesAnInvalidToken_Then_TheResponseIndicatesAuthenticationError() throws AuthenticationException {
-		when(securityPluginManager.authenticate(anyString(),anyString(),anyString())).thenReturn(Optional.empty());
+		when(securityPluginManager.authenticate(anyString(),anyString(),anyString(),anyString())).thenReturn(Optional.empty());
 		ssapJoin.getBody().setToken(UUID.randomUUID().toString());
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = processor.process(ssapJoin);
 

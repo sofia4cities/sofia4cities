@@ -65,7 +65,7 @@ public class JoinProcessor implements MessageTypeProcessor {
 			throw new SSAPComplianceException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "token", message.getMessageType().name()));
 		}
 
-		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(), join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance());
+		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(), join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance(), join.getSessionKey());
 		session.ifPresent( s -> {
 			response.setSessionKey(s.getSessionKey());
 			try {

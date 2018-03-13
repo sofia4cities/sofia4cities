@@ -1,0 +1,59 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+	    <meta name="description" content="Dashboard list template"/>
+		<meta name="keywords" content="sofia2,smart,cities,platform,Indra"/>
+		<meta name="author" content="Indra Sistemas, S.A."/>
+		
+	</head>	
+
+	<script src="../env/env.js"></script>
+  	<script>
+	    window.__env = window.__env || {};
+	    window.__env.socketEndpointConnect = '/dashboardengine/dsengine/solver';
+	    window.__env.socketEndpointSend = '/dsengine/solver';
+	    window.__env.socketEndpointSubscribe = '/dsengine/broker';
+	    window.__env.endpointSofia2ControlPanel = '/controlpanel';
+	    window.__env.endpointSofia2DashboardEngine = '/dashboardengine';
+	    window.__env.dashboardEngineUsername = 'administrator';
+	    window.__env.dashboardEnginePassword = 'changeIt!';
+	    window.__env.dashboardEngineLoginRest = '/loginRest';
+	    window.__env.enableDebug = false;
+	
+	</script>
+	
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+	
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/vendor.css"/>
+	
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>
+	
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>
+	
+	<!-- page-sidebar-closed to start page with collapsed menu -->
+	<body ng-app="s2DashboardFramework" class="layout-column">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+		<s2dashboard selectedpage="0" th:id="${dashboard.id}" th:attr="public=${dashboard.public},editmode=${edition}" class="flex layout-column"></s2dashboard>
+	</div>
+	
+	<script src="/controlpanel/static/dashboards/scripts/vendor.js"></script>
+										
+	<script src="/controlpanel/static/dashboards/gridster.js"></script>
+	
+	<!-- Angular Material Fileinput -->
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/>
+	<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>
+	
+	<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
+	
+	
+</body>
+</html> 
