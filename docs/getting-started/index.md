@@ -36,13 +36,14 @@ Please, use **administrator** login and **changeIt!** password to go into the pl
 ### Creating an Ontology
 
 The first step it to model the data that we want to use.
-To do that, go to the *DATA MODELLING -> Models / Ontologies* menu option ![Ontology Menu Option](./images/Ontology_menu.png).
+To do that, go to the *DATA MODELLING -> Models / Ontologies* menu option ![Ontology List](images/Ontology_list.png).
 
 This option shows the available ontologies.
 Use the **Create** option at the right upper corner to create a new *Ontology*.
+
 An *Ontology* represents the data model of your data.
 
-Complete the following information for your new *Ontology*:
+Complete the following information for your new *Ontology* ![Ontology creation](images/Ontology_creation.png):
 
 - Name: provide a unique name of the *Ontology*.
 - Meta-Information: insert keywords to classify *Ontologies*. Use commas to introduce several keywords.
@@ -56,10 +57,10 @@ Complete the following information for your new *Ontology*:
 After defining the ontology it is possible to define *Devices* that work with the ontology.
 A *Device* is the representation of a physical device into the platform.
 These *Devices* will generate or consume data.
-To do that, go to the *DEVICES -> Definition of Devices* menu option.
+To do that, go to the *DEVICES -> Definition of Devices* menu option ![Device List](images/Device_list.png).
 Use the **Create** button placed in the right upper corner to define a new *Device*.
 
-Complete the following information for the new *Device*:
+Complete the following information for the new *Device* ![Device Creation](images/Device_creation.png):
 
 - Identification: provide a unique name for the *Device*.
 - Description: add a description for the *Device*.
@@ -85,6 +86,15 @@ Complete the following information for the new *Device Simulator*:
 - Ontology Properties: fulfil the information required to generate values for each field of the ontology.
 
 Finally, it is necessary to save the simulator by using the **New** button.
+
+The *Control Panel* web application register the simulation task. For executing the simulation it is necessary to start the application device-simulator.
+To do that, go to S:\sources\sofia2-s4c\modules\device-simulator and execute:
+
+```sh
+mvn spring-boot:run
+```
+
+
 
 ### Creating a Dashboard
 
