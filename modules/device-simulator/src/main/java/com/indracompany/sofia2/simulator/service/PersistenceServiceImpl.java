@@ -13,21 +13,22 @@
  */
 package com.indracompany.sofia2.simulator.service;
 
-import java.time.ZoneId;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.indracompany.sofia2.persistence.ContextData;
-import com.indracompany.sofia2.router.service.app.model.NotificationModel;
-import com.indracompany.sofia2.router.service.app.model.OperationModel;
-import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
-import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
-import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
-import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.services.client.ClientPlatformService;
+import com.indracompany.sofia2.config.services.token.TokenService;
+import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
+import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,40 +36,59 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PersistenceServiceImpl implements PersistenceService {
 
+
 	@Autowired
-	private RouterService routerService;
+	private MessageProcessor messageProcessor;
+	@Autowired
+	private ClientPlatformService clientPlatformService;
+	@Autowired
+	private TokenService tokenService;
+	private String sessionKey;
 
-
-
+	public void connectIotBroker(String clientPlatform, String clientPlatformInstance) {
+		Token token = this.tokenService.getToken(this.clientPlatformService.getByIdentification(clientPlatform));
+		final SSAPMessage<SSAPBodyJoinMessage> join = new SSAPMessage<SSAPBodyJoinMessage>();
+		join.setDirection(SSAPMessageDirection.REQUEST);
+		join.setMessageType(SSAPMessageTypes.JOIN);
+		SSAPBodyJoinMessage body = new SSAPBodyJoinMessage();
+		body.setClientPlatform(clientPlatform);
+		body.setClientPlatformInstance(clientPlatformInstance);
+		body.setToken(token.getToken());
+		join.setBody(body);
+		SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(join);
+		if(response.getSessionKey()!=null)
+			this.sessionKey = response.getSessionKey();
+	}
 
 	@Override
 	public void insertOntologyInstance(String instance, String ontology, String user, String clientPlatform,
 			String clientPlatformInstance) throws Exception {
 
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode json = mapper.readTree(instance);
+		if (this.sessionKey != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode json = mapper.readTree(instance);
+			
+			final SSAPMessage<SSAPBodyInsertMessage> insert = new SSAPMessage<SSAPBodyInsertMessage>();
+			final SSAPBodyInsertMessage body = new SSAPBodyInsertMessage();
+			insert.setDirection(SSAPMessageDirection.REQUEST);
+			insert.setMessageType(SSAPMessageTypes.INSERT);
+			insert.setSessionKey(this.sessionKey);
+			body.setOntology(ontology);
+			body.setData(json);
+			insert.setBody(body);
+			
+			
+			SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(insert);
+			if(response.getBody().getErrorCode().name()==SSAPErrorCode.AUTENTICATION.name()) {
+				this.connectIotBroker(clientPlatform, clientPlatformInstance);
+				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
+			
+			}
 
-		final ContextData contextData = new ContextData();
-
-		contextData.setClientConnection("");
-		contextData.setClientPatform(clientPlatform);
-		contextData.setClientPatformInstance(clientPlatformInstance);
-		contextData.setTimezoneId(ZoneId.systemDefault().toString());
-		contextData.setUser(user);
-		((ObjectNode) json).set("contextData", mapper.valueToTree(contextData));
-
-		final OperationModel model = new OperationModel();
-		model.setBody(json.toString());
-		model.setOntologyName(ontology);
-		model.setUser(user);
-		model.setOperationType(OperationType.POST);
-		model.setQueryType(QueryType.NATIVE);
-
-		final NotificationModel modelNotification = new NotificationModel();
-		modelNotification.setOperationModel(model);
-
-		final OperationResultModel response = routerService.insert(modelNotification);
-		log.debug("Response from router: " + response);
+		} else {
+			this.connectIotBroker(clientPlatform, clientPlatformInstance);
+			this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
+		}
 	}
 
 }
