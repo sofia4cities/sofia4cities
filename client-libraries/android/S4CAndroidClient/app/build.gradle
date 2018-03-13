@@ -19,6 +19,11 @@ android {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven{ url "http://sofia2.org/nexus/content/repositories/releases/"}
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -30,5 +35,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:9.2.0'
     compile 'com.android.support:cardview-v7:25.1.+'
     compile 'com.skyfishjy.ripplebackground:library:1.0.1'
-    compile project(path: ':s4candroidapi')
+    compile 'com.indracompany.sofia2:s4candroidapi:1.0.0'
 }
