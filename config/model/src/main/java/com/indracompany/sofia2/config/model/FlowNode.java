@@ -37,7 +37,7 @@ import lombok.Setter;
 public class FlowNode extends AuditableEntityWithUUID implements NotificationEntity {
 
 	public static enum Type {
-		HTTP_NOTIFIER("sofia-notification-endpoint");
+		HTTP_NOTIFIER("sofia4cities-notification-endpoint");
 
 		private String exposedName;
 
