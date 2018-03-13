@@ -5,6 +5,11 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 		<script src="./sofia_ws_api.js"></script>
+		
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script type="text/javascript">
             
 			config = {"url":"http://localhost:8081/iotbroker/message", "debug" : true,
@@ -22,17 +27,10 @@
 				i=0;
 				while (i< 100){
 					if (i%2 == 0){
-						/*client.join(function (response) {
-							console.log("" + JSON.stringify(response));
-						});*/
 						client.join().then(function (response){
 							console.log("par -> " + JSON.stringify(response));
 						});
 					}else{
-						/*client.join(function (response) {
-							console.log("impar -> " + JSON.stringify(response));
-						});
-						*/
 						client.join().then(function (response){
 							console.log("imppar -> " + JSON.stringify(response));
 						});
@@ -42,22 +40,22 @@
 				}
 			}
 			
-			function writeResult(operation , result){
+			function writeResult(divId, operation , result){
 				console.log(operation);
 				console.log(result);
 				content =  "<p>" + operation + "</p>" + "<pre>" + JSON.stringify(result,null,'\t') + "</pre>";
-				$("#responseDivResult").html(content);
+				$("#"+divId).html(content);
 			}
 			
 			function connectTest(){
 						client.join().then(function (response){
-							writeResult("response join ", response);
+							writeResult("responseDivJoinResult","response join ", response);
 						});
 			}
 			
 			function sendQueryTest(){
-				var ontology = $("#ontology").val();
-				var query = $("#query").val();
+				var ontology = $("#ontologyTabQueryField").val();
+				var query = $("#tabQueryField").val();
 				var queryType = "NATIVE";
 				
 				client.query(ontology, query, queryType).then(function (response){
@@ -66,59 +64,58 @@
 						content += response.body.data.length;
 					} else {content += "0";}
 					
-					writeResult(content, response);					
+					writeResult("responseDivQueryResult",content, response);					
 				});
 
 			}
 			
 			function sendInsertTest () {
-				var ontology = $("#ontology").val();
-				var query = $("#query").val();
+				var ontology = $("#ontologyTabInserField").val();
 				
 				//data = {"EmptyBase" : { "test" : "3" } };
 				
 				data = JSON.parse($("#insertInstance").val());
 				
 				client.insert(ontology, JSON.stringify(data)).then(function (response) {
-					writeResult("response insert ", response);
+					writeResult("responseDivInsertResult","response insert ", response);
 				});	
 			}
 			
 			function sendUpdate () {
-				var ontology = $("#ontology").val();
-				var query = $("#query").val();
+				var ontology = $("#ontologyTabUpdateField").val();
+				var query = $("#tabUpdteField").val();
 				
 				client.update(ontology, query).then(function (response){
-					writeResult("response update", response);
+					writeResult("responseDivUpdateResult", "response update", response);
 				});
 				
 			}
 			
 			function sendRemoveTest(){
-				var ontology = $("#ontology").val();
-				var query = $("#query").val();
+				var ontology = $("#ontologyTabDeleteField").val();
+				var query = $("#tabDeleteField").val();
 				client.remove(ontology, query).then(function (response){
-					writeResult("test remove", response);
+					writeResult("responseDivDeleteResult","test remove", response);
 				});
 			}
 			
 			function sendUpdateByIdTest(){
-				var ontology = $("#ontology").val();
-				var sofiaId = $("#sofiaId").val();
+				var ontology = $("#ontologyTabUpdateByField").val();
+				var sofiaId = $("#sofiaIdUpdate").val();
 				
-				data = {"EmptyBase" : { "test" : "testupdate3" } };
+				data = JSON.parse($("#updateInstance").val()); //{"EmptyBase" : { "test" : "testupdate3" } };
 				
 				client.updateById(ontology, sofiaId, JSON.stringify(data)).then( function (response){
-					writeResult("test updateById ", response);
+					writeResult("responseDivUpdateByIdResult","test updateById ", response);
 				});
 			}
 			
 			function sendRemoveByIdTest(){
-				var ontology = $("#ontology").val();
-				var sofiaId = $("#sofiaId").val();
+				var ontology = $("#ontologyTabDeleteByField").val();
+				var sofiaId = $("#sofiaIdDelete").val();
 				
 				client.removeById(ontology, sofiaId).then( function (response){
-					writeResult("test remove byId ", response);
+					writeResult("responseDivDeleteByIdResult","test remove byId ", response);
 				});
 			}
 			
@@ -126,43 +123,119 @@
 
         </script>
     </head>
-    <body >
-        <div>
-            <br />
-            <div>
-                <button id="connect" onclick="connectTest();">Connect</button>
-				<button id="connect" onclick="connectTestMulti();">Connect Multi</button>
-				
-                <button id="disconnect" disabled="disabled" onclick="disconnect();">
-                    Disconnect
-                </button>
-            </div>
-            <br />
-			<div>
-				Ontology name: <input type="text" id="ontology" placeholder="write ontology..." value="testrober"/>
-			</div>
-			<br/>
-            <div id="conversationDiv">
-                Query: <input type="text" id="query" placeholder="Write a query..." value="db.testrober.find()"/>
-                <button id="sendMessage" onclick="sendQueryTest()">Test query</button>			
-				<button id="sendMessageUpdate" onclick="sendUpdate()">Test update</button>				
-				<button id="sendMessageDelete" onclick="sendRemoveTest()">Test delete</button>
-                <p id="response"></p>
-            </div>
-			<br/>
-			<div>
-				<input type="text" id="insertInstance" placeholder="Write instance to insert..." value="{'EmptyBase' : { 'test' : '3' } }"/>
-				<button id="sendInserMessage" onclick="sendInsertTest()">Test insert query</button>	
-			</div>
-			<br/>
-			<div>
-				Id <input type="text" id="sofiaId" placeholder="write id..."/>
-				<button id="sendMessageUpdate" onclick="sendUpdateByIdTest()">Test updateById</button>
-				<button id="sendMessageDelete" onclick="sendRemoveByIdTest()">Test deleteById</button>
-			</div>
-			
-			<div id= "responseDivResult"></div>
-        </div>
- 
+    <body>
+		<div class="container">
+  
+				<ul class="nav nav-tabs" id="myTab" role="tablist">
+				  <li class="nav-item">
+					<a class="nav-link active" id="connect-tab" data-toggle="tab" href="#connect" role="tab" aria-controls="connect" aria-selected="true">Connect</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="home-tab" data-toggle="tab" href="#query" role="tab" aria-controls="query" aria-selected="false">Query</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="profile-tab" data-toggle="tab" href="#insert" role="tab" aria-controls="insert" aria-selected="false">Insert</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#update" role="tab" aria-controls="update" aria-selected="false">Update</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#updateById" role="tab" aria-controls="updateById" aria-selected="false">Update By Id</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#delete" role="tab" aria-controls="delete" aria-selected="false">Delete</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#deleteById" role="tab" aria-controls="deleteById" aria-selected="false">Delete By Id</a>
+				  </li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+				  <div class="tab-pane fade show active" id="connect" role="tabpanel" aria-labelledby="connect-tab">
+						<div class="form-group">
+							<button id="connect" onclick="connectTest();">Connect</button>
+						</div>
+						<div id= "responseDivJoinResult"></div>
+				  </div>
+				  <div class="tab-pane fade show " id="query" role="tabpanel" aria-labelledby="home-tab">
+						<div class="form-group">
+							<label> Ontology name:</label> 
+							<input type="text" id="ontologyTabQueryField" class="form-control"  placeholder="write ontology..." value="testrober"/>
+						</div>
+						<div class="form-group">
+							<label>Query:</label> 
+							<input type="text" id="tabQueryField"  class="form-control"  placeholder="Write a query..." value="db.testrober.find()"/>
+						</div>
+						<button id="sendMessage" onclick="sendQueryTest()">Test query</button>
+						
+						<div id= "responseDivQueryResult"></div>
+				  </div>
+				  <div class="tab-pane fade" id="insert" role="tabpanel" aria-labelledby="profile-tab">
+						<div class="form-group">
+							<label>Ontology name: </label>
+							<input type="text" id="ontologyTabInserField" class="form-control" placeholder="write ontology..." value="testrober"/>
+						</div>
+						<div class="form-group">
+							<label>Instance: </label>
+							<input type="text" id="insertInstance" class="form-control" placeholder="Write instance to insert..." value=""/>
+						</div>
+						<button id="sendInserMessage" onclick="sendInsertTest()">Test insert query</button>	
+						<div id= "responseDivInsertResult"></div>
+				  </div>
+				  <div class="tab-pane fade" id="update" role="tabpanel" aria-labelledby="contact-tab">
+						<div class="form-group">
+							<label>Ontology name:</label> 
+							<input type="text" id="ontologyTabUpdateField" class="form-control" placeholder="write ontology..." value="testrober"/>
+						</div>
+						<div class="form-group">
+							<label>Query: </label>
+							<input type="text" id="tabUpdteField" class="form-control" placeholder="Write a query..." value=""/>
+						</div>
+						<button id="sendMessageUpdate" onclick="sendUpdate()">Test update</button>
+						<div id= "responseDivUpdateResult"></div>
+				  </div>
+				  <div class="tab-pane fade" id="updateById" role="tabpanel" aria-labelledby="contact-tab">
+						<div class="form-group">
+							<label>Ontology name:</label>
+							<input type="text" id="ontologyTabUpdateByField" class="form-control" placeholder="write ontology..." value="testrober"/>
+						</div>
+						<div class="form-group">
+							<label>Id:</label> 
+							<input type="text" id="sofiaIdUpdate" class="form-control" placeholder="write id..." value=""/>
+						</div>
+						<div class="form-group">
+							<label>Instance:</label> 
+							<input type="text" id="updateInstance" class="form-control" placeholder="Write instance to insert..." value=""/>
+						</div>
+						<button id="sendMessageUpdate" onclick="sendUpdateByIdTest()">Test updateById</button>
+						<div id= "responseDivUpdateByIdResult"></div>
+				  </div>
+				  <div class="tab-pane fade" id="delete" role="tabpanel" aria-labelledby="contact-tab">
+						<div class="form-group">
+							<label>Ontology name:</label> 
+							<input type="text" id="ontologyTabDeleteField" class="form-control" placeholder="write ontology..." value="testrober"/>
+						</div>
+						<div class="form-group">
+							<label>Query:</label> 
+							<input type="text" id="tabDeleteField" class="form-control" placeholder="Write a query..." value="db.testrober.remove()"/>
+						</div>
+						<button id="sendMessageDelete" onclick="sendRemoveTest()">Test delete</button>
+						<div id= "responseDivDeleteResult"></div>
+				  </div>
+				  <div class="tab-pane fade" id="deleteById" role="tabpanel" aria-labelledby="contact-tab">
+						<div class="form-group">
+							<label>Ontology name:</label> 
+							<input type="text" id="ontologyTabDeleteByField" class="form-control" placeholder="write ontology..." value="testrober"/>
+						</div>
+						<div class="form-group">
+							<label>Id:</label> 
+							<input type="text" id="sofiaIdDelete" class="form-control" placeholder="write id..." value=""/>
+						</div>
+						<button id="sendMessageDelete" onclick="sendRemoveByIdTest()">Test deleteById</button>
+						<div id= "responseDivDeleteByIdResult"></div>
+				  </div>
+				</div>
+				<!-- Content here -->
+		</div>
+
     </body>
 </html>
