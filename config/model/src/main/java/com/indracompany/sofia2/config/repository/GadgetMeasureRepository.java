@@ -32,4 +32,5 @@ public interface GadgetMeasureRepository extends JpaRepository<GadgetMeasure,Str
 	List<GadgetMeasure> findByGadget(Gadget gadget);
 	List<GadgetMeasure> findById(String id);
 	List<GadgetMeasure> findByDatasource(String datasource);
+	void deleteByGadget(Gadget gadget);
 }

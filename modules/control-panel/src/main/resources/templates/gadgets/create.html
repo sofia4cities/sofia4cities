@@ -105,9 +105,19 @@
 									<div class="col-md-12 margin-bottom-20">
 									
 									  
-									  <form role="form" id="gadget_create_form" th:object="${gadgets}" method="post" class="form">
-									  <!-- FORM ACTIONS FOR INSERT-->
-								 														  									  
+									  <form role="form" id="gadget_create_form" th:object="${gadget}" method="post" class="form">
+									  		<!-- FORM ACTIONS FOR INSERT-->
+											<input th:if="${gadget.id} == null" type="hidden" name="action" th:value="@{/gadgets/create}"/>
+											
+											<!-- FORM ACTIONS FOR UPDATE -->											
+											<input th:if="${gadget.id} != null" type="hidden" name="action" th:value="@{/gadgets/update}"/>
+											<input th:if="${gadget.id} != null" type="hidden" name="_method" value="PUT"/>
+								 			
+								 			<input type="hidden" th:field="*{config}"/>
+								 			<input type="hidden" th:field="*{type}"/>
+								 			<input type="hidden" th:field="*{description}"/>
+								 			<input type="hidden" th:field="*{public}"/>	
+								 										  
 											<div class="form-body">
 									 			<div class="row">
 									 			<div class="form-group">
@@ -124,13 +134,14 @@
 															<i class="fa fa-database"></i>  <label class="control-label" th:text="#{datasources.name} + ':'">Datasource</label>
 															<div class="input-icon ">
 																<i class="la la-database"></i>
-															<select id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:field="*{identification}" th:required="true">
+															<select id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:required="true">
 																<option value="none"></option> 
-																<i class="fa fa-database"></i><option th:each="datasource:${datasources}" th:value="${datasource}" th:text="${datasource}" ></option>
+																<option th:each="datasource:${datasources}" th:value="${datasource.id}" th:text="${datasource.identification}"></option>
 															</select>
+																								
+															</div>
 														</div>
-														</div>
-												    		</div>
+												    </div>
 																											
 														</div>
 													</div>
@@ -142,15 +153,23 @@
 									 <!-- Aquí irán los iconos de los gráficos -->
 									 <div  class="container">
 									 	<div id="icons" class="row">
-									 	 									 	
+									 	 			 	
 									 					 		
 									 	</div>
-									 </div>							
+									 </div>		
+									 
+									 <!-- Aquí el select de datasource -->
+									 <div class="col-md-12 row">
+										 <div id="measures">
+										   
+										 </div>
+										 <button id="addMore" class="btn btn-success pull-right" onclick="addFormSttByType()">Add measure</button>
+									 </div>				
 									
 												<div class="form-actions">
 													<div class="pull-right">
 														<!-- CREATE -->
-															<button th:if="${gadgets.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success btn-lg" name="create"  th:value="#{gadgets.create}" > <span th:text="#{gadgets.create}"> Create</span></button>
+															<button th:if="${gadget.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success btn-lg" name="create"  th:value="#{gadgets.create}" > <span th:text="#{gadgets.create}"> Create</span></button>
 										
 													</div>
 												</div>					
@@ -180,69 +199,157 @@
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/muuri/0.5.4/muuri.min.js"></script>
 	
 	<script th:inline="javascript">
-		
+
+	var gadget= [ {
+		type : "line",
+		icon : "../static/images/dashboards/linechart.jpg",
+
+		attributes : [ {
+			name : "X axis",
+			types : [ "date", "number" ]
+		}, {
+			name : "Y axis",
+			types : [ "number" ]
+		} ],
+		series : {
+			maxseries : -1,
+			options : {
+				"title" : "Series options",
+				"type" : "object",
+				"properties" : {
+					"Name" : {
+						"type" : "string",
+						"description" : "Serie name"
+					},
+					"Color" : {
+						"type" : "string",
+						"format" : "color",
+						"title" : "Serie color",
+						"default" : "#ffa500"
+					}
+				}
+			}
+		},
+		options : {
+			beginToZero : true
+		}
+	}, {
+		type : "bar",
+		icon : "../static/images/dashboards/barchart.jpg",
+		attributes : [ {
+			name : "X axis",
+			types : [ "date", "number", "string" ]
+		}, {
+			name : "Y axis",
+			types : [ "number" ]
+		} ],
+		series : {
+			maxseries : -1,
+			options : {
+				"title" : "Series options",
+				"type" : "object",
+				"properties" : {
+					"Name" : {
+						"type" : "string",
+						"description" : "Serie name"
+					},
+					"Color" : {
+						"type" : "string",
+						"format" : "color",
+						"title" : "Serie color",
+						"default" : "#ffa500"
+					}
+				}
+			}
+		},
+		options:{}
+	},
+
+	{
+		type : "pie",
+		icon : "../static/images/dashboards/piechart.jpg",
+		attributes : [ {
+			name : "X axis",
+			types : [ "date", "number", "string" ]
+		}, {
+			name : "Y axis",
+			types : [ "number" ]
+		} ],
+		series : {
+			maxseries : 1,
+			options : {
+				"title" : "Series options",
+				"type" : "object",
+				"properties" : {
+					"Name" : {
+						"type" : "string",
+						"description" : "Serie name"
+					},
+					"Color" : {
+						"type" : "string",
+						"format" : "color",
+						"title" : "Serie color",
+						"default" : "#ffa500"
+					}
+				}
+			}
+		},
+		options:{}
+	},
+
+	{
+		type : "map",
+		icon : "../static/images/dashboards/bordermap.png",
+		attributes : [ {
+			name : "Latitude",
+			types : [ "number" ]
+		}, {
+			name : "Longitude",
+			types : [ "number" ]
+		}, {
+			name : "Popup",
+			types : [ "number", "string", "boolean" ],
+			multi :true //multivalue
+		} ],
+		series : {
+			maxseries : 1,
+			options : {
+			}
+		},
+		options:{
+			center:{
+				lat:30,
+				lng:30,
+				zoom:2
+			}
+		}
+	}, {
+		type : "wordcloud",
+		icon : "../static/images/dashboards/wordchart.jpg",
+		attributes : [ {
+			name : "Words",
+			types : [ "number", "string" ]
+		}],
+		series : {
+			maxseries : 1,
+			options : {
+			}
+		},
+		options:{
+		}
+	}
+
+	];
+	
 	//De momento pruebo sin parámetros. Añado en JSON en la función..
 	function showGadgetSelect(){
 		$("#icons").empty();
+		$("#vercamposdatasource").empty();
 		
-		var gadget= [ {
-			type : "line",
-			icon : "../static/images/dashboards/linechart.jpg",
-
-			attributes : [ {
-				name : "X axis",
-				types : [ "date", "number" ]
-			}, {
-				name : "Y axis",
-				types : [ "number" ]
-			} ],
-			series : {
-				maxseries : -1,
-				options : {
-					"title" : "Series options",
-					"type" : "object",
-					"properties" : {
-						"Name" : {
-							"type" : "string",
-							"description" : "Serie name"
-						},
-						"Color" : {
-							"type" : "string",
-							"format" : "color",
-							"title" : "Serie color",
-							"default" : "#ffa500"
-						}
-					}
-				}
-			},
-			options : {
-				beginToZero : true
-			}
-		}, {
-			type : "bar",
-			icon : "../static/images/dashboards/barchart.jpg",
-			options : ""
-		},
-
-		{
-			type : "pie",
-			icon : "../static/images/dashboards/piechart.jpg",
-			options : ""
-		},
-
-		{
-			type : "map",
-			icon : "../static/images/dashboards/bordermap.png",
-			options : ""
-		}, {
-			type : "wordcloud",
-			icon : "../static/images/dashboards/wordchart.jpg",
-			options : ""
-		}
-
-		];	
+	
 		
 		if(($("#datasources").val())!="none"){ 
 		
@@ -250,14 +357,87 @@
 		$.each(gadget, function() {
 						var Type = this.type;
 						var Icon = this.icon;
-							//Esto está mal. Nunca lo coge como vacía por lo tanto mal referenciado
+							
+						$("#icons").append('<div class="col-md-3"> <div class="card card-01" onclick="showMeasures(\'' + Type + '\')"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
 						
-										
-						   //Problema: no muestra imágenes pero sí los nombres (type). 
-						$("#icons").append('<div class="col-md-3"> <div class="card card-01"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
-					} )}
+					} )
+		  }
+		
 	}
-    </script>
 	
-
+	function iterate(obj, stack, fields) {
+    	for (var property in obj) {
+           if (obj.hasOwnProperty(property)) {
+               if (typeof obj[property] == "object") {
+                   iterate(obj[property], stack + (stack==""?'':'.') + property, fields);
+        } else {
+                   fields.push({field:stack + (stack==""?'':'.') + property, type:typeof obj[property]});
+               }
+           }
+      	}    
+      	return fields;
+   	}
+	// <![CDATA[
+	var stt;
+	
+	function addFormSttByType(){
+		var measure = "";
+		var division;
+		switch (stt.attributes.length){
+			case 1: division='col-md-5';break;
+			case 2: division='col-md-3';break;
+			case 3: division='col-md-2';break;
+			default: division='col-md-1';break;
+		}
+		
+		var mhtml = '<div class="gserie col-md-12">';
+		for(var i = 0; i < stt.attributes.length; i++){
+			var atr = stt.attributes[i];
+			mhtml += '<div class="form-group ' + division + '">';
+			mhtml += '<label class="control-label"> ' + atr.name + ' </label>';
+			mhtml += '<select ' + (atr.multi?'multiple=multiple':'') + ' onchange="refreshGadget()" class="form-control ' + atr.types.join(" ") + '" data-live-search="true" data-width="100%"></select>';
+			mhtml	+= '</div>'
+		}
+		
+		mhtml += '<div class="form-group ' + division + '">';
+		mhtml += '<label class="control-label"> Name </label>';
+		mhtml += '<input class="form-control" data-live-search="true" data-width="100%"/>'
+		mhtml += '</div>'
+		if(!($(".gserie").length == 0 && stt.series.maxseries == 1)){
+			mhtml += '<button class="btn btn-danger" onclick="removeMeasure(' + $(".gserie").length + ')">Remove measure</button>'
+		}
+		mhtml += '</div>'
+		
+		$("#measures").append(mhtml);
+		if(stt.series.maxseries != -1 && stt.series.maxseries >= $(".gserie").length){
+			$("#addMore").hide();
+		}
+		else{
+			$("#addMore").show();
+		}
+	}
+	// ]]>
+	function refreshGadget(){
+		//Update live gadget
+	}
+	
+	function removeMeasure(index){
+		$(".gserie")[index].remove();
+		$("#addMore").show();
+	}
+	
+	function showMeasures(type){
+		$.get("/controlpanel/datasources/getSampleDatasource/" + $("#datasources").val(), function (jsonString){
+			var fields = iterate(jsonString[0],"", []);
+		    stt = gadget.filter(function(g){return g.type == type})[0];
+		    $("#measures").empty().append(addFormSttByType());
+		    debugger;
+			for (var i in fields){
+		    	$('.' + fields[i].type).append('<option value="' + fields[i].field + '">' + fields[i].field + '</option>');
+		    }
+		});		
+	}
+	
+	</script>
+	
 </html> 

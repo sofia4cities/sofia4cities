@@ -163,7 +163,7 @@ public class GadgetDatasourceController {
 		@DeleteMapping("/{id}")
 		public String delete(Model model, @PathVariable("id") String id) {
 
-			this.gadgetDatasourceService.deleteGadgetDatasource(id);
+			this.gadgetDatasourceService.deleteGadgetDatasource(id, utils.getUserId());
 			return "redirect:/datasources/list";
 		}
 		
