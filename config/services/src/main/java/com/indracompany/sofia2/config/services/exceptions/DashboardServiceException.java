@@ -11,18 +11,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.controller;
+package com.indracompany.sofia2.config.services.exceptions;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+public class DashboardServiceException extends RuntimeException {
 
-@RestController
-public class LoginRestController {
-
-	@CrossOrigin
-    @RequestMapping("/loginRest")
-    public String login() {
-        return "{\"Ok\":true}";
-    }
+	public DashboardServiceException(String message)
+	{
+		super(message);
+	}
 }

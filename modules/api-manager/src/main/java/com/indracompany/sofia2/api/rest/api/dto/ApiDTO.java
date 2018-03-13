@@ -40,10 +40,15 @@ public class ApiDTO implements Cloneable, Serializable {
 	@Setter
 	private Integer version;
 
-	@ApiModelProperty(value = "API Public/Private")
+	@ApiModelProperty(value = "API Type")
 	@Getter
 	@Setter
 	private String type;
+	
+	@ApiModelProperty(value = "API Public/Private")
+	@Getter
+	@Setter
+	private Boolean isPublic;
 
 	@ApiModelProperty(value = "API Category")
 	@Getter

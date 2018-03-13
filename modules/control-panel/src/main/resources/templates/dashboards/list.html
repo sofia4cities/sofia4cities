@@ -46,6 +46,30 @@
 		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
 		<!-- END SIDEBAR -->
 		
+		<script type="text/javascript" th:inline="javascript">
+			var showDashboardURLDialog = function(url){
+				$.confirm({
+					icon: 'fas fa-chart-pie',
+					title: "URL Dashboard",
+					theme: 'dark',
+					columnClass: 'medium',
+					content: '<input class="col-md-12 form-control" readonly="readonly" value="' + window.location.origin + url + '" type="text"/>',
+					draggable: true,
+					dragWindowGap: 100,
+					backgroundDismiss: true,
+					closeIcon: true,
+					buttons: {
+						Ok: {
+							text: "Ok",
+							btnClass: 'btn btn-sm btn-danger btn-outline',
+							action: function(){ 
+							}											
+						}
+					}
+				});
+			}
+		</script>
+		
 		<!-- BEGIN CONTENT -->
 		<div class="page-content-wrapper">
 			
@@ -84,9 +108,9 @@
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
 								</div>								
 								<div class="actions margin-right-20">
-									<div class="btn-group">									
+									<div class="btn-group">												
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" id="createDashboardButton" ><i class="fas fa-chart-line"></i> <span th:text="#{gen.create}">New </span></button>								
 										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
-										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../dashboards/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
 									</div>										
 								</div>
 							</div>
@@ -169,13 +193,16 @@
 																<div class="grupo-iconos">
 																	<!-- VIEW -->		
 																														
-																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/view/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editor/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																	
-																	<!-- INDEXES -->
-																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
+																	<!-- Full EDIT -->
+																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} + ' FullScreen'" th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
+																	
+																	<!-- URL -->
+																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" title="URL Dashboard" data-original-title="URL Dashboard" th:onclick="'javascript:showDashboardURLDialog(\'' + @{|/dashboard/view/${dashboard.id}} + '\');'"><i class="fa fa-link"></i></span>
 																</div>
 															</td>
 														</tr>
@@ -222,7 +249,7 @@
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
 	
 	
-	<script th:inline="javascript">	
+	<script type="text/javascript" th:inline="javascript">	
 	
 	// TEMPLATE SEARCH FORM.
 	var sname = [[${param.name}]] || '';
@@ -286,6 +313,53 @@
 			$('#form_dashboard')[0].submit();
 		});
 		
+		var createDashboard = function(name){
+			$.post(
+				"/controlpanel/dashboards/create", 
+				{identification : name}
+			).done(function(id){
+				navigateUrl("/controlpanel/dashboards/editor/" + id)}
+			).fail(
+				function(e){
+					console.log("Error creating dashboard, message detail: " + e.responseText);
+				}
+			)
+		}
+		
+		var createDashboardDialog = function(){
+			$.confirm({
+				icon: 'fas fa-chart-pie',
+				title: "Insert the new dashboard name",
+				theme: 'dark',
+				columnClass: 'medium',
+				content: "<input class='col-md-12 form-control' type=text id='newDashboard'></input>",
+				draggable: true,
+				dragWindowGap: 100,
+				backgroundDismiss: true,
+				closeIcon: true,
+				buttons: {
+					Ok: {
+						text: "Ok",
+						btnClass: 'btn btn-sm btn-danger btn-outline',
+						action: function(){ 
+							if($("#newDashboard").val()=="" || !$("#newDashboard").val()){
+				                console.log("dashboard empty");
+				                return;
+				            }
+				            createDashboard($("#newDashboard").val());
+				            $( this ).dialog( "close" );
+						}											
+					},
+					close: {
+						text: "Cancel",
+						btnClass: 'btn btn-sm btn-default btn-outline',
+						action: function (){} //GENERIC CLOSE.		
+					}
+				}
+			});
+		}
+		
+		$("#createDashboardButton").on("click", createDashboardDialog);
 		// SEARCH FORM
 		$('#search_dashboard').on('click',function(){ $('#form_dashboard')[0].submit(); });
 		

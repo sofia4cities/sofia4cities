@@ -30,6 +30,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 
 		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND CODEMIRROR  -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
 
 		
@@ -100,7 +101,7 @@
 							<div class="portlet-body" style="display: block; height: auto;">
 								
 								<div class="row">
-									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+									<div class="col-md-12 alert-zone" id="alerts"><!-- ALERTS ZONE -->
 										<div class="alert alert-danger display-hide">
 											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
 										</div>
@@ -167,7 +168,7 @@
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{simulation.interval} + ':'">Interval</label>
-															<input th:required="true" type="number" th:placeholder="#{simulation.interval.placeholder}" class="form-control" name="interval" th:value="${simulation.interval}"/>
+															<input th:required="true" type="number" th:placeholder="#{simulation.interval.placeholder}" class="form-control" name="interval" th:value="${simulation.interval} "/>
 														</div>
 													</div>
 												</div>
@@ -355,11 +356,11 @@
 		<div  class="col-md-3 col-sm-3 col-xs-6" >	
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.date.from} + ':'"> Begin</label>
-				<input name="from" id="dateFrom" type="date" class="form-control no-remove" th:placeholder="#{simulation.date.to}"/>	
+				<input name="from" id="dateFrom" type="text" class="form-control datetime  no-remove" th:placeholder="#{simulation.date.from}"/>	
 			</div>
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.date.to} + ':'"> End</label>
-				<input name="to" id="dateTo" type="date" class="form-control no-remove" th:placeholder="#{simulation.date.to}"/>	
+				<input name="to" id="dateTo" type="text" class="form-control datetime no-remove" th:placeholder="#{simulation.date.to}"/>	
 			</div>
 		</div>
 	</div>
@@ -367,7 +368,7 @@
 		<div class="col-md-3 col-sm-3 col-xs-6" >
 			<div class="form-group">
 				<label class="control-label" th:text="#{simulation.string.fixed} + ':'"> Value</label>
-				<input name="value" type="date" class="form-control no-remove" th:placeholder="#{simulation.string.fixed}"/>
+				<input id="dateFixed" name="value" type="text" class="form-control datetime  no-remove" th:placeholder="#{simulation.date.fixed}"/>
 			</div>
 		</div>
 	</div>
@@ -385,6 +386,8 @@
 	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
 
 	
+	<script th:src="@{/static/vendor/moment.js}"/>	
+	<script th:src="@{/static/vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js}"/>
 	
 	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
     <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
@@ -407,11 +410,20 @@
 		"language" : currentLanguage
 
 	};
-
+	function setDateTimePicker(inputs) {
+		inputs.datetimepicker({
+			format: currentFormat,
+			locale: currentLanguage,
+			useCurrent: true
+		});
+	}
 	var defaultOption=[[#{simulation.choose}]];
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
 	$( document ).ready(function() {
+		
+		currentFormat =  'MM/DD/YYYY HH:mm:ss';    
+		
 		if(simulationJson !=null)
 		{
 			getOntologyFields();

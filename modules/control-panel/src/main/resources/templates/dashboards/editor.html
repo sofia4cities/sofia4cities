@@ -1,0 +1,213 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+	    <meta name="description" content="Dashboard list template"/>
+		<meta name="keywords" content="sofia2,smart,cities,platform,Indra"/>
+		<meta name="author" content="Indra Sistemas, S.A."/>
+		
+		<!-- BEGIN WEB FONT -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+		
+		<!-- PLUGINS STYLE SHEETS AND BOOSTRAP-TIMEPICKER -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>
+		
+	</head>	
+	
+	<!-- Funciones AJAX -->
+	<script th:inline="javascript">
+
+		function getQueryExecutedFragment() {
+			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#query").val(), 'queryType': 'SQL', 'ontologyIdentification': ''});
+			$("#dimensionsPanel").show();
+		} 
+	
+
+		function getOntologyFields() {
+
+			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
+
+		}
+	
+	</script>
+	
+	<script src="../env/env.js"></script>
+  	<script>
+	    window.__env = window.__env || {};
+	    window.__env.socketEndpointConnect = '/dashboardengine/dsengine/solver';
+	    window.__env.socketEndpointSend = '/dsengine/solver';
+	    window.__env.socketEndpointSubscribe = '/dsengine/broker';
+	    window.__env.endpointSofia2ControlPanel = '/controlpanel';
+	    window.__env.endpointSofia2DashboardEngine = '/dashboardengine';
+	    window.__env.dashboardEngineUsername = 'administrator';
+	    window.__env.dashboardEnginePassword = 'changeIt!';
+	    window.__env.dashboardEngineLoginRest = '/loginRest';
+	    window.__env.enableDebug = false;
+	
+	</script>
+	
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+	
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/vendor.css"/>
+	
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>
+	
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>
+	
+	<!-- page-sidebar-closed to start page with collapsed menu -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>		
+			
+		<!-- BEGIN SIDEBAR -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+		
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE HEADER-->
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM -->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/dashboards/list}"> <span th:text="#{name.visualization}">Visualization</span></a><i class="fa fa-circle"></i></li>
+						<li><span>Editor Dashboard</span></li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{datasources.new}">New Datasource</span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">						
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="la la-database font-grey-gallery"></i>						
+									
+									<!-- FORM TITLE -->
+									<span class="caption-subject font-grey-gallery uppercase" > Dashboard Editor: &nbsp;</span><b th:if="${dashboard.id} != null" th:text="${dashboard.identification} + ':'"></b>
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>
+								
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> 
+											<span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>										
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
+									</div>
+									<div class="col-md-12">
+									
+									
+										<form role="form" id="dashboard_create_form" th:object="${dashboard}" method="post" class="form">
+											<!-- FORM BUTTONS -->
+											<div class="form-actions">
+												<div class="pull-right">
+													<!-- REMOVE -->
+													<button th:if="${dashboard.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'DashboardsCreateController.deleteDashboard(\'' + ${dashboard.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+												</div>
+											</div>
+											<div class="form-body">
+												<div ng-app="s2DashboardFramework">
+												<s2dashboard editmode="true" selectedpage="0" th:id="${dashboard.id}" th:attr="public=${dashboard.public}" class="flex layout-column"></s2dashboard>
+												</div>
+												
+												<script src="/controlpanel/static/dashboards/scripts/vendor.js"></script>
+												
+												<script src="/controlpanel/static/dashboards/gridster.js"></script>
+												
+												<!-- Angular Material Fileinput -->
+												<link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/>
+												<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>
+												
+												<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
+											</div>
+										</form>
+										
+										<!-- AUXILIAR FORM TO DELETE DASHBOARD -->
+										<form id="delete_dashboard_form" class="delete-dashboard hide"  th:action="@{'/dashboards/'+${dashboard.id}}"  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="id" th:value="${dashboard.id}"/>
+										</form>	
+									</div>									
+								</div>
+								
+							</div>
+						</div><!-- END PORTLET BASIC  -->						
+					</div><!-- END COL-12 -->												
+				</div><!-- END MAIN ROW -->				
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>	
+	
+	<!-- CORE CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/dashboardsCreate.js}"/>
+	
+	
+	
+	
+	
+</body>
+</html> 
