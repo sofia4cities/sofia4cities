@@ -86,7 +86,7 @@ var ApiCreateController = function() {
         
         switch (apiType) {
             case 'iot':
-            	apiEndPoint.val(endpoint + "/v" + apiVersion + "/" + apiName);
+            	apiEndPoint.val(endpoint + "server/api/v" + apiVersion + "/" + apiName);
 //            	apiSwagger.val(endpoint + "/services/management/api-docs?url=/services/management/swagger" + "/v" + apiVersion + "/" + apiName + "/swagger.json");
             	apiSwagger.val(endpoint + "/services/management/api-docs?url=/services/management/swagger" + "/" + apiName + "/swagger.json");
                 break;

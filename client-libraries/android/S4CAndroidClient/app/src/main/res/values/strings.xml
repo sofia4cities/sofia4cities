@@ -37,13 +37,13 @@
     <!-- Preferences strings -->
     <string name="pref_email_name">Your e-mail address</string>
     <string name="pref_ontology_name">Ontology name</string>
-    <string name="pref_thinkp_name">ThinKP name</string>
+    <string name="pref_thinkp_name">Client Platform</string>
     <string name="pref_token_name">Token</string>
 
     <string name="pref_email_summary">E-mail to be notified</string>
     <string name="pref_ontology_summary">Ontology used</string>
-    <string name="pref_thinkp_summary">ThinKP used</string>
-    <string name="pref_token_summary">ThinKP Token</string>
+    <string name="pref_thinkp_summary">Client Platform used</string>
+    <string name="pref_token_summary">Client Platform Token</string>
 
     <string name="pref_sensor_name">Sensor selection</string>
     <string name="pref_sensor_summary">Identify the related sensor</string>

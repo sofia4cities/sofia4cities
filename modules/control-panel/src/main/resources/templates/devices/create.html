@@ -145,7 +145,7 @@
 												name="action" th:value="@{/devices/update}" /> <input
 												th:if="${device.id} != null" type="hidden" name="_method"
 												value="PUT" />
-
+											<input type="hidden" name="userId" th:value="${device.userId}"/>
 
 
 											<div class="form-body">

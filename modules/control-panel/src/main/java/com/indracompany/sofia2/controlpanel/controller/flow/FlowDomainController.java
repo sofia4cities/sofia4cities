@@ -57,7 +57,7 @@ public class FlowDomainController {
 
 	@Value("${sofia2.flowengine.services.baseurl:http://localhost:8082/sofia2/flowengine/admin}")
 	private String baseUrl;
-	
+
 	@Value("${sofia2.flowengine.services.proxyurl:http://localhost:5050/}")
 	private String proxyUrl;
 
@@ -107,7 +107,7 @@ public class FlowDomainController {
 				// change memory to MB
 				for (FlowEngineDomainStatus domainStatus : domainStatusList) {
 					if (!domainStatus.getMemory().isEmpty()) {
-						Double mem = new Double(domainStatus.getMemory()) / 1024d;
+						Double mem = new Double(domainStatus.getMemory()) / (1024d * 1024d);
 						domainStatus.setMemory(String.format("%.2f", mem));
 					}
 					if (!domainStatus.getCpu().isEmpty()) {
