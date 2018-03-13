@@ -115,6 +115,11 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 			sessionList.remove(sessionKey);
 			return false;
 		}
+		else {
+			//renew session on activity
+			session.setLastAccess(now);
+			sessionList.put(sessionKey, session);
+		}
 
 		return true;
 
@@ -157,6 +162,9 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 
 	@Override
 	public Optional<IoTSession> getSession(String sessionKey) {
+		if(StringUtils.isEmpty(sessionKey)) {
+			return Optional.empty();
+		}
 		final IoTSession session = sessionList.get(sessionKey);
 		if(session == null) {
 			return Optional.empty();
@@ -171,6 +179,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		final long now = System.currentTimeMillis();
 		final Predicate<IoTSession> delete = s -> now - s.getLastAccess().toInstant().toEpochMilli() >= s.getExpiration();
 		sessionList.values().removeIf(delete);
+		log.info("Deleting expired session");
 	}
 
 }

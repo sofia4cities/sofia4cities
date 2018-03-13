@@ -881,3 +881,23 @@ background: linear-gradient(to right, #75b8f3, #9353e6);
 .op_desc_div{
 	padding: 10px;
 }
+
+/*  Devices */
+#id_parameter_metaInfo {
+	height: auto;
+	box-shadow: none;
+	min-height: 100px;
+}
+
+.metainfo {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.metainfo p {
+	margin: 0px;
+}
+
+.metainfo p span {
+	margin-left: 5px;
+}
