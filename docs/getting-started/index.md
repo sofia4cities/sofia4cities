@@ -74,9 +74,9 @@ Complete the following information for the new *Device* ![Device Creation](image
 ### Creating a Simulator
 
 It is possible de define simulators for the device to help test the ontology and to generate data to aid in development.
-To do that, go to the *DEVICES -> Devices Simulator* menu option and use the **Create** button placed in the right upper corner to define a new *Device Simulator*.
+To do that, go to the *DEVICES -> Devices Simulator* menu option and use the **Create** button placed in the right upper corner to define a new *Device Simulator* ![Simulator Creation](images/Simulator_list.png).
 
-Complete the following information for the new *Device Simulator*:
+Complete the following information for the new *Device Simulator* ![Simulator Creation](images/Simulator_creation.png):
 
 - Identification: Choose a unique name for the *Device Simulator*.
 - Device: choose one of the available *Devices*.
@@ -88,13 +88,14 @@ Complete the following information for the new *Device Simulator*:
 Finally, it is necessary to save the simulator by using the **New** button.
 
 The *Control Panel* web application register the simulation task. For executing the simulation it is necessary to start the application device-simulator.
+
 To do that, go to S:\sources\sofia2-s4c\modules\device-simulator and execute:
 
 ```sh
 mvn spring-boot:run
 ```
 
-
+You can see that the simulator insert data using the **TOOLS -> Database Query Tools**.
 
 ### Creating a Dashboard
 
@@ -109,9 +110,10 @@ Execute S:\start.bat, go to S:\sources\sofia2-s4c\modules\api-manager and run:
 mvn spring-boot:run
 ```
 
-After the *API Manager* server starts go back to the *Control Panel* web application and use the *API MANAGER -> APIs Definition* menu option. Once this is done, use the **Create** button.
+After the *API Manager* server starts go back to the *Control Panel* web application and use the *API MANAGER -> APIs Definition* menu option ![Apimanager list](images/Apimanager_list.png). 
+Once this is done, use the **Create** button.
 
-You have to provide several information to create the API:
+You have to provide several information to create the API ![Apimanager creation](images/Apimanager_creation.png):
 
 - Identification: select a unique name for your API.
 - API type: currently only expose an *Ontology* as API REST is available.
@@ -134,7 +136,7 @@ You have to provide several information to create the API:
 
   Finally, use the **Edit** button to save the API data.
 
-  The next step is to create an *API Manager Token*. These tokens are used to authorize the REST operations.
+  The next step is to create an *API Manager Token*. These tokens are used to authorize the REST operations ![Tokens list](images/Apimanager_token_list.png).
 
   To test the API you can use the integrated *swagger* client.
   Go to the *API MANAGER -> APIs Definition* menu option, and use the **SWAGGER** option of the API that you want to test.
