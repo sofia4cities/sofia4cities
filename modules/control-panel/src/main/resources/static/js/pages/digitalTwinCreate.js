@@ -17,85 +17,25 @@ var DigitalTwinCreateController = function() {
 	var AceEditor;
 	var editor;
 	var AllActionsLogic = [];
+	var mountablePropModel = $('#properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
+	var mountableActModel = $('#actions').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
+	var mountableEventModel = $('#events').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	// CONTROLLER PRIVATE FUNCTIONS	--------------------------------------------------------------------------------
-    
-	$('#properties').mounTable(jsonProperties,{
-		model: '.mountable-model',
-		noDebug: false,
-		addLine:{				
-			button: "#button2",					
-			onClick: function (element){
-				console.log('Property added!');				
-				return true;
-			}
-		}			
-	});
 	
-	$('#actions').mounTable(jsonActions,{
-		model: '.mountable-model',
-		noDebug: false,
-		addLine:{				
-			button: "#button3",					
-			onClick: function (element){
-				console.log('Action added!');
-				return true;
-			}
-		}			
-	});
 	
-	$('#events').mounTable(jsonEvents,{
-		model: '.mountable-model',
-		noDebug: false,
-		addLine:{				
-			button: "#button4",					
-			onClick: function (element){
-				console.log('Event added!');				
-				return true;
-			}
-		}			
-	});
-	
-	// UPDATE TITLE TYPE AND DESCRIPTION IF CHANGED 
-	$('#identification').on('change', function(){
-		var jsonFromEditor = {};
-		var datamodelLoaded = $('#properties').attr('data-loaded');
-		if (datamodelLoaded){			
-			if (IsJsonString(editor.getText())){				
-				jsonFromEditor = editor.get();
-				jsonFromEditor["title"] = $(this).val();
-				jsonFromEditor["links"] = {};
-				editor.set(jsonFromEditor);
-			}			
-		}		
-	});
-	
-	$('#description').on('change', function(){
-		var jsonFromEditor = {};
-		var datamodelLoaded = $('#properties').attr('data-loaded');
-		if (datamodelLoaded){			
-			if (IsJsonString(editor.getText())){				
-				jsonFromEditor = editor.get();
-				jsonFromEditor["description"] = $(this).val();
-				editor.set(jsonFromEditor);
-			}			
-		}	
-		
-	});
-	
-	$('#type').on('change', function(){
-		var jsonFromEditor = {};
-		var datamodelLoaded = $('#properties').attr('data-loaded');
-		if (datamodelLoaded){			
-			if (IsJsonString(editor.getText())){				
-				jsonFromEditor = editor.get();
-				jsonFromEditor["type"] = $(this).val();
-				editor.set(jsonFromEditor);
-			}			
-		}	
-		
-	});
 	var generateSchema=false
 	$("#createBtn").on('click',function(){
+		if(generateSchema){
+			if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined)
+				DigitalTwinCreateController.submitform();
+		}else{
+			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: digitalTwinCreateJson.validations.schema});
+			return false;
+		}
+		
+	});
+	
+	$("#updateBtn").on('click',function(){
 		if(generateSchema){
 			if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined)
 				DigitalTwinCreateController.submitform();
@@ -127,9 +67,18 @@ var DigitalTwinCreateController = function() {
 		events=[];
 		actions=[];
 		logControl ? console.log('updateSchema() -> ') : '';
+		resetSchemaEditor();
 		updateSchemaProperties();
 		updateSchemaActions();
 		updateSchemaEvents();
+	}
+	
+	var resetSchemaEditor = function(){
+		jsonFromEditor = {};
+		jsonFromEditor["title"] = $('#identification').val();
+		jsonFromEditor["links"] = {};
+		jsonFromEditor["description"] = $('#description').val();
+		editor.setText(JSON.stringify(jsonFromEditor));
 	}
 	
 	var props=[];
@@ -256,7 +205,7 @@ var DigitalTwinCreateController = function() {
 		var updateEvent = $("input[name='event\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
 		var updateDescription = $("input[name='descriptionsEvents\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();	
 		var updateTypes = $("select[name='typeEvent\\[\\]']").map(function(){return $(this).val();}).get();
-		var updateStatus = $("input[name='status']").map(function(){ if ($(this).val() !== ''){ return $(this).is(":checked"); }}).get();
+		var updateStatus = $("input[name='status\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).is(":checked"); }}).get();
 		
 		var schemaObj = {};
 		
@@ -321,6 +270,19 @@ var DigitalTwinCreateController = function() {
 		editor = new jsoneditor.JSONEditor(container, options, "");			
 	}
 	
+	// DELETE DIGITAL TWIN TYPE
+	var deleteDigitalTwinTypeConfirmation = function(digitalTwinTypeId){
+		console.log('deleteDigitalTwinTypeConfirmation() -> formId: '+ digitalTwinTypeId);
+		
+		// no Id no fun!
+		if ( !digitalTwinTypeId ) {$.alert({title: 'ERROR!', type: 'red' , theme: 'dark', content: digitalTwinCreateJson.validations.validform}); return false; }
+		
+		logControl ? console.log('deleteDigitalTwinTypeConfirmation() -> formAction: ' + $('.delete-digital').attr('action') + ' ID: ' + $('#delete-digitaltwintypeId').attr('digitaltwintypeId')) : '';
+		
+		// call ontology Confirm at header. 
+		HeaderController.showConfirmDialogDigitalTwinType('delete_digitaltwintype_form');	
+	}
+	
 	// REDIRECT URL
 	var navigateUrl = function(url){
 		window.location.href = url; 
@@ -335,8 +297,213 @@ var DigitalTwinCreateController = function() {
 		},
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
-			logControl ? console.log(LIB_TITLE + ': init()') : '';	
+			
+			logControl ? console.log(LIB_TITLE + ': init()') : '';
+			
+			$('#properties').mounTable(jsonProperties,{
+				model: '.mountable-model',
+				noDebug: false,
+				addLine:{				
+					button: "#button2",					
+					onClick: function (element){
+						console.log('Property added!');				
+						return true;
+					}
+				}			
+			});
+			
+			$('#actions').mounTable(jsonActions,{
+				model: '.mountable-model',
+				noDebug: false,
+				addLine:{				
+					button: "#button3",					
+					onClick: function (element){
+						console.log('Action added!');
+						return true;
+					}
+				}			
+			});
+			
+			$('#events').mounTable(jsonEvents,{
+				model: '.mountable-model',
+				noDebug: false,
+				addLine:{				
+					button: "#button4",					
+					onClick: function (element){
+						console.log('Event added!');				
+						return true;
+					}
+				}			
+			});
+			
+			// UPDATE TITLE TYPE AND DESCRIPTION IF CHANGED 
+			$('#identification').on('change', function(){
+				var jsonFromEditor = {};
+				var datamodelLoaded = $('#properties').attr('data-loaded');
+				if (datamodelLoaded){			
+					if (IsJsonString(editor.getText())){				
+						jsonFromEditor = editor.get();
+						jsonFromEditor["title"] = $(this).val();
+						jsonFromEditor["links"] = {};
+						editor.set(jsonFromEditor);
+					}			
+				}		
+			});
+			
+			$('#description').on('change', function(){
+				var jsonFromEditor = {};
+				var datamodelLoaded = $('#properties').attr('data-loaded');
+				if (datamodelLoaded){			
+					if (IsJsonString(editor.getText())){				
+						jsonFromEditor = editor.get();
+						jsonFromEditor["description"] = $(this).val();
+						editor.set(jsonFromEditor);
+					}			
+				}	
+				
+			});
+			
+			$('#type').on('change', function(){
+				var jsonFromEditor = {};
+				var datamodelLoaded = $('#properties').attr('data-loaded');
+				if (datamodelLoaded){			
+					if (IsJsonString(editor.getText())){				
+						jsonFromEditor = editor.get();
+						jsonFromEditor["type"] = $(this).val();
+						editor.set(jsonFromEditor);
+					}			
+				}	
+				
+			});
+			
 			createEditor();
+			// INSERT MODE ACTIONS  (ontologyCreateReg.actionMode = NULL ) 
+			if ( digitalTwinCreateJson.actionMode === null){
+				logControl ? console.log('|---> Action-mode: INSERT') : '';
+			}
+			// EDIT MODE ACTION 
+			else {	
+				logControl ? console.log('|---> Action-mode: UPDATE') : '';
+				
+				// if digitalTwinType has properties  we load it!.
+				propertiesJson = digitalTwinCreateJson.properties;			
+				if (propertiesJson.length > 0 ){
+					
+					// MOUNTING PROPERTIES ARRAY
+					var name, type , units, direction, description = '';
+					$.each( propertiesJson, function (key, object){			
+						
+						name = object.name; 
+						type = object.type; 
+						units= object.unit;
+						direction = object.direction;
+						description = object.description;
+						
+						propertyUpdate = {"property": name, "typeProp": type, "units" : units, "direction" : direction, "descriptionsProps": description};					
+						jsonProperties.push(propertyUpdate);
+						
+					});
+
+					logControl ? console.log('propertiesArr on UPDATE: ' + jsonProperties.length + ' Arr: ' + JSON.stringify(jsonProperties)) : '';
+					
+					$('#properties > tbody').html("");
+					$('#properties > tbody').append(mountablePropModel);
+					
+					$('#properties').mounTable(jsonProperties,{
+						model: '.mountable-model',
+						noDebug: false,
+						addLine:{				
+							button: "#button2",					
+							onClick: function (element){
+								console.log('Property added!');				
+								return true;
+							}
+						}			
+					});
+				}
+				
+				// if digitalTwinType has actions  we load it!.
+				actionsJson = digitalTwinCreateJson.actions;			
+				if (actionsJson.length > 0 ){
+					
+					// MOUNTING ACTIONS ARRAY
+					var name, description = '';
+					$.each( actionsJson, function (key, object){			
+						
+						name = object.name; 
+						description = object.description;
+						
+						ActionUpdate = {"action": name, "descriptionsActions": description};					
+						jsonActions.push(ActionUpdate);
+						
+					});
+
+					logControl ? console.log('jsonActions on UPDATE: ' + jsonActions.length + ' Arr: ' + JSON.stringify(jsonActions)) : '';
+					
+					$('#actions > tbody').html("");
+					$('#actions > tbody').append(mountableActModel);
+					
+					$('#actions').mounTable(jsonActions,{
+						model: '.mountable-model',
+						noDebug: false,
+						addLine:{				
+							button: "#button3",					
+							onClick: function (element){
+								console.log('Action added!');				
+								return true;
+							}
+						}			
+					});
+				}
+				
+				// if digitalTwinType has actions  we load it!.
+				eventsJson = digitalTwinCreateJson.events;			
+				if (eventsJson.length > 0 ){
+					
+					// MOUNTING ACTIONS ARRAY
+					var name, description, type, status = '';
+					$.each( eventsJson, function (key, object){			
+						
+						name = object.name; 
+						description = object.description;
+						type = object.type;
+						status = object.status;
+						
+						EventUpdate = {"event": name, "typeEvent": type, "status":status,"descriptionsEvents": description};					
+						jsonEvents.push(EventUpdate);
+						
+					});
+
+					logControl ? console.log('jsonEvents on UPDATE: ' + jsonEvents.length + ' Arr: ' + JSON.stringify(jsonEvents)) : '';
+					
+					$('#events > tbody').html("");
+					$('#events > tbody').append(mountableEventModel);
+					
+					$('#events').mounTable(jsonEvents,{
+						model: '.mountable-model',
+						noDebug: false,
+						addLine:{				
+							button: "#button4",					
+							onClick: function (element){
+								console.log('Event added!');				
+								return true;
+							}
+						}			
+					});
+				}
+				editor.setMode("text");
+				editor.setText(digitalTwinCreateJson.json);
+				editor.setMode("tree");
+				
+				
+				AceEditor = ace.edit("aceEditor");
+				var logica = digitalTwinCreateJson.logic;
+					
+				if(logica.charAt(0) === '\"'){
+					logica = logica.substr(1, logica.length-2);
+				}
+				AceEditor.setValue(logica);
+			}
 		},
 		
 		// REDIRECT
@@ -389,6 +556,12 @@ var DigitalTwinCreateController = function() {
 				AllActionsLogic.push(obj.value);
 			}
 
+		},
+		
+		// DELETE ONTOLOGY 
+		deleteDigitalTwinType: function(digitalTwinTypeId){
+			logControl ? console.log(LIB_TITLE + ': deleteDigitalTwinType()') : '';	
+			deleteDigitalTwinTypeConfirmation(digitalTwinTypeId);			
 		},
 	// CHECK FOR NON DUPLICATE PROPERTIES
 		checkProperty: function(obj){
