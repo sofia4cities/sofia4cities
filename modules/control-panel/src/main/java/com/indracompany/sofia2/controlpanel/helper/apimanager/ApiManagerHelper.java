@@ -55,6 +55,7 @@ import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.controller.apimanager.UserApiDTO;
 import com.indracompany.sofia2.controlpanel.multipart.ApiMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 
 @Component
 public class ApiManagerHelper {
@@ -72,6 +73,9 @@ public class ApiManagerHelper {
 	@Autowired
 	UserTokenRepository userTokenRepository;
 	
+	@Autowired
+	IntegrationResourcesService resourcesService;
+	
 	
 	@Autowired
 	UserService userService;
@@ -80,8 +84,8 @@ public class ApiManagerHelper {
 	@Autowired
 	AppWebUtils utils;
 
-	@Value("${apimanager.services.baseUrl:http://localhost:19090/api-manager}")
-	private String apiManagerBaseUrl;
+	private static String apiManagerBaseUrl="api-manager.base.url";
+	
 	
 	@Value("${apimanager.services.api:/api-manager/services}")
 	private String apiServices;
@@ -109,7 +113,7 @@ public class ApiManagerHelper {
 			ontologies = ontologyRepository.findByActiveTrue();
 		}
 		
-		uiModel.addAttribute("endpointBase", apiManagerBaseUrl);
+		uiModel.addAttribute("endpointBase", resourcesService.getURL(apiManagerBaseUrl));
 		uiModel.addAttribute("apiServices", apiServices);
 		
 		uiModel.addAttribute("categories", Api.ApiCategories.values());
@@ -131,7 +135,7 @@ public class ApiManagerHelper {
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
 		
-		uiModel.addAttribute("endpointBase", apiManagerBaseUrl);
+		uiModel.addAttribute("endpointBase", resourcesService.getURL(apiManagerBaseUrl));
 		uiModel.addAttribute("apiServices", apiServices);
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
@@ -162,7 +166,7 @@ public class ApiManagerHelper {
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
 
-		uiModel.addAttribute("endpointBase", apiManagerBaseUrl);
+		uiModel.addAttribute("endpointBase", resourcesService.getURL(apiManagerBaseUrl));
 		uiModel.addAttribute("apiServices", apiServices);
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
@@ -341,7 +345,7 @@ public class ApiManagerHelper {
 		Api api= apiRepository.findById(apiId);
 		
 		model.addAttribute("api", api);
-		model.addAttribute("endpointBase", apiManagerBaseUrl);
+		model.addAttribute("endpointBase", resourcesService.getURL(apiManagerBaseUrl));
 		model.addAttribute("apiServices", apiServices);
 	}
 

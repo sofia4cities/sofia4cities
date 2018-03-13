@@ -153,11 +153,9 @@ public class ApiFIQL {
 
 		api.setIdentification(apiDTO.getIdentification());
 		api.setNumversion(apiDTO.getVersion());
-		if (apiDTO.getType().equals(API_PUBLICA)) {
-			api.setPublic(true);
-		} else {
-			api.setPublic(false);
-		}
+		
+		api.setPublic(apiDTO.getIsPublic());
+		
 		api.setCategory(Api.ApiCategories.valueOf(apiDTO.getCategory()));
 
 		if (apiDTO.getOntologyId() != null && !apiDTO.getOntologyId().equals("")) {
@@ -165,6 +163,7 @@ public class ApiFIQL {
 			api.setOntology(ont);
 		}
 
+		api.setApiType(apiDTO.getType());
 		api.setEndpoint(apiDTO.getEndpoint());
 		api.setEndpointExt(apiDTO.getEndpointExt());
 		api.setDescription(apiDTO.getDescription());
