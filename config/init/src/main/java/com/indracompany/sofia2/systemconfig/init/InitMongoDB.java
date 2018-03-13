@@ -155,6 +155,32 @@ public class InitMongoDB {
 		}
 	}
 
+	public void init_AndroidIoTFrame(String path) {
+		try {
+			log.info("init init_androidIoTFrame");
+			if (manageDb.getListOfTables4Ontology("androidIoTFrame").isEmpty()) {
+				log.info("No Collection androidIoTFrame, creating...");
+				manageDb.createTable4Ontology("androidIoTFrame", "{}");
+			}
+			if (ontologyRepository.findByIdentification("androidIoTFrame") == null) {
+				Ontology ontology = new Ontology();
+				ontology.setJsonSchema(this.loadFromResources("androidIoTFrame-schema.json"));
+				ontology.setIdentification("androidIoTFrame");
+				ontology.setDescription("Ontology androidIoTFrame for measures");
+				ontology.setActive(true);
+				ontology.setRtdbClean(true);
+				ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
+				ontology.setRtdbToHdb(true);
+				ontology.setPublic(false);
+				ontology.setUser(getUserDeveloper());
+				ontologyRepository.save(ontology);
+			}
+
+		} catch (Exception e) {
+			log.error("Error creating init_androidIoTFrame DataSet...ignoring", e);
+		}
+	}
+
 	public void init_AuditGeneral() {
 		log.info("init AuditGeneral");
 		/*
