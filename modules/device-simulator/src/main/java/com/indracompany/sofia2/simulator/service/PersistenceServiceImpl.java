@@ -79,12 +79,13 @@ public class PersistenceServiceImpl implements PersistenceService {
 			
 			
 			SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(insert);
-			if(response.getBody().getErrorCode().name()==SSAPErrorCode.AUTENTICATION.name()) {
-				this.connectIotBroker(clientPlatform, clientPlatformInstance);
-				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
-			
+			if(response.getBody().getError()!=null) {
+				if(response.getBody().getErrorCode().name()==SSAPErrorCode.AUTENTICATION.name()) {
+					this.connectIotBroker(clientPlatform, clientPlatformInstance);
+					this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
+				
+				}
 			}
-
 		} else {
 			this.connectIotBroker(clientPlatform, clientPlatformInstance);
 			this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
