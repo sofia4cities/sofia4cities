@@ -20,16 +20,32 @@
 
 package com.indracompany.sofia2.config.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Device;
-
 public interface DeviceRepository extends JpaRepository<Device, String> {
 
 	List<Device> findByClientPlatform(String id);
 
+	List<Device> findByClientPlatformAndIdentification(ClientPlatform clientPlatform, String identification);
+
+	List<Device> findByClientPlatformAndIdentification(String clientPlatformId, String identification);
+
+	@Modifying
+	@Query("UPDATE Device d SET d.connected = :connected, d.disabled = :disabled WHERE d.updatedAt < :date")
+	int updateDeviceStatusByUpdatedAt(
+			@Param("connected") boolean connected,
+			@Param("disabled") boolean disabled,
+			@Param("date") Date date);
+
 	Device findById(String id);
+
 
 }

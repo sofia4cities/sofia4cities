@@ -89,4 +89,12 @@ public class Device extends AuditableEntityWithUUID {
 	@Setter
 	private String sessionKey;
 
+	@Column(name = "disabled", nullable = false, columnDefinition = "boolean default false")
+	@NotNull
+	@Getter
+	@Setter
+	private boolean disabled;
+
+
+
 }

@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,9 +58,9 @@ import io.swagger.annotations.ApiParam;
 		havingValue="true"
 		)
 @RestController
-@RequestMapping(path="/rest",
-produces= MediaType.APPLICATION_JSON_UTF8_VALUE,
-consumes=MediaType.APPLICATION_JSON_UTF8_VALUE
+@RequestMapping(path="/rest"
+//produces= MediaType.APPLICATION_JSON_UTF8_VALUE,
+//consumes=MediaType.APPLICATION_JSON_UTF8_VALUE
 		)
 @EnableAutoConfiguration
 @CrossOrigin(origins = "*")
@@ -91,7 +90,7 @@ public class Rest {
 
 		request.setDirection(SSAPMessageDirection.REQUEST);
 		request.setMessageType(SSAPMessageTypes.JOIN);
-		request.setSessionKey("sessionKey");
+		//		request.setSessionKey();
 		request.getBody().setToken(token);
 		request.getBody().setClientPlatform(clientPlatform);
 		request.getBody().setClientPlatformInstance(clientPlatformId);
