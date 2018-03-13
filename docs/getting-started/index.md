@@ -63,15 +63,31 @@ Complete the following information for the new *Device*:
 - Identification: provide a unique name for the *Device*.
 - Description: add a description for the *Device*.
 - Ontologies: it is possible to configure access to several ontologies.
-    - Ontology: ontology identification.
-    - Access Level: the type of access configured.
-- Meta Information:
-    - name:
-    - value:
-
+  - Ontology: ontology identification.
+  - Access Level: the type of access configured.
+- Meta Information: Additional information about the device. The information will be added as key values pairs.
+  - name: the name of the key.
+  - value: the value of the property.
 
 ### Creating a Simulator
+
+It is possible de define simulators for the device to help test the ontology and to generate data to aid in development.
+To do that, go to the *DEVICES -> Devices Simulator* menu option and use the **Create** button placed in the right upper corner to define a new *Device Simulator*.
+
+Complete the following information for the new *Device Simulator*:
+
+- Identification: Choose a unique name for the *Device Simulator*.
+- Device: choose one of the available *Devices*.
+- Token: choose one of the tokens defined in the *Device*.
+- Ontology: choose one of the ontologies in which the device has insert authorization.
+- Time between inserts: indicate the time in seconds between each insert in the ontology.
+- Ontology Properties: fulfil the information required to generate values for each field of the ontology.
+
+Finally, it is necessary to save the simulator by using the **New** button.
 
 ### Creating a Dashboard
 
 ### Creating an API
+
+It is possible to publish operations over your *Ontologies* using creating APIs REST.
+To do that, go to 
