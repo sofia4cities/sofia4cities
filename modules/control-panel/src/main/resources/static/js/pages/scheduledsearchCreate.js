@@ -4,7 +4,9 @@
 
 function submitForm()
 {
-	if($('#_checkboxnew').val($('#checkboxnew').is(':checked'))){
+	$('#_checkboxnew').val($('#checkboxnew').is(':checked'))
+	
+	if($('#checkboxnew').is(':checked')){
 		 existOntology();
 		 existClient();
 		 if($('input[name=ontologyId]').val()!="")
@@ -25,10 +27,10 @@ function submitForm()
 						$('.alert-exists-text').html("Platform Client Exists");
 					}
 				}
-			}else{
-				$('#scheduledsearch_create_form').submit();
 			}
 
+	}else{
+		$('#scheduledsearch_create_form').submit();
 	}
  
 	
@@ -252,8 +254,11 @@ var ScheduledSearchController= function()
 				// ES
 				if (currentLanguage === 'es'){
 					// change date es to en [ dd/mm/yyyy to yyyy/mm/dd ]
-					dateUnformatted = $(dateInput).val();
-					dateFormatted = dateUnformatted.split("/")[2] + '/' + dateUnformatted.split("/")[1] + '/' + dateUnformatted.split("/")[0];          
+					dateUnformatted = $(dateInput).val().split(" ")[0];
+					timeUnformatted = $(dateInput).val().split(" ")[1];
+					
+					dateFormatted = dateUnformatted.split("/")[2] + '/' + dateUnformatted.split("/")[1] + '/' + dateUnformatted.split("/")[0] + " " + timeUnformatted;
+					
 					$(dateInput).val(dateFormatted);
 					logControl ? console.log('FormatDate -> ' + $(dateInput).attr('id') + ' current:' + dateUnformatted + ' formatted: ' + $(dateInput).val()) : '';          
 				}
@@ -297,8 +302,7 @@ var ScheduledSearchController= function()
 				email:    { required: true, email: true },
 				password: { required: true, minlength: 7, maxlength: 20 },
 				roles:    { required: true },
-				dateFrom:{ date: true, required: true },
-				dateTo:{ date: true }
+				dates:    { required: true}
 			},
 			invalidHandler: function(event, validator) { //display error alert on form submit              
 				success1.hide();
@@ -348,7 +352,7 @@ var ScheduledSearchController= function()
 
 		// set current language and formats
 		currentLanguage = scheduledSearchCreateReg.language || LANGUAGE[0];
-		currentFormat = (currentLanguage == 'es') ? 'dd/mm/yyyy' : 'mm/dd/yyyy';    
+		currentFormat = (currentLanguage == 'es') ? 'DD/MM/YYYY HH:mm:ss' : 'MM/DD/YYYY HH:mm:ss';    
 
 		logControl ? console.log('|---> datepickers currentLanguage: ' + currentLanguage + ' CurrentFormat: ' + currentFormat) : '';
 
@@ -367,7 +371,7 @@ var ScheduledSearchController= function()
 		$('#resetBtn').on('click',function(){ 
 			cleanFields('scheduledsearch_create_form');
 		});
-
+		
 		//set TODAY to dateFrom depends on language INSERT-MODE ONLY   
 		if ( scheduledSearchCreateReg.actionMode === null){
 			logControl ? console.log('action-mode: INSERT') : '';
@@ -378,11 +382,13 @@ var ScheduledSearchController= function()
 			
 			
 			$('#dateFrom').datetimepicker({
+				format: currentFormat,
 				locale: currentLanguage,
 				useCurrent: true
 			});
 			
 			$('#dateTo').datetimepicker({
+				format: currentFormat,
 				locale: currentLanguage,
 				useCurrent: true
 			});
@@ -391,19 +397,23 @@ var ScheduledSearchController= function()
 			
 		}
 		else {
-			// set DATE created in EDIT MODE
-			logControl ? console.log('action-mode: UPDATE') : '';
-			var f = new Date(scheduledSearchCreateReg.dateFrom);
-			regDate = (currentLanguage == 'es') ? ('0' + (f.getDate())).slice(-2) + "/" + ('0' + (f.getMonth()+1)).slice(-2) + "/" + f.getFullYear() : ('0' + (f.getMonth()+1)).slice(-2) + "/" + ('0' + (f.getDate())).slice(-2) + "/" + f.getFullYear();
-			$('#dateFrom').datepicker('update',regDate);
-
-			// set DATE deleted in EDIT MODE if exists
-			if ( scheduledSearchCreateReg.dateTo !== null ) {
-				console.log('entra?');
-				var d = new Date(scheduledSearchCreateReg.dateTo);
-				regDateDel = (currentLanguage == 'es') ? ('0' + (d.getDate())).slice(-2) + "/" + ('0' + (d.getMonth()+1)).slice(-2) + "/" + d.getFullYear() : ('0' + (d.getMonth()+1)).slice(-2) + "/" + ('0' + (d.getDate())).slice(-2) + "/" + d.getFullYear();
-				$('#dateTo').datepicker('update',regDateDel);
-			}     
+			
+			dateFrom = $('#dateFrom').val();
+			dateTo = $('#dateTo').val();
+			dateFromFormatted = dateFrom.split("-")[2] + "/" + dateFrom.split("-")[1] + "/" +dateFrom.split("-")[0] + " " + dateFrom.split(" ")[1].split(".")[0];
+			dateToFormatted = dateTo.split("-")[2] + "/" + dateTo.split("-")[1] + "/" +dateTo.split("-")[0] + " " + dateTo.split(" ")[1].split(".")[0];
+			$('#dateFrom').datetimepicker({
+				format: currentFormat,
+				locale: currentLanguage,
+				useCurrent: true
+			});
+			$('#dateFrom').data("DateTimePicker").date(dateFromFormatted);
+			$('#dateTo').datetimepicker({
+				format: currentFormat,
+				locale: currentLanguage,
+				useCurrent: true
+			});
+			$('#dateTo').data("DateTimePicker").date(dateToFormatted);
 
 
 
