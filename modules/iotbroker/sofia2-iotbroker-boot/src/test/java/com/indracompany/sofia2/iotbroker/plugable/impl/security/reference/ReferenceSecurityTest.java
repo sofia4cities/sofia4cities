@@ -14,7 +14,7 @@
 package com.indracompany.sofia2.iotbroker.plugable.impl.security.reference;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,10 +30,13 @@ import org.springframework.util.StringUtils;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.github.javafaker.Faker;
 import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.ClientPlatformOntology;
+import com.indracompany.sofia2.config.model.ClientPlatformOntology.AccessType;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.RoleRepository;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
@@ -64,6 +67,8 @@ public class ReferenceSecurityTest {
 	DataModelRepository dataModelRepository;
 	@Autowired
 	TokenService tokenService;
+	@Autowired
+	ClientPlatformOntologyRepository clientPlatformOntologyRepository;
 
 	ClientPlatform subjectClientPlatform;
 	User subjectUser;
@@ -103,8 +108,17 @@ public class ReferenceSecurityTest {
 		final String clientPlatformIdentification = UUID.randomUUID().toString();
 		clientPlatform.setIdentification(clientPlatformIdentification);
 		clientPlatform.setUser(subjectUser);
-		clientPlatformService.createClientAndToken(Arrays.asList(subjectOntology), clientPlatform);
+		//		clientPlatformService.createClientAndToken(Arrays.asList(subjectOntology), clientPlatform);
+		clientPlatformService.createClientAndToken(new ArrayList<>(), clientPlatform);
 		subjectClientPlatform = clientPlatformService.getByIdentification(clientPlatformIdentification);
+
+		final ClientPlatformOntology cpo = new ClientPlatformOntology();
+		cpo.setAccesEnum(AccessType.ALL);
+		cpo.setAccess(AccessType.ALL.name());
+		cpo.setClientPlatform(subjectClientPlatform);
+		cpo.setOntology(subjectOntology);
+
+		clientPlatformOntologyRepository.save(cpo);
 
 		tokenService.generateTokenForClient(subjectClientPlatform);
 
@@ -120,7 +134,7 @@ public class ReferenceSecurityTest {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
-				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
 		Assert.assertTrue(session.isPresent());
 		Assert.assertTrue(!StringUtils.isEmpty(session.get().getSessionKey()));
@@ -132,7 +146,7 @@ public class ReferenceSecurityTest {
 	@Test
 	public void given_OneInvalidToken_When_ASessionIsCreated_Then_ItReturnsAnInvalidSession() throws AuthenticationException {
 		final Optional<IoTSession> session = security.authenticate("INVALID_TOKEN",
-				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
 		Assert.assertFalse(session.isPresent());
 	}
@@ -147,7 +161,7 @@ public class ReferenceSecurityTest {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
-				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
 		Assert.assertTrue(security.checkAuthorization(SSAPMessageTypes.INSERT, subjectOntology.getIdentification(), session.get().getSessionKey()));
 	}
@@ -157,7 +171,7 @@ public class ReferenceSecurityTest {
 		final Token t = tokenService.getToken(subjectClientPlatform);
 
 		final Optional<IoTSession> session = security.authenticate(t.getToken(),
-				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString());
+				subjectClientPlatform.getIdentification(), UUID.randomUUID().toString(), "");
 
 		Assert.assertFalse(security.checkAuthorization(SSAPMessageTypes.INSERT, "NOT_ASSIGNED_ONTOLOGY", session.get().getSessionKey()));
 	}

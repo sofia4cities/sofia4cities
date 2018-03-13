@@ -36,6 +36,22 @@ public class RequestDumpUtil {
     	if (value==null)
     		value = request.getHeader("$"+key);
     	
+    	if (value==null)
+    		return getValue(key,request);
+    	
+    	return value;
+    	
+    }
+    
+  public static String getValue(String key,HttpServletRequest request ) {
+    	
+    	String value = null;
+    	value = request.getParameter(key);
+    	if (value==null)
+    		value = request.getHeader(key);
+    	if (value==null)
+    		value = (String)request.getAttribute(key);
+    	
     	return value;
     	
     }

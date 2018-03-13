@@ -1,3 +1,4 @@
+#logging.level.org.hibernate.SQL: DEBUG
 security.ignored: /**
 app:
   name: iotbroker
@@ -5,10 +6,6 @@ app:
 server: ## Config Web Server
    port: 8081
    contextPath: /iotbroker
-   tomcat:
-      access_log_enabled: true
-      basedir: target/tomcat
-  
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
@@ -20,27 +17,44 @@ spring:
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
-
-  
     
 sofia2: #Config Sofia2 specific
-   database.mongodb:
-      database: sofia2_s4c
-      authenticationDatabase:  #admin
-      servers: localhost:27017
-      autoConnectRetry: true
-      socketTimeout: 5000
-      maxAutoConnectRetryTime: 5000
-      maxWaitTime: 5000
-      useAuth: false
-      username: #username
-      password: #password
-      readFromSecondaries: false
-      queries.executionTimeout: 5000
-      queries.defaultLimit: 150
-      queries.maxConcurrentQueries: 3
-      writeConcern: UNACKNOWLEDGED
-      tools.mongoexport.path: mongoexport
-      tools.mongoimport.path: mongoimport
-      tools.mongoshell.path: mongo
-      tools.useSequentialOps: true
+  database.mongodb:
+    database: sofia2_s4c
+    authenticationDatabase:  #admin
+    servers: localhost:27017
+    autoConnectRetry: true
+    socketTimeout: 5000
+    maxAutoConnectRetryTime: 5000
+    maxWaitTime: 5000
+    useAuth: false
+    username: #username
+    password: #password
+    readFromSecondaries: false
+    queries.executionTimeout: 5000
+    queries.defaultLimit: 150
+    queries.maxConcurrentQueries: 3
+    writeConcern: UNACKNOWLEDGED
+    tools.mongoexport.path: mongoexport
+    tools.mongoimport.path: mongoimport
+    tools.mongoshell.path: mongo
+    tools.useSequentialOps: true
+ 
+  iotbroker.plugbable:
+    gateway:
+      stomp:
+        enable: true
+      moquette:
+        enable: true
+        port: 1883
+        pool: 10
+        host: 0.0.0.0
+        store: moquette_store_bin.mapdb
+        outbound_topic: /topic/message
+        subscription_topic: /topic/subscription
+        command_topic: /topic/command
+        inbound_topic: /queue/message
+      rest:
+        enable: true
+        swaggerhost: localhost:8081    
+  

@@ -24,9 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
@@ -36,6 +36,9 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.SecurityPlugin;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @EnableScheduling
 @Component
 public class ReferenceSecurityImpl implements SecurityPlugin {
@@ -52,7 +55,7 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	ConcurrentHashMap<String, IoTSession> sessionList = new ConcurrentHashMap<>(200);
 
 	@Override
-	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance) {
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance, String sessionKey) {
 		final Token retrivedToken = tokenService.getTokenByToken(token);
 		if(retrivedToken == null) {
 			return Optional.empty();
@@ -64,14 +67,21 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 			session.setClientPlatform(clientPlatform);
 			//TODO: What if the instance it is not provied
 			session.setClientPlatformInstance(clientPlatformInstance);
-			session.setExpiration(60*1000*1000);
+			session.setExpiration(60*1000*1000l);
 			session.setLastAccess(ZonedDateTime.now());
-			session.setSessionKey(UUID.randomUUID().toString());
 			session.setToken(token);
 			session.setClientPlatformID(clientPlatformDB.getId());
 
 			session.setUserID(retrivedToken.getClientPlatform().getUser().getUserId());
 			session.setUserName(retrivedToken.getClientPlatform().getUser().getFullName());
+
+			if(!StringUtils.isEmpty(sessionKey)) {
+				this.closeSession(sessionKey);
+				session.setSessionKey(sessionKey);
+			}
+			else {
+				session.setSessionKey(UUID.randomUUID().toString());
+			}
 
 			sessionList.put(session.getSessionKey(), session);
 
@@ -105,6 +115,11 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 			sessionList.remove(sessionKey);
 			return false;
 		}
+		else {
+			//renew session on activity
+			session.setLastAccess(now);
+			sessionList.put(sessionKey, session);
+		}
 
 		return true;
 
@@ -118,14 +133,38 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 		}
 
 		final IoTSession session = sessionList.get(sessionKey);
-		final Ontology ontologyDB = ontologyService.getOntologyByIdentification(ontology, session.getUserID());
-		final ClientPlatform clientPlatformDB = clientPlatformService.getByIdentification(session.getClientPlatform());
 
-		return clientPlatformService.haveAuthorityOverOntology(clientPlatformDB, ontologyDB);
+		boolean clientHasAuthority = false;
+		try {
+			if (SSAPMessageTypes.INSERT.equals(messageType) || SSAPMessageTypes.UPDATE.equals(messageType) ||
+					SSAPMessageTypes.UPDATE_BY_ID.equals(messageType) ||
+					SSAPMessageTypes.DELETE.equals(messageType) || SSAPMessageTypes.DELETE_BY_ID.equals(messageType)) {
+
+
+				clientHasAuthority = ontologyService.hasClientPlatformPermisionForInsert(session.getClientPlatform(), ontology) ||
+						ontologyService.hasUserPermissionForInsert(session.getUserID(), ontology);
+
+			} else if (SSAPMessageTypes.QUERY.equals(messageType)) {
+
+				clientHasAuthority = ontologyService.hasClientPlatformPermisionForQuery(session.getClientPlatform(), ontology) ||
+						ontologyService.hasUserPermissionForQuery(session.getUserID(), ontology);
+			}
+		} catch(final Exception e) {
+			//TODO: LOG BETTER AND REVIEW hasUserPermissionForQuery LOGIC
+			log.error("Error validating operation permissions:" + e.getMessage());
+			return false;
+		}
+
+
+
+		return clientHasAuthority;
 	}
 
 	@Override
 	public Optional<IoTSession> getSession(String sessionKey) {
+		if(StringUtils.isEmpty(sessionKey)) {
+			return Optional.empty();
+		}
 		final IoTSession session = sessionList.get(sessionKey);
 		if(session == null) {
 			return Optional.empty();
@@ -138,8 +177,9 @@ public class ReferenceSecurityImpl implements SecurityPlugin {
 	@Scheduled(fixedDelay=60000)
 	private void invalidateExpiredSessions() {
 		final long now = System.currentTimeMillis();
-		final Predicate<IoTSession> delete = s -> (now - s.getLastAccess().toInstant().toEpochMilli()) >= s.getExpiration();
+		final Predicate<IoTSession> delete = s -> now - s.getLastAccess().toInstant().toEpochMilli() >= s.getExpiration();
 		sessionList.values().removeIf(delete);
+		log.info("Deleting expired session");
 	}
 
 }

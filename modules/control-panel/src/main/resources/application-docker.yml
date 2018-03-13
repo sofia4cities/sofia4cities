@@ -4,7 +4,7 @@ sofia2:
    flowengine.services:
     request.timeout.ms: 5000
     baseurl: http://flowengineservice:8082/sofia2/flowengine/admin   
-    proxyurl: http://localhost/nodered/             
+    proxyurl: https://${SERVER_NAME}/nodered/             
 
 spring:
    datasource:  

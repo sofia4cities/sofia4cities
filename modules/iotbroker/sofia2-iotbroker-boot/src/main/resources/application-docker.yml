@@ -1,6 +1,10 @@
 sofia2:
    database.mongodb:
-      servers: realtimedb:27017    
+      servers: realtimedb:27017
+   iotbroker.plugbable:
+     gateway:
+       rest:
+         swaggerhost: ${SERVER_NAME}  
 
 spring:
    datasource:  

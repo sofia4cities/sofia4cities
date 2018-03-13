@@ -30,6 +30,7 @@ import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaExceptio
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
@@ -37,6 +38,8 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyOntologyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
+import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 import com.indracompany.sofia2.ssap.util.SSAPMessageGenerator;
 
 @Component
@@ -50,6 +53,9 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 	@Autowired
 	private ApplicationContext context;
+
+	@Autowired
+	private DeviceManager deviceManager;
 
 	@Override
 	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message) {
@@ -70,7 +76,6 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 			final Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = this.validateMessage(message);
 
-
 			if (validation.isPresent()) {
 				return validation.get();
 			}
@@ -80,12 +85,22 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			processor.validateMessage(message);
 			response = processor.process(message);
 
+
 			if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 				response.setDirection(SSAPMessageDirection.RESPONSE);
 				response.setMessageId(message.getMessageId());
 				response.setMessageType(message.getMessageType());
-				//				response.setOntology(message.getOntology());
 			}
+
+			final SSAPMessage<SSAPBodyReturnMessage> resp = response;
+			final Optional<IoTSession> session = securityPluginManager.getSession(response.getSessionKey());
+
+			session.ifPresent((s) -> {
+				deviceManager.registerActivity(message, resp, s);
+			});
+
+
+
 
 		} catch (final SSAPProcessorException e) {
 			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.PROCESSOR,
@@ -110,7 +125,27 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return response;
 	}
 
-	public Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
+	@Override
+	public String process(String message) {
+		SSAPMessage<SSAPBodyReturnMessage> response = null;
+		SSAPMessage request = null;
+
+		try {
+			request = SSAPJsonParser.getInstance().deserialize(message);
+			response = this.process(request);
+		} catch (final SSAPParseException e) {
+			response = SSAPUtils.generateErrorMessage(request, SSAPErrorCode.PROCESSOR, "Request message is not parseable" + e.getMessage());
+		}
+
+		try {
+			return SSAPJsonParser.getInstance().serialize(response);
+		} catch (final SSAPParseException e) {
+			return "kk";
+		}
+
+	}
+
+	private Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
 	{
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 
@@ -149,7 +184,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 	}
 
-	public MessageTypeProcessor proxyProcesor(SSAPMessage<? extends SSAPBodyMessage> message)
+	private MessageTypeProcessor proxyProcesor(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws SSAPProcessorException {
 
 		if (null == message.getMessageType()) {
@@ -169,5 +204,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return filteredProcessors.get(0);
 
 	}
+
+
 
 }

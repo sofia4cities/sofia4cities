@@ -607,8 +607,7 @@ var App = function() {
 					}
 				}
 				return this;
-			};
-			
+			};		
         },
 
         //main function to initiate core javascript after ajax complete

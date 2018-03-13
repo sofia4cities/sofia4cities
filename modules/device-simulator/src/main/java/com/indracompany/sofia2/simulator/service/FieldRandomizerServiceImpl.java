@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -25,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
@@ -70,17 +72,15 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 
 			} else {
 				finalField = field;
-				//path= path + "/"+ field;
+				// path= path + "/"+ field;
 			}
 
 			switch (function) {
 			case FIXED_NUMBER:
-				((ObjectNode) map.at(path)).put(finalField,
-						json.path(field).get("value").asDouble());
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asDouble());
 				break;
 			case FIXED_INTEGER:
-				((ObjectNode) map.at(path)).put(finalField,
-						json.path(field).get("value").asInt());
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asInt());
 				break;
 			case RANDOM_NUMBER:
 				((ObjectNode) map.at(path)).put(finalField,
@@ -92,12 +92,17 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 						this.randomizeInt(json.path(field).get("from").asInt(), json.path(field).get("to").asInt()));
 				break;
 			case COSINE_NUMBER:
+				double angleCos = Math.toRadians(json.path(field).get("angle").asDouble());
+				double multiplierCos = json.path(field).get("multiplier").asDouble();
+				((ObjectNode) map.at(path)).put(finalField, Math.cos(angleCos) * multiplierCos);
 				break;
 			case SINE_NUMBER:
+				double angleSin = Math.toRadians(json.path(field).get("angle").asDouble());
+				double multiplierSin = json.path(field).get("multiplier").asDouble();
+				((ObjectNode) map.at(path)).put(finalField, Math.sin(angleSin) * multiplierSin);
 				break;
 			case FIXED_STRING:
-				((ObjectNode) map.at(path)).put(finalField,
-						(String) json.path(field).get("value").asText());
+				((ObjectNode) map.at(path)).put(finalField, (String) json.path(field).get("value").asText());
 				break;
 			case RANDOM_STRING:
 				((ObjectNode) map.at(path)).put(finalField,
@@ -106,7 +111,8 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 			case FIXED_DATE:
 				Date date;
 				try {
-					date = DateFormat.getInstance().parse(json.path(field).get("value").asText());
+					DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+					date = df.parse(json.path(field).get("value").asText());
 				} catch (ParseException e) {
 					date = new Date();
 				}
@@ -116,6 +122,20 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 
 				break;
 			case RANDOM_DATE:
+				Date dateFrom;
+				Date dateTo;
+				Date dateRandom=new Date();;
+				DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+				try {
+					dateFrom = df.parse(json.path(field).get("from").asText());
+					dateTo = df.parse(json.path(field).get("to").asText());
+					dateRandom = this.randomizeDate(dateFrom, dateTo);
+				} catch (ParseException e) {
+					dateRandom = new Date();
+				}
+				JsonNode dateRandomJson = mapper.createObjectNode();
+				((ObjectNode) dateRandomJson).put("$date", dateRandom.getTime());
+				((ObjectNode) map.at(path)).set(finalField, dateRandomJson);
 				break;
 			case NULL:
 				((ObjectNode) map.at(path)).set(finalField, null);
@@ -150,5 +170,12 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 		Double randomDoubleTruncated = BigDecimal.valueOf(randomDouble).setScale(precision, RoundingMode.HALF_UP)
 				.doubleValue();
 		return randomDoubleTruncated;
+	}
+	public Date randomizeDate (Date from, Date to) {
+		
+		ThreadLocalRandom th = ThreadLocalRandom.current();
+		Date randomDate = new Date(th.nextLong(from.getTime(), to.getTime()));
+		return randomDate;
+		
 	}
 }

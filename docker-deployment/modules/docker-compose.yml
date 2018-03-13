@@ -46,9 +46,9 @@ services:
     external_links:
      - configdb
      - schedulerdb
-     - realtimedb    
+     - realtimedb         
   loadbalancerservice:
-    image: ${REPOSITORY}sofia2/nginx:latest
+    image: ${REPOSITORY}sofia2/nginx:${IMAGETAG}
     container_name: loadbalancerservice
     environment:
       - SERVER_NAME=${SERVERNAME}
@@ -60,6 +60,7 @@ services:
      - controlpanelinstance
      - iotbrokerinstance
      - flowengineinstance
+     - apimanagerinstance
     depends_on:
      - "controlpanelinstance"
      - "iotbrokerinstance"

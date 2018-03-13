@@ -190,12 +190,10 @@ public class ApiManagerController {
 		return "apimanager/token";
 	}
 	
-	@GetMapping(value = "/invoke" , produces = "text/html")
-	public String invoker(Model model,	@RequestParam(required = false) String apiId) {		
+	@GetMapping(value = "/invoke/{id}" , produces = "text/html")
+	public String invoker(Model model, @PathVariable("id") String apiId) {
 		
-//		apiManagerHelper.populateApiManagerListForm(model);
-//		
-//		model.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user));
+		apiManagerHelper.populateApiManagerInvokeForm(model, apiId);
 		
 		return "apimanager/invoke";
 	}
@@ -229,6 +227,30 @@ public class ApiManagerController {
 	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, Model uiModel){
 		apiManagerService.updateState(id, state);
 		return "redirect:/apimanager/list";
+	}
+	
+	@PostMapping(value = "/generateToken")
+	public @ResponseBody ResponseEntity<String> generateToken() {
+		try {
+			apiManagerService.generateToken(utils.getUserId());
+			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
+		} catch(RuntimeException e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@RequestMapping(value = "/removeToken")
+	public @ResponseBody ResponseEntity<String> removeToken(@RequestBody String token) {
+		try {
+			apiManagerService.removeToken(utils.getUserId(), token);
+			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
+		} catch(RuntimeException e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 }

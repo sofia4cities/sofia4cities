@@ -54,6 +54,14 @@ public class OperationModel implements Serializable{
 	@Getter
 	@Setter
 	private String user;
+	
+	@Getter
+	@Setter
+	private String clientPlatformId;
+	
+	@Getter
+	@Setter
+	private boolean cacheable=false;
 
 	@Override
 	public String toString() {

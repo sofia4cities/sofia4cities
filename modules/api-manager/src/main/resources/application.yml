@@ -2,7 +2,7 @@
 ##security.require_ssl: true
 server: ## Config Web Server
    port: 19090
-   contextPath: /
+   contextPath: /api-manager
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat
@@ -15,7 +15,7 @@ security.basic.enabled: false
 management:
   security:
     enabled : false
-  port: 19091
+  port: 19090
 # turn on actuator health check
 endpoints:
   health:

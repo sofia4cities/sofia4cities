@@ -88,7 +88,8 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		model.setOperationType(OperationType.PUT);
 		model.setQueryType(QueryType.NATIVE);
 		model.setBody(updateMessage.getBody().getQuery());
-		model.setUser(session.get().getUserID());
+		session.ifPresent(s -> model.setUser(s.getUserID()));
+		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -130,7 +131,8 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		model.setOperationType(OperationType.PUT);
 		model.setQueryType(QueryType.NATIVE);
 		model.setBody(updateMessage.getBody().getData().toString());
-		model.setUser(session.get().getUserID());
+		session.ifPresent(s -> model.setUser(s.getUserID()));
+		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

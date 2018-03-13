@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.ws.rs.core.MediaType;
 
@@ -28,6 +29,8 @@ import com.indracompany.sofia2.api.rest.api.dto.ApiDTO;
 import com.indracompany.sofia2.api.rest.api.dto.ApiHeaderDTO;
 import com.indracompany.sofia2.api.rest.api.dto.ApiQueryParameterDTO;
 import com.indracompany.sofia2.api.rest.api.dto.OperacionDTO;
+import com.indracompany.sofia2.api.service.ApiServiceInterface;
+import com.indracompany.sofia2.config.model.ApiQueryParameter;
 
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Contact;
@@ -46,18 +49,19 @@ public class RestSwaggerReader {
 	public static String SWAGGER_VERSION = "2.0";
 
 	public static String INFO_VERSION = "Apache 2.0 License";
-	public static String INFO_TITLE = "Sofia2Open API Manager";
+	public static String INFO_TITLE = "Sofia2Cities API Manager";
 	public static String INFO_DESCRIPTION = "Select4Cities ";
 
 	public static String LICENSE_NAME = "1.0.0";
 	public static String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
-	//public static String BASE_PATH = "/api";
+	public static String BASE_PATH = "/api-manager/server/api";
 
 	public static String CONTACT_NAME = "The Sofia2 Select4Cities Team";
-	public static String CONTACT_URL = "http://sofia2.com";
+	public static String CONTACT_URL = "https://www.sofia4cities.com";
 	public static String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
+	
+	public static String dataTypeValueSeparator="|";
 
-	public static String SCHEMES = "http";
 
 	public static String XSOFIA2APIKey = "X-SOFIA2-APIKey";
 	public static String XSOFIAEXTENSION = "x-sofia2-extension";
@@ -65,6 +69,8 @@ public class RestSwaggerReader {
 	static List<String> PRODUCES = new ArrayList<String>(
 			Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_ATOM_XML, MediaType.TEXT_PLAIN));
 	static List<String> CONSUMES = new ArrayList<String>(Arrays.asList(MediaType.APPLICATION_JSON,MediaType.APPLICATION_ATOM_XML));
+	
+	static List<String> CACHEABLE = new ArrayList<String>(Arrays.asList("false","true"));
 
 	static Map<String, Response> responses = new HashMap<String, Response>();
 	static List<Scheme> schemes = new ArrayList<Scheme>();
@@ -136,7 +142,7 @@ public class RestSwaggerReader {
 		
 		info.setDescription(INFO_DESCRIPTION + "- "+identification);
 		
-		swagger.setBasePath("/server/api"+"/"+vVersion+"/"+identification);
+		swagger.setBasePath(BASE_PATH+"/"+vVersion+"/"+identification);
 
 		swagger.setSchemes(schemes);
 
@@ -146,22 +152,7 @@ public class RestSwaggerReader {
 		tags.add(tag);
 		swagger.setTags(tags);
 
-		// swagger.setDefinitions(definitions);
-
 		swagger.setVendorExtension(XSOFIAEXTENSION, populateApiDTOLite(apiDto));
-
-		/*
-		 * Map<String, Model> definitions=new HashMap<String, Model>();
-		 * 
-		 * swagger.setDefinitions(definitions);
-		 * 
-		 * for (String type : types) { Class<?> clazz =
-		 * classResolver.resolveClass(type); RestSwaggerReaderHelper.appendModels(clazz,
-		 * swagger); }
-		 * 
-		 * 
-		 * RestSwaggerReaderHelper.appendModels(String.class, swagger);
-		 */
 
 		ArrayList<OperacionDTO> operations = apiDto.getOperations();
 
@@ -169,8 +160,6 @@ public class RestSwaggerReader {
 			parse(swagger, operacionDTO);
 		}
 
-		// configure before returning
-		// swagger = config.configure(swagger);
 		return swagger;
 	}
 
@@ -179,6 +168,14 @@ public class RestSwaggerReader {
 		api2.setOperations(null);
 		api2.setAuthentication(null);
 		return api2;
+	}
+	
+	private void createPARAMETER(Swagger swagger,Operation op, String name, String description, String parameterType, String dataType, List<String> value) {
+		Parameter sofia2Api = RestSwaggerReaderHelper.populateParameter(swagger, name, description,	true, parameterType, dataType, null, value);
+		op.addParameter(sofia2Api);
+		op.setConsumes(CONSUMES);
+		op.setProduces(PRODUCES);
+		op.setResponses(responses);
 	}
 
 	private void parse(Swagger swagger, OperacionDTO operacionDTO) {
@@ -203,15 +200,17 @@ public class RestSwaggerReader {
 		op.operationId(description.replaceAll(" ", "_"));
 
 		String method = operation.toLowerCase(Locale.US);
-		Parameter sofia2Api = RestSwaggerReaderHelper.populateParameter(swagger, "X-SOFIA2-APIKey", "X-SOFIA2-APIKey",
-				true, "header", "string", null, null);
-		op.addParameter(sofia2Api);
-		op.setConsumes(CONSUMES);
-		op.setProduces(PRODUCES);
-		op.setResponses(responses);
+				
+		createPARAMETER(swagger, 
+				op, 
+				ApiServiceInterface.AUTHENTICATION_HEADER, 
+				ApiServiceInterface.AUTHENTICATION_HEADER,
+				ApiQueryParameter.HeaderType.header.name(), 
+				ApiQueryParameter.DataType.string.name(),
+				null);
 
 		swaggerPath = swaggerPath.set(method, op);
-
+		
 		for (ApiQueryParameterDTO apiQueryParameterDTO : queryParams) {
 
 			String desc = apiQueryParameterDTO.getDescription();
@@ -220,11 +219,46 @@ public class RestSwaggerReader {
 			String value = apiQueryParameterDTO.getValue();
 			String condition = apiQueryParameterDTO.getHeaderType().name();
 
-			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, name, desc, true,
-					condition, type, null, value);
+			Parameter parameter = RestSwaggerReaderHelper.populateParameter(swagger, 
+					name, 
+					desc, 
+					true, 
+					condition, 
+					type, 
+					null, 
+					splitStringValue(value));
+			
 			op.addParameter(parameter);
+		}
+		
+		if (method.equalsIgnoreCase("GET")) {
+			createPARAMETER(swagger,
+					op, 
+					ApiServiceInterface.CACHEABLE, 
+					ApiServiceInterface.CACHEABLE, 
+					ApiQueryParameter.HeaderType.header.name(), 
+					ApiQueryParameter.DataType.string.name(),
+					CACHEABLE);
 		}
 
 	}
+	
+	 private static List<String> splitStringValue(String value) {
+		  List<String> enumValue=new ArrayList<>();
+		  if (value==null) return null;
+		  
+		  if (value.contains(RestSwaggerReader.dataTypeValueSeparator)==false) {
+			  enumValue.add(value);
+			  return enumValue;
+		  }
+		  else {
+			  StringTokenizer st = new StringTokenizer(value, RestSwaggerReader.dataTypeValueSeparator);
+			  while (st.hasMoreTokens()) {
+				  String token = st.nextToken();
+				  enumValue.add(token);
+			  }
+		  }
+		  return enumValue;
+	  }
 
 }

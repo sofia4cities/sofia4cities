@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.iotbroker.processor.impl;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
@@ -41,19 +43,40 @@ public class JoinProcessor implements MessageTypeProcessor {
 	@Autowired
 	SecurityPluginManager securityManager;
 
+	@Autowired
+	ObjectMapper mapper;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws SSAPComplianceException, AuthenticationException {
 		final SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
 		final SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
+		response.setBody(new SSAPBodyReturnMessage());
+		response.getBody().setOk(true);
+		try {
+			response.getBody().setData(mapper.readTree("{}"));
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		if (StringUtils.isEmpty(join.getBody().getToken())) {
 			throw new SSAPComplianceException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "token", message.getMessageType().name()));
 		}
 
-		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(), join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance());
-		session.ifPresent( s -> response.setSessionKey(s.getSessionKey()) );
+		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(), join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance(), join.getSessionKey());
+		session.ifPresent( s -> {
+			response.setSessionKey(s.getSessionKey());
+			try {
+				response.getBody().setData(mapper.readTree("{\"sessionKey\":\""+s.getSessionKey()+"\"}"));
+			} catch (final IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+
+		} );
 
 		if ( !StringUtils.isEmpty(response.getSessionKey()) ) {
 			response.setDirection(SSAPMessageDirection.RESPONSE);

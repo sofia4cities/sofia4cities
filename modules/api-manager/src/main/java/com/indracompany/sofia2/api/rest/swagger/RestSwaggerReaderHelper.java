@@ -15,6 +15,7 @@ package com.indracompany.sofia2.api.rest.swagger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
@@ -41,7 +42,7 @@ import io.swagger.models.properties.StringProperty;
 
 public class RestSwaggerReaderHelper {
 	
-	public static Parameter populateParameter(Swagger swagger, String name, String description, boolean required, String parameterType, String dataType, String arrayType, String value)
+	public static Parameter populateParameter(Swagger swagger, String name, String description, boolean required, String parameterType, String dataType, String arrayType, List<String> value)
 	{
 		Parameter parameter = null;
 		if (parameterType.equals("body")) {
@@ -65,10 +66,10 @@ public class RestSwaggerReaderHelper {
             if (parameter instanceof SerializableParameter) {
                 SerializableParameter serializableParameter = (SerializableParameter) parameter;
                 
-                if (value!=null && (!value.equals(""))) {
-                	 List<String> enumValue=new ArrayList<>();
-                     enumValue.add(value);
-     				((SerializableParameter) parameter).setEnumValue(enumValue);
+                if (value!=null && (value.size()>0)) {
+                	 /*List<String> enumValue=new ArrayList<>();
+                	 enumValue =  splitStringValue(value);*/
+     				((SerializableParameter) parameter).setEnumValue(value);
                 }
                
 
@@ -225,6 +226,9 @@ public class RestSwaggerReaderHelper {
 	        }
 	        return null;
 	    }
+	  
+	  
+	 
 	  
 	
 }

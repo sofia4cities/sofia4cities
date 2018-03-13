@@ -42,6 +42,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 @Component
 public class QueryProcessor implements MessageTypeProcessor {
@@ -67,9 +68,15 @@ public class QueryProcessor implements MessageTypeProcessor {
 		model.setBody(queryMessage.getBody().getQuery());
 		model.setOntologyName(queryMessage.getBody().getOntology());
 		model.setOperationType(OperationType.QUERY);
-		model.setQueryType(QueryType.valueOf(queryMessage.getBody().getQueryType().name()));
-		model.setUser(session.get().getUserID());
-
+		if( SSAPQueryType.SQL.equals(queryMessage.getBody().getQueryType())) {
+			model.setQueryType(OperationModel.QueryType.SQLLIKE);
+		}
+		else {
+			model.setQueryType(QueryType.valueOf(queryMessage.getBody().getQueryType().name()));
+		}
+		
+		session.ifPresent(s -> model.setUser(s.getUserID()));
+		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

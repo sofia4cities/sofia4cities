@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +32,6 @@ import com.indracompany.sofia2.config.model.ApiAuthenticationParameter;
 import com.indracompany.sofia2.config.model.ApiHeader;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.ApiQueryParameter;
-import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.repository.ApiAuthenticationAttributeRepository;
@@ -49,6 +47,8 @@ import com.indracompany.sofia2.config.services.apimanager.authentication.Authent
 import com.indracompany.sofia2.config.services.apimanager.operation.HeaderJson;
 import com.indracompany.sofia2.config.services.apimanager.operation.OperationJson;
 import com.indracompany.sofia2.config.services.apimanager.operation.QueryStringJson;
+import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.config.services.usertoken.UserTokenService;
 import com.indracompany.sofia2.config.services.utils.ServiceUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -75,6 +75,10 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	ApiQueryParameterRepository apiQueryParameterRepository;
 	@Autowired
 	ApiHeaderRepository apiHeaderRepository;
+	@Autowired
+	private UserTokenService userTokenService;
+	@Autowired
+	UserService userService;
 	@Autowired
 	ServiceUtils serviceUtils;
 	
@@ -320,17 +324,17 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 			e.printStackTrace();
 		}
 		
-		AuthenticationJson authenticationJson = null;
-		
-		if (authenticationObject!=null && !authenticationObject.equals("")){
-			
+//		AuthenticationJson authenticationJson = null;
+//		
+//		if (authenticationObject!=null && !authenticationObject.equals("")){
+//			
 //			if (autenticacion!=null && !autenticacion.equals("")){
 //				JSONDeserializer<AutenticationJson> JSONDeserializer = new JSONDeserializer<AutenticationJson>().use(null, AutenticationJson.class).use("parametros.values", ArrayList.class);
 //				 AutenticationJson autenticacionJson = JSONDeserializer.deserialize(autenticacion);	
 //				 
 //				 updateAutenticacion(apimemory, autenticacionJson);
 //			}
-		}
+//		}
 		
 		updateOperations(apimemory, operationsJson);
 	}
@@ -342,13 +346,13 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		return operationsObject;
 	}
 
-	private void updateAuthentication(Api apimemory, AuthenticationJson authenticationJson) {
-		List<ApiAuthentication> apiAutenticationlist = apiAuthenticationRepository.findAllByApi(apimemory);
-		for (ApiAuthentication apiAuthentication : apiAutenticationlist) {
-			apiAuthenticationRepository.delete(apiAuthentication);
-		}
-		createAuthentication(apimemory, authenticationJson);
-	}
+//	private void updateAuthentication(Api apimemory, AuthenticationJson authenticationJson) {
+//		List<ApiAuthentication> apiAutenticationlist = apiAuthenticationRepository.findAllByApi(apimemory);
+//		for (ApiAuthentication apiAuthentication : apiAutenticationlist) {
+//			apiAuthenticationRepository.delete(apiAuthentication);
+//		}
+//		createAuthentication(apimemory, authenticationJson);
+//	}
 
 	private void updateOperations(Api api, List<OperationJson> operationsJson) {
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
@@ -416,4 +420,25 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		api.setState(Api.ApiStates.valueOf(state));
 		apiRepository.save(api);	
 	}
+
+	@Override
+	public void generateToken(String userId) throws Exception {
+		User user = this.userService.getUser(userId);
+		
+		userTokenService.generateToken(user);
+	}
+
+	@Override
+	public void removeToken(String userId, String tokenJson) throws Exception {
+		String token;
+		Map<String, String> obj;
+		
+		obj = new ObjectMapper().readValue(tokenJson, new TypeReference<Map<String, String>>(){});
+		token = obj.get("token");
+		
+		User user = this.userService.getUser(userId);
+			
+		userTokenService.removeToken(user, token);		
+	}
+
 }

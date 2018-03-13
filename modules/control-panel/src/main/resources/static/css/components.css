@@ -12,7 +12,7 @@ body {
   padding: 0px !important;
   margin: 0px !important;
   direction: "ltr";
-  font-size: 14px; }
+  font-size: 13px; }
   
   
 /* ICON FONTS */  
@@ -15745,7 +15745,7 @@ body.stop-scrolling {
     transform: translateY(-120%); }
 
 .mt-element-step .step-line .mt-step-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   position: relative; }
   .mt-element-step .step-line .mt-step-title:after {
@@ -22910,6 +22910,7 @@ Custom color buttons
 
 .flow-description {
 	    margin: 5% 5% 5% 5%;
+		text-align: justify;
 }
 @media (max-width: 767px) {
   /* 767px */

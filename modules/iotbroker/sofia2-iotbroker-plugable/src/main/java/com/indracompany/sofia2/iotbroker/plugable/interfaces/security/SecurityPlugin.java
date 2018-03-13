@@ -18,7 +18,7 @@ import java.util.Optional;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public interface SecurityPlugin {
-	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance);
+	public Optional<IoTSession> authenticate(String token, String clientPlatform, String clientPlatformInstance, String sessionKey);
 
 	public boolean closeSession(String sessionKey);
 

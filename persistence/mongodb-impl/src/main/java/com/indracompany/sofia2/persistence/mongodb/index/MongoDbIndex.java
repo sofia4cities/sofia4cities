@@ -20,6 +20,7 @@
 package com.indracompany.sofia2.persistence.mongodb.index;
 
 import java.util.Map;
+import java.util.Objects;
 
 import org.bson.Document;
 
@@ -88,13 +89,16 @@ public class MongoDbIndex {
 
 	@Override
 	public boolean equals(Object other) {
-		if (!(other instanceof MongoDbIndex))
-			return false;
-		MongoDbIndex anotherIndex = (MongoDbIndex) other;
-		if (this.name != null)
-			return (this.name.equals(anotherIndex.name));
-		else
-			return this.key.equals(anotherIndex.key);
+		if (other == null) return false;
+		if (!(other instanceof MongoDbIndex)) return false;
+		MongoDbIndex that = (MongoDbIndex) other;
+		return Objects.equals(this.name, that.name) &&
+				Objects.equals(this.key, that.key);
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(this.name, this.key);
 	}
 
 }

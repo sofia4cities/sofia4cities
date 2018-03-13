@@ -16,15 +16,18 @@ package com.indracompany.sofia2.iotbroker.mock.ssap;
 import java.io.IOException;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
@@ -138,7 +141,33 @@ public final class SSAPMessageGenerator {
 		return message;
 	}
 
+	public static SSAPMessage<SSAPBodySubscribeMessage> generateSubscriptionMessage(String ontology, String sessionKey,SSAPQueryType queryType, String query) {
+		final SSAPMessage<SSAPBodySubscribeMessage> message = new SSAPMessage<>();
+		message.setSessionKey(sessionKey);
 
+		final SSAPBodySubscribeMessage body = new SSAPBodySubscribeMessage();
+		body.setOntology(ontology);
+		body.setQueryType(queryType);
+		body.setQuery(query);
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.SUBSCRIBE);
 
+		return message;
+	}
 
+	public static SSAPMessage<SSAPBodyCommandMessage> generateCommandMessage(String sessionKey) throws JsonProcessingException, IOException {
+		final SSAPMessage<SSAPBodyCommandMessage> message = new SSAPMessage<>();
+		message.setSessionKey(sessionKey);
+
+		final SSAPBodyCommandMessage body = new SSAPBodyCommandMessage();
+		body.setCommand("COMMAND");
+		body.setCommandId(UUID.randomUUID().toString());
+		body.setParams(mapper.readTree("{}"));
+		message.setBody(body);
+		message.setDirection(SSAPMessageDirection.REQUEST);
+		message.setMessageType(SSAPMessageTypes.COMMAND);
+
+		return message;
+	}
 }
