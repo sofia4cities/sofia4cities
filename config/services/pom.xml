@@ -54,7 +54,11 @@
 		    <version>2.2.8</version>
 		</dependency>
 		
-
+		<!-- JSON -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
 
 	</dependencies>
 

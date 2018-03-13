@@ -54,7 +54,8 @@ var OntologyCreateController = function() {
 					}
 				});
 			}
-		});		
+		});	
+		console.log('|--- jsonFormatted: '+ JSON.stringify(jsonFormatted ));
 		return jsonFormatted;
 	}
 	
