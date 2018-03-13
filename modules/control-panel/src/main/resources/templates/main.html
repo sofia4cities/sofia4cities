@@ -57,7 +57,7 @@
 					<div class="row step-line">					
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col first ">
 							<span th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasOntology} ? bg-green : bg-red">
-							  <i class="flaticon-interface-9"></i> 
+							  <i class="flaticon-network"></i> 
 							</span>
 							<div class="mt-step-title uppercase bold font-grey-steel" th:text="#{flow.ontology}">Modela el dato</div>
 							<div class="mt-step-content font-grey-steel flow-description" th:text="#{flow.ontology.description}">...</div>
@@ -97,8 +97,10 @@
 							<div class="mt-step-title uppercase font-grey-steel" th:text="#{flow.api}">Crea tu API</div>
 							<div class="mt-step-content font-grey-steel flow-description" th:text="#{flow.api.description}">...</div>
 						</div>
+						<div class="pull-right"><span class="btn btn-icon-only purple-studio hide-main-block"><i class="fa fa-eye-slash"></i></span></div>
 					</div>
 				</div>
+				<div class="main-block-toggle hide"><span class="btn btn-icon-only dark"><i class="fa fa-eye"></i></span></div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
@@ -109,7 +111,7 @@
 				<div class="row">					
 					<div class="col-md-12 col-sm-12">
 						<!-- BEGIN GRAPH INCLUDE -->
-						<div sec:authorize="hasAnyAuthority('ROLE_DEVELOPER','ROLE_DATASCIENTIST','ROLE_ADMINISTRATOR')" th:include="fragments/graph::#graphFragment" class="margin-bottom-10"></div>
+						<div id="graphInclude" sec:authorize="hasAnyAuthority('ROLE_DEVELOPER','ROLE_DATASCIENTIST','ROLE_ADMINISTRATOR')" th:include="fragments/graph::#graphFragment" class="margin-top-10 margin-bottom-10"></div>
 						<!-- END GRAPH -->
 					</div>
 				</div><!-- END MAIN ROW -->
@@ -146,6 +148,25 @@
 			target: null,
 			remove: false
 		});
+		
+		
+		// toogle info zone
+		$('.hide-main-block').on('click', function(){
+			var mainIsVisible = $(".main-block").is(":visible");
+			console.log('VISIBLE: ' + mainIsVisible);
+			$('.main-block').fadeToggle(); 
+			$('.hide-main-block').addClass('hide');
+			$('.main-block-toggle').removeClass('hide');
+		
+		});
+		
+		$('.main-block-toggle').on('click', function(){
+			$('.main-block').fadeToggle(); 
+			$('.hide-main-block').removeClass('hide');
+			$('.main-block-toggle').addClass('hide');
+			
+		});
+		
 		
 	});
 	 
