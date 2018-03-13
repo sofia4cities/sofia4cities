@@ -15,12 +15,14 @@ package com.indracompany.sofia2.streaming.twitter.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 
 
 @SpringBootApplication
+@EnableCaching(proxyTargetClass=true)
 @ComponentScan("com.indracompany.sofia2")
 public class StreamingTwitterApplication {
 

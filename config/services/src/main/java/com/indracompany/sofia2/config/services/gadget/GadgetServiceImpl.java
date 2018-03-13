@@ -19,12 +19,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.indracompany.sofia2.config.model.Gadget;
+import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
+import com.indracompany.sofia2.config.services.exceptions.GadgetDatasourceServiceException;
 
 @Service
 public class GadgetServiceImpl implements GadgetService {
@@ -34,6 +38,9 @@ public class GadgetServiceImpl implements GadgetService {
 	
 	@Autowired
 	private GadgetMeasureRepository gadgetMeasureRepository;
+	
+	@Autowired
+	private GadgetDatasourceService gadgetDatasourceService;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -146,7 +153,53 @@ public class GadgetServiceImpl implements GadgetService {
 			return lgm;
 		}
 		return null;
-	}	
+	}
+
+	@Override
+	public boolean hasUserPermission(String id, String userId) {
+		User user = userRepository.findByUserId(userId);
+		if(user.getRole().getName().equals("ROLE_ADMINISTRATOR")) {
+			return true;
+		}
+		else {
+			return gadgetRepository.findById(id).getUser().getUserId().equals(userId);
+		}
+	}
+	
+	@Override
+	public void deleteGadget(String gadgetId, String userId) {
+		if(hasUserPermission(gadgetId, userId)) {
+			Gadget gadget = this.gadgetRepository.findById(gadgetId);
+			if (gadget != null) {
+				gadgetMeasureRepository.deleteByGadget(gadget);
+				this.gadgetRepository.delete(gadget);
+			} else
+				throw new GadgetDatasourceServiceException("Cannot delete gadget that does not exist");
+		}
+				
+	}
+
+	@Override
+	public void updateGadget(Gadget gadget, List<String> gadgetDatasourceIds, List<String> jsonMeasures) {
+		gadgetMeasureRepository.deleteByGadget(gadget);
+		saveGadgetAndMeasures(gadget, gadgetDatasourceIds, jsonMeasures);
+	}
+
+	@Override
+	public void createGadget(Gadget gadget, List<String> gadgetDatasourceIds, List<String> jsonMeasures) {
+		saveGadgetAndMeasures(gadget, gadgetDatasourceIds, jsonMeasures);
+	}
+	
+	private void saveGadgetAndMeasures(Gadget g, List<String> gadgetDatasourceIds, List<String> jsonMeasures) {
+		gadgetRepository.save(g);
+		for (int i=0; i< jsonMeasures.size(); i++) {
+			GadgetMeasure gadgetMeasure = new GadgetMeasure();
+			gadgetMeasure.setGadget(g);
+			gadgetMeasure.setDatasource(gadgetDatasourceService.getGadgetDatasourceById(gadgetDatasourceIds.get(i)));
+			gadgetMeasure.setConfig(jsonMeasures.get(i));
+			gadgetMeasureRepository.save(gadgetMeasure);
+		}
+	}
 }
 
 
