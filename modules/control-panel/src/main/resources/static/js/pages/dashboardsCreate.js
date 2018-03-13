@@ -1,8 +1,8 @@
-var DatasourcesCreateController = function() {
+var DashboardsCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
-	var LIB_TITLE = 'Datasource Controller';	
+	var LIB_TITLE = 'Dashboard Controller';	
     var logControl = 1;
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.	
@@ -14,17 +14,17 @@ var DatasourcesCreateController = function() {
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
 	
-	// DELETE DATASOURCE
-	var deleteDatasourceConfirmation = function(datasourceId){
-		console.log('deleteGadgetDatasourceConfirmation() -> formId: '+ datasourceId);
+	// DELETE DASHBOARD
+	var deleteDashboardConfirmation = function(dashboardId){
+		console.log('deleteDashoardConfirmation() -> formId: '+ dashboardId);
 		
 		// no Id no fun!
-		if ( !datasourceId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO USER-FORM SELECTED!'}); return false; }
+		if ( !dashboardId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO DASHBOARD-FORM SELECTED!'}); return false; }
 		
-		logControl ? console.log('deleteGadgetDatasourceConfirmation() -> formAction: ' + $('.delete-gadgetDatasource').attr('action') + ' ID: ' + $('.delete-gadgetDatasource').attr('userId')) : '';
+		logControl ? console.log('deleteDashboardConfirmation() -> formAction: ' + $('.delete-dashboard').attr('action') + ' ID: ' + $('.delete-dashboard').attr('userId')) : '';
 		
 		// call user Confirm at header.
-		HeaderController.showConfirmDialogDatasource('delete_datasource_form');	
+		HeaderController.showConfirmDialogDashboard('delete_dashboard_form');
 	}
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
@@ -72,9 +72,9 @@ var DatasourcesCreateController = function() {
 		},
 		
 		// DELETE GADGET DATASOURCE 
-		deleteGadgetDatasource: function(gadgetDatasourceId){
-			logControl ? console.log(LIB_TITLE + ': deleteGadgetDatasource()') : '';	
-			deleteDatasourceConfirmation(gadgetDatasourceId);			
+		deleteDashboard: function(dashboardId){
+			logControl ? console.log(LIB_TITLE + ': deleteDashboard()') : '';	
+			deleteDashboardConfirmation(dashboardId);			
 		}
 		
 	};
@@ -84,8 +84,8 @@ var DatasourcesCreateController = function() {
 jQuery(document).ready(function() {
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
-	DatasourcesCreateController.load();	
+	DashboardsCreateController.load();	
 		
 	// AUTO INIT CONTROLLER.
-	DatasourcesCreateController.init();
+	DashboardsCreateController.init();
 });

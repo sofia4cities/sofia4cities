@@ -16,6 +16,7 @@ package com.indracompany.sofia2.config.services.gadget;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.Gadget;
+import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 
 public interface GadgetService {
@@ -27,4 +28,8 @@ public interface GadgetService {
 	public void createGadget(Gadget gadget);
 	public List<Gadget> getUserGadgetsByType(String userID, String type);
 	public List<GadgetMeasure> getGadgetMeasuresByGadgetId(String userID, String gadgetId);
+	public boolean hasUserPermission(String id, String userId);
+	public void updateGadget(Gadget gadget, List<String> gadgetDatasourceIds, List<String> jsonMeasures);
+	public void createGadget(Gadget gadget, List<String> gadgetDatasourceIds, List<String> jsonMeasures);
+	public void deleteGadget(String gadgetId, String userId);
 }
