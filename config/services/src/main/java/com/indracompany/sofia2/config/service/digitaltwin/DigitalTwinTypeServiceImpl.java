@@ -1,4 +1,3 @@
-
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -66,6 +64,74 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 
 	@Autowired
 	private UserService userService;
+	
+	@Override
+	public DigitalTwinType getDigitalTwinTypeById(String id) {
+		return digitalTwinTypeRepo.findById(id);
+	}
+	
+	@Override
+	public List<PropertyDigitalTwinTypeDTO> getPropertiesByDigitalId(String TypeId) {
+		
+		List<PropertyDigitalTwinTypeDTO> lPropertiesDTO = new ArrayList<PropertyDigitalTwinTypeDTO>();
+		List<PropertyDigitalTwinType> lProperties = propDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
+		
+		for(PropertyDigitalTwinType prop : lProperties) {
+			lPropertiesDTO.add(new PropertyDigitalTwinTypeDTO(prop.getId(), prop.getType(), prop.getName(), prop.getUnit(), prop.getDirection(), prop.getDescription()));
+		}
+		
+		return lPropertiesDTO;
+	}
+	
+	@Override
+	public List<ActionsDigitalTwinTypeDTO> getActionsByDigitalId(String TypeId) {
+		
+		List<ActionsDigitalTwinTypeDTO> lActionsDTO = new ArrayList<ActionsDigitalTwinTypeDTO>();
+		List<ActionsDigitalTwinType> lActions = actDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
+		
+		for(ActionsDigitalTwinType act : lActions) {
+			lActionsDTO.add(new ActionsDigitalTwinTypeDTO(act.getId(), act.getName(), act.getDescription()));
+		}
+		
+		return lActionsDTO;
+	}
+	
+	@Override
+	public List<EventsDigitalTwinTypeDTO> getEventsByDigitalId(String TypeId) {
+		
+		List<EventsDigitalTwinTypeDTO> lEventsDTO = new ArrayList<EventsDigitalTwinTypeDTO>();
+		List<EventsDigitalTwinType> lEvents = evtDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
+		
+		for(EventsDigitalTwinType event : lEvents) {
+			lEventsDTO.add(new EventsDigitalTwinTypeDTO(event.getId(), event.getType(), event.getName(), event.isStatus(), event.getDescription()));
+		}
+		
+		return lEventsDTO;
+	}
+	
+	@Override
+	public String getLogicByDigitalId(String TypeId) {
+		LogicDigitalTwinType logic = logicDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
+		if(logic!=null) {
+			return logic.getLogic();
+		}
+		return "";
+	}
+	
+	@Override
+	public List<String> getAllIdentifications() {
+		List<DigitalTwinType> digitalTypes = this.digitalTwinTypeRepo.findAllByOrderByNameAsc();
+		List<String> identifications = new ArrayList<String>();
+		for (DigitalTwinType type : digitalTypes) {
+			identifications.add(type.getName());
+		}
+		return identifications;
+	}
+	
+	@Override
+	public List<DigitalTwinType> getAll() {
+		return digitalTwinTypeRepo.findAll();
+	}
 
 	@Override
 	public DigitalTwinType getDigitalTwinTypeById(String id) {
@@ -148,6 +214,11 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 			Set<EventsDigitalTwinType> eventDigitalTwinTypes = new HashSet<>();
 			Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
 			
+			Set<PropertyDigitalTwinType> propertyDigitalTwinTypes = new HashSet<>();
+			Set<ActionsDigitalTwinType> actionDigitalTwinTypes = new HashSet<>();
+			Set<EventsDigitalTwinType> eventDigitalTwinTypes = new HashSet<>();
+			Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
+			
 			JSONObject json;
 			
 			User user = userService.getUser(digitalTwinType.getUser().getUserId());
@@ -208,7 +279,6 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 				log.error("Invalid user");
 			}				
 			
-
 		} catch (Exception e) {
 			throw new OntologyServiceException("Problems creating the digital twin type", e);
 		}
