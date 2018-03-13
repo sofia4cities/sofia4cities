@@ -60,7 +60,7 @@
 				"EN": "INGEST & PROCESS",
 				"ES": "INGESTA Y PROCESADO"
 			},
-			"icon": "la la-globe",
+			"icon": "flaticon-analytics",
 			"url": "",
 			"submenu": [	
 				{
@@ -120,7 +120,7 @@
 				"EN": "API MANAGER",
 				"ES": "API MANAGER"
 			},
-			"icon": "la la-random",
+			"icon": "flaticon-layers",
 			"url": "",
 			"submenu": [
 				{

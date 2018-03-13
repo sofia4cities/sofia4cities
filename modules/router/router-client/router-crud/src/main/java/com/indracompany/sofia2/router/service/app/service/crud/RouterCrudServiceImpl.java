@@ -42,8 +42,8 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
 	
 	
-	@Autowired
-	RouterCrudServiceImpl me;
+	//@Autowired
+	//RouterCrudServiceImpl me;
 
 	@Override
 	public OperationResultModel insert(OperationModel operationModel) {
@@ -179,7 +179,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final boolean cacheable = operationModel.isCacheable();
 		if (cacheable) {
 			log.info("DO CACHE OPERATION "+operationModel.toString());
-			result= me.queryCache(operationModel);
+			result= queryCache(operationModel);
 			
 		}
 		else {

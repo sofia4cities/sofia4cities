@@ -61,7 +61,7 @@ import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity {
 
-    String TAG = "DIAPoC";
+    String TAG = "S4C MainActivity";
 
     private final int LOCATION_PERMIT = 1;
     private final int BLUETOOTH_PERMIT = 2;
@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
     TelephonyManager mngr;
     String IMEI = "";
 
-    //TODO Create a new String to store your value
     String mLatitude = "";
     String mLongitude= "";
     String mAccuracy = "";
@@ -201,24 +200,15 @@ public class MainActivity extends AppCompatActivity {
                 final LocationSettingsStates state = result.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied. But could be fixed by showing the user
-                        // a dialog.
                         try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
                             status.startResolutionForResult(
                                     MainActivity.this, 1000);
                         } catch (IntentSender.SendIntentException e) {
-                            // Ignore the error.
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
                         break;
                 }
             }
@@ -548,7 +538,6 @@ public class MainActivity extends AppCompatActivity {
                 mAccelY = intent.getStringExtra("sens-update-accY");
                 mAccelZ = intent.getStringExtra("sens-update-accZ");
                 mBeaconEvent = intent.getBooleanExtra("sens-update-beaconEvent",false);
-                //TODO Fetch sensor data from intent to have them available in MainActivity
             }
             else if(intent.getAction().equals(TrackingService.ACTION_FRAME_GEN)){
                mFrameGen = intent.getStringExtra("frame_generated");

@@ -58,9 +58,15 @@ public class SubscribeProcessorTest {
 
 	SSAPMessage<SSAPBodySubscribeMessage> ssapSbuscription;
 	IoTSession session;
+	@MockBean
+	DeviceManager deviceManager;
+
+
+
 
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
@@ -78,7 +84,7 @@ public class SubscribeProcessorTest {
 
 	@Test
 	public void given_OneSubsctiptionProcessorWhenSubscriptionArrivesThenSubscriptionIsStoredAndReturned() {
-		final SSAPMessage<SSAPBodyReturnMessage> response = subscribeProcessor.process(ssapSbuscription);
+		final SSAPMessage<SSAPBodyReturnMessage> response = subscribeProcessor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
 		Assert.assertNotNull(response);
 		Assert.assertEquals(SSAPMessageDirection.RESPONSE, response.getDirection());
 		Assert.assertEquals(SSAPMessageTypes.SUBSCRIBE, response.getMessageType());

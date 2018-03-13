@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
@@ -103,7 +104,7 @@ public class MoquetteBroker {
 		public void onPublish(InterceptPublishMessage msg) {
 			final ByteBuf byteBuf = msg.getPayload();
 			final String playload = new String(ByteBufUtil.getBytes(byteBuf), Charset.forName("UTF-8"));
-			final String response = MoquetteBroker.this.processor.process(playload);
+			final String response = MoquetteBroker.this.processor.process(playload, getGatewayInfo());
 
 			final MqttPublishMessage message = MqttMessageBuilders.publish()
 					.topicName(outbound_topic + "/" + msg.getClientID())
@@ -233,5 +234,13 @@ public class MoquetteBroker {
 
 	public void setStore(String store) {
 		this.store = store;
+	}
+
+	private GatewayInfo getGatewayInfo() {
+		final GatewayInfo info = new GatewayInfo();
+		info.setName("moquette_gateway");
+		info.setProtocol("MQTT");
+
+		return info;
 	}
 }

@@ -139,15 +139,15 @@ public class DeviceController {
 			ClientPlatform device = clientPlatformService.getByIdentification(id);
 			if (!this.utils.getUserId().equals(device.getUser().getUserId()) && !utils.isAdministrator()) {
 				utils.addRedirectMessage("device.delete.error", redirect);
-				return "controlpanel/devices/list";
+				return "/controlpanel/devices/list";
 			}
 			this.entityDeletionService.deleteClient(id);
 		} catch (Exception e) {
 			utils.addRedirectMessage("device.delete.error", redirect);
-			return "controlpanel/devices/list";
+			return "/controlpanel/devices/list";
 		}
 
-		return "controlpanel/devices/list";
+		return "/controlpanel/devices/list";
 	}
 
 	@GetMapping(value = "/create")

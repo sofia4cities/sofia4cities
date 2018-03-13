@@ -10,14 +10,14 @@
 	<properties>
 		<license.dir>${project.parent.basedir}</license.dir>
 	</properties>
+	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>device-simulator</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
 	<name>device-simulator</name>
 	<description>Module for device simulations</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-router-core</artifactId>
+			<artifactId>sofia2-iotbroker-boot</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>

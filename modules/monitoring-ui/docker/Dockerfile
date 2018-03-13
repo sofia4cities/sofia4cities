@@ -1,13 +1,16 @@
 FROM openjdk:8-jdk-alpine
 
-LABEL maintainer "plataformasofia2@indra.es"
+# Metadata
+LABEL module.maintainer="plataformasofia2@indra.es" \
+	  module.name="monitoringui"
 
 VOLUME /tmp
 
-ARG JAR_FILE
-
 ADD *-exec.jar app.jar
 
-EXPOSE 8080
+EXPOSE 18090
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+ENV JAVA_OPTS="" \
+    SERVER_NAME=localhost
+    
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=docker","-jar","/app.jar"]
