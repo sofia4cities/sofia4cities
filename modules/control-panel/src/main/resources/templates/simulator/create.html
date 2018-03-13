@@ -133,7 +133,7 @@
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{simulation.clientplatform} + ':'">Platform Clients</label>
-															<select th:required="true" th:field="*{clientPlatform.identification}" th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="form-control" th:classappend="${simulation.id != null} ? select:selectpicker" data-live-search="true" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
+															<select th:required="true"  th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="form-control" th:classappend="${simulation.id != null} ? select:selectpicker" data-live-search="true" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
 																<option th:each=" platformClient : ${platformClients}" th:value="${platformClient}" th:text="${platformClient}"/>																
 															</select>										
 															
@@ -144,7 +144,7 @@
 														<div class="col-md-3 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label class="control-label" th:text="#{simulation.select.tokens} + ':'">Tokens</label>
-																<select th:field="*{token.token}" th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulation.tokens}"  >
+																<select th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulation.tokens}"  >
 																<option th:each="token : ${tokens}" th:value="${token}" th:text="${token}"/>
 																</select>									
 																									
@@ -153,7 +153,7 @@
 														<div class="col-md-2 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label class="control-label" th:text="#{simulation.select.ontologies} + ':'">Ontologies</label>
-																<select th:field="*{ontology.identification}" th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
+																<select th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
 																<option th:each="ontology : ${ontologies}" th:value="${ontology}" th:text="${ontology}"/>
 																</select>									
 																										
@@ -220,7 +220,7 @@
 													<button th:if="${simulation.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" onclick="submitForm('simulation_create_form')" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 
 													<!-- REMOVE -->
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteSimulation(\''+ ${simulation.id}+'\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" th:if="${simulation.id != null}" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteSimulation(\''+ ${simulation.id}+'\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 													
 													
 													
