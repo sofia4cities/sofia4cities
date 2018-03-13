@@ -14,12 +14,25 @@
  */
 package com.indracompany.sofia2.config.service.digitaltwin;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.ui.Model;
 
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 
 public interface DigitalTwinTypeService {
 	
 	void createDigitalTwinType(DigitalTwinType digitalTwinType, HttpServletRequest httpServletRequest);
-
+	List<DigitalTwinType> getAll();
+	List<String> getAllIdentifications();
+	DigitalTwinType getDigitalTwinTypeById(String id);
+	List<PropertyDigitalTwinTypeDTO> getPropertiesByDigitalId(String id);
+	List<ActionsDigitalTwinTypeDTO> getActionsByDigitalId(String TypeId);
+	List<EventsDigitalTwinTypeDTO> getEventsByDigitalId(String TypeId);
+	String getLogicByDigitalId(String TypeId);
+	void getDigitalTwinToUpdate(Model model, String id);
+	void updateDigitalTwinType(DigitalTwinType digitalTwinType, HttpServletRequest httpServletRequest);
+	public void deleteDigitalTwinType(DigitalTwinType digitalTwinType);
 }
