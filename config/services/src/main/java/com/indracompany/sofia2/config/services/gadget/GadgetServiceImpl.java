@@ -236,7 +236,7 @@ public class GadgetServiceImpl implements GadgetService {
 		for (int i=0; i< listJsonMeasures.size(); i++) {
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
 			gadgetMeasure.setGadget(g);
-			gadgetMeasure.setDatasource(gadgetDatasourceService.getGadgetDatasourceById(listDatasources.get(i)));
+			gadgetMeasure.setDatasource(gadgetDatasourceService.getGadgetDatasourceById(listDatasources.get(0)));
 			gadgetMeasure.setConfig(listJsonMeasures.get(i).getConfig());
 			gadgetMeasureRepository.save(gadgetMeasure);
 		}

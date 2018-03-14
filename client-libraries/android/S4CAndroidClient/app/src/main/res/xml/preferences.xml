@@ -29,7 +29,7 @@
             android:key="@string/pref_token"
             android:title="@string/pref_token_name"
             android:summary="@string/pref_token_summary"
-            android:defaultValue="ac8f980a28ab41e98b70b379eba63c3c"/>
+            android:defaultValue="fb3521092ebb4edfac1a8b22b72f51a4"/>
         
     </PreferenceCategory>
 </PreferenceScreen>

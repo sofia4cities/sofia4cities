@@ -37,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PersistenceServiceImpl implements PersistenceService {
 
-
 	@Autowired
 	private MessageProcessor messageProcessor;
 	@Autowired
@@ -57,15 +56,15 @@ public class PersistenceServiceImpl implements PersistenceService {
 		body.setToken(token.getToken());
 		join.setBody(body);
 		final SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(join, getGatewayInfo());
-		if(response.getSessionKey()!=null) {
+		if (response.getSessionKey() != null) {
 			this.sessionKey = response.getSessionKey();
 		}
 	}
 
 	private GatewayInfo getGatewayInfo() {
-		final GatewayInfo info =new GatewayInfo();
+		final GatewayInfo info = new GatewayInfo();
 		info.setName("Device Simulator");
-		info.setName("SIMULATION");
+		info.setProtocol("SIMULATION");
 		return info;
 	}
 
@@ -86,14 +85,14 @@ public class PersistenceServiceImpl implements PersistenceService {
 			body.setData(json);
 			insert.setBody(body);
 
-
 			final SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(insert, getGatewayInfo());
-			if(response.getBody().getErrorCode().name()==SSAPErrorCode.AUTENTICATION.name()) {
-				this.connectIotBroker(clientPlatform, clientPlatformInstance);
-				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
+			if (response.getBody().getError() != null) {
+				if (response.getBody().getErrorCode().name() == SSAPErrorCode.AUTENTICATION.name()) {
+					this.connectIotBroker(clientPlatform, clientPlatformInstance);
+					this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 
+				}
 			}
-
 		} else {
 			this.connectIotBroker(clientPlatform, clientPlatformInstance);
 			this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);

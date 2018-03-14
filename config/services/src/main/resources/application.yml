@@ -1,3 +1,4 @@
+#logging.level.org.hibernate.SQL: debug
 spring: ## General Config  
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false

@@ -1,6 +1,6 @@
 <p align="center">
   <a src='https://www.sofia4cities.com/'>
-    <img src='s4c.png'/>
+    <img src='s4c_logo.png'/>
   </a>
 </p>
 
