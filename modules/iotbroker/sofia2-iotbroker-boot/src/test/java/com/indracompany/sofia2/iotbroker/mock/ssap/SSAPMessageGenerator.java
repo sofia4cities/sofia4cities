@@ -170,4 +170,9 @@ public final class SSAPMessageGenerator {
 
 		return message;
 	}
+
+	//	public static SSAPMessage<SSAPBodyLeaveMessage> generateLeaveMessage() {
+	//		final SSAPMessage<SSAPBodyLeaveMessage> message = new SSAPMessage<>();
+	//
+	//	}
 }

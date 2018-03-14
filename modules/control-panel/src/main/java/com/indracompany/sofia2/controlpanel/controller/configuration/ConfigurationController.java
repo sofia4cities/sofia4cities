@@ -118,12 +118,12 @@ public class ConfigurationController {
 
 		if (configuration != null) {
 			if (!this.utils.getUserId().equals(configuration.getUser().getUserId()) && !utils.isAdministrator())
-				return "/error/403";
+				return "error/403";
 			try {
 				this.configurationService.updateConfiguration(configuration);
 			} catch (Exception e) {
 				log.debug(e.getMessage());
-				return "/configurations/create";
+				return "configurations/create";
 			}
 		} else {
 			return "redirect:/update/" + id;
@@ -146,11 +146,11 @@ public class ConfigurationController {
 			configuration = this.configurationService.getConfiguration(id);
 		}
 		if (configuration == null)
-			return "/error/404";
+			return "error/404";
 		if (!this.utils.getUserId().equals(configuration.getUser().getUserId()) && !utils.isAdministrator())
-			return "/error/403";
+			return "error/403";
 		model.addAttribute("configuration", configuration);
-		return "/configurations/show";
+		return "configurations/show";
 
 	}
 

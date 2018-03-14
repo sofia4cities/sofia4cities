@@ -31,7 +31,7 @@
 		    window.__env.socketEndpointSubscribe = '/dsengine/broker';
 		    window.__env.endpointSofia2ControlPanel = '/controlpanel';
 		    window.__env.endpointSofia2DashboardEngine = '/dashboardengine';
-		    window.__env.dashboardEngineUsername = 'administrator';
+		    window.__env.dashboardEngineUsername = 'operations';
 		    window.__env.dashboardEnginePassword = 'changeIt!';
 		    window.__env.dashboardEngineLoginRest = '/loginRest';
 		    window.__env.enableDebug = false;
@@ -139,7 +139,9 @@
 								 			<input type="hidden" id="type" th:field="*{type}"/>
 								 			<input type="hidden" id="description" th:field="*{description}"/>
 								 			<input type="hidden" id="public" th:field="*{public}"/>
-								 			<input type="hidden" id="id" th:field="*{id}"/>	
+								 			<input type="hidden" id="id" th:field="*{id}"/>
+								 			<input type="hidden" id="jsonMeasures" name="jsonMeasures" />
+								 			<input type="hidden" id="datasourcesMeasures" name="datasourcesMeasures" />
 								 										  
 											<div class="form-body">
 									 			<div class="row">
@@ -171,7 +173,7 @@
 									 			</div>
 									
 																		 
-									 </form>	
+									 	
 									 
 									 <!-- Aquí irán los iconos de los gráficos -->
 									 <div  class="container">
@@ -187,7 +189,7 @@
 										 <div id="measures">
 										   
 										 </div>
-										 <button id="addMore" style="display:none;margin-top:10px" class="btn btn-success pull-right" onclick="addFormSttByType(true)">Add measure</button>
+										 <button id="addMore" style="display:none;margin-top:10px" class="btn btn-success pull-right" onclick="addFormSttByType(event,true)">Add measure</button>
 									 </div>
 									<div id="viewer" style="height:300px; width:100%;display:inline-block">
 										<div id="gapp" ng-app="s2DashboardFramework">
@@ -208,10 +210,19 @@
 										<div class="pull-right">
 											<!-- CREATE -->
 												<button th:if="${gadget.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success btn-lg" name="create"  th:value="#{gadgets.create}" > <span th:text="#{gadgets.create}"> Create</span></button>
-							
+											<!-- UPDATE -->
+												<button th:if="${gadget.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													
+											<!-- REMOVE -->
+												<button th:if="${gadget.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'GadgetsCreateController.deleteGadget(\'' + ${gadget.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 										</div>
-									</div>					
-																										
+									</div>
+									</form>					
+									<!-- AUXILIAR FORM TO DELETE DATASOURCE -->
+									<form id="delete_gadget_form" class="delete-gadget hide"  th:action="@{'/gadgets/'+${gadget.id}}"  method="post">
+										<input type="hidden" name="_method" value="DELETE"/>
+										<input type="hidden" name="id" th:value="${gadget.id}"/>
+									</form>																	
 									</div>
 								</div>
 							</div>
@@ -239,8 +250,22 @@
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/muuri/0.5.4/muuri.min.js"></script>
 	
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/gadgetsCreate.js}"/>
+	
 	<script th:inline="javascript">
-
+	
+	 $("#createBtn,#updateBtn").on("click", function() {
+		// <![CDATA[
+		generateMeasuresArray();
+		
+     	$("#jsonMeasures").val(JSON.stringify(measures));
+     	$("#datasourcesMeasures").val(JSON.stringify([$("#datasources").val()]));
+     	$("#type").val(gtype);
+     	$("#config").val("{}");
+     	$("#gadget_create_form").get(0).submit();
+     });
+	
 	var gadget= [ {
 		type : "line",
 		icon : "/controlpanel/images/dashboards/linechart.jpg",
@@ -415,10 +440,13 @@
       	}    
       	return fields;
    	}
-	// <![CDATA[
+	
 	var stt;
 	
-	function addFormSttByType(loadOptions){
+	function addFormSttByType(e,loadOptions){
+		if(e){
+			e.preventDefault();	
+		}
 		var measure = "";
 		var division;
 		switch (stt.attributes.length){

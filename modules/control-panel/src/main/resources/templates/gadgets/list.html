@@ -63,7 +63,6 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/gadgets/list}"> <span th:text="#{name.visualization}">Visualization</span></a><i class="fa fa-circle"></i></li>
 						<li><span th:text="#{gadgets.my}">My Gadgets</span></li>
 					</ul>						
 				</div>
@@ -87,20 +86,11 @@
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
-								</div>
+								</div>								
 								<div class="actions margin-right-20">
-									<div class="btn-group">												
-										<a href="javascript:;" aria-expanded="false" class="btn btn-square btn-default" onclick="location.href='../gadgets/create'">
-										 <i class="flaticon-add"></i><span th:text="#{gen.create}"> Create </span> 
-										</a>
-										<!--  												
-										<ul class="dropdown-menu" role="menu">
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createWizard'" th:text="#{ontology.wizard}" >Wizard </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologies/createJsonSchema'" th:text="#{ontology.jsonSchema}" > JSON-Schema</a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/create'" th:text="#{ontology.csv}" > CSV/EXCEL </a></li>
-											<li sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_COLLABORATOR')"><a onclick="location.href='../ontologiasopendata/createJSONXML'" th:text="#{ontology.json_xml}" > JSON/XML </a></li>
-											<li class="divider"> </li>
-										</ul>-->
+									<div class="btn-group">										
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../gadgets/create'" ><i class="flaticon-dashboard"></i> <span th:text="#{gen.create}">New </span></button>
 									</div>										
 								</div>
 							</div>
@@ -110,13 +100,10 @@
 									<div class="col-md-12 alert-zone">
 										<!-- ALERT ZONE -->																			
 									</div>
-									<div class="col-md-12 margin-bottom-20">
+									<div class="col-md-12">
 									<!-- SEARCH FORM -->
 										<form id="form_gadget" class="" role="form" method="get">												
-											<div class="col-md-12 no-space">
-												<h4 data-toggle="collapse" data-target="#searchFilter" class="search-toggle margin-bottom-15 collapsed"  ><i class="fa fa-search"></i> <span  class="popovers"  data-trigger="hover" data-placement="top" data-content="Búsqueda de Gadgets, haga click para desplegar/colapsar el forumulario y Buscar." data-original-title="Filtro de Gadgeys" th:text="#{gen.search}">Search</span></h4>
-											</div>
-											<div id="searchFilter" class="form-body collapse">
+											<div id="searchFilter" class="form-body hide" style="border-bottom: 1px solid #eef1f5;">
 												<div class="row">
 													<div class="col-md-4 col-xs-12">
 														<div class="form-group">															
@@ -124,7 +111,7 @@
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>															
-																<input id="name" th:placeholder="#{gen.name}" name="name" class="form-control" type="text" maxlength="50" value=""/>
+																<input id="name" th:placeholder="#{gadgets.name}" name="name" class="form-control" type="text" maxlength="50" value=""/>
 															</div>
 														</div>
 													</div>
@@ -134,15 +121,14 @@
 																<span class="input-group-addon">
 																	<i class="fa fa-tag font-grey-mint"></i>
 																</span>
-																<input id="type" th:placeholder="#{gen.type}" name="type" class="form-control" type="text" maxlength="45" value=""/>
+																<input id="type" th:placeholder="#{gadgets.type}" name="type" class="form-control" type="text" maxlength="45" value=""/>
 															</div>
 														</div>
 													</div>
 													<div class="col-md-4 col-xs-12">
 														<div class="btn-group">
-															<button type="submit" id="search_gadget" name="search_gadget" th:title="#{gen.search}" th:value="#{gadget_search_button_form}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
-															<!--  <button type="button" id="reset_ontology" name="reset_ontology" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
-														-->
+															<button type="button" id="search_gadget" name="search_gadget" th:title="#{gen.search}" th:value="#{gadget_search_button_form}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
+															<button type="button" id="reset_gadget" name="reset_gadget" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>														
 														</div>
 													</div>
 												</div>
@@ -151,27 +137,27 @@
 									</div>
 									<!-- GADGET LIST -->
 									<div class="col-md-12">											
-										<div id="contenedor-tabla-outside" class="contiene">																						
-											<div  class ="table-scrollable table-scrollable-borderless">
+										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+											<div>
 												<!-- DATATABLE DANDELION CONF. -->												
 												<table id="gadgets" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
 													<thead>
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas" th:text="#{gen.name}">Name</th>
-															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Owner</span></th>
 															<th class="titulo-columnas" th:text="#{gen.description}">Description</th>
 															<!--  <th class="titulo-columnas text-center" th:text="#{gen.active}">Active</th> -->	
 															<th class="titulo-columnas text-center" th:text="#{gen.public}">Public</th>															
-															<th class="titulo-columnas" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
-															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
+															<th class="titulo-columnas text-center" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
 													<tbody th:remove="all-but-first">
 														<tr th:each="gadget : ${gadgets}" pages:paginate="10">
 															<!-- IDENTIFICATION/NAME -->
-															<td class="text-left bold" th:text="${gadget.identification}"></td>
+															<td class="text-left " th:text="${gadget.identification}"></td>
 															<!-- USER -->
-															<td class="text-center bold" th:text="${gadget.user.userId}"></td>
+															<td class="text-center " th:text="${gadget.user.userId}"></td>
 															<!-- DESCRIPTION -->
 															<td class="text-left text-truncate-sm" th:title="${gadget.description}" th:text="${gadget.description}"></td>
 															<!-- PUBLIC -->
@@ -182,11 +168,10 @@
 															<td class="text-center" th:if="${gadget.createdAt==null}" th:text="${gadget.createdAt}"></td>
 															<!-- OPTIONS -->
 															<td class="icon" style="white-space: nowrap">
-																<div class="grupo-iconos">
+																<div class="grupo-iconos text-center">
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/gadgets/edit/${gadget.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
-																	
+																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/gadgets/update/${gadget.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																	<!-- INDEXES -->
 																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
 																</div>
@@ -238,14 +223,14 @@
 	<script th:inline="javascript">	
 	
 	// TEMPLATE SEARCH FORM.
-	var search = new Array();
-	var search = [[${param.identification}]] || [];
-	var description = [[${param.description}]] || '';
 	
-	search[0] ? $('#identification').val(search[0]) : search[0] = '';
-	description ? $('#description').val(description) : description = '';
-	console.log('SEARCHING ... [ Identification: ' + search[0] + ' Description: ' + description + ']');
-	if (( search[0] != '') || (description != '')) { $('.search-toggle').trigger('click'); }
+	var sname = [[${param.name}]] || '';
+	var stype = [[${param.type}]] || '';
+	
+	sname ? $('#name').val(sname) : sname = '';
+	stype ? $('#type').val(stype) : stype = '';
+	console.log('SEARCHING ... [ Name: ' + sname + ' Type: ' + stype + ']');
+	if (( sname != '') || (stype != '')) { $('#search-toggle').trigger('click'); }
 	
 	// DATATABLES LANGUAJE FROM PROPERTIES.
 	datatable_lang = [[#{datatables_lang}]];	
@@ -299,6 +284,9 @@
 			$('#form_gadget')[0].reset();
 			$('#form_gadget')[0].submit();
 		});
+		
+		// SEARCH FORM
+		$('#search_gadget').on('click',function(){ $('#form_gadget')[0].submit(); });
 	});
 	 
 	// MAIN WHEN LOAD
@@ -307,6 +295,9 @@
 		// SHOW/HIDE DATATABLES COLUMN INIT 		
 		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
 		$('#dataTable-vis-toggle').removeClass('hide');
+		
+		// HIDE COLUMNS (DeESCRIPTION,  CREATEDAT)		
+		$.each([ 2 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
 		
 	});
 	

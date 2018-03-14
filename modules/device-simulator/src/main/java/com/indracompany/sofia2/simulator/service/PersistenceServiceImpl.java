@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.token.TokenService;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -36,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PersistenceServiceImpl implements PersistenceService {
 
-
 	@Autowired
 	private MessageProcessor messageProcessor;
 	@Autowired
@@ -46,18 +46,26 @@ public class PersistenceServiceImpl implements PersistenceService {
 	private String sessionKey;
 
 	public void connectIotBroker(String clientPlatform, String clientPlatformInstance) {
-		Token token = this.tokenService.getToken(this.clientPlatformService.getByIdentification(clientPlatform));
-		final SSAPMessage<SSAPBodyJoinMessage> join = new SSAPMessage<SSAPBodyJoinMessage>();
+		final Token token = this.tokenService.getToken(this.clientPlatformService.getByIdentification(clientPlatform));
+		final SSAPMessage<SSAPBodyJoinMessage> join = new SSAPMessage<>();
 		join.setDirection(SSAPMessageDirection.REQUEST);
 		join.setMessageType(SSAPMessageTypes.JOIN);
-		SSAPBodyJoinMessage body = new SSAPBodyJoinMessage();
+		final SSAPBodyJoinMessage body = new SSAPBodyJoinMessage();
 		body.setClientPlatform(clientPlatform);
 		body.setClientPlatformInstance(clientPlatformInstance);
 		body.setToken(token.getToken());
 		join.setBody(body);
-		SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(join);
-		if(response.getSessionKey()!=null)
+		final SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(join, getGatewayInfo());
+		if (response.getSessionKey() != null) {
 			this.sessionKey = response.getSessionKey();
+		}
+	}
+
+	private GatewayInfo getGatewayInfo() {
+		final GatewayInfo info = new GatewayInfo();
+		info.setName("Device Simulator");
+		info.setName("SIMULATION");
+		return info;
 	}
 
 	@Override
@@ -65,10 +73,10 @@ public class PersistenceServiceImpl implements PersistenceService {
 			String clientPlatformInstance) throws Exception {
 
 		if (this.sessionKey != null) {
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode json = mapper.readTree(instance);
-			
-			final SSAPMessage<SSAPBodyInsertMessage> insert = new SSAPMessage<SSAPBodyInsertMessage>();
+			final ObjectMapper mapper = new ObjectMapper();
+			final JsonNode json = mapper.readTree(instance);
+
+			final SSAPMessage<SSAPBodyInsertMessage> insert = new SSAPMessage<>();
 			final SSAPBodyInsertMessage body = new SSAPBodyInsertMessage();
 			insert.setDirection(SSAPMessageDirection.REQUEST);
 			insert.setMessageType(SSAPMessageTypes.INSERT);
@@ -76,15 +84,15 @@ public class PersistenceServiceImpl implements PersistenceService {
 			body.setOntology(ontology);
 			body.setData(json);
 			insert.setBody(body);
-			
-			
-			SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(insert);
-			if(response.getBody().getErrorCode().name()==SSAPErrorCode.AUTENTICATION.name()) {
-				this.connectIotBroker(clientPlatform, clientPlatformInstance);
-				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
-			
-			}
 
+			final SSAPMessage<SSAPBodyReturnMessage> response = messageProcessor.process(insert, getGatewayInfo());
+			if (response.getBody().getError() != null) {
+				if (response.getBody().getErrorCode().name() == SSAPErrorCode.AUTENTICATION.name()) {
+					this.connectIotBroker(clientPlatform, clientPlatformInstance);
+					this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
+
+				}
+			}
 		} else {
 			this.connectIotBroker(clientPlatform, clientPlatformInstance);
 			this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);

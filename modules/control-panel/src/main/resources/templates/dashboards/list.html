@@ -46,30 +46,7 @@
 		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
 		<!-- END SIDEBAR -->
 		
-		<script type="text/javascript" th:inline="javascript">
-			var showDashboardURLDialog = function(url){
-				$.confirm({
-					icon: 'fas fa-chart-pie',
-					title: "URL Dashboard",
-					theme: 'dark',
-					columnClass: 'medium',
-					content: '<input class="col-md-12 form-control" readonly="readonly" value="' + window.location.origin + url + '" type="text"/>',
-					draggable: true,
-					dragWindowGap: 100,
-					backgroundDismiss: true,
-					closeIcon: true,
-					buttons: {
-						Ok: {
-							text: "Ok",
-							btnClass: 'btn btn-sm btn-danger btn-outline',
-							action: function(){ 
-							}											
-						}
-					}
-				});
-			}
-		</script>
-		
+				
 		<!-- BEGIN CONTENT -->
 		<div class="page-content-wrapper">
 			
@@ -81,8 +58,7 @@
 				<!-- BEGIN PAGE BAR AND BREADCRUM -->
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
-						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/dashboards/list}"> <span th:text="#{name.visualization}">Visualization</span></a><i class="fa fa-circle"></i></li>
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>						
 						<li><span th:text="#{dashboards.my}">My Dashboards</span></li>
 					</ul>						
 				</div>
@@ -108,9 +84,9 @@
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>
 								</div>								
 								<div class="actions margin-right-20">
-									<div class="btn-group">												
-										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" id="createDashboardButton" ><i class="fas fa-chart-line"></i> <span th:text="#{gen.create}">New </span></button>								
+									<div class="btn-group">										
 										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" id="createDashboardButton" ><i class="fas fa-chart-line"></i> <span th:text="#{gen.create}">New </span></button>
 									</div>										
 								</div>
 							</div>
@@ -122,8 +98,7 @@
 									</div>
 									<div class="col-md-12">
 									<!-- SEARCH FORM -->
-										<form id="form_dashboard" class="" role="form" method="get">												
-											
+										<form id="form_dashboard" class="" role="form" method="get">								
 											<div id="searchFilter" class="form-body hide" style="border-bottom: 1px solid #eef1f5;">
 												<div class="row">
 													<div class="col-md-4 col-xs-12">
@@ -149,8 +124,7 @@
 													<div class="col-md-4 col-xs-12">
 														<div class="btn-group">
 															<button type="button" id="search_dashboard" name="search_dashboard" th:title="#{gen.search}" th:value="#{dashboard_search_button_form}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
-															<button type="button" id="reset_dashboard" name="reset_dashboard" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
-													
+															<button type="button" id="reset_dashboard" name="reset_dashboard" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>													
 														</div>
 													</div>
 												</div>
@@ -171,15 +145,15 @@
 															<!--  <th class="titulo-columnas text-center" th:text="#{gen.active}">Active</th> -->	
 															<th class="titulo-columnas text-center" th:text="#{gen.public}">Public</th>															
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{gen.created}"> Created At </span></th>
-															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
+															<th class="titulo-columnas text-center" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
 													</thead>
 													<tbody th:remove="all-but-first">
 														<tr th:each="dashboard : ${dashboards}" pages:paginate="10">
 															<!-- IDENTIFICATION/NAME -->
-															<td class="text-left bold" th:text="${dashboard.identification}"></td>
+															<td class="text-left " th:text="${dashboard.identification}"></td>
 															<!-- USER -->
-															<td class="text-center bold" th:text="${dashboard.user.userId}"></td>
+															<td class="text-center " th:text="${dashboard.user.userId}"></td>
 															<!-- DESCRIPTION -->
 															<td class="text-left text-truncate-sm" th:title="${dashboard.description}" th:text="${dashboard.description}"></td>
 														<!-- PUBLIC -->
@@ -190,19 +164,19 @@
 															<td class="text-center" th:if="${dashboard.createdAt==null}" th:text="${dashboard.createdAt}"></td>
 															<!-- OPTIONS -->
 															<td class="icon" style="white-space: nowrap">
-																<div class="grupo-iconos">
+																<div class="grupo-iconos text-center">
 																	<!-- VIEW -->		
 																														
-																	<span  th:title="#{gen.view}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/view/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/view/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editor/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editor/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
 																	
 																	<!-- Full EDIT -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} + ' FullScreen'" th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
+																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} + ' FullScreen'" th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
 																	
 																	<!-- URL -->
-																	<span  class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" title="URL Dashboard" data-original-title="URL Dashboard" th:onclick="'javascript:showDashboardURLDialog(\'' + @{|/dashboard/view/${dashboard.id}} + '\');'"><i class="fa fa-link"></i></span>
+																	<span  class="btn btn-sm green-haze sbold tooltips" data-container="body" data-placement="bottom" title="URL Dashboard" data-original-title="URL Dashboard" th:onclick="'javascript:showDashboardURLDialog(\'' + @{|/dashboard/view/${dashboard.id}} + '\');'"><i class="fa fa-link"></i></span>
 																</div>
 															</td>
 														</tr>
@@ -267,10 +241,34 @@
 
 	</script>
 	
-	<script type="text/javascript">	
+	<script type="text/javascript"  th:inline="javascript">	
+	//<![CDATA[
 	var optionName = 'DASHBOARDS';
 	
-	//<![CDATA[
+	
+	var showDashboardURLDialog = function(url){
+		$.confirm({
+			icon: 'fas fa-chart-pie',
+			title: "URL Dashboard",
+			theme: 'dark',
+			columnClass: 'medium',
+			content: '<input class="col-md-12 form-control" readonly="readonly" value="' + window.location.origin + url + '" type="text"/>',
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				Ok: {
+					text: "Ok",
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+					}											
+				}
+			}
+		});
+	};
+	
+	
 	function navigateUrl(url){  window.location.href = url;	}
 	
 	// MAIN WHEN READY
@@ -374,12 +372,14 @@
 		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
 		$('#dataTable-vis-toggle').removeClass('hide');
 		
-	});
+		// HIDE COLUMNS (DeESCRIPTION,  CREATEDAT)		
+		$.each([ 2,4 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
+		
+	});	
+	
 	
 	//]]>
 	</script>
 	
 </body>
 </html> 
--->
-  

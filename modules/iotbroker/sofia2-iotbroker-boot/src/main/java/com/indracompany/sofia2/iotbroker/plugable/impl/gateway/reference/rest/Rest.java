@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -96,7 +97,7 @@ public class Rest {
 		request.getBody().setClientPlatformInstance(clientPlatformId);
 
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request);
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
 		}
@@ -117,7 +118,7 @@ public class Rest {
 		request.setMessageType(SSAPMessageTypes.JOIN);
 		request.setSessionKey(sessionKey);
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request);
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
 		}
@@ -146,7 +147,7 @@ public class Rest {
 		request.getBody().setQueryType(queryType);
 		request.getBody().setResultFormat(SSAPQueryResultFormat.JSON);
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request);
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
 		}
@@ -171,7 +172,7 @@ public class Rest {
 		request.getBody().setOntology(ontology);
 		request.getBody().setData(data);
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request);
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
 		}
@@ -198,7 +199,7 @@ public class Rest {
 		request.getBody().setOntology(ontology);
 		request.getBody().setData(data);
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request);
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
 		}
@@ -223,7 +224,7 @@ public class Rest {
 		request.getBody().setOntology(ontology);
 		request.getBody().setQuery(query);
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request);
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
 		}
@@ -248,7 +249,7 @@ public class Rest {
 		request.getBody().setOntology(ontology);
 		request.getBody().setQuery(query);
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request);
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
 		}
@@ -273,7 +274,7 @@ public class Rest {
 		request.getBody().setId(id);
 		request.getBody().setOntology(ontology);
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request);
+		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
 		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
 		}
@@ -307,6 +308,14 @@ public class Rest {
 		}
 
 		return new ResponseEntity<>(response.getBody().getError(), status);
+	}
+
+	private GatewayInfo getGatewayInfo() {
+		final GatewayInfo info = new GatewayInfo();
+		info.setName("rest_gateway");
+		info.setProtocol("REST");
+
+		return info;
 	}
 
 

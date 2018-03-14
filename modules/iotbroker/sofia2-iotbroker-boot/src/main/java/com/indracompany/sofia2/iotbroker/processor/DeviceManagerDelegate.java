@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.config.model.Device;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.device.DeviceService;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -47,10 +48,11 @@ public class DeviceManagerDelegate implements DeviceManager {
 
 	//TODO: Make async event processing
 	@Override
-	public <T extends SSAPBodyMessage> void registerActivity(
+	public <T extends SSAPBodyMessage> boolean registerActivity(
 			SSAPMessage<T> request,
 			SSAPMessage<SSAPBodyReturnMessage> response,
-			IoTSession session) {
+			IoTSession session,
+			GatewayInfo info) {
 
 		final List<Device> devices= deviceService.getByClientPlatformIdAndIdentification(session.getClientPlatformID(), session.getClientPlatformInstance());
 		Device device = null;
@@ -62,20 +64,23 @@ public class DeviceManagerDelegate implements DeviceManager {
 			device = new Device();
 			device.setClientPlatform(session.getClientPlatformID());
 			device.setIdentification(session.getClientPlatformInstance());
+			device.setDescription("PROTOCOL: " + info.getProtocol());
 
 		}
 
 		switch(request.getMessageType()) {
 		case JOIN:
-			touchDevice(device, session, true);
+			touchDevice(device, session, true, info);
 			break;
 		case LEAVE:
-			touchDevice(device, session, false);
+			touchDevice(device, session, false, info);
 			break;
 		default:
-			touchDevice(device, session, true);
+			touchDevice(device, session, true, info);
 			break;
 		}
+
+		return true;
 	}
 
 	@Scheduled(fixedDelay=60000)
@@ -89,20 +94,26 @@ public class DeviceManagerDelegate implements DeviceManager {
 	}
 
 	private void updatingDevices() {
+		log.info("Start Updating all devices");
 		final Calendar c = Calendar.getInstance();
-		long millis = c.getTimeInMillis() - 5*60*1000;
+		long millis = c.getTimeInMillis() - 5*60*1000l;
 		c.setTimeInMillis(millis);
 
 		//Setting connected false when 5 minutes without activity
-		deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, false, c.getTime());
+		int n = deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, false, c.getTime());
+		log.info("End Updating all devices:" + n + " disconected");
 
 		//Setting disabled a true when 1 day witout activity
-		millis = c.getTimeInMillis() - 24*60*60*1000;
+		millis = c.getTimeInMillis() - 24*60*60*1000l;
 		c.setTimeInMillis(millis);
-		deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, true, c.getTime());
+		n = deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, true, c.getTime());
+		log.info("End Updating all devices:" + n + " disabled");
+
+
 	}
 
-	private void touchDevice(Device device, IoTSession session, boolean connected) {
+	private void touchDevice(Device device, IoTSession session, boolean connected, GatewayInfo info) {
+		log.info("Start Updating device " + device.getIdentification());
 		device.setAccesEnum(Device.StatusType.OK);
 		device.setClientPlatform(session.getClientPlatformID());
 		device.setIdentification(session.getClientPlatformInstance());
@@ -110,7 +121,9 @@ public class DeviceManagerDelegate implements DeviceManager {
 		device.setStatus("OK");
 		device.setConnected(connected);
 		device.setDisabled(false);
+		device.setDescription("PROTOCOL: " + info.getProtocol());
 		deviceService.updateDevice(device);
+		log.info("End Updating device " + device.getIdentification());
 	}
 
 }
