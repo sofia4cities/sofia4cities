@@ -196,7 +196,12 @@ public class GadgetDatasourceController {
 		public @ResponseBody String getSampleDatasource(@PathVariable("id") String datasourceId){
 			if (gadgetDatasourceService.hasUserPermission(datasourceId, this.utils.getUserId())) {
 				String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
-				return queryToolService.querySQLAsJson(this.utils.getUserId(),"", sampleQuery, 0);
+				GadgetDatasource gd = this.gadgetDatasourceService.getGadgetDatasourceById(datasourceId);
+				String query =  gd.getQuery();
+				int indexInit = query.toLowerCase().indexOf("from") + 4;
+				String aux = query.substring(indexInit);
+				String ontology = aux.trim().split(" ")[0]; 
+				return queryToolService.querySQLAsJson(this.utils.getUserId(),ontology, sampleQuery, 0);
 			}
 			else{
 				return "403";
