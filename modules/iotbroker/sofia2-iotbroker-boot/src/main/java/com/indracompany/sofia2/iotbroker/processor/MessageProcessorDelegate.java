@@ -90,7 +90,13 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			}
 
 			final SSAPMessage<SSAPBodyReturnMessage> resp = response;
-			final Optional<IoTSession> session = securityPluginManager.getSession(response.getSessionKey());
+			Optional<IoTSession> session;
+			if(SSAPMessageTypes.JOIN.equals(message.getMessageType())) {
+				session = securityPluginManager.getSession(response.getSessionKey());
+			}
+			else {
+				session = securityPluginManager.getSession(message.getSessionKey());
+			}
 
 			session.ifPresent((s) -> {
 				deviceManager.registerActivity(message, resp, s, info);
