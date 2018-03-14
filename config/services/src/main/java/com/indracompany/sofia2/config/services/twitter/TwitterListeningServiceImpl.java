@@ -172,6 +172,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		if (dataModelTwitter.getType().equals(DataModel.MainType.SocialMedia.toString()))
 			ontology.setDescription("Ontology created for tweet recollection");
 		ontology.setJsonSchema(dataModelTwitter.getJsonSchema());
+		ontology.setDataModel(dataModelTwitter);
 		ontology.setActive(true);
 		ontology.setPublic(false);
 		ontology.setRtdbClean(false);
@@ -184,6 +185,17 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 	public TwitterListening getListeningByJobName(String jobName) {
 		return this.twitterListeningRepository.findByJobName(jobName);
 	}
+
+	@Override
+	public List<String> getAllClientsForUser(User userSessionId) {
+		List<String> clients = new ArrayList<String>();
+		for(ClientPlatform client : this.clientPlatformRepository.findByUser(userSessionId)) {
+			clients.add(client.getIdentification());
+		}
+		return clients;
+	}
+	
+	
 	
 	
 
