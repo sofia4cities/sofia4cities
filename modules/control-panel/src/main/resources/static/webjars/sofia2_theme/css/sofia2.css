@@ -826,12 +826,30 @@ height: auto;
 display: flex;
  }
  
+ 
+ /* main */
+
+.main-block-toggle{
+	position: absolute;
+	top: 60px;
+	z-index: 1;
+	right: 86px;
+ -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;	
+}
+.hide-main-block{
+	position: relative;
+	right: 58px;
+	top: 30px;
+}
+ 
  .maininfo{
 	 font-family: "Open sans";
 	 font-size: 13px;
 	 line-height: 16px;
-	 margin: 4px;
-	 
+	 margin: 4px;	 
  }
  
  .maininfo-shadow {
@@ -842,11 +860,27 @@ box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
  
 .main-block{
 background: #564FC1;
-padding: 30px 30px 0px 30px;
+padding: 30px 30px 50px 30px;
  margin-left: -20px;margin-right: -20px;
 background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
 background: linear-gradient(to right, #75b8f3, #9353e6);
 } 
+
+.step-desc {
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.6);
+	color: ghostwhite;
+	border-radius: 4px;
+	padding: 10px;
+	z-index: 100;
+	width: auto;
+	top: 190px;
+	font-size: 13px;
+	letter-spacing: 0.3px;
+	display: block;
+	max-width: calc(-25% + 100vw);
+	margin-left: 60px;
+}
  
 /*** APIMANAGER OPERATIONS  ***/ 
 
@@ -926,21 +960,5 @@ background: linear-gradient(to right, #75b8f3, #9353e6);
 	margin-left: 5px;
 }
 
-/* main */
 
-.main-block-toggle{
-	position: absolute;
-	top: 60px;
-	z-index: 1;
-	right: 86px;
- -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease;	
-}
-.hide-main-block{
-	position: relative;
-	right: 58px;
-	top: -10px;	
-}
 
