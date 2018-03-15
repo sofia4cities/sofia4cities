@@ -9,3 +9,9 @@ spring:
 quartz:
     datasource:
       url: jdbc:mysql://schedulerdb:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      
+## LOGGING CONF
+logging:
+    path: /datadrive/logs-s4c 
+    file: ${app.name}_%d{HH:mm:ss.SSS}_%i.log
+    max-size: 100MB     

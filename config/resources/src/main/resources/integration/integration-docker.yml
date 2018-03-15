@@ -19,22 +19,22 @@ sofia2:
           url: http://flowengineservice:5050/
       router-standalone:
         base:
-          url: http://localhost:19100/
+          url: http://${SERVER_NAME}/
         advice:
-          url: http://localhost:19100/router/router/advice/
+          url: http://${SERVER_NAME}/router/router/advice/
         management:
-          url: http://localhost:19100/router/management/
+          url: http://${SERVER_NAME}/router/management/
         router:
-          url: http://localhost:19100/router/router/
+          url: http://${SERVER_NAME}/router/router/
         hawtio:
-          url: http://localhost:19100/hawtio/index.html
+          url: http://${SERVER_NAME}/hawtio/index.html
         swagger-ui:
           url: http://${SERVER_NAME}/router/swagger-ui.html
       api-manager:
         base:
-          url: http://apimanagerservice:19090/api-manager/
+          url: http://${SERVER_NAME}/api-manager/
         api:
-          url: http://apimanagerservice:19090/api-manager/server/api/
+          url: http://${SERVER_NAME}/api-manager/server/api/
         swagger-ui:
           url: http://${SERVER_NAME}/api-manager/services/management/api-docs?url=
         swagger-ui-management:
