@@ -15,10 +15,11 @@
 		
 		<style>
 			.counter {
-			  background-color: #0088cc;
+			  background-color: #00cc75;
 			  padding: 20px 0;
 			  border-radius: 5px;
 			  color: white;
+			  margin-left: 10px;
 			}
 			
 			.count-title {
@@ -35,6 +36,10 @@
 				margin-top: 10px;
 				margin-bottom: 0;
 				text-align: center;
+			}
+			
+			.alarm {
+				background-color: #cc8b00;
 			}
 		</style>
 		<script type="text/javascript">
@@ -177,8 +182,14 @@
 				timer = setInterval(function(){
 					console.log("executing..");
 					client.insert(ontology, JSON.stringify(data)).then(function (response) {
-					console.log(response);
-						$("#counter").text(Math.floor($("#counter").text()) + 1);
+						
+						if (response.direction === "ERROR"){
+							$("#counterErrors").text(Math.floor($(counterErrors).text()) + 1);
+							console.log(response);
+						} else {
+							$("#counter").text(Math.floor($("#counter").text()) + 1);
+						}
+						
 					});	
 					
 					
@@ -332,7 +343,7 @@
 							<input type="text" id="simulateInstance" class="form-control" placeholder="Write instance to insert..." value="{&quot;&quot;:&quot;&quot;}"/>
 						</div>
 						<div class="form-group">
-							<label>Execute every: </label>
+							<label>Execute every (milliseconds): </label>
 							<input type="text" id="simulateInterval" class="form-control" placeholder="Write in milliseconds..." value="1000"/>
 						</div>
 						<p>
@@ -345,7 +356,13 @@
 								<div class="counter col col-lg-4">
 								  <i class="fa fa-code fa-2x"></i>
 								  <h2 class="count-title count-number" id="counter">0</h2>
-								   <p class="count-text ">Num of messages</p>
+								  <p class="count-text ">Num of inserted messages</p>
+								</div>
+							
+								<div class="counter alarm col col-lg-4">
+								  <i class="fa fa-code fa-2x"></i>
+								  <h2 class="count-title count-number" id="counterErrors">0</h2>
+								  <p class="count-text ">Num of messages with error</p>
 								</div>
 							</div>
 					    </div>
