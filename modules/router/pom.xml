@@ -22,6 +22,7 @@
 		<version.swaggerui>2.7.0</version.swaggerui>
 		<version.hawtio>1.5.6</version.hawtio>
 		<sofia2.version>${project.parent.version}</sofia2.version>
+		<version.spring-cloud>1.4.3.RELEASE</version.spring-cloud>
 	</properties>
 
 	<dependencies>

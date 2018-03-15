@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Chat WebSocket</title>
+        <title>Test javascript library</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -10,10 +10,42 @@
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <script type="text/javascript">
+        
+		<link rel="stylesheet" type="text/css" media="all" href="./json/jsoneditor.css"/>
+		
+		<style>
+			.counter {
+			  background-color: #00cc75;
+			  padding: 20px 0;
+			  border-radius: 5px;
+			  color: white;
+			  margin-left: 10px;
+			}
+			
+			.count-title {
+				font-size: 40px;
+				font-weight: normal;
+				margin-top: 10px;
+				margin-bottom: 0;
+				text-align: center;
+			}
+
+			.count-text {
+				font-size: 13px;
+				font-weight: normal;
+				margin-top: 10px;
+				margin-bottom: 0;
+				text-align: center;
+			}
+			
+			.alarm {
+				background-color: #cc8b00;
+			}
+		</style>
+		<script type="text/javascript">
             
 			config = {"url":"http://localhost:8081/iotbroker/message", "debug" : true,
-					  "token":"f45ae34dd65e478983d2ffad6e4f4237", "clientPlatform": "GTKP-Example", "clientPlatformInstance":"kp01"};
+					  "token":"1984fd5137e74e26ad1e5163c88c9e60", "clientPlatform": "GTKP-Example", "clientPlatformInstance":"kp01"};
 					  
 			client = new SofiaClient();
 			client.configure(config);
@@ -43,8 +75,24 @@
 			function writeResult(divId, operation , result){
 				console.log(operation);
 				console.log(result);
-				content =  "<p>" + operation + "</p>" + "<pre>" + JSON.stringify(result,null,'\t') + "</pre>";
+				/*content =  "<p>" + operation + "</p>" + "<pre>" + JSON.stringify(result,null,'\t') + "</pre>";
 				$("#"+divId).html(content);
+				*/
+				$("#"+divId).html("");
+				
+				var jsonSchema = JSON.parse(JSON.stringify(result.body,null,'\t'));
+				var container = document.getElementById(''+divId);	
+				var options = {
+					mode: 'view',
+					theme: 'bootstrap3',			
+					modes: ['view'], // allowed modes
+					error: function (err) {
+						$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
+						return false;
+					}
+				};
+				
+				editor = new jsoneditor.JSONEditor(container, options, jsonSchema);
 			}
 			
 			function connectTest(){
@@ -119,6 +167,42 @@
 				});
 			}
 			
+			var timer = 0;
+			
+			function startSimulation (){
+				var ontology = $("#ontologyTabSimulateField").val();
+				
+				//data = {"EmptyBase" : { "test" : "3" } };
+				
+				data = JSON.parse($("#simulateInstance").val());
+				
+				simulateInterval = $("#simulateInterval").val();
+				
+				console.log("start simulation" + simulateInterval);
+				timer = setInterval(function(){
+					console.log("executing..");
+					client.insert(ontology, JSON.stringify(data)).then(function (response) {
+						
+						if (response.direction === "ERROR"){
+							$("#counterErrors").text(Math.floor($(counterErrors).text()) + 1);
+							console.log(response);
+						} else {
+							$("#counter").text(Math.floor($("#counter").text()) + 1);
+						}
+						
+					});	
+					
+					
+				},simulateInterval);
+				
+				
+			}
+			
+			function stopSimulation () {
+				clearInterval(timer); 
+			}
+			
+			
 			
 
         </script>
@@ -148,11 +232,16 @@
 				  <li class="nav-item">
 					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#deleteById" role="tab" aria-controls="deleteById" aria-selected="false">Delete By Id</a>
 				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#simulate" role="tab" aria-controls="simulate" aria-selected="false">Simulate</a>
+				  </li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
 				  <div class="tab-pane fade show active" id="connect" role="tabpanel" aria-labelledby="connect-tab">
 						<div class="form-group">
-							<button id="connect" onclick="connectTest();">Connect</button>
+							<p>
+								<button id="connect" onclick="connectTest();">Connect</button>
+							</p>
 						</div>
 						<div id= "responseDivJoinResult"></div>
 				  </div>
@@ -165,8 +254,9 @@
 							<label>Query:</label> 
 							<input type="text" id="tabQueryField"  class="form-control"  placeholder="Write a query..." value="db.testrober.find()"/>
 						</div>
-						<button id="sendMessage" onclick="sendQueryTest()">Test query</button>
-						
+						<p>
+							<button id="sendMessage" onclick="sendQueryTest()">Test query</button>
+						</p>
 						<div id= "responseDivQueryResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="insert" role="tabpanel" aria-labelledby="profile-tab">
@@ -176,9 +266,11 @@
 						</div>
 						<div class="form-group">
 							<label>Instance: </label>
-							<input type="text" id="insertInstance" class="form-control" placeholder="Write instance to insert..." value=""/>
+							<input type="text" id="insertInstance" class="form-control" placeholder="Write instance to insert..." value="{&quot;&quot;:&quot;&quot;}"/>
 						</div>
-						<button id="sendInserMessage" onclick="sendInsertTest()">Test insert query</button>	
+						<p>
+							<button id="sendInserMessage" onclick="sendInsertTest()">Test insert query</button>
+						</p>	
 						<div id= "responseDivInsertResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="update" role="tabpanel" aria-labelledby="contact-tab">
@@ -190,7 +282,9 @@
 							<label>Query: </label>
 							<input type="text" id="tabUpdteField" class="form-control" placeholder="Write a query..." value=""/>
 						</div>
-						<button id="sendMessageUpdate" onclick="sendUpdate()">Test update</button>
+						<p>
+							<button id="sendMessageUpdate" onclick="sendUpdate()">Test update</button>
+						</p>
 						<div id= "responseDivUpdateResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="updateById" role="tabpanel" aria-labelledby="contact-tab">
@@ -204,9 +298,11 @@
 						</div>
 						<div class="form-group">
 							<label>Instance:</label> 
-							<input type="text" id="updateInstance" class="form-control" placeholder="Write instance to insert..." value=""/>
+							<input type="text" id="updateInstance" class="form-control" placeholder="Write instance to update..." value="{&quot;&quot;:&quot;&quot;}"/>
 						</div>
-						<button id="sendMessageUpdate" onclick="sendUpdateByIdTest()">Test updateById</button>
+						<p>
+							<button id="sendMessageUpdate" onclick="sendUpdateByIdTest()">Test updateById</button>
+						</p>
 						<div id= "responseDivUpdateByIdResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="delete" role="tabpanel" aria-labelledby="contact-tab">
@@ -218,7 +314,9 @@
 							<label>Query:</label> 
 							<input type="text" id="tabDeleteField" class="form-control" placeholder="Write a query..." value="db.testrober.remove()"/>
 						</div>
-						<button id="sendMessageDelete" onclick="sendRemoveTest()">Test delete</button>
+						<p>
+							<button id="sendMessageDelete" onclick="sendRemoveTest()">Test delete</button>
+						</p>
 						<div id= "responseDivDeleteResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="deleteById" role="tabpanel" aria-labelledby="contact-tab">
@@ -230,12 +328,48 @@
 							<label>Id:</label> 
 							<input type="text" id="sofiaIdDelete" class="form-control" placeholder="write id..." value=""/>
 						</div>
-						<button id="sendMessageDelete" onclick="sendRemoveByIdTest()">Test deleteById</button>
+						<p>
+							<button id="sendMessageDelete" onclick="sendRemoveByIdTest()">Test deleteById</button>
+						</p>	
 						<div id= "responseDivDeleteByIdResult"></div>
 				  </div>
+				  <div class="tab-pane fade" id="simulate" role="tabpanel" aria-labelledby="profile-tab">
+						<div class="form-group">
+							<label>Ontology name: </label>
+							<input type="text" id="ontologyTabSimulateField" class="form-control" placeholder="write ontology..." value="testrober"/>
+						</div>
+						<div class="form-group">
+							<label>Instance: </label>
+							<input type="text" id="simulateInstance" class="form-control" placeholder="Write instance to insert..." value="{&quot;&quot;:&quot;&quot;}"/>
+						</div>
+						<div class="form-group">
+							<label>Execute every (milliseconds): </label>
+							<input type="text" id="simulateInterval" class="form-control" placeholder="Write in milliseconds..." value="1000"/>
+						</div>
+						<p>
+							<button id="startSimulationBtn" onclick="startSimulation()">Start</button>
+							<button id="stopSimulationBtn" onclick="stopSimulation()">Stop</button>
+						</p>	
+						<div id= "responseDivSimulateResult"></div>
+						<div class="container">
+							<div class="row justify-content-md-center">
+								<div class="counter col col-lg-4">
+								  <i class="fa fa-code fa-2x"></i>
+								  <h2 class="count-title count-number" id="counter">0</h2>
+								  <p class="count-text ">Num of inserted messages</p>
+								</div>
+							
+								<div class="counter alarm col col-lg-4">
+								  <i class="fa fa-code fa-2x"></i>
+								  <h2 class="count-title count-number" id="counterErrors">0</h2>
+								  <p class="count-text ">Num of messages with error</p>
+								</div>
+							</div>
+					    </div>
 				</div>
 				<!-- Content here -->
 		</div>
 
     </body>
+	<script src="./json/jsoneditor.js"></script>
 </html>

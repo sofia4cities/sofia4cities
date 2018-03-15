@@ -40,4 +40,6 @@ public interface ClientPlatformService {
 	void createClientPlatform(ClientPlatform clientPlatform);
 
 	void updateDevice(DeviceCreateDTO clientPlatform);
+	
+	void createOntologyRelation(Ontology ontology, ClientPlatform clientPlatform);
 }
