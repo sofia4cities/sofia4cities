@@ -195,7 +195,7 @@
 																	<select th:id="${#strings.replace(field.key,'.','--')}" th:name="fields" th:title="#{simulation.choose}" data-width="100%" data-live-search="true" class="select form-control" th:onchange="'generateSimulatorFunctionDiv(\''+${#strings.replace(field.key,'.','--')}+'\')'" >
 																		<option th:text="#{simulation.choose}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'string') AND (simulator eq 'NULL' OR #strings.contains(simulator,'STRING')))}" th:value="${simulator}" th:text="${simulator}"/>
-																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'number') AND (simulator == 'NULL' OR #strings.contains(simulator,'NUMBER')))}" th:value="${simulator}" th:text="${simulator}"/>
+																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'number' OR #strings.toLowerCase(field.value) eq 'integer' ) AND (simulator == 'NULL' OR #strings.contains(simulator,'NUMBER')))}" th:value="${simulator}" th:text="${simulator}"/>
 																		<option th:each="simulator : ${simulators}"  th:if="${((#strings.toLowerCase(field.value) eq 'date') AND (simulator == 'NULL' OR #strings.contains(simulator,'DATE')))}" th:value="${simulator}" th:text="${simulator}"/>
 																	</select>
 																	<input type="hidden" th:value="simulator+${field.key}"/>																	

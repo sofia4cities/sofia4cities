@@ -16,6 +16,11 @@
 	<description>Module for device simulations</description>
 	<dependencies>
 		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-starter-client</artifactId>
+			<version>${spring-boot-admin-starter-client.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-iotbroker-boot</artifactId>
 			<version>${sofia2.version}</version>
@@ -63,24 +68,24 @@
 					</execution>
 				</executions>
 			</plugin>
-		    <plugin>
-		      <groupId>com.spotify</groupId>
-		      <artifactId>docker-maven-plugin</artifactId>   		      
-		      <configuration>
-		        <imageName>sofia2/devicesimulator</imageName>
-		        <imageTags>
-		           <imageTag>${sofia2.docker.version}</imageTag>
-		        </imageTags>		        
-		        <dockerDirectory>docker</dockerDirectory>
-		        <resources>
-		           <resource>
-		             <targetPath>/</targetPath>
-		             <directory>${project.build.directory}</directory>
-		             <include>${project.build.finalName}-exec.jar</include>
-		           </resource>
-		        </resources>
-		      </configuration>
-		    </plugin>			
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+					<imageName>sofia2/devicesimulator</imageName>
+					<imageTags>
+						<imageTag>${sofia2.docker.version}</imageTag>
+					</imageTags>
+					<dockerDirectory>docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}-exec.jar</include>
+						</resource>
+					</resources>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
