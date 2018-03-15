@@ -302,22 +302,22 @@ public class InitConfigDB {
 
 	public void init_ClientConnection() {
 		log.info("init ClientConnection");
-//		List<ClientConnection> clients = this.clientConnectionRepository.findAll();
-//		ClientPlatform cp = this.clientPlatformRepository.findAll().get(0);
-//		if (clients.isEmpty()) {
-//			log.info("No clients ...");
-//			ClientConnection con = new ClientConnection();
-//			//
-//			con.setClientPlatform(cp);
-//			con.setIdentification("1");
-//			con.setIpStrict(true);
-//			con.setStaticIp(false);
-//			con.setLastIp("192.168.1.89");
-//			Calendar date = Calendar.getInstance();
-//			con.setLastConnection(date);
-//			con.setClientPlatform(cp);
-//			clientConnectionRepository.save(con);
-//		}
+		List<ClientConnection> clients = this.clientConnectionRepository.findAll();
+		ClientPlatform cp = this.clientPlatformRepository.findAll().get(0);
+		if (clients.isEmpty()) {
+			log.info("No clients ...");
+			ClientConnection con = new ClientConnection();
+			//
+			con.setClientPlatform(cp);
+			con.setIdentification("1");
+			con.setIpStrict(true);
+			con.setStaticIp(false);
+			con.setLastIp("192.168.1.89");
+			Calendar date = Calendar.getInstance();
+			con.setLastConnection(date);
+			con.setClientPlatform(cp);
+			clientConnectionRepository.save(con);
+		}
 	}
 	// List<ClientConnection> clients=
 	// this.clientConnectionRepository.findAll();
@@ -340,42 +340,42 @@ public class InitConfigDB {
 	public void init_ClientPlatformOntology() {
 
 		log.info("init ClientPlatformOntology");
-//		List<ClientPlatformOntology> cpos = this.clientPlatformOntologyRepository.findAll();
-//		if (cpos.isEmpty()) {
-//			if (this.clientPlatformRepository.findAll().isEmpty())
-//				throw new RuntimeException("There must be at least a ClientPlatform with id=1 created");
-//			if (this.ontologyRepository.findAll().isEmpty())
-//				throw new RuntimeException("There must be at least a Ontology with id=1 created");
-//			log.info("No Client Platform Ontologies");
-//			ClientPlatformOntology cpo = new ClientPlatformOntology();
-//			cpo.setClientPlatform(this.clientPlatformRepository.findAll().get(0));
-//			cpo.setOntology(this.ontologyRepository.findAll().get(0));
-//			cpo.setAccesEnum(ClientPlatformOntology.AccessType.ALL);
-//			this.clientPlatformOntologyRepository.save(cpo);
-//		}
+		List<ClientPlatformOntology> cpos = this.clientPlatformOntologyRepository.findAll();
+		if (cpos.isEmpty()) {
+			if (this.clientPlatformRepository.findAll().isEmpty())
+				throw new RuntimeException("There must be at least a ClientPlatform with id=1 created");
+			if (this.ontologyRepository.findAll().isEmpty())
+				throw new RuntimeException("There must be at least a Ontology with id=1 created");
+			log.info("No Client Platform Ontologies");
+			ClientPlatformOntology cpo = new ClientPlatformOntology();
+			cpo.setClientPlatform(this.clientPlatformRepository.findAll().get(0));
+			cpo.setOntology(this.ontologyRepository.findAll().get(0));
+			cpo.setAccesEnum(ClientPlatformOntology.AccessType.ALL);
+			this.clientPlatformOntologyRepository.save(cpo);
+		}
 	}
 
 	public void init_ClientPlatform() {
 		log.info("init ClientPlatform");
-//		List<ClientPlatform> clients = this.clientPlatformRepository.findAll();
-//		if (clients.isEmpty()) {
-//			log.info("No clients ...");
-//			ClientPlatform client = new ClientPlatform();
-//			client.setId("1");
-//			client.setUser(getUserDeveloper());
-//			client.setIdentification("Client-MasterData");
-//			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
-//			client.setDescription("ClientPatform created as MasterData");
-//			clientPlatformRepository.save(client);
-//			client = new ClientPlatform();
-//			client.setId("2");
-//			client.setUser(getUserDeveloper());
-//			client.setIdentification("GTKP-Example");
-//			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
-//			client.setDescription("ClientPatform created as Example");
-//			clientPlatformRepository.save(client);
-//
-//		}
+		List<ClientPlatform> clients = this.clientPlatformRepository.findAll();
+		if (clients.isEmpty()) {
+			log.info("No clients ...");
+			ClientPlatform client = new ClientPlatform();
+			client.setId("1");
+			client.setUser(getUserDeveloper());
+			client.setIdentification("Client-MasterData");
+			client.setEncryptionKey("b37bf11c-631e-4bc4-ae44-910e58525952");
+			client.setDescription("ClientPatform created as MasterData");
+			clientPlatformRepository.save(client);
+			client = new ClientPlatform();
+			client.setId("2");
+			client.setUser(getUserDeveloper());
+			client.setIdentification("GTKP-Example");
+			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
+			client.setDescription("ClientPatform created as Example");
+			clientPlatformRepository.save(client);
+
+		}
 
 	}
 
@@ -824,64 +824,64 @@ public class InitConfigDB {
 
 	public void init_OntologyEmulator() {
 		log.info("init OntologyEmulator");
-//		List<OntologyEmulator> oes = this.ontologyEmulatorRepository.findAll();
-//		if (oes.isEmpty()) {
-//			log.info("No ontology emulators, adding...");
-//			OntologyEmulator oe = new OntologyEmulator();
-//			oe.setMeasures("2.5,3.4,4.5");
-//			oe.setIdentification("Id 1");
-//			oe.setUser(getUserDeveloper());
-//			oe.setInsertEvery(5);
-//			Ontology o = this.ontologyRepository.findAll().get(0);
-//			if (o == null) {
-//				o = new Ontology();
-//				o.setJsonSchema("{}");
-//				o.setIdentification("Id 1");
-//				o.setDescription("Description");
-//				o.setActive(true);
-//				o.setRtdbClean(true);
-//				o.setPublic(true);
-//				ontologyRepository.save(o);
-//
-//			}
-//			oe.setOntology(o);
-//			this.ontologyEmulatorRepository.save(oe);
-//
-//		}
+		List<OntologyEmulator> oes = this.ontologyEmulatorRepository.findAll();
+		if (oes.isEmpty()) {
+			log.info("No ontology emulators, adding...");
+			OntologyEmulator oe = new OntologyEmulator();
+			oe.setMeasures("2.5,3.4,4.5");
+			oe.setIdentification("Id 1");
+			oe.setUser(getUserDeveloper());
+			oe.setInsertEvery(5);
+			Ontology o = this.ontologyRepository.findAll().get(0);
+			if (o == null) {
+				o = new Ontology();
+				o.setJsonSchema("{}");
+				o.setIdentification("Id 1");
+				o.setDescription("Description");
+				o.setActive(true);
+				o.setRtdbClean(true);
+				o.setPublic(true);
+				ontologyRepository.save(o);
+
+			}
+			oe.setOntology(o);
+			this.ontologyEmulatorRepository.save(oe);
+
+		}
 
 	}
 
 	public void init_Ontology() {
 
 		log.info("init Ontology");
-//		List<Ontology> ontologies = this.ontologyRepository.findAll();
-//		if (ontologies.isEmpty()) {
-//			log.info("No ontologies..adding");
-//			Ontology ontology = new Ontology();
-//			ontology.setId("1");
-//			ontology.setJsonSchema("{}");
-//			ontology.setIdentification("OntologyMaster");
-//			ontology.setDescription("Ontology created as Master Data");
-//			ontology.setActive(true);
-//			ontology.setRtdbClean(true);
-//			ontology.setRtdbToHdb(true);
-//			ontology.setPublic(true);
-//			ontology.setUser(getUserDeveloper());
-//			ontologyRepository.save(ontology);
-//
-//			ontology = new Ontology();
-//			ontology.setId("2");
-//			ontology.setJsonSchema("{Data:,Temperature:}");
-//			ontology.setDescription("Ontology created as example");
-//			ontology.setIdentification("OntologyTest");
-//			ontology.setActive(true);
-//			ontology.setRtdbClean(true);
-//			ontology.setRtdbToHdb(true);
-//			ontology.setPublic(true);
-//			ontology.setUser(getUserDeveloper());
-//			ontologyRepository.save(ontology);
-//
-//		}
+		List<Ontology> ontologies = this.ontologyRepository.findAll();
+		if (ontologies.isEmpty()) {
+			log.info("No ontologies..adding");
+			Ontology ontology = new Ontology();
+			ontology.setId("1");
+			ontology.setJsonSchema("{}");
+			ontology.setIdentification("OntologyMaster");
+			ontology.setDescription("Ontology created as Master Data");
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
+			ontology = new Ontology();
+			ontology.setId("2");
+			ontology.setJsonSchema("{Data:,Temperature:}");
+			ontology.setDescription("Ontology created as example");
+			ontology.setIdentification("OntologyTest");
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
+		}
 
 	}
 
@@ -997,23 +997,23 @@ public class InitConfigDB {
 	public void init_Token() {
 
 		log.info("init token");
-//		List<Token> tokens = this.tokenRepository.findAll();
-//		if (tokens.isEmpty()) {
-//			log.info("No Tokens, adding ...");
-//			if (this.clientPlatformRepository.findAll().isEmpty())
-//				throw new RuntimeException("You need to create ClientPlatform before Token");
-//
-//			ClientPlatform client = this.clientPlatformRepository.findAll().get(0);
-//			Set<Token> hashSetTokens = new HashSet<Token>();
-//
-//			Token token = new Token();
-//			token.setClientPlatform(client);
-//			token.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
-//			token.setActive(true);
-//			hashSetTokens.add(token);
-//			client.setTokens(hashSetTokens);
-//			tokenRepository.save(token);
-//		}
+		List<Token> tokens = this.tokenRepository.findAll();
+		if (tokens.isEmpty()) {
+			log.info("No Tokens, adding ...");
+			if (this.clientPlatformRepository.findAll().isEmpty())
+				throw new RuntimeException("You need to create ClientPlatform before Token");
+
+			ClientPlatform client = this.clientPlatformRepository.findAll().get(0);
+			Set<Token> hashSetTokens = new HashSet<Token>();
+
+			Token token = new Token();
+			token.setClientPlatform(client);
+			token.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
+			token.setActive(true);
+			hashSetTokens.add(token);
+			client.setTokens(hashSetTokens);
+			tokenRepository.save(token);
+		}
 
 	}
 

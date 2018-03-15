@@ -15,7 +15,9 @@
 package com.indracompany.sofia2.controlpanel.controller;
 
 import org.springframework.boot.autoconfigure.web.ErrorController;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class DefaultErrorController implements ErrorController{
 	
 	@Override

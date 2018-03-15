@@ -74,9 +74,11 @@ public class QueryProcessor implements MessageTypeProcessor {
 		else {
 			model.setQueryType(QueryType.valueOf(queryMessage.getBody().getQueryType().name()));
 		}
-		
-		session.ifPresent(s -> model.setUser(s.getUserID()));
-		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
+
+		session.ifPresent(s -> {
+			model.setUser(s.getUserID());
+			model.setClientPlatformId(s.getClientPlatform());
+		});
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -89,6 +91,9 @@ public class QueryProcessor implements MessageTypeProcessor {
 			responseStr = result.getResult();
 			messageStr = result.getMessage();
 			responseMessage.getBody().setData(objectMapper.readTree(responseStr));
+			if(session.isPresent()) {
+				responseMessage.setSessionKey(session.get().getSessionKey());
+			}
 
 		}
 		catch (final Exception e) {

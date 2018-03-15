@@ -46,7 +46,7 @@ public class SolverServiceImpl implements SolverService{
 			return "Not found: 404 for user " + utils.getUserId() + " datasource: " + im.getDs();
 		}
 		
-		if(!gd.getUser().getUserId().equals(utils.getUserId()) && utils.isAdministrator()) {
+		if(!gd.getUser().getUserId().equals(utils.getUserId()) && !utils.isAdministrator()) {
 			return "Permision denied: 403 for user " + utils.getUserId() + " datasource: " + im.getDs();
 		}
 		

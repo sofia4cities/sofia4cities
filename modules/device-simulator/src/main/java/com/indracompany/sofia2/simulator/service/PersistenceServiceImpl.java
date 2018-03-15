@@ -64,7 +64,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 	private GatewayInfo getGatewayInfo() {
 		final GatewayInfo info = new GatewayInfo();
 		info.setName("Device Simulator");
-		info.setName("SIMULATION");
+		info.setProtocol("SIMULATION");
 		return info;
 	}
 

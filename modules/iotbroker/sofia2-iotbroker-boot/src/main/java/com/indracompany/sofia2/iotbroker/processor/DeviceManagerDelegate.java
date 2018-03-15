@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.iotbroker.processor;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -122,6 +123,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 		device.setConnected(connected);
 		device.setDisabled(false);
 		device.setDescription("PROTOCOL: " + info.getProtocol());
+		device.setUpdatedAt(new Date());
 		deviceService.updateDevice(device);
 		log.info("End Updating device " + device.getIdentification());
 	}
