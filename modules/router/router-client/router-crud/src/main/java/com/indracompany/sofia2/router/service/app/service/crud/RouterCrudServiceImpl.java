@@ -32,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-@CacheConfig(cacheNames={"queries"})
 public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Autowired
@@ -41,9 +40,9 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	@Autowired
 	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
 	
-	
-	//@Autowired
-	//RouterCrudServiceImpl me;
+	@Autowired
+	private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
+
 
 	@Override
 	public OperationResultModel insert(OperationModel operationModel) {
@@ -179,7 +178,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final boolean cacheable = operationModel.isCacheable();
 		if (cacheable) {
 			log.info("DO CACHE OPERATION "+operationModel.toString());
-			result= queryCache(operationModel);
+			result= routerCrudCachedOperationsService.queryCache(operationModel);
 			
 		}
 		else {
@@ -245,14 +244,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	}
 	
 	
-	@Cacheable("queries")
-	public OperationResultModel queryCache(OperationModel operationModel) {
-		
-		log.info("Router CACHE EXPLICIT Crud Service Operation "+operationModel.toString());
-		OperationResultModel result = queryNoCache(operationModel);
-		return result;
-
-	}
+	
 
 	@Override
 	public OperationResultModel execute(OperationModel operationModel) {
