@@ -116,7 +116,6 @@ public class GadgetDatasourceController {
 				utils.addRedirectMessage("gadgetDatasource.create.error", redirect);
 				return "redirect:/datasources/create";
 			}
-			utils.addRedirectMessage("gadgetDatasource.create.success", redirect);
 			return "redirect:/datasources/list";
 		}
 		
@@ -155,8 +154,6 @@ public class GadgetDatasourceController {
 				utils.addRedirectMessage("gadgetDatasource.update.error", redirect);
 				return "redirect:/datasources/create";
 			}
-			
-			utils.addRedirectMessage("gadgetDatasource.update.success", redirect);
 			return "redirect:/datasources/list";
 		}
 		
@@ -174,12 +171,12 @@ public class GadgetDatasourceController {
 		
 		@GetMapping(value = "/getDatasourceById/{id}", produces="application/json")
 		public @ResponseBody GadgetDatasource getDatasourceById(@PathVariable("id") String id){
-			if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {
+			//if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {
 				return this.gadgetDatasourceService.getGadgetDatasourceById(id);
-			}
-			else {
-				return null;
-			}
+			//}
+			//else {
+			//	return null;
+			//}
 		}
 		
 		@GetMapping(value = "/getDatasourceByIdentification/{id}", produces="application/json")
@@ -196,6 +193,11 @@ public class GadgetDatasourceController {
 		public @ResponseBody String getSampleDatasource(@PathVariable("id") String datasourceId){
 			if (gadgetDatasourceService.hasUserPermission(datasourceId, this.utils.getUserId())) {
 				String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
+				GadgetDatasource gd = this.gadgetDatasourceService.getGadgetDatasourceById(datasourceId);
+				String query =  gd.getQuery();
+				int indexInit = query.toLowerCase().indexOf("from") + 4;
+				String aux = query.substring(indexInit);
+				String ontology = aux.trim().split(" ")[0]; 
 				return queryToolService.querySQLAsJson(this.utils.getUserId(),"", sampleQuery, 0);
 			}
 			else{

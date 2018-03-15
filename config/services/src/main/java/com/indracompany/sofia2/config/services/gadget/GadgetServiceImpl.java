@@ -119,12 +119,12 @@ public class GadgetServiceImpl implements GadgetService {
 	
 	@Override
 	public Gadget getGadgetById(String userID, String gadgetId) {
-		User user = userRepository.findByUserId(userID);
+		//User user = userRepository.findByUserId(userID);
 		Gadget gadget = gadgetRepository.findById(gadgetId);
-		if(user.getRole().getId().equals("ROLE_ADMINISTRATOR") || gadget.getUser().getUserId().equals(userID)) {
+		//if(user.getRole().getId().equals("ROLE_ADMINISTRATOR") || gadget.getUser().getUserId().equals(userID)) {
 			return gadget;
-		}
-		return null;
+		//}
+		//return null;
 	}
 	
 	@Override
@@ -149,13 +149,13 @@ public class GadgetServiceImpl implements GadgetService {
 
 	@Override
 	public List<GadgetMeasure> getGadgetMeasuresByGadgetId(String userID, String gadgetId) {
-		User user = userRepository.findByUserId(userID);
+		//User user = userRepository.findByUserId(userID);
 		Gadget gadget = gadgetRepository.findById(gadgetId);
 		List<GadgetMeasure> lgm = gadgetMeasureRepository.findByGadget(gadgetRepository.findById(gadgetId));
-		if(user.getRole().getId().equals("ROLE_ADMINISTRATOR") || gadget.getUser().getUserId().equals(userID)) {
+		//if(user.getRole().getId().equals("ROLE_ADMINISTRATOR") || gadget.getUser().getUserId().equals(userID)) {
 			return lgm;
-		}
-		return null;
+		//}
+		//return null;
 	}
 
 	@Override
@@ -236,7 +236,7 @@ public class GadgetServiceImpl implements GadgetService {
 		for (int i=0; i< listJsonMeasures.size(); i++) {
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
 			gadgetMeasure.setGadget(g);
-			gadgetMeasure.setDatasource(gadgetDatasourceService.getGadgetDatasourceById(listDatasources.get(i)));
+			gadgetMeasure.setDatasource(gadgetDatasourceService.getGadgetDatasourceById(listDatasources.get(0)));
 			gadgetMeasure.setConfig(listJsonMeasures.get(i).getConfig());
 			gadgetMeasureRepository.save(gadgetMeasure);
 		}
