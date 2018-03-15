@@ -93,11 +93,9 @@
       "sofia4cities-connection-config": "sofia4cities-connection-config/sofia4cities-connection-config.js",
       "sofia4cities-insert": "sofia4cities-insert/sofia4cities-insert.js",
       "sofia4cities-delete": "sofia4cities-delete/sofia4cities-delete.js",
-      "sofia4cities-query": "sofia4cities-query/sofia4cities-query.js"
-    },
-    "onDevelopment": {
-      "sofia4cities-leave": "sofia4cities-leave/sofia4cities-leave.js",
-      "sofia4cities-update": "sofia4cities-update/sofia4cities-update.js"
+      "sofia4cities-query": "sofia4cities-query/sofia4cities-query.js",
+      "sofia4cities-update": "sofia4cities-update/sofia4cities-update.js",
+      "sofia4cities-leave": "sofia4cities-leave/sofia4cities-leave.js"
     }
   },
   "optionalDependencies": {},
