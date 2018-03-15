@@ -5,38 +5,62 @@
 function submitForm()
 {
 	$('#_checkboxnew').val($('#checkboxnew').is(':checked'))
+	$('#_checkboxnewclient').val($('#checkboxnewclient').is(':checked'))
 	
 	if($('#checkboxnew').is(':checked')){
-		 existOntology();
-		 existClient();
-		 if($('input[name=ontologyId]').val()!="")
-			{
-				if(ontologyExist==false && clientExist==false) $('#scheduledsearch_create_form').submit();
-				else
-				{
-					if(ontologyExist==true) 
-					{
-						hideErrors();
-						$('.alert-generic').show();
-						$('.alert-exists-text').html("Ontology Exists");
-					}
-					else if(clientExist==true)
-					{ 
-						hideErrors();
-						$('.alert-generic').show();
-						$('.alert-exists-text').html("Platform Client Exists");
-					}
-				}
-			}
+		 existOntology($('#ontologyId2').val());
 
+		if(ontologyExist==false) {
+
+			$('input[name=ontologyId]').val($('#ontologyId2').val());
+			$('input[name=clientPlatformId]').val($('#clientPlatformId2').val());
+			$('#scheduledsearch_create_form').submit();
+			
+		}else{
+			if(ontologyExist==true) 
+			{
+				hideErrors();
+				$('.alert-generic').show();
+				$('.alert-exists-text').html("Ontology Exists");
+			}else if(clientExist==true)	{ 
+				hideErrors();
+				$('.alert-generic').show();
+				$('.alert-exists-text').html("Platform Client Exists");
+				document.location.href='#alerts';
+			}
+		}
+			
+
+	}else if ($('#checkboxnewclient').is(':checked')){
+		existOntology($('#ontologyId').val());
+		existClient($('#clientPlatformId').val());
+
+		if(ontologyExist==false && clientExist==false) {
+		
+			$('input[name=ontologyId]').val($('#ontologyId2').val());
+			$('input[name=clientPlatformId]').val($('#clientPlatformId2').val());
+			$('#scheduledsearch_create_form').submit();
+		}else{
+			if(ontologyExist==true) 
+			{
+				hideErrors();
+				$('.alert-generic').show();
+				$('.alert-exists-text').html("Ontology Exists");
+			}else if(clientExist==true)	{ 
+				hideErrors();
+				$('.alert-generic').show();
+				$('.alert-exists-text').html("Platform Client Exists");
+				document.location.href='#alerts';
+			}
+		}
 	}else{
 		$('#scheduledsearch_create_form').submit();
 	}
  
 	
 }
-function existOntology(){
-	var identification = $('input[name=ontologyId]').val();
+function existOntology(identification){
+
   return $.ajax({ 
 		url: "/controlpanel/twitter/scheduledsearch/existontology",
 		type: 'POST',
@@ -53,8 +77,8 @@ function existOntology(){
 }
 
 
-function existClient(callback){
-	var identification = $('input[name=clientPlatformId]').val();
+function existClient(identification){
+	
 	return $.ajax({ 
 		url: "/controlpanel/twitter/scheduledsearch/existclient", 
 		type: 'POST',
@@ -72,18 +96,48 @@ function existClient(callback){
 
 
 
-function newOntology(){
+function newOntologyAndClient(){
+	
+	
 	if($('#row-new').is(':visible'))
 	{
 		$('#row-new').hide();
 		$('#row-not-new').show();
-	}else{
+	}else if($('#row-new-ontology').is(':visible')){
+		$('#row-new-ontology').hide();
+		$('#row-new').show();
+	}else {
 		$('#row-new').show();
 		$('#row-not-new').hide();
 	}
+	if($('#checkboxnew').is(':checked')){
+		$('#checkboxnew').prop('checked', false);
+	}
 	$('#_checkboxnew').val($('#checkboxnew').is(':checked'));
+	$('#_checkboxnewclient').val($('#checkboxnewclient').is(':checked'));
 
 }
+function newOntology(){
+	if($('#row-new').is(':visible'))
+	{
+		$('#row-new').hide();
+		$('#row-new-ontology').show();
+	}else if($('#row-not-new').is(':visible')){
+		$('#row-not-new').hide();
+		$('#row-new-ontology').show();
+	}else {
+		$('#row-new-ontology').hide();
+		$('#row-not-new').show();
+	}
+	if($('#checkboxnewclient').is(':checked')){
+		$('#checkboxnewclient').prop('checked', false);
+	}
+	$('#_checkboxnew').val($('#checkboxnew').is(':checked'));
+	$('#_checkboxnewclient').val($('#checkboxnewclient').is(':checked'));
+	$('#fragmentClients').load('/controlpanel/twitter/scheduledsearch/getallclients');
+
+}
+
 
 function getClients(){
 	var ontologyId = $("#ontologies").find(":selected").val();
@@ -107,9 +161,11 @@ function getClients(){
 							$("#clientplatforms").append(o);
 						}
 						getTokens();
+						$('.alert-generic').hide();
 					}else{
 						$('.alert-generic').show();
 						$('.alert-exists-text').html("No clients found for this ontology");
+						document.location.href='#alerts';
 					}
 
 				}
@@ -141,9 +197,11 @@ function getTokens(){
 						var o = new Option(data[i]);
 						$("#tokens").append(o);
 					}
+					$('.alert-generic').hide();
 				}else{
 					$('.alert-generic').show();
 					$('.alert-exists-text').html("No tokens found for this client");
+					$('.alert-generic').show();
 				}
 
 			}

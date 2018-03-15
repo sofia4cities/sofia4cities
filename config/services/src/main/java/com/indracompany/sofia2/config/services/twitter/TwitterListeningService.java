@@ -18,6 +18,7 @@ import java.util.List;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.model.User;
 
 public interface TwitterListeningService {
 
@@ -48,5 +49,7 @@ public interface TwitterListeningService {
 	void updateListening(TwitterListening twitterListening);
 
 	TwitterListening getListeningByJobName(String jobName);
+
+	List<String> getAllClientsForUser(User userSessionId);
 
 }
