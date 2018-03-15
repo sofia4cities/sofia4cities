@@ -1,22 +1,23 @@
 module.exports = function(RED) {
 	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator');
-	var sofia2Config = require('../sofia2-connection-config/sofia2-connection-config');
+	var sofia4citiesConfig = require('../sofia4cities-connection-config/sofia4cities-connection-config');
 	var ssapResourceGenerator = require('../lib/SSAPResourceGenerator');
-	var http = require('http');
-	var https = require('https');
+	//var http = require('http');
+	//var https = require('https');
+	var http = null;
 	var isHttps = false;
-	
+
     function Query(n) {
         RED.nodes.createNode(this,n);
-        
+
 		var node = this;
 		this.ontology = n.ontology;
 		this.query = n.query;
 		this.queryType = n.queryType;
-		
+
 		// Retrieve the server (config) node
 		var server = RED.nodes.getNode(n.server);
-        
+
 		this.on('input', function(msg) {
 			var ontologia="";
 			var queryType="";
@@ -37,22 +38,22 @@ module.exports = function(RED) {
 			   query=this.query;
 			}
 			if (server) {
-				var protocol = server.protocol;				
+				var protocol = server.protocol;
 				console.log("Using protocol:"+protocol);
 				console.log("Using ontology:"+ontologia);
 				if(protocol.toUpperCase() == "MQTT".toUpperCase()){
-					if (server.sessionKey==null || server.sessionKey=="")			 {		
+					if (server.sessionKey==null || server.sessionKey=="")			 {
 						server.generateSession();
-					    console.log("SessionKey null...Generated SessionKey:"+server.sessionKey);	
+					    console.log("SessionKey null...Generated SessionKey:"+server.sessionKey);
 					}
 				    console.log("Using SessionKey:"+server.sessionKey);
-					var query = ssapMessageGenerator.generateQueryWithQueryTypeMessage(query, ontologia,queryType,null,server.sessionKey);
+					var query = ssapMessageGenerator.generateQueryWithQueryTypeMessage(query, ontologia, queryType, server.sessionKey);
 					console.log("Using query:"+query);
 					var state = server.sendToSib(query);
-					
+
 					state.then(function(response){
-						
-						var body = JSON.parse(response.body);						
+						console.log("Datos respuesta: " + JSON.stringify(response.body));
+						var body = response.body;
 						console.log("Responde Body:"+response.body);
 						if(body.ok){
 							console.log("Message sent OK. Body:"+body);
@@ -76,61 +77,70 @@ module.exports = function(RED) {
 					var endpoint = server.endpoint;
 					console.log("Endpoint:"+endpoint);
 					var arr = endpoint.toString().split(":");
-					
+
 					var host;
 					var port = 80;
-					
-					if (arr[0].toUpperCase()=='HTTPS'.toUpperCase())
+
+					if (arr[0].toUpperCase()=='HTTPS'.toUpperCase()) {
 						isHttps=true;
+						console.log("Using HTTPS:"+arr[0]);
+					}
 					if(arr[0].toUpperCase()=="HTTP".toUpperCase()||arr[0].toUpperCase()=='HTTPS'.toUpperCase()){
 						host=arr[1].substring(2, arr[1].length);
 						if(arr.length>2){
 							port = parseInt(arr[arr.length-1]);
 						}
 					}else{
-						host = arr[0];	
+						console.log("Using Host:"+arr[0]);
+						host = arr[0];
 						if(arr.length>1){
 							port = parseInt(arr[arr.length-1]);
 						}
 					}
-					
+
 					var postheaders = {
 						'Accept' : 'application/json'
 					};
 					var pathUrl = "/sib/services/api_ssap/v01/SSAPResource?$sessionKey=" + server.sessionKey + "&$query="+ query + "&$queryType="+ queryType;
-					
+
 					console.log("Path URL:"+pathUrl);
-					
+
 					var options = {
 					  host: host,
 					  port: port,
 					  path: pathUrl,
 					  method: 'GET',
-					  headers: postheaders
+					  headers: postheaders,
+					  rejectUnauthorized: false
 					};
 					// do the GET call
 					var result='';
+					if (isHttps)
+						http= require('https');
+					else
+						http = require('http');
 					var req = http.request(options, function(res) {
 						console.log("Status code of the query call: ", res.statusCode);
 						if( res.statusCode==400 || res.statusCode==401){
 							console.log("Not SessionKey. Doing JOIN");
 							var queryJoin = ssapResourceGenerator.generateJoinByTokenMessage(server.kp, instance, server.token);
 								console.log("queryJoin: ",queryJoin);
-			
+
 							var postheadersJoin = {
 								'Content-Type' : 'application/json',
 								'Accept' : 'application/json',
 								'Content-Length' : Buffer.byteLength(queryJoin, 'utf8')
 							};
-							
+
 							var optionsJoin = {
 							  host: host,
 							  port: port,
 							  path: '/sib/services/api_ssap/v01/SSAPResource/',
 							  method: 'POST',
-							  headers: postheadersJoin
+							  headers: postheadersJoin,
+							  rejectUnauthorized: false
 							};
-							
+
 						// do the JOIN POST call
 						var resultJoin='';
 						var reqPost = http.request(optionsJoin, function(res) {
@@ -142,7 +152,7 @@ module.exports = function(RED) {
 								resultJoin = JSON.parse(resultJoin);
 								server.sessionKey=resultJoin.sessionKey;
 								console.log("SessionKey obtained: " + server.sessionKey);
-								
+
 								var postheaders = {
 									'Content-Type' : 'application/json',
 									'Accept' : 'application/json'
@@ -154,7 +164,8 @@ module.exports = function(RED) {
 								  port: port,
 								  path: pathUrl,
 								  method: 'GET',
-								  headers: postheaders
+								  headers: postheaders,
+							      rejectUnauthorized: false
 								};
 								// do the GET call
 								var result='';
@@ -173,7 +184,7 @@ module.exports = function(RED) {
 										msg.payload=result;
 										node.send(msg);
 									});
-									
+
 								});
 								req.end();
 								req.on('error', function(err) {
@@ -181,7 +192,7 @@ module.exports = function(RED) {
 									node.error("Error:"+err);
 								});
 							});
-							
+
 						});
 						reqPost.write(queryJoin);
 						reqPost.end();
@@ -206,15 +217,15 @@ module.exports = function(RED) {
 						node.error("Error:"+err);
 					});
 					console.log("Output:"+result);
-					
+
 				}
-				
+
 			} else {
 					console.log("Error:"+err);
 					node.error("Error:"+err);
 			}
         });
-		
+
     }
-    RED.nodes.registerType("sofia2-query",Query);
+    RED.nodes.registerType("sofia4cities-query",Query);
 }

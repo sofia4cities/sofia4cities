@@ -1,22 +1,22 @@
 module.exports = function(RED) {
 	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator');
-	var sofia2Config = require('../sofia2-connection-config/sofia2-connection-config');
+	var sofia2Config = require('../sofia4cities-connection-config/sofia4cities-connection-config');
 	var ssapResourceGenerator = require('../lib/SSAPResourceGenerator');
 
 	var http = null;
 	var isHttps = false;
-	
+
     function Delete(n) {
         RED.nodes.createNode(this,n);
-        
+
 		var node = this;
 		this.ontology = n.ontology;
 		this.query = n.query;
 		this.queryType = n.queryType;
-		
+
 		// Retrieve the server (config) node
 		var server = RED.nodes.getNode(n.server);
-        
+
 		this.on('input', function(msg) {
 			var ontologia="";
 			var queryType="";
@@ -36,22 +36,26 @@ module.exports = function(RED) {
 			}else{
 			   query=this.query;
 			}
+			console.log("[ info ] query: "+ query);
+			console.log("[ info ] ontologia: "+ ontologia);
+			console.log("[ info ] sessionKey: "+ server.sessionKey);
 			if (server) {
 				var protocol = server.protocol;
 				if(protocol.toUpperCase() == "MQTT".toUpperCase()){
-					var queryDelete = ssapMessageGenerator.generateDeleteWithQueryTypeMessage(query, ontologia,queryType,server.sessionKey);
-				
-					var state = server.sendToSib(queryDelete);
+					var queryDelete = ssapMessageGenerator.generateDeleteMessage(query, ontologia, server.sessionKey);
+					console.log("[ info ] queryDelete: "+ queryDelete);
 					
+					var state = server.sendToSib(queryDelete);
+
 					state.then(function(response){
-						
+
 						var body = JSON.parse(response.body);
 						if(body.ok){
 							console.log("The message is send.");
 							msg.payload=body;
 							node.send(msg);
 						}else{
-							console.log("Error sendind the delete SSAP message.");
+							console.log("Error sending the delete SSAP message.");
 							msg.payload=body.error;
 							if(body.errorCode == "AUTENTICATION"){
 								console.log("The sessionKey is not valid.");
@@ -67,7 +71,7 @@ module.exports = function(RED) {
 					var arr = endpoint.toString().split(":");
 					var host;
 					var port = 80;
-					
+
 					if (arr[0].toUpperCase()=='HTTPS'.toUpperCase()) {
 						isHttps=true;
 						console.log("Using HTTPS:"+arr[0]);
@@ -78,12 +82,12 @@ module.exports = function(RED) {
 							port = parseInt(arr[arr.length-1]);
 						}
 					}else{
-						host = arr[0];	
+						host = arr[0];
 						if(arr.length>1){
 							port = parseInt(arr[arr.length-1]);
 						}
 					}
-					
+
 					//Se prepara el mensaje delete
 					var queryDelete='?$sessionKey='+server.sessionKey+'&$query='+query+'&$queryType='+queryType;
 					queryDelete = queryDelete.replace(/ /g, "+");
@@ -93,8 +97,8 @@ module.exports = function(RED) {
 						'Accept' : 'application/json',
 						//'Content-Length' : Buffer.byteLength(queryDelete, 'utf8')
 					};
-					
-				
+
+
 					var optionsDelete = {
 					  host: host,
 					  port: port,
@@ -105,7 +109,7 @@ module.exports = function(RED) {
 					};
 					// do the GET POST call
 					var resultDelete='';
-					if (isHttps) 
+					if (isHttps)
 						http= require('https');
 					else
 						http = require('http');
@@ -120,13 +124,13 @@ module.exports = function(RED) {
 								//Se regenera la sessionKey con un join
 								var instance = server.kp + ':' + server.instance;
 								var queryJoin = ssapResourceGenerator.generateJoinByTokenMessage(server.kp, instance, server.token);
-								
+
 								var postheadersJoin = {
 									'Content-Type' : 'application/json',
 									'Accept' : 'application/json',
 									'Content-Length' : Buffer.byteLength(queryJoin, 'utf8')
 								};
-								
+
 								var optionsJoin = {
 								  host: host,
 								  port: port,
@@ -145,7 +149,7 @@ module.exports = function(RED) {
 										result = JSON.parse(result);
 										server.sessionKey=result.sessionKey;
 										console.log("SessionKey obtained: " + server.sessionKey);
-										
+
 										//Se prepara el mensaje delete
 										var queryDelete='?$sessionKey='+server.sessionKey+'&$query='+query+'&$queryType='+queryType;
 										queryDelete = queryDelete.replace(/ /g, "+");
@@ -155,7 +159,7 @@ module.exports = function(RED) {
 											'Accept' : 'application/json',
 											//'Content-Length' : Buffer.byteLength(queryDelete, 'utf8')
 										};
-										
+
 										var optionsDelete = {
 										  host: host,
 										  port: port,
@@ -164,7 +168,7 @@ module.exports = function(RED) {
 										  headers: postheadersDelete,
 										  rejectUnauthorized: false
 										};
-										
+
 										// do the GET POST call
 										var resultDelete='';
 										var reqDelete = http.request(optionsDelete, function(res) {
@@ -184,24 +188,24 @@ module.exports = function(RED) {
 													node.send(msg);
 												}
 											});
-											
+
 										});
 										reqDelete.end();
 										reqDelete.on('error', function(err) {
 											console.log("Error:"+err);
 											node.error("Error:"+err);
 										});
-										
-										
+
+
 									});
-									
+
 								});
 								reqPost.write(queryJoin);
 								reqPost.end();
 								reqPost.on('error', function(err) {
 									console.log("There was an error inserting the data: ", err);
 								});
-								
+
 							}else if(res.statusCode==200){
 								try{
 									resultDelete = JSON.parse(resultDelete);
@@ -212,7 +216,7 @@ module.exports = function(RED) {
 								node.send(msg);
 							}
 						});
-						
+
 					});
 					//reqDelete.write(queryDelete);
 					reqDelete.end();
@@ -221,12 +225,12 @@ module.exports = function(RED) {
 									node.error("Error:"+err);
 					});
 				}
-					
+
 			} else {
 				console.log("Error");
 			}
         });
-		
+
     }
-    RED.nodes.registerType("sofia2-delete",Delete);
+    RED.nodes.registerType("sofia4cities-delete",Delete);
 }

@@ -4,140 +4,47 @@ module.exports = function(RED) {
 	var ssapResourceGenerator = require('../lib/SSAPResourceGenerator');
 	var http = null;
 	var isHttps = false;
-	var items = [];
 
     function Insert(n) {
         RED.nodes.createNode(this,n);
         var node = this;
 		this.ontology = n.ontology;
-		this.messageType = n.messageType;
-		this.limit = n.limit;
-		this.limitType = n.limitType;
 
 		// Retrieve the server (config) node
 		 var server = RED.nodes.getNode(n.server);
 
-		//Para detener el intervalo de renovación de sesión
- 		var connectionInterval;
-
-		if (this.limitType == "seconds") {
-			connectionInterval= setInterval( function() {
-				console.log("[Desarrollo - Jaro] Bucle envio datos");
-				var ontologia="";
-				var messageType="";
-				var limit=this.limit;
-				var sessionKey="";
-				if(this.ontology==""){
-				   ontologia = msg.ontology;
-				}else{
-				   ontologia=this.ontology;
-				}
-				if(this.messageType==""){
-				   messageType= msg.messageType;
-				}else{
-				   messageType=this.messageType;
-				}
-
-				if (items.length > 0){
-					items = sendData(server, ontologia, messageType, items);
-				}
-				console.log("[Desarrollo - Jaro] Limite de tiempo: "+(n.limit*1000)+" ms.");
-			}, (n.limit*1000) );	// Expressed in ms.
-		}
 
 		this.on('input', function(msg) {
-			var data=msg.payload.replace(/"/g, "\"").replace(/\"/g, "\\\"");
-			console.log("[Desarrollo - Jaro] Payload: "+msg.payload);
-			console.log("[Desarrollo - Jaro] Data: "+data);
 			var ontologia="";
-			var messageType="";
-			var limit=this.limit;
-			var limitType=this.limitType;
-			console.log("[Desarrollo - Jaro] Tipo limite: "+limitType);
-			var sessionKey="";
+			var sessionKey='';
 			if(this.ontology==""){
 			   ontologia = msg.ontology;
 			}else{
 			   ontologia=this.ontology;
 			}
-			if(this.messageType==""){
-			   messageType= msg.messageType;
-			}else{
-			   messageType=this.messageType;
-			}
 
-			//Almaceno en la ultima posicion el siguiente item del bulk
-			items[items.length] = '{"type":"'
-			 + messageType + '","body": "{\\\"@type\\\":\\\"SSAPBodyOperationMessage\\\",\\\"data\\\":'
-			 + data + ',\\\"version\\\":null,\\\"query\\\":null,\\\"queryType\\\":null}","ontology":"'
-			 + ontologia + '"}';
-			//TODO mas adelante se habilitara la seleccion desde el bloque, por defecto sera de 2
-			// limit = 2;
-			console.log("[Desarrollo - Jaro] Limite Actual: "+this.limit);
-			console.log("[Desarrollo - Jaro] Nº mensajes procesados: "+items.length);
-			console.log("[Desarrollo - Jaro] Variable Items: "+items);
-
-
-			if ( (limitType == "messages")  && (items.length >= limit)) {
-				items = sendData(server, ontologia, messageType, items);
-			}
-
-    });
-
-		this.on('close', function() {
-			clearInterval(connectionInterval);
-
-			//LEAVE  y un disconnect físico
-			var queryLeave = ssapMessageGenerator.generateLeaveMessage(node.sessionKey);
-			if(this.server=="undefined"){
-				console.log("server: " + this.server);
-				var state = this.server.sendToSib(queryLeave);
-
-				state.then(function(response){
-
-					var body = JSON.parse(response.body);
-					if(body.ok){
-						console.log("The message is send.");
-						myKp.disconnect();
-					}else{
-						console.log("Error sendind the leave SSAP message.");
-						if(body.errorCode == "AUTHENTICATION"){
-							console.log("The sessionKey is not valid.");
-						}
-					}
-				});
-			}
-		});
-
-    }
-
-		function sendData(server, ontologia, messageType, items){
-			console.log("->[Desarrollo Jaro] Conectando y enviando datos a sofia2");
 			if (server) {
 				var protocol = server.protocol;
 				console.log("Using protocol:"+protocol);
 				console.log("Using ontology:"+ontologia);
-				console.log("Using messageType:"+messageType);
 
 				if(protocol.toUpperCase() == "MQTT".toUpperCase()){
-					//TODO Aqui hay que poner el bucle de espera para el enviado de mensajes
-
-
 					if (server.sessionKey==null || server.sessionKey=="")			 {
 						server.generateSession();
-							console.log("SessionKey null...Generated SessionKey:"+server.sessionKey);
+					    console.log("SessionKey null...Generated SessionKey:"+server.sessionKey);
 					}
-						console.log("Using SessionKey:"+server.sessionKey);
-					var queryBulk = ssapMessageGenerator.generateBulkMessage(items, ontologia, messageType, server.sessionKey);
-					console.log(queryBulk);
+				  console.log("Using SessionKey:"+server.sessionKey);
 
-					var state = server.sendToSib(queryBulk);
+					var queryInsert = ssapMessageGenerator.generateInsertMessage(msg.payload, ontologia,server.sessionKey);
+					console.log("Using query:"+queryInsert);
+
+					var state = server.sendToSib(queryInsert);
 					if(typeof(state)=="undefined" || state==""){
 						console.log("There are not response for the query send.");
 					}else{
 						state.then(function(response){
-							var body = JSON.parse(response.body);
-							console.log("Responde Body:"+response.body);
+							var body = response.body;
+							console.log("Responde Body:"+body);
 							if(body.ok){
 								console.log("Message sent OK. Body:"+body);
 								msg.payload=body;
@@ -186,12 +93,12 @@ module.exports = function(RED) {
 
 					console.log("URL invocation:"+host+":"+port+path);
 					var optionsInsert = {
-						host: host,
-						port: port,
-						path: path,
-						method: 'POST',
-						headers: postheadersInsert,
-						rejectUnauthorized: false
+					  host: host,
+					  port: port,
+					  path: path,
+					  method: 'POST',
+					  headers: postheadersInsert,
+					  rejectUnauthorized: false
 					};
 					// do the INSERT POST call
 					var resultInsert='';
@@ -219,12 +126,12 @@ module.exports = function(RED) {
 								};
 
 								var optionsJoin = {
-									host: host,
-									port: port,
-									path: path,
-									method: 'POST',
-									headers: postheadersJoin,
-									rejectUnauthorized: false
+								  host: host,
+								  port: port,
+								  path: path,
+								  method: 'POST',
+								  headers: postheadersJoin,
+								  rejectUnauthorized: false
 								};
 								var result='';
 								var reqPost = http.request(optionsJoin, function(res) {
@@ -244,12 +151,12 @@ module.exports = function(RED) {
 										};
 
 										var optionsInsert = {
-											host: host,
-											port: port,
-											path: '/sib/services/api_ssap/v01/SSAPResource/',
-											method: 'POST',
-											headers: postheadersInsert,
-											rejectUnauthorized: false
+										  host: host,
+										  port: port,
+										  path: '/sib/services/api_ssap/v01/SSAPResource/',
+										  method: 'POST',
+										  headers: postheadersInsert,
+										  rejectUnauthorized: false
 										};
 
 										var resultInsert='';
@@ -311,15 +218,12 @@ module.exports = function(RED) {
 					});
 				}
 
-			// Reset variable items.
-			items = [];
-			console.log("[Desarrollo - Jaro] Reiniciado items. Longitud: "+items.length);
 			} else {
 				console.log("Error");
 			}
 
-			return items;
-		}
+        });
 
-    RED.nodes.registerType("sofia2-bulk",Insert);
+    }
+    RED.nodes.registerType("sofia4cities-insert",Insert);
 }

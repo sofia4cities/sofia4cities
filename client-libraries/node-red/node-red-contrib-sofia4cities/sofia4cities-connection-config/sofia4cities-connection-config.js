@@ -15,7 +15,7 @@ module.exports = function(RED) {
 	});
 
     this.protocol=n.protocol;
-		this.kp=n.kp;
+		this.device=n.device;
 		this.instance=n.instance;
 		this.token=n.token;
 		this.renovation=n.renovation;
@@ -77,7 +77,7 @@ module.exports = function(RED) {
 						);
 
 					}else{
-						node.log("KP Connected. Renew Sessionkey");
+						node.log("Device Connected. Renew Sessionkey");
 						generateSession();
 					}
 				}
@@ -98,15 +98,11 @@ module.exports = function(RED) {
 
 				if( typeof(node.sessionKey)=="undefined" || node.sessionKey==""){
 					console.log("There is no previous session, generate new session...")
-					ssapMessageJOIN = ssapMessageGenerator.generateJoinByTokenMessage(node.token, node.kp, node.instance );
+					ssapMessageJOIN = ssapMessageGenerator.generateJoinByTokenMessage(node.token, node.device, node.instance );
 
 				}else{ //There is a previouse session. Try to renovate it
 					console.log("There is a previouse session. Try to renovate it...")
-					console.log(node.token);
-					console.log(node.kp);
-					console.log(node.instance);
-					console.log(node.sessionKey);
-					ssapMessageJOIN = ssapMessageGenerator.generateJoinRenovateByTokenMessage(node.token, node.kp, node.instance, node.sessionKey );
+					ssapMessageJOIN = ssapMessageGenerator.generateJoinRenovateByTokenMessage(node.token, node.device, node.instance, node.sessionKey );
 				}
 				console.log(ssapMessageJOIN);
 				myKp.send(ssapMessageJOIN)
@@ -176,5 +172,5 @@ module.exports = function(RED) {
 		}
     }
 
-    RED.nodes.registerType("sofia2-config",SofiaConfig);
+    RED.nodes.registerType("sofia4cities-config",SofiaConfig);
 }

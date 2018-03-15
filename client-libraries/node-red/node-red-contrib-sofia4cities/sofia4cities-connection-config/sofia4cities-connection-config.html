@@ -1,28 +1,28 @@
 <html>
 	<script type="text/javascript">
-    RED.nodes.registerType('sofia2-config',{
+    RED.nodes.registerType('sofia4cities-config',{
         category: 'config',
         defaults: {
             protocol: {value:""},
-            kp: {value:""},
-			instance: {value:""},
-			token: {value:""},
-			renovation: {value:""},
-			ip: {value:""},
-			port: {value:""},
-			endpoint: {value:""}
+            device: {value:""},
+						instance: {value:""},
+						token: {value:""},
+						renovation: {value:""},
+						ip: {value:""},
+						port: {value:""},
+						endpoint: {value:""}
         },
         label: function() {
 			if(this.protocol=="MQTT"){
-					return this.ip+":"+this.port+" as "+this.kp+":"+this.instance;
+					return this.ip+":"+this.port+" as "+this.device+":"+this.instance;
 			}else{
-				return this.endpoint+" as "+this.kp+":"+this.instance;
+				return this.endpoint+" as "+this.device+":"+this.instance;
 			}
-			
+
         },
 		oneditprepare: function() {
 			$("#node-config-input-protocol").change(function() {
-					
+
 				var prot = $("#node-config-input-protocol").val();
 				if(prot!=null){
 					if(prot=="MQTT"){
@@ -34,25 +34,25 @@
 						$("#div-ip").hide();
 						$("#div-port").hide();
 					}
-				}				
+				}
 			});
 			$(".inject-time-count").spinner({
                 //max:60,
                 min:1
             });
 		}
-		
+
     });
 </script>
 
 
 
-<script type="text/x-red" data-template-name="sofia2-config">
+<script type="text/x-red" data-template-name="sofia4cities-config">
     <div class="form-row">
         <label for="node-config-input-protocol"><i class="icon-bookmark"></i> Protocol</label>
         <select type="text" id="node-config-input-protocol">
 			<option value="MQTT">MQTT</option>
-			<option value="REST">REST</option>
+			<!--option value="REST">REST</option-->
 			<!--option value="WEBSOCKET">WEBSOCKET</option-->
 		</select>
     </div>
@@ -72,8 +72,8 @@
         <input type="text" style="width:213px" id="node-config-input-port" placeholder="Port">
     </div>
     <div class="form-row">
-        <label for="node-config-input-kp"><i class="icon-bookmark"></i> ThinKP</label>
-        <input type="text" id="node-config-input-kp" placeholder="ThinKP">
+        <label for="node-config-input-device"><i class="icon-bookmark"></i> Device</label>
+        <input type="text" id="node-config-input-device" placeholder="Device">
     </div>
 	<div class="form-row">
         <label for="node-config-input-instance"><i class="icon-file"></i> Instance</label>
@@ -85,19 +85,19 @@
     </div>
 	<div class="form-row">
         <label for="node-config-input-renovation"><i class="icon-bookmark"></i> Renovate session every</label>
-        <input id="node-config-input-renovation" class="inject-time-count" value="1"></input>
+        <input id="node-config-input-renovation" class="inject-time-count" value="60"></input>
         <label>minutes</label>
     </div>
-	
-	
+
+
 </script>
 
-	<script type="text/x-red" data-help-name="sofia2-config">
+	<script type="text/x-red" data-help-name="sofia4cities-config">
 		<p>Configuration for the conexion:</p>
 		<p><code>Protocol</code>  Select the protocol between: MQTT, REST, WEBSOCKET</p>
-	    <p><code>ThinKP</code> It is used to indicate the  KP instance to be referenced.</p>
-	    <p><code>Instance</code> It is used to indicate the  KP instance to be referenced.</p>
-	    <p><code>Token</code> Identification number of the ThinKP.</p>
+	    <p><code>Device</code> It is used to indicate the Device to be referenced.</p>
+	    <p><code>Instance</code> It is used to indicate the Device instance to be referenced.</p>
+	    <p><code>Token</code> Identification number of the Device.</p>
 	    <p><code>Renovate session</code> Connection renewal time.</p>
 		<p>To MQTT conexions:</p>
 		<p><code>IP</code> Host name</p>
