@@ -40,6 +40,8 @@ quartz:
       simulationScheduler
     
 sofia2: #Config Sofia2 specific
+   iotbroker:
+      server: http://localhost:8081/iotbroker
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -59,7 +61,8 @@ sofia2: #Config Sofia2 specific
       tools.mongoexport.path: mongoexport
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
-      tools.useSequentialOps: true 
+      tools.useSequentialOps: true
+
             
 ## LOGGING CONF
 logging:
