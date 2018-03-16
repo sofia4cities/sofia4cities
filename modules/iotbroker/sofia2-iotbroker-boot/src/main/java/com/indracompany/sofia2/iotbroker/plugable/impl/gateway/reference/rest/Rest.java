@@ -108,14 +108,14 @@ public class Rest {
 
 	@ApiOperation(value = "Logs out a client device into Sofia4Cities with token")
 	@RequestMapping(value="/client/leave", method=RequestMethod.GET)
-	public ResponseEntity<?> join(
+	public ResponseEntity<?> leave(
 			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey) {
 
 		final SSAPMessage<SSAPBodyLeaveMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyLeaveMessage());
 
 		request.setDirection(SSAPMessageDirection.REQUEST);
-		request.setMessageType(SSAPMessageTypes.JOIN);
+		request.setMessageType(SSAPMessageTypes.LEAVE);
 		request.setSessionKey(sessionKey);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());

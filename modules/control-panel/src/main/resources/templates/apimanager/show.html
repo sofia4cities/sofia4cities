@@ -252,27 +252,10 @@
 							                                                            <input id="description_DELETEID" name="description_DELETEID" class="form-control" type="text" maxlength="250"/>
 							                                                        </div>
 							                                                     </div>
-																				 
-								                                                 <!-- <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
-								                                                    <div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" style="margin-Top:30px;margin-bottom: 30px">
-								                                                        <input th:id="${(operation.identification + 'CUSTOMSQL')}"
-								                                                        		class="op_button_selected"
-								                                                        		style="width: 110px; margin-left: 25px;" type="button" 
-								                                                        		th:value="#{apimanager.GETCUSTOM.button}" 
-								                                                        		th:name="${(operation.identification + 'CUSTOMSQL')}" 
-								                                                        		th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'"/>
-								                                                    </div>
-								                                                    <label th:id="${operation.identification + '_LABEL'}" class="description" style="padding-left: 20px;" th:text="${operation.identification}"/>
-								                                                    <br/>
-								                                                    <b><span th:id="${operation.identification + '_PATH'}" style="padding-left: 20px; width: 93%;" th:text="${operation.path}"/></b>
-								                                                    <br/>
-								                                                    <b><span th:each="querystring : ${operation.querystrings}" th:if="${(querystring.name == '$query')}" th:id="${operation.identification + '_QUERY'}" style="padding-left: 20px; width: 93%;" th:text="${querystring.value}"/></b>
-								                                                    <br/>
-								                                                    <span th:id="${operation.identification + '_DESC'}" style="padding-left: 20px;" th:text="${operation.description}"/>
-								                                                 </div> -->
 																				 <div th:each="operation : ${operations}" th:if="${!#strings.endsWith(operation.identification,'_GET')} AND ${!#strings.endsWith(operation.identification,'_POST')} AND ${!#strings.endsWith(operation.identification,'_PUT')} AND ${!#strings.endsWith(operation.identification,'_DELETEID')}" th:id="${(operation.identification)}" class="op_div_selected">
 																					<div th:id="${operation.identification + '_OPERATION'}" class="op_button_div" >
-																						<input th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected"  type="button" th:value="#{apimanager.GETCUSTOM.button}" th:name="${(operation.identification + 'CUSTOMSQL')}" />
+																						<input th:if="((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected"  type="button" th:value="#{apimanager.GETCUSTOM.button}" th:name="${(operation.identification + 'CUSTOMSQL')}" th:onclick="'javascript:ApiCustomOpsController.selectEditCustomOp(\'' + ${operation.identification} + '\');'" />
+																						<input th:if="((${#authentication.name} != ${api.user.userId}) AND (${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'))" th:id="${(operation.identification + 'CUSTOMSQL')}" class="op_button_selected"  type="button" th:value="#{apimanager.GETCUSTOM.button}" th:name="${(operation.identification + 'CUSTOMSQL')}" />
 																					</div>
 																					<div class="op_desc_div">
 																						<label th:id="${operation.identification + '_LABEL'}" class="description bold" style="font-size: 14px; color: rgb(34, 48, 77); padding-right:15px; min-width: 200px;display: inline-block;" th:text="${operation.identification}"/>
@@ -298,7 +281,7 @@
 															<span th:if="(((${#authentication.name} == ${api.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')) AND (${api.state.name() == 'CREATED'} OR ${api.state.name() == 'DEVELOPMENT'}))" class="sep" th:text="#{gen.sepBtn}"> or </span>
 															
 															<!-- CANCEL TO-DO: authentication and control -->
-															<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+															<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 														</div>
 													</div>											
 												</form>
@@ -423,7 +406,8 @@
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>		
 	
-	
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/apiCustomOps.js}"/>
 	
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
