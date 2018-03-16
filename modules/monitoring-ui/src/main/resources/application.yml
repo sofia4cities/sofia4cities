@@ -49,6 +49,9 @@ spring: ## General Config
           
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
+logging:
    level:
       org.springframework: INFO
       de.codecentric: DEBUG

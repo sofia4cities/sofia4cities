@@ -6,10 +6,7 @@ server: ## Config Web Server
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat
-      
-spring.application.name : smartstore
 
-spring.security.enabled: false
 management.security.enabled: false
 security.basic.enabled: false
 # all access to actuator endpoints without security
@@ -58,6 +55,7 @@ security:
    
 spring: ## General Config  
    application.name: sofia2-router
+   security.enabled: false
    boot.admin: #Spring Boot Admin Config  
       client: 
         enabled: false
@@ -100,6 +98,8 @@ spring: ## General Config
         
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
    level:
       org.springframework: INFO
       de.codecentric: DEBUG
