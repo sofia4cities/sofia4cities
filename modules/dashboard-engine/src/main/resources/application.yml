@@ -5,10 +5,7 @@ server:
   contextPath: /dashboardengine
   
 spring:
-  profiles: 
-    active: common
-    include: dummy-dev, localtest
-  ## JPA Config
+  application.name: sofia2-dashboard-engine
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
@@ -50,6 +47,8 @@ sofia2: #Config Sofia2 specific
       
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
    level:
       org.springframework: INFO
       com.example.boot.thymeleaf: INFO

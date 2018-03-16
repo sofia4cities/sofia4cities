@@ -13,4 +13,3 @@ quartz:
 ## LOGGING CONF
 logging:
    path: /var/log/logs-s4c 
-   file: ${logging.path}/${app.name}.log 
