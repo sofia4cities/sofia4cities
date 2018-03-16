@@ -122,7 +122,7 @@
          "identification":"getPopulation",
          "operation":"GET",
          "path":"/getPopulation",
-         "description":"getPopulation",
+         "description":"Helsinki's Male, Female and Total Population",
          "queryParams":[
             {
                "name":"queryType",
@@ -157,7 +157,7 @@
          "identification":"getPopulationByYear",
          "operation":"GET",
          "path":"/getPopulationByYear",
-         "description":"Total Female and Male Population of Helsinki filter by year",
+         "description":"Total, Female and Male Population of Helsinki filter by year",
          "queryParams":[
             {
                "name":"queryType",

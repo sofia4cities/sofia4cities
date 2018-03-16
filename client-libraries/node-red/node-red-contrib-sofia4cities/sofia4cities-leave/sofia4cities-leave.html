@@ -1,0 +1,36 @@
+<html>
+	<script type="text/javascript">
+		RED.nodes.registerType('sofia4cities-leave',{
+			category: 'sofia4cities',
+			color: '#C0DEED',
+			defaults: {
+				name: {value:""},
+				server: {value:"", type:"sofia4cities-config"}
+			},
+			inputs: 1,
+			outputs:1,
+			icon: "s4c.png",
+			label: function() {
+				return this.name||"sofia4cities-leave";
+			}
+		});
+	</script>
+
+	<script type="text/x-red" data-template-name="sofia4cities-leave">
+		<div class="form-row">
+			<label for="node-input-name"><i class="icon-tag"></i> Name</label>
+			<input type="text" id="node-input-name" placeholder="Name">
+		</div>
+		<div class="form-row">
+			<label for="node-input-server"><i class="icon-file"></i> Server</label>
+			<input type="text" id="node-input-server" placeholder="Server">
+		</div>
+		<script
+	</script>
+	<script type="text/x-red" data-help-name="sofia4cities-leave">
+		<span><img style="margin-left: 5px;" src="icons/s4c.png"/><h2 style="display:inline"> Sofia4Cities</h2>
+		<p>Node leaving the session:</p>
+		<p><code>msg.sessionKey</code> Session Key that should be closed.</p>
+		</script>
+
+</html>
