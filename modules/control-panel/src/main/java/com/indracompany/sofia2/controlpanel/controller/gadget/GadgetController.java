@@ -124,7 +124,6 @@ public class GadgetController {
 			utils.addRedirectMessage("gadgetDatasource.create.error", redirect);
 			return "redirect:/gadgets/create";
 		}
-		utils.addRedirectMessage("gadgets.create.success", redirect);
 		return "redirect:/gadgets/list";
 
 	}
@@ -162,8 +161,6 @@ public class GadgetController {
 			utils.addRedirectMessage("gadgetDatasource.update.error", redirect);
 			return "redirect:/gadgets/create";
 		}
-		
-		utils.addRedirectMessage("gadgets.update.success", redirect);
 		return "redirect:/gadgets/list";
 	}
 	
