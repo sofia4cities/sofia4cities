@@ -13,7 +13,35 @@
         
 		<link rel="stylesheet" type="text/css" media="all" href="./json/jsoneditor.css"/>
 		
-		
+		<style>
+			.counter {
+			  background-color: #00cc75;
+			  padding: 20px 0;
+			  border-radius: 5px;
+			  color: white;
+			  margin-left: 10px;
+			}
+			
+			.count-title {
+				font-size: 40px;
+				font-weight: normal;
+				margin-top: 10px;
+				margin-bottom: 0;
+				text-align: center;
+			}
+
+			.count-text {
+				font-size: 13px;
+				font-weight: normal;
+				margin-top: 10px;
+				margin-bottom: 0;
+				text-align: center;
+			}
+			
+			.alarm {
+				background-color: #cc8b00;
+			}
+		</style>
 		<script type="text/javascript">
             
 			config = {"url":"http://localhost:8081/iotbroker/message", "debug" : true,
@@ -139,6 +167,42 @@
 				});
 			}
 			
+			var timer = 0;
+			
+			function startSimulation (){
+				var ontology = $("#ontologyTabSimulateField").val();
+				
+				//data = {"EmptyBase" : { "test" : "3" } };
+				
+				data = JSON.parse($("#simulateInstance").val());
+				
+				simulateInterval = $("#simulateInterval").val();
+				
+				console.log("start simulation" + simulateInterval);
+				timer = setInterval(function(){
+					console.log("executing..");
+					client.insert(ontology, JSON.stringify(data)).then(function (response) {
+						
+						if (response.direction === "ERROR"){
+							$("#counterErrors").text(Math.floor($(counterErrors).text()) + 1);
+							console.log(response);
+						} else {
+							$("#counter").text(Math.floor($("#counter").text()) + 1);
+						}
+						
+					});	
+					
+					
+				},simulateInterval);
+				
+				
+			}
+			
+			function stopSimulation () {
+				clearInterval(timer); 
+			}
+			
+			
 			
 
         </script>
@@ -167,6 +231,9 @@
 				  </li>
 				  <li class="nav-item">
 					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#deleteById" role="tab" aria-controls="deleteById" aria-selected="false">Delete By Id</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="contact-tab" data-toggle="tab" href="#simulate" role="tab" aria-controls="simulate" aria-selected="false">Simulate</a>
 				  </li>
 				</ul>
 				<div class="tab-content" id="myTabContent">
@@ -199,7 +266,7 @@
 						</div>
 						<div class="form-group">
 							<label>Instance: </label>
-							<input type="text" id="insertInstance" class="form-control" placeholder="Write instance to insert..." value=""/>
+							<input type="text" id="insertInstance" class="form-control" placeholder="Write instance to insert..." value="{&quot;&quot;:&quot;&quot;}"/>
 						</div>
 						<p>
 							<button id="sendInserMessage" onclick="sendInsertTest()">Test insert query</button>
@@ -231,7 +298,7 @@
 						</div>
 						<div class="form-group">
 							<label>Instance:</label> 
-							<input type="text" id="updateInstance" class="form-control" placeholder="Write instance to insert..." value=""/>
+							<input type="text" id="updateInstance" class="form-control" placeholder="Write instance to update..." value="{&quot;&quot;:&quot;&quot;}"/>
 						</div>
 						<p>
 							<button id="sendMessageUpdate" onclick="sendUpdateByIdTest()">Test updateById</button>
@@ -266,6 +333,39 @@
 						</p>	
 						<div id= "responseDivDeleteByIdResult"></div>
 				  </div>
+				  <div class="tab-pane fade" id="simulate" role="tabpanel" aria-labelledby="profile-tab">
+						<div class="form-group">
+							<label>Ontology name: </label>
+							<input type="text" id="ontologyTabSimulateField" class="form-control" placeholder="write ontology..." value="testrober"/>
+						</div>
+						<div class="form-group">
+							<label>Instance: </label>
+							<input type="text" id="simulateInstance" class="form-control" placeholder="Write instance to insert..." value="{&quot;&quot;:&quot;&quot;}"/>
+						</div>
+						<div class="form-group">
+							<label>Execute every (milliseconds): </label>
+							<input type="text" id="simulateInterval" class="form-control" placeholder="Write in milliseconds..." value="1000"/>
+						</div>
+						<p>
+							<button id="startSimulationBtn" onclick="startSimulation()">Start</button>
+							<button id="stopSimulationBtn" onclick="stopSimulation()">Stop</button>
+						</p>	
+						<div id= "responseDivSimulateResult"></div>
+						<div class="container">
+							<div class="row justify-content-md-center">
+								<div class="counter col col-lg-4">
+								  <i class="fa fa-code fa-2x"></i>
+								  <h2 class="count-title count-number" id="counter">0</h2>
+								  <p class="count-text ">Num of inserted messages</p>
+								</div>
+							
+								<div class="counter alarm col col-lg-4">
+								  <i class="fa fa-code fa-2x"></i>
+								  <h2 class="count-title count-number" id="counterErrors">0</h2>
+								  <p class="count-text ">Num of messages with error</p>
+								</div>
+							</div>
+					    </div>
 				</div>
 				<!-- Content here -->
 		</div>
