@@ -579,7 +579,13 @@
 		    	$('.' + gfields[i].type).append('<option value="' + gfields[i].field + '">' + gfields[i].field + '</option>');
 		    }
 			for(var i=0;i<measures.length;i++){
-				var config = JSON.parse(measures[i].config);
+				var config;
+				if(typeof measures[i].config !== "object"){
+					config = JSON.parse(measures[i].config);
+				}
+				else{
+					config = measures[i].config;
+				}
 				var fields = config.fields;
 				for(var f=0;f<fields.length;f++){
 					var fieldAux = fields[f].replace("[",".").replace("]","");
