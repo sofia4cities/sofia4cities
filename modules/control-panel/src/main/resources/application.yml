@@ -102,6 +102,7 @@ quartz:
            
 ## LOGGING CONF
 logging:
+   file: ${spring.application.name}
    level:
       org.springframework: INFO
       com.example.boot.thymeleaf: INFO
