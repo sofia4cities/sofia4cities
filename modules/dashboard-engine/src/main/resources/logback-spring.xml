@@ -54,12 +54,12 @@
         </encoder>
     </appender>
          
-    <springProfile name="dev,default">
+    <springProfile name="dev">
 	    <root level="INFO">
 	        <appender-ref ref="stdoutAppender" />
 	    </root>
     </springProfile>
-    <springProfile name="production,docker">
+    <springProfile name="production,docker,default">
 	    <root level="INFO">
 	        <appender-ref ref="rollingFileAppender" />
 	        <appender-ref ref="stdoutWarnAppender" />
