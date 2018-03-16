@@ -12,6 +12,5 @@ quartz:
       
 ## LOGGING CONF
 logging:
-    path: /datadrive/logs-s4c 
-    file: ${app.name}_%d{HH:mm:ss.SSS}_%i.log
-    max-size: 100MB     
+   path: /var/log/logs-s4c 
+   file: ${logging.path}/${app.name}.log 
