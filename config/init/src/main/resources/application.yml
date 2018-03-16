@@ -55,6 +55,8 @@ spring:
             
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
    level:
       org.springframework: INFO
       com.example.boot.thymeleaf: INFO
