@@ -50,13 +50,11 @@
 		<!-- PLUGINS STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
 		
-		<!-- Dashboard styles -->
+		<!-- Dashboard styles -->		
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/vendor.css"/>	
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>	
+		<!-- <link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>	-->
 		
-		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/vendor.css"/>
-	
-		<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>
-	
-		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>	
 	</head>	
 	
 	<!-- page-sidebar-closed to start page with collapsed menu -->
@@ -123,18 +121,14 @@
 									<div class="col-md-12 alert-zone">
 										<!-- ALERT ZONE -->																			
 									</div>		
-																	
-									<div class="col-md-12 margin-bottom-20">
-									
-									  
+									<div class="col-md-12 margin-bottom-20">									
 									  <form role="form" id="gadget_create_form" th:object="${gadget}" method="post" class="form">
 									  		<!-- FORM ACTIONS FOR INSERT-->
 											<input th:if="${gadget.id} == null" type="hidden" name="action" th:value="@{/gadgets/create}"/>
 											
 											<!-- FORM ACTIONS FOR UPDATE -->											
 											<input th:if="${gadget.id} != null" type="hidden" name="action" th:value="@{/gadgets/update}"/>
-											<input th:if="${gadget.id} != null" type="hidden" name="_method" value="PUT"/>
-								 			
+											<input th:if="${gadget.id} != null" type="hidden" name="_method" value="PUT"/>								 			
 								 			<input type="hidden" id="config" th:field="*{config}"/>
 								 			<input type="hidden" id="type" th:field="*{type}"/>
 								 			<input type="hidden" id="description" th:field="*{description}"/>
@@ -144,74 +138,63 @@
 								 			<input type="hidden" id="datasourcesMeasures" name="datasourcesMeasures" />
 								 										  
 											<div class="form-body">
-									 			<div class="row">
-									 			<div class="form-group">
-									 			 	<div class="col-md-6">
-														<i class="fa fa-credit-card"></i>  <label class="control-label"  th:text="#{gen.name} + ':'">Name</label>
-																<div class="input-icon ">
-																	<i class="fa fa-credit-card"></i>
-																	<input id="identification" type="text" name="identification"  th:required="true"   maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{gen.name}" />
-															    </div>															
-														</div>	
-														<div class="col-md-6"> 
-														
+									 			<div class="row">																					 			
+													<div class="col-md-6 col-sm-12">
+														<div class="form-group">
+															<i class="fa fa-credit-card"></i>  <label class="control-label"  th:text="#{gen.name} + ':'">Name</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="identification" type="text" name="identification"  th:required="true"   maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{gen.name}" />
+															</div>
+														</div>
+													</div>	
+													<div class="col-md-6 col-sm-12">														
 														<div class="form-group">
 															<i class="fa fa-database"></i>  <label class="control-label" th:text="#{datasources.name} + ':'">Datasource</label>
 															<div class="input-icon ">
 																<i class="la la-database"></i>
-															<select th:readonly="${gadget.id} != null" readonly="readonly" id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:required="true">
-																<option value="none"></option> 
-																<option th:each="datasource:${datasources}" th:value="${datasource.id}" th:text="${datasource.identification}"></option>
-															</select>
-																								
+																<select th:readonly="${gadget.id} != null" readonly="readonly" id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:required="true">
+																	<option value="none"></option> 
+																	<option th:each="datasource:${datasources}" th:value="${datasource.id}" th:text="${datasource.identification}"></option>
+																</select>
 															</div>
 														</div>
-												    </div>
-																											
+													</div>
+													<div class="col-md-12"> 
+														<div class="alert alert-info alert-dismissable">
+															<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+															<i class="fa fa-info-circle"></i> <strong>Plantilla de Ontología</strong> 
+															<span>Para crear una ontología, debe partir de un Datamodel esquema, que no es más qeu un conjunto de campos que definen su ontología. Si quiere usar alguna de las que le proponemos, seleccionela del siguiente selector. Puede usar EMPYBASE si quiere hacer el esquema desde 0.</span>															
 														</div>
 													</div>
-									 			</div>
-									
-																		 
-									 	
+												</div>
+											</div>
 									 
-									 <!-- Aquí irán los iconos de los gráficos -->
-									 <div  class="container">
-									 	<div id="icons" class="row">
-									 	 			 	
-									 					 		
-									 	</div>
+									 <!-- GADGETS IMAGES -->
+									 <div class="container-fluid">
+									 	<div id="icons" class="row"></div>
 									 </div>		
 									 
-									 <!-- Aquí el select de datasource -->
+									 <!-- DATASOURCE -->
 									 <div id="measuresContainer" style="display:none" class="col-md-12 row" >
 									 	 <h3>Measures</h3>
-										 <div id="measures">
-										   
+										 <div id="measures">										   
 										 </div>
 										 <button id="addMore" style="display:none;margin-top:10px" class="btn btn-success pull-right" onclick="addFormSttByType(event,true)">Add measure</button>
 									 </div>
+									<!-- VIEWER -->
 									<div id="viewer" style="height:300px; width:100%;display:inline-block">
 										<div id="gapp" ng-app="s2DashboardFramework">
 										<gadget style="height:300px;width:100%;display:inline-block" class="flex layout-column"></gadget>
 										</div>
-										
-										<script src="/controlpanel/static/dashboards/scripts/vendor.js"></script>
-										
-										<script src="/controlpanel/static/dashboards/gridster.js"></script>
-										
-										<!-- Angular Material Fileinput -->
-										<link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/>
-										<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>
-										
-										<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
 									</div>
+									
 									<div style="margin-top:20px" class="form-actions">
 										<div class="pull-right">
 											<!-- CREATE -->
-												<button th:if="${gadget.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success btn-lg" name="create"  th:value="#{gadgets.create}" > <span th:text="#{gadgets.create}"> Create</span></button>
+												<button th:if="${gadget.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success " name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 											<!-- UPDATE -->
-												<button th:if="${gadget.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+												<button th:if="${gadget.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 													
 											<!-- REMOVE -->
 												<button th:if="${gadget.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'GadgetsCreateController.deleteGadget(\'' + ${gadget.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
@@ -252,6 +235,15 @@
 	
 	<!-- TEMPLATE CONTROLLER  -->	
 	<script th:src="@{/static/js/pages/gadgetsCreate.js}"/>
+	
+	
+	<script src="/controlpanel/static/dashboards/scripts/vendor.js"></script>										
+	<script src="/controlpanel/static/dashboards/gridster.js"></script>
+	
+	<!-- Angular Material Fileinput -->
+	<!-- <link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/> -->
+	<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>										
+	<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
 	
 	<script th:inline="javascript">
 	
@@ -420,8 +412,48 @@
 		$.each(gadget, function() {
 				var Type = this.type;
 				var Icon = this.icon;
+				var html_markup = '';
 					
-				$("#icons").append('<div class="col-md-3"> <div class="card card-01" id="' + Type + '" onclick="showMeasures(\'' + Type + '\')"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
+				//$("#icons").append('<div class="col-md-3"> <div class="card card-01" id="' + Type + '" onclick="showMeasures(\'' + Type + '\')"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
+				html_markup = '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">' +
+				'	<div class="portlet light bordered">' +
+				'		<div class="portlet-title">' +
+				'			<div class="caption">' +
+				'				<i class=" la la-cube font-green"></i>' +
+				'				<span class="caption-subject font-green bold uppercase">'+Type+'</span>' +
+				'				<div class="caption-desc font-grey-cascade">Gadget Gráfica de Lineas para el Dashboard</div>' +
+				'			</div>' +
+				'		</div>' +
+				'		<div class="portlet-body">' +
+				'			<div class="mt-element-overlay">' +
+				'				<div class="row">' +
+				'					<div class="col-md-12">' +
+				'						<div class="mt-overlay-1">' +
+				'							<img src="'+icon+'">' +
+				'							<div class="mt-overlay">' +
+				'								<ul class="mt-info">' +
+				'									<li>' +
+				'										<a class="btn default btn-outline" href="javascript:;">' +
+				'											<i class="icon-magnifier"></i>' +
+				'										</a>' +
+				'									</li>' +
+				'									<li>' +
+				'										<a class="btn default btn-outline" href="javascript:;">' +
+				'											<i class="icon-link"></i>' +
+				'										</a>' +
+				'									</li>' +
+				'								</ul>' +
+				'							</div>' +
+				'						</div>' +
+				'					</div>' +
+				'				</div>' +
+				'			</div>' +
+				'		</div>' +
+				'	</div>' +
+				'</div>';
+				$("#icons").append(html_markup);			
+				
+				
 				
 			} )
 		  }
