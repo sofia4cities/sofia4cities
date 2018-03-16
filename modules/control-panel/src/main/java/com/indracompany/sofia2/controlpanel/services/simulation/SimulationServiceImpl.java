@@ -41,13 +41,13 @@ public class SimulationServiceImpl implements SimulationService {
 	private TaskService taskService;
 
 	@Override
-	public String getDeviceSimulationJson(String clientPlatform, String token, String ontology, String jsonMap)
+	public String getDeviceSimulationJson(String identification, String clientPlatform, String token, String ontology, String jsonMap)
 			throws JsonProcessingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode rootNode = mapper.createObjectNode();
 
 		((ObjectNode) rootNode).put("clientPlatform", clientPlatform);
-		((ObjectNode) rootNode).put("clientPlatformInstance", clientPlatform + ":simulated");
+		((ObjectNode) rootNode).put("clientPlatformInstance", clientPlatform + ":"+identification);
 		((ObjectNode) rootNode).put("token", token);
 		((ObjectNode) rootNode).put("ontology", ontology);
 		((ObjectNode) rootNode).set("fields", mapper.readTree(jsonMap));
