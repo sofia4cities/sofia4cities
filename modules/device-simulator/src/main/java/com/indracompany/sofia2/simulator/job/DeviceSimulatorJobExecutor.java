@@ -34,7 +34,7 @@ public class DeviceSimulatorJobExecutor implements BatchGenericExecutor {
 		
 		try
 		{
-			log.info("Executed");
+			log.debug("Executed");
 			deviceSimulatorJob.execute(context);
 		}catch(Exception e) {
 			//TO-DO
