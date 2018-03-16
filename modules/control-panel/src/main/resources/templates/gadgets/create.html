@@ -31,7 +31,7 @@
 		    window.__env.socketEndpointSubscribe = '/dsengine/broker';
 		    window.__env.endpointSofia2ControlPanel = '/controlpanel';
 		    window.__env.endpointSofia2DashboardEngine = '/dashboardengine';
-		    window.__env.dashboardEngineUsername = 'operations';
+		    window.__env.dashboardEngineUsername = 'administrator';
 		    window.__env.dashboardEnginePassword = 'changeIt!';
 		    window.__env.dashboardEngineLoginRest = '/loginRest';
 		    window.__env.enableDebug = false;
@@ -499,6 +499,7 @@
 	
 	function generateMeasuresArray(){
 		measures = [];
+		debugger
 		for(var s =0 ;s < $(".gserie").length; s++){
 			var selects = $($(".gserie").get(s)).find("select");
 			var config = {fields:[],name:""};
@@ -519,19 +520,21 @@
 					config.fields.push(realField);
 				}
 				else{
-					for(var fi = 0; fi < fieldAux.length; fi++){
-						var pathFields = fieldAux[fi].split(".");
-						var realField = pathFields[0];
-						for(var i=1;i<pathFields.length;i++){
-							if(isNormalInteger(pathFields[i])){
-								pathFields[i] = "[" + pathFields[i] + "]"
-								realField += pathFields[i];
+					if(fieldAux!=null){
+						for(var fi = 0; fi < fieldAux.length; fi++){
+							var pathFields = fieldAux[fi].split(".");
+							var realField = pathFields[0];
+							for(var i=1;i<pathFields.length;i++){
+								if(isNormalInteger(pathFields[i])){
+									pathFields[i] = "[" + pathFields[i] + "]"
+									realField += pathFields[i];
+								}
+								else{
+									realField += "." + pathFields[i];
+								}
 							}
-							else{
-								realField += "." + pathFields[i];
-							}
+							config.fields.push(realField);
 						}
-						config.fields.push(realField);
 					}
 				}
 			}
