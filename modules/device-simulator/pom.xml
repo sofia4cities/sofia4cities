@@ -11,9 +11,9 @@
 		<license.dir>${project.parent.basedir}</license.dir>
 	</properties>
 	<groupId>com.indracompany.sofia2</groupId>
-	<artifactId>device-simulator</artifactId>
-	<name>device-simulator</name>
-	<description>Module for device simulations</description>
+	<artifactId>sofia2-device-simulator</artifactId>
+	<name>sofia2-device-simulator</name>
+	<description>Module in charge of simulating Devices for the rest of the platform</description>
 	<dependencies>
 		<dependency>
 			<groupId>de.codecentric</groupId>
@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-		</dependency>
+		</dependency>		
 	</dependencies>
 	<build>
 		<plugins>

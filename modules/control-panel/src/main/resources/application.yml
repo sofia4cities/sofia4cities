@@ -7,6 +7,9 @@ server: ## Config Web Server
       access_log_enabled: true
       basedir: target/tomcat
 
+# all access to actuator endpoints without security
+management.security.enabled: false
+
 sofia2: #Config Sofia2 specific
    encription.key: sofia2
    devices:
@@ -41,7 +44,6 @@ sofia2: #Config Sofia2 specific
     baseurl: http://localhost:8082/sofia2/flowengine/admin   
     proxyurl: http://localhost:5050/
     
-management.security.enabled: false
  
 spring: ## General Config  
    application.name: sofia2-control-panel

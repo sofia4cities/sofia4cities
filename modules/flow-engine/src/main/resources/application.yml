@@ -1,9 +1,10 @@
-app:
-  name: flowengine
 server:
   port: 8082
   contextPath: /sofia2
-  
+
+# all access to actuator endpoints without security
+management.security.enabled: false
+
 spring:
   application.name: sofia2-flow-engine
   ## JPA Config
