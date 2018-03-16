@@ -842,7 +842,7 @@ display: flex;
 .hide-main-block{
 	position: relative;
 	right: 58px;
-	top: 30px;
+	top: -10px;
 }
  
  .maininfo{
@@ -860,7 +860,7 @@ box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
  
 .main-block{
 background: #564FC1;
-padding: 30px 30px 50px 30px;
+padding: 30px 30px 0px 30px;
  margin-left: -20px;margin-right: -20px;
 background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
 background: linear-gradient(to right, #75b8f3, #9353e6);
@@ -881,6 +881,8 @@ background: linear-gradient(to right, #75b8f3, #9353e6);
 	max-width: calc(-25% + 100vw);
 	margin-left: 60px;
 }
+
+.step-selected{ border-color: #555 !important; }
  
 /*** APIMANAGER OPERATIONS  ***/ 
 
