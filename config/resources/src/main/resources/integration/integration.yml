@@ -32,13 +32,13 @@ sofia2:
           url: http://localhost:19100/router/swagger-ui.html
       api-manager:
         base:
-          url: http://localhost:19090/api-manager/
+          url: https://rancher.sofia4cities.com/api-manager/
         api:
-          url: http://localhost:19090/api-manager/server/api/
+          url: https://rancher.sofia4cities.com/api-manager/server/api/
         swagger-ui:
-          url: http://localhost:19090/api-manager/swagger-ui.html?url=
+          url: https://rancher.sofia4cities.com/api-manager/swagger-ui.html?url=
         swagger-ui-management:
-          url: http://localhost:19090/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
+          url: https://rancher.sofia4cities.com/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
         swagger-json:
-          url: http://localhost:19090/api-manager/services/management/swagger/
+          url: https://rancher.sofia4cities.com/api-manager/services/management/swagger/
           
