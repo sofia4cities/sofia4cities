@@ -1,16 +1,16 @@
 /**
- * Copyright Indra Sistemas, S.A.
- * 2013-2018 SPAIN
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *      http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright Indra Sistemas, S.A.
+* 2013-2018 SPAIN
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*      http://www.apache.org/licenses/LICENSE-2.0
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
 package com.indracompany.sofia2.simulator.service;
 
 import java.util.HashMap;
@@ -21,6 +21,10 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -63,16 +67,15 @@ public class PersistenceServiceImpl implements PersistenceService {
 				.queryParam("token", token.getToken()).queryParam("clientPlatform", clientPlatform)
 				.queryParam("clientPlatformId", clientPlatformInstance);
 		try {
-		final JsonNode response = restTemplate.getForObject(builder.build().encode().toUri(), JsonNode.class);
-		String sessionKey = response.get("sessionKey").asText();
-		log.info("Session Key :" + sessionKey);
-		if (sessionKey != null)
-			this.sessionKeys.put(clientPlatform, sessionKey);
-		}catch(Exception e)
-		{
+
+			final JsonNode response = restTemplate.getForObject(builder.build().encode().toUri(), JsonNode.class);
+			String sessionKey = response.get("sessionKey").asText();
+			log.info("Session Key :" + sessionKey);
+			if (sessionKey != null)
+				this.sessionKeys.put(clientPlatform, sessionKey);
+		} catch (Exception e) {
 			log.error("IoT broker down");
 		}
-		
 
 	}
 
@@ -109,6 +112,20 @@ public class PersistenceServiceImpl implements PersistenceService {
 			this.connectIotBrokerRest(clientPlatform, clientPlatformInstance);
 			this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 		}
+	}
+
+	@Override
+	public void disconnectDeviceRest(String identification) {
+
+		final HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", this.sessionKeys.get(identification));
+		headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
+
+		final RestTemplate restTemplate = new RestTemplate();
+		restTemplate.exchange(iotbrokerUrl + "/rest/client/leave", HttpMethod.GET, new HttpEntity<String>(headers),
+				String.class);
+		this.sessionKeys.remove(identification);
+		log.info("Closed session for device " + identification);
 	}
 
 }

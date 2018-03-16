@@ -36,12 +36,12 @@ public class SimulationQuartzConfig  extends GenericQuartzConfig{
 	private static final String SCHEDULER_BEAN_FACTORY_NAME = "simulation-scheduler-factory";
 	
 	@Bean(SCHEDULER_BEAN_FACTORY_NAME)
-	public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, PlatformTransactionManager transactionManager) throws SchedulerException {						
+	public SchedulerFactoryBean simulationSchedulerFactoryBean(JobFactory jobFactory, PlatformTransactionManager transactionManager) throws SchedulerException {						
 		return getSchedulerFactoryBean(jobFactory, transactionManager);
 	}
 	
 	@Bean(SchedulerNames.SIMULATION_SCHEDULER_NAME)
-	public BatchScheduler scriptScheduler (@Autowired @Qualifier(SCHEDULER_BEAN_FACTORY_NAME) SchedulerFactoryBean schedulerFactoryBean){
+	public BatchScheduler simulationScheduler (@Autowired @Qualifier(SCHEDULER_BEAN_FACTORY_NAME) SchedulerFactoryBean schedulerFactoryBean){
 		return new GenericBatchScheduler(schedulerFactoryBean.getScheduler(), getSchedulerBeanName());
 	}
 	@Override

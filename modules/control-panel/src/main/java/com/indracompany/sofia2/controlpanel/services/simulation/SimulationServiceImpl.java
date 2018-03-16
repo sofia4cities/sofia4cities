@@ -41,13 +41,17 @@ public class SimulationServiceImpl implements SimulationService {
 	private TaskService taskService;
 
 	@Override
-	public String getDeviceSimulationJson(String identification, String clientPlatform, String token, String ontology, String jsonMap)
-			throws JsonProcessingException, IOException {
+
+	public String getDeviceSimulationJson(String identification, String clientPlatform, String token, String ontology,
+			String jsonMap) throws JsonProcessingException, IOException {
+
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode rootNode = mapper.createObjectNode();
 
 		((ObjectNode) rootNode).put("clientPlatform", clientPlatform);
-		((ObjectNode) rootNode).put("clientPlatformInstance", clientPlatform + ":"+identification);
+
+		((ObjectNode) rootNode).put("clientPlatformInstance", clientPlatform + ":" + identification);
+
 		((ObjectNode) rootNode).put("token", token);
 		((ObjectNode) rootNode).put("ontology", ontology);
 		((ObjectNode) rootNode).set("fields", mapper.readTree(jsonMap));
@@ -55,7 +59,8 @@ public class SimulationServiceImpl implements SimulationService {
 	}
 
 	@Override
-	public void createSimulation(String identification, int interval, String userId, String json) throws JsonProcessingException, IOException {
+	public void createSimulation(String identification, int interval, String userId, String json)
+			throws JsonProcessingException, IOException {
 
 		DeviceSimulation simulation = this.deviceSimulationService.createSimulation(identification, interval, userId,
 				json);
@@ -73,7 +78,6 @@ public class SimulationServiceImpl implements SimulationService {
 			deviceSimulation.setJobName(null);
 			this.deviceSimulationService.save(deviceSimulation);
 		}
-		
 
 	}
 
@@ -103,9 +107,10 @@ public class SimulationServiceImpl implements SimulationService {
 	}
 
 	@Override
-	public void updateSimulation(String identification, int interval, String json, DeviceSimulation simulation) throws JsonProcessingException, IOException {
-		this.deviceSimulationService.updateSimulation(identification, interval,	json, simulation);
-		
+	public void updateSimulation(String identification, int interval, String json, DeviceSimulation simulation)
+			throws JsonProcessingException, IOException {
+		this.deviceSimulationService.updateSimulation(identification, interval, json, simulation);
+
 	}
 
 }
