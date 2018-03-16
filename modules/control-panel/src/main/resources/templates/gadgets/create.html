@@ -53,10 +53,10 @@
 		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/vendor.css"/>	
 		<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>
 		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>
-		<style>
-		md-progress-circular { display:hide; visibility: hidden; }
-		</style>
 		
+		<style>
+		md-progress-circular { display: hide; visibility: hidden; }
+		</style>
 	</head>	
 	
 	<!-- page-sidebar-closed to start page with collapsed menu -->
@@ -124,7 +124,7 @@
 										<!-- ALERT ZONE -->																			
 									</div>		
 									<div class="col-md-12 margin-bottom-20">									
-									  <form role="form" id="gadget_create_form" th:object="${gadget}" method="post" class="form">
+										<form role="form" id="gadget_create_form" th:object="${gadget}" method="post" class="form">
 									  		<!-- FORM ACTIONS FOR INSERT-->
 											<input th:if="${gadget.id} == null" type="hidden" name="action" th:value="@{/gadgets/create}"/>
 											
@@ -142,7 +142,7 @@
 											<div class="form-body">
 									 			<div class="row">
 													<div class="col-md-12"> 
-														<div class="alert alert-info alert-dismissable">
+														<div class=" hidden alert alert-info alert-dismissable">
 															<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
 															<i class="fa fa-info-circle"></i> <strong>Plantilla de Ontología</strong> 
 															<span>Para crear una ontología, debe partir de un Datamodel esquema, que no es más qeu un conjunto de campos que definen su ontología. Si quiere usar alguna de las que le proponemos, seleccionela del siguiente selector. Puede usar EMPYBASE si quiere hacer el esquema desde 0.</span>															
@@ -168,49 +168,56 @@
 																</select>
 															</div>
 														</div>
+													</div>													
+													<div class="clearfix"></div>													
+												</div>
+												
+												 <!-- GADGETS IMAGES -->
+												 <div class="row">
+													<div id="icons" class="col-md-12 margin-top-10"></div>
+												 </div>		
+												 <div class="clearfix"></div>
+												 
+												 <!-- DATASOURCE -->
+												 <div id="measuresContainer" class="hide col-md-12 margin-bottom-20">
+													<h4><i class="fa fa-edit"></i> Measures:</h4>
+													<!-- DYNAMICAL MEASURES -->
+													<div id="measures"></div>
+													<div class="pull-left margin-bottom-20">														
+														<button id="addMore" style="display:none;margin-left: 30px;margin-top: 5px;" class="btn green-haze btn-sm btn-outline uppercase" onclick="addFormSttByType(event,true)"><i class="fa fa-plus"></i> Add measure</button>
 													</div>
-													<hr/>
-													<div class="clearfix"></div>
+												 </div>
+												<!-- VIEWER -->
+												<div id="viewer" class="hide col-md-offset-1 col-md-10 col-xs-12 bg-grey-carrara" style="border: 2px dotted #f5f5f5; padding: 10px 15px 10px 15px">
+													<div id="gapp" ng-app="s2DashboardFramework">
+													<gadget style="height:300px;width:100%;display:inline-block" class="flex layout-column"></gadget>
+													</div>
+												</div>
+												<div class="clearfix"></div>
+												<div style="margin-top:20px" class="form-actions">
+													<div class="pull-right">
+														<!-- CREATE -->
+															<button th:if="${gadget.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success " name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+														<!-- UPDATE -->
+															<button th:if="${gadget.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+																
+														<!-- REMOVE -->
+															<button th:if="${gadget.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'GadgetsCreateController.deleteGadget(\'' + ${gadget.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+															
+															<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
+														<!-- CANCEL  -->
+														<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:GadgetsCreateController.go(\'' + @{/gadgets/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													</div>
 												</div>
 											</div>
-									 
-									 <!-- GADGETS IMAGES -->
-									 <div class="row">
-									 	<div id="icons" class="col-md-12 "></div>
-									 </div>		
-									 
-									 <!-- DATASOURCE -->
-									 <div id="measuresContainer" style="display:none" class="col-md-12">
-									 	 <h3>Measures</h3>
-										 <div id="measures">										   
-										 </div>
-										 <button id="addMore" style="display:none;margin-top:10px" class="btn btn-success pull-right" onclick="addFormSttByType(event,true)">Add measure</button>
-									 </div>
-									<!-- VIEWER -->
-									<div id="viewer" style="height:300px;" class="col-md-12">
-										<div id="gapp" ng-app="s2DashboardFramework">
-										<gadget style="height:300px;width:100%;display:inline-block" class="flex layout-column"></gadget>
-										</div>
-									</div>
-									
-									<div style="margin-top:20px" class="form-actions">
-										<div class="pull-right">
-											<!-- CREATE -->
-												<button th:if="${gadget.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success " name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
-											<!-- UPDATE -->
-												<button th:if="${gadget.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
-													
-											<!-- REMOVE -->
-												<button th:if="${gadget.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'GadgetsCreateController.deleteGadget(\'' + ${gadget.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
-										</div>
-									</div>
-									</form>					
-									<!-- AUXILIAR FORM TO DELETE DATASOURCE -->
-									<form id="delete_gadget_form" class="delete-gadget hide"  th:action="@{'/gadgets/'+${gadget.id}}"  method="post">
-										<input type="hidden" name="_method" value="DELETE"/>
-										<input type="hidden" name="id" th:value="${gadget.id}"/>
-									</form>																	
+										</form>					
+
+										<!-- AUXILIAR FORM TO DELETE DATASOURCE -->
+										<form id="delete_gadget_form" class="delete-gadget hide"  th:action="@{'/gadgets/'+${gadget.id}}"  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="id" th:value="${gadget.id}"/>
+										</form>																	
 									</div>
 								</div>
 							</div>
@@ -416,13 +423,13 @@
 				var html_markup = '';
 					
 				//$("#icons").append('<div class="col-md-3"> <div class="card card-01" id="' + Type + '" onclick="showMeasures(\'' + Type + '\')"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
-				html_markup = '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">' +
+				html_markup = '<div class="col-lg-2 col-md-2 col-sm-6 col-xs-12">' +
 				'	<div class="portlet light bordered" id="' + Type + '" >' +
 				'		<div class="portlet-title">' +
 				'			<div class="caption">' +
 				'				<i class=" la la-cube font-green"></i>' +
 				'				<span class="caption-subject font-green bold uppercase" onclick="showMeasures(\'' + Type + '\')" >'+Type+'</span>' +
-				'				<div class="caption-desc font-grey-cascade">Gadget Gráfica de Lineas para el Dashboard</div>' +
+				'				<div class="caption-desc font-grey-cascade">Gadget para S4Cities Dashboards</div>' +
 				'			</div>' +
 				'		</div>' +
 				'		<div class="portlet-body">' +
@@ -504,7 +511,7 @@
 		mhtml += '<input onchange="refreshGadget()" id="n_' + $(".gserie").length + '" class="form-control" data-live-search="true" data-width="100%"/>'
 		mhtml += '</div>'
 		if($(".gserie").length > 0 && (stt.series.maxseries > (1 + $(".gserie").length) || stt.series.maxseries == -1)){
-			mhtml += '<button class="btn btn-danger" style="margin-top:10px" onclick="removeMeasure(' + $(".gserie").length + ')">Remove measure</button>'
+			mhtml += '<button style="margin-top:26px;" onclick="removeMeasure(' + $(".gserie").length + ')" class="btn red-mint btn-sm btn-outline uppercase"><i class="la la-trash"></i> REMOVE </button>';
 		}
 		mhtml += '</div>'
 		
@@ -526,8 +533,7 @@
 	}
 	
 	function generateMeasuresArray(){
-		measures = [];
-		debugger
+		measures = [];		
 		for(var s =0 ;s < $(".gserie").length; s++){
 			var selects = $($(".gserie").get(s)).find("select");
 			var config = {fields:[],name:""};
@@ -592,8 +598,11 @@
 	var gtype = "";
 	var gfields = [];
 	function showMeasures(type){
-		gtype =type;
+		gtype = type;
 		$.get("/controlpanel/datasources/getSampleDatasource/" + $("#datasources").val(), function (jsonString){
+			
+			if ( $('#measuresContainer').hasClass('hide') === true ){ $('#measuresContainer').removeClass('hide'); $('#viewer').removeClass('hide'); }
+			
 			gfields = iterate(jsonString[0],"", []);
 		    stt = gadget.filter(function(g){return g.type == type})[0];
 		    if(measures.length == 0){
@@ -632,6 +641,7 @@
 				$("#n_" + i).val(config.name);
 			}
 			
+			
 			refreshGadget();
 		});		
 	}
@@ -644,6 +654,15 @@
 				$("#datasources").change();
 				$("#" + $("#type").val() + "").click();
 			}
+			
+			// edit mode.
+			if ($('#type').val() != ''){
+				$('#'+ $('#type').val()).addClass('bg-inverse');
+				$('#'+ $('#type').val()).find('a').trigger('click');
+				// to-do class shadows.
+			
+			}
+			
 		}
 	)
 	
