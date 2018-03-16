@@ -9,7 +9,7 @@ management.security.enabled: false
 spring:
    application.name: sofia2-device-simulator
    boot.admin: #Spring Boot Admin Config   
-      url: http://localhost:18090
+      url: http://localhost:19000
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -75,7 +75,4 @@ logging:
    path: ./target/ 
    file: ${spring.application.name}
    level:
-      org.springframework: INFO
-      com.example.boot.thymeleaf: INFO
-      com.indra: DEBUG
-      org.hibernate: INFO
+      com.indra: DEBUG 

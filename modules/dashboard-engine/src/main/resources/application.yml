@@ -10,6 +10,12 @@ management.security.enabled: false
 
 spring:
   application.name: sofia2-dashboard-engine
+  boot.admin: #Spring Boot Admin Config   
+      url: http://localhost:19000
+      username: operations
+      password: changeIt!
+      client.metadata.user.name: ${spring.boot.admin.username}
+      client.metadata.user.password: $spring.boot.admin.password
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
@@ -22,8 +28,7 @@ spring:
     hibernate.ddl-auto: update
 
 sofia2: #Config Sofia2 specific
-   dashboardengine:
-      
+   dashboardengine:      
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -54,7 +59,4 @@ logging:
    path: ./target/ 
    file: ${spring.application.name}
    level:
-      org.springframework: INFO
-      com.example.boot.thymeleaf: INFO
-      com.indra: DEBUG
-      org.hibernate: INFO
+      com.indra: DEBUG 

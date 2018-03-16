@@ -1,22 +1,15 @@
 ##--spring.config.name=controlpanel
 ##security.require_ssl: true
 server: ## Config Web Server
-   port: 18090
+   port: 19000
    contextPath: /
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat
-
-##Security Config
-# security:
-#    user:
-#       name: admin
-#       password: admin
-   
+  
 spring: ## General Config  
    application.name: sofia2-monitoring-ui
    boot.admin: #Spring Boot Admin Config    
-      # url: http://localhost:18090
       routes.endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
       #Not autoregister as Spring Boot Admin client
       # username: operations
@@ -41,8 +34,8 @@ spring: ## General Config
       hibernate.ddl-auto: update 
    mail: ##Mail configuration
       host: smtp.gmail.com
-      username: sofia2oncloud@gmail.com
-      password: Indra2013!
+      username: sofia4cities@gmail.com
+      password: ---
       port: 587
       properties.mail.smtp.auth: true
       properties.mail.smtp.starttls.enable: true
@@ -52,9 +45,5 @@ logging:
    path: ./target/ 
    file: ${spring.application.name}
    level:
-      org.springframework: INFO
-      de.codecentric: DEBUG
-      com.example.boot.thymeleaf: INFO
-      com.indra: DEBUG
-      org.hibernate: INFO
+      com.indra: DEBUG 
  

@@ -49,11 +49,12 @@ In this table you can see the default ports and contextpaths of the deployables 
 MODULE | PORT | CONTEXT PATH 
 ------ | ---- | --------
 ControlPanel | 18080 | /controlpanel
-MonitoringUI | 18090 | /
-IoTBroker | 8081 | /iotbroker /iotbroker/swagger-ui.html
-APIManager | 19090 | /api-manager
-FlowEngine | 8082 | /flow-engine
-DeviceSimulator | 18061 | /devicesimulator
+Dashboard Engine | 18100 | /dashboard-engine
+IoTBroker | 18100 | /iotbroker /iotbroker/swagger-ui.html
+DeviceSimulator | 18110 | /devicesimulator
+APIManager | 18200 | /api-manager
+FlowEngine | 18300 | /flowengine
+MonitoringUI | 19000 | /
 
 
 
