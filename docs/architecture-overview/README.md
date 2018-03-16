@@ -51,8 +51,10 @@ MODULE | PORT | CONTEXT PATH
 ControlPanel | 18080 | /controlpanel
 MonitoringUI | 18090 | /
 IoTBroker | 8081 | /iotbroker /iotbroker/swagger-ui.html
+APIManager | 19090 | /api-manager
+FlowEngine | 8082 | /flow-engine
+DeviceSimulator | 18061 | /devicesimulator
 
-Content in the first column | Content in the second column
 
 
 
