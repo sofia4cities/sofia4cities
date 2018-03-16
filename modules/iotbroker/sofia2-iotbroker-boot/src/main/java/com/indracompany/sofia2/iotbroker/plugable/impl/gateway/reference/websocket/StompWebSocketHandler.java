@@ -34,7 +34,7 @@ import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 
 @ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugbable.gateway.stomp",
+		prefix="sofia2.iotbroker.plugable.gateway.stomp",
 		name="enable",
 		havingValue="true"
 		)

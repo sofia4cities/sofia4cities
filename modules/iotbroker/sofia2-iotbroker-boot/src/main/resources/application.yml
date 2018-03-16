@@ -1,12 +1,11 @@
-#logging.level.org.hibernate.SQL: DEBUG
 security.ignored: /**
-app:
-  name: iotbroker
-  
-server: ## Config Web Server
+
+## Config Web Server
+server:
    port: 8081
    contextPath: /iotbroker
 spring:
+  application.name: sofia2-iot-broker
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
@@ -40,7 +39,7 @@ sofia2: #Config Sofia2 specific
     tools.mongoshell.path: mongo
     tools.useSequentialOps: true
  
-  iotbroker.plugbable:
+  iotbroker.plugable:
     gateway:
       stomp:
         enable: true
