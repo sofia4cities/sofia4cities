@@ -1,6 +1,6 @@
 
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+<html xmlns:th="http://www.thymeleaf.org" th:with="lang=${#locale.language}" th:lang="${lang}">
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -43,17 +43,19 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/gadgets.css}"/>
+		<!-- <link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/gadgets.css}"/> -->
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 		
 		<!-- PLUGINS STYLE SHEETS -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
-		
+			
 		<!-- Dashboard styles -->		
 		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/vendor.css"/>	
-		<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>	
-		<!-- <link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>	-->
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>
+		<style>
+		md-progress-circular { display:hide; visibility: hidden; }
+		</style>
 		
 	</head>	
 	
@@ -138,7 +140,14 @@
 								 			<input type="hidden" id="datasourcesMeasures" name="datasourcesMeasures" />
 								 										  
 											<div class="form-body">
-									 			<div class="row">																					 			
+									 			<div class="row">
+													<div class="col-md-12"> 
+														<div class="alert alert-info alert-dismissable">
+															<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+															<i class="fa fa-info-circle"></i> <strong>Plantilla de Ontología</strong> 
+															<span>Para crear una ontología, debe partir de un Datamodel esquema, que no es más qeu un conjunto de campos que definen su ontología. Si quiere usar alguna de las que le proponemos, seleccionela del siguiente selector. Puede usar EMPYBASE si quiere hacer el esquema desde 0.</span>															
+														</div>
+													</div>												
 													<div class="col-md-6 col-sm-12">
 														<div class="form-group">
 															<i class="fa fa-credit-card"></i>  <label class="control-label"  th:text="#{gen.name} + ':'">Name</label>
@@ -160,30 +169,26 @@
 															</div>
 														</div>
 													</div>
-													<div class="col-md-12"> 
-														<div class="alert alert-info alert-dismissable">
-															<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-															<i class="fa fa-info-circle"></i> <strong>Plantilla de Ontología</strong> 
-															<span>Para crear una ontología, debe partir de un Datamodel esquema, que no es más qeu un conjunto de campos que definen su ontología. Si quiere usar alguna de las que le proponemos, seleccionela del siguiente selector. Puede usar EMPYBASE si quiere hacer el esquema desde 0.</span>															
-														</div>
-													</div>
+													<hr/>
+													<div class="clearfix"></div>
+													
 												</div>
 											</div>
 									 
 									 <!-- GADGETS IMAGES -->
-									 <div class="container-fluid">
-									 	<div id="icons" class="row"></div>
+									 <div class="row">
+									 	<div id="icons" class="col-md-12 "></div>
 									 </div>		
 									 
 									 <!-- DATASOURCE -->
-									 <div id="measuresContainer" style="display:none" class="col-md-12 row" >
+									 <div id="measuresContainer" style="display:none" class="col-md-12">
 									 	 <h3>Measures</h3>
 										 <div id="measures">										   
 										 </div>
 										 <button id="addMore" style="display:none;margin-top:10px" class="btn btn-success pull-right" onclick="addFormSttByType(event,true)">Add measure</button>
 									 </div>
 									<!-- VIEWER -->
-									<div id="viewer" style="height:300px; width:100%;display:inline-block">
+									<div id="viewer" style="height:300px;" class="col-md-12">
 										<div id="gapp" ng-app="s2DashboardFramework">
 										<gadget style="height:300px;width:100%;display:inline-block" class="flex layout-column"></gadget>
 										</div>
@@ -227,10 +232,8 @@
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 	
-	<!-- PLUGINS -->
-	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
-	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
-	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	<!-- PLUGINS -->	
+	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/muuri/0.5.4/muuri.min.js"></script>
 	
 	<!-- TEMPLATE CONTROLLER  -->	
@@ -241,8 +244,8 @@
 	<script src="/controlpanel/static/dashboards/gridster.js"></script>
 	
 	<!-- Angular Material Fileinput -->
-	<!-- <link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/> -->
-	<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>										
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/>
+	<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>
 	<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
 	
 	<script th:inline="javascript">
@@ -260,7 +263,7 @@
 	
 	var gadget= [ {
 		type : "line",
-		icon : "/controlpanel/images/dashboards/linechart.jpg",
+		icon : "/controlpanel/images/dashboards/lines-gadget.png",
 
 		attributes : [ {
 			name : "X axis",
@@ -293,7 +296,7 @@
 		}
 	}, {
 		type : "bar",
-		icon : "/controlpanel/static/images/dashboards/barchart.jpg",
+		icon : "/controlpanel/static/images/dashboards/bars-gadget.png",
 		attributes : [ {
 			name : "X axis",
 			types : [ "date", "number", "string" ]
@@ -325,7 +328,7 @@
 
 	{
 		type : "pie",
-		icon : "/controlpanel/static/images/dashboards/piechart.jpg",
+		icon : "/controlpanel/static/images/dashboards/pie-gadget.png",
 		attributes : [ {
 			name : "X axis",
 			types : [ "date", "number", "string" ]
@@ -357,7 +360,7 @@
 
 	{
 		type : "map",
-		icon : "/controlpanel/static/images/dashboards/bordermap.png",
+		icon : "/controlpanel/static/images/dashboards/map-gadget.png",
 		attributes : [ {
 			name : "Latitude",
 			types : [ "number" ]
@@ -402,10 +405,8 @@
 	//De momento pruebo sin parámetros. Añado en JSON en la función..
 	function showGadgetSelect(){
 		$("#icons").empty();
-		$("#vercamposdatasource").empty();
-		
-		$("#measuresContainer").show();
-		
+		$("#vercamposdatasource").empty();		
+		$("#measuresContainer").show();		
 		if(($("#datasources").val())!="none"){ 
 		
 		
@@ -416,11 +417,11 @@
 					
 				//$("#icons").append('<div class="col-md-3"> <div class="card card-01" id="' + Type + '" onclick="showMeasures(\'' + Type + '\')"> <h4 class="text-center font-title">'+Type+'</h4> <img class="card-img-top cursor" src="'+Icon+'"></img></div></div>');
 				html_markup = '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">' +
-				'	<div class="portlet light bordered">' +
+				'	<div class="portlet light bordered" id="' + Type + '" >' +
 				'		<div class="portlet-title">' +
 				'			<div class="caption">' +
 				'				<i class=" la la-cube font-green"></i>' +
-				'				<span class="caption-subject font-green bold uppercase">'+Type+'</span>' +
+				'				<span class="caption-subject font-green bold uppercase" onclick="showMeasures(\'' + Type + '\')" >'+Type+'</span>' +
 				'				<div class="caption-desc font-grey-cascade">Gadget Gráfica de Lineas para el Dashboard</div>' +
 				'			</div>' +
 				'		</div>' +
@@ -428,18 +429,13 @@
 				'			<div class="mt-element-overlay">' +
 				'				<div class="row">' +
 				'					<div class="col-md-12">' +
-				'						<div class="mt-overlay-1">' +
-				'							<img src="'+icon+'">' +
+				'						<div class="mt-overlay-1" style="height: 20% !important">' +
+				'							<img src="'+ Icon +'">' +
 				'							<div class="mt-overlay">' +
 				'								<ul class="mt-info">' +
 				'									<li>' +
-				'										<a class="btn default btn-outline" href="javascript:;">' +
-				'											<i class="icon-magnifier"></i>' +
-				'										</a>' +
-				'									</li>' +
-				'									<li>' +
-				'										<a class="btn default btn-outline" href="javascript:;">' +
-				'											<i class="icon-link"></i>' +
+				'										<a class="btn default btn-outline" onclick="showMeasures(\'' + Type + '\')" >' +
+				'											<i class="flaticon-add font-lg bold"></i> ADD GADGET' +
 				'										</a>' +
 				'									</li>' +
 				'								</ul>' +
