@@ -21,6 +21,24 @@ buildImage()
 	mvn clean package docker:build -Dmaven.test.skip=true
 }
 
+deleteImage()
+{
+	echo "Delete Sofia2 image locally, module: "$1  
+	docker rmi -f $(docker images | grep sofia2/$1 |  awk '{print $3}' | uniq)		
+}
+
+deleteUntaggedImages()
+{
+	echo "Remove all untagged images"
+	docker rmi $(docker images -f dangling=true -q)
+}
+
+removeOrphanVolumes()
+{
+	echo "Remove containers orphan volumes"
+	docker volume rm $(docker volume ls -qf dangling=true)
+}
+
 buildConfigDB()
 {
 	echo "ConfigDB image generation with Docker CLI: "
@@ -59,19 +77,43 @@ buildQuasar()
 
 prepareNodeRED()
 {
-	cp $homepath/../tools/Flow-Engine-Manager/*.zip $homepath/../modules/flow-engine/docker/nodered.zip
-	cd $homepath/../modules/flow-engine/docker
+	cp $homepath/../../tools/Flow-Engine-Manager/*.zip $homepath/../../modules/flow-engine/docker/nodered.zip
+	cd $homepath/../../modules/flow-engine/docker
 	unzip nodered.zip		
-	cp -f $homepath/dockerfiles/nodered/proxy-nodered.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/
-	cp -f $homepath/dockerfiles/nodered/sofia2-config-nodes-config.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/config/sofia2-config.js
-	cp -f $homepath/dockerfiles/nodered/sofia2-config-public-config.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/public/config/sofia2-config.js	
+	cp -f $homepath/../dockerfiles/nodered/proxy-nodered.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/
+	cp -f $homepath/../dockerfiles/nodered/sofia2-config-nodes-config.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/config/sofia2-config.js
+	cp -f $homepath/../dockerfiles/nodered/sofia2-config-public-config.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/public/config/sofia2-config.js	
 }
 
 removeNodeRED()
 {
-	cd $homepath/../modules/flow-engine/docker
+	cd $homepath/../../modules/flow-engine/docker
 	rm -rf Flow-Engine-Manager
 	rm nodered.zip		
+}
+
+pushAllImages2Registry()
+{		
+	docker tag sofia2/controlpanel:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:$1	
+	
+	docker tag sofia2/iotbroker:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/iotbroker:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/iotbroker:$1	
+	
+	docker tag sofia2/apimanager:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/apimanager:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/apimanager:$1	
+	
+	docker tag sofia2/flowengine:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/flowengine:$1
+
+	docker tag sofia2/devicesimulator:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
+	
+	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
+	
+	docker tag sofia2/monitoringui:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1							
 }
 
 echo "##########################################################################################"
@@ -92,46 +134,46 @@ homepath=$PWD
 
 # Generates images only if they are not present in local docker registry
 if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/control-panel/
+	cd $homepath/../../modules/control-panel/
 	buildImage "Control Panel"
 fi	
 
 if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
+	cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
 	buildImage "IoT Broker"
 fi
 
 if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
-	cd $homepath/../modules/api-manager/	
+	cd $homepath/../../modules/api-manager/	
 	buildImage "API Manager"
 fi
 
 if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/dashboard-engine/
+	cd $homepath/../../modules/dashboard-engine/
 	buildImage "Dashboard Engine"
 fi
 
 if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/device-simulator/
+	cd $homepath/../../modules/device-simulator/
 	buildImage "Device Simulator"
 fi	
 
 if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/monitoring-ui/
+	cd $homepath/../../modules/monitoring-ui/
 	buildImage "Monitoring UI"
 fi	
 
 if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
 		prepareNodeRED		
 
-	cd $homepath/../modules/flow-engine/
+	cd $homepath/../../modules/flow-engine/
 	buildImage "Flow Engine"
 	
 	removeNodeRED
 fi
 
 if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/nginx
+	cd $homepath/../dockerfiles/nginx
 	buildNginx latest
 fi
 
@@ -140,26 +182,42 @@ if [ -z "$1" ]; then
 	
 	# Generates images only if they are not present in local docker registry
 	if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/configdb
+		cd $homepath/../dockerfiles/configdb
 		buildConfigDB latest
 	fi
 	
 	if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/schedulerdb
+		cd $homepath/../dockerfiles/schedulerdb
 		buildSchedulerDB latest
 	fi
 	
 	if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/realtimedb
+		cd $homepath/../dockerfiles/realtimedb
 		buildRealTimeDB latest
 	fi
 	
 	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/quasar
+		cd $homepath/../dockerfiles/quasar
 		buildQuasar latest
 	fi
 fi
 
-echo "Docker images successfully generated!"
+echo "Pushing all images to Docker registry"
+#pushAllImages2Registry
+
+echo "Docker images successfully generated and pushed to local registry!"
+
+echo "CleanUp local images"
+deleteImage controlpanel 
+deleteImage iotbroker 
+deleteImage apimanager 
+deleteImage dashboard 
+deleteImage devicesimulator 
+deleteImage monitoringui 
+deleteImage flowengine
+deleteImage nginx
+
+deleteUntaggedImages
+removeOrphanVolumes
 
 exit 0
