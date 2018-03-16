@@ -161,10 +161,10 @@ public class DashboardServiceImpl implements DashboardService{
 	
 	@Override
 	public Dashboard getDashboardById(String id, String userId) {
-		if (hasUserPermission(id, userId)) {
+		//if (hasUserPermission(id, userId)) {
 			return dashboardRepository.findById(id);
-		}
-		return null;
+		//}
+		//return null;
 	}
 
 	@Override
