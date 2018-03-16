@@ -48,7 +48,9 @@ In this table you can see the default ports and contextpaths of the deployables 
 
 MODULE | PORT | CONTEXT PATH 
 ------ | ---- | --------
-ControlPanel | 18000 | /controlpanel
+ControlPanel | 18080 | /controlpanel
+MonitoringUI | 18090 | /
+IoTBroker | 8081 | /iotbroker /iotbroker/swagger-ui.html
 
 Content in the first column | Content in the second column
 
