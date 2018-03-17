@@ -54,7 +54,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugbable.gateway.rest",
+		prefix="sofia2.iotbroker.plugable.gateway.rest",
 		name="enable",
 		havingValue="true"
 		)

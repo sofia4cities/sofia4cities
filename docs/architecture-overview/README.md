@@ -42,6 +42,23 @@ As you can see there are two management UIs:
 - ControlPanel: for the visual management of all elements of the platform (devices, rules, flows, ontologies, dashboards,...)
 - Monitoring UI: monitorice all the executable modules, showing if they are active, CPU and memory use, metrics,...
 
+## Ports and  Context Paths of the modules
+
+In this table you can see the default ports and contextpaths of the deployables modules of the platform (you can configure it as you want):
+
+MODULE | PORT | CONTEXT PATH 
+------ | ---- | --------
+ControlPanel | 18080 | /controlpanel
+Dashboard Engine | 18100 | /dashboard-engine
+IoTBroker | 18100 | /iotbroker /iotbroker/swagger-ui.html
+DeviceSimulator | 18110 | /devicesimulator
+APIManager | 18200 | /api-manager
+FlowEngine | 18300 | /flowengine
+MonitoringUI | 19000 | /
+
+
+
+
 ## High Availability & Horizontal Scaling
 
 For the purpose of horizontal scaling, in Sofia4Cities all instances of the components will function concurrently.

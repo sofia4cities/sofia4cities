@@ -1,4 +1,6 @@
-# Getting Started Guide
+Getting Started Guide
+============================
+
 
 ## Installing the Development Environment
 

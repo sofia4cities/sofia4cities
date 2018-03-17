@@ -84,79 +84,50 @@ echo "#  | |__| | (_) | (__|   <  __/ |                                         
 echo "#  |_____/ \___/ \___|_|\_\___|_|                                                        #"                
 echo "#                                                                                        #"
 echo "# Sofia2 Docker Image generation                                                         #"
-echo "# arg1 (opt) --> -1 if only want to create images for persistence layer                  #"
+echo "# arg1 (opt) --> -1 if only want to create images for modules layer (skip persistence)   #"
 echo "#                                                                                        #"
 echo "##########################################################################################"
 
-if [ -z "$1" ]; then
-	echo "Continue? y/n: "
-	
-	read confirmation
-	
-	if [ "$confirmation" != "y" ]; then
-		exit 1
-	fi
-fi
-
 homepath=$PWD
 
-# Only create persistence layer
-if [ -z "$1" ]; then
-	# Generates images only if they are not present in local docker registry
-	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/control-panel/
-		buildImage "Control Panel"
-	fi	
-	
-	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
-		buildImage "IoT Broker"
-	fi
-	
-	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
-		cd $homepath/../modules/api-manager/	
-		buildImage "API Manager"
-	fi
-	
-	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/dashboard-engine/
-		buildImage "Dashboard Engine"
-	fi
-	
-	if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/device-simulator/
-		buildImage "Device Simulator"
-	fi	
-	
-	if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/monitoring-ui/
-		buildImage "Monitoring UI"
-	fi	
-	
-	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
- 		prepareNodeRED		
-	
-		cd $homepath/../modules/flow-engine/
-		buildImage "Flow Engine"
-		
-		removeNodeRED
-	fi
-fi
-
 # Generates images only if they are not present in local docker registry
-if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/configdb
-	buildConfigDB latest
+if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
+	cd $homepath/../modules/control-panel/
+	buildImage "Control Panel"
+fi	
+
+if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
+	cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
+	buildImage "IoT Broker"
 fi
 
-if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/schedulerdb
-	buildSchedulerDB latest
+if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
+	cd $homepath/../modules/api-manager/	
+	buildImage "API Manager"
 fi
 
-if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/realtimedb
-	buildRealTimeDB latest
+if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
+	cd $homepath/../modules/dashboard-engine/
+	buildImage "Dashboard Engine"
+fi
+
+if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
+	cd $homepath/../modules/device-simulator/
+	buildImage "Device Simulator"
+fi	
+
+if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
+	cd $homepath/../modules/monitoring-ui/
+	buildImage "Monitoring UI"
+fi	
+
+if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
+		prepareNodeRED		
+
+	cd $homepath/../modules/flow-engine/
+	buildImage "Flow Engine"
+	
+	removeNodeRED
 fi
 
 if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
@@ -164,9 +135,29 @@ if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
 	buildNginx latest
 fi
 
-if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/quasar
-	buildQuasar latest
+if [ -z "$1" ]; then
+	echo "++++++++++++++++++++ Persistence layer generation..."
+	
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/configdb
+		buildConfigDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/schedulerdb
+		buildSchedulerDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/realtimedb
+		buildRealTimeDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/quasar
+		buildQuasar latest
+	fi
 fi
 
 echo "Docker images successfully generated!"

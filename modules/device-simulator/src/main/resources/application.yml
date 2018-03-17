@@ -1,9 +1,15 @@
 server: ## Config Web Server
    port: 18061
+   contextPath: /devicesimulator
+
+
+# all access to actuator endpoints without security
+management.security.enabled: false
 
 spring:
+   application.name: sofia2-device-simulator
    boot.admin: #Spring Boot Admin Config   
-      url: http://localhost:18090
+      url: http://localhost:19000
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -40,6 +46,8 @@ quartz:
       simulationScheduler
     
 sofia2: #Config Sofia2 specific
+   iotbroker:
+      server: http://localhost:8081/iotbroker
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -59,12 +67,12 @@ sofia2: #Config Sofia2 specific
       tools.mongoexport.path: mongoexport
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
-      tools.useSequentialOps: true 
+      tools.useSequentialOps: true
+
             
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
    level:
-      org.springframework: INFO
-      com.example.boot.thymeleaf: INFO
-      com.indra: DEBUG
-      org.hibernate: INFO
+      com.indra: DEBUG 

@@ -47,7 +47,7 @@ import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
 
 @ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugbable.gateway.moquette",
+		prefix="sofia2.iotbroker.plugable.gateway.moquette",
 		name="enable",
 		havingValue="true"
 		)
@@ -55,28 +55,28 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class MoquetteBroker {
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.port:1883}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.port:1883}")
 	private String port;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.pool:10}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.pool:10}")
 	private int pool;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.host:localhost}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.host:localhost}")
 	private String host;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.store:moquette_store.mapdb}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.store:moquette_store.mapdb}")
 	private String store;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.outbound_topic:/topic/message}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.outbound_topic:/topic/message}")
 	private String outbound_topic;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.inbound_topic:/queue/message}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.inbound_topic:/queue/message}")
 	private String inbound_topic;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.subscription_topic:/topic/subscription}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.subscription_topic:/topic/subscription}")
 	private String subscription_topic;
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.moquette.command_topic:/topic/command}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.command_topic:/topic/command}")
 	private String command_topic;
 
 

@@ -22,7 +22,7 @@ public interface SimulationService {
 
 	void createSimulation(String identification, int interval, String userId, String json) throws JsonProcessingException, IOException;
 
-	String getDeviceSimulationJson(String clientPlatform, String token, String ontology, String jsonMap)
+	String getDeviceSimulationJson(String identification, String clientPlatform, String token, String ontology, String jsonMap)
 			throws JsonProcessingException, IOException;
 
 	void scheduleSimulation(DeviceSimulation deviceSimulation);
