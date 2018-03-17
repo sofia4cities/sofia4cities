@@ -20,7 +20,7 @@ import com.indracompany.sofia2.config.model.UserApi;
 
 public interface ApiManagerService {
 	
-	public List<Api> loadAPISByFilter(String filter, String user, String state) ;
+	public List<Api> loadAPISByFilter(String filter, String state, String user, String loggeduser) ;
 
 	public String createApi(Api api, String objetoOperaciones, String objetoAutenticacion);
 
