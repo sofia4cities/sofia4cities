@@ -5,6 +5,8 @@ services:
     environment:
       SERVER_NAME: rancher.sofia4cities.com
     stdin_open: true
+    volumes:
+    - /datadrive/logs-s4c:/var/log/logs-s4c:rw
     tty: true
     links:
     - schedulerdb:schedulerdb
@@ -80,6 +82,8 @@ services:
   dashboardengineservice:
     image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:latest
     stdin_open: true
+    volumes:
+    - /datadrive/logs-s4c:/var/log/logs-s4c:rw
     tty: true
     links:
     - realtimedb:realtimedb
