@@ -1,7 +1,27 @@
-/* Cubic Bezier Transition */
-/*********** 
-    Page Header
-    ***********/
+/* logo */
+.text-logo-s4c{
+position: relative;
+color: white;
+top: 7px;
+left: 2px;
+font-size: 15px;	
+}
+
+.text-logo-panel{
+color: darkturquoise;
+position: relative;
+top: 3px;
+left: 1px;
+font-size: 11px;
+white-space: nowrap;
+}
+
+@media (max-width: 992px) {
+.text-logo-s4c{ top: 12px; }
+.text-logo-panel{ top: 12px; left: 3px; }
+}
+
+/* Page Header   ***********/
 /* Header search bar, toggler button & top menu */
 .page-header.navbar {
   /*background-color: #FFF;*/

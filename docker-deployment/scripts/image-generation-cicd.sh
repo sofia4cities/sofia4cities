@@ -116,6 +116,12 @@ pushAllImages2Registry()
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1							
 }
 
+pushImage2Registry()
+{
+	docker tag sofia2/$1:$2 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/$1:$2
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/$1:$2	
+}
+
 echo "##########################################################################################"
 echo "#                                                                                        #"
 echo "#   _____             _                                                                  #"              
@@ -127,6 +133,7 @@ echo "#  |_____/ \___/ \___|_|\_\___|_|                                         
 echo "#                                                                                        #"
 echo "# Sofia2 Docker Image generation                                                         #"
 echo "# arg1 (opt) --> -1 if only want to create images for modules layer (skip persistence)   #"
+echo "# arg2 (opt) --> string represents the name of module to deploy image                    #"
 echo "#                                                                                        #"
 echo "##########################################################################################"
 
@@ -203,7 +210,7 @@ if [ -z "$1" ]; then
 fi
 
 echo "Pushing all images to Docker registry"
-#pushAllImages2Registry
+pushAllImages2Registry latest
 
 echo "Docker images successfully generated and pushed to local registry!"
 

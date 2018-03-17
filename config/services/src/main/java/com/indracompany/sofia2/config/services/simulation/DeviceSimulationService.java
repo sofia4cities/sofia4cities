@@ -46,4 +46,6 @@ public interface DeviceSimulationService {
 	List<DeviceSimulation> getSimulationsForUser(String userId);
 	
 	DeviceSimulation updateSimulation(String identification, int interval, String json, DeviceSimulation simulation) throws JsonProcessingException, IOException;
+
+	DeviceSimulation getSimulationByJobName(String jobName);
 }

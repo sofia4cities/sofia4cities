@@ -186,5 +186,10 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 		return this.deviceSimulationRepository.findByUser(this.userService.getUser(userId));
 	}
 
+	@Override
+	public DeviceSimulation getSimulationByJobName(String jobName) {
+		return this.deviceSimulationRepository.findByJobName(jobName);
+	}
+
 
 }
