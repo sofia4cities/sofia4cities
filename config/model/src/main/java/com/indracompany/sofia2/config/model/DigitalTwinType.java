@@ -74,6 +74,12 @@ public class DigitalTwinType extends AuditableEntityWithUUID{
 	@Setter
 	private Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
 	
+	@OneToMany(mappedBy = "typeId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	@Getter
+	@Setter
+	private Set<DigitalTwinDevice> digitalTwinDevices = new HashSet<>();
+	
 	@Column(name = "NAME", length = 50, unique = true, nullable = false)
 	@NotNull
 	@Getter

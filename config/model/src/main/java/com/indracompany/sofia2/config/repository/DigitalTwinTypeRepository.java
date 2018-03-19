@@ -17,6 +17,7 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.User;
@@ -44,4 +45,7 @@ public interface DigitalTwinTypeRepository extends JpaRepository<DigitalTwinType
 	void deleteById(String id);
 	
 	List<DigitalTwinType> findByUser(User user);
+	
+	@Query("SELECT o.name FROM DigitalTwinType AS o")
+	List<String> findAllNames();
 }

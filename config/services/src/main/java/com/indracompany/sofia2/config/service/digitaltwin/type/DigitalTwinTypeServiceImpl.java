@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.service.digitaltwin;
+package com.indracompany.sofia2.config.service.digitaltwin.type;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,7 +37,7 @@ import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.EventsDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.LogicDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.PropertyDigitalTwinTypeRepository;
-import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
+import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -280,7 +280,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 			}				
 			
 		} catch (Exception e) {
-			throw new OntologyServiceException("Problems creating the digital twin type", e);
+			throw new DigitalTwinServiceException("Problems creating the digital twin type", e);
 		}
 	}
 	

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.service.digitaltwin;
+package com.indracompany.sofia2.config.service.digitaltwin.device;
 
 import java.util.List;
 
@@ -20,20 +20,27 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
 
-import com.indracompany.sofia2.config.model.DigitalTwinType;
+import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 
-public interface DigitalTwinTypeService {
+public interface DigitalTwinDeviceService {
 	
-	void createDigitalTwinType(DigitalTwinType digitalTwinType, HttpServletRequest httpServletRequest);
-	List<DigitalTwinType> getAll();
 	List<String> getAllIdentifications();
-	DigitalTwinType getDigitalTwinTypeById(String id);
-	List<PropertyDigitalTwinTypeDTO> getPropertiesByDigitalId(String id);
-	List<ActionsDigitalTwinTypeDTO> getActionsByDigitalId(String TypeId);
-	List<EventsDigitalTwinTypeDTO> getEventsByDigitalId(String TypeId);
-	String getLogicByDigitalId(String TypeId);
-	void getDigitalTwinToUpdate(Model model, String id);
-	void updateDigitalTwinType(DigitalTwinType digitalTwinType, HttpServletRequest httpServletRequest);
-	public void deleteDigitalTwinType(DigitalTwinType digitalTwinType);
+	
+	List<DigitalTwinDevice> getAll();
+	
+	List<String> getAllDigitalTwinTypeNames();
+	
+	public String generateToken();
+	
+	public String getLogicFromType(String type);
+	
+	public void createDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice, HttpServletRequest httpServletRequest);
 
+	void getDigitalTwinToUpdate(Model model, String id);
+
+	DigitalTwinDevice getDigitalTwinDeviceById(String id);
+	
+	void updateDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice, HttpServletRequest httpServletRequest);
+
+	void deleteDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice);
 }

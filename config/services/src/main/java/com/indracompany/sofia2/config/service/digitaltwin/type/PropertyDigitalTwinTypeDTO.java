@@ -12,18 +12,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.service.digitaltwin;
+package com.indracompany.sofia2.config.service.digitaltwin.type;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class ActionsDigitalTwinTypeDTO {
+public class PropertyDigitalTwinTypeDTO {
 	
-
-	public ActionsDigitalTwinTypeDTO(String id, String name, String description) {
+	public PropertyDigitalTwinTypeDTO(String id, String type, String name, String unit, String direction,
+			String description) {
 		super();
 		this.id = id;
+		this.type = type;
 		this.name = name;
+		this.unit = unit;
+		this.direction = direction;
 		this.description = description;
 	}
 
@@ -31,9 +34,22 @@ public class ActionsDigitalTwinTypeDTO {
 	@Setter
 	private String id;
 
+	
+	@Getter
+	@Setter
+	private String type;
+	
 	@Getter
 	@Setter
 	private String name;
+	
+	@Getter
+	@Setter
+	private String unit;
+	
+	@Getter
+	@Setter
+	private String direction;
 	
 	@Getter
 	@Setter
