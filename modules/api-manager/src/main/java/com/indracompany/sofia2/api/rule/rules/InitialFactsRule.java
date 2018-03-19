@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jeasy.rules.annotation.Action;
 import org.jeasy.rules.annotation.Condition;
@@ -69,6 +68,9 @@ public class InitialFactsRule {
 		
 		String method = request.getMethod();
 		String pathInfo = request.getPathInfo();
+		if (!pathInfo.endsWith("/")) {
+			pathInfo = pathInfo.concat("/");
+		}
 
 		String queryDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FILTER_PARAM, request)).orElse("");
 		String targetDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.TARGET_DB_PARAM, request)).orElse("");
