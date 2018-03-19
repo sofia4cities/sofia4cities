@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.indracompany.sofia2</groupId>
-	<artifactId>sofia2-security-jwt-jdbc-ri</artifactId>
+	<artifactId>sofia2-security-jwt-server-ri</artifactId>
 	<packaging>jar</packaging>
 
-	<name>sofia2-security-jwt-jdbc-ri</name>
-	<description>Sofia2 JWT Core With JDBC Token Storage Server Reference Implementation</description>
+	<name>sofia2-security-jwt-server-ri</name>
+	<description>Sofia2 JWT Server Reference Implementation</description>
 
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
@@ -19,15 +19,24 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.security.oauth.version>2.3.0.RELEASE</spring.security.oauth.version>
 		<license.dir>${project.parent.basedir}</license.dir>
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 	
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-security-jwt-core-ri</artifactId>
+			<artifactId>sofia2-security-jwt-jdbc-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 

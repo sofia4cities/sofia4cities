@@ -19,7 +19,9 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -59,5 +61,18 @@ public class JWTAppConfig {
 		final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
 		jwtAccessTokenConverter.setSigningKey(SIGNING_KEY);
 		return jwtAccessTokenConverter;
+	}
+    
+    @Bean
+	@Primary
+	public Sofia2CustomTokenService tokenServices() {
+		final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+		defaultTokenServices.setTokenStore(tokenStore());
+		defaultTokenServices.setSupportRefreshToken(true);
+		defaultTokenServices.setReuseRefreshToken(true);
+		
+		Sofia2CustomTokenService token=new Sofia2CustomTokenService(defaultTokenServices);
+        return token;
+
 	}
 }

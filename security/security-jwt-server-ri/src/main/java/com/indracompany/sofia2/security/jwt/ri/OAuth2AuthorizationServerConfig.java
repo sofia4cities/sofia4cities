@@ -38,8 +38,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @EnableAuthorizationServer
 public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-	
-
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -76,23 +74,9 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 				.authorizedGrantTypes("authorization_code", "refresh_token", "password").scopes("openid");
 	}
 
-
 	@Bean
 	public TokenEnhancer tokenEnhancer() {
 		return new Sofia2CustomTokenEnhancer();
-	}
-
-	@Bean
-	@Primary
-	public Sofia2CustomTokenService tokenServices() {
-		final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-		defaultTokenServices.setTokenStore(tokenStore);
-		defaultTokenServices.setSupportRefreshToken(true);
-		defaultTokenServices.setReuseRefreshToken(true);
-		
-		Sofia2CustomTokenService token=new Sofia2CustomTokenService(defaultTokenServices);
-        return token;
-
 	}
 	
 }
