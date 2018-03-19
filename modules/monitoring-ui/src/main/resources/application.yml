@@ -42,7 +42,7 @@ spring: ## General Config
    mail: ##Mail configuration
       host: smtp.gmail.com
       username: sofia2oncloud@gmail.com
-      password: Indra2013!
+      password: ---
       port: 587
       properties.mail.smtp.auth: true
       properties.mail.smtp.starttls.enable: true
