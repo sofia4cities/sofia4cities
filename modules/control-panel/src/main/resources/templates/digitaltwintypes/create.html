@@ -100,7 +100,7 @@
 								<ul class="nav nav-tabs pull-left">
 									<li id="tab-datos" class="active">
 										<a href="#tab_1" data-toggle="tab" aria-expanded="false">
-											<i class="flaticon-network font-grey-gallery"></i>									
+											<i class="fa fa-desktop font-grey-gallery"></i>									
 											<!-- FORM TITLE -->
 											<span th:if="${digitaltwintype?.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{digitaltwintype.template.create}"> New Digital Twin Type</span>
 											<span th:if="${digitaltwintype?.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{digitaltwintype.template.update} + ' ' + ${digitaltwintype.name}"> Update Digital Twin Type </span>
@@ -140,7 +140,7 @@
 																<div class="form-group">
 																	<label class="" th:text="#{gen.name} + ':'">Name</label><span class="required"> (*)</span>
 																	<div class="input-icon ">
-																		<i class="flaticon-network"></i>
+																		<i class="fa fa-credit-card"></i>
 																		<input th:tabindex="1" id="identification" type="text"   th:required="true"  maxlength="50" th:field="*{name}" class="form-control "  th:placeholder="#{gen.name}"/>
 																	</div>
 																</div>
@@ -149,7 +149,7 @@
 																<div class="form-group">
 																	<label class="" th:text="#{digitaltwintype.type} + ':'">Type</label><span class="required"> (*)</span>
 																	<div class="input-icon ">
-																		<i class="flaticon-network"></i>
+																		<i class="fa fa-credit-card"></i>
 																		<select id="type" class="form-control" >
 																			<option value="thing">thing</option>
 																		</select>
@@ -406,7 +406,7 @@
 	
 
 	<!-- TEMPLATE CONTROLLER  -->	
-	<script th:src="@{/static/js/pages/digitalTwinCreate.js}"/>
+	<script th:src="@{/static/js/pages/digitalTwinTypeCreate.js}"/>
 
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
