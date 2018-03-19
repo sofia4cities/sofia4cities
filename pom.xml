@@ -90,6 +90,8 @@
 		<!--SECURITY-->		
 		<module>security/security-ui-ri</module>
 		<module>security/security-oauth2-ri</module>
+		<module>security/security-jwt-ri</module>
+		<module>security/security-jwt-jdbc-ri</module>
 		
 		<!--PERSISTENCE-->
 		<module>persistence/interfaces</module>	
