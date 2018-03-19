@@ -15,6 +15,7 @@ package com.indracompany.sofia2.simulator.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +60,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 	private IntegrationResourcesService intregationResourcesService;
 	private static final String UNAUTHORIZED_ONTOLOGY = "Unauthorized ontology";
 	private Map<String, String> sessionKeys;
-	private List<String> sessionBlackList;
+	private List<String> deviceBlackList;
 
 	private String iotbrokerUrl;
 
@@ -67,7 +68,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 	public void setUp() {
 		this.sessionKeys = new HashMap<String, String>();
 		this.iotbrokerUrl = this.intregationResourcesService.getURL("iot-broker.base.url") + "iotbroker";
-		this.sessionBlackList = new ArrayList<String>();
+		this.deviceBlackList = new ArrayList<String>();
 	}
 
 	public void connectDeviceRest(String clientPlatform, String clientPlatformInstance) {
@@ -116,7 +117,9 @@ public class PersistenceServiceImpl implements PersistenceService {
 				this.connectDeviceRest(clientPlatform, clientPlatformInstance);
 				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 			}
-
+			// Remove from black list, as it is still sending data
+			if (this.deviceBlackList.contains(clientPlatform))
+				this.deviceBlackList.remove(clientPlatform);
 			log.debug("Device " + clientPlatformInstance);
 		} else {
 			this.connectDeviceRest(clientPlatform, clientPlatformInstance);
@@ -140,8 +143,14 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@Scheduled(fixedDelay = 60000)
 	private void disconnectBlackListedDevices() {
-
-		
+		for(Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
+			String device = iterator.next();
+			this.disconnectDeviceRest(device);
+			iterator.remove();
+		}
+		for (Map.Entry<String, String> entry : this.sessionKeys.entrySet()) {
+			this.deviceBlackList.add(entry.getKey());
+		}
 	}
 
 }
