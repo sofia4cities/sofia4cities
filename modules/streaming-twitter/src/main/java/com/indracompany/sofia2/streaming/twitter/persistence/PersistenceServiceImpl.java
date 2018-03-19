@@ -14,6 +14,8 @@
 package com.indracompany.sofia2.streaming.twitter.persistence;
 
 import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,7 @@ public class PersistenceServiceImpl implements PeristenceService {
 		contextData.setClientPatform(clientPlatform);
 		contextData.setClientPatformInstance(clientPlatformInstance);
 		contextData.setTimezoneId(ZoneId.systemDefault().toString());
+		contextData.setTimestamp(Calendar.getInstance(TimeZone.getTimeZone(ZoneId.systemDefault())).getTime().toString());
 		contextData.setUser(user);
 		((ObjectNode) json).set("contextData", mapper.valueToTree(contextData));
 
