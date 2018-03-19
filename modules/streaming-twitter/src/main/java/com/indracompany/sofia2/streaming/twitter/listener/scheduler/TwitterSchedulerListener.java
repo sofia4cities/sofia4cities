@@ -37,6 +37,10 @@ public class TwitterSchedulerListener extends SchedulerListenerSupport {
 	private TwitterListeningService twitterListeningService;
 
 	@Override
+	public void jobUnscheduled(TriggerKey triggerKey) {
+		System.out.println(triggerKey);
+	}
+	@Override
 	public void triggerFinalized(Trigger trigger) {
 		System.out.println("Trigger finalized");
 		TwitterListening twitterListening = this.twitterListeningService
