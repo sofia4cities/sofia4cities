@@ -128,13 +128,18 @@ public class DeviceSimulatorController {
 	@PostMapping("startstop")
 	public String startStop(Model model, @RequestParam String id) {
 		DeviceSimulation simulation = this.deviceSimulationService.getSimulationById(id);
+		List<DeviceSimulation> simulations = new ArrayList<DeviceSimulation>();
 		if (simulation != null) {
 			if (simulation.isActive())
 				this.simulationService.unscheduleSimulation(simulation);
 			else
 				this.simulationService.scheduleSimulation(simulation);
 		}
-		model.addAttribute("simulations", this.deviceSimulationService.getAllSimulations());
+		if (this.utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
+			simulations = this.deviceSimulationService.getAllSimulations();
+		else
+			simulations = this.deviceSimulationService.getSimulationsForUser(this.utils.getUserId());
+		model.addAttribute("simulations", simulations);
 		return "simulator/list :: simulations";
 
 	}
@@ -142,7 +147,8 @@ public class DeviceSimulatorController {
 	@PutMapping("update/{id}")
 	public String update(Model model, @PathVariable("id") String id, @RequestParam String identification,
 			@RequestParam String jsonMap, @RequestParam String ontology, @RequestParam String clientPlatform,
-			@RequestParam String token, @RequestParam int interval, RedirectAttributes redirect) throws JsonProcessingException, IOException {
+			@RequestParam String token, @RequestParam int interval, RedirectAttributes redirect)
+			throws JsonProcessingException, IOException {
 
 		DeviceSimulation simulation = this.deviceSimulationService.getSimulationById(id);
 		if (simulation != null) {
@@ -155,12 +161,12 @@ public class DeviceSimulatorController {
 				this.utils.addRedirectMessage("simulation.update.isactive", redirect);
 				return "redirect:/devicesimulation/update/" + id;
 			}
-				
-		} else{
+
+		} else {
 			this.utils.addRedirectMessage("simulation.update.error", redirect);
 			return "redirect:/devicesimulation/update/" + id;
 		}
-			
+
 	}
 
 	@DeleteMapping("{id}")
