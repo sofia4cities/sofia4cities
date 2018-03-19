@@ -60,7 +60,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 	@PostConstruct
 	public void setUp() {
 		this.sessionKeys = new HashMap<String, String>();
-		this.iotbrokerUrl= this.intregationResourcesService.getURL("iot-broker.base")+"iotbroker";
+		this.iotbrokerUrl= this.intregationResourcesService.getURL("iot-broker.base.url")+"iotbroker";
 	}
 
 	public void connectIotBrokerRest(String clientPlatform, String clientPlatformInstance) {
