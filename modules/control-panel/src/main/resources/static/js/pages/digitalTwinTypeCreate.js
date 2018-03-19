@@ -558,7 +558,7 @@ var DigitalTwinCreateController = function() {
 
 		},
 		
-		// DELETE ONTOLOGY 
+		// DELETE DIGITAL TWIN TYPE 
 		deleteDigitalTwinType: function(digitalTwinTypeId){
 			logControl ? console.log(LIB_TITLE + ': deleteDigitalTwinType()') : '';	
 			deleteDigitalTwinTypeConfirmation(digitalTwinTypeId);			

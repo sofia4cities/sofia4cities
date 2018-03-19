@@ -303,7 +303,7 @@ var HeaderController = function() {
 
 	}
 	
-	// ONTOLOGY-CONFIRM-DIALOG
+	// DIGITALTWINTYPE-CONFIRM-DIALOG
 	var showConfirmDialogDigitalTwinType = function(formId){		
 		logControl ? console.log('showConfirmDialogDigitalTwinType()...') : '';
 
@@ -311,6 +311,46 @@ var HeaderController = function() {
 		var Remove = headerReg.btnEliminar;
 		var Close = headerReg.btnCancelar;
 		var Content = headerReg.digitalTwinTypeConfirm;
+		var Title = headerReg.titleConfirm + ':';		
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			type: 'red',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+
+	}
+	
+	// DIGITALTWINdevice-CONFIRM-DIALOG
+	var showConfirmDialogDigitalTwinDevice = function(formId){		
+		logControl ? console.log('showConfirmDialogDigitalTwinDevice()...') : '';
+
+		// i18 labels
+		var Remove = headerReg.btnEliminar;
+		var Close = headerReg.btnCancelar;
+		var Content = headerReg.digitalTwinDeviceConfirm;
 		var Title = headerReg.titleConfirm + ':';		
 
 		// jquery-confirm DIALOG SYSTEM.
@@ -648,6 +688,11 @@ var HeaderController = function() {
 		showConfirmDialogDigitalTwinType : function(formId){		
 			logControl ? console.log('showConfirmDialogDigitalTwinType()...') : '';
 			showConfirmDialogDigitalTwinType(formId);
+		},
+		// DIGITALTWINTYPE-CONFIRM-DIALOG
+		showConfirmDialogDigitalTwinDevice : function(formId){		
+			logControl ? console.log('showConfirmDialogDigitalTwinDevice()...') : '';
+			showConfirmDialogDigitalTwinDevice(formId);
 		},
 		showTwitterListeningConfirmDialog: function(formId){		
 			logControl ? console.log('showTwitterListeningConfirmDialog()...') : '';
