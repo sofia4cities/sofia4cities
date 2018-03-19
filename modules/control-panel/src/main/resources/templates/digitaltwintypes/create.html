@@ -66,9 +66,7 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-
 						<li><a th:href="@{/digitaltwintypes/list}"> <span th:text="#{digitaltwintype.breadcrumb.list}">Digital Twin </span></a><i class="fa fa-circle"></i></li>
-
 						<li>
 							<span th:if="${digitaltwintype?.id} == null" th:text="#{digitaltwintype.breadcrumb.create}">Show Digital Twin</span>
 							<span th:if="${digitaltwintype?.id} != null" th:text="#{digitaltwintype.breadcrumb.update}">Update Digital Twin</span>
@@ -106,7 +104,6 @@
 											<!-- FORM TITLE -->
 											<span th:if="${digitaltwintype?.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{digitaltwintype.template.create}"> New Digital Twin Type</span>
 											<span th:if="${digitaltwintype?.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{digitaltwintype.template.update} + ' ' + ${digitaltwintype.name}"> Update Digital Twin Type </span>
-
 										</a>
 									</li>
 								</ul>

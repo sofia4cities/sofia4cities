@@ -20,9 +20,8 @@ var DigitalTwinCreateController = function() {
 	var mountablePropModel = $('#properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableActModel = $('#actions').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableEventModel = $('#events').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
-
 	// CONTROLLER PRIVATE FUNCTIONS	--------------------------------------------------------------------------------
-	
+
 	var generateSchema=false
 	$("#createBtn").on('click',function(){
 		if(generateSchema){
