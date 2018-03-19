@@ -31,6 +31,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-config-resources</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-planner</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
@@ -50,7 +55,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
-		</dependency>		
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.token.TokenService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,15 +50,17 @@ public class PersistenceServiceImpl implements PersistenceService {
 	private ClientPlatformService clientPlatformService;
 	@Autowired
 	private TokenService tokenService;
-
+	@Autowired
+	private IntegrationResourcesService intregationResourcesService;
 	private static final String UNAUTHORIZED_ONTOLOGY = "Unauthorized ontology";
 	private Map<String, String> sessionKeys;
-	@Value("${sofia2.iotbroker.server}")
+
 	private String iotbrokerUrl;
 
 	@PostConstruct
 	public void setUp() {
 		this.sessionKeys = new HashMap<String, String>();
+		this.iotbrokerUrl= this.intregationResourcesService.getURL("iot-broker.base")+"iotbroker";
 	}
 
 	public void connectIotBrokerRest(String clientPlatform, String clientPlatformInstance) {
