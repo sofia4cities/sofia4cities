@@ -90,7 +90,7 @@ public class ApiManagerController {
 		
 		apiManagerHelper.populateApiManagerListForm(model);
 		
-		model.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user));
+		model.addAttribute("apis", apiManagerService.loadAPISByFilter(apiId, state, user, utils.getUserId()));
 		
 		return "apimanager/list";
 	}

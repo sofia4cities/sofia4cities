@@ -7,6 +7,9 @@ server: ## Config Web Server
       access_log_enabled: true
       basedir: target/tomcat
 
+# all access to actuator endpoints without security
+management.security.enabled: false
+
 sofia2: #Config Sofia2 specific
    encription.key: sofia2
    devices:
@@ -35,13 +38,12 @@ sofia2: #Config Sofia2 specific
     iotbroker: http://localhost:18080
     iotbroker.services: http://localhost:8080/sib/services
    paths:
-    ssap: /ssap
+      ssap: /ssap
    flowengine.services:
-    request.timeout.ms: 5000
-    baseurl: http://localhost:8082/sofia2/flowengine/admin   
-    proxyurl: http://localhost:5050/
+      request.timeout.ms: 5000
+      baseurl: http://localhost:18300/sofia2/flowengine/admin   
+      proxyurl: http://localhost:5050/
     
-management.security.enabled: false
  
 spring: ## General Config  
    application.name: sofia2-control-panel
@@ -77,7 +79,7 @@ spring: ## General Config
       hibernate.ddl-auto: update
       hibernate.temp.use_jdbc_metadata_defaults: false
    boot.admin: #Spring Boot Admin Config    
-      url: http://localhost:18090
+      url: http://localhost:19000/
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -102,9 +104,7 @@ quartz:
            
 ## LOGGING CONF
 logging:
+   path: ./target/ 
    file: ${spring.application.name}
    level:
-      org.springframework: INFO
-      com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
-      org.hibernate: INFO

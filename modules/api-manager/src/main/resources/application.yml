@@ -8,21 +8,11 @@ server: ## Config Web Server
       basedir: target/tomcat
 
 
-spring.security.enabled: false
-management.security.enabled: false
-security.basic.enabled: false
 # all access to actuator endpoints without security
-management:
-  security:
-    enabled : false
-  port: 19090
-# turn on actuator health check
-endpoints:
-  health:
-    enabled : true
-  jmx:
-    enabled: true
-     
+management.security.enabled: false
+
+security.basic.enabled: false
+    
 sofia2: #Config Sofia2 specific
    database.mongodb:
       database: sofia2_s4c
@@ -49,16 +39,11 @@ sofia2: #Config Sofia2 specific
       quasar.connectionTimeout.millis: 10000
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
     
-#Security Config
-#security:
-#    user:
-#       name: admin
-#       password: admin
-   
 spring: ## General Config  
    application.name: sofia2-api-manager
+   security.enabled: false
    boot.admin: #Spring Boot Admin Config    
-      url: http://localhost:18090
+      url: http://localhost:19000
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -82,27 +67,24 @@ spring: ## General Config
       properties.hibernate.enable_lazy_load_no_trans: true
    mail: ##Mail configuration
       host: smtp.gmail.com
-      username: sofia2oncloud@gmail.com
-      password: Indra2013!
+      username: sofia4cities@gmail.com
+      password: ----
       port: 587
       properties.mail.smtp.auth: true
       properties.mail.smtp.starttls.enable: true
    jmx:
     enabled: true
 
-              
-## LOGGING CONF
-logging:
-   level:
-      org.springframework: INFO
-      de.codecentric: DEBUG
-      com.example.boot.thymeleaf: INFO
-      com.indra: DEBUG
-      org.hibernate: INFO
       
 cxf:
   path: /services/management
   servlet.init: 
     component-scan: true
     classes-scan-packages: com.indracompany.sofia2.api.rest
- 
+            
+## LOGGING CONF
+logging:
+   path: ./target/ 
+   file: ${spring.application.name}
+   level:
+      com.indra: DEBUG 

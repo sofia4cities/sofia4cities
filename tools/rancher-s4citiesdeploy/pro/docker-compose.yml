@@ -5,13 +5,13 @@ services:
     environment:
       SERVER_NAME: rancher.sofia4cities.com
     stdin_open: true
+    volumes:
+    - /datadrive/logs-s4c:/var/log/logs-s4c:rw
     tty: true
     links:
     - schedulerdb:schedulerdb
     - configdb:configdb
     - realtimedb:realtimedb
-    ports:
-    - 1883:1883/tcp
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
@@ -80,6 +80,8 @@ services:
   dashboardengineservice:
     image: moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:latest
     stdin_open: true
+    volumes:
+    - /datadrive/logs-s4c:/var/log/logs-s4c:rw
     tty: true
     links:
     - realtimedb:realtimedb
@@ -141,3 +143,12 @@ services:
     labels:
       io.rancher.container.pull_image: always
       io.rancher.scheduler.affinity:host_label: node=worker-1
+  HAProxy:
+    image: rancher/lb-service-haproxy:v0.7.15
+    ports:
+    - 1883:1883/tcp
+    labels:
+      io.rancher.scheduler.affinity:host_label: node=worker-1
+      io.rancher.container.agent.role: environmentAdmin,agent
+      io.rancher.container.agent_service.drain_provider: 'true'
+      io.rancher.container.create_agent: 'true'

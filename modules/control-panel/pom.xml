@@ -109,10 +109,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!-- DECIDIR CUAL Y CUANDO USAR <dependency> <groupId>org.springframework.boot</groupId> 
-			<artifactId>spring-boot-starter-jersey</artifactId> </dependency> <dependency> 
-			<groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-websocket</artifactId> 
-			</dependency> -->
 		<!-- SPRING BOOT ADMIN-CLIENT -->
 		<dependency>
 			<groupId>de.codecentric</groupId>
