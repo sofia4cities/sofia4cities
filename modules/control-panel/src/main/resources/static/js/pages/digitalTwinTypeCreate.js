@@ -20,11 +20,27 @@ var DigitalTwinCreateController = function() {
 	var mountablePropModel = $('#properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableActModel = $('#actions').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableEventModel = $('#events').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
+<<<<<<< HEAD
+	// CONTROLLER PRIVATE FUNCTIONS	--------------------------------------------------------------------------------
+
+=======
+>>>>>>> Add update/list/remove of digital twin type
 	// CONTROLLER PRIVATE FUNCTIONS	--------------------------------------------------------------------------------
 	
 	
 	var generateSchema=false
 	$("#createBtn").on('click',function(){
+		if(generateSchema){
+			if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined)
+				DigitalTwinCreateController.submitform();
+		}else{
+			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: digitalTwinCreateJson.validations.schema});
+			return false;
+		}
+		
+	});
+	
+	$("#updateBtn").on('click',function(){
 		if(generateSchema){
 			if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined)
 				DigitalTwinCreateController.submitform();
@@ -206,6 +222,10 @@ var DigitalTwinCreateController = function() {
 		var updateDescription = $("input[name='descriptionsEvents\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();	
 		var updateTypes = $("select[name='typeEvent\\[\\]']").map(function(){return $(this).val();}).get();
 		var updateStatus = $("input[name='status\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).is(":checked"); }}).get();
+<<<<<<< HEAD
+
+=======
+>>>>>>> Add update/list/remove of digital twin type
 		
 		var schemaObj = {};
 		
@@ -297,7 +317,10 @@ var DigitalTwinCreateController = function() {
 		},
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
+<<<<<<< HEAD
+=======
 			
+>>>>>>> Add update/list/remove of digital twin type
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
 			$('#properties').mounTable(jsonProperties,{
@@ -504,6 +527,10 @@ var DigitalTwinCreateController = function() {
 				}
 				AceEditor.setValue(logica);
 			}
+<<<<<<< HEAD
+			
+=======
+>>>>>>> Add update/list/remove of digital twin type
 		},
 		
 		// REDIRECT

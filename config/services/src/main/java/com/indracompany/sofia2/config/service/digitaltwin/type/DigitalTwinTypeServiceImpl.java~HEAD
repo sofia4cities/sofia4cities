@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.service.digitaltwin;
+package com.indracompany.sofia2.config.service.digitaltwin.type;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,7 +37,7 @@ import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.EventsDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.LogicDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.PropertyDigitalTwinTypeRepository;
-import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
+import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -134,85 +134,12 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 	}
 
 	@Override
-	public DigitalTwinType getDigitalTwinTypeById(String id) {
-		return digitalTwinTypeRepo.findById(id);
-	}
-	
-	@Override
-	public List<PropertyDigitalTwinTypeDTO> getPropertiesByDigitalId(String TypeId) {
-		
-		List<PropertyDigitalTwinTypeDTO> lPropertiesDTO = new ArrayList<PropertyDigitalTwinTypeDTO>();
-		List<PropertyDigitalTwinType> lProperties = propDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
-		
-		for(PropertyDigitalTwinType prop : lProperties) {
-			lPropertiesDTO.add(new PropertyDigitalTwinTypeDTO(prop.getId(), prop.getType(), prop.getName(), prop.getUnit(), prop.getDirection(), prop.getDescription()));
-		}
-		
-		return lPropertiesDTO;
-	}
-	
-	@Override
-	public List<ActionsDigitalTwinTypeDTO> getActionsByDigitalId(String TypeId) {
-		
-		List<ActionsDigitalTwinTypeDTO> lActionsDTO = new ArrayList<ActionsDigitalTwinTypeDTO>();
-		List<ActionsDigitalTwinType> lActions = actDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
-		
-		for(ActionsDigitalTwinType act : lActions) {
-			lActionsDTO.add(new ActionsDigitalTwinTypeDTO(act.getId(), act.getName(), act.getDescription()));
-		}
-		
-		return lActionsDTO;
-	}
-	
-	@Override
-	public List<EventsDigitalTwinTypeDTO> getEventsByDigitalId(String TypeId) {
-		
-		List<EventsDigitalTwinTypeDTO> lEventsDTO = new ArrayList<EventsDigitalTwinTypeDTO>();
-		List<EventsDigitalTwinType> lEvents = evtDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
-		
-		for(EventsDigitalTwinType event : lEvents) {
-			lEventsDTO.add(new EventsDigitalTwinTypeDTO(event.getId(), event.getType(), event.getName(), event.isStatus(), event.getDescription()));
-		}
-		
-		return lEventsDTO;
-	}
-	
-	@Override
-	public String getLogicByDigitalId(String TypeId) {
-		LogicDigitalTwinType logic = logicDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
-		if(logic!=null) {
-			return logic.getLogic();
-		}
-		return "";
-	}
-	
-	@Override
-	public List<String> getAllIdentifications() {
-		List<DigitalTwinType> digitalTypes = this.digitalTwinTypeRepo.findAllByOrderByNameAsc();
-		List<String> identifications = new ArrayList<String>();
-		for (DigitalTwinType type : digitalTypes) {
-			identifications.add(type.getName());
-		}
-		return identifications;
-	}
-	
-	@Override
-	public List<DigitalTwinType> getAll() {
-		return digitalTwinTypeRepo.findAll();
-	}
-
-	@Override
 	public void createDigitalTwinType(DigitalTwinType digitalTwinType, HttpServletRequest httpServletRequest) {
 		try {
 			String[] properties = httpServletRequest.getParameterValues("propiedades");
 			String[] actions = httpServletRequest.getParameterValues("acciones");
 			String[] events = httpServletRequest.getParameterValues("eventos");
 			String logic = httpServletRequest.getParameter("logic");
-
-			Set<PropertyDigitalTwinType> propertyDigitalTwinTypes = new HashSet<>();
-			Set<ActionsDigitalTwinType> actionDigitalTwinTypes = new HashSet<>();
-			Set<EventsDigitalTwinType> eventDigitalTwinTypes = new HashSet<>();
-			Set<LogicDigitalTwinType> logicDigitalTwinTypes = new HashSet<>();
 			
 			Set<PropertyDigitalTwinType> propertyDigitalTwinTypes = new HashSet<>();
 			Set<ActionsDigitalTwinType> actionDigitalTwinTypes = new HashSet<>();
@@ -280,7 +207,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 			}				
 			
 		} catch (Exception e) {
-			throw new OntologyServiceException("Problems creating the digital twin type", e);
+			throw new DigitalTwinServiceException("Problems creating the digital twin type", e);
 		}
 	}
 	
