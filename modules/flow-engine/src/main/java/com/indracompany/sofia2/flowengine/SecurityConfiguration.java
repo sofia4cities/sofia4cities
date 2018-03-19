@@ -34,13 +34,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				// by default uses a Bean by the name of corsConfigurationSource
 				.cors().and()
 				// we don't need CSRF because our token is invulnerable
-				.csrf().disable()
-
-				.authorizeRequests()
-
+				.csrf().disable().authorizeRequests()
 				// allow anonymous resource requests
+				.anyRequest().permitAll().antMatchers("/health/", "/info", "/metrics", "/trace", "/api").permitAll();
 
-				.anyRequest().permitAll();
 		// Custom JWT based security filter
 
 		// disable page caching

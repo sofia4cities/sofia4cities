@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.config.services.apimanager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import com.indracompany.sofia2.config.model.ApiAuthenticationParameter;
 import com.indracompany.sofia2.config.model.ApiHeader;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.config.model.ApiQueryParameter;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.repository.ApiAuthenticationAttributeRepository;
@@ -82,9 +84,10 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	@Autowired
 	ServiceUtils serviceUtils;
 	
-	public List<Api> loadAPISByFilter(String apiId, String state, String userId) {
+	public List<Api> loadAPISByFilter(String apiId, String state, String userId, String loggeduser) {
 		List<Api> apis = null;
 		// Gets context User
+		User user = this.userService.getUser(loggeduser);
 		if ((apiId==null || "".equals(apiId)) && (state==null || "".equals(state)) && (userId==null || "".equals(userId))) {
 			apis = apiRepository.findAll();
 		} else if (state==null || "".equals(state)){
@@ -92,7 +95,23 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		} else {
 			apis = apiRepository.findApisByIdentificationOrStateOrUser(apiId, Api.ApiStates.valueOf(state), userId);
 		}
+		
+		apis = filterApisByUserAndState(apis, user);
+		
 		return apis;
+	}
+
+	private List<Api> filterApisByUserAndState(List<Api> apis, User user) {
+		List<Api> filteredApis = new ArrayList<Api>();
+		for (Api api : apis) {
+			if ((user.getRole().getName().equals(Role.Type.ROLE_ADMINISTRATOR.name())) || 
+				(api.getUser().equals(user)) ||
+				(!(api.getState().equals(Api.ApiStates.CREATED) || api.getState().equals(Api.ApiStates.DELETED)))){
+				
+					filteredApis.add(api);
+			}
+		}
+		return filteredApis;
 	}
 
 	@Override

@@ -198,7 +198,7 @@ public class GadgetDatasourceController {
 				int indexInit = query.toLowerCase().indexOf("from") + 4;
 				String aux = query.substring(indexInit);
 				String ontology = aux.trim().split(" ")[0]; 
-				return queryToolService.querySQLAsJson(this.utils.getUserId(),"", sampleQuery, 0);
+				return queryToolService.querySQLAsJson(this.utils.getUserId(),ontology, sampleQuery, 0);
 			}
 			else{
 				return "403";

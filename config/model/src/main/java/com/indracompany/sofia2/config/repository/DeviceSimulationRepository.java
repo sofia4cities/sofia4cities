@@ -36,4 +36,6 @@ public interface DeviceSimulationRepository extends JpaRepository<DeviceSimulati
 
 	void deleteById(String id);
 
+	DeviceSimulation findByJobName(String jobName);
+
 }
