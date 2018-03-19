@@ -1,7 +1,7 @@
 module.exports = function(RED) {
 	"use strict";
-	var device = require('../lib/deviceMQTT');
-	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator')
+	var device = require('../libraries/deviceMQTT');
+	var ssapMessageGenerator = require('../libraries/SSAPMessageGenerator')
 	var waitUntil = require('wait-until');
 
 	//Invoques constructor on deploy

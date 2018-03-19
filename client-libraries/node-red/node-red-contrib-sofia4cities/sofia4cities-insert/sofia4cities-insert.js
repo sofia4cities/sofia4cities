@@ -1,7 +1,7 @@
 module.exports = function(RED) {
-	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator');
-	var kp = require('../lib/deviceMQTT');
-	var ssapResourceGenerator = require('../lib/SSAPResourceGenerator');
+	var ssapMessageGenerator = require('../libraries/SSAPMessageGenerator');
+	var kp = require('../libraries/deviceMQTT');
+	var ssapResourceGenerator = require('../libraries/SSAPResourceGenerator');
 	var http = null;
 	var isHttps = false;
 

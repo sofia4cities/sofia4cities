@@ -1,7 +1,7 @@
 module.exports = function(RED) {
-	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator');
+	var ssapMessageGenerator = require('../libraries/SSAPMessageGenerator');
 	var sofia2Config = require('../sofia4cities-connection-config/sofia4cities-connection-config');
-	var ssapResourceGenerator = require('../lib/SSAPResourceGenerator');
+	var ssapResourceGenerator = require('../libraries/SSAPResourceGenerator');
 	var http = null;
 	var isHttps = false;
 
