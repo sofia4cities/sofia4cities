@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+
 public class RequestDumpUtil {
 
     private static final String INDENT = "\t";
@@ -55,6 +58,15 @@ public class RequestDumpUtil {
     	return value;
     	
     }
+  
+  public static String extractJWTToken(HttpServletRequest request) {
+		String authorization = request.getHeader("Authorization");
+		if (authorization != null && authorization.contains("Bearer")) {
+			String tokenId = authorization.substring("Bearer".length() + 1);
+			return tokenId;
+		}
+		else return "";
+	}
     
  public static String getContentType(HttpServletRequest request ) {
     	

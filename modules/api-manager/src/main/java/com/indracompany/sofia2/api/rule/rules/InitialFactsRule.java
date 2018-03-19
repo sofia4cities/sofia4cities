@@ -63,6 +63,8 @@ public class InitialFactsRule {
 
 		String headerToken = RequestDumpUtil.getValue(ApiServiceInterface.AUTHENTICATION_HEADER, request);
 		
+		String jwtToken = RequestDumpUtil.extractJWTToken(request);
+		
 		headerToken = Optional.ofNullable(headerToken).orElse("");
 		
 		String method = request.getMethod();
@@ -84,6 +86,7 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.CONTENT_TYPE_INPUT, contentTypeInput);
 		data.put(ApiServiceInterface.CONTENT_TYPE_OUTPUT, contentTypeOutput);
 		data.put(ApiServiceInterface.CACHEABLE, cacheable);
+		data.put(ApiServiceInterface.JWT_TOKEN, jwtToken);
 		
 		facts.put(RuleManager.ACTION, method);
 		
