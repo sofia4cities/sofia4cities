@@ -47,7 +47,15 @@ public class JWTService {
 		Authentication au = authentication.getUserAuthentication();
 		Object principal = authentication.getPrincipal();
 		
-		return authentication.getUserAuthentication().getName();
+		return (String)principal;
+	}
+	
+	public Object extractTokenPrincipal(String tokenId) {
+		OAuth2Authentication  authentication = tokenServices.loadAuthentication(tokenId);
+		Authentication au = authentication.getUserAuthentication();
+		Object principal = authentication.getPrincipal();
+		
+		return principal;
 	}
 
 }

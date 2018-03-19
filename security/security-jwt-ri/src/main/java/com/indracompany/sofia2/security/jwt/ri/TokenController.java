@@ -28,6 +28,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -64,9 +65,9 @@ public class TokenController {
         return tokenId;
     }
     
-    @RequestMapping(method = RequestMethod.GET, value = "/tokens/{tokenId}")
+    @RequestMapping(method = RequestMethod.POST, value = "/tokens/")
     @ResponseBody
-    public void tokenInfo(HttpServletRequest request, @PathVariable String tokenId) {
+    public void tokenInfo(HttpServletRequest request, @RequestBody String tokenId) {
     	jwtTokenService.extractToken(tokenId);
     }
 
