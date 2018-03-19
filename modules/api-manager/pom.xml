@@ -121,12 +121,17 @@
 			<version>${sofia2.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-security-jwt-server-ri</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+
 		<!-- JSON -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 		</dependency>
-
 
 		<!-- camel -->
 		<dependency>
@@ -192,13 +197,11 @@
 			<version>${version.prometheus}</version>
 		</dependency>
 
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>24.0-jre</version>
 		</dependency>
-
 
 	</dependencies>
 

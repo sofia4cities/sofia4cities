@@ -4,9 +4,9 @@ sofia2:
     integration:
       iot-broker:
         base:
-          url: http://localhost:8081/
+          url: http://iotbrokerservice:8081/
         advice:
-          url: http://localhost:8081/iotbroker/advice
+          url: http://iotbrokerservice:8081/iotbroker/advice
       scripting-engine:
         base:
           url: 
