@@ -18,8 +18,7 @@ module.exports = function(RED) {
 				var protocol = server.protocol;
 				if(protocol.toUpperCase() == "MQTT".toUpperCase()){
 					var queryLeave = ssapMessageGenerator.generateLeaveMessage(server.sessionKey);
-					console.log("[ info ] queryLeave: "+ queryLeave);
-
+					console.log("Using query:"+queryLeave);
 					var state = server.sendToSib(queryLeave);
 					console.log("SessionKey leaved: " + server.sessionKey);
 					server.sessionKey=""; // TODO mover mas abajo, para cuando haya respuesta.

@@ -1,17 +1,17 @@
 module.exports = function(RED) {
 	"use strict";
-	var kp = require('../lib/kpMQTT');
+	var device = require('../lib/deviceMQTT');
 	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator')
 	var waitUntil = require('wait-until');
 
-	//Invoca al constructor al desplegar el flujo
+	//Invoques constructor on deploy
     function SofiaConfig(n) {
 
-        RED.nodes.createNode(this,n);
-	this.on('close', function () {
-		console.log('Closing MQTT connection...');
-		myKp.disconnect();
-		console.log("Connection closed.");
+    RED.nodes.createNode(this,n);
+		this.on('close', function () {
+			console.log('Closing MQTT connection...');
+			myDevice.disconnect();
+			console.log("Connection closed.");
 	});
 
     this.protocol=n.protocol;
@@ -24,7 +24,7 @@ module.exports = function(RED) {
 		node.sessionKey="";
 		node.connected=false;
 
-		var myKp;
+		var myDevice;
 
 		//Para detener el intervalo de renovación de sesión
 		var testConnectionInterval;
@@ -35,17 +35,17 @@ module.exports = function(RED) {
 			this.ip=n.ip;
 			this.port=n.port;
 			console.log(this.ip + ":" + this.port);
-			myKp = new kp.KpMQTT();
+			myDevice = new device.deviceMQTT();
 
 			console.log("MQTT: Trying to connect on: "+this.ip+":"+this.port);
 
 			//Connect to the SIB
-			myKp.connect(this.ip, this.port);
+			myDevice.connect(this.ip, this.port);
 
-			//Chequea 5 veces con un intervarlo de x segundos si se ha conectado (En definitiva 5 segundos que es el connection timeout del kpMQTT)
+			//Chequea 5 veces con un intervarlo de x segundos si se ha conectado (En definitiva 5 segundos que es el connection timeout del deviceMQTT)
 			waitUntil(1000, 5,
 						function condition() {
-							return myKp.isConnected();
+							return myDevice.isConnected();
 						},
 						function done(result) {
 							if(result){//Está conectado
@@ -58,13 +58,13 @@ module.exports = function(RED) {
 			);
 
 			testConnectionInterval= setInterval( function() {
-				if (myKp != null && typeof(myKp) != "undefined")  {
-					if (!myKp.isConnected()) {
+				if (myDevice != null && typeof(myDevice) != "undefined")  {
+					if (!myDevice.isConnected()) {
 						node.log("Physic reconnection");
-						myKp.connect(node.ip, node.port);
+						myDevice.connect(node.ip, node.port);
 						waitUntil(1000, 5,
 							function condition() {
-								return myKp.isConnected();
+								return myDevice.isConnected();
 							},
 							function done(result) {
 								if(result){//Está conectado
@@ -93,7 +93,7 @@ module.exports = function(RED) {
 
 		function generateSession () {
 			console.log("The sessionKey is going to be generated...")
-			if(typeof(myKp) != "undefined"){
+			if(typeof(myDevice) != "undefined"){
 				var ssapMessageJOIN;
 
 				if( typeof(node.sessionKey)=="undefined" || node.sessionKey==""){
@@ -105,7 +105,7 @@ module.exports = function(RED) {
 					ssapMessageJOIN = ssapMessageGenerator.generateJoinRenovateByTokenMessage(node.token, node.device, node.instance, node.sessionKey );
 				}
 				console.log(ssapMessageJOIN);
-				myKp.send(ssapMessageJOIN)
+				myDevice.send(ssapMessageJOIN)
 					.then(function(joinResponse) {
 						console.log('Response body: ' + JSON.stringify(joinResponse));
 						if (joinResponse.sessionKey !== null) {
@@ -127,7 +127,7 @@ module.exports = function(RED) {
 		}
 
 		function setNotification(func, subscribeId){
-			myKp.setNotificationCallback(func, subscribeId);
+			myDevice.setNotificationCallback(func, subscribeId);
 		}
 		node.setNotification=setNotification;
 		node.generateSession=generateSession;
@@ -147,7 +147,7 @@ module.exports = function(RED) {
 					var body = JSON.parse(response.body);
 					if(body.ok){
 						console.log("The message is send.");
-						myKp.disconnect();
+						myDevice.disconnect();
 					}else{
 						console.log("Error sendind the leave SSAP message.");
 						if(body.errorCode == "AUTHENTICATION"){
@@ -162,8 +162,8 @@ module.exports = function(RED) {
 
 		//Envia un mensaje al SIB
 		this.sendToSib=function(msg) {
-		  if(typeof(myKp) != "undefined"){
-			return myKp.send(msg);
+		  if(typeof(myDevice) != "undefined"){
+			return myDevice.send(msg);
 		  }
 		}
 		//Devuelve la sessionkey de la conexión

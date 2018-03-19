@@ -1,6 +1,6 @@
 module.exports = function(RED) {
 	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator');
-	var kp = require('../lib/kpMQTT');
+	var kp = require('../lib/deviceMQTT');
 	var ssapResourceGenerator = require('../lib/SSAPResourceGenerator');
 	var http = null;
 	var isHttps = false;
@@ -25,8 +25,6 @@ module.exports = function(RED) {
 
 			if (server) {
 				var protocol = server.protocol;
-				console.log("Using protocol:"+protocol);
-				console.log("Using ontology:"+ontologia);
 
 				if(protocol.toUpperCase() == "MQTT".toUpperCase()){
 					if (server.sessionKey==null || server.sessionKey=="")			 {
@@ -40,7 +38,7 @@ module.exports = function(RED) {
 
 					var state = server.sendToSib(queryInsert);
 					if(typeof(state)=="undefined" || state==""){
-						console.log("There are not response for the query send.");
+						console.log("There's no response for the query send.");
 					}else{
 						state.then(function(response){
 							var body = response.body;

@@ -10,6 +10,7 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
 
 		var node = this;
+		this.deleteType = n.deleteType;
 		this.ontology = n.ontology;
 		this.query = n.query;
 		this.queryType = n.queryType;
@@ -18,6 +19,7 @@ module.exports = function(RED) {
 		var server = RED.nodes.getNode(n.server);
 
 		this.on('input', function(msg) {
+			var deleteType="";
 			var ontologia="";
 			var queryType="";
 			var query="";
@@ -33,18 +35,23 @@ module.exports = function(RED) {
 			}
 			if(this.query==""){
 			   query = msg.query;
+				 deleteType = msg.deleteType;
 			}else{
 			   query=this.query;
+				 deleteType=this.deleteType;
 			}
-			console.log("[ info ] query: "+ query);
-			console.log("[ info ] ontologia: "+ ontologia);
-			console.log("[ info ] sessionKey: "+ server.sessionKey);
 			if (server) {
 				var protocol = server.protocol;
 				if(protocol.toUpperCase() == "MQTT".toUpperCase()){
-					var queryDelete = ssapMessageGenerator.generateDeleteMessage(query, ontologia, server.sessionKey);
-					console.log("[ info ] queryDelete: "+ queryDelete);
-					
+					if (deleteType === "DELETE"){
+						var queryDelete = ssapMessageGenerator.generateDeleteMessage(query, ontologia, server.sessionKey);
+					}else if(deleteType === "DELETE_BY_ID"){
+						var queryDelete = ssapMessageGenerator.generateDeleteByIdMessage(query, ontologia, server.sessionKey);
+					}else{
+						console.log("Error: Delete message type not supported");
+					}
+					console.log("Using query:"+queryDelete);
+
 					var state = server.sendToSib(queryDelete);
 
 					state.then(function(response){
@@ -88,7 +95,7 @@ module.exports = function(RED) {
 						}
 					}
 
-					//Se prepara el mensaje delete
+					//Preparing delete message
 					var queryDelete='?$sessionKey='+server.sessionKey+'&$query='+query+'&$queryType='+queryType;
 					queryDelete = queryDelete.replace(/ /g, "+");
 
