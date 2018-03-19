@@ -1,8 +1,6 @@
 sofia2:
    database.mongodb:
-      servers: realtimedb:27017 
-   iotbroker:
-      server: http://iotbrokerservice:8081/iotbroker                  
+      servers: realtimedb:27017            
 
 spring:
    datasource:  
