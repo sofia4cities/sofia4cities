@@ -89,6 +89,7 @@
 		
 		<!--SECURITY-->		
 		<module>security/security-ui-ri</module>
+		<module>security/security-oauth2-ri</module>
 		
 		<!--PERSISTENCE-->
 		<module>persistence/interfaces</module>	
