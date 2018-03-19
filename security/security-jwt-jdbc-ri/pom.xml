@@ -58,7 +58,7 @@
 
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-security-ui-ri</artifactId>
+			<artifactId>sofia2-security-jwt-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 

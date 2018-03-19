@@ -22,10 +22,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 @Configuration
-public class AppConfig {
+public class JWTAppConfig {
     
+	private static final String SIGNING_KEY = "s1f41234pwqdqkl4l12ghg9853123sd";
+	
     @Value("${spring.datasource.url}")
     private String datasourceUrl;
     
@@ -50,4 +53,11 @@ public class AppConfig {
     public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource());
     }
+    
+    @Bean
+	public JwtAccessTokenConverter jwtAccessTokenConverter() {
+		final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+		jwtAccessTokenConverter.setSigningKey(SIGNING_KEY);
+		return jwtAccessTokenConverter;
+	}
 }

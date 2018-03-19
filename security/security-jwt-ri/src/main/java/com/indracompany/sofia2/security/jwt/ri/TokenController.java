@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -34,17 +35,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class TokenController {
 
-    @Resource(name = "tokenServices")
-    ConsumerTokenServices tokenServices;
-
     @Resource(name = "tokenStore")
     TokenStore tokenStore;
+    
+    @Autowired
+    JWTService jwtTokenService;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeById/{tokenId}")
-    @ResponseBody
-    public void revokeToken(HttpServletRequest request, @PathVariable String tokenId) {
-        tokenServices.revokeToken(tokenId);
-    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/tokens")
     @ResponseBody
@@ -66,6 +62,12 @@ public class TokenController {
             ((JdbcTokenStore) tokenStore).removeRefreshToken(tokenId);
         }
         return tokenId;
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/tokens/{tokenId}")
+    @ResponseBody
+    public void tokenInfo(HttpServletRequest request, @PathVariable String tokenId) {
+    	jwtTokenService.extractToken(tokenId);
     }
 
 }

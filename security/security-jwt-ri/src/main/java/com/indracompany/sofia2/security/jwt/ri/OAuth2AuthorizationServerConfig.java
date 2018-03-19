@@ -38,13 +38,19 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @EnableAuthorizationServer
 public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-	private static final String SIGNING_KEY = "s1f41234pwqdqkl4l12ghg9853123sd";
+	
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+	
+	@Autowired
+	private TokenStore tokenStore;
+	
+	@Autowired
+	private JwtAccessTokenConverter jwtAccessTokenConverter;
 
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -54,13 +60,13 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), jwtAccessTokenConverter()));
+		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), jwtAccessTokenConverter));
 
 		endpoints.tokenEnhancer(tokenEnhancerChain);
 		endpoints.authenticationManager(authenticationManager);
 		endpoints.userDetailsService(userDetailsService);
-		endpoints.tokenStore(tokenStore());
-		endpoints.accessTokenConverter(jwtAccessTokenConverter());
+		endpoints.tokenStore(tokenStore);
+		endpoints.accessTokenConverter(jwtAccessTokenConverter);
 
 	}
 
@@ -70,32 +76,23 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 				.authorizedGrantTypes("authorization_code", "refresh_token", "password").scopes("openid");
 	}
 
-	@Bean
-	public TokenStore tokenStore() {
-		return new JwtTokenStore(jwtAccessTokenConverter());
-	}
-
-	@Bean
-	public JwtAccessTokenConverter jwtAccessTokenConverter() {
-		final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-		jwtAccessTokenConverter.setSigningKey(SIGNING_KEY);
-		return jwtAccessTokenConverter;
-	}
 
 	@Bean
 	public TokenEnhancer tokenEnhancer() {
-		return new CustomTokenEnhancer();
+		return new Sofia2CustomTokenEnhancer();
 	}
 
 	@Bean
 	@Primary
-	public DefaultTokenServices tokenServices() {
+	public Sofia2CustomTokenService tokenServices() {
 		final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-		defaultTokenServices.setTokenStore(tokenStore());
+		defaultTokenServices.setTokenStore(tokenStore);
 		defaultTokenServices.setSupportRefreshToken(true);
 		defaultTokenServices.setReuseRefreshToken(true);
-		return defaultTokenServices;
+		
+		Sofia2CustomTokenService token=new Sofia2CustomTokenService(defaultTokenServices);
+        return token;
+
 	}
-	
 	
 }
