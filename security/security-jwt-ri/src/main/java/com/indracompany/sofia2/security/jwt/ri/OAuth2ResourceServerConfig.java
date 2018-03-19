@@ -48,15 +48,6 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
       
       @Override
       public void configure(HttpSecurity http) throws Exception {
-          http.authorizeRequests()
-          .antMatchers( 
-          		"/tokens/",
-          		"/tokens/**",
-          		"/metrics/",
-          		"/metrics/**",
-          		"/jolokia/",
-          		"/jolokia/**",
-          		"/tokeninfo/",
-          		"/tokeninfo/**").permitAll().anyRequest().authenticated(); 
+          http.authorizeRequests().anyRequest().permitAll(); 
   	}
 }

@@ -16,6 +16,7 @@ package com.indracompany.sofia2.security.oauth.ri;
 
 import java.security.Principal;
 
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,5 +32,10 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
 	public Principal user(Principal user) {
 		return user;
 	}
+	
+	 @Override
+     public void configure(HttpSecurity http) throws Exception {
+         http.authorizeRequests().anyRequest().permitAll(); 
+ 	}
 
 }
