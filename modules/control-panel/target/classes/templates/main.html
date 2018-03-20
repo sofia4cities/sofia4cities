@@ -54,6 +54,72 @@
 				
 				<!-- BEGIN PAGE -->
 				<div class="main-block mt-element-step">
+<<<<<<< HEAD
+				
+					<!-- description and elements zone -->
+					<div class="step-desc hide">
+						<i id="step-desc-close" class="la la-close pull-right" style="font-size: 18px;padding: 2px;position: inherit;right: 12px;"></i>
+						<div class="step-desc-content" style="padding-right: 15px;">
+						<table class="table table-light table-condensed" style="margin-bottom: 0;">
+							<tbody>
+								<tr>
+									<td width="3%"><i id="stepdescicon" class="flaticon-network" style="font-size: 30px; color: ghostwhite; padding: 2px;"></i></td>
+									<td id="stepdesctext" style="color: ghostwhite;" width="60%" th:text="#{flow.ontology.description}">desc...</td>
+									<td style="vertical-align: super !important;" class=""><a id="stepdesclink" type="button" href="" class="btn default btn-sm btn-outline sbold uppercase"><i id="stepdescbtn" class="fa fa-link"></i> <span>Ontologías</span></a></td>
+								</tr>
+							</tbody>
+						</table>
+
+						</div>
+
+					</div>
+					
+				
+					<div class="row step-line">					
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col first ">
+							<span onclick="showStepDesc(this,'/controlpanel/ontologies/list','flaticon-network','ontologyDesc')" class="btn mt-step-number font-grey" th:classappend="${hasOntology} ? bg-green : bg-red">
+							  <i class="flaticon-network"></i> 
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel" ><span th:text="#{flow.ontology}">Modela el dato</span> <i class="fa fa-angle-down font-grey-mint font-lg bold hide"></i></div>
+							<div id="ontologyDesc" class="hide" th:text="#{flow.ontology.description}">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
+							<span onclick="showStepDesc(this,'/controlpanel/devices/list','flaticon-share','deviceDesc')"  class="btn mt-step-number font-grey" th:classappend="${hasDevice} ? bg-green : bg-red">
+							  <i class="flaticon-share"></i> 
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel"><span th:text="#{flow.device}">Crea tu device</span> <i class="fa fa-angle-down font-grey-mint font-lg bold hide"></i></div>
+							<div id="deviceDesc" class="hide" th:text="#{flow.device.description}">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
+							<span  onclick="showStepDesc(this,'/controlpanel/devicesimulation/list','flaticon-analytics','flowDesc')" class="btn mt-step-number font-grey" th:classappend="${hasSimulation} ? bg-green : bg-red">
+							  <i class="flaticon-analytics "></i>
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel"><span th:text="#{flow.simulate}">Simula y prueba</span> <i class="fa fa-angle-down font-grey-mint font-lg bold hide"></i></div>
+							<div id="flowDesc" class="hide" th:text="#{flow.simulate.description}">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
+							<span onclick="showStepDesc(this,'/controlpanel/dashboards/list','flaticon-dashboard','dashboardDesc')" class="btn mt-step-number font-grey" th:classappend="${hasDashboard} ? bg-green : bg-red">
+							  <i class="flaticon-dashboard"></i> 
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel" ><span th:text="#{flow.visualize}">Visualiza</span> <i class="fa fa-angle-down font-grey-mint font-lg bold hide"></i></div>
+							<div id="dashboardDesc" class="hide" th:text="#{flow.visualize.description}">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col ">
+							<span onclick="showStepDesc(this,'/controlpanel/devices/list','flaticon-multimedia-1','connectDesc')" class="btn mt-step-number bg-blue font-grey">
+							  <i class="flaticon-multimedia-1"></i> 
+							</span>
+							<div class="mt-step-title uppercase bold font-grey-steel" ><span th:text="#{flow.connect}">Conecta tu Dispositivo</span> <i class="fa fa-angle-down font-grey-mint font-lg bold hide"></i></div>
+							<div id="connectDesc" class="hide" th:text="#{flow.connect.description}">...</div>
+						</div>
+						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col last">
+							<span onclick="showStepDesc(this,'/controlpanel/apimanager/list','flaticon-layers','apiDesc')" class="btn mt-step-number font-grey-steel" th:classappend="${hasApi} ? bg-green : bg-red">
+							  <i class="flaticon-layers"></i>  
+							</span>
+							<div class="mt-step-title uppercase font-grey-steel"><span th:text="#{flow.api}"> Crea tu API</span> <i class="fa fa-angle-down font-grey-mint font-lg bold hide"></i></div>
+							<div id="apiDesc" class="hide" th:text="#{flow.api.description}">...</div>
+						</div>
+						<div class="pull-right"><span class="btn btn-icon-only purple-studio hide-main-block"><i class="fa fa-eye-slash"></i></span></div>
+=======
 					<div class="row step-line">					
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col first ">
 							<div class="mt-step-title uppercase bold font-grey-steel" th:text="#{flow.ontology}">Modela el dato</div>
@@ -152,6 +218,7 @@
 							</div>
 						</div>
 						<!--<div class="pull-right"><span class="btn btn-icon-only purple-studio hide-main-block"><i class="fa fa-eye-slash"></i></span></div>-->
+>>>>>>> 5987baa36cad239898ff9d64f321bfc526a087b8
 					</div>
 				</div>
 				<div class="main-block-toggle hide"><span class="btn btn-icon-only dark"><i class="fa fa-eye"></i></span></div>
@@ -187,8 +254,53 @@
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	function navigateUrl(url){  window.location.href = url;	}
+<<<<<<< HEAD
+	var showLog = 0; // console.log toggle	
+    //<![CDATA[ 	
+	var lastOne = '';	
+	function showStepDesc(obj,link,icon,descId){
+		
+		var stepDesc = $('.step-desc');
+		
+		
+		// FILL DESC AND SHOW
+		$('#stepdescicon').attr('class',icon);		
+		$('#stepdesclink').attr('href',link); 
+		$('#stepdesclink span').text($(obj).next().find('span').text());		
+		$('#stepdescbtn').attr('class',icon);
+		$('#stepdesctext').text($('#'+descId).text());		
+		
+		// if its open closeIt
+		if ((lastOne != descId)&&(lastOne != '')&&(stepDesc.hasClass('hide') !== true )){ 			
+			//get the selected quit animation and anime this one.
+			$('.step-selected').next().removeClass('font-grey-mint').addClass('font-grey-steel').find('i').addClass('hide');
+			$('.step-selected').removeClass('step-selected');	
+			$(obj).addClass('step-selected');
+			$(obj).next().removeClass('font-grey-steel').addClass('font-grey-mint').find('i').removeClass('hide');
+			lastOne = descId; return; 
+		}
+
+		if (stepDesc.hasClass('hide') === true ){
+			// FADEIN DESC			
+			$(obj).addClass('step-selected');
+			$(obj).next().removeClass('font-grey-steel').addClass('font-grey-mint').find('i').removeClass('hide');
+			$('.main-block').animate({ "padding-bottom": "60px"});
+			stepDesc.removeClass('hide').fadeIn();			
+		} 
+		else {
+			// FADEOUT DESC
+			$(obj).removeClass('step-selected');
+			$(obj).next().removeClass('font-grey-mint').addClass('font-grey-steel').find('i').addClass('hide');
+			stepDesc.fadeOut();
+			$('.main-block').animate({ "padding-bottom": "0px"});
+			stepDesc.addClass('hide');
+		}
+		lastOne = descId;
+	}		
+=======
 	var showLog = 0; // console.log toggle
     //<![CDATA[ 	
+>>>>>>> 5987baa36cad239898ff9d64f321bfc526a087b8
 		
 	// MAIN WHEN READY
 	$( document ).ready(function() {
@@ -205,6 +317,25 @@
 		
 		
 		// toogle info zone
+<<<<<<< HEAD
+		$('.hide-main-block').on('click', function(){			
+			$('.main-block').slideUp('slow',function(){ $('.main-block-toggle').removeClass('hide'); }); 
+			$('.hide-main-block').addClass('hide');		
+		});
+		
+		$('.main-block-toggle').on('click', function(){
+			$('.main-block-toggle').addClass('hide');
+			$('.main-block').slideDown('slow', function(){ $('.hide-main-block').removeClass('hide'); }); 
+		});
+		
+		$('#step-desc-close').on('click',function(){ 
+			$('.step-desc').fadeOut(); $('.step-desc').addClass('hide');
+			$('.step-selected').next().removeClass('font-grey-mint').addClass('font-grey-steel').find('i').addClass('hide');
+			$('.step-selected').removeClass('step-selected');
+			// animate zone
+			$('.main-block').animate({ "padding-bottom": "0px"});
+		});		
+=======
 		$('.hide-main-block').on('click', function(){
 			var mainIsVisible = $(".main-block").is(":visible");
 			console.log('VISIBLE: ' + mainIsVisible);
@@ -221,6 +352,7 @@
 			
 		});
 		
+>>>>>>> 5987baa36cad239898ff9d64f321bfc526a087b8
 		
 	});
 	 
@@ -228,6 +360,10 @@
 	$(window).load(function(){  
 		// init on load.		
 		showLog ? console.log('INDEX load()...') : '';
+<<<<<<< HEAD
+		
+=======
+>>>>>>> 5987baa36cad239898ff9d64f321bfc526a087b8
 	});
 	
 	//]]>
