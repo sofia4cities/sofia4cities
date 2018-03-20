@@ -14,6 +14,7 @@
  */
 package com.indracompany.sofia2.security.jwt.ri;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -25,7 +26,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 public class JWTAppConfig {
 	
-	private static final String SIGNING_KEY = "s1f41234pwqdqkl4l12ghg9853123sd";
+	@Value("${security.signing-key}")
+	private String signingKey;
     
 	@Bean
 	public TokenStore tokenStore() {
@@ -35,7 +37,7 @@ public class JWTAppConfig {
 	@Bean
 	public JwtAccessTokenConverter jwtAccessTokenConverter() {
 		final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-		jwtAccessTokenConverter.setSigningKey(SIGNING_KEY);
+		jwtAccessTokenConverter.setSigningKey(signingKey);
 		return jwtAccessTokenConverter;
 	}
 	
