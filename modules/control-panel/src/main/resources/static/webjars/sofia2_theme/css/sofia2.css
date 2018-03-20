@@ -817,11 +817,11 @@ box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
  }
  
 .main-block{
-background: #564FC1;
+/*background: #564FC1;*/
 padding: 30px 30px 0px 30px;
  margin-left: -20px;margin-right: -20px;
-background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
-background: linear-gradient(to right, #75b8f3, #9353e6);
+/*background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
+background: linear-gradient(to right, #75b8f3, #9353e6);*/
 } 
  
 /*** APIMANAGER OPERATIONS  ***/ 
