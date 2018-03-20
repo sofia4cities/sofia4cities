@@ -10,6 +10,7 @@ var GadgetsTemplateCreateController = function() {
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
 	
+	var navigateUrl = function(url){ window.location.href = url; }
 	// DELETE GADGET
 	var deleteGadgetTemplateConfirmation = function(gadgetTemplateId){
 		console.log('deleteGadgetConfirmation() -> formId: '+ gadgetTemplateId);
@@ -17,10 +18,38 @@ var GadgetsTemplateCreateController = function() {
 		// no Id no fun!
 		if ( !gadgetTemplateId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO GATGET TEMPLATE SELECTED!'}); return false; }
 		
-		logControl ? console.log('deleteGadgetConfirmation() -> formAction: ' + $('.delete-gadget').attr('action') + ' ID: ' + $('.delete-gadget').attr('userId')) : '';
+		logControl ? console.log('deleteGadgetTemplateConfirmation() -> formAction: ' + $('.delete-gadget').attr('action') + ' ID: ' + $('.delete-gadget').attr('userId')) : '';
 		
 		// call user Confirm at header.
-		HeaderController.showConfirmDialogGadget('delete_gadget_template_form');	
+		HeaderController.showConfirmDialogGadgetTemplate('delete_gadget_template_form');	
+	}
+	
+	// INIT CODEMIRROR
+	var handleCodeMirror = function () {
+		logControl ? console.log('handleCodeMirror() on -> templateCode') : '';	
+		
+        var myTextArea = document.getElementById('templateCode');
+        var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "code",
+            lineNumbers: true,
+            foldGutter: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",         
+
+        })
+		myCodeMirror.setSize("100%", 350);
+        myCodeMirror.on('change',editor => { var scope = angular.element(document.getElementsByTagName('livehtml')[0]).scope();
+		  scope.$$childHead.vm.livecontent=editor.getValue();
+          scope.$$childHead.vm.$onChanges([]);          
+        });    
+    }
+	
+	var updatePreview = function (){
+		var scope = angular.element(document.getElementsByTagName('livehtml')[0]).scope();
+		scope.$$childHead.vm.livecontent=$('#templateCode').val();
+        scope.$$childHead.vm.$onChanges([]);  
+		
 	}
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
@@ -34,6 +63,8 @@ var GadgetsTemplateCreateController = function() {
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
+			handleCodeMirror();
+		//	updatePreview();
 		},
 		
 		// REDIRECT
@@ -41,7 +72,9 @@ var GadgetsTemplateCreateController = function() {
 			logControl ? console.log(LIB_TITLE + ': go()') : '';	
 			navigateUrl(url); 
 		},
-		
+		updatePreview: function(){
+			updatePreview();
+		},
 		// DELETE GADGET DATASOURCE 
 		deleteGadgetTemplate: function(gadgetId){
 			logControl ? console.log(LIB_TITLE + ': deleteGadget()') : '';	
