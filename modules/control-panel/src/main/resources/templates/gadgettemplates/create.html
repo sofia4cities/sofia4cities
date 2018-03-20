@@ -1,0 +1,323 @@
+
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org" th:with="lang=${#locale.language}" th:lang="${lang}">
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+	    <meta name="description" content="Gadget list template"/>
+		<meta name="keywords" content="sofia2,smart,cities,platform,Indra"/>
+		<meta name="author" content="Indra Sistemas, S.A."/>
+		
+		<!-- BEGIN WEB FONT -->
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+		
+		<script>
+		    window.__env = window.__env || {};
+		    window.__env.socketEndpointConnect = '/dashboardengine/dsengine/solver';
+		    window.__env.socketEndpointSend = '/dsengine/solver';
+		    window.__env.socketEndpointSubscribe = '/dsengine/broker';
+		    window.__env.endpointSofia2ControlPanel = '/controlpanel';
+		    window.__env.endpointSofia2DashboardEngine = '/dashboardengine';
+		    window.__env.dashboardEngineUsername = 'administrator';
+		    window.__env.dashboardEnginePassword = 'changeIt!';
+		    window.__env.dashboardEngineLoginRest = '/loginRest';
+		    window.__env.enableDebug = false;
+		
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- <link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/gadgets.css}"/> -->
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+		
+		<!-- PLUGINS STYLE SHEETS -->
+			
+		<!-- Dashboard styles -->		
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/vendor.css"/>	
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/gridster.css"/>
+		<link rel="stylesheet" href="/controlpanel/static/dashboards/styles/app.css"/>
+		
+		<style>
+		md-progress-circular { display: hide; visibility: hidden; }
+		</style>
+	</head>	
+	
+	<!-- page-sidebar-closed to start page with collapsed menu -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>		
+			
+		<!-- BEGIN SIDEBAR -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+		
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE HEADER-->
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM -->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>						
+						<li><a th:href="@{/gadgettemplates/list}"> <span th:text="#{gadgettemplates.my}">My Gadgets</span></a><i class="fa fa-circle"></i> </li>
+						<li><span th:text="#{gadgettemplates.create}">Create Gadget Template</span></li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{gadgettemplates.create}">Create Gadget Template</span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">
+					
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-list font-grey-gallery"></i>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{gadgettemplates.create}" > Create Gadget Template </span>
+									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+								</div>									
+								<div class="tools">
+									<!--  <a href="" class="collapse" data-original-title="" title=""> </a>-->
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>
+								
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone">
+										<!-- ALERT ZONE -->																			
+									</div>		
+									<div class="col-md-12 margin-bottom-20">									
+										<form role="form" id="gadget_create_form" th:object="${gadgetTemplate}" method="post" class="form">
+									  		<!-- FORM ACTIONS FOR INSERT-->
+											<input th:if="${gadgetTemplate.id} == null" type="hidden" name="action" th:value="@{/gadgettemplates/create}"/>
+											
+											<!-- FORM ACTIONS FOR UPDATE -->											
+											<input th:if="${gadgetTemplate.id} != null" type="hidden" name="action" th:value="@{/gadgettemplates/update}"/>
+											<input th:if="${gadgetTemplate.id} != null" type="hidden" name="_method" value="PUT"/>								 			
+								 			<input type="hidden" id="template" th:field="*{template}"/>								 			
+								 			<input type="hidden" id="description" th:field="*{description}"/>
+								 			<input type="hidden" id="public" th:field="*{public}"/>
+								 			<input type="hidden" id="id" th:field="*{id}"/>
+								 			
+								 										  
+											<div class="form-body">
+									 			<div class="row">
+													<div class="col-md-12"> 
+														<div class=" hidden alert alert-info alert-dismissable">
+															<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+															<i class="fa fa-info-circle"></i> <strong>Plantilla de Ontología</strong> 
+															<span>Para crear una ontología, debe partir de un Datamodel esquema, que no es más qeu un conjunto de campos que definen su ontología. Si quiere usar alguna de las que le proponemos, seleccionela del siguiente selector. Puede usar EMPYBASE si quiere hacer el esquema desde 0.</span>															
+														</div>
+													</div>												
+													<div class="col-md-6 col-sm-12">
+														<div class="form-group">
+															<i class="fa fa-credit-card"></i>  <label class="control-label"  th:text="#{gadgettemplates.identification} + ':'">Identification</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="identification" type="text" name="identification"  th:required="true"   maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{gadgettemplates.identification}" />
+															</div>
+														</div>
+													</div>	
+													<div class="col-md-6 col-sm-12">														
+														<div class="form-group">
+															<i class="fa fa-credit-card"></i>  <label class="control-label"  th:text="#{gadgettemplates.description} + ':'">Description</label>
+															<div class="input-icon ">
+																<i class="fa fa-credit-card"></i>
+																<input id="description" type="text" name="description"  th:required="true"   maxlength="50" th:field="*{description}" class="form-control " th:placeholder="#{gadgettemplates.description}" />
+															</div>
+														</div>
+													</div>													
+													<div class="clearfix"></div>													
+												</div>
+												
+											
+												
+												<!-- VIEWER -->
+												
+												<div id="viewer" class="col-md-offset-1 col-md-10 col-xs-12 bg-grey-carrara" style="border: 2px dotted #f5f5f5; padding: 10px 15px 10px 15px">
+													<div id="gapp" ng-app="s2DashboardFramework">
+													<gadget style="height:300px;width:100%;display:inline-block" class="flex layout-column"></gadget>
+													</div>
+												</div>
+												<div class="clearfix"></div>
+												<div style="margin-top:20px" class="form-actions">
+													<div class="pull-right">
+														<!-- CREATE -->
+															<button th:if="${gadgetTemplate.identification} == null" id="createBtn" type="submit" class="btn btn-square btn-success " name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+														<!-- UPDATE -->
+															<button th:if="${gadgetTemplate.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+																
+														<!-- REMOVE -->
+															<button th:if="${gadgetTemplate.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'GadgetsTemplateCreateController.deleteGadgetTemplate(\'' + ${gadgetTemplate.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+															
+															<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+													
+														<!-- CANCEL  -->
+														<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:GadgetsTemplateCreateController.go(\'' + @{/gadgettemplates/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													</div>
+												</div>
+											</div>
+										</form>					
+
+										<!-- AUXILIAR FORM TO DELETE DATASOURCE -->
+										<form id="delete_gadget_template_form" class="delete-gadget hide"  th:action="@{'/gadgettemplates/'+${gadgetTemplate.id}}"  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="id" th:value="${gadgetTemplate.id}"/>
+										</form>																	
+									</div>
+								</div>
+							</div>
+						</div>  <!-- END PORTLET BASIC LIGHT -->							
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->				
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	  </div>
+	 
+</body>
+
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>	
+	
+	<!-- CORE CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->	
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/muuri/0.5.4/muuri.min.js"></script>
+	
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/gadgetTemplatesCreate.js}"/>
+	
+	
+	<script src="/controlpanel/static/dashboards/scripts/vendor.js"></script>										
+	<script src="/controlpanel/static/dashboards/gridster.js"></script>
+	
+	<!-- Angular Material Fileinput -->
+	<link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/>
+	<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>
+	<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
+	
+	<script th:inline="javascript">
+	
+	 $("#createBtn,#updateBtn").on("click", function() {
+		// <![CDATA[
+			
+	 //generateMeasuresArray();
+		
+     //	$("#jsonMeasures").val(JSON.stringify(measures));
+     //	$("#datasourcesMeasures").val(JSON.stringify([$("#datasources").val()]));
+     //	$("#type").val(gtype);
+     //	$("#config").val("{}");
+     	$("#gadget_create_form").get(0).submit();
+     });
+	
+	
+	
+	function iterate(obj, stack, fields) {
+    	for (var property in obj) {
+           if (obj.hasOwnProperty(property)) {
+               if (typeof obj[property] == "object") {
+                   iterate(obj[property], stack + (stack==""?'':'.') + property, fields);
+        } else {
+                   fields.push({field:stack + (stack==""?'':'.') + property, type:typeof obj[property]});
+               }
+           }
+      	}    
+      	return fields;
+   	}
+	
+	var stt;
+	
+	
+	
+	function isNormalInteger(str) {
+	    var n = Math.floor(Number(str));
+	    return n !== Infinity && String(n) === str && n >= 0;
+	}
+	
+	
+	
+	function refreshGadget(){
+		//generateMeasuresArray();
+		//if(measures.length > 0){
+	        var scope = angular.element(document.getElementsByTagName('gadget')[0]).scope();
+	        debugger
+			scope.$$childHead.vm.config = {config:"{}",type:"livehtml"};
+	        scope.$$childHead.vm.content="hola";
+			scope.$$childHead.vm.measures = "";
+			scope.$$childHead.vm.ds = "[]";
+			scope.$$childHead.reloadContent();
+		//}
+	}
+	
+	
+	
+	
+	
+	
+	
+	// ]]>
+	$(document).ready(
+		function(){
+// 			if($("#id").val()){
+// 				measures = /*[[${measures}]]*/ [];
+// 				$("#datasources").val(measures[0].datasource.id);
+// 				$("#datasources").change();
+// 				$("#" + $("#type").val() + "").click();
+// 			}
+			
+// 			// edit mode.
+// 			if ($('#type').val() != ''){
+// 				$('#'+ $('#type').val()).addClass('bg-inverse');
+// 				$('#'+ $('#type').val()).find('a').trigger('click');
+// 				// to-do class shadows.
+			
+// 			}
+			
+			refreshGadget();
+		}
+	)
+	
+	</script>
+	
+</html> 

@@ -107,6 +107,14 @@
 				},
 				{
 					"title": {
+						"EN": "Gadget Templates",
+						"ES": "Plantillas Gadget  "
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgettemplates/list"
+				},
+				{
+					"title": {
 						"EN": "Datasources",
 						"ES": "Fuentes de datos"
 					},
