@@ -28,9 +28,10 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 
 @Configuration
 public class JWTAppConfig {
-    
-	private static final String SIGNING_KEY = "s1f41234pwqdqkl4l12ghg9853123sd";
 	
+	@Value("${security.signing-key}")
+	private String signingKey;
+    
     @Value("${spring.datasource.url}")
     private String datasourceUrl;
     
@@ -59,7 +60,7 @@ public class JWTAppConfig {
     @Bean
 	public JwtAccessTokenConverter jwtAccessTokenConverter() {
 		final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-		jwtAccessTokenConverter.setSigningKey(SIGNING_KEY);
+		jwtAccessTokenConverter.setSigningKey(signingKey);
 		return jwtAccessTokenConverter;
 	}
     
