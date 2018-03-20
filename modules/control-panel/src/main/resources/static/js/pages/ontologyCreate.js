@@ -284,7 +284,7 @@ var OntologyCreateController = function() {
                 identification:	{ minlength: 5, required: true },						
 				datamodelid:	{ required: true},
 				jsonschema:		{ required: true},
-				description:	{ required: true }
+				description:	{ minlength: 5, required: true }
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
                 success1.hide();

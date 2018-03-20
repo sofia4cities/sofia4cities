@@ -119,6 +119,7 @@ public class Ontology extends AuditableEntityWithUUID {
 
 	@Column(name = "DESCRIPTION", length = 512)
 	@Getter
+	@NotNull
 	@Setter
 	private String description;
 
