@@ -2,15 +2,6 @@
 $.extend(true, $.fn.dataTable.defaults, {
     "dom": "<'row'<'col-md-6 col-xs-12 col-sm-6 margin-bottom-10'l><'col-md-6 col-xs-12 col-sm-6 margin-bottom-10'f>r><'table-scrollable table-scrollable-borderless't><'row'<'col-md-5 col-sm-5'i><'col-md-7 col-sm-7 text-left'p>>", // default layout with horizobtal scrollable datatable
     //"dom": "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r>t<'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", // datatable layout without  horizobtal scroll(used when bootstrap dropdowns used in the datatable cells)
-    "language": {
-        "lengthMenu": " _MENU_ records ",
-        "paginate": {
-            "previous": 'Prev',
-            "next": 'Next',
-            "page": "Page",
-            "pageOf": "of"
-        }
-    },
     "pagingType": "bootstrap_number"
 });
 
