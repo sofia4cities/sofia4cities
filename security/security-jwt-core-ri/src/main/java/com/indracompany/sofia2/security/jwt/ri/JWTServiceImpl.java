@@ -21,8 +21,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.services.oauth.JWTService;
+
 @Service
-public class JWTService {
+public class JWTServiceImpl implements JWTService {
 
 	@Resource(name = "tokenServices")
 	Sofia2CustomTokenService tokenServices;
