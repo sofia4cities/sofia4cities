@@ -142,7 +142,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 			newTwitterListening.setTopics(twitterListening.getTopics());
 			newTwitterListening.setDateFrom(twitterListening.getDateFrom());
 			newTwitterListening.setDateTo(twitterListening.getDateTo());
-			newTwitterListening.setJobName(twitterListening.getJobName());
+			//newTwitterListening.setJobName(twitterListening.getJobName());
 			this.twitterListeningRepository.save(newTwitterListening);
 		}
 

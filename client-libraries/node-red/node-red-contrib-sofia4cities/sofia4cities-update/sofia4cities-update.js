@@ -1,7 +1,7 @@
 module.exports = function(RED) {
-	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator');
+	var ssapMessageGenerator = require('../libraries/SSAPMessageGenerator');
 	var sofia2Config = require('../sofia4cities-connection-config/sofia4cities-connection-config');
-	var ssapResourceGenerator = require('../lib/SSAPResourceGenerator');
+	var ssapResourceGenerator = require('../libraries/SSAPResourceGenerator');
 	var http = null;
 	var isHttps = false;
 
@@ -9,10 +9,11 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,n);
 
 		var node = this;
+		this.updateType = n.updateType;
 		this.ontology = n.ontology;
 		this.query = n.query;
 		this.queryType = n.queryType;
-
+		this.id = n.id;
 		// Retrieve the server (config) node
 		var server = RED.nodes.getNode(n.server);
 
@@ -20,6 +21,7 @@ module.exports = function(RED) {
 			var ontologia="";
 			var queryType="";
 			var query="";
+			var id="";
 			if(this.ontology==""){
 			   ontologia = msg.ontology;
 			}else{
@@ -32,13 +34,25 @@ module.exports = function(RED) {
 			}
 			if(this.query==""){
 			   query = msg.query;
+				 updateType = msg.updateType;
+				 id = msg.id;
 			}else{
 			   query=this.query;
+				 updateType = this.updateType;
+				 id = this.id;
 			}
 			if (server) {
 				var protocol = server.protocol;
 				if(protocol.toUpperCase() == "MQTT".toUpperCase()){
-					var queryUpdate = ssapMessageGenerator.generateUpdateMessage(query, ontologia, server.sessionKey);
+
+					if (updateType === "UPDATE"){
+						var queryUpdate = ssapMessageGenerator.generateUpdateMessage(query, ontologia, server.sessionKey);
+					}else if(updateType === "UPDATE_BY_ID"){
+						var queryUpdate = ssapMessageGenerator.generateUpdateByIdMessage(id, query, ontologia, server.sessionKey);
+					}else{
+						console.log("Error, update message type not supported");
+					}
+					console.log("Using query:"+queryUpdate);
 
 					var state = server.sendToSib(queryUpdate);
 

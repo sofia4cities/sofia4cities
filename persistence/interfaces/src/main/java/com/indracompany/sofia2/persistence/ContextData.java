@@ -20,7 +20,9 @@
 package com.indracompany.sofia2.persistence;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.persistence.util.CalendarAdapter;
@@ -40,6 +42,7 @@ public class ContextData implements Serializable {
 	@Getter @Setter private String clientConnection;
 	@Getter @Setter private String clientSession;
 	@Getter @Setter private String timezoneId;
+	@Getter @Setter private String timestamp;
 	
 	public ContextData() {}
 	
@@ -58,12 +61,20 @@ public class ContextData implements Serializable {
 			this.clientConnection = "";
 			this.clientSession = "";
 		}
-		
+
 		JsonNode timezoneId = node.findValue("timezoneId");
 		if (timezoneId != null) {
 			this.timezoneId = timezoneId.asText();
 		} else {
 			this.timezoneId = CalendarAdapter.getServerTimezoneId();
+		}
+		
+		JsonNode timestamp = node.findValue("timestamp");
+		if(timestamp != null) {
+			this.timestamp = timestamp.asText();
+		}else {
+		
+			this.timestamp = Calendar.getInstance(TimeZone.getTimeZone(this.timezoneId)).getTime().toString();
 		}
 	}
 	
@@ -74,6 +85,7 @@ public class ContextData implements Serializable {
 		this.clientConnection = other.clientConnection;
 		this.clientSession = other.clientSession;
 		this.timezoneId = other.timezoneId;
+		this.timestamp = other.timestamp;
 	}
 
 	
@@ -87,11 +99,12 @@ public class ContextData implements Serializable {
 				Objects.equals(this.clientPatform, that.clientPatform) && 
 				Objects.equals(this.clientConnection, that.clientConnection) && 
 				Objects.equals(this.clientSession, that.clientSession) && 
-				Objects.equals(this.timezoneId, that.timezoneId);
+				Objects.equals(this.timezoneId, that.timezoneId) &&
+				Objects.equals(this.timestamp, that.timestamp);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(user, clientPatform, clientPatformInstance, clientConnection, clientSession, timezoneId);
+		return Objects.hash(user, clientPatform, clientPatformInstance, clientConnection, clientSession, timezoneId, timestamp);
 	}
 }

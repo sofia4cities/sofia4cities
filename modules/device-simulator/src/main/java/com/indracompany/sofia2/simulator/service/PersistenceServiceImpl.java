@@ -13,7 +13,10 @@
 */
 package com.indracompany.sofia2.simulator.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -27,6 +30,8 @@ import org.springframework.http.HttpMethod;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -43,6 +48,7 @@ import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@EnableScheduling
 @Slf4j
 public class PersistenceServiceImpl implements PersistenceService {
 
@@ -54,16 +60,18 @@ public class PersistenceServiceImpl implements PersistenceService {
 	private IntegrationResourcesService intregationResourcesService;
 	private static final String UNAUTHORIZED_ONTOLOGY = "Unauthorized ontology";
 	private Map<String, String> sessionKeys;
+	private List<String> deviceBlackList;
 
 	private String iotbrokerUrl;
 
 	@PostConstruct
 	public void setUp() {
 		this.sessionKeys = new HashMap<String, String>();
-		this.iotbrokerUrl= this.intregationResourcesService.getURL("iot-broker.base.url")+"iotbroker";
+		this.iotbrokerUrl = this.intregationResourcesService.getURL("iot-broker.base.url") + "iotbroker";
+		this.deviceBlackList = new ArrayList<String>();
 	}
 
-	public void connectIotBrokerRest(String clientPlatform, String clientPlatformInstance) {
+	public void connectDeviceRest(String clientPlatform, String clientPlatformInstance) {
 		final Token token = this.tokenService.getToken(this.clientPlatformService.getByIdentification(clientPlatform));
 		final RestTemplate restTemplate = new RestTemplate();
 		final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(iotbrokerUrl + "/rest/client/join")
@@ -106,13 +114,15 @@ public class PersistenceServiceImpl implements PersistenceService {
 			if (response.path("id").isMissingNode()
 					&& response.asText().equals(PersistenceServiceImpl.UNAUTHORIZED_ONTOLOGY)) {
 				log.debug("Attemping to renew session key");
-				this.connectIotBrokerRest(clientPlatform, clientPlatformInstance);
+				this.connectDeviceRest(clientPlatform, clientPlatformInstance);
 				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 			}
-
+			// Remove from black list, as it is still sending data
+			if (this.deviceBlackList.contains(clientPlatform))
+				this.deviceBlackList.remove(clientPlatform);
 			log.debug("Device " + clientPlatformInstance);
 		} else {
-			this.connectIotBrokerRest(clientPlatform, clientPlatformInstance);
+			this.connectDeviceRest(clientPlatform, clientPlatformInstance);
 			this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 		}
 	}
@@ -129,6 +139,18 @@ public class PersistenceServiceImpl implements PersistenceService {
 				String.class);
 		this.sessionKeys.remove(identification);
 		log.info("Closed session for device " + identification);
+	}
+
+	@Scheduled(fixedDelay = 60000)
+	private void disconnectBlackListedDevices() {
+		for(Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
+			String device = iterator.next();
+			this.disconnectDeviceRest(device);
+			iterator.remove();
+		}
+		for (Map.Entry<String, String> entry : this.sessionKeys.entrySet()) {
+			this.deviceBlackList.add(entry.getKey());
+		}
 	}
 
 }

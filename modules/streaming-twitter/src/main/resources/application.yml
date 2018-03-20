@@ -1,6 +1,7 @@
 server: ## Config Web Server
    port: 18088
 spring:
+   application.name: sofia2-streaming-twitter
    boot.admin: #Spring Boot Admin Config   
       url: http://localhost:18090
       username: operations
