@@ -28,6 +28,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
+import com.indracompany.sofia2.config.model.Dashboard;
+import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
@@ -104,7 +106,8 @@ public class GraphUtil {
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, urlClientPlatform + "list", genericUserName, name,
 				utils.getUserId(), name, "suit", description, urlClientPlatform + "create"));
 
-		final List<ClientPlatform> clientPlatforms = clientPlatformRepository.findByUser(this.userService.getUser(utils.getUserId()));
+		final List<ClientPlatform> clientPlatforms = clientPlatformRepository
+				.findByUser(this.userService.getUser(utils.getUserId()));
 
 		for (final ClientPlatform clientPlatform : clientPlatforms) {
 			// Creación de enlaces
@@ -119,9 +122,9 @@ public class GraphUtil {
 					final Ontology ontology = clientPlatformOntology.getOntology();
 					// Crea link entre ontologia y clientPlatform
 					arrayLinks
-					.add(new GraphDTO(ontology.getId(), clientPlatform.getId(), urlOntology + ontology.getId(),
-							urlClientPlatform + clientPlatform.getId(), "ontology", "clientplatform",
-							ontology.getIdentification(), clientPlatform.getIdentification(), "licensing"));
+							.add(new GraphDTO(ontology.getId(), clientPlatform.getId(), urlOntology + ontology.getId(),
+									urlClientPlatform + clientPlatform.getId(), "ontology", "clientplatform",
+									ontology.getIdentification(), clientPlatform.getIdentification(), "licensing"));
 				}
 			}
 		}
@@ -131,7 +134,7 @@ public class GraphUtil {
 	private List<GraphDTO> constructGraphWithGadgets(String visualizationId, String visualizationName) {
 
 		final List<GraphDTO> arrayLinks = new LinkedList<>();
-		/*String name = utils.getMessage("name.gadgets", "GADGETS");
+		String name = utils.getMessage("name.gadgets", "GADGETS");
 
 		// carga de nodo gadget dependiente de visualizacion
 		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlGadget + "list", visualizationId, name,
@@ -147,43 +150,54 @@ public class GraphUtil {
 
 			}
 			gadgets.clear();
-		}*/
+		}
 		return arrayLinks;
 	}
 
 	private List<GraphDTO> constructGraphWithDashboard(String visualizationId, String visualizationName) {
 
 		final List<GraphDTO> arrayLinks = new LinkedList<>();
-		/*String name = utils.getMessage("name.dashboards", "DASHBOARDS");
+		String name = utils.getMessage("name.dashboards", "DASHBOARDS");
 
 		arrayLinks.add(new GraphDTO(visualizationId, name, null, urlDashboard + "list", visualizationId, name,
-				visualizationName, name, "suit", null, urlDashboard + "creategroup?"));
+				visualizationName, name, "suit", null, urlDashboard + "create"));
 
-		// dashboardTipo---> son los dashboard
-		List<DashboardType> dashboardTypes = dashboardTypeRepository
-				.findByUser(this.userService.getUser(utils.getUserId()));
-		for (DashboardType dashboardType : dashboardTypes) {
-			// Ahora hay que buscar la relacion entre dashboard y gadget. Eso nos lo da el
-			// dashboard
-			List<Dashboard> dashboards = dashboardRepository.findByDashboardType(dashboardType);
-			arrayLinks.add(new GraphDTO(name, Integer.toString(dashboardType.getId()), urlDashboard + "list",
-					urlDashboard + Integer.toString(dashboardType.getId()), name, "dashboard", null,
-					dashboardType.getType(), "licensing"));
+		List<Dashboard> dashboards = this.dashboardRepository
+				.findByUser(this.userService.getUser(this.utils.getUserId()));
 
-			for (Dashboard dashboard : dashboards) {
-				try {
-					List<String> gadgetIds = this.getGadgetIdsFromModel(dashboard.getModel());
-					for (String gadget : gadgetIds) {
-						arrayLinks.add(new GraphDTO(gadget, Integer.toString(dashboardType.getId()),
-								urlDashboard + gadget, urlDashboard + dashboardType.getId(), "gadget", "dashboard",
-								null, dashboardType.getType(), "licensing"));
-					}
-				} catch (Exception e) {
+		// // dashboardTipo---> son los dashboard
+		// List<DashboardType> dashboardTypes = dashboardTypeRepository
+		// .findByUser(this.userService.getUser(utils.getUserId()));
+		//
+		// for (DashboardType dashboardType : dashboardTypes) {
+		// Ahora hay que buscar la relacion entre dashboard y gadget. Eso nos lo da
 
+		// dashboard
+		// List<Dashboard> dashboards =
+		// dashboardRepository.findByDashboardType(dashboardType);
+		// arrayLinks.add(new GraphDTO(name, Integer.toString(dashboardType.getId()),
+		// urlDashboard + "list",
+		// urlDashboard + Integer.toString(dashboardType.getId()), name, "dashboard",
+		// null,
+		// dashboardType.getType(), "licensing"));
+		//
+		for (Dashboard dashboard : dashboards) {
+			try {
+				arrayLinks.add(new GraphDTO(name, dashboard.getId(), urlDashboard + "list",
+						urlDashboard + "view/" + dashboard.getId(), name, "dashboard", name,
+						dashboard.getIdentification(), "licensing"));
+				List<String> gadgetIds = this.getGadgetIdsFromModel(dashboard.getModel());
+				for (String gadget : gadgetIds) {
+					arrayLinks.add(new GraphDTO(gadget, dashboard.getId(), urlDashboard + gadget,
+							urlDashboard + dashboard.getId(), "gadget", "dashboard", null, dashboard.getIdentification(),
+							"licensing"));
 				}
+			} catch (Exception e) {
+
 			}
-			dashboards.clear();
-		}*/
+		}
+		// dashboards.clear();
+		// }
 
 		return arrayLinks;
 	}
@@ -191,7 +205,7 @@ public class GraphUtil {
 	public List<GraphDTO> constructGraphWithVisualization() {
 
 		final List<GraphDTO> arrayLinks = new LinkedList<>();
-		final String name = utils.getMessage("name_visualization", "VISUALIZATION");
+		final String name = utils.getMessage("name.visualization", "VISUALIZATION");
 		final String description = utils.getMessage("tooltip_visualization", null);
 		// carga de nodo gadget
 		arrayLinks.add(new GraphDTO(genericUserName, name, null, null, genericUserName, name, utils.getUserId(), name,
