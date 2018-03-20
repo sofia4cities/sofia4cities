@@ -639,6 +639,7 @@ var OntologyCreateController = function() {
 		var data 			= "";
 		var ontologyJson 	= {};
 		hasId = false;
+		document.getElementById("ontology_instance").innerHTML = "";
 		
 		// check if json-string can be parsed
 		if(IsJsonString(editor.getText())){
@@ -679,7 +680,8 @@ var OntologyCreateController = function() {
 			}
 			
 			instance = instance.substring(0,instance.length-1);  
-			instance = instance + "}";                      
+			instance = instance + "}";
+			document.getElementById("ontology_instance").innerHTML = "";
 			document.getElementById("ontology_instance").innerHTML = instance;
 			
 			if (ontologyJson.properties == null ){
@@ -804,6 +806,14 @@ var OntologyCreateController = function() {
 		 logControl ? console.log('        |--->   generateArray()') : '';
         var minItems = 1;
         // Se obtiene el numero minimo de elementos del array
+		console.log('ARRAY OBJ: ' + JSON.stringify(ontology));
+		
+		// void or malformed array
+		if (!ontology.hasOwnProperty('items')){
+			instance = instance + "[]";  
+			return instance;
+		}
+		
         if (ontology.minItems != null) {
             minItems =  ontology.minItems;
 			
