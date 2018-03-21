@@ -67,7 +67,7 @@ public class GraphUtil {
 	@PostConstruct
 	public void init() {
 		// initialize URLS
-		this.urlClientPlatform = this.url + "/controlpanel/devices/";
+		this.urlClientPlatform = this.url + "/controlpanel/devices/show/";
 		this.urlGadget = this.url + "/controlpanel/gadgets/";
 		this.urlDashboard = this.url + "/controlpanel/dashboards/";
 		this.urlOntology = this.url + "/controlpanel/ontologies/";
@@ -112,7 +112,7 @@ public class GraphUtil {
 		for (final ClientPlatform clientPlatform : clientPlatforms) {
 			// Creación de enlaces
 			arrayLinks.add(new GraphDTO(name, clientPlatform.getId(), urlClientPlatform + "list",
-					urlClientPlatform + clientPlatform.getId(), name, "clientplatform", name,
+					urlClientPlatform + clientPlatform.getIdentification(), name, "clientplatform", name,
 					clientPlatform.getIdentification(), "licensing"));
 
 			if (clientPlatform.getClientPlatformOntologies() != null) {
@@ -121,10 +121,11 @@ public class GraphUtil {
 				for (final ClientPlatformOntology clientPlatformOntology : clientPlatformOntologies) {
 					final Ontology ontology = clientPlatformOntology.getOntology();
 					// Crea link entre ontologia y clientPlatform
-					arrayLinks
-							.add(new GraphDTO(ontology.getId(), clientPlatform.getId(), urlOntology + ontology.getId(),
-									urlClientPlatform + clientPlatform.getId(), "ontology", "clientplatform",
-									ontology.getIdentification(), clientPlatform.getIdentification(), "licensing"));
+					
+					arrayLinks.add(new GraphDTO(ontology.getId(), clientPlatform.getId(),
+							urlOntology + ontology.getId(), urlClientPlatform + clientPlatform.getIdentification(),
+							"ontology", "clientplatform", ontology.getIdentification(),
+							clientPlatform.getIdentification(), "licensing"));
 				}
 			}
 		}
