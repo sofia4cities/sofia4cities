@@ -84,10 +84,7 @@
 								</span>
 								<button th:if="${hasOntology}" class="mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:if="${not hasOntology}">
-									<p th:text="#{flow.done}">Done</p>
-									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11">
-									    <path fill="none" fill-rule="evenodd" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.747l4.07 4.069L12.76 1"/>
-									</svg>
+									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>									
 								</div>
 							</div>
 						</div>
@@ -100,10 +97,7 @@
 								</span>
 								<button th:if="${hasDevice}" class="mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:if="${not hasDevice}">
-									<p th:text="#{flow.done}">Done</p>
-									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11">
-									    <path fill="none" fill-rule="evenodd" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.747l4.07 4.069L12.76 1"/>
-									</svg>
+									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
 						</div>
@@ -116,10 +110,7 @@
 								</span>
 								<button th:if="${hasSimulation}" class="mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:if="${not hasSimulation}">
-									<p th:text="#{flow.done}">Done</p>
-									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11">
-									    <path fill="none" fill-rule="evenodd" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.747l4.07 4.069L12.76 1"/>
-									</svg>
+									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
 						</div>
@@ -132,10 +123,7 @@
 								</span>
 								<button th:if="${hasDashboard}" class="mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/dashboards/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:unless="${hasDashboard}">
-									<p th:text="#{flow.done}">Done</p>
-									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11">
-									    <path fill="none" fill-rule="evenodd" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.747l4.07 4.069L12.76 1"/>
-									</svg>
+									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
 						</div>
@@ -148,10 +136,7 @@
 								</span>
 								<button th:if="${hasDevice}" class="mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:if="${not hasDevice}">
-									<p th:text="#{flow.done}">Done</p>
-									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11">
-									    <path fill="none" fill-rule="evenodd" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.747l4.07 4.069L12.76 1"/>
-									</svg>
+									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
 						</div>
@@ -164,17 +149,14 @@
 							</span>
 								<button th:if="${hasApi}" class="mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:if="${not hasApi}">
-									<p th:text="#{flow.done}">Done</p>
-									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="11" viewBox="0 0 14 11">
-									    <path fill="none" fill-rule="evenodd" stroke="#FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.747l4.07 4.069L12.76 1"/>
-									</svg>
+									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
 						</div>
-						<!--<div class="pull-right"><span class="btn btn-icon-only purple-studio hide-main-block"><i class="fa fa-eye-slash"></i></span></div>-->
+						<div class="pull-right"><span class="btn btn-icon-only blue-chambray hide-main-block"><i class="fa fa-eye-slash"></i></span></div>
 					</div>
 				</div>
-				<div class="main-block-toggle hide"><span class="btn btn-icon-only dark"><i class="fa fa-eye"></i></span></div>
+				<div class="main-block-toggle hide"><span class="btn btn-icon-only blue-chambray"><i class="fa fa-eye"></i></span></div>
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->

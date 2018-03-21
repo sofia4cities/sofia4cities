@@ -840,9 +840,9 @@ display: flex;
     transition: all 1s ease;	
 }
 .hide-main-block{
-	position: relative;
-	right: 58px;
-	top: -10px;
+position: relative;
+right: -5px;
+top: 12px;
 }
  
  .maininfo{
