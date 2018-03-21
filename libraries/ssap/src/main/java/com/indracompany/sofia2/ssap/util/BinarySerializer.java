@@ -32,6 +32,7 @@ import com.indracompany.sofia2.ssap.binary.Storage;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
+
 public class BinarySerializer {
 
 	// Method for Base64 encoding
@@ -51,7 +52,6 @@ public class BinarySerializer {
 
 		((ObjectNode) binaryNode).put("data", data);
 		((ObjectNode) binaryNode).set("media", mediaNode);
-		
 
 		((ObjectNode) returnNode).set(fieldName, binaryNode);
 
@@ -74,17 +74,23 @@ public class BinarySerializer {
 		}
 
 	}
+
 	public void binaryJsonToFile(JsonNode binaryNode, String path) throws IOException {
 		Encoder base64 = new Base64();
 
 		String data = binaryNode.get("data").asText();
-		String binaryEnconding = binaryNode.get("media").get("binaryEnconding").asText();
+		String binaryEnconding = binaryNode.get("media").get("binaryEncoding").asText();
 		String mime = binaryNode.get("media").get("mime").asText();
 		String name = binaryNode.get("media").get("name").asText();
 		String storageArea = binaryNode.get("media").get("storageArea").asText();
 
+	
 		if (binaryEnconding.equals(Encoding.Base64.name())) 
-			FileUtils.writeByteArrayToFile(new File(path+name), base64.decode(data)); 
+			
+			if(!new File(path+ "/" +name).isFile())
+				FileUtils.writeByteArrayToFile(new File(path+ "/" +name), base64.decode(data)); 
+			else
+				FileUtils.writeByteArrayToFile(new File(path+ "/"+ String.valueOf(Math.random()*1000).replace(".", "") +name ), base64.decode(data));
 		
 	}
 

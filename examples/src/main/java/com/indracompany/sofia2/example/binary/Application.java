@@ -2,28 +2,28 @@ package com.indracompany.sofia2.example.binary;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.client.MQTTClient;
+import com.indracompany.sofia2.client.RestClient;
 import com.indracompany.sofia2.ssap.binary.Mime;
 import com.indracompany.sofia2.ssap.util.BinarySerializer;
 
 public class Application {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		
-		MQTTClient client = new MQTTClient("tcp://localhost:1883");
+		RestClient client = new RestClient("http://localhost:8081/iotbroker");
 		String token = "eca34bf3ab1348419f8a5fd61676942f";
 		String clientPlatform = "IncidenciasApp";
-		String clientPlatformInstance = clientPlatform + ":mqtt";
+		String clientPlatformInstance = clientPlatform + ":REST";
 		String ontology = "BinaryOnt";
-		int timeout = 5;
-		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
-		//String jsonData ="{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}"; 
-		
+	
+		client.connect(token, clientPlatform, clientPlatformInstance);	
 		
 		JsonNode instance = mapper.createObjectNode();
 		BinarySerializer  serializer = new BinarySerializer();	
@@ -42,8 +42,17 @@ public class Application {
 		((ObjectNode) object).set("Image", image);
 		
 		((ObjectNode) instance).set(ontology, object);
-		System.out.println(instance.toString());
-		client.publish(ontology, instance.toString(), timeout);
-		client.disconnect();
+		
+		List<JsonNode> instances = client.getOntologyInstances(ontology);
+		if(instances.size() == 0)
+			client.insertInstance(ontology, instance.toString());
+
+		
+		for(JsonNode ontologyInstance : instances) {
+			
+			serializer.binaryJsonToFile(ontologyInstance.path(ontology).path("Image").get("Image"), "C:/Users/fjgcornejo/Pictures/Binary");
+		}
+		
+
 	}
 }

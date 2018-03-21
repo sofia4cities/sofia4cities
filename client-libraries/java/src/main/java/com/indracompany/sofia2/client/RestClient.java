@@ -2,10 +2,15 @@ package com.indracompany.sofia2.client;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.HttpUrl;
@@ -71,6 +76,33 @@ public class RestClient {
 		}
 
 		return this.sessionKey;
+
+	}
+
+	public List<JsonNode> getOntologyInstances(String ontology) {
+		ObjectMapper mapper = new ObjectMapper();
+		TypeFactory typeFactory = mapper.getTypeFactory();
+
+		List<JsonNode> instances = new ArrayList<JsonNode>();
+		HttpUrl urlJoinWithParams = new HttpUrl.Builder().scheme(HttpUrl.parse(this.restServer).scheme())
+				.host(HttpUrl.parse(this.restServer).host()).port(HttpUrl.parse(this.restServer).port())
+				.addPathSegment(HttpUrl.parse(this.restServer).pathSegments().get(0)).addEncodedPathSegments(LIST_GET)
+				.addPathSegment(ontology).addEncodedQueryParameter("query", "db." + ontology + ".find()")
+				.addQueryParameter("queryType", SSAPQueryType.NATIVE.name()).build();
+		Request request = new Request.Builder().url(urlJoinWithParams).addHeader("Authorization", this.sessionKey).get().build();
+
+		try {
+			Response response = client.newCall(request).execute();
+			String instancesAsText = response.body().string();
+			instancesAsText = instancesAsText.replaceAll("\\\\\\\"", "\"").replace("\"{", "{").replace("}\"","}");
+			System.out.print(instancesAsText);
+			instances = mapper.readValue(instancesAsText,
+					typeFactory.constructCollectionType(List.class, JsonNode.class));
+		} catch (IOException e) {
+			log.error("Could not get instances");
+			e.printStackTrace();
+		}
+		return instances;
 
 	}
 
