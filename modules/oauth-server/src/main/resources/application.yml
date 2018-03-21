@@ -1,8 +1,8 @@
-##--spring.config.name=apimanager
+##--spring.config.name=oauth-server
 ##security.require_ssl: true
 server: ## Config Web Server
-   port: 19090
-   contextPath: /api-manager
+   port: 21000
+   contextPath: /oauth-server
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat
