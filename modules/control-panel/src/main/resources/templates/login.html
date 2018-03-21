@@ -1,8 +1,9 @@
 <!doctype html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:with="lang=${#locale.language}" th:lang="${lang}">
 <head>
 	<meta charset="UTF-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<meta http-equiv="Content-Language" th:content="${lang}"/>
 	<link href='http://fonts.googleapis.com/css?family=Poppins:400,700' rel='stylesheet' type='text/css'/>
 	<link rel="stylesheet" th:href="@{/static/css/reset.css}"/> <!-- CSS reset -->
 	<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
@@ -118,6 +119,13 @@
 						<input class="full-width has-padding has-border" id="signup-email" th:field="*{email}" name ="emailup" type="email" placeholder="E-mail" th:required="true"/>
 						<span class="cd-error-message">Invalid email</span>
 					</p>
+					<div class="fieldset">
+						<div class="btn-group" data-toggle="buttons">
+							<label class="btn btn-role btn-developer green active"><i class="fa fa-check"></i> <input class="toggle" name="role" value="developer" type="radio"/> Developer</label>
+							<label class="btn btn-role btn-user green"><i class="fa fa-user"></i> <input class="toggle" name="role" value="user" type="radio"/> User </label>
+						</div>
+						<span style="padding-left: 11px;"><i class="fa fa-info-circle"></i> <span th:text="#{login.role}">please select user role</span></span>	
+					</div>					
 					<p class="fieldset">
 						<input class="full-width has-padding" type="submit" value="Create account"/>
 					</p>
@@ -172,7 +180,19 @@
 		});
 		timer = setTimeout(function(){ $('.cd-signin').trigger('click'); }, 1250);
 		$('.hide-password').trigger('click');
-
+		
+		
+		$('.btn-role').on('click', function(){	
+			var developerRole = $('.btn-developer > i');
+			var userRole  = $('.btn-user > i');
+			
+			if ($(this).hasClass("btn-developer") === true) {				
+				developerRole.hasClass('fa-user') ? (developerRole.removeClass().addClass('fa fa-check'),userRole.removeClass().addClass('fa fa-user')) : '';				 	
+			} 
+			else {			
+				userRole.hasClass('fa-user') ? (userRole.removeClass().addClass('fa fa-check'),developerRole.removeClass().addClass('fa fa-user')) : '';				 	
+			}	
+		});
 
 	};
 	</script>
