@@ -1,0 +1,50 @@
+<div class="toolbarButtons" layout="row" layout-align="right right" style="z-index:9000">
+  <span flex></span>
+  <!--<md-input-container>
+    <label>Layer</label>
+    <md-select ng-disabled="ed.dashboard.pages[ed.selectedpage].combinelayers" ng-model="ed.dashboard.pages[ed.selectedpage].selectedlayer">
+      <md-option ng-repeat="layer in ed.dashboard.pages[ed.selectedpage].layers" value="{{$index}}">{{layer.title}}</md-option>
+    </md-select>
+  </md-input-container>
+  <md-switch ng-model="ed.dashboard.pages[ed.selectedpage].combinelayers" aria-label="Combine layers">
+    Combine layers
+  </md-switch>-->
+  <md-button class="md-fab  md-warn transparent-color" ng-click="ed.showListBottomSheet()" aria-label="Add Element">
+    <md-tooltip md-direction="bottom">Add Element</md-tooltip>
+    <md-icon>add</md-icon>
+  </md-button>
+  <!--<md-button class="md-fab md-alert md-hue-1" ng-click="ed.datasourcesEdit()" aria-label="Add Datasource">
+    <md-tooltip md-direction="bottom">Edit Datasources Element</md-tooltip>
+    <md-icon>input</md-icon>
+  </md-button>-->
+  <md-fab-speed-dial md-open=false md-direction="down" class="md-scale md-hover-full transparent-color">
+    <md-fab-trigger>
+      <md-button aria-label="Edit Dashboard" class="md-fab md-warn transparent-color">
+        <md-tooltip md-direction="bottom">Edit Dashboard Options</md-tooltip>
+        <md-icon>dashboard</md-icon>
+      </md-button>
+    </md-fab-trigger>
+    <md-fab-actions>
+      <md-button aria-label="Pages" ng-click="ed.pagesEdit()" class="md-fab md-raised md-mini">
+        <md-tooltip md-direction="bottom">Pages</md-tooltip>
+        <md-icon aria-label="Pages">collections</md-icon>
+      </md-button>
+      <md-button aria-label="Page Layers" ng-click="ed.layersEdit()" class="md-fab md-raised md-mini">
+        <md-tooltip md-direction="bottom">Page Layers</md-tooltip>
+        <md-icon aria-label="Page layers">clear_all</md-icon>
+      </md-button>
+      <md-button aria-label="Configure Dashboard" ng-click="ed.dashboardEdit()" class="md-fab md-raised md-mini">
+        <md-tooltip md-direction="bottom">Configure Dashboard</md-tooltip>
+        <md-icon aria-label="Configure Dashboard">settings</md-icon>
+      </md-button>
+      <md-button aria-label="Dashboard Style" ng-click="ed.dashboardStyleEdit()" class="md-fab md-raised md-mini">
+        <md-tooltip md-direction="bottom">Dashboard Style</md-tooltip>
+        <md-icon aria-label="Configure Dashboard">format_paint</md-icon>
+      </md-button>
+    </md-fab-actions>
+  </md-fab-speed-dial>
+  <md-button class="md-fab md-primary md-hue-2 transparent-color" ng-click="ed.savePage()" aria-label="Save Dashboard">
+    <md-tooltip md-direction="bottom">Save Dashboard</md-tooltip>
+    <md-icon>save</md-icon>
+  </md-button>
+</div>

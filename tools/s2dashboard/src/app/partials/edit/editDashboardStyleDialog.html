@@ -1,0 +1,68 @@
+<md-dialog aria-label="Layers">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Dashboard configuration</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <b>X</b>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <md-subheader>Widget Header</md-subheader>
+      <div class="md-dialog-content layout-row layout-align-start-center flex">
+        <md-input-container flex="20">
+          <input ng-model="style.header.height" type="number" placeholder="Header Height">
+        </md-input-container>
+        <md-checkbox flex="30" ng-model="style.header.enable" class="flex">Enable widget header
+        </md-checkbox>
+        <md-input-container flex="30">
+          <label>Header Background</label>
+          <color-picker flex="40" ng-model="style.header.backgroundColor"></color-picker>
+        </md-input-container>
+      </div>
+      <md-subheader>Widgets Title</md-subheader>
+      <div class="md-dialog-content layout-row layout-align-start-center flex">
+        <md-input-container flex="30">
+          <label>Header Text Color</label>
+          <color-picker flex="50" ng-model="style.header.title.textColor"></color-picker>
+        </md-input-container>
+        <md-input-container flex="30">
+          <label>Header Icon Color</label>
+          <color-picker flex="50" ng-model="style.header.title.iconColor"></color-picker>
+        </md-input-container>
+      </div>
+      <md-subheader>Widget Body</md-subheader>
+      <div class="md-dialog-content layout-row layout-align-start-center flex">
+        <md-input-container flex="30">
+          <label>Body Background</label>
+          <color-picker flex="100" ng-model="style.backgroundColor"></color-picker>
+        </md-input-container>
+        <md-input-container flex="50">
+          <input ng-model="style.padding" type="number" placeholder="Content Padding">
+        </md-input-container>
+      </div>
+      <div class="md-dialog-content layout-row layout-align-start-center flex">
+        <md-input-container flex="33">
+          <input ng-model="style.border.width" type="number" placeholder="Border width">
+        </md-input-container>
+        <md-input-container flex="33">
+          <input ng-model="style.border.radius" type="number" placeholder="Corner Radius">
+        </md-input-container>
+        <md-input-container flex="30">
+          <label>Border Color</label>
+          <color-picker flex="33" ng-model="style.border.color"></color-picker>
+        </md-input-container>
+      </div>
+      
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="hide()" class="md-primary">
+        Close
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>
