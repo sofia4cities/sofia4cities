@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.router.config;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -21,24 +23,25 @@ import org.apache.camel.spring.boot.CamelConfigurationProperties;
 import org.apache.camel.spring.boot.CamelContextConfiguration;
 import org.apache.camel.spring.boot.RoutesCollector;
 import org.apache.camel.spring.boot.TypeConversionConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
+import com.indracompany.sofia2.router.util.SSLUtil;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Configuration
 @EnableConfigurationProperties(CamelConfigurationProperties.class)
 @Import(TypeConversionConfiguration.class)
 @ImportResource({"classpath:camel-context-reference.xml"})
 public class CamelConfig {
-	
-	@Autowired
-	private ApplicationContext applicationContext;
-	
 	
 	@Bean
 	@ConditionalOnMissingBean(RoutesCollector.class)
@@ -56,6 +59,25 @@ public class CamelConfig {
 		CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
 		processor.setApplicationContext(applicationContext);
 		return processor;
+	}
+	
+	
+	private static final String MSJ_SSL_ERROR = "Error configuring SSL verification in Router";
+	
+	@Bean
+	@Conditional(RouterAvoidSSLVerificationCondition.class)
+	String sslUtil() {
+        try {
+        	SSLUtil.turnOffSslChecking();
+        } catch (KeyManagementException e) {
+               log.error(MSJ_SSL_ERROR, e);
+               throw new RuntimeException(MSJ_SSL_ERROR, e);
+        } catch (NoSuchAlgorithmException e) {
+               log.error(MSJ_SSL_ERROR, e);
+               throw new RuntimeException(MSJ_SSL_ERROR, e);
+        }
+        
+        return "OK";
 	}
 
 }
