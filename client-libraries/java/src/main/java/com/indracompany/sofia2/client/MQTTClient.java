@@ -211,7 +211,7 @@ public class MQTTClient {
 	}
 
 	/**
-	 * Closses MQTT session.
+	 * Closes MQTT session.
 	 *
 	 **/
 	public void disconnect() {

@@ -14,23 +14,34 @@
  */
 package com.indracompany.sofia2.client.app;
 
+import java.io.IOException;
+
 import com.indracompany.sofia2.client.MQTTClient;
+import com.indracompany.sofia2.client.RestClient;
 
 public class ClientsApplication {
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 
-		MQTTClient client = new MQTTClient("tcp://localhost:1883");
-		String token = "3f77b9a6af8642c683e5d786217afb0b";
-		String clientPlatform = "RestaurantsCp";
-		String clientPlatformInstance = clientPlatform + ":mqtt";
-		int timeout = 5;
-		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
-		String jsonData ="{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}"; 
-		Thread.sleep(5000);
-		client.publish("Restaurant", jsonData, timeout);
-		Thread.sleep(5000);
+//		MQTTClient client = new MQTTClient("tcp://localhost:1883");
+		String token = "eca34bf3ab1348419f8a5fd61676942f";
+		String clientPlatform = "IncidenciasApp";
+		String clientPlatformInstance = clientPlatform + ":REST";
+		String ontology = "BinaryOnt";
+//		int timeout = 5;
+//		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
+//		String jsonData ="{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}"; 
+//		Thread.sleep(5000);
+//		client.publish("Restaurant", jsonData, timeout);
+//		Thread.sleep(5000);
+//		
+//		client.disconnect();
 		
-		client.disconnect();
+		RestClient restClient = new RestClient("http://localhost:8081/iotbroker");
+		String sessionKey = restClient.connect(token, clientPlatform, clientPlatformInstance);
+		String instance = "{\"BinaryOnt\":{ \"Name\":\"string\",\"Image\":{\"data\":\"string\",\"media\":{\"name\":\"fichero.pdf\",\"storageArea\":\"SERIALIZED\",\"binaryEncoding\":\"Base64\",\"mime\":\"application/pdf\"}}}}";
+		restClient.insertInstance(ontology, instance);
+		restClient.disconnect();
+	
 	}
 }
