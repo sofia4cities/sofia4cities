@@ -14,65 +14,63 @@
  */
 package com.indracompany.sofia2.api.rest.controller;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.config.services.oauth.JWTService;
-
-import io.swagger.annotations.Api;
+import com.indracompany.sofia2.api.rest.api.dto.ApiDTO;
+import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
+import com.indracompany.sofia2.api.service.api.ApiServiceRest;
+import com.indracompany.sofia2.config.model.Api;
 
 @RestController
 public class OauthApiController {
 
-    @Resource(name = "tokenStore")
-    TokenStore tokenStore;
-    
-    @Autowired
-    JWTService jwtTokenService;
 
+	@Autowired
+	private ApiServiceRest apiService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/oauth-api/tokens")
-    @ResponseBody
-    public List<String> getTokens() {
-        List<String> tokenValues = new ArrayList<String>();
-        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId("sofia2_s4c");
-        if (tokens != null) {
-            for (OAuth2AccessToken token : tokens) {
-                tokenValues.add(token.getValue());
-            }
-        }
-        return tokenValues;
-    }
+	@Autowired
+	private ApiFIQL apiFIQL;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/oauth-api/tokens/revokeRefreshToken/{tokenId:.*}")
-    @ResponseBody
-    public String revokeRefreshToken(@PathVariable String tokenId) {
-        if (tokenStore instanceof JdbcTokenStore) {
-            ((JdbcTokenStore) tokenStore).removeRefreshToken(tokenId);
-        }
-        return tokenId;
-    }
-    
-    @RequestMapping(method = RequestMethod.POST, value = "/oauth-api/tokens/")
-    @ResponseBody
-    public void tokenInfo(HttpServletRequest request, @RequestBody String tokenId) {
-    	jwtTokenService.extractToken(tokenId);
-    }
+	@RequestMapping(method = RequestMethod.GET, value = "/oauth-api/api-names")
+	@ResponseBody
+	public List<String> getAPIs() {
+		
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    	String name = a.getName();
+
+		List<Api> list = apiService.findApisByUser(name, null);
+		
+		List<String> collect = list.stream()
+                .map(Api::getIdentification)
+                .collect(Collectors.toList());
+		
+		return collect;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/oauth-api/apis")
+	@ResponseBody
+	public List<ApiDTO> getAPIInfos() {
+		
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    	String name = a.getName();
+		
+		List<Api> list = apiService.findApisByUser(name, null);
+		
+		List<ApiDTO> collect = list.stream()
+                .map(x->apiFIQL.toApiDTO(x))
+                .collect(Collectors.toList());
+		
+		return collect;
+	}
+
 
 }
