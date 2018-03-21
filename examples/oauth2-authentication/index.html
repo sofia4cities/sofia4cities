@@ -20,7 +20,7 @@
 	<div class="container-fluid" id="container">
 		<header>
 			<div id="title">
-				<h1>Example Login</h1>
+				<h1>HTML Plain API Manager TESTER by OAUTH2 Authentication</h1>
 			</div>
 		</header>
 
@@ -45,29 +45,21 @@
 		</div>
 		
 		<div class="form-group">
+
+			<label 	for="get">click to get Operations</label> 
+			<input id="operations" type="button" value="operations" />
+			<textarea class="form-control" rows="5" id="result_ops"></textarea>
+			
+		</div>
+		
+		<div class="form-group">
 			<label 	for="get">click to TEST API</label> 
 			<input id="get" type="button" value="get" />
+			
 			<textarea class="form-control" rows="5" id="api">http://localhost:19090/api-manager/server/api/v1/HelsinkiPopulationAPI/getPopulation</textarea>
+			<label>The Result</label> 
 			<textarea class="form-control" rows="5" id="data"></textarea>
 		</div>
-
-		
-
-
-		<!--  div id="main" role="main">
-			<fieldset>
-				<label for="username">Username</label> <input id="username"
-					type="text" /> <label for="password">Password</label> <input
-					id="password" type="password" /> <input id="login" type="button"
-					value="login" />
-			</fieldset>
-			</br>
-			<fieldset>
-				<label>Result Token</label> <input id="token" type="textarea" />  <label for="username">Result</label>
-				<input id="data" type="textarea" />
-			</fieldset>
-		</div-->
-
 
 		<footer> </footer>
 	</div>
@@ -156,6 +148,12 @@
 											$('#data')
 													.val(JSON.stringify(data));
 										},
+										
+										error : function(req, status, err) {
+											console.log('something went wrong',
+													req.responseText, status, err);
+											$("#data").val(req.responseText);
+										},
 										statusCode : {
 											401 : function() {
 												alert("Unauthorised please log in via basic first");
@@ -163,6 +161,37 @@
 										},
 									});
 						});
+		
+		$("#operations")
+		.click(
+				function() {
+				
+					
+					$.ajax({
+								type : "GET",
+								url : "http://localhost:19090/api-manager/oauth-api/api-ops",
+								dataType : 'json',
+								headers : {
+									'Authorization' : 'Bearer '
+											+ accessToken
+								},
+								success : function(data) {
+									
+									$('#result_ops')
+											.val(JSON.stringify(data));
+								},
+								error : function(req, status, err) {
+									console.log('something went wrong',
+											req.responseText, status, err);
+									$("#result_ops").val(req.responseText);
+								},
+								statusCode : {
+									401 : function() {
+										alert("Unauthorised please log in via basic first");
+									}
+								},
+							});
+				});
 	</script>
 </body>
 </html>
