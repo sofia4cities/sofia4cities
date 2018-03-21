@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.indracompany.sofia2</groupId>
-	<artifactId>sofia2-security-jwt-server-ri</artifactId>
+	<artifactId>sofia2-oauth-server</artifactId>
 	<packaging>jar</packaging>
 
-	<name>sofia2-security-jwt-server-ri</name>
+	<name>sofia2-oauth-server</name>
 	<description>Sofia2 JWT Server Reference Implementation</description>
 
 	<parent>
@@ -33,6 +33,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
+		<!-- SPRING BOOT ADMIN-CLIENT -->
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-starter-client</artifactId>
+			<version>${spring-boot-admin-starter-client.version}</version>
+		</dependency>
 	
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
@@ -57,6 +64,24 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<configuration>
+					<imageName>sofia2/oauth-server</imageName>
+					<imageTags>
+						<imageTag>${sofia2.docker.version}</imageTag>
+					</imageTags>
+					<dockerDirectory>docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}-exec.jar</include>
+						</resource>
+					</resources>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

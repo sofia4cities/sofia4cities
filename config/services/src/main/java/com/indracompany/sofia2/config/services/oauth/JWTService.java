@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.repository;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
+package com.indracompany.sofia2.config.services.oauth;
 
-import com.indracompany.sofia2.config.model.OAuthRefreshToken;
+import javax.servlet.http.HttpServletRequest;
 
-@Transactional
-public interface OAuthRefreshTokenRepository extends JpaRepository<OAuthRefreshToken, String> {
+public interface JWTService {
+	public String extractToken(HttpServletRequest request);
+	public String extractToken(String tokenId);	
+	public Object extractTokenPrincipal(String tokenId);
 
 }

@@ -31,8 +31,8 @@ import com.indracompany.sofia2.api.service.ApiServiceInterface;
 import com.indracompany.sofia2.api.service.api.ApiManagerService;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.oauth.JWTService;
 import com.indracompany.sofia2.config.services.user.UserService;
-import com.indracompany.sofia2.security.jwt.ri.JWTService;
 
 @Component
 @Rule
@@ -44,7 +44,7 @@ public class UserAndAPIRule extends DefaultRuleBase {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
+	@Autowired(required=false)
 	private JWTService jwtService;
 	
 	
@@ -78,7 +78,7 @@ public class UserAndAPIRule extends DefaultRuleBase {
 		
 		Api api=null;
 		if (user==null) {
-			if (JWT_TOKEN.length()>0) {
+			if (JWT_TOKEN.length()>0 && jwtService!=null) {
 				String userid = jwtService.extractToken(JWT_TOKEN);
 				if (userid!=null)
 					user=userService.getUser(userid);

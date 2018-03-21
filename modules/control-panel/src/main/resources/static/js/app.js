@@ -383,7 +383,7 @@ var App = function() {
 		var labelSettings	= 'Settings';
 		var labelCollapse	= 'Collapse/Expand';
 		
-		if( headerReg.language ){
+		if( typeof headerReg !== 'undefined' ){
 			var labelFullscreen = headerReg.fullscreen;
 			var labelReload		= headerReg.reload;
 			var labelRemove		= headerReg.remove;

@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.security.jwt.ri;
+package com.indracompany.sofia2.api.rest.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.stereotype.Controller;
@@ -32,9 +31,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-public class TokenController {
+import com.indracompany.sofia2.config.services.oauth.JWTService;
+
+import io.swagger.annotations.Api;
+
+@RestController
+public class OauthApiController {
 
     @Resource(name = "tokenStore")
     TokenStore tokenStore;
@@ -43,7 +47,7 @@ public class TokenController {
     JWTService jwtTokenService;
 
 
-    @RequestMapping(method = RequestMethod.GET, value = "/tokens")
+    @RequestMapping(method = RequestMethod.GET, value = "/oauth-api/tokens")
     @ResponseBody
     public List<String> getTokens() {
         List<String> tokenValues = new ArrayList<String>();
@@ -56,7 +60,7 @@ public class TokenController {
         return tokenValues;
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/tokens/revokeRefreshToken/{tokenId:.*}")
+    @RequestMapping(method = RequestMethod.POST, value = "/oauth-api/tokens/revokeRefreshToken/{tokenId:.*}")
     @ResponseBody
     public String revokeRefreshToken(@PathVariable String tokenId) {
         if (tokenStore instanceof JdbcTokenStore) {
@@ -65,7 +69,7 @@ public class TokenController {
         return tokenId;
     }
     
-    @RequestMapping(method = RequestMethod.POST, value = "/tokens/")
+    @RequestMapping(method = RequestMethod.POST, value = "/oauth-api/tokens/")
     @ResponseBody
     public void tokenInfo(HttpServletRequest request, @RequestBody String tokenId) {
     	jwtTokenService.extractToken(tokenId);

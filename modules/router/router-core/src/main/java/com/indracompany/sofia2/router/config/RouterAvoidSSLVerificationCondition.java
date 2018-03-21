@@ -1,7 +1,6 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,13 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.repository;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.transaction.annotation.Transactional;
+package com.indracompany.sofia2.router.config;
 
-import com.indracompany.sofia2.config.model.OAuthRefreshToken;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
-@Transactional
-public interface OAuthRefreshTokenRepository extends JpaRepository<OAuthRefreshToken, String> {
+public class RouterAvoidSSLVerificationCondition implements Condition{
+	
+	@Override
+	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+		String avoidSSLVerification = context.getEnvironment().getProperty("sofia2.router.avoidsslverification");
+		return "true".equals(avoidSSLVerification);
+	}
 
 }
