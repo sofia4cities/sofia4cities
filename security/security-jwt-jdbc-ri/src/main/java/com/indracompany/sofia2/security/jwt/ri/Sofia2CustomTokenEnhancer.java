@@ -13,9 +13,13 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.security.jwt.ri;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -26,7 +30,19 @@ public class Sofia2CustomTokenEnhancer implements TokenEnhancer {
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         final Map<String, Object> additionalInfo = new HashMap<>();
-        additionalInfo.put("organization", authentication.getName());
+        additionalInfo.put("name", authentication.getName());
+        
+        Collection<GrantedAuthority>  authorities = authentication.getAuthorities();
+        List<String> collect = authorities.stream()
+                .map(GrantedAuthority:: getAuthority)
+                .collect(Collectors.toList());
+        
+        additionalInfo.put("authorities", collect);
+        additionalInfo.put("principal",  authentication.getUserAuthentication().getPrincipal());
+        additionalInfo.put("parameters",  authentication.getOAuth2Request().getRequestParameters());
+        additionalInfo.put("clientId",  authentication.getOAuth2Request().getClientId());
+        additionalInfo.put("grantType",  authentication.getOAuth2Request().getGrantType());
+       
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
         return accessToken;
     }
