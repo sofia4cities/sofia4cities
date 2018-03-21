@@ -161,11 +161,13 @@ var OntologyCreateController = function() {
 		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; requires = data.datos.required; } else { properties = data.properties;  requires = data.required }
 	
 		// ADD PROPERTY+TYPE
-		if (type != 'timestamp'){
-			properties[prop] = { "type": type};
-		} 
-		else {			
-			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}		
+		if (type == 'timestamp'){
+			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}	
+		} else if(type == 'binary'){
+			properties[prop] = {"type": "object", "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg"]}}}},"additionalProperties": false}
+		} else {			
+			properties[prop] = { "type": type}
+				
 		}
 		
 		// ADD REQUIRED
