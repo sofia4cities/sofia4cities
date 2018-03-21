@@ -104,7 +104,7 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	private List<Api> filterApisByUserAndState(List<Api> apis, User user) {
 		List<Api> filteredApis = new ArrayList<Api>();
 		for (Api api : apis) {
-			if ((user.getRole().getName().equals(Role.Type.ROLE_ADMINISTRATOR.name())) || 
+			if ((user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name())) || 
 				(api.getUser().equals(user)) ||
 				(!(api.getState().equals(Api.ApiStates.CREATED) || api.getState().equals(Api.ApiStates.DELETED)))){
 				
