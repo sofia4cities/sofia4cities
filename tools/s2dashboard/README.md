@@ -1,4 +1,4 @@
-### s2dashboard
+## s2dashboard
 
 #### For running this project you must install dependencies with npm
 ```bash
@@ -8,6 +8,11 @@
 #### For running server you need to start the serve with
 ```bash
  gulp serve
+```
+
+#### For build the application, you must copy dist folder to /sofia2-controlpanel/src/main/resources/static/dashboards in order to integrate this app
+```bash
+ gulp build
 ```
 
 #### Temporary solution. If you want to develop this framework with s4c...
