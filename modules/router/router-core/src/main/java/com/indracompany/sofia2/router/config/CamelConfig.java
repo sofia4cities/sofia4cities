@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
-import com.indracompany.sofia2.router.util.SSLUtil;
+import com.indracompany.sofia2.commons.ssl.SSLUtil;
 
 import lombok.extern.slf4j.Slf4j;
 

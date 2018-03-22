@@ -11,14 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.libraries.flow.engine;
+package com.indracompany.sofia2.controlpanel;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
-public class FlowEngineServiceFactory {
-
-	@Bean
-	public static FlowEngineServiceImpl getFlowEngineService(String restBaseUrl, int resrRequestTimeout, boolean avoidSSLVerification) {
-		return new FlowEngineServiceImpl(restBaseUrl, resrRequestTimeout, avoidSSLVerification);
+public class ControlPanelAvoidSSLVerificationCondition implements Condition{
+	
+	@Override
+	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+		String avoidSSLVerification = context.getEnvironment().getProperty("sofia2.controlpanel.avoidsslverification");
+		return "true".equals(avoidSSLVerification);
 	}
+
 }

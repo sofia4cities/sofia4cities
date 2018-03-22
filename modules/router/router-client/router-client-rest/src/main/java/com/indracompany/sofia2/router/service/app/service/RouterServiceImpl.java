@@ -13,11 +13,15 @@
  */
 package com.indracompany.sofia2.router.service.app.service;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.indracompany.sofia2.commons.ssl.SSLUtil;
 import com.indracompany.sofia2.router.client.RouterClient;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -30,6 +34,14 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 	@Value("${sofia2.flowengine.home.base:http://localhost:19100/router/router/}")
 	private String routerStandaloneURL;
 
+	@Value("${sofia2.router.avoidsslverification:false")
+	private boolean avoidSSLVerification;
+	
+	public RouterServiceImpl() throws KeyManagementException, NoSuchAlgorithmException {
+		if (avoidSSLVerification) {
+			SSLUtil.turnOffSslChecking();
+		}
+	}
 
 	@Override
 	public OperationResultModel execute(NotificationModel input) {
