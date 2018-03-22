@@ -4,17 +4,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.indracompany.sofia2</groupId>
-	<artifactId>sofia2-security-oauth2-ri</artifactId>
+	<artifactId>sofia2-security-jwt-core-ri</artifactId>
 	<packaging>jar</packaging>
 
-	<name>sofia2-security-oauth2-ri</name>
-	<description>Sofia2 Oauth2 OpenId Server Reference Implementation</description>
+	<name>sofia2-security-jwt-core-ri</name>
+	<description>Sofia2 JWT Core Reference Implementation</description>
 
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
 		<version>5.0.0-SNAPSHOT</version>
-		<relativePath>../..</relativePath> <!-- lookup parent from repository -->
+		<relativePath>../../</relativePath> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
@@ -24,35 +24,34 @@
 	</properties>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-
-		<dependency>
+	<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
+</dependency>
 
 		<dependency>
 			<groupId>org.springframework.security.oauth</groupId>
 			<artifactId>spring-security-oauth2</artifactId>
 			<version>${spring.security.oauth.version}</version>
 		</dependency>
-			
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-jwt</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-security-ui-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-config-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
