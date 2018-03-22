@@ -210,7 +210,7 @@ if [ -z "$1" ]; then
 fi
 
 echo "Pushing all images to Docker registry"
-pushAllImages2Registry v5.0.0-rc2
+pushAllImages2Registry 5.0.0-rc2
 
 echo "Docker images successfully generated and pushed to local registry!"
 
