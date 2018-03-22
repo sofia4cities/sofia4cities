@@ -1,0 +1,14 @@
+<md-toolbar ng-if="vm.dashboard.header.enable" layout="row" class="md-hue-2" layout-align="space-between center" ng-style="{'height': + vm.dashboard.header.height + 'px', 'background': vm.dashboard.header.backgroundColor}">
+  <!--The left side-->
+  <md-headline layout="row" layout-align="start center" class="left-margin-10">
+    <img ng-if="vm.dashboard.header.logo.filedata" ng-src={{vm.dashboard.header.logo.filedata}} ng-style="{'height': + vm.dashboard.header.logo.height + 'px'}"></img>
+    <span ng-style="{'color': vm.dashboard.header.textColor}">{{'&nbsp;' + vm.dashboard.header.title}} </span>
+    <md-icon ng-style="{'color': vm.dashboard.header.iconColor}" ng-if="vm.dashboard.navigation.showBreadcrumbIcon">keyboard_arrow_right</md-icon>
+    <span ng-style="{'color': vm.dashboard.header.pageColor}" ng-if="vm.dashboard.navigation.showBreadcrumb">{{vm.dashboard.pages[vm.selectedpage].title}}</span>
+  </md-headline>
+  <!--The right side-->
+  <md-button class="md-icon-button" aria-label="Open Menu" ng-click="vm.sidenav.toggle();">
+    <md-tooltip md-direction="left">Toggle Menu</md-tooltip>
+    <md-icon>reorder</md-icon>
+  </md-button>
+</md-toolbar>

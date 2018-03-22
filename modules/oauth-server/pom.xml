@@ -43,7 +43,7 @@
 	
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-security-jwt-jdbc-ri</artifactId>
+			<artifactId>sofia2-security-jwt-authorization-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 

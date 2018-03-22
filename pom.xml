@@ -89,9 +89,10 @@
 		
 		<!--SECURITY-->		
 		<module>security/security-ui-ri</module>
-		<module>security/security-oauth2-ri</module>
-		<module>security/security-jwt-core-ri</module>
-		<module>security/security-jwt-jdbc-ri</module>
+		<module>security/oauth/security-oauth2-ri</module>
+		<module>security/oauth/security-jwt-core-ri</module>
+		<module>security/oauth/security-jwt-jdbc-core-ri</module>
+		<module>security/oauth/security-jwt-authorization-ri</module>
 		
 		<!--PERSISTENCE-->
 		<module>persistence/interfaces</module>	

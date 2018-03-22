@@ -14,6 +14,7 @@
  */
 package com.indracompany.sofia2.api.rest.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.indracompany.sofia2.api.rest.api.dto.ApiDTO;
+import com.indracompany.sofia2.api.rest.api.dto.OperacionDTO;
 import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 import com.indracompany.sofia2.api.service.api.ApiServiceRest;
 import com.indracompany.sofia2.config.model.Api;
@@ -33,6 +35,7 @@ import com.indracompany.sofia2.config.model.Api;
 @RestController
 public class OauthApiController {
 
+	private static String BASE_PATH="/api-manager/server/api";
 
 	@Autowired
 	private ApiServiceRest apiService;
@@ -53,6 +56,42 @@ public class OauthApiController {
                 .map(Api::getIdentification)
                 .collect(Collectors.toList());
 		
+		return collect;
+	}
+	
+	private List<String> composeURL(ApiDTO api) {
+		
+		List<String> list = new ArrayList<String>();
+		int version = api.getVersion();
+		String vVersion="v"+version;
+		String identification = api.getIdentification();
+	
+		String base = BASE_PATH+"/"+vVersion+"/"+identification+"/";
+		
+		ArrayList<OperacionDTO> ops = api.getOperations();
+		List<String> collect = ops.stream()
+				.filter(x -> "GET".equals(x.getOperation().name())) 
+                .map(x->base+x.getPath())
+                .collect(Collectors.toList());
+		return collect;
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/oauth-api/api-ops")
+	@ResponseBody
+	public List<String> getAPIOps() {
+		
+		List<String> collect = new ArrayList<String>();
+		
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+    	String name = a.getName();
+
+		List<Api> list = apiService.findApisByUser(name, null);
+		for (Api api : list) {
+			List<String> l = composeURL(apiFIQL.toApiDTO(api));
+			collect.addAll(l);
+		}
+				
 		return collect;
 	}
 	
