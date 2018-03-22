@@ -204,14 +204,13 @@
 																							<tr class="mountable-model">
 																								<td><input type="text" name="property[]"  onblur="DigitalTwinCreateController.checkProperty(this)" class="form-control"/></td>
 																								<td>
-																									<select name="typeProp[]" class="form-control">																																																				
-																										<option value="number">number</option>
+																									<select name="typeProp[]" class="form-control">	
+																										<option value="string">string</option>																																																			
+																										<option value="int">int</option>
 																										<option value="object">object</option>
 																										<option value="date">date</option>
-																										<option value="timestamp">timestamp</option>
 																										<option value="double">double</option>
-																										<option value="boolean">boolean</option>																										
-																										<option value="array">array</option>
+																										<option value="boolean">boolean</option>
 																									</select>
 																								</td>
 																								<td><input type="text" name="units[]" class="form-control"/></td>
@@ -316,7 +315,12 @@
 																					</div>
 																				</div>
 																			</div>
-																			<div class="tab-pane" id="tab_6">																			
+																			<div class="tab-pane" id="tab_6">	
+																				<div class="alert alert-info alert-dismissable">
+																					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+																					<i class="fa fa-info-circle"></i> <strong th:text="#{digitaltwintype.logic}">LOGIC</strong> 
+																					<span th:text="#{digitaltwintype.info.action}"> info.</span>
+																				</div>																		
 																				<div class="row">
 																					<div id="aceEditor" style="position:relative;min-height:400px;"></div>
 																				</div>

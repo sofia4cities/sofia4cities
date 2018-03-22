@@ -108,3 +108,10 @@ logging:
    file: ${spring.application.name}
    level:
       com.indra: DEBUG
+      
+## Digital Twin
+digitaltwin:
+   temp.dir: C:\\Users\\rbarrio\\temp
+   src:
+      main: \\devicetwin\\src\\main
+      app: \\java\\digitaltwin\\device
