@@ -53,7 +53,7 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 		setOperationHumidity(OperationType.IN);
 		setOperationTemperature(OperationType.IN);
 	}
-
+	
 	@Override
 	public Boolean validate(OperationType operationType, String property) {
 		try {
