@@ -48,6 +48,9 @@
 	<script src="js/respond.min.js"></script>
 	<![endif]-->
 	
+	<!-- INPUT FILE -->
+	<link rel="stylesheet" href="../css/jpreview.css">
+	
 	<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
 		<script>
           WebFont.load({
@@ -301,6 +304,14 @@
 								<textarea width="100%" id="description" name="description" class="form-control">Your Issue description</textarea>
 							</div>
 						</div>
+						<div class="col-md-12 col-sm-12">
+							<div class="form-group"  style="margin:25px auto;">
+                                <label for="exampleInputFile" style="color:white;">Issue Images:</label>
+                                <input type="file" id="file" accept="image/gif, image/jpeg, image/png"  class="demo" data-jpreview-container="#demo-1-container">
+                                <div id="b64"></div>
+                                <div id="demo-1-container" class="jpreview-container"></div>
+				        	</div>
+				        </div>
 						<div class="col-md-offset-10 col-md-2 col-sm-2">
 							<button type="button" class="btn btn-default btn-block btn-new-issue"><i class="ti-announcement"></i> SEND ISSUE</button>
 						</div>
@@ -329,6 +340,7 @@
 									<th> Name </th>
 									<th>email</th>
 									<th> Status </th>
+									<th> Image </th>
 								</tr>
 							</thead>
 						<tbody id="tableAllIssuesBody">
@@ -454,6 +466,9 @@
 	<script src="../js/stomp.js"></script>
 	<!-- Controller -->
 	<script src="../js/issueController.js"></script>
+	<!-- jpreview -->
+	<script src="../js/bootstrap-prettyfile.js"></script>
+	<script type="text/javascript" src="../js/jpreview.js"></script>
 	
 
 	

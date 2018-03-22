@@ -317,6 +317,9 @@
 	
 	var init = function(){
 		
+		$('input[type="file"]').prettyFile();
+
+		$('.demo').jPreview();
 
 		
 		$(".btn-geolocalization").click(function () { //user clicks button

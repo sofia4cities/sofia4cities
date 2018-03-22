@@ -17,6 +17,7 @@ var IssueController = function() {
 		
 		var data ={'Ticket':{}};
 		var coordinates = {'coordinates': {'0':0.0,'1':0.0}};
+		var media ={'data': '', 'media':{}};
 		data['Ticket']['Identification']=$('#issue').val();
 		data['Ticket']['Status'] = 'PENDING';
 		data['Ticket']['Email']=$('#email').val();
@@ -30,7 +31,19 @@ var IssueController = function() {
 	
 		data['Ticket']['Type']=$('#issuecategory').val();;
 		data['Ticket']['Description']=$('#description').val();;
-		//data['Ticket']['File']=;
+		
+		if($("#b64").val() != "") {
+			media['data'] = $("#b64").val();
+			media['media']['name'] = document.getElementById('file').files[0].name;
+			media['media']['storageArea'] = 'SERIALIZED'
+			media['media']['binaryEncoding'] = 'Base64';
+			media['media']['mime'] = 'image/png';
+			data['Ticket']['File'] = media;
+		}else {
+			data['Ticket']['File']= null;
+		}
+		
+		
 		
 		client.insert(ontology,JSON.stringify(data), function(response){
 			if( response.body.data.id != null) {
@@ -62,13 +75,27 @@ var IssueController = function() {
 				}else {
 					htmlStatus = status;
 				}
+				if(issue.Ticket.File != null) {
+					var htmlImage = '<div class="jpreview-image img-responsive thumbnail" style="background-image: url(data:'
+						+ issue.Ticket.File.media.mime + ';' + issue.Ticket.File.media.binaryEncoding + ',' + issue.Ticket.File.data + ')" ></div>'
+					$('#tableAllIssues tbody').append('<tr><td>'+i+'</td><td>'
+							+issue._id.$oid+'</td><td>'
+							+issue.Ticket.Identification+'</td><td>'
+							+issue.Ticket.Type+'</td><td>'
+							+issue.Ticket.Name+'</td><td>'
+							+issue.Ticket.Email+'</td><td>'+htmlStatus+'</td><td>'
+							+htmlImage+'</td></tr>')
+					
+				}else {
+					$('#tableAllIssues tbody').append('<tr><td>'+i+'</td><td>'
+							+issue._id.$oid+'</td><td>'
+							+issue.Ticket.Identification+'</td><td>'
+							+issue.Ticket.Type+'</td><td>'
+							+issue.Ticket.Name+'</td><td>'
+							+issue.Ticket.Email+'</td><td>'+htmlStatus+'</td></tr>')
+					
+				}
 				
-				$('#tableAllIssues tbody').append('<tr><td>'+i+'</td><td>'
-						+issue._id.$oid+'</td><td>'
-						+issue.Ticket.Identification+'</td><td>'
-						+issue.Ticket.Type+'</td><td>'
-						+issue.Ticket.Name+'</td><td>'
-						+issue.Ticket.Email+'</td><td>'+htmlStatus+'</td></tr>')
 			}
 		}
 		$('#issueForm').addClass('hide');
@@ -79,10 +106,37 @@ var IssueController = function() {
 		
 	};
 	
+	var readFile = function() {
+		  
+		  if (this.files && this.files[0]) {
+		    
+		    var FR= new FileReader();
+		    
+		    FR.addEventListener("load", function(e) {
+		      //document.getElementById("img").src= e.target.result;
+		    	var base64 = e.target.result.split(",")[1];
+		      $("#b64").val(base64);
+		    }); 
+		    
+		    FR.readAsDataURL( this.files[0] );
+		  }
+		  
+		}
+	
 	var queryForIssue = function (response) {
 		$('#tableAllIssues tbody').html("");
 		var arrayList = response.body.data;
 		
+		if(arrayList.length > 0){
+			
+			
+			
+		}
+		
+		$('#issueForm').addClass('hide');
+		$('#issueList').removeClass('hide');
+		$('#issueSearch').addClass('hide');
+		document.querySelector('.scrolltolist').scrollIntoView({ behavior: 'smooth' , block: 'start'});		
 		
 		
 		
@@ -99,6 +153,8 @@ var IssueController = function() {
 			client.configure(config);
 			client.connect();
 			
+			document.getElementById("file").addEventListener("change", readFile);
+			
 			
 			$(".btn-new-issue").click(function () {
 				newIssue();				
@@ -109,10 +165,11 @@ var IssueController = function() {
 			});
 			
 			$('.btn-search').on('click',function(){
-				var query = 'db.' + ontology + '.find({})'
-				client.query(ontology, queryAll, queryType,  function(response){queryAllIssues(response)});
+				var query = 'db.' + ontology + '.find({\'_id\':{\'$oid\':\''+$('#issuesearch').val()+'\'}})'
+				client.query(ontology, query, queryType,  function(response){queryAllIssues(response)});
 			});
 		
+			
 			
 		}
 	
