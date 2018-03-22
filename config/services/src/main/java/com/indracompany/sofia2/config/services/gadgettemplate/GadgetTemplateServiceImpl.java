@@ -140,4 +140,11 @@ public class GadgetTemplateServiceImpl implements GadgetTemplateService {
 
 	}
 
+	@Override
+	public List<GadgetTemplate> getUserGadgetTemplate(String userId) {
+		List<GadgetTemplate> gadgetTemplates = this.gadgetTemplateRepository
+				.findGadgetTemplateByUserAndIsPublicTrue(userId);
+		return gadgetTemplates;
+	}
+
 }

@@ -133,4 +133,9 @@ public class GadgetTemplateController {
 		return "redirect:/gadgettemplates/list";
 	}
 
+	@GetMapping(value = "getUserGadgetTemplate")
+	public @ResponseBody List<GadgetTemplate> getUserGadgetTemplate() {
+		return this.gadgetTemplateService.getUserGadgetTemplate(utils.getUserId());
+	}
+
 }

@@ -35,4 +35,6 @@ public interface GadgetTemplateService {
 	public void createGadgetTemplate(GadgetTemplate gadgettemplate);
 
 	public void deleteGadgetTemplate(String id, String userId);
+
+	public List<GadgetTemplate> getUserGadgetTemplate(String userId);
 }

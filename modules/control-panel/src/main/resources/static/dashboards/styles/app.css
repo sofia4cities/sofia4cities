@@ -1,4 +1,4 @@
-/* html, body {
+html, body {
   height: 100vh;
   margin: 0;
   padding: 0;
@@ -8,7 +8,7 @@ body {
   display: flex;
   flex-direction: column;
 }
- */
+
 .sidenav-fab {
   position: absolute;
   z-index: 5;

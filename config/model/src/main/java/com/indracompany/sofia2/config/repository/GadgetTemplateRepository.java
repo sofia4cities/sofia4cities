@@ -22,6 +22,8 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.GadgetTemplate;
 import com.indracompany.sofia2.config.model.User;
@@ -49,5 +51,8 @@ public interface GadgetTemplateRepository extends JpaRepository<GadgetTemplate, 
 			String description);
 
 	GadgetTemplate findByIdentification(String identification);
+
+	@Query("SELECT o FROM GadgetTemplate AS o WHERE (o.user.userId LIKE %:userId% ) OR o.isPublic IS true")
+	List<GadgetTemplate> findGadgetTemplateByUserAndIsPublicTrue(@Param("userId") String userId);
 
 }
