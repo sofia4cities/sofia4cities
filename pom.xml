@@ -32,6 +32,7 @@
         <project.year>2013-2018</project.year>
         <project.organization.name>Indra Sistemas S.A. SPAIN</project.organization.name>
         <project.website>https://sofia2.com</project.website>
+		<freemarket.version>2.3.20</freemarket.version>	
 	</properties>
 	
 	<dependencyManagement>

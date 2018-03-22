@@ -48,7 +48,7 @@ public class EventsDigitalTwinType extends AuditableEntityWithUUID{
 	@Setter
 	private DigitalTwinType typeId;
 	
-	@Column(name = "NAME", length = 50, unique = true, nullable = false)
+	@Column(name = "NAME", length = 50, unique = false, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
@@ -65,7 +65,7 @@ public class EventsDigitalTwinType extends AuditableEntityWithUUID{
 	@Setter
 	private boolean status;
 	
-	@Column(name = "TYPE", length = 50, unique = true, nullable = false)
+	@Column(name = "TYPE", length = 50, unique = false, nullable = false)
 	@NotNull
 	@Getter
 	private String type;

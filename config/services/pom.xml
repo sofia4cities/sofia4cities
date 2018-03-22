@@ -59,7 +59,14 @@
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 		</dependency>
-
+		<!-- freemarker -->
+		<dependency>
+		    <groupId>org.freemarker</groupId>
+		    <artifactId>freemarker</artifactId>
+		    <version>${freemarket.version}</version>
+		</dependency>
+		
+	
 	</dependencies>
 
 </project>

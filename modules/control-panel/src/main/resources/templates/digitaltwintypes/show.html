@@ -334,7 +334,10 @@
 		editor = new jsoneditor.JSONEditor(container, options, jsonSchema);
 		
 		var aceEditor = ace.edit("aceEditor");
-		aceEditor.setValue(logic);
+		if(logic.startsWith("\"")){
+			logic = logic.substring(1,logic.length-1);
+		}
+		aceEditor.setValue(logic.replace(/\n/g,"\n"));
 		
 	});
 	//]]>

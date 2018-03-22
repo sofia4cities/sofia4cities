@@ -14,12 +14,20 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.digitaltwin.device;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -165,4 +173,16 @@ public class DigitalTwinDeviceController {
 		}
 	}
 	
+	@GetMapping(value = "/generateProject/{identification}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public ResponseEntity<InputStreamResource> generateProject(@PathVariable("identification") String identification)  throws FileNotFoundException{
+		
+		File zipFile= digitalTwinDeviceService.generateProject(identification);
+
+		HttpHeaders respHeaders = new HttpHeaders();
+		respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+		respHeaders.setContentDispositionFormData("attachment", zipFile.getName());
+		respHeaders.setContentLength(zipFile.length());
+		InputStreamResource isr = new InputStreamResource(new FileInputStream(zipFile));
+	    return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
+	}
 }

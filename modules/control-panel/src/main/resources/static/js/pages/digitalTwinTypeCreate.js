@@ -538,7 +538,7 @@ var DigitalTwinCreateController = function() {
 		     });
 			
 			$("#json").val(JSON.stringify(editor.get()));
-			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue().trim()));
+			$("#logic").val(JSON.stringify(ace.edit("aceEditor").getValue()));
 			$("#digitalType").val($("#type").val());
 			
 			$("#digitaltwintype_create_form").submit();
@@ -550,7 +550,7 @@ var DigitalTwinCreateController = function() {
 			if(!AllActionsLogic.includes(obj.value)){
 				var aceEditor = ace.edit("aceEditor");
 				var js = aceEditor.getValue();
-				js = js + "\nfunction " + obj.value + "(){ \n\t//TODO\n}";
+				js = js + "\nvar onAction"+obj.value.substring(0,1).toUpperCase() + obj.value.substring(1)+"=function(data){ }";
 				aceEditor.setValue(js);
 				AllActionsLogic.push(obj.value);
 			}
@@ -652,6 +652,6 @@ jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
 	AceEditor = ace.edit("aceEditor");
-	AceEditor.setValue("function main(){\n\t//TODO\n}");
+	AceEditor.setValue("function main(){}");
 	DigitalTwinCreateController.init();
 });

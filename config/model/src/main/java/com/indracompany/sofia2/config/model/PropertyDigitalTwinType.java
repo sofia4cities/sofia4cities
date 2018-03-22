@@ -48,7 +48,7 @@ public class PropertyDigitalTwinType extends AuditableEntityWithUUID{
 	@Setter
 	private DigitalTwinType typeId;
 
-	@Column(name = "NAME", length = 50, unique = true, nullable = false)
+	@Column(name = "NAME", length = 50, unique = false, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
