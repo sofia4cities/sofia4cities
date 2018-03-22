@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.indracompany.sofia2.config.services.oauth.JWTService;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -45,6 +46,9 @@ public class RouterControllerImpl implements RouterControllerInterface, RouterSe
 	@Autowired
 	@Qualifier("routerServiceImpl")
 	private RouterSuscriptionService routerSuscriptionService;
+	
+	@Autowired(required=false)
+	private JWTService jwtService;
 	
 	
 	@RequestMapping(value = "/insert", method = RequestMethod.POST)
@@ -93,6 +97,14 @@ public class RouterControllerImpl implements RouterControllerInterface, RouterSe
 		output.setMessage("ALL IS OK");
 		output.setOperation("ADVICE");
 		output.setResult("OK");
+		return output;
+	}
+	
+	@RequestMapping(value = "/token", method = RequestMethod.POST)
+	@ApiOperation(value = "token")
+	public String tokenPostProcessing(@RequestBody String input) {
+		System.out.println(input.toString());
+		String output = jwtService.extractToken(input);
 		return output;
 	}
 	
