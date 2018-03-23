@@ -13,6 +13,18 @@ var IssueController = function() {
 	var queryType= 'NATIVE';
 	var isAuthenticated = false;
 	var states = ['PENDING','DONE','WORKING', 'STOPPED'];
+
+
+	var comboSelect;
+
+	var edit = function(id) {
+		var queryUpdate = 'db.' + ontology + '.update({\'_id\':{\'$oid\':\''+id+'\'}},{\'Status\':\''+$('#'+id +' span').html()+ '\'}';
+		client.update(ontology,queryUpdate,function(response) {
+			
+			$('.btn-list').trigger('click');
+
+		});
+	}
 	var newIssue = function() {
 	
 		
@@ -80,21 +92,21 @@ var IssueController = function() {
 				if(issue.Ticket.File != null) {
 					var htmlImage = '<div class="jpreview-image img-responsive thumbnail" style="background-image: url(data:'
 						+ issue.Ticket.File.media.mime + ';' + issue.Ticket.File.media.binaryEncoding + ',' + issue.Ticket.File.data + ')" ></div>'
-					$('#tableAllIssues tbody').append('<tr><td>'+i+'</td><td>'
+					$('#tableAllIssues tbody').append('<tr id="'+issue._id.$oid+'"><td>'+i+'</td><td>'
 							+issue._id.$oid+'</td><td>'
 							+issue.Ticket.Identification+'</td><td>'
 							+issue.Ticket.Type+'</td><td>'
 							+issue.Ticket.Name+'</td><td>'
-							+issue.Ticket.Email+'</td><td>'+htmlStatus+'</td><td>'
-							+htmlImage+'</td></tr>')
+							+issue.Ticket.Email+'</td><td>'+htmlStatus+comboSelect+'</td><td>'
+							+htmlImage+'</td><td><button class="btn btn-white btn-outline" onclick="IssueController.edit(\''+issue._id.$oid+'\')">Edit</button></td></tr>')
 					
 				}else {
-					$('#tableAllIssues tbody').append('<tr><td>'+i+'</td><td>'
+					$('#tableAllIssues tbody').append('<tr id="'+issue._id.$oid+'"><td>'+i+'</td><td>'
 							+issue._id.$oid+'</td><td>'
 							+issue.Ticket.Identification+'</td><td>'
 							+issue.Ticket.Type+'</td><td>'
 							+issue.Ticket.Name+'</td><td>'
-							+issue.Ticket.Email+'</td><td>'+htmlStatus+'</td></tr>')
+						+issue.Ticket.Email+'</td><td>'+htmlStatus+comboSelect+'</td><td></td><td><button class="btn btn-white btn-outline" onclick="IssueController.edit(\''+issue._id.$oid+'\')">Edit</button></td></tr>')
 					
 				}
 				
@@ -146,6 +158,9 @@ var IssueController = function() {
 	
 	return {
 		
+		edit : function(id) {
+			edit(id);
+		},
 		init: function(){
 
 			config['url'] = url;
@@ -156,8 +171,13 @@ var IssueController = function() {
 			client.connect();
 			
 			document.getElementById("file").addEventListener("change", readFile);
-			
-			
+
+			comboSelect = '<select>';
+			for (i= 0; i< states.length ; i++ ){
+				comboSelect = comboSelect+'<option>'+states[i]+'</option>';
+			}
+			comboSelect = comboSelect +'</select>';
+
 			$(".btn-new-issue").click(function () {
 				newIssue();				
 			});
