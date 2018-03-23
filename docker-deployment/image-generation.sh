@@ -106,13 +106,7 @@ if [ -z "$1" ]; then
 	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
 		cd $homepath/../modules/api-manager/	
 		buildImage "API Manager"
-	fi
-	
-	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
-		cd $homepath/../config/init/
-		buildImage "Config Init"
-	fi	
-	
+	fi			
 fi
 
 if [ ! -z "$1" ]; then
@@ -138,6 +132,11 @@ if [ ! -z "$1" ]; then
 		cd $homepath/dockerfiles/quasar
 		buildQuasar latest
 	fi
+	
+	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+		cd $homepath/../config/init/
+		buildImage "Config Init"
+	fi	
 fi
 
 echo "Docker images successfully generated!"
