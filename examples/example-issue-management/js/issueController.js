@@ -18,7 +18,7 @@ var IssueController = function() {
 	var comboSelect;
 
 	var edit = function(id) {
-		var queryUpdate = 'db.' + ontology + '.update({\'_id\':{\'$oid\':\''+id+'\'}},{\'Status\':\''+$('#'+id +' span').html()+ '\'}';
+		var queryUpdate = 'db.' + ontology + '.update({\'_id\':{\'$oid\':\''+id+'\'}},{\'Status\':\''+$('#'+id +' select').val()+ '\'}';
 		client.update(ontology,queryUpdate,function(response) {
 			
 			$('.btn-list').trigger('click');
