@@ -37,7 +37,17 @@ services:
      - REALTIMEDB=realtimedb 
     depends_on:
      - "realtimedb"
-     - "configdb"         
+     - "configdb"   
+  configinit:
+    image: ${REPOSITORY}sofia2/configinit:${IMAGETAG}
+    container_name: configinit
+    networks:
+     - datanetwork
+    ports:
+     - "18081:18081"
+    depends_on:
+     - "realtimedb"
+     - "configdb"           
 networks:
   datanetwork:
     ipam:
