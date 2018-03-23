@@ -13,12 +13,14 @@
  */
 package com.indracompany.sofia2.systemconfig.init;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -210,10 +212,14 @@ public class InitMongoDB {
 					Charset.forName("UTF-8"));
 
 		} catch (Exception e) {
-			log.error("**********************************************");
-			log.error("Error loading resource: " + name + ".Please check if this error affect your database");
-			log.error(e.getMessage());
-			return null;
+			try {
+				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(), Charset.forName("UTF-8"));
+			} catch (IOException e1) {
+				log.error("**********************************************");
+				log.error("Error loading resource: " + name + ".Please check if this error affect your database");
+				log.error(e.getMessage());
+				return null;
+			}
 		}
 	}
 

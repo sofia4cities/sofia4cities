@@ -82,4 +82,42 @@
 		
 	</dependencies>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>exec</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+					
+		    <plugin>
+		      <groupId>com.spotify</groupId>
+		      <artifactId>docker-maven-plugin</artifactId>   		      
+		      <configuration>
+		        <imageName>sofia2/configinit</imageName>
+		        <imageTags>
+		           <imageTag>${sofia2.docker.version}</imageTag>
+		        </imageTags>		        
+		        <dockerDirectory>docker</dockerDirectory>
+		        <resources>
+		           <resource>
+		             <targetPath>/</targetPath>
+		             <directory>${project.build.directory}</directory>
+		             <include>${project.build.finalName}-exec.jar</include>
+		           </resource>
+		        </resources>
+		      </configuration>
+		    </plugin>			
+		</plugins>
+	</build>	
+
 </project>
