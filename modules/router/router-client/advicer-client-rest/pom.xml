@@ -33,6 +33,11 @@
 			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-commons</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
 	        <groupId>com.fasterxml.jackson.core</groupId>
 	        <artifactId>jackson-databind</artifactId>
 	      </dependency>
