@@ -43,7 +43,7 @@ public class AdviceServiceImpl
 		return execute(input);
 	}
 	
-	@Value("${sofia2.router.avoidsslverification:false")
+	@Value("${sofia2.router.avoidsslverification:false}")
 	private boolean avoidSSLVerification;
 	
 	public AdviceServiceImpl() throws KeyManagementException, NoSuchAlgorithmException {
