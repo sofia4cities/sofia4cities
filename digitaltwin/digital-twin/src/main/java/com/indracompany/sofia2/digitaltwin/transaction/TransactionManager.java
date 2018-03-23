@@ -52,7 +52,7 @@ public class TransactionManager {
 		executor = Executors.newFixedThreadPool(1);
 	}
 	
-	public void setProperty(String propertyName,String property, String idTransaction) {
+	public void setProperty(String propertyName,String property, String idTransaction) throws Exception {
 		try {
 			JSONObject propJSON = new JSONObject(property);
 			String propertyValue = propJSON.getString(propertyName);
@@ -76,6 +76,7 @@ public class TransactionManager {
 			
 		} catch (JSONException e) {
 			log.error("Invalid JSON property: " + property, e);
+			throw new Exception();
 		}
 	}
 	
@@ -99,6 +100,7 @@ public class TransactionManager {
 						actionExecutor.executeAction(action);
 					} catch (Exception e) {
 						log.error("Error setting transactional properties with idTransaction: " + idTransaction);
+						
 					}
 				}
 			});

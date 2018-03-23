@@ -215,6 +215,7 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 		
 		List<PropertiesDTO> properties = new ArrayList<PropertiesDTO>();
 		List<String> inits = new ArrayList<String>();
+		List<PropertiesDTO> cls = new ArrayList<PropertiesDTO>();
 		
 		DigitalTwinDevice device = digitalTwinDeviceRepo.findByIdentification(identificarion);
 		List<PropertyDigitalTwinType> propsDigitalTwin = propDigitalTwinTypeRepo.findByTypeId(device.getTypeId());
@@ -238,11 +239,13 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 			properties.add(new PropertiesDTO(prop.getName(), prop.getType().substring(0, 1).toUpperCase() + prop.getType().substring(1)));
 			properties.add(new PropertiesDTO("operation"+prop.getName().substring(0, 1).toUpperCase() + prop.getName().substring(1), "OperationType"));
 			inits.add("setOperation" + prop.getName().substring(0, 1).toUpperCase() + prop.getName().substring(1) + "(OperationType."+ prop.getDirection().toUpperCase() +");");
+			cls.add(new PropertiesDTO(prop.getName(), prop.getType().substring(0, 1).toUpperCase() + prop.getType().substring(1)));
 		}
 		
 		dataMap.put("properties", properties);
 		dataMap.put("inits", inits);
 		dataMap.put("package", "digitaltwin.device.status;");
+		dataMap.put("mapClass", cls);
 		
 		Writer writer=null;
 		PrintWriter out=null;
@@ -260,13 +263,14 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 					"import org.springframework.boot.SpringApplication;\r\n" + 
 					"import org.springframework.boot.autoconfigure.SpringBootApplication;\r\n" + 
 					"\r\n" + 
-					"@SpringBootApplication\r\n" + 
+					"@SpringBootApplication(scanBasePackages=\"com.indracompany.sofia2, digitaltwin.device\")\r\n" + 
 					"public class DeviceApplication {\r\n" + 
 					"\r\n" + 
 					"	public static void main(String[] args) {\r\n" + 
 					"		SpringApplication.run(DeviceApplication.class, args);\r\n" + 
 					"	}\r\n" + 
-					"}");
+					"}\r\n" + 
+					"");
 			out.flush();
 			
 			//Create DigitalTwinStatus.java
@@ -412,78 +416,6 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 			Element versionD = doc.createElement("version");
 			versionD.appendChild(doc.createTextNode("0.0.1-SNAPSHOT"));
 			dependency.appendChild(versionD);
-			
-			// dependency elements
-			Element dependency1 = doc.createElement("dependency");
-			dependencies.appendChild(dependency1);
-
-			Element groupIdD1 = doc.createElement("groupId");
-			groupIdD1.appendChild(doc.createTextNode("org.springframework.boot"));
-			dependency1.appendChild(groupIdD1);
-
-			Element artifactIdD1 = doc.createElement("artifactId");
-			artifactIdD1.appendChild(doc.createTextNode("spring-boot-starter"));
-			dependency1.appendChild(artifactIdD1);
-
-			// dependency elements
-			Element dependency2 = doc.createElement("dependency");
-			dependencies.appendChild(dependency2);
-
-			Element groupIdD2 = doc.createElement("groupId");
-			groupIdD2.appendChild(doc.createTextNode("org.springframework.boot"));
-			dependency2.appendChild(groupIdD2);
-
-			Element artifactIdD2 = doc.createElement("artifactId");
-			artifactIdD2.appendChild(doc.createTextNode("spring-boot-starter-test"));
-			dependency2.appendChild(artifactIdD2);
-			
-			Element scope = doc.createElement("scope");
-			scope.appendChild(doc.createTextNode("test"));
-			dependency2.appendChild(scope);
-			
-			// dependency elements
-			Element dependency3 = doc.createElement("dependency");
-			dependencies.appendChild(dependency3);
-
-			Element groupIdD3 = doc.createElement("groupId");
-			groupIdD3.appendChild(doc.createTextNode("org.json"));
-			dependency3.appendChild(groupIdD3);
-
-			Element artifactIdD3 = doc.createElement("artifactId");
-			artifactIdD3.appendChild(doc.createTextNode("json"));
-			dependency3.appendChild(artifactIdD3);
-			
-			// dependency elements
-			Element dependency4 = doc.createElement("dependency");
-			dependencies.appendChild(dependency4);
-
-			Element groupIdD4 = doc.createElement("groupId");
-			groupIdD4.appendChild(doc.createTextNode("org.projectlombok"));
-			dependency4.appendChild(groupIdD4);
-
-			Element artifactIdD4 = doc.createElement("artifactId");
-			artifactIdD4.appendChild(doc.createTextNode("lombok"));
-			dependency4.appendChild(artifactIdD4);
-			
-			Element optional = doc.createElement("optional");
-			optional.appendChild(doc.createTextNode("true"));
-			dependency4.appendChild(optional);
-			
-			// dependency elements
-			Element dependency5 = doc.createElement("dependency");
-			dependencies.appendChild(dependency4);
-
-			Element groupIdD5 = doc.createElement("groupId");
-			groupIdD5.appendChild(doc.createTextNode("org.apache.cxf"));
-			dependency5.appendChild(groupIdD5);
-
-			Element artifactIdD5 = doc.createElement("artifactId");
-			artifactIdD5.appendChild(doc.createTextNode("cxf-spring-boot-starter-jaxrs"));
-			dependency5.appendChild(artifactIdD5);
-			
-			Element versionD5 = doc.createElement("version");
-			versionD5.appendChild(doc.createTextNode("3.2.2"));
-			dependency5.appendChild(versionD5);
 			
 			// write the content into xml file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();

@@ -16,15 +16,18 @@ package com.indracompany.sofia2.digitaltwin.status;
 
 import java.util.Properties;
 
+import org.springframework.stereotype.Component;
+
 import com.indracompany.sofia2.digitaltwin.property.controller.OperationType;
 
+@Component
 public interface IDigitalTwinStatus {
 	
 	Boolean validate (OperationType operationType, String property);
 	
-	String getProperty(String property);
+	Object getProperty(String property) throws Exception;
 	
-	void setProperty(String property, String value);
+	void setProperty(String property, Object value) throws Exception;
 	
 	Properties toProperties();
 }
