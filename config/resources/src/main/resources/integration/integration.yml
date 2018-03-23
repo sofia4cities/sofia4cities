@@ -14,9 +14,9 @@ sofia2:
           url: 
       node-red:
         base:
-          url: https://rancher.sofia4cities.com/sofia2/flowengine/admin
+          url: https://s4citiespro.westeurope.cloudapp.azure.com/sofia2/flowengine/admin
         advice:
-          url: https://rancher.sofia4cities.com/nodered/
+          url: https://s4citiespro.westeurope.cloudapp.azure.com/nodered/
       router-standalone:
         base:
           url: http://localhost:19100/
@@ -32,13 +32,13 @@ sofia2:
           url: http://localhost:19100/router/swagger-ui.html
       api-manager:
         base:
-          url: https://rancher.sofia4cities.com/api-manager/
+          url: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/
         api:
-          url: https://rancher.sofia4cities.com/api-manager/server/api/
+          url: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/
         swagger-ui:
-          url: https://rancher.sofia4cities.com/api-manager/swagger-ui.html?url=
+          url: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/swagger-ui.html?url=
         swagger-ui-management:
-          url: https://rancher.sofia4cities.com/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
+          url: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
         swagger-json:
-          url: https://rancher.sofia4cities.com/api-manager/services/management/swagger/
+          url: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/services/management/swagger/
           
