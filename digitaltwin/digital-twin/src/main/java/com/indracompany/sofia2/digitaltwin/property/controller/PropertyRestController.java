@@ -45,10 +45,14 @@ public class PropertyRestController {
 	
 	@RequestMapping(value = "/{propertyName}", method = RequestMethod.GET)
 	public Response getProperty(@PathVariable("propertyName") String propertyName) {
-		if(digitalTwinStatus.validate(OperationType.OUT, propertyName)) {
-			return Response.ok(digitalTwinStatus.getProperty(propertyName)).build();
-		}else {
-			return Response.status(Status.UNAUTHORIZED).build();
+		try {
+			if(digitalTwinStatus.validate(OperationType.OUT, propertyName)) {
+				return Response.ok(digitalTwinStatus.getProperty(propertyName)).build();
+			}else {
+				return Response.status(Status.UNAUTHORIZED).build();
+			}
+		}catch(Exception e) {
+			return Response.status(Status.FORBIDDEN).build();
 		}
 	}
 
@@ -62,11 +66,13 @@ public class PropertyRestController {
 				if(idTransaction!=null && idTransaction!="") {
 					transactionManager.setProperty(propertyName, property, idTransaction);
 				}else {
-					digitalTwinStatus.setProperty(property, propJSON.getString(propertyName));
+					digitalTwinStatus.setProperty(propertyName, propJSON.get(propertyName));
 				}
 			} catch (JSONException e) {
 				log.error("Invalid JSON property: "+ property, e);
 				return Response.status(Status.BAD_REQUEST).build();
+			}catch (Exception e) {
+				return Response.status(Status.FORBIDDEN).build();
 			}
 			return Response.ok().build();
 		}else {

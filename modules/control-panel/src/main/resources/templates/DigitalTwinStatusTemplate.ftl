@@ -14,6 +14,8 @@
  */
 package ${package}
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import javax.annotation.PostConstruct;
 
@@ -35,12 +37,19 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 		@Setter
 		private ${property.type} ${property.name};
 	</#list>
+	
+	private Map<String, Class> mapClass;
 
 	@PostConstruct
 	public void init() {
 		//Init Operation types values
 		<#list inits as init>
 			${init}
+		</#list>
+		
+		mapClass = new HashMap<String, Class>();
+		<#list mapClass as class>
+			mapClass.put("${class.name}", ${class.type}.class);
 		</#list>
 	}
 
@@ -62,12 +71,12 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 	}
 
 	@Override
-	public String getProperty(String property) {
+	public Object getProperty(String property) {
 		try {
 			Class cls = Class.forName(DigitalTwinStatus.class.getName());
 			Method method = cls.getMethod("get"+property.substring(0, 1).toUpperCase() + property.substring(1), null);
 			
-			return (String) method.invoke(this, new Class[]{});
+			return method.invoke(this, new Class[]{});
 
 		}catch (Exception e) {
 			log.error("get property "+ property + " failed.", e);
@@ -76,12 +85,12 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 	}
 
 	@Override
-	public void setProperty(String property, String value) {
+	public void setProperty(String property, Object value) {
 		try {
 			Class cls = Class.forName(DigitalTwinStatus.class.getName());
 			
-			Method method = cls.getMethod("set"+property.substring(0, 1).toUpperCase() + property.substring(1), String.class);
-			method.invoke(this, value);
+			Method method = cls.getMethod("set"+property.substring(0, 1).toUpperCase() + property.substring(1), mapClass.get(property));
+			method.invoke(this, mapClass.get(property).cast(value));
 
 		}catch (Exception e) {
 			log.error("set property "+ property + " failed.", e);
