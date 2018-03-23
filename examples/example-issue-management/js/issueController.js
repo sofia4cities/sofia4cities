@@ -11,8 +11,10 @@ var IssueController = function() {
 	var config ={};
 	var queryAll= 'db.' + ontology + '.find()'
 	var queryType= 'NATIVE';
-	
+	var isAuthenticated = false;
+	var states = ['PENDING','DONE','WORKING', 'STOPPED'];
 	var newIssue = function() {
+	
 		
 		
 		var data ={'Ticket':{}};
@@ -55,7 +57,7 @@ var IssueController = function() {
 		
 	};
 	
-	var queryAllIssues = function(response) {
+	var queryFor = function(response) {
 		$('#tableAllIssues tbody').html("");
 		var arrayList = response.body.data;
 		if(arrayList.length > 0){
@@ -161,14 +163,88 @@ var IssueController = function() {
 			});
 			
 			$('.btn-list').on('click',function(){
-				client.query(ontology, queryAll, queryType,  function(response){queryAllIssues(response)});
+				if(isAuthenticated == true){
+					client.query(ontology, queryAll, queryType,  function(response){queryFor(response)});
+				}else {
+					$('#issueForm').addClass('hide');
+					$('#issueList').addClass('hide');
+					$('#issueSearch').addClass('hide');
+					$('#issueLogin').removeClass('hide');
+					document.querySelector('.scrolltosearch').scrollIntoView({ behavior: 'smooth' , block: 'start'});	
+				}
 			});
 			
 			$('.btn-search').on('click',function(){
 				var query = 'db.' + ontology + '.find({\'_id\':{\'$oid\':\''+$('#issuesearch').val()+'\'}})'
-				client.query(ontology, query, queryType,  function(response){queryAllIssues(response)});
+				client.query(ontology, query, queryType,  function(response){queryFor(response)});
 			});
 		
+			$(".btn-login").on('click',
+					function() {
+						var username = $("#username").val();
+						var password = $("#password").val();
+
+						var url_base = 'http://localhost:19090/api-manager/oauth/token';
+
+						// The auth_token is the base64 encoded string for the API 
+						// application.
+						var auth_token = 'sofia2_s4c:sofia2_s4c';
+						auth_token = window.btoa(auth_token);
+						var requestPayload = {
+							// Enter your inContact credentials for the 'username' and 
+							// 'password' fields.
+							'grant_type' : 'password',
+							'username' : username,
+							'password' : password
+						}
+						$.ajax({
+							'url' : url_base,
+							'type' : 'POST',
+							'content-Type' : 'x-www-form-urlencoded',
+							'dataType' : 'json',
+							'headers' : {
+								'Authorization' : 'Basic ' + auth_token
+							},
+							'data' : requestPayload,
+							'success' : function(result) {
+								
+								accessToken = result.access_token;
+								if(accessToken != null) {
+									isAuthenticated = true;
+									$('#badCredentials').addClass('hide');
+									$('#issueLogin').addClass('hide');
+									$('.btn-list').trigger('click');
+								}else {
+									$('#badCredentials').show();
+								}
+								return result;
+							},
+							'error' : function(req, status, err) {
+								console.log('something went wrong',
+										req.responseText, status, err);
+								$('#badCredentials').removeClass('hide');
+							}
+
+						});
+					});
+
+			$('.btn-issue-search').on('click',function(){
+				if(isAuthenticated == false){
+					$('#issueForm').addClass('hide');
+					$('#issueList').addClass('hide');
+					$('#issueSearch').addClass('hide');
+					$('#issueLogin').removeClass('hide');
+					document.querySelector('.scrolltosearch').scrollIntoView({ behavior: 'smooth' , block: 'start'});	
+					
+				}else {
+					$('#issueForm').addClass('hide');
+					$('#issueList').addClass('hide');
+					$('#issueLogin').addClass('hide');
+					$('#issueSearch').removeClass('hide');
+					document.querySelector('.scrolltosearch').scrollIntoView({ behavior: 'smooth' , block: 'start'});	
+				}
+						
+			});
 			
 			
 		}

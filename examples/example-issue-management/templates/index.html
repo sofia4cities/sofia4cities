@@ -319,6 +319,40 @@
 				</div>
 			</div>
 		</div>
+		<!-- LOGIN OAUTH -->
+		<div id="issueLogin" class="gtco-container scrolltosearch hide">
+			<div class="row animate-box fadeInUp animated-fast">
+				<div class="col-md-8 col-md-offset-2 text-center gtco-heading">
+					<h2>LOGIN</h2>
+					<p>Please login to search for tickets</p>
+				</div>
+			</div>
+			<div class="row animate-box fadeInUp animated-fast">
+				<div class="col-md-12">
+					<form class="form-inline">
+						
+						<div class="col-md-offset-2 col-md-4 col-sm-4">
+							<div class="form-group">
+								<label for="username" class="sr-only">Username</label>
+								<input class="form-control" id="username" placeholder="USERNAME" type="text">
+							</div>
+						</div>
+						<div class="col-md-4 col-sm-4">
+							<div class="form-group">
+								<label for="password" class="sr-only">Password</label>
+								<input class="form-control" id="password" placeholder="PASSWORD" type="password">
+							</div>
+						</div>
+						<div class="col-md-offset-4 col-md-4 col-sm-4">
+						<button type="button" id="login" class="btn btn-default btn-block btn-login"><i class="ti-search"></i> Login</button>
+						<div id="badCredentials" class="alert alert-danger hide">
+							<span>Bad credentials.</span>
+						</div>						
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
 		<!-- ISSUE LIST -->
 		<div id="issueList" class="gtco-container scrolltolist hide">
 			<div class="row animate-box  fadeInUp animated-fast">

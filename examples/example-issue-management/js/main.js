@@ -349,12 +349,6 @@
 		
 		
 		
-		$('.btn-issue-search').on('click',function(){
-			$('#issueForm').addClass('hide');
-			$('#issueList').addClass('hide');
-			$('#issueSearch').removeClass('hide');
-			document.querySelector('.scrolltosearch').scrollIntoView({ behavior: 'smooth' , block: 'start'});			
-		});
 		 
 				
 	};
