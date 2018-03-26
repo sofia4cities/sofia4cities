@@ -207,6 +207,11 @@ if [ -z "$1" ]; then
 		cd $homepath/../dockerfiles/quasar
 		buildQuasar latest
 	fi
+	
+	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+		cd $homepath/../config/init/
+		buildImage "Config Init"
+	fi	
 fi
 
 echo "Pushing all images to Docker registry"

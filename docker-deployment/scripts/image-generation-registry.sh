@@ -218,6 +218,11 @@ if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
 	buildQuasar latest
 fi
 
+if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+	cd $homepath/../config/init/
+	buildImage "Config Init"
+fi
+	
 echo "Docker images successfully generated!"
 
 echo "Push Sofia2 images to private registry"
@@ -234,6 +239,7 @@ pushImage2Registry dashboard latest
 pushImage2Registry monitoringui latest 
 pushImage2Registry nginx latest
 pushImage2Registry quasar latest 
+pushImage2Registry configinit latest 
 
 # pushAllImages2Registry latest
 
