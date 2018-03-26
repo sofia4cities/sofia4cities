@@ -209,7 +209,7 @@ if [ -z "$1" ]; then
 	fi
 	
 	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
-		cd $homepath/../config/init/
+		cd $homepath/../../config/init/
 		buildImage "Config Init"
 	fi	
 fi
