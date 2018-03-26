@@ -7,6 +7,8 @@
   /** @ngInject */
   function DatasourceSolverService(socketService, sofia2HttpService, $interval, $rootScope) {
       var vm = this;
+      vm.gadgetToDatasource = {};
+      
       vm.pendingDatasources = {};
       vm.poolingDatasources = {};
       vm.streamingDatasources = {};
@@ -72,27 +74,80 @@
         }
       }
 
+      //Method from gadget to drill up and down the datasource
+      vm.drillDown = function(gadgetId){}
+      vm.drillUp = function(gadgetId){}
+
+      vm.updateDatasourceTriggerAndShot = function(gadgetID, updateInfo){
+        var accessInfo = vm.gadgetToDatasource[gadgetID];
+        var dsSolver = vm.poolingDatasources[accessInfo.ds].triggers[accessInfo.index];
+        updateQueryParams(dsSolver,updateInfo);
+        var solverCopy = angular.copy(dsSolver);
+        solverCopy.params.filter = solverCopy.params.filter.map(function(elem){
+          return elem.data[0];
+        })
+        socketService.sendAndSubscribe({"msg":fromTriggerToMessage(solverCopy,accessInfo.ds),id: gadgetID, type:"filter", callback: vm.emitToTargets});
+      }
+
+      //update info has the filter, group, project id to allow override filters from same gadget and combining with others
+      function updateQueryParams(trigger, updateInfo){
+        debugger;
+        var index = 0;//index filter
+        var overwriteFilter = trigger.params.filter.filter(function(sfilter,i){
+          if(sfilter.id == updateInfo.filter.id){
+            index = i;
+          }
+          return sfilter.id == updateInfo.filter.id;
+        });
+        if (overwriteFilter>0){//filter founded, we need to override it
+          if(updateInfo.filter.data.length==0){//with empty array we delete it, remove filter action
+            trigger.params.filter.splice(index,1); 
+          }
+          else{ //override filter, for example change filter data and no adding
+            overwriteFilter.data = updateInfo.filter.data;  
+          }
+        }
+        else{
+          trigger.params.filter.push(updateInfo.filter);
+        }
+
+        if(updateInfo.group){//For group that only change in drill options, we need to override all elements
+          trigger.params.group = updateInfo.group;
+        }
+
+        if(updateInfo.project){//For project that only change in drill options, we need to override all elements
+          trigger.params.project = updateInfo.project;
+        }
+      }
+
       vm.registerSingleDatasourceAndFirstShot = function(datasource){
         if(datasource.type=="query"){//Query datasource. We don't need RT conection only request-response
-          if(datasource.refresh==0){//One shot datasource, we don't need to save it, only execute it once
-            //vm.pendingDatasources[datasource.name] = datasource;
-            for(var i = 0; i< datasource.triggers.length;i++){
-              socketService.sendAndSubscribe({"msg":fromTriggerToMessage(datasource.triggers[i],datasource.name),id: datasource.triggers[i].emiter, callback: vm.emitToTargets});
-            }
+          if(!(datasource.name in vm.poolingDatasources)){
+            vm.poolingDatasources[datasource.name] = datasource;
+            vm.poolingDatasources[datasource.name].triggers[0].listeners = 1;
+            vm.gadgetToDatasource[datasource.triggers[0].emiter] = {"ds":datasource.name, "index":0};
           }
-          else{//Interval query datasource, we need to register this datasource in order to pooling results
+          else if(!(datasource.triggers[0].emitter in vm.gadgetToDatasource)){
+            vm.poolingDatasources[datasource.name].triggers.push(datasource.triggers[0]);
+            var newposition = vm.poolingDatasources[datasource.name].triggers.length-1
+            vm.poolingDatasources[datasource.name].triggers[newposition].listeners = 1;
+            vm.gadgetToDatasource[datasource.triggers[0].emiter] = {"ds":datasource.name, "index":newposition};
+          }
+          else{
+            var gpos = vm.gadgetToDatasource[datasource.triggers[0].emitter];
+            vm.poolingDatasources[datasource.name].triggers[gpos.index].listeners++;
+          }
+          //One shot datasource, for pooling and 
+          //vm.pendingDatasources[datasource.name] = datasource;
+          for(var i = 0; i< datasource.triggers.length;i++){
+            socketService.sendAndSubscribe({"msg":fromTriggerToMessage(datasource.triggers[i],datasource.name),id: datasource.triggers[i].emiter, type:"refresh", callback: vm.emitToTargets});
+          }
+          if(datasource.refresh!=0){//Interval query datasource, we need to register this datasource in order to pooling results
             var i;
-            if(!(datasource.name in vm.poolingDatasources)){
-              vm.poolingDatasources[datasource.name] = datasource;
-              vm.poolingDatasources[datasource.name].triggers[0].listeners = 1;
-            }
-            else if(i=vm.poolingDatasources[datasource.name].triggers.indexOf(datasource.triggers[0])!=-1){
-              vm.poolingDatasources[datasource.name].triggers[i].listeners++;
-            }
             var intervalId = $interval(/*Datasource passed as parameter in order to call every refresh time*/
               function(datasource){
                 for(var i = 0; i< datasource.triggers.length;i++){
-                  socketService.sendAndSubscribe({"msg":fromTriggerToMessage(datasource.triggers[i],datasource.name),id: datasource.triggers[i].emiter, callback: vm.emitToTargets});
+                  socketService.sendAndSubscribe({"msg":fromTriggerToMessage(datasource.triggers[i],datasource.name),id: datasource.triggers[i].emiter, type:"refresh", callback: vm.emitToTargets});
                 }
               },datasource.refresh * 1000, 0, true, datasource
             );
@@ -110,9 +165,15 @@
         return baseMsg;
       }
 
-      vm.emitToTargets = function(id,data){
+      vm.emitToTargets = function(id,name,data){
         //pendingDatasources
-        $rootScope.$broadcast(id,JSON.parse(data.data));
+        $rootScope.$broadcast(id,
+          {
+            type: "data",
+            name: name,
+            data: JSON.parse(data.data)
+          }
+        );
       }
 
       vm.registerDatasource = function(datasource){

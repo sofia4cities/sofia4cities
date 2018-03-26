@@ -15,7 +15,7 @@
     });
 
   /** @ngInject */
-  function MainController($log, $scope, $mdSidenav, $mdDialog, $timeout, sofia2HttpService) {
+  function MainController($log, $scope, $mdSidenav, $mdDialog, $timeout, sofia2HttpService, interactionService) {
     var vm = this;
     vm.$onInit = function () {
       setTimeout(function () {
@@ -32,6 +32,11 @@
 
           vm.dashboard.gridOptions.enableEmptyCellDrop = true;
           vm.dashboard.gridOptions.emptyCellDropCallback = dropElementEvent.bind(this);
+
+          $timeout(function(){
+            interactionService.registerGadgetFieldEmitter("24286b82-e428-489e-9429-f4c539a7c8f2","cuisine");
+            interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "b4506302-4a6f-4b8a-ac77-7988f064b71e", "cuisine", "cuisine");
+          },3000);
         }
       )
       /*

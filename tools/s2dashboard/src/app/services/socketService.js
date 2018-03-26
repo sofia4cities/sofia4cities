@@ -61,7 +61,7 @@
           vm.hashRequestResponse[UUID] = datasource;
           vm.hashRequestResponse[UUID].subscription = $stomp.subscribe(__env.socketEndpointSubscribe + "/" + UUID, function (payload, headers, res) {
             var answerId = headers.destination.split("/").pop();
-            vm.hashRequestResponse[answerId].callback(vm.hashRequestResponse[answerId].id,payload);
+            vm.hashRequestResponse[answerId].callback(vm.hashRequestResponse[answerId].id,vm.hashRequestResponse[answerId].type,payload);
             // Unsubscribe
             vm.hashRequestResponse[UUID].subscription.unsubscribe();//Unsubscribe
           })

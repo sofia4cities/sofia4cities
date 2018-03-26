@@ -15,14 +15,22 @@
     });
 
   /** @ngInject */
-  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService) {
+  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService) {
     var vm = this;
     vm.ds = [];
     vm.type = "loading";
     vm.config = {};//Gadget database config
     vm.measures = [];
+    vm.dataStatus = [];
+    vm.status = "initial"
 
     vm.$onInit = function(){
+      //register Gadget in interaction service when gadget has id
+      if(vm.id){
+        interactionService.registerGadget(vm.id);
+      }
+      //Activate incoming events
+      vm.unsubscribeHandler = $scope.$on(vm.id,eventGProcessor);
       $scope.reloadContent();
     }
 
@@ -67,19 +75,19 @@
           function(measures){
             vm.measures = measures.data;
 
-            var projects = [];
+            vm.projects = [];
             for(var index=0; index < vm.measures.length; index++){
               var jsonConfig = JSON.parse(vm.measures[index].config);
               for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-                if(!isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
-                  projects.push({op:"",field:jsonConfig.fields[indexF]});
+                if(!isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },vm.projects)){
+                  vm.projects.push({op:"",field:jsonConfig.fields[indexF]});
                 }
               }
               vm.measures[index].config = jsonConfig;
             }
             sofia2HttpService.getDatasourceById(vm.measures[0].datasource.id).then(
               function(datasource){
-                subscriptionDatasource(datasource.data, [], projects, []);
+                subscriptionDatasource(datasource.data, [], vm.projects, []);
               }
             )
           }
@@ -116,14 +124,6 @@
     }
 
     function subscriptionDatasource(datasource, filter, project, group) {
-      vm.unsubscribeHandler = $scope.$on(vm.id,function(event,data){
-        if(data.length!=0){
-          processDataToGadget(data);
-        }
-        else{
-          vm.type="nodata";
-        }
-      });
 
       datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
         {
@@ -291,6 +291,97 @@
         }
       }
       return ret;
+    }
+
+    function eventGProcessor(event,dataEvent){
+      if(dataEvent.type == "data" && dataEvent.data.length==0){
+        vm.type="nodata";
+      }
+      else{
+        switch(dataEvent.type){
+          case "data":
+            switch(dataEvent.name){
+              case "refresh":
+                if(vm.status == "initial" || vm.status == "ready"){
+                  processDataToGadget(dataEvent.data);
+                }
+                else{
+                  console.log("Ignoring refresh event, status " + vm.status);
+                }
+                break;
+              case "add":
+                //processDataToGadget(data);
+                break;
+              case "filter":
+                if(vm.status = "pending"){
+                  processDataToGadget(dataEvent.data);
+                  vm.status = "ready";
+                }
+                break;
+              case "drillup":
+                //processDataToGadget(data);
+                break;
+              case "drilldown":
+                //processDataToGadget(data);
+                break;
+              default:
+                console.error("Not allowed data event: " + dataEvent.name);
+                break;
+            } 
+            break;
+          case "filter":
+            vm.status = "pending";
+            vm.type = "loading";
+            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
+            break;
+          default:
+            console.error("Not allowed event: " + dataEvent.type);
+            break;
+        }
+        
+      }
+    }
+
+    function buildFilterStt(dataEvent){
+      if(typeof dataEvent.data.value === "string"){
+        dataEvent.data.value = "\"" + dataEvent.data.value + "\""
+      }
+      return {
+        filter: {
+          id: dataEvent.id,
+          data: [
+            {
+              field: dataEvent.data.field,
+              op: "=",
+              exp: dataEvent.data.value
+            }
+          ]
+        } , 
+        group:[], 
+        project:vm.projects
+      }
+    }
+
+    vm.clickEventProcessorEmitter = function(points, evt){
+      var originField;
+      var originValue;
+      switch(vm.config.type){
+        case "line":
+          //originField = vm.measures[0].config.fields[0];
+          //originValue = points[0]._model.label;
+          break;
+        case "bar":
+          originField = vm.measures[0].config.fields[0];
+          originValue = points[0]._model.label;
+          break;
+        case "pie":
+          originField = vm.measures[0].config.fields[0];
+          originValue = points[0]._model.label;
+          break;
+      }
+      var filterStt = {}
+      filterStt[originField]=originValue;
+      interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
   }
 })();
