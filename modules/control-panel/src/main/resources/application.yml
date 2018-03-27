@@ -3,7 +3,7 @@
 
 
 server: ## Config Web Server
-   port: 18080
+   port: 19000
    contextPath: /controlpanel
    tomcat:
       access_log_enabled: true

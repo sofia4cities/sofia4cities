@@ -148,12 +148,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUser(User user) {
+	public void updatePassword(User user) {
 		if (this.userExists(user)) {
 			final User userDb = this.userRepository.findByUserId(user.getUserId());
 			userDb.setPassword(user.getPassword());
+		}
+	}
+
+	@Override
+	public void updateUser(User user) {
+		if (this.userExists(user)) {
+			final User userDb = this.userRepository.findByUserId(user.getUserId());
 			userDb.setEmail(user.getEmail());
-			userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
+
+			if (user.getRole() != null)
+				userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
 
 			// Update dateDeleted for in/active user
 			if (!userDb.isActive() && user.isActive()) {
@@ -198,8 +207,15 @@ public class UserServiceImpl implements UserService {
 		return r;
 	}
 
+	Role getRoleUser() {
+		final Role r = new Role();
+		r.setName(Role.Type.ROLE_USER.name());
+		r.setIdEnum(Role.Type.ROLE_USER);
+		return r;
+	}
+
 	@Override
-	public void registerUser(User user) {
+	public void registerRoleDeveloper(User user) {
 		// FIXME
 		if (user.getPassword().length() < 7) {
 			throw new UserServiceException("Password has to be at least 7 characters");
@@ -210,7 +226,26 @@ public class UserServiceImpl implements UserService {
 		}
 
 		user.setRole(getRoleDeveloper());
+		user.setActive(true);
 		log.debug("Creating user with Role Developer default");
+
+		this.userRepository.save(user);
+
+	}
+
+	@Override
+	public void registerRoleUser(User user) {
+
+		if (user.getPassword().length() < 7) {
+			throw new UserServiceException("Password has to be at least 7 characters");
+		}
+		if (this.userExists(user)) {
+			throw new UserServiceException(
+					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
+		}
+		user.setActive(true);
+		user.setRole(getRoleUser());
+		log.debug("Creating user with Role User default");
 
 		this.userRepository.save(user);
 
@@ -224,6 +259,7 @@ public class UserServiceImpl implements UserService {
 		return clients;
 	}
 
+	@Override
 	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);
 	}

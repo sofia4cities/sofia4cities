@@ -56,6 +56,11 @@ public class Sofia2ConfigDBAuthenticationProvider implements AuthenticationProvi
 			log.info("authenticate: User not exist: " + name);
 			throw new BadCredentialsException("Authentication failed. User not exists: " + name);
 		}
+
+		if (!user.isActive()) {
+			log.info("authenticate: User not active: " + name);
+			throw new BadCredentialsException("Authentication failed. User deactivated: " + name);
+		}
 		String hashPassword = null;
 		try {
 			hashPassword = PasswordEncoder.getInstance().encodeSHA256(password);
