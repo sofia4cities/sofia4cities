@@ -17,6 +17,11 @@ services:
       - "3306:3306"
     depends_on:
      - "realtimedb"
+    healthcheck:
+     test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+     interval: 20s
+     timeout: 10s
+     retries: 3       
   schedulerdb:
     image: ${REPOSITORY}sofia2/schedulerdb:${IMAGETAG}
     container_name: schedulerdb
@@ -46,8 +51,8 @@ services:
     ports:
      - "18081:18081"
     depends_on:
-     - "realtimedb"
-     - "configdb"           
+     configdb: 
+       condition: service_healthy         
 networks:
   datanetwork:
     ipam:
