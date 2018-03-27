@@ -35,7 +35,7 @@ pipeline {
 
 	   		steps {
 		    	// Only compile and generate artifacts
-	        	sh "mvn clean install -DskipTests"	
+	        	sh "mvn clean install -Dmaven.test.skip=true"	
 	        	
 	   			// Generates persistence images only if 
 	   			// they are not present in local Docker registry		   		
