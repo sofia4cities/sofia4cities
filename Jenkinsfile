@@ -35,7 +35,7 @@ pipeline {
 
 	   		steps {
 		    	// Only compile and generate artifacts
-	        	sh "mvn clean install -DskipTests"	
+	        	sh "mvn clean install -Dmaven.test.skip=true"	
 	        	
 	   			// Generates persistence images only if 
 	   			// they are not present in local Docker registry		   		
@@ -49,10 +49,10 @@ pipeline {
 				}
 				
 				// Wait until config db are loaded
-				sleep 20	
+				sleep 30	
 	   			
 	   			// Execute tests
-	   			sh "mvn surefire:test"			
+	   			sh "mvn clean install"			
 					
 				sh "mvn sonar:sonar"
 	   		}
@@ -67,7 +67,10 @@ pipeline {
 				sh "docker-compose down || true"
 				
         		echo "Removing orphan volumes"
-        		sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"				
+        		sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"	
+        		
+        		echo "Removing config init image"
+        		sh "docker rmi -f \$(docker images | grep sofia2/configinit | awk '{print \$3}' | uniq) || true"			
 			}        
 			
         	echo 'Clean up workspace...'
@@ -87,7 +90,7 @@ pipeline {
 			body: 'Ha ocurrido un error al compilar los fuentes de la rama $BRANCH_NAME del proyecto $PROJECT_NAME.url del Build: $BUILD_URL', 
 			compressLog: true, 
 			subject: '[ERROR!] Ha ocurrido un error al compilar los fuentes de la rama $BRANCH_NAME del proyecto $PROJECT_NAME. Se adjuntan los logs de la compilación. id del Build: $BUILD_NUMBER', 
-			to: 'ialonsoc@minsait.com, alanton@minsait.com, plantona@minsait.com, rbarrio@minsait.com, aclaramonte@minsait.com, jfgpimpollo@minsait.com, cfsanchez@indra.es, lfernandezsa@minsait.com, pgmarquina@minsait.com, fjgcornejo@minsait.com, lmgracia@minsait.com, rlgiron@minsait.com, jjmorenoa@minsait.com, mmourino@minsait.com, dsanteodoro@indra.es, ljsantos@minsait.com, rtvachet@minsait.com, mmoran@minsait.com'
+			to: 'mmoran@minsait.com'
 	    }
    }      
 }
