@@ -21,7 +21,7 @@ services:
      test: "/usr/bin/mysql --user=root --execute \"SHOW DATABASES;\""
      interval: 4s
      timeout: 2s
-     retries: 10       
+     retries: 20       
   schedulerdb:
     image: ${REPOSITORY}sofia2/schedulerdb:${IMAGETAG}
     container_name: schedulerdb
