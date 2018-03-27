@@ -19,9 +19,9 @@ services:
      - "realtimedb"
     healthcheck:
      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-     interval: 20s
-     timeout: 10s
-     retries: 3       
+     interval: 7s
+     timeout: 4s
+     retries: 5       
   schedulerdb:
     image: ${REPOSITORY}sofia2/schedulerdb:${IMAGETAG}
     container_name: schedulerdb
