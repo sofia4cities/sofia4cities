@@ -35,7 +35,7 @@ pipeline {
 
 	   		steps {
 		    	// Only compile and generate artifacts
-	        	sh "mvn clean install -Dmaven.test.skip=true"	
+	        	sh "mvn clean install -DskipTests"
 	        	
 	   			// Generates persistence images only if 
 	   			// they are not present in local Docker registry		   		
@@ -52,7 +52,7 @@ pipeline {
 				sleep 30	
 	   			
 	   			// Execute tests
-	   			sh "mvn clean install"			
+	   			sh "mvn surefire:test"			
 					
 				sh "mvn sonar:sonar"
 	   		}
