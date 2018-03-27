@@ -119,12 +119,14 @@
 						<input class="full-width has-padding has-border" id="signup-email" th:field="*{email}" name ="emailup" type="email" placeholder="E-mail" th:required="true"/>
 						<span class="cd-error-message">Invalid email</span>
 					</p>
+					 
 					<div class="fieldset">
-						<div class="btn-group" data-toggle="buttons">
-							<label class="btn btn-role btn-developer green active"><i class="fa fa-check"></i> <input class="toggle" name="role" value="developer" type="radio"/> Developer</label>
-							<label class="btn btn-role btn-user green"><i class="fa fa-user"></i> <input class="toggle" name="role" value="user" type="radio"/> User </label>
+					 	<div class="btn-group" data-toggle="buttons">
+							<label class="btn btn-role btn-developer green active"><i class="fa fa-check"></i> <input class="toggle" name="roleName" value="developer" type="radio" checked="checked"/> Developer</label>
+							<label class="btn btn-role btn-user green"><i class="fa fa-user"></i> <input class="toggle" name="roleName" value="user" type="radio"/> User </label>
 						</div>
 						<span style="padding-left: 11px;"><i class="fa fa-info-circle"></i> <span th:text="#{login.role}">please select user role</span></span>	
+					
 					</div>					
 					<p class="fieldset">
 						<input class="full-width has-padding" type="submit" value="Create account"/>
@@ -192,7 +194,7 @@
 			else {			
 				userRole.hasClass('fa-user') ? (userRole.removeClass().addClass('fa fa-check'),developerRole.removeClass().addClass('fa fa-user')) : '';				 	
 			}	
-		});
+		}); 
 
 	};
 	</script>

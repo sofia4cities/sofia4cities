@@ -57,7 +57,9 @@ public interface UserService {
 
 	void deleteUser(String userId);
 
-	void registerUser(User user);
+	void registerRoleDeveloper(User user);
+	
+	void registerRoleUser(User user);
 	
 	List<ClientPlatform> getClientsForUser(User user);
 
