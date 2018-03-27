@@ -197,9 +197,16 @@ public class UserServiceImpl implements UserService {
 		r.setIdEnum(Role.Type.ROLE_DEVELOPER);
 		return r;
 	}
+	
+	Role getRoleUser() {
+		final Role r = new Role();
+		r.setName(Role.Type.ROLE_USER.name());
+		r.setIdEnum(Role.Type.ROLE_USER);
+		return r;
+	}
 
 	@Override
-	public void registerUser(User user) {
+	public void registerRoleDeveloper(User user) {
 		// FIXME
 		if (user.getPassword().length() < 7) {
 			throw new UserServiceException("Password has to be at least 7 characters");
@@ -210,11 +217,31 @@ public class UserServiceImpl implements UserService {
 		}
 
 		user.setRole(getRoleDeveloper());
+		user.setActive(true);
 		log.debug("Creating user with Role Developer default");
 
 		this.userRepository.save(user);
 
 	}
+	@Override
+	public void registerRoleUser(User user){
+		
+		if (user.getPassword().length() < 7) {
+			throw new UserServiceException("Password has to be at least 7 characters");
+		}
+		if (this.userExists(user)) {
+			throw new UserServiceException(
+					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
+		}
+		user.setActive(true);
+		user.setRole(getRoleUser());
+		log.debug("Creating user with Role User default");
+
+		this.userRepository.save(user);
+
+	}
+		
+
 
 	@Override
 

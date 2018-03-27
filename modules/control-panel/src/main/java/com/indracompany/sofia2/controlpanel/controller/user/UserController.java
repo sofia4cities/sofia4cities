@@ -15,6 +15,7 @@ package com.indracompany.sofia2.controlpanel.controller.user;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
@@ -50,6 +52,7 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private AppWebUtils utils;
+
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/create", produces = "text/html")
@@ -210,36 +213,46 @@ public class UserController {
 	private void populateFormData(Model model) {
 		model.addAttribute("roleTypes", this.userService.getAllRoles());
 	}
+	
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
-
+	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes, HttpServletRequest request ) {
+		String nameRole = request.getParameter("roleName");
+		
 		if (user != null) {
-
 			if (this.userService.emailExists(user)) {
-
 				log.debug("There is already an user with this email");
 				utils.addRedirectMessage("login.error.email.duplicate", redirectAttributes);
 				return "redirect:/login";
 			}
-
 			if (utils.paswordValidation(user.getPassword()) && (this.userService.emailExists(user) == false)) {
 
 				try {
-					this.userService.registerUser(user);
+					if(nameRole == null) {
+						log.debug("A role must be selected");
+						utils.addRedirectMessage("login.error.user.register", redirectAttributes);
+						return "redirect:/login";
+					}
+					if(nameRole.equals("user")) {
+						this.userService.registerRoleUser(user);
+					}else {						
+						this.userService.registerRoleDeveloper(user);
+					}
+					
 					log.debug("User created from login");
 					utils.addRedirectMessage("login.register.created", redirectAttributes);
 					return "redirect:/login";
+			
 				} catch (UserServiceException e) {
 					log.debug("This user already exist");
 					utils.addRedirectMessage("login.error.register", redirectAttributes);
 					return "redirect:/login";
 				}
-
 			}
-
 		}
 		return "redirect:/login?errorRegister";
+	
 	}
-
 }
+
+	
