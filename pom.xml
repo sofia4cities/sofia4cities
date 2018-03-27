@@ -80,6 +80,7 @@
         <module>libraries/mail</module>
         <module>libraries/social</module>
         <module>libraries/flow-engine-services</module>
+        <module>libraries/audit</module>
 
 		<!--CONFIG -->
 		<module>config/model</module>
@@ -109,14 +110,12 @@
         <module>modules/api-manager</module>
 	<!--        <module>modules/scripting-engine</module-->
 		<module>modules/planner</module>
-		 <module>modules/router</module>
+	    <module>modules/router</module>
         <module>modules/flow-engine</module>
 		<module>modules/dashboard-engine</module>
 		<module>modules/device-simulator</module>
 		<module>modules/oauth-server</module>
-		<!--
-        <module>api-manager</module>
-		-->
+	
 	</modules>
 	
 	<build>

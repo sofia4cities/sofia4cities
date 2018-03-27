@@ -1,16 +1,16 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
-	<route id="start-hazelcast-queue-timer" errorHandlerRef="defaultEH">
+	<!-- route id="start-hazelcast-queue-timer" errorHandlerRef="defaultEH">
 		<from uri="timer:foo?period=5000" />
 		<log message="Producer side: Sending data to Hazelcast Queue" />
 		<setBody><constant>HELLO</constant></setBody>
-		<to uri="hazelcast-queue:foo" />
+		<to uri="hazelcast-queue:audit" />
 		<log message="Producer side: Sended data Async" />
-	</route>
+	</route-->
 
 
 	<route id="start-hazelcast-queue-route" errorHandlerRef="defaultEH">
-		<from uri="hazelcast-queue:foo" />
+		<from uri="hazelcast-queue:audit" />
 		<log message="Getting Message From queue foo ${body}" />
 		
 	</route>
