@@ -42,7 +42,7 @@
 
     <appender name="rollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/${LOG_FILE}-%d{yyyy-MM-dd}-${PID}.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH:-.}/${LOG_FILE:-.}-%d{yyyy-MM-dd}-${PID}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
