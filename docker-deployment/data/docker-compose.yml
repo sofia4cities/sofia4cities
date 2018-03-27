@@ -18,7 +18,7 @@ services:
     depends_on:
      - "realtimedb"
     healthcheck:
-     test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+     test: "/usr/bin/mysql --user=root --execute \"SHOW DATABASES;\""
      interval: 7s
      timeout: 4s
      retries: 5       
