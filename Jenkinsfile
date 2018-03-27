@@ -52,7 +52,7 @@ pipeline {
 				sleep 30	
 	   			
 	   			// Execute tests
-	   			sh "mvn surefire:test"			
+	   			sh "mvn clean install"			
 					
 				sh "mvn sonar:sonar"
 	   		}
