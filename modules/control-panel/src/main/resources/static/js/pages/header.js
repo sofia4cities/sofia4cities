@@ -489,15 +489,17 @@ var HeaderController = function() {
 	}	
 	
 	// SERVER ERRORS-DIALOG
-	var errors = function(){		
+	var messages = function(){		
 		var Close = headerReg.btnCancelar;
-		if ( headerReg.errores !== null ){			
+		var infoTitle = headerReg.informationtitle;
+		if ( headerReg.messages !== null ){			
 			// jquery-confirm DIALOG SYSTEM.
 			$.confirm({
-				icon: 'fa fa-bug',
-				title: 'ERROR',
+				icon: 'fa fa-info-circle',
+				title: infoTitle + ':',
 				theme: 'dark',
-				content: headerReg.errores,
+				type: 'blue',
+				content: headerReg.messages,
 				draggable: true,
 				dragWindowGap: 100,
 				backgroundDismiss: true,
@@ -510,7 +512,7 @@ var HeaderController = function() {
 					}
 				}
 			});			
-		} else { logControl ? console.log('|---> errors() -> NO ERRORS FROM SERVER.') : ''; }		
+		} else { logControl ? console.log('|---> messages() -> NO MESSAGES FROM SERVER.') : ''; }		
 	}
 
 	// SERVER INFORMATION-DIALOG (ERRORS)
@@ -554,8 +556,8 @@ var HeaderController = function() {
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 
-			// CALL ERRORS
-			errors();			
+			// CALL MESSAGES/ERRORS
+			messages();			
 			// CALL INFO
 			information();
 		},
