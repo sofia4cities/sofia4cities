@@ -47,7 +47,7 @@ services:
      - "18081:18081"
     depends_on:
      - "realtimedb"
-     - "configdb"           
+     - "configdb"          
 networks:
   datanetwork:
     ipam:

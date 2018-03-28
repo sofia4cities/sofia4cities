@@ -46,12 +46,8 @@ public class CamelConfig {
 	@Bean
 	@ConditionalOnMissingBean(RoutesCollector.class)
 	RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties config) {
-
-		Collection<CamelContextConfiguration> configurations = applicationContext
-				.getBeansOfType(CamelContextConfiguration.class).values();
-
-		return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations),
-				config);
+		Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
+		return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations),config);
 	}
 
 	@Bean
@@ -60,7 +56,6 @@ public class CamelConfig {
 		processor.setApplicationContext(applicationContext);
 		return processor;
 	}
-	
 	
 	private static final String MSJ_SSL_ERROR = "Error configuring SSL verification in Router";
 	

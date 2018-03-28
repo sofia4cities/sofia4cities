@@ -13,31 +13,25 @@
  */
 package com.indracompany.sofia2.router.config;
 
-import org.apache.camel.component.hazelcast.queue.HazelcastQueueComponent;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.indracompany.sofia2.router.camel.CamelContextHandler;
+import com.hazelcast.config.Config;
+import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.config.MaxSizeConfig;
 
 @Configuration
-
-public class HazelcastConfiguration {
-
-	@Autowired
-	CamelContextHandler camelContextHandler;
-
-	@Autowired
-	HazelcastInstance instance;
+@EnableCaching
+public class HazelcastCacheConfiguration {
 
 	@Bean
-	public HazelcastQueueComponent hazelcastQueueComponent() {
-		// setup camel hazelcast
-		HazelcastQueueComponent hazelcast = new HazelcastQueueComponent();
-		hazelcast.setHazelcastInstance(instance);
-		camelContextHandler.getDefaultCamelContext().addComponent("hazelcast-queue", hazelcast);
-		return hazelcast;
+	public Config hazelCastConfig() {
+		
+		return new Config().setInstanceName("hazelcast-instance")
+				.addMapConfig(new MapConfig().setName("queries")
+						.setMaxSizeConfig(new MaxSizeConfig(200, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
+						.setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(20));
 	}
-
 }

@@ -1,7 +1,6 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.api.camel;
+package com.indracompany.sofia2.router.camel;
 
 import java.util.Map;
 
@@ -24,14 +23,13 @@ import org.apache.camel.spring.boot.CamelConfigurationProperties;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApiCamelContextHandler implements BeanFactoryAware {
+public class CamelContextHandler implements BeanFactoryAware {
 
 	private BeanFactory beanFactory;
 

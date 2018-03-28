@@ -39,7 +39,7 @@ import com.indracompany.sofia2.api.camel.CamelContextReferenceContitional;
 @Conditional(CamelContextReferenceContitional.class)
 @EnableConfigurationProperties(CamelConfigurationProperties.class)
 @Import(TypeConversionConfiguration.class)
-@ImportResource({"classpath:api-camel-context-empty.xml"})
+@ImportResource({"classpath:api-manager-camel-context.xml"})
 public class ApiCamelConfig  {
 	
 	@Autowired
