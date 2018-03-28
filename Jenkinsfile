@@ -34,9 +34,6 @@ pipeline {
             }
 
 	   		steps {
-		    	// Only compile and generate artifacts
-	        	sh "mvn clean install -Dmaven.test.skip=true"	
-	        	
 	   			// Generates persistence images only if 
 	   			// they are not present in local Docker registry		   		
 	   		    dir("${env.IMAGEGENPATH}") {
@@ -48,13 +45,21 @@ pipeline {
 					sh "docker-compose up -d || true"
 				}
 				
-				// Wait until config db are loaded
-				sleep 30	
+		    	// Only compile and generate artifacts
+	        	sh "mvn clean install -DskipTests"	   		
+	   							
+				// Load Sofia2 CDB and BDTR					
+	   			dir("${env.SYSTEMCONFIG}") {
+					// Wait until configdb and realtimedb are up and running
+					sleep 10
+						
+					sh "mvn spring-boot:run"	  			
+	   			}
 	   			
 	   			// Execute tests
-	   			sh "mvn clean install"			
+	   			sh "mvn test"			
 					
-				sh "mvn sonar:sonar"
+				sh "mvn sonar:sonar"	   			
 	   		}
 	   }	 
    
@@ -90,7 +95,7 @@ pipeline {
 			body: 'Ha ocurrido un error al compilar los fuentes de la rama $BRANCH_NAME del proyecto $PROJECT_NAME.url del Build: $BUILD_URL', 
 			compressLog: true, 
 			subject: '[ERROR!] Ha ocurrido un error al compilar los fuentes de la rama $BRANCH_NAME del proyecto $PROJECT_NAME. Se adjuntan los logs de la compilación. id del Build: $BUILD_NUMBER', 
-			to: 'mmoran@minsait.com'
+			to: 'ialonsoc@minsait.com, alanton@minsait.com, plantona@minsait.com, rbarrio@minsait.com, aclaramonte@minsait.com, jfgpimpollo@minsait.com, cfsanchez@indra.es, lfernandezsa@minsait.com, pgmarquina@minsait.com, fjgcornejo@minsait.com, lmgracia@minsait.com, rlgiron@minsait.com, jjmorenoa@minsait.com, mmourino@minsait.com, dsanteodoro@indra.es, ljsantos@minsait.com, rtvachet@minsait.com, mmoran@minsait.com'
 	    }
    }      
 }
