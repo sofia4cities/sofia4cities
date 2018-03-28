@@ -16,6 +16,8 @@
         $log.debug(args)
       });
 
+      $stomp.setDebug(false);
+
       vm.connect = function(){
         $stomp.connect(__env.socketEndpointConnect, []).then(
           function(frame){
@@ -41,7 +43,7 @@
           // frame = CONNECTED headers
           .then(function (frame) {
             for(var reqrest in reqrespList){
-              var UUID = (new Date()).getTime();
+              var UUID = generateConnectionUUID();
               vm.hashRequestResponse[UUID] = reqrespList[reqrest];
               vm.hashRequestResponse[UUID].subscription = $stomp.subscribe(__env.socketEndpointSubscribe + "/" + UUID, function (payload, headers, res) {
                 var answerId = headers.destination.split("/").pop();
@@ -57,13 +59,22 @@
 
       vm.sendAndSubscribe = function(datasource){
         if(vm.connected){
-          var UUID = (new Date()).getTime();
+          var UUID = generateConnectionUUID();
           vm.hashRequestResponse[UUID] = datasource;
           vm.hashRequestResponse[UUID].subscription = $stomp.subscribe(__env.socketEndpointSubscribe + "/" + UUID, function (payload, headers, res) {
             var answerId = headers.destination.split("/").pop();
             vm.hashRequestResponse[answerId].callback(vm.hashRequestResponse[answerId].id,vm.hashRequestResponse[answerId].type,payload);
             // Unsubscribe
             vm.hashRequestResponse[UUID].subscription.unsubscribe();//Unsubscribe
+            function deleteHash(UUID){
+              $timeout(
+                function(){
+                  delete vm.hashRequestResponse[UUID];
+                },
+                0
+              );
+            }
+            deleteHash(UUID);
           })
 
           // Send message
@@ -79,6 +90,14 @@
         $stomp.disconnect().then(function () {
           $log.info('disconnected')
         })
+      }
+
+      function generateConnectionUUID(){
+        var newUUID = (new Date()).getTime() + Math.floor(((Math.random()*1000000)));
+        while(newUUID in vm.hashRequestResponse){
+          newUUID = generateConnectionUUID();
+        }
+        return newUUID;
       }
   };
 })();

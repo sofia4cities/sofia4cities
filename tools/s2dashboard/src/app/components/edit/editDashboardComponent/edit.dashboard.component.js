@@ -1435,9 +1435,7 @@
 
     }
 
-    $scope.$on('deleteElement',function (item) {
-      event.stopPropagation();
-      event.preventDefault();
+    $scope.$on('deleteElement',function (event, item) {
       var dashboard = $scope.ed.dashboard;
       var page = dashboard.pages[$scope.ed.selectedpage];
       var layer = page.layers[page.selectedlayer];

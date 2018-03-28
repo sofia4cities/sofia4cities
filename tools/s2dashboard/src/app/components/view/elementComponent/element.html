@@ -5,6 +5,16 @@
         <md-icon ng-style="{'color':vm.element.header.title.iconColor}">{{vm.element.header.title.icon}}</md-icon>
         <h5 flex ng-style="{'color':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5>
 
+        <md-button ng-if="vm.datastatus" class="md-icon-button" aria-label="Filters">
+          <md-icon>filter_list</md-icon>
+          <md-tooltip class="tt-multiline">
+            <b>Applied filters:</b>
+            <span ng-repeat="(field, value) in vm.datastatus">
+              <br/>
+              <label>{{field}}</label>:<span>{{value}}</span>
+            </span>            
+          </md-tooltip>
+        </md-button>
         <!--<md-button ng-click="toggleFullScreen()" class="md-icon-button" aria-label="Fullscreen">
           <md-icon>fullscreen</md-icon>
           <md-tooltip>Fullscreen</md-tooltip>
@@ -47,6 +57,6 @@
     <!--<div ng-bind-html="vm.trustHTML(vm.element.content)" class="fullcontainer" flex ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}">
     </div>-->
     <livehtml ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}" ng-if="vm.element.type == 'livehtml'" livecontent="vm.element.content" datasource="vm.element.datasource"></livehtml>
-    <gadget ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'display': 'inline-block', 'width':'100%', 'height': vm.calcHeight()}" ng-if="vm.element.type != 'livehtml'" id="vm.element.id"></gadget>
+    <gadget ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'display': 'inline-block', 'width':'100%', 'height': vm.calcHeight()}" ng-if="vm.element.type != 'livehtml'" id="vm.element.id" datastatus="vm.datastatus"></gadget>
   </div>
 </gridster-item>

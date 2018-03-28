@@ -10,7 +10,8 @@
         id:"<?",
         gconfig:"=?",
         gmeasures:"=?",
-        gdatasourceid:"=?"
+        gdatasourceid:"=?",
+        datastatus:"=?"
       }
     });
 
@@ -21,7 +22,6 @@
     vm.type = "loading";
     vm.config = {};//Gadget database config
     vm.measures = [];
-    vm.dataStatus = [];
     vm.status = "initial"
 
     vm.$onInit = function(){
@@ -130,7 +130,7 @@
           type: datasource.mode,
           name: datasource.identification,
           refresh: datasource.refresh,
-          triggers: [{params:{filter:filter, group:group, project:project},emiter:vm.id}]
+          triggers: [{params:{filter:filter, group:group, project:project},emitTo:vm.id}]
         }
       );
     };
@@ -294,7 +294,7 @@
     }
 
     function eventGProcessor(event,dataEvent){
-      if(dataEvent.type == "data" && dataEvent.data.length==0){
+      if(dataEvent.type === "data" && dataEvent.data.length===0){
         vm.type="nodata";
       }
       else{
@@ -302,7 +302,7 @@
           case "data":
             switch(dataEvent.name){
               case "refresh":
-                if(vm.status == "initial" || vm.status == "ready"){
+                if(vm.status === "initial" || vm.status === "ready"){
                   processDataToGadget(dataEvent.data);
                 }
                 else{
@@ -313,7 +313,7 @@
                 //processDataToGadget(data);
                 break;
               case "filter":
-                if(vm.status = "pending"){
+                if(vm.status === "pending"){
                   processDataToGadget(dataEvent.data);
                   vm.status = "ready";
                 }
@@ -333,6 +333,10 @@
             vm.status = "pending";
             vm.type = "loading";
             datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
+            if(!vm.datastatus){
+              vm.datastatus = {};
+            }
+            vm.datastatus[dataEvent.data.field] = dataEvent.data.value;
             break;
           default:
             console.error("Not allowed event: " + dataEvent.type);

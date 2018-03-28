@@ -78,7 +78,7 @@
           type: newDatasource.type,
           name: newDatasource.name,
           refresh: newDatasource.refresh,
-          triggers: [{params:{filter:[],group:[],project:[]},emiter:newDatasource.name}]
+          triggers: [{params:{filter:[],group:[],project:[]},emitTo:newDatasource.name}]
         }
       );
     };
