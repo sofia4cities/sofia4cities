@@ -44,6 +44,18 @@
       return date.getTime();
     }
 
+    $scope.sendFilter = function(field, value){
+      var filterStt = {};
+      filterStt[field]=value;
+      interactionService.sendBroadcastFilter(vm.id,filterStt);
+    }
+    
+    $scope.sendFilterChain = function(field, value){
+      var filterStt = angular.copy(vm.datastatus)||{};
+      filterStt[field]=value;
+      interactionService.sendBroadcastFilter(vm.id,filterStt);
+    }
+
     vm.insertSofia2Http = function(token, clientPlatform, clientPlatformId, ontology, data){
       sofia2HttpService.insertSofia2Http(token, clientPlatform, clientPlatformId, ontology, data).then(
         function(e){
