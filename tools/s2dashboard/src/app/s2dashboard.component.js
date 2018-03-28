@@ -40,6 +40,7 @@
             //interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "e179daad-c908-49e8-8d96-3b2220866c53", "cuisine", "cuisine");
             interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "cuisine", "cuisine");
             interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "e179daad-c908-49e8-8d96-3b2220866c53", "borough", "borough");
+            interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "livehtml_1522240022760", "borough", "borough");
           },3000);
         }
       )
@@ -134,6 +135,7 @@
           $scope.addGadget = function() {
             $scope.config.type = $scope.type;
             $scope.config.id = $scope.gadget.id;
+            $scope.config.header.title.text = $scope.gadget.identification;
             $scope.layergrid.push($scope.config);
             $mdDialog.cancel();
           };
@@ -163,7 +165,7 @@
 
       function dropElementEvent(e,newElem){
         var type = e.dataTransfer.getData("type");
-        newElem.id = type;
+        newElem.id = type + "_" + (new Date()).getTime();
         newElem.content = type;
         newElem.type = type;
         newElem.header = {
@@ -171,7 +173,7 @@
           title: {
             icon: "",
             iconColor: "hsl(0, 0%, 100%)",
-            text: type,
+            text: type + "_" + (new Date()).getTime(),
             textColor: "hsl(0, 0%, 100%)"
           },
           backgroundColor: "hsl(200, 23%, 64%)",

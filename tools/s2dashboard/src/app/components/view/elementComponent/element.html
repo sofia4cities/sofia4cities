@@ -56,7 +56,7 @@
 
     <!--<div ng-bind-html="vm.trustHTML(vm.element.content)" class="fullcontainer" flex ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}">
     </div>-->
-    <livehtml ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}" ng-if="vm.element.type == 'livehtml'" livecontent="vm.element.content" datasource="vm.element.datasource"></livehtml>
+    <livehtml ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}" ng-if="vm.element.type == 'livehtml'" livecontent="vm.element.content" datasource="vm.element.datasource" id="vm.element.id" datastatus="vm.datastatus"></livehtml>
     <gadget ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'display': 'inline-block', 'width':'100%', 'height': vm.calcHeight()}" ng-if="vm.element.type != 'livehtml'" id="vm.element.id" datastatus="vm.datastatus"></gadget>
   </div>
 </gridster-item>
