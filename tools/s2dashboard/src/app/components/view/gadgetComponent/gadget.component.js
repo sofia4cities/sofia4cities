@@ -16,7 +16,7 @@
     });
 
   /** @ngInject */
-  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService) {
+  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService) {
     var vm = this;
     vm.ds = [];
     vm.type = "loading";
@@ -143,15 +143,15 @@
           //Group X axis values
           var allLabelsField = [];
           for(var index=0; index < vm.measures.length; index++){
-            allLabelsField = allLabelsField.concat(data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)}));
+            allLabelsField = allLabelsField.concat(data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)}));
           }
-          allLabelsField = sort_unique(allLabelsField);
+          allLabelsField = utilsService.sort_unique(allLabelsField);
 
           //Match Y values
           var allDataField = [];//Data values sort by labels
           for(var index=0; index < vm.measures.length; index++){
-            var dataRawSerie = data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[1],ind)});
-            var labelRawSerie = data.map(function(d,ind){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)});
+            var dataRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[1],ind)});
+            var labelRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)});
             var sortedArray = [];
             for(var indexf = 0; indexf < dataRawSerie.length; indexf++){
               sortedArray[allLabelsField.indexOf(labelRawSerie[indexf])] = dataRawSerie[indexf];
@@ -197,11 +197,11 @@
           vm.markers = data.map(
             function(d){
               return {
-                lat: getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
-                lng: getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
+                lat: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
+                lng: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
                 message: vm.measures[0].config.fields.slice(2).reduce(
                   function(a, b){
-                    return a + "<b>" + b + ":</b>&nbsp;" + getJsonValueByJsonPath(d,b) + "<br/>";
+                    return a + "<b>" + b + ":</b>&nbsp;" + utilsService.getJsonValueByJsonPath(d,b) + "<br/>";
                   }
                   ,""
                 )
@@ -214,9 +214,7 @@
       }
 
       vm.type = vm.config.type;//Activate gadget
-      if(!$scope.$$phase) {
-        $scope.$applyAsync();
-      }
+      utilsService.forceRender($scope);
     }
 
     function redrawWordCloud(){
@@ -247,50 +245,6 @@
       var width = element.offsetWidth;
       vm.width = width;
       vm.height = height;
-    }
-
-    //Access json by string dot path
-    function multiIndex(obj,is,pos) {  // obj,['1','2','3'] -> ((obj['1'])['2'])['3']
-      if(is.length && !(is[0] in obj)){
-        return obj[is[is.length-1]];
-      }
-      return is.length ? multiIndex(obj[is[0]],is.slice(1),pos) : obj
-    }
-
-    function getJsonValueByJsonPath(obj,is,pos) {
-      //special case for array access, return key is 0, 1
-      var matchArray = is.match(/\[[0-9]\]*$/);
-      if(matchArray){
-        //Get de match in is [0] and get return field name
-        return obj[pos];
-      }
-      return multiIndex(obj,is.split('.'))
-    }
-
-    //array transform to sorted and unique values
-    function sort_unique(arr) {
-      if (arr.length === 0) return arr;
-      var sortFn;
-      if(typeof arr[0] === "string"){//String sort
-        sortFn = function (a, b) {
-          if(a < b) return -1;
-          if(a > b) return 1;
-          return 0;
-        }
-      }
-      else{//Number and date sort
-        sortFn = function (a, b) {
-          return a*1 - b*1;
-        }
-      }
-      arr = arr.sort(sortFn);
-      var ret = [arr[0]];
-      for (var i = 1; i < arr.length; i++) { //Start loop at 1: arr[0] can never be a duplicate
-        if (arr[i-1] !== arr[i]) {
-          ret.push(arr[i]);
-        }
-      }
-      return ret;
     }
 
     function eventGProcessor(event,dataEvent){
@@ -342,8 +296,8 @@
             console.error("Not allowed event: " + dataEvent.type);
             break;
         }
-        
       }
+      utilsService.forceRender($scope);
     }
 
     function buildFilterStt(dataEvent){
