@@ -106,13 +106,23 @@
     };
 
     function buildFilterEvent(destination, destinationFieldBundle, sourceFilterData, gadgetEmitterId) {
+      var sourceFilterDataAux = angular.copy(sourceFilterData);
+      //we add first de filter event by the parent filter and then we add the chaining filter with the same filterId in order to propagate filters
+      var dataFilter = [{
+        "field": destination.overwriteField, 
+        "value": sourceFilterData[destinationFieldBundle.emiterField]
+      }];
+      delete sourceFilterDataAux[destinationFieldBundle.emiterField];
+      for(var field in sourceFilterDataAux){
+        dataFilter.push({
+          "field": field, 
+          "value": sourceFilterDataAux[field]
+        })
+      }
       return {
         "type": "filter", 
         "id": gadgetEmitterId, 
-        "data": {
-          "field": destination.overwriteField, 
-          "value": sourceFilterData[destinationFieldBundle.emiterField]
-        }
+        "data": dataFilter
       };
     }
 

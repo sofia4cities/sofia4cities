@@ -24,6 +24,9 @@
     vm.measures = [];
     vm.status = "initial"
 
+    //Chaining filters, used to propagate own filters to child elements
+    vm.filterChaining=true;
+
     vm.$onInit = function(){
       //register Gadget in interaction service when gadget has id
       if(vm.id){
@@ -49,7 +52,7 @@
         for(var index=0; index < vm.measures.length; index++){
           var jsonConfig = JSON.parse(vm.measures[index].config);
           for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-            if(!isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
+            if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
               projects.push({op:"",field:jsonConfig.fields[indexF]});
             }
           }
@@ -79,7 +82,7 @@
             for(var index=0; index < vm.measures.length; index++){
               var jsonConfig = JSON.parse(vm.measures[index].config);
               for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-                if(!isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },vm.projects)){
+                if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },vm.projects)){
                   vm.projects.push({op:"",field:jsonConfig.fields[indexF]});
                 }
               }
@@ -93,22 +96,6 @@
           }
         )
       }
-    }
-
-    function isSameJsonInArray(json,arrayJson){
-      for(var index = 0; index < arrayJson.length; index ++){
-        var equals = true;
-        for(var key in arrayJson[index]){
-          if(arrayJson[index][key] != json[key]){
-            equals = false;
-            break;
-          }
-        }
-        if(equals){
-          return true;
-        }
-      }
-      return false;
     }
 
     vm.$onChanges = function(changes) {
@@ -286,11 +273,13 @@
           case "filter":
             vm.status = "pending";
             vm.type = "loading";
-            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
             if(!vm.datastatus){
               vm.datastatus = {};
             }
-            vm.datastatus[dataEvent.data.field] = dataEvent.data.value;
+            for(var index in dataEvent.data){
+              vm.datastatus[angular.copy(dataEvent.data[index].field)] = angular.copy(dataEvent.data[index].value);
+            }
+            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
             break;
           default:
             console.error("Not allowed event: " + dataEvent.type);
@@ -301,19 +290,22 @@
     }
 
     function buildFilterStt(dataEvent){
-      if(typeof dataEvent.data.value === "string"){
-        dataEvent.data.value = "\"" + dataEvent.data.value + "\""
-      }
       return {
         filter: {
           id: dataEvent.id,
-          data: [
-            {
-              field: dataEvent.data.field,
-              op: "=",
-              exp: dataEvent.data.value
+          data: dataEvent.data.map(
+            function(f){
+              //quotes for string identification
+              if(typeof f.value === "string"){
+                f.value = "\"" + f.value + "\""
+              }
+              return {
+                field: f.field,
+                op: "=",
+                exp: f.value
+              }
             }
-          ]
+          )
         } , 
         group:[], 
         project:vm.projects
@@ -337,7 +329,12 @@
           originValue = points[0]._model.label;
           break;
       }
-      var filterStt = {}
+      if(vm.filterChaining){
+        var filterStt = angular.copy(vm.datastatus)||{}
+      }
+      else{
+        var filterStt = {}
+      }
       filterStt[originField]=originValue;
       interactionService.sendBroadcastFilter(vm.id,filterStt);
     }

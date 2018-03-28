@@ -83,9 +83,13 @@
         var dsSolver = vm.poolingDatasources[accessInfo.ds].triggers[accessInfo.index];
         updateQueryParams(dsSolver,updateInfo);
         var solverCopy = angular.copy(dsSolver);
-        solverCopy.params.filter = solverCopy.params.filter.map(function(elem){
-          return elem.data[0];
-        })
+        solverCopy.params.filter = [];
+        for(var index in dsSolver.params.filter){
+          var bundleFilters = dsSolver.params.filter[index].data;
+          for(var indexB in bundleFilters){
+            solverCopy.params.filter.push(bundleFilters[indexB]);
+          }
+        }
         socketService.sendAndSubscribe({"msg":fromTriggerToMessage(solverCopy,accessInfo.ds),id: angular.copy(gadgetID), type:"filter", callback: vm.emitToTargets});
       }
 

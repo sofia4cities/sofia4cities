@@ -58,5 +58,21 @@
         }
         return ret;
       }
+
+      vm.isSameJsonInArray = function(json,arrayJson){
+        for(var index = 0; index < arrayJson.length; index ++){
+          var equals = true;
+          for(var key in arrayJson[index]){
+            if(arrayJson[index][key] != json[key]){
+              equals = false;
+              break;
+            }
+          }
+          if(equals){
+            return true;
+          }
+        }
+        return false;
+      }
   };
 })();
