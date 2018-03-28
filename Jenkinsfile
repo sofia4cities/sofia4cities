@@ -57,7 +57,7 @@ pipeline {
 	   			}
 	   			
 	   			// Execute tests
-	   			sh "mvn surefire:test"			
+	   			sh "mvn test"			
 					
 				sh "mvn sonar:sonar"	   			
 	   		}
