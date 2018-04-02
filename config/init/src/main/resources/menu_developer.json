@@ -11,7 +11,7 @@
 			"icon": "flaticon-network",
 			"url": "",
 			"submenu": [
-				{
+				{	
 					"title": {
 						"EN": "Models/Ontologies",
 						"ES": "Modelos/Ontologías"
