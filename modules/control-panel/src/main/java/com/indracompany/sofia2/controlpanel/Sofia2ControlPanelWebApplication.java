@@ -17,6 +17,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.endpoint.MetricsEndpoint;
 import org.springframework.boot.actuate.endpoint.MetricsEndpointMetricReader;
@@ -42,6 +43,8 @@ import com.github.dandelion.datatables.thymeleaf.dialect.DataTablesDialect;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.indracompany.sofia2.commons.ssl.SSLUtil;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -50,6 +53,11 @@ import lombok.extern.slf4j.Slf4j;
 @EnableAutoConfiguration
 @ComponentScan("com.indracompany.sofia2")
 public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
+
+	@Value("${sofia2.locale.default:en}")
+	@Getter
+	@Setter
+	private String defaultLocale;
 
 	public static void main(String[] args) throws Exception {
 		SpringApplication.run(Sofia2ControlPanelWebApplication.class, args);
@@ -106,8 +114,8 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 	@Bean
 	public LocaleResolver localeResolver() {
 		SessionLocaleResolver slr = new SessionLocaleResolver();
-		Locale spanish = new Locale("es", "ES");
-		slr.setDefaultLocale(spanish);
+		Locale locale = new Locale(defaultLocale);
+		slr.setDefaultLocale(locale);
 		return slr;
 	}
 
@@ -115,6 +123,7 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 	public LocaleChangeInterceptor localeChangeInterceptor() {
 		LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
 		lci.setParamName("lang");
+		lci.setIgnoreInvalidLocale(true);
 		return lci;
 	}
 
@@ -122,23 +131,23 @@ public class Sofia2ControlPanelWebApplication extends WebMvcConfigurerAdapter {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(localeChangeInterceptor());
 	}
-	
+
 	private static final String MSJ_SSL_ERROR = "Error configuring SSL verification in Control Panel";
-	
+
 	@Bean
 	@Conditional(ControlPanelAvoidSSLVerificationCondition.class)
 	String sslUtil() {
-        try {
-        	SSLUtil.turnOffSslChecking();
-        } catch (KeyManagementException e) {
-               log.error(MSJ_SSL_ERROR, e);
-               throw new RuntimeException(MSJ_SSL_ERROR, e);
-        } catch (NoSuchAlgorithmException e) {
-               log.error(MSJ_SSL_ERROR, e);
-               throw new RuntimeException(MSJ_SSL_ERROR, e);
-        }
-        
-        return "OK";
+		try {
+			SSLUtil.turnOffSslChecking();
+		} catch (KeyManagementException e) {
+			log.error(MSJ_SSL_ERROR, e);
+			throw new RuntimeException(MSJ_SSL_ERROR, e);
+		} catch (NoSuchAlgorithmException e) {
+			log.error(MSJ_SSL_ERROR, e);
+			throw new RuntimeException(MSJ_SSL_ERROR, e);
+		}
+
+		return "OK";
 	}
 
 }
