@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.audit.Sofia2AuditEvent;
+import com.indracompany.sofia2.audit.aop.Auditable;
 
 import lombok.extern.slf4j.Slf4j;
 

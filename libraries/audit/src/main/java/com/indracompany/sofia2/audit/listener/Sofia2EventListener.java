@@ -31,12 +31,6 @@ public class Sofia2EventListener {
 	@Autowired
 	EventRouter eventRouter;
 
-	//@EventListener
-	void handleSync(Sofia2AuditEvent event) {
-		log.info("Sofia2EventListener :: thread '{}' handling '{}' event", Thread.currentThread(), event);
-		eventRouter.notify(event);
-	}
-
 	@Async
 	@EventListener
 	void handleAsync(Sofia2AuditEvent event) {

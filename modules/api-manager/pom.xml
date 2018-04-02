@@ -127,6 +127,12 @@
 			<version>${sofia2.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-audit</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+
 		<!-- JSON -->
 		<dependency>
 			<groupId>org.json</groupId>
