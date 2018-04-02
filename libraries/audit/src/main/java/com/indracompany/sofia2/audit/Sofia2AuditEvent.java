@@ -16,6 +16,7 @@ package com.indracompany.sofia2.audit;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,10 @@ import lombok.Setter;
 public class Sofia2AuditEvent implements Serializable{
 
 	private static final long serialVersionUID = 1L;
+	
+	public static enum EventType {
+		USER, SECURITY, ERROR, DATA, GENERAL;
+	}
 
 	@Getter
 	@Setter
@@ -35,11 +40,12 @@ public class Sofia2AuditEvent implements Serializable{
 	
 	@Getter
 	@Setter
-	private String type;
+	private EventType type;
 	
 	@Getter
 	@Setter
 	private Date timeStamp;
+	
 	
 	@Getter
 	@Setter
@@ -53,6 +59,41 @@ public class Sofia2AuditEvent implements Serializable{
 	@Setter
 	private String error;
 	
+	@Getter
+	@Setter
+	private String className;
 	
+	@Getter
+	@Setter
+	private String methodName;
+	
+	@Getter
+	@Setter
+	private String sessionId;
+	
+	@Getter
+	@Setter
+	private String remoteAddress;
+	
+	@Getter
+	@Setter
+	private String route;
+	
+	@Getter
+	@Setter
+	private Map<String, Object> data;
+	
+	@Getter
+	@Setter
+	private String otherType;
+
+	@Override
+	public String toString() {
+		return "Sofia2AuditEvent [message=" + message + ", id=" + id + ", type=" + type + ", timeStamp=" + timeStamp
+				+ ", user=" + user + ", module=" + module + ", error=" + error + ", className=" + className
+				+ ", methodName=" + methodName + ", sessionId=" + sessionId + ", remoteAddress=" + remoteAddress
+				+ ", route=" + route + ", data=" + data + ", otherType=" + otherType + "]";
+	}
+
 
 }
