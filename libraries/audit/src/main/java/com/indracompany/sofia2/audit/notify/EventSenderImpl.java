@@ -12,47 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.audit;
+package com.indracompany.sofia2.audit.notify;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.hazelcast.core.HazelcastInstance;
+import com.indracompany.sofia2.audit.Sofia2AuditEvent;
 
+@Service
+public class EventSenderImpl implements EventRouter {
 
-public class Sofia2AuditEvent implements Serializable{
+	@Autowired
+	private HazelcastInstance instance;
 
-	private static final long serialVersionUID = 1L;
+	@Override
+	public void notify(Sofia2AuditEvent event) {
+		instance.getQueue("audit").offer(event);
 
-	@Getter
-	@Setter
-	private String message;
-	
-	@Getter
-	@Setter
-	private String id;
-	
-	@Getter
-	@Setter
-	private String type;
-	
-	@Getter
-	@Setter
-	private Date timeStamp;
-	
-	@Getter
-	@Setter
-	private String user;
-	
-	@Getter
-	@Setter
-	private String module;
-	
-	@Getter
-	@Setter
-	private String error;
-	
-	
+	}
 
 }
