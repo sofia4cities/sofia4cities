@@ -123,6 +123,9 @@
 			<setHeader headerName="Content-Type">
 				<constant>application/json</constant>
 			</setHeader>
+			<setHeader headerName="X-Frame-Options">
+				<constant>SAMEORIGIN</constant>
+			</setHeader>
 		</route>
 
 		<route id="set-default-headers">
@@ -133,6 +136,9 @@
 			</setHeader>
 			<setHeader headerName="Content-Type">
 				<constant>application/json</constant>
+			</setHeader>
+			<setHeader headerName="X-Frame-Options">
+				<constant>SAMEORIGIN</constant>
 			</setHeader>
 		</route>
 
