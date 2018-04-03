@@ -49,7 +49,7 @@ public class MarketAsset extends AuditableEntityWithUUID {
 	private static final long serialVersionUID = 1L;
 	
 	public static enum MarketAssetState {
-		PENDING, APPROVED;
+		PENDING, APPROVED, REJECTED;
 	}
 	
 	public static enum MarketAssetType {

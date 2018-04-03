@@ -288,11 +288,11 @@ var MarketAssetCreateController = function() {
 			json_desc.apiDescription=$('#apiDescription').val();
 		} else if (type=='DOCUMENT'){
 		} else if (type=='APPLICATION'){
-			json_desc.installation=$('#installation').val(json_desc.installation);
-			json_desc.functionality=$('#functionality').val(json_desc.functionality);
+			json_desc.installation=$('#installation').val();
+			json_desc.functionality=$('#functionality').val();
 		} else if (type=='WEBPROJECT'){
-			json_desc.functionality=$('#functionality').val(json_desc.functionality);
-			json_desc.id_endpoint=$('#id_endpoint').val(json_desc.id_endpoint);
+			json_desc.functionality=$('#functionality').val();
+			json_desc.id_endpoint=$('#id_endpoint').val();
 		}
 
 		$("#json_desc").val(JSON.stringify(json_desc));

@@ -274,11 +274,12 @@
 	};
 						
 	$(window).load(function(){  
-		
- 		var json_desc = JSON.parse($('#json_desc').val());
-		var type = $('#marketassetType').val();
-		
-		loadFragment(type, json_desc); 
+		if ( [[${marketasset.id}]] != null){
+	 		var json_desc = JSON.parse($('#json_desc').val());
+			var type = $('#marketassetType').val();
+			
+			loadFragment(type, json_desc); 
+		}
 	});
 	
 	function loadFragment(type, json_desc){
