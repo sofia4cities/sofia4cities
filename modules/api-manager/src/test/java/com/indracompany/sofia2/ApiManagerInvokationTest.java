@@ -51,7 +51,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApiManagerApplication.class,webEnvironment = WebEnvironment.RANDOM_PORT)
 
-public class ApiManagerOAuth2TokenTest {
+public class ApiManagerInvokationTest {
 
     @Autowired
     private WebApplicationContext wac;
@@ -103,7 +103,7 @@ public class ApiManagerOAuth2TokenTest {
     }
     
     @Test
-    public void testHealthCheck() throws Exception {
+    public void testApiJWTCall() throws Exception {
     	final String accessToken = obtainAccessToken("administrator", "changeIt!");
     	System.out.println("token:" + accessToken);
   
@@ -119,19 +119,37 @@ public class ApiManagerOAuth2TokenTest {
     	assertTrue(health.getStatusCode().is2xxSuccessful());
        
     }
+    
+    @Test
+    public void testApiSofia2TokenCall() throws Exception {
+    	
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.add("X-SOFIA2-APIKey", "acbca01b-da32-469e-945d-05bb6cd1552e");
+    	headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+    	headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+    	
+    	ResponseEntity<String> health = restTemplate.exchange(HEALTH_URL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    	
+    	System.out.println(health.getBody());
+    	
+    	assertTrue(health.getStatusCode().is2xxSuccessful());
+       
+    }
 
-   // @Test
+    @Test
     public void givenNoToken_whenGetSecureRequest_thenUnauthorized() throws Exception {
-        mockMvc.perform(get(HEALTH_URL).param("year", "1990")).andDo(print()).andExpect(status().isUnauthorized());
+    	HttpHeaders headers = new HttpHeaders();
+    	headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+    	headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+    	
+    	ResponseEntity<String> health = restTemplate.exchange(HEALTH_URL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
+    	
+    	System.out.println(health.getBody());
+    	    	
+    	String expectedOutput="[\"STOPPED EXECUTION BY GENERAL\",\"User not Found by Token :\"]";
+    	
+    	assertTrue(expectedOutput.equals(health.getBody()));
+       
     }
-
-   // @Test
-    public void givenInvalidRole_whenGetSecureRequest_thenForbidden() throws Exception {
-        final String accessToken = obtainAccessToken("administrator", "changeIt!");
-        System.out.println("token:" + accessToken);
-        mockMvc.perform(get(HEALTH_URL).param("year", "1990").header("Authorization", "Bearer " + accessToken)).andDo(print()).andExpect(status().isOk());
-    }
-
-   
 
 }
