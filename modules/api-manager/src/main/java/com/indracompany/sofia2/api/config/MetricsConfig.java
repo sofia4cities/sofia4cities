@@ -31,7 +31,7 @@ import org.springframework.jmx.export.MBeanExporter;
 
 import com.codahale.metrics.MetricRegistry;
 
-@Configuration
+//@Configuration
 public class MetricsConfig {
 
 	@Autowired

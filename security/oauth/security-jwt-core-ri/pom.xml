@@ -14,7 +14,7 @@
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
 		<version>5.1.0-SNAPSHOT</version>
-		<relativePath>../../</relativePath> <!-- lookup parent from repository -->
+		<relativePath>../../../</relativePath> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>

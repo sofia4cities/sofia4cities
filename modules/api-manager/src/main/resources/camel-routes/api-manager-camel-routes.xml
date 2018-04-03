@@ -1,13 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-
-
-	<camelContext id="camel-context" streamCache="true" trace="false"
-		xmlns="http://camel.apache.org/schema/spring">
+<routes xmlns="http://camel.apache.org/schema/spring">
 
 		<route id="entry-point">
 			<from uri="servlet:///api?matchOnUriPrefix=true" />
@@ -132,6 +123,9 @@
 			<setHeader headerName="Content-Type">
 				<constant>application/json</constant>
 			</setHeader>
+			<setHeader headerName="X-Frame-Options">
+				<constant>SAMEORIGIN</constant>
+			</setHeader>
 		</route>
 
 		<route id="set-default-headers">
@@ -143,8 +137,9 @@
 			<setHeader headerName="Content-Type">
 				<constant>application/json</constant>
 			</setHeader>
+			<setHeader headerName="X-Frame-Options">
+				<constant>SAMEORIGIN</constant>
+			</setHeader>
 		</route>
 
-	</camelContext>
-
-</beans>
+	</routes>

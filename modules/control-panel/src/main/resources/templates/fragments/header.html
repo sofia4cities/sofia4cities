@@ -177,7 +177,7 @@
 	<!-- HEADER DATA TO SEND TO HEADER CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
 		var currentLanguage = [[${lang}]];	
-		var errores = [[${message}]];
+		var messages = [[${message}]];
 		var informacion = [[${info}]];		
 		var headerJson = { 
 			"language": currentLanguage,
@@ -186,8 +186,9 @@
 			"remove":[[#{gen.remove}]],
 			"settings":[[#{gen.settings}]],
 			"collapse":[[#{gen.collapse}]],
-			"errores": errores,
+			"messages": messages,
 			"informacion": informacion,
+			"informationtitle": [[#{gen.informationTitle}]],
 			"btnEliminar": [[#{gen.deleteBtn}]],
 			"btnCancelar": [[#{gen.closeBtn}]],
 			"btnClose": [[#{gen.closeBtn}]],

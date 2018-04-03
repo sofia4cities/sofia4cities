@@ -53,14 +53,16 @@ public interface UserService {
 
 	void updateUser(User user);
 
+	void updatePassword(User user);
+
 	Role getUserRole(String role);
 
 	void deleteUser(String userId);
 
 	void registerRoleDeveloper(User user);
-	
+
 	void registerRoleUser(User user);
-	
+
 	List<ClientPlatform> getClientsForUser(User user);
 
 	boolean emailExists(User user);

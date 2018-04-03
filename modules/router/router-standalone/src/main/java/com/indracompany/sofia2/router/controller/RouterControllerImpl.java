@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.indracompany.sofia2.audit.Sofia2AuditEvent;
+import com.indracompany.sofia2.audit.aop.Auditable;
+import com.indracompany.sofia2.audit.producer.EventProducer;
 import com.indracompany.sofia2.config.services.oauth.JWTService;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
@@ -49,6 +52,11 @@ public class RouterControllerImpl implements RouterControllerInterface, RouterSe
 	
 	@Autowired(required=false)
 	private JWTService jwtService;
+
+	@Autowired
+	private EventProducer eventProducer;
+
+	
 	
 	
 	@RequestMapping(value = "/insert", method = RequestMethod.POST)
@@ -106,6 +114,17 @@ public class RouterControllerImpl implements RouterControllerInterface, RouterSe
 		System.out.println(input.toString());
 		String output = jwtService.extractToken(input);
 		return output;
+	}
+	
+	@RequestMapping(value = "/event", method = RequestMethod.POST)
+	@ApiOperation(value = "event")
+	@Auditable
+	public String eventProcessing(@RequestBody String input) {
+		System.out.println(input.toString());
+		Sofia2AuditEvent event= new Sofia2AuditEvent();
+		event.setMessage(input);
+		eventProducer.publish(event);
+		return input;
 	}
 	
 

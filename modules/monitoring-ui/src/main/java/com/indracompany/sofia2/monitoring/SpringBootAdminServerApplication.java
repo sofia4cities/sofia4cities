@@ -26,7 +26,7 @@ import de.codecentric.boot.admin.config.EnableAdminServer;
 @ComponentScan("com.indracompany.sofia2")
 public class SpringBootAdminServerApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SpringBootAdminServerApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootAdminServerApplication.class, args);
+	}
 }
