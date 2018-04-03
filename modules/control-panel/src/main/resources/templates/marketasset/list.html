@@ -159,8 +159,8 @@
 											</div>												
 										</form>								
 									</div>
-									<!-- USER LIST -->
-									<div class="col-md-12">											
+									<!-- MARKET LIST -->
+									<div class="col-md-12 hide">											
 										<div id="contenedor-tabla-outside" class="contiene">																						
 											<div>
 												<!-- DATATABLE DANDELION CONF. -->												
@@ -248,7 +248,7 @@
 									
 									
 									<!-- nueva seccion -->
-									<div class="col-md-12 margin-top-40">																
+									<div class="col-md-12 margin-top-10">																
 										<!-- CABECERA DE FILTROS Y BUSCADOR DE PROYECTOS -->
 										<div class="col-md-12 bg-white" style="margin-top: -8px; border: 1px solid #eee;padding-top: 8px; padding-bottom: 8px">																	
 											<!-- ETIQUETA -->
@@ -260,10 +260,7 @@
 											<div class="main-filters col-md-6 col-sm-6 col-xs-7" th:with="strList = ${ {'la la-desktop font-lg hidden-xs', 'la la-thumbs-up font-lg hidden-xs', 'la la-tablet font-lg hidden-xs', 'la la-database font-lg hidden-xs'} }">
 												<div class="list-inline text-center cd-filters">
 													<a href="#0" data-type="0" data-filter="ALL" class="padding-both-10 m-link m-link--brand filter"><i class="la la-table font-lg hidden-xs"></i><span>ALL</span></a>
-													<a href="#1" data-type="1" data-filter="API" class="padding-both-10 m-link m-link--brand filter"><i class="la la-desktop font-lg hidden-xs"></i><span>API</span></a>
-													<a href="#2" data-type="2" data-filter="DOCUMENT" class="padding-both-10 m-link m-link--brand filter"><i class="la la-desktop font-lg hidden-xs"></i><span>DOCUMENT</span></a>
-													<a href="#3" data-type="3" data-filter="WEBPROJECT" class="padding-both-10 m-link m-link--brand filter"><i class="la la-desktop font-lg hidden-xs"></i><span>WEB PROJECT</span></a>
-													<a href="#4" data-type="4" data-filter="APPLICATION" class="padding-both-10 m-link m-link--brand filter"><i class="la la-desktop font-lg hidden-xs"></i><span>APPLICATION</span></a>
+													<a th:each="marketassettype, row :${marketassettypes}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassettype},data-type=${row.index}" class="padding-both-10 m-link m-link--brand filter"><i th:class="@{|${strList[row.index]}|}"></i> <span th:text="#{marketasset.type.__${marketassettype}__}"> Tipo de Proyecto</span></a>
 												</div>
 											</div>
 											<!-- BUSCADOR Y TOOLBAR -->
@@ -294,16 +291,24 @@
 													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'DOCUMENT'"  class="la la-thumbs-up font-lg font-purple-studio"></i>
 													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'WEBPROJECT'"  class="la la-tablet font-lg font-purple-studio"></i>
 													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'APPLICATION'" class="la la-database font-lg font-purple-studio"></i>
-													<span class="uppercase bold project-title" th:text="${marketasset.identification}" >Identification</span>
-													<div class="pull-right"><a href="#" th:title="${marketasset.identification}"><span class="btn btn-xs btn-outline grey-mint tooltips" data-container="body" data-placement="top" th:attr="data-original-title=${marketasset.identification} + ' Website'"><i class="la la-globe font-md"></i> </span></a></div>
+													<span class="uppercase bold project-title" th:text="${marketasset.title}" >Identification</span>
+													<div class="pull-right"><a href="#" th:title="${marketasset.title}"><span class="btn btn-xs btn-outline grey-mint tooltips" data-container="body" data-placement="top" th:attr="data-original-title=${marketasset.title} + ' Website'"><i class="la la-globe font-md"></i> </span></a></div>
 												</div>
 												<div class="panel-body panel-project">
-													<div th:if="${!marketasset.jsonDesc.isEmpty()}" class="project-description" style="text-align: justify;padding: 15px;" th:title="${marketasset.jsonDesc}">
-														<span th:text="${marketasset.jsonDesc}">Description</span>
+													<div th:if="${!marketasset.description.isEmpty()}" class="project-description" style="text-align: justify;padding: 15px;" th:title="${marketasset.description}">
+														<span style="display:block; margin-bottom:15px;" th:text="${marketasset.description}">Description</span>
+																												
+														<div class="form-inline" style="padding: 15px;" th:unless="${marketasset.technologies == null}">															
+															 <span th:each="tag,status : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label label-sm label-info label-marketasset"><i class="fa fa-tag"></i> <span th:text="${tag}">technology</span></span>															
+														  </div>
+																
+																
+														
+														<div class="clearfix"></div>
 														<img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive thumbnail" />
 														<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive thumbnail" />
 													</div>
-													<div th:if="${marketasset.jsonDesc.isEmpty()}"  class="project-description" style="text-align: justify;padding: 15px;"> No Desc.</div>
+													<div th:if="${marketasset.description.isEmpty()}"  class="project-description" style="text-align: justify;padding: 15px;"> No Desc.</div>
 												</div>
 												<div class="panel-footer"> 
 													<div class="pull-left">
@@ -445,9 +450,9 @@
 		
 		// SET ANIMACIÓN BLOQUES DE PROYECTO
 		$('.panel-white').hover(function() {
-			$(this).addClass('bg-purple-soft font-grey-cararra',500);
+			$(this).addClass('bg-grey-mint font-grey-cararra',800);
 		}, function() {
-			$(this).removeClass('bg-purple-soft font-grey-cararra',100);
+			$(this).removeClass('bg-grey-mint font-grey-cararra',100);
 		});
 		
 		// TOGGLE DE VISUALIZACIÓN EXTENDIDA DE Proyectos
@@ -505,15 +510,16 @@
 			$('div.project-container.'+ projectFilter).show();
 			
 			// ALL show ALL 
-			if (projectFilter === 'ALL') { $('div.project-container').show(); }
+			if (projectFilter === 'ALL') { $('div.project-container').show();  $('#proyect-list-alert').is(':visible') ? $('#proyect-list-alert').toggleClass('hide') : '';  }
 			
 			filters.addClass('bold uppercase').not(this).removeClass('bold uppercase');
 			
 			// control no-data, no projects with this criteria, then show alert. 
 			if ($('div.project-container.'+ projectFilter).length == 0 ){				
-				$('#proyect-list-alert').is(':visible') ? '' : $('#proyect-list-alert').toggleClass('hide');				
+				if (projectFilter !== 'ALL') { $('#proyect-list-alert').is(':visible') ? '' : $('#proyect-list-alert').toggleClass('hide'); }				
 			}
 			else {
+				console.log('entra con ' + projectFilter);
 				$('#proyect-list-alert').is(':visible') ? $('#proyect-list-alert').toggleClass('hide') : ''; 
 			} 
 		
