@@ -1,0 +1,183 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<!-- MARKETASSET API FRAGMENT-->
+<div th:fragment="APIMarketAssetFragment" id="APIMarketAssetFragment">
+	<div class="row">
+		<div class="col-md-4 col-sm-6 col-xs-12 ">
+			<div class="form-group">
+				<label th:text="#{apimanager.id} + ':'">Identification</label>
+				<select id="apiId" name="apiId" class="form-control" type="text" maxlength="100" onchange="MarketAssetCreateController.changeVersions();">
+					<option value="" selected="selected" disabled="disabled" hidden="hidden"></option>
+					<option th:each="api:${apis}" th:value="${api.identification}" th:text="${api.identification}">apiId</option>
+				</select>														
+			</div>
+		</div>
+		<div class="col-md-1 col-sm-1 col-xs-12 ">
+			<div class="form-group">
+				<label th:text="#{apimanager.numversion} + ':'">Version</label>
+				<select id="versions" name="versions" class="form-control" type="text" maxlength="100" onchange="MarketAssetCreateController.changeDescription();">
+					<option value="" selected="selected" disabled="disabled" hidden="hidden"></option>
+					<option th:each="api:${apis}" th:value="${api.numversion}" th:text="${api.numversion}">apiId</option>
+				</select>														
+			</div>
+		</div>
+		<div class="col-md-7 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label class="description" for="descripcionapi">Description </label>
+				<textarea class="element textarea small form-control" id="apiDescription" name="apiDescription" maxlength="512" th:text="${api?.description}"></textarea>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div th:fragment="APIMarketAssetFragmentShow" id="APIMarketAssetFragmentShow">
+	<div class="row">
+		<div class="col-md-4 col-sm-6 col-xs-12 ">
+			<div class="form-group">
+				<label th:text="#{apimanager.id} + ':'">Identification</label>
+				<p id="apiId" name="apiId" class="form-control-static-block bold"></p>
+			</div>
+		</div>
+		<div class="col-md-1 col-sm-1 col-xs-12 ">
+			<div class="form-group">
+				<label th:text="#{apimanager.numversion} + ':'">Version</label>
+				<p id="versions" name="versions" class="form-control-static-block bold"></p>
+			</div>
+		</div>
+		<div class="col-md-7 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label class="description" for="descripcionapi">Description </label>
+				<textarea disabled="disabled" class="element textarea small form-control" id="apiDescription" name="apiDescription" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- MARKETASSET API FRAGMENT-->
+
+<!-- MARKETASSET DOCUMENT FRAGMENT-->
+<div th:fragment="DOCUMENTMarketAssetFragment" id="DOCUMENTMarketAssetFragment">
+	<div class="row">
+		<div class="col-md-4 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label th:text="#{marketasset.document}">Documento</label>
+				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+			</div>
+		</div>
+	</div>
+</div>
+<div th:fragment="DOCUMENTMarketAssetFragmentShow" id="DOCUMENTMarketAssetFragmentShow">
+	<div class="row">
+		<div class="col-md-4 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label th:text="#{marketasset.document}">Documento</label>
+				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- MARKETASSET DOCUMENT FRAGMENT-->
+
+<!-- MARKETASSET APPLICATION FRAGMENT-->
+<div th:fragment="APPLICATIONMarketAssetFragment" id="APPLICATIONMarketAssetFragment">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label class="installation" for="installation" th:text="#{marketasset.installation}">Installation </label>
+				<textarea class="element textarea small form-control" id="installation" name="installation" maxlength="512"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label class="functionality" for="functionality" th:text="#{marketasset.functionality}">Functionality </label>
+				<textarea class="element textarea small form-control" id="functionality" name="functionality" maxlength="512"></textarea>
+			</div>	
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label  th:text="#{marketasset.app}">Application</label>
+				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+			</div>
+		</div>
+	</div>
+</div>
+<div th:fragment="APPLICATIONMarketAssetFragmentShow" id="APPLICATIONMarketAssetFragmentShow">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label class="installation" for="installation" th:text="#{marketasset.installation}">Installation </label>
+				<textarea disabled="disabled" class="element textarea small form-control" id="installation" name="installation" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label class="functionality" for="functionality" th:text="#{marketasset.functionality}">Functionality </label>
+				<textarea disabled="disabled" class="element textarea small form-control" id="functionality" name="functionality" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
+			</div>	
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label  th:text="#{marketasset.app}">Application</label>
+				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- MARKETASSET APPLICATION FRAGMENT-->
+
+<!-- MARKETASSET WEBPROJECT FRAGMENT-->
+<div th:fragment="WEBPROJECTMarketAssetFragment" id="WEBPROJECTMarketAssetFragment">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label class="functionality" for="functionality" th:text="#{marketasset.functionality}">Functionality </label>
+				<textarea disabled="disabled" class="element textarea small form-control" id="functionality" name="functionality" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
+			</div>	
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-8 col-sm-6 col-xs-12">
+			<div class="form-group">
+				<label  id="id_endpoint_label" th:text="#{marketasset.endpoint}">EndPoint</label>
+				<input id="id_endpoint" name="id_endpoint" class="form-control" type="text" maxlength="512" readonly="readonly"/>
+			</div>
+		</div>
+		<div class="col-md-4 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label  th:text="#{marketasset.webproject}">Imagen</label>
+				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+			</div>
+		</div>
+	</div>
+</div>
+<div th:fragment="WEBPROJECTMarketAssetFragmentShow" id="WEBPROJECTMarketAssetFragmentShow">
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label class="functionality" for="functionality" th:text="#{marketasset.functionality}">Functionality </label>
+				<textarea disabled="disabled" class="element textarea small form-control" id="functionality" name="functionality" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
+			</div>	
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-8 col-sm-6 col-xs-12">
+			<div class="form-group">
+				<label  id="id_endpoint_label" th:text="#{marketasset.endpoint}">EndPoint</label>
+				<p id="id_endpoint" name="id_endpoint" class="form-control-static-block bold"></p>
+			</div>
+		</div>
+		<div class="col-md-4 col-sm-12 col-xs-12">
+			<div class="form-group">
+				<label  th:text="#{marketasset.webproject}">Imagen</label>
+				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- MARKETASSET WEBPROJECT FRAGMENT-->
