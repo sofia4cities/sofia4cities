@@ -29,6 +29,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/devicon.css}"/>
 		<style>
 			/*** efectos de shadow de paneles  ***/
 .effect-1
@@ -122,18 +123,24 @@
 								</div>								
 								<div class="actions margin-right-20">
 									<div class="btn-group">									
-										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
-										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../marketasset/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
+										<button id="search-toggle" type="button" class="hide btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<div class="input-group input-group-sm">
+											<span class="input-group-btn">
+											   <button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../marketasset/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>
+											</span>
+											<input style="border: 1px solid #555;" placeholder="Filtrar..." class="btn-search-proyect form-control input-xsmall" type="text"/>
+											<span class="input-group-btn">
+											  <button class="btn grey-mint  btn-outline sbold  btn-project-description"><i class="la la-expand"></i></button>
+											</span>
+										</div>
+
 									</div>										
 								</div>
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
-								<div class="row">
-									<div class="col-md-12 alert-zone">
-										<!-- ALERT ZONE -->																			
-									</div>
-									<div class="col-md-12 margin-bottom-20">
+								<div class="row">									
+									<div class="col-md-12 margin-bottom-20 hide">
 									<!-- SEARCH FORM -->
 										<form id="form_marketasset" action="list.html" th:action="@{/marketasset/list}" class="" role="form" method="get">												
 											
@@ -248,69 +255,56 @@
 									
 									
 									<!-- nueva seccion -->
-									<div class="col-md-12 margin-top-10">																
+									<div class="col-md-12">																
 										<!-- CABECERA DE FILTROS Y BUSCADOR DE PROYECTOS -->
-										<div class="col-md-12 bg-white" style="margin-top: -8px; border: 1px solid #eee;padding-top: 8px; padding-bottom: 8px">																	
-											<!-- ETIQUETA -->
-											<div style="float: left;cursor: pointer;" class="filter col-md-3 col-sm-3 hidden-xs"> 
-												<span class="btn-filter uppercase"><i class="fa fa-filter"></i><span  class="hidden-xs">Filtrar Proyectos</span></span>
-												<span style="float: right; margin-left:80px;" class="btn btn-filter-close btn-xs btn-default hide">Cerrar</span>
-											</div>
+										<div class="col-md-12" style="margin-top: -8px;">																	
+											
 											<!-- FILTRO PPAL TIPO-PROYECTO -->
-											<div class="main-filters col-md-6 col-sm-6 col-xs-7" th:with="strList = ${ {'la la-desktop font-lg hidden-xs', 'la la-thumbs-up font-lg hidden-xs', 'la la-tablet font-lg hidden-xs', 'la la-database font-lg hidden-xs'} }">
-												<div class="list-inline text-center cd-filters">
-													<a href="#0" data-type="0" data-filter="ALL" class="padding-both-10 m-link m-link--brand filter"><i class="la la-table font-lg hidden-xs"></i><span>ALL</span></a>
-													<a th:each="marketassettype, row :${marketassettypes}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassettype},data-type=${row.index}" class="padding-both-10 m-link m-link--brand filter"><i th:class="@{|${strList[row.index]}|}"></i> <span th:text="#{marketasset.type.__${marketassettype}__}"> Tipo de Proyecto</span></a>
+											<div class="main-filters col-md-9 col-sm-6 col-xs-7" > <!-- th:with="strList = ${ {'la la-desktop font-lg hidden-xs', 'la la-thumbs-up font-lg hidden-xs', 'la la-tablet font-lg hidden-xs', 'la la-database font-lg hidden-xs'} }"  <i th:class="@{|${strList[row.index]}|}"></i> -->
+												<div class="list-inline text-left cd-filters">
+													<a href="#0" data-type="0" data-filter="ALL" class="btn btn-outline grey-gallery btn-sm padding-both-10"><i class="la la-table font-lg hidden-xs"></i><span>ALL</span></a>
+													<a th:each="marketassettype, row :${marketassettypes}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassettype},data-type=${row.index}" class="btn btn-outline blue-chambray btn-sm padding-both-10"> <span th:text="#{marketasset.type.__${marketassettype}__}"> Tipo de Proyecto</span></a>
 												</div>
 											</div>
 											<!-- BUSCADOR Y TOOLBAR -->
 											<div class="col-md-3 col-sm-3 col-xs-5 proyect-toolbars ">
 												<div class="pull-right form-inline">
-													<div class="input-group input-group-sm">
-														<span class="input-group-addon">
-															<i class="fa fa-search font-grey-mint"></i>
-														</span>
-														<input placeholder="Buscar..." class="btn-search-proyect form-control input-xsmall" type="text"/>
-														<span class="input-group-btn">
-														  <button class="btn btn-outline grey-mint  btn-project-description"><i class="la la-expand"></i></button>
-														</span>
-													</div>																			
+																															
 												</div>
 											</div>
 											<div class="clearfix"></div>
 										</div>													
 									</div>
 									<div class="clearfix"></div>															
-									<div class="col-md-12 proyect-list" style="padding: 20px;">
+									<div class="col-md-12 proyect-list margin-bottom-40" style="padding: 20px;">
 										<!-- CONTENEDOR DE PROYECTO class="project-container col-md-4 col-sm-6 col-xs-12 + project_type" -->
-										<div th:each="marketasset : ${marketAssets}" th:class="'project-container col-md-4 col-sm-6 col-xs-12 ' + ${#strings.replace(marketasset.marketAssetType,' ','')}">
+										<div th:each="marketasset : ${marketAssets}" th:class="'project-container col-md-3 col-sm-6 col-xs-12 ' + ${#strings.replace(marketasset.marketAssetType,' ','')}">
 											<!-- PANEL DE PROYECTO BASE va con fondo blanco, tocar panel-defautl para hacer un panel-white -->
 											<div class="panel panel-white effect-1">
 												<div class="panel-heading ">																																			  
-													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'API'" class="la la-desktop font-lg font-purple-studio"></i>
+													<!-- <i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'API'" class="la la-desktop font-lg font-purple-studio"></i>
 													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'DOCUMENT'"  class="la la-thumbs-up font-lg font-purple-studio"></i>
 													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'WEBPROJECT'"  class="la la-tablet font-lg font-purple-studio"></i>
-													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'APPLICATION'" class="la la-database font-lg font-purple-studio"></i>
-													<span class="uppercase bold project-title" th:text="${marketasset.title}" >Identification</span>
-													<div class="pull-right"><a href="#" th:title="${marketasset.title}"><span class="btn btn-xs btn-outline grey-mint tooltips" data-container="body" data-placement="top" th:attr="data-original-title=${marketasset.title} + ' Website'"><i class="la la-globe font-md"></i> </span></a></div>
+													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'APPLICATION'" class="la la-database font-lg font-purple-studio"></i> -->
+													<span class="uppercase bold project-title" th:text="${marketasset.title}" >Identification</span>													
+													<img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}" style="max-height: 125px; width:auto; margin: 5px 0px" />
+													<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}" style="max-height: 125px; width:auto; margin: 5px 0px" />
+													<div class="form-inline" style=" font-size: 25px" th:unless="${marketasset.technologies == null}">															
+														 <span th:each="tag,status : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label-marketasset" th:title="${tag}" th:alt="${tag}"><i th:class="'devicon-' + ${tag} +'-plain'"></i></span>															
+														 <div class="pull-right">
+														<span class="btn btn-xs green-turquoise tooltips" data-container="body" data-placement="top" th:attr="data-original-title=${marketasset.paymentMode} + ' Payment Mode'" th:text="${marketasset.paymentMode}" style="margin-top: 5px;"> FREE </span>
+													</div>
+													</div>
+													
 												</div>
-												<div class="panel-body panel-project">
-													<div th:if="${!marketasset.description.isEmpty()}" class="project-description" style="text-align: justify;padding: 15px;" th:title="${marketasset.description}">
+												<div class="panel-body panel-project" style="display: none;">
+													<div th:if="${!marketasset.description.isEmpty()}" class="project-description" style="text-align: justify;padding: 10px;" th:title="${marketasset.description}">
 														<span style="display:block; margin-bottom:15px;" th:text="${marketasset.description}">Description</span>
-																												
-														<div class="form-inline" style="padding: 15px;" th:unless="${marketasset.technologies == null}">															
-															 <span th:each="tag,status : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label label-sm label-info label-marketasset"><i class="fa fa-tag"></i> <span th:text="${tag}">technology</span></span>															
-														  </div>
-																
-																
-														
-														<div class="clearfix"></div>
-														<img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive thumbnail" />
-														<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive thumbnail" />
+														<div class="clearfix"></div>														
 													</div>
 													<div th:if="${marketasset.description.isEmpty()}"  class="project-description" style="text-align: justify;padding: 15px;"> No Desc.</div>
 												</div>
-												<div class="panel-footer"> 
+												<div class="panel-footer" style="display: none;"> 
 													<div class="pull-left">
 														<span class="btn btn-xs btn-outline grey-mint"><i class="fa fa-user font-md"></i> <span th:text="${marketasset.user.userId}">Usuario del Proyecto</span></span>
 													</div>
@@ -337,7 +331,7 @@
 										<!-- ALERT de DE HOY HAY DATOS. -->
 										<div id="proyect-list-alert" class="alert alert-warning margin-both-10 alert-dismissable hide">
 											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-											<i class="la la-warning font-lg"></i> <strong>Proyectos: </strong> No hay Proyectos con estos filtros. 
+											<i class="la la-warning font-lg"></i> <strong>Markeplace Assets: </strong> No Assets with this Type. 
 										</div>	
 									</div>
 									
@@ -457,7 +451,7 @@
 		
 		// TOGGLE DE VISUALIZACIÓN EXTENDIDA DE Proyectos
 		$('.btn-project-description').on('click', function(){			
-			$('.panel-project').fadeToggle('500');		
+			$('.panel-project,.panel-footer').fadeToggle('500');		
 			$(this).find("i").hasClass('la la-expand') ? $(this).find("i").removeClass('la la-expand').addClass('la la-compress') : $(this).find("i").removeClass('la la-compress').addClass('la la-expand');		
 		});		
 		
@@ -584,7 +578,7 @@
 		$('#yadcf-filter--marketassets-4').on('click', function() { 
 			$('#yadcf-filter--marketassets-4 option[value="-1"]').text([[#{marketasset.list.value.placeholder}]]); });
 			
-		var allprojects = $('div.panel-project');
+		var allprojects = $('.project-description');
 		allprojects.matchHeight({
 			byRow: true,
 			property: 'height',
