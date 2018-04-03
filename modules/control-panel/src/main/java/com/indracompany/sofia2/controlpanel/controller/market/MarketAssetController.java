@@ -88,7 +88,7 @@ public class MarketAssetController {
 		
 		marketAssetHelper.populateMarketAssetListForm(model);
 		
-		model.addAttribute("marketAssets", marketAssetService.loadMarketAssetByFilter(marketassetId, utils.getUserId()));
+		model.addAttribute("marketAssets", marketAssetHelper.toMarketAssetBean(marketAssetService.loadMarketAssetByFilter(marketassetId, utils.getUserId())));
 		
 		return "marketasset/list";
 	}

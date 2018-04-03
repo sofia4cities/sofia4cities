@@ -16,6 +16,7 @@ package com.indracompany.sofia2.controlpanel.helper.market;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +32,17 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetPaymentMode;
+import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetState;
+import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetType;
 import com.indracompany.sofia2.config.repository.ApiRepository;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.multipart.MarketAssetMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
@@ -56,7 +62,8 @@ public class MarketAssetHelper {
 	AppWebUtils utils;
 
 	public void populateMarketAssetListForm(Model model) {
-		// TODO Auto-generated method stub
+		model.addAttribute("marketassettypes", MarketAsset.MarketAssetType.values());
+		model.addAttribute("marketassetmodes", MarketAsset.MarketAssetPaymentMode.values());
 	}
 
 	public void populateMarketAssetCreateForm(Model model) {
@@ -170,14 +177,7 @@ public class MarketAssetHelper {
 			if (marketAsset!= null) {
 				return "ERROR";
 			}
-		} catch (JsonParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -221,6 +221,50 @@ public class MarketAssetHelper {
 
 	private String getFileExt(String originalFilename) {
 		return originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+	}
+
+	public List<MarketAssetDTO> toMarketAssetBean(List<MarketAsset> marketAssetList) {
+		List<MarketAssetDTO> marketAssetDTOList = new ArrayList<MarketAssetDTO>();
+		
+		for (MarketAsset marketAsset : marketAssetList) {
+			
+			MarketAssetDTO marketAssetDTO = new MarketAssetDTO();
+			
+			marketAssetDTO.setId(marketAsset.getId());
+			marketAssetDTO.setIdentification(marketAsset.getIdentification());
+			
+			marketAssetDTO.setUser(this.userService.getUser(utils.getUserId()));
+
+			marketAssetDTO.setPublic(marketAsset.isPublic());
+			marketAssetDTO.setState(marketAsset.getState());
+			marketAssetDTO.setMarketAssetType(marketAsset.getMarketAssetType());
+			marketAssetDTO.setPaymentMode(marketAsset.getPaymentMode());
+			marketAssetDTO.setJsonDesc(marketAsset.getJsonDesc().toString());
+			
+			if (marketAsset.getImage()!=null) {
+				marketAssetDTO.setImage(marketAsset.getImage());
+			}
+
+			if (marketAsset.getJsonDesc().toString()!=null && !"".equals(marketAsset.getJsonDesc().toString())){
+				
+				Map<String, String> obj;
+				try {
+					obj = new ObjectMapper().readValue(marketAsset.getJsonDesc().toString(), new TypeReference<Map<String, String>>(){});
+					
+					marketAssetDTO.setTitle(obj.get("title"));
+					marketAssetDTO.setDescription(obj.get("description"));
+					marketAssetDTO.setTechnologies(obj.get("technologies"));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			marketAssetDTO.setCreatedAt(marketAsset.getCreatedAt());
+			marketAssetDTO.setUpdatedAt(marketAsset.getUpdatedAt());	
+			
+			marketAssetDTOList.add(marketAssetDTO);
+		}
+		return marketAssetDTOList;
 	}
 
 }
