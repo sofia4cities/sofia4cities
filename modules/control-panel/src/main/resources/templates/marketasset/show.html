@@ -136,7 +136,8 @@
 														<div class="form-group">
 															<label  th:text="#{marketasset.image}">Image</label>
 															<img id="showedImg" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" class="img-responsive thumbnail" style="max-height: 150px; margin-top: 20px;"/>
-															<img id="showedImg" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="max-height: 150px; margin-top: 20px;"/>																	
+															<img id="showedImg" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="max-height: 150px; margin-top: 20px;"/>
+															<input type="hidden" th:if="${#lists.isEmpty(marketasset.image)}" th:field="*{imageType}"/>																	
 														</div>
 													</div>
 													<div class="col-md-8 col-sm-12 col-xs-12">
@@ -173,7 +174,7 @@
 											</div>											
 										</form>
 										<form th:id="form_download_document" th:action="@{|/marketasset/${marketasset.id}/downloadContent|}" method="POST">
-                   							<input type="hidden" name="id_document" id="id_document"/> 
+                   							<input type="hidden" name="id_document" id="id_document"/>
                 						</form>
 									</div>									
 								</div>
@@ -214,7 +215,10 @@
 	<script  th:inline="javascript">
 	
 	var error="";
-	var currentLanguage = [[${lang}]];	
+	var currentLanguage = [[${lang}]];
+	
+	// REDIRECT URL
+	var navigateUrl = function(url){ window.location.href = url; }
 								
 	// MAIN WHEN LOAD
 	$(window).load(function(){  

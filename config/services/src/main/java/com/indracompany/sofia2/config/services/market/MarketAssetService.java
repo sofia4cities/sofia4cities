@@ -16,6 +16,8 @@ package com.indracompany.sofia2.config.services.market;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.indracompany.sofia2.config.model.MarketAsset;
 
 public interface MarketAssetService {
@@ -28,4 +30,7 @@ public interface MarketAssetService {
 
 	byte[] getContent(String id);
 
+	void downloadDocument(String id, HttpServletResponse response) throws Exception;
+
+	void updateMarketAsset(String id, MarketAsset marketAssetMultipartMap);
 }

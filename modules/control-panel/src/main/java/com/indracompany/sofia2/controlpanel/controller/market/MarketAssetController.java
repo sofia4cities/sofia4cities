@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,7 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.services.exceptions.ApiManagerServiceException;
 import com.indracompany.sofia2.config.services.market.MarketAssetService;
 import com.indracompany.sofia2.controlpanel.helper.market.MarketAssetHelper;
@@ -102,13 +100,6 @@ public class MarketAssetController {
 			return "redirect:/marketasset/create";
 		}
 		
-//		if (api.getMultipartImage()!=null && api.getMultipartImage().getSize()>0 && !"image/png".equalsIgnoreCase(api.getMultipartImage().getContentType()) && !"image/jpeg".equalsIgnoreCase(api.getMultipartImage().getContentType())
-//				&& !"image/jpg".equalsIgnoreCase(api.getMultipartImage().getContentType()) && !"application/octet-stream".equalsIgnoreCase(api.getMultipartImage().getContentType())){
-//			log.debug("Some user properties missing");
-//			utils.addRedirectMessage("user.create.error", redirect);
-//			return "redirect:/apimanager/create";
-//		}
-		
 		try {
 			
 			String apiId = marketAssetService.createMarketAsset(marketAssetHelper.marketAssetMultipartMap(marketAssetMultipart));
@@ -123,24 +114,17 @@ public class MarketAssetController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
 	@PutMapping(value="/update/{id}", produces = "text/html")
-	public String update(@PathVariable("id") String id, MarketAssetMultipart marketAssetMultipart, BindingResult bindingResult, @RequestParam(required = false) String operationsObject, @RequestParam(required = false) String authenticationObject, @RequestParam(required = false) String deprecateApis, RedirectAttributes redirect) {
+	public String update(@PathVariable("id") String id, MarketAssetMultipart marketAssetMultipart, BindingResult bindingResult, RedirectAttributes redirect) {
 
 		if (bindingResult.hasErrors()) {
 			utils.addRedirectMessage("api.update.error", redirect);
 			return "redirect:/marketasset/update";
 		}
-//		if (api.getImagen()!=null && api.getImagen().getSize()>0 && !"image/png".equalsIgnoreCase(api.getImagen().getContentType()) && !"image/jpeg".equalsIgnoreCase(api.getImagen().getContentType())
-//				&& !"image/jpg".equalsIgnoreCase(api.getImagen().getContentType()) && !"application/octet-stream".equalsIgnoreCase(api.getImagen().getContentType())){
-//			LOG.error("Error. La imagen introducida no esta permitida");
-//			utils.addRedirectMessage("api.update.error", redirect);
-//			return "redirect:/apimanager/update";
-//		}
 		
 		try {
-			
-			//apiManagerService.updateApi(apiManagerHelper.apiMultipartMap(api), deprecateApis, operationsObject, authenticationObject);
+			marketAssetService.updateMarketAsset(id, marketAssetHelper.marketAssetMultipartMap(marketAssetMultipart));
 
-			return "redirect:/apimanager/show/" + id;
+			return "redirect:/marketasset/show/" + id;
 		} catch (Exception e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("api.update.error", redirect);
@@ -203,20 +187,10 @@ public class MarketAssetController {
 	
 	@RequestMapping(value="/{id}/downloadContent")
 	public void download(@PathVariable("id") String id, HttpServletResponse response) {
-		byte[] buffer = marketAssetService.getContent(id);
-		if (buffer.length > 0) {
-			OutputStream output = null;
-			try {
-				output = response.getOutputStream();
-				response.setContentLength(buffer.length);
-				output.write(buffer);
-			} catch (Exception e) {
-			} finally {
-				try {
-					output.close();
-				} catch (IOException e) {
-				}
-			}
+		try {
+			marketAssetService.downloadDocument(id, response);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
