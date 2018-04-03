@@ -16,7 +16,6 @@ package com.indracompany.sofia2.controlpanel.helper.market;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,17 +31,12 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetPaymentMode;
-import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetState;
-import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetType;
 import com.indracompany.sofia2.config.repository.ApiRepository;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.multipart.MarketAssetMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Component

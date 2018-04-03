@@ -166,7 +166,7 @@
 														<div class="form-group">
 															<label  th:text="#{marketasset.image}">Image</label>
 															<input id="image" class="btn btn-default" type="file" th:field="*{image}" onchange="MarketAssetCreateController.validateImageSize();" style="width:100%"/>
-															<img id="showedImg" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/apimanager/} + ${marketasset.id + '/getImage'}" class="img-responsive thumbnail" style="max-height: 150px; margin-top: 20px;"/>
+															<img id="showedImg" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" class="img-responsive thumbnail" style="max-height: 150px; margin-top: 20px;"/>
 															<img id="showedImg" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="max-height: 150px; margin-top: 20px;"/>																	
 														</div>
 													</div>
@@ -210,8 +210,8 @@
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:ApiCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:ApiCreateController.go(\'' + @{/apimanager/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:MarketAssetCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:MarketAssetCreateController.go(\'' + @{/marketasset/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
 										</form>
@@ -266,19 +266,16 @@
 		"language" : currentLanguage,
 		"actionMode" : [[${marketasset.id}]],
 		"dateCreated" : [[${marketasset.createdAt}]],
-		"marketAssetmanager_identification_error" : [[#{marketAssetmanager.identification.error}]],
-		"apimanager_image_error" : [[#{apimanager.image.error}]],
-		"apimanager_noops_error" : [[#{apimanager.noops.error}]],
-		"apimanager_ops_description_error" : [[#{apimanager.ops.description.error}]],
-		"apiId": [[${marketasset?.id}]],
+		"marketAssetmanager_identification_error" : [[#{marketasset.identification.error}]]
 	};
 						
 	$(window).load(function(){  
-		
- 		var json_desc = JSON.parse($('#json_desc').val());
-		var type = $('#marketassetType').val();
-		
-		loadFragment(type, json_desc); 
+		if ( [[${marketasset.id}]] != null){
+	 		var json_desc = JSON.parse($('#json_desc').val());
+			var type = $('#marketassetType').val();
+			
+			loadFragment(type, json_desc); 
+		}
 	});
 	
 	function loadFragment(type, json_desc){
