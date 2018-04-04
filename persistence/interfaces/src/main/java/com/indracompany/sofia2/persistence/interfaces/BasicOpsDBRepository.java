@@ -69,4 +69,8 @@ public interface BasicOpsDBRepository {
 
 	public long countNative(String collectionName, String query) throws DBPersistenceException;
 
+	public long deleteNativeById(String ontologyName, String objectId) throws DBPersistenceException;
+
+	public long updateNativeByObjectIdAndBodyData(String ontologyName, String objectId, String body) throws DBPersistenceException;
+
 }
