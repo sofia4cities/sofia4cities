@@ -14,11 +14,27 @@
  */
 package com.indracompany.sofia2.config.services.ontologydata;
 
-import com.indracompany.sofia2.config.model.Ontology;
+/**
+ * Exception to show data validation errors
+ */
+public class DataSchemaValidationException extends Exception {
 
-public interface OntologyDataService {
+	private static final long serialVersionUID = 1L;
 
-	public void checkOntologySchemaCompliance(final String data, final Ontology ontology) throws DataSchemaValidationException;
+	public DataSchemaValidationException() {
+		super();
+	}
+
+	public DataSchemaValidationException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public DataSchemaValidationException(String message) {
+		super(message);
+	}
+
+	public DataSchemaValidationException(Throwable cause) {
+		super(cause);
+	}
 	
-	public void checkOntologySchemaCompliance(final String data, final String ontologyName) throws DataSchemaValidationException;
 }

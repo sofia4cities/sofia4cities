@@ -113,7 +113,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 	
 	@PrometheusTimeMethod(name = "processQuery", help = "processQuery")
 	@Timed
-	public Map<String,Object> processQuery(Map<String,Object> data, Exchange exchange) {
+	public Map<String,Object> processQuery(Map<String,Object> data, Exchange exchange) throws Exception {
 		
 		Ontology ontology = (Ontology) data.get(ApiServiceInterface.ONTOLOGY);
 		String METHOD = (String) data.get(ApiServiceInterface.METHOD);
@@ -149,32 +149,31 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		
 		String OUTPUT="";
 		
-		
-		try {
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
-				model.setBody(QUERY);
-				model.setOperationType(OperationType.QUERY);
-				OperationResultModel result =facade.query(modelNotification);
-				OUTPUT = result.getResult();
-			}
-			
-			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
-				model.setOperationType(OperationType.INSERT);
-				OperationResultModel result =facade.insert(modelNotification);
-				OUTPUT = result.getResult();
-			}
-			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
-				model.setOperationType(OperationType.UPDATE);
-				OperationResultModel result =facade.update(modelNotification);
-				OUTPUT = result.getResult();
-			}
-			else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
-				OperationResultModel result =facade.delete(modelNotification);
-				OUTPUT = result.getResult();	
-			}
-		} catch (Exception e) {
-			
+		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
+			model.setBody(QUERY);
+			model.setOperationType(OperationType.QUERY);
+			OperationResultModel result =facade.query(modelNotification);
+			OUTPUT = result.getResult();
 		}
+		
+		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
+			model.setOperationType(OperationType.INSERT);
+			OperationResultModel result =facade.insert(modelNotification);
+			if ("ERROR".equals(result.getResult())){
+				throw new ApiServiceException("Error inserting data: " + result.getMessage());
+			}
+			OUTPUT = result.getResult();
+		}
+		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+			model.setOperationType(OperationType.UPDATE);
+			OperationResultModel result =facade.update(modelNotification);
+			OUTPUT = result.getResult();
+		}
+		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
+			OperationResultModel result =facade.delete(modelNotification);
+			OUTPUT = result.getResult();	
+		}
+		
 
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
 		exchange.getIn().setBody(data);

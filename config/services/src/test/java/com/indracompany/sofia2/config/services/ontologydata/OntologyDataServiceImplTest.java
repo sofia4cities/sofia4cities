@@ -14,8 +14,6 @@
  */
 package com.indracompany.sofia2.config.services.ontologydata;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -94,22 +92,22 @@ public class OntologyDataServiceImplTest {
 	private final String BAD_JSON_DATA = "{Something\":{ \"id\":\"string\"}}"; //invalid JSON. Something should be surrounded by quotes.
 	
 	@Test
-	public void given_OneValidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ItReturnsTrue() {
-		assertTrue("This Json data should pass the validation", service.isJsonCompliantWithSchema(GOOD_JSON_DATA, GOOD_JSON_SCHEMA));
+	public void given_OneValidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ExceptionIsNotLauched() throws DataSchemaValidationException {
+		service.checkJsonCompliantWithSchema(GOOD_JSON_DATA, GOOD_JSON_SCHEMA);
 	}
 	
-	@Test
-	public void given_OneInvalidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ItResturnsFalse() {
-		assertFalse("The schema should not be validated", service.isJsonCompliantWithSchema(GOOD_JSON_DATA, BAD_JSON_SCHEMA));
+	@Test(expected=DataSchemaValidationException.class)
+	public void given_OneInvalidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ExceptionIsLauched() throws DataSchemaValidationException {
+		service.checkJsonCompliantWithSchema(GOOD_JSON_DATA, BAD_JSON_SCHEMA);
 	}
 	
-	@Test
-	public void given_OneValidJsonSchemaAndOneNotCompliantJson_When_TheJsonIsValidated_Then_ItReturnsFalse() {
-		assertFalse("The Json data should not pass the validation", service.isJsonCompliantWithSchema(NONVALID_JSON_DATA, GOOD_JSON_SCHEMA));
+	@Test(expected=DataSchemaValidationException.class)
+	public void given_OneValidJsonSchemaAndOneNotCompliantJson_When_TheJsonIsValidated_Then_ItReturnsFalse() throws DataSchemaValidationException {
+		service.checkJsonCompliantWithSchema(NONVALID_JSON_DATA, GOOD_JSON_SCHEMA);
 	}
 	
-	@Test
-	public void given_OneValidJsonSchemaAndOneIncorrectJson_When_TheJsonIsValidated_Then_ItReturnsFalse() {
-		assertFalse("The Json data is incorrect, it should not be validated", service.isJsonCompliantWithSchema(BAD_JSON_DATA, GOOD_JSON_SCHEMA));
+	@Test(expected=DataSchemaValidationException.class)
+	public void given_OneValidJsonSchemaAndOneIncorrectJson_When_TheJsonIsValidated_Then_ItReturnsFalse() throws DataSchemaValidationException {
+		service.checkJsonCompliantWithSchema(BAD_JSON_DATA, GOOD_JSON_SCHEMA);
 	}
 }

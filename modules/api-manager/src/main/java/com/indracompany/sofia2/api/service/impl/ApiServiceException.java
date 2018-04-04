@@ -12,13 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.services.ontologydata;
+package com.indracompany.sofia2.api.service.impl;
 
-import com.indracompany.sofia2.config.model.Ontology;
-
-public interface OntologyDataService {
-
-	public void checkOntologySchemaCompliance(final String data, final Ontology ontology) throws DataSchemaValidationException;
+public class ApiServiceException extends Exception {
 	
-	public void checkOntologySchemaCompliance(final String data, final String ontologyName) throws DataSchemaValidationException;
+	private static final long serialVersionUID = 1L;
+
+	public ApiServiceException() {
+		super();
+	}
+
+	public ApiServiceException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public ApiServiceException(String message) {
+		super(message);
+	}
+
+	public ApiServiceException(Throwable cause) {
+		super(cause);
+	}
 }
