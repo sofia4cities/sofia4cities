@@ -25,6 +25,15 @@
     right: 0;
     position: absolute;
     margin: auto; }
+	
+.marketasset-technologies{
+font-size: 50px;
+border-top: 1px solid;
+border-bottom: 1px solid;
+ border-color: #f0f1f2;
+padding: 15px 0 10px 0;
+margin-bottom: 20px;	
+}
 
 .marketasset-content-1 .marketasset-post-content {
   padding: 20px 30px 30px 30px;
@@ -270,13 +279,13 @@
       margin-bottom: 10px;
       position: relative; }
       .marketasset-content-2 .marketasset-single-sidebar > .marketasset-single-sidebar-recent > ul > li > a {
-        color: #49a7fa;
+        color: #555b62;
         font-size: 16px;
         padding-left: 20px;
         display: block; }
         .marketasset-content-2 .marketasset-single-sidebar > .marketasset-single-sidebar-recent > ul > li > a:hover {
           text-decoration: none;
-          color: #3598DC; }
+          color: #2C4BA7; }
       .marketasset-content-2 .marketasset-single-sidebar > .marketasset-single-sidebar-recent > ul > li:before {
         content: "•";
         color: #dae0e5;
@@ -311,8 +320,10 @@
       border-color: #f0f1f2;
       padding: 20px 0; }
       .marketasset-content-2 .marketasset-single-sidebar > .marketasset-single-sidebar-links > ul > li > a {
-        color: #49a7fa;
-        font-size: 16px; }
+       color: #4781b6;
+font-size: 14px;
+font-family: "Open sans";
+letter-spacing: -0.1px; }
         .marketasset-content-2 .marketasset-single-sidebar > .marketasset-single-sidebar-links > ul > li > a:hover {
           text-decoration: none;
           color: #3598DC; }
