@@ -193,10 +193,11 @@ margin-bottom: 20px;
     .marketasset-content-2 .marketasset-single-content > .marketasset-single-img > img {
       width: 100%; }
   .marketasset-content-2 .marketasset-single-content > .marketasset-single-desc > p {
-    margin: 0 0 35px 0;
-    font-size: 16px;
-    color: #7e8691;
-    line-height: 24px; }
+   margin: 0 0 20px 0;
+    margin-top: 0px;
+font-size: 14px;
+color: #7e8691;
+line-height: 24px; }
   .marketasset-content-2 .marketasset-single-content > .marketasset-single-foot {
     border-top: 1px solid;
     border-bottom: 1px solid;
@@ -225,9 +226,9 @@ margin-bottom: 20px;
           margin-right: 0; }
   .marketasset-content-2 .marketasset-single-content .marketasset-comments {
     display: inline-block;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 400;
-    margin: 6px 10px 3px 0; }
+    margin: 10px 10px 3px 0; }
     .marketasset-content-2 .marketasset-single-content .marketasset-comments .marketasset-comments-title {
       font-size: 20px; }
     .marketasset-content-2 .marketasset-single-content .marketasset-comments .c-comment-list {
@@ -241,13 +242,15 @@ margin-bottom: 20px;
         width: 50px;
         border-radius: 50px !important; }
       .marketasset-content-2 .marketasset-single-content .marketasset-comments .c-comment-list .media-heading > a {
-        color: #9aa5b2;
-        font-weight: 600; }
+       color: #4e5257;
+font-weight: 600;
+font-family: "Open sans";
+font-size: 15px; }
         .marketasset-content-2 .marketasset-single-content .marketasset-comments .c-comment-list .media-heading > a:hover {
           color: #3598DC;
           text-decoration: none; }
       .marketasset-content-2 .marketasset-single-content .marketasset-comments .c-comment-list .media-heading > .c-date {
-        font-size: 14px; }
+        font-size: 13px; }
     .marketasset-content-2 .marketasset-single-content .marketasset-comments i {
       position: relative;
       top: 2px; }
@@ -279,10 +282,10 @@ margin-bottom: 20px;
       margin-bottom: 10px;
       position: relative; }
       .marketasset-content-2 .marketasset-single-sidebar > .marketasset-single-sidebar-recent > ul > li > a {
-        color: #555b62;
-        font-size: 16px;
-        padding-left: 20px;
-        display: block; }
+		color: #555b62;
+		font-size: 13px;
+		padding-left: 20px;
+		display: block; }
         .marketasset-content-2 .marketasset-single-sidebar > .marketasset-single-sidebar-recent > ul > li > a:hover {
           text-decoration: none;
           color: #2C4BA7; }
@@ -318,9 +321,9 @@ margin-bottom: 20px;
       list-style: none;
       border-bottom: 1px solid;
       border-color: #f0f1f2;
-      padding: 20px 0; }
+      padding: 10px 0; }
       .marketasset-content-2 .marketasset-single-sidebar > .marketasset-single-sidebar-links > ul > li > a {
-       color: #4781b6;
+     color: #4781b6;
 font-size: 14px;
 font-family: "Open sans";
 letter-spacing: -0.1px; }

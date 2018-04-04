@@ -34,6 +34,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/devicon.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/marketasset.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/jquery-bar-rating/themes/bars-1to10.css}"/>
 		
 
 	</head>	
@@ -93,7 +94,7 @@
 										<div class="marketasset-single-content bordered marketasset-container">
 											<div class="marketasset-single-head">
 												<h1 class="marketasset-single-head-title uppercase bold ">sofia4cities Ontology Manual</h1>
-												<div class="marketasset-single-head-date">
+												<div class="marketasset-single-head-date hide">
 													<span class="btn btn-md green-turquoise tooltips" data-container="body" data-placement="top" style="margin-top: 5px;" data-original-title="Modalidad Pago: FREE">FREE</span>
 												</div>
 											</div>											
@@ -105,20 +106,18 @@
 														 <span class="label-marketasset" title="javascript" alt="javascript"><i class="devicon-javascript-plain"></i></span>															
 														 <span class="label-marketasset" title="mongodb" alt="mongodb"><i class="devicon-mongodb-plain"></i></span>															
 														 <div class="pull-right">
-														<span data-container="body" data-placement="top" style="margin-top: 5px;" data-original-title="Modalidad Pago: FREE" class="btn btn-lg green-haze tooltips">FREE</span>
+														<span data-container="body" data-placement="top" style="margin-top: 10px;" data-original-title="Modalidad Pago: FREE" class="btn btn-lg green-haze tooltips">FREE</span>
 													</div>
 												</div>
 												
-												<p> Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore siat magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-													ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat. </p>
-												<p> Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla et facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum
-													zzril delenit augue et duis dolore feugait nulla facilisi. Nam liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim placerat facer possim assum. Typi non habent claritatem
-													insitam; est usus legentis in iis qui facit eorum claritatem. </p>
-												<p> Investigationes demonstraverunt lectores legere me lius quod ii legunt saepius. Claritas est etiam et processus sequitur mutationem consuetudium lectorum. Mirum est notare quam littera gothica, quame nunc putamus
-													parum claram, siad anteposuerit litterarum formas humanitatis per seacula quarta decima et quinta decima. Eodem modo typi, qui nunc nobis videntur parum clari, fiant sollemnes in futurum. </p>
+												<p class="margin-top-10">
+												SOFIA2 is a middleware that allows the interoperability of multiple systems and devices, offering a semantic platform to make real world information available to smart applications (Internet of Things).
+												</p><p>
+												It is multi-language and multi-protocol, enabling the interconnection of heterogeneous devices. It provides publishing and subscription mechanisms, facilitating the orchestration of sensors and actuators in order to monitor and act on the environment.
+												</p>
 											</div>
 											<div class="marketasset-single-img">
-												<img class="img-responsive thumnail" src="/controlpanel/marketasset/6aad6386-3f8b-4f3a-83a8-2c1cf676a10d/getImage" />
+												<img class="img-responsive img-asset-show thumnail" src="/controlpanel/marketasset/6aad6386-3f8b-4f3a-83a8-2c1cf676a10d/getImage" />
 											</div>
 											<div class="marketasset-single-foot">
 												<h3 style="margin-bottom: 18px;margin-top: -5px;font-size: 15px;" class="uppercase bold">Asset Technologies Applied</h3>
@@ -210,7 +209,7 @@
 														<textarea rows="8" name="message" placeholder="Write comment here ..." class="form-control c-square"></textarea>
 													</div>
 													<div class="form-group">
-														<button type="submit" class="btn blue uppercase btn-md sbold btn-block">Submit</button>
+														<button type="submit" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block"><i class="la la-upload"></i> Submit Comment</button>
 													</div>
 												</form>
 											</div>
@@ -219,10 +218,16 @@
 									<div class="col-lg-3">
 										<div class="marketasset-single-sidebar bordered marketasset-container">
 											<div class="marketasset-single-sidebar-search">
+												<div class="form-group">
+													<button type="submit" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block"><i class="la la-download"></i> Download</button>
+												</div>
+											</div>
+											<div class="marketasset-single-sidebar-search hide">
 												<div class="input-icon right">
 													<i class="icon-magnifier"></i>
 													<input class="form-control" placeholder="Search Blog" type="text" /> </div>
 											</div>
+											
 											<div class="marketasset-single-sidebar-recent">
 												<h3 class="marketasset-sidebar-title uppercase">Recent Market Assets</h3>
 												<ul>
@@ -289,7 +294,7 @@
 													</li>
 												</ul>
 											</div>
-											<div class="marketasset-single-sidebar-ui">
+											<div class="marketasset-single-sidebar-ui hide">
 												<h3 class="marketasset-sidebar-title uppercase">UI Examples</h3>
 												<div class="row ui-margin">
 													<div class="col-xs-4 ui-padding">
@@ -433,6 +438,9 @@
 	<!-- INPUTMASK -->
 	<script th:src="@{/static/vendor/jquery-inputmask/dist/min/jquery.inputmask.bundle.min.js}"/>
 	
+	<!-- RATEIT -->
+	<script th:src="@{/static/vendor/jquery-bar-rating/js/jquery.barrating.min.js}"/>
+	
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	
@@ -453,6 +461,11 @@
 		var marketAssetType = [[${marketasset.marketAssetType.name()}]];
 		
 		loadFragment(marketAssetType,json_desc);
+		
+		 $('#example-1to10').barrating('show', {
+            theme: 'bars-1to10'
+        });
+		
 	});
 	
 	function loadFragment(type, json_desc){
