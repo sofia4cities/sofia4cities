@@ -15,6 +15,8 @@
 package com.indracompany.sofia2.client;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -36,8 +38,10 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
 import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
@@ -48,10 +52,16 @@ public class MQTTClient {
 
 	private MemoryPersistence persistence = new MemoryPersistence();;
 	private String brokerURI;
-	private CompletableFuture<String> completableFutureMessage = new CompletableFuture<>();;
+	private CompletableFuture<String> completableFutureMessage = new CompletableFuture<>();
+	private CompletableFuture<String> completableFutureIndication = new CompletableFuture<>();;
 	private String sessionKey;
 	private String topic = "/message";;
 	private MqttClient client;
+	private Map<String,String> subscriptions = new HashMap<String,String>();
+
+	public enum QUERY_TYPE {
+		NATIVE, SQL
+	};
 
 	public MQTTClient(String brokerURI) {
 		this.brokerURI = brokerURI;
@@ -86,7 +96,7 @@ public class MQTTClient {
 		body.setClientPlatformInstance(clientPlatformInstance);
 		body.setToken(token);
 		join.setBody(body);
-
+		
 		try {
 			// Connect client MQTT
 			this.client = new MqttClient(brokerURI, clientPlatform, persistence);
@@ -137,6 +147,65 @@ public class MQTTClient {
 			log.info("Session key is null, either Token or ClientPlatform params are not valid");
 
 		return this.sessionKey;
+	}
+
+	public String subscribe(String ontology, String query, QUERY_TYPE queryType, int timeout, SubscriptionListener listener) {
+
+		String subscriptionId = null;
+		final SSAPMessage<SSAPBodySubscribeMessage> subscription = new SSAPMessage<SSAPBodySubscribeMessage>();
+		subscription.setSessionKey(this.sessionKey);
+		final SSAPBodySubscribeMessage body = new SSAPBodySubscribeMessage();
+		body.setOntology(ontology);
+		switch (queryType) {
+		case NATIVE:
+			body.setQueryType(SSAPQueryType.NATIVE);
+		case SQL:
+			body.setQueryType(SSAPQueryType.SQL);
+		}
+		body.setQuery(query);
+		subscription.setBody(body);
+		subscription.setDirection(SSAPMessageDirection.REQUEST);
+		subscription.setMessageType(SSAPMessageTypes.SUBSCRIBE);
+
+		try {
+			final String subscriptionStr = SSAPJsonParser.getInstance().serialize(subscription);
+
+			
+			final MqttMessage message = new MqttMessage(subscriptionStr.getBytes());
+			client.publish(topic, message);
+
+			// GET SUBS RESPONSE
+			String subsResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
+			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(subsResponse);
+			subscriptionId = response.getBody().getData().at("/subscriptionId").asText();
+			
+			
+			this.client.subscribe("/topic/subscription/" + this.sessionKey, new IMqttMessageListener() {
+				@Override
+				public void messageArrived(String topic, MqttMessage message) throws Exception {
+					final String response = new String(message.getPayload());
+					listener.onMessageArrived(response);
+					log.info("subs message");
+				}
+			});
+		} catch (SSAPParseException e) {
+			log.error("Could not parse SSAP message");
+			throw new MQTTException("Could not parse SSAP message");
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return subscriptionId;
 	}
 
 	/**
