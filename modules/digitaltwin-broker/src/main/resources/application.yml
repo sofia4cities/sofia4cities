@@ -26,7 +26,7 @@ spring:
     client.metadata.user.password: $spring.boot.admin.password} 
     
 sofia2: #Config Sofia2 specific
-  digitaltwin:
+  digitaltwin.broker:
       rest:
         enable: true
         swaggerhost: localhost:8081    

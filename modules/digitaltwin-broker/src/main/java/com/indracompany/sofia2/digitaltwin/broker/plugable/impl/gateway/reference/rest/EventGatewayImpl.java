@@ -22,11 +22,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,21 +35,15 @@ import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel.EventTy
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterDigitalTwinService;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
+@RestController
 @ConditionalOnProperty(
-		prefix="sofia2.digitaltwin.rest",
+		prefix="sofia2.digitaltwin.broker.rest",
 		name="enable",
 		havingValue="true"
 		)
-@RestController
-@RequestMapping(path="/event")
 @EnableAutoConfiguration
-@CrossOrigin(origins = "*")
-@Api(value="event", description="Sofia4Cities events for digital twins")
-public class Event {
+public class EventGatewayImpl implements EventGateway {
 	
 	@Autowired
 	private DigitalTwinDeviceRepository deviceRepo;
@@ -61,11 +52,10 @@ public class Event {
 	@Qualifier("routerDigitalTwinServiceImpl")
 	private RouterDigitalTwinService routerDigitalTwinService;
 	
-	@ApiOperation(value = "Event Register to register the endpoint of the Digital Twin")
-	@RequestMapping(value="/register", method=RequestMethod.POST)
+	@Override
 	public ResponseEntity<?> register(
-			@ApiParam(value = "ApiKey provided from digital twin", required = true) @RequestHeader(value="Authorization") String apiKey,
-			@ApiParam(value = "Json data need to execute the event", required = true)  @RequestBody JsonNode data){
+			@RequestHeader(value="Authorization") String apiKey,
+			@RequestBody JsonNode data){
 		
 		//Validation apikey
 		if(data.get("id")==null || data.get("endpoint")==null) {
@@ -82,11 +72,10 @@ public class Event {
 		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Event Ping")
-	@RequestMapping(value="/ping", method=RequestMethod.POST)
+	@Override
 	public ResponseEntity<?> ping(
-			@ApiParam(value = "ApiKey provided from digital twin", required = true) @RequestHeader(value="Authorization") String apiKey,
-			@ApiParam(value = "Json data need to execute the event", required = true)  @RequestBody JsonNode data){
+			@RequestHeader(value="Authorization") String apiKey,
+			@RequestBody  JsonNode data){
 		
 		//Validation apikey
 		if(data.get("id")==null) {
@@ -104,11 +93,10 @@ public class Event {
 		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 	
-	@ApiOperation(value = "Event Log")
-	@RequestMapping(value="/log", method=RequestMethod.POST)
+	@Override
 	public ResponseEntity<?> log(
-			@ApiParam(value = "ApiKey provided from digital twin", required = true) @RequestHeader(value="Authorization") String apiKey,
-			@ApiParam(value = "Json data need to execute the event", required = true)  @RequestBody JsonNode data){
+			@RequestHeader(value="Authorization") String apiKey,
+			@RequestBody JsonNode data){
 		
 		if(data.get("id")==null || data.get("log")==null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -142,11 +130,10 @@ public class Event {
 		}
 	}
 	
-	@ApiOperation(value = "Event Shadow")
-	@RequestMapping(value="/shadow", method=RequestMethod.POST)
+	@Override
 	public ResponseEntity<?> shadow(
-			@ApiParam(value = "ApiKey provided from digital twin", required = true) @RequestHeader(value="Authorization") String apiKey,
-			@ApiParam(value = "Json data need to execute the event", required = true)  @RequestBody JsonNode data){
+			@RequestHeader(value="Authorization") String apiKey,
+			@RequestBody JsonNode data){
 		
 		if(data.get("id")==null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -164,11 +151,10 @@ public class Event {
 		}
 	}
 	
-	@ApiOperation(value = "Event Notebook")
-	@RequestMapping(value="/notebook", method=RequestMethod.POST)
+	@Override
 	public ResponseEntity<?> notebook(
-			@ApiParam(value = "ApiKey provided from digital twin", required = true) @RequestHeader(value="Authorization") String apiKey,
-			@ApiParam(value = "Json data need to execute the event", required = true)  @RequestBody JsonNode data){
+			@RequestHeader(value="Authorization") String apiKey,
+			@RequestBody JsonNode data){
 		
 		if(data.get("id")==null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -183,11 +169,10 @@ public class Event {
 		}
 	}
 	
-	@ApiOperation(value = "Event Flow")
-	@RequestMapping(value="/flow", method=RequestMethod.POST)
+	@Override
 	public ResponseEntity<?> flow(
-			@ApiParam(value = "ApiKey provided from digital twin", required = true) @RequestHeader(value="Authorization") String apiKey,
-			@ApiParam(value = "Json data need to execute the event", required = true)  @RequestBody JsonNode data){
+			@RequestHeader(value="Authorization") String apiKey,
+			@RequestBody JsonNode data){
 		
 		if(data.get("id")==null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -202,11 +187,10 @@ public class Event {
 		}
 	}
 	
-	@ApiOperation(value = "Event Rule")
-	@RequestMapping(value="/rule", method=RequestMethod.POST)
+	@Override
 	public ResponseEntity<?> rule(
-			@ApiParam(value = "ApiKey provided from digital twin", required = true) @RequestHeader(value="Authorization") String apiKey,
-			@ApiParam(value = "Json data need to execute the event", required = true)  @RequestBody JsonNode data){
+			@RequestHeader(value="Authorization") String apiKey,
+			@RequestBody JsonNode data){
 		
 		if(data.get("id")==null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
