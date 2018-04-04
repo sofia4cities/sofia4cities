@@ -18,11 +18,9 @@ import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel.OperationType;
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel.QueryType;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
@@ -38,12 +36,6 @@ public class RouterServiceImpl implements RouterService, RouterSuscriptionServic
 	@Autowired
 	SuscriptionModelRepository repository;
 	
-	//TODO the router will use that repository to obtain ontology information for validations.
-	//TODO this access is not based on any user authorization so it will use the repository instead the service.
-	//TODO if this assumption is not correct, it should be fixed here. If correct, it is neccesary to remove the TODOs
-	@Autowired
-	OntologyRepository ontologyRepository;
-	
 	@Autowired
 	OntologyDataService ontologyDataService;
 	
@@ -51,21 +43,9 @@ public class RouterServiceImpl implements RouterService, RouterSuscriptionServic
 
 	@Override
 	public OperationResultModel insert(NotificationModel model) throws Exception {
-		String data = model.getOperationModel().getBody();
-		String ontologyName = model.getOperationModel().getOntologyName();
-		Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
-		boolean dataValidated = ontologyDataService.hasOntologySchemaCompliance(data, ontology);
-		if (dataValidated) {
-			ProducerTemplate t = camelContext.createProducerTemplate();
-			OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
-			return result;
-		} else {
-			OperationResultModel errorResult = new OperationResultModel();
-			errorResult.setResult("ERROR");
-			errorResult.setStatus(false);
-			errorResult.setMessage("Body is not copliant with the ontology " + ontologyName + " schema, data: "+data);
-			return errorResult;
-		}
+		ProducerTemplate t = camelContext.createProducerTemplate();
+		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		return result;		
 	}
 
 	@Override

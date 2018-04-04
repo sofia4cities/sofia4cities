@@ -20,6 +20,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.ApiOperation;
+import com.indracompany.sofia2.config.services.ontologydata.DataSchemaValidationException;
+import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
@@ -27,6 +29,7 @@ import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
+import com.indracompany.sofia2.router.service.app.service.RouterCrudServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,10 +45,13 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	
 	@Autowired
 	private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
+	
+	@Autowired
+	private OntologyDataService ontologyDataService;
 
 
 	@Override
-	public OperationResultModel insert(OperationModel operationModel) {
+	public OperationResultModel insert(OperationModel operationModel) throws RouterCrudServiceException {
 
 		log.info("Router Crud Service Operation "+operationModel.toString());
 
@@ -64,19 +70,19 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		result.setStatus(true);
 
 		try {
+			ontologyDataService.checkOntologySchemaCompliance(BODY, ontologyName);
+			
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
 				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);
 			}
 		} 
-		catch (DBPersistenceException dbe) {
-			result.setResult(OUTPUT);
-			result.setStatus(false);
-			result.setMessage(dbe.getMessage());
-		}
 		catch (final Exception e) {
-			result.setResult(OUTPUT);
+			result.setResult("ERROR");
 			result.setStatus(false);
 			result.setMessage(e.getMessage());
+			result.setErrorCode("");
+			result.setOperation("INSERT");
+			throw new RouterCrudServiceException("Error inserting data", e, result);
 		}
 
 		result.setResult(OUTPUT);
