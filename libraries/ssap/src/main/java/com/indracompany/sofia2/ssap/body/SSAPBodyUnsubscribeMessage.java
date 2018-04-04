@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,25 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.ssap.enums;
+package com.indracompany.sofia2.ssap.body;
 
-public enum SSAPMessageTypes {
-	NONE,
+import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
-	JOIN,
-	LEAVE,
 
-	INSERT,
-	UPDATE,
-	UPDATE_BY_ID,
-	DELETE,
-	DELETE_BY_ID,
+public class SSAPBodyUnsubscribeMessage extends SSAPBodyMessage {
 
-	QUERY,
+	private String subscriptionId;
+	
+	public String getSubscriptionId() {
+		return subscriptionId;
+	}
 
-	SUBSCRIBE,
-	UNSUBSCRIBE,
-	INDICATION,
+	public void setSubscriptionId(String subscriptionId) {
+		this.subscriptionId = subscriptionId;
+	}
 
-	COMMAND
+	@Override
+	public boolean isSessionKeyMandatory() {
+		return true;
+	}
+
+	@Override
+	public boolean isOntologyMandatory() {
+		return false;
+	}
+
 }

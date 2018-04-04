@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.router.service.app.service;
 
+import javax.transaction.Transactional;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +92,7 @@ public class RouterServiceImpl implements RouterService, RouterSuscriptionServic
 		return result;
 	}
 
+	@Transactional
 	@Override
 	public OperationResultModel unSuscribe(SuscriptionModel model) throws Exception {
 		
@@ -99,7 +102,7 @@ public class RouterServiceImpl implements RouterService, RouterSuscriptionServic
 		result.setErrorCode("");
 		result.setOperation("UNSUSCRIBE");
 		result.setResult("OK");
-		result.setMessage("Suscription to "+model.getOntologyName()+" has "+repository.findAllByOntologyName(model.getOntologyName()).size());
+		result.setMessage("Suscription "+model.getSuscriptionId()+" removed");
 		return result;
 	}
 

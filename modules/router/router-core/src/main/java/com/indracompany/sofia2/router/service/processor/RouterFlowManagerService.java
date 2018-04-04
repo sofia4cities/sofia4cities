@@ -203,10 +203,10 @@ public class RouterFlowManagerService {
 	
 	private String appendOIDForSQL(String query, String objectId) {
 		if (query.toUpperCase().contains("WHERE")) {
-			return query + " AND _id = OID '"+objectId+"'";
+			return query + " AND _id = OID(\""+objectId+"\")";
 		}
 		else 
-			return query + " WHERE _id = OID '"+objectId+"'";
+			return query + " WHERE _id = OID(\""+objectId+"\")";
 		
 	}
 	
