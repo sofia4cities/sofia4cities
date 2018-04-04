@@ -14,7 +14,6 @@
  */
 package com.indracompany.sofia2.config.service.digitaltwin.device;
 
-import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,5 +44,4 @@ public interface DigitalTwinDeviceService {
 
 	void deleteDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice);
 
-	File generateProject(String identification);
 }

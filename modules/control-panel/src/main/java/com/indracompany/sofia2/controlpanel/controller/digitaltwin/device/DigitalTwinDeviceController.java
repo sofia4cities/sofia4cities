@@ -46,6 +46,7 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.service.digitaltwin.device.DigitalTwinDeviceService;
 import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.controlpanel.helper.digitaltwin.device.DigitalTwinDeviceHelper;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +64,9 @@ public class DigitalTwinDeviceController {
 	
 	@Autowired
 	private DigitalTwinDeviceService digitalTwinDeviceService;
+	
+	@Autowired
+	private DigitalTwinDeviceHelper digitalTwinDeviceHelper;
 	
 	@PostMapping("/getNamesForAutocomplete")
 	public @ResponseBody List<String> getNamesForAutocomplete() {
@@ -176,7 +180,7 @@ public class DigitalTwinDeviceController {
 	@GetMapping(value = "/generateProject/{identification}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
 	public ResponseEntity<InputStreamResource> generateProject(@PathVariable("identification") String identification)  throws FileNotFoundException{
 		
-		File zipFile= digitalTwinDeviceService.generateProject(identification);
+		File zipFile= digitalTwinDeviceHelper.generateProject(identification);
 
 		HttpHeaders respHeaders = new HttpHeaders();
 		respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
