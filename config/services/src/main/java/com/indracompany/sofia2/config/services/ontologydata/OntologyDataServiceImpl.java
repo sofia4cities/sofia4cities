@@ -17,6 +17,7 @@ package com.indracompany.sofia2.config.services.ontologydata;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,19 +29,27 @@ import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.indracompany.sofia2.config.model.Ontology;
-import lombok.extern.slf4j.Slf4j;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 
-@Slf4j
 @Service
 public class OntologyDataServiceImpl implements OntologyDataService {
 	
+	@Autowired
+	private OntologyRepository ontologyRepository;
+	
 	@Override
-	public boolean hasOntologySchemaCompliance(final String data, final Ontology ontology)  {
+	public void checkOntologySchemaCompliance(final String data, final Ontology ontology) throws DataSchemaValidationException {
 		final String jsonSchema = ontology.getJsonSchema();
-		return isJsonCompliantWithSchema(data, jsonSchema);
+		checkJsonCompliantWithSchema(data, jsonSchema);
+	}
+	
+	@Override
+	public void checkOntologySchemaCompliance(String data, String ontologyName) throws DataSchemaValidationException {
+		Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
+		checkOntologySchemaCompliance(data, ontology);
 	}
 		
-	boolean isJsonCompliantWithSchema(final String dataString, final String schemaString) {
+	void checkJsonCompliantWithSchema(final String dataString, final String schemaString) throws DataSchemaValidationException{
 		JsonNode dataJson;
 		JsonNode schemaJson;
 		JsonSchema schema;
@@ -52,11 +61,10 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			schema = factory.getJsonSchema(schemaJson);
 			report = schema.validate(dataJson);
 		} catch (IOException e) {
-			log.error("Error reading data for cheaking schema compliance",e);
-			return false;
+			throw new DataSchemaValidationException ("Error reading data for cheaking schema compliance", e);
 		} catch (ProcessingException e) {
-			log.error("Error checking data schema compliance",e);
-			return false;
+			throw new DataSchemaValidationException ("Error checking data schema compliance", e);
+			
 		}
 		
 		if (report != null && !report.isSuccess()) {
@@ -69,11 +77,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 				}
 			}
 			
-			log.error(msgerror.toString());
+			throw new DataSchemaValidationException(msgerror.toString());
 		}
-		
-		return report.isSuccess();
-
 	}
 
 }

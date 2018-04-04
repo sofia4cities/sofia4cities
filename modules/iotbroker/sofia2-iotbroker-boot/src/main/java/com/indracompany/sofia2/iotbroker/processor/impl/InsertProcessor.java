@@ -14,9 +14,11 @@
 package com.indracompany.sofia2.iotbroker.processor.impl;
 
 import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -79,7 +81,9 @@ public class InsertProcessor implements MessageTypeProcessor {
 		});
 
 		contextData.setClientSession(insertMessage.getSessionKey());
-		contextData.setTimezoneId(ZoneId.systemDefault().toString());
+		String zoneId = ZoneId.systemDefault().toString();
+		contextData.setTimezoneId(zoneId);
+		contextData.setTimestamp(Calendar.getInstance(TimeZone.getTimeZone(zoneId)).getTime().toString());
 
 		((ObjectNode) insertMessage.getBody().getData()).set("contextData", objectMapper.valueToTree(contextData));
 

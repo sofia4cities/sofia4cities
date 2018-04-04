@@ -18,5 +18,7 @@ import com.indracompany.sofia2.config.model.Ontology;
 
 public interface OntologyDataService {
 
-	public boolean hasOntologySchemaCompliance(final String data, final Ontology ontology);
+	public void checkOntologySchemaCompliance(final String data, final Ontology ontology) throws DataSchemaValidationException;
+	
+	public void checkOntologySchemaCompliance(final String data, final String ontologyName) throws DataSchemaValidationException;
 }
