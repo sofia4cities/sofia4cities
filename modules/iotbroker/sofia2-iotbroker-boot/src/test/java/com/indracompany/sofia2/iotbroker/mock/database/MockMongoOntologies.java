@@ -64,6 +64,16 @@ public class MockMongoOntologies {
 		repository.delete(ontology.getSimpleName());
 		manage.removeTable4Ontology(ontology.getSimpleName());
 	}
+	
+	public <T> String getJSONSchema(Class<T> ontology) throws JsonGenerationException, JsonMappingException, IOException{
+		final JsonSchemaGenerator generator = new JsonSchemaGenerator(objectMapper);
+		final JsonSchema jsonSchema = generator.generateSchema(ontology);
+		
+		final StringWriter json = new StringWriter();
+		objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		objectMapper.writeValue(json, jsonSchema);
+		return json.toString();
+	}
 
 
 }

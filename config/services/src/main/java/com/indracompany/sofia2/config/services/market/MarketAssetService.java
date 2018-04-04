@@ -12,13 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.services.ontologydata;
+package com.indracompany.sofia2.config.services.market;
 
-import com.indracompany.sofia2.config.model.Ontology;
+import java.util.List;
 
-public interface OntologyDataService {
+import javax.servlet.http.HttpServletResponse;
 
-	public void checkOntologySchemaCompliance(final String data, final Ontology ontology) throws DataSchemaValidationException;
-	
-	public void checkOntologySchemaCompliance(final String data, final String ontologyName) throws DataSchemaValidationException;
+import com.indracompany.sofia2.config.model.MarketAsset;
+
+public interface MarketAssetService {
+
+	List<MarketAsset> loadMarketAssetByFilter(String marketAssetId, String userId);
+
+	String createMarketAsset(MarketAsset marketAsset);
+
+	byte[] getImgBytes(String id);
+
+	byte[] getContent(String id);
+
+	void downloadDocument(String id, HttpServletResponse response) throws Exception;
+
+	void updateMarketAsset(String id, MarketAsset marketAssetMultipartMap);
 }

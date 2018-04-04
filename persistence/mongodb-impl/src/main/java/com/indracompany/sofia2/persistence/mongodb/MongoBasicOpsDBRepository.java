@@ -129,6 +129,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 		return deleteNative(collection, "{}");
 	}
 
+	@Override
 	public long deleteNativeById(String collection, String objectId) throws DBPersistenceException {
 		log.debug("deleteNativeById", collection, objectId);
 		return deleteNative(collection, "{\"_id\": { \"$oid\" : \"" + objectId + "\" }}");
@@ -177,6 +178,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 		}
 	}
 
+	@Override
 	public long updateNativeByObjectIdAndBodyData(String collection, String objectId, String bodyData) {
 		String updateQuery = "db." + collection + ".update({\"_id\": {\"$oid\" : \"" + objectId + "\" }}, {$set:"
 				+ bodyData + " })";

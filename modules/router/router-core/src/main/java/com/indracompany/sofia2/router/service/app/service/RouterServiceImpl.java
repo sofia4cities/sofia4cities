@@ -18,14 +18,13 @@ import javax.transaction.Transactional;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel.OperationType;
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel.QueryType;
 import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
+import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
@@ -39,13 +38,16 @@ public class RouterServiceImpl implements RouterService, RouterSuscriptionServic
 	@Autowired
 	SuscriptionModelRepository repository;
 	
+	@Autowired
+	OntologyDataService ontologyDataService;
+	
 	private String defaultStartupRoute = "direct:start-broker-flow";
 
 	@Override
 	public OperationResultModel insert(NotificationModel model) throws Exception {
 		ProducerTemplate t = camelContext.createProducerTemplate();
 		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
-		return result;
+		return result;		
 	}
 
 	@Override

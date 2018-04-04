@@ -37,7 +37,6 @@
 
 		<route id="process-api">
 			<from uri="direct:process-api" />
-
 			<doTry>
 				<process ref="apiServiceImpl" />
 				<doCatch>
@@ -73,6 +72,17 @@
 
 			<doTry>
 				<to uri="bean:apiServiceImpl?method=processQuery" />
+				<doCatch>
+					<exception>com.indracompany.sofia2.api.service.impl.ApiServiceException</exception>
+					<log message="Error in query" loggingLevel="ERROR"/>
+					<to uri="direct:set-default-headers" />
+					<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+						<constant>400</constant>
+					</setHeader>
+					<setBody>
+						<simple>["MESSAGE EXCEPTION","${exception.message}"]</simple>
+					</setBody>
+				</doCatch>
 				<doCatch>
 					<exception>java.lang.Exception</exception>
 					<log message="Error processing QUERTY API" loggingLevel="ERROR" />
