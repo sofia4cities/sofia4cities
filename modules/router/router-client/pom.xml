@@ -25,6 +25,7 @@
 		<module>router-client-rest</module>
 		<module>advicer-client-rest</module>
 		<module>router-crud</module>
+		<module>router-digitaltwin</module>
 	</modules>
 
 </project>
