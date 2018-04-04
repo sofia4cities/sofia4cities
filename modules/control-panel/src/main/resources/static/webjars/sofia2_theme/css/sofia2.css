@@ -798,6 +798,7 @@ padding-top: 2px;
     color: #333;
     background-color: #FFF !Important;
     border-color: #ddd;
+	padding: 6px 12px !important;
 }
 
 /*** AUTOCOMPLETE ***/

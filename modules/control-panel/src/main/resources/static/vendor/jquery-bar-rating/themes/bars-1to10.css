@@ -2,7 +2,7 @@
 .box-example-1to10 .br-wrapper {
   width: 210px;
   position: absolute;
-  margin: 0px 0 0 -105px;
+  margin: 0px 0 0 -100px;
   left: 50%;
 }
 .box-example-movie .br-wrapper {
@@ -82,18 +82,18 @@
 }
 /* Boxes */
 .box {
-  width: 100%;
-  float: left;
-  margin: 1em 0;
+width: 230px;
+float: left;
+margin: 0;
 }
 .box .box-header {
-  text-align: center;
-  font-weight: 400;
-  padding: .5em 0;
+text-align: center;
+font-weight: 400;
+padding: 3px 0;
 }
 .box .box-body {
-  padding-top: 2em;
-  height: 85px;
+  padding-top: 7px;
+  height: 48px;
   /* rating widgets will be absolutely centered relative to box body */
   position: relative;
 }
@@ -117,12 +117,12 @@
   border-top: 0;
 }
 .box-green .box-header {
-  background-color: #50e3c2;
-  color: white;
+     background-color: #44b6ae;
+    color: white;
 }
 .box-green .box-body {
   background-color: white;
-  border: 2px solid #92eed9;
+  border: 2px solid #44b6ae;
   border-top: 0;
 }
 .box-blue .box-header {

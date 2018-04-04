@@ -67,7 +67,7 @@
 				</div>		
 				
 				<!-- BEGIN PAGE BAR AND BREADCRUM-->
-				<div class="page-bar margin-bottom-20">
+				<div class="page-bar margin-bottom-20 hide">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
 						<li><a th:href="@{/marketasset/list}"> <span th:text="#{marketasset.breadcrumb.prev}">Market Asset List</span></a><i class="fa fa-circle"></i></li>
@@ -82,8 +82,9 @@
 				
 				<!-- MAIN ROW -->
 				<div class="row">
-					<div class="col-md-12">						
-						<div class="portlet light bordered">							
+					<form role="form" id="marketasset_create_form" action="view.html" th:action="@{|/marketasset/update/${marketasset.id}|}" th:object="${marketasset}" method="get" class="form" enctype="multipart/form-data">
+					<div class="col-md-12 margin-top-30">						
+						<div class="portlet light ">							
 							<div class="portlet-body marketasset-page marketasset-content-2" style="display: block; height: auto;">
 								<div class="row">
 									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->						
@@ -93,62 +94,70 @@
 									 <div class="col-lg-9">
 										<div class="marketasset-single-content bordered marketasset-container">
 											<div class="marketasset-single-head">
-												<h1 class="marketasset-single-head-title uppercase bold ">sofia4cities Ontology Manual</h1>
-												<div class="marketasset-single-head-date hide">
-													<span class="btn btn-md green-turquoise tooltips" data-container="body" data-placement="top" style="margin-top: 5px;" data-original-title="Modalidad Pago: FREE">FREE</span>
+												<h1 class="marketasset-single-head-title bold">
+													<span class="uppercase" id="title">&nbsp;</span>
+													<div class="marketasset-type">
+														<i class="flaticon-layers" style="font-size: 20px;"></i>
+														<span th:text="#{marketasset.type.__*{marketAssetType}__}"> DOCUMENT</span>
+													</div>
+												</h1>
+												<div class="marketasset-single-head-date ">
+													<div class="box box-green box-example-1to10" style="margin-top: -25px;">
+													  <div class="box-header">1/10 Markeplace Rating</div>
+													  <div class="box-body">
+														<select id="example-1to10" name="rating" autocomplete="off">
+														  <option value="1">1</option>
+														  <option value="2">2</option>
+														  <option value="3">3</option>
+														  <option value="4">4</option>
+														  <option value="5">5</option>
+														  <option value="6">6</option>
+														  <option value="7" selected="selected">7</option>
+														  <option value="8">8</option>
+														  <option value="9">9</option>
+														  <option value="10">10</option>
+														</select>
+													  </div>
+													</div>
 												</div>
 											</div>											
 											<div class="marketasset-single-desc">
-												<div style=" font-size: 50px;border-top: 1px solid;border-bottom: 1px solid;border-color: #f0f1f2;padding: 15px 0 10px 0;margin-bottom: 20px;" class="marketasset-technologies form-inline font-green-haze">															
-														 <span class="label-marketasset" title="html5" alt="html5"><i class="devicon-html5-plain"></i></span>															
-														 <span class="label-marketasset" title="css" alt="css"><i class="devicon-css-plain"></i></span>															
-														 <span class="label-marketasset" title="java" alt="java"><i class="devicon-java-plain"></i></span>															
-														 <span class="label-marketasset" title="javascript" alt="javascript"><i class="devicon-javascript-plain"></i></span>															
-														 <span class="label-marketasset" title="mongodb" alt="mongodb"><i class="devicon-mongodb-plain"></i></span>															
-														 <div class="pull-right">
-														<span data-container="body" data-placement="top" style="margin-top: 10px;" data-original-title="Modalidad Pago: FREE" class="btn btn-lg green-haze tooltips">FREE</span>
+												<div class="marketasset-technologies form-inline font-green-haze">
+													<!-- technology tags -->
+													<div id="technologies-icons" style="display: inline"></div>
+													<!-- public and payment method -->
+													 <div class="pull-right" style="margin-top: -8px;">															
+														<span th:if="*{public}" class="btn btn-md blue-hoki ">PUBLIC</span>
+														<span th:if="!*{public}" class="btn btn-md red-haze ">PRIVATE</span>
+														<span class="btn btn-md green-haze" th:text="#{marketasset.paymentmode.__*{paymentMode}__}">payment</span>
 													</div>
-												</div>
-												
-												<p class="margin-top-10">
-												SOFIA2 is a middleware that allows the interoperability of multiple systems and devices, offering a semantic platform to make real world information available to smart applications (Internet of Things).
-												</p><p>
-												It is multi-language and multi-protocol, enabling the interconnection of heterogeneous devices. It provides publishing and subscription mechanisms, facilitating the orchestration of sensors and actuators in order to monitor and act on the environment.
-												</p>
+												</div>												
 											</div>
-											<div class="marketasset-single-img">
-												<img class="img-responsive img-asset-show thumnail" src="/controlpanel/marketasset/6aad6386-3f8b-4f3a-83a8-2c1cf676a10d/getImage" />
+											<div class="marketasset-single-img col-md-4 col-sm-12">
+												<img class="img-responsive img-asset-show thumbnail"  th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" />
+												<img class="img-responsive img-asset-show thumbnail"  th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" />
 											</div>
+											<div class="marketasset-single-desc col-md-8 col-sm-12">												
+												<!-- description -->												
+												<p class="margin-top-10" id="description"></p>
+											</div>
+											<div class="clearfix"></div>
 											<div class="marketasset-single-foot">
 												<h3 style="margin-bottom: 18px;margin-top: -5px;font-size: 15px;" class="uppercase bold">Asset Technologies Applied</h3>
-												<ul class="marketasset-post-tags">
-													<li class="uppercase ">
-														<a href="javascript:;" class="">Bootstrap</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">Sass</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">HTML</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">CSS3</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">JAVASCRIPT</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">JAVA</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">MONGODB</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">MYSQL</a>
-													</li>
-												</ul>
+												<!-- technology tags -->
+												<ul id="technologies-tags" class="marketasset-post-tags"></ul>
 											</div>
-											<div class="marketasset-comments">
+											<!-- DOCUMENT FRAGMENT -->
+											<div class="marketasset-single-foot" id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'DOCUMENT')" th:include="marketasset/marketassetfragments::#DOCUMENTMarketAssetFragmentShow"/>
+											
+											<!-- API FRAGMENT SECTION -->
+											<div class="marketasset-single-foot" id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'API')" th:include="marketasset/marketassetfragments::#APIMarketAssetFragmentShow"/>
+											
+											<!-- APPLICATION FRAGMENT -->
+											<div class="marketasset-single-foot" id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'APPLICATION')" th:include="marketasset/marketassetfragments::#APPLICATIONMarketAssetFragmentShow"/>
+											
+											<!-- COMMENTS PENDING -->
+											<div class="marketasset-comments hide">
 												<h3 class="sbold marketasset-comments-title">Comments(30)</h3>
 												<div class="c-comment-list">
 													<div class="media">
@@ -217,17 +226,19 @@
 									</div>
 									<div class="col-lg-3">
 										<div class="marketasset-single-sidebar bordered marketasset-container">
-											<div class="marketasset-single-sidebar-search">
-												<div class="form-group">
-													<button type="submit" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block"><i class="la la-download"></i> Download</button>
-												</div>
-											</div>
+											<!-- back to market -->
+											<div class="form-group">
+												<button type="button" onclick="javascript:location.href='/controlpanel/marketasset/list';" class="btn blue-chambray padding-both-10 uppercase btn-md sbold btn-block"><i class="la la-arrow-left"></i> Back to Market</button>
+											</div>											
+											
+											<!-- SEARCH (pending) -->											
 											<div class="marketasset-single-sidebar-search hide">
 												<div class="input-icon right">
 													<i class="icon-magnifier"></i>
-													<input class="form-control" placeholder="Search Blog" type="text" /> </div>
+													<input class="form-control" placeholder="Search Blog" type="text" /> 
+												</div>
 											</div>
-											
+											<!-- RECENT MARKETASSETS (pending) -->
 											<div class="marketasset-single-sidebar-recent">
 												<h3 class="marketasset-sidebar-title uppercase">Recent Market Assets</h3>
 												<ul>
@@ -245,86 +256,40 @@
 													</li>
 												</ul>
 											</div>
+											<!-- MARKETASSETS TECHNOLOGY TAGCLOUD (pending) -->
 											<div class="marketasset-single-sidebar-tags">
-												<h3 class="marketasset-sidebar-title uppercase">Technologies</h3>
+												<h3 class="marketasset-sidebar-title uppercase">Marketplace Technologies</h3>
 												<ul class="marketasset-post-tags">
-													<li class="uppercase">
-														<a href="javascript:;">Bootstrap</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">Sass</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">HTML</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">CSS</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">Gulp</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">Framework</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">Admin Theme</a>
-													</li>
-													<li class="uppercase">
-														<a href="javascript:;">UI Features</a>
-													</li>
+													<li class="uppercase"><a href="javascript:;">JAVA</a></li>
+													<li class="uppercase"><a href="javascript:;">JAVASCRIPT</a></li>
+													<li class="uppercase"><a href="javascript:;">HTML5</a></li>
+													<li class="uppercase"><a href="javascript:;">CSS</a></li>
+													<li class="uppercase"><a href="javascript:;">DOCKER</a></li>
+													<li class="uppercase"><a href="javascript:;">LINUX</a></li>
+													<li class="uppercase"><a href="javascript:;">APACHE</a></li>
+													<li class="uppercase"><a href="javascript:;">PHP</a></li>
+													<li class="uppercase"><a href="javascript:;">ANGULARJS</a></li>
+													<li class="uppercase"><a href="javascript:;">ANDROID</a></li>
+													<li class="uppercase"><a href="javascript:;">APPLE</a></li>
+													<li class="uppercase"><a href="javascript:;">WINDOWS</a></li>
 												</ul>
 											</div>
+											<!-- MARKET INTEREST LINKS (pending) -->
 											<div class="marketasset-single-sidebar-links">
 												<h3 class="marketasset-sidebar-title uppercase">Useful Links</h3>
 												<ul>
-													<li>
-														<a href="javascript:;">Lorem Ipsum </a>
-													</li>
-													<li>
-														<a href="javascript:;">Dolore Amet</a>
-													</li>
-													<li>
-														<a href="javascript:;">Metronic Database</a>
-													</li>
-													<li>
-														<a href="javascript:;">UI Features</a>
-													</li>
-													<li>
-														<a href="javascript:;">Advanced Forms</a>
-													</li>
+													<li><a href="javascript:;">Sofia4Cities Marketplace</a></li>
+													<li><a href="javascript:;">Ontologies</a></li>
+													<li><a href="javascript:;">Console Manual</a></li>
+													<li><a href="javascript:;">Sofia4Cities Features</a></li>
+													<li><a href="javascript:;">Terms and Conditions</a></li>
 												</ul>
-											</div>
-											<div class="marketasset-single-sidebar-ui hide">
-												<h3 class="marketasset-sidebar-title uppercase">UI Examples</h3>
-												<div class="row ui-margin">
-													<div class="col-xs-4 ui-padding">
-														<a href="javascript:;">
-															<img src="/controlpanel/marketasset/40a331fa-a00c-4b1d-b1cc-1c21f56927a3/getImage" />
-														</a>
-													</div>
-													<div class="col-xs-4 ui-padding">
-														<a href="javascript:;">
-															<img src="/controlpanel/marketasset/453ecf03-dbaa-4907-b318-e82dc91e1795/getImage" />
-														</a>
-													</div>
-													<div class="col-xs-4 ui-padding">
-														<a href="javascript:;">
-															<img src="/controlpanel/marketasset/4bb160b3-3428-4866-8d7e-b90267945f86/getImage" />
-														</a>
-													</div>
-													<div class="col-xs-4 ui-padding">
-														<a href="javascript:;">
-															<img src="/controlpanel/marketasset/6aad6386-3f8b-4f3a-83a8-2c1cf676a10d/getImage" />
-														</a>
-													</div>													
-												</div>
-											</div>
+											</div>											
 										</div>
-									</div>
-									
-									
+									</div>			
+									<!-- show anterior --> 
 									<div class="col-md-12 hide">										
-										<form role="form" id="marketasset_create_form" action="view.html" th:action="@{|/marketasset/update/${marketasset.id}|}" th:object="${marketasset}" method="get" class="form" enctype="multipart/form-data">
+										
 											<div class="form-body">
 												<!-- id, version and category -->
 												<div class="row">
@@ -370,7 +335,7 @@
 													<div class="col-md-8 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label th:text="#{marketasset.title}">Title</label>
-															<p id="title" name="title" class="form-control-static-block bold" disabled="disabled"></p>
+															<p  class="form-control-static-block bold" disabled="disabled"></p>
 														</div>
 														<div class="form-group">
 															<label th:text="#{marketasset.technologies}">Tecnologies</label>
@@ -378,14 +343,14 @@
 														</div>
 														<div class="form-group">
 															<label th:text="#{marketasset.description}"></label>
-															<textarea disabled="disabled" class="element textarea small form-control" id="description" name="description" maxlength="512" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
+															<textarea disabled="disabled" class="element textarea small form-control"  name="description" maxlength="512" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
 														</div>
 													</div>
 												</div>
-												<div id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'API')" th:include="marketasset/marketassetfragments::#APIMarketAssetFragmentShow"/>
-												<div id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'DOCUMENT')" th:include="marketasset/marketassetfragments::#DOCUMENTMarketAssetFragmentShow"/>
+												
+												
 												<div id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'WEBPROJECT')" th:include="marketasset/marketassetfragments::#WEBPROJECTMarketAssetFragmentShow"/>
-												<div id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'APPLICATION')" th:include="marketasset/marketassetfragments::#APPLICATIONMarketAssetFragmentShow"/>
+												
 											</div>
 											<!-- FORM BUTTONS -->
 											<div class="form-actions">
@@ -399,7 +364,7 @@
 													<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/marketasset/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
-										</form>
+										
 										<form th:id="form_download_document" th:action="@{|/marketasset/${marketasset.id}/downloadContent|}" method="POST">
                    							<input type="hidden" name="id_document" id="id_document"/>
                 						</form>
@@ -407,7 +372,8 @@
 								</div>
 							</div>
 						</div><!-- END PORTLET BASIC  -->						
-					</div><!-- END COL-12 -->						
+					</div><!-- END COL-12 -->
+					</form>					
 				</div><!-- END MAIN ROW -->
 			</div><!-- END CONTENT BODY -->
 		</div><!-- END CONTENT page-content-wrapper -->		
@@ -439,12 +405,12 @@
 	<script th:src="@{/static/vendor/jquery-inputmask/dist/min/jquery.inputmask.bundle.min.js}"/>
 	
 	<!-- RATEIT -->
-	<script th:src="@{/static/vendor/jquery-bar-rating/js/jquery.barrating.min.js}"/>
+	<script th:src="@{/static/vendor/jquery-bar-rating/jquery.barrating.min.js}"/>
 	
 	<!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	
-	var error="";
+	var error = "";
 	var currentLanguage = [[${lang}]];
 	
 	// REDIRECT URL
@@ -455,8 +421,27 @@
 		var json_desc = JSON.parse(/*[[${json_desc}]]*/);
 		
 		$('#title').text(json_desc.title);
-		$('#technologies').tagsinput('add', json_desc.technologies);
-		$('#description').val(json_desc.description);
+		//$('#technologies').tagsinput('add', json_desc.technologies);
+		var techdata 	 = '';
+		var techMarkup	 = '';
+		var techLiMarkup = '';
+		var techData 	 = json_desc.technologies;
+		var techString 	 = techData.toLowerCase();
+		var techArr 	 = techString.split(',');
+		var icon 		 = '';
+		
+		// mount icons and tags from technology data.
+		$.each(techArr, function( index, value ) {
+		  icon = (value === 'css') ? 'css3' : value;		  
+		  techMarkup += '<span class="label-marketasset" title="'+ value +'" alt="'+ value +'" style="padding-right: 10px"><i class="devicon-'+ icon +'-plain"></i></span>';
+		  techLiMarkup += '<li class="uppercase"><a href="javascript:;">'+ value +'</a></li>';
+		});
+		
+		// append technology data to html
+		$('#technologies-icons').append(techMarkup);
+		$('#technologies-tags').append(techLiMarkup);
+		$('#description').append(json_desc.description);
+		
 		
 		var marketAssetType = [[${marketasset.marketAssetType.name()}]];
 		
@@ -472,12 +457,12 @@
 		if (type=='API'){
 			$('#apiId').text(json_desc.apiId);
 			$('#versions').text(json_desc.versions);
-			$('#apiDescription').val(json_desc.apiDescription);
+			$('#apiDescription').text(json_desc.apiDescription);
 		} else if (type=='DOCUMENT'){
 			$("a[href='document']").attr('href', [[@{/marketasset/}]] + [[${marketasset.id}]] + '/downloadContent');
 		} else if (type=='APPLICATION'){
-			$('#installation').val(json_desc.installation);
-			$('#functionality').val(json_desc.functionality);
+			$('#installation').text(json_desc.installation);
+			$('#functionality').text(json_desc.functionality);
 		} else if (type=='WEBPROJECT'){
 			$('#functionality').text(json_desc.functionality);
 			$('#id_endpoint').val(json_desc.id_endpoint);
