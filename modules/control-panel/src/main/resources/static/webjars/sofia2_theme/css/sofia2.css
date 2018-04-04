@@ -962,5 +962,10 @@ background: linear-gradient(to right, #75b8f3, #9353e6);*/
 	margin-left: 5px;
 }
 
+/*  marketplace assets images */
+.img-market{ 
+max-height: 125px; min-height: 125px; width:auto; margin: 5px 0px;  display: block; margin: 5px auto;
+}
+
 
 

@@ -1,5 +1,5 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+<html xmlns:th="http://www.thymeleaf.org" th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
@@ -26,46 +26,8 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 		
 		<!-- PLUGINS STYLE SHEETS -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.css}"/>
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/devicon.css}"/>
-		<style>
-			/*** efectos de shadow de paneles  ***/
-.effect-1
-{
-  	position:relative;
-    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset !Important;
-       -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset !Important;
-            box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset !Important;
-}
-.effect-1:before, .effect-1:after
-{
-	content:"";
-    position:absolute;
-    z-index:-1;
-    -webkit-box-shadow:0 0 20px rgba(0,0,0,0.8);
-    -moz-box-shadow:0 0 20px rgba(0,0,0,0.8);
-    box-shadow:0 0 20px rgba(0,0,0,0.8);
-    top:0;
-    bottom:0;
-    left:10px;
-    right:10px;
-    -moz-border-radius:100px / 10px;
-    border-radius:100px / 10px;
-}
-.effect-1:after
-{
-	right:10px;
-    left:auto;
-    -webkit-transform:skew(8deg) rotate(3deg);
-       -moz-transform:skew(8deg) rotate(3deg);
-        -ms-transform:skew(8deg) rotate(3deg);
-         -o-transform:skew(8deg) rotate(3deg);
-            transform:skew(8deg) rotate(3deg);
-}
-/*** end efectos de shadow de paneles  ***/
-		</style>
+
 	</head>	
 	
 	<!-- page-sidebar-closed to start page with collapsed menu -->
@@ -128,7 +90,7 @@
 											<span class="input-group-btn">
 											   <button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../marketasset/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>
 											</span>
-											<input style="border: 1px solid #555;" placeholder="Filtrar..." class="btn-search-proyect form-control input-xsmall" type="text"/>
+											<input style="border: 1px solid #555;" th:placeholder="#{gen.filter} + '...'" class="btn-search-proyect form-control input-xsmall" type="text"/>
 											<span class="input-group-btn">
 											  <button class="btn grey-mint  btn-outline sbold  btn-project-description"><i class="la la-expand"></i></button>
 											</span>
@@ -140,139 +102,18 @@
 							<div class="portlet-body" style="display: block; height: auto;">
 								
 								<div class="row">									
-									<div class="col-md-12 margin-bottom-20 hide">
-									<!-- SEARCH FORM -->
-										<form id="form_marketasset" action="list.html" th:action="@{/marketasset/list}" class="" role="form" method="get">												
-											
-											<div id="searchFilter" class="form-body hide" style="border-bottom: 1px solid #eef1f5;">
-												<div class="row">
-													<div class="col-md-4 col-md-6 col-xs-12">
-														<div class="form-group">															
-															<div class="input-group">
-																<span class="input-group-addon">
-																	<i class="fa fa-tag font-grey-mint"></i>
-																</span>															
-																<input id="marketassetId" th:placeholder="#{marketasset.id}" name="marketassetId" class="form-control" type="text" maxlength="70" value=""/>
-															</div>
-														</div>
-													</div>
-													<div class="col-md-2 col-xs-12">
-														<div class="btn-group">
-															<button type="button" id="search_marketasset" name="search_marketasset" th:title="#{gen.search}" th:value="#{gen.search}" value="Search" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> Search </button>
-															<button type="button" id="reset_marketasset" name="reset_marketasset" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
-														</div>
-													</div>
-												</div>
-											</div>												
-										</form>								
-									</div>
-									<!-- MARKET LIST -->
-									<div class="col-md-12 hide">											
-										<div id="contenedor-tabla-outside" class="contiene">																						
-											<div>
-												<!-- DATATABLE DANDELION CONF. -->												
-												<table id="marketassets" class="table table-hover table-striped" dt:table="true" dt:filterClearSelector="#clearFilters" dt:filterPlaceholder="none"  dt:paginationtype="full_numbers">
-													<thead>
-														<tr class="cabecera-tabla">
-															<th class="titulo-columnas text-center" ><i class="fa fa-image "></i> <span th:text="#{marketasset.image}"> image </span></th>
-															<th class="titulo-columnas text-left" dt:filterable="true" dt:filterCssClass="input-small" dt:selector="userFilter" ><i class="la la-credit-card"></i> <span th:text="#{marketasset.id}">Identification</span></th>
-															<th class="titulo-columnas text-center"><span th:text="#{gen.public}">Public</span></th>
-															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{gen.owner}" >Name</span></th>
-															<th class="titulo-columnas text-center" id="roleType" dt:filterable="true" dt:filterType="select" dt:selector="roleFilter" dt:filterCssClass="input-small"><span th:text="#{marketasset.state}" >State</span></th>
-															<th class="titulo-columnas text-center" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
-														</tr>
-													</thead>
-													<tbody th:remove="all-but-first">
-														<tr th:each="marketasset : ${marketAssets}" pages:paginate="10">
-															<!-- IMAGE -->
-															<td class="text-center no-wrap">
-																<img class="img-responsive thumbnail" style="max-width: 125px" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{${marketasset.id} + '/getImage'}" />
-																<img class="img-responsive thumbnail" style="max-width: 125px" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" />
-															</td>
-															<!-- IDENTIFICATION -->
-															<td class="text-left bold no-wrap" th:text="${marketasset.identification}"></td>
-															<!-- PUBLIC -->
-															<td class="text-center" th:if="${marketasset.public}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
-															<td class="text-center" th:if="${!marketasset.public}"><span class="label label-danger"><i class="fa fa-times"></i></span></td>
-															<!-- OWNER -->
-															<td class="text-left no-wrap " th:text="${marketasset.user.userId}"></td>
-															<!-- STATE -->
-															<td class="text-center no-wrap " th:text="#{marketasset.state.__${marketasset.state}__}"></td>
-															<!-- OPTIONS -->
-															<td class="icon" style="text-align: center; white-space: nowrap">
-																<!-- VIEW -->															
-																<span th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/marketasset/show/${marketasset.id}|} + '\');'"><i class="fa fa-eye"></i></span>
-																
-																<!-- EDIT -->
-																<span th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))"  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/marketasset/update/${marketasset.id}|} + '\');'"><i class="fa fa-edit"></i></span>
-																
-																<!-- ACTIONS -->
-															</td>
-														</tr>
-													</tbody>
-												</table>
-												
-												<!-- DATATABLE DANDELION CONF. -->
-												<div dt:conf="marketassets">
-													<div dt:confType="extrahtml" dt:uid="0">
-														<!-- TABLE FILTERS AUX. ROW -->
-														<table id="filteringTable" class="hide">
-																<tr id="filtering" class="hide" role="row">
-																	<th></th>
-																	<th id="userFilter" class="dtFilter"></th>
-																	<th></th>
-																	<th></th>
-																	<th id="roleFilter" class="dtFilter"></th>
-																	<th></th>
-																</tr>
-														</table>
-													</div>
-												</div>
-												
-												
-												
-												<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
-												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
-												
-													<!-- CLEAR-FILTERS, TOGGLE-SELECTION AND DELETE-SELECTED -->
-													<button id="clearFilters" th:value="#{gen.resetBtn}" class="btn grey-mint btn-outline sbold" style="padding: 7px 10px;"><i class="fa fa-times"></i></button>												
-												
-													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn grey-mint btn-sm btn-outline ">
-														<i class="fa fa-eye"></i> <span th:text="#{gen.columns}">Columns</span> <i class="fa fa-angle-down"></i>
-													</a>
-													<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
-														<label class="toggle-vis" data-column="0" th:text="#{marketasset.image}"> Image </label>
-														<label class="toggle-vis" data-column="1" th:text="#{marketasset.id}"> Id </label>
-														<label class="toggle-vis" data-column="2" th:text="#{gen.public}"> Public</label>
-														<label class="toggle-vis" data-column="3" th:text="#{gen.owner}"> Owner</label>
-														<label class="toggle-vis" data-column="4" th:text="#{marketasset.state}"> State</label>													
-														<label class="toggle-vis" data-column="5" th:text="#{gen.options}" > Options</label>															
-													</div>
-												</div>
-											</div>
-										</div>											
-									</div>
-									
-									
 									<!-- nueva seccion -->
 									<div class="col-md-12">																
 										<!-- CABECERA DE FILTROS Y BUSCADOR DE PROYECTOS -->
 										<div class="col-md-12" style="margin-top: -8px;">																	
 											
 											<!-- FILTRO PPAL TIPO-PROYECTO -->
-											<div class="main-filters col-md-9 col-sm-6 col-xs-7" > <!-- th:with="strList = ${ {'la la-desktop font-lg hidden-xs', 'la la-thumbs-up font-lg hidden-xs', 'la la-tablet font-lg hidden-xs', 'la la-database font-lg hidden-xs'} }"  <i th:class="@{|${strList[row.index]}|}"></i> -->
+											<div class="main-filters col-md-12 col-sm-12 col-xs-12" > <!-- th:with="strList = ${ {'la la-desktop font-lg hidden-xs', 'la la-thumbs-up font-lg hidden-xs', 'la la-tablet font-lg hidden-xs', 'la la-database font-lg hidden-xs'} }"  <i th:class="@{|${strList[row.index]}|}"></i> -->
 												<div class="list-inline text-left cd-filters">
-													<a href="#0" data-type="0" data-filter="ALL" class="btn btn-outline grey-gallery btn-sm padding-both-10"><i class="la la-table font-lg hidden-xs"></i><span>ALL</span></a>
-													<a th:each="marketassettype, row :${marketassettypes}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassettype},data-type=${row.index}" class="btn btn-outline blue-chambray btn-sm padding-both-10"> <span th:text="#{marketasset.type.__${marketassettype}__}"> Tipo de Proyecto</span></a>
+													<a href="#0" data-type="0" data-filter="ALL" class="btn btn-outline grey-gallery btn-sm margin-bottom-5 padding-both-10"><i class="la la-table font-lg hidden-xs"></i><span>ALL</span></a>
+													<a th:each="marketassettype, row :${marketassettypes}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassettype},data-type=${row.index}" class="btn btn-outline blue-chambray btn-sm margin-bottom-5  padding-both-10"> <span th:text="#{marketasset.type.__${marketassettype}__}"> Tipo de Proyecto</span></a>
 												</div>
-											</div>
-											<!-- BUSCADOR Y TOOLBAR -->
-											<div class="col-md-3 col-sm-3 col-xs-5 proyect-toolbars ">
-												<div class="pull-right form-inline">
-																															
-												</div>
-											</div>
-											<div class="clearfix"></div>
+											</div>											
 										</div>													
 									</div>
 									<div class="clearfix"></div>															
@@ -281,18 +122,15 @@
 										<div th:each="marketasset : ${marketAssets}" th:class="'project-container col-md-3 col-sm-6 col-xs-12 ' + ${#strings.replace(marketasset.marketAssetType,' ','')}">
 											<!-- PANEL DE PROYECTO BASE va con fondo blanco, tocar panel-defautl para hacer un panel-white -->
 											<div class="panel panel-white effect-1">
-												<div class="panel-heading ">																																			  
-													<!-- <i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'API'" class="la la-desktop font-lg font-purple-studio"></i>
-													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'DOCUMENT'"  class="la la-thumbs-up font-lg font-purple-studio"></i>
-													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'WEBPROJECT'"  class="la la-tablet font-lg font-purple-studio"></i>
-													<i th:if="${#strings.replace(marketasset.marketAssetType,' ','')} == 'APPLICATION'" class="la la-database font-lg font-purple-studio"></i> -->
-													<span class="uppercase bold project-title" th:text="${marketasset.title}" >Identification</span>													
-													<img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}" style="max-height: 125px; width:auto; margin: 5px 0px" />
-													<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}" style="max-height: 125px; width:auto; margin: 5px 0px" />
+												<div class="panel-heading ">																						  
+												
+													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><div class="uppercase no-wrap text-truncate-md project-title" th:title="${marketasset.title}" th:text="${marketasset.title}" >Identification</div></a>
+													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  /></a>
+													<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  />
 													<div class="form-inline" style=" font-size: 25px" th:unless="${marketasset.technologies == null}">															
-														 <span th:each="tag,status : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label-marketasset" th:title="${tag}" th:alt="${tag}"><i th:class="'devicon-' + ${tag} +'-plain'"></i></span>															
+														 <span th:each="tag : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label-marketasset" th:title="${tag}" th:alt="${tag}"><i th:class="'devicon-' + ${tag} +'-plain'"></i></span>															
 														 <div class="pull-right">
-														<span class="btn btn-xs green-turquoise tooltips" data-container="body" data-placement="top" th:attr="data-original-title=${marketasset.paymentMode} + ' Payment Mode'" th:text="${marketasset.paymentMode}" style="margin-top: 5px;"> FREE </span>
+														<span class="btn btn-xs green-turquoise tooltips" data-container="body" data-placement="top" th:attr="data-original-title=#{marketasset.paymentmode} + ': ' + ${marketasset.paymentMode}" th:text="${marketasset.paymentMode}" style="margin-top: 5px;"> FREE </span>
 													</div>
 													</div>
 													
@@ -309,14 +147,13 @@
 														<span class="btn btn-xs btn-outline grey-mint"><i class="fa fa-user font-md"></i> <span th:text="${marketasset.user.userId}">Usuario del Proyecto</span></span>
 													</div>
 													<div class="pull-right">
-														<!-- FECHA DE ALTA -->
-														<a th:title="${#dates.format(marketasset.createdAt,'dd/MM/YYYY')}" class="btn btn-xs btn-outline grey-mint"><i class="fa fa-calendar font-md"></i></a>
+														
 														<!-- VER PROYECTO -->
-														<a th:href="@{|/marketasset/show/${marketasset.id}|}"  class="btn btn-xs btn-outline grey-mint" ><i class="fa fa-eye font-md"></i></a>
+														<a th:href="@{|/marketasset/show/${marketasset.id}|}" th:title="#{gen.view}" class="btn btn-xs btn-outline grey-mint" ><i class="fa fa-eye font-md"></i></a>
 														<!-- EDITAR PROYECTO -->
 														<a th:title="#{gen.edit}" th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))"  class="btn btn-xs btn-outline grey-mint" th:onclick="'javascript:navigateUrl(\'' + @{|/marketasset/update/${marketasset.id}|} + '\');'" ><i class="fa fa-edit font-md"></i></a>
 														<!-- BORRAR PROYECTO -->																				
-														<span  class="btn btn-xs btn-outline red-sunglo tooltips" data-container="body" data-placement="bottom" th:title="#{proyectos_listado_button_eliminar}" th:data-original-title="#{proyectos_listado_button_eliminar}" ><i class="fa fa-trash font-md"></i></span>
+														<!-- <span  class="btn btn-xs btn-outline red-sunglo tooltips" data-container="body" data-placement="bottom" th:title="#{proyectos_listado_button_eliminar}" th:data-original-title="#{proyectos_listado_button_eliminar}" ><i class="fa fa-trash font-md"></i></span> -->
 													</div>
 													<div class="clearfix"></div>
 												</div>
@@ -328,10 +165,10 @@
 										<form class="delete-proyect hide"  action=""  method="post">
 											<input type="hidden" name="_method" value="DELETE"/>
 										</form>
-										<!-- ALERT de DE HOY HAY DATOS. -->
+										<!-- ALERT filter: no-data -->
 										<div id="proyect-list-alert" class="alert alert-warning margin-both-10 alert-dismissable hide">
 											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-											<i class="la la-warning font-lg"></i> <strong>Markeplace Assets: </strong> No Assets with this Type. 
+											<i class="la la-warning font-lg"></i> <strong><span th:text="#{marketasset.template.list}">Markeplace Assets</span>: </strong> <span th:text="#{marketasset.filter.nodata}">No Assets with this Type.</span>
 										</div>	
 									</div>
 									
@@ -355,14 +192,11 @@
 	<script th:src="@{/static/js/layout.js}"/>
 	
 	<!-- PLUGINS -->
-	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
-	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>
-	<script th:src="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.js}"/>
-	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
 	<script th:src="@{/static/vendor/jquery-matchHeight/jquery.matchHeight-min.js}"/>
 	
 	
 	<script th:inline="javascript">	
+	//<![CDATA[ 
 	
 	// TEMPLATE SEARCH FORM
 	var marketassetId = [[${param.marketassetId}]] || '';
@@ -375,50 +209,13 @@
 	// OPEN SEARCH FORM IF SEARCH DATA EXISTS.
 	if (( marketassetId != '')) { $('#search-toggle').trigger('click'); }
 	
-	// DATATABLES LANGUAJE FROM PROPERTIES.
-	datatable_lang = [[#{datatables_lang}]];	
-	var languageJson = JSON.parse(datatable_lang);
-	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
-
-	</script>
-	
-	<script th:inline="javascript">	
-	//<![CDATA[ 
-	
 	var optionName = 'MARKETASSET';
 	
 	function navigateUrl(url){  window.location.href = url;	}
 	
 	// MAIN WHEN READY
-	$( document ).ready(function() {
-	
-	
-		//SHOW/HIDE DATATABLE COLUMNS HANDLER
-		$('label.toggle-vis').on( 'click', function (e) {
-			e.preventDefault(); 
-			// Get the column MarketAsset object
-			var column = $('#marketasset').DataTable().column( $(this).attr('data-column') ); 
-			// Toggle the visibility
-			column.visible( ! column.visible() );
-			// Toggle visibility on filtering row
-			if ($('#filtering')){
-				$('#filtering th').eq($(this).attr('data-column')).toggle();
-			}
-			// toggle Text
-			$(this).toggleClass('text-muted line-through');			
-		});	
-		
-		// SEARCH FORM RESET
-		$('#reset_marketasset').on('click',function(){
-			$('#form_marketasset')[0].reset();
-			$('#form_marketasset')[0].submit();
-		});
-		
-				
-		// SEARCH FORM
-		$('#search_marketasset').on('click',function(){ $('#form_marketasset')[0].submit(); });
-		
-		
+	$( document ).ready(function() {	
+			
 		// TO-DO: HACER MÁS ADELANTE EL FILTRO. BLOQUEADA return false;
 		$('.btn-filter').on('click',function(){	
 
@@ -515,16 +312,11 @@
 			else {
 				console.log('entra con ' + projectFilter);
 				$('#proyect-list-alert').is(':visible') ? $('#proyect-list-alert').toggleClass('hide') : ''; 
-			} 
-		
+			} 		
 		});
-
-		
-
-		
 	});
 	
-	// FUNCION PARA BORRAR UN PROYECTO 
+	// FUNCION PARA BORRAR UN MARKETASSET (pending) 
 	function deleteProjectConfirmation(formId){
 		console.log('deleteProjectConfirmation() -> formId: '+ formId);
 		
@@ -540,44 +332,10 @@
 		HeaderController.showConfirmDialog('command' + formId);	
 	};
 		
-		
-		
-
-	 
+	
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
-	
-		//DATATABLE 
-		var oTable = $('#marketassets').DataTable();
-		
-		// SHOW/HIDE DATATABLES COLUMN INIT 		
-		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
-		$('#dataTable-vis-toggle').removeClass('hide');
-		
-				
-		// FILTERING COLUMNS INIT
-		$('#filtering').appendTo($('#marketassets > thead'));	
-		$('#filtering').removeClass('hide');
-		
-		// RESET ALL FILTERS BTN
-		$('#clearFilters').on('click', function(){			
-			yadcf.exResetAllFilters(oTable);		
-		});			
-		
-		// ADJUST CSS FOR DATATABLE FILTERS 
-		var filters = $('.dtFilter .yadcf-filter-wrapper .yadcf-filter');
-		var filtersResets = $('.dtFilter .yadcf-filter-wrapper .yadcf-filter-reset-button');
-		filters.addClass('input-small font-sm');
-		filtersResets.addClass('hide');
-		
-		// HIDE COLUMNS (DESCRIPTION, DATAMODEL AND CREATEDAT)		
-		
-		$('#yadcf-filter--marketassets-1').attr("placeholder", [[#{marketasset.list.text.placeholder}]]);
-		$('#yadcf-filter--marketassets-4 option[value="-1"]').text([[#{marketasset.list.value.placeholder}]]);
-		
-		$('#yadcf-filter--marketassets-4').on('click', function() { 
-			$('#yadcf-filter--marketassets-4 option[value="-1"]').text([[#{marketasset.list.value.placeholder}]]); });
-			
+		// match height for description when expanded.
 		var allprojects = $('.project-description');
 		allprojects.matchHeight({
 			byRow: true,
@@ -586,8 +344,7 @@
 			remove: false
 		});		
 	
-	});
-	
+	});	
 	
 	//]]>
 	</script>
