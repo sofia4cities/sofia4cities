@@ -18,7 +18,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
@@ -33,10 +32,12 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchUtil;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,7 @@ public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHt
 	@Value("${sofia2.database.elasticsearch.sql.connectionTimeout.millis:10000}")
 	private int connectionTimeout;
 	@Value("${sofia2.database.elasticsearch.sql.connector.http.endpoint:http://localhost:9200}")
-	private String quasarEndpoint;
+	private String endpoint;
 	
 	private int maxLimit =200;
 	
@@ -87,9 +88,11 @@ public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHt
 		HttpConnectionParams.setConnectionTimeout(httpParams, connectionTimeout);
 	}
 
+
 	@Override
 	public String queryAsJson(String query, int scroll_init, int scroll_end) throws DBPersistenceException {
 		String url=null;
+		String res=null;
 		try {
 			if (scroll_end<=0) scroll_end = maxLimit;
 			if (scroll_init<=0) scroll_init = 0;
@@ -114,12 +117,21 @@ public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHt
 			throw new DBPersistenceException("Error building URL", e);
 		}
 		String result = invokeSQLPlugin(url, ACCEPT_APPLICATION_JSON);
-		return result;
+		
+		try {
+			 res =  ElasticSearchUtil.parseElastiSearchResult(result);
+		} catch (JSONException e) {
+			log.error("Error Parsing ES Result", e);
+			throw new DBPersistenceException("Error Parsing ES Result", e);
+		}
+		
+		return res;
 	}
 	
 	@Override
 	public String queryAsJson(String query, int limit) throws DBPersistenceException {
 		String url;
+		String res=null;
 		try {
 			url = buildUrl(query, 0, limit,true);
 		} catch (UnsupportedEncodingException e) {
@@ -127,8 +139,17 @@ public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHt
 			throw new DBPersistenceException("Error building URL", e);
 		}
 		String result = invokeSQLPlugin(url, ACCEPT_TEXT_CSV);
-		return result;
+		try {
+			 res =  ElasticSearchUtil.parseElastiSearchResult(result);
+		} catch (JSONException e) {
+			log.error("Error Parsing ES Result", e);
+			throw new DBPersistenceException("Error Parsing ES Result", e);
+		}
+		
+		return res;
 	}
+	
+	
 
 
 	private String invokeSQLPlugin(String endpoint, String accept) throws DBPersistenceException {
@@ -209,12 +230,12 @@ public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHt
 		
 		if (encode)
 			params = URLEncoder.encode(params, "UTF-8");
-		String url = this.quasarEndpoint  + "/_sql?sql=" + params;
+		String url = this.endpoint  + "/_sql?sql=" + params;
 		return url;
 	}
 	
 	private String buildUrl(String query) throws UnsupportedEncodingException {
-		String url = this.quasarEndpoint  + "/_sql?sql=" + URLEncoder.encode(query, "UTF-8");
+		String url = this.endpoint  + "/_sql?sql=" + URLEncoder.encode(query, "UTF-8");
 		return url;
 	}
 

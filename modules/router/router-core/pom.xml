@@ -72,6 +72,8 @@
 			<artifactId>sofia2-advicer-client-rest</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
+		
+	
 
 		<!-- JSON -->
 		<dependency>

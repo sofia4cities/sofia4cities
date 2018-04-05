@@ -53,6 +53,14 @@ public class Sofia2AuditEvent implements Serializable{
 	
 	@Getter
 	@Setter
+	private String ontology;
+	
+	@Getter
+	@Setter
+	private String operationType;
+	
+	@Getter
+	@Setter
 	private String module;
 	
 	@Getter
@@ -90,10 +98,13 @@ public class Sofia2AuditEvent implements Serializable{
 	@Override
 	public String toString() {
 		return "Sofia2AuditEvent [message=" + message + ", id=" + id + ", type=" + type + ", timeStamp=" + timeStamp
-				+ ", user=" + user + ", module=" + module + ", error=" + error + ", className=" + className
-				+ ", methodName=" + methodName + ", sessionId=" + sessionId + ", remoteAddress=" + remoteAddress
-				+ ", route=" + route + ", data=" + data + ", otherType=" + otherType + "]";
+				+ ", user=" + user + ", ontology=" + ontology + ", operationType=" + operationType + ", module="
+				+ module + ", error=" + error + ", className=" + className + ", methodName=" + methodName
+				+ ", sessionId=" + sessionId + ", remoteAddress=" + remoteAddress + ", route=" + route + ", data="
+				+ data + ", otherType=" + otherType + "]";
 	}
+
+	
 
 
 }

@@ -49,6 +49,12 @@
 			<groupId>com.hazelcast</groupId>
 			<artifactId>hazelcast</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-router-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 
 	</dependencies>
 
