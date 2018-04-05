@@ -104,7 +104,7 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	private List<Api> filterApisByUserAndState(List<Api> apis, User user) {
 		List<Api> filteredApis = new ArrayList<Api>();
 		for (Api api : apis) {
-			if ((user.getRole().getName().equals(Role.Type.ROLE_ADMINISTRATOR.name())) || 
+			if ((user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name())) || 
 				(api.getUser().equals(user)) ||
 				(!(api.getState().equals(Api.ApiStates.CREATED) || api.getState().equals(Api.ApiStates.DELETED)))){
 				
@@ -149,7 +149,7 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 	@Override
 	public String createApi(Api api, String operationsObject, String authenticationObject) {
 			
-		String numversionData = "{\"identificador\":\""+api.getIdentification()+"\",\"odata\":\""+api.getApiType()+"\"}";
+		String numversionData = "{\"identification\":\""+api.getIdentification()+"\",\"apiType\":\""+api.getApiType()+"\"}";
 		api.setNumversion(calculateNumVersion(numversionData));
 		
 		ObjectMapper objectMapper = new ObjectMapper();

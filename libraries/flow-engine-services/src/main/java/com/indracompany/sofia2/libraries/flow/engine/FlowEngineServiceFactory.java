@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Bean;
 public class FlowEngineServiceFactory {
 
 	@Bean
-	public static FlowEngineServiceImpl getFlowEngineService(String restBaseUrl, int resrRequestTimeout) {
-		return new FlowEngineServiceImpl(restBaseUrl, resrRequestTimeout);
+	public static FlowEngineServiceImpl getFlowEngineService(String restBaseUrl, int resrRequestTimeout, boolean avoidSSLVerification) {
+		return new FlowEngineServiceImpl(restBaseUrl, resrRequestTimeout, avoidSSLVerification);
 	}
 }

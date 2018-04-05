@@ -76,7 +76,6 @@ public class User extends AuditableEntity {
 	@NotNull
 	@Getter
 	@Setter
-	// @Convert(converter = JPACryptoConverter.class)
 	@Convert(converter = JPAHAS256ConverterCustom.class)
 	private String password;
 
@@ -96,22 +95,24 @@ public class User extends AuditableEntity {
 	@Getter
 	@Setter
 	private Date dateDeleted;
-	
+
 	@Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User )) return false;
-        return getUserId() != null && getUserId().equals(((User) o).getUserId());
-    }
-	
-    @Override
-    public int hashCode() {
-    	return java.util.Objects.hash(getUserId());
-    }
-    
-    @Override
-    public String toString() {
-    	return getUserId();
-    }
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof User))
+			return false;
+		return getUserId() != null && getUserId().equals(((User) o).getUserId());
+	}
+
+	@Override
+	public int hashCode() {
+		return java.util.Objects.hash(getUserId());
+	}
+
+	@Override
+	public String toString() {
+		return getUserId();
+	}
 
 }

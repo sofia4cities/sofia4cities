@@ -41,6 +41,7 @@ import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 import com.indracompany.sofia2.router.service.app.service.AdviceNotificationService;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
+import com.indracompany.sofia2.router.service.app.service.RouterCrudServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -116,12 +117,15 @@ public class RouterFlowManagerService {
 				OperationResultModel result =routerCrudService.delete(model);
 				compositeModel.setOperationResultModel(result);
 			}
+			
+		} catch (RouterCrudServiceException ex) {
+			log.debug("executeCrudOperations: Exception "+ex.getMessage());
+			compositeModel.setOperationResultModel(ex.getResult());
 		} catch (Exception e) {
 			log.debug("executeCrudOperations: Exception "+e.getMessage());
 		}
 		
 		exchange.getIn().setBody(compositeModel);
-		
 		log.debug("executeCrudOperations: End");
 	}
 	
@@ -203,10 +207,10 @@ public class RouterFlowManagerService {
 	
 	private String appendOIDForSQL(String query, String objectId) {
 		if (query.toUpperCase().contains("WHERE")) {
-			return query + " AND _id = OID '"+objectId+"'";
+			return query + " AND _id = OID(\""+objectId+"\")";
 		}
 		else 
-			return query + " WHERE _id = OID '"+objectId+"'";
+			return query + " WHERE _id = OID(\""+objectId+"\")";
 		
 	}
 	

@@ -24,6 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.social.twitter.api.Stream;
 import org.springframework.social.twitter.api.StreamDeleteEvent;
 import org.springframework.social.twitter.api.StreamListener;
@@ -31,6 +33,8 @@ import org.springframework.social.twitter.api.StreamWarningEvent;
 import org.springframework.social.twitter.api.Tweet;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.config.model.TwitterListening;
+import com.indracompany.sofia2.config.services.twitter.TwitterListeningService;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.streaming.twitter.persistence.PeristenceService;
 
@@ -39,11 +43,15 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Component("prototype")
+@EnableScheduling
 @Slf4j
 public class TwitterStreamListener implements StreamListener {
 
 	@Autowired
-	PeristenceService peristenceService;
+	private PeristenceService peristenceService;
+	@Autowired
+	private TwitterListeningService twitterListeningService;
+
 	@Getter
 	@Setter
 	private List<String> keywords;
@@ -92,6 +100,7 @@ public class TwitterStreamListener implements StreamListener {
 	@Setter
 	private Stream twitterStream;
 
+	private static final int TIME_SCHEDULING = 60000;
 	private static final int QUEUE_LENGTH = 25;
 	private static final String A_PATTERN = "<a href=\"(.*)\" rel=\"(.*)\">(.*)</a>";
 	private static final String MONGO_DATE_FORMAT = "YYYY-MM-dd'T'HH:mm:ss.SSS'Z'";
@@ -114,6 +123,7 @@ public class TwitterStreamListener implements StreamListener {
 
 	@Override
 	public void onTweet(Tweet tweet) {
+
 		try {
 			log.info("New Tweet, Stream: " + this.twitterStream.hashCode());
 			this.lastTweet = tweet;
@@ -229,9 +239,32 @@ public class TwitterStreamListener implements StreamListener {
 		try {
 			this.twitterStream.close();
 		} catch (Exception e) {
-
+			log.info("Error while killing threaded stream, non critic.");
 		} finally {
 			this.twitterStream = null;
+		}
+
+	}
+
+	@Scheduled(fixedDelay = TIME_SCHEDULING)
+	private void stopStreamIfListeningIsDeleted() {
+		if (this.twitterStream != null) {
+			TwitterListening twitterListening = this.twitterListeningService.getListenById(this.id);
+			// Check if currently scheduled twitter listening was deleted from control panel
+			if (twitterListening == null) {
+				// If twitter listening was unscheduled then kill stream thread
+
+				log.info("Detected deleted listening, closing stream...");
+				this.closeStream();
+
+			} else {
+				if (twitterListening.getDateTo().getTime() < System.currentTimeMillis()
+						|| twitterListening.getDateFrom().getTime() > System.currentTimeMillis()) {
+					log.info("This listening should have already ended, closing stream...");
+					this.closeStream();
+				}
+			}
+
 		}
 
 	}

@@ -154,7 +154,10 @@ public class ApiManagerService {
 		String opIdentifier = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 		if (opIdentifier.startsWith("\\") || opIdentifier.startsWith("/")) {
 			opIdentifier = opIdentifier.substring(1);
+			//opIdentifier= opIdentifier.replace("/", "");
 		}
+		
+		opIdentifier= opIdentifier.replace("/", "");
 
 		final List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
 

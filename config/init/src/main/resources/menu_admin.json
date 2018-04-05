@@ -151,6 +151,24 @@
 		},
 		{
 			"title": {
+				"EN": "MARKET",
+				"ES": "MARKET"
+			},
+			"icon": "flaticon-layers",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Market's Assets",
+						"ES": "Gestión Assets"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
+				}
+			]
+		},
+		{
+			"title": {
 				"EN": "TOOLS",
 				"ES": "HERRAMIENTAS"
 			},

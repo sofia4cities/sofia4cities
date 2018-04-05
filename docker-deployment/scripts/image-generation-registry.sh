@@ -21,23 +21,6 @@ buildImage()
 	mvn clean package docker:build -Dmaven.test.skip=true
 }
 
-deleteImage()
-{
-	echo "Do you want to delete "$1 " image locally? y/n: "
-	read confirmation
-	
-	if [ "$confirmation" == "y" ]; then
-		echo "Delete Sofia2 image locally, module: "$1  
-		docker rmi -f $(docker images | grep sofia2/$1 |  awk '{print $3}' | uniq)		
-	fi		
-}
-
-deleteUntaggedImages()
-{
-	echo "Delete untagged images locally"
-	docker rmi -f $(docker images -f dangling=true -q)
-}
-
 buildConfigDB()
 {
 	echo "ConfigDB image generation with Docker CLI: "
@@ -150,96 +133,96 @@ echo "#  | |__| | (_) | (__|   <  __/ |                                         
 echo "#  |_____/ \___/ \___|_|\_\___|_|                                                        #"                
 echo "#                                                                                        #"
 echo "# Sofia2 Docker Image generation                                                         #"
-echo "# arg1 (opt) --> -1 Delete local images                                                  #"
+echo "# arg1 (opt) --> -1 if only want to create images for persistence layer                  #"
 echo "#                                                                                        #"
 echo "##########################################################################################"
 
-echo "Continue? y/n: "
-
-read confirmation
-
-if [ "$confirmation" != "y" ]; then
-	exit 1
+if [ -z "$1" ]; then
+	echo "Continue? y/n: "
+	
+	read confirmation
+	
+	if [ "$confirmation" != "y" ]; then
+		exit 1
+	fi
 fi
 
 homepath=$PWD
 
-if [ "$1" == -1 ]; then
-	deleteImage controlpanel 
-	deleteImage iotbroker 
-	deleteImage apimanager 
-	deleteImage dashboard 
-	deleteImage devicesimulator 
-	deleteImage monitoringui 
-	deleteImage flowengine
-fi
-
-# Generates images only if they are not present in local docker registry
-if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/control-panel/
-	buildImage "Control Panel"
-fi	
-
-if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
-	buildImage "IoT Broker"
-fi
+# Only create persistence layer
+if [ -z "$1" ]; then
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/control-panel/
+		buildImage "Control Panel"
+	fi	
 	
-if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
-	cd $homepath/../modules/api-manager/	
-	buildImage "API Manager"
-fi
+	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
+		buildImage "IoT Broker"
+	fi
 	
-if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/dashboard-engine/
-	buildImage "Dashboard Engine"
-fi
-
-if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/device-simulator/
-	buildImage "Device Simulator"
-fi		
-
-if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/monitoring-ui/
-	buildImage "Monitoring UI"
-fi
-
-if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
-		prepareNodeRED		
-
-	cd $homepath/../modules/flow-engine/
-	buildImage "Flow Engine"
+	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../../modules/api-manager/	
+		buildImage "API Manager"
+	fi
 	
-	removeNodeRED
+	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/dashboard-engine/
+		buildImage "Dashboard Engine"
+	fi
+	
+	if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/device-simulator/
+		buildImage "Device Simulator"
+	fi	
+	
+	if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/monitoring-ui/
+		buildImage "Monitoring UI"
+	fi		
+	
+	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
+ 		prepareNodeRED		
+	
+		cd $homepath/../../modules/flow-engine/
+		buildImage "Flow Engine"
+		
+		removeNodeRED
+	fi	
 fi
 
 # Generates images only if they are not present in local docker registry
 if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/configdb
+	cd $homepath/../dockerfiles/configdb
 	buildConfigDB latest
 fi
 
 if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/schedulerdb
+	cd $homepath/../dockerfiles/schedulerdb
 	buildSchedulerDB latest
 fi
 
 if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/realtimedb
+	cd $homepath/../dockerfiles/realtimedb
 	buildRealTimeDB latest
 fi
 
 if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/nginx
+	cd $homepath/../dockerfiles/nginx
 	buildNginx latest
 fi
 
 if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/quasar
+	cd $homepath/../dockerfiles/quasar
 	buildQuasar latest
 fi
 
+if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+	cd $homepath/../../config/init/
+	buildImage "Config Init"
+fi
+	
 echo "Docker images successfully generated!"
 
 echo "Push Sofia2 images to private registry"
@@ -256,5 +239,8 @@ pushImage2Registry dashboard latest
 pushImage2Registry monitoringui latest 
 pushImage2Registry nginx latest
 pushImage2Registry quasar latest 
+pushImage2Registry configinit latest 
+
+# pushAllImages2Registry latest
 
 exit 0

@@ -176,7 +176,7 @@
 																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} + ' FullScreen'" th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
 																	
 																	<!-- URL -->
-																	<span  class="btn btn-sm green-haze sbold tooltips" data-container="body" data-placement="bottom" title="URL Dashboard" data-original-title="URL Dashboard" th:onclick="'javascript:showDashboardURLDialog(\'' + @{|/dashboard/view/${dashboard.id}} + '\');'"><i class="fa fa-link"></i></span>
+																	<span  class="btn btn-sm green-haze sbold tooltips" data-container="body" data-placement="bottom" title="URL Dashboard" data-original-title="URL Dashboard" th:onclick="'javascript:showDashboardURLDialog(\'' + @{|/dashboards/view/${dashboard.id}} + '\');'"><i class="fa fa-link"></i></span>
 																</div>
 															</td>
 														</tr>
@@ -186,7 +186,7 @@
 												<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
 												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
 													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
-														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
+														<i class="fa fa-eye"></i> <th:block th:text="#{gen.columns}"></th:block> <i class="fa fa-angle-down"></i>
 													</a>
 													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
 														<label class="toggle-vis" data-column="0" > Name</label>

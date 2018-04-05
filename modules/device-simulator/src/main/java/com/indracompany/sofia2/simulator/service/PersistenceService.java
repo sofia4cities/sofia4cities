@@ -18,4 +18,6 @@ public interface PersistenceService {
 	void insertOntologyInstance(String instance, String ontology, String user, String clientPlatform,
 			String clientPlatformInstance) throws Exception;
 
+	void disconnectDeviceRest(String identification);
+
 }

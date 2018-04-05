@@ -34,37 +34,6 @@ services:
      - configdb
      - schedulerdb
      - realtimedb  
-  flowengineinstance:
-    image: ${REPOSITORY}sofia2/flowengine:${IMAGETAG}
-    container_name: flowengineservice 
-    environment:
-      - SERVER_NAME=${SERVERNAME}       
-    networks:
-      - data_datanetwork
-    ports:
-     - "8094:8082"
-    external_links:
-     - configdb
-     - schedulerdb
-     - realtimedb         
-  loadbalancerservice:
-    image: ${REPOSITORY}sofia2/nginx:${IMAGETAG}
-    container_name: loadbalancerservice
-    environment:
-      - SERVER_NAME=${SERVERNAME}
-    networks:
-      - data_datanetwork
-    ports:
-     - "80:80"     
-    links:
-     - controlpanelinstance
-     - iotbrokerinstance
-     - flowengineinstance
-     - apimanagerinstance
-    depends_on:
-     - "controlpanelinstance"
-     - "iotbrokerinstance"
-     - "flowengineinstance"
 networks:
   data_datanetwork:
     external: true

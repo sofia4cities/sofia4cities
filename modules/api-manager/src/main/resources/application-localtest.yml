@@ -19,3 +19,13 @@ sofia2: #Config Sofia2 specific
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
+      
+      
+## OAUTH    
+security:
+  signing-key: s1f41234pwqdqkl4l12ghg9853123sds1f41234pwqdqkl4l12ghg9853123sd
+  jwt:
+    client-id: sofia2_s4c
+    client-secret: sofia2_s4c
+    grant-type: authorization_code,refresh_token,password
+    scopes: openid

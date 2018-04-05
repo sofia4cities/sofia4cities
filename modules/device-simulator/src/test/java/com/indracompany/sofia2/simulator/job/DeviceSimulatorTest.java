@@ -1,0 +1,91 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.indracompany.sofia2.simulator.job;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.simulator.service.FieldRandomizerService;
+import com.indracompany.sofia2.simulator.service.PersistenceService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class DeviceSimulatorTest {
+
+	@MockBean
+	PersistenceService persistenceService;
+	@MockBean
+	OntologyService ontologyService;
+
+	@Autowired
+	private DeviceSimulatorJob deviceSimulatorJob;
+
+	@Autowired
+	private FieldRandomizerService fieldRandomizerService;
+
+	private String user;
+	private String json;
+	private String jsonSchema;
+	
+	@Mock
+	private Ontology ontology;
+	
+
+	@Before
+	public void setUp() throws Exception {
+		this.user = "administrator";
+		this.json = "{\"clientPlatform\":\"DeviceTemp\",\"clientPlatformInstance\":\"DeviceTemp:TempSimulate\",\"token\":\"170c81ecbb3347179acf690efe48f9c3\",\"ontology\":\"Ontology\",\"fields\":{\"Temp\":{\"function\":\"RANDOM_NUMBER\",\"from\":\"5\",\"to\":\"35\",\"precision\":\"0\"}}}";
+		this.jsonSchema="{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"title\":\"Ontology\",\"type\":\"object\",\"required\":[\"Ontology\"],\"properties\":{\"Ontology\":{\"type\":\"string\",\"$ref\":\"#/datos\"}},\"datos\":{\"description\":\"Info EmptyBase\",\"type\":\"object\",\"required\":[\"Temp\"],\"properties\":{\"Temp\":{\"type\":\"number\"}}},\"description\":\"Ontology test\",\"additionalProperties\":true}";
+		this.initMocks();
+	}
+
+	public void initMocks() throws Exception {
+		this.ontology = new Ontology();
+		this.ontology .setJsonSchema(jsonSchema);
+		
+		Mockito.doNothing().when(this.persistenceService).insertOntologyInstance(any(), any(), any(), any(), any());
+		when(this.ontologyService.getOntologyByIdentification(any(), any())).thenReturn(this.ontology);
+		
+		
+	}
+
+	@Test
+	public void Test_SimulateTempValues() throws Exception {
+
+		JsonNode randomInstance = this.deviceSimulatorJob.generateInstance(this.user, this.json);
+		
+		Assert.assertTrue(randomInstance.get("Ontology").get("Temp").asInt()>= 5);
+		Assert.assertTrue(randomInstance.get("Ontology").get("Temp").asInt()<= 35);
+	}
+
+}

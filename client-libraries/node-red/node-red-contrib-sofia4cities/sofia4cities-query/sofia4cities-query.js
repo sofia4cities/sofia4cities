@@ -1,7 +1,7 @@
 module.exports = function(RED) {
-	var ssapMessageGenerator = require('../lib/SSAPMessageGenerator');
+	var ssapMessageGenerator = require('../libraries/SSAPMessageGenerator');
 	var sofia4citiesConfig = require('../sofia4cities-connection-config/sofia4cities-connection-config');
-	var ssapResourceGenerator = require('../lib/SSAPResourceGenerator');
+	var ssapResourceGenerator = require('../libraries/SSAPResourceGenerator');
 	//var http = require('http');
 	//var https = require('https');
 	var http = null;
@@ -39,8 +39,6 @@ module.exports = function(RED) {
 			}
 			if (server) {
 				var protocol = server.protocol;
-				console.log("Using protocol:"+protocol);
-				console.log("Using ontology:"+ontologia);
 				if(protocol.toUpperCase() == "MQTT".toUpperCase()){
 					if (server.sessionKey==null || server.sessionKey=="")			 {
 						server.generateSession();
@@ -52,11 +50,9 @@ module.exports = function(RED) {
 					var state = server.sendToSib(query);
 
 					state.then(function(response){
-						console.log("Datos respuesta: " + JSON.stringify(response.body));
 						var body = response.body;
-						console.log("Responde Body:"+response.body);
 						if(body.ok){
-							console.log("Message sent OK. Body:"+body);
+							console.log("Message received OK. Body:"+body);
 							msg.payload=body;
 							node.send(msg);
 						}else{

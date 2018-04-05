@@ -64,7 +64,6 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/users/list}"> <span th:text="#{user.breadcrumb.prev}">Users List</span></a><i class="fa fa-circle"></i></li>
 						<li>
 							<span th:if="${user.userId} == null" th:text="#{user.breadcrumb.create}">Show User</span>
 							<span th:if="${user.userId} != null" th:text="#{user.breadcrumb.update}">Update User</span>
@@ -130,16 +129,9 @@
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
 																<input id="userId" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"  th:readonly="*{userId}" th:classappend="${user.userId} ? no-remove : ''"  />
+																<input id="password" type="hidden"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
+																
 															</div>															
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.password.help},data-title=#{user.password}"><i class="la la-lightbulb-o"></i> <span th:text="#{user.password} + ':'">Password</span><span class="required">*</span></label>
-															<div class="input-icon ">
-																<i class="fa fa-asterisk"></i>
-																<input id="password" type="text"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
-															</div>	
 														</div>
 													</div>
 													<div class="col-md-3 col-sm-6 col-xs-12">
@@ -223,9 +215,7 @@
 													<!-- REMOVE -->
 													<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'UserCreateController.deleteUser(\'' + ${user.userId} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 																										
-													<!-- RESET -->
-													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
-													
+												
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->

@@ -1,0 +1,98 @@
+##--spring.config.name=oauth-server
+##security.require_ssl: true
+server: ## Config Web Server
+   port: 21000
+   contextPath: /oauth-server
+   tomcat:
+      access_log_enabled: true
+      basedir: target/tomcat
+
+
+# all access to actuator endpoints without security
+management.security.enabled: false
+#security.basic.enabled: false
+    
+sofia2: #Config Sofia2 specific
+   database.mongodb:
+      database: sofia2_s4c
+      authenticationDatabase:  #admin
+      servers: localhost:27017
+      autoConnectRetry: true
+      socketTimeout: 5000
+      maxAutoConnectRetryTime: 5000
+      maxWaitTime: 5000
+      useAuth: false
+      username: #username
+      password: #password
+      readFromSecondaries: false
+      queries.executionTimeout: 5000
+      queries.defaultLimit: 150
+      queries.maxConcurrentQueries: 3
+      writeConcern: UNACKNOWLEDGED
+      tools.mongoexport.path: mongoexport
+      tools.mongoimport.path: mongoimport
+      tools.mongoshell.path: mongo
+      tools.useSequentialOps: true
+      quasar.maxHttpConnections: 10
+      quasar.maxHttpConnectionsPerRoute: 10
+      quasar.connectionTimeout.millis: 10000
+      quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
+    
+spring: ## General Config  
+   application.name: sofia2-api-manager
+   boot.admin: #Spring Boot Admin Config    
+      url: http://localhost:19000
+      username: operations
+      password: changeIt!
+      client.metadata.user.name: ${spring.boot.admin.username}
+      client.metadata.user.password: $spring.boot.admin.password} 
+   datasource: ## JPA Config
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      username: root
+      password:
+      # Number of ms to wait before throwing an exception if no connection is available.
+      tomcat.max-wait: 10000
+      # Maximum number of active connections that can be allocated from this pool at the same time.
+      tomcat.max-active: 50
+      # Validate the connection before borrowing it from the pool.
+      tomcat.test-on-borrow: true
+   jpa:
+      ## Hibernate Properties
+      # The SQL dialect makes Hibernate generate better SQL for the chosen database
+      properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+      # Hibernate ddl auto (create, create-drop, validate, update)
+      hibernate.ddl-auto: update 
+      properties.hibernate.enable_lazy_load_no_trans: true
+   mail: ##Mail configuration
+      host: smtp.gmail.com
+      username: sofia4cities@gmail.com
+      password: ----
+      port: 587
+      properties.mail.smtp.auth: true
+      properties.mail.smtp.starttls.enable: true
+   jmx:
+    enabled: true
+
+## CXF      
+cxf:
+  path: /services/management
+  servlet.init: 
+    component-scan: true
+    classes-scan-packages: com.indracompany.sofia2.api.rest
+            
+## LOGGING CONF
+logging:
+   path: ./target/ 
+   file: ${spring.application.name}
+   level:
+      com.indra: DEBUG 
+      
+## OAUTH    
+security:
+  signing-key: s1f41234pwqdqkl4l12ghg9853123sds1f41234pwqdqkl4l12ghg9853123sd
+  jwt:
+    client-id: sofia2_s4c
+    client-secret: sofia2_s4c
+    grant-type: authorization_code,refresh_token,password
+    scopes: openid
+    

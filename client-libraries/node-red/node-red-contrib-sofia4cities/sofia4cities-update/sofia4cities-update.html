@@ -9,7 +9,9 @@
 				server: {value:"", type:"sofia4cities-config"},
 				check: {value:false},
 				query: {value:""},
-				queryType: {value:""}
+				queryType: {value:""},
+				updateType: {value:""},
+				id: {value:""}
 			},
 			inputs: 1,
 			outputs:1,
@@ -22,13 +24,19 @@
 					$("#node-input-ontology").removeProp('disabled');
 					$("#node-input-query").removeProp('disabled');
 					$("#node-input-queryType").removeProp('disabled');
+					$("#node-input-updateType").removeProp('disabled');
+					$("#node-input-id").removeProp('disabled');
 				}else{
 					$("#node-input-ontology").prop('disabled',true);
 					$("#node-input-query").prop('disabled',true);
 					$("#node-input-queryType").prop('disabled',true);
+					$("#node-input-updateType").prop('disabled',true);
+					$("#node-input-id").prop('disabled',true);
 					$("#node-input-ontology").val('');
 					$("#node-input-query").val('');
 					$("#node-input-queryType").val('');
+					$("#node-input-updateType").val('');
+					$("#node-input-id").val('');
 				}
 
 				$("#node-input-check").click(function() {
@@ -38,13 +46,19 @@
 						$("#node-input-ontology").removeProp('disabled');
 						$("#node-input-query").removeProp('disabled');
 						$("#node-input-queryType").removeProp('disabled');
+						$("#node-input-updateType").removeProp('disabled');
+						$("#node-input-id").removeProp('disabled');
 					} else{
 						$("#node-input-ontology").prop('disabled',true);
 						$("#node-input-query").prop('disabled',true);
 						$("#node-input-queryType").prop('disabled',true);
+						$("#node-input-updateType").prop('disabled',true);
+						$("#node-input-id").prop('disabled',true);
 						$("#node-input-ontology").val('');
 						$("#node-input-query").val('');
 						$("#node-input-queryType").val('');
+						$("#node-input-updateType").val('');
+						$("#node-input-id").val('');
 					}
 
 				});
@@ -63,7 +77,18 @@
 			<input type="checkbox" id="node-input-check" style="display: inline-block; width: auto; vertical-align: top;">
 			<label for="node-input-check" style="width: 70%;"> Insert the data manually</label>
 			<label id="label-ontology" for="node-input-ontology" ><i class="icon-file"></i> Ontology</label>
-			<input type="text" id="node-input-ontology" placeholder="Ontología" disabled  />
+			<input type="text" id="node-input-ontology" placeholder="Ontology" disabled  />
+		</div>
+		<div class="form-row">
+			<label for="node-input-updateType"><i class="icon-file"></i> Update Type</label>
+			<select id="node-input-updateType" value="" placeholder="Update type" disabled>
+				<option value="UPDATE"> UPDATE</option>
+				<option value="UPDATE_BY_ID"> UPDATE_BY_ID</option>
+			</select>
+		</div>
+		<div class="form-row">
+			<label for="node-input-id"><i class="icon-file"></i> Id</label>
+			<input type="text" id="node-input-id" placeholder="Id" disabled />
 		</div>
 		<div class="form-row">
 			<label for="node-input-query"><i class="icon-file"></i> Query</label>
@@ -86,6 +111,8 @@
 		<span><img style="margin-left: 5px;" src="icons/s4c.png"/><h2 style="display:inline"> sofia4cities</h2>
 		<p>Node updating data in an ontology</p>
 		<p><code>Ontology</code> Name of the ontology if the checkbox is selected, else the name of the ontology have to go in the <code>msg.ontology</code></p>
+		<p><code>UpdateType</code> Type of update, update by query or id are supported, if checkbox is unselected the types have go fo in the <code>msg.updateType</code>. Available options: (<code>UPDATE, UPDATE_BY_ID</code>)</p>
+		<p><code>Id</code> Id reference if UPDATE_BY_ID is selected, if checkbox is unselected, the name of the id have to go in the <code>msg.id</code></p>
 		<p><code>Query</code> Query to update if the checkbox is selected, else the query have to go in the <code>msg.query</code></p>
 		<!--p><code>Query Type</code> Query Type of the query if the checkbox is selected, else the query type have to go in the <code>msg.queryType</code></p-->
 	</script>

@@ -54,12 +54,12 @@ pipeline {
 					sleep 10
 						
 					sh "mvn spring-boot:run"	  			
-	   			}		
+	   			}
 	   			
 	   			// Execute tests
-	   			sh "mvn surefire:test"			
+	   			sh "mvn test"			
 					
-				sh "mvn sonar:sonar"
+				sh "mvn sonar:sonar"	   			
 	   		}
 	   }	 
    
@@ -72,7 +72,10 @@ pipeline {
 				sh "docker-compose down || true"
 				
         		echo "Removing orphan volumes"
-        		sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"				
+        		sh "docker volume rm \$(docker volume ls -qf dangling=true) || true"	
+        		
+        		echo "Removing config init image"
+        		sh "docker rmi -f \$(docker images | grep sofia2/configinit | awk '{print \$3}' | uniq) || true"			
 			}        
 			
         	echo 'Clean up workspace...'

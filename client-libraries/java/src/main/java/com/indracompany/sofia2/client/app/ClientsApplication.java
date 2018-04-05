@@ -14,23 +14,50 @@
  */
 package com.indracompany.sofia2.client.app;
 
+import java.io.IOException;
+
 import com.indracompany.sofia2.client.MQTTClient;
+import com.indracompany.sofia2.client.MQTTClient.QUERY_TYPE;
+import com.indracompany.sofia2.client.RestClient;
+import com.indracompany.sofia2.client.SubscriptionListener;
 
 public class ClientsApplication {
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 
 		MQTTClient client = new MQTTClient("tcp://localhost:1883");
-		String token = "3f77b9a6af8642c683e5d786217afb0b";
-		String clientPlatform = "RestaurantsCp";
-		String clientPlatformInstance = clientPlatform + ":mqtt";
-		int timeout = 5;
+		String token = "55f51b934e2240638ef23fd5e839ddb1";
+		String clientPlatform = "CPRestaurants";
+		String clientPlatformInstance = clientPlatform + ":MQTT";
+		String ontology = "Restaurants";
+		int timeout = 50;
 		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
-		String jsonData ="{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}"; 
-		Thread.sleep(5000);
-		client.publish("Restaurant", jsonData, timeout);
-		Thread.sleep(5000);
-		
+		String jsonData = "{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}";
+		String subsId = client.subscribe(ontology, "SELECT * FROM Restaurants", QUERY_TYPE.SQL, timeout,
+				new SubscriptionListener() {
+
+					@Override
+					public void onMessageArrived(String message) {
+						System.out.println(message);
+
+					}
+
+				});
+		client.unsubscribe(subsId);
+		// Thread.sleep(5000);
+		// //client.publish("Restaurants", jsonData, timeout);
+		// Thread.sleep(5000);
+		//
+		// while(true);
 		client.disconnect();
+
+		// RestClient restClient = new RestClient("http://localhost:8081/iotbroker");
+		// String sessionKey = restClient.connect(token, clientPlatform,
+		// clientPlatformInstance);
+		// String instance = "{\"BinaryOnt\":{
+		// \"Name\":\"string\",\"Image\":{\"data\":\"string\",\"media\":{\"name\":\"fichero.pdf\",\"storageArea\":\"SERIALIZED\",\"binaryEncoding\":\"Base64\",\"mime\":\"application/pdf\"}}}}";
+		// restClient.insertInstance(ontology, instance);
+		// restClient.disconnect();
+		//
 	}
 }

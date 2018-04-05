@@ -161,11 +161,13 @@ var OntologyCreateController = function() {
 		if ( data.hasOwnProperty('datos') ){ properties = data.datos.properties; requires = data.datos.required; } else { properties = data.properties;  requires = data.required }
 	
 		// ADD PROPERTY+TYPE
-		if (type != 'timestamp'){
-			properties[prop] = { "type": type};
-		} 
-		else {			
-			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}		
+		if (type == 'timestamp'){
+			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}	
+		} else if(type == 'binary'){
+			properties[prop] = {"type": "object", "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg"]}}}},"additionalProperties": false}
+		} else {			
+			properties[prop] = { "type": type}
+				
 		}
 		
 		// ADD REQUIRED
@@ -284,7 +286,7 @@ var OntologyCreateController = function() {
                 identification:	{ minlength: 5, required: true },						
 				datamodelid:	{ required: true},
 				jsonschema:		{ required: true},
-				description:	{ required: true }
+				description:	{ minlength: 5, required: true }
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
                 success1.hide();
@@ -639,6 +641,7 @@ var OntologyCreateController = function() {
 		var data 			= "";
 		var ontologyJson 	= {};
 		hasId = false;
+		document.getElementById("ontology_instance").innerHTML = "";
 		
 		// check if json-string can be parsed
 		if(IsJsonString(editor.getText())){
@@ -679,7 +682,8 @@ var OntologyCreateController = function() {
 			}
 			
 			instance = instance.substring(0,instance.length-1);  
-			instance = instance + "}";                      
+			instance = instance + "}";
+			document.getElementById("ontology_instance").innerHTML = "";
 			document.getElementById("ontology_instance").innerHTML = instance;
 			
 			if (ontologyJson.properties == null ){
@@ -804,6 +808,14 @@ var OntologyCreateController = function() {
 		 logControl ? console.log('        |--->   generateArray()') : '';
         var minItems = 1;
         // Se obtiene el numero minimo de elementos del array
+		console.log('ARRAY OBJ: ' + JSON.stringify(ontology));
+		
+		// void or malformed array
+		if (!ontology.hasOwnProperty('items')){
+			instance = instance + "[]";  
+			return instance;
+		}
+		
         if (ontology.minItems != null) {
             minItems =  ontology.minItems;
 			

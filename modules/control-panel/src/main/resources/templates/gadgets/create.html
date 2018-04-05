@@ -89,7 +89,6 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/gadgets/list}"> <span th:text="#{name.visualization}">Visualization</span></a><i class="fa fa-circle"></i></li>
 						<li><a th:href="@{/gadgets/list}"> <span th:text="#{gadgets.my}">My Gadgets</span></a><i class="fa fa-circle"></i> </li>
 						<li><span th:text="#{gadgets.create}">Create Gadget</span></li>
 					</ul>						
@@ -97,7 +96,7 @@
 				<!-- END PAGE BAR -->
 				
 				<!-- BEGIN PAGE TITLE-->
-				<h1 class="page-title hide "><span th:text="#{gadgets.new}">New Gadget</span></h1>
+				<h1 class="page-title hide "><span th:text="#{gadgets.new}"></span></h1>
 				<!-- END PAGE TITLE-->			
 				
 				<!-- MAIN ROW -->
@@ -108,7 +107,7 @@
 							<div class="portlet-title">
 								<div class="caption">
 									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase"> New Gadget </span>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{gadgets.new}"> New Gadget </span>
 									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
 								</div>									
 								<div class="tools">

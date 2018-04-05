@@ -798,6 +798,7 @@ padding-top: 2px;
     color: #333;
     background-color: #FFF !Important;
     border-color: #ddd;
+	padding: 6px 12px !important;
 }
 
 /*** AUTOCOMPLETE ***/
@@ -840,9 +841,9 @@ display: flex;
     transition: all 1s ease;	
 }
 .hide-main-block{
-	position: relative;
-	right: 58px;
-	top: -10px;
+position: relative;
+right: -5px;
+top: 12px;
 }
  
  .maininfo{
@@ -859,11 +860,11 @@ box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
  }
  
 .main-block{
-background: #564FC1;
+/*background: #564FC1;*/
 padding: 30px 30px 0px 30px;
  margin-left: -20px;margin-right: -20px;
-background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
-background: linear-gradient(to right, #75b8f3, #9353e6);
+/*background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
+background: linear-gradient(to right, #75b8f3, #9353e6);*/
 } 
 
 .step-desc {
@@ -962,5 +963,16 @@ background: linear-gradient(to right, #75b8f3, #9353e6);
 	margin-left: 5px;
 }
 
+/*  marketplace assets images */
+.img-market{ 
+max-height: 125px; min-height: 125px; width:auto; margin: 5px 0px;  display: block; margin: 5px auto;
+}
 
+.img-asset-show{
+max-height: 225px;
+margin: 0 auto;
+width: auto !important;
+border-radius: 10px;
+	
+}
 

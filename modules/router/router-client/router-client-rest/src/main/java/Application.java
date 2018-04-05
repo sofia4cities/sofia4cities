@@ -13,6 +13,9 @@
  */
 
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +30,7 @@ public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws KeyManagementException, NoSuchAlgorithmException {
     	RouterServiceImpl impl = new RouterServiceImpl();
     	impl.setRouterStandaloneURL("http://localhost:19100/router/router/");
     	

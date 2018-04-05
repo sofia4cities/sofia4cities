@@ -306,10 +306,9 @@
 
 	</script>
 	
-	<script type="text/javascript">	
+	<script th:inline="javascript">	
 	var optionName = 'APIMANAGER';
 	
-	//<![CDATA[
 	function navigateUrl(url){  window.location.href = url;	}
 	
 	// MAIN WHEN READY
@@ -353,8 +352,9 @@
 		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
 		$('#dataTable-vis-toggle').removeClass('hide');
 		
+				
 		// FILTERING COLUMNS INIT
-		$('#filtering').appendTo($('#apis > thead'));
+		$('#filtering').appendTo($('#apis > thead'));	
 		$('#filtering').removeClass('hide');
 		
 		// RESET ALL FILTERS BTN
@@ -371,10 +371,15 @@
 		// HIDE COLUMNS (DeESCRIPTION, DATAMODEL AND CREATEDAT)		
 		$.each([ 0,2,6 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
 		
+		$('#yadcf-filter--apis-1').attr("placeholder", [[#{apimanager.list.text.placeholder}]]);
+		$('#yadcf-filter--apis-5 option[value="-1"]').text([[#{apimanager.list.value.placeholder}]]);
+		
+		$('#yadcf-filter--apis-5').on('click', function() { 
+			$('#yadcf-filter--apis-5 option[value="-1"]').text([[#{apimanager.list.value.placeholder}]]); })
+
 		
 	});
 	
-	//]]>
 	</script>
 	
 </body>

@@ -1,0 +1,20 @@
+<!-- Dashboard edit component -->
+<edit-dashboard ng-if="vm.editmode" id="vm.id" public="vm.public" dashboard="vm.dashboard" selectedpage="vm.selectedpage"></edit-dashboard>
+<!-- end Dashboard edit component -->
+
+<!--<ng-include ng-if="editmode" src="app/partials/edit/editDashboardSidenav.html"></ng-include>-->
+
+<!-- header partial -->
+<ng-include src="'app/partials/view/header.html'"></ng-include>
+<!-- end header partial -->
+
+<!-- sidenav partial -->
+<ng-include src="'app/partials/view/sidenav.html'"></ng-include>
+<!-- end sidenav partial -->
+
+<span>
+  <div ng-repeat="page in vm.dashboard.pages">
+    <page page="page" gridoptions="vm.dashboard.gridOptions" editmode="vm.editmode" selectedlayer="vm.selectedlayer" class="flex" ng-if="vm.checkIndex($index)"></page>
+  </div>
+</span>
+<!--</section>-->

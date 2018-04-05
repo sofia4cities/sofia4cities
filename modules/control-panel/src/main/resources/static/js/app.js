@@ -374,32 +374,51 @@ var App = function() {
     var handleTooltips = function() {
         // global tooltips
         $('.tooltips').tooltip();
-
+		
+		// CURRENT LANGUAGE CONFIGURATION FORM HEADER
+		// DEFAULTS
+		var labelFullscreen = 'Fullscreen';
+		var labelReload		= 'Reload';
+		var labelRemove		= 'Remove';
+		var labelSettings	= 'Settings';
+		var labelCollapse	= 'Collapse/Expand';
+		
+		if( typeof headerReg !== 'undefined' ){
+			var labelFullscreen = headerReg.fullscreen;
+			var labelReload		= headerReg.reload;
+			var labelRemove		= headerReg.remove;
+			var labelSettings	= headerReg.settings;
+			var labelCollapse	= headerReg.collapse;			
+		}
+		
+		
+		//console.log('LANGUAGE: ' + headerReg.language);
         // portlet tooltips
         $('.portlet > .portlet-title .fullscreen').tooltip({
             trigger: 'hover',
             container: 'body',
-            title: 'Fullscreen'
+			placement:'left',
+            title: labelFullscreen
         });
         $('.portlet > .portlet-title > .tools > .reload').tooltip({
             trigger: 'hover',
             container: 'body',
-            title: 'Reload'
+            title: labelReload
         });
         $('.portlet > .portlet-title > .tools > .remove').tooltip({
             trigger: 'hover',
             container: 'body',
-            title: 'Remove'
+            title: labelRemove
         });
         $('.portlet > .portlet-title > .tools > .config').tooltip({
             trigger: 'hover',
             container: 'body',
-            title: 'Settings'
+            title: labelSettings
         });
         $('.portlet > .portlet-title > .tools > .collapse, .portlet > .portlet-title > .tools > .expand').tooltip({
             trigger: 'hover',
             container: 'body',
-            title: 'Collapse/Expand'
+            title: labelCollapse
         });
     };
 

@@ -11,7 +11,7 @@
 			"icon": "flaticon-network",
 			"url": "",
 			"submenu": [
-				{
+				{	
 					"title": {
 						"EN": "Models/Ontologies",
 						"ES": "Modelos/Ontologías"
@@ -146,6 +146,24 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/apimanager/token/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "MARKET",
+				"ES": "MARKET"
+			},
+			"icon": "flaticon-layers",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Market's Assets",
+						"ES": "Gestión Assets"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
 				}
 			]
 		},

@@ -63,6 +63,10 @@ var GraphController = function() {
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf2be', size: 60, color: '#4B77BE' }
 			},
+			users:{
+				shape: 'icon',
+				icon:{ face: 'FontAwesome', code: '\uf2be', size: 60, color: '#4B77BE' }
+			},
 			gadgets:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf1e6',	size: 40, color: '#525e64' }
@@ -71,14 +75,22 @@ var GraphController = function() {
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf080',	size: 50, color: '#525e64' }
 			},
+			visualizaciones:{
+				shape: 'icon',
+				icon:{ face: 'FontAwesome', code: '\uf080',	size: 50, color: '#525e64' }
+			},
 			analytics:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf0c3',	size: 50, color: '#525e64' }
 			},
-			platform_clients:{
+			devices:{
 				shape: 'icon',
 				icon: {	face: 'FontAwesome', code: '\uf2db', size: 40, color: '#5e738b' }
-			},			
+			},		
+			clientes:{
+				shape: 'icon',
+				icon: {	face: 'FontAwesome', code: '\uf2db', size: 40, color: '#5e738b' }
+			},
 			notebooks:{
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf02d', size: 40, color: '#5e738b' }
@@ -119,7 +131,20 @@ var GraphController = function() {
 				shape: 'icon',
 				icon:{ face: 'FontAwesome', code: '\uf0e8', size: 30, color: '#333333' }
 			},
-			kp:{
+			ontology:{
+				shape: 'icon',
+				icon:{
+					face: 'FontAwesome',
+					code: '\uf1e0',
+					size: 30,
+					color: '#c49f47'
+				}
+			},
+			ontologías:{
+				shape: 'icon',
+				icon:{ face: 'FontAwesome', code: '\uf0e8', size: 30, color: '#333333' }
+			},
+			clientplatform:{
 				shape: 'icon',
 				icon: { face: 'FontAwesome', code: '\uf10b', size: 35, color: '#c49f47' }
 			},

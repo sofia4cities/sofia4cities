@@ -28,6 +28,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyUnsubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 
@@ -44,6 +45,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 	@JsonSubTypes.Type(SSAPBodyUpdateByIdMessage.class),
 	@JsonSubTypes.Type(SSAPBodyUpdateMessage.class),
 	@JsonSubTypes.Type(SSAPBodySubscribeMessage.class),
+	@JsonSubTypes.Type(SSAPBodyUnsubscribeMessage.class),
 	@JsonSubTypes.Type(SSAPBodyIndicationMessage.class),
 	@JsonSubTypes.Type(SSAPBodyCommandMessage.class)
 })

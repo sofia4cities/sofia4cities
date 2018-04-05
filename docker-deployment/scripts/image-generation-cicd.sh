@@ -113,7 +113,10 @@ pushAllImages2Registry()
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
 	
 	docker tag sofia2/monitoringui:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1
-	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1							
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1	
+	
+	docker tag sofia2/configinit:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/configinit:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/configinit:$1								
 }
 
 pushImage2Registry()
@@ -184,6 +187,11 @@ if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
 	buildNginx latest
 fi
 
+if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+	cd $homepath/../../config/init/
+	buildImage "Config Init"
+fi	
+
 if [ -z "$1" ]; then
 	echo "++++++++++++++++++++ Persistence layer generation..."
 	
@@ -223,6 +231,7 @@ deleteImage devicesimulator
 deleteImage monitoringui 
 deleteImage flowengine
 deleteImage nginx
+deleteImage configinit
 
 deleteUntaggedImages
 removeOrphanVolumes

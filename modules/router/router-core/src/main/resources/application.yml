@@ -27,7 +27,8 @@ sofia2: #Config Sofia2 specific
       quasar.maxHttpConnections: 10
       quasar.maxHttpConnectionsPerRoute: 10
       quasar.connectionTimeout.millis: 10000
-      quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
+      quasar.connector.http.endpoint: http://localhost:18200/query/fs/
+   router.avoidsslverification: true 
     
 #Security Config
 security:
