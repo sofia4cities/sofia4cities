@@ -126,54 +126,45 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		
 		User user = (User) data.get(ApiServiceInterface.USER);
 		
-		OperationModel model = new OperationModel();
+		String body = BODY;
+		OperationType operationType;
 		
-		model.setBody(BODY);
-		model.setObjectId(OBJECT_ID);
-	//	model.setOntologyId(ontology.getId());
-		model.setOntologyName(ontology.getIdentification());
-		model.setOperationType(OperationType.valueOf(METHOD));
-		model.setQueryType(QueryType.valueOf(QUERY_TYPE));
-		model.setClientPlatformId("");
-		model.setUser(user.getUserId());
+		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
+			body = QUERY;
+			operationType = OperationType.QUERY;
+		} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
+			operationType = OperationType.INSERT;
+		} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+			operationType = OperationType.UPDATE;
+		} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
+			operationType = OperationType.DELETE;
+		}
 		
-		if ("true".equalsIgnoreCase(CACHEABLE)) {
-			model.setCacheable(true);
-		}
-		else {
-			model.setCacheable(false);
-		}
+		
+		OperationModel model = OperationModel.builder(
+				ontology.getIdentification(), 
+				OperationType.valueOf(METHOD),
+				user.getUserId(), 
+				OperationModel.Source.APIMANAGER)
+				.body(body)
+				.queryType(QueryType.valueOf(QUERY_TYPE))
+				.objectId(OBJECT_ID)
+				.clientPlatformId("")
+				.cacheable("true".equalsIgnoreCase(CACHEABLE) ? true : false)
+				.build();
 		
 		NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
 		
-		String OUTPUT="";
+		String OUTPUT = "";
+		OperationResultModel result =facade.query(modelNotification);
 		
-		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
-			model.setBody(QUERY);
-			model.setOperationType(OperationType.QUERY);
-			OperationResultModel result =facade.query(modelNotification);
-			OUTPUT = result.getResult();
-		}
-		
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
-			model.setOperationType(OperationType.INSERT);
-			OperationResultModel result =facade.insert(modelNotification);
+		if (result != null) {
 			if ("ERROR".equals(result.getResult())){
 				throw new ApiServiceException("Error inserting data: " + result.getMessage());
 			}
-			OUTPUT = result.getResult();
+			OUTPUT= result.getResult();
 		}
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
-			model.setOperationType(OperationType.UPDATE);
-			OperationResultModel result =facade.update(modelNotification);
-			OUTPUT = result.getResult();
-		}
-		else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
-			OperationResultModel result =facade.delete(modelNotification);
-			OUTPUT = result.getResult();	
-		}
-		
 
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
 		exchange.getIn().setBody(data);

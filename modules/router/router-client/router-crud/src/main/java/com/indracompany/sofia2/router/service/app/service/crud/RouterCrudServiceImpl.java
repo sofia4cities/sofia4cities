@@ -65,8 +65,9 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 		try {
 			ontologyDataService.checkOntologySchemaCompliance(BODY, ontologyName);
+			String bodyWithDataContext = ontologyDataService.addContextData(operationModel);
 			if (METHOD.equalsIgnoreCase("POST") || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);
+				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, bodyWithDataContext);
 			}
 		} 
 		catch (final Exception e) {
