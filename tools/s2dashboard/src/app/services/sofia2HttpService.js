@@ -43,7 +43,7 @@
         };
 
         $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata;
-        return $http.get(__env.endpointSofia2DashboardEngine + __env.dashboardEngineLoginRest);
+        return $http.get(__env.endpointSofia2DashboardEngine + __env.dashboardEngineLoginRest, {timeout : __env.dashboardEngineLoginRestTimeout});
       };
 
       vm.getDashboardModel = function(id){

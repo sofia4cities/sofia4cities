@@ -1,0 +1,109 @@
+<md-dialog aria-label="Pages">
+  <form ng-cloak>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Datalink</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+          <b>X</b>
+        </md-button>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content>
+      <md-subheader>Connections</md-subheader>
+
+      <md-table-container>
+        <table md-table ng-model="connections" md-progress="promise">
+          <thead md-head>
+            <tr md-row>
+              <th md-column ><span>Source Gadget</span></th>
+              <th md-column ><span>Source Field</span></th>
+              <th md-column ><span>Target Gadget</span></th>
+              <th md-column ><span>Target Field</span></th>
+              <th md-column> <span>Options</span></th>
+            </tr>
+          </thead>
+          <tbody md-body>
+            <tr md-row md-select="c" md-select-id="name" md-auto-select ng-repeat="c in connections">
+              <td md-cell>{{ generateGadgetInfo(c.source) }}</td>
+              <td md-cell>{{c.sourceField}}</td>
+              <td md-cell>{{ generateGadgetInfo(c.target) }}</td>
+              <td md-cell>{{c.targetField}}</td>
+              <td md-cell>
+                <md-button class="md-icon-button md-warn" aria-label="Delete connection" ng-click="delete(c.source,c.sourceField,c.target,c.targetField)">
+                  <md-icon>remove_circle</md-icon>
+                </md-button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </md-table-container>
+
+      <md-subheader>Add New Connection</md-subheader>
+        <md-list>
+          <md-list-item>
+            <md-input-container class="flex">
+              <label>Source</label>
+              <md-select ng-model="newSource" aria-label="Compact type"
+                          placeholder="Compact Type" class="flex">
+                <md-option value="none">None</md-option>
+                <md-option value="compactUp">Compact Up</md-option>
+                <md-option value="compactLeft">Compact Left</md-option>
+                <md-option value="compactLeft&Up">Compact Left & Up</md-option>
+                <md-option value="compactUp&Left">Compact Up & Left</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container class="flex">
+              <label>Source field</label>
+              <md-select ng-model="newSourceField" aria-label="Compact type"
+                          placeholder="Compact Type" class="flex">
+                <md-option value="none">None</md-option>
+                <md-option value="compactUp">Compact Up</md-option>
+                <md-option value="compactLeft">Compact Left</md-option>
+                <md-option value="compactLeft&Up">Compact Left & Up</md-option>
+                <md-option value="compactUp&Left">Compact Up & Left</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container class="flex">
+              <label>Target</label>
+              <md-select ng-model="newTarget" aria-label="Compact type"
+                          placeholder="Compact Type" class="flex">
+                <md-option value="none">None</md-option>
+                <md-option value="compactUp">Compact Up</md-option>
+                <md-option value="compactLeft">Compact Left</md-option>
+                <md-option value="compactLeft&Up">Compact Left & Up</md-option>
+                <md-option value="compactUp&Left">Compact Up & Left</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container class="flex">
+              <label>Target overwrite field</label>
+              <md-select ng-model="newTargetField" aria-label="Compact type"
+                          placeholder="Compact Type" class="flex">
+                <md-option value="none">None</md-option>
+                <md-option value="compactUp">Compact Up</md-option>
+                <md-option value="compactLeft">Compact Left</md-option>
+                <md-option value="compactLeft&Up">Compact Left & Up</md-option>
+                <md-option value="compactUp&Left">Compact Up & Left</md-option>
+              </md-select>
+            </md-input-container>
+
+            <md-input-container flex="30">
+              <md-button class="md-icon-button md-primary" aria-label="Add Connection" ng-click="create()">
+                <md-icon>add_circle</md-icon>
+              </md-button>
+            </md-input-container>
+          </md-list-item>
+        </md-list>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="hide()" class="md-primary">
+        Close
+      </md-button>
+    </md-dialog-actions>
+  </form>
+</md-dialog>

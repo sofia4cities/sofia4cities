@@ -5,7 +5,7 @@
     .service('datasourceSolverService', DatasourceSolverService);
 
   /** @ngInject */
-  function DatasourceSolverService(socketService, sofia2HttpService, $interval, $rootScope) {
+  function DatasourceSolverService(socketService, sofia2HttpService, $mdDialog, $interval, $rootScope) {
       var vm = this;
       vm.gadgetToDatasource = {};
       
@@ -17,7 +17,17 @@
         console.log("Login Rest OK, connecting SockJs Stomp dashboard engine");
         socketService.connect();
       }).catch(function(e){
-        console.log("Login Rest Fail: " + JSON.stringify(e));
+        console.log("Dashboard Engine Login Rest Fail: " + JSON.stringify(e));
+        $mdDialog.show(
+          $mdDialog.alert()
+            .parent(angular.element(document.querySelector('body')))
+            .clickOutsideToClose(true)
+            .title('Dashboard Engine Login Fail')
+            .textContent('You dashboard engine could not to be started, please started and reload this page again')
+            .ariaLabel('Alert Dialog Dashboard Engine')
+            .ok('OK')
+            //.targetEvent(ev)
+        );
       })
 
       //datasource {"name":"name","type":"query","refresh":"refresh",triggers:[{params:{where:[],project:[],filter:[]},emiter:""}]}

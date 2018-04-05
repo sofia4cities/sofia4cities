@@ -15,7 +15,7 @@
     });
 
   /** @ngInject */
-  function MainController($log, $scope, $mdSidenav, $mdDialog, $timeout, sofia2HttpService, interactionService) {
+  function MainController($log, $scope, $mdSidenav, $mdDialog, $timeout, $window, sofia2HttpService, interactionService) {
     var vm = this;
     vm.$onInit = function () {
       setTimeout(function () {
@@ -44,6 +44,10 @@
             interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "livehtml_1522240022760", "borough", "borough");
             interactionService.registerGadgetInteractionDestination("livehtml_1522241789696","b4506302-4a6f-4b8a-ac77-7988f064b71e","name","name");
           },3000);
+        }
+      ).catch(
+        function(){
+          $window.location.href = "/controlpanel/login";
         }
       )
       /*

@@ -12,6 +12,14 @@
 
     };
 
+    vm.setInteractionHash = function(interactionHash){
+      vm.interactionHash = interactionHash;
+    };
+
+    vm.getInteractionHash = function(){
+      return vm.interactionHash;
+    };
+
     vm.registerGadget = function (gadgetId) {
       vm.interactionHash[gadgetId] = [];
     };
@@ -86,7 +94,7 @@
         }
       );
       if (found != -1) {
-        destinationBundle.targetList.splice(found, 1);
+        destinationFieldBundle[0].targetList.splice(found, 1);
       }
     };
 

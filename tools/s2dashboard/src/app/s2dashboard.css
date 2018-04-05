@@ -133,3 +133,7 @@ element{
 md-tooltip.tt-multiline {
   height: auto !important;
 }
+
+.input-fields{
+  width:100%
+}

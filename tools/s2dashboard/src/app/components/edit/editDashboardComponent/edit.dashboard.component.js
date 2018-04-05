@@ -1088,6 +1088,28 @@
       });
     };
 
+    ed.showDatalink = function (ev) {
+      $mdDialog.show({
+        controller: DatalinkController,
+        templateUrl: 'app/partials/edit/datalinkDialog.html',
+        parent: angular.element(document.body),
+        targetEvent: ev,
+        clickOutsideToClose:true,
+        fullscreen: false, // Only for -xs, -sm breakpoints.
+        openFrom: '.toolbarButtons',
+        closeTo: '.toolbarButtons',
+        locals: {
+          dashboard: ed.dashboard,
+          selectedpage: ed.selectedpage
+        }
+      })
+      .then(function(page) {
+        $scope.status = 'Dialog datalink closed'
+      }, function() {
+        $scope.status = 'You cancelled the dialog.';
+      });
+    };
+
     ed.savePage = function (ev) {
       sofia2HttpService.saveDashboard(ed.id(), {"data":{"model":JSON.stringify(ed.dashboard),"id":"","identification":"a","customcss":"","customjs":"","jsoni18n":"","description":"a","public":ed.public}}).then(
         function(d){
@@ -1406,6 +1428,72 @@
         var diffs = compareJSON(oldValue, newValue);
         $rootScope.$broadcast('global.style', diffs);
       }, true)
+
+      $scope.hide = function() {
+        $mdDialog.hide();
+      };
+
+      $scope.cancel = function() {
+        $mdDialog.cancel();
+      };
+
+    }
+
+    function DatalinkController($scope,$rootScope, $mdDialog, interactionService, dashboard, selectedpage) {
+      $scope.dashboard = dashboard;
+      $scope.selectedpage = selectedpage;
+
+      var rawInteractions = interactionService.getInteractionHash();
+
+      initConnectionsList();
+
+      function initConnectionsList(){
+        $scope.connections = [];
+        for(var source in rawInteractions){
+          for(var indexFieldTargets in rawInteractions[source]){
+            for(var indexTargets in rawInteractions[source][indexFieldTargets].targetList){
+              var rowInteraction = {
+                source:source,
+                sourceField:rawInteractions[source][indexFieldTargets].emiterField,
+                target:rawInteractions[source][indexFieldTargets].targetList[indexTargets].gadgetId,
+                targetField:rawInteractions[source][indexFieldTargets].targetList[indexTargets].overwriteField
+              }
+              $scope.connections.push(rowInteraction);
+            }
+          }
+        }
+      }
+
+      $scope.generateGadgetInfo = function (gadgetId){
+        var gadget = findGadgetInDashboard(gadgetId);
+        if(gadget == null){
+          return gadgetId;
+        }
+        else{
+          return gadget.header.title.text + " (" + gadget.type + ")"
+        }
+      }
+
+      function findGadgetInDashboard(gadgetId){
+        var page = $scope.dashboard.pages[$scope.selectedpage];
+        for(var layerIndex in page.layers){
+          var layer = page.layers[layerIndex];
+          var gadgets = layer.gridboard.filter(function(gadget){return gadget.id === gadgetId});
+          if(gadgets.length){
+            return gadgets[0];
+          }
+        }
+        return null;
+      }
+
+      $scope.create = function() {
+        interactionService.registerGadgetInteractionDestination(sourceGadgetId, targetGadgetId, originField, destinationField);
+      };
+
+      $scope.delete = function(sourceGadgetId, targetGadgetId, originField, destinationField){
+        interactionService.unregisterGadgetInteractionDestination(sourceGadgetId, originField, targetGadgetId, destinationField);
+        initConnectionsList();
+      }
 
       $scope.hide = function() {
         $mdDialog.hide();
