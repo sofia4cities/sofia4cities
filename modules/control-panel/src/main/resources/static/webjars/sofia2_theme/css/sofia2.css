@@ -798,6 +798,7 @@ padding-top: 2px;
     color: #333;
     background-color: #FFF !Important;
     border-color: #ddd;
+	padding: 6px 12px !important;
 }
 
 /*** AUTOCOMPLETE ***/
@@ -967,5 +968,11 @@ background: linear-gradient(to right, #75b8f3, #9353e6);*/
 max-height: 125px; min-height: 125px; width:auto; margin: 5px 0px;  display: block; margin: 5px auto;
 }
 
-
+.img-asset-show{
+max-height: 225px;
+margin: 0 auto;
+width: auto !important;
+border-radius: 10px;
+	
+}
 
