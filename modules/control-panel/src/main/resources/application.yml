@@ -37,6 +37,7 @@ sofia2: #Config Sofia2 specific
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
+      digitaltwin.database: digital_twin
    urls:
     iotbroker: http://localhost:18080
     iotbroker.services: http://localhost:8080/sib/services

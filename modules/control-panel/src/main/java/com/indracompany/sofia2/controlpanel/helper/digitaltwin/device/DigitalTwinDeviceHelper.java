@@ -25,21 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.PropertyDigitalTwinType;
@@ -75,7 +64,9 @@ public class DigitalTwinDeviceHelper {
 	@Value("${digitaltwin.src.app}")
 	private String appPath;
 	
-	private Template template;
+	private Template digitalTwinStatusTemplate;
+	private Template pomTemplate;
+	private Template deviceApplicationTemplate;
 	private Map<String, Object> dataMap;
 	private Configuration cfg;
 	
@@ -87,7 +78,9 @@ public class DigitalTwinDeviceHelper {
 			ClassLoader classLoader = getClass().getClassLoader();
 			TemplateLoader templateLoader = new FileTemplateLoader(new File(classLoader.getResource("templates").getFile()));
 			cfg.setTemplateLoader(templateLoader);
-			template = cfg.getTemplate("DigitalTwinStatusTemplate.ftl");
+			digitalTwinStatusTemplate = cfg.getTemplate("DigitalTwinStatusTemplate.ftl");
+			pomTemplate = cfg.getTemplate("pomTemplate.ftl");
+			deviceApplicationTemplate = cfg.getTemplate("DeviceApplicationTemplate.ftl");
 		} catch (IOException e) {
 			log.error("Error configuring the template loader.", e);
 		}
@@ -141,21 +134,9 @@ public class DigitalTwinDeviceHelper {
 			if(!app.isDirectory()) {
 				app.mkdirs();
 			}
-			out = new PrintWriter (app + File.separator + "DeviceApplication.java");
-			out.println("package digitaltwin.device;\r\n" + 
-					"\r\n" + 
-					"import org.springframework.boot.SpringApplication;\r\n" + 
-					"import org.springframework.boot.autoconfigure.SpringBootApplication;\r\n" + 
-					"\r\n" + 
-					"@SpringBootApplication(scanBasePackages=\"com.indracompany.sofia2, digitaltwin.device\")\r\n" + 
-					"public class DeviceApplication {\r\n" + 
-					"\r\n" + 
-					"	public static void main(String[] args) {\r\n" + 
-					"		SpringApplication.run(DeviceApplication.class, args);\r\n" + 
-					"	}\r\n" + 
-					"}\r\n" + 
-					"");
-			out.flush();
+			writer = new FileWriter (app + File.separator + "DeviceApplication.java");
+			deviceApplicationTemplate.process(new HashMap(), writer);
+			writer.flush();
 			
 			//Create DigitalTwinStatus.java
 			File fileJava = new File(app + File.separator + "status");
@@ -163,7 +144,7 @@ public class DigitalTwinDeviceHelper {
 				fileJava.mkdirs();
 			}
 			writer = new FileWriter (fileJava + File.separator + "DigitalTwinStatus.java");
-			template.process(dataMap, writer);
+			digitalTwinStatusTemplate.process(dataMap, writer);
 			writer.flush();
 			
 			//Create logic.js
@@ -185,7 +166,9 @@ public class DigitalTwinDeviceHelper {
 			out.flush();
 			
 			//Create pom.xml
-			createPom();
+			writer = new FileWriter (tempDir + File.separator + "devicetwin" + File.separator +"pom.xml");
+			pomTemplate.process(new HashMap(), writer);
+			writer.flush();
 		}catch (Exception e) {
 			log.error("Error generating class DigitalTwinStatus.java", e);
 		}
@@ -206,114 +189,4 @@ public class DigitalTwinDeviceHelper {
 		
 		return zipFile;
 	}
-	
-	private void createPom() {
-		try {
-
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-
-			// dependencies elements
-			Document doc = docBuilder.newDocument();
-			Element project = doc.createElement("project");
-			doc.appendChild(project);
-			
-			// set attribute to project element
-			Attr attr = doc.createAttribute("xmlns");
-			attr.setValue("http://maven.apache.org/POM/4.0.0");
-			project.setAttributeNode(attr);
-			
-			Attr attr2 = doc.createAttribute("xmlns:xsi");
-			attr2.setValue("http://www.w3.org/2001/XMLSchema-instance");
-			project.setAttributeNode(attr2);
-			
-			Attr attr3 = doc.createAttribute("xsi:schemaLocation");
-			attr3.setValue("http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd");
-			project.setAttributeNode(attr3);
-			
-			Element modelVersion = doc.createElement("modelVersion");
-			modelVersion.appendChild(doc.createTextNode("4.0.0"));
-			project.appendChild(modelVersion);
-			
-			Element groupId = doc.createElement("groupId");
-			groupId.appendChild(doc.createTextNode("digitaltwin"));
-			project.appendChild(groupId);
-			
-			Element artifactId = doc.createElement("artifactId");
-			artifactId.appendChild(doc.createTextNode("device"));
-			project.appendChild(artifactId);
-			
-			Element version = doc.createElement("version");
-			version.appendChild(doc.createTextNode("0.0.1-SNAPSHOT"));
-			project.appendChild(version);
-			
-			Element packaging = doc.createElement("packaging");
-			packaging.appendChild(doc.createTextNode("jar"));
-			project.appendChild(packaging);
-			
-			Element parent = doc.createElement("parent");
-			project.appendChild(parent);
-			
-			Element groupIdParent = doc.createElement("groupId");
-			groupIdParent.appendChild(doc.createTextNode("org.springframework.boot"));
-			parent.appendChild(groupIdParent);
-			
-			Element artifactIdParent = doc.createElement("artifactId");
-			artifactIdParent.appendChild(doc.createTextNode("spring-boot-starter-parent"));
-			parent.appendChild(artifactIdParent);
-			
-			Element versionParent = doc.createElement("version");
-			versionParent.appendChild(doc.createTextNode("1.5.10.RELEASE"));
-			parent.appendChild(versionParent);
-			
-			Element properties = doc.createElement("properties");
-			project.appendChild(properties);
-			
-			Element sourceEncoding = doc.createElement("project.build.sourceEncoding");
-			sourceEncoding.appendChild(doc.createTextNode("UTF-8"));
-			properties.appendChild(sourceEncoding);
-			
-			Element outputEncoding = doc.createElement("project.reporting.outputEncoding");
-			outputEncoding.appendChild(doc.createTextNode("UTF-8"));
-			properties.appendChild(outputEncoding);
-			
-			Element javaVersion = doc.createElement("java.version");
-			javaVersion.appendChild(doc.createTextNode("1.8"));
-			properties.appendChild(javaVersion);
-			
-			Element dependencies = doc.createElement("dependencies");
-			project.appendChild(dependencies);
-
-			// dependency elements
-			Element dependency = doc.createElement("dependency");
-			dependencies.appendChild(dependency);
-
-			
-			Element groupIdD = doc.createElement("groupId");
-			groupIdD.appendChild(doc.createTextNode("com.indracompany.sofia2"));
-			dependency.appendChild(groupIdD);
-
-			Element artifactIdD = doc.createElement("artifactId");
-			artifactIdD.appendChild(doc.createTextNode("sofia2-digital-twin"));
-			dependency.appendChild(artifactIdD);
-
-			Element versionD = doc.createElement("version");
-			versionD.appendChild(doc.createTextNode("0.0.1-SNAPSHOT"));
-			dependency.appendChild(versionD);
-			
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(tempDir + File.separator + "devicetwin" + File.separator +"pom.xml"));
-
-			transformer.transform(source, result);
-
-		  } catch (ParserConfigurationException e0) {
-			log.error("error doing pom.xml.",e0);
-		  } catch (TransformerException e1) {
-			 log.error("error doing pom.xml.",e1);
-		  }
-	}
-
 }

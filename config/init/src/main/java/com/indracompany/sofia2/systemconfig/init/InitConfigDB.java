@@ -209,25 +209,27 @@ public class InitConfigDB {
 	private void init_FlowDomain() {
 		log.info("init_FlowDomain");
 		// Domain for administrator
-		FlowDomain domain = new FlowDomain();
-		domain.setActive(true);
-		domain.setIdentification("adminDomain");
-		domain.setUser(userCDBRepository.findByUserId("administrator"));
-		domain.setHome("/tmp/administrator");
-		domain.setState("START");
-		domain.setPort(8000);
-		domain.setServicePort(7000);
-		domainRepository.save(domain);
-		// Domain for developer
-		domain = new FlowDomain();
-		domain.setActive(true);
-		domain.setIdentification("devDomain");
-		domain.setUser(userCDBRepository.findByUserId("developer"));
-		domain.setHome("/tmp/developer");
-		domain.setState("START");
-		domain.setPort(8001);
-		domain.setServicePort(7001);
-		domainRepository.save(domain);
+		if (this.domainRepository.count() == 0) {
+			FlowDomain domain = new FlowDomain();
+			domain.setActive(true);
+			domain.setIdentification("adminDomain");
+			domain.setUser(userCDBRepository.findByUserId("administrator"));
+			domain.setHome("/tmp/administrator");
+			domain.setState("START");
+			domain.setPort(8000);
+			domain.setServicePort(7000);
+			domainRepository.save(domain);
+			// Domain for developer
+			domain = new FlowDomain();
+			domain.setActive(true);
+			domain.setIdentification("devDomain");
+			domain.setUser(userCDBRepository.findByUserId("developer"));
+			domain.setHome("/tmp/developer");
+			domain.setState("START");
+			domain.setPort(8001);
+			domain.setServicePort(7001);
+			domainRepository.save(domain);
+		}
 	}
 
 	private void init_Configuration() {

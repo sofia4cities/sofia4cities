@@ -115,7 +115,7 @@ public class EventGatewayImpl implements EventGateway {
 			model.setEvent(EventType.LOG);
 			model.setLog(data.get("log").asText());
 			model.setId(data.get("id").asText());
-			model.setType(data.get("type").asText());
+			model.setType(device.getTypeId().getName());
 			
 			compositeModel.setDigitalTwinModel(model);
 			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
@@ -138,12 +138,30 @@ public class EventGatewayImpl implements EventGateway {
 		if(data.get("id")==null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
+		
+		DigitalTwinModel model = new DigitalTwinModel();
+		DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+		
 		//Validation apikey
 		DigitalTwinDevice device = deviceRepo.findById(data.get("id").asText());
 		if(apiKey.equals(device.getApiKey())) {
 			
-			//update device with shadow info
-			JsonNode status = data.get("status");
+			//Set last updated
+			device.setUpdatedAt(new Date());
+			deviceRepo.save(device);
+			//insert trace of log
+			model.setEvent(EventType.SHADOW);
+			model.setStatus(data.get("status").toString());
+			model.setId(data.get("id").asText());
+			model.setType(device.getTypeId().getName());
+			
+			compositeModel.setDigitalTwinModel(model);
+			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
+			
+			OperationResultModel result = routerDigitalTwinService.updateShadow(compositeModel);
+			if(!result.isStatus()) {
+				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
+			}
 			//TODO update
 			return new ResponseEntity<>(null, HttpStatus.OK);
 		}else {

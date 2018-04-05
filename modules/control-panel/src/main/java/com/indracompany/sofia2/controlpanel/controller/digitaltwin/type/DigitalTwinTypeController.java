@@ -39,6 +39,7 @@ import com.indracompany.sofia2.config.service.digitaltwin.type.DigitalTwinTypeSe
 import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -55,6 +56,9 @@ public class DigitalTwinTypeController {
 	
 	@Autowired
 	private DigitalTwinTypeService digitalTwinTypeService;
+	
+	@Autowired
+	private ManageDBRepository  mongoManageRepo;
 	
 	@PostMapping("/getNamesForAutocomplete")
 	public @ResponseBody List<String> getNamesForAutocomplete() {
@@ -86,7 +90,9 @@ public class DigitalTwinTypeController {
 			User user = userService.getUser(utils.getUserId());
 			digitalTwinType.setUser(user);
 			digitalTwinTypeService.createDigitalTwinType(digitalTwinType, httpServletRequest);
-
+			//Create collections on mongo for properties and actions
+			mongoManageRepo.createTable4Ontology("TwinProperties" + digitalTwinType.getName().substring(0, 1).toUpperCase() + digitalTwinType.getName().substring(1), "{}");
+			mongoManageRepo.createTable4Ontology("TwinActions" + digitalTwinType.getName().substring(0, 1).toUpperCase() + digitalTwinType.getName().substring(1), "{}");
 		} catch (DigitalTwinServiceException e) {
 			log.error("Cannot create digital twin type because of:" + e.getMessage());
 			utils.addRedirectException(e, redirect);
