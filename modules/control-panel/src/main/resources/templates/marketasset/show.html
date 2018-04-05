@@ -103,7 +103,7 @@
 												</h1>
 												<div class="marketasset-single-head-date ">
 													<div class="box box-green box-example-1to10" style="margin-top: -25px;">
-													  <div class="box-header">1/10 Markeplace Rating</div>
+													  <div class="box-header">Markeplace Rating</div>
 													  <div class="box-body">
 														<select id="example-1to10" name="rating" autocomplete="off">
 														  <option value="1">1</option>
@@ -286,7 +286,21 @@
 												</ul>
 											</div>											
 										</div>
-									</div>			
+									</div>
+									<div class="col-md-12" th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))">
+										<!-- FORM BUTTONS -->
+										<div class="form-actions">
+											<div class="pull-right">
+												<!-- UPDATE -->
+												<button th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+												
+												<span th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="sep" th:text="#{gen.sepBtn}"> or </span>
+												
+												<!-- CANCEL TO-DO: authentication and control -->
+												<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/marketasset/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+											</div>
+										</div>
+									</div>
 									<!-- show anterior --> 
 									<div class="col-md-12 hide">										
 										
@@ -352,18 +366,7 @@
 												<div id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'WEBPROJECT')" th:include="marketasset/marketassetfragments::#WEBPROJECTMarketAssetFragmentShow"/>
 												
 											</div>
-											<!-- FORM BUTTONS -->
-											<div class="form-actions">
-												<div class="pull-right">
-													<!-- UPDATE -->
-													<button th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
-													
-													<span th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="sep" th:text="#{gen.sepBtn}"> or </span>
-													
-													<!-- CANCEL TO-DO: authentication and control -->
-													<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/marketasset/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-												</div>
-											</div>											
+																						
 										
 										<form th:id="form_download_document" th:action="@{|/marketasset/${marketasset.id}/downloadContent|}" method="POST">
                    							<input type="hidden" name="id_document" id="id_document"/>

@@ -165,9 +165,13 @@
 													<div class="col-md-4 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label  th:text="#{marketasset.image}">Image</label>
+															<div class="clearfix"></div>
+															<div th:if="${not #lists.isEmpty(marketasset.image)}" class="margin-bottom-10">
+																<button class="btn btn-sm btn-outline red-sunglo"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.image}"> Delete Image</span></button>
+															</div>
 															<input id="image" class="btn btn-default" type="file" th:field="*{image}" onchange="MarketAssetCreateController.validateImageSize();" style="width:100%"/>
-															<img id="showedImg" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" class="img-responsive thumbnail" style="max-height: 150px; margin-top: 20px;"/>
-															<img id="showedImg" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="max-height: 150px; margin-top: 20px;"/>																	
+															<img id="showedImg" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" class="img-responsive thumbnail" style="max-height: 150px; margin: 20px auto;"/>
+															<img id="showedImg" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="max-height: 150px; margin: 20px auto;"/>																	
 														</div>
 													</div>
 													<div class="col-md-8 col-sm-12 col-xs-12">
