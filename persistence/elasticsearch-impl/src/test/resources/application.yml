@@ -4,7 +4,7 @@ sofia2: #Config Sofia2 specific
       sql.maxHttpConnectionsPerRoute: 10
       sql.connectionTimeout.millis: 10000
       sql.connector.http.endpoint: http://localhost:9200
-      url: http://localhost
+      url: localhost
       port: 9300
 
 

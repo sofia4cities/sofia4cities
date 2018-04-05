@@ -13,7 +13,10 @@
  */
 package com.indracompany.sofia2.persistence.mongodb;
 
+import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -27,26 +30,32 @@ import com.indracompany.sofia2.persistence.elasticsearch.api.ElasticSearchApi;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Luis Miguel Gracia
- */
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-// @ContextConfiguration(classes = EmbeddedMongoConfiguration.class)
-// @Ignore
 public class ElasticSearchBasicApiTest {
 	
 	 public final static String TEST_INDEX = "elasticsearch-test_index";
 	 public final static String TEST_INDEX_GAME_OF_THRONES = TEST_INDEX + "_game_of_thrones";
+	 public final static String TEST_INDEX_ONLINE = TEST_INDEX + "_online";
 
 	@Autowired
 	ElasticSearchApi connector;
 	
 	private String createTestIndex(String index) {
-		return connector.createIndex(index);
+		String res =   connector.createIndex(index);
+		System.out.println("createTestIndex :"+res);
+		return res;
+	}
+	
+	@After
+	public  void tearDown() {
+		System.out.println("teardown process...");
+        deleteTestIndex(TEST_INDEX_GAME_OF_THRONES);
+        deleteTestIndex(TEST_INDEX_ONLINE);
+        connector.getClient().close();
 	}
 	
 	 private PutMappingResponse  prepareGameOfThronesIndex() {
@@ -76,49 +85,41 @@ public class ElasticSearchBasicApiTest {
 	                "}"+
 	                "} } }";
 	        
-	      return connector.prepareIndex(TEST_INDEX_GAME_OF_THRONES, "gotCharacters", dataMapping);
+	        PutMappingResponse response =  connector.prepareIndex(TEST_INDEX_GAME_OF_THRONES, "gotCharacters", dataMapping);
+	        System.out.println("prepareGameOfThronesIndex :"+response.isAcknowledged());
+	        return response;
 	       
 	    }
 
-	private  void deleteTestIndex(String index) {
-		return connector.createIndex(index);
+	private void deleteTestIndex(String index) {
+		boolean res =  connector.deleteIndex(index);
+		System.out.println("deleteTestIndex :"+res);
 	}
 
 	@Test
 	public void testCreateTable() {
 		try {
+			
+			
+			NodesInfoResponse nodeInfos = connector.getClient().admin().cluster().prepareNodesInfo().get();
+			String clusterName = nodeInfos.getClusterName().value();
+			System.out.println(String.format("Found cluster... cluster name: %s", clusterName));
+			
+			BulkResponse response2 = connector.loadBulkFromFile("src/test/resources/online.json", TEST_INDEX_ONLINE);
+			System.out.println("Loaded Bulk :"+ response2.getItems().length);
+		
 			createTestIndex(TEST_INDEX_GAME_OF_THRONES);
 			prepareGameOfThronesIndex();
-			loadBulk("src/test/resources/game_of_thrones_complex.json", TEST_INDEX_GAME_OF_THRONES);
+			BulkResponse response = connector.loadBulkFromFile("src/test/resources/game_of_thrones_complex.json", TEST_INDEX_GAME_OF_THRONES);
 		
-			Assert.assertTrue(result.length() > 0);
+			System.out.println("Loaded Bulk :"+ response.getItems().length);
+			
+			Assert.assertTrue(response.hasFailures()==false);
 		} catch (Exception e) {
 			Assert.fail("No connection with MongoDB by Quasar. " + e);
 		}
 	}
 
-	@Test
-	public void testQueryAsTable() {
-		try {
-			String query = "select * from shakespeare";
-			String result = connector.queryAsJson(query, 0, 100);
-			log.info("Returned:" + result);
-			Assert.assertTrue(result.length() > 0);
-		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
-		}
-	}
 	
-	@Test
-	public void testQueryAsTableScroll() {
-		try {
-			String query = "select * from shakespeare";
-			String result = connector.queryAsJson(query, 10, 20);
-			log.info("Returned:" + result);
-			Assert.assertTrue(result.length() > 0);
-		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
-		}
-	}
 
 }

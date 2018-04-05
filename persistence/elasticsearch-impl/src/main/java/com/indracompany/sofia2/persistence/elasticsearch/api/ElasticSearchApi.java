@@ -27,16 +27,18 @@ public class ElasticSearchApi {
 	
 	private TransportClient client;
 	
-	@Value("${sofia2.database.elasticsearch.url:http://localhost}")
+	@Value("${sofia2.database.elasticsearch.url:localhost}")
 	private String host;
 	
-	@Value("${sofia2.database.elasticsearch.url:9300}")
+	@Value("${sofia2.database.elasticsearch.port:9300}")
 	private String port;
 	
 	@PostConstruct
 	void initializeIt() throws UnknownHostException {
 		Settings settings = Settings.builder().put("client.transport.ignore_cluster_name",true).build();
 		client = new PreBuiltTransportClient(settings).addTransportAddress(getTransportAddress());
+		System.out.println(String.format("Settings %s ", client.settings().toString()));
+		
 	}
 	
 	private TransportAddress getTransportAddress() throws UnknownHostException {
