@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.Gadget;
-import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.services.exceptions.GadgetDatasourceServiceException;
 import com.indracompany.sofia2.config.services.exceptions.GadgetServiceException;
@@ -52,74 +50,80 @@ public class GadgetController {
 
 	@Autowired
 	private GadgetService gadgetService;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private GadgetDatasourceService gadgetDatasourceService;
-	
+
 	@Autowired
 	private AppWebUtils utils;
-	
+
 	@RequestMapping(value = "/list", produces = "text/html")
-	public String list (Model uiModel, HttpServletRequest request) {
-				
+	public String list(Model uiModel, HttpServletRequest request) {
+
 		String identification = request.getParameter("identification");
 		String description = request.getParameter("description");
-		
-		if(identification!=null){if(identification.equals("")) identification=null;}
-		if(description!=null){if(description.equals("")) description=null;}
 
-		List<Gadget> gadget=this.gadgetService.findGadgetWithIdentificationAndDescription( identification, description, utils.getUserId());
-				//gadgets: tiene que coincidir con el del list
+		if (identification != null) {
+			if (identification.equals(""))
+				identification = null;
+		}
+		if (description != null) {
+			if (description.equals(""))
+				description = null;
+		}
+
+		List<Gadget> gadget = this.gadgetService.findGadgetWithIdentificationAndDescription(identification, description,
+				utils.getUserId());
+		// gadgets: tiene que coincidir con el del list
 		uiModel.addAttribute("gadgets", gadget);
 		return "gadgets/list";
-				
+
 	}
-		
-	@RequestMapping(method = RequestMethod.POST, value="getNamesForAutocomplete")
-	public @ResponseBody List<String> getNamesForAutocomplete(){
+
+	@RequestMapping(method = RequestMethod.POST, value = "getNamesForAutocomplete")
+	public @ResponseBody List<String> getNamesForAutocomplete() {
 		return this.gadgetService.getAllIdentifications();
 	}
-	
-	@GetMapping(value="getUserGadgetsByType/{type}")
-	public @ResponseBody List<Gadget> getUserGadgetsByType(@PathVariable("type") String type){
+
+	@GetMapping(value = "getUserGadgetsByType/{type}")
+	public @ResponseBody List<Gadget> getUserGadgetsByType(@PathVariable("type") String type) {
 		return this.gadgetService.getUserGadgetsByType(utils.getUserId(), type);
 	}
-	
-	@GetMapping(value="getGadgetConfigById/{gadgetId}")
-	public @ResponseBody Gadget getGadgetConfigById(@PathVariable("gadgetId") String gadgetId){
+
+	@GetMapping(value = "getGadgetConfigById/{gadgetId}")
+	public @ResponseBody Gadget getGadgetConfigById(@PathVariable("gadgetId") String gadgetId) {
 		return this.gadgetService.getGadgetById(utils.getUserId(), gadgetId);
 	}
-	
-	@GetMapping(value="getGadgetMeasuresByGadgetId/{gadgetId}")
-	public @ResponseBody List<GadgetMeasure> getGadgetMeasuresByGadgetId(@PathVariable("gadgetId") String gadgetId){
+
+	@GetMapping(value = "getGadgetMeasuresByGadgetId/{gadgetId}")
+	public @ResponseBody List<GadgetMeasure> getGadgetMeasuresByGadgetId(@PathVariable("gadgetId") String gadgetId) {
 		return this.gadgetService.getGadgetMeasuresByGadgetId(utils.getUserId(), gadgetId);
 	}
-	
+
 	@GetMapping(value = "/create", produces = "text/html")
 	public String createGadget(Model model) {
-		model.addAttribute("gadget",new Gadget());
-		model.addAttribute("datasources",this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
+		model.addAttribute("gadget", new Gadget());
+		model.addAttribute("datasources", this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
 		return "gadgets/create";
 
 	}
-	
+
 	@PostMapping(value = "/create", produces = "text/html")
-	public String saveGadget(@Valid Gadget gadget, BindingResult bindingResult,
-			String jsonMeasures, String datasourcesMeasures, Model uiModel, HttpServletRequest httpServletRequest, RedirectAttributes redirect) {
-		if(bindingResult.hasErrors())
-		{
+	public String saveGadget(@Valid Gadget gadget, BindingResult bindingResult, String jsonMeasures,
+			String datasourcesMeasures, Model uiModel, HttpServletRequest httpServletRequest,
+			RedirectAttributes redirect) {
+		if (bindingResult.hasErrors()) {
 			log.debug("Some gadget properties missing");
 			utils.addRedirectMessage("gadgets.validation.error", redirect);
 			return "redirect:/gadgets/create";
 		}
-		try{
+		try {
 			gadget.setUser(this.userService.getUser(this.utils.getUserId()));
-			this.gadgetService.createGadget(gadget,datasourcesMeasures,jsonMeasures);
-		}catch (GadgetDatasourceServiceException e)
-		{
+			this.gadgetService.createGadget(gadget, datasourcesMeasures, jsonMeasures);
+		} catch (GadgetDatasourceServiceException e) {
 			log.debug("Cannot create gadget datasource");
 			utils.addRedirectMessage("gadgetDatasource.create.error", redirect);
 			return "redirect:/gadgets/create";
@@ -127,41 +131,40 @@ public class GadgetController {
 		return "redirect:/gadgets/list";
 
 	}
-	
+
 	@GetMapping(value = "/update/{gadgetId}", produces = "text/html")
 	public String createGadget(Model model, @PathVariable("gadgetId") String gadgetId) {
-		model.addAttribute("gadget",this.gadgetService.getGadgetById(utils.getUserId(), gadgetId));
-		model.addAttribute("measures",this.gadgetService.getGadgetMeasuresByGadgetId(utils.getUserId(), gadgetId));
-		model.addAttribute("datasources",this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
+		model.addAttribute("gadget", this.gadgetService.getGadgetById(utils.getUserId(), gadgetId));
+		model.addAttribute("measures", this.gadgetService.getGadgetMeasuresByGadgetId(utils.getUserId(), gadgetId));
+		model.addAttribute("datasources", this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId()));
 		return "gadgets/create";
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public String delete(Model model, @PathVariable("id") String id) {
 		this.gadgetService.deleteGadget(id, utils.getUserId());
 		return "redirect:/gadgets/list";
 	}
-	
+
 	@PutMapping(value = "/update/{id}", produces = "text/html")
-	public String updateGadget(Model model, @PathVariable ("id") String id, @Valid Gadget gadget, String jsonMeasures, String datasourcesMeasures, BindingResult bindingResult, RedirectAttributes redirect) {
-		
-		if(bindingResult.hasErrors())
-		{
+	public String updateGadget(Model model, @PathVariable("id") String id, @Valid Gadget gadget, String jsonMeasures,
+			String datasourcesMeasures, BindingResult bindingResult, RedirectAttributes redirect) {
+
+		if (bindingResult.hasErrors()) {
 			log.debug("Some Gadget properties missing");
 			utils.addRedirectMessage("gadgets.validation.error", redirect);
-			return "redirect:/gadgets/update/"+id;
+			return "redirect:/gadgets/update/" + id;
 		}
 		if (!gadgetService.hasUserPermission(id, this.utils.getUserId()))
 			return "error/403";
 		try {
-			this.gadgetService.updateGadget(gadget,datasourcesMeasures, jsonMeasures);
-		}catch (GadgetServiceException e)
-		{
+			this.gadgetService.updateGadget(gadget, datasourcesMeasures, jsonMeasures);
+		} catch (GadgetServiceException e) {
 			log.debug("Cannot update gadget datasource");
 			utils.addRedirectMessage("gadgetDatasource.update.error", redirect);
 			return "redirect:/gadgets/create";
 		}
 		return "redirect:/gadgets/list";
 	}
-	
+
 }

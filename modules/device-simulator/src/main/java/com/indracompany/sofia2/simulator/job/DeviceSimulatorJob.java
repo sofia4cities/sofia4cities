@@ -15,9 +15,7 @@ package com.indracompany.sofia2.simulator.job;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.assertj.core.data.MapEntry;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,7 +71,7 @@ public class DeviceSimulatorJob {
 		JsonNode fieldAndValues = this.fieldRandomizerService.randomizeFields(jsonInstance.path("fields"),
 				ontologySchema);
 
-		log.debug("Inserted ontology: "+fieldAndValues.toString());
+		log.debug("Inserted ontology: " + fieldAndValues.toString());
 		this.persistenceService.insertOntologyInstance(fieldAndValues.toString(), ontology, user, clientPlatform,
 				clientPlatformInstance);
 		return fieldAndValues;
