@@ -55,7 +55,7 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/ambiance.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neo.css}"/>
-		
+		  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 		
 		<style>
 		md-progress-circular { display: hide; visibility: hidden; }
@@ -136,7 +136,19 @@
 								
 								<div class="row">
 									<div class="col-md-12 alert-zone">
-										<!-- ALERT ZONE -->																			
+									
+										<!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button>
+											<span th:text="#{gen.form.error}">You have some form
+												errors. Please check below.</span>
+										</div>
+										<div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button>
+											<span th:text="#{gen.form.success}">Your form
+												validation is successful!</span>
+										</div>
+																						
 									</div>		
 									<div class="col-md-12 margin-bottom-20">									
 										<form role="form" id="gadget_create_form" th:object="${gadgetTemplate}" method="post" class="form">
@@ -191,7 +203,36 @@
 													</div>												
 													<div class="clearfix"></div>													
 												</div>
+											
+											
 												
+										<div class="portlet light ">
+																	<div class="portlet-title tabbable-line">
+																		<div class="tools">
+																			<a href="javascript:;" class="collapse" data-original-title="" title=""> </a>
+																			<a href="" class="fullscreen" data-original-title="" title=""> </a>
+																		</div>
+																		<label th:text="#{gadgettemplates.template.parameters.title}">Parameters Template</label>			
+																		</div>
+																		<div class="portlet-body">
+										<div class="col-md-5 col-sm-5 col-xs-12">										
+											<ul class="list-group">
+											  <li class="list-group-item active" th:text="#{gadgettemplates.template.parameters.drag}">Drag the editor, the parameters you need </li>
+											  <li id="label_text" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.text.label}">Text Label Parameter</li>
+											  <li id="label_number" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.number.label}">Number Label Parameter</li>
+											  <li id="label_ds" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.ds.label}">Label with data From Data Source</li>
+											<!--   <li id="select_ds" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)">Porta ac consectetur ac</li> -->
+											  <li id="select_options" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.label.select}">Label that will be loaded with the selected value from a list</li>
+											</ul>
+										</div>	
+										<div class="col-md-7 col-sm-7 col-xs-12">			
+										<ul id="parameters-form" class="list-group">
+											  <li class="list-group-item active" th:text="#{gadgettemplates.template.parameters.selected}">These are the parametric components of the template</li>
+									    </ul>
+										</div>																					
+											</div>
+											</div>
+															
 											
 												<!-- Json-->
 												<div class="row">
@@ -275,15 +316,34 @@
 	<link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/>
 	<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>
 	<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
-	
+	<script
+		th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}"
+		type="text/javascript"></script>
+	<script
+		th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}"
+		type="text/javascript"></script>
+		<script th:if="${lang} == 'es'"
+		th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}"
+		type="text/javascript"></script>
 	<script th:inline="javascript">
 	
 		// <![CDATA[
 	 $("#createBtn,#updateBtn").on("click", function() {	
-        $("#gadget_create_form").get(0).submit();
+      //  $("#gadget_create_form").get(0).submit();
      });
-		
+	
 	 $(window).load(function () {GadgetsTemplateCreateController.updatePreview();});
+	 
+	 
+		var gadgetTemplateCreateJson = { 		
+				"parameterTextLabel" : [[#{gadgettemplates.template.parameters.text.label}]],
+				"language" : currentLanguage,
+				"parameterNumberLabel" : [[#{gadgettemplates.template.parameters.number.label}]],	
+				"parameterDsLabel" : [[#{gadgettemplates.template.parameters.ds.label}]],	
+				"parameterSelectLabel" : [[#{gadgettemplates.template.parameters.label.select}]]};
+		
+			
+	 
 	// ]]>
 	
 	
