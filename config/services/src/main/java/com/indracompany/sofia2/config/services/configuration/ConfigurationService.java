@@ -21,7 +21,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Configuration.Environment;
-import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.User;
 
 public interface ConfigurationService {
@@ -34,17 +33,17 @@ public interface ConfigurationService {
 
 	Configuration getConfiguration(String id);
 
-	List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId);
+	List<Configuration> getConfigurations(Configuration.Type configurationTypeId);
 	
-	List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId, User user);
+	List<Configuration> getConfigurations(Configuration.Type configurationTypeId, User user);
 
-	Configuration getConfiguration(ConfigurationType.Type configurationType, String environment, String suffix);
+	Configuration getConfiguration(Configuration.Type configurationType, Environment environment, String suffix);
 
-	TwitterConfiguration getTwitterConfiguration(String environment, String suffix);
+	TwitterConfiguration getTwitterConfiguration(Environment environment, String suffix);
 
 	List<Environment> getEnvironmentValues();
 
-	List<ConfigurationType> getAllConfigurationTypes();
+	List<Configuration.Type> getAllConfigurationTypes();
 
 	void createConfiguration(Configuration configuration);
 

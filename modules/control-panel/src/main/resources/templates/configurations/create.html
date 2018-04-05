@@ -125,8 +125,8 @@
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{configurations.type} + ':'">Configuration Type</label>
-															<select id="configurationTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{configurationType.id}" th:required="true">
-																<option th:each="configurationType :${configurationTypes}" th:value="${configurationType.id}" th:text="${configurationType.description}" ></option>
+															<select id="configurationTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{configurations.type}" th:field="*{type}" th:required="true">
+																<option th:each="configurationType :${configurationTypes}" th:value="${configurationType}" th:text="${configurationType}" ></option>
 																
 															</select>													
 														</div>

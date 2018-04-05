@@ -26,7 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -50,7 +50,7 @@ public class ConfigurationServiceIntegrationTest {
 
 	@Test
 	public void given_OneConfiguration_When_TwitterPropertiesAreRequested_TheCorrectValuesAreObtained() {
-		Configuration config = service.getConfiguration(ConfigurationType.Type.TwitterConfiguration, "ALL", "lmgracia");
+		Configuration config = service.getConfiguration(Configuration.Type.TwitterConfiguration, Configuration.Environment.ALL, "lmgracia");
 		Map<?, ?> values = service.fromYaml(config.getYmlConfig());
 		Map<?, ?> value = (Map<?, ?>) values.get("twitter");
 		Assert.assertEquals(value.get("accessToken"), "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy");
@@ -58,7 +58,7 @@ public class ConfigurationServiceIntegrationTest {
 
 	@Test
 	public void given_OneConfiguration_When_TwitterWholeConfigurationIsRequested_ItIsObtained() {
-		TwitterConfiguration config = service.getTwitterConfiguration("ALL", "lmgracia");
+		TwitterConfiguration config = service.getTwitterConfiguration(Configuration.Environment.ALL, "lmgracia");
 		Assert.assertEquals(config.getAccessToken(), "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy");
 	}
 }

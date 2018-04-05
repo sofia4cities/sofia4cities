@@ -18,7 +18,8 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
+import com.indracompany.sofia2.config.model.Configuration.Environment;
+import com.indracompany.sofia2.config.model.Configuration.Type;
 import com.indracompany.sofia2.config.model.User;
 
 public interface ConfigurationRepository extends JpaRepository<Configuration, String> {
@@ -29,14 +30,14 @@ public interface ConfigurationRepository extends JpaRepository<Configuration, St
 	
 	Configuration findByDescription(String description);
 
-	List<Configuration> findByConfigurationType(ConfigurationType configurationTypeId);
+	List<Configuration> findByType(Type type);
 	
-	List<Configuration> findByConfigurationTypeAndUser(ConfigurationType configurationTypeId, User user);
+	List<Configuration> findByTypeAndUser(Type type, User user);
 
-	Configuration findByConfigurationTypeAndEnvironmentAndSuffix(ConfigurationType configurationType,
-			String environment, String suffix);
+	Configuration findByTypeAndEnvironmentAndSuffix(Type type,
+			Environment environment, String suffix);
 
-	List<Configuration> findByUserAndConfigurationType(User userId, ConfigurationType configurationType);
+	List<Configuration> findByUserAndType(User userId, Type type);
 
 	void deleteById(String id);
 

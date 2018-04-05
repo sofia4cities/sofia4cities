@@ -36,7 +36,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -251,13 +250,13 @@ public class TwitterListeningController {
 	@GetMapping("/configurations/list")
 	public String listConfigurations(Model model) {
 		List<Configuration> configurations = this.configurationService.getConfigurations(
-				ConfigurationType.Type.TwitterConfiguration, this.userService.getUser(this.utils.getUserId()));
+				Configuration.Type.TwitterConfiguration, this.userService.getUser(this.utils.getUserId()));
 		model.addAttribute("configurations", configurations);
 		return "configurations/list";
 	}
 
 	public void populateFormData(Model model) {
-		model.addAttribute("configurationTypes", ConfigurationType.Type.TwitterConfiguration);
+		model.addAttribute("configurationTypes", Configuration.Type.TwitterConfiguration);
 		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
 	}
 }

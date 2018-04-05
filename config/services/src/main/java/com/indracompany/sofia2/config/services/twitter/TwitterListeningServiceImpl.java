@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -80,7 +79,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 
 	@Override
 	public List<Configuration> getAllConfigurations() {
-		return this.configurationService.getConfigurations(ConfigurationType.Type.TwitterConfiguration);
+		return this.configurationService.getConfigurations(Configuration.Type.TwitterConfiguration);
 	}
 
 	@Override

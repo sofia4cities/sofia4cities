@@ -28,10 +28,9 @@ import com.indracompany.sofia2.config.components.AllConfiguration;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Configuration.Environment;
-import com.indracompany.sofia2.config.model.ConfigurationType;
+import com.indracompany.sofia2.config.model.Configuration.Type;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
-import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.config.services.exceptions.ConfigServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 
@@ -42,8 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ConfigurationServiceImpl implements ConfigurationService {
 	@Autowired
 	private ConfigurationRepository configurationRepository;
-	@Autowired
-	private ConfigurationTypeRepository configurationTypeRepository;
+
 	@Autowired
 	private UserService userService;
 
@@ -59,8 +57,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public List<ConfigurationType> getAllConfigurationTypes() {
-		List<ConfigurationType> types = this.configurationTypeRepository.findAll();
+	public List<Type> getAllConfigurationTypes() {
+		List<Type> types = Arrays.asList(Configuration.Type.values());
 		return types;
 
 	}
@@ -76,15 +74,15 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		if (oldConfiguration != null)
 			throw new ConfigServiceException(
 					"You cann´t create a Configuration that exists:" + configuration.toString());
-		oldConfiguration = this.configurationRepository.findByConfigurationTypeAndEnvironmentAndSuffix(
-				configuration.getConfigurationType(), configuration.getEnvironment(), configuration.getSuffix());
+		oldConfiguration = this.configurationRepository.findByTypeAndEnvironmentAndSuffix(
+				configuration.getType(), configuration.getEnvironment(), configuration.getSuffix());
 		if (oldConfiguration != null)
 			throw new ConfigServiceException(
 					"Exist a configuration of this type for the environment and suffix:" + configuration.toString());
 
 		oldConfiguration = new Configuration();
 		oldConfiguration.setUser(configuration.getUser());
-		oldConfiguration.setConfigurationType(configuration.getConfigurationType());
+		oldConfiguration.setType(configuration.getType());
 		oldConfiguration.setYmlConfig(configuration.getYmlConfig());
 		oldConfiguration.setDescription(configuration.getDescription());
 		oldConfiguration.setSuffix(configuration.getSuffix());
@@ -110,10 +108,9 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public TwitterConfiguration getTwitterConfiguration(String environment, String suffix) {
+	public TwitterConfiguration getTwitterConfiguration(Environment environment, String suffix) {
 		try {
-			Configuration config = this.getConfiguration(ConfigurationType.Type.TwitterConfiguration, environment,
-					suffix);
+			Configuration config = this.getConfiguration(Configuration.Type.TwitterConfiguration, environment, suffix);
 			Constructor constructor = new Constructor(AllConfiguration.class);
 			Yaml yaml = new Yaml(constructor);
 			AllConfiguration tConfig = yaml.loadAs(config.getYmlConfig(), AllConfiguration.class);
@@ -151,27 +148,22 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId) {
-		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
-		return this.configurationRepository.findByConfigurationType(confType);
+	public List<Configuration> getConfigurations(Configuration.Type type) {
+		return this.configurationRepository.findByType(type);
 	}
-	
+
 	@Override
-	public List<Configuration> getConfigurations(ConfigurationType.Type configurationTypeId, User user){
-		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
-		return this.configurationRepository.findByConfigurationTypeAndUser(confType,user);
+	public List<Configuration> getConfigurations(Configuration.Type type, User user) {
+		return this.configurationRepository.findByTypeAndUser(type, user);
 	}
+
 	@Override
-	public Configuration getConfiguration(ConfigurationType.Type configurationTypeId, String environment,
-			String suffix) {
-		ConfigurationType confType = this.configurationTypeRepository.findById(configurationTypeId.toString());
-		return this.configurationRepository.findByConfigurationTypeAndEnvironmentAndSuffix(confType, environment,
-				suffix);
+	public Configuration getConfiguration(Configuration.Type type, Environment environment, String suffix) {
+		return this.configurationRepository.findByTypeAndEnvironmentAndSuffix(type, environment, suffix);
 	}
-	
+
 	@Override
-	public Configuration getConfigurationByDescription(String description)
-	{
+	public Configuration getConfigurationByDescription(String description) {
 		return this.configurationRepository.findByDescription(description);
 	}
 
