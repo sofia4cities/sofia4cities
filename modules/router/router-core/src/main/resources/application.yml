@@ -28,8 +28,7 @@ sofia2: #Config Sofia2 specific
       quasar.maxHttpConnectionsPerRoute: 10
       quasar.connectionTimeout.millis: 10000
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
-      digitaltwin:
-         database: digital_twin
+      digitaltwin.database: digital_twin
 #Security Config
 security:
     user:

@@ -99,9 +99,13 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 	@Override
 	public void createDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice, HttpServletRequest httpServletRequest) {
 		try {
-			String type = httpServletRequest.getParameter("typeSelected");
+			String type = httpServletRequest.getParameter("typeSelected").trim();
 			if(type!=null && type!="") {
 				DigitalTwinType digitalTwinType = this.digitalTwinTypeRepo.findByName(type);
+				if(digitalTwinType==null) {
+					log.error("Digital Twin Type : " + type + "doesn't exist.");
+					return;
+				}
 				User user = userService.getUser(digitalTwinDevice.getUser().getUserId());
 				if (user != null) {
 					digitalTwinDevice.setUser(user);
@@ -109,9 +113,11 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 					this.digitalTwinDeviceRepo.save(digitalTwinDevice);
 				} else {
 					log.error("Invalid user");
+					return;
 				}	
 			}else {
 				log.error("Invalid Digital Twin Type.");
+				return;
 			}
 		} catch (Exception e) {
 			throw new DigitalTwinServiceException("Problems creating the digital twin device", e);

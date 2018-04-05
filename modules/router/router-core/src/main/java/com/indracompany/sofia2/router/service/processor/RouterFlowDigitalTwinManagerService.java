@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;
-import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.digitaltwin.RouterDigitalTwinOpsServiceImpl;
 
@@ -43,7 +42,7 @@ public class RouterFlowDigitalTwinManagerService {
 		log.debug("startBrokerFlow: Notification Model arrived");
 
 		ProducerTemplate t = camelContext.createProducerTemplate();
-		NotificationCompositeModel result = (NotificationCompositeModel)t.requestBody(executeDigitalTwinOpsRoute, compositeModel);
+		DigitalTwinCompositeModel result = (DigitalTwinCompositeModel)t.requestBody(executeDigitalTwinOpsRoute, compositeModel);
 		return result.getOperationResultModel();
 		
 	}
@@ -65,6 +64,10 @@ public class RouterFlowDigitalTwinManagerService {
 			if (EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.LOG.name())) {
 				
 				OperationResultModel result =routerDigitalTwinOpsServiceImpl.insertLog(compositeModel);
+				compositeModel.setOperationResultModel(result);
+			}else if (EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.SHADOW.name())) {
+				
+				OperationResultModel result =routerDigitalTwinOpsServiceImpl.updateShadow(compositeModel);
 				compositeModel.setOperationResultModel(result);
 			}
 
