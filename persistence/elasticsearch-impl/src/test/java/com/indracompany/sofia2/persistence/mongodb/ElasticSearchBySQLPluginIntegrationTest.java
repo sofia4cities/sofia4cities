@@ -68,7 +68,8 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	    
 		BulkResponse response2 = insertService.loadBulkFromFileResource(TEST_INDEX_ACCOUNT,"src/test/resources/accounts.json");
 		System.out.println("Loaded Bulk :"+ response2.getItems().length);
-	
+		
+		Thread.sleep(10000);
 	}
 	
 	@After
