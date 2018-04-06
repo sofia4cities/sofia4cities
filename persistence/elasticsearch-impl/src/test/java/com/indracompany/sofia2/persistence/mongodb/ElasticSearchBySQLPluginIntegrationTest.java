@@ -13,8 +13,11 @@
  */
 package com.indracompany.sofia2.persistence.mongodb;
 
-import org.json.JSONArray;
+import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
+import com.indracompany.sofia2.persistence.elasticsearch.api.ESInsertService;
 import com.indracompany.sofia2.persistence.elasticsearch.sql.connector.ElasticSearchSQLDbHttpConnector;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,14 +44,73 @@ import lombok.extern.slf4j.Slf4j;
 // @Ignore
 public class ElasticSearchBySQLPluginIntegrationTest {
 
-	@Autowired
-	ElasticSearchSQLDbHttpConnector connector;
+    public final static String TEST_INDEX_ACCOUNT = "account";
 
+	
+	@Autowired
+	ElasticSearchSQLDbHttpConnector httpConnector;
+	
+	@Autowired
+	ESInsertService insertService;
+
+	@Autowired
+	ESBaseApi connector;
+	
+	@Before
+	public  void doBefore() throws Exception {
+		
+		NodesInfoResponse nodeInfos = connector.getClient().admin().cluster().prepareNodesInfo().get();
+		String clusterName = nodeInfos.getClusterName().value();
+		System.out.println(String.format("Found cluster... cluster name: %s", clusterName));
+		connector.deleteIndex(TEST_INDEX_ACCOUNT);
+		connector.createIndex(TEST_INDEX_ACCOUNT);
+	    System.out.println(prepareAccountsIndex());
+	    
+		BulkResponse response2 = insertService.loadBulkFromFileResource(TEST_INDEX_ACCOUNT,"src/test/resources/accounts.json");
+		System.out.println("Loaded Bulk :"+ response2.getItems().length);
+	
+	}
+	
+	@After
+	public  void tearDown() {
+		System.out.println("teardown process...");
+        deleteTestIndex(TEST_INDEX_ACCOUNT);
+        //connector.getClient().close();
+	}
+	
+	
+	private void deleteTestIndex(String index) {
+		boolean res =  connector.deleteIndex(index);
+		System.out.println("deleteTestIndex :"+res);
+	}
+	
+	private  boolean prepareAccountsIndex() {
+		String dataMapping = "{  \"account\": {" +
+				" \"properties\": {\n" +
+				"          \"gender\": {\n" +
+				"            \"type\": \"text\",\n" +
+				"            \"fielddata\": true\n" +
+				"          }," +
+				"          \"address\": {\n" +
+				"            \"type\": \"text\",\n" +
+				"            \"fielddata\": true\n" +
+				"          }," +
+				"          \"state\": {\n" +
+				"            \"type\": \"text\",\n" +
+				"            \"fielddata\": true\n" +
+				"          }" +
+				"       }"+
+				"   }" +
+				"}";
+		boolean response =  connector.createType(TEST_INDEX_ACCOUNT, "account", dataMapping);
+		return response;
+	}
+	
 	@Test
 	public void given_MongoDbAndQuasar_When_AnSQLQueryIsExecuted_Then_MongoDb_ReturnsTheResult() {
 		try {
-			String query = "select * from shakespeare";
-			String result = connector.queryAsJson(query, 100);
+			String query = "select * from account";
+			String result = httpConnector.queryAsJson(query, 100);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {
@@ -57,8 +121,8 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	@Test
 	public void testQueryAsTable() {
 		try {
-			String query = "select * from shakespeare";
-			String result = connector.queryAsJson(query, 0, 100);
+			String query = "select * from account";
+			String result = httpConnector.queryAsJson(query, 0, 100);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {
@@ -69,8 +133,8 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	@Test
 	public void testQueryAsTableScroll() {
 		try {
-			String query = "select * from shakespeare";
-			String result = connector.queryAsJson(query, 10, 20);
+			String query = "select * from account";
+			String result = httpConnector.queryAsJson(query, 10, 20);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {

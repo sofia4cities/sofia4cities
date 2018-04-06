@@ -58,7 +58,7 @@ public class ElasticSearchBasicApiTest {
 		System.out.println("teardown process...");
         deleteTestIndex(TEST_INDEX_GAME_OF_THRONES);
         deleteTestIndex(TEST_INDEX_ONLINE);
-        connector.getClient().close();
+       // connector.getClient().close();
 	}
 	
 	 private boolean  prepareGameOfThronesIndex() {
