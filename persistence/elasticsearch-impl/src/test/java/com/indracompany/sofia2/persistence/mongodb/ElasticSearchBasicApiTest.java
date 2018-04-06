@@ -14,7 +14,6 @@
 package com.indracompany.sofia2.persistence.mongodb;
 
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
-import org.elasticsearch.action.admin.indices.mapping.put.PutMappingResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.junit.After;
 import org.junit.Assert;
@@ -26,7 +25,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.persistence.elasticsearch.api.ElasticSearchApi;
+import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
+import com.indracompany.sofia2.persistence.elasticsearch.api.ESInsertService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +42,10 @@ public class ElasticSearchBasicApiTest {
 	 public final static String TEST_INDEX_ONLINE = TEST_INDEX + "_online";
 
 	@Autowired
-	ElasticSearchApi connector;
+	ESBaseApi connector;
+	
+	@Autowired
+	ESInsertService insertService;
 	
 	private String createTestIndex(String index) {
 		String res =   connector.createIndex(index);
@@ -58,7 +61,7 @@ public class ElasticSearchBasicApiTest {
         connector.getClient().close();
 	}
 	
-	 private PutMappingResponse  prepareGameOfThronesIndex() {
+	 private boolean  prepareGameOfThronesIndex() {
 	        String dataMapping = "{  \"gotCharacters\": { " +
 	                " \"properties\": {\n" +
 	                " \"nickname\": {\n" +
@@ -85,8 +88,8 @@ public class ElasticSearchBasicApiTest {
 	                "}"+
 	                "} } }";
 	        
-	        PutMappingResponse response =  connector.prepareIndex(TEST_INDEX_GAME_OF_THRONES, "gotCharacters", dataMapping);
-	        System.out.println("prepareGameOfThronesIndex :"+response.isAcknowledged());
+	        boolean response =  connector.createType(TEST_INDEX_GAME_OF_THRONES, "gotCharacters", dataMapping);
+	        System.out.println("prepareGameOfThronesIndex :"+response);
 	        return response;
 	       
 	    }
@@ -104,13 +107,15 @@ public class ElasticSearchBasicApiTest {
 			NodesInfoResponse nodeInfos = connector.getClient().admin().cluster().prepareNodesInfo().get();
 			String clusterName = nodeInfos.getClusterName().value();
 			System.out.println(String.format("Found cluster... cluster name: %s", clusterName));
-			
-			BulkResponse response2 = connector.loadBulkFromFile("src/test/resources/online.json", TEST_INDEX_ONLINE);
+			deleteTestIndex(TEST_INDEX_ONLINE);
+			createTestIndex(TEST_INDEX_ONLINE);
+			BulkResponse response2 = insertService.loadBulkFromFileResource(TEST_INDEX_ONLINE,"src/test/resources/online.json");
 			System.out.println("Loaded Bulk :"+ response2.getItems().length);
 		
+			deleteTestIndex(TEST_INDEX_GAME_OF_THRONES);
 			createTestIndex(TEST_INDEX_GAME_OF_THRONES);
 			prepareGameOfThronesIndex();
-			BulkResponse response = connector.loadBulkFromFile("src/test/resources/game_of_thrones_complex.json", TEST_INDEX_GAME_OF_THRONES);
+			BulkResponse response = insertService.loadBulkFromFileResource(TEST_INDEX_GAME_OF_THRONES,"src/test/resources/game_of_thrones_complex.json");
 		
 			System.out.println("Loaded Bulk :"+ response.getItems().length);
 			
