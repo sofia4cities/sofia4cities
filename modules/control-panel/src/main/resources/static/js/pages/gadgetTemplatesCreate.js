@@ -149,20 +149,18 @@ var GadgetsTemplateCreateController = function() {
 		window.crypto.getRandomValues(ident);
 		
 		switch(id) {
-	    case "label_text":
-	        return '\n<label-s4c  name="parameterName-'+ident+'" type="text">label-text-s4c</label-s4c>';
+	    case "label_text":	    
+	        return '\n<!--label-s4c  name="parameterName-'+ident+'" type="text"-->';
 	        break;
-	    case "label_number":
-	    	return '\n<label-s4c name="parameterName-'+ident+'" type="number">label-number-s4c</label-s4c>';
+	    case "label_number":	    	
+	    	  return '\n<!--label-s4c  name="parameterName-'+ident+'" type="number"-->';
 	        break;
-	    case "label_ds":
-	    	return '\n<label-s4c name="parameterName-'+ident+'" type="ds" >label-ds-s4c</label-s4c>';
+	    case "label_ds":	    	
+	    	  return '\n<!--label-s4c  name="parameterName-'+ident+'" type="ds"-->';
 	        break;	  
-	    case "select_options":
-	    	return `\n<select-s4c name="parameterName-`+ident+`" type="ds" >label-select-s4c\n\t <option-s4c value=""></option-s4c>\n</select-s4c>`;
-	    			
-	    	        
-	        break;
+	    case "select_options":	    	
+	   	  return '\n<!--select-s4c  name="parameterName-'+ident+'" type="ds" options="a,b,c" -->';	    	        
+	      break;
 	    default:
 	        return "";
 	}
@@ -170,76 +168,67 @@ var GadgetsTemplateCreateController = function() {
 	}
 	
 
-	function searchTag(regex,str,end){
+	
+	
+	function searchTag(regex,str){
 		let m;
 		let found=[];
 		while ((m = regex.exec(str)) !== null) {  
 		    if (m.index === regex.lastIndex) {
 		        regex.lastIndex++;
 		    }
-		    m.forEach(function(item, index, arr){
-			if(end){
-				found.push(arr.index+arr[0].length);
-			}else{
-				found.push(arr.index);
-			}
+		    m.forEach(function(item, index, arr){			
+				found.push(arr[0]);			
 			});  
 		}
 		return found;
 	}
-
-
+	
+	function searchTagContentName(regex,str){
+		let m;
+		var content;
+		while ((m = regex.exec(str)) !== null) {  
+		    if (m.index === regex.lastIndex) {
+		        regex.lastIndex++;
+		    }
+		    m.forEach(function(item, index, arr){			
+		    	content = arr[0].match(/"([^"]+)"/)[1];			
+			});  
+		}
+		return content;
+	}
 	
 	function searchProperties(str){
 
-		const regexLabelStart = /<\s*label-s4c/g;
-		const regexLabelEnd = /<\/\s*label-s4c\s*>/g;
+		const regex =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+		const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
 
-		const regexSelectStart = /<\s*select-s4c/g;
-		const regexSelectEnd = /<\/\s*select-s4c\s*>/g;
-
-	
-		let foundLabelStart=[];
-		let foundLabelEnd=[];
-		let foundSelectStart=[];
-		let foundSelectEnd=[];
-
-
-		foundLabelStart = searchTag(regexLabelStart,str,false);
-		foundLabelEnd = searchTag(regexLabelEnd,str,true);
-		foundSelectStart = searchTag(regexSelectStart,str,false);
-		foundSelectEnd = searchTag(regexSelectEnd,str,true);
+		let found=[];
+		found = searchTag(regex,str);		
 
 		$('#parameters-form').empty();
-		$('#parameters-form').append('<li class="list-group-item active">Estos son los componentes paramétricos de la plantilla</li>');
+		$('#parameters-form').append('<li class="list-group-item active">'+gadgetTemplateCreateJson.titleParametersSelected+'</li>');
 
-		for (var i = 0; i < foundLabelStart.length; i++) {			
-			var tag = str.substring(foundLabelStart[i],foundLabelEnd[i]);
-			if(tag.replace(/\s/g, '').search('type="text"')>=0){
-				var elem = $(tag);
-				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+elem[0].getAttribute(["name"])+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterTextLabel+'</label></li>');
-			}else if(tag.replace(/\s/g, '').search('type="number"')>=0){
-				var elem = $(tag);
-				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+elem[0].getAttribute(["name"])+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterNumberLabel+'</label></li>');
-			}else if(tag.replace(/\s/g, '').search('type="ds"')>=0){
-				var elem = $(tag);
-				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+elem[0].getAttribute(["name"])+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterDsLabel+'</label></li>');
+		for (var i = 0; i < found.length; i++) {			
+			var tag = found[i];
+			if(tag.replace(/\s/g, '').search('type="text"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+		
+				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+searchTagContentName(regexName,tag)+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterTextLabel+'</label></li>');
+			}else if(tag.replace(/\s/g, '').search('type="number"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+			
+				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+searchTagContentName(regexName,tag)+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterNumberLabel+'</label></li>');
+			}else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+				
+				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+searchTagContentName(regexName,tag)+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterDsLabel+'</label></li>');
+			}else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){
+			
+				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+searchTagContentName(regexName,tag)+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterSelectLabel+'</label></li>');
 			}
 			
-		} 
-		 
-		for (var i = 0; i < foundSelectStart.length; i++) {
-			var tag = str.substring(foundLabelStart[i],foundLabelEnd[i]);
-			var elem = $(tag);
-			$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+elem[0].getAttribute(["name"])+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterSelectLabel+'</label></li>');
-		} 
-		 
+		} 	 
+	
 		}
 
-
-
-	
-	
 	var updatePreview = function (){
 		var scope = angular.element(document.getElementsByTagName('livehtml')[0]).scope();
 		scope.$$childHead.vm.livecontent=$('#templateCode').val();
