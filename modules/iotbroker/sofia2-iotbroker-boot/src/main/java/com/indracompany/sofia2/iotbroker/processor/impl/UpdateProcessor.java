@@ -34,6 +34,7 @@ import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -83,14 +84,24 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		responseMessage.getBody().setOk(true);
 		final Optional<IoTSession> session = securityPluginManager.getSession(updateMessage.getSessionKey());
 
-		final OperationModel model = new OperationModel();
-		model.setOntologyName(updateMessage.getBody().getOntology());
-		model.setOperationType(OperationType.PUT);
-		model.setQueryType(QueryType.NATIVE);
-		model.setBody(updateMessage.getBody().getQuery());
-		session.ifPresent(s -> model.setUser(s.getUserID()));
-		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
+		String user = null;
+		String clientPlatformId = null;
 
+		if (session.isPresent()) {
+			user = session.get().getUserID();
+			clientPlatformId = session.get().getClientPlatform();
+		}
+				
+		final OperationModel model = OperationModel.builder(
+				updateMessage.getBody().getOntology(), 
+				OperationType.PUT, 
+				user, 
+				Source.IOTBROKER)
+				.clientPlatformId(clientPlatformId)
+				.queryType(QueryType.NATIVE)
+				.body(updateMessage.getBody().getQuery())
+				.build();
+		
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
 
@@ -125,14 +136,24 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		responseMessage.getBody().setOk(true);
 		final Optional<IoTSession> session = securityPluginManager.getSession(updateMessage.getSessionKey());
 
-		final OperationModel model = new OperationModel();
-		model.setObjectId(updateMessage.getBody().getId());
-		model.setOntologyName(updateMessage.getBody().getOntology());
-		model.setOperationType(OperationType.PUT);
-		model.setQueryType(QueryType.NATIVE);
-		model.setBody(updateMessage.getBody().getData().toString());
-		session.ifPresent(s -> model.setUser(s.getUserID()));
-		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
+		String user = null;
+		String clientPlatformId = null;
+
+		if (session.isPresent()) {
+			user = session.get().getUserID();
+			clientPlatformId = session.get().getClientPlatform();
+		}
+		
+		final OperationModel model = OperationModel.builder(
+				updateMessage.getBody().getOntology(), 
+				OperationType.PUT, 
+				user, 
+				Source.IOTBROKER)
+				.objectId(updateMessage.getBody().getId())
+				.queryType(QueryType.NATIVE)
+				.body(updateMessage.getBody().getData().toString())
+				.clientPlatformId(clientPlatformId)
+				.build();
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

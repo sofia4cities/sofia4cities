@@ -16,6 +16,7 @@ package com.indracompany.sofia2.router.service.app.service.crud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.audit.aop.Auditable;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
@@ -45,6 +46,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 
 	@Override
+	@Auditable
 	public OperationResultModel insert(OperationModel operationModel) throws RouterCrudServiceException {
 
 		log.info("Router Crud Service Operation "+operationModel.toString());
@@ -65,8 +67,9 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 		try {
 			ontologyDataService.checkOntologySchemaCompliance(BODY, ontologyName);
+			String bodyWithDataContext = ontologyDataService.addContextData(operationModel);
 			if (METHOD.equalsIgnoreCase("POST") || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, BODY);
+				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, bodyWithDataContext);
 			}
 		} 
 		catch (final Exception e) {
@@ -86,6 +89,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	}
 
 	@Override
+	@Auditable
 	public OperationResultModel update(OperationModel operationModel) {
 
 		log.info("Router Crud Service Operation "+operationModel.toString());
@@ -129,6 +133,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	}
 
 	@Override
+	@Auditable
 	public OperationResultModel delete(OperationModel operationModel) {
 
 		log.info("Router Crud Service Operation "+operationModel.toString());
@@ -170,6 +175,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	}
 
 	@Override
+	@Auditable
 	public OperationResultModel query(OperationModel operationModel) {
 
 		log.info("Router Crud Service Operation "+operationModel.toString());
@@ -246,6 +252,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	
 
 	@Override
+	//@Auditable
 	public OperationResultModel execute(OperationModel operationModel) {
 
 		String METHOD = operationModel.getOperationType().name();

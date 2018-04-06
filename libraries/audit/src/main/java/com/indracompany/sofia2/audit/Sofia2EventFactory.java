@@ -105,7 +105,7 @@ public class Sofia2EventFactory {
 			Object details = SecurityContextHolder.getContext().getAuthentication().getDetails();
 			if (details instanceof OAuth2AuthenticationDetails) {
 				event.setSessionId(((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getTokenValue());
-				event.setRemoteAddress(((WebAuthenticationDetails) details).getRemoteAddress());
+				event.setRemoteAddress(((OAuth2AuthenticationDetails) details).getRemoteAddress());
 			}
 
 			else if (details instanceof WebAuthenticationDetails) {

@@ -17,7 +17,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.boot.CamelConfigurationProperties;
 import org.springframework.beans.factory.BeanFactory;
@@ -51,7 +50,7 @@ public class CamelContextHandler implements BeanFactoryAware {
 	}
 
 	public Map<String, SpringCamelContext> findCamelContexts() {
-		return (Map<String, SpringCamelContext>) applicationContext.getBeansOfType(SpringCamelContext.class);
+		return applicationContext.getBeansOfType(SpringCamelContext.class);
 	}
 
 	public Resource loadCamelContextResource(String resourceLocation) {

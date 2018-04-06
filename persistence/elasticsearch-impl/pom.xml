@@ -14,66 +14,83 @@
 	<packaging>jar</packaging>
 
 	<properties>
-    <license.dir>${project.parent.basedir}</license.dir>
+		<license.dir>${project.parent.basedir}</license.dir>
+		<elasticsearch.version>6.2.3</elasticsearch.version>
 	</properties>
-	
-	<dependencies>		
+
+	<dependencies>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-interfaces</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-	
-	    <dependency>
+
+		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
-        </dependency>
-						
-	
-		
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
-		  <groupId>joda-time</groupId>
-		  <artifactId>joda-time</artifactId>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
 		</dependency>
-	
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- Apache HTTP client dependencies -->
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-        </dependency>
-	  
-	  
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${httpclient.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>${elasticsearch.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>transport</artifactId>
+			<version>${elasticsearch.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>24.1-jre</version>
+		</dependency>
+
+
 	</dependencies>
 
-<!-- 		<plugins> -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.springframework.boot</groupId> -->
-<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<classifier>exec</classifier> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
-<!-- 		</plugins> -->
-<!-- 	</build> -->
+	<!-- <plugins> -->
+	<!-- <plugin> -->
+	<!-- <groupId>org.springframework.boot</groupId> -->
+	<!-- <artifactId>spring-boot-maven-plugin</artifactId> -->
+	<!-- <configuration> -->
+	<!-- <classifier>exec</classifier> -->
+	<!-- </configuration> -->
+	<!-- </plugin> -->
+	<!-- </plugins> -->
+	<!-- </build> -->
 
 
 </project>

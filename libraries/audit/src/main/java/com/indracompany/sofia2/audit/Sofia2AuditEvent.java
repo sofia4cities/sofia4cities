@@ -21,11 +21,10 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 
-
-public class Sofia2AuditEvent implements Serializable{
+public class Sofia2AuditEvent implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public static enum EventType {
 		USER, SECURITY, ERROR, DATA, GENERAL;
 	}
@@ -33,56 +32,63 @@ public class Sofia2AuditEvent implements Serializable{
 	@Getter
 	@Setter
 	private String message;
-	
+
 	@Getter
 	@Setter
 	private String id;
-	
+
 	@Getter
 	@Setter
 	private EventType type;
-	
+
 	@Getter
 	@Setter
 	private Date timeStamp;
-	
-	
+
 	@Getter
 	@Setter
 	private String user;
-	
+
+	@Getter
+	@Setter
+	private String ontology;
+
+	@Getter
+	@Setter
+	private String operationType;
+
 	@Getter
 	@Setter
 	private String module;
-	
+
 	@Getter
 	@Setter
 	private String error;
-	
+
 	@Getter
 	@Setter
 	private String className;
-	
+
 	@Getter
 	@Setter
 	private String methodName;
-	
+
 	@Getter
 	@Setter
 	private String sessionId;
-	
+
 	@Getter
 	@Setter
 	private String remoteAddress;
-	
+
 	@Getter
 	@Setter
 	private String route;
-	
+
 	@Getter
 	@Setter
 	private Map<String, Object> data;
-	
+
 	@Getter
 	@Setter
 	private String otherType;
@@ -90,10 +96,10 @@ public class Sofia2AuditEvent implements Serializable{
 	@Override
 	public String toString() {
 		return "Sofia2AuditEvent [message=" + message + ", id=" + id + ", type=" + type + ", timeStamp=" + timeStamp
-				+ ", user=" + user + ", module=" + module + ", error=" + error + ", className=" + className
-				+ ", methodName=" + methodName + ", sessionId=" + sessionId + ", remoteAddress=" + remoteAddress
-				+ ", route=" + route + ", data=" + data + ", otherType=" + otherType + "]";
+				+ ", user=" + user + ", ontology=" + ontology + ", operationType=" + operationType + ", module="
+				+ module + ", error=" + error + ", className=" + className + ", methodName=" + methodName
+				+ ", sessionId=" + sessionId + ", remoteAddress=" + remoteAddress + ", route=" + route + ", data="
+				+ data + ", otherType=" + otherType + "]";
 	}
-
 
 }

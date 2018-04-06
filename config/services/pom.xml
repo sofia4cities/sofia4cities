@@ -53,7 +53,16 @@
 		    <artifactId>json-schema-validator</artifactId>
 		    <version>2.2.8</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-persistence-interfaces</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-router-services</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 
 
 	</dependencies>

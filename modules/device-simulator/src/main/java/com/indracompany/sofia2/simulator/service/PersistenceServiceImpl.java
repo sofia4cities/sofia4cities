@@ -142,7 +142,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@Scheduled(fixedDelay = 60000)
 	private void disconnectBlackListedDevices() {
-		for(Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
 			String device = iterator.next();
 			this.disconnectDeviceRest(device);
 			iterator.remove();
