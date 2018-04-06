@@ -22,12 +22,9 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -143,7 +140,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@Scheduled(fixedDelay = 60000)
 	private void disconnectBlackListedDevices() {
-		for(Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
 			String device = iterator.next();
 			this.disconnectDeviceRest(device);
 			iterator.remove();

@@ -27,8 +27,6 @@ import org.jeasy.rules.api.Facts;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
 
@@ -46,7 +44,7 @@ public class CheckRequestBodyRule {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 		Object body = data.get(ApiServiceInterface.BODY);
-		if (request != null && body==null)
+		if (request != null && body == null)
 			return true;
 		else
 			return false;
@@ -58,10 +56,9 @@ public class CheckRequestBodyRule {
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
 		String body = request.getReader().lines().collect(Collectors.joining());
-		
+
 		data.put(ApiServiceInterface.BODY, body);
 
 	}
-	
-	
+
 }

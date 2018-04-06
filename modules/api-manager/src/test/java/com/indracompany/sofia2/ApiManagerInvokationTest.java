@@ -14,9 +14,7 @@
  */
 package com.indracompany.sofia2;
 
-
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -38,7 +36,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,107 +46,107 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ApiManagerApplication.class,webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = ApiManagerApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 
 public class ApiManagerInvokationTest {
 
-    @Autowired
-    private WebApplicationContext wac;
-    
-    @Autowired
-    private FilterChainProxy springSecurityFilterChain;
+	@Autowired
+	private WebApplicationContext wac;
 
-    private MockMvc mockMvc;
-    
-    @Autowired
+	@Autowired
+	private FilterChainProxy springSecurityFilterChain;
+
+	private MockMvc mockMvc;
+
+	@Autowired
 	private TestRestTemplate restTemplate;
 
-    private static final String CLIENT_ID = "sofia2_s4c";
-    private static final String CLIENT_SECRET = "sofia2_s4c";
+	private static final String CLIENT_ID = "sofia2_s4c";
+	private static final String CLIENT_SECRET = "sofia2_s4c";
 
-    private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
-    
-    private static String HEALTH_URL = "/server/api/v1/HelsinkiPopulationAPI/getTotalPopulation";
+	private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
+	private static String HEALTH_URL = "/server/api/v1/HelsinkiPopulationAPI/getTotalPopulation";
 
-    @Before
-    public void setup() {
-    	 this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).addFilter(springSecurityFilterChain).build();
-    }
+	@Before
+	public void setup() {
+		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).addFilter(springSecurityFilterChain).build();
+	}
 
-    private String obtainAccessToken(String username, String password) throws Exception {
-        final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "password");
-        params.add("username", username);
-        params.add("password", password);
-        
-        byte[] enconded= Base64.encodeBase64((CLIENT_ID+":"+CLIENT_SECRET).getBytes());
+	private String obtainAccessToken(String username, String password) throws Exception {
+		final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "password");
+		params.add("username", username);
+		params.add("password", password);
 
-        // @formatter:off
+		byte[] enconded = Base64.encodeBase64((CLIENT_ID + ":" + CLIENT_SECRET).getBytes());
 
-        ResultActions result = mockMvc.perform(post("/oauth/token")
-                               .params(params)
-                               .header("Authorization", "Basic " +  new String(enconded))
-                               .accept(CONTENT_TYPE)).andDo(print())
-                               .andExpect(status().isOk())
-                               .andExpect(content().contentType(CONTENT_TYPE));
-        
-        // @formatter:on
+		// @formatter:off
 
-        String resultString = result.andReturn().getResponse().getContentAsString();
+		ResultActions result = mockMvc
+				.perform(post("/oauth/token").params(params).header("Authorization", "Basic " + new String(enconded))
+						.accept(CONTENT_TYPE))
+				.andDo(print()).andExpect(status().isOk()).andExpect(content().contentType(CONTENT_TYPE));
 
-        JacksonJsonParser jsonParser = new JacksonJsonParser();
-        return jsonParser.parseMap(resultString).get("access_token").toString();
-    }
-    
-    @Test
-    public void testApiJWTCall() throws Exception {
-    	final String accessToken = obtainAccessToken("administrator", "changeIt!");
-    	System.out.println("token:" + accessToken);
-  
-    	HttpHeaders headers = new HttpHeaders();
-    	headers.add("Authorization", "Bearer " + accessToken);
-    	headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-    	headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
-    	
-    	ResponseEntity<String> health = restTemplate.exchange(HEALTH_URL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-    	
-    	System.out.println(health.getBody());
-    	
-    	assertTrue(health.getStatusCode().is2xxSuccessful());
-       
-    }
-    
-    @Test
-    public void testApiSofia2TokenCall() throws Exception {
-    	
-    	HttpHeaders headers = new HttpHeaders();
-    	headers.add("X-SOFIA2-APIKey", "acbca01b-da32-469e-945d-05bb6cd1552e");
-    	headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-    	headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
-    	
-    	ResponseEntity<String> health = restTemplate.exchange(HEALTH_URL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-    	
-    	System.out.println(health.getBody());
-    	
-    	assertTrue(health.getStatusCode().is2xxSuccessful());
-       
-    }
+		// @formatter:on
 
-    @Test
-    public void givenNoToken_whenGetSecureRequest_thenUnauthorized() throws Exception {
-    	HttpHeaders headers = new HttpHeaders();
-    	headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
-    	headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
-    	
-    	ResponseEntity<String> health = restTemplate.exchange(HEALTH_URL, HttpMethod.GET, new HttpEntity<>(headers), String.class);
-    	
-    	System.out.println(health.getBody());
-    	    	
-    	String expectedOutput="[\"STOPPED EXECUTION BY GENERAL\",\"User not Found by Token :\"]";
-    	
-    	assertTrue(expectedOutput.equals(health.getBody()));
-       
-    }
+		String resultString = result.andReturn().getResponse().getContentAsString();
+
+		JacksonJsonParser jsonParser = new JacksonJsonParser();
+		return jsonParser.parseMap(resultString).get("access_token").toString();
+	}
+
+	@Test
+	public void testApiJWTCall() throws Exception {
+		final String accessToken = obtainAccessToken("administrator", "changeIt!");
+		System.out.println("token:" + accessToken);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", "Bearer " + accessToken);
+		headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+		headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+
+		ResponseEntity<String> health = restTemplate.exchange(HEALTH_URL, HttpMethod.GET, new HttpEntity<>(headers),
+				String.class);
+
+		System.out.println(health.getBody());
+
+		assertTrue(health.getStatusCode().is2xxSuccessful());
+
+	}
+
+	@Test
+	public void testApiSofia2TokenCall() throws Exception {
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("X-SOFIA2-APIKey", "acbca01b-da32-469e-945d-05bb6cd1552e");
+		headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+		headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+
+		ResponseEntity<String> health = restTemplate.exchange(HEALTH_URL, HttpMethod.GET, new HttpEntity<>(headers),
+				String.class);
+
+		System.out.println(health.getBody());
+
+		assertTrue(health.getStatusCode().is2xxSuccessful());
+
+	}
+
+	@Test
+	public void givenNoToken_whenGetSecureRequest_thenUnauthorized() throws Exception {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+		headers.add(HttpHeaders.ACCEPT_CHARSET, StandardCharsets.UTF_8.name());
+
+		ResponseEntity<String> health = restTemplate.exchange(HEALTH_URL, HttpMethod.GET, new HttpEntity<>(headers),
+				String.class);
+
+		System.out.println(health.getBody());
+
+		String expectedOutput = "[\"STOPPED EXECUTION BY GENERAL\",\"User not Found by Token :\"]";
+
+		assertTrue(expectedOutput.equals(health.getBody()));
+
+	}
 
 }

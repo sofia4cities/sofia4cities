@@ -244,20 +244,26 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		DecodedAuthentication decodedAuth = decodeAuth(authentication);
 		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
-		OperationModel operationModel = new OperationModel();
-		operationModel.setUser(sofia2User.getUserId());
-		operationModel.setOntologyName(ontologyIdentificator);
-		operationModel.setOperationType(OperationType.QUERY);
+		QueryType type;
+
 		if ("sql".equals(queryType.toLowerCase())) {
-			operationModel.setQueryType(QueryType.SQLLIKE);
+			type = QueryType.SQLLIKE;
 		} else if ("native".equals(queryType)) {
-			operationModel.setQueryType(QueryType.NATIVE);
+			type = QueryType.NATIVE;
 		} else {
 			log.error("Invalid value {} for queryType. Possible values are: SQL, NATIVE.", queryType);
 			throw new IllegalArgumentException(
 					"Invalid value " + queryType + " for queryType. Possible values are: SQL, NATIVE.");
 		}
-		operationModel.setBody(query);
+		
+		OperationModel operationModel = OperationModel.builder(
+				ontologyIdentificator,
+				OperationType.QUERY,
+				sofia2User.getUserId(),
+				OperationModel.Source.FLOWENGINE)
+				.body(query)
+				.queryType(type)
+				.build();
 
 		OperationResultModel result = null;
 		try {
@@ -310,11 +316,13 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		DecodedAuthentication decodedAuth = decodeAuth(authentication);
 		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
 
-		OperationModel operationModel = new OperationModel();
-		operationModel.setUser(sofia2User.getUserId());
-		operationModel.setBody(data);
-		operationModel.setOntologyName(ontology);
-		operationModel.setOperationType(OperationType.INSERT);
+		OperationModel operationModel = OperationModel.builder(
+				ontology,
+				OperationType.INSERT,
+				sofia2User.getUserId(),
+				OperationModel.Source.FLOWENGINE)
+				.body(data)
+				.build();
 
 		OperationResultModel result = null;
 

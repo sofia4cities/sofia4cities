@@ -17,7 +17,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -40,7 +39,7 @@ import lombok.Setter;
 @Table(name = "DEVICE_SIMULATION")
 @Configurable
 public class DeviceSimulation extends AuditableEntityWithUUID {
-	
+
 	public static enum Type {
 		FIXED_INTEGER, FIXED_NUMBER, FIXED_STRING, FIXED_DATE, RANDOM_INTEGER, RANDOM_NUMBER, RANDOM_STRING, RANDOM_DATE, COSINE_NUMBER, SINE_NUMBER, NULL
 	}
@@ -50,7 +49,7 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@NotNull
 	@Setter
 	private String identification;
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
@@ -58,7 +57,7 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private User user;
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "ONTOLOGY_ID", referencedColumnName = "ID")
@@ -66,7 +65,7 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private Ontology ontology;
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID")
@@ -74,7 +73,7 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private ClientPlatform clientPlatform;
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "TOKEN_ID", referencedColumnName = "ID")
@@ -82,8 +81,7 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private Token token;
-	
-	
+
 	@Column(name = "JSON")
 	@NotNull
 	@Lob
@@ -108,21 +106,21 @@ public class DeviceSimulation extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String cron;
-	
-	@Column(name= "INTERVAL_SECONDS")
+
+	@Column(name = "INTERVAL_SECONDS")
 	@Getter
 	@Setter
 	private int interval;
-	
+
 	@Column(name = "ACTIVE")
 	@Getter
 	@Setter
 	@NotNull
 	private boolean active;
-	
+
 	@Column(name = "JOB_NAME")
 	@Getter
 	@Setter
 	private String jobName;
-	
+
 }
