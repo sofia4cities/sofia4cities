@@ -170,7 +170,7 @@ public class RouterFlowManagerService {
 					OperationType.QUERY, 
 					model.getUser(), 
 					Source.INTERNAL_ROUTER)
-					.body(appendOIDForSQL(model.getQuery(),compositeModel.getNotificationModel().getOperationModel().getObjectId()))
+					.body(appendOIDForSQL(model.getQuery(),compositeModel.getOperationResultModel().getResult()))
 					.queryType(QueryType.valueOf(model.getQueryType().name()))
 					.build();
 
