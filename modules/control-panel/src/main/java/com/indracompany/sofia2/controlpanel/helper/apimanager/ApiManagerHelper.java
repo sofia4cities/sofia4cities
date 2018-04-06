@@ -86,7 +86,6 @@ public class ApiManagerHelper {
 	@Autowired
 	AppWebUtils utils;
 
-	private static String apiManagerBaseUrl="api-manager.base.url";
 	
 	
 	@Value("${apimanager.services.api:/api-manager/services}")

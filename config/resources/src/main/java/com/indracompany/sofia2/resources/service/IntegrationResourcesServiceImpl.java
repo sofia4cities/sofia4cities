@@ -32,7 +32,7 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 	private Environment environment;
 
 	private Urls urls;
-	// private static String INTEGRATION_PREFIX = "sofia2.module.integration.";
+
 
 	public enum ServiceUrl {
 		base, advice, management, router, hawtio, swaggerUI, api, swaggerUIManagement, swaggerJson

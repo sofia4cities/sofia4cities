@@ -42,7 +42,6 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
-import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.router.service.app.service.RouterSuscriptionService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -69,6 +68,7 @@ public class SubscribeProcessor implements MessageTypeProcessor {
 	@Override
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) {
 
+		@SuppressWarnings("unchecked")
 		final SSAPMessage<SSAPBodySubscribeMessage> subscribeMessage = (SSAPMessage<SSAPBodySubscribeMessage>) message;
 		SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
 		final String subsId = UUID.randomUUID().toString();
@@ -142,6 +142,7 @@ public class SubscribeProcessor implements MessageTypeProcessor {
 	@Override
 	public boolean validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws OntologySchemaException, BaseException, Exception {
+		@SuppressWarnings("unchecked")
 		final SSAPMessage<SSAPBodySubscribeMessage> subscribeMessage = (SSAPMessage<SSAPBodySubscribeMessage>) message;
 
 		if (StringUtils.isEmpty(subscribeMessage.getBody().getQuery())) {
@@ -166,7 +167,7 @@ public class SubscribeProcessor implements MessageTypeProcessor {
 	}
 
 	
-	@Scheduled(fixedDelay = 3000000)
+	@Scheduled(fixedDelay = 300000)
 	@Transactional
 	private void deleteOldSubscriptions() {
 		List<SuscriptionNotificationsModel> subscriptions = this.repository.findAll();
