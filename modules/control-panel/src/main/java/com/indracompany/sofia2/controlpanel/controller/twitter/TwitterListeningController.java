@@ -257,6 +257,6 @@ public class TwitterListeningController {
 
 	public void populateFormData(Model model) {
 		model.addAttribute("configurationTypes", Configuration.Type.TwitterConfiguration);
-		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
+//		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
 	}
 }

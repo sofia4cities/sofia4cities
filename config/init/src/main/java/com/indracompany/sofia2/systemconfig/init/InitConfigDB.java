@@ -25,7 +25,6 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.IOUtils;
-import org.hibernate.annotations.GeneratorType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -219,14 +218,14 @@ public class InitConfigDB {
 			config = new Configuration();
 			config.setType(Configuration.Type.TwitterConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.ALL);
+			config.setEnvironment("dev");
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
 			config = new Configuration();
 			config.setType(Configuration.Type.TwitterConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.ALL);
+			config.setEnvironment("default");
 			config.setSuffix("lmgracia");
 			config.setDescription("Twitter");
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
@@ -236,15 +235,26 @@ public class InitConfigDB {
 			config = new Configuration();
 			config.setType(Configuration.Type.EndpointModulesConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.DEV);
-			config.setYmlConfig(loadFromResources("EndpointModulesConfiguration.yml"));
+			config.setEnvironment("default");
+			config.setDescription("Endpoints default profile");
+			config.setYmlConfig(loadFromResources("EndpointModulesConfigurationDefault.yml"));
+			this.configurationRepository.save(config);
+			//
+			//
+
+			config = new Configuration();
+			config.setType(Configuration.Type.EndpointModulesConfiguration);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment("docker");
+			config.setDescription("Endpoints docker profile");
+			config.setYmlConfig(loadFromResources("EndpointModulesConfigurationDocker.yml"));
 			this.configurationRepository.save(config);
 			//
 
 			config = new Configuration();
 			config.setType(Configuration.Type.MailConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.ALL);
+			config.setEnvironment("default");
 			config.setYmlConfig(loadFromResources("MailConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
@@ -252,7 +262,7 @@ public class InitConfigDB {
 			config = new Configuration();
 			config.setType(Configuration.Type.RTDBConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.LOCAL);
+			config.setEnvironment("default");
 			config.setYmlConfig(loadFromResources("RTDBConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
@@ -260,7 +270,7 @@ public class InitConfigDB {
 			config = new Configuration();
 			config.setType(Configuration.Type.MonitoringConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironment(Configuration.Environment.LOCAL);
+			config.setEnvironment("default");
 			config.setYmlConfig(loadFromResources("MonitoringConfiguration.yml"));
 			this.configurationRepository.save(config);
 

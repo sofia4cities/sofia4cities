@@ -25,9 +25,10 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 import com.indracompany.sofia2.config.components.AllConfiguration;
+import com.indracompany.sofia2.config.components.ModulesUrls;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
+import com.indracompany.sofia2.config.components.Urls;
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.Configuration.Environment;
 import com.indracompany.sofia2.config.model.Configuration.Type;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
@@ -108,7 +109,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public TwitterConfiguration getTwitterConfiguration(Environment environment, String suffix) {
+	public TwitterConfiguration getTwitterConfiguration(String environment, String suffix) {
 		try {
 			Configuration config = this.getConfiguration(Configuration.Type.TwitterConfiguration, environment, suffix);
 			Constructor constructor = new Constructor(AllConfiguration.class);
@@ -158,7 +159,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public Configuration getConfiguration(Configuration.Type type, Environment environment, String suffix) {
+	public Configuration getConfiguration(Configuration.Type type, String environment, String suffix) {
 		return this.configurationRepository.findByTypeAndEnvironmentAndSuffix(type, environment, suffix);
 	}
 
@@ -168,8 +169,18 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
-	public List<Environment> getEnvironmentValues() {
-		return Arrays.asList(Configuration.Environment.values());
+	public Urls getEndpointsUrls(String environment) {
+		Configuration config = this.configurationRepository.findByTypeAndEnvironment(Configuration.Type.EndpointModulesConfiguration, environment);
+		Constructor constructor = new Constructor(ModulesUrls.class);
+		Yaml yamlUrls = new Yaml(constructor);
+		return (Urls) yamlUrls.loadAs(config.getYmlConfig(), ModulesUrls.class).getSofia2().get("urls");
+		
+	}
+
+	@Override
+	public ModulesUrls getModulesUrls(String environment, User user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

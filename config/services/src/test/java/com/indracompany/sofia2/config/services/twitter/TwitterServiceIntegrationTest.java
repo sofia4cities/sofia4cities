@@ -66,7 +66,7 @@ public class TwitterServiceIntegrationTest {
 			twitterListening = new TwitterListening();
 			twitterListening.setId("1");
 			twitterListening.setConfiguration(
-					configurationService.getConfiguration(Configuration.Type.TwitterConfiguration, Configuration.Environment.ALL, null));
+					configurationService.getConfiguration(Configuration.Type.TwitterConfiguration, "ALL", null));
 
 			User user = userService.getUser("administrator");
 			if (this.ontologyService.getOntologyByIdentification("OntologyTwitter", user.getUserId()) == null) {

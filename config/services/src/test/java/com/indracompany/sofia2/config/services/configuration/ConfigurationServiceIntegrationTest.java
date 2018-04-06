@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.config.services.configuration;
 
+import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Assert;
@@ -25,8 +26,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
+import com.indracompany.sofia2.config.components.Urls;
 import com.indracompany.sofia2.config.model.Configuration;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -50,7 +51,7 @@ public class ConfigurationServiceIntegrationTest {
 
 	@Test
 	public void given_OneConfiguration_When_TwitterPropertiesAreRequested_TheCorrectValuesAreObtained() {
-		Configuration config = service.getConfiguration(Configuration.Type.TwitterConfiguration, Configuration.Environment.ALL, "lmgracia");
+		Configuration config = service.getConfiguration(Configuration.Type.TwitterConfiguration, "ALL", "lmgracia");
 		Map<?, ?> values = service.fromYaml(config.getYmlConfig());
 		Map<?, ?> value = (Map<?, ?>) values.get("twitter");
 		Assert.assertEquals(value.get("accessToken"), "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy");
@@ -58,7 +59,13 @@ public class ConfigurationServiceIntegrationTest {
 
 	@Test
 	public void given_OneConfiguration_When_TwitterWholeConfigurationIsRequested_ItIsObtained() {
-		TwitterConfiguration config = service.getTwitterConfiguration(Configuration.Environment.ALL, "lmgracia");
+		TwitterConfiguration config = service.getTwitterConfiguration("ALL", "lmgracia");
 		Assert.assertEquals(config.getAccessToken(), "74682827-D6cX2uurqpxy6yWlg6wioRl49f9Rtt2pEXUu6YNUy");
+	}
+
+	@Test
+	public void endpointsConfiguration_fromYaml() throws IOException {
+		Urls urls = this.service.getEndpointsUrls("default");
+		Assert.assertTrue(urls.getIotbroker().getBase().contains("iotbroker"));
 	}
 }

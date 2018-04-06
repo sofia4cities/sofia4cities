@@ -37,10 +37,6 @@ import lombok.Setter;
 @Configurable
 public class Configuration extends AuditableEntityWithUUID {
 
-	public static enum Environment {
-		ALL, LOCAL, DEV, PRE, PRO, OTHER, DEFAULT
-	}
-
 	public static enum Type {
 		EndpointModulesConfiguration, TwitterConfiguration, MailConfiguration, RTDBConfiguration, MonitoringConfiguration, SchedulingConfiguration
 	}
@@ -62,8 +58,7 @@ public class Configuration extends AuditableEntityWithUUID {
 	@Column(name = "ENVIRONMENT", length = 50)
 	@Getter
 	@Setter
-	@Enumerated(EnumType.STRING)
-	private Environment environment;
+	private String environment;
 
 	@Column(name = "TYPE", length = 50)
 	@Getter

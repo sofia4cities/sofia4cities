@@ -18,9 +18,10 @@ import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import com.indracompany.sofia2.config.components.ModulesUrls;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
+import com.indracompany.sofia2.config.components.Urls;
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.Configuration.Environment;
 import com.indracompany.sofia2.config.model.User;
 
 public interface ConfigurationService {
@@ -37,11 +38,11 @@ public interface ConfigurationService {
 	
 	List<Configuration> getConfigurations(Configuration.Type configurationTypeId, User user);
 
-	Configuration getConfiguration(Configuration.Type configurationType, Environment environment, String suffix);
+	Configuration getConfiguration(Configuration.Type configurationType, String environment, String suffix);
 
-	TwitterConfiguration getTwitterConfiguration(Environment environment, String suffix);
+	TwitterConfiguration getTwitterConfiguration(String environment, String suffix);
 
-	List<Environment> getEnvironmentValues();
+//	List<String> getEnvironmentValues();
 
 	List<Configuration.Type> getAllConfigurationTypes();
 
@@ -56,6 +57,12 @@ public interface ConfigurationService {
 	Map fromYaml(final String yaml);
 	
 	Configuration getConfigurationByDescription(String descrption);
+	
+	Urls getEndpointsUrls(String environment);
+	
+	ModulesUrls getModulesUrls(String environment, User user);
+	
+	
 
 
 }
