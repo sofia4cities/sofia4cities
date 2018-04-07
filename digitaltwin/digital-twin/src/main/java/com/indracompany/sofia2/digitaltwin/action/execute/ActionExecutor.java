@@ -44,7 +44,7 @@ public class ActionExecutor {
 			engine.eval(new FileReader(classLoader.getResource("static/js/logic.js").getFile()));
 			
 			invocable.invokeFunction("onAction"+name.substring(0, 1).toUpperCase() + name.substring(1), 
-					digitalTwinStatus.toProperties());
+					digitalTwinStatus.toMap());
 		}catch(ScriptException e1) {
 			log.error("Execution logic for action " + name + " failed", e1);
 		}catch(NoSuchMethodException e2) {

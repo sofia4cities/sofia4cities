@@ -29,6 +29,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.digitaltwin.action.execute.ActionExecutor;
+import com.indracompany.sofia2.digitaltwin.event.manager.EventManager;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,10 @@ public class TransactionManager {
 	private ActionExecutor actionExecutor;
 	
 	@Autowired
-	  private ApplicationContext applicationContext;
+	private ApplicationContext applicationContext;
+	
+	@Autowired
+	private EventManager eventManager;
 	
 	private ConcurrentHashMap<String, Transaction> map;
 	private ExecutorService executor;
@@ -80,7 +84,7 @@ public class TransactionManager {
 		}
 	}
 	
-	public void executeSetproperty(String idTransaction, String action) {
+	public void completeTransaction(String idTransaction, String action) {
 		Transaction transaction = map.get(idTransaction);
 		if(transaction!=null) {
 			Properties properties = transaction.getProperties();
@@ -95,6 +99,9 @@ public class TransactionManager {
 							String name = (String) e.nextElement();
 							digitalTwinStatus.setProperty(name, properties.getProperty(name));
 						}
+						
+						eventManager.updateShadow(digitalTwinStatus.toMap());
+						
 						map.remove(idTransaction);
 						//Execute action
 						actionExecutor.executeAction(action);

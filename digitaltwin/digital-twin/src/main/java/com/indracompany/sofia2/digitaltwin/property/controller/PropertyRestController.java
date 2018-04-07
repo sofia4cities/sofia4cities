@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.indracompany.sofia2.digitaltwin.event.manager.EventManager;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
 import com.indracompany.sofia2.digitaltwin.transaction.TransactionManager;
 
@@ -42,6 +43,9 @@ public class PropertyRestController {
 	
 	@Autowired
 	private TransactionManager transactionManager;
+	
+	@Autowired
+	private EventManager eventManager;
 	
 	@RequestMapping(value = "/{propertyName}", method = RequestMethod.GET)
 	public Response getProperty(@PathVariable("propertyName") String propertyName) {
@@ -67,6 +71,7 @@ public class PropertyRestController {
 					transactionManager.setProperty(propertyName, property, idTransaction);
 				}else {
 					digitalTwinStatus.setProperty(propertyName, propJSON.get(propertyName));
+					eventManager.updateShadow(digitalTwinStatus.toMap());
 				}
 			} catch (JSONException e) {
 				log.error("Invalid JSON property: "+ property, e);

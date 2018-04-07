@@ -72,7 +72,7 @@ public class RouterFlowDigitalTwinManagerService {
 			}
 
 		} catch (Exception e) {
-			log.debug("executeDigitalTwinOperations: Exception "+e.getMessage());
+			log.error("executeDigitalTwinOperations: Exception "+e.getMessage(), e);
 		}
 		
 		exchange.getIn().setBody(compositeModel);

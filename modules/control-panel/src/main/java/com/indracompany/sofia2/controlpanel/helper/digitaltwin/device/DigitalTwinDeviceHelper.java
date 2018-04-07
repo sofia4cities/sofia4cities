@@ -76,7 +76,7 @@ public class DigitalTwinDeviceHelper {
 		cfg = new Configuration();
 		try {
 			ClassLoader classLoader = getClass().getClassLoader();
-			TemplateLoader templateLoader = new FileTemplateLoader(new File(classLoader.getResource("templates").getFile()));
+			TemplateLoader templateLoader = new FileTemplateLoader(new File(classLoader.getResource("digitaltwin/templates").getFile()));
 			cfg.setTemplateLoader(templateLoader);
 			digitalTwinStatusTemplate = cfg.getTemplate("DigitalTwinStatusTemplate.ftl");
 			pomTemplate = cfg.getTemplate("pomTemplate.ftl");
@@ -91,6 +91,7 @@ public class DigitalTwinDeviceHelper {
 		File zipFile = null;
 		
 		List<PropertiesDTO> properties = new ArrayList<PropertiesDTO>();
+		List<PropertiesDTO> statusProperties=new ArrayList<PropertiesDTO>();
 		List<String> inits = new ArrayList<String>();
 		List<PropertiesDTO> cls = new ArrayList<PropertiesDTO>();
 		
@@ -113,13 +114,15 @@ public class DigitalTwinDeviceHelper {
 		}
 		
 		for(PropertyDigitalTwinType prop : propsDigitalTwin) {
-			properties.add(new PropertiesDTO(prop.getName(), prop.getType().substring(0, 1).toUpperCase() + prop.getType().substring(1)));
+			properties.add(new PropertiesDTO(prop.getName(), GeneratorJavaTypesMapper.mapPropertyName(prop.getType())));
+			statusProperties.add(new PropertiesDTO(prop.getName(), GeneratorJavaTypesMapper.mapPropertyName(prop.getType())));
 			properties.add(new PropertiesDTO("operation"+prop.getName().substring(0, 1).toUpperCase() + prop.getName().substring(1), "OperationType"));
 			inits.add("setOperation" + prop.getName().substring(0, 1).toUpperCase() + prop.getName().substring(1) + "(OperationType."+ prop.getDirection().toUpperCase() +");");
-			cls.add(new PropertiesDTO(prop.getName(), prop.getType().substring(0, 1).toUpperCase() + prop.getType().substring(1)));
+			cls.add(new PropertiesDTO(prop.getName(), GeneratorJavaTypesMapper.mapPropertyName(prop.getType())));
 		}
 		
 		dataMap.put("properties", properties);
+		dataMap.put("statusProperties", statusProperties);
 		dataMap.put("inits", inits);
 		dataMap.put("package", "digitaltwin.device.status;");
 		dataMap.put("mapClass", cls);

@@ -14,7 +14,7 @@
  */
 package com.indracompany.sofia2.digitaltwin.status;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -29,5 +29,5 @@ public interface IDigitalTwinStatus {
 	
 	void setProperty(String property, Object value) throws Exception;
 	
-	Properties toProperties();
+	Map<String, Object> toMap();
 }

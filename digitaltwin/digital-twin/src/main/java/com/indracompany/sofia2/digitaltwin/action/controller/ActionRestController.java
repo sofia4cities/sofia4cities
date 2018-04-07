@@ -47,11 +47,11 @@ public class ActionRestController {
 			String idTransaction = request.getHeader("Transaction-Id");
 			String actionName = actionJSON.getString("name");
 			
-			if(idTransaction!=null && idTransaction!="") {
+			if(idTransaction!=null && idTransaction!="") {//Action Finish transaction
 				//First executing set properties
-				transactionManager.executeSetproperty(idTransaction, actionName);
+				transactionManager.completeTransaction(idTransaction, actionName);
 				
-			}else {
+			}else {//Action without transactcion, executes it inmediately
 				actionExecutor.executeAction(actionName);
 			}
 			

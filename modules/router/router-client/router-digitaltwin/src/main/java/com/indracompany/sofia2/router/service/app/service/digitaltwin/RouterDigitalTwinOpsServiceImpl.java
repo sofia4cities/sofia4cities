@@ -13,6 +13,14 @@
  */
 package com.indracompany.sofia2.router.service.app.service.digitaltwin;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+
+import org.hibernate.mapping.Map;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,9 +31,10 @@ import com.indracompany.sofia2.router.service.app.model.DigitalTwinCompositeMode
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterDigitalTwinService;
-import com.indracompany.sofia2.router.service.app.service.digitaltwin.dto.LogDTO;
-import com.indracompany.sofia2.router.service.app.service.digitaltwin.dto.ShadowDTO;
 
+
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -35,7 +44,10 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 	final static String LOG_COLLECTION = "TwinLogs";
 	final static String PROPERTIES_COLLECTION = "TwinProperties";
 	
-	private ObjectMapper mapper = new ObjectMapper();
+//	private ObjectMapper mapper = new ObjectMapper();
+	
+	DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	
 	
 	@Autowired
 	private MongoBasicOpsDBRepository mongoRepo;
@@ -44,15 +56,22 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 	public OperationResultModel insertLog(DigitalTwinCompositeModel compositeModel) {
 		log.info("Router Digital Twin Service Operation "+compositeModel.getDigitalTwinModel().toString());
 		OperationResultModel result = new OperationResultModel();
-		LogDTO logInstance = new LogDTO();
 		DigitalTwinModel model = compositeModel.getDigitalTwinModel();
 		
 		final String EVENT = model.getEvent().name();
 		
-		logInstance.setTrace(model.getLog());
-		logInstance.setDeviceId(model.getId());
-		logInstance.setType(model.getType());
-		logInstance.setTimestamp(compositeModel.getTimestamp());
+		
+		JSONObject instance = new JSONObject();
+	
+		JSONObject timestamp=new JSONObject();
+		timestamp.put("$date", LocalDateTime.now().format(timestampFormatter));
+		
+		
+		instance.put("trace", model.getLog());
+		instance.put("deviceId", model.getId());
+		instance.put("type", model.getType());
+		instance.put("timestamp", timestamp);
+		
 		
 		String OUTPUT="";
 		result.setMessage("OK");
@@ -60,7 +79,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 
 		try {
 			
-			OUTPUT = mongoRepo.insert(LOG_COLLECTION, mapper.writeValueAsString(logInstance));
+			OUTPUT = mongoRepo.insert(LOG_COLLECTION, instance.toString());
 			
 		} catch (final Exception e) {
 			result.setResult(OUTPUT);
@@ -77,24 +96,27 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 	public OperationResultModel updateShadow(DigitalTwinCompositeModel compositeModel) {
 		log.info("Router Digital Twin Service Operation "+compositeModel.getDigitalTwinModel().toString());
 		OperationResultModel result = new OperationResultModel();
-		ShadowDTO shadowInstance = new ShadowDTO();
+
 		DigitalTwinModel model = compositeModel.getDigitalTwinModel();
 		
 		final String EVENT = model.getEvent().name();
 		
-		JSONObject status = new JSONObject(model.getStatus());
-		shadowInstance.setStatus(status.toString());
-		shadowInstance.setDaviceId(model.getId());
-		shadowInstance.setType(model.getType());
-		shadowInstance.setTimestamp(compositeModel.getTimestamp());
+		JSONObject timestamp=new JSONObject();
+		timestamp.put("$date", LocalDateTime.now().format(timestampFormatter));
 		
+		JSONObject instance = new JSONObject();
+		instance.put("deviceId", model.getId());
+		instance.put("type", model.getType());
+		instance.put("timestamp", timestamp);
+		instance.put("status", new JSONObject(model.getStatus()));
+
 		String OUTPUT="";
 		result.setMessage("OK");
 		result.setStatus(true);
 
 		try {
 			
-			OUTPUT = mongoRepo.insert(PROPERTIES_COLLECTION + model.getType().substring(0,1).toUpperCase() + model.getType().substring(1), mapper.writeValueAsString(shadowInstance));
+			OUTPUT = mongoRepo.insert(PROPERTIES_COLLECTION + model.getType().substring(0,1).toUpperCase() + model.getType().substring(1), instance.toString() /*mapper.writeValueAsString(shadowInstance)*/);
 			
 		} catch (final Exception e) {
 			result.setResult(OUTPUT);

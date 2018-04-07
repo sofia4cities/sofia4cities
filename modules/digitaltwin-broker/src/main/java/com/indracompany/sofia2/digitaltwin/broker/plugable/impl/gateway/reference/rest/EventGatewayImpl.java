@@ -59,17 +59,22 @@ public class EventGatewayImpl implements EventGateway {
 		
 		//Validation apikey
 		if(data.get("id")==null || data.get("endpoint")==null) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("id and endpoint are required", HttpStatus.BAD_REQUEST);
 		}
-		DigitalTwinDevice device = deviceRepo.findById(data.get("id").asText());
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
+	
+		if(null==device) {
+			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+		
 		if(apiKey.equals(device.getApiKey())) {
 			//Set endpoint
 			device.setUrl(data.get("endpoint").asText());
 			deviceRepo.save(device);
 		}else {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
-		return new ResponseEntity<>(null, HttpStatus.OK);
+		return new ResponseEntity<>("Device Registered", HttpStatus.OK);
 	}
 	
 	@Override
@@ -79,18 +84,23 @@ public class EventGatewayImpl implements EventGateway {
 		
 		//Validation apikey
 		if(data.get("id")==null) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
 		}
 		
-		DigitalTwinDevice device = deviceRepo.findById(data.get("id").asText());
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
+		
+		if(null==device) {
+			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+		
 		if(apiKey.equals(device.getApiKey())) {
 			//Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
 		}else {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
-		return new ResponseEntity<>(null, HttpStatus.OK);
+		return new ResponseEntity<>("Ping Successful", HttpStatus.OK);
 	}
 	
 	@Override
@@ -99,14 +109,19 @@ public class EventGatewayImpl implements EventGateway {
 			@RequestBody JsonNode data){
 		
 		if(data.get("id")==null || data.get("log")==null) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("id and log are required", HttpStatus.BAD_REQUEST);
 		}
 
 		DigitalTwinModel model = new DigitalTwinModel();
 		DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
 		
 		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findById(data.get("id").asText());
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
+		
+		if(null==device) {
+			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+		
 		if(apiKey.equals(device.getApiKey())) {
 			//Set last updated
 			device.setUpdatedAt(new Date());
@@ -126,7 +141,7 @@ public class EventGatewayImpl implements EventGateway {
 			}
 			return new ResponseEntity<>(result.getResult(), HttpStatus.OK);
 		}else {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
 	}
 	
@@ -136,20 +151,25 @@ public class EventGatewayImpl implements EventGateway {
 			@RequestBody JsonNode data){
 		
 		if(data.get("id")==null) {
-			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
 		}
 		
 		DigitalTwinModel model = new DigitalTwinModel();
 		DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
 		
 		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findById(data.get("id").asText());
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
+		
+		if(null==device) {
+			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+		
 		if(apiKey.equals(device.getApiKey())) {
 			
 			//Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
-			//insert trace of log
+			//insert shadow
 			model.setEvent(EventType.SHADOW);
 			model.setStatus(data.get("status").toString());
 			model.setId(data.get("id").asText());
@@ -163,9 +183,9 @@ public class EventGatewayImpl implements EventGateway {
 				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
 			}
 			//TODO update
-			return new ResponseEntity<>(null, HttpStatus.OK);
+			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
 		}else {
-			return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
 	}
 	
@@ -178,7 +198,7 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findById(data.get("id").asText());
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
 		if(apiKey.equals(device.getApiKey())) {
 			//TODO
 			return new ResponseEntity<>(null, HttpStatus.OK);
@@ -196,7 +216,7 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findById(data.get("id").asText());
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
 		if(apiKey.equals(device.getApiKey())) {
 			//TODO
 			return new ResponseEntity<>(null, HttpStatus.OK);
@@ -214,7 +234,7 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
 		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findById(data.get("id").asText());
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
 		if(apiKey.equals(device.getApiKey())) {
 			//TODO
 			return new ResponseEntity<>(null, HttpStatus.OK);

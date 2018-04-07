@@ -16,7 +16,6 @@ package ${package}
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
@@ -99,10 +98,10 @@ public class DigitalTwinStatus implements IDigitalTwinStatus{
 	}
 	
 	@Override
-	public Properties toProperties() {
-		Properties properties = new Properties();
+	public Map<String, Object> toMap() {
+		Map<String, Object> properties = new HashMap<String, Object>();
 		
-		<#list properties as property>
+		<#list statusProperties as property>
 			properties.put("${property.name}",${property.name});
 		</#list>
 		
