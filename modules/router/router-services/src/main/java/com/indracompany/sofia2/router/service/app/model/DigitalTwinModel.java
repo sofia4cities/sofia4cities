@@ -50,9 +50,15 @@ public class DigitalTwinModel implements Serializable{
 	@Setter
 	private  String log;
 	
+	@Getter
+	@Setter
+	private String endpoint;
+
 	@Override
 	public String toString() {
-		return "DigitalTwinModel [type=" + type + ", event=" + event + ", status="
-				+ status + ", processId=" + processId + ", log=" + log + "]";
+		return "DigitalTwinModel [id=" + id + ", type=" + type + ", event=" + event + ", status=" + status
+				+ ", processId=" + processId + ", log=" + log + ", endpoint=" + endpoint + "]";
 	}
+	
+	
 }

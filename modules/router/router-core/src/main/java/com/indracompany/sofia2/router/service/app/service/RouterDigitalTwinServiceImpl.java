@@ -30,6 +30,13 @@ public class RouterDigitalTwinServiceImpl implements RouterDigitalTwinService{
 	private String defaultStartupRoute = "direct:start-digitaltwin-broker-flow";
 
 	@Override
+	public OperationResultModel insertEvent(DigitalTwinCompositeModel model) {
+		ProducerTemplate t = camelContext.createProducerTemplate();
+		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);
+		return result;
+	}
+	
+	@Override
 	public OperationResultModel insertLog(DigitalTwinCompositeModel model) {
 		ProducerTemplate t = camelContext.createProducerTemplate();
 		OperationResultModel result = (OperationResultModel)t.requestBody(defaultStartupRoute, model);

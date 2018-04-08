@@ -61,14 +61,22 @@ public class RouterFlowDigitalTwinManagerService {
 		compositeModel.setOperationResultModel(fallback);
 		
 		try {
-			if (EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.LOG.name())) {
-				
-				OperationResultModel result =routerDigitalTwinOpsServiceImpl.insertLog(compositeModel);
+			if(EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.PING.name()) ||
+					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.REGISTER.name()) ||
+					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.RULE.name()) ||
+					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.FLOW.name()) ||
+					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.NOTEBOOK.name())) {
+				OperationResultModel result = routerDigitalTwinOpsServiceImpl.insertEvent(compositeModel);
 				compositeModel.setOperationResultModel(result);
-			}else if (EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.SHADOW.name())) {
 				
+			}else if (EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.LOG.name())) {
+				OperationResultModel result =  routerDigitalTwinOpsServiceImpl.insertLog(compositeModel);
+				compositeModel.setOperationResultModel(result);
+			
+			}else if (EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.SHADOW.name())) {
 				OperationResultModel result =routerDigitalTwinOpsServiceImpl.updateShadow(compositeModel);
 				compositeModel.setOperationResultModel(result);
+				
 			}
 
 		} catch (Exception e) {

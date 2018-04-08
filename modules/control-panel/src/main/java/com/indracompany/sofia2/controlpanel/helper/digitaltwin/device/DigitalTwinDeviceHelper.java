@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -58,22 +60,23 @@ public class DigitalTwinDeviceHelper {
 	@Value("${digitaltwin.temp.dir}")
 	private String tempDir;
 	
-	@Value("${digitaltwin.src.main}")
-	private String srcPath;
+	@Value("${digitaltwin.maven.exec.path}")
+	private String mavenExecPath;
 	
-	@Value("${digitaltwin.src.app}")
-	private String appPath;
+//	@Value("${digitaltwin.src.main}")
+//	private String srcPath;
+//	
+//	@Value("${digitaltwin.src.app}")
+//	private String appPath;
 	
 	private Template digitalTwinStatusTemplate;
 	private Template pomTemplate;
 	private Template deviceApplicationTemplate;
-	private Map<String, Object> dataMap;
-	private Configuration cfg;
+	private Template deviceConfigurationTemplate;
 	
 	@PostConstruct
 	public void init() {
-		dataMap = new HashMap<String, Object>();
-		cfg = new Configuration();
+		Configuration cfg  = new Configuration();
 		try {
 			ClassLoader classLoader = getClass().getClassLoader();
 			TemplateLoader templateLoader = new FileTemplateLoader(new File(classLoader.getResource("digitaltwin/templates").getFile()));
@@ -81,21 +84,21 @@ public class DigitalTwinDeviceHelper {
 			digitalTwinStatusTemplate = cfg.getTemplate("DigitalTwinStatusTemplate.ftl");
 			pomTemplate = cfg.getTemplate("pomTemplate.ftl");
 			deviceApplicationTemplate = cfg.getTemplate("DeviceApplicationTemplate.ftl");
+			deviceConfigurationTemplate = cfg.getTemplate("applicationPropertiesTemplate.ftl");
 		} catch (IOException e) {
 			log.error("Error configuring the template loader.", e);
 		}
 	}
 	
-	public File generateProject(String identificarion) {
-
-		File zipFile = null;
+	
+	public File generateProject(String identificacion) {
 		
 		List<PropertiesDTO> properties = new ArrayList<PropertiesDTO>();
 		List<PropertiesDTO> statusProperties=new ArrayList<PropertiesDTO>();
 		List<String> inits = new ArrayList<String>();
 		List<PropertiesDTO> cls = new ArrayList<PropertiesDTO>();
 		
-		DigitalTwinDevice device = digitalTwinDeviceRepo.findByIdentification(identificarion);
+		DigitalTwinDevice device = digitalTwinDeviceRepo.findByIdentification(identificacion);
 		List<PropertyDigitalTwinType> propsDigitalTwin = propDigitalTwinTypeRepo.findByTypeId(device.getTypeId());
 		String logic = device.getLogic();
 		
@@ -104,7 +107,9 @@ public class DigitalTwinDeviceHelper {
 			logic = logic.replace("\\\"","\"");
 		}
 		
-		File src = new File(tempDir + srcPath);
+		String projectDirectory=tempDir+File.separator+UUID.randomUUID();
+		
+		File src = new File(projectDirectory + File.separator + device.getIdentification() + File.separator +"src" + File.separator + "main");
 		if(!src.isDirectory()) {
 			Boolean success = src.mkdirs();
 			if(!success) {
@@ -121,75 +126,178 @@ public class DigitalTwinDeviceHelper {
 			cls.add(new PropertiesDTO(prop.getName(), GeneratorJavaTypesMapper.mapPropertyName(prop.getType())));
 		}
 		
-		dataMap.put("properties", properties);
-		dataMap.put("statusProperties", statusProperties);
-		dataMap.put("inits", inits);
-		dataMap.put("package", "digitaltwin.device.status;");
-		dataMap.put("mapClass", cls);
+		//Status Template properties
+		Map<String, Object> dataStatusMap=new HashMap<String, Object>();
+		dataStatusMap.put("properties", properties);
+		dataStatusMap.put("statusProperties", statusProperties);
+		dataStatusMap.put("inits", inits);
+		dataStatusMap.put("package", "digitaltwin.device.status;");
+		dataStatusMap.put("mapClass", cls);
 		
-		Writer writer=null;
-		PrintWriter out=null;
+		//TODO COMPLETAR LA CARGA CORRECTA DE LA CONFIGURACION
+		Map<String, Object> dataApplicationPropertiesMap=new HashMap<String, Object>();
+		dataApplicationPropertiesMap.put("serverPort", "10000");
+		dataApplicationPropertiesMap.put("serverContextPath", "/turbine");
+		dataApplicationPropertiesMap.put("applicationName", identificacion);
+		dataApplicationPropertiesMap.put("apiKey", device.getApiKey());
+		dataApplicationPropertiesMap.put("deviceId", device.getIdentification());
+		dataApplicationPropertiesMap.put("deviceRestLocalSchema", "http");
+		dataApplicationPropertiesMap.put("deviceRestLocalIp", "localhost");
+		dataApplicationPropertiesMap.put("sofia2BrokerEndpoint", "http://localhost:8081/digitaltwinbroker");
+		
+		
+		//pom.xml Template properties
+		Map<String, Object> dataPomMap=new HashMap<String, Object>();
+		dataPomMap.put("projectName", identificacion);
+		
+		
+		
+		Writer writerDeviceApplication=null;
+		Writer writerTwinStatus=null;
+		Writer writerApplicationProperties=null;
+		Writer writerPom=null;
+		PrintWriter outLogic=null;
+		File zipFile = null;
+		
 		try {
-			zipFile = File.createTempFile("deviceTwin", ".zip");
+			zipFile = File.createTempFile(device.getIdentification(), ".zip");
 			
 			//Create DeviceApplication.java
-			File app = new File(src.getAbsolutePath() + File.separator + appPath);
+			File app = new File(src.getAbsolutePath() + File.separator + "java" + File.separator + "digitaltwin" + File.separator + "device");
 			if(!app.isDirectory()) {
 				app.mkdirs();
 			}
-			writer = new FileWriter (app + File.separator + "DeviceApplication.java");
-			deviceApplicationTemplate.process(new HashMap(), writer);
-			writer.flush();
+			writerDeviceApplication = new FileWriter (app + File.separator + "DeviceApplication.java");
+			deviceApplicationTemplate.process(new HashMap(), writerDeviceApplication);
+			writerDeviceApplication.flush();
 			
 			//Create DigitalTwinStatus.java
 			File fileJava = new File(app + File.separator + "status");
 			if(!fileJava.isDirectory()) {
 				fileJava.mkdirs();
 			}
-			writer = new FileWriter (fileJava + File.separator + "DigitalTwinStatus.java");
-			digitalTwinStatusTemplate.process(dataMap, writer);
-			writer.flush();
+			writerTwinStatus = new FileWriter (fileJava + File.separator + "DigitalTwinStatus.java");
+			digitalTwinStatusTemplate.process(dataStatusMap, writerTwinStatus);
+			writerTwinStatus.flush();
 			
 			//Create logic.js
 			File fileStatic = new File(src.getAbsolutePath() + File.separator + "resources" + File.separator  + "static" + File.separator + "js");
 			if(!fileStatic.isDirectory()) {
 				fileStatic.mkdirs();
 			}
-			out = new PrintWriter(fileStatic + File.separator + "logic.js");
-			out.println(logic.replace("\\n", System.getProperty("line.separator")));
-			out.flush();
+			outLogic = new PrintWriter(fileStatic + File.separator + "logic.js");
+			outLogic.println(logic.replace("\\n", System.getProperty("line.separator")));
+			outLogic.flush();
 			
-			//Create application.properties
-			out = new PrintWriter(src.getAbsolutePath() + File.separator + "resources" + File.separator + "application.properties");
-			StringBuilder str = new StringBuilder();
-			str.append("api.key:" + device.getApiKey());
-			str.append(System.getProperty("line.separator"));
-			str.append("url:" + device.getUrl());			
-			out.println(str.toString());
-			out.flush();
+			
+			//Create application.yml
+			writerApplicationProperties = new FileWriter (src.getAbsolutePath() + File.separator + "resources" + File.separator + "application.yml");
+			deviceConfigurationTemplate.process(dataApplicationPropertiesMap, writerApplicationProperties);
+			writerApplicationProperties.flush();
+			
 			
 			//Create pom.xml
-			writer = new FileWriter (tempDir + File.separator + "devicetwin" + File.separator +"pom.xml");
-			pomTemplate.process(new HashMap(), writer);
-			writer.flush();
+			writerPom = new FileWriter (projectDirectory + File.separator + device.getIdentification() + File.separator +"pom.xml");
+			pomTemplate.process(dataPomMap, writerPom);
+			writerPom.flush();
+		
 		}catch (Exception e) {
 			log.error("Error generating class DigitalTwinStatus.java", e);
 		}
 		finally{
 			try {
-				writer.close();
-				out.close();
-			} catch (IOException e) {
+				if(null!=writerDeviceApplication) {
+					writerDeviceApplication.close();
+				}
+			} catch (Exception e) {
 				log.error("Error closing File object", e);
 			}
+			
+			try {
+				if(null!=writerTwinStatus) {
+					writerTwinStatus.close();
+				}
+			} catch (Exception e) {
+				log.error("Error closing File object", e);
+			}
+			
+			try {
+				if(null!=writerApplicationProperties) {
+					writerApplicationProperties.close();
+				}
+			} catch (Exception e) {
+				log.error("Error closing File object", e);
+			}
+			
+			try {
+				if(null!=writerPom) {
+					writerPom.close();
+				}
+			} catch (Exception e) {
+				log.error("Error closing File object", e);
+			}
+			
+			try {
+				if(null!=outLogic) {
+					outLogic.close();
+				}
+			} catch (Exception e) {
+				log.error("Error closing File object", e);
+			}
+
 		}
 		
+		this.buildProjectMaven(projectDirectory+File.separator+device.getIdentification());
+		
+		File fileProjectDirectory = new File(projectDirectory);
 		try {
-			zipUtil.zipDirectory(new File(tempDir), zipFile);
+			zipUtil.zipDirectory(fileProjectDirectory, zipFile);
 		} catch (IOException e) {
 			log.error("Zip file deviceTwin failed", e);
 		}
 		
+		
+		//Removes the directory
+		this.deleteDirectory(fileProjectDirectory);
+		
 		return zipFile;
+	}
+	
+	private boolean deleteDirectory(File directoryToBeDeleted) {
+	    File[] allContents = directoryToBeDeleted.listFiles();
+	    if (allContents != null) {
+	        for (File file : allContents) {
+	            deleteDirectory(file);
+	        }
+	    }
+	    return directoryToBeDeleted.delete();
+	}
+	
+	
+	private void buildProjectMaven(String projectPath) {
+		try {
+			File pathToExecutable = new File(mavenExecPath);
+			ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "clean", "package");
+			builder.directory( new File(projectPath).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
+			builder.redirectErrorStream(true);
+			Process process =  builder.start();
+	
+			Scanner s = new Scanner(process.getInputStream());
+			StringBuilder text = new StringBuilder();
+			while (s.hasNextLine()) {
+			  text.append(s.nextLine());
+			  text.append("\n");
+			}
+			s.close();
+	
+			int result = process.waitFor();
+	
+			log.info( "Process exited with result %d and output %s%n", result, text );
+		}catch(Exception e) {
+			log.error("Error compiling project", e);
+		}
+		
+		
+		
 	}
 }

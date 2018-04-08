@@ -18,6 +18,7 @@ import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 public interface RouterDigitalTwinService {
 	
+	public OperationResultModel insertEvent(DigitalTwinCompositeModel compositeModel);
 	public OperationResultModel insertLog(DigitalTwinCompositeModel compositeModel);
 	public OperationResultModel updateShadow(DigitalTwinCompositeModel compositeModel);
 }

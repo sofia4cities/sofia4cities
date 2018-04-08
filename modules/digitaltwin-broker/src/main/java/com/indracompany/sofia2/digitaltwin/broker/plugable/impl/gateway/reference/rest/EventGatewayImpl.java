@@ -69,8 +69,28 @@ public class EventGatewayImpl implements EventGateway {
 		
 		if(apiKey.equals(device.getApiKey())) {
 			//Set endpoint
-			device.setUrl(data.get("endpoint").asText());
+			String deviceUrl=data.get("endpoint").asText();
+			
+			device.setUrl(deviceUrl);
 			deviceRepo.save(device);
+			
+			//insert the register event
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+			
+			model.setEvent(EventType.REGISTER);
+			model.setId(data.get("id").asText());
+			model.setType(device.getTypeId().getName());
+			model.setEndpoint(deviceUrl);
+			
+			compositeModel.setDigitalTwinModel(model);
+			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
+			
+			OperationResultModel result = routerDigitalTwinService.insertLog(compositeModel);
+			if(!result.isStatus()) {
+				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
+			}
+			
 		}else {
 			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
@@ -97,6 +117,23 @@ public class EventGatewayImpl implements EventGateway {
 			//Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
+			
+			//insert the ping event
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+			
+			model.setEvent(EventType.PING);
+			model.setId(data.get("id").asText());
+			model.setType(device.getTypeId().getName());
+			
+			compositeModel.setDigitalTwinModel(model);
+			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
+			
+			OperationResultModel result = routerDigitalTwinService.insertLog(compositeModel);
+			if(!result.isStatus()) {
+				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
+			}
+			
 		}else {
 			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
@@ -112,8 +149,7 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>("id and log are required", HttpStatus.BAD_REQUEST);
 		}
 
-		DigitalTwinModel model = new DigitalTwinModel();
-		DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+		
 		
 		//Validation apikey
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
@@ -127,6 +163,9 @@ public class EventGatewayImpl implements EventGateway {
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
 			//insert trace of log
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+			
 			model.setEvent(EventType.LOG);
 			model.setLog(data.get("log").asText());
 			model.setId(data.get("id").asText());
@@ -154,9 +193,6 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
 		}
 		
-		DigitalTwinModel model = new DigitalTwinModel();
-		DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-		
 		//Validation apikey
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
 		
@@ -169,7 +205,11 @@ public class EventGatewayImpl implements EventGateway {
 			//Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
+			
 			//insert shadow
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+			
 			model.setEvent(EventType.SHADOW);
 			model.setStatus(data.get("status").toString());
 			model.setId(data.get("id").asText());

@@ -13,34 +13,27 @@
  */
 package com.indracompany.sofia2.router.service.app.service.digitaltwin;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.Optional;
 
-import org.hibernate.mapping.Map;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterDigitalTwinService;
 
-
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService {
 	
+	final static String EVENTS_COLLECTION = "TwinEvents";
 	final static String LOG_COLLECTION = "TwinLogs";
 	final static String PROPERTIES_COLLECTION = "TwinProperties";
 	
@@ -51,6 +44,52 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 	
 	@Autowired
 	private MongoBasicOpsDBRepository mongoRepo;
+	
+	
+	
+	@Override
+	public OperationResultModel insertEvent(DigitalTwinCompositeModel compositeModel) {
+		log.info("Router Digital Twin Service Operation "+compositeModel.getDigitalTwinModel().toString());
+		OperationResultModel result = new OperationResultModel();
+		DigitalTwinModel model = compositeModel.getDigitalTwinModel();
+		
+		final String EVENT = model.getEvent().name();
+		
+		JSONObject instance = new JSONObject();
+	
+		JSONObject timestamp=new JSONObject();
+		timestamp.put("$date", LocalDateTime.now().format(timestampFormatter));
+		
+		instance.put("deviceId", model.getId());
+		instance.put("type", model.getType());
+		instance.put("timestamp", timestamp);
+		instance.put("event", EVENT);
+		
+		Optional<JSONObject> optionalContent=buildEventContent(model);
+		if(optionalContent.isPresent()) {
+			instance.put("content", optionalContent.get());
+		}
+		
+		
+		String OUTPUT="";
+		result.setMessage("OK");
+		result.setStatus(true);
+
+		try {
+			
+			OUTPUT = mongoRepo.insert(EVENTS_COLLECTION, instance.toString());
+			
+		} catch (final Exception e) {
+			result.setResult(OUTPUT);
+			result.setStatus(false);
+			result.setMessage(e.getMessage());
+		}
+
+		result.setResult(OUTPUT);
+		result.setOperation(EVENT);
+		return result;
+	}
+	
 
 	@Override
 	public OperationResultModel insertLog(DigitalTwinCompositeModel compositeModel) {
@@ -128,6 +167,22 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		result.setOperation(EVENT);
 		return result;
 	}
+
+	
+	
+	private Optional<JSONObject> buildEventContent(DigitalTwinModel model) {
+		JSONObject content=new JSONObject();
+		
+		switch(model.getEvent()) {
+			case REGISTER:	content.put("endpoint", model.getEndpoint());
+							return Optional.of(content);
+							
+			default:		return Optional.empty();
+		}
+		
+		
+	}
+	
 
 
 }
