@@ -16,6 +16,10 @@
         return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getDatasourceById/' + datasourceId);
       }
 
+      vm.getFieldsFromDatasourceId = function(datasourceId){
+        return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getSampleDatasource/' + datasourceId);
+      }
+
       vm.getGadgetConfigById = function(gadgetId){
         return $http.get(__env.endpointSofia2ControlPanel + '/gadgets/getGadgetConfigById/' + gadgetId);
       }

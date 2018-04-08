@@ -74,5 +74,18 @@
         }
         return false;
       }
+
+      vm.getJsonFields = function iterate(obj, stack, fields) {
+        for (var property in obj) {
+          if (obj.hasOwnProperty(property)) {
+            if (typeof obj[property] == "object") {
+              vm.getJsonFields(obj[property], stack + (stack==""?'':'.') + property, fields);
+            } else {
+              fields.push({field:stack + (stack==""?'':'.') + property, type:typeof obj[property]});
+            }
+          }
+        }    
+        return fields;
+      }
   };
 })();

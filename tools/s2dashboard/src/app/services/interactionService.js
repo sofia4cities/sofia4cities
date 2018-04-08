@@ -21,7 +21,9 @@
     };
 
     vm.registerGadget = function (gadgetId) {
-      vm.interactionHash[gadgetId] = [];
+      if(!(gadgetId in vm.interactionHash)){
+        vm.interactionHash[gadgetId] = [];
+      }
     };
 
     vm.unregisterGadget = function (gadgetId) {
@@ -49,12 +51,17 @@
     };
 
     vm.registerGadgetFieldEmitter = function (gadgetId, fieldEmitter) {
-      vm.interactionHash[gadgetId].push(
-        {
-          targetList: [],
-          emiterField: fieldEmitter
-        }
-      )
+      if(!(gadgetId in vm.interactionHash)){
+        vm.interactionHash[gadgetId] = [];
+      }
+      if(!(vm.interactionHash[gadgetId].filter(function(f){return f.emiterField === fieldEmitter}).length)){
+        vm.interactionHash[gadgetId].push(
+          {
+            targetList: [],
+            emiterField: fieldEmitter
+          }
+        )
+      }
     };
 
     vm.unregisterGadgetFieldEmitter = function (gadgetId, fieldEmitter) {
@@ -68,6 +75,10 @@
     };
 
     vm.registerGadgetInteractionDestination = function (sourceGadgetId, targetGadgetId, originField, destinationField) {
+      //Auto generated
+      if(!(sourceGadgetId in vm.interactionHash) || !(vm.interactionHash[sourceGadgetId].filter(function(f){return f.emiterField === originField}).length)){
+        vm.registerGadgetFieldEmitter(sourceGadgetId, originField);
+      }
       var destinationFieldBundle = vm.interactionHash[sourceGadgetId].filter(
         function (elem) {
           return elem.emiterField == originField;

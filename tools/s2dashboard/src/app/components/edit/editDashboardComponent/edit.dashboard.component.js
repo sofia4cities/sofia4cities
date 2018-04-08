@@ -15,8 +15,12 @@
     });
 
   /** @ngInject */
-  function EditDashboardController($log, $scope, $mdSidenav, $mdDialog, $mdBottomSheet, sofia2HttpService) {
+  function EditDashboardController($log, $scope, $mdSidenav, $mdDialog, $mdBottomSheet, sofia2HttpService, interactionService) {
     var ed = this;
+
+    //Gadget source type list
+    var typeGadgetList = ["pie","bar","livehtml"];
+
     ed.$onInit = function () {
       ed.selectedlayer = 0;
       ed.selectedpage = ed.selectedpage();
@@ -1111,6 +1115,7 @@
     };
 
     ed.savePage = function (ev) {
+      ed.dashboard.interactionHash = interactionService.getInteractionHash();
       sofia2HttpService.saveDashboard(ed.id(), {"data":{"model":JSON.stringify(ed.dashboard),"id":"","identification":"a","customcss":"","customjs":"","jsoni18n":"","description":"a","public":ed.public}}).then(
         function(d){
           if(d){
@@ -1439,13 +1444,14 @@
 
     }
 
-    function DatalinkController($scope,$rootScope, $mdDialog, interactionService, dashboard, selectedpage) {
+    function DatalinkController($scope,$rootScope, $mdDialog, interactionService, utilsService, sofia2HttpService, dashboard, selectedpage) {
       $scope.dashboard = dashboard;
       $scope.selectedpage = selectedpage;
 
       var rawInteractions = interactionService.getInteractionHash();
 
       initConnectionsList();
+      generateGadgetsLists();
 
       function initConnectionsList(){
         $scope.connections = [];
@@ -1464,14 +1470,113 @@
         }
       }
 
+      $scope.refreshGadgetEmitterFields = function(gadgetId){
+        var gadget = findGadgetInDashboard(gadgetId);
+        if(gadget == null){
+          $scope.gadgetEmitterFields = [];
+        }
+        else{
+          setGadgetEmitterFields(gadget);
+        }
+      }
+
+      $scope.refreshGadgetTargetFields = function(gadgetId){
+        var gadget = findGadgetInDashboard(gadgetId);
+        if(gadget == null){
+          $scope.gadgetEmitterFields = [];
+        }
+        else{
+          setGadgetTargetFields(gadget);
+        }
+      }
+
+      function setGadgetEmitterFields(gadget){
+        switch(gadget.type){
+          case "pie":
+          case "bar":
+            var gadgetMeasures = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm.measures;
+            $scope.emitterDatasource = gadgetMeasures[0].datasource.identification;
+            $scope.gadgetEmitterFields = utilsService.sort_unique(gadgetMeasures.map(function(m){return m.config.fields[0]})).map(function(m){return {field:m}});
+            break;
+          case "livehtml":
+            var gadgetData = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm;
+            $scope.emitterDatasource = gadgetData.datasource.name;
+            sofia2HttpService.getFieldsFromDatasourceId(gadgetData.datasource.id).then(
+              function(data){
+                $scope.gadgetEmitterFields = utilsService.getJsonFields(data.data[0],"", []);
+              }
+            )
+            $scope.gadgetEmitterFields = [];
+            break;
+        }
+      }
+
+      //Destination are all gadget fields
+      function setGadgetTargetFields(gadget){
+        $scope.targetDatasource="";
+        var gadgetData = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm;
+        if(gadget.type === 'livehtml'){
+          $scope.targetDatasource = gadgetData.datasource.name;
+          var dsId = gadgetMeasures.datasource.id;
+        }
+        else{
+          $scope.targetDatasource = gadgetData.measures[0].datasource.identification;
+          var dsId = gadgetData.measures[0].datasource.id;
+        }
+        sofia2HttpService.getFieldsFromDatasourceId(dsId).then(
+          function(data){
+            $scope.gadgetTargetFields = utilsService.getJsonFields(data.data[0],"", []);
+          }
+        )
+        $scope.gadgetTargetFields = [];
+      }
+
+      //Get gadget JSON and return string info for UI
+      $scope.prettyGadgetInfo = function(gadget){
+        return gadget.header.title.text + " (" + gadget.type + ")"
+      }
+
       $scope.generateGadgetInfo = function (gadgetId){
         var gadget = findGadgetInDashboard(gadgetId);
         if(gadget == null){
           return gadgetId;
         }
         else{
-          return gadget.header.title.text + " (" + gadget.type + ")"
+          return $scope.prettyGadgetInfo(gadget)
         }
+      }
+
+      function generateGadgetsLists(){
+        $scope.gadgetsSources = getGadgetsSourcesInDashboard();
+        $scope.gadgetsTargets = getGadgetsInDashboard();
+      }
+
+      //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
+      function getGadgetsSourcesInDashboard(){
+        var gadgets = [];
+        var page = $scope.dashboard.pages[$scope.selectedpage];
+        for(var layerIndex in page.layers){
+          var layer = page.layers[layerIndex];
+          var gadgetsAux = layer.gridboard.filter(function(gadget){return typeGadgetList.indexOf(gadget.type) != -1});
+          if(gadgetsAux.length){
+            gadgets = gadgets.concat(gadgetsAux);
+          }
+        }
+        return gadgets;
+      }
+
+      //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
+      function getGadgetsInDashboard(){
+        var gadgets = [];
+        var page = $scope.dashboard.pages[$scope.selectedpage];
+        for(var layerIndex in page.layers){
+          var layer = page.layers[layerIndex];
+          var gadgetsAux = layer.gridboard;
+          if(gadgetsAux.length){
+            gadgets = gadgets.concat(gadgetsAux);
+          }
+        }
+        return gadgets;
       }
 
       function findGadgetInDashboard(gadgetId){
@@ -1486,8 +1591,9 @@
         return null;
       }
 
-      $scope.create = function() {
+      $scope.create = function(sourceGadgetId, originField , targetGadgetId, destinationField) {
         interactionService.registerGadgetInteractionDestination(sourceGadgetId, targetGadgetId, originField, destinationField);
+        initConnectionsList();
       };
 
       $scope.delete = function(sourceGadgetId, targetGadgetId, originField, destinationField){

@@ -33,16 +33,21 @@
           vm.dashboard.gridOptions.enableEmptyCellDrop = true;
           vm.dashboard.gridOptions.emptyCellDropCallback = dropElementEvent.bind(this);
 
+          debugger;
+          //If interaction hash then recover connections
+          if(vm.dashboard.interactionHash){
+            interactionService.setInteractionHash(vm.dashboard.interactionHash);
+          }
           $timeout(function(){
-            interactionService.registerGadgetFieldEmitter("24286b82-e428-489e-9429-f4c539a7c8f2","cuisine");
-            interactionService.registerGadgetFieldEmitter("0d6fb521-49e1-4c34-85d8-c4b30b3795bd","borough");
-            interactionService.registerGadgetFieldEmitter("livehtml_1522241789696","name");
-            interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "b4506302-4a6f-4b8a-ac77-7988f064b71e", "cuisine", "cuisine");
+            //interactionService.registerGadgetFieldEmitter("24286b82-e428-489e-9429-f4c539a7c8f2","cuisine");
+            //interactionService.registerGadgetFieldEmitter("0d6fb521-49e1-4c34-85d8-c4b30b3795bd","borough");
+            //interactionService.registerGadgetFieldEmitter("livehtml_1522241789696","name");
+            //interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "b4506302-4a6f-4b8a-ac77-7988f064b71e", "cuisine", "cuisine");
             //interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "e179daad-c908-49e8-8d96-3b2220866c53", "cuisine", "cuisine");
-            interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "cuisine", "cuisine");
-            interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "e179daad-c908-49e8-8d96-3b2220866c53", "borough", "borough");
-            interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "livehtml_1522240022760", "borough", "borough");
-            interactionService.registerGadgetInteractionDestination("livehtml_1522241789696","b4506302-4a6f-4b8a-ac77-7988f064b71e","name","name");
+            //interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "cuisine", "cuisine");
+            //interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "e179daad-c908-49e8-8d96-3b2220866c53", "borough", "borough");
+            //interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "livehtml_1522240022760", "borough", "borough");
+            //interactionService.registerGadgetInteractionDestination("livehtml_1522241789696","b4506302-4a6f-4b8a-ac77-7988f064b71e","name","name");
           },3000);
         }
       ).catch(
