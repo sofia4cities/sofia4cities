@@ -137,3 +137,15 @@ md-tooltip.tt-multiline {
 .input-fields{
   width:100%
 }
+
+.spinner-margin-top{
+  margin-top: 20%;
+}
+
+.spinner-overlay{
+  position:absolute;
+  width:100%;
+  height:100%;
+  z-index:90000;
+  margin-top:20%
+}

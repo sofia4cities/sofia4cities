@@ -180,7 +180,7 @@
           $scope.$on("$resize",redrawWordCloud);
           break;
         case "map":
-          vm.center = vm.config.config.center;
+          vm.center =vm.center || vm.config.config.center;
           vm.markers = data.map(
             function(d){
               return {
@@ -249,6 +249,7 @@
     function eventGProcessor(event,dataEvent){
       if(dataEvent.type === "data" && dataEvent.data.length===0){
         vm.type="nodata";
+        vm.status = "ready";
       }
       else{
         switch(dataEvent.type){
@@ -284,7 +285,7 @@
             break;
           case "filter":
             vm.status = "pending";
-            vm.type = "loading";
+            //vm.type = "loading";
             if(!vm.datastatus){
               vm.datastatus = {};
             }
