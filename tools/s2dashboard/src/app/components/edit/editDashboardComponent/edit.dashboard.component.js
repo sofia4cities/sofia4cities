@@ -18,8 +18,8 @@
   function EditDashboardController($log, $scope, $mdSidenav, $mdDialog, $mdBottomSheet, sofia2HttpService, interactionService) {
     var ed = this;
 
-    //Gadget source type list
-    var typeGadgetList = ["pie","bar","livehtml"];
+    //Gadget source connection type list
+    var typeGadgetList = ["pie","bar","map","livehtml"];
 
     ed.$onInit = function () {
       ed.selectedlayer = 0;
@@ -1498,6 +1498,11 @@
             $scope.emitterDatasource = gadgetMeasures[0].datasource.identification;
             $scope.gadgetEmitterFields = utilsService.sort_unique(gadgetMeasures.map(function(m){return m.config.fields[0]})).map(function(m){return {field:m}});
             break;
+          case "map":
+            var gadgetMeasures = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm.measures;
+            $scope.emitterDatasource = gadgetMeasures[0].datasource.identification;
+            $scope.gadgetEmitterFields = utilsService.sort_unique(gadgetMeasures.map(function(m){return m.config.fields[2]})).map(function(m){return {field:m}});
+            break;
           case "livehtml":
             var gadgetData = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm;
             $scope.emitterDatasource = gadgetData.datasource.name;
@@ -1517,7 +1522,7 @@
         var gadgetData = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm;
         if(gadget.type === 'livehtml'){
           $scope.targetDatasource = gadgetData.datasource.name;
-          var dsId = gadgetMeasures.datasource.id;
+          var dsId = gadgetData.datasource.id;
         }
         else{
           $scope.targetDatasource = gadgetData.measures[0].datasource.identification;

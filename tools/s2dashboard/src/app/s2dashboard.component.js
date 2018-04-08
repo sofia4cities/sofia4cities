@@ -33,91 +33,16 @@
           vm.dashboard.gridOptions.enableEmptyCellDrop = true;
           vm.dashboard.gridOptions.emptyCellDropCallback = dropElementEvent.bind(this);
 
-          debugger;
           //If interaction hash then recover connections
           if(vm.dashboard.interactionHash){
             interactionService.setInteractionHash(vm.dashboard.interactionHash);
           }
-          $timeout(function(){
-            //interactionService.registerGadgetFieldEmitter("24286b82-e428-489e-9429-f4c539a7c8f2","cuisine");
-            //interactionService.registerGadgetFieldEmitter("0d6fb521-49e1-4c34-85d8-c4b30b3795bd","borough");
-            //interactionService.registerGadgetFieldEmitter("livehtml_1522241789696","name");
-            //interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "b4506302-4a6f-4b8a-ac77-7988f064b71e", "cuisine", "cuisine");
-            //interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "e179daad-c908-49e8-8d96-3b2220866c53", "cuisine", "cuisine");
-            //interactionService.registerGadgetInteractionDestination("24286b82-e428-489e-9429-f4c539a7c8f2", "0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "cuisine", "cuisine");
-            //interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "e179daad-c908-49e8-8d96-3b2220866c53", "borough", "borough");
-            //interactionService.registerGadgetInteractionDestination("0d6fb521-49e1-4c34-85d8-c4b30b3795bd", "livehtml_1522240022760", "borough", "borough");
-            //interactionService.registerGadgetInteractionDestination("livehtml_1522241789696","b4506302-4a6f-4b8a-ac77-7988f064b71e","name","name");
-          },3000);
         }
       ).catch(
         function(){
           $window.location.href = "/controlpanel/login";
         }
       )
-      /*
-      vm.dashboard = {
-        header: {
-          title: "My new s4c Dashboard",
-          enable: true,
-          height: 64,
-          logo: {
-            height: 64
-          }
-        },
-        navigation:{
-          showBreadcrumbIcon: true,
-          showBreadcrumb: true
-        },
-        pages: [],
-        gridOptions: {
-          gridType: 'fit',
-          compactType: 'none',
-          margin: 0,
-          outerMargin: false,
-          mobileBreakpoint: 640,
-          minCols: 20,
-          maxCols: 100,
-          minRows: 20,
-          maxRows: 100,
-          maxItemCols: 5000,
-          minItemCols: 1,
-          maxItemRows: 5000,
-          minItemRows: 1,
-          maxItemArea: 25000,
-          minItemArea: 1,
-          defaultItemCols: 4,
-          defaultItemRows: 4,
-          fixedColWidth: 250,
-          fixedRowHeight: 250,
-          enableEmptyCellClick: false,
-          enableEmptyCellContextMenu: false,
-          enableEmptyCellDrop: false,
-          enableEmptyCellDrag: false,
-          emptyCellDragMaxCols: 5000,
-          emptyCellDragMaxRows: 5000,
-          draggable: {
-            delayStart: 100,
-            enabled: true,
-            ignoreContent: true,
-            dragHandleClass: 'drag-handler'
-          },
-          resizable: {
-            delayStart: 0,
-            enabled: true
-          },
-          swap: false,
-          pushItems: true,
-          disablePushOnDrag: false,
-          disablePushOnResize: false,
-          pushDirections: {north: true, east: true, south: true, west: true},
-          pushResizeItems: false,
-          displayGrid: 'always',
-          disableWindowResize: false,
-          disableWarnings: false,
-          scrollToNewItems: true
-        }
-      }*/
 
       function showAddGadgetDialog(type,config,layergrid){
         function AddGadgetController($scope, $mdDialog, sofia2HttpService, type, config, layergrid) {

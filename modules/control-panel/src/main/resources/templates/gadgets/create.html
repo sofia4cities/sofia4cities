@@ -374,6 +374,9 @@
 			name : "Longitude",
 			types : [ "number" ]
 		}, {
+			name : "Point ID",
+			types : [ "number", "string", "boolean" ]
+		}, {
 			name : "Popup",
 			types : [ "number", "string", "boolean" ],
 			multi :true //multivalue
@@ -486,7 +489,7 @@
 		switch (stt.attributes.length){
 			case 1: division='col-md-5';break;
 			case 2: division='col-md-3';break;
-			case 3: division='col-md-2';break;
+			case 3: case 4: case 5: division='col-md-2';break;
 			default: division='col-md-1';break;
 		}
 		

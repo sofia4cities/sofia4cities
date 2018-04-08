@@ -16,7 +16,7 @@
     });
 
   /** @ngInject */
-  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService) {
+  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService, leafletMarkerEvents) {
     var vm = this;
     vm.ds = [];
     vm.type = "loading";
@@ -186,15 +186,27 @@
               return {
                 lat: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
                 lng: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
-                message: vm.measures[0].config.fields.slice(2).reduce(
+
+                message: vm.measures[0].config.fields.slice(3).reduce(
                   function(a, b){
                     return a + "<b>" + b + ":</b>&nbsp;" + utilsService.getJsonValueByJsonPath(d,b) + "<br/>";
                   }
                   ,""
-                )
+                ),
+                id: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[2],2)
               }
             }
           )
+          $scope.events = {
+            markers: {
+                enable: leafletMarkerEvents.getAvailableEvents(),
+            }
+          };
+          
+          //Init map events
+          var eventName = 'leafletDirectiveMarker.lmap' + vm.id + '.click';
+          $scope.$on(eventName, vm.clickMarkerMapEventProcessorEmitter);
+
           redrawLeafletMap();
           $scope.$on("$resize",redrawLeafletMap);
           break;
@@ -312,7 +324,8 @@
       }
     }
 
-    vm.clickEventProcessorEmitter = function(points, evt){
+    //Chartjs click event
+    vm.clickChartEventProcessorEmitter = function(points, evt){
       var originField;
       var originValue;
       switch(vm.config.type){
@@ -321,7 +334,13 @@
           //originValue = points[0]._model.label;
           break;
         case "bar":
-          originField = vm.measures[0].config.fields[0];
+          //find serie x field if there are diferent x field in measures
+          for(var index in vm.data){
+            if(vm.data[index][points[0]._index]){
+              originField = vm.measures[index].config.fields[0];
+              break;
+            }
+          }
           originValue = points[0]._model.label;
           break;
         case "pie":
@@ -329,6 +348,17 @@
           originValue = points[0]._model.label;
           break;
       }
+      sendEmitterEvent(originField,originValue);
+    }
+
+    //leafletjs click marker event, by Point Id
+    vm.clickMarkerMapEventProcessorEmitter = function(event, args){
+      var originField = vm.measures[0].config.fields[2];
+      var originValue = args.model.id;
+      sendEmitterEvent(originField,originValue);
+    }
+
+    function sendEmitterEvent(originField,originValue){
       if(vm.filterChaining){
         var filterStt = angular.copy(vm.datastatus)||{}
       }
