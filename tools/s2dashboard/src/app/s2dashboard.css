@@ -146,6 +146,5 @@ md-tooltip.tt-multiline {
   position:absolute;
   width:100%;
   height:100%;
-  z-index:90000;
-  margin-top:20%
+  z-index:90000
 }

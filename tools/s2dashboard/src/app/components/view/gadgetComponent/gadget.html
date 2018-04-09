@@ -1,8 +1,8 @@
 <div class="spinner-margin-top" ng-if="vm.type == 'loading'" layout="row" layout-sm="column" layout-align="space-around">
   <md-progress-circular md-diameter="60"></md-progress-circular>
 </div>
-<div class="spinner-margin-top spinner-overlay" ng-if="vm.status == 'pending'" layout="row" layout-sm="column" layout-align="space-around">
-  <md-progress-circular md-diameter="60"></md-progress-circular>
+<div class="spinner-overlay" ng-if="vm.status == 'pending'" layout="row" layout-sm="column" layout-align="space-around">
+  <md-progress-linear md-mode="indeterminate"></md-progress-linear>
 </div>
 <div ng-if="vm.type == 'nodata'" layout="row" layout-sm="column" layout-align="space-around">
   <h3>No data found</h3>
