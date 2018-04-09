@@ -1597,8 +1597,10 @@
       }
 
       $scope.create = function(sourceGadgetId, originField , targetGadgetId, destinationField) {
-        interactionService.registerGadgetInteractionDestination(sourceGadgetId, targetGadgetId, originField, destinationField);
-        initConnectionsList();
+        if(sourceGadgetId && originField && targetGadgetId && destinationField){
+          interactionService.registerGadgetInteractionDestination(sourceGadgetId, targetGadgetId, originField, destinationField);
+          initConnectionsList();
+        }
       };
 
       $scope.delete = function(sourceGadgetId, targetGadgetId, originField, destinationField){
