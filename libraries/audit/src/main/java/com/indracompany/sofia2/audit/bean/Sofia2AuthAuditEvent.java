@@ -12,11 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.audit.notify;
+package com.indracompany.sofia2.audit.bean;
 
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
+import java.util.Date;
+import java.util.Map;
 
-public interface EventRouter {
-	//public void notify(Sofia2AuditEvent event);
-	public void notify(String event);
+public class Sofia2AuthAuditEvent extends Sofia2AuditRemoteEvent{
+
+	public Sofia2AuthAuditEvent(String message, String id, EventType type, Date timeStamp, String user, String ontology,
+			String operationType, Module module, Map<String, Object> extraData, String otherType,
+			String remoteAddress) {
+		super(message, id, type, timeStamp, user, ontology, operationType, module, extraData, otherType, remoteAddress);
+	}
+
+	private static final long serialVersionUID = -146537921734143436L;
+	
 }

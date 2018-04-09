@@ -1,7 +1,6 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
- *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,11 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.audit.notify;
+package com.indracompany.sofia2.iotbroker.audit.aop;
 
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-public interface EventRouter {
-	//public void notify(Sofia2AuditEvent event);
-	public void notify(String event);
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+@Documented
+@Retention(RUNTIME)
+@Target(METHOD)
+public @interface IotBrokerAuditable {
+	String doNotify() default "yes";
+	String module() default "IOTBROKER";
 }
