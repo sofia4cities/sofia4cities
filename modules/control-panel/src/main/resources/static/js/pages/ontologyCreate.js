@@ -1210,8 +1210,7 @@ var OntologyCreateController = function() {
 				
 				authorization('delete',ontologyCreateReg.ontologyId, selUser, selAccessType, selAuthorizationId, obj );				
 			}
-		},
-		
+		},		
 		// UPDATE authorization
 		updateAuthorization: function(obj){
 			logControl ? console.log(LIB_TITLE + ': updateAuthorization()') : '';
@@ -1236,7 +1235,11 @@ var OntologyCreateController = function() {
 				} 
 				else { console.log('no hay cambios');}
 			}
-		}	
+		},
+		// GENERATE DUMMY ONTOLOGY INSTANCES
+		setRtdbDatasource: function(){
+			$('#rtdb').val($('#rtdbInstance').val());
+		}
 	};
 }();
 

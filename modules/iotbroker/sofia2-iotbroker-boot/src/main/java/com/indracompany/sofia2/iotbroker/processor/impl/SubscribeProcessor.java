@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.iotbroker.processor.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -161,23 +162,25 @@ public class SubscribeProcessor implements MessageTypeProcessor {
 	}
 
 	@PostConstruct
-	public void cleanSubscriptions() {
+	private void cleanSubscriptions() {
 
 		this.repository.deleteAll();
 	}
 
-	
-	@Scheduled(fixedDelay = 300000)
 	@Transactional
+	@Scheduled(fixedDelay = 300000)
 	private void deleteOldSubscriptions() {
+		ArrayList<SuscriptionNotificationsModel> subscriptionsToRemove = new ArrayList<SuscriptionNotificationsModel>();
 		List<SuscriptionNotificationsModel> subscriptions = this.repository.findAll();
 		for (SuscriptionNotificationsModel subscription : subscriptions) {
-			
+
 			Optional<IoTSession> session = securityPluginManager.getSession(subscription.getSessionKey());
-			
-			if(!session.isPresent())
-				this.repository.deleteBySuscriptionId(subscription.getSuscriptionId());
+
+			if (!session.isPresent())
+				subscriptionsToRemove.add(subscription);
+
 		}
+		this.repository.delete(subscriptionsToRemove);
 	}
 
 }

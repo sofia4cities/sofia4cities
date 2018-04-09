@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import com.indracompany.sofia2.client.MQTTClient;
 import com.indracompany.sofia2.client.MQTTClient.QUERY_TYPE;
-import com.indracompany.sofia2.client.RestClient;
 import com.indracompany.sofia2.client.SubscriptionListener;
 
 public class ClientsApplication {
@@ -26,14 +25,14 @@ public class ClientsApplication {
 	public static void main(String[] args) throws InterruptedException, IOException {
 
 		MQTTClient client = new MQTTClient("tcp://localhost:1883");
-		String token = "55f51b934e2240638ef23fd5e839ddb1";
-		String clientPlatform = "CPRestaurants";
+		String token = "a5bdc70f74da414eaa7d72daac397626";
+		String clientPlatform = "DeviceTemp";
 		String clientPlatformInstance = clientPlatform + ":MQTT";
-		String ontology = "Restaurants";
+		String ontology = "TempOnt";
 		int timeout = 50;
 		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
-		String jsonData = "{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}";
-		String subsId = client.subscribe(ontology, "SELECT * FROM Restaurants", QUERY_TYPE.SQL, timeout,
+		String jsonData = "{\"TempOnt\":{ \"Temp\":28.6}}";
+		String subsId = client.subscribe(ontology, "SELECT * FROM TempOnt", QUERY_TYPE.SQL, timeout,
 				new SubscriptionListener() {
 
 					@Override
@@ -43,10 +42,9 @@ public class ClientsApplication {
 					}
 
 				});
-		client.unsubscribe(subsId);
-		// Thread.sleep(5000);
-		// //client.publish("Restaurants", jsonData, timeout);
-		// Thread.sleep(5000);
+		// client.unsubscribe(subsId);
+		Thread.sleep(50000);
+		// client.publish("TempOnt", jsonData, timeout);
 		//
 		// while(true);
 		client.disconnect();
