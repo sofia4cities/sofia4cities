@@ -283,14 +283,16 @@
 											</div>											
 										</div>
 									</div>
-									<div class="col-md-12" th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))">
+									<div class="col-md-12">
 										<!-- FORM BUTTONS -->
 										<div class="form-actions">
 											<div class="pull-right">
 												<!-- UPDATE -->
 												<button th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 												
-												<span th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="sep" th:text="#{gen.sepBtn}"> or </span>
+												<button th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" id="deleteBtn"  type="button" class="btn btn-square btn-warning red-sunglo" name="delete"  th:value="#{gen.deleteBtn}" th:onclick="'javascript:navigateUrl(\'' + @{/marketasset/delete/} + ${marketasset.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.deleteBtn}"> Edit</span></button>
+												
+												<span th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="sep" th:text="#{gen.sepBtn}"></span>
 												
 												<!-- CANCEL TO-DO: authentication and control -->
 												<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/marketasset/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>

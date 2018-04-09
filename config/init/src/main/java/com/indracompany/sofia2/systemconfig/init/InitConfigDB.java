@@ -44,6 +44,7 @@ import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
+import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
@@ -51,6 +52,7 @@ import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetState;
 import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
@@ -62,6 +64,7 @@ import com.indracompany.sofia2.config.repository.FlowDomainRepository;
 import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
+import com.indracompany.sofia2.config.repository.MarketAssetRepository;
 import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -128,6 +131,9 @@ public class InitConfigDB {
 
 	@Autowired
 	UserTokenRepository userTokenRepository;
+	
+	@Autowired
+	MarketAssetRepository marketAssetRepository;
 
 	@PostConstruct
 	@Test
@@ -183,6 +189,9 @@ public class InitConfigDB {
 
 		init_FlowDomain();
 		log.info("OK init_FlowDomain");
+		
+		init_market();
+		log.info("OK init_Market");
 	}
 
 	private void init_FlowDomain() {
@@ -401,19 +410,28 @@ public class InitConfigDB {
 
 	private String loadFromResources(String name) {
 		try {
-			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
-					Charset.forName("UTF-8"));
+			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),	Charset.forName("UTF-8"));
 
 		} catch (Exception e) {
 			try {
-				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(),
-						Charset.forName("UTF-8"));
+				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(), Charset.forName("UTF-8"));
 			} catch (IOException e1) {
 				log.error("**********************************************");
 				log.error("Error loading resource: " + name + ".Please check if this error affect your database");
 				log.error(e.getMessage());
 				return null;
 			}
+		}
+	}
+	
+	private byte[] loadFileFromResources(String name) {
+		try {
+			return Files.readAllBytes((Paths.get(getClass().getClassLoader().getResource(name).toURI())));
+
+		} catch (Exception e) {
+			log.error("Error loading resource: " + name + ".Please check if this error affect your database");
+			log.error(e.getMessage());
+			return null;
 		}
 	}
 
@@ -1120,6 +1138,35 @@ public class InitConfigDB {
 				userCDBRepository.deleteAll();
 				throw new RuntimeException("Error creating users...ignoring creation rest of Tables");
 			}
+		}
+	}
+	
+	public void init_market() {
+		log.info("init MarketPlace");
+		List<MarketAsset> marketAssets = this.marketAssetRepository.findAll();
+		if (marketAssets.isEmpty()) {
+			log.info("No market Assets...adding");
+			MarketAsset marketAsset = new MarketAsset();
+			
+			marketAsset.setId("1");
+			marketAsset.setIdentification("TEST");
+			
+			marketAsset.setUser(getUserDeveloper());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+			
+			marketAsset.setJsonDesc(loadFromResources("market/marketAsset_TEST.json"));
+						
+			marketAsset.setContent(loadFileFromResources("market/README.md"));
+			marketAsset.setContentId("README.md");
+			
+			marketAsset.setImage(loadFileFromResources("market/population.png"));
+			marketAsset.setImageType("population.png");
+			
+			marketAssetRepository.save(marketAsset);
 		}
 	}
 
