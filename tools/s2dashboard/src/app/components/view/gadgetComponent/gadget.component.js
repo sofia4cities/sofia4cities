@@ -155,7 +155,17 @@
           else{
             vm.data = allDataField;
           }
-          vm.optionsChart = {legend: {display: true}, maintainAspectRatio: false, responsive: true, responsiveAnimationDuration:500};
+          vm.optionsChart = {
+            legend: {
+              display: true, 
+              labels: {
+                boxWidth: 11
+              }
+            }, 
+            maintainAspectRatio: false, 
+            responsive: true, 
+            responsiveAnimationDuration:500
+          };
           break;
         case 'wordcloud':
           //Get data in an array
@@ -180,7 +190,7 @@
           $scope.$on("$resize",redrawWordCloud);
           break;
         case "map":
-          vm.center =vm.center || vm.config.config.center;
+          vm.center = vm.center || vm.config.config.center;
           vm.markers = data.map(
             function(d){
               return {

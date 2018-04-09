@@ -263,7 +263,13 @@
      	$("#jsonMeasures").val(JSON.stringify(measures));
      	$("#datasourcesMeasures").val(JSON.stringify([$("#datasources").val()]));
      	$("#type").val(gtype);
-     	$("#config").val("{}");
+     	if(gtype === 'map'){
+     		var scope = angular.element(document.getElementsByTagName('gadget')[0]).scope();
+     		$("#config").val(JSON.stringify(scope.$$childHead.vm.config.config));
+     	}
+     	else{
+     		$("#config").val("{}");
+     	}
      	$("#gadget_create_form").get(0).submit();
      });
 	
@@ -583,7 +589,18 @@
 		generateMeasuresArray();
 		if(measures.length > 0){
 	        var scope = angular.element(document.getElementsByTagName('gadget')[0]).scope();
-			scope.$$childHead.vm.config = {config:"{}",type:gtype};			
+	        if(gtype === "map"){
+	        	if(!scope.$$childHead.vm.config.config && !$("#config").val()){
+	        		scope.$$childHead.vm.config = {config:"{\"center\":{\"lat\":30,\"lng\":30,\"zoom\":2}}",type:gtype};
+	        	}
+	        	else{
+	        		scope.$$childHead.vm.config = {config:$("#config").val(),type:gtype};
+	        	}
+	        }
+	        else{
+	        	scope.$$childHead.vm.config = {config:"{}",type:gtype};	
+	        }
+						
 			scope.$$childHead.vm.measures = measures;
 			scope.$$childHead.vm.ds = $("#datasources").val();
 			scope.$$childHead.reloadContent();
