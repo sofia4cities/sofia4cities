@@ -202,6 +202,7 @@ public class MQTTClient {
 			this.client.subscribe("/topic/subscription/" + this.sessionKey, new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
+					log.info("Subs message available");
 					final String response = new String(message.getPayload());
 					delegateMessageFromSubscription(response);
 
@@ -394,7 +395,7 @@ public class MQTTClient {
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonMessage = mapper.readTree(message);
-		String subsId = jsonMessage.get("body").get("subscriptionId").asText();
+		String subsId = jsonMessage.get("body").get("subsciptionId").asText();
 		SubscriptionListener listener = this.subscriptions.get(subsId);
 		listener.onMessageArrived(message);
 

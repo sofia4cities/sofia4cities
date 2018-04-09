@@ -18,13 +18,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.boot.CamelConfigurationProperties;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -53,7 +51,7 @@ public class ApiCamelContextHandler implements BeanFactoryAware {
 	}
 
 	public Map<String, SpringCamelContext> findCamelContexts() {
-		return (Map<String, SpringCamelContext>) applicationContext.getBeansOfType(SpringCamelContext.class);
+		return applicationContext.getBeansOfType(SpringCamelContext.class);
 	}
 
 	public Resource loadCamelContextResource(String resourceLocation) {

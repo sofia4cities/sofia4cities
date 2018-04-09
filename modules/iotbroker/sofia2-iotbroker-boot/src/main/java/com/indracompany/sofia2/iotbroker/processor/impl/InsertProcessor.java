@@ -38,6 +38,7 @@ import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -70,31 +71,31 @@ public class InsertProcessor implements MessageTypeProcessor {
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
 		// TODO: Client Connection in contextData
-		final ContextData contextData = new ContextData();
+		
 		final Optional<IoTSession> session = securityPluginManager.getSession(insertMessage.getSessionKey());
-		contextData.setClientConnection("");
 
-		session.ifPresent(s -> {
-			contextData.setClientPatform(s.getClientPlatform());
-			contextData.setClientPatformInstance(s.getClientPlatformInstance());
-			contextData.setUser(s.getUserID());
-		});
-
-		contextData.setClientSession(insertMessage.getSessionKey());
-		String zoneId = ZoneId.systemDefault().toString();
-		contextData.setTimezoneId(zoneId);
-		contextData.setTimestamp(Calendar.getInstance(TimeZone.getTimeZone(zoneId)).getTime().toString());
-
-		((ObjectNode) insertMessage.getBody().getData()).set("contextData", objectMapper.valueToTree(contextData));
-
-		final OperationModel model = new OperationModel();
-
-		model.setBody(insertMessage.getBody().getData().toString());
-		model.setOntologyName(insertMessage.getBody().getOntology());
-		model.setOperationType(OperationType.POST);
-		model.setQueryType(QueryType.NATIVE);
-		session.ifPresent(s -> model.setUser(s.getUserID()));
-		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
+		
+		String user = null;
+		String clientPlatformId = null;
+		String clientPlatformInstance = null;
+		if (session.isPresent()) {
+			user = session.get().getUserID();
+			clientPlatformId = session.get().getClientPlatform();
+			clientPlatformInstance = session.get().getClientPlatformInstance();
+		}
+		
+		final OperationModel model = OperationModel.builder(
+				insertMessage.getBody().getOntology(), 
+				OperationType.POST, 
+				user, 
+				Source.IOTBROKER)
+				.body(insertMessage.getBody().getData().toString())
+				.queryType(QueryType.NATIVE)
+				.clientPlatformId(clientPlatformId)
+				.clientPlatformInstance(clientPlatformInstance)
+				.clientSession(insertMessage.getSessionKey())
+				.clientConnection("")
+				.build();
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

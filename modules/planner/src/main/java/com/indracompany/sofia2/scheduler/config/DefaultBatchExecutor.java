@@ -13,24 +13,20 @@
  */
 package com.indracompany.sofia2.scheduler.config;
 
-
-import static com.indracompany.sofia2.scheduler.PropertyNames.SCHEDULER_PROPERTIES_LOCATION;
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnResource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.indracompany.sofia2.scheduler.job.BatchGenericExecutor;
 
 @Configuration
-//@ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
+// @ConditionalOnResource(resources = SCHEDULER_PROPERTIES_LOCATION)
 public class DefaultBatchExecutor {
-	
+
 	@Bean
 	@ConditionalOnMissingBean(BatchGenericExecutor.class)
 	public BatchGenericExecutor batchExecutor() {
-		
+
 		return null;
 	}
 

@@ -17,10 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.DeviceSimulation;
-import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.Token;
 
 public interface DeviceSimulationService {
 
@@ -44,8 +41,9 @@ public interface DeviceSimulationService {
 	DeviceSimulation getSimulationById(String id);
 
 	List<DeviceSimulation> getSimulationsForUser(String userId);
-	
-	DeviceSimulation updateSimulation(String identification, int interval, String json, DeviceSimulation simulation) throws JsonProcessingException, IOException;
+
+	DeviceSimulation updateSimulation(String identification, int interval, String json, DeviceSimulation simulation)
+			throws JsonProcessingException, IOException;
 
 	DeviceSimulation getSimulationByJobName(String jobName);
 }

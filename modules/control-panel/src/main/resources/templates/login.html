@@ -9,8 +9,7 @@
 	<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
 	<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
 	<link rel="stylesheet" th:href="@{/static/webjars/sofia2_theme/css/login.css}"/> <!-- sofia2_theme login style -->
-	
-  	
+		  	
 	<title th:text="#{login.title}">Control Panel Login</title>
 </head>
 <body>
@@ -22,8 +21,8 @@
 		<nav class="main-nav">
 			<ul>
 				<!-- inser more links here -->
-				<li><a class="cd-signin" href="#0">Login</a></li>
-				<li><a class="cd-signup" href="#0" th:text="#{login.new}">New Account</a></li>
+				<li><a class="cd-signin" href="#0" th:text="#{login.login}"></a></li>
+				<li><a class="cd-signup" href="#0" th:text="#{login.new}"></a></li>
 			</ul>
 		</nav>
 	</header>
@@ -35,20 +34,20 @@
 
 		<div class="cd-user-modal-container"> <!-- this is the container wrapper -->
 			<ul class="cd-switcher">
-				<li><a href="#0">Login</a></li>
-				<li><a href="#0" th:text="#{login.new}">New Account</a></li>
+				<li><a href="#0" th:text="#{login.login}"></a></li>
+				<li><a href="#0" th:text="#{login.new}"></a></li>
 			</ul>
 
 			<div id="cd-login"> <!-- log in form -->			
 				
 				<div th:if="${param.error}" class="alert alert-warning alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-					<p th:text="#{login.error}">Invalid username and password.</p>
+					<p th:text="#{login.error}"></p>
 				</div>
 				
 				<div th:if="${param.logout}" class="alert alert-info alert-dismissable">
 					<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-					<p th:text="#{login.logout}">You have been logged out.</p>
+					<p th:text="#{login.logout}"></p>
 				</div>
 				
 				<div th:if="${message} != null ? true" class="alert alert-warning alert-dismissable">
@@ -57,35 +56,30 @@
 				</div>
 								
 				<form class="cd-form" th:action="@{/login}" method="post" >
-					<!-- <p class="fieldset">
-						<label class="image-replace cd-email" for="signin-email">E-mail</label>
-						<input class="full-width has-padding has-border" id="signin-email" type="email" placeholder="E-mail"/>
-						<span class="cd-error-message">Error message here!</span>
-					</p> -->
 					<p class="fieldset">
 						<label class="image-replace cd-username" for="signup-username">Username</label>
-						<input class="full-width has-padding has-border" id="username" name="username" type="text" placeholder="Username"/>
+						<input class="full-width has-padding has-border" id="username" name="username" type="text" th:placeholder="#{login.data.user}"/>
 						<span class="cd-error-message">Invalid username</span>
 					</p>
 
 					<p class="fieldset">
 						<label class="image-replace cd-password" for="signin-password">Password</label>
-						<input class="full-width has-padding has-border" id="password" name="password" type="text"  placeholder="Password"/>
-						<a href="#0" class="hide-password">Hide</a>
-						<span class="cd-error-message">Invalid password</span>
+						<input class="full-width has-padding has-border" id="password" name="password" type="text"  th:placeholder="#{login.data.password}"/>
+						<a href="#0" class="hide-password"></a>
+						<span class="cd-error-message" th:text="#{login.error.password}"></span>
 					</p>
 
 					<p class="fieldset">
 						<input type="checkbox" id="remember-me" checked="checked" />
-						<label for="remember-me">Remember me</label>
+						<label for="remember-me" th:text="#{login.remember}"></label>
 					</p>
 
 					<p class="fieldset">
-						<input class="full-width" type="submit" value="Login" />
+						<input class="full-width" type="submit"  th:value="#{login.login}" />
 					</p>
 				</form>
 				
-				<p class="cd-form-bottom-message"><a href="#0">Forgot your password?</a></p>
+				<p class="cd-form-bottom-message"><a href="#0" th:text="#{login.forgot.password}"></a></p>
 				<!-- <a href="#0" class="cd-close-form">Close</a> -->
 			</div> <!-- cd-login -->
 
@@ -95,7 +89,7 @@
 				
 					<p class="fieldset">
 						<label class="image-replace cd-username" for="signup-username">Username</label>
-						<input class="full-width has-padding has-border" id="usernameup" th:field="*{userId}" name="usernameup" type="text" placeholder="Username" th:required="true"/>
+						<input class="full-width has-padding has-border" id="usernameup" th:field="*{userId}" name="usernameup" type="text" th:placeholder="#{login.data.user}" th:required="true" th:oninvalid="'javascript:setCustomValidity(\'' + #{login.pattern.username} + '\');'" onchange="try{setCustomValidity('')}catch(e){}"/>
 						<span class="cd-error-message">Invalid Username</span>
 						
 					</p>
@@ -103,33 +97,41 @@
 					<p class="fieldset">
 
 						<label class="image-replace cd-password" for="signup-password">Password</label>
-						<input class="full-width has-padding has-border" id="passwordup" th:field="*{password}" name="passwordup" type="password"  placeholder="Password" th:required="true" title="Must contain at least: one uppercase letter, one lowercase letter and a number or simbol. Password must be between 7 and 20 characters." pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />  
-						<span class="cd-error-message">Error with password</span>
+						<input class="full-width has-padding has-border" id="passwordup" th:field="*{password}" name="passwordup" type="password" th:required="true"  th:placeholder="#{login.data.password}" th:oninvalid="'javascript:setCustomValidity(\'' + #{login.pattern.password} + '\');'"  onchange="try{setCustomValidity('')}catch(e){}" pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />   
+						<span class="cd-error-message" th:text="#{login.error.password}"></span>
 						
 					</p>
 					
 					<p class="fieldset">
 						<label class="image-replace cd-username" for="signup-name">Name</label>
-						<input class="full-width has-padding has-border" id="signup-name" th:field="*{fullName}" name="nameup" type="text" placeholder="Name" th:required="true"/>
+						<input class="full-width has-padding has-border" id="signup-name" th:field="*{fullName}" name="nameup" type="text" th:placeholder="#{login.data.name}" th:required="true" th:oninvalid="'javascript:setCustomValidity(\'' + #{login.pattern.name} + '\');'" onchange="try{setCustomValidity('')}catch(e){}"/>
 						<span class="cd-error-message">Error with Name</span>
 					</p>
 					
 					<p class="fieldset">
 						<label class="image-replace cd-email" for="signup-email">E-mail</label>
-						<input class="full-width has-padding has-border" id="signup-email" th:field="*{email}" name ="emailup" type="email" placeholder="E-mail" th:required="true"/>
+						<input class="full-width has-padding has-border" id="signup-email" th:field="*{email}" name ="emailup" type="email" th:placeholder="#{login.data.email}" th:required="true" th:oninvalid="'javascript:setCustomValidity(\'' + #{login.pattern.email} + '\');'" onchange="try{setCustomValidity('')}catch(e){}" pattern="^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,3})$" />
 						<span class="cd-error-message">Invalid email</span>
 					</p>
 					 
 					<div class="fieldset">
-					 	<div class="btn-group" data-toggle="buttons">
-							<label class="btn btn-role btn-developer green active"><i class="fa fa-check"></i> <input class="toggle" name="roleName" value="developer" type="radio" checked="checked"/> Developer</label>
-							<label class="btn btn-role btn-user green"><i class="fa fa-user"></i> <input class="toggle" name="roleName" value="user" type="radio"/> User </label>
+					 	<div class="btn-group" data-toggle="buttons" >
+							<label class="btn btn-role btn-developer green active"><i class="fa fa-check"></i> <input class="toggle" name="roleName" th:text="#{login.role.developer}" type="radio" checked="checked"/> </label>
+							<label class="btn btn-role btn-user green"><i class="fa fa-user"></i> <input class="toggle" name="roleName" th:text="#{login.role.user}" type="radio"/> </label>
 						</div>
 						<span style="padding-left: 11px;"><i class="fa fa-info-circle"></i> <span th:text="#{login.role}">please select user role</span></span>	
 					
-					</div>					
+					</div>
+					
+					<p class="fieldset" id="dialog">
+						<input type="checkbox" id="accept-terms" th:field="*{active}" name="accept-terms" th:required="true" th:oninvalid="'javascript:setCustomValidity(\'' + #{login.pattern.terms} + '\');'" onchange="try{setCustomValidity('')}catch(e){}" />
+							<span href="#0" class="popup" id="termsconditions1" th:text="#{foot.legal.acepted1}">Terms</span>
+							<a data-toggle="modal" data-target="#myModal" th:text="#{foot.legal}">Terms Popup</a>
+							<span href="#0" class="popup" id="termsconditions2" th:text="#{foot.legal.acepted2}">Terms</span>
+					</p>
+
 					<p class="fieldset">
-						<input class="full-width has-padding" type="submit" value="Create account"/>
+						<input class="full-width has-padding" type="submit" id="submitAccount" name="submitAccount" th:value="#{login.create.account}"/>
 					</p>
 				</form>
 				<!-- <a href="#0" class="cd-close-form">Close</a> -->
@@ -159,21 +161,51 @@
 	<!-- LEGAL INFO -->
 	<div id="legal" style="z-index: 1;color: #FFF; margin: 1em auto; position: absolute; bottom:5%;vertical-align: middle;text-align: center;width: 100%;" class="">Sofia4Cities Minsait © 2018 Indra Company</div>
 	
+	<!-- Modal -->
+	<div id="myModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	
+	    <!-- Modal content-->
+	    <div class="modal-content"  >
+	    	<div class="modal-header">
+	        	<button type="button" class="close" data-dismiss="modal">&times;</button>
+	        	<h4 class="modal-title" th:text="#{foot.legal}" >Modal Header</h4>
+	     	</div>
+	     	<div class="modal-body">
+	      		<div th:include="fragments/legal::#legalFragment" class="" name="iframe1" id="iframe1"> </div>
+	      	</div>
+	        <div class="modal-footer">
+	        	<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	      	</div>
+	    </div>
+	 </div>
+	 <style>
+	 .modal-dialog { width: 50% !important;display: block;  margin-left: 25%; margin-rigth:25%;}
+	 </style>
+	</div> <!-- End modal -->
+
 	<canvas class="background"></canvas>
 	
-	<!-- MAIN SCRIPTS  -->
+	<!-- MAIN SCRIPTS  --> 
 	<script th:src="@{/static/vendor/jquery/jquery.min.js}"></script>	
 	<script th:src="@{/static/vendor/bootstrap/bootstrap.js}"/>
 	<script th:src="@{/static/js/pages/login.js}"></script>
 	<script th:src="@{/static/vendor/modernizr.js}"></script> <!-- Modernizr -->
 	<script th:src="@{/static/vendor/particles.js}"></script>
+
 	
 	<!-- CORE -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>
 	
-	<script>
+	<script type="text/javascript" th:inline="javascript"> 
 	var timer = 0;
+	
+	var loginJson = { 
+			"hide": [[#{login.password.hide}]],
+			"show": [[#{login.password.show}]]
+	};
+	
 	window.onload = function() {
 		Particles.init({
 		selector: '.background',
@@ -188,15 +220,19 @@
 			var developerRole = $('.btn-developer > i');
 			var userRole  = $('.btn-user > i');
 			
-			if ($(this).hasClass("btn-developer") === true) {				
+			if ($(this).hasClass('btn-developer') === true) {				
 				developerRole.hasClass('fa-user') ? (developerRole.removeClass().addClass('fa fa-check'),userRole.removeClass().addClass('fa fa-user')) : '';				 	
 			} 
 			else {			
 				userRole.hasClass('fa-user') ? (userRole.removeClass().addClass('fa fa-check'),developerRole.removeClass().addClass('fa fa-user')) : '';				 	
 			}	
-		}); 
-
+		}); 		
+	
 	};
+	
+	
+	
 	</script>
+
 </body>
 </html>

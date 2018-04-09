@@ -14,8 +14,13 @@
  */
 package com.indracompany.sofia2.resources.service;
 
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
+
+
+
 public interface IntegrationResourcesService {
 	
-	public String getURL(String serviceKey);
+	String getUrl(Module module, ServiceUrl service);
 
 }
