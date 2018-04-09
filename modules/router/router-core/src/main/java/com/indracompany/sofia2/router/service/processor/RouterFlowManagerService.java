@@ -173,6 +173,7 @@ public class RouterFlowManagerService {
 					.queryType(QueryType.valueOf(model.getQueryType().name())).build();
 
 			OperationResultModel result = null;
+
 			try {
 				result = routerCrudService.execute(operationModel);
 			} catch (Exception e) {
