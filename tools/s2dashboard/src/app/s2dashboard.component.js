@@ -51,6 +51,7 @@
           $scope.layergrid = layergrid;
 
           $scope.gadgets = [];
+         
 
           $scope.hide = function() {
             $mdDialog.hide();
@@ -99,6 +100,305 @@
       }
 
 
+      function showAddGadgetTemplateDialog(type,config,layergrid){
+        function AddGadgetController($scope, $mdDialog, sofia2HttpService, type, config, layergrid) {
+          $scope.type = type;
+          $scope.config = config;
+          $scope.layergrid = layergrid;
+
+         
+          $scope.templates = [];
+
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+
+         
+          $scope.loadTemplates = function() {
+            return sofia2HttpService.getUserGadgetTemplate().then(
+              function(templates){
+                $scope.templates = templates.data;
+              }
+            );
+          };
+
+          $scope.useTemplate = function() {    
+                 
+            $scope.config.type = $scope.type;
+            $scope.config.content=$scope.template.template          
+            showAddGadgetTemplateParameterDialog($scope.type,$scope.config,$scope.layergrid);
+            $mdDialog.hide();
+          };
+          $scope.noUseTemplate = function() {
+            $scope.config.type = $scope.type;        
+            $scope.layergrid.push($scope.config);
+            $mdDialog.cancel();
+          };
+
+        }
+        $mdDialog.show({
+          controller: AddGadgetController,
+          templateUrl: 'app/partials/edit/addGadgetTemplateDialog.html',
+          parent: angular.element(document.body),
+          clickOutsideToClose:true,
+          fullscreen: false, // Only for -xs, -sm breakpoints.
+          openFrom: '.sidenav-fab',
+          closeTo: angular.element(document.querySelector('.sidenav-fab')),
+          locals: {
+            type: type,
+            config: config,
+            layergrid: layergrid
+          }
+        })
+        .then(function() {
+       
+        }, function() {
+          $scope.status = 'You cancelled the dialog.';
+        });
+      }
+
+
+
+      function showAddGadgetTemplateParameterDialog(type,config,layergrid){
+        function AddGadgetController($scope, $mdDialog,$mdCompiler, sofia2HttpService, type, config, layergrid) {
+          var agc = this;
+          agc.$onInit = function () {
+            $scope.loadDatasources();
+            $scope.getPredefinedParameters();
+          }
+         
+          $scope.type = type;
+          $scope.config = config;
+          $scope.layergrid = layergrid;
+          $scope.datasource;
+          $scope.datasources = [];
+          $scope.datasourceFields = [];
+          $scope.parameters = [];
+         
+          $scope.templates = [];
+
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+
+         
+          $scope.loadDatasources = function(){
+            return sofia2HttpService.getDatasources().then(
+              function(response){
+                $scope.datasources=response.data;
+                
+              },
+              function(e){
+                console.log("Error getting datasources: " +  JSON.stringify(e))
+              }
+            );
+          };
+    
+          $scope.iterate=  function (obj, stack, fields) {
+            for (var property in obj) {
+                 if (obj.hasOwnProperty(property)) {
+                     if (typeof obj[property] == "object") {
+                      $scope.iterate(obj[property], stack + (stack==""?'':'.') + property, fields);
+              } else {
+                         fields.push({field:stack + (stack==""?'':'.') + property, type:typeof obj[property]});
+                     }
+                 }
+              }    
+              return fields;
+           }
+
+          /**method that finds the tags in the given text*/
+          function searchTag(regex,str){
+            let m;
+            let found=[];
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                found.push(arr[0]);			
+              });  
+            }
+            return found;
+          }
+          /**method that finds the name attribute and returns its value in the given tag */
+          function searchTagContentName(regex,str){
+            let m;
+            var content;
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                  content = arr[0].match(/"([^"]+)"/)[1];			
+              });  
+            }
+            return content;
+          }
+          /**method that finds the options attribute and returns its values in the given tag */
+          function searchTagContentOptions(regex,str){
+            let m;
+            var content=" ";
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                  content = arr[0].match(/"([^"]+)"/)[1];			
+              });  
+            }
+          
+            return  content.split(',');
+          }
+
+          /**we look for the parameters in the source code to create the form */
+          $scope.getPredefinedParameters = function(){
+            var str =  $scope.config.content;
+           	const regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+		        const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
+            const regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
+		        let found=[];
+	        	found = searchTag(regexTag,str);	
+        
+        
+            for (var i = 0; i < found.length; i++) {			
+              var tag = found[i];
+              if(tag.replace(/\s/g, '').search('type="text"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){	
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterTextLabel", type:"labelsText"});
+              }else if(tag.replace(/\s/g, '').search('type="number"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:0, type:"labelsNumber"});              
+              }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterDsLabel", type:"labelsds"});               
+              }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){
+                var optionsValue = searchTagContentOptions(regexOptions,tag); 
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterSelectLabel",type:"selects", optionsValue:optionsValue});	              
+              }
+             } 
+            }
+        
+
+            /**find a value for a given parameter */
+            function findValueForParameter(label){
+                for (let index = 0; index <  $scope.parameters.length; index++) {
+                  const element =  $scope.parameters[index];
+                  if(element.label===label){
+                    return element.value;
+                  }
+                }
+            }
+        
+            /**Parse the parameter of the data source so that it has array coding*/
+            function parseArrayPosition(str){
+              const regex = /\.[\d]+/g;
+              let m;              
+              while ((m = regex.exec(str)) !== null) {                
+                  if (m.index === regex.lastIndex) {
+                      regex.lastIndex++;
+                  } 
+                  m.forEach( function(item, index, arr){             
+                    var index = arr[0].substring(1,arr[0].length)
+                    var result =  "["+index+"]";
+                    str = str.replace(arr[0],result) ;
+                  });
+              }
+              return str;
+            }
+
+            /** this function Replace parameteres for his selected values*/
+            function parseProperties(){
+              var str =  $scope.config.content;
+              const regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+              const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
+              const regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
+              let found=[];
+              found = searchTag(regexTag,str);	
+          
+              let parserList=[];
+              for (var i = 0; i < found.length; i++) {
+                var tag = found[i];			
+               
+                if(tag.replace(/\s/g, '').search('type="text"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){                 
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});   
+                }else if(tag.replace(/\s/g, '').search('type="number"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});   
+                }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){                
+                  var field = parseArrayPosition(findValueForParameter(searchTagContentName(regexName,tag)).field);                               
+                  parserList.push({tag:tag,value:"{{ds[0]."+field+"}}"});        
+                }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){                
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});  
+                }
+              } 
+              //Replace parameteres for his values
+              for (var i = 0; i < parserList.length; i++) {
+                str = str.replace(parserList[i].tag,parserList[i].value);
+              }
+              return str;
+            }
+          
+          
+
+
+
+      
+          $scope.loadDatasourcesFields = function(){
+            
+            if($scope.config.datasource!=null && $scope.config.datasource.id!=null && $scope.config.datasource.id!=""){
+                 return sofia2HttpService.getsampleDatasources($scope.config.datasource.id).then(
+                  function(response){
+                    $scope.datasourceFields=$scope.iterate(response.data[0],"", []);
+                  },
+                  function(e){
+                    console.log("Error getting datasourceFields: " +  JSON.stringify(e))
+                  }
+                );
+              }
+              else 
+              {return null;}
+        }
+
+
+          $scope.save = function() { 
+            $scope.config.type = $scope.type;
+            $scope.config.content=parseProperties();            
+            $scope.layergrid.push($scope.config);
+            $mdDialog.cancel();
+          };
+        
+        }
+        $mdDialog.show({
+          controller: AddGadgetController,
+          templateUrl: 'app/partials/edit/addGadgetTemplateParameterDialog.html',
+          parent: angular.element(document.body),
+          clickOutsideToClose:true,
+          fullscreen: false, // Only for -xs, -sm breakpoints.
+          openFrom: '.sidenav-fab',
+          closeTo: angular.element(document.querySelector('.sidenav-fab')),
+          locals: {
+            type: type,
+            config: config,
+            layergrid: layergrid
+          }
+        })
+        .then(function() {
+
+        }, function() {
+          $scope.status = 'You cancelled the dialog.';
+        });
+      }
+
+
+
+
+
+
       function dropElementEvent(e,newElem){
         var type = e.dataTransfer.getData("type");
         newElem.id = type + "_" + (new Date()).getTime();
@@ -122,10 +422,8 @@
           width: 1,
           radius: 1
         }
-        if(type == 'livehtml'){
-          var layerGrid = vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer];
-          layerGrid.gridboard.push(newElem);
-          $scope.$applyAsync();
+        if(type == 'livehtml'){         
+          showAddGadgetTemplateDialog(type,newElem,vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer].gridboard); 
         }
         else{
           showAddGadgetDialog(type,newElem,vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer].gridboard);
@@ -140,62 +438,6 @@
           },100
         );
       }
-
-
-      /*var page = {};
-      var layer = {};
-
-      layer.gridboard = [
-        {
-          cols: 8,
-          rows: 7,
-          y: 0,
-          x: 0,
-          id: "1",
-          type: "livehtml",
-          content: "<h1> LiveHTML Text </h1>",
-          header: {
-            enable: true,
-            title: {
-              icon: "",
-              iconColor: "none",
-              text: "Leaflet Map Gadget test",
-              textColor: "none"
-            },
-            backgroundColor: "none",
-            height: 64
-          },
-          backgroundColor: "initial",
-          padding: 0,
-          border: {
-            color: "black",
-            width: 1,
-            radius: 5
-          }
-        }
-      ];
-
-      layer.title = "baseLayer";
-
-      page.title = "New Page";
-      page.icon = "android"
-      page.background = {}
-      page.background.file = []
-
-      page.layers = [layer];
-      */
-     /* Edit mode only */
-      /*page.selectedlayer=0
-      page.combinelayers=!vm.editmode;
-
-      var page2 = JSON.parse(JSON.stringify(page));
-      page2.icon = "bug_report";
-      page2.title = "New Page2";
-
-      vm.dashboard.pages.push(page);
-      vm.dashboard.pages.push(page2);
-      */
-
     };
 
     vm.checkIndex = function(index){

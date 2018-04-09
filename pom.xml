@@ -32,6 +32,7 @@
         <project.year>2013-2018</project.year>
         <project.organization.name>Indra Sistemas S.A. SPAIN</project.organization.name>
         <project.website>https://sofia2.com</project.website>
+		<freemarket.version>2.3.21</freemarket.version>	
 	</properties>
 	
 	<dependencyManagement>
@@ -115,7 +116,8 @@
 		<module>modules/dashboard-engine</module>
 		<module>modules/device-simulator</module>
 		<module>modules/oauth-server</module>
-	
+		<module>modules/digitaltwin-broker</module>	
+
 	</modules>
 	
 	<build>

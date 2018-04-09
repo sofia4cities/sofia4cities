@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.persistence.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
@@ -31,6 +32,7 @@ public class QueryToolServiceImpl implements QueryToolService {
 	QueryAsTextDBRepository queryOps = null;
 
 	@Autowired
+	@Qualifier("MongoManageDBRepository")
 	ManageDBRepository manageOps = null;
 
 	@Autowired

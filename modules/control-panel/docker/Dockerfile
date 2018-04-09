@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM maven:3.5.3-jdk-8-alpine
 
 # Metadata
 LABEL module.maintainer="plataformasofia2@indra.es" \

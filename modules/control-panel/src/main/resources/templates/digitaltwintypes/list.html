@@ -1,0 +1,293 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+		
+		
+		<!-- BEGIN WEB FONT -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+		
+		<!-- PLUGINS STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
+	</head>	
+	
+	<!-- page-sidebar-closed to start page with collapsed menu -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>		
+			
+		<!-- BEGIN SIDEBAR -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+		
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE HEADER-->
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM -->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/digitaltwintypes/list}"> <span th:text="#{digitaltwintype.breadcrumb.list}">Digital Twin Types</span></a><i class="fa fa-circle"></i></li>						
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{digitaltwintype.template.list}">My Digital Twin Types </span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">
+					
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-list font-grey-gallery"></i>
+									<span class="caption-subject bold font-grey-gallery uppercase" th:text="#{digitaltwintype.template.list}"> My Digital Twin Types </span>
+									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>								
+								<div class="actions margin-right-20">
+									<div class="btn-group">									
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../digitaltwintypes/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
+									</div>										
+								</div>								
+							</div>
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone">
+										<!-- ALERT ZONE -->																			
+									</div>
+									<div class="col-md-12 margin-bottom-20">
+									<!-- SEARCH FORM -->
+										<form id="form_digital_twin_type" class="" role="form" method="get">											
+											<div id="searchFilter" class="form-body hide" style="border-bottom: 1px solid #eef1f5;">
+												<div class="row">
+													<div class="col-md-4 col-xs-12">
+														<div class="form-group">															
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="fa fa-tag font-grey-mint"></i>
+																</span>															
+																<input id="identification" th:placeholder="#{gen.name}" name="identification" class="form-control" type="text" maxlength="50" value=""/>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-4 col-xs-12">
+														<div class="form-group">															
+															<div class="input-group">
+																<span class="input-group-addon">
+																	<i class="fa fa-tag font-grey-mint"></i>
+																</span>
+																<input id="description" th:placeholder="#{gen.description}" name="description" class="form-control" type="text" maxlength="100" value=""/>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-4 col-xs-12">
+														<div class="btn-group">
+															<button type="button" id="search_digital_type" name="search_digital_type" th:title="#{gen.search}" class="btn grey-mint  btn-outline sbold"><i class="fa fa-search"></i> <em th:text="#{gen.search}">Search</em></button>
+															<button type="button" id="reset_digital_type" name="reset_digital_type" value="Reset" class="btn purple-plum btn-outline sbold" title="Reset"><i class="fa fa-refresh"></i>&nbsp;</button>
+														</div>
+													</div>
+												</div>
+											</div>												
+										</form>								
+									</div>
+									<!-- DIGITAL TWIN TYPE LIST -->
+									<div class="col-md-12">											
+										<div id="contenedor-tabla-outside" class="contiene margin-bottom-30">																						
+											<div>
+												<!-- DATATABLE DANDELION CONF. -->												
+												<table id="digital_twin_types" class="table table-hover table-striped" dt:table="true" dt:paginationtype="full_numbers">
+													<thead>
+														<tr class="cabecera-tabla">
+															<th class="titulo-columnas" th:text="#{gen.name}">Name</th>
+															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{ontology.userId}" >Owner</span></th>
+															<th class="titulo-columnas" th:text="#{gen.description}">Description</th>
+															<th class="titulo-columnas text-center" th:text="#{digitaltwintype.type}">type</th>
+															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{ontology.createdAt}"> Created At </span></th>
+															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
+														</tr>
+													</thead>
+													<tbody th:remove="all-but-first">
+														<tr th:each="type : ${digitalTwinTypes}" pages:paginate="10">
+															<!-- IDENTIFICATION/NAME -->
+															<td class="text-left no-wrap " th:text="${type.name}"></td>
+															<!-- USER -->
+															<td class="text-center " th:text="${type.user.userId}"></td>
+															<!-- DESCRIPTION -->
+															<td class="text-left text-truncate-sm" th:title="${type.description}" th:text="${type.description}"></td>
+															<!-- TYPE -->
+															<td class="text-left text-truncate-sm" th:title="${type.type}" th:text="${type.type}"></td>
+															<!-- DATE -->
+															<td class="text-center" th:if="${type.createdAt!=null}" th:text="${#dates.format(type.createdAt,'dd/MM/YYYY')}"></td>
+															<td class="text-center" th:if="${type.createdAt==null}" th:text="${type.createdAt}"></td>
+															<!-- OPTIONS -->
+															<td class="icon" style="white-space: nowrap">
+																<div class="grupo-iconos">
+																	<!-- VIEW -->															
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/digitaltwintypes/show/${type.id}|} + '\');'"><i class="fa fa-eye"></i></span>
+																																																			
+																	<!-- EDIT -->
+																	<span  th:if="(${#authentication.name} == ${type.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/digitaltwintypes/update/${type.id}|} + '\');'"><i class="fa fa-edit"></i></span>
+																	
+																	<!-- INDEXES -->
+																	<!-- <span th:title="#{plantillas_listado_button_crear_indice}" class="btn grey-mint btn-xs btn-outline sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{plantillas_listado_button_crear_indice}" th:onclick="'javascript:navigateUrl(\'' + @{|/indices/${ontology.id}|} + '\');'"><i class="fa fa-database"></i></span> -->
+																</div>
+															</td>
+														</tr>
+													</tbody>
+												</table>									
+											</div>
+										</div>											
+									</div>
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC LIGHT -->							
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->				
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>	
+	
+	<!-- CORE CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
+	
+	
+	<script th:inline="javascript">	
+	
+	// TEMPLATE SEARCH FORM.
+	var search = new Array();
+	var search = [[${param.identification}]] || [];
+	var description = [[${param.description}]] || '';
+	
+	search[0] ? $('#identification').val(search[0]) : search[0] = '';
+	description ? $('#description').val(description) : description = '';
+	console.log('SEARCHING ... [ Identification: ' + search[0] + ' Description: ' + description + ']');
+	if (( search[0] != '') || (description != '')) { $('#search-toggle').trigger('click'); }
+	
+	// DATATABLES LANGUAJE FROM PROPERTIES.
+	datatable_lang = [[#{datatables_lang}]];	
+	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
+
+	</script>
+	
+	<script type="text/javascript">	
+	var optionName = 'ONTOLOGIES';
+	
+	//<![CDATA[
+	function navigateUrl(url){  window.location.href = url;	}
+	
+	// MAIN WHEN READY
+	$( document ).ready(function() {
+	
+	
+		// AUTO COMPLETE ON ONTOLOGY IDENTIFICATION/NAME
+		$.ajax({ url: "/controlpanel/digitaltwintypes/getNamesForAutocomplete", type: 'POST', dataType: 'json', contentType: 'text/html', mimeType: 'application/json',
+			success: function (source) {			 
+						var namesArray = new Array();
+						for( var i = 0; i < source.length; i++ ){
+							namesArray[i] = { value: source[i] , data: source[i]};
+						}
+						
+						// INIT AJAX AUTO COMPLETE
+				$('#identification').autocomplete({ 
+					lookup: namesArray,
+					lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
+						var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
+						return re.test(suggestion.value);
+					}	
+				});
+			}
+		});
+		
+		//SHOW/HIDE DATATABLE COLUMNS HANDLER
+		$('label.toggle-vis').on( 'click', function (e) {
+			e.preventDefault(); 
+			// Get the column API object
+			var column = $('#digital_twin_types').DataTable().column( $(this).attr('data-column') ); 
+			// Toggle the visibility
+			column.visible( ! column.visible() );			
+			// toggle Text
+			$(this).toggleClass('text-muted line-through');			
+		});	
+		
+		// SEARCH FORM RESET
+		$('#reset_digital_type').on('click',function(){
+			console.log('reset form...');
+			$('#form_digital_twin_type')[0].reset();
+			$('#form_digital_twin_type')[0].submit();
+		});
+		
+		// SEARCH FORM
+		$('#search_digital_type').on('click',function(){ $('#form_digital_twin_type')[0].submit(); });
+	});
+	 
+	// MAIN WHEN LOAD
+	$(window).load(function(){  
+		
+		// SHOW/HIDE DATATABLES COLUMN INIT 		
+		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
+		$('#dataTable-vis-toggle').removeClass('hide');
+		
+		// HIDE COLUMNS (DeESCRIPTION, DATAMODEL AND CREATEDAT)		
+		$.each([ 2,6,7 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
+		
+	});
+	
+	//]]>
+	</script>
+	
+</body>
+</html>
+  

@@ -36,4 +36,7 @@ public interface MarketAssetRepository extends JpaRepository<MarketAsset, String
 	@Query("SELECT o FROM MarketAsset AS o WHERE (o.identification LIKE %:marketAssetId%)")
 	List<MarketAsset> findByIdentificationLike(@Param("marketAssetId") String marketAssetId);
 	
+	@Query("SELECT o.jsonDesc FROM MarketAsset AS o")
+	List<String> findJsonDescs();
+	
 }

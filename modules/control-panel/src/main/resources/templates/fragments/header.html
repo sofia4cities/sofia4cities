@@ -176,19 +176,11 @@
 			
 	<!-- HEADER DATA TO SEND TO HEADER CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
-		var currentLanguage = [[${lang}]];	
-		var messages = [[${message}]];
+		var errores = [[${message}]];
 		var informacion = [[${info}]];		
 		var headerJson = { 
-			"language": currentLanguage,
-			"fullscreen": [[#{gen.fullscreen}]],
-			"reload":[[#{gen.reload}]],
-			"remove":[[#{gen.remove}]],
-			"settings":[[#{gen.settings}]],
-			"collapse":[[#{gen.collapse}]],
-			"messages": messages,
+			"errores": errores,
 			"informacion": informacion,
-			"informationtitle": [[#{gen.informationTitle}]],
 			"btnEliminar": [[#{gen.deleteBtn}]],
 			"btnCancelar": [[#{gen.closeBtn}]],
 			"btnClose": [[#{gen.closeBtn}]],
@@ -196,6 +188,8 @@
 			"userConfirm":[[#{user.delete.confirm}]],
 			"twitterListeningConfirm": [[#{scheduledsearch.delete.confirm}]],
 			"ontologyConfirm":[[#{ontology.delete.confirm}]],
+			"digitalTwinTypeConfirm":[[#{digitaltwintype.delete.confirm}]],
+			"digitalTwinDeviceConfirm":[[#{digitaltwindevice.delete.confirm}]],
 			"genericConfirm":[[#{dialogo_confirm_delete_text}]],
 			"configurationConfirm":[[#{configuration.del.confirm}]],
 			"gadgetDatasourceConfirm":[[#{datasources.del.confirm}]],
