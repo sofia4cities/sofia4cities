@@ -14,9 +14,9 @@ sofia2:
           url: 
       node-red:
         base:
-          url: https://rancher.sofia4cities.com/sofia2/flowengine/admin
+          url: http://localhost:8082/flowengine/
         advice:
-          url: https://rancher.sofia4cities.com/nodered/
+          url: http://localhost:5050/
       router-standalone:
         base:
           url: http://localhost:19100/

@@ -23,7 +23,7 @@ public class FlowEngineServiceIntegrationTest {
 	// TODO this test should not expect FlowEngine to be up. Erase this tests.
 
 	private FlowEngineService flowEngineService;
-	private String baseUrl = "http://localhost:8082/sofia2/flowengine/admin";
+	private String baseUrl = "http://localhost:8082/flowengine/admin";
 	private int restTimeout = 5000;
 	private String domainId;
 	private int port = 8005;

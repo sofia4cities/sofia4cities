@@ -6,7 +6,7 @@ sofia2:
     iotbroker: https://${SERVER_NAME}           
    flowengine.services:
     request.timeout.ms: 5000
-    baseurl: http://flowengineservice:8082/sofia2/flowengine/admin   
+    baseurl: http://flowengineservice:8082/flowengine/admin   
     proxyurl: https://${SERVER_NAME}/nodered/             
 
 spring:

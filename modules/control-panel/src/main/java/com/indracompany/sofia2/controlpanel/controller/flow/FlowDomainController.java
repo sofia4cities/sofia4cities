@@ -55,7 +55,7 @@ public class FlowDomainController {
 	@Value("${sofia2.flowengine.services.request.timeout.ms:5000}")
 	private int restRequestTimeout;
 
-	@Value("${sofia2.flowengine.services.baseurl:http://localhost:8082/sofia2/flowengine/admin}")
+	@Value("${sofia2.flowengine.services.baseurl:http://localhost:8082/flowengine/admin}")
 	private String baseUrl;
 
 	@Value("${sofia2.flowengine.services.proxyurl:http://localhost:5050/}")
