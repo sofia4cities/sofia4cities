@@ -48,178 +48,171 @@ import lombok.extern.slf4j.Slf4j;
 @Service("routerFlowManagerService")
 @Slf4j
 public class RouterFlowManagerService {
-	
+
 	@Autowired
 	private RouterCrudService routerCrudService;
-	
+
 	@Autowired
 	private ClientsConfigFactory clientsFactory;
-	
+
 	@Autowired
 	private ApplicationContext applicationContext;
-	
+
 	@Autowired
 	private CamelContext camelContext;
-	
+
 	private String executeCrudOperationsRoute = "direct:execute-crud-operations";
-	
+
 	public OperationResultModel startBrokerFlow(NotificationModel model, Exchange exchange) {
 		log.debug("startBrokerFlow: Notification Model arrived");
 		NotificationCompositeModel compositeModel = new NotificationCompositeModel();
 		compositeModel.setNotificationModel(model);
-		
+
 		if (checkModelIntegrity(compositeModel)) {
 			ProducerTemplate t = camelContext.createProducerTemplate();
-			NotificationCompositeModel result = (NotificationCompositeModel)t.requestBody(executeCrudOperationsRoute, compositeModel);
+			NotificationCompositeModel result = (NotificationCompositeModel) t.requestBody(executeCrudOperationsRoute,
+					compositeModel);
 			return result.getOperationResultModel();
-		}
-		else {
+		} else {
 			OperationResultModel output = new OperationResultModel();
 			output.setResult("ERROR");
 			output.setStatus(false);
 			output.setMessage("Input Model Integrity Check Failed");
 			return output;
-		}				
+		}
 	}
-	
+
 	public void executeCrudOperations(Exchange exchange) {
 		log.debug("executeCrudOperations: Begin");
-		
+
 		NotificationCompositeModel compositeModel = (NotificationCompositeModel) exchange.getIn().getBody();
 		OperationModel model = compositeModel.getNotificationModel().getOperationModel();
 		String METHOD = model.getOperationType().name();
-		
+
 		OperationResultModel fallback = new OperationResultModel();
 		fallback.setResult("NO_RESULT");
 		fallback.setStatus(false);
 		fallback.setMessage("Operation Not Executed due to lack of OperationType");
 		compositeModel.setOperationResultModel(fallback);
-		
+
 		try {
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
-				OperationResultModel result =routerCrudService.query(model);
+			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())
+					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
+				OperationResultModel result = routerCrudService.query(model);
 				compositeModel.setOperationResultModel(result);
-			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				OperationResultModel result =routerCrudService.insert(model);
+			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name())
+					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
+				OperationResultModel result = routerCrudService.insert(model);
 				compositeModel.setOperationResultModel(result);
-			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
-				OperationResultModel result =routerCrudService.update(model);
+			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name())
+					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
+				OperationResultModel result = routerCrudService.update(model);
 				compositeModel.setOperationResultModel(result);
-			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
-				OperationResultModel result =routerCrudService.delete(model);
+			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())
+					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
+				OperationResultModel result = routerCrudService.delete(model);
 				compositeModel.setOperationResultModel(result);
 			} else {
 				throw new IllegalArgumentException("Operation not soported: " + METHOD);
 			}
-			
+
 		} catch (RouterCrudServiceException ex) {
-			log.debug("executeCrudOperations: Exception "+ex.getMessage());
+			log.debug("executeCrudOperations: Exception " + ex.getMessage());
 			compositeModel.setOperationResultModel(ex.getResult());
 		} catch (Exception e) {
-			log.debug("executeCrudOperations: Exception "+e.getMessage());
+			log.debug("executeCrudOperations: Exception " + e.getMessage());
 		}
-		
+
 		exchange.getIn().setBody(compositeModel);
 		log.debug("executeCrudOperations: End");
 	}
-	
+
 	public void getScriptsAndNodereds(Exchange exchange) {
 		log.debug("getScriptsAndNodereds: Begin");
 		NotificationCompositeModel compositeModel = (NotificationCompositeModel) exchange.getIn().getBody();
 		OperationModel model = compositeModel.getNotificationModel().getOperationModel();
-		
+
 		String ontologyName = model.getOntologyName();
 		String messageType = model.getOperationType().name();
-		
-		List<AdviceNotificationModel> listNotifications =new ArrayList<AdviceNotificationModel>();
-		
-		Map<String, AdviceNotificationService>  map = applicationContext.getBeansOfType(AdviceNotificationService.class);
-		
+
+		List<AdviceNotificationModel> listNotifications = new ArrayList<AdviceNotificationModel>();
+
+		Map<String, AdviceNotificationService> map = applicationContext.getBeansOfType(AdviceNotificationService.class);
+
 		Iterator<Entry<String, AdviceNotificationService>> iterator = map.entrySet().iterator();
-		while (iterator.hasNext())
-		{
+		while (iterator.hasNext()) {
 			Entry<String, AdviceNotificationService> item = iterator.next();
 			AdviceNotificationService service = item.getValue();
 			List<AdviceNotificationModel> list = service.getAdviceNotificationModel(ontologyName, messageType);
-			if (list!=null)
+			if (list != null)
 				listNotifications.addAll(list);
 		}
-		
-		if (listNotifications!=null && listNotifications.size()>0)
+
+		if (listNotifications != null && listNotifications.size() > 0)
 			exchange.getIn().setHeader("endpoints", listNotifications);
-		
+
 		log.debug("getScriptsAndNodereds: End");
-		
+
 	}
-	
+
 	public OperationResultModel adviceScriptsAndNodereds(@Header(value = "theBody") Object header, Exchange exchange) {
-		
+
 		log.debug("adviceScriptsAndNodereds: Begin");
-		
+
 		NotificationCompositeModel compositeModel = (NotificationCompositeModel) header;
-		AdviceNotificationModel entity = (AdviceNotificationModel)exchange.getIn().getBody();
-		
+		AdviceNotificationModel entity = (AdviceNotificationModel) exchange.getIn().getBody();
+
 		compositeModel.setUrl(entity.getUrl());
 		compositeModel.setNotificationEntityId(entity.getEntityId());
-		
-		SuscriptionModel model =entity.getSuscriptionModel();
-		if (model!=null)
-		{
-			OperationModel operationModel = OperationModel.builder(
-					model.getOntologyName(), 
-					OperationType.QUERY, 
-					model.getUser(), 
-					Source.INTERNAL_ROUTER)
-					.body(appendOIDForSQL(model.getQuery(),compositeModel.getNotificationModel().getOperationModel().getObjectId()))
-					.queryType(QueryType.valueOf(model.getQueryType().name()))
-					.build();
 
-			OperationResultModel result =null;
+		SuscriptionModel model = entity.getSuscriptionModel();
+		if (model != null) {
+			OperationModel operationModel = OperationModel
+					.builder(model.getOntologyName(), OperationType.QUERY, model.getUser(), Source.INTERNAL_ROUTER)
+					.body(appendOIDForSQL(model.getQuery(), compositeModel.getOperationResultModel().getResult()))
+					.queryType(QueryType.valueOf(model.getQueryType().name())).build();
+
+			OperationResultModel result = null;
+
 			try {
-				result =routerCrudService.execute(operationModel);
+				result = routerCrudService.execute(operationModel);
 			} catch (Exception e) {
 			}
-			
-			if (result!=null) {
+
+			if (result != null) {
 				compositeModel.setOperationResultModel(result);
 			}
-			
+
 		}
-				
+
 		OperationResultModel fallback = new OperationResultModel();
 		fallback.setResult("ERROR");
 		fallback.setStatus(false);
-		fallback.setMessage("Operation Failed. Returned Default FallBack with :"+entity.getEntityId()+" URL: "+compositeModel.getUrl());
-		
-		RouterClientGateway<NotificationCompositeModel, OperationResultModel> adviceGateway =  clientsFactory.createAdviceGateway("advice", "adviceGroup");
+		fallback.setMessage("Operation Failed. Returned Default FallBack with :" + entity.getEntityId() + " URL: "
+				+ compositeModel.getUrl());
+
+		RouterClientGateway<NotificationCompositeModel, OperationResultModel> adviceGateway = clientsFactory
+				.createAdviceGateway("advice", "adviceGroup");
 		adviceGateway.setFallback(fallback);
-		
+
 		OperationResultModel ret = adviceGateway.execute(compositeModel);
-		
+
 		log.debug("adviceScriptsAndNodereds: END");
 		return ret;
-		
-		
+
 	}
-	
+
 	private String appendOIDForSQL(String query, String objectId) {
 		if (query.toUpperCase().contains("WHERE")) {
-			return query + " AND _id = OID(\""+objectId+"\")";
-		}
-		else 
-			return query + " WHERE _id = OID(\""+objectId+"\")";
-		
+			return query + " AND _id = OID(\"" + objectId + "\")";
+		} else
+			return query + " WHERE _id = OID(\"" + objectId + "\")";
+
 	}
-	
-	
-	
+
 	public boolean checkModelIntegrity(NotificationCompositeModel model) {
 		log.debug("checkModelIntegrity: Begin");
 		return true;
 	}
-	
-	
-	
-	
 
 }

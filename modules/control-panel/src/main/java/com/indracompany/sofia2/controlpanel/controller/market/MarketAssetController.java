@@ -67,7 +67,12 @@ public class MarketAssetController {
 	@GetMapping(value = "/update/{id}")
 	public String updateForm(@PathVariable("id") String id, Model model) {
 
-		marketAssetHelper.populateMarketAssetUpdateForm(model, id);
+		try {
+			marketAssetHelper.populateMarketAssetUpdateForm(model, id);
+		} catch (Exception e) {
+			marketAssetHelper.populateMarketAssetShowForm(model, id);
+			return "marketasset/show";
+		}
 
 		return "marketasset/create";
 	}
@@ -105,7 +110,7 @@ public class MarketAssetController {
 			String apiId = marketAssetService.createMarketAsset(marketAssetHelper.marketAssetMultipartMap(marketAssetMultipart));
 
 			return "redirect:/marketasset/show/" + utils.encodeUrlPathSegment(apiId, request);
-		} catch (ApiManagerServiceException e) {
+		} catch (Exception e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
 			return "redirect:/marketasset/create";
@@ -113,8 +118,8 @@ public class MarketAssetController {
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-	@PutMapping(value="/update/{id}", produces = "text/html")
-	public String update(@PathVariable("id") String id, MarketAssetMultipart marketAssetMultipart, BindingResult bindingResult, RedirectAttributes redirect) {
+	@PostMapping(value="/update/{id}")
+	public String update(@PathVariable("id") String id, MarketAssetMultipart marketAssetMultipart, MultipartHttpServletRequest request, BindingResult bindingResult, RedirectAttributes redirect) {
 
 		if (bindingResult.hasErrors()) {
 			utils.addRedirectMessage("api.update.error", redirect);
@@ -194,10 +199,10 @@ public class MarketAssetController {
 		}
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-	@GetMapping(value = "/updateState/{id}/{state}")
-	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, Model uiModel){
-		//apiManagerService.updateState(id, state);
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@PostMapping(value = "/updateState/{id}/{state}")
+	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, @RequestBody String reasonData){
+		marketAssetService.updateState(id, state, reasonData);
 		return "redirect:/apimanager/list";
 	}
 	

@@ -12,33 +12,18 @@
  * limitations under the License.
  */
 /*******************************************************************************
+
  * © Indra Sistemas, S.A.
  * 2013 - 2018  SPAIN
  *
  * All rights reserved
  ******************************************************************************/
-
 package com.indracompany.sofia2.config.repository;
-
-import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.OntologyEmulator;
-import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserComment;
 
-public interface OntologyEmulatorRepository extends JpaRepository<OntologyEmulator, String> {
+public interface UserCommentRepository extends JpaRepository<UserComment, String> {
 
-	List<OntologyEmulator> findByIdentification(String identification);
-
-	List<OntologyEmulator> findByIdentificationAndUser(String identification, User user);
-
-	List<OntologyEmulator> findByUser(User user);
-
-	List<OntologyEmulator> findById(String id);
-
-	OntologyEmulator findByOntology(Ontology ontology);
-
-	void deleteByOntology(Ontology ontology);
 }

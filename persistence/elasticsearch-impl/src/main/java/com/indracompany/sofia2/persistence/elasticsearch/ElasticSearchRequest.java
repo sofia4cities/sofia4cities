@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,14 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.repository;
+package com.indracompany.sofia2.persistence.elasticsearch;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import lombok.Data;
 
-import com.indracompany.sofia2.config.model.ConfigurationType;
-
-public interface ConfigurationTypeRepository extends JpaRepository<ConfigurationType, String> {
-
-	ConfigurationType findById(String id);
+@Data
+public class ElasticSearchRequest {
+    
+    private String index;
+    private String type;
+    private String id;
 
 }

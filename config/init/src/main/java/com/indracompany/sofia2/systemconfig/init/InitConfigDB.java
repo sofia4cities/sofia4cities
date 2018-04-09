@@ -15,7 +15,6 @@ package com.indracompany.sofia2.systemconfig.init;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
@@ -38,7 +37,6 @@ import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DataModel;
@@ -46,11 +44,8 @@ import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
-import com.indracompany.sofia2.config.model.GeneratorType;
-import com.indracompany.sofia2.config.model.InstanceGenerator;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
-import com.indracompany.sofia2.config.model.OntologyEmulator;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
@@ -60,7 +55,6 @@ import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
-import com.indracompany.sofia2.config.repository.ConfigurationTypeRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
@@ -68,10 +62,7 @@ import com.indracompany.sofia2.config.repository.FlowDomainRepository;
 import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
-import com.indracompany.sofia2.config.repository.GeneratorTypeRepository;
-import com.indracompany.sofia2.config.repository.InstanceGeneratorRepository;
 import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
-import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
@@ -115,15 +106,10 @@ public class InitConfigDB {
 	@Autowired
 	GadgetRepository gadgetRepository;
 	@Autowired
-	GeneratorTypeRepository generatorTypeRepository;
-	@Autowired
-	InstanceGeneratorRepository instanceGeneratorRepository;
-	@Autowired
 	OntologyRepository ontologyRepository;
 	@Autowired
 	OntologyCategoryRepository ontologyCategoryRepository;
-	@Autowired
-	OntologyEmulatorRepository ontologyEmulatorRepository;
+
 	@Autowired
 	OntologyUserAccessRepository ontologyUserAccessRepository;
 	@Autowired
@@ -136,8 +122,7 @@ public class InitConfigDB {
 	UserRepository userCDBRepository;
 	@Autowired
 	ConfigurationRepository configurationRepository;
-	@Autowired
-	ConfigurationTypeRepository configurationTypeRepository;
+
 	@Autowired
 	FlowDomainRepository domainRepository;
 
@@ -164,12 +149,10 @@ public class InitConfigDB {
 		log.info("OK init_OntologyUserAccess");
 		init_OntologyUserAccessType();
 		log.info("OK init_OntologyUserAccessType");
-		init_OntologyEmulator();
-		log.info("OK init_OntologyEmulator");
+		
 		init_OntologyCategory();
 		log.info("OK init_OntologyCategory");
-		init_OntologyEmulator();
-		log.info("OK init_OntologyEmulator");
+	
 		//
 		init_ClientPlatform();
 		log.info("OK init_ClientPlatform");
@@ -193,10 +176,7 @@ public class InitConfigDB {
 		init_GadgetMeasure();
 		log.info("OK init_GadgetMeasure");
 
-		init_GeneratorType();
-		log.info("OK init_GeneratorType");
-		// init_InstanceGenerator();
-		//
+
 		init_Menu_ControlPanel();
 		log.info("OK init_ConsoleMenu");
 		init_Configuration();
@@ -236,68 +216,63 @@ public class InitConfigDB {
 		log.info("init_Configuration");
 		if (this.configurationRepository.count() == 0) {
 
-			ConfigurationType type = new ConfigurationType();
 			Configuration config = new Configuration();
-			type.setIdEnum(ConfigurationType.Type.TwitterConfiguration);
-			type.setDescription("Configuration for access Twitter account (Token and Key)");
-			this.configurationTypeRepository.save(type);
 			config = new Configuration();
-			config.setConfigurationType(type);
+			config.setType(Configuration.Type.TwitterConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironmentEnum(Configuration.Environment.ALL);
+			config.setEnvironment("dev");
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
 			config = new Configuration();
-			config.setConfigurationType(type);
+			config.setType(Configuration.Type.TwitterConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironmentEnum(Configuration.Environment.ALL);
+			config.setEnvironment("default");
 			config.setSuffix("lmgracia");
 			config.setDescription("Twitter");
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
-			type = new ConfigurationType();
-			type.setIdEnum(ConfigurationType.Type.EndpointModulesConfiguration);
-			type.setDescription("Endpoints of Sofia2 Modules Configuration p");
-			this.configurationTypeRepository.save(type);
+
 			config = new Configuration();
-			config.setConfigurationType(type);
+			config.setType(Configuration.Type.EndpointModulesConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironmentEnum(Configuration.Environment.DEV);
-			config.setYmlConfig(loadFromResources("EndpointModulesConfiguration.yml"));
+			config.setEnvironment("default");
+			config.setDescription("Endpoints default profile");
+			config.setYmlConfig(loadFromResources("EndpointModulesConfigurationDefault.yml"));
 			this.configurationRepository.save(config);
 			//
-			type = new ConfigurationType();
-			type.setIdEnum(ConfigurationType.Type.MailConfiguration);
-			type.setDescription("Mail Configuration por mail sending");
-			this.configurationTypeRepository.save(type);
+			//
+
 			config = new Configuration();
-			config.setConfigurationType(type);
+			config.setType(Configuration.Type.EndpointModulesConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironmentEnum(Configuration.Environment.ALL);
+			config.setEnvironment("docker");
+			config.setDescription("Endpoints docker profile");
+			config.setYmlConfig(loadFromResources("EndpointModulesConfigurationDocker.yml"));
+			this.configurationRepository.save(config);
+			//
+
+			config = new Configuration();
+			config.setType(Configuration.Type.MailConfiguration);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment("default");
 			config.setYmlConfig(loadFromResources("MailConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
-			type = new ConfigurationType();
-			type.setIdEnum(ConfigurationType.Type.RTDBConfiguration);
-			type.setDescription("Configuration for the default RealTime DB (MongoDB)");
-			this.configurationTypeRepository.save(type);
+
 			config = new Configuration();
-			config.setConfigurationType(type);
+			config.setType(Configuration.Type.RTDBConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironmentEnum(Configuration.Environment.LOCAL);
+			config.setEnvironment("default");
 			config.setYmlConfig(loadFromResources("RTDBConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
-			type = new ConfigurationType();
-			type.setIdEnum(ConfigurationType.Type.MonitoringConfiguration);
-			type.setDescription("Configuration for report to Monitoring UI");
-			this.configurationTypeRepository.save(type);
+
 			config = new Configuration();
-			config.setConfigurationType(type);
+			config.setType(Configuration.Type.MonitoringConfiguration);
 			config.setUser(getUserAdministrator());
-			config.setEnvironmentEnum(Configuration.Environment.LOCAL);
+			config.setEnvironment("default");
 			config.setYmlConfig(loadFromResources("MonitoringConfiguration.yml"));
 			this.configurationRepository.save(config);
 
@@ -426,13 +401,14 @@ public class InitConfigDB {
 	}
 
 	private String loadFromResources(String name) {
-		try {			 									
+		try {
 			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
 					Charset.forName("UTF-8"));
 
 		} catch (Exception e) {
 			try {
-				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(), Charset.forName("UTF-8"));
+				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(),
+						Charset.forName("UTF-8"));
 			} catch (IOException e1) {
 				log.error("**********************************************");
 				log.error("Error loading resource: " + name + ".Please check if this error affect your database");
@@ -782,39 +758,7 @@ public class InitConfigDB {
 
 	}
 
-	public void init_GeneratorType() {
-		log.info("init GeneratorType");
-		List<GeneratorType> types = this.generatorTypeRepository.findAll();
-		if (types.isEmpty()) {
-			log.info("No generator types found..adding");
-			GeneratorType type = new GeneratorType();
-			type.setId(GeneratorType.RANDOM_NUMBER);
-			type.setIdentification("Random Number");
-			type.setKeyType("desde,number;hasta,number;numdecimal,number");
-			type.setKeyValueDef("desde,100;hasta,10000;numdecimal,0");
-			this.generatorTypeRepository.save(type);
 
-		}
-
-	}
-
-	public void init_InstanceGenerator() {
-
-		log.info("init InstanceGenerator");
-		List<InstanceGenerator> generators = this.instanceGeneratorRepository.findAll();
-		if (generators.isEmpty()) {
-			log.info("No instance generators found...adding");
-			InstanceGenerator generator = new InstanceGenerator();
-			generator.setId(1);
-			generator.setValues("desde,0;hasta,400");
-			generator.setIdentification("Integer 0 a 400");
-			GeneratorType type = this.generatorTypeRepository.findById(GeneratorType.RANDOM_NUMBER);
-			generator.setGeneratorType(type);
-			this.instanceGeneratorRepository.save(generator);
-
-		}
-
-	}
 
 	public void init_OntologyCategory() {
 
@@ -831,34 +775,7 @@ public class InitConfigDB {
 
 	}
 
-	public void init_OntologyEmulator() {
-		log.info("init OntologyEmulator");
-		List<OntologyEmulator> oes = this.ontologyEmulatorRepository.findAll();
-		if (oes.isEmpty()) {
-			log.info("No ontology emulators, adding...");
-			OntologyEmulator oe = new OntologyEmulator();
-			oe.setMeasures("2.5,3.4,4.5");
-			oe.setIdentification("Id 1");
-			oe.setUser(getUserDeveloper());
-			oe.setInsertEvery(5);
-			Ontology o = this.ontologyRepository.findAll().get(0);
-			if (o == null) {
-				o = new Ontology();
-				o.setJsonSchema("{}");
-				o.setIdentification("Id 1");
-				o.setDescription("Description");
-				o.setActive(true);
-				o.setRtdbClean(true);
-				o.setPublic(true);
-				ontologyRepository.save(o);
 
-			}
-			oe.setOntology(o);
-			this.ontologyEmulatorRepository.save(oe);
-
-		}
-
-	}
 
 	public void init_Ontology() {
 
@@ -897,10 +814,9 @@ public class InitConfigDB {
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
 		/*
-		 * List<OntologyUserAccess>
-		 * users=this.ontologyUserAccessRepository.findAll();
-		 * if(users.isEmpty()) { log.info("No users found...adding");
-		 * OntologyUserAccess user=new OntologyUserAccess(); user.setUser("6");
+		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
+		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
+		 * user=new OntologyUserAccess(); user.setUser("6");
 		 * user.setOntology(ontologyRepository.findAll().get(0));
 		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
 		 * this.ontologyUserAccessRepository.save(user); }
@@ -1140,15 +1056,14 @@ public class InitConfigDB {
 	 * if (templates.isEmpty()) { try {
 	 * 
 	 * log.info("No templates Adding..."); Template template= new Template();
-	 * template.setIdentification("GSMA-Weather Forecast");
-	 * template.setType("0"); template.
+	 * template.setIdentification("GSMA-Weather Forecast"); template.setType("0");
+	 * template.
 	 * setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}"
 	 * ); template.
 	 * setDescription("This contains a harmonised description of a Weather Forecast."
 	 * ); template.setCategory("plantilla_categoriaGSMA");
 	 * template.setIsrelational(false); templateRepository.save(template); ///
-	 * template=new Template();
-	 * template.setIdentification("TagsProjectBrandwatch");
+	 * template=new Template(); template.setIdentification("TagsProjectBrandwatch");
 	 * template.setType("1"); template.
 	 * setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}"
 	 * ); template.

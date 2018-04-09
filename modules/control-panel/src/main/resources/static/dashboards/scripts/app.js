@@ -1505,7 +1505,7 @@
     }
 
     function itemResize(item, itemComponent) {
-      debugger;
+    
       $log.info('itemResized', item, itemComponent);
     }
 
@@ -1531,6 +1531,100 @@
     };
 
 
+  }
+})();
+
+(function () {
+  'use strict';
+
+  LiveHTMLController.$inject = ["$log", "$scope", "$element", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService"];
+  angular.module('s2DashboardFramework')
+    .component('livehtml', {
+      templateUrl: 'app/components/view/liveHTMLComponent/livehtml.html',
+      controller: LiveHTMLController,
+      controllerAs: 'vm',
+      bindings:{
+        livecontent:"<",
+        datasource:"<"
+      }
+    });
+
+  /** @ngInject */
+  function LiveHTMLController($log, $scope, $element, $mdCompiler, $compile, datasourceSolverService,sofia2HttpService) {
+    var vm = this;
+    $scope.ds = [];
+
+    vm.$onInit = function(){
+      compileContent();
+    }
+
+    vm.$onChanges = function(changes,c,d,e) {
+      if("datasource" in changes && changes["datasource"].currentValue){
+        refreshSubscriptionDatasource(changes.datasource.currentValue, changes.datasource.previousValue)
+      }
+      else{
+        compileContent();
+      }
+    };
+
+    $scope.getTime = function(){
+      var date  = new Date();
+      return date.getTime();
+    }
+
+    vm.insertSofia2Http = function(token, clientPlatform, clientPlatformId, ontology, data){
+      sofia2HttpService.insertSofia2Http(token, clientPlatform, clientPlatformId, ontology, data).then(
+        function(e){
+          console.log("OK Rest: " + JSON.stringify(e));
+        }).catch(function(e){
+          console.log("Fail Rest: " + JSON.stringify(e));
+        });
+    }
+
+    vm.$onDestroy = function(){
+      if($scope.unsubscribeHandler){
+        $scope.unsubscribeHandler();
+        $scope.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
+      }
+    }
+
+    function compileContent(){
+      var parentElement = $element[0];
+      
+      $mdCompiler.compile({
+        template: vm.livecontent
+      }).then(function (compileData) {
+        compileData.link($scope);
+        $element.empty();
+        $element.prepend(compileData.element)
+       
+      });
+    }
+
+
+  
+
+
+    function refreshSubscriptionDatasource(newDatasource, oldDatasource) {
+      if($scope.unsubscribeHandler){
+        $scope.unsubscribeHandler();
+        $scope.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
+      }
+      $scope.unsubscribeHandler = $scope.$on(newDatasource.name,function(event,data){
+        $scope.ds = data;
+      });
+
+      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
+        {
+          type: newDatasource.type,
+          name: newDatasource.name,
+          refresh: newDatasource.refresh,
+          triggers: [{params:{filter:[],group:[],project:[]},emiter:newDatasource.name}]
+        }
+      );
+    };
   }
 })();
 
@@ -1654,7 +1748,6 @@
 
     function subscriptionDatasource(datasource, filter, project, group) {
       vm.unsubscribeHandler = $scope.$on(vm.id,function(event,data){
-        console.log("received " + vm.id + " : " + JSON.stringify(data));
         if(data.length!=0){
           processDataToGadget(data);
         }
@@ -1836,101 +1929,6 @@
 (function () {
   'use strict';
 
-  LiveHTMLController.$inject = ["$log", "$scope", "$element", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService", "$interval"];
-  angular.module('s2DashboardFramework')
-    .component('livehtml', {
-      templateUrl: 'app/components/view/liveHTMLComponent/livehtml.html',
-      controller: LiveHTMLController,
-      controllerAs: 'vm',
-      bindings:{
-        livecontent:"<",
-        datasource:"<"
-      }
-    });
-
-  /** @ngInject */
-  function LiveHTMLController($log, $scope, $element, $mdCompiler, $compile, datasourceSolverService,sofia2HttpService,$interval) {
-    var vm = this;
-    $scope.ds = [];
-
-    vm.$onInit = function(){
-      compileContent();
-    }
-
-    vm.$onChanges = function(changes,c,d,e) {
-      if("datasource" in changes && changes["datasource"].currentValue){
-        refreshSubscriptionDatasource(changes.datasource.currentValue, changes.datasource.previousValue)
-      }
-      else{
-        compileContent();
-      }
-    };
-
-    $scope.getTime = function(){
-      var date  = new Date();
-      return date.getTime();
-    }
-
-    vm.insertSofia2Http = function(token, clientPlatform, clientPlatformId, ontology, data){
-      sofia2HttpService.insertSofia2Http(token, clientPlatform, clientPlatformId, ontology, data).then(
-        function(e){
-          console.log("OK Rest: " + JSON.stringify(e));
-        }).catch(function(e){
-          console.log("Fail Rest: " + JSON.stringify(e));
-        });
-    }
-
-    vm.$onDestroy = function(){
-      if($scope.unsubscribeHandler){
-        $scope.unsubscribeHandler();
-        $scope.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
-      }
-    }
-
-    function compileContent(){
-      var parentElement = $element[0];
-      $mdCompiler.compile({
-        template: vm.livecontent
-      }).then(function (compileData) {
-        compileData.link($scope);
-        $element.empty();
-        $element.prepend(compileData.element);
-        if(!$scope.$$phase) {
-          $interval(
-            function(){
-              $scope.$applyAsync();
-            }
-          ,0);
-        }
-      });
-    }
-
-    function refreshSubscriptionDatasource(newDatasource, oldDatasource) {
-      if($scope.unsubscribeHandler){
-        $scope.unsubscribeHandler();
-        $scope.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(oldDatasource.name,oldDatasource.name);
-      }
-      $scope.unsubscribeHandler = $scope.$on(newDatasource.name,function(event,data){
-        $scope.ds = data;
-      });
-
-      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
-        {
-          type: newDatasource.type,
-          name: newDatasource.name,
-          refresh: newDatasource.refresh,
-          triggers: [{params:{filter:[],group:[],project:[]},emiter:newDatasource.name}]
-        }
-      );
-    };
-  }
-})();
-
-(function () {
-  'use strict';
-
   ElementController.$inject = ["$log", "$scope", "$mdDialog", "$sanitize", "$sce", "$rootScope"];
   angular.module('s2DashboardFramework')
     .component('element', {
@@ -1946,7 +1944,7 @@
   /** @ngInject */
   function ElementController($log, $scope, $mdDialog, $sanitize, $sce, $rootScope) {
     EditContainerDialog.$inject = ["$scope", "$mdDialog", "element"];
-    EditGadgetDialog.$inject = ["$scope", "$mdDialog", "$http", "element", "sofia2HttpService"];
+    EditGadgetDialog.$inject = ["$scope", "$mdCompiler", "$mdDialog", "$http", "element", "sofia2HttpService"];
     var vm = this;
     vm.$onInit = function () {
       inicializeIncomingsEvents();
@@ -2970,7 +2968,7 @@
       });
     };
 
-    function EditGadgetDialog($scope, $mdDialog, $http, element, sofia2HttpService) {
+    function EditGadgetDialog($scope,$mdCompiler, $mdDialog, $http, element, sofia2HttpService) {
 
 
       $scope.element = element;
@@ -2986,7 +2984,6 @@
       $scope.answer = function(answer) {
         $mdDialog.hide(answer);
       };
-
       $scope.datasources = [];
 
       $scope.loadDatasources = function(){
@@ -2999,13 +2996,16 @@
           }
         );
       };
-
     }
 
     vm.trustHTML = function(html_code) {
       return $sce.trustAsHtml(html_code)
     }
 
+
+
+
+    
     vm.calcHeight = function(){
       vm.element.header.height = (vm.element.header.height=='inherit'?64:vm.element.header.height);
       return "calc(100% - " + (vm.element.header.enable?vm.element.header.height:0) + "px)";
@@ -3032,6 +3032,10 @@
         return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getUserGadgetDatasources');
       }
 
+      vm.getsampleDatasources = function(ds){
+        return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getSampleDatasource/'+ds);
+      }
+
       vm.getDatasourceById = function(datasourceId){
         return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getDatasourceById/' + datasourceId);
       }
@@ -3042,6 +3046,10 @@
 
       vm.getUserGadgetsByType = function(type){
         return $http.get(__env.endpointSofia2ControlPanel + '/gadgets/getUserGadgetsByType/' + type);
+      }
+
+      vm.getUserGadgetTemplate = function(){
+        return $http.get(__env.endpointSofia2ControlPanel + '/gadgettemplates/getUserGadgetTemplate/');
       }
 
       vm.getGadgetMeasuresByGadgetId = function(gadgetId){
@@ -3129,8 +3137,6 @@
               vm.hashRequestResponse[UUID] = reqrespList[reqrest];
               vm.hashRequestResponse[UUID].subscription = $stomp.subscribe(__env.socketEndpointSubscribe + "/" + UUID, function (payload, headers, res) {
                 var answerId = headers.destination.split("/").pop();
-                console.log("answerId: " + answerId);
-                console.log("answerId: " + JSON.stringify(vm.hashRequestResponse));
                 vm.hashRequestResponse[answerId].callback(vm.hashRequestResponse[answerId].id,payload);
                 // Unsubscribe
                 vm.hashRequestResponse[answerId].subscription.unsubscribe();//Unsubscribe
@@ -3140,46 +3146,23 @@
             }
           })
         };
-      vm.pending = false;
+
       vm.sendAndSubscribe = function(datasource){
-        if(vm.pending){
-          console.log("delay: " + JSON.stringify(datasource));
-          var sincro = function(datasource){
-            $timeout(
-              function(){
-                console.log("try again: " + JSON.stringify(datasource));
-                  vm.sendAndSubscribe(datasource);
-              }
-            ,300);
-          }
-          sincro(datasource);
+        if(vm.connected){
+          var UUID = (new Date()).getTime();
+          vm.hashRequestResponse[UUID] = datasource;
+          vm.hashRequestResponse[UUID].subscription = $stomp.subscribe(__env.socketEndpointSubscribe + "/" + UUID, function (payload, headers, res) {
+            var answerId = headers.destination.split("/").pop();
+            vm.hashRequestResponse[answerId].callback(vm.hashRequestResponse[answerId].id,payload);
+            // Unsubscribe
+            vm.hashRequestResponse[UUID].subscription.unsubscribe();//Unsubscribe
+          })
+
+          // Send message
+          $stomp.send(__env.socketEndpointSend + "/" + UUID, datasource.msg)
         }
         else{
-          if(vm.connected){
-            vm.pending = true;
-            var UUID = (new Date()).getTime();
-            console.log("New uuid: " + UUID);
-            vm.hashRequestResponse[UUID] = datasource;
-            console.log("Hash: " + JSON.stringify(vm.hashRequestResponse));
-            vm.hashRequestResponse[UUID].subscription = $stomp.subscribe(__env.socketEndpointSubscribe + "/" + UUID, function (payload, headers, res) {
-              var answerId = headers.destination.split("/").pop();
-              vm.hashRequestResponse[answerId].callback(vm.hashRequestResponse[answerId].id,payload);
-              // Unsubscribe
-              vm.hashRequestResponse[UUID].subscription.unsubscribe();//Unsubscribe
-              $timeout(
-                function(){
-                  delete vm.hashRequestResponse[UUID];
-                  vm.pending=false;
-                },200
-              )
-            })
-
-            // Send message
-            $stomp.send(__env.socketEndpointSend + "/" + UUID, datasource.msg);
-          }
-          else{
-            vm.initQueue.push(datasource);
-          }
+          vm.initQueue.push(datasource);
         }
       }
 
@@ -3307,7 +3290,6 @@
 
       vm.emitToTargets = function(id,data){
         //pendingDatasources
-        console.log("send " + id + " : " + JSON.stringify(data));
         $rootScope.$broadcast(id,JSON.parse(data.data));
       }
 
@@ -3465,77 +3447,10 @@ angular.module('s2DashboardFramework').constant('__env', env);
           vm.dashboard.gridOptions.resizable.stop = sendResizeToGadget;
 
           vm.dashboard.gridOptions.enableEmptyCellDrop = true;
-          if(!vm.editmode){
-            vm.dashboard.gridOptions.resizable.enabled=false;
-            vm.dashboard.gridOptions.draggable.enabled=false;
-            vm.dashboard.gridOptions.pushItems=false;
-          }
           vm.dashboard.gridOptions.emptyCellDropCallback = dropElementEvent.bind(this);
         }
       )
-      /*
-      vm.dashboard = {
-        header: {
-          title: "My new s4c Dashboard",
-          enable: true,
-          height: 64,
-          logo: {
-            height: 64
-          }
-        },
-        navigation:{
-          showBreadcrumbIcon: true,
-          showBreadcrumb: true
-        },
-        pages: [],
-        gridOptions: {
-          gridType: 'fit',
-          compactType: 'none',
-          margin: 0,
-          outerMargin: false,
-          mobileBreakpoint: 640,
-          minCols: 20,
-          maxCols: 100,
-          minRows: 20,
-          maxRows: 100,
-          maxItemCols: 5000,
-          minItemCols: 1,
-          maxItemRows: 5000,
-          minItemRows: 1,
-          maxItemArea: 25000,
-          minItemArea: 1,
-          defaultItemCols: 4,
-          defaultItemRows: 4,
-          fixedColWidth: 250,
-          fixedRowHeight: 250,
-          enableEmptyCellClick: false,
-          enableEmptyCellContextMenu: false,
-          enableEmptyCellDrop: false,
-          enableEmptyCellDrag: false,
-          emptyCellDragMaxCols: 5000,
-          emptyCellDragMaxRows: 5000,
-          draggable: {
-            delayStart: 100,
-            enabled: true,
-            ignoreContent: true,
-            dragHandleClass: 'drag-handler'
-          },
-          resizable: {
-            delayStart: 0,
-            enabled: true
-          },
-          swap: false,
-          pushItems: true,
-          disablePushOnDrag: false,
-          disablePushOnResize: false,
-          pushDirections: {north: true, east: true, south: true, west: true},
-          pushResizeItems: false,
-          displayGrid: 'always',
-          disableWindowResize: false,
-          disableWarnings: false,
-          scrollToNewItems: true
-        }
-      }*/
+     
 
       function showAddGadgetDialog(type,config,layergrid){
         AddGadgetController.$inject = ["$scope", "$mdDialog", "sofia2HttpService", "type", "config", "layergrid"];
@@ -3545,6 +3460,7 @@ angular.module('s2DashboardFramework').constant('__env', env);
           $scope.layergrid = layergrid;
 
           $scope.gadgets = [];
+         
 
           $scope.hide = function() {
             $mdDialog.hide();
@@ -3592,6 +3508,307 @@ angular.module('s2DashboardFramework').constant('__env', env);
       }
 
 
+      function showAddGadgetTemplateDialog(type,config,layergrid){
+        AddGadgetController.$inject = ["$scope", "$mdDialog", "sofia2HttpService", "type", "config", "layergrid"];
+        function AddGadgetController($scope, $mdDialog, sofia2HttpService, type, config, layergrid) {
+          $scope.type = type;
+          $scope.config = config;
+          $scope.layergrid = layergrid;
+
+         
+          $scope.templates = [];
+
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+
+         
+          $scope.loadTemplates = function() {
+            return sofia2HttpService.getUserGadgetTemplate().then(
+              function(templates){
+                $scope.templates = templates.data;
+              }
+            );
+          };
+
+          $scope.useTemplate = function() {    
+                 
+            $scope.config.type = $scope.type;
+            $scope.config.content=$scope.template.template          
+            showAddGadgetTemplateParameterDialog($scope.type,$scope.config,$scope.layergrid);
+            $mdDialog.hide();
+          };
+          $scope.noUseTemplate = function() {
+            $scope.config.type = $scope.type;        
+            $scope.layergrid.push($scope.config);
+            $mdDialog.cancel();
+          };
+
+        }
+        $mdDialog.show({
+          controller: AddGadgetController,
+          templateUrl: 'app/partials/edit/addGadgetTemplateDialog.html',
+          parent: angular.element(document.body),
+          clickOutsideToClose:true,
+          fullscreen: false, // Only for -xs, -sm breakpoints.
+          openFrom: '.sidenav-fab',
+          closeTo: angular.element(document.querySelector('.sidenav-fab')),
+          locals: {
+            type: type,
+            config: config,
+            layergrid: layergrid
+          }
+        })
+        .then(function() {
+       
+        }, function() {
+          $scope.status = 'You cancelled the dialog.';
+        });
+      }
+
+
+
+      function showAddGadgetTemplateParameterDialog(type,config,layergrid){
+        AddGadgetController.$inject = ["$scope", "$mdDialog", "$mdCompiler", "sofia2HttpService", "type", "config", "layergrid"];
+        function AddGadgetController($scope, $mdDialog,$mdCompiler, sofia2HttpService, type, config, layergrid) {
+          var agc = this;
+          agc.$onInit = function () {
+            $scope.loadDatasources();
+            $scope.getPredefinedParameters();
+          }
+         
+          $scope.type = type;
+          $scope.config = config;
+          $scope.layergrid = layergrid;
+          $scope.datasource;
+          $scope.datasources = [];
+          $scope.datasourceFields = [];
+          $scope.parameters = [];
+         
+          $scope.templates = [];
+
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+
+         
+          $scope.loadDatasources = function(){
+            return sofia2HttpService.getDatasources().then(
+              function(response){
+                $scope.datasources=response.data;
+                
+              },
+              function(e){
+                console.log("Error getting datasources: " +  JSON.stringify(e))
+              }
+            );
+          };
+    
+          $scope.iterate=  function (obj, stack, fields) {
+            for (var property in obj) {
+                 if (obj.hasOwnProperty(property)) {
+                     if (typeof obj[property] == "object") {
+                      $scope.iterate(obj[property], stack + (stack==""?'':'.') + property, fields);
+              } else {
+                         fields.push({field:stack + (stack==""?'':'.') + property, type:typeof obj[property]});
+                     }
+                 }
+              }    
+              return fields;
+           }
+
+          /**method that finds the tags in the given text*/
+          function searchTag(regex,str){
+            let m;
+            let found=[];
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                found.push(arr[0]);			
+              });  
+            }
+            return found;
+          }
+          /**method that finds the name attribute and returns its value in the given tag */
+          function searchTagContentName(regex,str){
+            let m;
+            var content;
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                  content = arr[0].match(/"([^"]+)"/)[1];			
+              });  
+            }
+            return content;
+          }
+          /**method that finds the options attribute and returns its values in the given tag */
+          function searchTagContentOptions(regex,str){
+            let m;
+            var content=" ";
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                  content = arr[0].match(/"([^"]+)"/)[1];			
+              });  
+            }
+          
+            return  content.split(',');
+          }
+
+          /**we look for the parameters in the source code to create the form */
+          $scope.getPredefinedParameters = function(){
+            var str =  $scope.config.content;
+           	const regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+		        const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
+            const regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
+		        let found=[];
+	        	found = searchTag(regexTag,str);	
+        
+        
+            for (var i = 0; i < found.length; i++) {			
+              var tag = found[i];
+              if(tag.replace(/\s/g, '').search('type="text"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){	
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterTextLabel", type:"labelsText"});
+              }else if(tag.replace(/\s/g, '').search('type="number"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:0, type:"labelsNumber"});              
+              }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterDsLabel", type:"labelsds"});               
+              }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){
+                var optionsValue = searchTagContentOptions(regexOptions,tag); 
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterSelectLabel",type:"selects", optionsValue:optionsValue});	              
+              }
+             } 
+            }
+        
+
+            /**find a value for a given parameter */
+            function findValueForParameter(label){
+                for (let index = 0; index <  $scope.parameters.length; index++) {
+                  const element =  $scope.parameters[index];
+                  if(element.label===label){
+                    return element.value;
+                  }
+                }
+            }
+        
+            /**Parse the parameter of the data source so that it has array coding*/
+            function parseArrayPosition(str){
+              const regex = /\.[\d]+/g;
+              let m;              
+              while ((m = regex.exec(str)) !== null) {                
+                  if (m.index === regex.lastIndex) {
+                      regex.lastIndex++;
+                  } 
+                  m.forEach( function(item, index, arr){             
+                    var index = arr[0].substring(1,arr[0].length)
+                    var result =  "["+index+"]";
+                    str = str.replace(arr[0],result) ;
+                  });
+              }
+              return str;
+            }
+
+            /** this function Replace parameteres for his selected values*/
+            function parseProperties(){
+              var str =  $scope.config.content;
+              const regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+              const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
+              const regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
+              let found=[];
+              found = searchTag(regexTag,str);	
+          
+              let parserList=[];
+              for (var i = 0; i < found.length; i++) {
+                var tag = found[i];			
+               
+                if(tag.replace(/\s/g, '').search('type="text"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){                 
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});   
+                }else if(tag.replace(/\s/g, '').search('type="number"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});   
+                }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){                
+                  var field = parseArrayPosition(findValueForParameter(searchTagContentName(regexName,tag)).field);                               
+                  parserList.push({tag:tag,value:"{{ds[0]."+field+"}}"});        
+                }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){                
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});  
+                }
+              } 
+              //Replace parameteres for his values
+              for (var i = 0; i < parserList.length; i++) {
+                str = str.replace(parserList[i].tag,parserList[i].value);
+              }
+              return str;
+            }
+          
+          
+
+
+
+      
+          $scope.loadDatasourcesFields = function(){
+            
+            if($scope.config.datasource!=null && $scope.config.datasource.id!=null && $scope.config.datasource.id!=""){
+                 return sofia2HttpService.getsampleDatasources($scope.config.datasource.id).then(
+                  function(response){
+                    $scope.datasourceFields=$scope.iterate(response.data[0],"", []);
+                  },
+                  function(e){
+                    console.log("Error getting datasourceFields: " +  JSON.stringify(e))
+                  }
+                );
+              }
+              else 
+              {return null;}
+        }
+
+
+          $scope.save = function() { 
+            $scope.config.type = $scope.type;
+            $scope.config.content=parseProperties();            
+            $scope.layergrid.push($scope.config);
+            $mdDialog.cancel();
+          };
+        
+        }
+        $mdDialog.show({
+          controller: AddGadgetController,
+          templateUrl: 'app/partials/edit/addGadgetTemplateParameterDialog.html',
+          parent: angular.element(document.body),
+          clickOutsideToClose:true,
+          fullscreen: false, // Only for -xs, -sm breakpoints.
+          openFrom: '.sidenav-fab',
+          closeTo: angular.element(document.querySelector('.sidenav-fab')),
+          locals: {
+            type: type,
+            config: config,
+            layergrid: layergrid
+          }
+        })
+        .then(function() {
+
+        }, function() {
+          $scope.status = 'You cancelled the dialog.';
+        });
+      }
+
+
+
+
+
+
       function dropElementEvent(e,newElem){
         var type = e.dataTransfer.getData("type");
         newElem.id = type;
@@ -3615,10 +3832,8 @@ angular.module('s2DashboardFramework').constant('__env', env);
           width: 1,
           radius: 1
         }
-        if(type == 'livehtml'){
-          var layerGrid = vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer];
-          layerGrid.gridboard.push(newElem);
-          $scope.$applyAsync();
+        if(type == 'livehtml'){         
+          showAddGadgetTemplateDialog(type,newElem,vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer].gridboard); 
         }
         else{
           showAddGadgetDialog(type,newElem,vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer].gridboard);
@@ -3633,62 +3848,6 @@ angular.module('s2DashboardFramework').constant('__env', env);
           },100
         );
       }
-
-
-      /*var page = {};
-      var layer = {};
-
-      layer.gridboard = [
-        {
-          cols: 8,
-          rows: 7,
-          y: 0,
-          x: 0,
-          id: "1",
-          type: "livehtml",
-          content: "<h1> LiveHTML Text </h1>",
-          header: {
-            enable: true,
-            title: {
-              icon: "",
-              iconColor: "none",
-              text: "Leaflet Map Gadget test",
-              textColor: "none"
-            },
-            backgroundColor: "none",
-            height: 64
-          },
-          backgroundColor: "initial",
-          padding: 0,
-          border: {
-            color: "black",
-            width: 1,
-            radius: 5
-          }
-        }
-      ];
-
-      layer.title = "baseLayer";
-
-      page.title = "New Page";
-      page.icon = "android"
-      page.background = {}
-      page.background.file = []
-
-      page.layers = [layer];
-      */
-     /* Edit mode only */
-      /*page.selectedlayer=0
-      page.combinelayers=!vm.editmode;
-
-      var page2 = JSON.parse(JSON.stringify(page));
-      page2.icon = "bug_report";
-      page2.title = "New Page2";
-
-      vm.dashboard.pages.push(page);
-      vm.dashboard.pages.push(page2);
-      */
-
     };
 
     vm.checkIndex = function(index){
@@ -3703,6 +3862,8 @@ angular.module('s2DashboardFramework').constant('__env', env);
 
 angular.module('s2DashboardFramework').run(['$templateCache', function($templateCache) {$templateCache.put('app/s2dashboard.html','<edit-dashboard ng-if=vm.editmode id=vm.id public=vm.public dashboard=vm.dashboard selectedpage=vm.selectedpage></edit-dashboard><ng-include src="\'app/partials/view/header.html\'"></ng-include><ng-include src="\'app/partials/view/sidenav.html\'"></ng-include><span><div ng-repeat="page in vm.dashboard.pages"><page page=page gridoptions=vm.dashboard.gridOptions editmode=vm.editmode selectedlayer=vm.selectedlayer class=flex ng-if=vm.checkIndex($index)></page></div></span>');
 $templateCache.put('app/partials/edit/addGadgetDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Select Gadget to add</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container><label>Select gadget type</label><md-select ng-model=gadget md-on-open=loadGadgets()><md-option ng-value=gadget ng-repeat="gadget in gadgets"><em>{{gadget.identification}}</em></md-option></md-select></md-input-container><md-dialog-actions layout=row><span flex></span><md-button ng-click=cancel()>Cancel</md-button><md-button ng-click=addGadget()>Add Gadget</md-button></md-dialog-actions></form></md-dialog>');
+$templateCache.put('app/partials/edit/addGadgetTemplateDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Create using template?</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container><label>Select Template</label><md-select ng-model=template md-on-open=loadTemplates()><md-option ng-value=template ng-repeat="template in templates"><em>{{template.identification}}</em></md-option></md-select></md-input-container><md-dialog-actions layout=row><span flex></span><md-button ng-click=useTemplate()>Yes</md-button><md-button ng-click=noUseTemplate()>No</md-button></md-dialog-actions></form></md-dialog>');
+$templateCache.put('app/partials/edit/addGadgetTemplateParameterDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Select a content for the parameters</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container class=md-dialog-content><label>Datasource</label><md-select required md-autofocus placeholder="Select new templace datasource" ng-model=config.datasource md-on-open=loadDatasources() ng-change=loadDatasourcesFields()><md-option ng-value={name:datasource.identification,refresh:datasource.refresh,type:datasource.mode,id:datasource.id} ng-repeat="datasource in datasources">{{datasource.identification}}</md-option></md-select></md-input-container><div flex=""><md-content><md-list class=md-dense flex=""><md-list-item class=md-3-line ng-repeat="item in parameters"><div class=md-list-item-text layout=column><span>name:{{ item.label }}</span><md-input-container ng-if="item.type==\'labelsText\'" class=md-dialog-content><p>string value :</p><input type=text ng-model=item.value></md-input-container><md-input-container ng-if="item.type==\'labelsNumber\'" class=md-dialog-content><p>number value :</p><input type=number ng-model=item.value></md-input-container><md-input-container ng-if="item.type==\'labelsds\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter from datasource" ng-model=item.value><md-option ng-value={field:datasourceField.field,type:datasourceField.type} ng-repeat="datasourceField in datasourceFields">{{datasourceField.field}}</md-option></md-select></md-input-container><md-input-container ng-if="item.type==\'selects\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter value" ng-model=item.value><md-option ng-value=optionsValue ng-repeat="optionsValue in item.optionsValue">{{optionsValue}}</md-option></md-select></md-input-container></div></md-list-item></md-list></md-content></div><md-dialog-actions layout=row><span flex></span><md-button ng-click=save()>Ok</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/addWidgetBottomSheet.html','<md-bottom-sheet class=md-grid layout=column><div layout=row layout-align="center center" ng-cloak><h4>Drag&Drop your gadget to the grid panel</h4></div><div ng-cloak><md-list flex layout=row layout-align="center center"><md-list-item><div><md-button id=line class=md-grid-item-content draggable><md-icon>show_chart</md-icon><div class=md-grid-text>Line Chart</div></md-button></div></md-list-item><md-list-item><div><md-button id=bar class=md-grid-item-content draggable><md-icon>insert_chart</md-icon><div class=md-grid-text>Bar Chart</div></md-button></div></md-list-item><md-list-item><div><md-button id=pie class=md-grid-item-content draggable><md-icon>pie_chart</md-icon><div class=md-grid-text>Pie Chart</div></md-button></div></md-list-item><md-list-item><div><md-button id=wordcloud class=md-grid-item-content draggable><md-icon>sort_by_alpha</md-icon><div class=md-grid-text>Wordcloud</div></md-button></div></md-list-item><md-list-item><div><md-button id=map class=md-grid-item-content draggable><md-icon>map</md-icon><div class=md-grid-text>Map</div></md-button></div></md-list-item><md-list-item><div><md-button id=livehtml class=md-grid-item-content draggable><md-icon>art_track</md-icon><div class=md-grid-text>Live HTML</div></md-button></div></md-list-item></md-list></div></md-bottom-sheet>');
 $templateCache.put('app/partials/edit/datasourcesDialog.html','<md-dialog aria-label=Layers><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Page Datasources</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Datasources</md-subheader><md-list><md-list-item ng-repeat="(nameDatasource, data) in dashboard.pages[selectedpage].datasources"><md-input-container flex=60><label>Datasource name</label><input ng-model=nameDatasource md-autofocus disabled></md-input-container><md-input-container flex=40><md-button ng-if="data.triggers.length == 0" class="md-icon-button md-warn" aria-label="Delete Datasource" ng-click=delete(nameDatasource)><md-icon>remove_circle</md-icon></md-button></md-input-container></md-list-item></md-list><md-subheader>Add New Datasource</md-subheader><md-list><md-list-item><md-input-container flex=80><md-select required md-autofocus placeholder="Select new page datasource" ng-model=datasource md-on-open=loadDatasources()><md-option ng-if=!dashboard.pages[selectedpage].datasources[datasource.identification] ng-value=datasource ng-repeat="datasource in datasources">{{datasource.identification}}</md-option></md-select></md-input-container><md-input-container flex=30><md-button class="md-icon-button md-primary" aria-label="Add Datasource" ng-click=create()><md-icon>add_circle</md-icon></md-button></md-input-container></md-list-item></md-list></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/editContainerDialog.html','<md-dialog aria-label=Container><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Edit Container</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Header</md-subheader><div class="md-dialog-content layout-row layout-align-start-center flex"><md-input-container flex=20><input ng-model=element.header.height type=number placeholder="Header Height"></md-input-container><md-checkbox flex=40 ng-model=element.header.enable class=flex>Enable widget header</md-checkbox><md-input-container flex=30><label>Background Color</label><color-picker flex=40 ng-model=element.header.backgroundColor></color-picker></md-input-container></div><md-subheader>Title</md-subheader><div class="md-dialog-content layout-row layout-align-start-center flex"><md-input-container flex=50><label>Widget Title</label><input ng-model=element.header.title.text required md-autofocus></md-input-container><md-input-container flex=30><label>Text Color</label><color-picker flex=50 ng-model=element.header.title.textColor></color-picker></md-input-container></div><md-subheader>Icon</md-subheader><div class="md-dialog-content layout-row layout-align-start-center flex"><md-autocomplete flex=50 ng-disabled=false md-no-cache=false md-selected-item=ctrl.icons[$index] md-search-text-change=ctrl.searchTextChange(ctrl.searchText) md-search-text=element.header.title.icon md-selected-item-change=ctrl.selectedItemChange(item) md-items="icon in queryIcon(element.header.title.icon)" md-item-text=icon md-min-length=0 md-menu-class=autocomplete-custom-template md-floating-label="Select icon of widget"><md-item-template><span class=item-title><md-icon>{{icon}}</md-icon><span>{{icon}}</span></span></md-item-template></md-autocomplete><md-input-container flex=30><label>Icon Color</label><color-picker flex=50 ng-model=element.header.title.iconColor></color-picker></md-input-container></div><md-subheader>Body</md-subheader><div class="md-dialog-content layout-row layout-align-start-center flex"><md-input-container flex=30><label>Body Background</label><color-picker flex=100 ng-model=element.backgroundColor></color-picker></md-input-container><md-input-container flex=50><input ng-model=element.padding type=number placeholder="Content Padding"></md-input-container></div><div class="md-dialog-content layout-row layout-align-start-center flex"><md-input-container flex=33><input ng-model=element.border.width type=number placeholder="Border width"></md-input-container><md-input-container flex=33><input ng-model=element.border.radius type=number placeholder="Corner Radius"></md-input-container><md-input-container flex=30><label>Border Color</label><color-picker flex=33 ng-model=element.border.color></color-picker></md-input-container></div></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');
@@ -3717,8 +3878,8 @@ $templateCache.put('app/partials/edit/layersDialog.html','<md-dialog aria-label=
 $templateCache.put('app/partials/edit/pagesDialog.html','<md-dialog aria-label=Pages><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Dashboard Pages</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Pages</md-subheader><md-list><md-list-item ng-repeat="page in dashboard.pages"><md-input-container flex=35><label>Page name</label><input ng-model=page.title required md-autofocus></md-input-container><md-autocomplete flex=35 ng-disabled=false md-no-cache=false md-selected-item=ctrl.icons[$index] md-search-text-change=ctrl.searchTextChange(ctrl.searchText) md-search-text=page.icon md-selected-item-change=ctrl.selectedItemChange(item) md-items="icon in queryIcon(page.icon)" md-item-text=icon md-min-length=0 md-menu-class=autocomplete-custom-template md-floating-label="Select icon of page"><md-item-template><span class=item-title><md-icon>{{icon}}</md-icon><span>{{icon}}</span></span></md-item-template></md-autocomplete><lf-ng-md-file-input ng-change=onFilesChange($index) lf-api=apiUpload[$index] lf-files=auxUpload[$index].file lf-placeholder="" lf-browse-label="Change Background Img" accept=image/* progress lf-filesize=5MB lf-remove-label=""></lf-ng-md-file-input><md-input-container flex=30><md-button ng-if="!$first && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=up ng-click=moveUpPage($index)><md-icon>arrow_upward</md-icon></md-button><md-button ng-if="!$last && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=down ng-click=moveDownPage($index)><md-icon>arrow_downward</md-icon></md-button><md-button ng-if="dashboard.pages.length > 1" class="md-icon-button md-warn" aria-label="Delete page" ng-click=delete($index)><md-icon>remove_circle</md-icon></md-button></md-input-container></md-list-item></md-list><md-subheader>Add New Page</md-subheader><md-list><md-list-item><md-input-container flex=35><label>Page name</label><input ng-model=title required md-autofocus></md-input-container><md-autocomplete flex=35 ng-disabled=false md-no-cache=false md-selected-item=selectedIconItem md-search-text-change=ctrl.searchTextChange(ctrl.searchText) md-search-text=searchIconText md-selected-item-change=ctrl.selectedItemChange(item) md-items="icon in queryIcon(searchIconText)" md-item-text=icon md-min-length=0 md-menu-class=autocomplete-custom-template md-floating-label="Select icon of page"><md-item-template><span class=item-title><md-icon>{{icon}}</md-icon><span>{{icon}}</span></span></md-item-template></md-autocomplete><lf-ng-md-file-input lf-files=file lf-placeholder="" lf-browse-label="Change Background Img" accept=image/* progress lf-filesize=5MB lf-remove-label=""></lf-ng-md-file-input><md-input-container flex=30><md-button class="md-icon-button md-primary" aria-label="Add page" ng-click=create()><md-icon>add_circle</md-icon></md-button></md-input-container></md-list-item></md-list></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/view/header.html','<md-toolbar ng-if=vm.dashboard.header.enable layout=row class=md-hue-2 layout-align="space-between center" ng-style="{\'height\': + vm.dashboard.header.height + \'px\', \'background\': vm.dashboard.header.backgroundColor}"><md-headline layout=row layout-align="start center" class=left-margin-10><img ng-if=vm.dashboard.header.logo.filedata ng-src={{vm.dashboard.header.logo.filedata}} ng-style="{\'height\': + vm.dashboard.header.logo.height + \'px\'}"><span ng-style="{\'color\': vm.dashboard.header.textColor}">{{\'&nbsp;\' + vm.dashboard.header.title}}</span><md-icon ng-style="{\'color\': vm.dashboard.header.iconColor}" ng-if=vm.dashboard.navigation.showBreadcrumbIcon>keyboard_arrow_right</md-icon><span ng-style="{\'color\': vm.dashboard.header.pageColor}" ng-if=vm.dashboard.navigation.showBreadcrumb>{{vm.dashboard.pages[vm.selectedpage].title}}</span></md-headline><md-button class=md-icon-button aria-label="Open Menu" ng-click=vm.sidenav.toggle();><md-tooltip md-direction=left>Toggle Menu</md-tooltip><md-icon>reorder</md-icon></md-button></md-toolbar>');
 $templateCache.put('app/partials/view/sidenav.html','<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id=left><header class=nav-header></header><md-content flex="" role=navigation class="_md flex"><md-subheader class=md-no-sticky>Pages</md-subheader><md-list class=md-hue-2><span ng-repeat="page in vm.dashboard.pages"><md-list-item md-colors="{background: ($index===vm.selectedpage ? \'primary\' : \'grey-A100\')}" ng-click=vm.setIndex($index) flex><md-icon>{{page.icon}}</md-icon><p>{{page.title}}</p></md-list-item></span></md-list></md-content></md-sidenav>');
-$templateCache.put('app/components/edit/editDashboardComponent/edit.dashboard.html','<ng-include src="\'app/partials/edit/editDashboardButtons.html\'"></ng-include><ng-include src="\'app/partials/edit/editDashboardSidenav.html\'"></ng-include>');
 $templateCache.put('app/components/view/elementComponent/element.html','<gridster-item item=vm.element ng-style="{ \'border-width\': vm.element.border.width + \'px\', \'border-color\': vm.element.border.color, \'border-radius\': vm.element.border.radius + \'px\', \'border-style\': \'solid\'}"><div class="element-container fullcontainer"><md-toolbar ng-if=vm.element.header.enable class="widget-header md-hue-2" ng-style="{\'background\':vm.element.header.backgroundColor, \'height\': vm.element.header.height + \'px\'}"><div class=md-toolbar-tools><md-icon ng-style="{\'color\':vm.element.header.title.iconColor}">{{vm.element.header.title.icon}}</md-icon><h5 flex ng-style="{\'color\':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5><md-button ng-if=vm.editmode ng-click=vm.openEditContainerDialog() class=md-icon-button aria-label="Edit Container"><md-icon>format_paint</md-icon><md-tooltip>Edit container</md-tooltip></md-button><md-button ng-if="vm.editmode && vm.element.type == \'livehtml\'" ng-click=vm.openEditGadgetDialog() class=md-icon-button aria-label="Gadget Editor"><md-icon>mode_edit</md-icon><md-tooltip>Edit Gadget definition</md-tooltip></md-button><md-button ng-if=vm.editmode class="drag-handler md-icon-button"><md-icon>open_with</md-icon><md-tooltip>Move</md-tooltip></md-button><md-button ng-if=vm.editmode class="remove-button md-icon-button" ng-click=vm.deleteElement()><md-icon>delete</md-icon><md-tooltip>Remove</md-tooltip></md-button></div></md-toolbar><div ng-if="vm.editmode && !vm.element.header.enable" class=item-buttons><md-button ng-click=vm.openEditContainerDialog() class="md-raised md-icon-button" aria-label="Edit Container"><md-icon>format_paint</md-icon></md-button><md-button ng-click=vm.openEditGadgetDialog() ng-if="vm.element.type == \'livehtml\'" class="md-raised md-icon-button" aria-label="Gadget Editor"><md-icon>mode_edit</md-icon></md-button><md-button ng-if=vm.editmode class="drag-handler md-raised md-icon-button"><md-icon>open_with</md-icon></md-button><md-button ng-if=vm.editmode class="remove-button md-raised md-icon-button" ng-click=vm.deleteElement()><md-icon>delete</md-icon><md-tooltip>Remove</md-tooltip></md-button></div><livehtml ng-style="{\'background-color\':vm.element.backgroundColor, \'padding\': vm.element.padding + \'px\', \'height\': vm.calcHeight()}" ng-if="vm.element.type == \'livehtml\'" livecontent=vm.element.content datasource=vm.element.datasource></livehtml><gadget ng-style="{\'background-color\':vm.element.backgroundColor, \'padding\': vm.element.padding + \'px\', \'display\': \'inline-block\', \'width\':\'100%\', \'height\': vm.calcHeight()}" ng-if="vm.element.type != \'livehtml\'" id=vm.element.id></gadget></div></gridster-item>');
 $templateCache.put('app/components/view/pageComponent/page.html','<div class=page-dashboard-container ng-style="{\'background-image\':\'url(\' + vm.page.background.filedata + \')\'}"><span ng-repeat="layer in vm.page.layers"><gridster ng-if="(vm.page.combinelayers || vm.page.selectedlayer == $index) " options=vm.gridoptions class=flex><element ng-style="{\'z-index\':$parent.$index*500+1}" ng-if=item.id element=item editmode=vm.editmode ng-repeat="item in layer.gridboard"></element></gridster></span></div>');
 $templateCache.put('app/components/view/gadgetComponent/gadget.html','<div ng-if="vm.type == \'loading\'" layout=row layout-sm=column layout-align=space-around><md-progress-circular md-diameter=60></md-progress-circular></div><div ng-if="vm.type == \'nodata\'" layout=row layout-sm=column layout-align=space-around><h3>No data found</h3></div><canvas ng-if="vm.type == \'line\'" class="chart chart-line" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'bar\'" class="chart chart-bar" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'pie\'" class="chart chart-doughnut" chart-data=vm.data chart-labels=vm.labels chart-options=vm.optionsChart></canvas><word-cloud ng-if="vm.type == \'wordcloud\'" words=vm.words width=vm.width height=vm.height padding=0 use-tooltip=false use-transition=true></word-cloud><leaflet ng-if="vm.type == \'map\'" lf-center=vm.center markers=vm.markers height={{vm.height}} width=100%></leaflet>');
-$templateCache.put('app/components/view/liveHTMLComponent/livehtml.html','<div id=testhtml>{{1+1}}</div>');}]);
+$templateCache.put('app/components/view/liveHTMLComponent/livehtml.html','<div id=testhtml>{{1+1}}</div>');
+$templateCache.put('app/components/edit/editDashboardComponent/edit.dashboard.html','<ng-include src="\'app/partials/edit/editDashboardButtons.html\'"></ng-include><ng-include src="\'app/partials/edit/editDashboardSidenav.html\'"></ng-include>');}]);

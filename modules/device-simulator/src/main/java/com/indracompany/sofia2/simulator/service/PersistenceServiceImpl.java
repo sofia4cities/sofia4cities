@@ -41,6 +41,8 @@ import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,7 +66,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 	@PostConstruct
 	public void setUp() {
 		this.sessionKeys = new HashMap<String, String>();
-		this.iotbrokerUrl = this.intregationResourcesService.getURL("iot-broker.base.url") + "iotbroker";
+		this.iotbrokerUrl = this.intregationResourcesService.getUrl(Module.iotbroker, ServiceUrl.base);
 		this.deviceBlackList = new ArrayList<String>();
 	}
 
