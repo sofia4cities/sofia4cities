@@ -63,7 +63,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Autowired
 	private QuasarMongoDBbHttpConnector quasarMongoConnector;
 
-	@Value("${sofia2.database.mongodb.database:#{null}}")
+	@Value("${sofia2.database.mongodb.database:sofia2_s4c}")
 	@Getter
 	@Setter
 	private String database;
