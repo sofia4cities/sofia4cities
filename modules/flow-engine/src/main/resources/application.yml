@@ -1,6 +1,6 @@
 server:
   port: 8082
-  contextPath: /sofia2
+  contextPath: /flowengine
 
 # all access to actuator endpoints without security
 management.security.enabled: false
@@ -23,8 +23,10 @@ spring:
     username: operations
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}
-    client.metadata.user.password: ${spring.boot.admin.password} 
-
+    client.metadata.user.password: ${spring.boot.admin.password}
+    service-base-url: http://localhost:8082
+    client.service-url: http://localhost:8082
+    
 sofia2: #Config Sofia2 specific
    flowengine:
       sync.monitor:
