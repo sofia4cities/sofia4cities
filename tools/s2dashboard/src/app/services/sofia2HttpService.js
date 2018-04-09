@@ -12,6 +12,10 @@
         return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getUserGadgetDatasources');
       }
 
+      vm.getsampleDatasources = function(ds){
+        return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getSampleDatasource/'+ds);
+      }
+
       vm.getDatasourceById = function(datasourceId){
         return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getDatasourceById/' + datasourceId);
       }
@@ -22,6 +26,10 @@
 
       vm.getUserGadgetsByType = function(type){
         return $http.get(__env.endpointSofia2ControlPanel + '/gadgets/getUserGadgetsByType/' + type);
+      }
+
+      vm.getUserGadgetTemplate = function(){
+        return $http.get(__env.endpointSofia2ControlPanel + '/gadgettemplates/getUserGadgetTemplate/');
       }
 
       vm.getGadgetMeasuresByGadgetId = function(gadgetId){
