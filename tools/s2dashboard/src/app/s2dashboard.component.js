@@ -15,7 +15,7 @@
     });
 
   /** @ngInject */
-  function MainController($log, $scope, $mdSidenav, $mdDialog, $timeout, sofia2HttpService) {
+  function MainController($log, $scope, $mdSidenav, $mdDialog, $timeout, $window, sofia2HttpService, interactionService) {
     var vm = this;
     vm.$onInit = function () {
       setTimeout(function () {
@@ -32,9 +32,17 @@
 
           vm.dashboard.gridOptions.enableEmptyCellDrop = true;
           vm.dashboard.gridOptions.emptyCellDropCallback = dropElementEvent.bind(this);
+
+          //If interaction hash then recover connections
+          if(vm.dashboard.interactionHash){
+            interactionService.setInteractionHash(vm.dashboard.interactionHash);
+          }
+        }
+      ).catch(
+        function(){
+          $window.location.href = "/controlpanel/login";
         }
       )
-     
 
       function showAddGadgetDialog(type,config,layergrid){
         function AddGadgetController($scope, $mdDialog, sofia2HttpService, type, config, layergrid) {
@@ -64,6 +72,7 @@
           $scope.addGadget = function() {
             $scope.config.type = $scope.type;
             $scope.config.id = $scope.gadget.id;
+            $scope.config.header.title.text = $scope.gadget.identification;
             $scope.layergrid.push($scope.config);
             $mdDialog.cancel();
           };
@@ -392,7 +401,7 @@
 
       function dropElementEvent(e,newElem){
         var type = e.dataTransfer.getData("type");
-        newElem.id = type;
+        newElem.id = type + "_" + (new Date()).getTime();
         newElem.content = type;
         newElem.type = type;
         newElem.header = {
@@ -400,7 +409,7 @@
           title: {
             icon: "",
             iconColor: "hsl(0, 0%, 100%)",
-            text: type,
+            text: type + "_" + (new Date()).getTime(),
             textColor: "hsl(0, 0%, 100%)"
           },
           backgroundColor: "hsl(200, 23%, 64%)",

@@ -90,6 +90,7 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 		marketAssetMemory.setPublic(marketAsset.isPublic());
 		marketAssetMemory.setMarketAssetType(marketAsset.getMarketAssetType());
 		marketAssetMemory.setPaymentMode(marketAsset.getPaymentMode());
+		marketAssetMemory.setState(MarketAsset.MarketAssetState.PENDING);
 		
 		marketAssetMemory.setJsonDesc(marketAsset.getJsonDesc());
 		

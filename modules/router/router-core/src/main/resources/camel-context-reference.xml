@@ -17,70 +17,8 @@
                               backOffMultiplier="2" useExponentialBackOff="true"/>
 		</errorHandler>
 
-		<route id="start-broker-flow-route" errorHandlerRef="defaultEH">
-			<from uri="direct:start-broker-flow" />
-			<log message="Camel Reference Context Broker Flow Start" />
-			<to uri="bean:routerFlowManagerService?method=startBrokerFlow" />
-		</route>
-		
-		<route id="start-digitaltwin-broker-flow-route" errorHandlerRef="defaultEH">
-			<from uri="direct:start-digitaltwin-broker-flow" />
-			<log message="Camel Reference Context Digital-Twin Broker Flow Start" />
-			<to uri="bean:routerFlowDigitalTwinManagerService?method=startDigitalTwinBrokerFlow" />
-		</route>
-		
-		<route id="execute-crud-operations-route" errorHandlerRef="dlc">
-			<from uri="direct:execute-crud-operations" />
-			<log message="Context : execute-crud-operations-route" />
-			
-			<to uri="bean:routerFlowManagerService?method=executeCrudOperations" />
-			<log message="Context : before WireTape to Process Background" />
-			<setHeader headerName="theBody"><simple>${body}</simple></setHeader>
-			<wireTap uri="seda:get-scripts-and-nodereds"/>
-			<setBody><simple>${in.header.theBody}</simple></setBody>
-		</route>
-		
-		<route id="execute-digitaltwin-operations-route" errorHandlerRef="dlc">
-			<from uri="direct:execute-digitaltwin-operations" />
-			<log message="Context : execute-digitaltwin-operations-route" />
-			
-			<to uri="bean:routerFlowDigitalTwinManagerService?method=executeDigitalTwinOperations" />
-		</route>
-		
-		<route id="get-scripts-and-nodereds-route" errorHandlerRef="defaultEH">
-			<from uri="seda:get-scripts-and-nodereds" />
-			<log message="Context : Preprocessing Advicers" />
-			<to uri="bean:routerFlowManagerService?method=getScriptsAndNodereds" />
-			<to uri="seda:split-aggregate-calls"/>
-		</route>
-		
-		<route id="split-aggregate-calls-route" errorHandlerRef="defaultEH">
-			<from uri="seda:split-aggregate-calls" />
-				<log message="Context : Processing Advicers" />
-				<setHeader headerName="theBody"><simple>${body}</simple></setHeader>
-					<choice>
-						<when>
-							<header>endpoints</header>
-							<split parallelProcessing="true" streaming="true">
-								<simple>${in.header.endpoints}</simple>
-								<log message="Context: Call ${header.CamelSplitIndex} Advicer" />
-								<to uri="direct:advice-scripts-and-nodereds" />
-							</split>
-                        </when>
-                        <otherwise>
-                                <log message="Context : NO Endpoints will be applied" />   
-                        </otherwise>
-                	</choice>
-                	
-				<setBody><simple>${in.header.theBody}</simple></setBody>
-				<log message="Camel Reference Context Broker Flow End" />
-		</route>
-		
-		<route id="advice-scripts-and-nodereds-route" errorHandlerRef="dlc">
-			<from uri="direct:advice-scripts-and-nodereds" />
-			 <log message="Context : Calling Advice Processor" />  
-			<to uri="bean:routerFlowManagerService?method=adviceScriptsAndNodereds" />
-		</route>		
+		<!-- MUST BE EMPTY OF ROUTES -->
+		<!-- ROUTES SHOULD BE LOCATED IN "camel-routes" FOLDER!!! -->
 
 	</camelContext>
 	

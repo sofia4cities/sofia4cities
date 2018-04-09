@@ -20,6 +20,10 @@
         return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getDatasourceById/' + datasourceId);
       }
 
+      vm.getFieldsFromDatasourceId = function(datasourceId){
+        return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getSampleDatasource/' + datasourceId);
+      }
+
       vm.getGadgetConfigById = function(gadgetId){
         return $http.get(__env.endpointSofia2ControlPanel + '/gadgets/getGadgetConfigById/' + gadgetId);
       }
@@ -51,7 +55,7 @@
         };
 
         $http.defaults.headers.common['Authorization'] = 'Basic ' + authdata;
-        return $http.get(__env.endpointSofia2DashboardEngine + __env.dashboardEngineLoginRest);
+        return $http.get(__env.endpointSofia2DashboardEngine + __env.dashboardEngineLoginRest, {timeout : __env.dashboardEngineLoginRestTimeout});
       };
 
       vm.getDashboardModel = function(id){

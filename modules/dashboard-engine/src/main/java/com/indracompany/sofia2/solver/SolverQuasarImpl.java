@@ -75,6 +75,7 @@ public class SolverQuasarImpl implements SolverInterface{
 			StringBuilder sb = new StringBuilder();
 			sb.append(" where ");
 			for(FilterStt f: filters) {
+				sb.append("Solved.");
 				sb.append(f.getField());
 				sb.append(" ");
 				sb.append(f.getOp());
