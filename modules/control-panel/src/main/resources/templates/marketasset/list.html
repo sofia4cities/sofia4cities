@@ -125,9 +125,9 @@
 												<div class="panel-heading ">																						  
 												
 													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><div class="uppercase no-wrap text-truncate-md project-title" th:title="${marketasset.title}" th:text="${marketasset.title}" >Identification</div></a>
-													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  /></a>
-													<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  />
-													<div class="form-inline" style=" font-size: 20px" th:unless="${marketasset.technologies == null}">															
+													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  />
+													<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  /></a>
+													<div class="form-inline" style=" font-size: 20px; min-height: 20px">															
 														 <span th:each="tag : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label-marketasset" th:title="${tag}" th:alt="${tag}"><i th:class="'devicon-' + ${tag} +'-plain'"></i></span>															
 														 <div class="pull-right">
 														<span class="btn btn-xs green-turquoise tooltips" data-container="body" data-placement="top" th:attr="data-original-title=#{marketasset.paymentmode} + ': ' + ${marketasset.paymentMode}" th:text="${marketasset.paymentMode}" style="margin-top: 2px;"> FREE </span>

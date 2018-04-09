@@ -12,31 +12,18 @@
  * limitations under the License.
  */
 /*******************************************************************************
+
  * © Indra Sistemas, S.A.
  * 2013 - 2018  SPAIN
  *
  * All rights reserved
  ******************************************************************************/
-
 package com.indracompany.sofia2.config.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import com.indracompany.sofia2.config.model.MarketAsset;
+import com.indracompany.sofia2.config.model.UserComment;
 
-public interface MarketAssetRepository extends JpaRepository<MarketAsset, String> {
+public interface UserCommentRepository extends JpaRepository<UserComment, String> {
 
-	MarketAsset findById(@Param("id") String id);
-	MarketAsset findByIdentification(@Param("marketAssetId") String marketAssetId);
-	
-	@Query("SELECT o FROM MarketAsset AS o WHERE (o.identification LIKE %:marketAssetId%)")
-	List<MarketAsset> findByIdentificationLike(@Param("marketAssetId") String marketAssetId);
-	
-	@Query("SELECT o.jsonDesc FROM MarketAsset AS o")
-	List<String> findJsonDescs();
-	
 }

@@ -12,7 +12,7 @@ var MarketAssetCreateController = function() {
 	var reader = new FileReader();
 	    
 	reader.onload = function (e) {
-        $('#showedImg').attr('src', e.target.result);
+        $('#showedImgPreview').attr('src', e.target.result);
     }
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
@@ -78,6 +78,36 @@ var MarketAssetCreateController = function() {
         });
     }
     
+    var changeState = function(state){
+    	updateState(state, $('#rejection').val());
+	}
+    
+    var openReject = function(){
+       	$('#rejection').val("");
+        $('#dialog-reject').modal('toggle');
+	}
+    
+    var updateState = function(state, reason){
+    	var url =  marketAssetCreateReg.url + "/updateState";
+	    if ($('#marketassetType').val() != '') {
+	        url = url + '/' + marketAssetCreateReg.actionMode + '/' + state;
+	    }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: JSON.stringify({"rejectionReason":reason}),
+            dataType: 'text',
+            contentType: 'text/plain',
+            mimeType: 'text/plain',
+            success: function(data) {
+            	navigateUrl(marketAssetCreateReg.url + '/show/' + marketAssetCreateReg.actionMode);
+            },
+            error: function(data,status,er) {
+            	showGenericErrorDialog('Error', marketAssetCreateReg.marketAssetmanager_identification_error);
+            }
+        });
+	}
+    
 	var validateId = function() {
         var identification = $('#identification').val();
 
@@ -111,16 +141,6 @@ var MarketAssetCreateController = function() {
 		
 		//CLEAR OUT THE VALIDATION ERRORS
 		$('#'+formId).validate().resetForm(); 
-		$('#'+formId).find('input:text, input:password, input:file, select, textarea').each(function(){
-			// CLEAN ALL EXCEPTS cssClass "no-remote" persistent fields
-			if(!$(this).hasClass("no-remove")){$(this).val('');}
-		});
-		
-		//CLEANING SELECTs
-		$(".selectpicker").each(function(){
-			$(this).val( '' );
-			$(this).selectpicker('deselectAll').selectpicker('refresh');
-		});
 		
 		// CLEAN ALERT MSG
 		$('.alert-danger').hide();
@@ -279,7 +299,7 @@ var MarketAssetCreateController = function() {
 	}
 	
     function prepareData(){
-    	var json_desc = {"title": $('#title').val() , "technologies": $('#technologies').val(), "description": $('#description').val()};
+    	var json_desc = {"title": $('#title').val() , "technologies": $('#technologies').val(), "description": $('#description').val(), "detailedDescription": $('#detailedDescription').val() };
     	var type=$("#marketassetType").val();
     	
 		if (type=='API'){
@@ -301,7 +321,7 @@ var MarketAssetCreateController = function() {
     function validateImgSize() {
         if ($('#image').prop('files') && $('#image').prop('files')[0].size>60*1024){
         	showGenericErrorDialog('Error', marketAssetCreateReg.marketAssetmanager_image_error);
-        	$('#image').val("");
+        	$('#showedImg').val("");
          } else if ($('#image').prop('files')) {
         	 reader.readAsDataURL($("#image").prop('files')[0]);
          }
@@ -343,6 +363,18 @@ var MarketAssetCreateController = function() {
 		changeDescription: function() {
 			logControl ? console.log(LIB_TITLE + ': changeDescription()') : '';
 			loadDescription();
+		},
+		
+		// MARKET ASSET DESCRIPTION LOAD
+		updateState: function(state) {
+			logControl ? console.log(LIB_TITLE + ': uploadState(state)') : '';
+			changeState(state);
+		},
+		
+		// OPEN REJECT DIALOG
+		openRejectDialog: function() {
+			logControl ? console.log(LIB_TITLE + ': openRejectDialog(state)') : '';
+			openReject();
 		},
 		
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
