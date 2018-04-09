@@ -594,7 +594,9 @@
 	        		scope.$$childHead.vm.config = {config:"{\"center\":{\"lat\":30,\"lng\":30,\"zoom\":2}}",type:gtype};
 	        	}
 	        	else{
-	        		scope.$$childHead.vm.config = {config:$("#config").val(),type:gtype};
+	        		if(!scope.$$childHead.vm.config.config) {
+	        			scope.$$childHead.vm.config = {config:$("#config").val(),type:gtype};
+	        		}
 	        	}
 	        }
 	        else{
