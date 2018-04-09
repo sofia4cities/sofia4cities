@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
@@ -153,5 +154,38 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 	public void deleteDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice) {
 		this.digitalTwinDeviceRepo.delete(digitalTwinDevice);
 	}
+
+	@Override
+	public List<String> getDigitalTwinDevicesByTypeId(String typeId) {
+		return this.digitalTwinDeviceRepo.findNamesByTypeId(this.digitalTwinTypeRepo.findByName(typeId));
+		
+	}
+
+	@Override
+	public List<String> getDigitalTwinDevicesIdsByUser(String userId) {
+		User user = this.userService.getUser(userId);
+		if(user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+			return this.digitalTwinDeviceRepo.findAllIds();
+		}else {
+			return this.digitalTwinDeviceRepo.findIdsByUser(this.userService.getUser(userId));
+		}
+		
+	}
+	
+	@Override
+	public List<String> getDigitalTwinDevicesIdsByUserAndTypeId(String userId, String typeId) {
+		User user = this.userService.getUser(userId);
+		if(user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+			return this.digitalTwinDeviceRepo.findIdsByTypeId(this.digitalTwinTypeRepo.findByName(typeId));
+		}else {
+			return this.digitalTwinDeviceRepo.findIdsByUserAndTypeId(user, this.digitalTwinTypeRepo.findByName(typeId));
+		}
+	}
+
+	@Override
+	public DigitalTwinDevice getDigitalTwinDevicebyName(String name) {
+		return this.digitalTwinDeviceRepo.findByIdentification(name);
+	}
+
 
 }

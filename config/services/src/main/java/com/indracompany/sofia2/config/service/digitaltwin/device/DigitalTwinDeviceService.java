@@ -43,5 +43,12 @@ public interface DigitalTwinDeviceService {
 	void updateDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice, HttpServletRequest httpServletRequest);
 
 	void deleteDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice);
+	
+	List<String> getDigitalTwinDevicesByTypeId(String typeId);
+	
+	List<String> getDigitalTwinDevicesIdsByUser(String user);
 
+	List<String> getDigitalTwinDevicesIdsByUserAndTypeId(String userId, String typeId);
+	
+	DigitalTwinDevice getDigitalTwinDevicebyName(String name);
 }

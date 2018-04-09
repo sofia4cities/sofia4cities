@@ -17,8 +17,11 @@ package com.indracompany.sofia2.config.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
+import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.User;
 
 public interface DigitalTwinDeviceRepository extends JpaRepository<DigitalTwinDevice, String>{
@@ -40,5 +43,22 @@ public interface DigitalTwinDeviceRepository extends JpaRepository<DigitalTwinDe
 	void deleteById(String id);
 	
 	List<DigitalTwinDevice> findByUser(User user);
+	
+	List<DigitalTwinDevice> findByTypeId(DigitalTwinType typeId);
+	
+	@Query("SELECT o.identification FROM DigitalTwinDevice AS o where o.typeId = :typeId")
+	List<String> findNamesByTypeId(@Param("typeId") DigitalTwinType typeId);
+	
+	@Query("SELECT o.id FROM DigitalTwinDevice AS o where o.typeId = :typeId")
+	List<String> findIdsByTypeId(@Param("typeId") DigitalTwinType typeId);
+	
+	@Query("SELECT o.id FROM DigitalTwinDevice AS o where o.user = :user")
+	List<String> findIdsByUser(@Param("user") User user);
+	
+	@Query("SELECT o.id FROM DigitalTwinDevice AS o")
+	List<String> findAllIds();
+
+	@Query("SELECT o.id FROM DigitalTwinDevice AS o where o.user = :user AND o.typeId = :typeId")
+	List<String> findIdsByUserAndTypeId(@Param("user") User user, @Param("typeId") DigitalTwinType typeId);
 	
 }

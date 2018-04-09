@@ -34,6 +34,7 @@ public interface DigitalTwinTypeService {
 	String getLogicByDigitalId(String TypeId);
 	void getDigitalTwinToUpdate(Model model, String id);
 	void updateDigitalTwinType(DigitalTwinType digitalTwinType, HttpServletRequest httpServletRequest);
-	public void deleteDigitalTwinType(DigitalTwinType digitalTwinType);
+	void deleteDigitalTwinType(DigitalTwinType digitalTwinType);
+	List<DigitalTwinType> getDigitalTwinTypesByUserId(String sessionUserId);
 
 }

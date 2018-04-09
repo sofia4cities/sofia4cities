@@ -60,7 +60,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		JSONObject timestamp=new JSONObject();
 		timestamp.put("$date", LocalDateTime.now().format(timestampFormatter));
 		
-		instance.put("deviceId", model.getId());
+		instance.put("deviceId", model.getDeviceId());
 		instance.put("type", model.getType());
 		instance.put("timestamp", timestamp);
 		instance.put("event", EVENT);
@@ -107,7 +107,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		
 		
 		instance.put("trace", model.getLog());
-		instance.put("deviceId", model.getId());
+		instance.put("deviceId", model.getDeviceId());
 		instance.put("type", model.getType());
 		instance.put("timestamp", timestamp);
 		
@@ -144,7 +144,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		timestamp.put("$date", LocalDateTime.now().format(timestampFormatter));
 		
 		JSONObject instance = new JSONObject();
-		instance.put("deviceId", model.getId());
+		instance.put("deviceId", model.getDeviceId());
 		instance.put("type", model.getType());
 		instance.put("timestamp", timestamp);
 		instance.put("status", new JSONObject(model.getStatus()));

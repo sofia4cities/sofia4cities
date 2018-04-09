@@ -48,4 +48,5 @@ public interface DigitalTwinTypeRepository extends JpaRepository<DigitalTwinType
 	
 	@Query("SELECT o.name FROM DigitalTwinType AS o")
 	List<String> findAllNames();
+	
 }

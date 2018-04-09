@@ -31,6 +31,7 @@ import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
 import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
 import com.indracompany.sofia2.config.model.PropertyDigitalTwinType;
+import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.ActionsDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
@@ -242,6 +243,16 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 	@Override
 	public void deleteDigitalTwinType(DigitalTwinType digitalTwinType) {
 		this.digitalTwinTypeRepo.delete(digitalTwinType);
+	}
+
+	@Override
+	public List<DigitalTwinType> getDigitalTwinTypesByUserId(String sessionUserId) {
+		User sessionUser = this.userService.getUser(sessionUserId);
+		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+			return this.digitalTwinTypeRepo.findAll();
+		} else {
+			return this.digitalTwinTypeRepo.findByUser(sessionUser);
+		}
 	}
 
 }

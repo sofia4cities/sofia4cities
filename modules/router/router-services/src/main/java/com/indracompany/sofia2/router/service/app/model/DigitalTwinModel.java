@@ -28,7 +28,11 @@ public class DigitalTwinModel implements Serializable{
 
 	@Getter
 	@Setter
-	private String id;
+	private String deviceId;
+	
+	@Getter
+	@Setter
+	private String deviceName;
 	
 	@Getter
 	@Setter
@@ -56,7 +60,7 @@ public class DigitalTwinModel implements Serializable{
 
 	@Override
 	public String toString() {
-		return "DigitalTwinModel [id=" + id + ", type=" + type + ", event=" + event + ", status=" + status
+		return "DigitalTwinModel [deviceId=" + deviceId + ", type=" + type + ", event=" + event + ", status=" + status
 				+ ", processId=" + processId + ", log=" + log + ", endpoint=" + endpoint + "]";
 	}
 	
