@@ -25,7 +25,6 @@ import org.jeasy.rules.api.Facts;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.api.rule.RuleManager;
-import com.indracompany.sofia2.api.service.ApiServiceInterface;
 import com.indracompany.sofia2.api.util.RequestDumpUtil;
 
 @Component
@@ -60,7 +59,7 @@ public class DumpRequestRule {
 
 		System.out.println(sb.toString());
 
-		//data.put(ApiServiceInterface.DUMP, sb.toString());
+		// data.put(ApiServiceInterface.DUMP, sb.toString());
 
 	}
 }

@@ -28,7 +28,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.ApiOperation;
-import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
 import com.indracompany.sofia2.router.client.RouterClientGateway;
 import com.indracompany.sofia2.router.service.ClientsConfigFactory;
 import com.indracompany.sofia2.router.service.app.model.AdviceNotificationModel;
@@ -37,10 +36,12 @@ import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 import com.indracompany.sofia2.router.service.app.service.AdviceNotificationService;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
+import com.indracompany.sofia2.router.service.app.service.RouterCrudServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,9 +79,7 @@ public class RouterFlowManagerService {
 			output.setStatus(false);
 			output.setMessage("Input Model Integrity Check Failed");
 			return output;
-		}
-		
-		
+		}				
 	}
 	
 	public void executeCrudOperations(Exchange exchange) {
@@ -98,30 +97,29 @@ public class RouterFlowManagerService {
 		
 		try {
 			if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
-				
 				OperationResultModel result =routerCrudService.query(model);
 				compositeModel.setOperationResultModel(result);
-			}
-			
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
+			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.POST.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
 				OperationResultModel result =routerCrudService.insert(model);
-				model.setObjectId(result.getResult());
 				compositeModel.setOperationResultModel(result);
-			}
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
+			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.PUT.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
 				OperationResultModel result =routerCrudService.update(model);
 				compositeModel.setOperationResultModel(result);
-			}
-			if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
+			} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name()) || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
 				OperationResultModel result =routerCrudService.delete(model);
 				compositeModel.setOperationResultModel(result);
+			} else {
+				throw new IllegalArgumentException("Operation not soported: " + METHOD);
 			}
+			
+		} catch (RouterCrudServiceException ex) {
+			log.debug("executeCrudOperations: Exception "+ex.getMessage());
+			compositeModel.setOperationResultModel(ex.getResult());
 		} catch (Exception e) {
 			log.debug("executeCrudOperations: Exception "+e.getMessage());
 		}
 		
 		exchange.getIn().setBody(compositeModel);
-		
 		log.debug("executeCrudOperations: End");
 	}
 	
@@ -167,12 +165,15 @@ public class RouterFlowManagerService {
 		SuscriptionModel model =entity.getSuscriptionModel();
 		if (model!=null)
 		{
-			OperationModel operationModel = new OperationModel();
-			operationModel.setBody(appendOIDForSQL(model.getQuery(),compositeModel.getNotificationModel().getOperationModel().getObjectId()));
-			operationModel.setOntologyName(model.getOntologyName());
-			operationModel.setQueryType(QueryType.valueOf(model.getQueryType().name()));
-			operationModel.setUser(model.getUser());
-			operationModel.setOperationType(OperationType.QUERY);
+			OperationModel operationModel = OperationModel.builder(
+					model.getOntologyName(), 
+					OperationType.QUERY, 
+					model.getUser(), 
+					Source.INTERNAL_ROUTER)
+					.body(appendOIDForSQL(model.getQuery(),compositeModel.getOperationResultModel().getResult()))
+					.queryType(QueryType.valueOf(model.getQueryType().name()))
+					.build();
+
 			OperationResultModel result =null;
 			try {
 				result =routerCrudService.execute(operationModel);
@@ -203,10 +204,10 @@ public class RouterFlowManagerService {
 	
 	private String appendOIDForSQL(String query, String objectId) {
 		if (query.toUpperCase().contains("WHERE")) {
-			return query + " AND _id = OID '"+objectId+"'";
+			return query + " AND _id = OID(\""+objectId+"\")";
 		}
 		else 
-			return query + " WHERE _id = OID '"+objectId+"'";
+			return query + " WHERE _id = OID(\""+objectId+"\")";
 		
 	}
 	

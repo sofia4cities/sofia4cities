@@ -57,7 +57,7 @@ public class AdviceServiceImpl
 		final RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.TEXT_PLAIN);
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		ObjectMapper mapper = new ObjectMapper();
 		HttpEntity<String> domainToStart;
 		try {

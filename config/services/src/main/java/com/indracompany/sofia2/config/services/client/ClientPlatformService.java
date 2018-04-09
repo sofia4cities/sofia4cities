@@ -16,7 +16,6 @@ package com.indracompany.sofia2.config.services.client;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology.AccessType;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -40,6 +39,6 @@ public interface ClientPlatformService {
 	void createClientPlatform(ClientPlatform clientPlatform);
 
 	void updateDevice(DeviceCreateDTO clientPlatform);
-	
+
 	void createOntologyRelation(Ontology ontology, ClientPlatform clientPlatform);
 }

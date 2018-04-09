@@ -15,6 +15,8 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -35,8 +37,8 @@ import lombok.Setter;
 @Configurable
 public class Configuration extends AuditableEntityWithUUID {
 
-	public static enum Environment {
-		ALL, LOCAL, DEV, PRE, PRO, OTHER
+	public static enum Type {
+		EndpointModulesConfiguration, TwitterConfiguration, MailConfiguration, RTDBConfiguration, MonitoringConfiguration, SchedulingConfiguration
 	}
 
 	@ManyToOne
@@ -53,21 +55,16 @@ public class Configuration extends AuditableEntityWithUUID {
 	@Setter
 	private String ymlConfig;
 
-	@ManyToOne
-	@OnDelete(action = OnDeleteAction.NO_ACTION)
-	@JoinColumn(name = "CONFIGURATION_TYPE", referencedColumnName = "ID", nullable = false)
-	@Getter
-	@Setter
-	private ConfigurationType configurationType;
-
-	@Column(name = "environment", length = 50)
+	@Column(name = "ENVIRONMENT", length = 50)
 	@Getter
 	@Setter
 	private String environment;
 
-	public void setEnvironmentEnum(Configuration.Environment env) {
-		this.environment = env.toString();
-	}
+	@Column(name = "TYPE", length = 50)
+	@Getter
+	@Setter
+	@Enumerated(EnumType.STRING)
+	private Type type;
 
 	@Column(name = "SUFFIX", length = 50)
 	@Getter

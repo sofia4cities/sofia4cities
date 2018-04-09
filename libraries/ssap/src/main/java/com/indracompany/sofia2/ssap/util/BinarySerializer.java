@@ -18,7 +18,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,10 +30,6 @@ import com.indracompany.sofia2.ssap.binary.Encoder;
 import com.indracompany.sofia2.ssap.binary.Encoding;
 import com.indracompany.sofia2.ssap.binary.Mime;
 import com.indracompany.sofia2.ssap.binary.Storage;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
 
 public class BinarySerializer {
 
@@ -84,14 +82,15 @@ public class BinarySerializer {
 		String name = binaryNode.get("media").get("name").asText();
 		String storageArea = binaryNode.get("media").get("storageArea").asText();
 
-	
-		if (binaryEnconding.equals(Encoding.Base64.name())) 
-			
-			if(!new File(path+ "/" +name).isFile())
-				FileUtils.writeByteArrayToFile(new File(path+ "/" +name), base64.decode(data)); 
+		if (binaryEnconding.equals(Encoding.Base64.name()))
+
+			if (!new File(path + "/" + name).isFile())
+				FileUtils.writeByteArrayToFile(new File(path + "/" + name), base64.decode(data));
 			else
-				FileUtils.writeByteArrayToFile(new File(path+ "/"+ String.valueOf(Math.random()*1000).replace(".", "") +name ), base64.decode(data));
-		
+				FileUtils.writeByteArrayToFile(
+						new File(path + "/" + String.valueOf(Math.random() * 1000).replace(".", "") + name),
+						base64.decode(data));
+
 	}
 
 }

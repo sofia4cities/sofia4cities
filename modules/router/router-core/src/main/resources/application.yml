@@ -1,7 +1,7 @@
 ##--spring.config.name=apimanager
 ##security.require_ssl: true
       
-spring.application.name : smartstore
+spring.application.name : router-core
      
 sofia2: #Config Sofia2 specific
    database.mongodb:
