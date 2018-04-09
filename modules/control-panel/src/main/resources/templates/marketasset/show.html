@@ -128,7 +128,7 @@
 													<div id="technologies-icons" style="display: inline"></div>
 													<!-- public and payment method -->
 													 <div class="pull-right" style="margin-top: -8px;">
-													 	<span th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" th:text="#{marketasset.state.__*{state}__}" th:class="${marketasset.state.name()== 'REJECTED'} ? 'btn btn-md red-sunglo' : 'btn btn-md grey-mint'">STATE</span>
+													 	<span th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" th:text="#{marketasset.state.__*{state}__}" th:class="${marketasset.state.name()== 'REJECTED'} ? 'btn btn-md red-sunglo' : 'btn btn-md grey-mint'" th:title="${marketasset.state.name()== 'REJECTED'? marketasset.rejectionReason : marketasset.state.name()}">STATE</span>
 											 													
 														<span th:if="*{public}" class="btn btn-md blue-hoki ">PUBLIC</span>
 														<span th:if="!*{public}" class="btn btn-md red-haze ">PRIVATE</span>
@@ -379,7 +379,6 @@
 		$('#technologies-icons').append(techMarkup);
 		$('#technologies-tags').append(techLiMarkup);
 		$('#description').append(json_desc.description);
-		$('#detailedDescription').append(json_desc.detailedDescription);
 		
 		
 		var marketAssetType = [[${marketasset.marketAssetType.name()}]];
@@ -402,9 +401,11 @@
 			$('#versions').text(json_desc.versions);
 			$('#apiDescription').val(json_desc.apiDescription);
 		} else if (type=='DOCUMENT'){
+			$('#detailedDescription').append(json_desc.detailedDescription);
 		} else if (type=='APPLICATION'){
 			$('#installation').text(json_desc.installation);
 			$('#functionality').text(json_desc.functionality);
+			$('#detailedDescription').append(json_desc.detailedDescription);
 		} else if (type=='WEBPROJECT'){
 			$('#functionality').text(json_desc.functionality);
 			$('#id_endpoint').val(json_desc.id_endpoint);

@@ -26,7 +26,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.indracompany.sofia2.config.services.exceptions.ApiManagerServiceException;
 import com.indracompany.sofia2.config.services.market.MarketAssetService;
 import com.indracompany.sofia2.controlpanel.helper.market.MarketAssetHelper;
 import com.indracompany.sofia2.controlpanel.multipart.MarketAssetMultipart;
