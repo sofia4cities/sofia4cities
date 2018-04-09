@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,8 @@ import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetState;
 import com.indracompany.sofia2.config.model.Role;
@@ -87,23 +90,24 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 		marketAssetMemory.setPublic(marketAsset.isPublic());
 		marketAssetMemory.setMarketAssetType(marketAsset.getMarketAssetType());
 		marketAssetMemory.setPaymentMode(marketAsset.getPaymentMode());
+		marketAssetMemory.setState(MarketAsset.MarketAssetState.PENDING);
 		
 		marketAssetMemory.setJsonDesc(marketAsset.getJsonDesc());
 		
-		if (marketAsset.getContent()!=null) {
-			marketAssetMemory.setContent(marketAsset.getContent());
-			marketAssetMemory.setContentType(marketAsset.getContentType());
-		} else {
+		if (marketAsset.getContentId()==null || "".equals(marketAsset.getContentId())) {
 			marketAssetMemory.setContent(null);
-			marketAssetMemory.setContentType(null);
+			marketAssetMemory.setContentId(null);
+		} else if (marketAsset.getContent()!=null && marketAsset.getContent().length>0) {
+			marketAssetMemory.setContent(marketAsset.getContent());
+			marketAssetMemory.setContentId(marketAsset.getContentId());
 		}
 		
-		if (marketAsset.getImage()!=null) {
-			marketAssetMemory.setImage(marketAsset.getImage());
-			marketAssetMemory.setImageType(marketAsset.getImageType());
-		} else {
+		if (marketAsset.getImageType()==null || "".equals(marketAsset.getImageType())) {
 			marketAssetMemory.setImage(null);
 			marketAssetMemory.setImageType(null);
+		} else if (marketAsset.getImage()!=null && marketAsset.getImage().length>0) {
+			marketAssetMemory.setImage(marketAsset.getImage());
+			marketAssetMemory.setImageType(marketAsset.getImageType());	
 		}
 		
 		marketAssetMemory.setCreatedAt(marketAsset.getCreatedAt());
@@ -136,40 +140,46 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 
 	@Override
 	public byte[] getContent(String id) {
-		MarketAsset market= marketAssetRepository.findById(id);
+		MarketAsset marketAsset= marketAssetRepository.findById(id);
 		
-		byte[] buffer = market.getContent();
+		byte[] buffer = marketAsset.getContent();
 		
 		return buffer;
 	}
 	
 	public void downloadDocument(String id, HttpServletResponse response) throws Exception{
-		MarketAsset market= marketAssetRepository.findById(id);
+		MarketAsset marketAsset= marketAssetRepository.findById(id);
 
-		InputStream bis = new ByteArrayInputStream(market.getContent());
-		String type = market.getContentType();
+		InputStream bis = new ByteArrayInputStream(marketAsset.getContent());
+		String name = marketAsset.getContentId();
+		response.setContentType("application/octet-stream");
 		
 		ServletOutputStream out;
-		try {
-			if (type.equalsIgnoreCase("xls")){
-				response.setContentType("application/vnd.ms-excel");
-			} else if (type.equalsIgnoreCase("pdf")){
-				response.setContentType("application/pdf");
-			} else if(type.equalsIgnoreCase("doc")){
-				response.setContentType("application/msword");
-			} else if (type.equalsIgnoreCase("xlsx")){
-				response.setContentType("application/vnd.ms-excel");
-			} else if(type.equalsIgnoreCase("docx")){
-				response.setContentType("application/msword");
-			} else {
-				response.setContentType("application/octet-stream");
-			}
-			 
-			response.setHeader("Content-Disposition", "filename=Prueba."+type);	
+		try {		 
+			response.setHeader("Content-Disposition", "filename=" + name);	
 			out = response.getOutputStream();
 			IOUtils.copy(bis, out);
 			response.flushBuffer();   
 		} catch (IOException e) {
 		}   
+	}
+
+	@Override
+	public void updateState(String id, String state, String reason) {
+		Map<String, String> obj;
+		String rejectReason = "";
+		try {
+			obj = new ObjectMapper().readValue(reason, new TypeReference<Map<String, String>>(){});
+			rejectReason = obj.get("rejectionReason");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		MarketAsset marketAsset= marketAssetRepository.findById(id);
+		
+		marketAsset.setRejectionReason(rejectReason);
+		marketAsset.setState(MarketAssetState.valueOf(state));
+		
+		marketAssetRepository.save(marketAsset);
 	}
 }

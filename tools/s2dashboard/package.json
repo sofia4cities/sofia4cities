@@ -6,6 +6,7 @@
     "angular": "^1.6.9",
     "angular-chart.js": "^1.1.1",
     "angular-d3-word-cloud": "^0.5.3",
+    "angular-material-data-table": "^0.10.10",
     "angular-sanitize": "^1.6.9",
     "angular-simple-logger": "^0.1.7",
     "angular-ui-codemirror": "^0.3.0",

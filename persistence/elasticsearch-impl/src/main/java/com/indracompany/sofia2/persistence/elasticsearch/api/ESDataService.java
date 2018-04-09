@@ -61,6 +61,20 @@ public class ESDataService {
         }
         return list;
     }
+    
+    public List<String> findAllByType(String type, String... indexes) {
+        QueryBuilder query = matchAllQuery();
+        log.info("getMatchAllQueryCount query =>" + query.toString());
+        SearchHit[] hits = connector.getClient().prepareSearch(indexes).setQuery(query).setTypes(type).execute().actionGet().getHits().getHits();
+        List<String> list = new ArrayList<String>();
+        for (SearchHit hit : hits) {
+            // hit.sourceAsMap()
+            list.add(hit.getSourceAsString());
+        }
+        return list;
+    }
+    
+   
 
 
     public List<String> findQueryData(String jsonQueryString, String... indexes) {
@@ -225,9 +239,6 @@ public class ESDataService {
        
         return hits;
     }
-    
-   
 
-   
 
 }

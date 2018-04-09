@@ -121,7 +121,7 @@
 											
 											<!-- FORM ACTIONS FOR UPDATE -->											
 											<input th:if="${marketasset.id} != null" type="hidden" name="action" th:value="@{/marketasset/update}"/>
-											<input th:if="${marketasset.id} != null" type="hidden" name="_method" value="PUT"/>											
+																				
 											
 											<div class="form-body">
 												<!-- id, version and category -->
@@ -167,28 +167,56 @@
 														<div class="form-group">
 															<label  th:text="#{marketasset.image}">Image</label>
 															<div class="clearfix"></div>
-															<div th:if="${not #lists.isEmpty(marketasset.image)}" class="margin-bottom-10">
-																<button class="btn btn-sm btn-outline red-sunglo"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.image}"> Delete Image</span></button>
+															<div id="imageShow" th:style="*{imageType} ? 'display:block' : 'display:none'">
+																<button id="removeImgBtn" type="button" class="btn btn-sm btn-outline red-sunglo" name="removeImgBtn" onclick="manageImg()"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.image}"> Delete Image</span></button>
+																<img id="showedImg" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" class="img-responsive thumbnail" style="max-height: 135px; margin: 20px auto;"/>
+																<img id="showedImg" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="max-height: 135px; margin: 20px auto;"/>
 															</div>
-															<input id="image" class="btn btn-default" type="file" th:field="*{image}" onchange="MarketAssetCreateController.validateImageSize();" style="width:100%"/>
-															<img id="showedImg" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" class="img-responsive thumbnail" style="max-height: 150px; margin: 20px auto;"/>
-															<img id="showedImg" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="max-height: 150px; margin: 20px auto;"/>																	
+															<div id="imageForm" th:style="*{imageType} ? 'display:none' : 'display:block'">
+																<input id="image" class="btn btn-default" type="file" th:field="*{image}" onchange="MarketAssetCreateController.validateImageSize();" style="width:100%"/>
+																<img id="showedImgPreview" class="img-responsive thumbnail" th:src="@{/img/API.png}" style="max-height: 135px; margin: 20px auto;"/>
+															</div>
+															<input id="imageType" name="imageType" type="hidden" th:field="*{imageType}"/>
 														</div>
 													</div>
-													<div class="col-md-8 col-sm-12 col-xs-12">
+													<div class="col-md-6 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label th:text="#{marketasset.title}">Title</label>
 															<input id="title" type="text" name="title" th:required="true"  maxlength="50" class="form-control " th:placeholder="#{marketasset.title}"/>
 														</div>
+													</div>
+													<div class="col-md-2 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{marketasset.state}">Estado</label>
+															<div class="clearfix"></div>
+															<div th:if="(${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR') AND (${marketasset.id} != null)">
+																<button id="approveBtn" type="button" class="btn btn-sm btn-outline grey-mint" name="approveBtn" onclick="MarketAssetCreateController.updateState('APPROVED')"><i class="fa fa-times"></i> <span th:text="#{marketasset.approve}"> Approve</span></button>
+																<button id="rejectBtn" type="button" class="btn btn-sm btn-outline red-sunglo" name="rejectBtn" onclick="MarketAssetCreateController.openRejectDialog()"><i class="fa fa-times"></i> <span th:text="#{marketasset.reject}"> Reject</span></button>
+															</div>
+															<div th:if="(${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR') OR (${marketasset.id} == null)">
+																<button th:if="${marketasset.id} == null" id="pendingBtn" type="button" class="btn btn-sm grey-mint" name="pendingBtn"><i class="fa fa-times"></i> <span th:text="#{marketasset.state.PENDING}"> Pending</span></button>
+																<button th:if="${marketasset.id} != null" id="stateBtn" type="button" th:class="${marketasset.state.name()== 'REJECTED'} ? 'btn btn-sm btn-outline red-sunglo' : 'btn btn-sm grey-mint'" name="stateBtn"><i class="fa fa-times"></i> <span th:text="${marketasset.state}" th:title="${marketasset.state.name()== 'REJECTED'? marketasset.rejectionReason : marketasset.state.name()}"> State</span></button>
+															</div>
+														</div>	
+													</div>
+													<div class="col-md-8 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label th:text="#{marketasset.technologies}">Tecnologies</label>
-															<div class="input-icon ">
+															<div class="input-icon">
 																<input id="technologies" data-role="tagsinput" type="text" name="technologies" th:required="true"  maxlength="50" class="form-control " th:placeholder="#{marketasset.technologies}"/>
-															</div>															
+															</div>													
 														</div>
+													</div>
+													<div class="col-md-8 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label th:text="#{marketasset.description}"></label>
-															<textarea class="element textarea small form-control" id="description" th:required="true" data-provide="markdown" data-iconlibrary="fa" rows="10" name="description" maxlength="512"></textarea>
+															<textarea class="element textarea small form-control" id="description" th:required="true" name="description" maxlength="512"></textarea>
+														</div>
+													</div>
+													<div class="col-md-12 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{marketasset.details}"></label>
+															<textarea class="element textarea small form-control" id="detailedDescription" th:required="true" data-provide="markdown" data-iconlibrary="fa" rows="10" name="detailedDescription"></textarea>
 														</div>
 														<input id="json_desc" name="json_desc" type="hidden" th:field="*{jsonDesc}"/>
 													</div>
@@ -198,8 +226,8 @@
 												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'DOCUMENT'))" th:include="marketasset/marketassetfragments::#DOCUMENTMarketAssetFragment"/>
 												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'WEBPROJECT'))" th:include="marketasset/marketassetfragments::#WEBPROJECTMarketAssetFragment"/>
 												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'APPLICATION'))" th:include="marketasset/marketassetfragments::#APPLICATIONMarketAssetFragment"/>
-
-											</div>
+												<input id="contentId" name="contentId" type="hidden" th:field="*{contentId}" />
+											</div>	
 											<!-- FORM BUTTONS -->
 											<div class="form-actions">
 												<div class="pull-right">
@@ -220,12 +248,34 @@
 												</div>
 											</div>											
 										</form>
+										<form th:id="form_download_document" th:action="@{|/marketasset/${marketasset.id}/downloadContent|}" method="POST">
+                   							<input type="hidden" name="id_document" id="id_document"/>
+                						</form>
 									</div>									
 								</div>
 							</div>
 						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->
+				<div id="dialog-reject" title="CustomSql" th:title="#{marketasset.reject.dialog}" tabindex="-1" role="dialog" class="modal fade" style="display: none;">
+					<div class="modal-dialog">
+					    <!-- Modal content-->
+					    <div class="modal-content">					
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title"></h4>
+							</div>
+							<div class="modal-body">
+				                <label class="reason" th:text="#{marketasset.reject.reason}"></label>
+				                <textarea class="element textarea small form-control" id="rejection" th:required="true" name="rejection" maxlength="512"></textarea>
+							</div>					
+							<div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						        <button type="button" class="btn btn-primary" onclick="MarketAssetCreateController.updateState('REJECTED', $('rejection').val())" >Save changes</button>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div><!-- END CONTENT BODY -->
 		</div><!-- END CONTENT page-content-wrapper -->		
 	</div>
@@ -271,6 +321,17 @@
 	var error="";
 	var currentLanguage = [[${lang}]];	
 	
+    $('#image').change(function() {
+        var filename = $('#image').val();
+        var fileExt = filename.split('.').pop();
+        $('#imageType').val(fileExt);
+    });
+    
+    function loadContentId(){
+        var filename = $('#content')[0].files[0]['name'];
+        $('#contentId').val(filename);
+    };
+	
 	var marketAssetCreateJson = {
 		"url": [[@{/marketasset}]],
 		"validation_dates" : [[#{api.valid.dateDeleted}]],
@@ -284,7 +345,7 @@
 	$(window).load(function(){  
 		if ( [[${marketasset.id}]] != null){
 	 		var json_desc = JSON.parse($('#json_desc').val());
-			var type = $('#marketassetType').val();
+			type = $('#marketassetType').val();
 			
 			loadFragment(type, json_desc); 
 		}
@@ -296,9 +357,11 @@
 			$('#versions').val(json_desc.versions);
 			$('#apiDescription').val(json_desc.apiDescription);
 		} else if (type=='DOCUMENT'){
+			$('#detailedDescription').append(json_desc.detailedDescription);
 		} else if (type=='APPLICATION'){
 			$('#installation').val(json_desc.installation);
 			$('#functionality').val(json_desc.functionality);
+			$('#detailedDescription').val(json_desc.detailedDescription);
 		} else if (type=='WEBPROJECT'){
 			$('#functionality').val(json_desc.functionality);
 			$('#id_endpoint').val(json_desc.id_endpoint);
@@ -306,6 +369,23 @@
 		
 	};
 	
+	function manageImg(){
+		$('#imageType').val("");
+		$('#imageShow').css('display','none');
+		$('#imageForm').css('display','block');
+	}
+	
+	function manageContent(){
+		$('#contentId').val("");
+		$('#contentShow').css('display','none');
+		$('#contentForm').css('display','block');
+	}
+	
+	function downloadContent(){  
+       document.getElementById("id_document").value=[[${marketasset.id}]];
+       document.forms["form_download_document"].submit();
+	}
+
 	</script>	
 
 </body>

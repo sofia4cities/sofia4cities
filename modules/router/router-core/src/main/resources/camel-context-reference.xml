@@ -16,7 +16,10 @@
             <redeliveryPolicy maximumRedeliveries="5" retryAttemptedLogLevel="INFO" redeliveryDelay="250"
                               backOffMultiplier="2" useExponentialBackOff="true"/>
 		</errorHandler>
-        
+
+		<!-- MUST BE EMPTY OF ROUTES -->
+		<!-- ROUTES SHOULD BE LOCATED IN "camel-routes" FOLDER!!! -->
+
 	</camelContext>
 	
 </beans>

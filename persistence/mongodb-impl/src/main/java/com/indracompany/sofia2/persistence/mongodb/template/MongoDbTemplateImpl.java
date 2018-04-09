@@ -88,7 +88,7 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	@Autowired
 	private UtilMongoDB util;
 
-	@Value("${sofia2.database.mongodb.servers:#{null}}")
+	@Value("${sofia2.database.mongodb.servers:localhost:27017}")
 	private String servers;
 
 	@Value("${sofia2.database.mongodb.socketTimeout:30000}")

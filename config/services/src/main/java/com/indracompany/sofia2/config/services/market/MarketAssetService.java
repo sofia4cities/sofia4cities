@@ -33,4 +33,6 @@ public interface MarketAssetService {
 	void downloadDocument(String id, HttpServletResponse response) throws Exception;
 
 	void updateMarketAsset(String id, MarketAsset marketAssetMultipartMap);
+
+	void updateState(String id, String state, String reasonData);
 }

@@ -30,7 +30,7 @@ import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
 import com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClient;
 
 @RestController
-@RequestMapping(value = "/flowengine/admin")
+@RequestMapping(value = "/admin")
 public class FlowEngineController {
 
 	@Autowired
