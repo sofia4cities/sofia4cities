@@ -1,4 +1,9 @@
 jQuery(document).ready(function($){
+	
+	// i18 variables
+	var loginReg = loginJson; 
+	
+	
 	var formModal = $('.cd-user-modal'),
 		formLogin = formModal.find('#cd-login'),
 		formSignup = formModal.find('#cd-signup'),
@@ -45,7 +50,8 @@ jQuery(document).ready(function($){
 			passwordField = togglePass.prev('input');
 		
 		( 'password' == passwordField.attr('type') ) ? passwordField.attr('type', 'text') : passwordField.attr('type', 'password');
-		( 'Hide' == togglePass.text() ) ? togglePass.text('Show') : togglePass.text('Hide');
+		console.log('mostar/ocultar: ' + togglePass.text());
+		( loginReg.show == togglePass.text() ) ? togglePass.text(loginReg.hide) : togglePass.text(loginReg.show);
 		//focus and move cursor to the end of input field
 		passwordField.putCursorAtEnd();
 	});

@@ -414,6 +414,43 @@ var HeaderController = function() {
 		});
 	}
 	
+	// GADGET-CONFIRM-DIALOG
+	var showConfirmDialogGadgetTemplate = function(formId){	
+
+		//i18 labels
+		var Close = headerReg.btnCancelar;
+		var Remove = headerReg.btnEliminar;
+		var Content = headerReg.gadgetTemplateConfirm;
+		var Title = headerReg.titleConfirm + ':';
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+	}
+	
 	// DASHBOARDS-CONFIRM-DIALOG
 	var showConfirmDialogDashboard = function(formId){	
 
@@ -489,15 +526,17 @@ var HeaderController = function() {
 	}	
 	
 	// SERVER ERRORS-DIALOG
-	var errors = function(){		
+	var messages = function(){		
 		var Close = headerReg.btnCancelar;
-		if ( headerReg.errores !== null ){			
+		var infoTitle = headerReg.informationtitle;
+		if ( headerReg.messages !== null ){			
 			// jquery-confirm DIALOG SYSTEM.
 			$.confirm({
-				icon: 'fa fa-bug',
-				title: 'ERROR',
+				icon: 'fa fa-info-circle',
+				title: infoTitle + ':',
 				theme: 'dark',
-				content: headerReg.errores,
+				type: 'blue',
+				content: headerReg.messages,
 				draggable: true,
 				dragWindowGap: 100,
 				backgroundDismiss: true,
@@ -510,7 +549,7 @@ var HeaderController = function() {
 					}
 				}
 			});			
-		} else { logControl ? console.log('|---> errors() -> NO ERRORS FROM SERVER.') : ''; }		
+		} else { logControl ? console.log('|---> messages() -> NO MESSAGES FROM SERVER.') : ''; }		
 	}
 
 	// SERVER INFORMATION-DIALOG (ERRORS)
@@ -554,8 +593,8 @@ var HeaderController = function() {
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 
-			// CALL ERRORS
-			errors();			
+			// CALL MESSAGES/ERRORS
+			messages();			
 			// CALL INFO
 			information();
 		},
@@ -644,7 +683,12 @@ var HeaderController = function() {
 		showConfirmDialogDevice: function(formId){		
 			logControl ? console.log('showConfirmDialogDevice()...') : '';
 			showConfirmDialogDevice(formId);
+		},// GADGET-CONFIRM-DIALOG
+		showConfirmDialogGadgetTemplate : function(formId){		
+			logControl ? console.log('showConfirmDialogGadgetTemplate()...') : '';
+			showConfirmDialogGadgetTemplate(formId);
 		},
+			
 		
 	};
 }();

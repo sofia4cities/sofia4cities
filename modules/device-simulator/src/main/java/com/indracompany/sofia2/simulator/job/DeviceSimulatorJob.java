@@ -15,9 +15,7 @@ package com.indracompany.sofia2.simulator.job;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 
-import org.assertj.core.data.MapEntry;
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +57,7 @@ public class DeviceSimulatorJob {
 
 	}
 
-	public void generateInstance(String user, String json) throws Exception {
+	public JsonNode generateInstance(String user, String json) throws Exception {
 
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -73,12 +71,13 @@ public class DeviceSimulatorJob {
 		JsonNode fieldAndValues = this.fieldRandomizerService.randomizeFields(jsonInstance.path("fields"),
 				ontologySchema);
 
-		log.debug("Inserted ontology: "+fieldAndValues.toString());
+		log.debug("Inserted ontology: " + fieldAndValues.toString());
 		this.persistenceService.insertOntologyInstance(fieldAndValues.toString(), ontology, user, clientPlatform,
 				clientPlatformInstance);
+		return fieldAndValues;
 	}
 
-	public JsonNode generateJsonSchema(String ontology, String user) throws JsonProcessingException, IOException {
+	private JsonNode generateJsonSchema(String ontology, String user) throws JsonProcessingException, IOException {
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode ontologySchema = mapper
@@ -115,7 +114,7 @@ public class DeviceSimulatorJob {
 
 	}
 
-	public JsonNode createObjectNode(JsonNode fieldNode) {
+	private JsonNode createObjectNode(JsonNode fieldNode) {
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode objectNode = mapper.createObjectNode();
@@ -156,7 +155,7 @@ public class DeviceSimulatorJob {
 		return objectNode;
 	}
 
-	public JsonNode createArrayNode(JsonNode fieldNode) {
+	private JsonNode createArrayNode(JsonNode fieldNode) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode objectNode = mapper.createObjectNode();
 

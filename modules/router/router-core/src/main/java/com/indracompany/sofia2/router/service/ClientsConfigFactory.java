@@ -14,8 +14,6 @@
 package com.indracompany.sofia2.router.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.router.client.RouterClient;
@@ -26,21 +24,21 @@ import com.indracompany.sofia2.router.service.app.service.advice.AdviceServiceIm
 
 @Service
 public class ClientsConfigFactory {
-	
+
 	@Autowired
 	private AdviceServiceImpl adviceServiceImpl;
-	
-	public RouterClientGateway<NotificationCompositeModel,OperationResultModel> createAdviceGateway(String key, String keyGroup) {
 
-		RouterClient<NotificationCompositeModel,OperationResultModel> routerClient= (RouterClient<NotificationCompositeModel,OperationResultModel>)adviceServiceImpl;
-		RouterClientGateway<NotificationCompositeModel,OperationResultModel> gateway = 	new RouterClientGateway<NotificationCompositeModel,OperationResultModel>
-				(RouterClientGateway.setupDefault(keyGroup,key),routerClient);
-		
-		//gateway.setFallback(fallback);
-		
+	public RouterClientGateway<NotificationCompositeModel, OperationResultModel> createAdviceGateway(String key,
+			String keyGroup) {
+
+		RouterClient<NotificationCompositeModel, OperationResultModel> routerClient = adviceServiceImpl;
+		RouterClientGateway<NotificationCompositeModel, OperationResultModel> gateway = new RouterClientGateway<NotificationCompositeModel, OperationResultModel>(
+				RouterClientGateway.setupDefault(keyGroup, key), routerClient);
+
+		// gateway.setFallback(fallback);
+
 		return gateway;
 
 	}
-
 
 }

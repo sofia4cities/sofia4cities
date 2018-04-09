@@ -19,12 +19,6 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.indracompany.sofia2.config.model.ApiComment;
@@ -37,212 +31,96 @@ import lombok.Setter;
 
 public class ApiMultipart {
 	
+	@Getter
+	@Setter
 	private String id;
 	
-	private MultipartFile image;
-	
+	@Getter
+	@Setter
 	private Ontology ontology;
+	
+	@Getter
+	@Setter
 	private User user;
+	
+	@Getter
+	@Setter
 	private boolean ssl_certificate;
+	
+	@Getter
+	@Setter
 	private Set<ApiComment> comments;
+	
+	@Getter
+	@Setter
 	private Set<ApiUserAssessment> userAssessments;
+	
+	@Getter
+	@Setter
 	private String identification;
+	
+	@Getter
+	@Setter
 	private Integer numversion;
+	
+	@Getter
+	@Setter
 	private String description;
+	
+	@Getter
+	@Setter
 	private String category;
+	
+	@Getter
+	@Setter
 	private String endpoint;
+	
+	@Getter
+	@Setter
 	private String endpointExt;
+	
+	@Getter
+	@Setter
 	private String state;
+	
+	@Getter
+	@Setter
 	private String metaInf;
+	
+	@Getter
+	@Setter
 	private String imageType;
+	
+	@Getter
+	@Setter
 	private boolean isPublic;
+	
+	@Getter
+	@Setter
 	private Integer cachetimeout;
+	
+	@Getter
+	@Setter
 	private Integer apilimit;
+	
+	@Getter
+	@Setter
 	private String apiType;
+	
+	@Getter
+	@Setter
 	private Double assessment;
 	
+	@Getter
+	@Setter
 	private Date createdAt;
+	
+	@Getter
+	@Setter
 	private Date updatedAt;
 	
-	public Ontology getOntology() {
-		return ontology;
-	}
-
-	public void setOntology(Ontology ontology) {
-		this.ontology = ontology;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public boolean isSsl_certificate() {
-		return ssl_certificate;
-	}
-
-	public void setSsl_certificate(boolean ssl_certificate) {
-		this.ssl_certificate = ssl_certificate;
-	}
-
-	public Set<ApiComment> getComments() {
-		return comments;
-	}
-
-	public void setComments(Set<ApiComment> comments) {
-		this.comments = comments;
-	}
-
-	public Set<ApiUserAssessment> getUserAssessments() {
-		return userAssessments;
-	}
-
-	public void setUserAssessments(Set<ApiUserAssessment> userAssessments) {
-		this.userAssessments = userAssessments;
-	}
-
-	public String getIdentification() {
-		return identification;
-	}
-
-	public void setIdentification(String identification) {
-		this.identification = identification;
-	}
-
-	public Integer getNumversion() {
-		return numversion;
-	}
-
-	public void setNumversion(Integer numversion) {
-		this.numversion = numversion;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-
-	public String getEndpointExt() {
-		return endpointExt;
-	}
-
-	public void setEndpointExt(String endpointExt) {
-		this.endpointExt = endpointExt;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getMetaInf() {
-		return metaInf;
-	}
-
-	public void setMetaInf(String metaInf) {
-		this.metaInf = metaInf;
-	}
-
-	public String getImageType() {
-		return imageType;
-	}
-
-	public void setImageType(String imageType) {
-		this.imageType = imageType;
-	}
-
-	public boolean isPublic() {
-		return isPublic;
-	}
-
-	public void setPublic(boolean isPublic) {
-		this.isPublic = isPublic;
-	}
-
-	public Integer getCachetimeout() {
-		return cachetimeout;
-	}
-
-	public void setCachetimeout(Integer cachetimeout) {
-		this.cachetimeout = cachetimeout;
-	}
-
-	public Integer getApilimit() {
-		return apilimit;
-	}
-
-	public void setApilimit(Integer apilimit) {
-		this.apilimit = apilimit;
-	}
-
-	public String getApiType() {
-		return apiType;
-	}
-
-	public void setApiType(String apiType) {
-		this.apiType = apiType;
-	}
-
-	public Double getAssessment() {
-		return assessment;
-	}
-
-	public void setAssessment(Double assessment) {
-		this.assessment = assessment;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public MultipartFile getImage() {
-		return image;
-	}
+	@Getter
+	private MultipartFile image;
 
 	public void setImage(MultipartFile image) {
 		this.image = image;

@@ -21,10 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.DeviceSimulation;
 import com.indracompany.sofia2.config.model.DeviceSimulation.Type;
@@ -113,18 +110,21 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 	}
 
 	@Override
-	public DeviceSimulation createSimulation(String identification, int interval, String userId, String json) throws JsonProcessingException, IOException {
+	public DeviceSimulation createSimulation(String identification, int interval, String userId, String json)
+			throws JsonProcessingException, IOException {
 
 		ObjectMapper mapper = new ObjectMapper();
 		DeviceSimulation simulation = new DeviceSimulation();
-		
-		simulation.setOntology(this.ontologyService.getOntologyByIdentification(mapper.readTree(json).path("ontology").asText(),userId));
-		simulation.setClientPlatform(this.clientPlatformRepository.findByIdentification(mapper.readTree(json).path("clientPlatform").asText()));
+
+		simulation.setOntology(this.ontologyService
+				.getOntologyByIdentification(mapper.readTree(json).path("ontology").asText(), userId));
+		simulation.setClientPlatform(this.clientPlatformRepository
+				.findByIdentification(mapper.readTree(json).path("clientPlatform").asText()));
 		simulation.setToken(this.tokenRepository.findByToken(mapper.readTree(json).path("token").asText()));
 		simulation.setIdentification(identification);
 		simulation.setJson(json);
 		simulation.setInterval(interval);
-		
+
 		int minutes = 0;
 		int seconds = interval;
 		if (interval >= 0) {
@@ -142,17 +142,20 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 		return this.deviceSimulationRepository.save(simulation);
 
 	}
-	
+
 	@Override
-	public DeviceSimulation updateSimulation(String identification, int interval, String json, DeviceSimulation simulation) throws JsonProcessingException, IOException {
+	public DeviceSimulation updateSimulation(String identification, int interval, String json,
+			DeviceSimulation simulation) throws JsonProcessingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		simulation.setOntology(this.ontologyService.getOntologyByIdentification(mapper.readTree(json).path("ontology").asText(),simulation.getUser().getUserId()));
-		simulation.setClientPlatform(this.clientPlatformRepository.findByIdentification(mapper.readTree(json).path("clientPlatform").asText()));
+		simulation.setOntology(this.ontologyService.getOntologyByIdentification(
+				mapper.readTree(json).path("ontology").asText(), simulation.getUser().getUserId()));
+		simulation.setClientPlatform(this.clientPlatformRepository
+				.findByIdentification(mapper.readTree(json).path("clientPlatform").asText()));
 		simulation.setToken(this.tokenRepository.findByToken(mapper.readTree(json).path("token").asText()));
 		simulation.setIdentification(identification);
 		simulation.setJson(json);
 		simulation.setInterval(interval);
-		
+
 		int minutes = 0;
 		int seconds = interval;
 		if (interval >= 0) {
@@ -170,19 +173,19 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 	}
 
 	@Override
-	public void save(DeviceSimulation simulation) {		
+	public void save(DeviceSimulation simulation) {
 		this.deviceSimulationRepository.save(simulation);
 	}
 
 	@Override
 	public DeviceSimulation getSimulationById(String id) {
-		
+
 		return this.deviceSimulationRepository.findById(id);
 	}
 
 	@Override
 	public List<DeviceSimulation> getSimulationsForUser(String userId) {
-		
+
 		return this.deviceSimulationRepository.findByUser(this.userService.getUser(userId));
 	}
 
@@ -190,6 +193,5 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 	public DeviceSimulation getSimulationByJobName(String jobName) {
 		return this.deviceSimulationRepository.findByJobName(jobName);
 	}
-
 
 }

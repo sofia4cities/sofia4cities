@@ -1883,7 +1883,7 @@
     }
 
     function itemResize(item, itemComponent) {
-      debugger;
+    
       $log.info('itemResized', item, itemComponent);
     }
 
@@ -2315,7 +2315,7 @@
   /** @ngInject */
   function ElementController($log, $scope, $mdDialog, $sanitize, $sce, $rootScope) {
     EditContainerDialog.$inject = ["$scope", "$mdDialog", "element"];
-    EditGadgetDialog.$inject = ["$scope", "$mdDialog", "$http", "element", "sofia2HttpService"];
+    EditGadgetDialog.$inject = ["$scope", "$mdCompiler", "$mdDialog", "$http", "element", "sofia2HttpService"];
     var vm = this;
     vm.$onInit = function () {
       inicializeIncomingsEvents();
@@ -3339,7 +3339,7 @@
       });
     };
 
-    function EditGadgetDialog($scope, $mdDialog, $http, element, sofia2HttpService) {
+    function EditGadgetDialog($scope,$mdCompiler, $mdDialog, $http, element, sofia2HttpService) {
 
 
       $scope.element = element;
@@ -3355,7 +3355,6 @@
       $scope.answer = function(answer) {
         $mdDialog.hide(answer);
       };
-
       $scope.datasources = [];
 
       $scope.loadDatasources = function(){
@@ -3368,13 +3367,16 @@
           }
         );
       };
-
     }
 
     vm.trustHTML = function(html_code) {
       return $sce.trustAsHtml(html_code)
     }
 
+
+
+
+    
     vm.calcHeight = function(){
       vm.element.header.height = (vm.element.header.height=='inherit'?64:vm.element.header.height);
       return "calc(100% - " + (vm.element.header.enable?vm.element.header.height:0) + "px)";
@@ -3495,6 +3497,10 @@
         return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getUserGadgetDatasources');
       }
 
+      vm.getsampleDatasources = function(ds){
+        return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getSampleDatasource/'+ds);
+      }
+
       vm.getDatasourceById = function(datasourceId){
         return $http.get(__env.endpointSofia2ControlPanel + '/datasources/getDatasourceById/' + datasourceId);
       }
@@ -3509,6 +3515,10 @@
 
       vm.getUserGadgetsByType = function(type){
         return $http.get(__env.endpointSofia2ControlPanel + '/gadgets/getUserGadgetsByType/' + type);
+      }
+
+      vm.getUserGadgetTemplate = function(){
+        return $http.get(__env.endpointSofia2ControlPanel + '/gadgettemplates/getUserGadgetTemplate/');
       }
 
       vm.getGadgetMeasuresByGadgetId = function(gadgetId){
@@ -4175,6 +4185,7 @@ angular.module('s2DashboardFramework').constant('__env', env);
           $scope.layergrid = layergrid;
 
           $scope.gadgets = [];
+         
 
           $scope.hide = function() {
             $mdDialog.hide();
@@ -4223,6 +4234,307 @@ angular.module('s2DashboardFramework').constant('__env', env);
       }
 
 
+      function showAddGadgetTemplateDialog(type,config,layergrid){
+        AddGadgetController.$inject = ["$scope", "$mdDialog", "sofia2HttpService", "type", "config", "layergrid"];
+        function AddGadgetController($scope, $mdDialog, sofia2HttpService, type, config, layergrid) {
+          $scope.type = type;
+          $scope.config = config;
+          $scope.layergrid = layergrid;
+
+         
+          $scope.templates = [];
+
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+
+         
+          $scope.loadTemplates = function() {
+            return sofia2HttpService.getUserGadgetTemplate().then(
+              function(templates){
+                $scope.templates = templates.data;
+              }
+            );
+          };
+
+          $scope.useTemplate = function() {    
+                 
+            $scope.config.type = $scope.type;
+            $scope.config.content=$scope.template.template          
+            showAddGadgetTemplateParameterDialog($scope.type,$scope.config,$scope.layergrid);
+            $mdDialog.hide();
+          };
+          $scope.noUseTemplate = function() {
+            $scope.config.type = $scope.type;        
+            $scope.layergrid.push($scope.config);
+            $mdDialog.cancel();
+          };
+
+        }
+        $mdDialog.show({
+          controller: AddGadgetController,
+          templateUrl: 'app/partials/edit/addGadgetTemplateDialog.html',
+          parent: angular.element(document.body),
+          clickOutsideToClose:true,
+          fullscreen: false, // Only for -xs, -sm breakpoints.
+          openFrom: '.sidenav-fab',
+          closeTo: angular.element(document.querySelector('.sidenav-fab')),
+          locals: {
+            type: type,
+            config: config,
+            layergrid: layergrid
+          }
+        })
+        .then(function() {
+       
+        }, function() {
+          $scope.status = 'You cancelled the dialog.';
+        });
+      }
+
+
+
+      function showAddGadgetTemplateParameterDialog(type,config,layergrid){
+        AddGadgetController.$inject = ["$scope", "$mdDialog", "$mdCompiler", "sofia2HttpService", "type", "config", "layergrid"];
+        function AddGadgetController($scope, $mdDialog,$mdCompiler, sofia2HttpService, type, config, layergrid) {
+          var agc = this;
+          agc.$onInit = function () {
+            $scope.loadDatasources();
+            $scope.getPredefinedParameters();
+          }
+         
+          $scope.type = type;
+          $scope.config = config;
+          $scope.layergrid = layergrid;
+          $scope.datasource;
+          $scope.datasources = [];
+          $scope.datasourceFields = [];
+          $scope.parameters = [];
+         
+          $scope.templates = [];
+
+          $scope.hide = function() {
+            $mdDialog.hide();
+          };
+
+          $scope.cancel = function() {
+            $mdDialog.cancel();
+          };
+
+         
+          $scope.loadDatasources = function(){
+            return sofia2HttpService.getDatasources().then(
+              function(response){
+                $scope.datasources=response.data;
+                
+              },
+              function(e){
+                console.log("Error getting datasources: " +  JSON.stringify(e))
+              }
+            );
+          };
+    
+          $scope.iterate=  function (obj, stack, fields) {
+            for (var property in obj) {
+                 if (obj.hasOwnProperty(property)) {
+                     if (typeof obj[property] == "object") {
+                      $scope.iterate(obj[property], stack + (stack==""?'':'.') + property, fields);
+              } else {
+                         fields.push({field:stack + (stack==""?'':'.') + property, type:typeof obj[property]});
+                     }
+                 }
+              }    
+              return fields;
+           }
+
+          /**method that finds the tags in the given text*/
+          function searchTag(regex,str){
+            let m;
+            let found=[];
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                found.push(arr[0]);			
+              });  
+            }
+            return found;
+          }
+          /**method that finds the name attribute and returns its value in the given tag */
+          function searchTagContentName(regex,str){
+            let m;
+            var content;
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                  content = arr[0].match(/"([^"]+)"/)[1];			
+              });  
+            }
+            return content;
+          }
+          /**method that finds the options attribute and returns its values in the given tag */
+          function searchTagContentOptions(regex,str){
+            let m;
+            var content=" ";
+            while ((m = regex.exec(str)) !== null) {  
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach(function(item, index, arr){			
+                  content = arr[0].match(/"([^"]+)"/)[1];			
+              });  
+            }
+          
+            return  content.split(',');
+          }
+
+          /**we look for the parameters in the source code to create the form */
+          $scope.getPredefinedParameters = function(){
+            var str =  $scope.config.content;
+           	const regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+		        const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
+            const regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
+		        let found=[];
+	        	found = searchTag(regexTag,str);	
+        
+        
+            for (var i = 0; i < found.length; i++) {			
+              var tag = found[i];
+              if(tag.replace(/\s/g, '').search('type="text"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){	
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterTextLabel", type:"labelsText"});
+              }else if(tag.replace(/\s/g, '').search('type="number"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:0, type:"labelsNumber"});              
+              }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterDsLabel", type:"labelsds"});               
+              }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){
+                var optionsValue = searchTagContentOptions(regexOptions,tag); 
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterSelectLabel",type:"selects", optionsValue:optionsValue});	              
+              }
+             } 
+            }
+        
+
+            /**find a value for a given parameter */
+            function findValueForParameter(label){
+                for (let index = 0; index <  $scope.parameters.length; index++) {
+                  const element =  $scope.parameters[index];
+                  if(element.label===label){
+                    return element.value;
+                  }
+                }
+            }
+        
+            /**Parse the parameter of the data source so that it has array coding*/
+            function parseArrayPosition(str){
+              const regex = /\.[\d]+/g;
+              let m;              
+              while ((m = regex.exec(str)) !== null) {                
+                  if (m.index === regex.lastIndex) {
+                      regex.lastIndex++;
+                  } 
+                  m.forEach( function(item, index, arr){             
+                    var index = arr[0].substring(1,arr[0].length)
+                    var result =  "["+index+"]";
+                    str = str.replace(arr[0],result) ;
+                  });
+              }
+              return str;
+            }
+
+            /** this function Replace parameteres for his selected values*/
+            function parseProperties(){
+              var str =  $scope.config.content;
+              const regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+              const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
+              const regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
+              let found=[];
+              found = searchTag(regexTag,str);	
+          
+              let parserList=[];
+              for (var i = 0; i < found.length; i++) {
+                var tag = found[i];			
+               
+                if(tag.replace(/\s/g, '').search('type="text"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){                 
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});   
+                }else if(tag.replace(/\s/g, '').search('type="number"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});   
+                }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){                
+                  var field = parseArrayPosition(findValueForParameter(searchTagContentName(regexName,tag)).field);                               
+                  parserList.push({tag:tag,value:"{{ds[0]."+field+"}}"});        
+                }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){                
+                  parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});  
+                }
+              } 
+              //Replace parameteres for his values
+              for (var i = 0; i < parserList.length; i++) {
+                str = str.replace(parserList[i].tag,parserList[i].value);
+              }
+              return str;
+            }
+          
+          
+
+
+
+      
+          $scope.loadDatasourcesFields = function(){
+            
+            if($scope.config.datasource!=null && $scope.config.datasource.id!=null && $scope.config.datasource.id!=""){
+                 return sofia2HttpService.getsampleDatasources($scope.config.datasource.id).then(
+                  function(response){
+                    $scope.datasourceFields=$scope.iterate(response.data[0],"", []);
+                  },
+                  function(e){
+                    console.log("Error getting datasourceFields: " +  JSON.stringify(e))
+                  }
+                );
+              }
+              else 
+              {return null;}
+        }
+
+
+          $scope.save = function() { 
+            $scope.config.type = $scope.type;
+            $scope.config.content=parseProperties();            
+            $scope.layergrid.push($scope.config);
+            $mdDialog.cancel();
+          };
+        
+        }
+        $mdDialog.show({
+          controller: AddGadgetController,
+          templateUrl: 'app/partials/edit/addGadgetTemplateParameterDialog.html',
+          parent: angular.element(document.body),
+          clickOutsideToClose:true,
+          fullscreen: false, // Only for -xs, -sm breakpoints.
+          openFrom: '.sidenav-fab',
+          closeTo: angular.element(document.querySelector('.sidenav-fab')),
+          locals: {
+            type: type,
+            config: config,
+            layergrid: layergrid
+          }
+        })
+        .then(function() {
+
+        }, function() {
+          $scope.status = 'You cancelled the dialog.';
+        });
+      }
+
+
+
+
+
+
       function dropElementEvent(e,newElem){
         var type = e.dataTransfer.getData("type");
         newElem.id = type + "_" + (new Date()).getTime();
@@ -4246,10 +4558,8 @@ angular.module('s2DashboardFramework').constant('__env', env);
           width: 1,
           radius: 1
         }
-        if(type == 'livehtml'){
-          var layerGrid = vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer];
-          layerGrid.gridboard.push(newElem);
-          $scope.$applyAsync();
+        if(type == 'livehtml'){         
+          showAddGadgetTemplateDialog(type,newElem,vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer].gridboard); 
         }
         else{
           showAddGadgetDialog(type,newElem,vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer].gridboard);
@@ -4264,62 +4574,6 @@ angular.module('s2DashboardFramework').constant('__env', env);
           },100
         );
       }
-
-
-      /*var page = {};
-      var layer = {};
-
-      layer.gridboard = [
-        {
-          cols: 8,
-          rows: 7,
-          y: 0,
-          x: 0,
-          id: "1",
-          type: "livehtml",
-          content: "<h1> LiveHTML Text </h1>",
-          header: {
-            enable: true,
-            title: {
-              icon: "",
-              iconColor: "none",
-              text: "Leaflet Map Gadget test",
-              textColor: "none"
-            },
-            backgroundColor: "none",
-            height: 64
-          },
-          backgroundColor: "initial",
-          padding: 0,
-          border: {
-            color: "black",
-            width: 1,
-            radius: 5
-          }
-        }
-      ];
-
-      layer.title = "baseLayer";
-
-      page.title = "New Page";
-      page.icon = "android"
-      page.background = {}
-      page.background.file = []
-
-      page.layers = [layer];
-      */
-     /* Edit mode only */
-      /*page.selectedlayer=0
-      page.combinelayers=!vm.editmode;
-
-      var page2 = JSON.parse(JSON.stringify(page));
-      page2.icon = "bug_report";
-      page2.title = "New Page2";
-
-      vm.dashboard.pages.push(page);
-      vm.dashboard.pages.push(page2);
-      */
-
     };
 
     vm.checkIndex = function(index){
@@ -4334,6 +4588,8 @@ angular.module('s2DashboardFramework').constant('__env', env);
 
 angular.module('s2DashboardFramework').run(['$templateCache', function($templateCache) {$templateCache.put('app/s2dashboard.html','<edit-dashboard ng-if=vm.editmode id=vm.id public=vm.public dashboard=vm.dashboard selectedpage=vm.selectedpage></edit-dashboard><ng-include src="\'app/partials/view/header.html\'"></ng-include><ng-include src="\'app/partials/view/sidenav.html\'"></ng-include><span><div ng-repeat="page in vm.dashboard.pages"><page page=page gridoptions=vm.dashboard.gridOptions editmode=vm.editmode selectedlayer=vm.selectedlayer class=flex ng-if=vm.checkIndex($index)></page></div></span>');
 $templateCache.put('app/partials/edit/addGadgetDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Select Gadget to add</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container><label>Select gadget type</label><md-select ng-model=gadget md-on-open=loadGadgets()><md-option ng-value=gadget ng-repeat="gadget in gadgets"><em>{{gadget.identification}}</em></md-option></md-select></md-input-container><md-dialog-actions layout=row><span flex></span><md-button ng-click=cancel()>Cancel</md-button><md-button ng-click=addGadget()>Add Gadget</md-button></md-dialog-actions></form></md-dialog>');
+$templateCache.put('app/partials/edit/addGadgetTemplateDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Create using template?</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container><label>Select Template</label><md-select ng-model=template md-on-open=loadTemplates()><md-option ng-value=template ng-repeat="template in templates"><em>{{template.identification}}</em></md-option></md-select></md-input-container><md-dialog-actions layout=row><span flex></span><md-button ng-click=useTemplate()>Yes</md-button><md-button ng-click=noUseTemplate()>No</md-button></md-dialog-actions></form></md-dialog>');
+$templateCache.put('app/partials/edit/addGadgetTemplateParameterDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Select a content for the parameters</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container class=md-dialog-content><label>Datasource</label><md-select required md-autofocus placeholder="Select new templace datasource" ng-model=config.datasource md-on-open=loadDatasources() ng-change=loadDatasourcesFields()><md-option ng-value={name:datasource.identification,refresh:datasource.refresh,type:datasource.mode,id:datasource.id} ng-repeat="datasource in datasources">{{datasource.identification}}</md-option></md-select></md-input-container><div flex=""><md-content><md-list class=md-dense flex=""><md-list-item class=md-3-line ng-repeat="item in parameters"><div class=md-list-item-text layout=column><span>name:{{ item.label }}</span><md-input-container ng-if="item.type==\'labelsText\'" class=md-dialog-content><p>string value :</p><input type=text ng-model=item.value></md-input-container><md-input-container ng-if="item.type==\'labelsNumber\'" class=md-dialog-content><p>number value :</p><input type=number ng-model=item.value></md-input-container><md-input-container ng-if="item.type==\'labelsds\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter from datasource" ng-model=item.value><md-option ng-value={field:datasourceField.field,type:datasourceField.type} ng-repeat="datasourceField in datasourceFields">{{datasourceField.field}}</md-option></md-select></md-input-container><md-input-container ng-if="item.type==\'selects\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter value" ng-model=item.value><md-option ng-value=optionsValue ng-repeat="optionsValue in item.optionsValue">{{optionsValue}}</md-option></md-select></md-input-container></div></md-list-item></md-list></md-content></div><md-dialog-actions layout=row><span flex></span><md-button ng-click=save()>Ok</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/addWidgetBottomSheet.html','<md-bottom-sheet class=md-grid layout=column><div layout=row layout-align="center center" ng-cloak><h4>Drag&Drop your gadget to the grid panel</h4></div><div ng-cloak><md-list flex layout=row layout-align="center center"><md-list-item><div><md-button id=line class=md-grid-item-content draggable><md-icon>show_chart</md-icon><div class=md-grid-text>Line Chart</div></md-button></div></md-list-item><md-list-item><div><md-button id=bar class=md-grid-item-content draggable><md-icon>insert_chart</md-icon><div class=md-grid-text>Bar Chart</div></md-button></div></md-list-item><md-list-item><div><md-button id=pie class=md-grid-item-content draggable><md-icon>pie_chart</md-icon><div class=md-grid-text>Pie Chart</div></md-button></div></md-list-item><md-list-item><div><md-button id=wordcloud class=md-grid-item-content draggable><md-icon>sort_by_alpha</md-icon><div class=md-grid-text>Wordcloud</div></md-button></div></md-list-item><md-list-item><div><md-button id=map class=md-grid-item-content draggable><md-icon>map</md-icon><div class=md-grid-text>Map</div></md-button></div></md-list-item><md-list-item><div><md-button id=livehtml class=md-grid-item-content draggable><md-icon>art_track</md-icon><div class=md-grid-text>Live HTML</div></md-button></div></md-list-item></md-list></div></md-bottom-sheet>');
 $templateCache.put('app/partials/edit/datalinkDialog.html','<md-dialog aria-label=Pages><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Datalink</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Connections</md-subheader><md-table-container><table md-table ng-model=connections md-progress=promise><thead md-head><tr md-row><th md-column><span>Source Gadget</span></th><th md-column><span>Source Field</span></th><th md-column><span>Target Gadget</span></th><th md-column><span>Target Field</span></th><th md-column><span>Options</span></th></tr></thead><tbody md-body><tr md-row md-select=c md-select-id=name md-auto-select ng-repeat="c in connections"><td md-cell>{{ generateGadgetInfo(c.source) }}</td><td md-cell>{{c.sourceField}}</td><td md-cell>{{ generateGadgetInfo(c.target) }}</td><td md-cell>{{c.targetField}}</td><td md-cell><md-button class="md-icon-button md-warn" aria-label="Delete connection" ng-click=delete(c.source,c.sourceField,c.target,c.targetField)><md-icon>remove_circle</md-icon></md-button></td></tr></tbody></table></md-table-container><md-subheader>Add New Connection</md-subheader><md-list><md-list-item><md-input-container flex=25><label>Source Gadget</label><md-select ng-model=emitterGadget aria-label="Source Gadget" placeholder="Source Gadget" class=flex ng-change=refreshGadgetEmitterFields(emitterGadget)><md-option ng-repeat="gadget in gadgetsSources" ng-value=gadget.id>{{prettyGadgetInfo(gadget)}}</md-option></md-select></md-input-container><md-input-container flex=25><label>{{emitterDatasource?\'Source Field\' + \'(\' + emitterDatasource + \')\':\'Source Field\'}}</label><md-select ng-model=emitterGadgetField aria-label="Source Field" placeholder="{{emitterDatasource?\'Source Field\' + \'(\' + emitterDatasource + \')\':\'Source Field\'}}" class=flex><md-option ng-repeat="field in gadgetEmitterFields" ng-value=field.field>{{field.field}}</md-option></md-select></md-input-container><md-input-container flex=25><label>Target Gadget</label><md-select ng-model=targetGadget aria-label="Target Gadget" placeholder="Target Gadget" class=flex ng-change=refreshGadgetTargetFields(targetGadget)><md-option ng-repeat="gadget in gadgetsTargets" ng-value=gadget.id>{{prettyGadgetInfo(gadget)}}</md-option></md-select></md-input-container><md-input-container flex=25><label>{{targetDatasource?\'Target Field\' + \'(\' + targetDatasource + \')\':\'Target Field\'}}</label><md-select ng-model=targetGadgetField aria-label="Target Field" placeholder="{{targetDatasource?\'Target Field\' + \'(\' + targetDatasource + \')\':\'Target Field\'}}" class=flex><md-option ng-repeat="field in gadgetTargetFields" ng-value=field.field>{{field.field}}</md-option></md-select></md-input-container><md-input-container flex=5><md-button class="md-icon-button md-primary" aria-label="Add Connection" ng-click=create(emitterGadget,emitterGadgetField,targetGadget,targetGadgetField)><md-icon>add_circle</md-icon></md-button></md-input-container></md-list-item></md-list></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/datasourcesDialog.html','<md-dialog aria-label=Layers><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Page Datasources</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Datasources</md-subheader><md-list><md-list-item ng-repeat="(nameDatasource, data) in dashboard.pages[selectedpage].datasources"><md-input-container flex=60><label>Datasource name</label><input ng-model=nameDatasource md-autofocus disabled></md-input-container><md-input-container flex=40><md-button ng-if="data.triggers.length == 0" class="md-icon-button md-warn" aria-label="Delete Datasource" ng-click=delete(nameDatasource)><md-icon>remove_circle</md-icon></md-button></md-input-container></md-list-item></md-list><md-subheader>Add New Datasource</md-subheader><md-list><md-list-item><md-input-container flex=80><md-select required md-autofocus placeholder="Select new page datasource" ng-model=datasource md-on-open=loadDatasources()><md-option ng-if=!dashboard.pages[selectedpage].datasources[datasource.identification] ng-value=datasource ng-repeat="datasource in datasources">{{datasource.identification}}</md-option></md-select></md-input-container><md-input-container flex=30><md-button class="md-icon-button md-primary" aria-label="Add Datasource" ng-click=create()><md-icon>add_circle</md-icon></md-button></md-input-container></md-list-item></md-list></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');

@@ -8,7 +8,7 @@ VOLUME /tmp
 
 ADD *-exec.jar app.jar
 
-EXPOSE 18090
+EXPOSE 19000
 
 ENV JAVA_OPTS="" \
     SERVER_NAME=localhost

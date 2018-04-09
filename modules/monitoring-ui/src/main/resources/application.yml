@@ -2,11 +2,11 @@
 ##security.require_ssl: true
 server: ## Config Web Server
    port: 19000
-   contextPath: /
+   contextPath: /monitoring
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat
-  
+     
 spring: ## General Config  
    application.name: sofia2-monitoring-ui
    boot.admin: #Spring Boot Admin Config    
@@ -30,6 +30,7 @@ spring: ## General Config
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+ 
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update 
    mail: ##Mail configuration
@@ -40,10 +41,15 @@ spring: ## General Config
       properties.mail.smtp.auth: true
       properties.mail.smtp.starttls.enable: true
           
+
 ## LOGGING CONF
 logging:
    path: ./target/ 
    file: ${spring.application.name}
    level:
       com.indra: DEBUG 
+
+
+
+ 
  

@@ -17,31 +17,45 @@ package com.indracompany.sofia2.client.app;
 import java.io.IOException;
 
 import com.indracompany.sofia2.client.MQTTClient;
-import com.indracompany.sofia2.client.RestClient;
+import com.indracompany.sofia2.client.MQTTClient.QUERY_TYPE;
+import com.indracompany.sofia2.client.SubscriptionListener;
 
 public class ClientsApplication {
 
 	public static void main(String[] args) throws InterruptedException, IOException {
 
-//		MQTTClient client = new MQTTClient("tcp://localhost:1883");
-		String token = "eca34bf3ab1348419f8a5fd61676942f";
-		String clientPlatform = "IncidenciasApp";
-		String clientPlatformInstance = clientPlatform + ":REST";
-		String ontology = "BinaryOnt";
-//		int timeout = 5;
-//		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
-//		String jsonData ="{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}"; 
-//		Thread.sleep(5000);
-//		client.publish("Restaurant", jsonData, timeout);
-//		Thread.sleep(5000);
-//		
-//		client.disconnect();
-		
-		RestClient restClient = new RestClient("http://localhost:8081/iotbroker");
-		String sessionKey = restClient.connect(token, clientPlatform, clientPlatformInstance);
-		String instance = "{\"BinaryOnt\":{ \"Name\":\"string\",\"Image\":{\"data\":\"string\",\"media\":{\"name\":\"fichero.pdf\",\"storageArea\":\"SERIALIZED\",\"binaryEncoding\":\"Base64\",\"mime\":\"application/pdf\"}}}}";
-		restClient.insertInstance(ontology, instance);
-		restClient.disconnect();
-	
+		MQTTClient client = new MQTTClient("tcp://localhost:1883");
+		String token = "a5bdc70f74da414eaa7d72daac397626";
+		String clientPlatform = "DeviceTemp";
+		String clientPlatformInstance = clientPlatform + ":MQTT";
+		String ontology = "TempOnt";
+		int timeout = 50;
+		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
+		String jsonData = "{\"TempOnt\":{ \"Temp\":28.6}}";
+		String subsId = client.subscribe(ontology, "SELECT * FROM TempOnt", QUERY_TYPE.SQL, timeout,
+				new SubscriptionListener() {
+
+					@Override
+					public void onMessageArrived(String message) {
+						System.out.println(message);
+
+					}
+
+				});
+		// client.unsubscribe(subsId);
+		Thread.sleep(50000);
+		// client.publish("TempOnt", jsonData, timeout);
+		//
+		// while(true);
+		client.disconnect();
+
+		// RestClient restClient = new RestClient("http://localhost:8081/iotbroker");
+		// String sessionKey = restClient.connect(token, clientPlatform,
+		// clientPlatformInstance);
+		// String instance = "{\"BinaryOnt\":{
+		// \"Name\":\"string\",\"Image\":{\"data\":\"string\",\"media\":{\"name\":\"fichero.pdf\",\"storageArea\":\"SERIALIZED\",\"binaryEncoding\":\"Base64\",\"mime\":\"application/pdf\"}}}}";
+		// restClient.insertInstance(ontology, instance);
+		// restClient.disconnect();
+		//
 	}
 }

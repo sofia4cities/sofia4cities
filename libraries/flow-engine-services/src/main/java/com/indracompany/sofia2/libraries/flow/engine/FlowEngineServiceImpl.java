@@ -26,20 +26,34 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
 import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
+import com.indracompany.sofia2.commons.ssl.SSLUtil;
 import com.indracompany.sofia2.libraries.flow.engine.exception.FlowEngineServiceException;
 
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+
+@Value
 
 @Slf4j
 public class FlowEngineServiceImpl implements FlowEngineService {
 
 	private HttpComponentsClientHttpRequestFactory httpRequestFactory;
 	private String restBaseUrl;
+	
+	public FlowEngineServiceImpl(String restBaseUrl, int restRequestTimeout, boolean avoidSSLVerification) {
+		
+		if (avoidSSLVerification) {
+			httpRequestFactory = SSLUtil.getHttpRequestFactoryAvoidingSSLVerification();
+		} else {
+			httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
+		}
+		httpRequestFactory.setConnectionRequestTimeout(restRequestTimeout);
+		
+		this.restBaseUrl = restBaseUrl;
+	}
 
 	public FlowEngineServiceImpl(String restBaseUrl, int restRequestTimeout) {
-		httpRequestFactory = new HttpComponentsClientHttpRequestFactory();
-		httpRequestFactory.setConnectTimeout(restRequestTimeout);
-		this.restBaseUrl = restBaseUrl;
+		this(restBaseUrl, restRequestTimeout, false);	
 	}
 
 	@Override
@@ -91,7 +105,6 @@ public class FlowEngineServiceImpl implements FlowEngineService {
 			log.error("Unable to delete domain " + domainId);
 			throw new FlowEngineServiceException("Unable to delete domain " + domainId, e);
 		}
-
 	}
 
 	@Override

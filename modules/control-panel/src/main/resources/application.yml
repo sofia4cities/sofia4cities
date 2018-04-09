@@ -1,5 +1,7 @@
-##--spring.config.name=controlpanel
 ##security.require_ssl: true
+
+
+
 server: ## Config Web Server
    port: 18080
    contextPath: /controlpanel
@@ -11,6 +13,7 @@ server: ## Config Web Server
 management.security.enabled: false
 
 sofia2: #Config Sofia2 specific
+   locale.default: en
    encription.key: sofia2
    devices:
       timeout_devices_inseconds:300
@@ -43,7 +46,7 @@ sofia2: #Config Sofia2 specific
       request.timeout.ms: 5000
       baseurl: http://localhost:18300/sofia2/flowengine/admin   
       proxyurl: http://localhost:5050/
-    
+   controlpanel.avoidsslverification: true
  
 spring: ## General Config  
    application.name: sofia2-control-panel

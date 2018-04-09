@@ -21,10 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -33,7 +31,6 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 
 @Service
 public class FieldRandomizerServiceImpl implements FieldRandomizerService {
@@ -102,11 +99,11 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				((ObjectNode) map.at(path)).put(finalField, Math.sin(angleSin) * multiplierSin);
 				break;
 			case FIXED_STRING:
-				((ObjectNode) map.at(path)).put(finalField, (String) json.path(field).get("value").asText());
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asText());
 				break;
 			case RANDOM_STRING:
 				((ObjectNode) map.at(path)).put(finalField,
-						(String) this.randomizeStrings(json.path(field).get("list").asText()));
+						this.randomizeStrings(json.path(field).get("list").asText()));
 				break;
 			case FIXED_DATE:
 				Date date;
@@ -124,7 +121,8 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 			case RANDOM_DATE:
 				Date dateFrom;
 				Date dateTo;
-				Date dateRandom=new Date();;
+				Date dateRandom = new Date();
+				;
 				DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 				try {
 					dateFrom = df.parse(json.path(field).get("from").asText());
@@ -171,11 +169,12 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				.doubleValue();
 		return randomDoubleTruncated;
 	}
-	public Date randomizeDate (Date from, Date to) {
-		
+
+	public Date randomizeDate(Date from, Date to) {
+
 		ThreadLocalRandom th = ThreadLocalRandom.current();
 		Date randomDate = new Date(th.nextLong(from.getTime(), to.getTime()));
 		return randomDate;
-		
+
 	}
 }

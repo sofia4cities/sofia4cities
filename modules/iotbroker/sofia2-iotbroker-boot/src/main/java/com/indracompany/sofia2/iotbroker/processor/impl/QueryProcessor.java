@@ -34,6 +34,7 @@ import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -62,23 +63,31 @@ public class QueryProcessor implements MessageTypeProcessor {
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
 		final Optional<IoTSession> session = securityPluginManager.getSession(queryMessage.getSessionKey());
-
-		final OperationModel model = new OperationModel();
-
-		model.setBody(queryMessage.getBody().getQuery());
-		model.setOntologyName(queryMessage.getBody().getOntology());
-		model.setOperationType(OperationType.QUERY);
+		
+		String user = null;
+		String clientPlatformId = null;
+		
+		if (session.isPresent()) {
+			user = session.get().getUserID();
+			clientPlatformId = session.get().getClientPlatform();
+		}
+		
+		QueryType type;
 		if( SSAPQueryType.SQL.equals(queryMessage.getBody().getQueryType())) {
-			model.setQueryType(OperationModel.QueryType.SQLLIKE);
+			type = OperationModel.QueryType.SQLLIKE;
 		}
 		else {
-			model.setQueryType(QueryType.valueOf(queryMessage.getBody().getQueryType().name()));
+			type = QueryType.valueOf(queryMessage.getBody().getQueryType().name());
 		}
-
-		session.ifPresent(s -> {
-			model.setUser(s.getUserID());
-			model.setClientPlatformId(s.getClientPlatform());
-		});
+		
+		final OperationModel model = OperationModel.builder(
+				queryMessage.getBody().getOntology(), 
+				OperationType.QUERY, 
+				user, 
+				Source.IOTBROKER)
+				.body(queryMessage.getBody().getQuery())
+				.queryType(type)
+				.build();
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

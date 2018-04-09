@@ -30,6 +30,11 @@ import lombok.Setter;
 
 public class ApiDTO implements Cloneable, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@ApiModelProperty(value = "API Identification")
 	@Getter
 	@Setter
@@ -44,7 +49,7 @@ public class ApiDTO implements Cloneable, Serializable {
 	@Getter
 	@Setter
 	private String type;
-	
+
 	@ApiModelProperty(value = "API Public/Private")
 	@Getter
 	@Setter

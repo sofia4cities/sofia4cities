@@ -26,6 +26,9 @@ public class JPAHAS256ConverterCustom implements AttributeConverter<String, Stri
 	@Override
 	public String convertToDatabaseColumn(String sensitive) {
 		try {
+			// password already encoded
+			if (sensitive.length() > 16)
+				return sensitive;
 			return PasswordEncoder.getInstance().encodeSHA256(sensitive);
 		} catch (final Exception e) {
 			log.error("Error in convertToDatabaseColumn:" + e.getMessage());

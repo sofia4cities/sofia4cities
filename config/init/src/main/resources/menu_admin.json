@@ -107,6 +107,14 @@
 				},
 				{
 					"title": {
+						"EN": "Gadget Templates",
+						"ES": "Plantillas Gadget  "
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgettemplates/list"
+				},
+				{
+					"title": {
 						"EN": "Datasources",
 						"ES": "Fuentes de datos"
 					},
@@ -138,6 +146,24 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/apimanager/token/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "MARKET",
+				"ES": "MARKET"
+			},
+			"icon": "flaticon-layers",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Market's Assets",
+						"ES": "Gestión Assets"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
 				}
 			]
 		},

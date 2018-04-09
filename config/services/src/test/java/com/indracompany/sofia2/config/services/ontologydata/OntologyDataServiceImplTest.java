@@ -14,6 +14,8 @@
  */
 package com.indracompany.sofia2.config.services.ontologydata;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 import org.junit.Test;
@@ -21,11 +23,17 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
+
 @RunWith(MockitoJUnitRunner.class)
 public class OntologyDataServiceImplTest {
 	
-	
-
 	@InjectMocks
 	OntologyDataServiceImpl service;
 	
@@ -94,22 +102,76 @@ public class OntologyDataServiceImplTest {
 	private final String BAD_JSON_DATA = "{Something\":{ \"id\":\"string\"}}"; //invalid JSON. Something should be surrounded by quotes.
 	
 	@Test
-	public void given_OneValidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ItReturnsTrue() {
-		assertTrue("This Json data should pass the validation", service.isJsonCompliantWithSchema(GOOD_JSON_DATA, GOOD_JSON_SCHEMA));
+	public void given_OneValidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ExceptionIsNotLauched() throws DataSchemaValidationException {
+		service.checkJsonCompliantWithSchema(GOOD_JSON_DATA, GOOD_JSON_SCHEMA);
+	}
+	
+	@Test(expected=DataSchemaValidationException.class)
+	public void given_OneInvalidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ExceptionIsLauched() throws DataSchemaValidationException {
+		service.checkJsonCompliantWithSchema(GOOD_JSON_DATA, BAD_JSON_SCHEMA);
+	}
+	
+	@Test(expected=DataSchemaValidationException.class)
+	public void given_OneValidJsonSchemaAndOneNotCompliantJson_When_TheJsonIsValidated_Then_ItReturnsFalse() throws DataSchemaValidationException {
+		service.checkJsonCompliantWithSchema(NONVALID_JSON_DATA, GOOD_JSON_SCHEMA);
+	}
+	
+	@Test(expected=DataSchemaValidationException.class)
+	public void given_OneValidJsonSchemaAndOneIncorrectJson_When_TheJsonIsValidated_Then_ItReturnsFalse() throws DataSchemaValidationException {
+		service.checkJsonCompliantWithSchema(BAD_JSON_DATA, GOOD_JSON_SCHEMA);
 	}
 	
 	@Test
-	public void given_OneInvalidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ItResturnsFalse() {
-		assertFalse("The schema should not be validated", service.isJsonCompliantWithSchema(GOOD_JSON_DATA, BAD_JSON_SCHEMA));
-	}
-	
-	@Test
-	public void given_OneValidJsonSchemaAndOneNotCompliantJson_When_TheJsonIsValidated_Then_ItReturnsFalse() {
-		assertFalse("The Json data should not pass the validation", service.isJsonCompliantWithSchema(NONVALID_JSON_DATA, GOOD_JSON_SCHEMA));
-	}
-	
-	@Test
-	public void given_OneValidJsonSchemaAndOneIncorrectJson_When_TheJsonIsValidated_Then_ItReturnsFalse() {
-		assertFalse("The Json data is incorrect, it should not be validated", service.isJsonCompliantWithSchema(BAD_JSON_DATA, GOOD_JSON_SCHEMA));
+	public void given_OneValidOperationModel_When_TheDataContextHasToBeCreated_Then_TheCompleteDataWithTheDataContextIsGenerated() throws JsonProcessingException, IOException {
+		final String ontologyName = "Commands";
+		final OperationType operationType = OperationType.INSERT;
+		final String user = "developer";
+		final Source source = Source.INTERNAL_ROUTER;
+		final String clientConnection = "connection1";
+		final String clientPlatformId = "platform1";
+		final String clientPlatformInstance = "instance1";
+		final String clientSession = "session1";
+		OperationModel om = OperationModel.builder(
+				ontologyName, 
+				operationType, 
+				user, 
+				source)
+			.clientConnection(clientConnection)
+			.clientPlatformId(clientPlatformId)
+			.clientPlatformInstance(clientPlatformInstance)
+			.clientSession(clientSession)
+			.body(GOOD_JSON_DATA)
+			.cacheable(false)
+			.queryType(QueryType.NATIVE)
+			.build();
+		
+		String completeBody = service.addContextData(om);
+		assertTrue("The body should be created", completeBody != null);
+		final ObjectMapper objectMapper = new ObjectMapper();
+		final JsonNode jsonBody = objectMapper.readTree(completeBody);
+		
+		JsonNode contextData = jsonBody.findValue("contextData");
+		assertTrue("The contextData should be created", contextData != null);
+		
+		JsonNode timestampJSON = contextData.findValue("timestamp");
+		assertTrue("The timestamp should be created", timestampJSON != null);
+		
+		JsonNode timezoneIdJSON = contextData.findValue("timezoneId");
+		assertTrue("The timezoneId should be created", timezoneIdJSON != null);
+		
+		JsonNode userJSON = contextData.findValue("user");
+		assertTrue("The user should be created", userJSON.asText().equals(user));
+		
+		JsonNode clientPlatformJSON = contextData.findValue("clientPatform");
+		assertTrue("The clientPatform should be created", clientPlatformJSON.asText().equals(clientPlatformId));
+		
+		JsonNode clientPlatformInstanceJSON = contextData.findValue("clientPatformInstance");
+		assertTrue("The clientPatformInstance should be created", clientPlatformInstanceJSON.asText().equals(clientPlatformInstance));
+		
+		JsonNode clientConnectionJSON = contextData.findValue("clientConnection");
+		assertTrue("The clientConnection should be created", clientConnectionJSON.asText().equals(clientConnection));
+		
+		JsonNode clientSessionJSON = contextData.findValue("clientSession");
+		assertTrue("The clientSession should be created", clientSessionJSON.asText().equals(clientSession));
 	}
 }
