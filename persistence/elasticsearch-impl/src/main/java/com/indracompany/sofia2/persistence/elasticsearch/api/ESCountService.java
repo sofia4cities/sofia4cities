@@ -30,6 +30,13 @@ public class ESCountService {
 	@Autowired
 	ESBaseApi connector;
 
+    public long getMatchAllQueryCountByType(String type, String... indexes) {
+        QueryBuilder query = matchAllQuery();
+        log.info("getMatchAllQueryCount query =>"+ query.toString());
+        long count = connector.getClient().prepareSearch(indexes).setQuery(query).setTypes(type).setSize(0).execute().actionGet().getHits().getTotalHits();
+        return count;
+    }
+    
     public long getMatchAllQueryCount(String... indexes) {
         QueryBuilder query = matchAllQuery();
         log.info("getMatchAllQueryCount query =>"+ query.toString());
