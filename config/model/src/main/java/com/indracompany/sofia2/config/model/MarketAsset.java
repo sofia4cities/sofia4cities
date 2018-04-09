@@ -19,6 +19,8 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.model;
 
+import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,12 +31,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
@@ -123,10 +128,10 @@ public class MarketAsset extends AuditableEntityWithUUID {
 	@Setter
 	private byte[] content;
 
-	@Column(name = "CONTENT_TYPE", length = 20)
+	@Column(name = "CONTENT_ID", length = 200)
 	@Getter
 	@Setter
-	private String contentType;
+	private String contentId;
 
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = "JSON_DESC", length = 1000000)
@@ -134,5 +139,18 @@ public class MarketAsset extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String jsonDesc;
+	
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = "REJECTION_REASON", length = 500)
+	@Lob
+	@Getter
+	@Setter
+	private String rejectionReason;
+	
+	@Column(name = "DELETED_AT",nullable = true)
+	@Temporal(TemporalType.TIMESTAMP)
+	@Getter
+	@Setter  
+	private Date deletedAt;
 
 }
