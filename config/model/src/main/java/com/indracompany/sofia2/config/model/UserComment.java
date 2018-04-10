@@ -45,15 +45,18 @@ public class UserComment extends AuditableEntityWithUUID {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "MARKETASSET_ID", referencedColumnName = "ID")
+    @NotNull
 	@Getter
 	@Setter
     private MarketAsset marketAsset;
             
-    @Column(name = "USUARIO_ID", length = 50)
+    @ManyToOne	
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)
     @NotNull
 	@Getter
 	@Setter
-    private User userId;
+    private User user;
     
     @Column(name = "TITLE", length = 512)
     @NotNull

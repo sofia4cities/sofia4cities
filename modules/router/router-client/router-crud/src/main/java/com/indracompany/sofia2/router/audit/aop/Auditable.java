@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,13 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence;
+package com.indracompany.sofia2.router.audit.aop;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Configuration
-@ComponentScan
-public class PersistenceStarterAutoConfig {
+
+@Documented
+@Retention(RUNTIME)
+@Target(METHOD)
+public @interface Auditable {
+
+    String doNotify() default "yes";
+    String parameter() default "value";
+    String module() default "Audit";
+    String type() default "User";
 
 }

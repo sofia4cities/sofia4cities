@@ -14,6 +14,7 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch.api;
 
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -67,7 +68,17 @@ public class ESDeleteService {
 		return bulkResponse.hasFailures() == true ? false : true;
 	}
 	
+	public boolean deleteAllOld(String index, String type) {
+		DeleteIndexResponse response = null;
+		
+		if(connector.getClient().admin().indices().prepareExists(index).get().isExists()){
+			response = 	connector.getClient().admin().indices().prepareDelete(index).get();
+	      }
+		log.info("Documents have been deleted...");
+		return response.isAcknowledged() == true ? false : true;
+	}
 	
+	  
 
 	public long deleteByQuery(String index , String jsonQueryString) {
 		WrapperQueryBuilder build = QueryBuilders.wrapperQuery(jsonQueryString);

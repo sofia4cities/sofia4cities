@@ -16,10 +16,10 @@ package com.indracompany.sofia2.router.service.app.service.crud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.audit.aop.Auditable;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.router.audit.aop.Auditable;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -36,10 +36,11 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	private QueryToolService  queryToolService;
 	
 	@Autowired
-	private BasicOpsDBRepository mongoBasicOpsDBRepository;
+	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
+
 	
-	@Autowired
-	private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
+	//@Autowired
+	//private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
 	
 	@Autowired
 	private OntologyDataService ontologyDataService;
@@ -182,12 +183,14 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		OperationResultModel result=null;
 		final boolean cacheable = operationModel.isCacheable();
 		if (cacheable) {
+
 			log.info("DO CACHE OPERATION "+operationModel.toString());
-			result= routerCrudCachedOperationsService.queryCache(operationModel);
+			result= queryNoCache(operationModel);
 			
 		}
 		else {
 			log.info("NOT CACHING, GO TO SOURCE "+operationModel.toString());
+
 			result = queryNoCache(operationModel);
 		}
 			
@@ -290,13 +293,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 
 
-	public BasicOpsDBRepository getMongoBasicOpsDBRepository() {
-		return mongoBasicOpsDBRepository;
-	}
-
-	public void setMongoBasicOpsDBRepository(BasicOpsDBRepository mongoBasicOpsDBRepository) {
-		this.mongoBasicOpsDBRepository = mongoBasicOpsDBRepository;
-	}
+	
 
 	public static boolean NullString(String l) {
 		if (l==null) return true;

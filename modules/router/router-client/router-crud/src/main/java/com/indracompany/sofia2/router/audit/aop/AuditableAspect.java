@@ -12,22 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.audit.aop;
+package com.indracompany.sofia2.router.audit.aop;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.audit.Sofia2AuditEvent;
-import com.indracompany.sofia2.audit.Sofia2AuditEvent.EventType;
-import com.indracompany.sofia2.audit.Sofia2EventFactory;
-import com.indracompany.sofia2.audit.producer.EventProducer;
+import com.indracompany.sofia2.audit.aop.BaseAspect;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
+import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
@@ -38,9 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class AuditableAspect extends BaseAspect {
-
-	@Autowired
-	private EventProducer eventProducer;
 
 	// @Around(value = "@annotation(auditable)")
 	public Object processTx(ProceedingJoinPoint joinPoint, Auditable auditable) throws java.lang.Throwable {
@@ -56,7 +54,7 @@ public class AuditableAspect extends BaseAspect {
 
 		OperationModel model = (OperationModel) getTheObject(joinPoint, OperationModel.class);
 		if (model != null) {
-			event = Sofia2EventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
+			event = Sofia2RouterEventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
 					"Processing :" + className + "-> " + methodName);
 			event.setOntology(model.getOntologyName());
 			event.setOperationType(model.getOperationType().name());
@@ -67,7 +65,7 @@ public class AuditableAspect extends BaseAspect {
 		}
 
 		else {
-			event = Sofia2EventFactory.createAuditEvent(joinPoint, auditable, EventType.GENERAL,
+			event = Sofia2RouterEventFactory.createAuditEvent(joinPoint, auditable, EventType.GENERAL,
 					"Processing :" + className + "-> " + methodName);
 			event.setMessage("Action Performed");
 		}
@@ -98,7 +96,7 @@ public class AuditableAspect extends BaseAspect {
 
 		OperationModel model = (OperationModel) getTheObject(joinPoint, OperationModel.class);
 		if (model != null) {
-			event = Sofia2EventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
+			event = Sofia2RouterEventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
 					"Processing :" + className + "-> " + methodName);
 			event.setOntology(model.getOntologyName());
 			event.setOperationType(model.getOperationType().name());
@@ -109,7 +107,7 @@ public class AuditableAspect extends BaseAspect {
 		}
 
 		else {
-			event = Sofia2EventFactory.createAuditEvent(joinPoint, auditable, EventType.GENERAL,
+			event = Sofia2RouterEventFactory.createAuditEvent(joinPoint, auditable, EventType.GENERAL,
 					"Processing :" + className + "-> " + methodName);
 			event.setMessage("Action Being Performed");
 		}
@@ -126,7 +124,7 @@ public class AuditableAspect extends BaseAspect {
 
 		if (retVal != null) {
 
-			Sofia2AuditEvent event = Sofia2EventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
+			Sofia2AuditEvent event = Sofia2RouterEventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
 					"Returned Execution of :" + className + "-> " + methodName);
 
 			if (retVal instanceof ResponseEntity) {
@@ -139,7 +137,7 @@ public class AuditableAspect extends BaseAspect {
 				OperationModel model = (OperationModel) getTheObject(joinPoint, OperationModel.class);
 
 				OperationResultModel response = (OperationResultModel) retVal;
-				event = Sofia2EventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
+				event = Sofia2RouterEventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
 						"Processing :" + className + "-> " + methodName);
 				event.setOntology(model.getOntologyName());
 				event.setOperationType(model.getOperationType().name());
@@ -165,24 +163,24 @@ public class AuditableAspect extends BaseAspect {
 		String className = getClassName(joinPoint);
 		String methodName = getMethod(joinPoint).getName();
 
-		Sofia2AuditEvent event = null;
+		Sofia2AuditError event = null;
 
 		OperationModel model = (OperationModel) getTheObject(joinPoint, OperationModel.class);
+		
 		if (model != null) {
-			event = Sofia2EventFactory.createAuditEvent(joinPoint, auditable, EventType.ERROR, null);
+			event = Sofia2EventFactory.createAuditEventError(joinPoint, null, Module.ROUTER, ex); 
 			event.setOntology(model.getOntologyName());
 			event.setOperationType(model.getOperationType().name());
 			event.setUser(model.getUser());
 			event.setMessage("Exception Detected while operation : " + model.getOntologyName() + " Type : "
 					+ model.getOperationType().name() + " By User : " + model.getUser());
 		} else {
-			event = Sofia2EventFactory.createAuditEvent(joinPoint, auditable, EventType.ERROR, null);
+			event = Sofia2EventFactory.createAuditEventError(joinPoint, null, Module.ROUTER, ex);
 		}
 
 		event.setMessage("Exception Detected");
-		event.setError(ex.getMessage());
-		event.setType(EventType.ERROR);
-
+		event.setEx(ex);
+		
 		Sofia2EventFactory.setErrorDetails(event, ex);
 		eventProducer.publish(event);
 
@@ -194,19 +192,6 @@ public class AuditableAspect extends BaseAspect {
 
 	}
 
-	private Object getTheObject(JoinPoint joinPoint, Class T) {
-		Object obj = null;
-		if (joinPoint.getArgs() != null) {
-			int size = joinPoint.getArgs().length;
-			if (size > 0) {
-				Object[] obs = joinPoint.getArgs();
-				for (Object object : obs) {
-					if (T.isInstance(object))
-						obj = object;
-				}
-			}
-		}
-		return obj;
-	}
+	
 
 }

@@ -38,7 +38,7 @@ import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.PropertyDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.services.utils.ZipUtil;
 
-import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -63,12 +63,6 @@ public class DigitalTwinDeviceHelper {
 	@Value("${digitaltwin.maven.exec.path}")
 	private String mavenExecPath;
 	
-//	@Value("${digitaltwin.src.main}")
-//	private String srcPath;
-//	
-//	@Value("${digitaltwin.src.app}")
-//	private String appPath;
-	
 	private Template digitalTwinStatusTemplate;
 	private Template pomTemplate;
 	private Template deviceApplicationTemplate;
@@ -76,10 +70,10 @@ public class DigitalTwinDeviceHelper {
 	
 	@PostConstruct
 	public void init() {
-		Configuration cfg  = new Configuration();
+		Configuration cfg  = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		try {
-			ClassLoader classLoader = getClass().getClassLoader();
-			TemplateLoader templateLoader = new FileTemplateLoader(new File(classLoader.getResource("digitaltwin/templates").getFile()));
+			TemplateLoader templateLoader = new ClassTemplateLoader(getClass(), "/digitaltwin/templates");
+			
 			cfg.setTemplateLoader(templateLoader);
 			digitalTwinStatusTemplate = cfg.getTemplate("DigitalTwinStatusTemplate.ftl");
 			pomTemplate = cfg.getTemplate("pomTemplate.ftl");
@@ -262,8 +256,8 @@ public class DigitalTwinDeviceHelper {
 		
 		
 		//Removes the directory
-		//TODO QUITAR EL COMENTARIO
-	//	this.deleteDirectory(fileProjectDirectory);
+		//TODO
+//		this.deleteDirectory(fileProjectDirectory);
 		
 		return zipFile;
 	}
@@ -283,7 +277,11 @@ public class DigitalTwinDeviceHelper {
 		try {
 			File pathToExecutable = new File(mavenExecPath);
 			ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "clean", "package");
-			builder.directory( new File(projectPath).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
+			File workingDirectory=new File(projectPath);
+			log.info("Sets working directory: {}", workingDirectory);
+			log.info("Absolute path: {}", workingDirectory);
+			
+			builder.directory( workingDirectory); // this is where you set the root folder for the executable to run with
 			builder.redirectErrorStream(true);
 			Process process =  builder.start();
 	
@@ -296,7 +294,8 @@ public class DigitalTwinDeviceHelper {
 			s.close();
 	
 			int result = process.waitFor();
-	
+			//TODO --> Borrar
+			System.out.println(text);
 			log.info( "Process exited with result %d and output %s%n", result, text );
 		}catch(Exception e) {
 			log.error("Error compiling project", e);

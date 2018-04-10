@@ -20,10 +20,17 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.UserComment;
 
 public interface UserCommentRepository extends JpaRepository<UserComment, String> {
+	
+	@Query("SELECT o FROM UserComment AS o WHERE (o.marketAsset.id = :marketAssetId)")
+	List<UserComment> findByMarketAsset(@Param("marketAssetId") String marketAssetId);
 
 }

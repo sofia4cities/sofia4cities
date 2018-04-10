@@ -41,7 +41,7 @@ import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -55,7 +55,7 @@ public class InsertProcessorTest {
 	MessageProcessorDelegate insertProcessor;
 
 	@Autowired
-	BasicOpsDBRepository repository;
+	MongoBasicOpsDBRepository repository;
 
 	@MockBean
 	SecurityPluginManager securityPluginManager;

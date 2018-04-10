@@ -105,7 +105,9 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 		List<EventsDigitalTwinType> lEvents = evtDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
 		
 		for(EventsDigitalTwinType event : lEvents) {
-			lEventsDTO.add(new EventsDigitalTwinTypeDTO(event.getId(), event.getType(), event.getName(), event.isStatus(), event.getDescription()));
+			if(!event.getType().equalsIgnoreCase(EventsDigitalTwinType.Type.PING.name()) && !event.getType().equalsIgnoreCase(EventsDigitalTwinType.Type.REGISTER.name())) {
+				lEventsDTO.add(new EventsDigitalTwinTypeDTO(event.getId(), event.getType(), event.getName(), event.isStatus(), event.getDescription()));
+			}
 		}
 		
 		return lEventsDTO;
@@ -115,7 +117,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 	public String getLogicByDigitalId(String TypeId) {
 		LogicDigitalTwinType logic = logicDigitalTwinTypeRepo.findByTypeId(digitalTwinTypeRepo.findById(TypeId));
 		if(logic!=null) {
-			return logic.getLogic();
+			return logic.getLogic().replace("\\r", "");
 		}
 		return "";
 	}
@@ -213,7 +215,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 				if(logic!=null) {
 					LogicDigitalTwinType l = new LogicDigitalTwinType();
 					l.setTypeId(digitalTwinType);
-					l.setLogic(logic.replace("\\n", System.getProperty("line.separator")));
+					l.setLogic(logic.replace("\\n", System.getProperty("line.separator")).substring(1, logic.length()-1).replace("\\r", ""));
 					logicDigitalTwinTypes.add(l);
 				}
 				
