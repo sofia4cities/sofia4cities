@@ -20,10 +20,20 @@
  ******************************************************************************/
 package com.indracompany.sofia2.config.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.indracompany.sofia2.config.model.UserRatings;
 
-public interface UserRatingsRepository extends JpaRepository<UserRatings	, String> {
-
+public interface UserRatingsRepository extends JpaRepository<UserRatings, String> {
+	
+	@Query("SELECT o FROM UserRatings AS o WHERE (o.marketAsset.id = :marketAssetId AND o.user.userId = :userId)")
+	List<UserRatings> findByMarketAssetAndUser(@Param("marketAssetId") String marketAssetId, @Param("userId") String userId);
+	
+	@Query("SELECT o FROM UserRatings AS o WHERE (o.marketAsset.id = :marketAssetId)")
+	List<UserRatings> findByMarketAsset(@Param("marketAssetId") String marketAssetId);
+	
 }
