@@ -91,7 +91,7 @@ public class DigitalTwinDeviceHelper {
 	}
 	
 	
-	public File generateProject(String identificacion) {
+	public File generateProject(String identificacion, Boolean compile) {
 		
 		List<PropertiesDTO> properties = new ArrayList<PropertiesDTO>();
 		List<PropertiesDTO> statusProperties=new ArrayList<PropertiesDTO>();
@@ -110,12 +110,15 @@ public class DigitalTwinDeviceHelper {
 		String projectDirectory=tempDir+File.separator+UUID.randomUUID();
 		
 		File src = new File(projectDirectory + File.separator + device.getIdentification() + File.separator +"src" + File.separator + "main");
-		if(!src.isDirectory()) {
+		if(!src.exists()) {
 			Boolean success = src.mkdirs();
 			if(!success) {
 				log.error("Creating project for Digital Twin Device falied");
 				return null;
 			}
+		}else {
+			log.error("Creating project for Digital Twin Device falied, the temporary directory don't exist: " + src.getAbsolutePath());
+			return null;
 		}
 		
 		for(PropertyDigitalTwinType prop : propsDigitalTwin) {
@@ -134,16 +137,15 @@ public class DigitalTwinDeviceHelper {
 		dataStatusMap.put("package", "digitaltwin.device.status;");
 		dataStatusMap.put("mapClass", cls);
 		
-		//TODO COMPLETAR LA CARGA CORRECTA DE LA CONFIGURACION
 		Map<String, Object> dataApplicationPropertiesMap=new HashMap<String, Object>();
 		dataApplicationPropertiesMap.put("serverPort", "10000");
-		dataApplicationPropertiesMap.put("serverContextPath", "/turbine");
+		dataApplicationPropertiesMap.put("serverContextPath", device.getContextPath());
 		dataApplicationPropertiesMap.put("applicationName", identificacion);
-		dataApplicationPropertiesMap.put("apiKey", device.getApiKey());
+		dataApplicationPropertiesMap.put("apiKey", device.getDigitalKey());
 		dataApplicationPropertiesMap.put("deviceId", device.getIdentification());
-		dataApplicationPropertiesMap.put("deviceRestLocalSchema", "http");
-		dataApplicationPropertiesMap.put("deviceRestLocalIp", "localhost");
-		dataApplicationPropertiesMap.put("sofia2BrokerEndpoint", "http://localhost:8081/digitaltwinbroker");
+		dataApplicationPropertiesMap.put("deviceRestLocalSchema", device.getUrlSchema());
+		dataApplicationPropertiesMap.put("deviceRestLocalIp", device.getIp());
+		dataApplicationPropertiesMap.put("sofia2BrokerEndpoint", device.getUrl());
 		
 		
 		//pom.xml Template properties
@@ -163,6 +165,7 @@ public class DigitalTwinDeviceHelper {
 			zipFile = File.createTempFile(device.getIdentification(), ".zip");
 			
 			//Create DeviceApplication.java
+			log.info("New file is going to be generate on: " + src.getAbsolutePath() + File.separator + "java" + File.separator + "digitaltwin" + File.separator + "device");
 			File app = new File(src.getAbsolutePath() + File.separator + "java" + File.separator + "digitaltwin" + File.separator + "device");
 			if(!app.isDirectory()) {
 				app.mkdirs();
@@ -246,8 +249,9 @@ public class DigitalTwinDeviceHelper {
 			}
 
 		}
-		
-		this.buildProjectMaven(projectDirectory+File.separator+device.getIdentification());
+		if(compile) {
+			this.buildProjectMaven(projectDirectory+File.separator+device.getIdentification());
+		}
 		
 		File fileProjectDirectory = new File(projectDirectory);
 		try {
@@ -258,7 +262,8 @@ public class DigitalTwinDeviceHelper {
 		
 		
 		//Removes the directory
-		this.deleteDirectory(fileProjectDirectory);
+		//TODO QUITAR EL COMENTARIO
+	//	this.deleteDirectory(fileProjectDirectory);
 		
 		return zipFile;
 	}

@@ -58,10 +58,35 @@ public class DigitalTwinDevice extends AuditableEntityWithUUID{
 	@Setter
 	private String url;
 	
-	@Column(name = "API_KEY", length = 512)
+	@Column(name = "URL_SCHEMA", length = 100, nullable = false)
+	@NotNull
 	@Getter
 	@Setter
-	private String apiKey;
+	private String urlSchema;
+	
+	@Column(name = "DIGITAL_KEY", length = 512, nullable = false)
+	@Getter
+	@Setter
+	@NotNull
+	private String DigitalKey;
+	
+	@Column(name = "IP", length = 512, nullable = false)
+	@Getter
+	@Setter
+	@NotNull
+	private String ip;
+	
+	@Column(name = "PORT", nullable = false)
+	@Getter
+	@Setter
+	@NotNull
+	private Integer port;
+	
+	@Column(name = "CONTEXT_PATH", length = 512, nullable = false)
+	@Getter
+	@Setter
+	@NotNull
+	private String contextPath;
 	
 	@Column(name = "LATITUDE", length = 512)
 	@Getter
@@ -75,7 +100,7 @@ public class DigitalTwinDevice extends AuditableEntityWithUUID{
 	
 	@Column(name = "LOGIC")
 	@Lob
-	@Type(type = "org.hibernate.type.TextType")
+    @Type(type = "org.hibernate.type.TextType")
 	@Getter
 	@Setter
 	private String logic;

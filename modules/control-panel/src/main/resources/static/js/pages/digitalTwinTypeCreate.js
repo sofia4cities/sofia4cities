@@ -201,6 +201,10 @@ var DigitalTwinCreateController = function() {
 	var updateSchemaEvents = function(){
 		logControl ? console.log('updateSchemaEvents() -> ') : '';
 		
+		//Set jsoneditor with ping and register events by default
+		updateEvents('ping', 'Ping', true, 'PING');
+		updateEvents('register', 'Register', true, 'REGISTER');
+		
 		var updateEvent = $("input[name='event\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
 		var updateDescription = $("input[name='descriptionsEvents\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();	
 		var updateTypes = $("select[name='typeEvent\\[\\]']").map(function(){return $(this).val();}).get();
@@ -286,6 +290,8 @@ var DigitalTwinCreateController = function() {
 	var navigateUrl = function(url){
 		window.location.href = url; 
 	}
+	
+	
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{
@@ -375,6 +381,9 @@ var DigitalTwinCreateController = function() {
 			});
 			
 			createEditor();
+			//Set jsoneditor with ping and register events by default
+			updateEvents('ping', 'Ping', true, 'PING');
+			updateEvents('register', 'Register', true, 'REGISTER');
 			// INSERT MODE ACTIONS  (ontologyCreateReg.actionMode = NULL ) 
 			if ( digitalTwinCreateJson.actionMode === null){
 				logControl ? console.log('|---> Action-mode: INSERT') : '';
@@ -547,10 +556,10 @@ var DigitalTwinCreateController = function() {
 		addActionLogic: function(obj){
 			logControl ? console.log(LIB_TITLE + ': addActionLogic()') : '';
 			if(!AllActionsLogic.includes(obj.value)){
-				var aceEditor = ace.edit("aceEditor");
-				var js = aceEditor.getValue();
+				AceEditor = ace.edit("aceEditor");
+				var js = AceEditor.getValue();
 				js = js + "\nvar onAction"+obj.value.substring(0,1).toUpperCase() + obj.value.substring(1)+"=function(data){ }";
-				aceEditor.setValue(js);
+				AceEditor.setValue(js);
 				AllActionsLogic.push(obj.value);
 			}
 
@@ -651,6 +660,6 @@ jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
 	AceEditor = ace.edit("aceEditor");
-	AceEditor.setValue("function main(){}");
+	AceEditor.setValue("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction main(){}");
 	DigitalTwinCreateController.init();
 });
