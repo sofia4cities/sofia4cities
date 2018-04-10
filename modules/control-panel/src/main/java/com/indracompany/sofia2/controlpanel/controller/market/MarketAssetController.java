@@ -26,7 +26,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.indracompany.sofia2.config.services.exceptions.ApiManagerServiceException;
 import com.indracompany.sofia2.config.services.market.MarketAssetService;
 import com.indracompany.sofia2.controlpanel.helper.market.MarketAssetHelper;
 import com.indracompany.sofia2.controlpanel.multipart.MarketAssetMultipart;
@@ -135,6 +133,15 @@ public class MarketAssetController {
 			utils.addRedirectMessage("api.update.error", redirect);
 			return "redirect:/marketasset/update";
 		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+	@GetMapping(value = "/delete/{id}" , produces = "text/html")
+	public String delete(Model model, @PathVariable("id") String id) {		
+		
+		marketAssetService.delete(id, utils.getUserId());
+
+		return "redirect:/marketasset/list";
 	}
 	
 	@GetMapping(value = "/invoke/{id}" , produces = "text/html")

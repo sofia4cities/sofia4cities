@@ -76,7 +76,7 @@ public class MarketAssetHelper {
 		MarketAsset marketAsset = marketAssetRepository.findById(id);
 		
 		// If the user is not the owner nor Admin an exception is launch to redirect to show view
-		if (!marketAsset.getUser().equals(user) && !marketAsset.getUser().getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
+		if (!marketAsset.getUser().equals(user) && !user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
 			throw new Exception();
 		}
 		
@@ -231,6 +231,7 @@ public class MarketAssetHelper {
 
 			marketAssetDTO.setPublic(marketAsset.isPublic());
 			marketAssetDTO.setState(marketAsset.getState());
+			marketAssetDTO.setRejectionReason(marketAsset.getRejectionReason());
 			marketAssetDTO.setMarketAssetType(marketAsset.getMarketAssetType());
 			marketAssetDTO.setPaymentMode(marketAsset.getPaymentMode());
 			marketAssetDTO.setJsonDesc(marketAsset.getJsonDesc().toString());

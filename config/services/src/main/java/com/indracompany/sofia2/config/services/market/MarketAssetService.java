@@ -35,4 +35,6 @@ public interface MarketAssetService {
 	void updateMarketAsset(String id, MarketAsset marketAssetMultipartMap);
 
 	void updateState(String id, String state, String reasonData);
+
+	void delete(String id, String userId);
 }
