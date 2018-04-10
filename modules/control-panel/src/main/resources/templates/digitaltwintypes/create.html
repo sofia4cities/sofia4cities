@@ -274,11 +274,11 @@
 																						<table class="table" id="events" data-loaded="false">
 																							<thead>
 																								<tr class="cabecera-tabla" role="row" >
-																									<th class="titulo-columnas" th:text="#{gen.name}">Nombre</th>
-																									<th class="titulo-columnas" th:text="#{digitaltwintype.events.status}">Estado</th>
-																									<th class="titulo-columnas" th:text="#{digitaltwintype.type}">Tipo</th>
-																									<th class="titulo-columnas" th:text="#{gen.description}">Descripción</th>																															
-																									<th class="titulo-columnas" th:text="#{gen.options}">Opciones</th>
+																									<th class="titulo-columnas" th:text="#{gen.name}">Name</th>
+																									<th class="titulo-columnas" th:text="#{digitaltwintype.events.status}">Status</th>
+																									<th class="titulo-columnas" th:text="#{digitaltwintype.operation}">Operation</th>
+																									<th class="titulo-columnas" th:text="#{gen.description}">Description</th>																															
+																									<th class="titulo-columnas" th:text="#{gen.options}">Options</th>
 																								</tr>
 																							</thead>
 																							<tbody>
@@ -287,16 +287,16 @@
 
 																									<td nowrap="nowrap"><input id="status" class="form-control no-remove"  name="status[]" value="status" type="checkbox"/></td>
 																									<td>
-																										<select name="typeEvent[]" class="form-control" >
+																										<select name="typeEvent[]" class="form-control">
 																											<option value="update_shadow">UPDATE_SHADOW</option>
 																											<option value="notebook">NOTEBOOK</option>
 																											<option value="rule">RULE</option>
 																											<option value="flow">FLOW</option>
-																											<option value="ping">PING</option>
 																											<option value="pipeline">PIPELINE</option>																										
 																											<option value="log">LOG</option>
-																											<option value="register">REGISTER</option>
+																											<option value="other">OTHER</option>
 																										</select>
+																										<input th:tabindex="1" type="text" class="form-control hide" th:placeholder="#{gen.name}"/>
 																									</td>	
 																									<td><input type="text" name="descriptionsEvents[]" class="form-control"/></td>																					
 																									<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="DigitalTwinCreateController.removeEvent(this)" th:text="#{gen.deleteBtn}">Remove</button></td>			
@@ -335,6 +335,12 @@
 																					<div id="jsoneditor"  style="padding-top: 10px;"></div>
 																				</div>
 																			</div>
+																			<div id="dialog-custom-operation" style="display: none;" class="tabla_description" title="Custom">
+												                                <fieldset>
+												                                    <label class="description" for="name_custom" >Name</label>
+												                                    <input class="element select small form-control" id="name_custom" name="name_custom" style="width: 250px;"/>
+												                                </fieldset>  
+													                        </div>
 																		</div>
 																	</div>
 																</div>
@@ -436,8 +442,10 @@
 			"validform": [[#{digitaltwintype.validform}]]
 		}
 	};
+
 	// LOAD DATA TO USE IN CREATE WIZARD CONTROLLER
 	// CREATE WIZARD CONTROLLER LOAD AND INIT ITSELF	
-	</script>	
+
+	</script>
 </body>
 </html>

@@ -155,7 +155,8 @@
           else{
             vm.data = allDataField;
           }
-          vm.optionsChart = {
+
+          var baseOptionsChart = {
             legend: {
               display: true, 
               labels: {
@@ -166,6 +167,11 @@
             responsive: true, 
             responsiveAnimationDuration:500
           };
+
+          vm.datasetOverride = vm.measures.map (function(m){return m.config.config});
+
+          vm.optionsChart = angular.merge({},vm.config.config,baseOptionsChart);
+
           break;
         case 'wordcloud':
           //Get data in an array
