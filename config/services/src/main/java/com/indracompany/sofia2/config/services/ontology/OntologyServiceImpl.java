@@ -382,8 +382,10 @@ public class OntologyServiceImpl implements OntologyService {
 		if (isPropertyArray) {
 			if (!jsonNode.path(property).path("items").path("properties").isMissingNode())
 				jsonNode = jsonNode.path(property).path("items").path("properties");
-			else {
-				jsonNode = jsonNode.path(property).path("items").path("items");
+			else if (!jsonNode.path(property).path("properties").isMissingNode()) {
+				jsonNode = jsonNode.path(property).path("properties");
+			} else {
+				jsonNode = jsonNode.path(property).path("items");
 				int size = jsonNode.size();
 				for (int i = 0; i < size; i++) {
 					fields.put(parentField + "." + i, jsonNode.path(i).get("type").asText());

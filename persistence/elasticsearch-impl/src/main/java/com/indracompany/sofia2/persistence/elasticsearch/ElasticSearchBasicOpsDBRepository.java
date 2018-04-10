@@ -125,18 +125,21 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public List<String> queryNative(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		throw new DBPersistenceException("Not Implemented Already");
+		log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNative: %s into elasticsearch %s %s", query, ontology));
+		return eSDataService.findQueryData(query, ontology);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
+		log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNativeAsJson: %s into elasticsearch %s %s", query, ontology));
 		return queryNative(ontology,query).get(0);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		throw new DBPersistenceException("Not Implemented Already");
+		log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNativeAsJson: %s into elasticsearch %s %s", query, ontology));
+		return queryNative(ontology,query).get(0);
 	}
 
 	@Override

@@ -11,6 +11,8 @@ spring: ## General Config
    application.name: sofia2-monitoring-ui
    boot.admin: #Spring Boot Admin Config    
       routes.endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
+      connect-timeout: 120000
+      read-timeout: 150000     
       #Not autoregister as Spring Boot Admin client
       # username: operations
       # password: changeIt!

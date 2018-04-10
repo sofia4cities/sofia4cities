@@ -135,6 +135,15 @@ public class MarketAssetController {
 		}
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+	@GetMapping(value = "/delete/{id}" , produces = "text/html")
+	public String delete(Model model, @PathVariable("id") String id) {		
+		
+		marketAssetService.delete(id, utils.getUserId());
+
+		return "redirect:/marketasset/list";
+	}
+	
 	@GetMapping(value = "/invoke/{id}" , produces = "text/html")
 	public String invoker(Model model, @PathVariable("id") String apiId) {
 		
