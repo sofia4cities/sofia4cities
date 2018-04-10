@@ -106,7 +106,7 @@
 													<div class="box box-green box-example-1to10" style="margin-top: -25px;">
 													  <div class="box-header">Markeplace Rating</div>
 													  <div class="box-body">
-														<select id="example-1to10" name="rating" autocomplete="off">
+														<select id="asset-1to10" name="rating" autocomplete="off">
 														  <option value="1">1</option>
 														  <option value="2">2</option>
 														  <option value="3">3</option>
@@ -159,73 +159,60 @@
 											
 											<!-- API FRAGMENT SECTION -->
 											<div class="marketasset-single-foot" id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'API')" th:include="marketasset/marketassetfragments::#APIMarketAssetFragmentShow"/>
+
+											<!-- URLAPPLICATION FRAGMENT -->
+											<div class="marketasset-single-foot" id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'URLAPPLICATION')" th:include="marketasset/marketassetfragments::#URLAPPLICATIONMarketAssetFragmentShow"/>
 											
 											<!-- APPLICATION FRAGMENT -->
 											<div class="marketasset-single-foot" id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'APPLICATION')" th:include="marketasset/marketassetfragments::#APPLICATIONMarketAssetFragmentShow"/>
 											
 											<!-- COMMENTS PENDING -->
-											<div class="marketasset-comments hide">
-												<h3 class="sbold marketasset-comments-title">Comments(30)</h3>
+											<div class="marketasset-comments" style="display: block;">
+												<h3 class="sbold marketasset-comments-title" th:text="#{comments} + '(' + ${commentsNumber} + ')'"></h3>
+												<div class="box box-green box-example-1to10" style="margin-top: -25px; float:right;">
+												  <div class="box-header">Rate It!</div>
+												  <div class="box-body">
+													<select id="userAssetRating-1to10" name="rating" autocomplete="off">
+													  <option value="1">1</option>
+													  <option value="2">2</option>
+													  <option value="3">3</option>
+													  <option value="4">4</option>
+													  <option value="5">5</option>
+													  <option value="6">6</option>
+													  <option value="7" selected="selected">7</option>
+													  <option value="8">8</option>
+													  <option value="9">9</option>
+													  <option value="10">10</option>
+													</select>
+												  </div>
+												</div>
 												<div class="c-comment-list">
-													<div class="media">
+													<div th:each="comment : ${commentsList}" class="media">
 														<div class="media-left">
-															<a href="#">
-																<img class="media-object" alt="" src="/controlpanel/images/genavatar.png" /> </a>
+															<a href="#"><img class="media-object" alt="" src="/controlpanel/images/genavatar.png" /></a>
 														</div>
 														<div class="media-body">
 															<h4 class="media-heading">
-																<a href="#">Sean</a> on
-																<span class="c-date">23 May 2015, 10:40AM</span>
-															</h4> Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. </div>
-													</div>
-													<div class="media">
-														<div class="media-left">
-															<a href="#">
-																<img class="media-object" alt="" src="/controlpanel/images/genavatar.png"/> </a>
+																<b><a href="#" th:text="${comment.user.userId}"></a></b>
+																<span class="c-date" th:text="${comment.createdAt}">23 May 2015, 10:40AM</span>
+																<span th:if="((${#authentication.name} == ${comment.user.userId}) OR (${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="btn btn-xs btn-outline red-sunglo" data-container="body" th:title="#{proyectos_listado_button_eliminar}" th:data-original-title="#{proyectos_listado_button_eliminar}" th:onclick="'javascript:navigateUrl(\'' +@{/marketasset/deletecomment/__${marketasset.id}__/__${comment.id}__} + '\');'" ><i class="fa fa-trash font-md" style="top: 0px;"></i></span>
+															</h4>
+															<b><span th:text="${comment.title}"></span></b>
+															
+															<br/>
+															<span th:text="${comment.comment}"></span>
 														</div>
-														<div class="media-body">
-															<h4 class="media-heading">
-																<a href="#">Strong Strong</a> on
-																<span class="c-date">21 May 2015, 11:40AM</span>
-															</h4> Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.
-															<div class="media">
-																<div class="media-left">
-																	<a href="#">
-																		<img class="media-object" alt="" src="/controlpanel/images/genavatar.png"/> </a>
-																</div>
-																<div class="media-body">
-																	<h4 class="media-heading">
-																		<a href="#">Emma Stone</a> on
-																		<span class="c-date">30 May 2015, 9:40PM</span>
-																	</h4> Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. </div>
-															</div>
-														</div>
-													</div>
-													<div class="media">
-														<div class="media-left">
-															<a href="#">
-																<img class="media-object" alt="" src="/controlpanel/images/genavatar.png"/> </a>
-														</div>
-														<div class="media-body">
-															<h4 class="media-heading">
-																<a href="#">Nick Nilson</a> on
-																<span class="c-date">30 May 2015, 9:40PM</span>
-															</h4> Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. </div>
 													</div>
 												</div>
 												<h3 class="sbold marketasset-comments-title">Leave A Comment</h3>
-												<form action="#">
+												<form role="form" id="marketasset_comment_form"  th:value="@{/marketasset/comment}" method="post" class="form" enctype="multipart/form-data">
 													<div class="form-group">
-														<input placeholder="Your Name" class="form-control c-square" type="text" /> </div>
+														<input id="commentTitleInput" name="commentTitleInput" placeholder="Some Title" class="form-control c-square" type="text" /> </div>
 													<div class="form-group">
-														<input placeholder="Your Email" class="form-control c-square" type="text" /> </div>
-													<div class="form-group">
-														<input placeholder="Your Website" class="form-control c-square" type="text" /> </div>
-													<div class="form-group">
-														<textarea rows="8" name="message" placeholder="Write comment here ..." class="form-control c-square"></textarea>
+														<textarea id="commentInput" name="commentInput" rows="8" placeholder="Write comment here ..." class="form-control c-square"></textarea>
 													</div>
 													<div class="form-group">
-														<button type="submit" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block"><i class="la la-upload"></i> Submit Comment</button>
+														<button type="button" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block" th:onclick="'javascript:sendComment();'"><i class="la la-upload"></i> Submit Comment</button>
 													</div>
 												</form>
 											</div>
@@ -304,6 +291,11 @@
 						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->
 					</form>
+					<form th:id="form_marketasset_comment" th:action="@{/marketasset/comment}" method="POST">
+						<input id="marketAssetId" name="marketAssetId" type="hidden" th:value="${marketasset.id}" />
+						<input id="commentTitle" name="commentTitle" type="hidden" />
+						<input id="comment" name="comment" rows="8" type="hidden" />
+      				</form>		
 					<form th:id="form_download_document" th:action="@{|/marketasset/${marketasset.id}/downloadContent|}" method="POST">
          				<input type="hidden" name="id_document" id="id_document"/>
       				</form>				
@@ -381,6 +373,7 @@
 		$('#technologies-icons').append(techMarkup);
 		$('#technologies-tags').append(techLiMarkup);
 		$('#description').append(json_desc.description);
+		$('#detailedDescription').val(json_desc.detailedDescription);
 		
 		
 		var marketAssetType = [[${marketasset.marketAssetType.name()}]];
@@ -391,8 +384,24 @@
 	    $(".btn-primary").css("display", "none");
 	    $("button[title|='Preview']").click();
 	    
-		 $('#example-1to10').barrating('show', {
-            theme: 'bars-1to10'
+		$('#asset-1to10').barrating('show', {
+            theme: 'bars-1to10',
+            initialRating:'[[${marketassetRating}]]',
+            readonly: true
+        });
+		
+		$('#userAssetRating-1to10').barrating('show', {
+            theme: 'bars-1to10',
+            initialRating:'[[${userRating}]]',
+            onSelect: function(value, text, event) {
+                if (typeof(event) !== 'undefined') {
+                	if ($('#userAssetRating-1to10')){
+                  		window.location.href = [[@{/marketasset/rateit/}]] + [[${marketasset.id}]] + '/' + value;
+                	}
+                  	console.log(event.target);
+                } else {
+                }
+              }
         });
 		
 	});
@@ -402,12 +411,15 @@
 			$('#apiId').text(json_desc.apiId);
 			$('#versions').text(json_desc.versions);
 			$('#apiDescription').val(json_desc.apiDescription);
+			$('#swaggerUI').attr("src", json_desc.swaggerUI);
 		} else if (type=='DOCUMENT'){
 			$('#detailedDescription').append(json_desc.detailedDescription);
-		} else if (type=='APPLICATION'){
-			$('#installation').text(json_desc.installation);
+		} else if (type=='URLAPPLICATION'){
 			$('#functionality').text(json_desc.functionality);
-			$('#detailedDescription').append(json_desc.detailedDescription);
+			$('#id_endpoint').text(json_desc.id_endpoint);
+		} else if (type=='APPLICATION'){
+			$('#functionality').text(json_desc.functionality);
+			$('#installation').text(json_desc.installation);
 		} else if (type=='WEBPROJECT'){
 			$('#functionality').text(json_desc.functionality);
 			$('#id_endpoint').val(json_desc.id_endpoint);
@@ -419,6 +431,13 @@
        document.getElementById("id_document").value=[[${marketasset.id}]];
        document.forms["form_download_document"].submit();
     }
+	
+	function sendComment(){
+		$('#marketAssetId').val([[${marketasset.id}]]);
+		$('#commentTitle').val($('#commentTitleInput').val());
+		$('#comment').val($('#commentInput').val());
+		document.forms["form_marketasset_comment"].submit();
+	}
 	</script>	
 
 </body>

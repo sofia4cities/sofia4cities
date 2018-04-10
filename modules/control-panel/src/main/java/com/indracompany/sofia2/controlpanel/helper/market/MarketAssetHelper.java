@@ -22,7 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
@@ -34,11 +37,18 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserComment;
+import com.indracompany.sofia2.config.model.UserRatings;
 import com.indracompany.sofia2.config.repository.ApiRepository;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
+import com.indracompany.sofia2.config.repository.UserCommentRepository;
+import com.indracompany.sofia2.config.repository.UserRatingsRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.multipart.MarketAssetMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,10 +63,22 @@ public class MarketAssetHelper {
 	private MarketAssetRepository marketAssetRepository;
 	
 	@Autowired
+	UserRatingsRepository userRatingsRepository;
+	
+	@Autowired
+	UserCommentRepository userCommentRepository;
+	
+	@Autowired
+	IntegrationResourcesService resourcesService;
+	
+	@Autowired
 	UserService userService;
 	
 	@Autowired
 	AppWebUtils utils;
+	
+	@Value("${apimanager.services.api:/api-manager/services}")
+	private String apiServices;
 
 	public void populateMarketAssetListForm(Model model) {
 		model.addAttribute("marketassettypes", MarketAsset.MarketAssetType.values());
@@ -88,9 +110,39 @@ public class MarketAssetHelper {
 	}
 
 	public void populateMarketAssetShowForm(Model model, String id) {
+		//Asset to show
 		MarketAsset marketAsset = marketAssetRepository.findById(id);
+		
 		model.addAttribute("marketasset", marketAsset);
 		model.addAttribute("json_desc", marketAsset.getJsonDesc());
+		
+		//User Asset Market Rating
+		List<UserRatings> userRatings = userRatingsRepository.findByMarketAssetAndUser(id, utils.getUserId());
+		if (userRatings!=null && userRatings.size()>0) {
+			model.addAttribute("userRating", userRatings.get(0).getValue());
+		}
+
+		//Asset Market Rating
+		Double ratingMarketAsset = 0.0;
+		List<UserRatings> usersRatingsMarketAssets = userRatingsRepository.findByMarketAsset(id);
+
+		for (UserRatings usersRatingsMarketAsset : usersRatingsMarketAssets) {
+			ratingMarketAsset = ratingMarketAsset + usersRatingsMarketAsset.getValue();
+		}
+		
+		if (usersRatingsMarketAssets.size()>0) {
+			ratingMarketAsset = ratingMarketAsset / usersRatingsMarketAssets.size();
+		} else {
+			ratingMarketAsset = 5.0;
+		}		
+		model.addAttribute("marketassetRating", ratingMarketAsset.intValue());
+
+		//Asset Comments
+		List<UserComment> usersComments = userCommentRepository.findByMarketAsset(id);
+		model.addAttribute("commentsList", usersComments);
+		model.addAttribute("commentsNumber", usersComments.size());
+		
+		//Technologies
 		model.addAttribute("technologies", getTechnologies());
 	}
 
@@ -111,10 +163,11 @@ public class MarketAssetHelper {
 			List<Api> apis = getApisIds(apiList);
 			
 			model.addAttribute("apis", apis);
-			
-		} else if (type.equals(MarketAsset.MarketAssetType.DOCUMENT.toString())){
-		} else if (type.equals(MarketAsset.MarketAssetType.APPLICATION.toString())){		
+		
 		} else if (type.equals(MarketAsset.MarketAssetType.WEBPROJECT.toString())){
+		} else if (type.equals(MarketAsset.MarketAssetType.DOCUMENT.toString())){
+		} else if (type.equals(MarketAsset.MarketAssetType.APPLICATION.toString())){
+		} else if (type.equals(MarketAsset.MarketAssetType.URLAPPLICATION.toString())){
 		}
 
 	}
@@ -162,7 +215,19 @@ public class MarketAssetHelper {
 		} catch (IOException e) {
 			log.warn(e.getClass().getName() + ":" + e.getMessage());
 		}
-		return (apis.get(0).getDescription());
+		
+		String srcSwagger = resourcesService.getUrl(Module.apiManager, ServiceUrl.base) + "swagger-ui.html?url=" + apiServices + "/management/swagger/" + apis.get(0).getIdentification() + "/swagger.json"; 
+		
+		JSONObject returnObject = new JSONObject();
+		
+		try {
+			returnObject.put("description",apis.get(0).getDescription());
+			returnObject.put("srcSwagger",srcSwagger);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return (returnObject.toString());
 	}
 	
 	public String validateId(String marketAssetId) {
@@ -199,7 +264,7 @@ public class MarketAssetHelper {
 		marketAsset.setJsonDesc(marketAssetMultipart.getJsonDesc().toString());
 		
 		try {
-			if (marketAssetMultipart.getContentId()!=null) {
+			if (marketAssetMultipart.getContentId()!=null && !"".equals(marketAssetMultipart.getContentId())) {
 				marketAsset.setContent(marketAssetMultipart.getContent().getBytes());
 				marketAsset.setContentId(marketAssetMultipart.getContentId());
 			}

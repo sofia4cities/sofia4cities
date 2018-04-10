@@ -16,6 +16,7 @@ package com.indracompany.sofia2.controlpanel.controller.market;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,6 +143,39 @@ public class MarketAssetController {
 		marketAssetService.delete(id, utils.getUserId());
 
 		return "redirect:/marketasset/list";
+	}
+	
+	@GetMapping(value = "/rateit/{id}/{rate}" , produces = "text/html")
+	public String rateit(Model model, @PathVariable("id") String id, @PathVariable("rate") String rate) {		
+		
+		marketAssetService.rate(id, rate, utils.getUserId());
+
+		return "redirect:/marketasset/show/" + id;
+	}
+	
+	@PostMapping(value="/comment")
+	public String comment(HttpServletRequest request, RedirectAttributes redirect) {
+		String id = request.getParameter("marketAssetId");
+		String title = request.getParameter("commentTitle");
+		String comment = request.getParameter("comment");
+		
+		try {
+			marketAssetService.createComment(id, utils.getUserId(), title, comment);
+
+			return "redirect:/marketasset/show/" + id;
+		} catch (Exception e) {
+			log.debug("Cannot update user that does not exist");
+			utils.addRedirectMessage("api.update.error", redirect);
+			return "redirect:/marketasset/show/" + id;
+		}
+	}
+	
+	@GetMapping(value = "/deletecomment/{marketassetid}/{id}" , produces = "text/html")
+	public String deletecomment(Model model, @PathVariable("marketassetid") String marketassetid, @PathVariable("id") String id) {		
+		
+		marketAssetService.deleteComment(id);
+
+		return "redirect:/marketasset/show/" + marketassetid;
 	}
 	
 	@GetMapping(value = "/invoke/{id}" , produces = "text/html")
