@@ -24,6 +24,7 @@ import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchManageDBRepository;
 import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchQueryAsTextDBRepository;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
@@ -47,8 +48,7 @@ public class QueryToolServiceImpl implements QueryToolService {
 	ElasticSearchQueryAsTextDBRepository queryElasticSearch;
 
 	@Autowired
-	@Qualifier("ElasticSearchManageDBRepository")
-	ManageDBRepository manageElasticSearch;
+	ElasticSearchManageDBRepository manageElasticSearch;
 
 	@Autowired
 	OntologyService ontologyService;
