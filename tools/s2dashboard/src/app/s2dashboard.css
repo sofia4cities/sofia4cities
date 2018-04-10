@@ -148,3 +148,8 @@ md-tooltip.tt-multiline {
   height:100%;
   z-index:90000
 }
+
+.no-wrap{
+  white-space: nowrap;
+  font-size:12px
+}
