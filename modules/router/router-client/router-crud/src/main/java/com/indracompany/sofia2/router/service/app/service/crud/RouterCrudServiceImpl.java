@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
 import com.indracompany.sofia2.router.audit.aop.Auditable;
@@ -37,8 +36,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	private QueryToolService  queryToolService;
 	
 	@Autowired
-
-	private BasicOpsDBRepository mongoBasicOpsDBRepository;
+	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
 
 	
 	//@Autowired
