@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -52,7 +53,6 @@ import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
-import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetState;
 import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
@@ -131,7 +131,7 @@ public class InitConfigDB {
 
 	@Autowired
 	UserTokenRepository userTokenRepository;
-	
+
 	@Autowired
 	MarketAssetRepository marketAssetRepository;
 
@@ -189,7 +189,7 @@ public class InitConfigDB {
 
 		init_FlowDomain();
 		log.info("OK init_FlowDomain");
-		
+
 		init_market();
 		log.info("OK init_Market");
 	}
@@ -336,8 +336,8 @@ public class InitConfigDB {
 				throw new RuntimeException("There must be at least a Ontology with id=1 created");
 			log.info("No Client Platform Ontologies");
 			ClientPlatformOntology cpo = new ClientPlatformOntology();
-			cpo.setClientPlatform(this.clientPlatformRepository.findAll().get(0));
-			cpo.setOntology(this.ontologyRepository.findAll().get(0));
+			cpo.setClientPlatform(this.clientPlatformRepository.findByIdentification("Ticketing App"));
+			cpo.setOntology(this.ontologyRepository.findByIdentification("Ticket"));
 			cpo.setAccesEnum(ClientPlatformOntology.AccessType.ALL);
 			this.clientPlatformOntologyRepository.save(cpo);
 		}
@@ -361,6 +361,13 @@ public class InitConfigDB {
 			client.setIdentification("GTKP-Example");
 			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
 			client.setDescription("ClientPatform created as Example");
+			clientPlatformRepository.save(client);
+			client = new ClientPlatform();
+			client.setId("3");
+			client.setUser(getUserDeveloper());
+			client.setIdentification("Ticketing App");
+			client.setEncryptionKey(UUID.randomUUID().toString());
+			client.setDescription("Platform client for issues and ticketing");
 			clientPlatformRepository.save(client);
 
 		}
@@ -410,11 +417,13 @@ public class InitConfigDB {
 
 	private String loadFromResources(String name) {
 		try {
-			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),	Charset.forName("UTF-8"));
+			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
+					Charset.forName("UTF-8"));
 
 		} catch (Exception e) {
 			try {
-				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(), Charset.forName("UTF-8"));
+				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(),
+						Charset.forName("UTF-8"));
 			} catch (IOException e1) {
 				log.error("**********************************************");
 				log.error("Error loading resource: " + name + ".Please check if this error affect your database");
@@ -423,7 +432,7 @@ public class InitConfigDB {
 			}
 		}
 	}
-	
+
 	private byte[] loadFileFromResources(String name) {
 		try {
 			return Files.readAllBytes((Paths.get(getClass().getClassLoader().getResource(name).toURI())));
@@ -544,7 +553,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Twitter");
 			dataModel.setTypeEnum(DataModel.MainType.SocialMedia);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter_Temp.json"));
+			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter.json"));
 			dataModel.setDescription("Twitter DataModel");
 			dataModel.setLabels("Twitter,Social Media");
 			dataModel.setUser(getUserAdministrator());
@@ -809,10 +818,9 @@ public class InitConfigDB {
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
-			ontology.setId("2");
-			ontology.setJsonSchema("{Data:,Temperature:}");
-			ontology.setDescription("Ontology created as example");
-			ontology.setIdentification("OntologyTest");
+			ontology.setJsonSchema(loadFromResources("OntologySchema_Ticket.json"));
+			ontology.setDescription("Ontology created for Ticketing");
+			ontology.setIdentification("Ticket");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
@@ -905,10 +913,9 @@ public class InitConfigDB {
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
 		/*
-		 * List<OntologyUserAccess>
-		 * users=this.ontologyUserAccessRepository.findAll();
-		 * if(users.isEmpty()) { log.info("No users found...adding");
-		 * OntologyUserAccess user=new OntologyUserAccess(); user.setUser("6");
+		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
+		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
+		 * user=new OntologyUserAccess(); user.setUser("6");
 		 * user.setOntology(ontologyRepository.findAll().get(0));
 		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
 		 * this.ontologyUserAccessRepository.save(user); }
@@ -1020,12 +1027,12 @@ public class InitConfigDB {
 			if (this.clientPlatformRepository.findAll().isEmpty())
 				throw new RuntimeException("You need to create ClientPlatform before Token");
 
-			ClientPlatform client = this.clientPlatformRepository.findAll().get(0);
+			ClientPlatform client = this.clientPlatformRepository.findByIdentification("Ticketing App");
 			Set<Token> hashSetTokens = new HashSet<Token>();
 
 			Token token = new Token();
 			token.setClientPlatform(client);
-			token.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
+			token.setToken("e7ef0742d09d4de5a3687f0cfdf7f626");
 			token.setActive(true);
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
@@ -1140,32 +1147,32 @@ public class InitConfigDB {
 			}
 		}
 	}
-	
+
 	public void init_market() {
 		log.info("init MarketPlace");
 		List<MarketAsset> marketAssets = this.marketAssetRepository.findAll();
 		if (marketAssets.isEmpty()) {
 			log.info("No market Assets...adding");
 			MarketAsset marketAsset = new MarketAsset();
-			
+
 			marketAsset.setId("1");
 			marketAsset.setIdentification("TEST");
-			
+
 			marketAsset.setUser(getUserDeveloper());
 
 			marketAsset.setPublic(true);
 			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
 			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
-			
+
 			marketAsset.setJsonDesc(loadFromResources("market/marketAsset_TEST.json"));
-						
+
 			marketAsset.setContent(loadFileFromResources("market/README.md"));
 			marketAsset.setContentId("README.md");
-			
+
 			marketAsset.setImage(loadFileFromResources("market/population.png"));
 			marketAsset.setImageType("population.png");
-			
+
 			marketAssetRepository.save(marketAsset);
 		}
 	}
@@ -1177,15 +1184,14 @@ public class InitConfigDB {
 	 * if (templates.isEmpty()) { try {
 	 * 
 	 * log.info("No templates Adding..."); Template template= new Template();
-	 * template.setIdentification("GSMA-Weather Forecast");
-	 * template.setType("0"); template.
+	 * template.setIdentification("GSMA-Weather Forecast"); template.setType("0");
+	 * template.
 	 * setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}"
 	 * ); template.
 	 * setDescription("This contains a harmonised description of a Weather Forecast."
 	 * ); template.setCategory("plantilla_categoriaGSMA");
 	 * template.setIsrelational(false); templateRepository.save(template); ///
-	 * template=new Template();
-	 * template.setIdentification("TagsProjectBrandwatch");
+	 * template=new Template(); template.setIdentification("TagsProjectBrandwatch");
 	 * template.setType("1"); template.
 	 * setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}"
 	 * ); template.
