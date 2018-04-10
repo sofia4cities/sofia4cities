@@ -67,7 +67,7 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
 		}
 		
-		if(apiKey.equals(device.getApiKey())) {
+		if(apiKey.equals(device.getDigitalKey())) {
 			//Set endpoint
 			String deviceUrl=data.get("endpoint").asText();
 			
@@ -114,7 +114,7 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
 		}
 		
-		if(apiKey.equals(device.getApiKey())) {
+		if(apiKey.equals(device.getDigitalKey())) {
 			//Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
@@ -160,7 +160,7 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
 		}
 		
-		if(apiKey.equals(device.getApiKey())) {
+		if(apiKey.equals(device.getDigitalKey())) {
 			//Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
@@ -203,7 +203,7 @@ public class EventGatewayImpl implements EventGateway {
 			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
 		}
 		
-		if(apiKey.equals(device.getApiKey())) {
+		if(apiKey.equals(device.getDigitalKey())) {
 			
 			//Set last updated
 			device.setUpdatedAt(new Date());
@@ -243,7 +243,7 @@ public class EventGatewayImpl implements EventGateway {
 		}
 		//Validation apikey
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		if(apiKey.equals(device.getApiKey())) {
+		if(apiKey.equals(device.getDigitalKey())) {
 			//TODO
 			return new ResponseEntity<>(null, HttpStatus.OK);
 		}else {
@@ -261,7 +261,7 @@ public class EventGatewayImpl implements EventGateway {
 		}
 		//Validation apikey
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		if(apiKey.equals(device.getApiKey())) {
+		if(apiKey.equals(device.getDigitalKey())) {
 			//TODO
 			return new ResponseEntity<>(null, HttpStatus.OK);
 		}else {
@@ -279,7 +279,7 @@ public class EventGatewayImpl implements EventGateway {
 		}
 		//Validation apikey
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		if(apiKey.equals(device.getApiKey())) {
+		if(apiKey.equals(device.getDigitalKey())) {
 			//TODO
 			return new ResponseEntity<>(null, HttpStatus.OK);
 		}else {

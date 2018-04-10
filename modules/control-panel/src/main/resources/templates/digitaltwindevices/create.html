@@ -159,21 +159,60 @@
 																		</div>
 																	</div>
 																</div>
-																<div class="col-md-12 col-sm-6 col-xs-12">
+																<div class="col-md-6 col-sm-6 col-xs-12">
 																	<div class="form-group">
-																		<label>URL</label><span class="required"> (*)</span>
+																		<label th:text="#{digitaltwindevice.schema.url}">URL Schema</label><span class="required"> (*)</span>
 																		<div class="input-icon ">
 																			<i class="fa fa-link"></i>
-																			<input class="form-control" id="url" name="url" maxlength="50" th:field="*{url}" th:required="true" placeholder="URL"/>
+																			<select id="urlSchema" class="form-control" th:field="*{urlSchema}">
+																				<option value="http">HTTP</option>
+																				<option value="https">HTTPs</option>
+																			</select>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label>IP</label><span class="required"> (*)</span>
+																		<div class="input-icon ">
+																			<i class="fa fa-link"></i>
+																			<input class="form-control" id="ip" name="ip" maxlength="50" th:field="*{ip}" th:required="true" placeholder="IP"/>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label th:text="#{digitaltwindevice.port}">Port</label><span class="required"> (*)</span>
+																		<div class="input-icon ">
+																			<i class="fa fa-link"></i>
+																			<input class="form-control" id="port" name="port" maxlength="50" th:field="*{port}" th:required="true" th:placeholder="#{digitaltwindevice.port}"/>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label>ContextPath</label><span class="required"> (*)</span>
+																		<div class="input-icon ">
+																			<i class="fa fa-link"></i>
+																			<input class="form-control" id="contextPath" name="contextPath" maxlength="50" th:field="*{contextPath}" th:required="true" placeholder="contextPath"/>
 																		</div>
 																	</div>
 																</div>
 																<div class="col-md-12 col-sm-6 col-xs-12">
 																	<div class="form-group">
-																		<label th:text="#{digitaltwindevice.apykey}">API KEY </label><span class="required"> (*)</span>
+																		<label th:text="#{digitaltwindevice.broker.endpoint}">Broker Endpoint</label><span class="required"> (*)</span>
+																		<div class="input-icon ">
+																			<i class="fa fa-link"></i>
+																			<input class="form-control" id="endpoint" name="endpoint" maxlength="50" th:field="*{url}" th:required="true" th:placeholder="#{digitaltwindevice.broker.endpoint}"/>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-md-12 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label th:text="#{digitaltwindevice.apykey}">Digitaltwin KEY </label><span class="required"> (*)</span>
 																		<div class="input-icon ">
 																			<i class="fa fa-credit-card"></i>
-																			<input class="form-control" id="apiKey" name="apiKey" maxlength="50" th:field="*{apiKey}" th:required="true" th:placeholder="#{digitaltwindevice.apykey}"/>
+																			<input class="form-control" id="apiKey" name="apiKey" maxlength="50" th:field="*{digitalKey}" th:required="true" th:placeholder="#{digitaltwindevice.apykey}"/>
 																		</div>
 																	</div>
 																	<div class="btn-group" style="margin-bottom: 10px;">
@@ -305,15 +344,15 @@
 		var uluru;
 		var marker;
 		if([[${digitaltwindevice?.id}]] === null){
-			uluru = {lat: 40.416874, lng: -3.703314};
+			uluru = {lat: 53.516822602373786, lng: 14.697412318359397};
 			 var map = new google.maps.Map(document.getElementById('map'), {
-		          zoom: 6,
+		          zoom: 3,
 		          center: uluru
 		        });
 		}else{
 			uluru= new google.maps.LatLng([[${digitaltwindevice?.latitude}]],[[${digitaltwindevice?.longitude}]]);
 			 var map = new google.maps.Map(document.getElementById('map'), {
-		          zoom: 6,
+		          zoom: 3,
 		          center: uluru
 		        });
 			marker = new google.maps.Marker({

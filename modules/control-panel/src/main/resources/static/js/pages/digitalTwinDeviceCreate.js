@@ -99,7 +99,7 @@ var DigitalTwinCreateController = function() {
 			success : function(data) {
 				if (data!="" && data != undefined) {
 					AceEditor = ace.edit("aceEditor");
-					AceEditor.setValue(data.substring(1,data.length-1));
+					AceEditor.setValue(data);
 				} else {
 					$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: 'error'}); 
 				}
@@ -134,11 +134,11 @@ var DigitalTwinCreateController = function() {
 				$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: digitalTwinCreateJson.validations.types}); 
 				return false;
 			}
-			changeDigitalTwinType($("#typeDigitalTwin").val());
+			
 			// INSERT MODE ACTIONS  (ontologyCreateReg.actionMode = NULL ) 
 			if ( digitalTwinCreateJson.actionMode === null){
 				logControl ? console.log('|---> Action-mode: INSERT') : '';
-				
+				changeDigitalTwinType($("#typeDigitalTwin").val());
 			}
 			// EDIT MODE ACTION 
 			else {	
