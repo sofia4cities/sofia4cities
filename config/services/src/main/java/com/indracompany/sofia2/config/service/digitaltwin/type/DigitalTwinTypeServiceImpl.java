@@ -29,6 +29,7 @@ import org.springframework.ui.Model;
 import com.indracompany.sofia2.config.model.ActionsDigitalTwinType;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
+import com.indracompany.sofia2.config.model.EventsDigitalTwinType.Type;
 import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
 import com.indracompany.sofia2.config.model.PropertyDigitalTwinType;
 import com.indracompany.sofia2.config.model.Role;
@@ -153,6 +154,24 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 			if (user != null) {
 				digitalTwinType.setUser(user);
 				
+				//Add PING and REGISTER events by default
+				EventsDigitalTwinType ping = new EventsDigitalTwinType();
+				ping.setName("ping");
+				ping.setStatus(true);
+				ping.setType(Type.PING);
+				ping.setDescription("Ping the platform to keepalive the device");
+				ping.setTypeId(digitalTwinType);
+				eventDigitalTwinTypes.add(ping);
+				
+				EventsDigitalTwinType register = new EventsDigitalTwinType();
+				register.setDescription("REGISTER");
+				register.setName("register");
+				register.setStatus(true);
+				register.setType(Type.REGISTER);
+				register.setDescription("Register the device into the plaform");
+				register.setTypeId(digitalTwinType);
+				eventDigitalTwinTypes.add(register);
+				
 				if(properties !=null && !properties[0].equals("")) {
 					for(String prop : properties) {
 						json = new JSONObject(prop);
@@ -194,7 +213,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 				if(logic!=null) {
 					LogicDigitalTwinType l = new LogicDigitalTwinType();
 					l.setTypeId(digitalTwinType);
-					l.setLogic(logic);
+					l.setLogic(logic.replace("\\n", System.getProperty("line.separator")));
 					logicDigitalTwinTypes.add(l);
 				}
 				

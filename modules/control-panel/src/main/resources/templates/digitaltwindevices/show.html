@@ -133,16 +133,40 @@
 																		<p class="form-control-static-block bold" th:text="*{typeId.name}">  </p>
 																	</div>
 																</div>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label th:text="#{digitaltwindevice.schema.url}">URL Schema</label>
+																		<p class="form-control-static-block bold" th:text="*{urlSchema}"> </p>
+																	</div>
+																</div>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label>IP</label>
+																		<p class="form-control-static-block bold" th:text="*{ip}">  </p>
+																	</div>
+																</div>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label th:text="#{digitaltwindevice.port}">Port</label>
+																		<p class="form-control-static-block bold" th:text="*{port}">  </p>
+																	</div>
+																</div>
+																<div class="col-md-6 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label>ContextPath</label>
+																		<p class="form-control-static-block bold" th:text="*{contextPath}">  </p>
+																	</div>
+																</div>
 																<div class="col-md-12 col-sm-6 col-xs-12">
 																	<div class="form-group">
-																		<label class="control-label">URL</label>
+																		<label th:text="#{digitaltwindevice.broker.endpoint}">Broker Endpoint</label>
 																		<p class="form-control-static-block bold" th:text="*{url}">  </p>
 																	</div>
 																</div>
 																<div class="col-md-12 col-sm-6 col-xs-12">
 																	<div class="form-group">
 																		<label class="control-label" th:text="#{digitaltwindevice.apykey}">API KEY </label>
-																		<p class="form-control-static-block bold" th:text="*{apiKey}">  </p>
+																		<p class="form-control-static-block bold" th:text="*{digitalKey}">  </p>
 																	</div>
 																</div>
 																<div class="col-md-12 col-sm-6 col-xs-12">
@@ -154,8 +178,11 @@
 																		<div class="col-md-9 col-sm-6 col-xs-12">
 																			<input class="form-control" id="git" name="git" maxlength="50" placeholder="GIT"  style="display:inline;"/>
 																		</div>
-																		<div class="col-md-12">
+																		<div class="col-md-3">
 																			<input type="radio" id="maven"  name="project" value="maven"/><p style="display:inline;  padding-left: 10px">MAVEN</p>
+																		</div>
+																		<div class="col-md-9">
+																			<input type="checkbox" id="compile"  name="compile"/><p style="display:inline;  padding-left: 10px" th:text="#{digitaltwindevice.maven.compile}">MAVEN</p>
 																		</div>
 																	</div>
 																	<div class="btn-group" style="margin-top: 10px;">
@@ -272,7 +299,7 @@
 	$("#generateButton").on("click", function(){
 		var selected = $('input[name=project]:checked', '#digitaltwindevice_create_form').val()
 		if(selected=='maven'){
-			window.location.href = "/controlpanel/digitaltwindevices/generateProject/"+$("#identification").text(); 
+			window.location.href = "/controlpanel/digitaltwindevices/generateProject/"+$("#identification").text()+"/"+$("#compile").val(); 
 		}else {
 			
 		}

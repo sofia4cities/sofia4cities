@@ -38,7 +38,7 @@ public class EventsDigitalTwinType extends AuditableEntityWithUUID{
 	private static final long serialVersionUID = 1L;
 	
 	public static enum Type {
-		UPDATE_SHADOW,NOTEBOOK,RULE,FLOW,PING,PIPELINE,LOG,REGISTER
+		UPDATE_SHADOW,NOTEBOOK,RULE,FLOW,PING,PIPELINE,LOG,REGISTER, OTHER
 	}
 	
 	@ManyToOne
