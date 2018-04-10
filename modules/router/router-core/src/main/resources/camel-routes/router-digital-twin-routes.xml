@@ -5,5 +5,11 @@
 			<log message="Camel Reference Context Digital-Twin Broker Flow Start" />
 			<to uri="bean:routerFlowDigitalTwinManagerService?method=startDigitalTwinBrokerFlow" />
 	</route>
+	
+	<route id="ops-digitaltwin-broker-flow-route" errorHandlerRef="defaultEH">
+			<from uri="direct:execute-digitaltwin-operations" />
+			<log message="Camel Reference Context Digital-Twin Broker Flow Execute Operations" />
+			<to uri="bean:routerFlowDigitalTwinManagerService?method=executeDigitalTwinOperations" />
+	</route>
 
 </routes>
