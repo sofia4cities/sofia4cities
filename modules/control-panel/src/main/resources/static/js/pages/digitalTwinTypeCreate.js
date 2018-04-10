@@ -473,10 +473,10 @@ var DigitalTwinCreateController = function() {
 						
 						name = object.name; 
 						description = object.description;
-						type = object.type;
+						type = object.type.toLowerCase();
 						status = object.status;
 						
-						EventUpdate = {"event": name, "typeEvent": type, "status":status,"descriptionsEvents": description};					
+						EventUpdate = {"event": name, "status":status, "typeEvent": type,"descriptionsEvents": description};					
 						jsonEvents.push(EventUpdate);
 						
 					});

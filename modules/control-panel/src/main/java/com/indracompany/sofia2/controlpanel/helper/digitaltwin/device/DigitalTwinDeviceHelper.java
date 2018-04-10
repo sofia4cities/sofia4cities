@@ -256,7 +256,7 @@ public class DigitalTwinDeviceHelper {
 		
 		
 		//Removes the directory
-	//	this.deleteDirectory(fileProjectDirectory);
+		this.deleteDirectory(fileProjectDirectory);
 		
 		return zipFile;
 	}
@@ -289,7 +289,8 @@ public class DigitalTwinDeviceHelper {
 			s.close();
 	
 			int result = process.waitFor();
-	
+			//TODO --> Borrar
+			System.out.println(text);
 			log.info( "Process exited with result %d and output %s%n", result, text );
 		}catch(Exception e) {
 			log.error("Error compiling project", e);

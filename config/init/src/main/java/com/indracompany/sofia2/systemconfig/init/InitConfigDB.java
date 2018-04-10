@@ -240,10 +240,9 @@ public class InitConfigDB {
 		logic.setTypeId(type);
 		logic.setLogic("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();" + System.getProperty("line.separator") +
 				"function main(){}" + System.getProperty("line.separator") +
-				"var onActionConnectElectricNetwork=function(data){ }" + System.getProperty("line.separator") +
+				"var onActionConnectElectricNetwork=function(data){  }" + System.getProperty("line.separator") +
 				"var onActionDisconnectElectricNetwork=function(data){ }" + System.getProperty("line.separator") +
-				"var onActionLimitRotorSpeed=function(data){ }" + System.getProperty("line.separator") +
-				"var onActionTempAlert=function(data) { }");
+				"var onActionLimitRotorSpeed=function(data){ }");
 		logics.add(logic);
 		return logics;
 	}

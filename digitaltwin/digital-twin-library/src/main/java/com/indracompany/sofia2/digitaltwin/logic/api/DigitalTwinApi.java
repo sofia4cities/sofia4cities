@@ -75,4 +75,8 @@ public class DigitalTwinApi {
 	public void sendUpdateShadow() {
 		eventManager.updateShadow(digitalTwinStatus.toMap());
 	}
+	
+	public void sendCustomEvent(String eventName) {
+		eventManager.sendCustomEvent(digitalTwinStatus.toMap(), eventName);
+	}
 }
