@@ -151,5 +151,14 @@ md-tooltip.tt-multiline {
 
 .no-wrap{
   white-space: nowrap;
-  font-size:12px
+  font-size:12px;
+  overflow: hidden
+}
+
+tip-arrow{
+  display: none
+}
+
+.cursor-hand{
+  cursor: pointer
 }
