@@ -100,6 +100,9 @@ pushAllImages2Registry()
 	docker tag sofia2/devicesimulator:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	
+	docker tag sofia2/digitaltwin:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1	
+	
 	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
 	
@@ -166,6 +169,11 @@ if [ -z "$1" ]; then
 		cd $homepath/../../modules/api-manager/	
 		buildImage "API Manager"
 	fi
+	
+	if [[ "$(docker images -q sofia2/digitaltwin 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../../modules/digitaltwin-broker/	
+		buildImage "Digital Twin"
+	fi	
 	
 	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../modules/dashboard-engine/
@@ -235,6 +243,7 @@ pushImage2Registry iotbroker latest
 pushImage2Registry apimanager latest 
 pushImage2Registry flowengine latest 
 pushImage2Registry devicesimulator latest 
+pushImage2Registry digitaltwin latest
 pushImage2Registry dashboard latest 
 pushImage2Registry monitoringui latest 
 pushImage2Registry nginx latest

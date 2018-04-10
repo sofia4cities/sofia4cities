@@ -17,11 +17,6 @@ services:
       - "3306:3306"
     depends_on:
      - "realtimedb"
-    healthcheck:
-     test: "/usr/bin/mysql --user=root --execute \"SHOW DATABASES;\""
-     interval: 4s
-     timeout: 2s
-     retries: 20       
   schedulerdb:
     image: ${REPOSITORY}sofia2/schedulerdb:${IMAGETAG}
     container_name: schedulerdb
@@ -42,18 +37,7 @@ services:
      - REALTIMEDB=realtimedb 
     depends_on:
      - "realtimedb"
-     - "configdb"   
-  configinit:
-    image: ${REPOSITORY}sofia2/configinit:${IMAGETAG}
-    container_name: configinit
-    networks:
-     - datanetwork
-    ports:
-     - "18081:18081"
-    build: .     
-    depends_on:
-     configdb: 
-       condition: service_healthy         
+     - "configdb"         
 networks:
   datanetwork:
     ipam:

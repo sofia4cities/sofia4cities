@@ -14,9 +14,9 @@ sofia2:
           url: 
       node-red:
         base:
-          url: https://s4citiespro.westeurope.cloudapp.azure.com/sofia2/flowengine/admin
+          url: http://flowengineservice:8082/flowengine/admin
         advice:
-          url: https://s4citiespro.westeurope.cloudapp.azure.com/nodered/
+          url: http://flowengineservice:5050/
       router-standalone:
         base:
           url: http://localhost:19100/

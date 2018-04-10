@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -90,6 +91,7 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 		marketAssetMemory.setPublic(marketAsset.isPublic());
 		marketAssetMemory.setMarketAssetType(marketAsset.getMarketAssetType());
 		marketAssetMemory.setPaymentMode(marketAsset.getPaymentMode());
+		marketAssetMemory.setState(MarketAsset.MarketAssetState.PENDING);
 		
 		marketAssetMemory.setJsonDesc(marketAsset.getJsonDesc());
 		
@@ -180,5 +182,16 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 		marketAsset.setState(MarketAssetState.valueOf(state));
 		
 		marketAssetRepository.save(marketAsset);
+	}
+
+	@Override
+	public void delete(String id, String userId) {
+		User user = this.userService.getUser(userId);
+		MarketAsset marketAssetToDelete = marketAssetRepository.findById(id);
+		
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()) || marketAssetToDelete.getUser().equals(user)) {
+			marketAssetToDelete.setDeletedAt(new Date());
+			marketAssetRepository.save(marketAssetToDelete);
+		}
 	}
 }

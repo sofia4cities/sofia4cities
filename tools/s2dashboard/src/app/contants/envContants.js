@@ -14,6 +14,7 @@ else{//Default config
   env.dashboardEngineUsername = '';
   env.dashboardEnginePassword = '';
   env.dashboardEngineLoginRest = '/loginRest';
+  env.dashboardEngineLoginRestTimeout = 5000;
   env.sofia2RestUrl = 'http://rancher.sofia4cities.com/iotbroker/rest/client';
 }
 

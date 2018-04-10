@@ -64,13 +64,18 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				String array[] = field.split("\\.");
 				finalField = array[array.length - 1];
 				for (int s = 0; s < array.length - 1; s++) {
+					if (map.at(path).isArray())
+						path = path + "/0";
 					path = path + "/" + array[s];
+
 				}
 
 			} else {
 				finalField = field;
 				// path= path + "/"+ field;
 			}
+			if (map.at(path).isArray())
+				path = path + "/0";
 
 			switch (function) {
 			case FIXED_NUMBER:
@@ -114,7 +119,9 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 					date = new Date();
 				}
 				JsonNode dateJson = mapper.createObjectNode();
-				((ObjectNode) dateJson).put("$date", date.getTime());
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+				((ObjectNode) dateJson).put("$date", df.format(date));
 				((ObjectNode) map.at(path)).set(finalField, dateJson);
 
 				break;
@@ -123,20 +130,22 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				Date dateTo;
 				Date dateRandom = new Date();
 				;
-				DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+
 				try {
-					dateFrom = df.parse(json.path(field).get("from").asText());
-					dateTo = df.parse(json.path(field).get("to").asText());
+					DateFormat dfr = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+					dateFrom = dfr.parse(json.path(field).get("from").asText());
+					dateTo = dfr.parse(json.path(field).get("to").asText());
 					dateRandom = this.randomizeDate(dateFrom, dateTo);
 				} catch (ParseException e) {
 					dateRandom = new Date();
 				}
 				JsonNode dateRandomJson = mapper.createObjectNode();
-				((ObjectNode) dateRandomJson).put("$date", dateRandom.getTime());
+				df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+				((ObjectNode) dateRandomJson).put("$date", df.format(dateRandom));
 				((ObjectNode) map.at(path)).set(finalField, dateRandomJson);
 				break;
 			case NULL:
-				((ObjectNode) map.at(path)).set(finalField, null);
+				// ((ObjectNode) map.at(path)).put(finalField, "null");
 				break;
 
 			}

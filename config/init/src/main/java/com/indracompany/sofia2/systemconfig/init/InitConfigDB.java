@@ -49,6 +49,7 @@ import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
+import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
@@ -70,6 +71,7 @@ import com.indracompany.sofia2.config.repository.FlowDomainRepository;
 import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
+import com.indracompany.sofia2.config.repository.MarketAssetRepository;
 import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -140,6 +142,9 @@ public class InitConfigDB {
 
 	@Autowired
 	UserTokenRepository userTokenRepository;
+	
+	@Autowired
+	MarketAssetRepository marketAssetRepository;
 
 	@PostConstruct
 	@Test
@@ -161,10 +166,10 @@ public class InitConfigDB {
 		log.info("OK init_OntologyUserAccess");
 		init_OntologyUserAccessType();
 		log.info("OK init_OntologyUserAccessType");
-		
+
 		init_OntologyCategory();
 		log.info("OK init_OntologyCategory");
-	
+
 		//
 		init_ClientPlatform();
 		log.info("OK init_ClientPlatform");
@@ -188,7 +193,6 @@ public class InitConfigDB {
 		init_GadgetMeasure();
 		log.info("OK init_GadgetMeasure");
 
-
 		init_Menu_ControlPanel();
 		log.info("OK init_ConsoleMenu");
 		init_Configuration();
@@ -199,6 +203,9 @@ public class InitConfigDB {
 		
 		init_DigitalTwinType();
 		log.info("OK init_DigitalTwinType");
+		
+		init_market();
+		log.info("OK init_Market");
 	
 	}
 	
@@ -584,19 +591,28 @@ public class InitConfigDB {
 
 	private String loadFromResources(String name) {
 		try {
-			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
-					Charset.forName("UTF-8"));
+			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),	Charset.forName("UTF-8"));
 
 		} catch (Exception e) {
 			try {
-				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(),
-						Charset.forName("UTF-8"));
+				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(), Charset.forName("UTF-8"));
 			} catch (IOException e1) {
 				log.error("**********************************************");
 				log.error("Error loading resource: " + name + ".Please check if this error affect your database");
 				log.error(e.getMessage());
 				return null;
 			}
+		}
+	}
+	
+	private byte[] loadFileFromResources(String name) {
+		try {
+			return Files.readAllBytes((Paths.get(getClass().getClassLoader().getResource(name).toURI())));
+
+		} catch (Exception e) {
+			log.error("Error loading resource: " + name + ".Please check if this error affect your database");
+			log.error(e.getMessage());
+			return null;
 		}
 	}
 
@@ -940,8 +956,6 @@ public class InitConfigDB {
 
 	}
 
-
-
 	public void init_OntologyCategory() {
 
 		log.info("init OntologyCategory");
@@ -956,8 +970,6 @@ public class InitConfigDB {
 		}
 
 	}
-
-
 
 	public void init_Ontology() {
 
@@ -989,6 +1001,84 @@ public class InitConfigDB {
 			ontology.setUser(getUserDeveloper());
 			ontologyRepository.save(ontology);
 
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("OntologySchema_HelsinkiPopulation.json"));
+			ontology.setDescription("Ontology HelsinkiPopulation for testing");
+			ontology.setIdentification("HelsinkiPopulation");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("OntologySchema_TweetSentiment.json"));
+			ontology.setDescription("TweetSentiment");
+			ontology.setIdentification("TweetSentiment");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("OntologySchema_GeoAirQuality.json"));
+			ontology.setDescription("Air quality retrieved from https://api.waqi.info/search");
+			ontology.setIdentification("GeoAirQuality");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("OntologySchema_CityPopulation.json"));
+			ontology.setDescription(
+					"Population of Urban Agglomerations with 300,000 Inhabitants or More in 2014, by Country, 1950-2030 (thousands)");
+			ontology.setIdentification("CityPopulation");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("OntologySchema_AirQuality_gr2.json"));
+			ontology.setDescription("AirQuality_gr2");
+			ontology.setIdentification("AirQuality_gr2");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("OntologySchema_AirQuality.json"));
+			ontology.setDescription("AirQuality");
+			ontology.setIdentification("AirQuality");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("OntologySchema_AirCOMeter.json"));
+			ontology.setDescription("AirCOMeter");
+			ontology.setIdentification("AirCOMeter");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			ontologyRepository.save(ontology);
+
 		}
 
 	}
@@ -996,9 +1086,10 @@ public class InitConfigDB {
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
 		/*
-		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
-		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
-		 * user=new OntologyUserAccess(); user.setUser("6");
+		 * List<OntologyUserAccess>
+		 * users=this.ontologyUserAccessRepository.findAll();
+		 * if(users.isEmpty()) { log.info("No users found...adding");
+		 * OntologyUserAccess user=new OntologyUserAccess(); user.setUser("6");
 		 * user.setOntology(ontologyRepository.findAll().get(0));
 		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
 		 * this.ontologyUserAccessRepository.save(user); }
@@ -1230,6 +1321,35 @@ public class InitConfigDB {
 			}
 		}
 	}
+	
+	public void init_market() {
+		log.info("init MarketPlace");
+		List<MarketAsset> marketAssets = this.marketAssetRepository.findAll();
+		if (marketAssets.isEmpty()) {
+			log.info("No market Assets...adding");
+			MarketAsset marketAsset = new MarketAsset();
+			
+			marketAsset.setId("1");
+			marketAsset.setIdentification("TEST");
+			
+			marketAsset.setUser(getUserDeveloper());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+			
+			marketAsset.setJsonDesc(loadFromResources("market/marketAsset_TEST.json"));
+						
+			marketAsset.setContent(loadFileFromResources("market/README.md"));
+			marketAsset.setContentId("README.md");
+			
+			marketAsset.setImage(loadFileFromResources("market/population.png"));
+			marketAsset.setImageType("population.png");
+			
+			marketAssetRepository.save(marketAsset);
+		}
+	}
 
 	/*
 	 * public void init_Template() { log.info("init template"); List<Template>
@@ -1238,14 +1358,15 @@ public class InitConfigDB {
 	 * if (templates.isEmpty()) { try {
 	 * 
 	 * log.info("No templates Adding..."); Template template= new Template();
-	 * template.setIdentification("GSMA-Weather Forecast"); template.setType("0");
-	 * template.
+	 * template.setIdentification("GSMA-Weather Forecast");
+	 * template.setType("0"); template.
 	 * setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}"
 	 * ); template.
 	 * setDescription("This contains a harmonised description of a Weather Forecast."
 	 * ); template.setCategory("plantilla_categoriaGSMA");
 	 * template.setIsrelational(false); templateRepository.save(template); ///
-	 * template=new Template(); template.setIdentification("TagsProjectBrandwatch");
+	 * template=new Template();
+	 * template.setIdentification("TagsProjectBrandwatch");
 	 * template.setType("1"); template.
 	 * setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}"
 	 * ); template.

@@ -35,7 +35,7 @@ import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 import javassist.NotFoundException;
 
 @RestController
-@RequestMapping(value = "/flowengine/node/services")
+@RequestMapping(value = "/node/services")
 public class FlowEngineNodeServicesController {
 
 	@Autowired

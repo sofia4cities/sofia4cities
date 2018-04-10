@@ -27,11 +27,11 @@
       );
 
       /* Global handler by id */
-      $scope.$on(vm.element.id,
+      /*$scope.$on(vm.element.id,
         function(ev,data){
           angular.merge(vm.element,vm.element,data);
         }
-      );
+      );*/
     }
 
     vm.openEditContainerDialog = function (ev) {

@@ -92,7 +92,7 @@ public class LoadHelsinkiSampleData implements ApplicationRunner {
 		return userAdministrator;
 	}
 
-	private void createAPI() throws Exception {
+	public void createAPI() throws Exception {
 		String token = "acbca01b-da32-469e-945d-05bb6cd1552e";
 		try {
 			Api theApi = apiService.findApi(APINAME, token);

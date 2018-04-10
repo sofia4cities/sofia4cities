@@ -127,7 +127,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		User user = (User) data.get(ApiServiceInterface.USER);
 		
 		String body = BODY;
-		OperationType operationType;
+		OperationType operationType = null;
 		
 		if (METHOD.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
 			body = QUERY;
@@ -143,7 +143,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		
 		OperationModel model = OperationModel.builder(
 				ontology.getIdentification(), 
-				OperationType.valueOf(METHOD),
+				OperationType.valueOf(operationType.name()),
 				user.getUserId(), 
 				OperationModel.Source.APIMANAGER)
 				.body(body)

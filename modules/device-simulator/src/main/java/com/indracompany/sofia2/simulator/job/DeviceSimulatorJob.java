@@ -102,7 +102,7 @@ public class DeviceSimulatorJob {
 					JsonNode object = this.createArrayNode(ontologySchema.path(field));
 					JsonNode arrayNode = mapper.createArrayNode();
 					((ArrayNode) arrayNode).add(object);
-					((ObjectNode) fieldsSchema).set(field, object);
+					((ObjectNode) fieldsSchema).set(field, arrayNode);
 				}
 
 			}
@@ -136,7 +136,7 @@ public class DeviceSimulatorJob {
 					JsonNode object = this.createArrayNode(fieldNode.path(field));
 					JsonNode arrayNode = mapper.createArrayNode();
 					((ArrayNode) arrayNode).add(object);
-					((ObjectNode) objectNode).set(field, object);
+					((ObjectNode) objectNode).set(field, arrayNode);
 				}
 
 			}
@@ -159,8 +159,8 @@ public class DeviceSimulatorJob {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode objectNode = mapper.createObjectNode();
 
-		if (!fieldNode.path("items").path("properties").isMissingNode()) {
-			fieldNode = fieldNode.path("items").path("properties");
+		if (!fieldNode.path("properties").isMissingNode()) {
+			fieldNode = fieldNode.path("properties");
 			Iterator<String> fields = fieldNode.fieldNames();
 
 			while (fields.hasNext()) {
@@ -172,24 +172,34 @@ public class DeviceSimulatorJob {
 				else if (fieldNode.path(field).get("type").asText().equals("object")) {
 					JsonNode object = this.createObjectNode(fieldNode.path(field));
 					((ObjectNode) objectNode).set(field, object);
+				} else if (fieldNode.path(field).get("type").asText().equals("array")) {
+					JsonNode object = this.createArrayNode(fieldNode.path(field));
+					JsonNode arrayNode = mapper.createArrayNode();
+					((ArrayNode) arrayNode).add(object);
+					((ObjectNode) objectNode).set(field, arrayNode);
 				}
 
 			}
 
-		} else if (!fieldNode.path("items").path("items").isMissingNode()) {
+		} else if (!fieldNode.path("items").isMissingNode()) {
 
-			fieldNode = fieldNode.path("items").path("items");
-			Iterator<String> fields = fieldNode.fieldNames();
+			fieldNode = fieldNode.path("items");
+			int size = fieldNode.size();
 
-			while (fields.hasNext()) {
-				String field = fields.next();
-				if (fieldNode.path(field).get("type").asText().equals("string"))
-					((ObjectNode) objectNode).put(field, "");
-				else if (fieldNode.path(field).get("type").asText().equals("number"))
-					((ObjectNode) objectNode).put(field, 0);
-				else if (fieldNode.path(field).get("type").asText().equals("object")) {
-					JsonNode object = this.createObjectNode(fieldNode.path(field));
-					((ObjectNode) objectNode).set(field, object);
+			for (int i = 0; i < size; i++) {
+
+				if (fieldNode.path(i).get("type").asText().equals("string"))
+					((ObjectNode) objectNode).put(String.valueOf(i), "");
+				else if (fieldNode.path(i).get("type").asText().equals("number"))
+					((ObjectNode) objectNode).put(String.valueOf(i), 0);
+				else if (fieldNode.path(i).get("type").asText().equals("object")) {
+					JsonNode object = this.createObjectNode(fieldNode.path(i));
+					((ObjectNode) objectNode).set(String.valueOf(i), object);
+				} else if (fieldNode.path(i).get("type").asText().equals("array")) {
+					JsonNode object = this.createArrayNode(fieldNode.path(i));
+					JsonNode arrayNode = mapper.createArrayNode();
+					((ArrayNode) arrayNode).add(object);
+					((ObjectNode) objectNode).set(String.valueOf(i), arrayNode);
 				}
 
 			}

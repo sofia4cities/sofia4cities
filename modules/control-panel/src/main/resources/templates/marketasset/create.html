@@ -195,7 +195,7 @@
 															</div>
 															<div th:if="(${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR') OR (${marketasset.id} == null)">
 																<button th:if="${marketasset.id} == null" id="pendingBtn" type="button" class="btn btn-sm grey-mint" name="pendingBtn"><i class="fa fa-times"></i> <span th:text="#{marketasset.state.PENDING}"> Pending</span></button>
-																<button th:if="${marketasset.id} != null" id="stateBtn" type="button" th:class="${marketasset.state.name()== 'REJECTED'} ? 'btn btn-sm btn-outline red-sunglo' : 'btn btn-sm grey-mint'" name="stateBtn"><i class="fa fa-times"></i> <span th:text="${marketasset.state}"> State</span></button>
+																<button th:if="${marketasset.id} != null" id="stateBtn" type="button" th:class="${marketasset.state.name()== 'REJECTED'} ? 'btn btn-sm btn-outline red-sunglo' : 'btn btn-sm grey-mint'" name="stateBtn"><i class="fa fa-times"></i> <span th:text="${marketasset.state}" th:title="${marketasset.state.name()== 'REJECTED'? marketasset.rejectionReason : marketasset.state.name()}"> State</span></button>
 															</div>
 														</div>	
 													</div>
@@ -243,8 +243,7 @@
 													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 													
 													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:MarketAssetCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:MarketAssetCreateController.go(\'' + @{/marketasset/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:MarketAssetCreateController.go(\'' + @{/marketasset/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 												</div>
 											</div>											
 										</form>
@@ -357,9 +356,11 @@
 			$('#versions').val(json_desc.versions);
 			$('#apiDescription').val(json_desc.apiDescription);
 		} else if (type=='DOCUMENT'){
+			$('#detailedDescription').append(json_desc.detailedDescription);
 		} else if (type=='APPLICATION'){
 			$('#installation').val(json_desc.installation);
 			$('#functionality').val(json_desc.functionality);
+			$('#detailedDescription').val(json_desc.detailedDescription);
 		} else if (type=='WEBPROJECT'){
 			$('#functionality').val(json_desc.functionality);
 			$('#id_endpoint').val(json_desc.id_endpoint);
