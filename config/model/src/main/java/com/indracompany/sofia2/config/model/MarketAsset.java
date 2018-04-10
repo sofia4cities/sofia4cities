@@ -58,7 +58,7 @@ public class MarketAsset extends AuditableEntityWithUUID {
 	}
 	
 	public static enum MarketAssetType {
-		API, DOCUMENT, WEBPROJECT, APPLICATION;
+		API, DOCUMENT, WEBPROJECT, APPLICATION, URLAPPLICATION;
 	}
 	
 	public static enum MarketAssetPaymentMode {
