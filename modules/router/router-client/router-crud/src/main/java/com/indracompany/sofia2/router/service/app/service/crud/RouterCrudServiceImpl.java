@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.audit.aop.Auditable;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
@@ -36,7 +37,8 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	private QueryToolService  queryToolService;
 	
 	@Autowired
-	private BasicOpsDBRepository mongoBasicOpsDBRepository;
+	
+	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
 	
 	@Autowired
 	private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
@@ -290,13 +292,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 
 
 
-	public BasicOpsDBRepository getMongoBasicOpsDBRepository() {
-		return mongoBasicOpsDBRepository;
-	}
-
-	public void setMongoBasicOpsDBRepository(BasicOpsDBRepository mongoBasicOpsDBRepository) {
-		this.mongoBasicOpsDBRepository = mongoBasicOpsDBRepository;
-	}
+	
 
 	public static boolean NullString(String l) {
 		if (l==null) return true;

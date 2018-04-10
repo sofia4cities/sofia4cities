@@ -26,18 +26,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
-import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoNativeManageDBRepository;
 
 @Component
 public class MockMongoOntologies {
 
 	@Autowired
 	ObjectMapper objectMapper;
+	
 	@Autowired
-	ManageDBRepository manage;
+	MongoNativeManageDBRepository manage;
+	
 	@Autowired
-	BasicOpsDBRepository repository;
+	MongoBasicOpsDBRepository repository;
 
 	public <T> boolean createOntology(Class<T> ontology) throws JsonGenerationException, JsonMappingException, IOException {
 		final List<String> list = manage.getListOfTables();

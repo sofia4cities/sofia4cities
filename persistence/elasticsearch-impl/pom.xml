@@ -9,13 +9,11 @@
 		<relativePath>../..</relativePath>
 	</parent>
 
-	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-persistence-elasticsearch</artifactId>
 	<packaging>jar</packaging>
 
 	<properties>
 		<license.dir>${project.parent.basedir}</license.dir>
-		<elasticsearch.version>6.2.3</elasticsearch.version>
 	</properties>
 
 	<dependencies>
@@ -60,14 +58,17 @@
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
 			<version>${elasticsearch.version}</version>
+			
 		</dependency>
+
+
 
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>transport</artifactId>
 			<version>${elasticsearch.version}</version>
+			
 		</dependency>
-
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -75,8 +76,28 @@
 			<version>24.1-jre</version>
 		</dependency>
 
-
 	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>${elasticsearch.version}</version>
+				
+			</dependency>
+
+			<dependency>
+				<groupId>org.elasticsearch.client</groupId>
+				<artifactId>transport</artifactId>
+				<version>${elasticsearch.version}</version>
+				
+			</dependency>
+
+		</dependencies>
+
+	</dependencyManagement>
+
 
 	<!-- <plugins> -->
 	<!-- <plugin> -->
