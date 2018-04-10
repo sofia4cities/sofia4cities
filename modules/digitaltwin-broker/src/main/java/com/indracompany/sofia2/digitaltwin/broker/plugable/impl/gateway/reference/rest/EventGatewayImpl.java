@@ -79,8 +79,8 @@ public class EventGatewayImpl implements EventGateway {
 			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
 			
 			model.setEvent(EventType.REGISTER);
-			model.setDeviceId(data.get("id").asText());
-			model.setDeviceName(this.deviceRepo.findById(data.get("id").asText()).getIdentification());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			model.setEndpoint(deviceUrl);
 			
@@ -124,8 +124,8 @@ public class EventGatewayImpl implements EventGateway {
 			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
 			
 			model.setEvent(EventType.PING);
-			model.setDeviceId(data.get("id").asText());
-			model.setDeviceName(this.deviceRepo.findById(data.get("id").asText()).getIdentification());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			
 			compositeModel.setDigitalTwinModel(model);
@@ -170,8 +170,8 @@ public class EventGatewayImpl implements EventGateway {
 			
 			model.setEvent(EventType.LOG);
 			model.setLog(data.get("log").asText());
-			model.setDeviceId(data.get("id").asText());
-			model.setDeviceName(this.deviceRepo.findById(data.get("id").asText()).getIdentification());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			
 			compositeModel.setDigitalTwinModel(model);
@@ -215,8 +215,8 @@ public class EventGatewayImpl implements EventGateway {
 			
 			model.setEvent(EventType.SHADOW);
 			model.setStatus(data.get("status").toString());
-			model.setDeviceId(data.get("id").asText());
-			model.setDeviceName(this.deviceRepo.findById(data.get("id").asText()).getIdentification());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			
 			compositeModel.setDigitalTwinModel(model);
@@ -261,8 +261,8 @@ public class EventGatewayImpl implements EventGateway {
 			
 			model.setEvent(EventType.NOTEBOOK);
 			model.setStatus(data.get("status").toString());
-			model.setDeviceId(data.get("id").asText());
-			model.setDeviceName(this.deviceRepo.findById(data.get("id").asText()).getIdentification());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			
 			compositeModel.setDigitalTwinModel(model);
@@ -306,8 +306,8 @@ public class EventGatewayImpl implements EventGateway {
 			
 			model.setEvent(EventType.FLOW);
 			model.setStatus(data.get("status").toString());
-			model.setDeviceId(data.get("id").asText());
-			model.setDeviceName(this.deviceRepo.findById(data.get("id").asText()).getIdentification());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			
 			compositeModel.setDigitalTwinModel(model);
@@ -351,8 +351,8 @@ public class EventGatewayImpl implements EventGateway {
 			
 			model.setEvent(EventType.RULE);
 			model.setStatus(data.get("status").toString());
-			model.setDeviceId(data.get("id").asText());
-			model.setDeviceName(this.deviceRepo.findById(data.get("id").asText()).getIdentification());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			
 			compositeModel.setDigitalTwinModel(model);
@@ -393,8 +393,8 @@ public class EventGatewayImpl implements EventGateway {
 			
 			model.setEvent(EventType.CUSTOM);
 			model.setStatus(data.get("status").toString());
-			model.setDeviceId(data.get("id").asText());
-			model.setDeviceName(this.deviceRepo.findById(data.get("id").asText()).getIdentification());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			
 			compositeModel.setDigitalTwinModel(model);
