@@ -152,7 +152,7 @@
 															<i class="fa fa-credit-card"></i>  <label class="control-label"  th:text="#{gen.name} + ':'">Name</label>
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
-																<input id="identification" type="text" name="identification"  th:required="true"   maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{gen.name}" />
+																<input th:disabled="${gadget.id} != null" id="identification" type="text" name="identification"  th:required="true"   maxlength="50" th:field="*{identification}" class="form-control " th:placeholder="#{gen.name}" />
 															</div>
 														</div>
 													</div>	
@@ -161,7 +161,7 @@
 															<i class="fa fa-database"></i>  <label class="control-label" th:text="#{datasources.name} + ':'">Datasource</label>
 															<div class="input-icon ">
 																<i class="la la-database"></i>
-																<select th:readonly="${gadget.id} != null" readonly="readonly" id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:required="true">
+																<select th:readonly="${gadget.id} != null" readonly="readonly" th:disabled="${gadget.id} != null" id="datasources" class="selectpicker form-control" onchange="showGadgetSelect()" data-live-search="true" data-width="100%" th:title="#{datasources.name}" th:required="true">
 																	<option value="none"></option> 
 																	<option th:each="datasource:${datasources}" th:value="${datasource.id}" th:text="${datasource.identification}"></option>
 																</select>
@@ -177,7 +177,17 @@
 												 </div>		
 												 <div class="clearfix"></div>
 												 
-												 <!-- DATASOURCE -->
+												 <!-- CONFIG GADGET -->
+												 <div id="configContainer" class="hide col-md-12 margin-bottom-20">
+													<h4><i class="fa fa-wrench"></i> Gadget Axis config:</h4>
+													<!-- DYNAMICAL CONFIG -->
+													<div id="configGadget"></div>
+													<div class="pull-left margin-bottom-20">														
+														<button id="addMoreAxes" style="margin-left: 30px;margin-top: 5px;" class="btn green-haze btn-sm btn-outline uppercase" onclick="addAxes(event)"><i class="fa fa-plus"></i> Add axis</button>
+													</div>
+												 </div>
+												 
+												 <!-- MEASURES -->
 												 <div id="measuresContainer" class="hide col-md-12 margin-bottom-20">
 													<h4><i class="fa fa-edit"></i> Measures:</h4>
 													<!-- DYNAMICAL MEASURES -->
@@ -263,13 +273,13 @@
      	$("#jsonMeasures").val(JSON.stringify(measures));
      	$("#datasourcesMeasures").val(JSON.stringify([$("#datasources").val()]));
      	$("#type").val(gtype);
-     	if(gtype === 'map'){
+     	//if(gtype === 'map'){
      		var scope = angular.element(document.getElementsByTagName('gadget')[0]).scope();
      		$("#config").val(JSON.stringify(scope.$$childHead.vm.config.config));
-     	}
-     	else{
-     		$("#config").val("{}");
-     	}
+     	//}
+     	//else{
+     	//	$("#config").val("{}");
+     	//}
      	$("#gadget_create_form").get(0).submit();
      });
 	
@@ -286,25 +296,36 @@
 		} ],
 		series : {
 			maxseries : -1,
-			options : {
-				"title" : "Series options",
-				"type" : "object",
-				"properties" : {
-					"Name" : {
-						"type" : "string",
-						"description" : "Serie name"
-					},
-					"Color" : {
-						"type" : "string",
-						"format" : "color",
-						"title" : "Serie color",
-						"default" : "#ffa500"
+			options : [
+				{
+					"type" : "color",
+					"name" : "Color",
+					"default" : "#ffa500",
+					"jsonFields" : ["backgroundColor","borderColor","pointBackgroundColor"]
+				},
+				{
+					"type" : "select",
+					"name" : "Y Axis ID",
+					"class" : "yaxisselector",
+					"ref" : '$(".axis_id").splice(0,$(".axis_id").length).map(function(e){return e.value})',
+					"jsonFields": ["yAxisID"]
+				},
+				{
+					"type" : "boolean",
+					"name" : "Fill Serie",
+					"jsonFields": ["fill"]
+				}
+			]
+		},
+		options : {
+			scales: {
+				yAxes: {
+					type: "array",
+					elems: {
+						
 					}
 				}
 			}
-		},
-		options : {
-			beginToZero : true
 		}
 	}, {
 		type : "bar",
@@ -318,22 +339,20 @@
 		} ],
 		series : {
 			maxseries : -1,
-			options : {
-				"title" : "Series options",
-				"type" : "object",
-				"properties" : {
-					"Name" : {
-						"type" : "string",
-						"description" : "Serie name"
-					},
-					"Color" : {
-						"type" : "string",
-						"format" : "color",
-						"title" : "Serie color",
-						"default" : "#ffa500"
-					}
+			options : [
+				{
+					"type" : "color",
+					"name" : "Color",
+					"default" : "#ffa500",
+					"jsonFields" : ["backgroundColor","borderColor","pointBackgroundColor"]
+				},
+				{
+					"type" : "select",
+					"name" : "Y Axis ID",
+					"ref" : '$(".axis_id").splice(0,$(".axis_id").length).map(function(e){return e.value})',
+					"jsonFields": ["yAxisID"]
 				}
-			}
+			]
 		},
 		options:{}
 	},
@@ -350,22 +369,7 @@
 		} ],
 		series : {
 			maxseries : 1,
-			options : {
-				"title" : "Series options",
-				"type" : "object",
-				"properties" : {
-					"Name" : {
-						"type" : "string",
-						"description" : "Serie name"
-					},
-					"Color" : {
-						"type" : "string",
-						"format" : "color",
-						"title" : "Serie color",
-						"default" : "#ffa500"
-					}
-				}
-			}
+			options : []
 		},
 		options:{}
 	},
@@ -420,8 +424,8 @@
 	//De momento pruebo sin parámetros. Añado en JSON en la función..
 	function showGadgetSelect(){
 		$("#icons").empty();
-		$("#vercamposdatasource").empty();		
-		$("#measuresContainer").show();		
+		$("#vercamposdatasource").empty();
+		$("#measuresContainer").show();
 		if(($("#datasources").val())!="none"){ 
 		
 		
@@ -436,7 +440,7 @@
 				'		<div class="portlet-title">' +
 				'			<div class="caption">' +
 				'				<i class=" la la-cube font-green"></i>' +
-				'				<span class="caption-subject font-green bold uppercase" onclick="showMeasures(\'' + Type + '\')" >'+Type+'</span>' +
+				'				<span class="caption-subject font-green bold uppercase" onclick="showConfigAndMeasures(\'' + Type + '\')" >'+Type+'</span>' +
 				'				<div class="caption-desc font-grey-cascade">Gadget para S4Cities Dashboards</div>' +
 				'			</div>' +
 				'		</div>' +
@@ -449,7 +453,7 @@
 				'							<div class="mt-overlay">' +
 				'								<ul class="mt-info">' +
 				'									<li>' +
-				'										<a class="btn default btn-outline" onclick="showMeasures(\'' + Type + '\')" >' +
+				'										<a class="btn default btn-outline" onclick="showConfigAndMeasures(\'' + Type + '\')" >' +
 				'											<i class="flaticon-add font-lg bold"></i> ADD GADGET' +
 				'										</a>' +
 				'									</li>' +
@@ -486,13 +490,44 @@
 	
 	var stt;
 	
+	function addAxes(e){
+		if(e){
+			e.preventDefault();	
+		}
+		var i = parseInt($(".gcserie .axis_id").last().val().slice(1))+1;
+		var gchtml = '';
+		gchtml += '<div class="gcserie col-md-12">';
+		gchtml += '<div class="form-group col-md-2">';
+		gchtml += '<label class="control-label">ID</label>';
+		gchtml += '<input disabled="disabled" class="form-control axis_id" data-live-search="true" data-width="100%" id="axis_id_' + i + '" value="#' + i + '"/>';
+		gchtml	+= '</div>'
+		gchtml += '<div class="form-group col-md-2">';
+		gchtml += '<label class="control-label">Position</label>';
+		gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="position_' + i + '"><option value="right">right</option><option selected="selected" value="left">left</option></select>';
+		gchtml	+= '</div>'
+		gchtml += '<div class="form-group col-md-2">';
+		gchtml += '<label class="control-label">Type</label>';
+		gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="type_' + i + '"><option selected="selected" value="linear">linear</option><option value="logarithmic">logarithmic</option></select>';
+		gchtml	+= '</div>'
+		gchtml += '<div class="form-group col-md-2">';
+		gchtml += '<label class="control-label">Axis Label</label>';
+		gchtml += '<input onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="label_' + i + '"/>';
+		gchtml	+= '</div>'
+		if($(".gcserie").length > 0){
+			gchtml += '<button style="margin-top:26px;" onclick="removeAxes(' + $(".gcserie").length + ')" class="btn red-mint btn-sm btn-outline uppercase"><i class="la la-trash"></i> REMOVE </button>';
+		}
+		gchtml	+= '</div>'
+		$("#configGadget").append(gchtml);
+		$(".yaxisselector").append('<option value="' + "#" + i + '">' + "#" + i + "</option>");
+	}
+
 	function addFormSttByType(e,loadOptions){
 		if(e){
 			e.preventDefault();	
 		}
 		var measure = "";
 		var division;
-		switch (stt.attributes.length){
+		switch (stt.attributes.length + (Math.floor((!stt.series.options.length?0:stt.series.options.length)/2)+1)){
 			case 1: division='col-md-5';break;
 			case 2: division='col-md-3';break;
 			case 3: case 4: case 5: division='col-md-2';break;
@@ -504,7 +539,7 @@
 			var atr = stt.attributes[i];
 			mhtml += '<div class="form-group ' + division + '">';
 			mhtml += '<label class="control-label"> ' + atr.name + ' </label>';
-			mhtml += '<select id="s_' + $(".gserie").length + '_' + i + '" ' + (atr.multi?'multiple=multiple':'') + ' onchange="refreshGadget()" class="form-control ' + atr.types.join(" ") + '" data-live-search="true" data-width="100%">';
+			mhtml += '<select id="s_' + $(".gserie").length + '_' + i + '" ' + (atr.multi?'multiple=multiple':'') + ' onchange="refreshGadget()" class="measureSelect form-control ' + atr.types.join(" ") + '" data-live-search="true" data-width="100%">';
 			if(loadOptions){
 				for(var o = 0 ; o < gfields.length;o++){
 					mhtml += '<option value="' + gfields[o].field + '">' + gfields[o].field + '</option>'
@@ -518,6 +553,27 @@
 		mhtml += '<label class="control-label"> Name </label>';
 		mhtml += '<input onchange="refreshGadget()" id="n_' + $(".gserie").length + '" class="form-control" data-live-search="true" data-width="100%"/>'
 		mhtml += '</div>'
+		
+		for(var i = 0; i < stt.series.options.length; i++){
+			var atr = stt.series.options[i];
+			mhtml += '<div class="form-group col-md-1">';
+			mhtml += '<label class="control-label"> ' + atr.name + ' </label>';
+			switch(atr.type){
+				case "color":
+					mhtml += '<input onchange="refreshGadget()" class="gsoption form-control" type="color"/>'
+					break;
+				case "select":
+					mhtml += '<select onchange="refreshGadget()" class="gsoption form-control + ' + atr.class + '">';
+					mhtml += eval(atr.ref).map(function(e){ return '<option value="' + e + '">' + e + '</option>"'})
+					mhtml += '</select>';
+					break;
+				case "boolean":
+					mhtml += '<input onchange="refreshGadget()" class="gsoption form-control" type="checkbox"/>'
+					break;
+			}
+			mhtml	+= '</div>'
+		}
+		
 		if($(".gserie").length > 0 && (stt.series.maxseries > (1 + $(".gserie").length) || stt.series.maxseries == -1)){
 			mhtml += '<button style="margin-top:26px;" onclick="removeMeasure(' + $(".gserie").length + ')" class="btn red-mint btn-sm btn-outline uppercase"><i class="la la-trash"></i> REMOVE </button>';
 		}
@@ -543,8 +599,8 @@
 	function generateMeasuresArray(){
 		measures = [];		
 		for(var s =0 ;s < $(".gserie").length; s++){
-			var selects = $($(".gserie").get(s)).find("select");
-			var config = {fields:[],name:""};
+			var selects = $($(".gserie").get(s)).find(".measureSelect");
+			var config = {fields:[],name:"",config:{}};
 			for(var sel = 0;sel < selects.length;sel++){
 				var fieldAux = $("#s_" + s + "_" + sel).val();
 				if(typeof fieldAux !== "object"){
@@ -580,6 +636,14 @@
 					}
 				}
 			}
+			var gsoptions = $($(".gserie").get(s)).find(".gsoption");
+			for(var i =0; i < gsoptions.length; i++){
+				var v = gsoptions[i].value;
+				if(gsoptions[i].type === "checkbox"){
+					v = gsoptions[i].checked;
+				}
+				stt.series.options[i].jsonFields.map(function(opt){config.config[opt]=v});
+			}
 			config.name = $("#n_" + s).val();			
 			measures.push({config:JSON.stringify(config)});
 		}
@@ -600,7 +664,35 @@
 	        	}
 	        }
 	        else{
-	        	scope.$$childHead.vm.config = {config:"{}",type:gtype};	
+				if(gtype == "bar" || gtype == "line"){
+					var gconfig = {
+						scales:{
+							yAxes :[]
+						}
+					}
+					for(var gc = 0; gc < $(".gcserie").length ; gc++){
+						var gcserie = $($(".gcserie").get(gc));
+						var id = gcserie.find("#axis_id_" + gc).val();
+						var position = gcserie.find("#position_" + gc).val();
+						var type = gcserie.find("#type_" + gc).val();
+						var label = gcserie.find("#label_" + gc).val();
+						var ax = {
+							id: id,
+							display: true,
+							type: type,
+							position: position,
+							scaleLabel: {
+								labelString: label,
+								display: true
+							}
+						}
+						gconfig.scales.yAxes.push(ax)
+					}
+					scope.$$childHead.vm.config = {config:gconfig,type:gtype};	
+				}
+				else{
+					scope.$$childHead.vm.config = {config:$("#config").val()?$("#config").val():"{}",type:gtype};	
+				}
 	        }
 						
 			scope.$$childHead.vm.measures = measures;
@@ -615,11 +707,83 @@
 		refreshGadget();
 	}
 	
+	function removeAxes(index){
+		$(".gcserie")[index].remove();
+		$(".yaxisselector").each(function(){this.remove(index)});
+		refreshGadget();
+	}
+	
 	var measures=[];
 	var gtype = "";
 	var gfields = [];
-	function showMeasures(type){
+	function showConfigAndMeasures(type){
+		$("#icons").hide();
 		gtype = type;
+		if(gtype=="line" || gtype=="bar"){
+			if ( $('#configContainer').hasClass('hide') === true ){ 
+				$('#configContainer').removeClass('hide');
+			}
+			var jsonConfig;
+			if(!$("#config").val() || $("#config").val() === "{}"){
+				jsonConfig = {scales:{yAxes:[]}};
+			}
+			else{
+				jsonConfig = JSON.parse($("#config").val());
+			}
+			for(var index=0; index<jsonConfig.scales.yAxes.length;index++){
+				var gchtml = '';
+				var axis = jsonConfig.scales.yAxes[index];
+				var i =  parseInt(axis.id.slice(1));
+				gchtml += '<div class="gcserie col-md-12">';
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">ID</label>';
+				gchtml += '<input disabled="disabled" class="form-control axis_id" data-live-search="true" data-width="100%" id="axis_id_' + i + '" value="#' + i + '"/>';
+				gchtml	+= '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">Position</label>';
+				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="position_' + i + '"><option selected="selected" value="left">left</option><option value="right">right</option></select>';
+				gchtml	+= '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">Type</label>';
+				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="type_' + i + '"><option selected="selected" value="linear">linear</option><option value="logarithmic">logarithmic</option></select>';
+				gchtml	+= '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">Axis Label</label>';
+				gchtml += '<input onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="label_' + i + '"/>';
+				gchtml	+= '</div>'
+				if($(".gcserie").length > 0){
+					gchtml += '<button style="margin-top:26px;" onclick="removeAxes(' + $(".gcserie").length + ')" class="btn red-mint btn-sm btn-outline uppercase"><i class="la la-trash"></i> REMOVE </button>';
+				}
+				gchtml	+= '</div>';
+				$("#configGadget").append(gchtml);
+				$("#position_" + i).val(axis.position);
+				$("#type_" + i).val(axis.type);
+				$("#label_" + i).val(axis.scaleLabel.labelString);
+			}
+			if(!jsonConfig.scales.yAxes.length){
+				var i = 0;
+				var gchtml = '';
+				gchtml += '<div class="gcserie col-md-12">';
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">ID</label>';
+				gchtml += '<input disabled="disabled" class="form-control axis_id" data-live-search="true" data-width="100%" id="axis_id_' + i + '" value="#' + i + '"/>';
+				gchtml	+= '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">Position</label>';
+				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="position_' + i + '"><option selected="selected" value="left">left</option><option value="right">right</option></select>';
+				gchtml	+= '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">Type</label>';
+				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="type_' + i + '"><option selected="selected" value="linear">linear</option><option value="logarithmic">logarithmic</option></select>';
+				gchtml	+= '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">Axis Label</label>';
+				gchtml += '<input onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="label_' + i + '"/>';
+				gchtml	+= '</div>'
+				$("#configGadget").html(gchtml);
+			}
+			
+		}
 		$.get("/controlpanel/datasources/getSampleDatasource/" + $("#datasources").val(), function (jsonString){
 			
 			if ( $('#measuresContainer').hasClass('hide') === true ){ $('#measuresContainer').removeClass('hide'); $('#viewer').removeClass('hide'); }
@@ -659,6 +823,19 @@
 						$("#s_" + i + "_" + f).val(fieldAux);
 					}
 				}
+				var gsoptions = $($(".gserie").get(i)).find(".gsoption");
+				for(var gc =0; gc < gsoptions.length; gc++){
+					//property not found
+					if(!config.config || !(stt.series.options[gc].jsonFields[0] in config.config)){
+						continue;
+					}
+					$(gsoptions[gc]).val(config.config[stt.series.options[gc].jsonFields[0]]);
+					if(gsoptions[gc].type === "checkbox"){
+						gsoptions[gc].checked = gsoptions[gc].value === "true";
+						gsoptions[gc].value = "on"
+					}
+				}
+
 				$("#n_" + i).val(config.name);
 			}
 			
