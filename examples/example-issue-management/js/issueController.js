@@ -5,7 +5,7 @@ var IssueController = function() {
 	
 	var url = "http://localhost:8081/iotbroker/message";
 	var ontology = 'Ticket';
-	var device = 'Ticketing';
+	var device = 'Ticketing App';
 	var token= 'e7ef0742d09d4de5a3687f0cfdf7f626';
 	var deviceInstance = new Date();
 	var config ={};
@@ -30,7 +30,7 @@ var IssueController = function() {
 		
 		
 		var data ={'Ticket':{}};
-		var coordinates = {'coordinates': {'0':0.0,'1':0.0}, 'type' : 'Point'};
+		var coordinates = {'coordinates': {}, 'type' : 'Point'};
 		var media ={'data': '', 'media':{}};
 		data['Ticket']['Identification']=$('#issue').val();
 		data['Ticket']['Status'] = 'PENDING';
@@ -38,8 +38,8 @@ var IssueController = function() {
 		data['Ticket']['Name']=$('#name').val();
 		data['Ticket']['Response_via']=$('#requesttype').val();
 		
-		coordinates['coordinates']['0'] =parseFloat($('#longitude').val());	
-		coordinates['coordinates']['1'] = parseFloat($('#latitude').val());
+		coordinates['coordinates']['0']=parseFloat($('#longitude').val());	
+		coordinates['coordinates']['1']= parseFloat($('#latitude').val());
 		
 		data['Ticket']['Coordinates']= coordinates;
 	
@@ -53,8 +53,6 @@ var IssueController = function() {
 			media['media']['binaryEncoding'] = 'Base64';
 			media['media']['mime'] = 'image/png';
 			data['Ticket']['File'] = media;
-		}else {
-			data['Ticket']['File']= null;
 		}
 		
 		

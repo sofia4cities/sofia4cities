@@ -13,18 +13,14 @@
  */
 package com.indracompany.sofia2.iotbroker.processor.impl;
 
-import java.time.ZoneId;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
@@ -33,7 +29,6 @@ import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
-import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
@@ -66,15 +61,13 @@ public class InsertProcessor implements MessageTypeProcessor {
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws BaseException {
 		@SuppressWarnings("unchecked")
-		final
-		SSAPMessage<SSAPBodyInsertMessage> insertMessage = (SSAPMessage<SSAPBodyInsertMessage>) message;
+		final SSAPMessage<SSAPBodyInsertMessage> insertMessage = (SSAPMessage<SSAPBodyInsertMessage>) message;
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
 		// TODO: Client Connection in contextData
-		
+
 		final Optional<IoTSession> session = securityPluginManager.getSession(insertMessage.getSessionKey());
 
-		
 		String user = null;
 		String clientPlatformId = null;
 		String clientPlatformInstance = null;
@@ -83,37 +76,35 @@ public class InsertProcessor implements MessageTypeProcessor {
 			clientPlatformId = session.get().getClientPlatform();
 			clientPlatformInstance = session.get().getClientPlatformInstance();
 		}
-		
-		final OperationModel model = OperationModel.builder(
-				insertMessage.getBody().getOntology(), 
-				OperationType.POST, 
-				user, 
-				Source.IOTBROKER)
-				.body(insertMessage.getBody().getData().toString())
-				.queryType(QueryType.NATIVE)
-				.clientPlatformId(clientPlatformId)
-				.clientPlatformInstance(clientPlatformInstance)
-				.clientSession(insertMessage.getSessionKey())
-				.clientConnection("")
-				.build();
 
-		final NotificationModel modelNotification= new NotificationModel();
+		final OperationModel model = OperationModel
+				.builder(insertMessage.getBody().getOntology(), OperationType.POST, user, Source.IOTBROKER)
+				.body(insertMessage.getBody().getData().toString()).queryType(QueryType.NATIVE)
+				.clientPlatformId(clientPlatformId).clientPlatformInstance(clientPlatformInstance)
+				.clientSession(insertMessage.getSessionKey()).clientConnection("").build();
+
+		final NotificationModel modelNotification = new NotificationModel();
 		modelNotification.setOperationModel(model);
 
 		String repositoryResponse = "";
 		try {
 			final OperationResultModel result = routerService.insert(modelNotification);
-			repositoryResponse = result.getResult();
+			if (!result.getResult().equals("ERROR")) {
+				repositoryResponse = result.getResult();
 
-			responseMessage.setDirection(SSAPMessageDirection.RESPONSE);
-			responseMessage.setMessageId(insertMessage.getMessageId());
-			responseMessage.setMessageType(insertMessage.getMessageType());
-			//			responseMessage.setOntology(insertMessage.getOntology());
-			responseMessage.setSessionKey(insertMessage.getSessionKey());
-			responseMessage.setBody(new SSAPBodyReturnMessage());
-			responseMessage.getBody().setOk(true);
+				responseMessage.setDirection(SSAPMessageDirection.RESPONSE);
+				responseMessage.setMessageId(insertMessage.getMessageId());
+				responseMessage.setMessageType(insertMessage.getMessageType());
+				// responseMessage.setOntology(insertMessage.getOntology());
+				responseMessage.setSessionKey(insertMessage.getSessionKey());
+				responseMessage.setBody(new SSAPBodyReturnMessage());
+				responseMessage.getBody().setOk(true);
 
-			responseMessage.getBody().setData(objectMapper.readTree("{\"id\":\""+repositoryResponse+"\"}"));
+				responseMessage.getBody().setData(objectMapper.readTree("{\"id\":\"" + repositoryResponse + "\"}"));
+			} else {
+				log.error(result.getMessage());
+				throw new SSAPProcessorException(result.getMessage());
+			}
 
 		} catch (final Exception e1) {
 			log.error("Error processing Insert", e1);
@@ -134,8 +125,9 @@ public class InsertProcessor implements MessageTypeProcessor {
 
 		final SSAPMessage<SSAPBodyInsertMessage> insertMessage = (SSAPMessage<SSAPBodyInsertMessage>) message;
 
-		if(insertMessage.getBody().getData() == null || insertMessage.getBody().getData().isNull() ) {
-			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "data", insertMessage.getMessageType().name()));
+		if (insertMessage.getBody().getData() == null || insertMessage.getBody().getData().isNull()) {
+			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "data",
+					insertMessage.getMessageType().name()));
 		}
 		return true;
 	}
