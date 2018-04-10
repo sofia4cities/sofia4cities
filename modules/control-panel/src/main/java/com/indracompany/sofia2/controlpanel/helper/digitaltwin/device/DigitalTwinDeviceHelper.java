@@ -256,7 +256,7 @@ public class DigitalTwinDeviceHelper {
 		
 		
 		//Removes the directory
-		this.deleteDirectory(fileProjectDirectory);
+	//	this.deleteDirectory(fileProjectDirectory);
 		
 		return zipFile;
 	}
