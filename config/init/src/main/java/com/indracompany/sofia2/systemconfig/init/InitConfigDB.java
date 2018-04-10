@@ -52,7 +52,6 @@ import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
-import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetState;
 import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
@@ -131,7 +130,7 @@ public class InitConfigDB {
 
 	@Autowired
 	UserTokenRepository userTokenRepository;
-	
+
 	@Autowired
 	MarketAssetRepository marketAssetRepository;
 
@@ -189,7 +188,7 @@ public class InitConfigDB {
 
 		init_FlowDomain();
 		log.info("OK init_FlowDomain");
-		
+
 		init_market();
 		log.info("OK init_Market");
 	}
@@ -410,11 +409,13 @@ public class InitConfigDB {
 
 	private String loadFromResources(String name) {
 		try {
-			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),	Charset.forName("UTF-8"));
+			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
+					Charset.forName("UTF-8"));
 
 		} catch (Exception e) {
 			try {
-				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(), Charset.forName("UTF-8"));
+				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(),
+						Charset.forName("UTF-8"));
 			} catch (IOException e1) {
 				log.error("**********************************************");
 				log.error("Error loading resource: " + name + ".Please check if this error affect your database");
@@ -423,7 +424,7 @@ public class InitConfigDB {
 			}
 		}
 	}
-	
+
 	private byte[] loadFileFromResources(String name) {
 		try {
 			return Files.readAllBytes((Paths.get(getClass().getClassLoader().getResource(name).toURI())));
@@ -829,7 +830,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			List<DataModel> dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_TweetSentiment.json"));
@@ -840,7 +845,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_GeoAirQuality.json"));
@@ -851,7 +860,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_CityPopulation.json"));
@@ -863,7 +876,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_AirQuality_gr2.json"));
@@ -874,7 +891,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_AirQuality.json"));
@@ -885,7 +906,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_AirCOMeter.json"));
@@ -896,7 +921,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 		}
 
@@ -1140,32 +1169,32 @@ public class InitConfigDB {
 			}
 		}
 	}
-	
+
 	public void init_market() {
 		log.info("init MarketPlace");
 		List<MarketAsset> marketAssets = this.marketAssetRepository.findAll();
 		if (marketAssets.isEmpty()) {
 			log.info("No market Assets...adding");
 			MarketAsset marketAsset = new MarketAsset();
-			
+
 			marketAsset.setId("1");
 			marketAsset.setIdentification("TEST");
-			
+
 			marketAsset.setUser(getUserDeveloper());
 
 			marketAsset.setPublic(true);
 			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
 			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
-			
+
 			marketAsset.setJsonDesc(loadFromResources("market/marketAsset_TEST.json"));
-						
+
 			marketAsset.setContent(loadFileFromResources("market/README.md"));
 			marketAsset.setContentId("README.md");
-			
+
 			marketAsset.setImage(loadFileFromResources("market/population.png"));
 			marketAsset.setImageType("population.png");
-			
+
 			marketAssetRepository.save(marketAsset);
 		}
 	}
