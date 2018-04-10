@@ -149,6 +149,12 @@ public class Ontology extends AuditableEntityWithUUID {
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private RtdbDatasource rtdbDatasource = Ontology.RtdbDatasource.Mongo;
+	
+	@Column(name = "ALLOW_CYPHERED_FIELD", nullable = false)
+	@NotNull
+	@Getter
+	@Setter
+	private boolean allowsCypheredFields;
 
 	public void addOntologyUserAccess(OntologyUserAccess ontologyUserAccess) {
 		ontologyUserAccess.setOntology(this);
