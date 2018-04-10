@@ -65,7 +65,8 @@ public class RouterFlowDigitalTwinManagerService {
 					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.REGISTER.name()) ||
 					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.RULE.name()) ||
 					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.FLOW.name()) ||
-					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.NOTEBOOK.name())) {
+					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.NOTEBOOK.name())||
+					EVENT.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name())) {
 				OperationResultModel result = routerDigitalTwinOpsServiceImpl.insertEvent(compositeModel);
 				compositeModel.setOperationResultModel(result);
 				

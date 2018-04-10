@@ -134,9 +134,14 @@
 													<div class="col-md-2 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" th:text="#{simulation.clientplatform} + ':'">Platform Clients</label>
-															<select th:required="true"  th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="form-control" th:classappend="${simulation.id != null} ? select:selectpicker" data-live-search="true" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
-																<option th:each=" platformClient : ${platformClients}" th:value="${platformClient}" th:text="${platformClient}"/>																
-															</select>										
+															<th:block th:if="${simulation.id != null}">
+																<input type="text" th:name="clientPlatform" id="clientPlatforms" readonly="true" th:required="true" class="form-control" th:value="${simulation.clientPlatform.identification}"/>															
+															</th:block>
+															<th:block th:if="${simulation.id == null}">
+																<select th:required="true"  th:name="clientPlatform" id="clientPlatforms" data-width="100%" class="form-control" th:classappend="${simulation.id != null} ? select:selectpicker" data-live-search="true" onchange="getTokensAndOntologies()" th:title="#{simulation.clients}" >
+																	<option th:each=" platformClient : ${platformClients}" th:value="${platformClient}" th:text="${platformClient}"/>																
+																</select>																											
+															</th:block>										
 															
 														</div>
 													</div>
@@ -144,20 +149,28 @@
 													<div th:fragment="ontologiesAndTokens" >
 														<div class="col-md-3 col-sm-6 col-xs-12">
 															<div class="form-group">
-																<label class="control-label" th:text="#{simulation.select.tokens} + ':'">Tokens</label>
-																<select th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulation.tokens}"  >
-																<option th:each="token : ${tokens}" th:value="${token}" th:text="${token}"/>
-																</select>									
-																									
+															<label class="control-label" th:text="#{simulation.select.tokens} + ':'">Tokens</label>
+															<th:block th:if="${simulation?.id != null}">
+																<input th:name="token" type="text" id="tokens" readonly="true" th:required="true" class="form-control" th:value="${simulation.token.token}"/>															
+															</th:block>
+															<th:block th:if="${simulation == null}">																
+																	<select th:name="token"  id="tokens" th:required="true"  data-width="100%" data-live-search="true" class="select form-control" th:title="#{simulation.tokens}"  >
+																	<option th:each="token : ${tokens}" th:value="${token}" th:text="${token}"/>
+																	</select>				
+															</th:block>												
 															</div>
 														</div>
 														<div class="col-md-2 col-sm-6 col-xs-12">
 															<div class="form-group">
 																<label class="control-label" th:text="#{simulation.select.ontologies} + ':'">Ontologies</label>
-																<select th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
-																<option th:each="ontology : ${ontologies}" th:value="${ontology}" th:text="${ontology}"/>
-																</select>									
-																										
+																<th:block th:if="${simulation?.id != null}">
+																	<input th:name="ontology" id="ontologies" type="text" readonly="true" th:required="true" class="form-control" th:value="${simulation.ontology.identification}"/>															
+																</th:block>
+																<th:block th:if="${simulation == null}">
+																	<select th:required="true" th:name="ontology" th:title="#{simulation.ontologies}" id="ontologies" data-width="100%" data-live-search="true" onchange="getOntologyFields()" class="select form-control" >
+																	<option th:each="ontology : ${ontologies}" th:value="${ontology}" th:text="${ontology}"/>
+																	</select>									
+																</th:block>						
 															</div>
 														</div>														
 													</div>
