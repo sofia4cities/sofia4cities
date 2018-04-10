@@ -72,13 +72,6 @@ spring: ## General Config
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update 
       properties.hibernate.enable_lazy_load_no_trans: true
-   mail: ##Mail configuration
-      host: smtp.gmail.com
-      username: sofia4cities@gmail.com
-      password: ----
-      port: 587
-      properties.mail.smtp.auth: true
-      properties.mail.smtp.starttls.enable: true
    jmx:
     enabled: true
 
