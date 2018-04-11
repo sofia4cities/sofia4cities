@@ -35,7 +35,3 @@ sofia2: #Config Sofia2 FlowEngine specific
                min: 7000
                max: 7500
          home.base: /tmp/
-   webproject:
-         rootfolder.path: /usr/local/webprojects/
-         baseurl: https://localhost:18080/controlpanel/webprojects/
-

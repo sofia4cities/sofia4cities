@@ -7,7 +7,10 @@ sofia2:
    flowengine.services:
     request.timeout.ms: 5000
     baseurl: http://flowengineservice:8082/flowengine/admin   
-    proxyurl: https://${SERVER_NAME}/nodered/             
+    proxyurl: https://${SERVER_NAME}/nodered/    
+   webproject:
+      rootfolder.path: /usr/local/webprojects/
+      baseurl: http:///${SERVER_NAME}/controlpanel/webprojects/               
 
 spring:
    datasource:  
