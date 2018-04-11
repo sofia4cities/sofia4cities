@@ -8,5 +8,6 @@
   window.__env.dashboardEngineUsername = 'administrator';
   window.__env.dashboardEnginePassword = 'changeIt!';
   window.__env.dashboardEngineLoginRest = '/loginRest';
+  window.__env.dashboardEngineLoginRestTimeout = 5000;
   window.__env.enableDebug = false;
 }(this));

@@ -302,6 +302,86 @@ var HeaderController = function() {
 		});
 
 	}
+	
+	// DIGITALTWINTYPE-CONFIRM-DIALOG
+	var showConfirmDialogDigitalTwinType = function(formId){		
+		logControl ? console.log('showConfirmDialogDigitalTwinType()...') : '';
+
+		// i18 labels
+		var Remove = headerReg.btnEliminar;
+		var Close = headerReg.btnCancelar;
+		var Content = headerReg.digitalTwinTypeConfirm;
+		var Title = headerReg.titleConfirm + ':';		
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			type: 'red',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+
+	}
+	
+	// DIGITALTWINdevice-CONFIRM-DIALOG
+	var showConfirmDialogDigitalTwinDevice = function(formId){		
+		logControl ? console.log('showConfirmDialogDigitalTwinDevice()...') : '';
+
+		// i18 labels
+		var Remove = headerReg.btnEliminar;
+		var Close = headerReg.btnCancelar;
+		var Content = headerReg.digitalTwinDeviceConfirm;
+		var Title = headerReg.titleConfirm + ':';		
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			type: 'red',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+
+	}
 
 	// USER-CONFIRM-DIALOG
 	var showConfirmDialogUsuario = function(formId){	
@@ -414,6 +494,43 @@ var HeaderController = function() {
 		});
 	}
 	
+	// GADGET-CONFIRM-DIALOG
+	var showConfirmDialogGadgetTemplate = function(formId){	
+
+		//i18 labels
+		var Close = headerReg.btnCancelar;
+		var Remove = headerReg.btnEliminar;
+		var Content = headerReg.gadgetTemplateConfirm;
+		var Title = headerReg.titleConfirm + ':';
+
+		// jquery-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}											
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});
+	}
+	
 	// DASHBOARDS-CONFIRM-DIALOG
 	var showConfirmDialogDashboard = function(formId){	
 
@@ -489,17 +606,15 @@ var HeaderController = function() {
 	}	
 	
 	// SERVER ERRORS-DIALOG
-	var messages = function(){		
+	var errors = function(){		
 		var Close = headerReg.btnCancelar;
-		var infoTitle = headerReg.informationtitle;
-		if ( headerReg.messages !== null ){			
+		if ( headerReg.errores !== null ){			
 			// jquery-confirm DIALOG SYSTEM.
 			$.confirm({
-				icon: 'fa fa-info-circle',
-				title: infoTitle + ':',
+				icon: 'fa fa-bug',
+				title: 'ERROR',
 				theme: 'dark',
-				type: 'blue',
-				content: headerReg.messages,
+				content: headerReg.errores,
 				draggable: true,
 				dragWindowGap: 100,
 				backgroundDismiss: true,
@@ -512,7 +627,7 @@ var HeaderController = function() {
 					}
 				}
 			});			
-		} else { logControl ? console.log('|---> messages() -> NO MESSAGES FROM SERVER.') : ''; }		
+		} else { logControl ? console.log('|---> errors() -> NO ERRORS FROM SERVER.') : ''; }		
 	}
 
 	// SERVER INFORMATION-DIALOG (ERRORS)
@@ -556,8 +671,8 @@ var HeaderController = function() {
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 
-			// CALL MESSAGES/ERRORS
-			messages();			
+			// CALL ERRORS
+			errors();			
 			// CALL INFO
 			information();
 		},
@@ -604,6 +719,16 @@ var HeaderController = function() {
 			logControl ? console.log('showConfirmDialogOntologia()...') : '';
 			showConfirmDialogOntologia(formId);
 		},
+		// DIGITALTWINTYPE-CONFIRM-DIALOG
+		showConfirmDialogDigitalTwinType : function(formId){		
+			logControl ? console.log('showConfirmDialogDigitalTwinType()...') : '';
+			showConfirmDialogDigitalTwinType(formId);
+		},
+		// DIGITALTWINTYPE-CONFIRM-DIALOG
+		showConfirmDialogDigitalTwinDevice : function(formId){		
+			logControl ? console.log('showConfirmDialogDigitalTwinDevice()...') : '';
+			showConfirmDialogDigitalTwinDevice(formId);
+		},
 		showTwitterListeningConfirmDialog: function(formId){		
 			logControl ? console.log('showTwitterListeningConfirmDialog()...') : '';
 			showTwitterListeningConfirmDialog(formId);
@@ -646,7 +771,12 @@ var HeaderController = function() {
 		showConfirmDialogDevice: function(formId){		
 			logControl ? console.log('showConfirmDialogDevice()...') : '';
 			showConfirmDialogDevice(formId);
+		},// GADGET-CONFIRM-DIALOG
+		showConfirmDialogGadgetTemplate : function(formId){		
+			logControl ? console.log('showConfirmDialogGadgetTemplate()...') : '';
+			showConfirmDialogGadgetTemplate(formId);
 		},
+			
 		
 	};
 }();

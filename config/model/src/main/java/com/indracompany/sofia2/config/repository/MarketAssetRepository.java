@@ -30,10 +30,16 @@ import com.indracompany.sofia2.config.model.MarketAsset;
 
 public interface MarketAssetRepository extends JpaRepository<MarketAsset, String> {
 
+	@Query("SELECT o FROM MarketAsset AS o WHERE (o.id = :id AND o.deletedAt = null)")
 	MarketAsset findById(@Param("id") String id);
+	
+	@Query("SELECT o FROM MarketAsset AS o WHERE (o.identification = :marketAssetId AND o.deletedAt = null) order by o.identification")
 	MarketAsset findByIdentification(@Param("marketAssetId") String marketAssetId);
 	
-	@Query("SELECT o FROM MarketAsset AS o WHERE (o.identification LIKE %:marketAssetId%)")
+	@Query("SELECT o FROM MarketAsset AS o WHERE (o.identification LIKE %:marketAssetId% AND o.deletedAt = null) order by o.identification")
 	List<MarketAsset> findByIdentificationLike(@Param("marketAssetId") String marketAssetId);
+	
+	@Query("SELECT o.jsonDesc FROM MarketAsset AS o WHERE (o.deletedAt = null)")
+	List<String> findJsonDescs();
 	
 }

@@ -27,6 +27,11 @@ import lombok.Setter;
 
 public class ApiHeaderDTO implements Cloneable, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@ApiModelProperty(value = "Header Name")
 	@Getter
 	@Setter

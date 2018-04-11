@@ -16,10 +16,16 @@ package com.indracompany.sofia2.controlpanel.helper.market;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
@@ -31,11 +37,18 @@ import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserComment;
+import com.indracompany.sofia2.config.model.UserRatings;
 import com.indracompany.sofia2.config.repository.ApiRepository;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
+import com.indracompany.sofia2.config.repository.UserCommentRepository;
+import com.indracompany.sofia2.config.repository.UserRatingsRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.multipart.MarketAssetMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,14 +63,27 @@ public class MarketAssetHelper {
 	private MarketAssetRepository marketAssetRepository;
 	
 	@Autowired
+	UserRatingsRepository userRatingsRepository;
+	
+	@Autowired
+	UserCommentRepository userCommentRepository;
+	
+	@Autowired
+	IntegrationResourcesService resourcesService;
+	
+	@Autowired
 	UserService userService;
 	
 	@Autowired
 	AppWebUtils utils;
+	
+	@Value("${apimanager.services.api:/api-manager/services}")
+	private String apiServices;
 
 	public void populateMarketAssetListForm(Model model) {
 		model.addAttribute("marketassettypes", MarketAsset.MarketAssetType.values());
 		model.addAttribute("marketassetmodes", MarketAsset.MarketAssetPaymentMode.values());
+		model.addAttribute("technologies", getTechnologies());
 	}
 
 	public void populateMarketAssetCreateForm(Model model) {
@@ -66,8 +92,16 @@ public class MarketAssetHelper {
 		model.addAttribute("marketassetmodes", MarketAsset.MarketAssetPaymentMode.values());
 	}
 
-	public void populateMarketAssetUpdateForm(Model model, String id) {
+	public void populateMarketAssetUpdateForm(Model model, String id) throws Exception {
+		User user = this.userService.getUser(utils.getUserId());
+		
 		MarketAsset marketAsset = marketAssetRepository.findById(id);
+		
+		// If the user is not the owner nor Admin an exception is launch to redirect to show view
+		if (!marketAsset.getUser().equals(user) && !user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
+			throw new Exception();
+		}
+		
 		model.addAttribute("marketasset", marketAsset);
 		model.addAttribute("marketassettypes", MarketAsset.MarketAssetType.values());
 		model.addAttribute("marketassetmodes", MarketAsset.MarketAssetPaymentMode.values());
@@ -76,9 +110,40 @@ public class MarketAssetHelper {
 	}
 
 	public void populateMarketAssetShowForm(Model model, String id) {
+		//Asset to show
 		MarketAsset marketAsset = marketAssetRepository.findById(id);
+		
 		model.addAttribute("marketasset", marketAsset);
 		model.addAttribute("json_desc", marketAsset.getJsonDesc());
+		
+		//User Asset Market Rating
+		List<UserRatings> userRatings = userRatingsRepository.findByMarketAssetAndUser(id, utils.getUserId());
+		if (userRatings!=null && userRatings.size()>0) {
+			model.addAttribute("userRating", userRatings.get(0).getValue());
+		}
+
+		//Asset Market Rating
+		Double ratingMarketAsset = 0.0;
+		List<UserRatings> usersRatingsMarketAssets = userRatingsRepository.findByMarketAsset(id);
+
+		for (UserRatings usersRatingsMarketAsset : usersRatingsMarketAssets) {
+			ratingMarketAsset = ratingMarketAsset + usersRatingsMarketAsset.getValue();
+		}
+		
+		if (usersRatingsMarketAssets.size()>0) {
+			ratingMarketAsset = ratingMarketAsset / usersRatingsMarketAssets.size();
+		} else {
+			ratingMarketAsset = 5.0;
+		}		
+		model.addAttribute("marketassetRating", ratingMarketAsset.intValue());
+
+		//Asset Comments
+		List<UserComment> usersComments = userCommentRepository.findByMarketAsset(id);
+		model.addAttribute("commentsList", usersComments);
+		model.addAttribute("commentsNumber", usersComments.size());
+		
+		//Technologies
+		model.addAttribute("technologies", getTechnologies());
 	}
 
 	public void populateMarketAssetFragment(Model model, String type) {
@@ -98,13 +163,11 @@ public class MarketAssetHelper {
 			List<Api> apis = getApisIds(apiList);
 			
 			model.addAttribute("apis", apis);
-			
-		} else if (type.equals(MarketAsset.MarketAssetType.DOCUMENT.toString())){
-			
-		} else if (type.equals(MarketAsset.MarketAssetType.APPLICATION.toString())){
-			
+		
 		} else if (type.equals(MarketAsset.MarketAssetType.WEBPROJECT.toString())){
-			
+		} else if (type.equals(MarketAsset.MarketAssetType.DOCUMENT.toString())){
+		} else if (type.equals(MarketAsset.MarketAssetType.APPLICATION.toString())){
+		} else if (type.equals(MarketAsset.MarketAssetType.URLAPPLICATION.toString())){
 		}
 
 	}
@@ -134,11 +197,6 @@ public class MarketAssetHelper {
 		
 		model.addAttribute("apis", apis);
 	}
-
-//	public void populateApiDescription(Model model, String identification, String version) {
-//		List<Api> apis = apiRepository.findByIdentificationAndNumversion(identification, Integer.parseInt(version));
-//		model.addAttribute("api", apis);
-//	}
 	
 	public String getApiDescription(String apiData) {
 		List<Api> apis = null;
@@ -157,7 +215,19 @@ public class MarketAssetHelper {
 		} catch (IOException e) {
 			log.warn(e.getClass().getName() + ":" + e.getMessage());
 		}
-		return (apis.get(0).getDescription());
+		
+		String srcSwagger = resourcesService.getUrl(Module.apiManager, ServiceUrl.base) + "swagger-ui.html?url=" + apiServices + "/management/swagger/" + apis.get(0).getIdentification() + "/swagger.json"; 
+		
+		JSONObject returnObject = new JSONObject();
+		
+		try {
+			returnObject.put("description",apis.get(0).getDescription());
+			returnObject.put("srcSwagger",srcSwagger);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return (returnObject.toString());
 	}
 	
 	public String validateId(String marketAssetId) {
@@ -178,7 +248,6 @@ public class MarketAssetHelper {
 		return null;
 	}
 
-
 	public MarketAsset marketAssetMultipartMap(MarketAssetMultipart marketAssetMultipart) {
 
 		MarketAsset marketAsset = new MarketAsset();
@@ -195,13 +264,13 @@ public class MarketAssetHelper {
 		marketAsset.setJsonDesc(marketAssetMultipart.getJsonDesc().toString());
 		
 		try {
-			if (marketAssetMultipart.getContent()!=null) {
+			if (marketAssetMultipart.getContentId()!=null && !"".equals(marketAssetMultipart.getContentId())) {
 				marketAsset.setContent(marketAssetMultipart.getContent().getBytes());
-				marketAsset.setContentType(getFileExt(marketAssetMultipart.getContent().getOriginalFilename()));
+				marketAsset.setContentId(marketAssetMultipart.getContentId());
 			}
 			if (marketAssetMultipart.getImage()!=null) {
 				marketAsset.setImage(marketAssetMultipart.getImage().getBytes());
-				marketAsset.setImageType(getFileExt(marketAssetMultipart.getImage().getOriginalFilename()));
+				marketAsset.setImageType(marketAssetMultipart.getImageType());
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
@@ -211,10 +280,6 @@ public class MarketAssetHelper {
 		marketAsset.setUpdatedAt(marketAssetMultipart.getUpdatedAt());
 
 		return marketAsset;
-	}
-
-	private String getFileExt(String originalFilename) {
-		return originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
 	}
 
 	public List<MarketAssetDTO> toMarketAssetBean(List<MarketAsset> marketAssetList) {
@@ -227,10 +292,11 @@ public class MarketAssetHelper {
 			marketAssetDTO.setId(marketAsset.getId());
 			marketAssetDTO.setIdentification(marketAsset.getIdentification());
 			
-			marketAssetDTO.setUser(this.userService.getUser(utils.getUserId()));
+			marketAssetDTO.setUser(marketAsset.getUser());
 
 			marketAssetDTO.setPublic(marketAsset.isPublic());
 			marketAssetDTO.setState(marketAsset.getState());
+			marketAssetDTO.setRejectionReason(marketAsset.getRejectionReason());
 			marketAssetDTO.setMarketAssetType(marketAsset.getMarketAssetType());
 			marketAssetDTO.setPaymentMode(marketAsset.getPaymentMode());
 			marketAssetDTO.setJsonDesc(marketAsset.getJsonDesc().toString());
@@ -259,6 +325,28 @@ public class MarketAssetHelper {
 			marketAssetDTOList.add(marketAssetDTO);
 		}
 		return marketAssetDTOList;
+	}
+	
+	private Collection<String> getTechnologies() {
+		List<String> jsonDescArray = marketAssetRepository.findJsonDescs();
+		HashMap<String, String> technologiesMap = new HashMap<String, String>();
+		
+		Map<String, String> obj;
+		for (String jsonDesc : jsonDescArray) {
+			try {
+				obj = new ObjectMapper().readValue(jsonDesc, new TypeReference<Map<String, String>>(){});
+				
+				String technologies = obj.get("technologies").trim();
+				List<String> technologiesList = new ArrayList<String>(Arrays.asList(technologies.split(",")));
+				
+				for (String technology : technologiesList) {
+					technologiesMap.put(technology.toUpperCase(), technology.toUpperCase());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}		
+		}
+		return (technologiesMap.values());
 	}
 
 }

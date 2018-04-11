@@ -27,7 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.ConfigurationType;
+import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.TwitterListening;
@@ -65,8 +65,8 @@ public class TwitterServiceIntegrationTest {
 		if (twitterListeningService.getListenByIdentificator("Listening Test") == null) {
 			twitterListening = new TwitterListening();
 			twitterListening.setId("1");
-			twitterListening.setConfiguration(
-					configurationService.getConfiguration(ConfigurationType.Type.TwitterConfiguration, "ALL", null));
+			twitterListening.setConfiguration(configurationService
+					.getConfiguration(Configuration.Type.TwitterConfiguration, "default", "lmgracia"));
 
 			User user = userService.getUser("administrator");
 			if (this.ontologyService.getOntologyByIdentification("OntologyTwitter", user.getUserId()) == null) {

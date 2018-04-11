@@ -16,6 +16,7 @@ package com.indracompany.sofia2.controlpanel.controller.market;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.indracompany.sofia2.config.services.exceptions.ApiManagerServiceException;
 import com.indracompany.sofia2.config.services.market.MarketAssetService;
 import com.indracompany.sofia2.controlpanel.helper.market.MarketAssetHelper;
 import com.indracompany.sofia2.controlpanel.multipart.MarketAssetMultipart;
@@ -67,7 +66,12 @@ public class MarketAssetController {
 	@GetMapping(value = "/update/{id}")
 	public String updateForm(@PathVariable("id") String id, Model model) {
 
-		marketAssetHelper.populateMarketAssetUpdateForm(model, id);
+		try {
+			marketAssetHelper.populateMarketAssetUpdateForm(model, id);
+		} catch (Exception e) {
+			marketAssetHelper.populateMarketAssetShowForm(model, id);
+			return "marketasset/show";
+		}
 
 		return "marketasset/create";
 	}
@@ -105,7 +109,7 @@ public class MarketAssetController {
 			String apiId = marketAssetService.createMarketAsset(marketAssetHelper.marketAssetMultipartMap(marketAssetMultipart));
 
 			return "redirect:/marketasset/show/" + utils.encodeUrlPathSegment(apiId, request);
-		} catch (ApiManagerServiceException e) {
+		} catch (Exception e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
 			return "redirect:/marketasset/create";
@@ -113,8 +117,8 @@ public class MarketAssetController {
 	}
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-	@PutMapping(value="/update/{id}", produces = "text/html")
-	public String update(@PathVariable("id") String id, MarketAssetMultipart marketAssetMultipart, BindingResult bindingResult, RedirectAttributes redirect) {
+	@PostMapping(value="/update/{id}")
+	public String update(@PathVariable("id") String id, MarketAssetMultipart marketAssetMultipart, MultipartHttpServletRequest request, BindingResult bindingResult, RedirectAttributes redirect) {
 
 		if (bindingResult.hasErrors()) {
 			utils.addRedirectMessage("api.update.error", redirect);
@@ -130,6 +134,48 @@ public class MarketAssetController {
 			utils.addRedirectMessage("api.update.error", redirect);
 			return "redirect:/marketasset/update";
 		}
+	}
+	
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+	@GetMapping(value = "/delete/{id}" , produces = "text/html")
+	public String delete(Model model, @PathVariable("id") String id) {		
+		
+		marketAssetService.delete(id, utils.getUserId());
+
+		return "redirect:/marketasset/list";
+	}
+	
+	@GetMapping(value = "/rateit/{id}/{rate}" , produces = "text/html")
+	public String rateit(Model model, @PathVariable("id") String id, @PathVariable("rate") String rate) {		
+		
+		marketAssetService.rate(id, rate, utils.getUserId());
+
+		return "redirect:/marketasset/show/" + id;
+	}
+	
+	@PostMapping(value="/comment")
+	public String comment(HttpServletRequest request, RedirectAttributes redirect) {
+		String id = request.getParameter("marketAssetId");
+		String title = request.getParameter("commentTitle");
+		String comment = request.getParameter("comment");
+		
+		try {
+			marketAssetService.createComment(id, utils.getUserId(), title, comment);
+
+			return "redirect:/marketasset/show/" + id;
+		} catch (Exception e) {
+			log.debug("Cannot update user that does not exist");
+			utils.addRedirectMessage("api.update.error", redirect);
+			return "redirect:/marketasset/show/" + id;
+		}
+	}
+	
+	@GetMapping(value = "/deletecomment/{marketassetid}/{id}" , produces = "text/html")
+	public String deletecomment(Model model, @PathVariable("marketassetid") String marketassetid, @PathVariable("id") String id) {		
+		
+		marketAssetService.deleteComment(id);
+
+		return "redirect:/marketasset/show/" + marketassetid;
 	}
 	
 	@GetMapping(value = "/invoke/{id}" , produces = "text/html")
@@ -194,10 +240,10 @@ public class MarketAssetController {
 		}
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
-	@GetMapping(value = "/updateState/{id}/{state}")
-	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, Model uiModel){
-		//apiManagerService.updateState(id, state);
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
+	@PostMapping(value = "/updateState/{id}/{state}")
+	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, @RequestBody String reasonData){
+		marketAssetService.updateState(id, state, reasonData);
 		return "redirect:/apimanager/list";
 	}
 	

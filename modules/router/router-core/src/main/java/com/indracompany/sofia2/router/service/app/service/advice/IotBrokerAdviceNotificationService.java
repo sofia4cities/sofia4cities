@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
 import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 import com.indracompany.sofia2.router.service.app.model.AdviceNotificationModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel.OperationType;
@@ -37,14 +39,14 @@ public class IotBrokerAdviceNotificationService implements AdviceNotificationSer
 	@Autowired
 	IntegrationResourcesService resourcesService;
 	
-	private static String ADVICE_URL="iot-broker.advice.url";
 	
 	@Override
 	public List<AdviceNotificationModel> getAdviceNotificationModel(String ontologyName, String messageType) {
 		
 		List<SuscriptionNotificationsModel>  listNotifications=null;
 		List<AdviceNotificationModel> model =null;
-		String baseUrl = resourcesService.getURL(ADVICE_URL);
+		String baseUrl = resourcesService.getUrl(Module.iotbroker, ServiceUrl.advice);
+		
 		
 		try {
 			listNotifications = repository.findAllByOntologyName(ontologyName);

@@ -150,7 +150,8 @@ public class GadgetServiceImpl implements GadgetService {
 	@Override
 	public List<GadgetMeasure> getGadgetMeasuresByGadgetId(String userID, String gadgetId) {
 		//User user = userRepository.findByUserId(userID);
-		Gadget gadget = gadgetRepository.findById(gadgetId);
+		
+		//Gadget gadget = gadgetRepository.findById(gadgetId);
 		List<GadgetMeasure> lgm = gadgetMeasureRepository.findByGadget(gadgetRepository.findById(gadgetId));
 		//if(user.getRole().getId().equals("ROLE_ADMINISTRATOR") || gadget.getUser().getUserId().equals(userID)) {
 			return lgm;

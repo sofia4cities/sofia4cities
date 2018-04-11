@@ -26,6 +26,14 @@ spring:
     client.metadata.user.password: $spring.boot.admin.password} 
     
 sofia2: #Config Sofia2 specific
+  database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300
   database.mongodb:
     database: sofia2_s4c
     authenticationDatabase:  #admin
@@ -61,6 +69,13 @@ sofia2: #Config Sofia2 specific
         subscription_topic: /topic/subscription
         command_topic: /topic/command
         inbound_topic: /queue/message
+        ssl:
+          enable: true
+          port: 8883
+          jks_path: develkeystore.jks
+          keystore_password: changeIt!
+          keymanager_passwrod: changeIt!
+        
       rest:
         enable: true
         swaggerhost: localhost:8081    

@@ -24,6 +24,8 @@ import com.indracompany.sofia2.router.service.app.model.NotificationCompositeMod
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
 
 public class RouterServiceGenerator {
 
@@ -32,13 +34,18 @@ public class RouterServiceGenerator {
 		final ObjectMapper mapper = new ObjectMapper();
 		final NotificationCompositeModel model = new NotificationCompositeModel();
 		model.setNotificationModel(new NotificationModel());
-		model.getNotificationModel().setOperationModel(new OperationModel());
-		model.getNotificationModel().getOperationModel().setBody(mapper.writeValueAsString(subject));
-		model.getNotificationModel().getOperationModel().setClientPlatformId(session.getClientPlatformID());
-		model.getNotificationModel().getOperationModel().setObjectId(UUID.randomUUID().toString());
-		model.getNotificationModel().getOperationModel().setOntologyName(Person.class.getSimpleName());
-		model.getNotificationModel().getOperationModel().setQueryType(OperationModel.QueryType.NATIVE);
-		model.getNotificationModel().getOperationModel().setUser(session.getUserID());
+		model.getNotificationModel().setOperationModel(OperationModel.builder(
+				Person.class.getSimpleName(), 
+				OperationModel.OperationType.QUERY, 
+				session.getUserID(), 
+				Source.IOTBROKER)
+				.body(mapper.writeValueAsString(subject))
+				.clientPlatformId(mapper.writeValueAsString(subject))
+				.queryType(QueryType.NATIVE)
+				.objectId(UUID.randomUUID().toString())
+				.build()
+				);
+
 		model.setNotificationEntityId(subscriptionId);
 		model.setOperationResultModel(new OperationResultModel());
 		model.getOperationResultModel().setErrorCode("");

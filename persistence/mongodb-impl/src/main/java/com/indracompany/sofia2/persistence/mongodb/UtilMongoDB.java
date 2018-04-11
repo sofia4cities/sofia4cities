@@ -205,11 +205,11 @@ public class UtilMongoDB {
 		return pInsert;
 	}
 
-	public ContextData buildMinimalContextData() {
-		ContextData contextData = new ContextData();
-		contextData.setTimezoneId(CalendarAdapter.getServerTimezoneId());
-		return contextData;
-	}
+//	public ContextData buildMinimalContextData() {
+//		ContextData contextData = new ContextData();
+//		contextData.setTimezoneId(CalendarAdapter.getServerTimezoneId());
+//		return contextData;
+//	}
 
 	public <T> Collection<T> toJavaCollection(MongoIterable<T> iterable) {
 		return toJavaList(iterable);

@@ -107,6 +107,7 @@
 										</a>
 									</li>																	
 									<li id="tab-autorizaciones" class=""><a href="#tab_2" data-toggle="tab" th:classappend="${ontology?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.authorizations}" >AUTORIZACIONES </span></a></li>
+									<li id="tab-advanced-options" class=""><a href="#tab_settings" data-toggle="tab" aria-expanded="true"><i class="flaticon-settings font-grey-gallery"></i> <span class="uppercase font-md" th:text="#{ontology.advancedsettings}" >Advanced Settings </span></a></li>
 								</ul>
 								
 							</div>
@@ -128,6 +129,7 @@
 												<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
 													<input id="datamodelid" class="hidden-validation" type="hidden" th:required="true" th:field="*{dataModel}" />											
 													<input id="jsonschema"  class="hidden-validation" type="hidden" th:required="true" th:field="*{jsonSchema}"  />
+													<input id="rtdb" name="rtdb" type="hidden" value="Mongo" th:field="*{rtdbDatasource}"/>
 													
 													
 													<!-- FORM ACTIONS FOR INSERT-->
@@ -227,6 +229,7 @@
 																		<ul class="nav nav-tabs pull-left">
 																			<li id="tab-plantilla" class="active"><a href="#tab_3" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span class="uppercase font-md" th:text="#{ontology.section.templates}">Ontology Templates</span></a></li>																	
 																			<li id="tab-esquema" class=""><a href="#tab_4" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.section.schema}">Schema Generator and JSON Instances</span></a></li>
+																		
 																		</ul>
 																	</div>
 																	<div class="portlet-body">
@@ -291,7 +294,7 @@
 																												<!-- <input type="text" name="type[]"   onblur="OntologyCreateController.checkType(this)" class="form-control" placeholder="[string, number, object, timestamp, binary]" /> -->
 																												<select name="type[]" class="form-control" onchange="OntologyCreateController.checkType(this)">																																																				<option value="string">string</option>
 																													<option value="number">number</option>
-																													<option value="object">object</option>
+																													<option value="geometry">geometry</option>
 																													<option value="timestamp">timestamp</option>
 																													<option value="binary">binary</option>																											
 																													<option value="array">array</option>
@@ -442,6 +445,23 @@
 											</div>
 										</div>
 									</div>
+									<!-- ONTOLOGY ADVANCED SETTINGS -->
+									<div class="tab-pane " id="tab_settings">
+										<div class="row">
+											<div class="col-md-4 col-sm-6 col-xs-12">
+											<!-- RTDB SELECTION -->
+												<div class="form-group">
+													<label class="control-label" th:text="#{ontology.rtdbinstance}">User</label>
+													<select id="rtdbInstance" class="selectpicker form-control" data-live-search="true" data-width="100%" onchange="OntologyCreateController.setRtdbDatasource()" >
+														<option th:each="rtdb :${rtdbs}" th:value="${rtdb}" th:text="${rtdb}" ></option>														
+													</select>
+										
+													<hr/>
+													<b th:text="#{ontology.rtdb.warning}">Warning!</b>
+												</div>
+											</div>
+										</div>									
+									</div>									
 								</div>							
 							</div>
 						</div><!-- END PORTLET BASIC  -->

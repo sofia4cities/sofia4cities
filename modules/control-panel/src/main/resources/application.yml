@@ -17,6 +17,14 @@ sofia2: #Config Sofia2 specific
    encription.key: sofia2
    devices:
       timeout_devices_inseconds:300
+   database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -30,13 +38,14 @@ sofia2: #Config Sofia2 specific
       password: #password
       readFromSecondaries: false
       queries.executionTimeout: 5000
-      queries.defaultLimit: 50
+      queries.defaultLimit: 500
       queries.maxConcurrentQueries: 3
       writeConcern: UNACKNOWLEDGED
       tools.mongoexport.path: mongoexport
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
+      digitaltwin.database: digital_twin
    urls:
     iotbroker: http://localhost:18080
     iotbroker.services: http://localhost:8080/sib/services
@@ -44,7 +53,7 @@ sofia2: #Config Sofia2 specific
       ssap: /ssap
    flowengine.services:
       request.timeout.ms: 5000
-      baseurl: http://localhost:18300/sofia2/flowengine/admin   
+      baseurl: http://localhost:8082/flowengine/admin   
       proxyurl: http://localhost:5050/
    controlpanel.avoidsslverification: true
  
@@ -111,3 +120,8 @@ logging:
    file: ${spring.application.name}
    level:
       com.indra: DEBUG
+      
+## Digital Twin
+digitaltwin:
+   temp.dir: /tmp
+   maven.exec.path: /usr/share/maven/bin/mvn

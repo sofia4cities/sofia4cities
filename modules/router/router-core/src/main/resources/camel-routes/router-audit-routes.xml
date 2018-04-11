@@ -11,7 +11,8 @@
 
 	<route id="start-hazelcast-queue-route" errorHandlerRef="defaultEH">
 		<from uri="hazelcast-queue:audit" />
-		<log message="Getting Message From queue foo ${body}" />
+		<log message="Store Audit Event ${body}" />
+		<to uri="bean:auditFlowManagerService?method=audit" />
 		
 	</route>
 

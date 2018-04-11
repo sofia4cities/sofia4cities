@@ -13,32 +13,27 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.audit.aop;
+
 import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.indracompany.sofia2.audit.Sofia2AuditEvent;
+import com.indracompany.sofia2.audit.producer.EventProducer;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 public class BaseAspect {
-	
+
 	private static ConcurrentHashMap<String, MethodStats> methodStats = new ConcurrentHashMap<String, MethodStats>();
 	private static long statLogFrequency = 10;
 	private static long methodWarningThreshold = 1000;
 	
-	
-	
+	@Autowired
+	protected EventProducer eventProducer;
 
 	public static Method getMethod(JoinPoint joinPoint) {
 
@@ -46,55 +41,73 @@ public class BaseAspect {
 		Method method = signature.getMethod();
 		return method;
 	}
-	
+
 	public static String getClassName(JoinPoint joinPoint) {
 
 		String method = joinPoint.getTarget().getClass().getName();
 		return method;
 	}
-    
-    
-    public void updateStats(String className, String methodName, long elapsedTime) {
-        MethodStats stats = methodStats.get(methodName);
-        
-        if(stats == null) {
-            stats = new MethodStats(className, methodName);
-            methodStats.put(methodName,stats);
-        }
-        stats.count++;
-        stats.totalTime += elapsedTime;
-        if(elapsedTime > stats.maxTime) {
-            stats.maxTime = elapsedTime;
-        }
-       
-        if(elapsedTime > methodWarningThreshold) {
-        	log.warn("method warning: Class : "+className +" Method: " + methodName + "(), cnt = " + stats.count + ", lastTime = " + elapsedTime + ", maxTime = " + stats.maxTime);
-        }
-       
-        if(stats.count % statLogFrequency == 0) {
-            long avgTime = stats.totalTime / stats.count;
-            long runningAvg = (stats.totalTime-stats.lastTotalTime) / statLogFrequency;
-            log.info(" Class : "+className +" Method : " + methodName + "(), cnt = " + stats.count + ", lastTime = " + elapsedTime + ", avgTime = " + avgTime + ", runningAvg = " + runningAvg + ", maxTime = " + stats.maxTime);
-           
-            //reset the last total time
-            stats.lastTotalTime = stats.totalTime;   
-        }
-        
-       // System.out.println("method debug: " + methodName + "(), cnt = " + stats.count + ", lastTime = " + elapsedTime + ", maxTime = " + stats.maxTime);
-    }
-   
-    class MethodStats {
-        public String methodName;
-        public String className;
-        public long count;
-        public long totalTime;
-        public long lastTotalTime;
-        public long maxTime;
-       
-        public MethodStats(String className, String methodName) {
-            this.className=className;
-        	this.methodName = methodName;
-        }
-    } 
+
+	public void updateStats(String className, String methodName, long elapsedTime) {
+		MethodStats stats = methodStats.get(methodName);
+
+		if (stats == null) {
+			stats = new MethodStats(className, methodName);
+			methodStats.put(methodName, stats);
+		}
+		stats.count++;
+		stats.totalTime += elapsedTime;
+		if (elapsedTime > stats.maxTime) {
+			stats.maxTime = elapsedTime;
+		}
+
+		if (elapsedTime > methodWarningThreshold) {
+			log.warn("method warning: Class : " + className + " Method: " + methodName + "(), cnt = " + stats.count
+					+ ", lastTime = " + elapsedTime + ", maxTime = " + stats.maxTime);
+		}
+
+		if (stats.count % statLogFrequency == 0) {
+			long avgTime = stats.totalTime / stats.count;
+			long runningAvg = (stats.totalTime - stats.lastTotalTime) / statLogFrequency;
+			log.info(" Class : " + className + " Method : " + methodName + "(), cnt = " + stats.count + ", lastTime = "
+					+ elapsedTime + ", avgTime = " + avgTime + ", runningAvg = " + runningAvg + ", maxTime = "
+					+ stats.maxTime);
+
+			// reset the last total time
+			stats.lastTotalTime = stats.totalTime;
+		}
+
+		// System.out.println("method debug: " + methodName + "(), cnt = " + stats.count
+		// + ", lastTime = " + elapsedTime + ", maxTime = " + stats.maxTime);
+	}
+	
+	protected Object getTheObject(JoinPoint joinPoint, Class T) {
+		Object obj = null;
+		if (joinPoint.getArgs() != null) {
+			int size = joinPoint.getArgs().length;
+			if (size > 0) {
+				Object[] obs = joinPoint.getArgs();
+				for (Object object : obs) {
+					if (T.isInstance(object))
+						obj = object;
+				}
+			}
+		}
+		return obj;
+	}
+
+	class MethodStats {
+		public String methodName;
+		public String className;
+		public long count;
+		public long totalTime;
+		public long lastTotalTime;
+		public long maxTime;
+
+		public MethodStats(String className, String methodName) {
+			this.className = className;
+			this.methodName = methodName;
+		}
+	}
 
 }

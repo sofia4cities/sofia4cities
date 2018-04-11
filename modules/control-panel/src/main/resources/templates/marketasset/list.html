@@ -118,16 +118,16 @@
 									</div>
 									<div class="clearfix"></div>															
 									<div class="col-md-12 proyect-list margin-bottom-40" style="padding: 20px;">
-										<!-- CONTENEDOR DE PROYECTO class="project-container col-md-4 col-sm-6 col-xs-12 + project_type" -->
+										<!-- ASSET CONTAINER class="project-container col-md-4 col-sm-6 col-xs-12 + project_type" -->
 										<div th:each="marketasset : ${marketAssets}" th:class="'project-container col-md-3 col-sm-6 col-xs-12 ' + ${#strings.replace(marketasset.marketAssetType,' ','')}">
-											<!-- PANEL DE PROYECTO BASE va con fondo blanco, tocar panel-defautl para hacer un panel-white -->
+											<!-- ASSET PANEL va con fondo blanco, tocar panel-defautl para hacer un panel-white -->
 											<div class="panel panel-white effect-1">
 												<div class="panel-heading ">																						  
 												
 													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><div class="uppercase no-wrap text-truncate-md project-title" th:title="${marketasset.title}" th:text="${marketasset.title}" >Identification</div></a>
-													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  /></a>
-													<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  />
-													<div class="form-inline" style=" font-size: 20px" th:unless="${marketasset.technologies == null}">															
+													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  style="border:none!important;"/>
+													<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}" style="border:none!important;" /></a>
+													<div class="form-inline" style=" font-size: 20px; min-height: 20px">															
 														 <span th:each="tag : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label-marketasset" th:title="${tag}" th:alt="${tag}"><i th:class="'devicon-' + ${tag} +'-plain'"></i></span>															
 														 <div class="pull-right">
 														<span class="btn btn-xs green-turquoise tooltips" data-container="body" data-placement="top" th:attr="data-original-title=#{marketasset.paymentmode} + ': ' + ${marketasset.paymentMode}" th:text="${marketasset.paymentMode}" style="margin-top: 2px;"> FREE </span>
@@ -144,16 +144,17 @@
 												</div>
 												<div class="panel-footer" style="display: none;"> 
 													<div class="pull-left">
-														<span class="btn btn-xs btn-outline grey-mint"><i class="fa fa-user font-md"></i> <span th:text="${marketasset.user.userId}">Usuario del Proyecto</span></span>
+														<span class="btn btn-xs btn-outline grey-mint"><i class="fa fa-user font-md"></i> <span th:text="${marketasset.user.userId}">User</span></span>
+														<span th:if="${marketasset.state.name()== 'REJECTED'}" class="btn btn-xs btn-outline red-sunglo" th:title="${marketasset.rejectionReason}"><i class="fa fa-ban font-md"></i> <span th:text="${marketasset.state}">State</span></span>
 													</div>
 													<div class="pull-right">
 														
-														<!-- VER PROYECTO -->
+														<!-- SHOW ASSET -->
 														<a th:href="@{|/marketasset/show/${marketasset.id}|}" th:title="#{gen.view}" class="btn btn-xs btn-outline grey-mint" ><i class="fa fa-eye font-md"></i></a>
-														<!-- EDITAR PROYECTO -->
+														<!-- EDIT PROYECTO -->
 														<a th:title="#{gen.edit}" th:if="((${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))"  class="btn btn-xs btn-outline grey-mint" th:onclick="'javascript:navigateUrl(\'' + @{|/marketasset/update/${marketasset.id}|} + '\');'" ><i class="fa fa-edit font-md"></i></a>
-														<!-- BORRAR PROYECTO -->																				
-														<!-- <span  class="btn btn-xs btn-outline red-sunglo tooltips" data-container="body" data-placement="bottom" th:title="#{proyectos_listado_button_eliminar}" th:data-original-title="#{proyectos_listado_button_eliminar}" ><i class="fa fa-trash font-md"></i></span> -->
+														<!-- DELETE ASSET -->																				
+														<!-- <span class="btn btn-xs btn-outline red-sunglo tooltips" data-container="body" data-placement="bottom" th:title="#{proyectos_listado_button_eliminar}" th:data-original-title="#{proyectos_listado_button_eliminar}" ><i class="fa fa-trash font-md"></i></span> -->
 													</div>
 													<div class="clearfix"></div>
 												</div>

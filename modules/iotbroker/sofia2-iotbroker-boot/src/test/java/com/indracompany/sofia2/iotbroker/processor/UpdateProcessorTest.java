@@ -40,7 +40,7 @@ import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
@@ -58,7 +58,7 @@ public class UpdateProcessorTest {
 	MessageProcessorDelegate updateProcessor;
 
 	@Autowired
-	BasicOpsDBRepository repository;
+	MongoBasicOpsDBRepository repository;
 
 	@MockBean
 	SecurityPluginManager securityPluginManager;

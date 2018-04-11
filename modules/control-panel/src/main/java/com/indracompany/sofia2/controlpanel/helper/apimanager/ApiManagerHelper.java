@@ -56,6 +56,8 @@ import com.indracompany.sofia2.controlpanel.controller.apimanager.UserApiDTO;
 import com.indracompany.sofia2.controlpanel.multipart.ApiMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
 @Component
 public class ApiManagerHelper {
@@ -84,7 +86,6 @@ public class ApiManagerHelper {
 	@Autowired
 	AppWebUtils utils;
 
-	private static String apiManagerBaseUrl="api-manager.base.url";
 	
 	
 	@Value("${apimanager.services.api:/api-manager/services}")
@@ -113,7 +114,7 @@ public class ApiManagerHelper {
 			ontologies = ontologyRepository.findByActiveTrue();
 		}
 		
-		uiModel.addAttribute("endpointBase", resourcesService.getURL(apiManagerBaseUrl));
+		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
 		uiModel.addAttribute("apiServices", apiServices);
 		
 		uiModel.addAttribute("categories", Api.ApiCategories.values());
@@ -135,7 +136,7 @@ public class ApiManagerHelper {
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
 		
-		uiModel.addAttribute("endpointBase", resourcesService.getURL(apiManagerBaseUrl));
+		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
 		uiModel.addAttribute("apiServices", apiServices);
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
@@ -166,7 +167,7 @@ public class ApiManagerHelper {
 		List<ApiOperation> apiOperations = apiOperationRepository.findAllByApi(api);
 		List<OperationJson> operations = populateOperationsObject(apiOperations);
 
-		uiModel.addAttribute("endpointBase", resourcesService.getURL(apiManagerBaseUrl));
+		uiModel.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
 		uiModel.addAttribute("apiServices", apiServices);
 		uiModel.addAttribute("authenticacion", authenticacion);
 		uiModel.addAttribute("operations", operations);
@@ -345,7 +346,7 @@ public class ApiManagerHelper {
 		Api api= apiRepository.findById(apiId);
 		
 		model.addAttribute("api", api);
-		model.addAttribute("endpointBase", resourcesService.getURL(apiManagerBaseUrl));
+		model.addAttribute("endpointBase", resourcesService.getUrl(Module.apiManager, ServiceUrl.base));
 		model.addAttribute("apiServices", apiServices);
 	}
 

@@ -43,8 +43,8 @@
     <appender name="rollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/${LOG_FILE}-%d{yyyy-MM-dd}-${PID}.log</fileNamePattern>
-            <maxHistory>10</maxHistory>
-            <totalSizeCap>1GB</totalSizeCap>
+            <maxHistory>3</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
         </rollingPolicy>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <maxFileSize>100MB</maxFileSize>
@@ -64,6 +64,9 @@
 	        <appender-ref ref="rollingFileAppender" />
 	        <appender-ref ref="stdoutWarnAppender" />
 	    </root>
+	    <root level="ERROR">
+	        <appender-ref ref="rollingFileAppender" />
+	    </root>	    
     </springProfile>     
     
 </configuration>   

@@ -42,7 +42,7 @@
     }
 
     function itemResize(item, itemComponent) {
-      debugger;
+    
       $log.info('itemResized', item, itemComponent);
     }
 

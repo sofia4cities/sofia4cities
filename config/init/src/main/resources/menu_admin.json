@@ -107,6 +107,14 @@
 				},
 				{
 					"title": {
+						"EN": "Gadget Templates",
+						"ES": "Plantillas Gadget  "
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgettemplates/list"
+				},
+				{
+					"title": {
 						"EN": "Datasources",
 						"ES": "Fuentes de datos"
 					},
@@ -177,11 +185,37 @@
 				},
 				{
 					"title": {
+						"EN": "Audit",
+						"ES": "Auditoría"
+					},
+					"icon": "",
+					"url": "/controlpanel/audit/show"
+				},
+				{
+					"title": {
 						"EN": "Planned Tasks",
 						"ES": "Tareas Planificadas"
 					},
 					"icon": "",
 					"url": "/controlpanel/planner/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "PROJECTS",
+				"ES": "PROYECTOS"
+			},
+			"icon": "flaticon-open-box",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Web Projects",
+						"ES": "Proyectos Web"
+					},
+					"icon": "",
+					"url": "/controlpanel/webprojects/list"
 				}
 			]
 		},
