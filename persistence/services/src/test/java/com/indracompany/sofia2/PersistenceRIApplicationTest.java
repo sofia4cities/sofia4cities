@@ -22,9 +22,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableConfigurationProperties
-public class PersistenceRIApplication {
+public class PersistenceRIApplicationTest {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PersistenceRIApplication.class, args);
+		SpringApplication.run(PersistenceRIApplicationTest.class, args);
 	}
 }
