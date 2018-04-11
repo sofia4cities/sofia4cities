@@ -38,6 +38,11 @@ public class Sofia2AuditEvent implements Serializable {
 	public static enum Module {
 		CONTROLPANEL, APIMANAGER, IOTBROKER, FLOWENGINE, ROUTER
 	}
+	
+	public static enum OperationType {
+		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE,UPDATE_BY_ID, DELETE, 
+		DELETE_BY_ID, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND
+	}
 
 	@Getter
 	@Setter

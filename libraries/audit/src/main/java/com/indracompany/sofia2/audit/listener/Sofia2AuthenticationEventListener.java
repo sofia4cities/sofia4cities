@@ -17,7 +17,6 @@ package com.indracompany.sofia2.audit.listener;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.event.AuthorizationFailureEvent;
@@ -33,6 +32,7 @@ import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
 import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,7 +52,7 @@ public class Sofia2AuthenticationEventListener extends Sofia2EventListener {
     	if (source instanceof UsernamePasswordAuthenticationToken) {
     		
     	}
-    	
+    	s2event.setOperationType(OperationType.LOGIN.name());
     	s2event.setOtherType(AuthenticationSuccessEvent.class.getName());
     	s2event.setUser((String)event.getAuthentication().getPrincipal());
     	
@@ -75,7 +75,7 @@ public class Sofia2AuthenticationEventListener extends Sofia2EventListener {
     	if (source instanceof FilterInvocation) {
     		//s2event.setRoute(((FilterInvocation) errorEvent.getSource()).getRequestUrl());
     	}
-    	
+    	s2event.setOperationType(OperationType.LOGIN.name());
     	s2event.setUser((String)errorEvent.getAuthentication().getPrincipal());
     	s2event.setOtherType(AuthorizationFailureEvent.class.getName());
     	//Sofia2EventFactory.setErrorDetails(s2event, errorEvent.getAccessDeniedException());
@@ -92,13 +92,13 @@ public class Sofia2AuthenticationEventListener extends Sofia2EventListener {
     @Async
     public void handleAuthorizationFailureEvent(AuthorizationFailureEvent errorEvent) {
     	
-    	Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY, "Security Failure Event Received: "+errorEvent.getAccessDeniedException().getMessage());
+    	Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY, "Security Authorization Failure Event Received: " + errorEvent.getAccessDeniedException().getMessage());
     	
     	Object source = errorEvent.getSource();
     	if (source instanceof FilterInvocation) {
     		//s2event.setRoute(((FilterInvocation) errorEvent.getSource()).getRequestUrl());
     	}
-    	
+    	s2event.setOperationType(OperationType.LOGIN.name());
     	s2event.setUser((String)errorEvent.getAuthentication().getPrincipal());
     	s2event.setOtherType(AuthorizationFailureEvent.class.getName());
     	//Sofia2EventFactory.setErrorDetails(s2event, errorEvent.getAccessDeniedException());
@@ -113,7 +113,7 @@ public class Sofia2AuthenticationEventListener extends Sofia2EventListener {
     
     private static void setAuthValues(Object details, Sofia2AuditEvent s2event) {
     	if (details instanceof WebAuthenticationDetails) {
-			WebAuthenticationDetails details2 = (WebAuthenticationDetails) details;
+			//WebAuthenticationDetails details2 = (WebAuthenticationDetails) details;
 			
 			//s2event.setRemoteAddress(details2.getRemoteAddress());
 			//s2event.setSessionId(details2.getSessionId());
