@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
-import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.services.BasicOpsPersistenceServiceFacade;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
 import com.indracompany.sofia2.router.audit.aop.Auditable;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -36,7 +36,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	private QueryToolService  queryToolService;
 	
 	@Autowired
-	private MongoBasicOpsDBRepository mongoBasicOpsDBRepository;
+	private BasicOpsPersistenceServiceFacade basicOpsService;
 
 	
 	//@Autowired
@@ -70,7 +70,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 			ontologyDataService.checkOntologySchemaCompliance(BODY, ontologyName);
 			String bodyWithDataContext = ontologyDataService.addContextData(operationModel);
 			if (METHOD.equalsIgnoreCase("POST") || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, bodyWithDataContext);
+				OUTPUT = basicOpsService.insert(ontologyName, bodyWithDataContext);
 			}
 		} 
 		catch (final Exception e) {
@@ -113,12 +113,12 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 			if (METHOD.equalsIgnoreCase("PUT") || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
 
 				if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-					mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);
-					OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
+					basicOpsService.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);
+					OUTPUT = basicOpsService.findById(ontologyName, OBJECT_ID);
 				}
 
 				else {
-					OUTPUT = ""+mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);
+					OUTPUT = ""+basicOpsService.updateNative(ontologyName, BODY);
 				}
 
 			}
@@ -156,11 +156,11 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 			if (METHOD.equalsIgnoreCase("DELETE") || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
 
 				if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
-					OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
+					OUTPUT = ""+ basicOpsService.deleteNativeById(ontologyName, OBJECT_ID);
 				}
 
 				else {
-					OUTPUT = ""+ mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);
+					OUTPUT = ""+ basicOpsService.deleteNative(ontologyName, BODY);
 				}
 
 			}
@@ -233,11 +233,11 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 															  queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0,0);
 					}
 					else {
-						OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
+						OUTPUT = basicOpsService.findById(ontologyName, OBJECT_ID);
 					}
 				}
 				else {
-					OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
+					OUTPUT = basicOpsService.findById(ontologyName, OBJECT_ID);
 				}
 			}
 		} catch (final Exception e) {
