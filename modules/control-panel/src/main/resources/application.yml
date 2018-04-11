@@ -17,6 +17,14 @@ sofia2: #Config Sofia2 specific
    encription.key: sofia2
    devices:
       timeout_devices_inseconds:300
+   database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -116,4 +124,4 @@ logging:
 ## Digital Twin
 digitaltwin:
    temp.dir: /tmp
-   maven.exec.path: /usr/share/maven/mvn
+   maven.exec.path: /usr/share/maven/bin/mvn

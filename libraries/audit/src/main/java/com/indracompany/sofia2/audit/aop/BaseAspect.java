@@ -19,6 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.indracompany.sofia2.audit.producer.EventProducer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +31,9 @@ public class BaseAspect {
 	private static ConcurrentHashMap<String, MethodStats> methodStats = new ConcurrentHashMap<String, MethodStats>();
 	private static long statLogFrequency = 10;
 	private static long methodWarningThreshold = 1000;
+	
+	@Autowired
+	protected EventProducer eventProducer;
 
 	public static Method getMethod(JoinPoint joinPoint) {
 
@@ -73,6 +79,21 @@ public class BaseAspect {
 
 		// System.out.println("method debug: " + methodName + "(), cnt = " + stats.count
 		// + ", lastTime = " + elapsedTime + ", maxTime = " + stats.maxTime);
+	}
+	
+	protected Object getTheObject(JoinPoint joinPoint, Class T) {
+		Object obj = null;
+		if (joinPoint.getArgs() != null) {
+			int size = joinPoint.getArgs().length;
+			if (size > 0) {
+				Object[] obs = joinPoint.getArgs();
+				for (Object object : obs) {
+					if (T.isInstance(object))
+						obj = object;
+				}
+			}
+		}
+		return obj;
 	}
 
 	class MethodStats {

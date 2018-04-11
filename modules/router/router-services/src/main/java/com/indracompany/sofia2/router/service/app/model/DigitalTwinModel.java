@@ -23,7 +23,7 @@ public class DigitalTwinModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	public static enum EventType {
-		PING, LOG, NOTEBOOK, FLOW, RULE, SHADOW, REGISTER;
+		PING, LOG, NOTEBOOK, FLOW, RULE, SHADOW, REGISTER, CUSTOM;
 	}
 
 	@Getter

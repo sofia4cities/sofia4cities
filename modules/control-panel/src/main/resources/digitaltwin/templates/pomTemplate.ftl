@@ -20,9 +20,19 @@
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-digital-twin-library</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.1</version>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>SOFIA2</id>
+			<url>http://sofia2.org/nexus/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>com.indra.sofia2.releases</id>
+			<url>http://sofia2.org/nexus/content/repositories/releases/</url>
+		</repository>
+	</repositories>
 	
 	<build>
 		<plugins>

@@ -93,6 +93,11 @@ public class InitConfigDB {
 
 	private static User userCollaborator = null;
 	private static User userAdministrator = null;
+	private static User user = null;
+	private static User userAnalytics = null;
+	private static User userSysAdmin = null;
+	private static User userPartner = null;
+	private static User userOperation = null;
 	private static Token tokenAdministrator = null;
 	private static Ontology ontologyAdministrator = null;
 	private static GadgetDatasource gadgetDatasourceAdministrator = null;
@@ -169,6 +174,9 @@ public class InitConfigDB {
 
 		init_OntologyCategory();
 		log.info("OK init_OntologyCategory");
+		
+		initAuditOntology();
+		log.info("OK init_AuditOntology");
 
 		//
 		init_ClientPlatform();
@@ -239,14 +247,12 @@ public class InitConfigDB {
 		Set<LogicDigitalTwinType> logics = new HashSet<LogicDigitalTwinType>();
 		LogicDigitalTwinType logic = new LogicDigitalTwinType();
 		logic.setTypeId(type);
-		logic.setLogic(
-				"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
-						+ System.getProperty("line.separator") + "function main(){}"
-						+ System.getProperty("line.separator") + "var onActionConnectElectricNetwork=function(data){ }"
-						+ System.getProperty("line.separator")
-						+ "var onActionDisconnectElectricNetwork=function(data){ }"
-						+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }"
-						+ System.getProperty("line.separator") + "var onActionTempAlert=function(data) { }");
+		logic.setLogic("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();" + System.getProperty("line.separator") +
+				"function main(){}" + System.getProperty("line.separator") +
+				"var onActionConnectElectricNetwork=function(data){  }" + System.getProperty("line.separator") +
+				"var onActionDisconnectElectricNetwork=function(data){ }" + System.getProperty("line.separator") +
+				"var onActionLimitRotorSpeed=function(data){ }");
+
 		logics.add(logic);
 		return logics;
 	}
@@ -657,6 +663,38 @@ public class InitConfigDB {
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
 		return userAdministrator;
 	}
+	
+	private User getUser() {
+		if (user == null)
+			user = this.userCDBRepository.findByUserId("user");
+		return user;
+	}
+	
+	private User getUserAnalytics() {
+		if (userAnalytics == null)
+			userAnalytics = this.userCDBRepository.findByUserId("analytics");
+		return userAnalytics;
+	}
+	
+	private User getUserPartner() {
+		if (userPartner == null)
+			userPartner = this.userCDBRepository.findByUserId("partner");
+		return userPartner;
+	}
+	
+	private User getUserSysAdmin() {
+		if (userSysAdmin == null)
+			userSysAdmin = this.userCDBRepository.findByUserId("sysadmin");
+		return userSysAdmin;
+	}
+	
+	private User getUserOperations() {
+		if (userOperation == null)
+			userOperation = this.userCDBRepository.findByUserId("operations");
+		return userOperation;
+	}
+	
+	
 
 	private Token getTokenAdministrator() {
 		if (tokenAdministrator == null)
@@ -1089,8 +1127,41 @@ public class InitConfigDB {
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
 			ontologyRepository.save(ontology);
-
+			
 		}
+
+	}
+	
+	public void addAuditOntology (User user) {
+		Ontology ontology = new Ontology();
+		ontology.setJsonSchema("{}");
+		ontology.setIdentification("Audit_"+user.getUserId());
+		ontology.setDescription("Ontology Audit for user " + user.getUserId());
+		ontology.setActive(true);
+		ontology.setRtdbClean(true);
+		ontology.setRtdbToHdb(true);
+		ontology.setPublic(false);
+		ontology.setUser(user);
+		
+		ontologyRepository.save(ontology);
+	}
+	
+	public void initAuditOntology () {
+		log.info("adding audit ontologies...");
+		
+		addAuditOntology (getUserAdministrator());
+		
+		addAuditOntology (getUserDeveloper());
+		
+		addAuditOntology (getUser());
+		
+		addAuditOntology (getUserAnalytics());
+		
+		addAuditOntology (getUserPartner());
+		
+		addAuditOntology (getUserSysAdmin());
+		
+		addAuditOntology (getUserOperations());
 
 	}
 
