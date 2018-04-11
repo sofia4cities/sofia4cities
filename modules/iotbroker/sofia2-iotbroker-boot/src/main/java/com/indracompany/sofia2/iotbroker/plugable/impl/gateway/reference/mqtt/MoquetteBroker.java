@@ -79,7 +79,20 @@ public class MoquetteBroker {
 	@Value("${sofia2.iotbroker.plugable.gateway.moquette.command_topic:/topic/command}")
 	private String command_topic;
 
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.ssl.enable:false}")
+	public boolean sslEnabled;
 
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.ssl.port:8883}")
+	public String sslPort;
+
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.ssl.jks_path:develkeystore.jks}")
+	public String jksPath;
+
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.ssl.keystore_password:changeIt!}")
+	public String keyStorePassword;
+
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.ssl.keymanager_passwrod:changeIt!}")
+	public String keyManagerPassword;
 
 	@Autowired
 	protected MessageProcessor processor;
@@ -160,16 +173,18 @@ public class MoquetteBroker {
 					});
 
 			final Properties brokerProperties = new Properties();
+
 			brokerProperties.put(BrokerConstants.PERSISTENT_STORE_PROPERTY_NAME, store);
 			brokerProperties.put(BrokerConstants.PORT_PROPERTY_NAME, port);
 			brokerProperties.put(BrokerConstants.BROKER_INTERCEPTOR_THREAD_POOL_SIZE, pool);
 			brokerProperties.put(BrokerConstants.HOST_PROPERTY_NAME, host);
-			//			brokerProperties.put(BrokerConstants.NETTY_CHANNEL_TIMEOUT_SECONDS_PROPERTY_NAME, 5);
-			//			brokerProperties.put(BrokerConstants.NETTY_EPOLL_PROPERTY_NAME, "localhost");
-			//			brokerProperties.put(BrokerConstants.NETTY_SO_BACKLOG_PROPERTY_NAME, 100);
-			//			brokerProperties.put(BrokerConstants.NETTY_SO_KEEPALIVE_PROPERTY_NAME, false);
-			//			brokerProperties.put(BrokerConstants.NETTY_SO_REUSEADDR_PROPERTY_NAME, false);
-			//			brokerProperties.put(BrokerConstants.NETTY_TCP_NODELAY_PROPERTY_NAME, false);
+
+			if(sslEnabled) {
+				brokerProperties.put(BrokerConstants.JKS_PATH_PROPERTY_NAME, jksPath);
+				brokerProperties.put(BrokerConstants.KEY_STORE_PASSWORD_PROPERTY_NAME, keyStorePassword);
+				brokerProperties.put(BrokerConstants.KEY_MANAGER_PASSWORD_PROPERTY_NAME, keyManagerPassword);
+				brokerProperties.put(BrokerConstants.SSL_PORT_PROPERTY_NAME, "8883");
+			}
 
 
 			final MemoryConfig memoryConfig = new MemoryConfig(brokerProperties);
