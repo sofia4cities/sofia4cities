@@ -102,7 +102,6 @@ public class ManageDBPersistenceServiceFacade implements ManageDBRepository, Nat
 		
 	}
 
-
 	@Override
 	public void dropIndex(String ontology, String indexName) throws DBPersistenceException {
 		 getInstance(ontology).dropIndex(ontology,indexName);
@@ -127,20 +126,17 @@ public class ManageDBPersistenceServiceFacade implements ManageDBRepository, Nat
 
 	@Override
 	public Map<String, Boolean> getStatusDatabase() throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException("Method not executable, please use same definition with RtdbDatasource parameter");
 	}
 
 	@Override
 	public List<String> getListOfTables() throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException("Method not executable, please use same definition with RtdbDatasource parameter");
 	}
 
 	@Override
 	public void createIndex(String sentence) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		
+		throw new DBPersistenceException("Method not executable, please use same definition with RtdbDatasource parameter");
 	}
 
 	

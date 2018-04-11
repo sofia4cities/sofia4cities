@@ -56,6 +56,9 @@ sofia2: #Config Sofia2 specific
       baseurl: http://localhost:8082/flowengine/admin   
       proxyurl: http://localhost:5050/
    controlpanel.avoidsslverification: true
+   webproject:
+      rootfolder.path: /usr/local/webprojects/
+      baseurl: http://localhost:18080/controlpanel/webprojects/   
  
 spring: ## General Config  
    application.name: sofia2-control-panel
