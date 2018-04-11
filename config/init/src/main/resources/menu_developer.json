@@ -200,6 +200,40 @@
 					"url": "/controlpanel/planner/list"
 				}
 			]
+		},
+		{
+			"title": {
+				"EN": "DIGITAL TWIN",
+				"ES": "DIGITAL TWIN"
+			},
+			"icon": "flaticon-open-box",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Management of Types",
+						"ES": "Gestión de tipos"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwintypes/list"
+				},
+				{
+					"title": {
+						"EN": "Management of Devices",
+						"ES": "Gestión de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwindevices/list"
+				},
+				{
+					"title": {
+						"EN": "Display of Devices",
+						"ES": "Visualización de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwindisplay/show"
+				}
+			]
 		}
 	]
 }
