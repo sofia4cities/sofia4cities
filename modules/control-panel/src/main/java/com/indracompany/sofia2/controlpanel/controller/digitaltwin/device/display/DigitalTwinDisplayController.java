@@ -44,6 +44,7 @@ public class DigitalTwinDisplayController {
 	
 	final static String LOG_COLLECTION = "TwinLogs";
 	final static String PROPERTIES_COLLECTION = "TwinProperties";
+	final static String EVENTS_COLLECTION = "TwinEvents";
 	
 	@Autowired
 	MongoBasicOpsDBRepository mongoRepo;
@@ -78,7 +79,7 @@ public class DigitalTwinDisplayController {
 	}
 	
 	@PostMapping("executeQuery")
-	public String executeQuery(Model model, @RequestParam String type, @RequestParam String device, @RequestParam String offset, @RequestParam String operation) {
+	public String executeQuery(Model model, @RequestParam String type, @RequestParam String device, @RequestParam String offset, @RequestParam String operation, @RequestParam String eventName) {
 		try {
 			List<String> results = new ArrayList<String>();
 			List<String> devices = new ArrayList<String>();
@@ -106,8 +107,19 @@ public class DigitalTwinDisplayController {
 						collection = PROPERTIES_COLLECTION + t.substring(0, 1).toUpperCase() + t.substring(1);
 					}else if(operation.equalsIgnoreCase(DigitalTwinModel.EventType.LOG.name())) {
 						collection = LOG_COLLECTION;
+					}else if(operation.equalsIgnoreCase(DigitalTwinModel.EventType.NOTEBOOK.name()) || operation.equalsIgnoreCase(DigitalTwinModel.EventType.PIPELINE.name()) 
+								|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.FLOW.name()) || operation.equalsIgnoreCase(DigitalTwinModel.EventType.RULE.name())
+								|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name())) {
+						
+						collection = EVENTS_COLLECTION;
 					}
-					queryResult = mongoRepo.queryNativeAsJson(collection, "db." + collection + ".find({deviceId:'"+ d +"'}).sort({timestamp: -1}).limit("+Integer.parseInt(offset)+")");
+					if(operation.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name()) && eventName!=""){
+						queryResult = mongoRepo.queryNativeAsJson(collection, "db." + collection + ".find({deviceId:'"+ d +"',event:'"+operation.toUpperCase()+"',eventName:'"+eventName+"'}).sort({timestamp: -1}).limit("+Integer.parseInt(offset)+")");
+					}else if(collection.equalsIgnoreCase(EVENTS_COLLECTION)){
+						queryResult = mongoRepo.queryNativeAsJson(collection, "db." + collection + ".find({deviceId:'"+ d +"',event:'"+operation.toUpperCase()+"'}).sort({timestamp: -1}).limit("+Integer.parseInt(offset)+")");
+					}else {
+						queryResult = mongoRepo.queryNativeAsJson(collection, "db." + collection + ".find({deviceId:'"+ d +"'}).sort({timestamp: -1}).limit("+Integer.parseInt(offset)+")");
+					}
 					List<String> lRestuls = mapper.readValue(queryResult, List.class);
 					for(String r : lRestuls) {
 						results.add(r);

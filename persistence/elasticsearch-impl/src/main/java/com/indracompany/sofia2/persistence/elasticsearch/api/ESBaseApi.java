@@ -46,11 +46,18 @@ public class ESBaseApi {
 	private String port;
 
 	@PostConstruct
-	void initializeIt() throws UnknownHostException {
-		Settings settings = Settings.builder().put("client.transport.ignore_cluster_name", true).build();
-		client = new PreBuiltTransportClient(settings).addTransportAddress(getTransportAddress());
+	void initializeIt() {
+		
+		try {
+			Settings settings = Settings.builder().put("client.transport.ignore_cluster_name", true).build();
+			client = new PreBuiltTransportClient(settings).addTransportAddress(getTransportAddress());
 
-		log.info(String.format("Settings %s ", client.settings().toString()));
+			log.info(String.format("Settings %s ", client.settings().toString()));
+		} catch (Exception e) {
+			log.info(String.format("Cannot Instantiate ElasticSearch Feature due to : %s ", e.getMessage()));
+			log.error(String.format("Cannot Instantiate ElasticSearch Feature due to : %s ", e.getMessage()));
+		}
+		
 
 	}
 
