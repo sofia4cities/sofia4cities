@@ -200,6 +200,24 @@
 					"url": "/controlpanel/planner/list"
 				}
 			]
+		},
+		{
+			"title": {
+				"EN": "PROJECTS",
+				"ES": "PROYECTOS"
+			},
+			"icon": "flaticon-open-box",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Web Projects",
+						"ES": "Proyectos Web"
+					},
+					"icon": "",
+					"url": "/controlpanel/webprojects/list"
+				}
+			]
 		}
 	]
 }

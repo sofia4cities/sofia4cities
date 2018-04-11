@@ -72,13 +72,13 @@
 
     $scope.sendFilter = function(field, value){
       var filterStt = {};
-      filterStt[field]=value;
+      filterStt[field]={value: value, id: vm.id};
       interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
     
     $scope.sendFilterChain = function(field, value){
       var filterStt = angular.copy(vm.datastatus)||{};
-      filterStt[field]=value;
+      filterStt[field]={value: value, id: vm.id};
       interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
 
