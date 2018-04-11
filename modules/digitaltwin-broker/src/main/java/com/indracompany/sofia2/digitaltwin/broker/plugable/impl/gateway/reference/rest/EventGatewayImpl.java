@@ -369,7 +369,8 @@ public class EventGatewayImpl implements EventGateway {
 	}
 
 	@Override
-	public ResponseEntity<?> custom(String apiKey, JsonNode data) {
+	public ResponseEntity<?> custom(@RequestHeader(value="Authorization") String apiKey,
+			@RequestBody JsonNode data) {
 		if(data.get("id")==null) {
 			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
 		}
@@ -396,6 +397,7 @@ public class EventGatewayImpl implements EventGateway {
 			model.setDeviceId(device.getId());
 			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
+			model.setEventName(data.get("event").asText());
 			
 			compositeModel.setDigitalTwinModel(model);
 			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));

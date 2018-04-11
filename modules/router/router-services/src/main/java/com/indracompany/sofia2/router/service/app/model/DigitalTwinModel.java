@@ -23,7 +23,7 @@ public class DigitalTwinModel implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	public static enum EventType {
-		PING, LOG, NOTEBOOK, FLOW, RULE, SHADOW, REGISTER, CUSTOM;
+		PING, LOG, NOTEBOOK, FLOW, RULE, SHADOW, REGISTER, CUSTOM, PIPELINE;
 	}
 
 	@Getter
@@ -44,6 +44,10 @@ public class DigitalTwinModel implements Serializable{
 	
 	@Getter
 	@Setter
+	private  String eventName;
+	
+	@Getter
+	@Setter
 	private  String status;
 	
 	@Getter
@@ -61,7 +65,7 @@ public class DigitalTwinModel implements Serializable{
 	@Override
 	public String toString() {
 		return "DigitalTwinModel [deviceId=" + deviceId + ", type=" + type + ", event=" + event + ", status=" + status
-				+ ", processId=" + processId + ", log=" + log + ", endpoint=" + endpoint + "]";
+				+ ", processId=" + processId + ", log=" + log + ", endpoint=" + endpoint + ", eventName" + eventName+"]";
 	}
 	
 	

@@ -17,7 +17,13 @@ package com.indracompany.sofia2.audit.bean;
 import java.util.Date;
 import java.util.Map;
 
-public class Sofia2AuthAuditEvent extends Sofia2AuditRemoteEvent{
+public class Sofia2AuthAuditEvent extends Sofia2AuditRemoteEvent {
+
+	private static final long serialVersionUID = -146537921734143436L;
+
+	public Sofia2AuthAuditEvent() {
+		super();
+	}
 
 	public Sofia2AuthAuditEvent(String message, String id, EventType type, Date timeStamp, String user, String ontology,
 			String operationType, Module module, Map<String, Object> extraData, String otherType,
@@ -25,6 +31,4 @@ public class Sofia2AuthAuditEvent extends Sofia2AuditRemoteEvent{
 		super(message, id, type, timeStamp, user, ontology, operationType, module, extraData, otherType, remoteAddress);
 	}
 
-	private static final long serialVersionUID = -146537921734143436L;
-	
 }
