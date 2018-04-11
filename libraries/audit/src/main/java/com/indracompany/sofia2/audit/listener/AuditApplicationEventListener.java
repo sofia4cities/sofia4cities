@@ -13,31 +13,16 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.audit.listener;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.audit.AuditEvent;
-import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.access.event.AuthorizationFailureEvent;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
-import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.security.web.FilterInvocation;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.ServletRequestHandledEvent;
 
-import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
-import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
-import com.indracompany.sofia2.audit.notify.EventRouter;
 
 import lombok.extern.slf4j.Slf4j;
 

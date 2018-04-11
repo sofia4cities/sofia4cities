@@ -47,7 +47,7 @@ public class SolverQuasarImpl implements SolverInterface{
 		sb.append(buildGroup(group));
 		sb.append(" limit "); 
 		sb.append(maxreg);
-		return qts.querySQLAsJson(SecurityContextHolder.getContext().getAuthentication().getName(), "", sb.toString(), 0);
+		return qts.querySQLAsJson(SecurityContextHolder.getContext().getAuthentication().getName(), getOntologyFromDatasource(query), sb.toString(), 0);
 	}
 	
 	private String buildProject(List<ProjectStt> projections) {
@@ -100,5 +100,22 @@ public class SolverQuasarImpl implements SolverInterface{
 			}
 			return sb.substring(0, sb.length()-1).toString();
 		}
+	}
+	
+	private String getOntologyFromDatasource(String datasource) {
+		int indexfrom = datasource.toLowerCase().indexOf("from ");
+		int indexOf = datasource.toLowerCase().indexOf(" ",indexfrom + 5);
+		String testOntology = datasource.substring(indexfrom + 5, indexOf).trim();
+		while(testOntology.startsWith("(") && indexfrom!=-1) {
+			indexfrom = datasource.toLowerCase().indexOf("from ",indexfrom);
+			indexOf = datasource.toLowerCase().indexOf(" ",indexfrom + 5);
+			testOntology = datasource.substring(indexfrom + 5, indexOf).trim();
+		}
+		
+		if(indexfrom==-1) {
+			return "";
+		}
+		return testOntology;
+		
 	}
 }

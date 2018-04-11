@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.Map;
 
 import com.indracompany.sofia2.audit.bean.Sofia2AuditRemoteEvent;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 
@@ -46,10 +47,6 @@ public class IotBrokerAuditEvent extends Sofia2AuditRemoteEvent implements Seria
 
 	@Getter
 	@Setter
-	private String token;
-
-	@Getter
-	@Setter
 	private String clientPlatform;
 
 	@Getter
@@ -63,13 +60,12 @@ public class IotBrokerAuditEvent extends Sofia2AuditRemoteEvent implements Seria
 	public IotBrokerAuditEvent(String message, String id, EventType type, Date timeStamp, String user, String ontology,
 			String operationType, Module module, Map<String, Object> extraData, String otherType,
 			String remoteAddress, IoTSession session, GatewayInfo gatewayInfo, String query, String data,
-			String token, String clientPlatform, String clientPlatformInstance) {
+			String clientPlatform, String clientPlatformInstance) {
 		super(message, id, type, timeStamp, user, ontology, operationType, module, extraData, otherType, remoteAddress);
 		this.session = session;
 		this.gatewayInfo = gatewayInfo;
 		this.query = query;
 		this.data = data;
-		this.token = token;
 		this.clientPlatform = clientPlatform;
 		this.clientPlatformInstance = clientPlatformInstance;
 	}

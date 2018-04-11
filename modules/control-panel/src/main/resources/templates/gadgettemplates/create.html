@@ -221,6 +221,7 @@
 											  <li id="label_text" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.text.label}">Text Label Parameter</li>
 											  <li id="label_number" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.number.label}">Number Label Parameter</li>
 											  <li id="label_ds" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.ds.label}">Label with data From Data Source</li>
+											  <li id="label_ds_parameter" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.name.ds.label}">Label with parameter name from Data Source</li>
 											<!--   <li id="select_ds" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)">Porta ac consectetur ac</li> -->
 											  <li id="select_options" class="list-group-item" draggable="true" ondragstart="GadgetsTemplateCreateController.drag(event)" th:text="#{gadgettemplates.template.parameters.label.select}">Label that will be loaded with the selected value from a list</li>
 											</ul>
@@ -340,7 +341,8 @@
 				"language" : currentLanguage,
 				"parameterNumberLabel" : [[#{gadgettemplates.template.parameters.number.label}]],	
 				"parameterDsLabel" : [[#{gadgettemplates.template.parameters.ds.label}]],
-				"titleParametersSelected" : [[#{gadgettemplates.template.parameters.selected}]],
+				"parameterDsPropertieLabel" : [[#{gadgettemplates.template.parameters.name.ds.label}]],
+				"titleParametersSelected" : [[#{gadgettemplates.template.parameters.selected}]],				
 				"parameterSelectLabel" : [[#{gadgettemplates.template.parameters.label.select}]]};
 		
 			

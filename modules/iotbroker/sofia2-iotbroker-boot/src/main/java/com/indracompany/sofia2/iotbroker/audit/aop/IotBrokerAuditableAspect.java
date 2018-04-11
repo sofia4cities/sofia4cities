@@ -40,6 +40,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUnsubscribeMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
@@ -153,14 +154,21 @@ public class IotBrokerAuditableAspect extends BaseAspect {
                                    							   + " by user "	+ session.getUserID();
                                    return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(insertMessage, insertMessageText, session, info);
                                    
-                           case UPDATE:
                            case UPDATE_BY_ID:
+                        	   SSAPBodyUpdateByIdMessage updateIdMessage = (SSAPBodyUpdateByIdMessage)message.getBody();
+                               String updateMessageIdText = "Update ontology " + updateIdMessage.getOntology() + " by user " + session.getUserID();
+                               
+                               break;
+                               //return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(updateIdMessage, updateMessageText, session, info);
+                           case UPDATE:
                                    SSAPBodyUpdateMessage updateMessage = (SSAPBodyUpdateMessage)message.getBody();
                                    String updateMessageText = "Update ontology " + updateMessage.getOntology() + " by user " + session.getUserID();
                                    return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(updateMessage, updateMessageText, session, info);
-
-                           case DELETE:
                            case DELETE_BY_ID:
+                        	   
+                        	   		break;
+                           case DELETE:
+                           
                                    SSAPBodyDeleteMessage deletetMessage = (SSAPBodyDeleteMessage)message.getBody();
                                    deletetMessage.getOntology();
                                    deletetMessage.getQuery();
