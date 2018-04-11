@@ -31,7 +31,7 @@ public class OperationModel implements Serializable {
 	}
 
 	public static enum Source {
-		IOTBROKER, APIMANAGER, FLOWENGINE, INTERNAL_ROUTER, STREAMING_TWITTER;
+		IOTBROKER, APIMANAGER, FLOWENGINE, INTERNAL_ROUTER, STREAMING_TWITTER, AUDIT;
 	}
 
 	// Mandatory attributes

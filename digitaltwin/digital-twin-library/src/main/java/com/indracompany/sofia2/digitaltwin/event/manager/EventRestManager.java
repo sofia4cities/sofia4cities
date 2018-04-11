@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.indracompany.sofia2.digitaltwin.event.model.EventMessage;
 import com.indracompany.sofia2.digitaltwin.event.model.LogMessage;
 import com.indracompany.sofia2.digitaltwin.event.model.PingMessage;
 import com.indracompany.sofia2.digitaltwin.event.model.RegisterMessage;
@@ -91,8 +92,8 @@ public class EventRestManager implements EventManager {
 		new RegistryAndKeepAliveThread().start();
 	}
 	
-	/**
-	 * Hilo que gestiona el registro y envio de KeepAlive a plataforma 
+	/** 
+	 * Thread that manages the KeepAlive registry to platform
 	 * @author INDRA SISTEMAS
 	 *
 	 *
@@ -178,7 +179,6 @@ public class EventRestManager implements EventManager {
 		if(resp.getStatusCode()==HttpStatus.OK) {
 			log.info("Updated shadow in broker {}", brokerEndpoint);
 		}else {
-			//Meter en almacenamiento??
 			log.warn("HTTP code {} updating shadow in broker {}", resp.getStatusCode(), brokerEndpoint);
 			log.warn("Broker message {}", resp.getBody());
 		}
@@ -197,8 +197,26 @@ public class EventRestManager implements EventManager {
 		if(resp.getStatusCode()==HttpStatus.OK) {
 			log.info("Log in broker {}", brokerEndpoint);
 		}else {
-			//Meter en almacenamiento??
 			log.warn("HTTP code {} log in broker {}", resp.getStatusCode(), brokerEndpoint);
+			log.warn("Broker message {}", resp.getBody());
+		}
+	}
+
+	@Override
+	public void sendCustomEvent(Map<String, Object> status, String eventName) {
+		EventMessage eventMessage=new EventMessage();
+		eventMessage.setId(deviceId);
+		eventMessage.setStatus(status);
+		eventMessage.setEvent(eventName);
+		
+		HttpEntity<EventMessage> eventEntity = new HttpEntity<EventMessage>(eventMessage, headers);
+		
+		log.info("Attemp to sen a custom event {} in broker {}", eventName, brokerEndpoint);
+		ResponseEntity<String> resp = restTemplate.exchange(brokerEndpoint+"/event/custom", HttpMethod.POST, eventEntity, String.class);
+		if(resp.getStatusCode()==HttpStatus.OK) {
+			log.info("Send custom event {} in broker {}", eventName, brokerEndpoint);
+		}else {
+			log.warn("HTTP code {} send custom event {} in broker {}", eventName, resp.getStatusCode(), brokerEndpoint);
 			log.warn("Broker message {}", resp.getBody());
 		}
 	}

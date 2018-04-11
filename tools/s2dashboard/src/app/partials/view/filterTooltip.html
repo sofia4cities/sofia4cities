@@ -1,0 +1,8 @@
+<b>Applied filters:</b>
+<span class="no-wrap" ng-repeat="(field, data) in vm.datastatus">
+  <br/>  
+  <label>{{field}}</label>:<label md-truncate>{{vm.generateFilterInfo(data)}}</label>
+  <md-button class="md-icon-button md-warn" aria-label="Delete filter" ng-click="vm.deleteFilter(data.id,field)">
+    <md-icon>delete</md-icon>
+  </md-button>
+</span>

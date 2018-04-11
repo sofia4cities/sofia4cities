@@ -64,17 +64,19 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	private ElasticSearchSQLDbHttpConnector elasticSearchSQLDbHttpConnector;
 	
 	
-	@Value("${sofia2.database.elasticsearch.database:es_sofia2_s4c}")
+	/*@Value("${sofia2.database.elasticsearch.database:es_sofia2_s4c}")
 	@Getter
 	@Setter
 	private String database;
+	*/
 	
 	@Override
 	public String insert(String ontology, String instance) throws DBPersistenceException {
-		log.info(String.format("ElasticSearchBasicOpsDBRepository : Loading content: %s into elasticsearch %s %s", instance, database, ontology));
+		log.info(String.format("ElasticSearchBasicOpsDBRepository : Loading content: %s into elasticsearch  %s", instance, ontology));
 		String output;
 		try {
-			output = eSInsertService.load(database, ontology, instance);
+			//output = eSInsertService.load(database, ontology, instance);
+			output = eSInsertService.load(ontology, ontology, instance);
 		} catch (Exception e) {
 			throw new DBPersistenceException("Error inserting instance :"+instance+" into :"+ontology,e);
 		}
@@ -92,7 +94,8 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 		log.info(String.format("ElasticSearchBasicOpsDBRepository :Update Native"));
 		SearchResponse output=null;
 		try {
-			output = eSUpdateService.updateByQuery(database, ontology, updateStmt);
+			//output = eSUpdateService.updateByQuery(database, ontology, updateStmt);
+			output = eSUpdateService.updateByQuery(ontology, ontology, updateStmt);
 		} catch (InterruptedException | ExecutionException e) {
 			throw new DBPersistenceException("Error in operation ES updateNative : "+e.getMessage(),e);
 		}
@@ -104,7 +107,8 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 		log.info(String.format("ElasticSearchBasicOpsDBRepository :Update Native"));
 		SearchResponse output=null;
 		try {
-			output = eSUpdateService.updateByQueryAndFilter(database, collection, data, query);
+			//output = eSUpdateService.updateByQueryAndFilter(database, collection, data, query);
+			output = eSUpdateService.updateByQueryAndFilter(collection, collection, data, query);
 		} catch (InterruptedException | ExecutionException e) {
 			throw new DBPersistenceException("Error in operation ES updateNative : "+e.getMessage(),e);
 		}
@@ -144,7 +148,8 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 
 	@Override
 	public String findById(String ontology, String objectId) throws DBPersistenceException {
-		GetResponse getResponse =  eSDataService.findByIndex(database, ontology, objectId);
+		GetResponse getResponse =  eSDataService.findByIndex(ontology, ontology, objectId);
+		//GetResponse getResponse =  eSDataService.findByIndex(database, ontology, objectId);
 		String output = getResponse.getSourceAsString();
 		return output;
 		
@@ -172,7 +177,8 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 
 	@Override
 	public String findAllAsJson(String ontology) throws DBPersistenceException {
-		List<String> output = eSDataService.findAllByType(ontology, database);
+		//List<String> output = eSDataService.findAllByType(ontology, database);
+		List<String> output = eSDataService.findAllByType(ontology, ontology);
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String json = gson.toJson(output);
 		return json;
@@ -185,7 +191,8 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 
 	@Override
 	public List<String> findAll(String ontology) throws DBPersistenceException {
-		List<String> output = eSDataService.findAllByType(ontology, database);
+		//List<String> output = eSDataService.findAllByType(ontology, database);
+		List<String> output = eSDataService.findAllByType(ontology, ontology);
 		return output;
 	}
 
@@ -196,13 +203,15 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 
 	@Override
 	public long count(String ontology) throws DBPersistenceException {
-		return eSCountService.getMatchAllQueryCountByType(ontology,database);
+		//return eSCountService.getMatchAllQueryCountByType(ontology,database);
+		return eSCountService.getMatchAllQueryCountByType(ontology,ontology);
 	}
 
 	@Override
 	public long delete(String ontology) throws DBPersistenceException {
 		long count = count(ontology);
-		boolean all = eSDeleteService.deleteAll(database, ontology);
+		//boolean all = eSDeleteService.deleteAll(database, ontology);
+		boolean all = eSDeleteService.deleteAll(ontology, ontology);
 		if (all) return count;
 		else return -1;
 	}
@@ -214,7 +223,8 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 
 	@Override
 	public long deleteNativeById(String ontologyName, String objectId) throws DBPersistenceException {
-		boolean all = eSDeleteService.deleteById(database, ontologyName, objectId);
+		//boolean all = eSDeleteService.deleteById(database, ontologyName, objectId);
+		boolean all = eSDeleteService.deleteById(ontologyName, ontologyName, objectId);
 		if (all) return 1;
 		else return -1;
 	}
@@ -225,7 +235,8 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 		
 		UpdateResponse response=null;
 		 try {
-			 response = eSUpdateService.updateById(database,ontologyName,objectId,body);
+			// response = eSUpdateService.updateById(database,ontologyName,objectId,body);
+			 response = eSUpdateService.updateById(ontologyName,ontologyName,objectId,body);
 		} catch (InterruptedException | ExecutionException e) {
 			throw new DBPersistenceException("Error in Update Native:"+e.getMessage(),e);
 		}

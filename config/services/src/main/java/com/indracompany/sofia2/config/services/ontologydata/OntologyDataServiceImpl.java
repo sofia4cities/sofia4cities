@@ -41,23 +41,26 @@ import com.indracompany.sofia2.router.service.app.model.OperationModel;
 
 @Service
 public class OntologyDataServiceImpl implements OntologyDataService {
-	
+
 	@Autowired
 	private OntologyRepository ontologyRepository;
-	
+
 	@Override
-	public void checkOntologySchemaCompliance(final String data, final Ontology ontology) throws DataSchemaValidationException {
+	public void checkOntologySchemaCompliance(final String data, final Ontology ontology)
+			throws DataSchemaValidationException {
 		final String jsonSchema = ontology.getJsonSchema();
 		checkJsonCompliantWithSchema(data, jsonSchema);
 	}
-	
+
 	@Override
-	public void checkOntologySchemaCompliance(final String data, final String ontologyName) throws DataSchemaValidationException {
+	public void checkOntologySchemaCompliance(final String data, final String ontologyName)
+			throws DataSchemaValidationException {
 		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
 		checkOntologySchemaCompliance(data, ontology);
 	}
-		
-	void checkJsonCompliantWithSchema(final String dataString, final String schemaString) throws DataSchemaValidationException{
+
+	void checkJsonCompliantWithSchema(final String dataString, final String schemaString)
+			throws DataSchemaValidationException {
 		JsonNode dataJson;
 		JsonNode schemaJson;
 		JsonSchema schema;
@@ -69,12 +72,12 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			schema = factory.getJsonSchema(schemaJson);
 			report = schema.validate(dataJson);
 		} catch (IOException e) {
-			throw new DataSchemaValidationException ("Error reading data for cheaking schema compliance", e);
+			throw new DataSchemaValidationException("Error reading data for checking schema compliance", e);
 		} catch (ProcessingException e) {
-			throw new DataSchemaValidationException ("Error checking data schema compliance", e);
-			
+			throw new DataSchemaValidationException("Error checking data schema compliance", e);
+
 		}
-		
+
 		if (report != null && !report.isSuccess()) {
 			final Iterator<ProcessingMessage> it = report.iterator();
 			final StringBuffer msgerror = new StringBuffer();
@@ -84,7 +87,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 					msgerror.append(msg.asJson());
 				}
 			}
-			
+
 			throw new DataSchemaValidationException(msgerror.toString());
 		}
 	}
@@ -98,17 +101,13 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		final String clientPlatformId = operationModel.getClientPlatformId();
 		final String clientPlatoformInstance = operationModel.getClientPlatoformInstance();
 		final String clientSession = operationModel.getClientSession();
-		
-		
+
 		final String timezoneId = ZoneId.systemDefault().toString();
 		final String timestamp = Calendar.getInstance(TimeZone.getTimeZone(timezoneId)).getTime().toString();
 		final ContextData contextData = ContextData.builder(user, timezoneId, timestamp)
-				.clientConnection(clientConnection)
-				.clientPatform(clientPlatformId)
-				.clientPatformInstance(clientPlatoformInstance)
-				.clientSession(clientSession)
-				.build();
-		
+				.clientConnection(clientConnection).clientPatform(clientPlatformId)
+				.clientPatformInstance(clientPlatoformInstance).clientSession(clientSession).build();
+
 		final ObjectMapper objectMapper = new ObjectMapper();
 		final JsonNode jsonBody = objectMapper.readTree(body);
 		if (jsonBody.isObject()) {

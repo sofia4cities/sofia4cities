@@ -129,11 +129,21 @@
 															<div class="input-icon ">
 																<i class="fa fa-credit-card"></i>
 																<input id="userId" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"  th:readonly="*{userId}" th:classappend="${user.userId} ? no-remove : ''"  />
-																<input id="password" type="hidden"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
 																
 															</div>															
 														</div>
 													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{user.password} + ':'">Password</label>
+															<div class="input-icon ">
+																<i class="fas fa-key"></i>
+																<input id="password" class="form-control " th:field="*{password}" maxlength="50" name="password" type="password"  th:placeholder="#{user.password}" th:required="true" title="Must contain at least: one uppercase letter, one lowercase letter and a number or simbol. Password must be between 7 and 20 characters." pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />  
+						
+															</div>															
+														</div>
+													</div>
+													
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="" th:text="#{user.name} + ':'">Name</label>

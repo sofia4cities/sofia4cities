@@ -14,8 +14,9 @@
  */
 package com.indracompany.sofia2.audit.producer;
 
-import com.indracompany.sofia2.audit.Sofia2AuditEvent;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
 
 public interface EventProducer {
 	public void publish(Sofia2AuditEvent event);
+	
 }

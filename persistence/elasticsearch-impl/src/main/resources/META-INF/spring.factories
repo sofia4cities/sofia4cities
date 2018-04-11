@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.indracompany.sofia2.persistence.PersistenceStarterAutoConfig
+com.indracompany.sofia2.persistence.ESPersistenceStarterAutoConfig

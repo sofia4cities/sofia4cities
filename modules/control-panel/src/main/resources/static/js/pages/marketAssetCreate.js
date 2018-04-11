@@ -71,7 +71,10 @@ var MarketAssetCreateController = function() {
             contentType: 'text/plain',
             mimeType: 'text/plain',
             success: function(data) {
-                $("#apiDescription").val(data);
+            	dataJson = JSON.parse(data);
+                $("#apiDescription").val(dataJson.description);
+                $("#swaggerUI").attr("src", dataJson.srcSwagger);
+                
             },
             error: function(data,status,er) {
             }
@@ -306,7 +309,11 @@ var MarketAssetCreateController = function() {
 			json_desc.apiId=$('#apiId').val();
 			json_desc.versions=$('#versions').val();
 			json_desc.apiDescription=$('#apiDescription').val();
+			json_desc.swaggerUI=$('#swaggerUI').attr("src");
 		} else if (type=='DOCUMENT'){
+		} else if (type=='URLAPPLICATION'){
+			json_desc.functionality=$('#functionality').val();
+			json_desc.id_endpoint=$('#id_endpoint').val();
 		} else if (type=='APPLICATION'){
 			json_desc.installation=$('#installation').val();
 			json_desc.functionality=$('#functionality').val();

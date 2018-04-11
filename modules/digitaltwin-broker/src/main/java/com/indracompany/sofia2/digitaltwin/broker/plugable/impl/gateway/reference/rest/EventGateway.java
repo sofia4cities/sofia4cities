@@ -74,4 +74,10 @@ public interface EventGateway {
 	public ResponseEntity<?> rule(
 			@ApiParam(value = "ApiKey provided from digital twin", required = true) String apiKey,
 			@ApiParam(value = "Json data need to execute the event", required = true) JsonNode data);
+	
+	@ApiOperation(value = "Custom Event")
+	@RequestMapping(value="/custom", method=RequestMethod.POST)
+	public ResponseEntity<?> custom(
+			@ApiParam(value = "ApiKey provided from digital twin", required = true) String apiKey,
+			@ApiParam(value = "Json data need to execute the event", required = true) JsonNode data);
 }

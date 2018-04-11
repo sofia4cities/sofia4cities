@@ -23,6 +23,7 @@
 		<version.easyrules>3.1.0</version.easyrules>
 		<version.swaggerui>3.12.1</version.swaggerui>
 		<version.prometheus>0.2.0</version.prometheus>
+		<elasticsearch.version>6.2.3</elasticsearch.version>
 	</properties>
 
 	<dependencies>

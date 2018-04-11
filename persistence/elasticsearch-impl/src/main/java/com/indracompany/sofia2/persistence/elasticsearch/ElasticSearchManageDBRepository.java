@@ -44,10 +44,10 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 	@Autowired
 	private ESDeleteService eSDeleteService;
 	
-	@Value("${sofia2.database.elasticsearch.database:es_sofia2_s4c}")
+	/*@Value("${sofia2.database.elasticsearch.database:es_sofia2_s4c}")
 	@Getter
 	@Setter
-	private String database;
+	private String database;*/
 	
 	private String createTestIndex(String index) {
 		String res =   connector.createIndex(index);
@@ -63,9 +63,10 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 	@Override
 	public String createTable4Ontology(String ontology, String schema) throws DBPersistenceException {
 		try {
-			String res =   connector.createIndex(database);
+			//String res =   connector.createIndex(database);
+			String res =   connector.createIndex(ontology);
 		} catch (Exception e) {
-			log.info("Resource already exists "+database);
+			log.info("Resource already exists ");
 		}
 		
 		if (schema.equals("")) schema="{}";
@@ -76,7 +77,8 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 		}
 		
 		else {
-			boolean response =  connector.createType(database, ontology, schema);
+			boolean response =  connector.createType(ontology, ontology, schema);
+			//boolean response =  connector.createType(database, ontology, schema);
 			return ontology;
 		}
 	
@@ -94,7 +96,8 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public void removeTable4Ontology(String ontology) throws DBPersistenceException {
-		eSDeleteService.deleteAll(database, ontology);
+		//eSDeleteService.deleteAll(database, ontology);
+		eSDeleteService.deleteAll(ontology, ontology);
 
 	}
 

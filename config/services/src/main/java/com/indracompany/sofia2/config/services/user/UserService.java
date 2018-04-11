@@ -20,6 +20,7 @@ import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
+import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
 
 public interface UserService {
 
@@ -49,7 +50,7 @@ public interface UserService {
 
 	void createUser(User user);
 
-	boolean userExists(User user);
+	boolean userExists(User user) throws UserServiceException;
 
 	void updateUser(User user);
 
@@ -68,5 +69,5 @@ public interface UserService {
 	boolean emailExists(User user);
 
 	UserToken getUserToken(String user, String token);
-
+	
 }
