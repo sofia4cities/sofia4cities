@@ -25,14 +25,15 @@ public class ClientsApplication {
 	public static void main(String[] args) throws InterruptedException, IOException {
 
 		MQTTClient client = new MQTTClient("tcp://localhost:1883");
-		String token = "a5bdc70f74da414eaa7d72daac397626";
-		String clientPlatform = "DeviceTemp";
+		String token = "e7ef0742d09d4de5a3687f0cfdf7f626";
+		String clientPlatform = "Ticketing App";
 		String clientPlatformInstance = clientPlatform + ":MQTT";
-		String ontology = "TempOnt";
+		String ontology = "Ticket";
 		int timeout = 50;
 		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
-		String jsonData = "{\"TempOnt\":{ \"Temp\":28.6}}";
-		String subsId = client.subscribe(ontology, "SELECT * FROM TempOnt", QUERY_TYPE.SQL, timeout,
+		String jsonData = "{\"Ticket\":{ \"Temp\":28.6}}";
+		// client.publish(ontology, jsonData, timeout);
+		String subsId = client.subscribe(ontology, "SELECT * FROM Ticket", QUERY_TYPE.SQL, timeout,
 				new SubscriptionListener() {
 
 					@Override
@@ -42,13 +43,12 @@ public class ClientsApplication {
 					}
 
 				});
-		// client.unsubscribe(subsId);
-		Thread.sleep(50000);
-		// client.publish("TempOnt", jsonData, timeout);
+		client.unsubscribe(subsId);
+
 		//
 		// while(true);
 		client.disconnect();
-
+		System.exit(0);
 		// RestClient restClient = new RestClient("http://localhost:8081/iotbroker");
 		// String sessionKey = restClient.connect(token, clientPlatform,
 		// clientPlatformInstance);

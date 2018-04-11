@@ -54,7 +54,9 @@ public class MQTTClient {
 	private String brokerURI;
 	private CompletableFuture<String> completableFutureMessage = new CompletableFuture<>();
 	private String sessionKey;
-	private String topic = "/message";;
+	private String topic = "/message";
+	private String topic_message = "/topic/message";
+	private String topic_subscription = "/topic/subscription";
 	private MqttClient client;
 	private Map<String, SubscriptionListener> subscriptions = new HashMap<String, SubscriptionListener>();
 
@@ -102,7 +104,7 @@ public class MQTTClient {
 			this.client.connect();
 			log.info("Connecting to broker MQTT at " + brokerURI);
 
-			this.client.subscribe("/topic/message/" + client.getClientId(), new IMqttMessageListener() {
+			this.client.subscribe(topic_message + "/" + client.getClientId(), new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					final String response = new String(message.getPayload());
@@ -121,9 +123,12 @@ public class MQTTClient {
 			// GET JOIN RESPONSE
 			String joinResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(joinResponse);
-			if (response.getSessionKey() != null)
+			if (response.getSessionKey() != null) {
 				this.sessionKey = response.getSessionKey();
-			log.info("Session Key established: " + this.sessionKey);
+				log.info("Session Key established: " + this.sessionKey);
+			} else
+				throw new MQTTException("Could not stablish connection, error code is "
+						+ response.getBody().getErrorCode() + ":" + response.getBody().getError());
 
 		} catch (MqttException e) {
 			log.error("Could not connect to MQTT broker");
@@ -142,8 +147,9 @@ public class MQTTClient {
 			throw new MQTTException("Could not parse SSAP message");
 		}
 
-		if (this.sessionKey == null)
-			log.info("Session key is null, either Token or ClientPlatform params are not valid");
+		// if (this.sessionKey == null)
+		// log.info("Session key is null, either Token or ClientPlatform params are not
+		// valid");
 
 		return this.sessionKey;
 	}
@@ -199,7 +205,7 @@ public class MQTTClient {
 			if (!subscriptions.containsKey(subscriptionId))
 				subscriptions.put(subscriptionId, listener);
 
-			this.client.subscribe("/topic/subscription/" + this.sessionKey, new IMqttMessageListener() {
+			this.client.subscribe(topic_subscription + "/" + this.sessionKey, new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					log.info("Subs message available");
@@ -268,6 +274,7 @@ public class MQTTClient {
 			if (response.getBody().isOk()) {
 				log.info("Unsubscribed successfully");
 				this.subscriptions.remove(subscriptionId);
+				client.unsubscribe(topic_subscription + "/" + this.sessionKey);
 			} else
 				log.error("Could not unsubscribe");
 
@@ -325,8 +332,10 @@ public class MQTTClient {
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(insertResponse);
 			if (response.getBody().isOk())
 				log.info("Message published");
-			else
-				log.error("Could not publish message");
+			else {
+				throw new MQTTException("Could not publish message \nError Code: " + response.getBody().getErrorCode()
+						+ ":\n" + response.getBody().getError());
+			}
 
 		} catch (JsonProcessingException e) {
 			log.error("Could not read json data, invalid format");
