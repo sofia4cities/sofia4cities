@@ -144,6 +144,13 @@ public class MarketAssetHelper {
 		
 		//Technologies
 		model.addAttribute("technologies", getTechnologies());
+		
+		//Five Assets
+		List<MarketAsset> assets = marketAssetRepository.findByUser(utils.getUserId());
+		List<MarketAssetDTO> fiveAssets =  toMarketAssetBean(assets.subList(0, Math.min(assets.size(), 5)));
+		
+		//Technologies
+		model.addAttribute("fiveAssets", fiveAssets);
 	}
 
 	public void populateMarketAssetFragment(Model model, String type) {

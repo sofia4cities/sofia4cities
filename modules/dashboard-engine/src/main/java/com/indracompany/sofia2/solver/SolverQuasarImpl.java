@@ -105,10 +105,16 @@ public class SolverQuasarImpl implements SolverInterface{
 	private String getOntologyFromDatasource(String datasource) {
 		int indexfrom = datasource.toLowerCase().indexOf("from ");
 		int indexOf = datasource.toLowerCase().indexOf(" ",indexfrom + 5);
+		if(indexOf == -1) {
+			indexOf = datasource.length();
+		}
 		String testOntology = datasource.substring(indexfrom + 5, indexOf).trim();
 		while(testOntology.startsWith("(") && indexfrom!=-1) {
 			indexfrom = datasource.toLowerCase().indexOf("from ",indexfrom);
 			indexOf = datasource.toLowerCase().indexOf(" ",indexfrom + 5);
+			if(indexOf == -1) {
+				indexOf = datasource.length();
+			}
 			testOntology = datasource.substring(indexfrom + 5, indexOf).trim();
 		}
 		
