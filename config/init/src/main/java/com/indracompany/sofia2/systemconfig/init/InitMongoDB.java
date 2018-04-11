@@ -48,6 +48,8 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 public class InitMongoDB {
 
+	private static boolean started = false;
+
 	@Autowired
 	@Qualifier("MongoManageDBRepository")
 	ManageDBRepository manageDb;
@@ -67,14 +69,17 @@ public class InitMongoDB {
 	@PostConstruct
 	@Test
 	public void init() {
-		String userDir = System.getProperty(USER_DIR);
-		init_AuditGeneral();
-		init_RestaurantsDataSet(userDir);
-		init_HelsinkiPopulationDataSet(userDir);
-		init_DigitalTwinLogs();
-		init_DigitalTwinEvents();
-		init_DigitalTwinActionsTurbine();
-		init_DigitalTwinPropertiesTurbine();
+		if (!started) {
+			started = true;
+			String userDir = System.getProperty(USER_DIR);
+			init_AuditGeneral();
+			init_RestaurantsDataSet(userDir);
+			init_HelsinkiPopulationDataSet(userDir);
+			init_DigitalTwinLogs();
+			init_DigitalTwinEvents();
+			init_DigitalTwinActionsTurbine();
+			init_DigitalTwinPropertiesTurbine();
+		}
 	}
 
 	private User getUserDeveloper() {
