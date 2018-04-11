@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.iotbroker.audit.aop;
 
+import java.util.Optional;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -127,6 +129,8 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 
 		IotBrokerAuditEvent event = null;
 
+		Optional<IoTSession> sessionPlugin = securityPluginManager.getSession(message.getSessionKey());
+
 		if (SSAPMessageTypes.JOIN.equals(message.getMessageType())) {
 
 			SSAPBodyJoinMessage joinMessage = (SSAPBodyJoinMessage) message.getBody();
@@ -137,9 +141,9 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 			String messageText = "Join message by clientPlatform  " + joinMessage.getClientPlatform();
 			return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(joinMessage, messageText, info);
 
-		} else {
+		} else if (sessionPlugin != null) {
 
-			IoTSession session = securityPluginManager.getSession(message.getSessionKey()).get();
+			IoTSession session = sessionPlugin.get();
 
 			switch (message.getMessageType()) {
 			case NONE:
