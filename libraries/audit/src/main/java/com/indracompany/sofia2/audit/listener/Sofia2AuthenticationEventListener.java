@@ -17,7 +17,6 @@ package com.indracompany.sofia2.audit.listener;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.event.AuthorizationFailureEvent;
@@ -29,106 +28,120 @@ import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
-import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuthAuditEvent;
+import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
 public class Sofia2AuthenticationEventListener extends Sofia2EventListener {
-	
-	
+
 	@EventListener
-    @Async
-    public void handleAuthenticationSuccessEvent(AuthenticationSuccessEvent event) {
-    	
-    	
-    	Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY, "Login Success for User : "+event.getAuthentication().getPrincipal().toString());
-    	
-    	Object source = event.getSource();
-    	if (source instanceof UsernamePasswordAuthenticationToken) {
-    		
-    	}
-    	
-    	s2event.setOtherType(AuthenticationSuccessEvent.class.getName());
-    	s2event.setUser((String)event.getAuthentication().getPrincipal());
-    	
-    	if (event.getAuthentication().getDetails() != null) {
+	@Async
+	public void handleAuthenticationSuccessEvent(AuthenticationSuccessEvent event) {
+
+		log.debug("authentication success event for user " + event.getAuthentication().getPrincipal().toString());
+
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY,
+				"Login Success for User : " + event.getAuthentication().getPrincipal().toString());
+
+		Object source = event.getSource();
+		if (source instanceof UsernamePasswordAuthenticationToken) {
+
+		}
+		s2event.setOperationType(OperationType.LOGIN.name());
+		s2event.setOtherType(AuthenticationSuccessEvent.class.getName());
+		s2event.setUser((String) event.getAuthentication().getPrincipal());
+
+		if (event.getAuthentication().getDetails() != null) {
 			Object details = event.getAuthentication().getDetails();
-			setAuthValues(details,s2event);
+			setAuthValues(details, s2event);
 		}
- 
-    	eventRouter.notify(s2event.toJson());
-    }
-    
-    
-    
-    @EventListener
-    @Async
-    public void handleAuthenticationFailureBadCredentialsEvent(AuthenticationFailureBadCredentialsEvent errorEvent) { 
-    	Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY, "Security Failure Event Received: " + errorEvent.getException());
-    	
-    	Object source = errorEvent.getSource();
-    	if (source instanceof FilterInvocation) {
-    		//s2event.setRoute(((FilterInvocation) errorEvent.getSource()).getRequestUrl());
-    	}
-    	
-    	s2event.setUser((String)errorEvent.getAuthentication().getPrincipal());
-    	s2event.setOtherType(AuthorizationFailureEvent.class.getName());
-    	//Sofia2EventFactory.setErrorDetails(s2event, errorEvent.getAccessDeniedException());
-		
+
+		eventRouter.notify(s2event.toJson());
+	}
+
+	@EventListener
+	@Async
+	public void handleAuthenticationFailureBadCredentialsEvent(AuthenticationFailureBadCredentialsEvent event) {
+
+		log.debug("authentication failure bad credentials event for user "
+				+ event.getAuthentication().getPrincipal().toString());
+
+		String message = "Login Failed (Incorrect Credentials) for User: "
+				+ event.getAuthentication().getPrincipal().toString();
+
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY, message);
+
+		Object source = event.getSource();
+		if (source instanceof FilterInvocation) {
+			// s2event.setRoute(((FilterInvocation)
+			// errorEvent.getSource()).getRequestUrl());
+		}
+		s2event.setOperationType(OperationType.LOGIN.name());
+		s2event.setUser((String) event.getAuthentication().getPrincipal());
+		s2event.setOtherType(AuthorizationFailureEvent.class.getName());
+		// Sofia2EventFactory.setErrorDetails(s2event,
+		// errorEvent.getAccessDeniedException());
+
+		if (event.getAuthentication().getDetails() != null) {
+			Object details = event.getAuthentication().getDetails();
+			setAuthValues(details, s2event);
+		}
+
+		eventRouter.notify(s2event.toJson());
+	}
+
+	@EventListener
+	@Async
+	public void handleAuthorizationFailureEvent(AuthorizationFailureEvent errorEvent) {
+
+		log.debug("authorization failure  event for user " + errorEvent.getAuthentication().getPrincipal().toString());
+
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY,
+				"Login Failed (AuthorizationFailure) for User: "
+						+ errorEvent.getAuthentication().getPrincipal().toString());
+
+		Object source = errorEvent.getSource();
+		if (source instanceof FilterInvocation) {
+			// s2event.setRoute(((FilterInvocation)
+			// errorEvent.getSource()).getRequestUrl());
+		}
+		s2event.setOperationType(OperationType.LOGIN.name());
+		s2event.setUser((String) errorEvent.getAuthentication().getPrincipal());
+		s2event.setOtherType(AuthorizationFailureEvent.class.getName());
+		// Sofia2EventFactory.setErrorDetails(s2event,
+		// errorEvent.getAccessDeniedException());
+
 		if (errorEvent.getAuthentication().getDetails() != null) {
 			Object details = errorEvent.getAuthentication().getDetails();
-			setAuthValues(details,s2event);
+			setAuthValues(details, s2event);
 		}
-		
-		eventRouter.notify(s2event.toJson());	
-    }
-    
-    @EventListener
-    @Async
-    public void handleAuthorizationFailureEvent(AuthorizationFailureEvent errorEvent) {
-    	
-    	Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY, "Security Failure Event Received: "+errorEvent.getAccessDeniedException().getMessage());
-    	
-    	Object source = errorEvent.getSource();
-    	if (source instanceof FilterInvocation) {
-    		//s2event.setRoute(((FilterInvocation) errorEvent.getSource()).getRequestUrl());
-    	}
-    	
-    	s2event.setUser((String)errorEvent.getAuthentication().getPrincipal());
-    	s2event.setOtherType(AuthorizationFailureEvent.class.getName());
-    	//Sofia2EventFactory.setErrorDetails(s2event, errorEvent.getAccessDeniedException());
-		
-		if (errorEvent.getAuthentication().getDetails() != null) {
-			Object details = errorEvent.getAuthentication().getDetails();
-			setAuthValues(details,s2event);
-		}
-		
-		eventRouter.notify(s2event.toJson());	
-    }
-    
-    private static void setAuthValues(Object details, Sofia2AuditEvent s2event) {
-    	if (details instanceof WebAuthenticationDetails) {
+
+		eventRouter.notify(s2event.toJson());
+	}
+
+	private static void setAuthValues(Object details, Sofia2AuthAuditEvent s2event) {
+		if (details instanceof WebAuthenticationDetails) {
 			WebAuthenticationDetails details2 = (WebAuthenticationDetails) details;
-			
-			//s2event.setRemoteAddress(details2.getRemoteAddress());
-			//s2event.setSessionId(details2.getSessionId());
-			s2event.setModule(Module.CONTROLPANEL);		
+			s2event.setRemoteAddress(details2.getRemoteAddress());
+			// s2event.setSessionId(details2.getSessionId());
+			s2event.setModule(Module.CONTROLPANEL);
 		} else if (details instanceof OAuth2AuthenticationDetails) {
 			OAuth2AuthenticationDetails details2 = (OAuth2AuthenticationDetails) details;
-			
-			//s2event.setRemoteAddress(details2.getRemoteAddress());
-			//s2event.setSessionId(details2.getSessionId());
-			s2event.setModule(Module.APIMANAGER);	
-			Map<String, Object> data= new HashMap<String,Object>();
+
+			s2event.setRemoteAddress(details2.getRemoteAddress());
+			// s2event.setSessionId(details2.getSessionId());
+			s2event.setModule(Module.APIMANAGER);
+			Map<String, Object> data = new HashMap<String, Object>();
 			data.put("tokenType", details2.getTokenType());
 			data.put("tokenValue", details2.getTokenValue());
 			s2event.setExtraData(data);
 
 		}
-    }
+	}
 }

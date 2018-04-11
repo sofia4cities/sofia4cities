@@ -12,19 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2;
+package com.indracompany.sofia2.persistence.services;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import java.util.List;
+import java.util.Map;
 
-@SpringBootApplication
-@EnableJpaAuditing
-@EnableConfigurationProperties
-public class PersistenceRIApplication {
+import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
+import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 
-	public static void main(String[] args) {
-		SpringApplication.run(PersistenceRIApplication.class, args);
-	}
+public interface NativeManageDBRepository {
+	public Map<String, Boolean> getStatusDatabase(RtdbDatasource dataSource) throws DBPersistenceException ;
+
+	
+	public List<String> getListOfTables(RtdbDatasource dataSource) throws DBPersistenceException;
+
+	
+	public void createIndex(RtdbDatasource dataSource, String sentence) throws DBPersistenceException;
 }

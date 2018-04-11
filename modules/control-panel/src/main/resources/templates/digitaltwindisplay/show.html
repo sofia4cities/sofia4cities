@@ -67,13 +67,20 @@
 
 		}
 		
+		function changeOperation(){
+			var operation = $("#operation").val();
+			if(operation=="custom"){
+				$("#eventName").removeAttr("disabled");
+			}else{
+				$("#eventName").val("");
+				$("#eventName").attr("disabled", "disabled");
+			}
+
+		}
+		
 		function getQueryExecuted(){
-			var typeId = $("#types").val();
-			var device = $("#devices").val();
-			var offset = $("#offset").val();
-			var operation =$("#operation").val();
 			
-			$("#Canvasrespuesta").load('/controlpanel/digitaltwindisplay/executeQuery', { 'type': $("#types").val(), 'device': $("#devices").val(), 'offset': $("#offset").val(), 'operation': $("#operation").val()},function(response,status,xhr){
+			$("#Canvasrespuesta").load('/controlpanel/digitaltwindisplay/executeQuery', { 'type': $("#types").val(), 'device': $("#devices").val(), 'offset': $("#offset").val(), 'operation': $("#operation").val(), 'eventName': $("#eventName").val()},function(response,status,xhr){
 				
 				queryResponse = $(response);				
 				
@@ -168,7 +175,7 @@
 												<div class="panel-tools">	
 													<!-- OPCIONES DE CONSULTA -->
 													<div class="col-md-12 col-sm-11  margin-top-10 margin-bottom-10">
-														<fieldset class="col-sm-3">
+														<fieldset class="col-sm-2">
 															<label class="" th:text="#{digitaltwindisplay.type} + ':'">Type</label>											
 															<select class="form-control" id="types" name="types" onChange="changeType();">
 																<option name="all" value="all" id="all"> ALL (*) </option>
@@ -181,19 +188,28 @@
 																<option name="all" value="all" id="all"> ALL (*) </option>
 															</select>
 														</fieldset>
-														<fieldset class="col-md-3">
+														<fieldset class="col-md-2">
 															<label class="" th:text="#{digitaltwindisplay.operation} + ':'">Operation</label>									
-															<select  class="form-control" id="operation" name="operation" >
+															<select  class="form-control" id="operation" name="operation" onChange="changeOperation();">
 																<option name="shadow" value="shadow"> SHADOW </option>
 																<option name="log" value="log"> LOG </option>
+																<option name="notebook" value="notebook"> NOTEBOOK </option>
+																<option name="rule" value="rule"> RULE </option>
+																<option name="flow" value="flow"> FLOW </option>
+																<option name="pipeline" value="pipeline"> PIPELINE </option>
+																<option name="custom" value="custom"> OTHER </option>
 															</select>
-														</fieldset>	
+														</fieldset>
+														<fieldset class="col-md-2">
+															<label class="" th:text="#{digitaltwindisplay.custom.eventname} + ':'">Custom Event Name</label>									
+															<input  class="form-control" id="eventName" name="eventName" disabled="disabled" th:placeholder="#{digitaltwindisplay.custom.eventname}"/>
+														</fieldset>
 														<fieldset id="fieldset_offset" class="col-md-3">
 															<label class="" th:text="#{digitaltwindisplay.offset} + ':'">Offset</label>																
 															<input class="form-control" name="offset" id="offset"/>															
 														</fieldset>
 													</div>
-													<div class="btn-group" style="padding-top: 10px;">
+													<div class="btn-group" style="padding-top: 34px;">
 														<button type="button" class="btn btn-sm btn-primary" onclick="getQueryExecuted()" id="executeQuery"><i class="fa fa-play"></i> <span th:text="#{database.execQuery}">Ejecutar Query</span> </button>
 													</div>	
 												</div>

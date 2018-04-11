@@ -104,6 +104,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/querytool/show"
+				},
+				{
+					"title": {
+						"EN": "Audit",
+						"ES": "Auditoría"
+					},
+					"icon": "",
+					"url": "/controlpanel/audit/show"
 				}
 			]
 		}

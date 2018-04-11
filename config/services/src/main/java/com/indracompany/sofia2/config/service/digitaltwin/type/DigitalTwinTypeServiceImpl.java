@@ -215,7 +215,7 @@ public class DigitalTwinTypeServiceImpl implements DigitalTwinTypeService{
 				if(logic!=null) {
 					LogicDigitalTwinType l = new LogicDigitalTwinType();
 					l.setTypeId(digitalTwinType);
-					l.setLogic(logic.replace("\\n", System.getProperty("line.separator")).substring(1, logic.length()-1).replace("\\r", ""));
+					l.setLogic(logic.replace("\\n", System.getProperty("line.separator")).substring(1, logic.length()-1).replace("\\r", "").replace("\\t", "   "));
 					logicDigitalTwinTypes.add(l);
 				}
 				

@@ -49,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 
-public class ProxyBasicOpsDBRepositoryTest {
+public class QueryToolDBRepositoryTest {
 	
 	public final static String TEST_INDEX = "test"+System.currentTimeMillis();
 	public final static String TEST_INDEX_ONLINE = "ontology"+TEST_INDEX ;

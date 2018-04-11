@@ -20,6 +20,7 @@ import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
 import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
 import com.indracompany.sofia2.audit.notify.EventRouter;
 
 import java.io.IOException;
@@ -50,6 +51,7 @@ public class SofiaLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
     	Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY, "Logout Success for user: " + user);
     	
     	s2event.setUser(user);
+    	s2event.setOperationType(OperationType.LOGOUT.name());
     	s2event.setOtherType("LogoutEventSuccess");
     	
 		if (authentication.getDetails() != null) {

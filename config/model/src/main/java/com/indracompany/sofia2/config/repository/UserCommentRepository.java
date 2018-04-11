@@ -30,7 +30,7 @@ import com.indracompany.sofia2.config.model.UserComment;
 
 public interface UserCommentRepository extends JpaRepository<UserComment, String> {
 	
-	@Query("SELECT o FROM UserComment AS o WHERE (o.marketAsset.id = :marketAssetId)")
+	@Query("SELECT o FROM UserComment AS o WHERE (o.marketAsset.id = :marketAssetId) order by o.createdAt desc")
 	List<UserComment> findByMarketAsset(@Param("marketAssetId") String marketAssetId);
 
 }
