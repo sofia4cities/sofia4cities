@@ -107,6 +107,14 @@
 				},
 				{
 					"title": {
+						"EN": "Gadget Templates",
+						"ES": "Plantillas Gadget  "
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgettemplates/list"
+				},
+				{
+					"title": {
 						"EN": "Datasources",
 						"ES": "Fuentes de datos"
 					},
@@ -143,6 +151,24 @@
 		},
 		{
 			"title": {
+				"EN": "MARKET",
+				"ES": "MARKET"
+			},
+			"icon": "flaticon-layers",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Market's Assets",
+						"ES": "Gestión Assets"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
+				}
+			]
+		},
+		{
+			"title": {
 				"EN": "TOOLS",
 				"ES": "HERRAMIENTAS"
 			},
@@ -156,6 +182,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/querytool/show"
+				},
+				{
+					"title": {
+						"EN": "Audit",
+						"ES": "Auditoría"
+					},
+					"icon": "",
+					"url": "/controlpanel/audit/show"
 				},
 				{
 					"title": {

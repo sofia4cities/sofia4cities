@@ -23,6 +23,7 @@
 		<version.easyrules>3.1.0</version.easyrules>
 		<version.swaggerui>3.12.1</version.swaggerui>
 		<version.prometheus>0.2.0</version.prometheus>
+		<elasticsearch.version>6.2.3</elasticsearch.version>
 	</properties>
 
 	<dependencies>
@@ -127,6 +128,12 @@
 			<version>${sofia2.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-audit</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+
 		<!-- JSON -->
 		<dependency>
 			<groupId>org.json</groupId>
@@ -202,6 +209,14 @@
 			<artifactId>guava</artifactId>
 			<version>24.0-jre</version>
 		</dependency>
+
+		<!-- TESTS -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 
 	</dependencies>
 

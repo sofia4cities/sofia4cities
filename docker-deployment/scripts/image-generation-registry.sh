@@ -39,6 +39,12 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
+buildElasticSearchDB()
+{
+	echo "ElasticSearchDB image generation with Docker CLI: "
+	docker build -t sofia2/elasticdb:$1 .
+}
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -59,17 +65,17 @@ buildQuasar()
 
 prepareNodeRED()
 {
-	cp $homepath/../tools/Flow-Engine-Manager/*.zip $homepath/../modules/flow-engine/docker/nodered.zip
-	cd $homepath/../modules/flow-engine/docker
+	cp $homepath/../../tools/Flow-Engine-Manager/*.zip $homepath/../../modules/flow-engine/docker/nodered.zip
+	cd $homepath/../../modules/flow-engine/docker
 	unzip nodered.zip		
-	cp -f $homepath/dockerfiles/nodered/proxy-nodered.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/
-	cp -f $homepath/dockerfiles/nodered/sofia2-config-nodes-config.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/config/sofia2-config.js
-	cp -f $homepath/dockerfiles/nodered/sofia2-config-public-config.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/public/config/sofia2-config.js	
+	cp -f $homepath/../dockerfiles/nodered/proxy-nodered.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/
+	cp -f $homepath/../dockerfiles/nodered/sofia2-config-nodes-config.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/config/sofia2-config.js
+	cp -f $homepath/../dockerfiles/nodered/sofia2-config-public-config.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/public/config/sofia2-config.js	
 }
 
 removeNodeRED()
 {
-	cd $homepath/../modules/flow-engine/docker
+	cd $homepath/../../modules/flow-engine/docker
 	rm -rf Flow-Engine-Manager
 	rm nodered.zip		
 }
@@ -85,6 +91,9 @@ pushAllImages2Registry()
 	docker tag sofia2/realtimedb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/realtimedb:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/realtimedb:$1	
 	
+	docker tag sofia2/elasticdb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/elasticdb:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/elasticdb:$1	
+	
 	docker tag sofia2/controlpanel:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:$1	
 	
@@ -99,6 +108,9 @@ pushAllImages2Registry()
 
 	docker tag sofia2/devicesimulator:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
+	
+	docker tag sofia2/digitaltwin:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1	
 	
 	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
@@ -167,6 +179,11 @@ if [ -z "$1" ]; then
 		buildImage "API Manager"
 	fi
 	
+	if [[ "$(docker images -q sofia2/digitaltwin 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../../modules/digitaltwin-broker/	
+		buildImage "Digital Twin"
+	fi	
+	
 	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../modules/dashboard-engine/
 		buildImage "Dashboard Engine"
@@ -208,6 +225,11 @@ if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
 	buildRealTimeDB latest
 fi
 
+if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
+	cd $homepath/../dockerfiles/elasticsearch
+	buildElasticSearchDB latest
+fi
+
 if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
 	cd $homepath/../dockerfiles/nginx
 	buildNginx latest
@@ -230,11 +252,13 @@ echo "Push Sofia2 images to private registry"
 pushImage2Registry configdb latest 
 pushImage2Registry schedulerdb latest 
 pushImage2Registry realtimedb latest 
+pushImage2Registry elasticdb latest
 pushImage2Registry controlpanel latest 
 pushImage2Registry iotbroker latest 
 pushImage2Registry apimanager latest 
 pushImage2Registry flowengine latest 
 pushImage2Registry devicesimulator latest 
+pushImage2Registry digitaltwin latest
 pushImage2Registry dashboard latest 
 pushImage2Registry monitoringui latest 
 pushImage2Registry nginx latest

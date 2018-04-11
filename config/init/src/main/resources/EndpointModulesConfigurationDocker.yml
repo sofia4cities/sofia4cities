@@ -1,0 +1,25 @@
+#Integration Resources docker
+sofia2:
+  urls: 
+    iotbroker:
+      base: http://iotbrokerservice:8081/iotbroker
+      advice: http://iotbrokerservice:8081/iotbroker/advice
+    scriptingEngine:
+      base:
+      advice:
+    flowEngine:
+      base: https://s4citiespro.westeurope.cloudapp.azure.com/flowengine/
+      advice: https://s4citiespro.westeurope.cloudapp.azure.com/nodered/
+    routerStandAlone:
+      base: http://localhost:19100/
+      advice: http://localhost:19100/router/router/advice/
+      management: http://localhost:19100/router/management/
+      router: http://localhost:19100/router/router/
+      hawtio: http://localhost:19100/hawtio/index.html
+      swaggerUI: http://localhost:19100/router/swagger-ui.html
+    apiManager:
+      base: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/
+      api: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/
+      swaggerUI: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/swagger-ui.html?url=
+      swaggerUIManagement: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
+      swaggerJson: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/services/management/swagger/

@@ -34,6 +34,7 @@ import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -77,14 +78,19 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		responseMessage.setBody(new SSAPBodyReturnMessage());
 		responseMessage.getBody().setOk(true);
 		final Optional<IoTSession> session = securityPluginManager.getSession(message.getSessionKey());
-		final OperationModel model = new OperationModel();
-		model.setObjectId(message.getBody().getId());
-		model.setOntologyName(message.getBody().getOntology());
-		model.setOperationType(OperationType.DELETE);
-		model.setQueryType(QueryType.NATIVE);
-		session.ifPresent(s -> model.setUser(s.getUserID()));
-		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
-		//		model.setBody(message.getBody().getData().toString());
+		
+		String user = session.isPresent() ? session.get().getUserID() : null;
+		String clientPlatformId = session.isPresent() ? session.get().getClientPlatform() : null;
+		final OperationModel model = OperationModel.builder(
+				message.getBody().getOntology(), 
+				OperationType.DELETE, 
+				user, 
+				OperationModel.Source.IOTBROKER)
+				.objectId(message.getBody().getId())
+				.queryType(QueryType.NATIVE)
+				.clientPlatformId(clientPlatformId)
+				.build();
+
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -120,13 +126,17 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		responseMessage.getBody().setOk(true);
 		final Optional<IoTSession> session = securityPluginManager.getSession(message.getSessionKey());
 
-		final OperationModel model = new OperationModel();
-		model.setOntologyName(message.getBody().getOntology());
-		model.setOperationType(OperationType.DELETE);
-		model.setQueryType(QueryType.NATIVE);
-		model.setBody(message.getBody().getQuery());
-		session.ifPresent(s -> model.setUser(s.getUserID()));
-		session.ifPresent(s -> model.setClientPlatformId(s.getClientPlatform()));
+		String user = session.isPresent() ? session.get().getUserID() : null;
+		String clientPlatformId = session.isPresent() ? session.get().getClientPlatform() : null;
+		final OperationModel model = OperationModel.builder(
+				message.getBody().getOntology(), 
+				OperationType.DELETE, 
+				user, 
+				Source.IOTBROKER)
+				.queryType(QueryType.NATIVE)
+				.body(message.getBody().getQuery())
+				.clientPlatformId(clientPlatformId)
+				.build();
 
 		final NotificationModel modelNotification= new NotificationModel();
 		modelNotification.setOperationModel(model);

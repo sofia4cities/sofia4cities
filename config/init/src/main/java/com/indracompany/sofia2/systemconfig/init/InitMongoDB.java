@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
@@ -48,10 +49,12 @@ import lombok.extern.slf4j.Slf4j;
 public class InitMongoDB {
 
 	@Autowired
+	@Qualifier("MongoManageDBRepository")
 	ManageDBRepository manageDb;
-
+	
 	@Autowired
 	BasicOpsDBRepository basicOps;
+	
 	@Autowired
 	DataModelRepository dataModelRepository;
 	@Autowired
@@ -68,6 +71,10 @@ public class InitMongoDB {
 		init_AuditGeneral();
 		init_RestaurantsDataSet(userDir);
 		init_HelsinkiPopulationDataSet(userDir);
+		init_DigitalTwinLogs();
+		init_DigitalTwinEvents();
+		init_DigitalTwinActionsTurbine();
+		init_DigitalTwinPropertiesTurbine();
 	}
 
 	private User getUserDeveloper() {
@@ -202,6 +209,70 @@ public class InitMongoDB {
 			} catch (Exception e) {
 				log.error("Error init_AuditGeneral:" + e.getMessage());
 				manageDb.removeTable4Ontology("AuditGeneral");
+			}
+		}
+	}
+	
+	public void init_DigitalTwinActionsTurbine() {
+		log.info("init TwinActionsTurbine for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinActionsTurbine")==0) {
+			try {
+				log.info("No Collection TwinActionsTurbine...");
+				manageDb.createTable4Ontology("TwinActionsTurbine", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinActionsTurbine:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinActionsTurbine");
+			}
+		}
+	}
+	
+	public void init_DigitalTwinPropertiesTurbine() {
+		log.info("init TwinPropertiesTurbine for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinPropertiesTurbine")==0) {
+			try {
+				log.info("No Collection Logs...");
+				manageDb.createTable4Ontology("TwinPropertiesTurbine", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinPropertiesTurbine:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinPropertiesTurbine");
+			}
+		}
+	}
+	
+	public void init_DigitalTwinLogs() {
+		log.info("init TwinLogs for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinLogs")==0) {
+			try {
+				log.info("No Collection Logs...");
+				manageDb.createTable4Ontology("TwinLogs", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinLogs:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinLogs");
+			}
+		}
+	}
+	
+	public void init_DigitalTwinEvents() {
+		log.info("init TwinEvents for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinEvents")==0) {
+			try {
+				log.info("No Collection TwinEvents...");
+				manageDb.createTable4Ontology("TwinEvents", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinEvents:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinEvents");
 			}
 		}
 	}

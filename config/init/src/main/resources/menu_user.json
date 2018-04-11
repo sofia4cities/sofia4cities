@@ -44,6 +44,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/gadgets/list"
+				},				
+				{
+					"title": {
+						"EN": "Gadget Templates",
+						"ES": "Plantillas Gadget  "
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgettemplates/list"
 				},
 				{
 					"title": {
@@ -96,6 +104,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/querytool/show"
+				},
+				{
+					"title": {
+						"EN": "Audit",
+						"ES": "Auditoría"
+					},
+					"icon": "",
+					"url": "/controlpanel/audit/show"
 				}
 			]
 		}

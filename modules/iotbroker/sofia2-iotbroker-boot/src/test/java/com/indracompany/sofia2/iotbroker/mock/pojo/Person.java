@@ -13,13 +13,10 @@
  */
 package com.indracompany.sofia2.iotbroker.mock.pojo;
 
-import com.indracompany.sofia2.persistence.ContextData;
-
 import lombok.Data;
 
 @Data
 public class Person {
-	private ContextData contextData;
 	private String name;
 	private String surname;
 	private String telephone;

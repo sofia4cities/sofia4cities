@@ -23,6 +23,7 @@
     window.__env.dashboardEngineUsername = 'administrator';
     window.__env.dashboardEnginePassword = 'changeIt!';
     window.__env.dashboardEngineLoginRest = '/loginRest';
+    window.__env.dashboardEngineLoginRestTimeout = 5000;
     window.__env.enableDebug = false;
 
   </script>
@@ -36,6 +37,8 @@
   <link rel="stylesheet" href="../node_modules/codemirror/lib/codemirror.css">
   <link rel="stylesheet" href="../node_modules/codemirror/theme/twilight.css">
   <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="../node_modules/angular-material-data-table/dist/md-data-table.min.css">
+  <link rel="stylesheet" href="../node_modules/angular-tooltips/dist/angular-tooltips.min.css">
 
   <!-- endbuild -->
 
@@ -52,7 +55,7 @@
   <!-- endbuild -->
 </head>
 <body class="layout-column" ng-cloak>
-<s2dashboard editmode="false" selectedpage="0" id="1" public="false" class="flex layout-column"></s2dashboard>
+<s2dashboard editmode="true" selectedpage="0" id="34a01719-4ae8-4325-b683-a20e8a194d95" public="false" class="flex layout-column"></s2dashboard>
 
 <!-- build:js(src) scripts/vendor.js -->
 <script src="../node_modules/angular/angular.js"></script>
@@ -75,6 +78,8 @@
 <script src="../node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
 <script src="../node_modules/leaflet/dist/leaflet.js"></script>
 <script src="../node_modules/ui-leaflet/dist/ui-leaflet.min.js"></script>
+<script src="../node_modules/angular-material-data-table/dist/md-data-table.min.js"></script>
+<script src="../node_modules/angular-tooltips/dist/angular-tooltips.min.js"></script>
 
 <!-- endbuild -->
 

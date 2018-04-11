@@ -57,6 +57,12 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
+buildElasticSearchDB()
+{
+	echo "ElasticSearchDB image generation with Docker CLI: "
+	docker build -t sofia2/elasticdb:$1 .
+}
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -109,6 +115,9 @@ pushAllImages2Registry()
 	docker tag sofia2/devicesimulator:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	
+	docker tag sofia2/digitaltwin:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1	
+	
 	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
 	
@@ -156,6 +165,11 @@ fi
 if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
 	cd $homepath/../../modules/api-manager/	
 	buildImage "API Manager"
+fi
+
+if [[ "$(docker images -q sofia2/digitaltwin 2> /dev/null)" == "" ]]; then	
+	cd $homepath/../../modules/digitaltwin-broker/	
+	buildImage "Digital Twin"
 fi
 
 if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
@@ -211,6 +225,11 @@ if [ -z "$1" ]; then
 		buildRealTimeDB latest
 	fi
 	
+	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/elasticsearch
+		buildElasticSearchDB latest
+	fi	
+	
 	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/quasar
 		buildQuasar latest
@@ -226,6 +245,7 @@ echo "CleanUp local images"
 deleteImage controlpanel 
 deleteImage iotbroker 
 deleteImage apimanager 
+deleteImage digitaltwin
 deleteImage dashboard 
 deleteImage devicesimulator 
 deleteImage monitoringui 

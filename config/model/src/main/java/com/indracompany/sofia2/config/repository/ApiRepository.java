@@ -36,6 +36,8 @@ public interface ApiRepository extends JpaRepository<Api, String> {
 	List<Api> findByIdentificationContaining(String identification);
 
 	List<Api> findByUser(User user);
+	
+	List<Api> findByIdentificationAndUser(String identification, User user);
 
 	List<Api> findByIdentificationLikeAndDescriptionLike(String identification, String description);
 

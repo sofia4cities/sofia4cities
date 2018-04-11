@@ -14,7 +14,6 @@
 package com.indracompany.sofia2.streaming.twitter.service;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -52,6 +52,7 @@ public class TwitterStreamServiceIntegrationTest {
 
 	@Autowired
 	TwitterStreamService twitterStreamService;
+
 	@MockBean
 	ConfigurationService configurationService;
 
@@ -88,6 +89,7 @@ public class TwitterStreamServiceIntegrationTest {
 		twitterStreamListener.setConfigurationId(UUID.randomUUID().toString());
 	}
 
+	@Test
 	public void test_1_subscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
@@ -95,7 +97,9 @@ public class TwitterStreamServiceIntegrationTest {
 		Assert.assertNotNull(this.twitterStreamService.subscribe(twitterStreamListener));
 
 	}
-
+	
+	@Ignore
+	@Test
 	public void test_2_isSubscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
@@ -104,7 +108,8 @@ public class TwitterStreamServiceIntegrationTest {
 		Assert.assertTrue(this.twitterStreamService.isSubscribe(twitterStreamListener.getId()));
 
 	}
-
+	
+	@Test
 	public void test_3_unsubscribe() throws Exception {
 		when(configurationService.getConfiguration(any())).thenReturn(new Configuration());
 		when(configurationService.getTwitterConfiguration(any(), any())).thenReturn(twitterConfiguration);
@@ -112,6 +117,8 @@ public class TwitterStreamServiceIntegrationTest {
 		if (this.twitterStreamService.isSubscribe(twitterStreamListener.getId())) {
 			this.twitterStreamService.unsubscribe(twitterStreamListener.getId());
 		}
+		
+		Assert.assertTrue(!this.twitterStreamService.isSubscribe(twitterStreamListener.getId()));
 
 
 	}

@@ -22,12 +22,9 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -44,6 +41,8 @@ import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,7 +66,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 	@PostConstruct
 	public void setUp() {
 		this.sessionKeys = new HashMap<String, String>();
-		this.iotbrokerUrl = this.intregationResourcesService.getURL("iot-broker.base.url") + "iotbroker";
+		this.iotbrokerUrl = this.intregationResourcesService.getUrl(Module.iotbroker, ServiceUrl.base);
 		this.deviceBlackList = new ArrayList<String>();
 	}
 
@@ -143,7 +142,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@Scheduled(fixedDelay = 60000)
 	private void disconnectBlackListedDevices() {
-		for(Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
 			String device = iterator.next();
 			this.disconnectDeviceRest(device);
 			iterator.remove();

@@ -136,7 +136,7 @@ public class ConfigurationController {
 
 	private void populateFormData(Model model) {
 		model.addAttribute("configurationTypes", this.configurationService.getAllConfigurationTypes());
-		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
+//		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
 	}
 
 	@GetMapping(value = "/show/{id}", produces = "text/html")

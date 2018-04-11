@@ -13,21 +13,16 @@
  */
 package com.indracompany.sofia2.streaming.twitter.persistence;
 
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.TimeZone;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
 
@@ -47,22 +42,8 @@ public class PersistenceServiceImpl implements PeristenceService {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode json = mapper.readTree(instance);
 
-		final ContextData contextData = new ContextData();
-
-		contextData.setClientConnection("");
-		contextData.setClientPatform(clientPlatform);
-		contextData.setClientPatformInstance(clientPlatformInstance);
-		contextData.setTimezoneId(ZoneId.systemDefault().toString());
-		contextData.setTimestamp(Calendar.getInstance(TimeZone.getTimeZone(ZoneId.systemDefault())).getTime().toString());
-		contextData.setUser(user);
-		((ObjectNode) json).set("contextData", mapper.valueToTree(contextData));
-
-		final OperationModel model = new OperationModel();
-		model.setBody(json.toString());
-		model.setOntologyName(ontology);
-		model.setUser(user);
-		model.setOperationType(OperationType.POST);
-		model.setQueryType(QueryType.NATIVE);
+		final OperationModel model = new OperationModel.Builder(ontology, OperationType.INSERT, user, Source.IOTBROKER)
+				.body(json.toString()).queryType(QueryType.NATIVE).build();
 
 		final NotificationModel modelNotification = new NotificationModel();
 		modelNotification.setOperationModel(model);

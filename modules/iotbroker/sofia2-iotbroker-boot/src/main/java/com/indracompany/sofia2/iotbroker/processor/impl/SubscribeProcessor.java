@@ -14,17 +14,25 @@
 package com.indracompany.sofia2.iotbroker.processor.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
+import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
@@ -35,7 +43,7 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
-import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.router.service.app.service.RouterSuscriptionService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
@@ -46,19 +54,22 @@ import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
 @Component
+@EnableScheduling
 public class SubscribeProcessor implements MessageTypeProcessor {
 
 	@Autowired
-	private RouterService routerService;
+	private RouterSuscriptionService routerService;
 	@Autowired
 	SecurityPluginManager securityPluginManager;
 	@Autowired
 	ObjectMapper objectMapper;
-
+	@Autowired
+	SuscriptionModelRepository repository;
 
 	@Override
 	public SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<? extends SSAPBodyMessage> message) {
 
+		@SuppressWarnings("unchecked")
 		final SSAPMessage<SSAPBodySubscribeMessage> subscribeMessage = (SSAPMessage<SSAPBodySubscribeMessage>) message;
 		SSAPMessage<SSAPBodyReturnMessage> response = new SSAPMessage<>();
 		final String subsId = UUID.randomUUID().toString();
@@ -81,12 +92,12 @@ public class SubscribeProcessor implements MessageTypeProcessor {
 		model.setSuscriptionId(subsId);
 		session.ifPresent(s -> model.setUser(s.getUserID()));
 
-		OperationResultModel routerResponse=null;
+		OperationResultModel routerResponse = null;
 		try {
 			routerResponse = routerService.suscribe(model);
 		} catch (final Exception e1) {
-			//TODO: LOG
-			response = SSAPUtils.generateErrorMessage(subscribeMessage, SSAPErrorCode.PROCESSOR,e1.getMessage());
+			// TODO: LOG
+			response = SSAPUtils.generateErrorMessage(subscribeMessage, SSAPErrorCode.PROCESSOR, e1.getMessage());
 			return response;
 		}
 
@@ -94,10 +105,11 @@ public class SubscribeProcessor implements MessageTypeProcessor {
 		final String messageResponse = routerResponse.getMessage();
 		final String operation = routerResponse.getOperation();
 		final String result = routerResponse.getResult();
-		System.out.println(errorCode + " " +messageResponse + " " +operation + " " +result );
+		System.out.println(errorCode + " " + messageResponse + " " + operation + " " + result);
 
-		if(!StringUtils.isEmpty(routerResponse.getErrorCode())) {
-			response = SSAPUtils.generateErrorMessage(subscribeMessage, SSAPErrorCode.PROCESSOR, routerResponse.getErrorCode());
+		if (!StringUtils.isEmpty(routerResponse.getErrorCode())) {
+			response = SSAPUtils.generateErrorMessage(subscribeMessage, SSAPErrorCode.PROCESSOR,
+					routerResponse.getErrorCode());
 			return response;
 
 		}
@@ -106,21 +118,21 @@ public class SubscribeProcessor implements MessageTypeProcessor {
 		response.setSessionKey(subscribeMessage.getSessionKey());
 		response.getBody().setOk(true);
 		response.getBody().setError(routerResponse.getErrorCode());
-		final String dataStr = "{\"subscriptionId\": \""+subsId+"\",\"message\": \""+routerResponse.getMessage()+"\"}";
+		final String dataStr = "{\"subscriptionId\": \"" + subsId + "\",\"message\": \"" + routerResponse.getMessage()
+				+ "\"}";
 		JsonNode data;
 		try {
 			data = objectMapper.readTree(dataStr);
 			response.getBody().setData(data);
 		} catch (final IOException e) {
-			//TODO: LOG
-			response = SSAPUtils.generateErrorMessage(subscribeMessage, SSAPErrorCode.PROCESSOR,e.getMessage());
+			// TODO: LOG
+			response = SSAPUtils.generateErrorMessage(subscribeMessage, SSAPErrorCode.PROCESSOR, e.getMessage());
 			return response;
 		}
 
 		return response;
 
-
-		//return response;
+		// return response;
 	}
 
 	@Override
@@ -131,19 +143,44 @@ public class SubscribeProcessor implements MessageTypeProcessor {
 	@Override
 	public boolean validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
 			throws OntologySchemaException, BaseException, Exception {
+		@SuppressWarnings("unchecked")
 		final SSAPMessage<SSAPBodySubscribeMessage> subscribeMessage = (SSAPMessage<SSAPBodySubscribeMessage>) message;
 
-		if( StringUtils.isEmpty(subscribeMessage.getBody().getQuery()) ) {
-			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "query" ,message.getMessageType().name()));
+		if (StringUtils.isEmpty(subscribeMessage.getBody().getQuery())) {
+			throw new SSAPProcessorException(
+					String.format(MessageException.ERR_FIELD_IS_MANDATORY, "query", message.getMessageType().name()));
 		}
 
-		if( subscribeMessage.getBody().getQueryType() == null ) {
-			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "queryType" ,message.getMessageType().name()));
+		if (subscribeMessage.getBody().getQueryType() == null) {
+			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "queryType",
+					message.getMessageType().name()));
 		}
 
-		//TODO: Detect sql injection
+		// TODO: Detect sql injection
 
 		return true;
+	}
+
+	@PostConstruct
+	private void cleanSubscriptions() {
+
+		this.repository.deleteAll();
+	}
+
+	@Transactional
+	@Scheduled(fixedDelay = 300000)
+	private void deleteOldSubscriptions() {
+		ArrayList<SuscriptionNotificationsModel> subscriptionsToRemove = new ArrayList<SuscriptionNotificationsModel>();
+		List<SuscriptionNotificationsModel> subscriptions = this.repository.findAll();
+		for (SuscriptionNotificationsModel subscription : subscriptions) {
+
+			Optional<IoTSession> session = securityPluginManager.getSession(subscription.getSessionKey());
+
+			if (!session.isPresent())
+				subscriptionsToRemove.add(subscription);
+
+		}
+		this.repository.delete(subscriptionsToRemove);
 	}
 
 }

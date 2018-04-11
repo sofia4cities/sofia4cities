@@ -38,3 +38,4 @@ sofia2: #Config Sofia2 FlowEngine specific
    webproject:
          rootfolder.path: /webprojects/
          baseurl: https://localhost:18080/controlpanel/webprojects/
+

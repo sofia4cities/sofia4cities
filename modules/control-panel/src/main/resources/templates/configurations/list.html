@@ -171,6 +171,7 @@
 															<th class="titulo-columnas" ><i class="la la-user"></i> <span th:text="#{configuration.userid}" >Name</span></th>
 															<th class="titulo-columnas text-center" ><i class="la la-credit-card"></i> <span th:text="#{configuration.environment}" >Environment</span></th>
 															<th class="titulo-columnas text-center" ><i class="la"></i> <span th:text="#{configurations.type}" >Configuration Type</span></th>
+															<th class="titulo-columnas text-center" ><i class="la"></i> <span th:text="#{configuration.description}">Description</span></th>
 															<th class="titulo-columnas text-center" ><i class="la"></i> <span th:text="#{configuration.suffix}">Suffix</span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 												
@@ -183,8 +184,9 @@
 															<!-- IDENTIFICATION -->
 															<td class="text-center no-wrap " th:text="${configuration.environment}"></td>
 															<!-- CONFIGURATION TYPE -->														
-															<td class="text-left text-truncate-sm no-wrap " th:text="${configuration.configurationType.description}"></td>
+															<td class="text-left text-truncate-sm no-wrap " th:text="${configuration.type}"></td>
 															<!-- DESCRIPTION -->
+															<td class="text-center no-wrap" th:text="${configuration.description}"></td>
 															<td class="text-center no-wrap" th:text="${configuration.suffix}"></td>													
 															
 															<!-- OPTIONS -->
@@ -210,8 +212,9 @@
 														<label class="toggle-vis" data-column="0" th:text="#{configuration.userid}"> Name</label>
 														<label class="toggle-vis" data-column="1" th:text="#{configuration.environment}"> Entorno</label>
 														<label class="toggle-vis" data-column="2" th:text="#{configurations.type}">Configuration Type</label>
-														<label class="toggle-vis" data-column="3" th:text="#{configuration.suffix}">Sufijo</label>		
-														<label class="toggle-vis" data-column="4" th:text="#{gen.options}"> Options</label>
+														<label class="toggle-vis" data-column="3" th:text="#{configuration.description}">Description</label>	
+														<label class="toggle-vis" data-column="4" th:text="#{configuration.suffix}">Sufijo</label>		
+														<label class="toggle-vis" data-column="5" th:text="#{gen.options}"> Options</label>
 													</div>
 												</div>											
 											</div>

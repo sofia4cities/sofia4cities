@@ -32,6 +32,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
@@ -39,7 +41,7 @@ import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -53,7 +55,7 @@ public class InsertProcessorTest {
 	MessageProcessorDelegate insertProcessor;
 
 	@Autowired
-	BasicOpsDBRepository repository;
+	MongoBasicOpsDBRepository repository;
 
 	@MockBean
 	SecurityPluginManager securityPluginManager;
@@ -67,8 +69,8 @@ public class InsertProcessorTest {
 	@MockBean
 	DeviceManager deviceManager;
 
-
-
+	@MockBean
+	OntologyRepository ontologyRepository;
 
 	@Before
 	public void setUp() throws IOException, Exception {
@@ -143,10 +145,14 @@ public class InsertProcessorTest {
 
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 		final IoTSession session = PojoGenerator.generateSession();
+		
+		Ontology ontology = new Ontology();
+		ontology.setJsonSchema(mockOntologies.getJSONSchema(Person.class));
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
-
+		when(ontologyRepository.findByIdentification(anyString())).thenReturn(ontology);
+		
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);

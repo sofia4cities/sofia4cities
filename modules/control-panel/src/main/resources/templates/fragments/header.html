@@ -176,16 +176,9 @@
 			
 	<!-- HEADER DATA TO SEND TO HEADER CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
-		var currentLanguage = [[${lang}]];	
 		var errores = [[${message}]];
 		var informacion = [[${info}]];		
 		var headerJson = { 
-			"language": currentLanguage,
-			"fullscreen": [[#{gen.fullscreen}]],
-			"reload":[[#{gen.reload}]],
-			"remove":[[#{gen.remove}]],
-			"settings":[[#{gen.settings}]],
-			"collapse":[[#{gen.collapse}]],
 			"errores": errores,
 			"informacion": informacion,
 			"btnEliminar": [[#{gen.deleteBtn}]],
@@ -195,11 +188,14 @@
 			"userConfirm":[[#{user.delete.confirm}]],
 			"twitterListeningConfirm": [[#{scheduledsearch.delete.confirm}]],
 			"ontologyConfirm":[[#{ontology.delete.confirm}]],
+			"digitalTwinTypeConfirm":[[#{digitaltwintype.delete.confirm}]],
+			"digitalTwinDeviceConfirm":[[#{digitaltwindevice.delete.confirm}]],
 			"genericConfirm":[[#{dialogo_confirm_delete_text}]],
 			"configurationConfirm":[[#{configuration.del.confirm}]],
 			"gadgetDatasourceConfirm":[[#{datasources.del.confirm}]],
 			"gadgetConfirm":[[#{gadget.del.confirm}]],
 			"dashboardConfirm":[[#{dashboards.del.confirm}]],
+			"gadgetTemplateConfirm":[[#{gadgettemplates.del.confirm}]],
 			"scheduledSearchConfirm":[[#{scheduledsearch.del.confirm}]],
 			"deviceConfirm":[[#{device.delete.confirm}]],
 			"deviceSimulationConfirm" : [[#{simulation.delete.confirm}]],

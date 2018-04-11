@@ -1,24 +1,40 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "year": {
-      "type": "integer"
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Helsinki",
+    "type": "object",
+    "required": [
+        "Helsinki"
+    ],
+    "properties": {
+        "Helsinki": {
+            "type": "string",
+            "$ref": "#/datos"
+        }
     },
-    "population": {
-      "type": "integer"
+    "datos": {
+        "description": "Info Helsinki",
+        "type": "object",
+        "required": [
+            "year",
+            "population",
+            "population_men",
+            "population_women"
+        ],
+        "properties": {
+            "year": {
+                "type": "number"
+            },
+            "population": {
+                "type": "number"
+            },
+            "population_men": {
+                "type": "number"
+            },
+            "population_women": {
+                "type": "number"
+            }
+        }
     },
-    "population_women": {
-      "type": "integer"
-    },
-    "population_men": {
-      "type": "integer"
-    }
-  },
-  "required": [
-    "year",
-    "population",
-    "population_women",
-    "population_men"
-  ]
+    "description": "asdasdas",
+    "additionalProperties": true
 }

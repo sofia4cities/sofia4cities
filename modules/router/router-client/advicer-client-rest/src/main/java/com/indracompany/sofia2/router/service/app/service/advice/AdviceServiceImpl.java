@@ -42,10 +42,10 @@ public class AdviceServiceImpl
 	public OperationResultModel advicePostProcessing(NotificationCompositeModel input) {
 		return execute(input);
 	}
-	
+
 	@Value("${sofia2.router.avoidsslverification:false}")
 	private boolean avoidSSLVerification;
-	
+
 	public AdviceServiceImpl() throws KeyManagementException, NoSuchAlgorithmException {
 		if (avoidSSLVerification) {
 			SSLUtil.turnOffSslChecking();
@@ -57,14 +57,16 @@ public class AdviceServiceImpl
 		final RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.TEXT_PLAIN);
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		ObjectMapper mapper = new ObjectMapper();
 		HttpEntity<String> domainToStart;
 		try {
 			domainToStart = new HttpEntity<String>(mapper.writeValueAsString(input), headers);
 			OperationResultModel quote = restTemplate.postForObject(input.getUrl(), domainToStart,
 					OperationResultModel.class);
-			log.debug(quote.toString());
+			if (quote != null) {
+				log.debug(quote.toString());
+			}
 			return quote;
 		} catch (Exception e) {
 			log.error("Error while sending notification. Unable to parse notification to JSON. Cause = {}, message={}.",
