@@ -42,6 +42,7 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType.Type;
@@ -67,6 +68,7 @@ import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
 import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
@@ -144,6 +146,9 @@ public class InitConfigDB {
 
 	@Autowired
 	DigitalTwinTypeRepository digitalTwinTypeRepository;
+	
+	@Autowired
+	DigitalTwinDeviceRepository digitalTwinDeviceRepository;
 
 	@Autowired
 	UserTokenRepository userTokenRepository;
@@ -211,10 +216,56 @@ public class InitConfigDB {
 
 		init_DigitalTwinType();
 		log.info("OK init_DigitalTwinType");
+		
+		init_DigitalTwinDevice();
+		log.info("OK init_DigitalTwinDevice");
 
 		init_market();
 		log.info("OK init_Market");
 
+	}
+	
+	private void init_DigitalTwinDevice() {
+		log.info("init_DigitalTwinDevice");
+		if(this.digitalTwinDeviceRepository.count()==0) {
+			DigitalTwinDevice device = new DigitalTwinDevice();
+			device.setContextPath("/turbine");
+			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
+			device.setIdentification("TurbineHelsinki");
+			device.setIp("localhost");
+			device.setLatitude("60.17688297979675");
+			device.setLongitude("24.92333816559176");
+			device.setPort(10000);
+			device.setUrlSchema("http");
+			device.setUrl("http://localhost:8081/digitaltwinbroker");
+			device.setLogic("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();" + System.getProperty("line.separator") +
+					System.getProperty("line.separator")  + 
+					"function main(){" + System.getProperty("line.separator") +
+					"   digitalTwinApi.log('New loop');" + System.getProperty("line.separator") +
+					"   var alternatorTemp = 25;" + System.getProperty("line.separator") +
+					"   while(alternatorTemp<30){" + System.getProperty("line.separator") +
+					"      alternatorTemp ++;" + System.getProperty("line.separator") +
+					"      digitalTwinApi.setStatusValue('alternatorTemp', alternatorTemp);" + System.getProperty("line.separator") +
+					"      digitalTwinApi.setStatusValue('power', 50000.2);" + System.getProperty("line.separator") +
+					"      digitalTwinApi.setStatusValue('nacelleTemp', 25.9);" + System.getProperty("line.separator") +
+					"      digitalTwinApi.setStatusValue('rotorSpeed', 30);" + System.getProperty("line.separator") +
+					"      digitalTwinApi.setStatusValue('windDirection', 68);" + System.getProperty("line.separator") +
+					System.getProperty("line.separator")  + 
+					"      digitalTwinApi.sendUpdateShadow();" + System.getProperty("line.separator") +
+					"      digitalTwinApi.log('Send Update Shadow');" + System.getProperty("line.separator") +
+					"   }" + System.getProperty("line.separator") +
+					"   if(alternatorTemp>=30){" + System.getProperty("line.separator") +
+					"      digitalTwinApi.sendCustomEvent('tempAlert');" + System.getProperty("line.separator") +
+					"   }" + System.getProperty("line.separator") +
+					"}" + System.getProperty("line.separator") +
+					System.getProperty("line.separator")  + 
+					"var onActionConnectElectricNetwork=function(data){ }" + System.getProperty("line.separator") +
+					"var onActionDisconnectElectricNetwork=function(data){ }" + System.getProperty("line.separator") +
+					"var onActionLimitRotorSpeed=function(data){ }");
+			device.setTypeId(this.digitalTwinTypeRepository.findByName("Turbine"));
+			device.setUser(getUserAdministrator());
+			this.digitalTwinDeviceRepository.save(device);
+		}
 	}
 
 	private void init_DigitalTwinType() {
