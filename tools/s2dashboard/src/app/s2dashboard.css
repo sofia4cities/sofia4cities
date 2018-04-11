@@ -162,3 +162,7 @@ tip-arrow{
 .cursor-hand{
   cursor: pointer
 }
+
+.md-open-menu-container{
+  z-index: 10000 !important
+}

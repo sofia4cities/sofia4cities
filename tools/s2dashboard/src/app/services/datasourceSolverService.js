@@ -160,7 +160,16 @@
             var intervalId = $interval(/*Datasource passed as parameter in order to call every refresh time*/
               function(datasource){
                 for(var i = 0; i< datasource.triggers.length;i++){
-                  socketService.sendAndSubscribe({"msg":fromTriggerToMessage(datasource.triggers[i],datasource.name),id: angular.copy(datasource.triggers[i].emitTo), type:"refresh", callback: vm.emitToTargets});
+                  //Send filter array base without id filter (TODO)
+                  var solverCopy = angular.copy(datasource.triggers[i]);
+                  solverCopy.params.filter = [];
+                  for(var index in datasource.triggers[i].params.filter){
+                    var bundleFilters = datasource.triggers[i].params.filter[index].data;
+                    for(var indexB in bundleFilters){
+                      solverCopy.params.filter.push(bundleFilters[indexB]);
+                    }
+                  }
+                  socketService.sendAndSubscribe({"msg":fromTriggerToMessage(solverCopy,datasource.name),id: angular.copy(datasource.triggers[i].emitTo), type:"refresh", callback: vm.emitToTargets});
                 }
               },datasource.refresh * 1000, 0, true, datasource
             );
