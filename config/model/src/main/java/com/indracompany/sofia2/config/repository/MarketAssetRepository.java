@@ -39,6 +39,9 @@ public interface MarketAssetRepository extends JpaRepository<MarketAsset, String
 	@Query("SELECT o FROM MarketAsset AS o WHERE (o.identification LIKE %:marketAssetId% AND o.deletedAt = null) order by o.identification")
 	List<MarketAsset> findByIdentificationLike(@Param("marketAssetId") String marketAssetId);
 	
+	@Query("SELECT o FROM MarketAsset AS o WHERE (((o.user.userId = :userId OR o.isPublic = true) AND o.state = 'APPROVED')) AND (o.deletedAt = null)) order by o.createdAt desc")
+	List<MarketAsset> findByUser(@Param("userId") String userId);
+	
 	@Query("SELECT o.jsonDesc FROM MarketAsset AS o WHERE (o.deletedAt = null)")
 	List<String> findJsonDescs();
 	
