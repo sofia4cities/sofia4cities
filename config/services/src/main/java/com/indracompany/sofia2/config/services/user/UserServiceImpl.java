@@ -21,19 +21,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.RoleRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.repository.UserTokenRepository;
 import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
-import com.indracompany.sofia2.config.services.utils.ServiceUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,12 +48,7 @@ public class UserServiceImpl implements UserService {
 	private TokenRepository tokenRepository;
 	@Autowired
 	private ClientPlatformRepository clientPlatformRepository;
-	
-	
-	@Autowired OntologyRepository ontologyRepository;
-	
-	
-	
+
 	@Override
 	public boolean isUserAdministrator(User user) {
 		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()))
@@ -137,40 +129,24 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void createUser(User user) {
-		
+
 		if (user.getPassword().length() < 7) {
 			throw new UserServiceException("Password has to be at least 7 characters");
 		}
-		
+
 		if (!this.userExists(user)) {
 			log.debug("User no exist, creating...");
 			user.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
 			this.userRepository.save(user);
-			
-			String collectionAuditName = ServiceUtils.getAuditCollectionName (user.getUserId());
 
-			if (ontologyRepository.findByIdentification(collectionAuditName) == null) {
-				Ontology ontology = new Ontology();
-				ontology.setJsonSchema("{}");
-				ontology.setIdentification(collectionAuditName);
-				ontology.setDescription("Ontology Audit for user " + user.getUserId());
-				ontology.setActive(true);
-				ontology.setRtdbClean(true);
-				ontology.setRtdbToHdb(true);
-				ontology.setPublic(false);
-				ontology.setUser(user);
-				
-				ontologyRepository.save(ontology);
-			}
-						
 		} else {
 			throw new UserServiceException("User already exists in Database");
 		}
 	}
-	
+
 	@Override
 	public void registerRoleDeveloper(User user) {
-		
+
 		user.setRole(getRole(Role.Type.ROLE_DEVELOPER));
 		user.setActive(true);
 		log.debug("Creating user with Role Developer default");
@@ -251,7 +227,7 @@ public class UserServiceImpl implements UserService {
 			throw new UserServiceException("Cannot delete user that does not exist");
 		}
 	}
-	
+
 	Role getRole(Role.Type roleType) {
 		final Role r = new Role();
 		r.setName(roleType.name());
@@ -285,5 +261,5 @@ public class UserServiceImpl implements UserService {
 	public User getUserByIdentification(String identification) {
 		return userRepository.findByUserId(identification);
 	}
-	
+
 }
