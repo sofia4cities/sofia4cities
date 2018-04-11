@@ -28,7 +28,6 @@ spring:
     client.service-url: http://localhost:8082
     
 sofia2: #Config Sofia2 specific
-   router.avoidsslverification: true
    flowengine:
       sync.monitor:
          interval.sec: 30

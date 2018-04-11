@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -156,7 +154,7 @@ public class InitConfigDB {
 	@Autowired
 	MarketAssetRepository marketAssetRepository;
 
-	@PostConstruct
+	// @PostConstruct
 	@Test
 	public void init() {
 		log.info("Start initConfigDB...");
@@ -179,7 +177,7 @@ public class InitConfigDB {
 
 		init_OntologyCategory();
 		log.info("OK init_OntologyCategory");
-		
+
 		initAuditOntology();
 		log.info("OK init_AuditOntology");
 
@@ -298,11 +296,13 @@ public class InitConfigDB {
 		Set<LogicDigitalTwinType> logics = new HashSet<LogicDigitalTwinType>();
 		LogicDigitalTwinType logic = new LogicDigitalTwinType();
 		logic.setTypeId(type);
-		logic.setLogic("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();" + System.getProperty("line.separator") +
-				"function main(){}" + System.getProperty("line.separator") +
-				"var onActionConnectElectricNetwork=function(data){  }" + System.getProperty("line.separator") +
-				"var onActionDisconnectElectricNetwork=function(data){ }" + System.getProperty("line.separator") +
-				"var onActionLimitRotorSpeed=function(data){ }");
+		logic.setLogic(
+				"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
+						+ System.getProperty("line.separator") + "function main(){}"
+						+ System.getProperty("line.separator") + "var onActionConnectElectricNetwork=function(data){  }"
+						+ System.getProperty("line.separator")
+						+ "var onActionDisconnectElectricNetwork=function(data){ }"
+						+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }");
 
 		logics.add(logic);
 		return logics;
@@ -714,38 +714,36 @@ public class InitConfigDB {
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
 		return userAdministrator;
 	}
-	
+
 	private User getUser() {
 		if (user == null)
 			user = this.userCDBRepository.findByUserId("user");
 		return user;
 	}
-	
+
 	private User getUserAnalytics() {
 		if (userAnalytics == null)
 			userAnalytics = this.userCDBRepository.findByUserId("analytics");
 		return userAnalytics;
 	}
-	
+
 	private User getUserPartner() {
 		if (userPartner == null)
 			userPartner = this.userCDBRepository.findByUserId("partner");
 		return userPartner;
 	}
-	
+
 	private User getUserSysAdmin() {
 		if (userSysAdmin == null)
 			userSysAdmin = this.userCDBRepository.findByUserId("sysadmin");
 		return userSysAdmin;
 	}
-	
+
 	private User getUserOperations() {
 		if (userOperation == null)
 			userOperation = this.userCDBRepository.findByUserId("operations");
 		return userOperation;
 	}
-	
-	
 
 	private Token getTokenAdministrator() {
 		if (tokenAdministrator == null)
@@ -1110,7 +1108,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			List<DataModel> dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_TweetSentiment.json"));
@@ -1121,7 +1123,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_GeoAirQuality.json"));
@@ -1132,7 +1138,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_CityPopulation.json"));
@@ -1144,7 +1154,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_AirQuality_gr2.json"));
@@ -1155,7 +1169,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_AirQuality.json"));
@@ -1166,7 +1184,11 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("OntologySchema_AirCOMeter.json"));
@@ -1177,51 +1199,58 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontologyRepository.save(ontology);
-			
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
+
 		}
 
 	}
-	
-	public void addAuditOntology (User user) {
-		Ontology ontology = new Ontology();
-		ontology.setJsonSchema("{}");
-		ontology.setIdentification("Audit_"+user.getUserId());
-		ontology.setDescription("Ontology Audit for user " + user.getUserId());
-		ontology.setActive(true);
-		ontology.setRtdbClean(true);
-		ontology.setRtdbToHdb(true);
-		ontology.setPublic(false);
-		ontology.setUser(user);
-		
-		ontologyRepository.save(ontology);
+
+	public void addAuditOntology(User user) {
+		if (ontologyRepository.findByIdentification("Audit_" + user.getUserId()) == null) {
+			Ontology ontology = new Ontology();
+			ontology.setJsonSchema("{}");
+			ontology.setIdentification("Audit_" + user.getUserId());
+			ontology.setDescription("Ontology Audit for user " + user.getUserId());
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
+			ontology.setPublic(false);
+			ontology.setUser(user);
+
+			ontologyRepository.save(ontology);
+		}
 	}
-	
-	public void initAuditOntology () {
+
+	public void initAuditOntology() {
 		log.info("adding audit ontologies...");
-		
-		addAuditOntology (getUserAdministrator());
-		
-		addAuditOntology (getUserDeveloper());
-		
-		addAuditOntology (getUser());
-		
-		addAuditOntology (getUserAnalytics());
-		
-		addAuditOntology (getUserPartner());
-		
-		addAuditOntology (getUserSysAdmin());
-		
-		addAuditOntology (getUserOperations());
+
+		addAuditOntology(getUserAdministrator());
+
+		addAuditOntology(getUserDeveloper());
+
+		addAuditOntology(getUser());
+
+		addAuditOntology(getUserAnalytics());
+
+		addAuditOntology(getUserPartner());
+
+		addAuditOntology(getUserSysAdmin());
+
+		addAuditOntology(getUserOperations());
 
 	}
 
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
 		/*
-		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
-		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
-		 * user=new OntologyUserAccess(); user.setUser("6");
+		 * List<OntologyUserAccess>
+		 * users=this.ontologyUserAccessRepository.findAll();
+		 * if(users.isEmpty()) { log.info("No users found...adding");
+		 * OntologyUserAccess user=new OntologyUserAccess(); user.setUser("6");
 		 * user.setOntology(ontologyRepository.findAll().get(0));
 		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
 		 * this.ontologyUserAccessRepository.save(user); }
@@ -1490,14 +1519,15 @@ public class InitConfigDB {
 	 * if (templates.isEmpty()) { try {
 	 * 
 	 * log.info("No templates Adding..."); Template template= new Template();
-	 * template.setIdentification("GSMA-Weather Forecast"); template.setType("0");
-	 * template.
+	 * template.setIdentification("GSMA-Weather Forecast");
+	 * template.setType("0"); template.
 	 * setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}"
 	 * ); template.
 	 * setDescription("This contains a harmonised description of a Weather Forecast."
 	 * ); template.setCategory("plantilla_categoriaGSMA");
 	 * template.setIsrelational(false); templateRepository.save(template); ///
-	 * template=new Template(); template.setIdentification("TagsProjectBrandwatch");
+	 * template=new Template();
+	 * template.setIdentification("TagsProjectBrandwatch");
 	 * template.setType("1"); template.
 	 * setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}"
 	 * ); template.
