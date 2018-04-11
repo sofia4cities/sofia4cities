@@ -170,7 +170,7 @@ if [ -z "$1" ]; then
 		buildImage "API Manager"
 	fi
 	
-	if [[ "$(docker images -q sofia2/digitaltwin-broker 2> /dev/null)" == "" ]]; then	
+	if [[ "$(docker images -q sofia2/digitaltwin 2> /dev/null)" == "" ]]; then	
 		cd $homepath/../../modules/digitaltwin-broker/	
 		buildImage "Digital Twin"
 	fi	

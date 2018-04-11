@@ -14,14 +14,16 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch.api;
 
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.WrapperQueryBuilder;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryAction;
-import org.elasticsearch.index.reindex.DeleteByQueryRequestBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,10 +68,25 @@ public class ESDeleteService {
 		return bulkResponse.hasFailures() == true ? false : true;
 	}
 	
+	public boolean deleteAllOld(String index, String type) {
+		DeleteIndexResponse response = null;
+		
+		if(connector.getClient().admin().indices().prepareExists(index).get().isExists()){
+			response = 	connector.getClient().admin().indices().prepareDelete(index).get();
+	      }
+		log.info("Documents have been deleted...");
+		return response.isAcknowledged() == true ? false : true;
+	}
 	
+	  
 
-	/*public long deleteByQuery(String name) {
-		return new DeleteByQueryRequestBuilder(connector.getClient(), DeleteByQueryAction.INSTANCE)
-				.setQuery(QueryBuilders.termQuery("name", name)).execute().actionGet().getTotalDeleted();
-	}*/
+	public long deleteByQuery(String index , String jsonQueryString) {
+		WrapperQueryBuilder build = QueryBuilders.wrapperQuery(jsonQueryString);
+		BulkByScrollResponse response = DeleteByQueryAction.INSTANCE.newRequestBuilder(connector.getClient())
+			    .filter(build) 
+			    .source(index)                                  
+			    .get();                                             
+		long deleted = response.getDeleted();    
+		return deleted;
+	}
 }

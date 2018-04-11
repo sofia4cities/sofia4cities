@@ -17,80 +17,126 @@ package com.indracompany.sofia2.persistence.elasticsearch;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
+import com.indracompany.sofia2.persistence.elasticsearch.api.ESDeleteService;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+@Component("ElasticSearchManageDBRepository")
+@Scope("prototype")
+@Lazy
+@Slf4j
 public class ElasticSearchManageDBRepository implements ManageDBRepository {
+	
+	@Autowired
+	ESBaseApi connector;
+	
+	@Autowired
+	private ESDeleteService eSDeleteService;
+	
+	/*@Value("${sofia2.database.elasticsearch.database:es_sofia2_s4c}")
+	@Getter
+	@Setter
+	private String database;*/
+	
+	private String createTestIndex(String index) {
+		String res =   connector.createIndex(index);
+		log.info("ElasticSearchManageDBRepository createTestIndex :"+index+" res: " +res);
+		return res;
+	}
 
 	@Override
 	public Map<String, Boolean> getStatusDatabase() throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public String createTable4Ontology(String ontology, String schema) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			//String res =   connector.createIndex(database);
+			String res =   connector.createIndex(ontology);
+		} catch (Exception e) {
+			log.info("Resource already exists ");
+		}
+		
+		if (schema.equals("")) schema="{}";
+		
+		if (schema.equals("{}")) {
+			log.info("No schema is declared");
+			return ontology;
+		}
+		
+		else {
+			boolean response =  connector.createType(ontology, ontology, schema);
+			//boolean response =  connector.createType(database, ontology, schema);
+			return ontology;
+		}
+	
 	}
 
 	@Override
 	public List<String> getListOfTables() throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public List<String> getListOfTables4Ontology(String ontology) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public void removeTable4Ontology(String ontology) throws DBPersistenceException {
-		// TODO Auto-generated method stub
+		//eSDeleteService.deleteAll(database, ontology);
+		eSDeleteService.deleteAll(ontology, ontology);
 
 	}
 
 	@Override
 	public void createIndex(String ontology, String attribute) throws DBPersistenceException {
-		// TODO Auto-generated method stub
+		throw new DBPersistenceException("Not Implemented Already");
 
 	}
 
 	@Override
 	public void createIndex(String ontology, String nameIndex, String attribute) throws DBPersistenceException {
-		// TODO Auto-generated method stub
+		throw new DBPersistenceException("Not Implemented Already");
 
 	}
 
 	@Override
 	public void createIndex(String sentence) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-
+		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public void dropIndex(String ontology, String indexName) throws DBPersistenceException {
-		// TODO Auto-generated method stub
+		throw new DBPersistenceException("Not Implemented Already");
 
 	}
 
 	@Override
 	public List<String> getListIndexes(String ontology) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public String getIndexes(String ontology) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public void validateIndexes(String ontology, String schema) throws DBPersistenceException {
-		// TODO Auto-generated method stub
+		throw new DBPersistenceException("Not Implemented Already");
 
 	}
 

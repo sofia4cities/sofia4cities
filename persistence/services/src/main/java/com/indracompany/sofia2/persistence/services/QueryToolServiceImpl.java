@@ -13,14 +13,23 @@
  */
 package com.indracompany.sofia2.persistence.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
+import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchManageDBRepository;
+import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchQueryAsTextDBRepository;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.services.QueryAsTextMongoDBImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,19 +38,52 @@ import lombok.extern.slf4j.Slf4j;
 public class QueryToolServiceImpl implements QueryToolService {
 
 	@Autowired
-	QueryAsTextDBRepository queryOps = null;
+	QueryAsTextMongoDBImpl queryMongo;
 
 	@Autowired
 	@Qualifier("MongoManageDBRepository")
-	ManageDBRepository manageOps = null;
+	ManageDBRepository manageMongo;
+	
+	@Autowired
+	ElasticSearchQueryAsTextDBRepository queryElasticSearch;
 
 	@Autowired
-	OntologyService ontologyService = null;
+	ElasticSearchManageDBRepository manageElasticSearch;
+
+	@Autowired
+	OntologyService ontologyService;
+	
+	@Autowired
+	ClientPlatformService clientPlatformService;
 
 	private void hasUserPermission(String user, String ontology) throws Exception {
 		if (!ontologyService.hasUserPermissionForQuery(user, ontology)) {
 			throw new Exception("User:" + user + " has nos permission to query ontology " + ontology);
 		}
+	}
+	
+	private QueryAsTextDBRepository getInstance(String ontologyId, String sessionUserId) throws Exception {
+		Ontology  ds = ontologyService.getOntologyByIdentification(ontologyId, sessionUserId);
+		RtdbDatasource dataSource =  ds.getRtdbDatasource();
+		if (dataSource.name().equals("Mongo")) return queryMongo;
+		else if (dataSource.name().equals("ElasticSearch")) return queryElasticSearch; 
+		else return queryMongo;
+	}
+	
+	private QueryAsTextDBRepository getInstanceClientPlatform(String ontologyId, String clientP) throws Exception {
+		ClientPlatform cp = clientPlatformService.getByIdentification(clientP);
+		
+		List<Ontology>  ds = ontologyService.getOntologiesByClientPlatform(cp);
+		
+		Ontology result1 = ds.stream()                        
+                .filter(x -> ontologyId.equals(x.getIdentification()))       
+                .findAny()                                      
+                .orElse(null); 
+		
+		RtdbDatasource dataSource =  result1.getRtdbDatasource();
+		if (dataSource.name().equals("Mongo")) return queryMongo;
+		else if (dataSource.name().equals("ElasticSearch")) return queryElasticSearch; 
+		else return queryMongo;
 	}
 
 	private void hasClientPlatformPermisionForQuery(String clientPlatform, String ontology) throws Exception{
@@ -49,13 +91,16 @@ public class QueryToolServiceImpl implements QueryToolService {
 			throw new Exception("Client Platform:" + clientPlatform + " has nos permission to query ontology " + ontology);
 		}
 	}
+	
+	
 
 	@Override
 	public String queryNativeAsJson(String user, String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
 		try {
 			hasUserPermission(user, ontology);
-			return queryOps.queryNativeAsJson(ontology, query, offset, limit);
+			
+			return getInstance(ontology,user).queryNativeAsJson(ontology, query, offset, limit);
 		} catch (final Exception e) {
 			log.error("Error queryNativeAsJson:" + e.getMessage());
 			throw new DBPersistenceException(e);
@@ -66,7 +111,7 @@ public class QueryToolServiceImpl implements QueryToolService {
 	public String queryNativeAsJson(String user, String ontology, String query) throws DBPersistenceException {
 		try {
 			hasUserPermission(user, ontology);
-			return queryOps.queryNativeAsJson(ontology, query);
+			return getInstance(ontology,user).queryNativeAsJson(ontology, query);
 		} catch (final Exception e) {
 			log.error("Error queryNativeAsJson:" + e.getMessage());
 			throw new DBPersistenceException(e);
@@ -77,7 +122,7 @@ public class QueryToolServiceImpl implements QueryToolService {
 	public String querySQLAsJson(String user, String ontology, String query, int offset) throws DBPersistenceException {
 		try {
 			hasUserPermission(user, ontology);
-			return queryOps.querySQLAsJson(ontology, query, offset);
+			return getInstance(ontology,user).querySQLAsJson(ontology, query, offset);
 		} catch (final Exception e) {
 			log.error("Error querySQLAsJson:" + e.getMessage());
 			throw new DBPersistenceException(e);
@@ -90,7 +135,7 @@ public class QueryToolServiceImpl implements QueryToolService {
 
 		try {
 			hasClientPlatformPermisionForQuery(clientPlatform, ontology);
-			return queryOps.queryNativeAsJson(ontology, query, offset, limit);
+			return getInstanceClientPlatform(ontology,clientPlatform).queryNativeAsJson(ontology, query, offset, limit);
 		} catch (final Exception e) {
 			log.error("Error queryNativeAsJsonForPlatformClient:" + e.getMessage());
 			throw new DBPersistenceException(e);
@@ -102,7 +147,7 @@ public class QueryToolServiceImpl implements QueryToolService {
 			throws DBPersistenceException {
 		try {
 			hasClientPlatformPermisionForQuery(clientPlatform, ontology);
-			return queryOps.querySQLAsJson(ontology, query, offset);
+			return getInstanceClientPlatform(ontology,clientPlatform).querySQLAsJson(ontology, query, offset);
 		} catch (final Exception e) {
 			log.error("Error querySQLAsJsonForPlatformClient:" + e.getMessage());
 			throw new DBPersistenceException(e);

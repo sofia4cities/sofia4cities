@@ -15,7 +15,7 @@
     });
 
   /** @ngInject */
-  function MainController($log, $scope, $mdSidenav, $mdDialog, $timeout, $window, sofia2HttpService, interactionService) {
+  function MainController($log, $scope, $mdSidenav, $mdDialog, $timeout, $window, sofia2HttpService, interactionService, gadgetManagerService) {
     var vm = this;
     vm.$onInit = function () {
       setTimeout(function () {
@@ -37,6 +37,8 @@
           if(vm.dashboard.interactionHash){
             interactionService.setInteractionHash(vm.dashboard.interactionHash);
           }
+
+          gadgetManagerService.setDashboardModelAndPage(vm.dashboard,vm.selectedpage);
         }
       ).catch(
         function(){

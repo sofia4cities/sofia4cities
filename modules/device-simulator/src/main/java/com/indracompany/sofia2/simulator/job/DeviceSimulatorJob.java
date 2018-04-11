@@ -14,6 +14,9 @@
 package com.indracompany.sofia2.simulator.job;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.quartz.JobExecutionContext;
@@ -92,7 +95,14 @@ public class DeviceSimulatorJob {
 			while (fields.hasNext()) {
 				String field = fields.next();
 				if (ontologySchema.path(field).get("type").asText().equals("string"))
-					((ObjectNode) fieldsSchema).put(field, "");
+					if (!ontologySchema.path(field).path("enum").isMissingNode())
+						((ObjectNode) fieldsSchema).put(field, ontologySchema.path(field).get("enum").get(0).asText());
+					else {
+						if (field.equals("$date"))
+							((ObjectNode) fieldsSchema).put(field, this.getCurrentDate());
+						else
+							((ObjectNode) fieldsSchema).put(field, "");
+					}
 				else if (ontologySchema.path(field).get("type").asText().equals("number"))
 					((ObjectNode) fieldsSchema).put(field, 0);
 				else if (ontologySchema.path(field).get("type").asText().equals("object")) {
@@ -102,7 +112,7 @@ public class DeviceSimulatorJob {
 					JsonNode object = this.createArrayNode(ontologySchema.path(field));
 					JsonNode arrayNode = mapper.createArrayNode();
 					((ArrayNode) arrayNode).add(object);
-					((ObjectNode) fieldsSchema).set(field, object);
+					((ObjectNode) fieldsSchema).set(field, arrayNode);
 				}
 
 			}
@@ -126,7 +136,14 @@ public class DeviceSimulatorJob {
 			while (fields.hasNext()) {
 				String field = fields.next();
 				if (fieldNode.path(field).get("type").asText().equals("string"))
-					((ObjectNode) objectNode).put(field, "");
+					if (!fieldNode.path(field).path("enum").isMissingNode())
+						((ObjectNode) objectNode).put(field, fieldNode.path(field).get("enum").get(0).asText());
+					else {
+						if (field.equals("$date"))
+							((ObjectNode) objectNode).put(field, this.getCurrentDate());
+						else
+							((ObjectNode) objectNode).put(field, "");
+					}
 				else if (fieldNode.path(field).get("type").asText().equals("number"))
 					((ObjectNode) objectNode).put(field, 0);
 				else if (fieldNode.path(field).get("type").asText().equals("object")) {
@@ -134,9 +151,13 @@ public class DeviceSimulatorJob {
 					((ObjectNode) objectNode).set(field, object);
 				} else if (fieldNode.path(field).get("type").asText().equals("array")) {
 					JsonNode object = this.createArrayNode(fieldNode.path(field));
-					JsonNode arrayNode = mapper.createArrayNode();
-					((ArrayNode) arrayNode).add(object);
-					((ObjectNode) objectNode).set(field, object);
+					if (!object.isArray()) {
+						JsonNode arrayNode = mapper.createArrayNode();
+						((ArrayNode) arrayNode).add(object);
+						((ObjectNode) objectNode).set(field, arrayNode);
+					} else
+						((ObjectNode) objectNode).set(field, object);
+
 				}
 
 			}
@@ -159,61 +180,109 @@ public class DeviceSimulatorJob {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode objectNode = mapper.createObjectNode();
 
-		if (!fieldNode.path("items").path("properties").isMissingNode()) {
-			fieldNode = fieldNode.path("items").path("properties");
+		if (!fieldNode.path("properties").isMissingNode()) {
+			fieldNode = fieldNode.path("properties");
 			Iterator<String> fields = fieldNode.fieldNames();
 
 			while (fields.hasNext()) {
 				String field = fields.next();
 				if (fieldNode.path(field).get("type").asText().equals("string"))
-					((ObjectNode) objectNode).put(field, "");
+					if (!fieldNode.path(field).path("enum").isMissingNode())
+						((ObjectNode) objectNode).put(field, fieldNode.path(field).get("enum").get(0).asText());
+					else {
+						if (field.equals("$date"))
+							((ObjectNode) objectNode).put(field, this.getCurrentDate());
+						else
+							((ObjectNode) objectNode).put(field, "");
+					}
 				else if (fieldNode.path(field).get("type").asText().equals("number"))
 					((ObjectNode) objectNode).put(field, 0);
 				else if (fieldNode.path(field).get("type").asText().equals("object")) {
 					JsonNode object = this.createObjectNode(fieldNode.path(field));
-					((ObjectNode) objectNode).set(field, object);
+					return object;
 				}
+				// ((ObjectNode) objectNode).set(field, object);
+				// else if (fieldNode.path(field).get("type").asText().equals("array")) {
+				// JsonNode object = this.createArrayNode(fieldNode.path(field));
+				// JsonNode arrayNode = mapper.createArrayNode();
+				// ((ArrayNode) arrayNode).add(object);
+				// ((ObjectNode) objectNode).set(field, arrayNode);
+				// }
 
 			}
 
-		} else if (!fieldNode.path("items").path("items").isMissingNode()) {
+		} else if (!fieldNode.path("items").isMissingNode()) {
 
-			fieldNode = fieldNode.path("items").path("items");
-			Iterator<String> fields = fieldNode.fieldNames();
-
-			while (fields.hasNext()) {
-				String field = fields.next();
-				if (fieldNode.path(field).get("type").asText().equals("string"))
-					((ObjectNode) objectNode).put(field, "");
-				else if (fieldNode.path(field).get("type").asText().equals("number"))
-					((ObjectNode) objectNode).put(field, 0);
-				else if (fieldNode.path(field).get("type").asText().equals("object")) {
-					JsonNode object = this.createObjectNode(fieldNode.path(field));
-					((ObjectNode) objectNode).set(field, object);
-				}
-
-			}
-
-		} else if (fieldNode.path("items").isArray()) {
 			fieldNode = fieldNode.path("items");
 			int size = fieldNode.size();
+			ArrayNode nodeArray = mapper.createArrayNode();
 
 			for (int i = 0; i < size; i++) {
+				String type;
+				String fieldName;
+				boolean isEnum;
 
-				if (fieldNode.path(i).get("type").asText().equals("string"))
-					((ObjectNode) objectNode).put(String.valueOf(i), "");
-				else if (fieldNode.path(i).get("type").asText().equals("number"))
-					((ObjectNode) objectNode).put(String.valueOf(i), 0);
-				else if (fieldNode.path(i).get("type").asText().equals("object")) {
-					JsonNode object = this.createObjectNode(fieldNode.path(i));
-					((ObjectNode) objectNode).set(String.valueOf(i), object);
+				if (fieldNode.isArray()) {
+					type = fieldNode.get(i).get("type").asText();
+					for (int j = 0; j < size; j++) {
+						JsonNode nodeAux = mapper.createObjectNode();
+						if (type.equals("string")) {
+
+							// ((ObjectNode) nodeAux).put(String.valueOf(j), "");
+							((ObjectNode) nodeAux).put(String.valueOf(j), "");
+							((ArrayNode) nodeArray).add("");
+						} else if (type.equals("number")) {
+							// ((ObjectNode) nodeAux).put(String.valueOf(j), 0);
+							((ObjectNode) nodeAux).put(String.valueOf(j), 0);
+							((ArrayNode) nodeArray).add(0);
+
+						} else if (type.equals("object")) {
+							JsonNode object = this.createObjectNode(fieldNode);
+							return object;
+						}
+						// else if (type.equals("array")) {
+						// JsonNode object = this.createArrayNode(fieldNode.path(i));
+						// JsonNode arrayNode = mapper.createArrayNode();
+						// ((ArrayNode) arrayNode).add(object);
+						// ((ObjectNode) objectNode).set(String.valueOf(i), arrayNode);
+						// }
+					}
+					if (!nodeArray.isNull())
+						return nodeArray;
+
+				} else {
+					type = fieldNode.get("type").asText();
+
+				}
+				if (type.equals("string")) {
+
+					((ArrayNode) nodeArray).add("");
+
+				} else if (type.equals("number")) {
+					((ArrayNode) nodeArray).add(0);
+
+				} else if (type.equals("object")) {
+					JsonNode object = this.createObjectNode(fieldNode);
+					return object;
+				} else if (type.equals("array")) {
+					JsonNode object = this.createArrayNode(fieldNode.path(i));
+					JsonNode arrayNode = mapper.createArrayNode();
+					((ArrayNode) arrayNode).add(object);
+					((ObjectNode) objectNode).set(String.valueOf(i), arrayNode);
 				}
 
 			}
+			if (!nodeArray.isNull())
+				return nodeArray;
 
 		}
 
 		return objectNode;
 	}
+	// TODO jsonnode para fecha
 
+	private String getCurrentDate() {
+		DateFormat dfr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		return dfr.format(new Date());
+	}
 }

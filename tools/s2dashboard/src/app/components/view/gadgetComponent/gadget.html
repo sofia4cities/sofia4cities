@@ -7,8 +7,8 @@
 <div ng-if="vm.type == 'nodata'" layout="row" layout-sm="column" layout-align="space-around">
   <h3>No data found</h3>
 </div>
-<canvas ng-if="vm.type == 'line'" chart-click="vm.clickChartEventProcessorEmitter" class="chart chart-line" chart-data="vm.data" chart-labels="vm.labels" chart-series="vm.series" chart-options="vm.optionsChart"></canvas>
-<canvas ng-if="vm.type == 'bar'" chart-click="vm.clickChartEventProcessorEmitter" class="chart chart-bar" chart-data="vm.data" chart-labels="vm.labels" chart-series="vm.series" chart-options="vm.optionsChart"></canvas>
+<canvas ng-if="vm.type == 'line'" chart-dataset-override="vm.datasetOverride" chart-click="vm.clickChartEventProcessorEmitter" class="chart chart-line" chart-data="vm.data" chart-labels="vm.labels" chart-series="vm.series" chart-options="vm.optionsChart"></canvas>
+<canvas ng-if="vm.type == 'bar'" chart-dataset-override="vm.datasetOverride" chart-click="vm.clickChartEventProcessorEmitter" class="chart chart-bar" chart-data="vm.data" chart-labels="vm.labels" chart-series="vm.series" chart-options="vm.optionsChart"></canvas>
 <canvas ng-if="vm.type == 'pie'" chart-click="vm.clickChartEventProcessorEmitter" class="chart chart-doughnut" chart-data="vm.data" chart-labels="vm.labels" chart-options="vm.optionsChart"></canvas>
 <word-cloud ng-if="vm.type == 'wordcloud'" words="vm.words" width="vm.width" height="vm.height" padding="0" use-tooltip="false" use-transition="true">    </word-cloud>
 <leaflet id="{{'lmap' + vm.id}}" ng-if="vm.type == 'map'" lf-center="vm.center" markers="vm.markers" height="{{vm.height}}" width="100%"></leaflet>

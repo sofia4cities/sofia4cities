@@ -37,8 +37,6 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 	final static String LOG_COLLECTION = "TwinLogs";
 	final static String PROPERTIES_COLLECTION = "TwinProperties";
 	
-//	private ObjectMapper mapper = new ObjectMapper();
-	
 	DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	
 	
@@ -155,7 +153,7 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 
 		try {
 			
-			OUTPUT = mongoRepo.insert(PROPERTIES_COLLECTION + model.getType().substring(0,1).toUpperCase() + model.getType().substring(1), instance.toString() /*mapper.writeValueAsString(shadowInstance)*/);
+			OUTPUT = mongoRepo.insert(PROPERTIES_COLLECTION + model.getType().substring(0,1).toUpperCase() + model.getType().substring(1), instance.toString() );
 			
 		} catch (final Exception e) {
 			result.setResult(OUTPUT);
@@ -180,9 +178,5 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 			default:		return Optional.empty();
 		}
 		
-		
 	}
-	
-
-
 }

@@ -73,6 +73,8 @@ public class InitMongoDB {
 		init_HelsinkiPopulationDataSet(userDir);
 		init_DigitalTwinLogs();
 		init_DigitalTwinEvents();
+		init_DigitalTwinActionsTurbine();
+		init_DigitalTwinPropertiesTurbine();
 	}
 
 	private User getUserDeveloper() {
@@ -207,6 +209,38 @@ public class InitMongoDB {
 			} catch (Exception e) {
 				log.error("Error init_AuditGeneral:" + e.getMessage());
 				manageDb.removeTable4Ontology("AuditGeneral");
+			}
+		}
+	}
+	
+	public void init_DigitalTwinActionsTurbine() {
+		log.info("init TwinActionsTurbine for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinActionsTurbine")==0) {
+			try {
+				log.info("No Collection TwinActionsTurbine...");
+				manageDb.createTable4Ontology("TwinActionsTurbine", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinActionsTurbine:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinActionsTurbine");
+			}
+		}
+	}
+	
+	public void init_DigitalTwinPropertiesTurbine() {
+		log.info("init TwinPropertiesTurbine for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinPropertiesTurbine")==0) {
+			try {
+				log.info("No Collection Logs...");
+				manageDb.createTable4Ontology("TwinPropertiesTurbine", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinPropertiesTurbine:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinPropertiesTurbine");
 			}
 		}
 	}

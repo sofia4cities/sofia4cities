@@ -16,12 +16,16 @@ package com.indracompany.sofia2.persistence.elasticsearch.api;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
 import java.util.List;
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +40,17 @@ public class ESInsertService {
 	@Autowired
 	ESBaseApi connector;
 
-    public String load(String index, String type, String jsonDoc ) {
+    public String load(String index, String type, String jsonDoc ) throws Exception {
+    	
     	log.info(String.format("Loading content: %s into elasticsearch %s %s", jsonDoc, index, type));
-    	IndexResponse response= connector.getClient().prepareIndex(index, type).setSource(jsonDoc).get();
+    	JSONObject dataAsJson=null;
+		try {
+			dataAsJson = new JSONObject(jsonDoc);
+		} catch (JSONException e) {
+			throw new Exception(String.format("Failed during Parsing JSON String %s. failure message: %s", jsonDoc, e.getMessage()));
+		}
+    	
+    	IndexResponse response= connector.getClient().prepareIndex(index, type).setSource(jsonDoc, XContentType.JSON).get();
     	return response.getId();
     }
     

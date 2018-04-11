@@ -23,9 +23,9 @@ import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+//@Service
 @Slf4j
-@CacheConfig(cacheNames={"queries"})
+//CacheConfig(cacheNames={"queries"})
 public class RouterCrudCachedOperationsService {
 	
 	@Autowired

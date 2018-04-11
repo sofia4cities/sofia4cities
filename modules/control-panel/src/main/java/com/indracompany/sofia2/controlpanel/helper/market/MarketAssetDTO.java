@@ -83,6 +83,10 @@ public class MarketAssetDTO {
 	private Date updatedAt;
 	
 	@Getter
+	@Setter  
+	private String rejectionReason;
+	
+	@Getter
 	@Setter
 	byte[] image;
 }

@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,7 @@ public class RestTest {
 	}
 
 	@Test
+	@Ignore
 	public void test_join() throws Exception {
 
 		final StringBuilder url = new StringBuilder(URL_PATH);

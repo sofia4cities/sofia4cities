@@ -38,7 +38,7 @@ import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.PropertyDigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.services.utils.ZipUtil;
 
-import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.ClassTemplateLoader;
 import freemarker.cache.TemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -63,12 +63,6 @@ public class DigitalTwinDeviceHelper {
 	@Value("${digitaltwin.maven.exec.path}")
 	private String mavenExecPath;
 	
-//	@Value("${digitaltwin.src.main}")
-//	private String srcPath;
-//	
-//	@Value("${digitaltwin.src.app}")
-//	private String appPath;
-	
 	private Template digitalTwinStatusTemplate;
 	private Template pomTemplate;
 	private Template deviceApplicationTemplate;
@@ -76,10 +70,10 @@ public class DigitalTwinDeviceHelper {
 	
 	@PostConstruct
 	public void init() {
-		Configuration cfg  = new Configuration();
+		Configuration cfg  = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 		try {
-			ClassLoader classLoader = getClass().getClassLoader();
-			TemplateLoader templateLoader = new FileTemplateLoader(new File(classLoader.getResource("digitaltwin/templates").getFile()));
+			TemplateLoader templateLoader = new ClassTemplateLoader(getClass(), "/digitaltwin/templates");
+			
 			cfg.setTemplateLoader(templateLoader);
 			digitalTwinStatusTemplate = cfg.getTemplate("DigitalTwinStatusTemplate.ftl");
 			pomTemplate = cfg.getTemplate("pomTemplate.ftl");
@@ -91,7 +85,7 @@ public class DigitalTwinDeviceHelper {
 	}
 	
 	
-	public File generateProject(String identificacion) {
+	public File generateProject(String identificacion, Boolean compile) {
 		
 		List<PropertiesDTO> properties = new ArrayList<PropertiesDTO>();
 		List<PropertiesDTO> statusProperties=new ArrayList<PropertiesDTO>();
@@ -110,12 +104,15 @@ public class DigitalTwinDeviceHelper {
 		String projectDirectory=tempDir+File.separator+UUID.randomUUID();
 		
 		File src = new File(projectDirectory + File.separator + device.getIdentification() + File.separator +"src" + File.separator + "main");
-		if(!src.isDirectory()) {
+		if(!src.exists()) {
 			Boolean success = src.mkdirs();
 			if(!success) {
 				log.error("Creating project for Digital Twin Device falied");
 				return null;
 			}
+		}else {
+			log.error("Creating project for Digital Twin Device falied, the temporary directory don't exist: " + src.getAbsolutePath());
+			return null;
 		}
 		
 		for(PropertyDigitalTwinType prop : propsDigitalTwin) {
@@ -134,16 +131,15 @@ public class DigitalTwinDeviceHelper {
 		dataStatusMap.put("package", "digitaltwin.device.status;");
 		dataStatusMap.put("mapClass", cls);
 		
-		//TODO COMPLETAR LA CARGA CORRECTA DE LA CONFIGURACION
 		Map<String, Object> dataApplicationPropertiesMap=new HashMap<String, Object>();
 		dataApplicationPropertiesMap.put("serverPort", "10000");
-		dataApplicationPropertiesMap.put("serverContextPath", "/turbine");
+		dataApplicationPropertiesMap.put("serverContextPath", device.getContextPath());
 		dataApplicationPropertiesMap.put("applicationName", identificacion);
-		dataApplicationPropertiesMap.put("apiKey", device.getApiKey());
+		dataApplicationPropertiesMap.put("apiKey", device.getDigitalKey());
 		dataApplicationPropertiesMap.put("deviceId", device.getIdentification());
-		dataApplicationPropertiesMap.put("deviceRestLocalSchema", "http");
-		dataApplicationPropertiesMap.put("deviceRestLocalIp", "localhost");
-		dataApplicationPropertiesMap.put("sofia2BrokerEndpoint", "http://localhost:8081/digitaltwinbroker");
+		dataApplicationPropertiesMap.put("deviceRestLocalSchema", device.getUrlSchema());
+		dataApplicationPropertiesMap.put("deviceRestLocalIp", device.getIp());
+		dataApplicationPropertiesMap.put("sofia2BrokerEndpoint", device.getUrl());
 		
 		
 		//pom.xml Template properties
@@ -163,6 +159,7 @@ public class DigitalTwinDeviceHelper {
 			zipFile = File.createTempFile(device.getIdentification(), ".zip");
 			
 			//Create DeviceApplication.java
+			log.info("New file is going to be generate on: " + src.getAbsolutePath() + File.separator + "java" + File.separator + "digitaltwin" + File.separator + "device");
 			File app = new File(src.getAbsolutePath() + File.separator + "java" + File.separator + "digitaltwin" + File.separator + "device");
 			if(!app.isDirectory()) {
 				app.mkdirs();
@@ -246,8 +243,9 @@ public class DigitalTwinDeviceHelper {
 			}
 
 		}
-		
-		this.buildProjectMaven(projectDirectory+File.separator+device.getIdentification());
+		if(compile) {
+			this.buildProjectMaven(projectDirectory+File.separator+device.getIdentification());
+		}
 		
 		File fileProjectDirectory = new File(projectDirectory);
 		try {
@@ -258,7 +256,8 @@ public class DigitalTwinDeviceHelper {
 		
 		
 		//Removes the directory
-		this.deleteDirectory(fileProjectDirectory);
+		//TODO
+//		this.deleteDirectory(fileProjectDirectory);
 		
 		return zipFile;
 	}
@@ -278,7 +277,11 @@ public class DigitalTwinDeviceHelper {
 		try {
 			File pathToExecutable = new File(mavenExecPath);
 			ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "clean", "package");
-			builder.directory( new File(projectPath).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
+			File workingDirectory=new File(projectPath);
+			log.info("Sets working directory: {}", workingDirectory);
+			log.info("Absolute path: {}", workingDirectory);
+			
+			builder.directory( workingDirectory); // this is where you set the root folder for the executable to run with
 			builder.redirectErrorStream(true);
 			Process process =  builder.start();
 	
@@ -291,7 +294,8 @@ public class DigitalTwinDeviceHelper {
 			s.close();
 	
 			int result = process.waitFor();
-	
+			//TODO --> Borrar
+			System.out.println(text);
 			log.info( "Process exited with result %d and output %s%n", result, text );
 		}catch(Exception e) {
 			log.error("Error compiling project", e);

@@ -5,16 +5,8 @@
         <md-icon ng-style="{'color':vm.element.header.title.iconColor}">{{vm.element.header.title.icon}}</md-icon>
         <h5 flex ng-style="{'color':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5>
 
-        <md-button ng-if="vm.datastatus" class="md-icon-button" aria-label="Filters">
-          <md-icon>filter_list</md-icon>
-          <md-tooltip class="tt-multiline">
-            <b>Applied filters:</b>
-            <span ng-repeat="(field, value) in vm.datastatus">
-              <br/>
-              <label>{{field}}</label>:<span>{{value}}</span>
-            </span>            
-          </md-tooltip>
-        </md-button>
+        <md-icon class="cursor-hand" ng-if="vm.datastatus" tooltips tooltip-show-trigger="click" tooltip-hide-trigger="click" tooltip-close-button="true" tooltip-size="small" tooltip-template-url="app/partials/view/filterTooltip.html" ng-attr-tooltip-side="{{vm.editmode?'bottom':'bottom left'}}">filter_list</md-icon>
+
         <!--<md-button ng-click="toggleFullScreen()" class="md-icon-button" aria-label="Fullscreen">
           <md-icon>fullscreen</md-icon>
           <md-tooltip>Fullscreen</md-tooltip>

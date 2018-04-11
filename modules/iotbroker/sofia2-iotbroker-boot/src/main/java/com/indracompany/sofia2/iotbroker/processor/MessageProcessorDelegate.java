@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditable;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
@@ -54,6 +56,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	@Autowired
 	private DeviceManager deviceManager;
 
+	@IotBrokerAuditable
 	@Override
 	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message, GatewayInfo info) {
 

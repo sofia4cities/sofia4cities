@@ -12,9 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.audit;
+package com.indracompany.sofia2.audit.bean;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.aspectj.lang.JoinPoint;
 import org.springframework.boot.actuate.audit.AuditEvent;
@@ -23,20 +24,44 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
-import com.indracompany.sofia2.audit.Sofia2AuditEvent.EventType;
-import com.indracompany.sofia2.audit.aop.Auditable;
 import com.indracompany.sofia2.audit.aop.BaseAspect;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 
 public class Sofia2EventFactory {
 	
+	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message, Module module, Exception e) {
+		Sofia2AuditError event = createAuditEventError(joinPoint, message, e);
+		event.setModule(module);
+		return event;
+	}
 	
-	public static Sofia2AuditEvent createAuditEvent(JoinPoint joinPoint, Auditable auditable, EventType type, String message) {
-		Sofia2AuditEvent event = new Sofia2AuditEvent();
+	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message, Exception e) {
+		Sofia2AuditError event = createAuditEventError( joinPoint, message);
+		setErrorDetails(event, e);
+		return createAuditEventError(event,message);
+	}
+	
+	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message) {
+		Sofia2AuditError event = new Sofia2AuditError();
 		event.setClassName(BaseAspect.getClassName(joinPoint));
 		event.setMethodName(BaseAspect.getMethod(joinPoint).getName());
 		
-		return createAuditEvent(event, type,message);
+		return createAuditEventError(event,message);
 	}
+	
+	public static Sofia2AuditError createAuditEventError(Sofia2AuditError event, String message) {
+		
+		Date today = new Date();
+		event.setId(UUID.randomUUID().toString());
+		event.setTimeStamp(today);
+		event.setMessage(message);
+		event.setType(EventType.ERROR);
+		setSecurityData(event);	
+		return event;
+	}
+	
+
 	
 	public static Sofia2AuditEvent createAuditEvent(AuditApplicationEvent actualAuditEvent, EventType type, String message) {
 		Sofia2AuditEvent event = new Sofia2AuditEvent();
@@ -49,37 +74,31 @@ public class Sofia2EventFactory {
 		 event.setTimeStamp(audit.getTimestamp());
 		 event.setMessage(message);
 		 event.setOtherType( audit.getType());
-		 event.setData( audit.getData());
+		 event.setExtraData( audit.getData());
 		 event.setType(type);
 		 
 		 if (audit.getData().get("details") instanceof WebAuthenticationDetails) {
 			 WebAuthenticationDetails details = (WebAuthenticationDetails) audit.getData().get("details");
 				
-			 event.setRemoteAddress(details.getRemoteAddress());
-			 event.setSessionId(details.getSessionId());
+			 //event.setRemoteAddress(details.getRemoteAddress());
+			 //event.setSessionId(details.getSessionId());
 				
 		 } 
 		 
 		 else if (audit.getData().get("details") instanceof OAuth2AuthenticationDetails) {
 			 OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) audit.getData().get("details");
 				
-			 event.setRemoteAddress(details.getRemoteAddress());
-			 event.setSessionId(details.getTokenValue());
+			 //event.setRemoteAddress(details.getRemoteAddress());
+			 //event.setSessionId(details.getTokenValue());
 		 }
 		 
-		 if (audit.getData().get("requestUrl")!=null)
-			 event.setRoute((String)audit.getData().get("requestUrl"));
+		 //if (audit.getData().get("requestUrl")!=null)
+			 //event.setRoute((String)audit.getData().get("requestUrl"));
 			
 		 return event;
 	}
 	
 	
-	
-	public static Sofia2AuditEvent createAuditEvent(EventType type, String message, Exception error) {
-		Sofia2AuditEvent event = new Sofia2AuditEvent();
-		setErrorDetails(event,error);
-		return createAuditEvent(event, type, message);
-	}
 	
 	public static Sofia2AuditEvent createAuditEvent(EventType type, String message) {
 		Sofia2AuditEvent event = new Sofia2AuditEvent();
@@ -93,7 +112,7 @@ public class Sofia2EventFactory {
 		
 		event.setTimeStamp(today);
 		event.setMessage(message);
-		
+		event.setId(UUID.randomUUID().toString());
 		setSecurityData(event);	
 		return event;
 	}
@@ -104,18 +123,18 @@ public class Sofia2EventFactory {
 
 			Object details = SecurityContextHolder.getContext().getAuthentication().getDetails();
 			if (details instanceof OAuth2AuthenticationDetails) {
-				event.setSessionId(((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getTokenValue());
-				event.setRemoteAddress(((OAuth2AuthenticationDetails) details).getRemoteAddress());
+				//event.setSessionId(((OAuth2AuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getTokenValue());
+				//event.setRemoteAddress(((OAuth2AuthenticationDetails) details).getRemoteAddress());
 			}
 
 			else if (details instanceof WebAuthenticationDetails) {
-				event.setSessionId(((WebAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getSessionId());
-				event.setRemoteAddress(((WebAuthenticationDetails) details).getRemoteAddress());
+				//event.setSessionId(((WebAuthenticationDetails) SecurityContextHolder.getContext().getAuthentication().getDetails()).getSessionId());
+				//event.setRemoteAddress(((WebAuthenticationDetails) details).getRemoteAddress());
 			}
 		}
 	}
 	
-	public static void setErrorDetails(Sofia2AuditEvent event, final Throwable cause)
+	public static void setErrorDetails(Sofia2AuditError event, final Throwable cause)
 	{
 		if (cause!=null) {
 			Throwable rootCause = cause;

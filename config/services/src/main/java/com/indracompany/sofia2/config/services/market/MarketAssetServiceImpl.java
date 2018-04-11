@@ -18,6 +18,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +35,11 @@ import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetState;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.model.UserComment;
+import com.indracompany.sofia2.config.model.UserRatings;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
+import com.indracompany.sofia2.config.repository.UserCommentRepository;
+import com.indracompany.sofia2.config.repository.UserRatingsRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +53,12 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 	
 	@Autowired
 	private MarketAssetRepository marketAssetRepository;
+	
+	@Autowired
+	private UserRatingsRepository userRatingRepository;
+	
+	@Autowired
+	private UserCommentRepository userCommentRepository;
 	
 	@Override
 	public List<MarketAsset> loadMarketAssetByFilter(String marketAssetId, String userId) {
@@ -90,6 +101,7 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 		marketAssetMemory.setPublic(marketAsset.isPublic());
 		marketAssetMemory.setMarketAssetType(marketAsset.getMarketAssetType());
 		marketAssetMemory.setPaymentMode(marketAsset.getPaymentMode());
+		marketAssetMemory.setState(MarketAsset.MarketAssetState.PENDING);
 		
 		marketAssetMemory.setJsonDesc(marketAsset.getJsonDesc());
 		
@@ -180,5 +192,57 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 		marketAsset.setState(MarketAssetState.valueOf(state));
 		
 		marketAssetRepository.save(marketAsset);
+	}
+
+	@Override
+	public void delete(String id, String userId) {
+		User user = this.userService.getUser(userId);
+		MarketAsset marketAssetToDelete = marketAssetRepository.findById(id);
+		
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name()) || marketAssetToDelete.getUser().equals(user)) {
+			marketAssetToDelete.setDeletedAt(new Date());
+			marketAssetRepository.save(marketAssetToDelete);
+		}
+	}
+
+	@Override
+	public void rate(String marketAssetId, String rate, String userId) {
+		
+		List<UserRatings> userRatings = userRatingRepository.findByMarketAssetAndUser(marketAssetId, userId);
+		
+		if (userRatings!=null && userRatings.size()!=0) {
+			userRatingRepository.delete(userRatings);
+		}
+		
+		User user = this.userService.getUser(userId);
+		MarketAsset marketAsset = marketAssetRepository.findById(marketAssetId);
+		
+		UserRatings newUserRatings = new UserRatings();
+	
+		newUserRatings.setMarketAsset(marketAsset);
+		newUserRatings.setUser(user);
+		
+		newUserRatings.setValue(Double.parseDouble(rate));
+		
+		userRatingRepository.save(newUserRatings);
+	}
+
+	@Override
+	public void createComment(String marketAssetId, String userId, String title, String comment) {
+		User user = this.userService.getUser(userId);
+		MarketAsset marketAsset = marketAssetRepository.findById(marketAssetId);
+		
+		UserComment userComment = new UserComment();
+		userComment.setMarketAsset(marketAsset);
+		userComment.setUser(user);
+		userComment.setTitle(title);
+		userComment.setComment(comment);
+		
+		userCommentRepository.save(userComment);
+	}
+
+	@Override
+	public void deleteComment(String id) {
+		userCommentRepository.delete(id);
 	}
 }
