@@ -30,6 +30,32 @@
       compileContent();
     }
 
+   
+
+    $scope.parseDSArray = function(name){
+      var result=[];
+      var properties=[];
+      if(typeof name !="undefined" && name != null){
+      try {
+          for(var propertyName in $scope.ds[0]) {
+            properties.push(propertyName);
+          }
+          if(properties.indexOf(name) > -1){
+          for (var index = 0; index <  $scope.ds.length; index++) {             
+              
+                result.push($scope.ds[index][name]);               
+              }          
+            }        
+          
+      } catch (error) {
+        
+      }
+    }
+      return result;
+    }
+
+
+
     vm.$onChanges = function(changes,c,d,e) {
       if("datasource" in changes && changes["datasource"].currentValue){
         refreshSubscriptionDatasource(changes.datasource.currentValue, changes.datasource.previousValue)

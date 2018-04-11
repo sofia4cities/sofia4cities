@@ -20,7 +20,7 @@
         <md-list class="md-dense" flex="">         
           <md-list-item class="md-3-line" ng-repeat="item in parameters">
               <div class="md-list-item-text" layout="column">
-              <span>name:{{ item.label }}</span>
+              <span>{{ item.label }}</span>
               <md-input-container ng-if="item.type=='labelsText'" class="md-dialog-content">
                <p>string value : </p>
               <input type="text"    ng-model="item.value"/>
@@ -35,6 +35,12 @@
                 <md-option ng-value="{field:datasourceField.field,type:datasourceField.type}" ng-repeat="datasourceField in datasourceFields">{{datasourceField.field}}</md-option>
               </md-select>
             </md-input-container>
+            <md-input-container ng-if="item.type=='labelsdspropertie'" class="md-dialog-content">
+              <p>value : </p>
+            <md-select  required md-autofocus placeholder="Select parameter from datasource" ng-model="item.value" >
+              <md-option ng-value="{field:datasourceField.field,type:datasourceField.type}" ng-repeat="datasourceField in datasourceFields">{{datasourceField.field}}</md-option>
+            </md-select>
+        </md-input-container>
             <md-input-container ng-if="item.type=='selects'" class="md-dialog-content">
                 <p>value : </p>
             <md-select  required md-autofocus placeholder="Select parameter value" ng-model="item.value" >
