@@ -997,7 +997,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1009,7 +1009,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1021,7 +1021,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1033,7 +1033,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1045,7 +1045,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1058,7 +1058,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1070,7 +1070,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1082,7 +1082,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1094,7 +1094,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
-			ontology.setAllowsCypheredFields(false);
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 		}
