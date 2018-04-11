@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
 
 @Service
 public class EventSenderImpl implements EventRouter {
