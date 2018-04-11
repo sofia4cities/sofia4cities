@@ -62,6 +62,9 @@ public class RouterDigitalTwinOpsServiceImpl implements RouterDigitalTwinService
 		instance.put("type", model.getType());
 		instance.put("timestamp", timestamp);
 		instance.put("event", EVENT);
+		if(model.getEventName()!=null) {
+			instance.put("eventName", model.getEventName());
+		}
 		
 		Optional<JSONObject> optionalContent=buildEventContent(model);
 		if(optionalContent.isPresent()) {

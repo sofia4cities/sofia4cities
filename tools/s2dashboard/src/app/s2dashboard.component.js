@@ -219,8 +219,8 @@
 
           /**method that finds the tags in the given text*/
           function searchTag(regex,str){
-            let m;
-            let found=[];
+            var m;
+            var found=[];
             while ((m = regex.exec(str)) !== null) {  
                 if (m.index === regex.lastIndex) {
                     regex.lastIndex++;
@@ -233,7 +233,7 @@
           }
           /**method that finds the name attribute and returns its value in the given tag */
           function searchTagContentName(regex,str){
-            let m;
+            var m;
             var content;
             while ((m = regex.exec(str)) !== null) {  
                 if (m.index === regex.lastIndex) {
@@ -247,7 +247,7 @@
           }
           /**method that finds the options attribute and returns its values in the given tag */
           function searchTagContentOptions(regex,str){
-            let m;
+            var m;
             var content=" ";
             while ((m = regex.exec(str)) !== null) {  
                 if (m.index === regex.lastIndex) {
@@ -264,10 +264,10 @@
           /**we look for the parameters in the source code to create the form */
           $scope.getPredefinedParameters = function(){
             var str =  $scope.config.content;
-           	const regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
-		        const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
-            const regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
-		        let found=[];
+           	var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+		        var regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
+            var regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
+		        var found=[];
 	        	found = searchTag(regexTag,str);	
         
         
@@ -279,6 +279,8 @@
                 $scope.parameters.push({label:searchTagContentName(regexName,tag),value:0, type:"labelsNumber"});              
               }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
                 $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterDsLabel", type:"labelsds"});               
+              }else if(tag.replace(/\s/g, '').search('type="ds_parameter"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+                $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterNameDsLabel", type:"labelsdspropertie"});               
               }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){
                 var optionsValue = searchTagContentOptions(regexOptions,tag); 
                 $scope.parameters.push({label:searchTagContentName(regexName,tag),value:"parameterSelectLabel",type:"selects", optionsValue:optionsValue});	              
@@ -289,8 +291,8 @@
 
             /**find a value for a given parameter */
             function findValueForParameter(label){
-                for (let index = 0; index <  $scope.parameters.length; index++) {
-                  const element =  $scope.parameters[index];
+                for (var index = 0; index <  $scope.parameters.length; index++) {
+                  var element =  $scope.parameters[index];
                   if(element.label===label){
                     return element.value;
                   }
@@ -299,8 +301,8 @@
         
             /**Parse the parameter of the data source so that it has array coding*/
             function parseArrayPosition(str){
-              const regex = /\.[\d]+/g;
-              let m;              
+              var regex = /\.[\d]+/g;
+              var m;              
               while ((m = regex.exec(str)) !== null) {                
                   if (m.index === regex.lastIndex) {
                       regex.lastIndex++;
@@ -317,13 +319,13 @@
             /** this function Replace parameteres for his selected values*/
             function parseProperties(){
               var str =  $scope.config.content;
-              const regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
-              const regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
-              const regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
-              let found=[];
+              var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+              var regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
+              var regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
+              var found=[];
               found = searchTag(regexTag,str);	
           
-              let parserList=[];
+              var parserList=[];
               for (var i = 0; i < found.length; i++) {
                 var tag = found[i];			
                
@@ -334,6 +336,9 @@
                 }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){                
                   var field = parseArrayPosition(findValueForParameter(searchTagContentName(regexName,tag)).field);                               
                   parserList.push({tag:tag,value:"{{ds[0]."+field+"}}"});        
+                }else if(tag.replace(/\s/g, '').search('type="ds_parameter"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){                
+                  var field = parseArrayPosition(findValueForParameter(searchTagContentName(regexName,tag)).field);                               
+                  parserList.push({tag:tag,value:field});        
                 }else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){                
                   parserList.push({tag:tag,value:findValueForParameter(searchTagContentName(regexName,tag))});  
                 }

@@ -39,6 +39,12 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
+buildElasticSearchDB()
+{
+	echo "ElasticSearchDB image generation with Docker CLI: "
+	docker build -t sofia2/elasticdb:$1 .
+}
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -84,6 +90,9 @@ pushAllImages2Registry()
 	
 	docker tag sofia2/realtimedb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/realtimedb:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/realtimedb:$1	
+	
+	docker tag sofia2/elasticdb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/elasticdb:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/elasticdb:$1	
 	
 	docker tag sofia2/controlpanel:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:$1	
@@ -216,6 +225,11 @@ if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
 	buildRealTimeDB latest
 fi
 
+if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
+	cd $homepath/../dockerfiles/elasticsearch
+	buildElasticSearchDB latest
+fi
+
 if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
 	cd $homepath/../dockerfiles/nginx
 	buildNginx latest
@@ -238,6 +252,7 @@ echo "Push Sofia2 images to private registry"
 pushImage2Registry configdb latest 
 pushImage2Registry schedulerdb latest 
 pushImage2Registry realtimedb latest 
+pushImage2Registry elasticdb latest
 pushImage2Registry controlpanel latest 
 pushImage2Registry iotbroker latest 
 pushImage2Registry apimanager latest 

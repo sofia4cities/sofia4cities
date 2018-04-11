@@ -12,23 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.audit.notify;
+package com.indracompany.sofia2.persistence.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.util.List;
+import java.util.Map;
 
-import com.hazelcast.core.HazelcastInstance;
+import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
+import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 
-@Service
-public class EventSenderImpl implements EventRouter {
+public interface NativeManageDBRepository {
+	public Map<String, Boolean> getStatusDatabase(RtdbDatasource dataSource) throws DBPersistenceException ;
 
-	@Autowired
-	private HazelcastInstance instance;
 	
-	@Override
-	public void notify(String event) {
-		instance.getQueue("audit").offer(event);
+	public List<String> getListOfTables(RtdbDatasource dataSource) throws DBPersistenceException;
 
-	}
-
+	
+	public void createIndex(RtdbDatasource dataSource, String sentence) throws DBPersistenceException;
 }

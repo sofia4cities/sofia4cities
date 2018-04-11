@@ -20,16 +20,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,10 +58,8 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyIndicationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
-import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
-import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
 
 @Ignore
@@ -262,48 +256,48 @@ public class MoquetteBrokerTest {
 		client.disconnect();
 	}
 
-	@Test
-	public void given_OneMqttClientConnection_When_ItSendsAsubscribeMessagaAndIndicationOccurs_Then_ItGetsTheIndication() throws InterruptedException, SSAPParseException, ExecutionException, TimeoutException, MqttPersistenceException, MqttException {
-
-		final SSAPMessage<SSAPBodyJoinMessage> request = SSAPMessageGenerator.generateJoinMessageWithToken();
-		final String requestStr = SSAPJsonParser.getInstance().serialize(request);
-		final MqttClient client = new MqttClient(broker_url, clientId, persistence);
-		final MqttConnectOptions connOpts = new MqttConnectOptions();
-
-		connOpts.setCleanSession(true);
-		client.connect(connOpts);
-
-		client.subscribe("/topic/message/" + client.getClientId(), new IMqttMessageListener() {
-			@Override
-			public void messageArrived(String topic, MqttMessage message) throws Exception {
-				final String response = new String(message.getPayload());
-				completableFutureMessage.complete(response);
-			}
-		});
-
-		client.subscribe("/topic/subscription/" + client.getClientId(), new IMqttMessageListener() {
-			@Override
-			public void messageArrived(String topic, MqttMessage message) throws Exception {
-				final String response = new String(message.getPayload());
-				completableFutureMessage.complete(response);
-			}
-		});
-
-		final MqttMessage message = new MqttMessage(requestStr.getBytes());
-		message.setQos(qos);
-		client.publish(topic, message);
-
-		final String responseStr = completableFutureMessage.get(10000, TimeUnit.SECONDS);
-		final SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(responseStr);
-
-		Assert.assertNotNull(responseStr);
-		Assert.assertEquals(SSAPMessageDirection.RESPONSE, response.getDirection());
-		Assert.assertNotNull(response.getSessionKey());
-		Assert.assertEquals(session.getSessionKey(), response.getSessionKey());
-
-
-		client.disconnect();
-	}
+	//	@Test
+	//	public void given_OneMqttClientConnection_When_ItSendsAsubscribeMessagaAndIndicationOccurs_Then_ItGetsTheIndication() throws InterruptedException, SSAPParseException, ExecutionException, TimeoutException, MqttPersistenceException, MqttException {
+	//
+	//		final SSAPMessage<SSAPBodyJoinMessage> request = SSAPMessageGenerator.generateJoinMessageWithToken();
+	//		final String requestStr = SSAPJsonParser.getInstance().serialize(request);
+	//		final MqttClient client = new MqttClient(broker_url, clientId, persistence);
+	//		final MqttConnectOptions connOpts = new MqttConnectOptions();
+	//
+	//		connOpts.setCleanSession(true);
+	//		client.connect(connOpts);
+	//
+	//		client.subscribe("/topic/message/" + client.getClientId(), new IMqttMessageListener() {
+	//			@Override
+	//			public void messageArrived(String topic, MqttMessage message) throws Exception {
+	//				final String response = new String(message.getPayload());
+	//				completableFutureMessage.complete(response);
+	//			}
+	//		});
+	//
+	//		client.subscribe("/topic/subscription/" + client.getClientId(), new IMqttMessageListener() {
+	//			@Override
+	//			public void messageArrived(String topic, MqttMessage message) throws Exception {
+	//				final String response = new String(message.getPayload());
+	//				completableFutureMessage.complete(response);
+	//			}
+	//		});
+	//
+	//		final MqttMessage message = new MqttMessage(requestStr.getBytes());
+	//		message.setQos(qos);
+	//		client.publish(topic, message);
+	//
+	//		final String responseStr = completableFutureMessage.get(5, TimeUnit.SECONDS);
+	//		final SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(responseStr);
+	//
+	//		Assert.assertNotNull(responseStr);
+	//		Assert.assertEquals(SSAPMessageDirection.RESPONSE, response.getDirection());
+	//		Assert.assertNotNull(response.getSessionKey());
+	//		Assert.assertEquals(session.getSessionKey(), response.getSessionKey());
+	//
+	//
+	//		client.disconnect();
+	//	}
 
 
 
