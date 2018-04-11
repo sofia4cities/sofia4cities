@@ -54,7 +54,7 @@ public class WebProjectServiceImpl implements WebProjectService {
 	@Value("${sofia2.webproject.baseurl:https://localhost:18080/controlpanel/webprojects/}")
 	private String rootWWW = "";
 
-	@Value("${sofia2.webproject.rootfolder.path:/webprojects/}")
+	@Value("${sofia2.webproject.rootfolder.path:/usr/local/webprojects/}")
 	private String rootFolder;
 
 	@Override
