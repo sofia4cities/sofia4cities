@@ -93,6 +93,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 public class InitConfigDB {
 
+	private static boolean started = false;
 	private static User userCollaborator = null;
 	private static User userAdministrator = null;
 	private static User user = null;
@@ -159,69 +160,74 @@ public class InitConfigDB {
 	@PostConstruct
 	@Test
 	public void init() {
-		log.info("Start initConfigDB...");
-		// first we need to create users
-		init_RoleUser();
-		log.info("OK init_RoleUser");
-		init_User();
-		log.info("OK init_UserCDB");
-		//
-		init_DataModel();
-		log.info("OK init_DataModel");
-		init_OntologyCategory();
-		log.info("OK init_OntologyCategory");
-		init_Ontology();
-		log.info("OK init_Ontology");
-		init_OntologyUserAccess();
-		log.info("OK init_OntologyUserAccess");
-		init_OntologyUserAccessType();
-		log.info("OK init_OntologyUserAccessType");
+		if (!started) {
+			started = true;
 
-		init_OntologyCategory();
-		log.info("OK init_OntologyCategory");
+			log.info("Start initConfigDB...");
+			// first we need to create users
+			init_RoleUser();
+			log.info("OK init_RoleUser");
+			init_User();
+			log.info("OK init_UserCDB");
+			//
+			init_DataModel();
+			log.info("OK init_DataModel");
+			init_OntologyCategory();
+			log.info("OK init_OntologyCategory");
+			init_Ontology();
+			log.info("OK init_Ontology");
+			init_OntologyUserAccess();
+			log.info("OK init_OntologyUserAccess");
+			init_OntologyUserAccessType();
+			log.info("OK init_OntologyUserAccessType");
 
-		initAuditOntology();
-		log.info("OK init_AuditOntology");
+			init_OntologyCategory();
+			log.info("OK init_OntologyCategory");
 
-		//
-		init_ClientPlatform();
-		log.info("OK init_ClientPlatform");
-		init_ClientPlatformOntology();
-		log.info("OK init_ClientPlatformOntology");
-		init_ClientConnection();
-		log.info("OK init_ClientConnection");
-		//
-		init_Token();
-		log.info("OK init_Token");
+			initAuditOntology();
+			log.info("OK init_AuditOntology");
 
-		init_UserToken();
-		log.info("OK USER_Token");
-		//
-		init_Dashboard();
-		log.info("OK init_Dashboard");
-		init_Gadget();
-		log.info("OK init_Gadget");
-		init_GadgetDatasource();
-		log.info("OK init_GadgetDatasource");
-		init_GadgetMeasure();
-		log.info("OK init_GadgetMeasure");
+			//
+			init_ClientPlatform();
+			log.info("OK init_ClientPlatform");
+			init_ClientPlatformOntology();
+			log.info("OK init_ClientPlatformOntology");
+			init_ClientConnection();
+			log.info("OK init_ClientConnection");
+			//
+			init_Token();
+			log.info("OK init_Token");
 
-		init_Menu_ControlPanel();
-		log.info("OK init_ConsoleMenu");
-		init_Configuration();
-		log.info("OK init_Configuration");
+			init_UserToken();
+			log.info("OK USER_Token");
+			//
+			init_Dashboard();
+			log.info("OK init_Dashboard");
+			init_Gadget();
+			log.info("OK init_Gadget");
+			init_GadgetDatasource();
+			log.info("OK init_GadgetDatasource");
+			init_GadgetMeasure();
+			log.info("OK init_GadgetMeasure");
 
-		init_FlowDomain();
-		log.info("OK init_FlowDomain");
+			init_Menu_ControlPanel();
+			log.info("OK init_ConsoleMenu");
+			init_Configuration();
+			log.info("OK init_Configuration");
 
-		init_DigitalTwinType();
-		log.info("OK init_DigitalTwinType");
+			init_FlowDomain();
+			log.info("OK init_FlowDomain");
 
-		init_DigitalTwinDevice();
-		log.info("OK init_DigitalTwinDevice");
+			init_DigitalTwinType();
+			log.info("OK init_DigitalTwinType");
 
-		init_market();
-		log.info("OK init_Market");
+			init_DigitalTwinDevice();
+			log.info("OK init_DigitalTwinDevice");
+
+			init_market();
+			log.info("OK init_Market");
+
+		}
 
 	}
 
