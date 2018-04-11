@@ -14,15 +14,10 @@
 package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.mqtt;
 
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -39,14 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
-import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
-import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.iotbroker.processor.DeviceManager;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -63,38 +51,16 @@ public class MoquetteSSLTest {
 	String clientkeyManagerPassword = "changeIt!";
 	MemoryPersistence persistence = new MemoryPersistence();
 
-	@MockBean
-	SecurityPluginManager securityPluginManager;
 
-	@MockBean
-	DeviceManager deviceManager;
-
-	private CompletableFuture<String> completableFutureMessage;
-	private CompletableFuture<String> completableFutureIndication;
-	private CompletableFuture<String> completableFutureCommand;
-	private IoTSession session = null;
-
-	Person subject;
-
-	private void securityMocks() {
-		session = PojoGenerator.generateSession();
-
-		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
-		when(securityPluginManager.authenticate(any(), any(), any(), any())).thenReturn(Optional.of(session));
-		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
-		when(securityPluginManager.checkSessionKeyActive(anyString())).thenReturn(true);
-		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
-	}
 
 	@Before
 	public void setUp() {
-		securityMocks();
+
 	}
 
 	@Test
 	public void given_MqttBrokerWithSSLSupport_When_ClientWithCorrentCredential_Then_ConnectionIsGranted() throws Exception {
 		final MqttClient client = new MqttClient(broker_url, clientId, persistence);
-		final MqttConnectOptions opts = new MqttConnectOptions();
 
 		final SSLSocketFactory ssf = configureSSLSocketFactory(jksWithCorrectCertificate);
 		final MqttConnectOptions options = new MqttConnectOptions();
