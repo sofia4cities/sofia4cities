@@ -124,4 +124,4 @@ logging:
 ## Digital Twin
 digitaltwin:
    temp.dir: /tmp
-   maven.exec.path: /usr/share/maven/mvn
+   maven.exec.path: /usr/share/maven/bin/mvn
