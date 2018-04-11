@@ -144,7 +144,7 @@ public class InitConfigDB {
 
 	@Autowired
 	DigitalTwinTypeRepository digitalTwinTypeRepository;
-	
+
 	@Autowired
 	DigitalTwinDeviceRepository digitalTwinDeviceRepository;
 
@@ -214,7 +214,7 @@ public class InitConfigDB {
 
 		init_DigitalTwinType();
 		log.info("OK init_DigitalTwinType");
-		
+
 		init_DigitalTwinDevice();
 		log.info("OK init_DigitalTwinDevice");
 
@@ -222,10 +222,10 @@ public class InitConfigDB {
 		log.info("OK init_Market");
 
 	}
-	
+
 	private void init_DigitalTwinDevice() {
 		log.info("init_DigitalTwinDevice");
-		if(this.digitalTwinDeviceRepository.count()==0) {
+		if (this.digitalTwinDeviceRepository.count() == 0) {
 			DigitalTwinDevice device = new DigitalTwinDevice();
 			device.setContextPath("/turbine");
 			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
@@ -236,30 +236,51 @@ public class InitConfigDB {
 			device.setPort(10000);
 			device.setUrlSchema("http");
 			device.setUrl("http://localhost:8081/digitaltwinbroker");
-			device.setLogic("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();" + System.getProperty("line.separator") +
-					System.getProperty("line.separator")  + 
-					"function main(){" + System.getProperty("line.separator") +
-					"   digitalTwinApi.log('New loop');" + System.getProperty("line.separator") +
-					"   var alternatorTemp = 25;" + System.getProperty("line.separator") +
-					"   while(alternatorTemp<30){" + System.getProperty("line.separator") +
-					"      alternatorTemp ++;" + System.getProperty("line.separator") +
-					"      digitalTwinApi.setStatusValue('alternatorTemp', alternatorTemp);" + System.getProperty("line.separator") +
-					"      digitalTwinApi.setStatusValue('power', 50000.2);" + System.getProperty("line.separator") +
-					"      digitalTwinApi.setStatusValue('nacelleTemp', 25.9);" + System.getProperty("line.separator") +
-					"      digitalTwinApi.setStatusValue('rotorSpeed', 30);" + System.getProperty("line.separator") +
-					"      digitalTwinApi.setStatusValue('windDirection', 68);" + System.getProperty("line.separator") +
-					System.getProperty("line.separator")  + 
-					"      digitalTwinApi.sendUpdateShadow();" + System.getProperty("line.separator") +
-					"      digitalTwinApi.log('Send Update Shadow');" + System.getProperty("line.separator") +
-					"   }" + System.getProperty("line.separator") +
-					"   if(alternatorTemp>=30){" + System.getProperty("line.separator") +
-					"      digitalTwinApi.sendCustomEvent('tempAlert');" + System.getProperty("line.separator") +
-					"   }" + System.getProperty("line.separator") +
-					"}" + System.getProperty("line.separator") +
-					System.getProperty("line.separator")  + 
-					"var onActionConnectElectricNetwork=function(data){ }" + System.getProperty("line.separator") +
-					"var onActionDisconnectElectricNetwork=function(data){ }" + System.getProperty("line.separator") +
-					"var onActionLimitRotorSpeed=function(data){ }");
+			device.setLogic(
+					"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
+							+ System.getProperty("line.separator") + "function init(){"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('Init TurbineHelsinki shadow');"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('alternatorTemp', 25.0);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('power', 50000.2);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('nacelleTemp', 25.9);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('rotorSpeed', 30);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('windDirection', 68);"
+							+ System.getProperty("line.separator") + "" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.sendUpdateShadow();" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('Send Update Shadow for init function');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "function main(){" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('New loop');" + System.getProperty("line.separator")
+							+ "    var alternatorTemp = digitalTwinApi.getStatusValue('alternatorTemp');"
+							+ System.getProperty("line.separator") + "" + System.getProperty("line.separator")
+							+ "    alternatorTemp ++;" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('alternatorTemp', alternatorTemp);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('power', 50000.2);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('nacelleTemp', 25.9);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('rotorSpeed', 30);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('windDirection', 68);"
+							+ System.getProperty("line.separator") + "" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.sendUpdateShadow();" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('Send Update Shadow');" + System.getProperty("line.separator")
+							+ " " + System.getProperty("line.separator") + "   if(alternatorTemp>=30){"
+							+ System.getProperty("line.separator")
+							+ "      digitalTwinApi.sendCustomEvent('tempAlert');"
+							+ System.getProperty("line.separator") + "   }" + System.getProperty("line.separator") + "}"
+							+ System.getProperty("line.separator") + "" + System.getProperty("line.separator")
+							+ "var onActionConnectElectricNetwork=function(data){ }"
+							+ System.getProperty("line.separator")
+							+ "var onActionDisconnectElectricNetwork=function(data){ }"
+							+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }");
 			device.setTypeId(this.digitalTwinTypeRepository.findByName("Turbine"));
 			device.setUser(getUserAdministrator());
 			this.digitalTwinDeviceRepository.save(device);
@@ -298,6 +319,7 @@ public class InitConfigDB {
 		logic.setTypeId(type);
 		logic.setLogic(
 				"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
+						+ System.getProperty("line.separator") + "function init(){}"
 						+ System.getProperty("line.separator") + "function main(){}"
 						+ System.getProperty("line.separator") + "var onActionConnectElectricNetwork=function(data){  }"
 						+ System.getProperty("line.separator")
@@ -1247,10 +1269,9 @@ public class InitConfigDB {
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
 		/*
-		 * List<OntologyUserAccess>
-		 * users=this.ontologyUserAccessRepository.findAll();
-		 * if(users.isEmpty()) { log.info("No users found...adding");
-		 * OntologyUserAccess user=new OntologyUserAccess(); user.setUser("6");
+		 * List<OntologyUserAccess> users=this.ontologyUserAccessRepository.findAll();
+		 * if(users.isEmpty()) { log.info("No users found...adding"); OntologyUserAccess
+		 * user=new OntologyUserAccess(); user.setUser("6");
 		 * user.setOntology(ontologyRepository.findAll().get(0));
 		 * user.setOntologyUserAccessTypeId(ontologyUserAccessTypeId);
 		 * this.ontologyUserAccessRepository.save(user); }
@@ -1519,15 +1540,14 @@ public class InitConfigDB {
 	 * if (templates.isEmpty()) { try {
 	 * 
 	 * log.info("No templates Adding..."); Template template= new Template();
-	 * template.setIdentification("GSMA-Weather Forecast");
-	 * template.setType("0"); template.
+	 * template.setIdentification("GSMA-Weather Forecast"); template.setType("0");
+	 * template.
 	 * setJsonschema("{    '$schema': 'http://json-schema.org/draft-04/schema#', 'title': 'Weather Forecast',    'type': 'object',    'properties': {        'id': {            'type': 'string'        },        'type': {            'type': 'string'        },        'address': {            'type': 'object',            'properties': {                'addressCountry': {                    'type': 'string'                },                'postalCode': {                    'type': 'string'                },                'addressLocality': {                    'type': 'string'                }            },            'required': [                'addressCountry',                'postalCode',                'addressLocality'            ]        },        'dataProvider': {            'type': 'string'        },        'dateIssued': {            'type': 'string'        },        'dateRetrieved': {            'type': 'string'        },        'dayMaximum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'dayMinimum': {            'type': 'object',            'properties': {                'feelsLikeTemperature': {                    'type': 'integer'                },                'temperature': {                    'type': 'integer'                },                'relativeHumidity': {                    'type': 'number'                }            },            'required': [                'feelsLikeTemperature',                'temperature',                'relativeHumidity'            ]        },        'feelsLikeTemperature': {            'type': 'integer'        },        'precipitationProbability': {            'type': 'number'        },        'relativeHumidity': {            'type': 'number'        },        'source': {            'type': 'string'        },        'temperature': {            'type': 'integer'        },        'validFrom': {            'type': 'string'        },        'validTo': {            'type': 'string'        },        'validity': {            'type': 'string'        },        'weatherType': {            'type': 'string'        },        'windDirection': {            'type': 'null'        },        'windSpeed': {            'type': 'integer'        }    },    'required': [        'id',        'type',        'address',        'dataProvider',        'dateIssued',        'dateRetrieved',        'dayMaximum',        'dayMinimum',        'feelsLikeTemperature',        'precipitationProbability',        'relativeHumidity',        'source',        'temperature',        'validFrom',        'validTo',        'validity',        'weatherType',        'windDirection',        'windSpeed'    ]}"
 	 * ); template.
 	 * setDescription("This contains a harmonised description of a Weather Forecast."
 	 * ); template.setCategory("plantilla_categoriaGSMA");
 	 * template.setIsrelational(false); templateRepository.save(template); ///
-	 * template=new Template();
-	 * template.setIdentification("TagsProjectBrandwatch");
+	 * template=new Template(); template.setIdentification("TagsProjectBrandwatch");
 	 * template.setType("1"); template.
 	 * setJsonschema("{  '$schema': 'http://json-schema.org/draft-04/schema#',  'title': 'TagsProjectBrandwatch Schema',  'type': 'object',  'required': [    'TagsProjectBrandwatch'  ],  'properties': {    'TagsProjectBrandwatch': {      'type': 'string',      '$ref': '#/datos'    }  },  'datos': {    'description': 'Info TagsProjectBrandwatch',    'type': 'object',    'required': [      'id',      'name'    ],    'properties': {      'id': {        'type': 'integer'      },      'name': {        'type': 'string'      }    }  }}"
 	 * ); template.
