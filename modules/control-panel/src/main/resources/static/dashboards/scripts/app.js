@@ -153,13 +153,13 @@
 
     $scope.sendFilter = function(field, value){
       var filterStt = {};
-      filterStt[field]=value;
+      filterStt[field]={value: value, id: vm.id};
       interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
     
     $scope.sendFilterChain = function(field, value){
       var filterStt = angular.copy(vm.datastatus)||{};
-      filterStt[field]=value;
+      filterStt[field]={value: value, id: vm.id};
       interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
 
@@ -289,6 +289,408 @@
         group:[], 
         project:vm.projects
       }
+    }
+  }
+})();
+
+(function () {
+  'use strict';
+
+  GadgetController.$inject = ["$log", "$scope", "$element", "$window", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService", "interactionService", "utilsService", "leafletMarkerEvents"];
+  angular.module('s2DashboardFramework')
+    .component('gadget', {
+      templateUrl: 'app/components/view/gadgetComponent/gadget.html',
+      controller: GadgetController,
+      controllerAs: 'vm',
+      bindings:{
+        id:"<?",
+        gconfig:"=?",
+        gmeasures:"=?",
+        gdatasourceid:"=?",
+        datastatus:"=?"
+      }
+    });
+
+  /** @ngInject */
+  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService, leafletMarkerEvents) {
+    var vm = this;
+    vm.ds = [];
+    vm.type = "loading";
+    vm.config = {};//Gadget database config
+    vm.measures = [];
+    vm.status = "initial"
+
+    //Chaining filters, used to propagate own filters to child elements
+    vm.filterChaining=true;
+
+    vm.$onInit = function(){
+      //register Gadget in interaction service when gadget has id
+      if(vm.id){
+        interactionService.registerGadget(vm.id);
+      }
+      //Activate incoming events
+      vm.unsubscribeHandler = $scope.$on(vm.id,eventGProcessor);
+      $scope.reloadContent();
+    }
+
+    $scope.reloadContent = function(){
+      /*Gadget Editor Mode*/
+      if(!vm.id){
+        //vm.config = vm.gconfig;//gadget config
+        if(!vm.config.config){
+          return;//Init editor triggered
+        }
+        if(typeof vm.config.config == "string"){
+          vm.config.config = JSON.parse(vm.config.config);
+        }
+        //vm.measures = vm.gmeasures;//gadget config
+        var projects = [];
+        for(var index=0; index < vm.measures.length; index++){
+          var jsonConfig = JSON.parse(vm.measures[index].config);
+          for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
+            if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
+              projects.push({op:"",field:jsonConfig.fields[indexF]});
+            }
+          }
+          vm.measures[index].config = jsonConfig;
+        }
+        sofia2HttpService.getDatasourceById(vm.ds).then(
+          function(datasource){
+            subscriptionDatasource(datasource.data, [], projects, []);
+          }
+        )
+      }
+      else{
+      /*View Mode*/
+        sofia2HttpService.getGadgetConfigById(
+          vm.id
+        ).then(
+          function(config){
+            vm.config=config.data;
+            vm.config.config = JSON.parse(vm.config.config);
+            return sofia2HttpService.getGadgetMeasuresByGadgetId(vm.id);
+          }
+        ).then(
+          function(measures){
+            vm.measures = measures.data;
+
+            vm.projects = [];
+            for(var index=0; index < vm.measures.length; index++){
+              var jsonConfig = JSON.parse(vm.measures[index].config);
+              for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
+                if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },vm.projects)){
+                  vm.projects.push({op:"",field:jsonConfig.fields[indexF]});
+                }
+              }
+              vm.measures[index].config = jsonConfig;
+            }
+            sofia2HttpService.getDatasourceById(vm.measures[0].datasource.id).then(
+              function(datasource){
+                subscriptionDatasource(datasource.data, [], vm.projects, []);
+              }
+            )
+          }
+        )
+      }
+    }
+
+    vm.$onChanges = function(changes) {
+
+    };
+
+    vm.$onDestroy = function(){
+      if(vm.unsubscribeHandler){
+        vm.unsubscribeHandler();
+        vm.unsubscribeHandler=null;
+        datasourceSolverService.unregisterDatasourceTrigger(vm.measures[0].datasource);
+      }
+    }
+
+    function subscriptionDatasource(datasource, filter, project, group) {
+
+      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
+        {
+          type: datasource.mode,
+          name: datasource.identification,
+          refresh: datasource.refresh,
+          triggers: [{params:{filter:filter, group:group, project:project},emitTo:vm.id}]
+        }
+      );
+    };
+
+    function processDataToGadget(data){ //With dynamic loading this will change
+      switch(vm.config.type){
+        case "line":
+        case "bar":
+        case "pie":
+          //Group X axis values
+          var allLabelsField = [];
+          for(var index=0; index < vm.measures.length; index++){
+            allLabelsField = allLabelsField.concat(data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)}));
+          }
+          allLabelsField = utilsService.sort_unique(allLabelsField);
+
+          //Match Y values
+          var allDataField = [];//Data values sort by labels
+          for(var index=0; index < vm.measures.length; index++){
+            var dataRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[1],ind)});
+            var labelRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)});
+            var sortedArray = [];
+            for(var indexf = 0; indexf < dataRawSerie.length; indexf++){
+              sortedArray[allLabelsField.indexOf(labelRawSerie[indexf])] = dataRawSerie[indexf];
+            }
+            allDataField.push(sortedArray);
+          }
+
+          vm.labels = allLabelsField;
+          vm.series = vm.measures.map (function(m){return m.config.name});
+
+          if(vm.config.type == "pie"){
+            vm.data = allDataField[0];
+          }
+          else{
+            vm.data = allDataField;
+          }
+
+          var baseOptionsChart = {
+            legend: {
+              display: true, 
+              labels: {
+                boxWidth: 11
+              }
+            }, 
+            maintainAspectRatio: false, 
+            responsive: true, 
+            responsiveAnimationDuration:500
+          };
+
+          vm.datasetOverride = vm.measures.map (function(m){return m.config.config});
+
+          vm.optionsChart = angular.merge({},vm.config.config,baseOptionsChart);
+
+          break;
+        case 'wordcloud':
+          //Get data in an array
+          var arrayWordSplited = data.reduce(function(a,b){return a.concat(b.value.split(" "))},[])//data.flatMap(function(d){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0]).split(" ")})
+          var hashWords = {};
+          var counterArray = []
+          for(var index = 0; index < arrayWordSplited.length; index++){
+            var word = arrayWordSplited[index];
+            if(word in hashWords){
+              counterArray[hashWords[word]].count++;
+            }
+            else{
+              hashWords[word]=counterArray.length;
+              counterArray.push({text:word,count:1});
+            }
+          }
+
+          vm.counterArray = counterArray.sort(function(a, b){
+            return b.count - a.count;
+          })
+          redrawWordCloud();
+          $scope.$on("$resize",redrawWordCloud);
+          break;
+        case "map":
+          vm.center = vm.center || vm.config.config.center;
+          vm.markers = data.map(
+            function(d){
+              return {
+                lat: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
+                lng: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
+
+                message: vm.measures[0].config.fields.slice(3).reduce(
+                  function(a, b){
+                    return a + "<b>" + b + ":</b>&nbsp;" + utilsService.getJsonValueByJsonPath(d,b) + "<br/>";
+                  }
+                  ,""
+                ),
+                id: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[2],2)
+              }
+            }
+          )
+          $scope.events = {
+            markers: {
+                enable: leafletMarkerEvents.getAvailableEvents(),
+            }
+          };
+          
+          //Init map events
+          var eventName = 'leafletDirectiveMarker.lmap' + vm.id + '.click';
+          $scope.$on(eventName, vm.clickMarkerMapEventProcessorEmitter);
+
+          redrawLeafletMap();
+          $scope.$on("$resize",redrawLeafletMap);
+          break;
+      }
+
+      vm.type = vm.config.type;//Activate gadget
+      utilsService.forceRender($scope);
+    }
+
+    function redrawWordCloud(){
+      var element = $element[0];
+      var height = element.offsetHeight;
+      var width = element.offsetWidth;
+      var maxCount = vm.counterArray[0].count;
+      var minCount = vm.counterArray[vm.counterArray.length - 1].count;
+      var maxWordSize = width * 0.15;
+      var minWordSize = maxWordSize / 5;
+      var spread = maxCount - minCount;
+      if (spread <= 0) spread = 1;
+      var step = (maxWordSize - minWordSize) / spread;
+      vm.words = vm.counterArray.map(function(word) {
+          return {
+              text: word.text,
+              size: Math.round(maxWordSize - ((maxCount - word.count) * step)),
+              tooltipText: word.count + ' ocurrences'
+          }
+      })
+      vm.width = width;
+      vm.height = height;
+    }
+
+    function redrawLeafletMap(){
+      var element = $element[0];
+      var height = element.offsetHeight;
+      var width = element.offsetWidth;
+      vm.width = width;
+      vm.height = height;
+    }
+
+    function eventGProcessor(event,dataEvent){
+      if(dataEvent.type === "data" && dataEvent.data.length===0){
+        vm.type="nodata";
+        vm.status = "ready";
+      }
+      else{
+        switch(dataEvent.type){
+          case "data":
+            switch(dataEvent.name){
+              case "refresh":
+                if(vm.status === "initial" || vm.status === "ready"){
+                  processDataToGadget(dataEvent.data);
+                }
+                else{
+                  console.log("Ignoring refresh event, status " + vm.status);
+                }
+                break;
+              case "add":
+                //processDataToGadget(data);
+                break;
+              case "filter":
+                if(vm.status === "pending"){
+                  processDataToGadget(dataEvent.data);
+                  vm.status = "ready";
+                }
+                break;
+              case "drillup":
+                //processDataToGadget(data);
+                break;
+              case "drilldown":
+                //processDataToGadget(data);
+                break;
+              default:
+                console.error("Not allowed data event: " + dataEvent.name);
+                break;
+            } 
+            break;
+          case "filter":
+            vm.status = "pending";
+            //vm.type = "loading";
+            if(!vm.datastatus){
+              vm.datastatus = {};
+            }
+            if(dataEvent.data.length){
+              for(var index in dataEvent.data){
+                vm.datastatus[angular.copy(dataEvent.data[index].field)] = {
+                  value: angular.copy(dataEvent.data[index].value),
+                  id: angular.copy(dataEvent.id)
+                }
+              }
+            }
+            else{
+              delete vm.datastatus[dataEvent.field];
+              if(Object.keys(vm.datastatus).length === 0 ){
+                vm.datastatus = undefined;
+              }
+            }
+            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
+            break;
+          default:
+            console.error("Not allowed event: " + dataEvent.type);
+            break;
+        }
+      }
+      utilsService.forceRender($scope);
+    }
+
+    function buildFilterStt(dataEvent){
+      return {
+        filter: {
+          id: dataEvent.id,
+          data: dataEvent.data.map(
+            function(f){
+              //quotes for string identification
+              if(typeof f.value === "string"){
+                f.value = "\"" + f.value + "\""
+              }
+              return {
+                field: f.field,
+                op: "=",
+                exp: f.value
+              }
+            }
+          )
+        } , 
+        group:[], 
+        project:vm.projects
+      }
+    }
+
+    //Chartjs click event
+    vm.clickChartEventProcessorEmitter = function(points, evt){
+      var originField;
+      var originValue;
+      switch(vm.config.type){
+        case "line":
+          //originField = vm.measures[0].config.fields[0];
+          //originValue = points[0]._model.label;
+          break;
+        case "bar":
+          //find serie x field if there are diferent x field in measures
+          for(var index in vm.data){
+            if(vm.data[index][points[0]._index]){
+              originField = vm.measures[index].config.fields[0];
+              break;
+            }
+          }
+          originValue = points[0]._model.label;
+          break;
+        case "pie":
+          originField = vm.measures[0].config.fields[0];
+          originValue = points[0]._model.label;
+          break;
+      }
+      sendEmitterEvent(originField,originValue);
+    }
+
+    //leafletjs click marker event, by Point Id
+    vm.clickMarkerMapEventProcessorEmitter = function(event, args){
+      var originField = vm.measures[0].config.fields[2];
+      var originValue = args.model.id;
+      sendEmitterEvent(originField,originValue);
+    }
+
+    function sendEmitterEvent(originField,originValue){
+      if(vm.filterChaining){
+        var filterStt = angular.copy(vm.datastatus)||{}
+      }
+      else{
+        var filterStt = {}
+      }
+      filterStt[originField]={value: originValue, id: vm.id};
+      interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
   }
 })();
@@ -1952,408 +2354,6 @@
 (function () {
   'use strict';
 
-  GadgetController.$inject = ["$log", "$scope", "$element", "$window", "$mdCompiler", "$compile", "datasourceSolverService", "sofia2HttpService", "interactionService", "utilsService", "leafletMarkerEvents"];
-  angular.module('s2DashboardFramework')
-    .component('gadget', {
-      templateUrl: 'app/components/view/gadgetComponent/gadget.html',
-      controller: GadgetController,
-      controllerAs: 'vm',
-      bindings:{
-        id:"<?",
-        gconfig:"=?",
-        gmeasures:"=?",
-        gdatasourceid:"=?",
-        datastatus:"=?"
-      }
-    });
-
-  /** @ngInject */
-  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService, leafletMarkerEvents) {
-    var vm = this;
-    vm.ds = [];
-    vm.type = "loading";
-    vm.config = {};//Gadget database config
-    vm.measures = [];
-    vm.status = "initial"
-
-    //Chaining filters, used to propagate own filters to child elements
-    vm.filterChaining=true;
-
-    vm.$onInit = function(){
-      //register Gadget in interaction service when gadget has id
-      if(vm.id){
-        interactionService.registerGadget(vm.id);
-      }
-      //Activate incoming events
-      vm.unsubscribeHandler = $scope.$on(vm.id,eventGProcessor);
-      $scope.reloadContent();
-    }
-
-    $scope.reloadContent = function(){
-      /*Gadget Editor Mode*/
-      if(!vm.id){
-        //vm.config = vm.gconfig;//gadget config
-        if(!vm.config.config){
-          return;//Init editor triggered
-        }
-        if(typeof vm.config.config == "string"){
-          vm.config.config = JSON.parse(vm.config.config);
-        }
-        //vm.measures = vm.gmeasures;//gadget config
-        var projects = [];
-        for(var index=0; index < vm.measures.length; index++){
-          var jsonConfig = JSON.parse(vm.measures[index].config);
-          for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-            if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },projects)){
-              projects.push({op:"",field:jsonConfig.fields[indexF]});
-            }
-          }
-          vm.measures[index].config = jsonConfig;
-        }
-        sofia2HttpService.getDatasourceById(vm.ds).then(
-          function(datasource){
-            subscriptionDatasource(datasource.data, [], projects, []);
-          }
-        )
-      }
-      else{
-      /*View Mode*/
-        sofia2HttpService.getGadgetConfigById(
-          vm.id
-        ).then(
-          function(config){
-            vm.config=config.data;
-            vm.config.config = JSON.parse(vm.config.config);
-            return sofia2HttpService.getGadgetMeasuresByGadgetId(vm.id);
-          }
-        ).then(
-          function(measures){
-            vm.measures = measures.data;
-
-            vm.projects = [];
-            for(var index=0; index < vm.measures.length; index++){
-              var jsonConfig = JSON.parse(vm.measures[index].config);
-              for(var indexF = 0 ; indexF < jsonConfig.fields.length; indexF++){
-                if(!utilsService.isSameJsonInArray( { op:"", field:jsonConfig.fields[indexF] },vm.projects)){
-                  vm.projects.push({op:"",field:jsonConfig.fields[indexF]});
-                }
-              }
-              vm.measures[index].config = jsonConfig;
-            }
-            sofia2HttpService.getDatasourceById(vm.measures[0].datasource.id).then(
-              function(datasource){
-                subscriptionDatasource(datasource.data, [], vm.projects, []);
-              }
-            )
-          }
-        )
-      }
-    }
-
-    vm.$onChanges = function(changes) {
-
-    };
-
-    vm.$onDestroy = function(){
-      if(vm.unsubscribeHandler){
-        vm.unsubscribeHandler();
-        vm.unsubscribeHandler=null;
-        datasourceSolverService.unregisterDatasourceTrigger(vm.measures[0].datasource);
-      }
-    }
-
-    function subscriptionDatasource(datasource, filter, project, group) {
-
-      datasourceSolverService.registerSingleDatasourceAndFirstShot(//Raw datasource no group, filter or projections
-        {
-          type: datasource.mode,
-          name: datasource.identification,
-          refresh: datasource.refresh,
-          triggers: [{params:{filter:filter, group:group, project:project},emitTo:vm.id}]
-        }
-      );
-    };
-
-    function processDataToGadget(data){ //With dynamic loading this will change
-      switch(vm.config.type){
-        case "line":
-        case "bar":
-        case "pie":
-          //Group X axis values
-          var allLabelsField = [];
-          for(var index=0; index < vm.measures.length; index++){
-            allLabelsField = allLabelsField.concat(data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)}));
-          }
-          allLabelsField = utilsService.sort_unique(allLabelsField);
-
-          //Match Y values
-          var allDataField = [];//Data values sort by labels
-          for(var index=0; index < vm.measures.length; index++){
-            var dataRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[1],ind)});
-            var labelRawSerie = data.map(function(d,ind){return utilsService.getJsonValueByJsonPath(d,vm.measures[index].config.fields[0],ind)});
-            var sortedArray = [];
-            for(var indexf = 0; indexf < dataRawSerie.length; indexf++){
-              sortedArray[allLabelsField.indexOf(labelRawSerie[indexf])] = dataRawSerie[indexf];
-            }
-            allDataField.push(sortedArray);
-          }
-
-          vm.labels = allLabelsField;
-          vm.series = vm.measures.map (function(m){return m.config.name});
-
-          if(vm.config.type == "pie"){
-            vm.data = allDataField[0];
-          }
-          else{
-            vm.data = allDataField;
-          }
-
-          var baseOptionsChart = {
-            legend: {
-              display: true, 
-              labels: {
-                boxWidth: 11
-              }
-            }, 
-            maintainAspectRatio: false, 
-            responsive: true, 
-            responsiveAnimationDuration:500
-          };
-
-          vm.datasetOverride = vm.measures.map (function(m){return m.config.config});
-
-          vm.optionsChart = angular.merge({},vm.config.config,baseOptionsChart);
-
-          break;
-        case 'wordcloud':
-          //Get data in an array
-          var arrayWordSplited = data.reduce(function(a,b){return a.concat(b.value.split(" "))},[])//data.flatMap(function(d){return getJsonValueByJsonPath(d,vm.measures[index].config.fields[0]).split(" ")})
-          var hashWords = {};
-          var counterArray = []
-          for(var index = 0; index < arrayWordSplited.length; index++){
-            var word = arrayWordSplited[index];
-            if(word in hashWords){
-              counterArray[hashWords[word]].count++;
-            }
-            else{
-              hashWords[word]=counterArray.length;
-              counterArray.push({text:word,count:1});
-            }
-          }
-
-          vm.counterArray = counterArray.sort(function(a, b){
-            return b.count - a.count;
-          })
-          redrawWordCloud();
-          $scope.$on("$resize",redrawWordCloud);
-          break;
-        case "map":
-          vm.center = vm.center || vm.config.config.center;
-          vm.markers = data.map(
-            function(d){
-              return {
-                lat: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[0],0),
-                lng: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[1],1),
-
-                message: vm.measures[0].config.fields.slice(3).reduce(
-                  function(a, b){
-                    return a + "<b>" + b + ":</b>&nbsp;" + utilsService.getJsonValueByJsonPath(d,b) + "<br/>";
-                  }
-                  ,""
-                ),
-                id: utilsService.getJsonValueByJsonPath(d,vm.measures[0].config.fields[2],2)
-              }
-            }
-          )
-          $scope.events = {
-            markers: {
-                enable: leafletMarkerEvents.getAvailableEvents(),
-            }
-          };
-          
-          //Init map events
-          var eventName = 'leafletDirectiveMarker.lmap' + vm.id + '.click';
-          $scope.$on(eventName, vm.clickMarkerMapEventProcessorEmitter);
-
-          redrawLeafletMap();
-          $scope.$on("$resize",redrawLeafletMap);
-          break;
-      }
-
-      vm.type = vm.config.type;//Activate gadget
-      utilsService.forceRender($scope);
-    }
-
-    function redrawWordCloud(){
-      var element = $element[0];
-      var height = element.offsetHeight;
-      var width = element.offsetWidth;
-      var maxCount = vm.counterArray[0].count;
-      var minCount = vm.counterArray[vm.counterArray.length - 1].count;
-      var maxWordSize = width * 0.15;
-      var minWordSize = maxWordSize / 5;
-      var spread = maxCount - minCount;
-      if (spread <= 0) spread = 1;
-      var step = (maxWordSize - minWordSize) / spread;
-      vm.words = vm.counterArray.map(function(word) {
-          return {
-              text: word.text,
-              size: Math.round(maxWordSize - ((maxCount - word.count) * step)),
-              tooltipText: word.count + ' ocurrences'
-          }
-      })
-      vm.width = width;
-      vm.height = height;
-    }
-
-    function redrawLeafletMap(){
-      var element = $element[0];
-      var height = element.offsetHeight;
-      var width = element.offsetWidth;
-      vm.width = width;
-      vm.height = height;
-    }
-
-    function eventGProcessor(event,dataEvent){
-      if(dataEvent.type === "data" && dataEvent.data.length===0){
-        vm.type="nodata";
-        vm.status = "ready";
-      }
-      else{
-        switch(dataEvent.type){
-          case "data":
-            switch(dataEvent.name){
-              case "refresh":
-                if(vm.status === "initial" || vm.status === "ready"){
-                  processDataToGadget(dataEvent.data);
-                }
-                else{
-                  console.log("Ignoring refresh event, status " + vm.status);
-                }
-                break;
-              case "add":
-                //processDataToGadget(data);
-                break;
-              case "filter":
-                if(vm.status === "pending"){
-                  processDataToGadget(dataEvent.data);
-                  vm.status = "ready";
-                }
-                break;
-              case "drillup":
-                //processDataToGadget(data);
-                break;
-              case "drilldown":
-                //processDataToGadget(data);
-                break;
-              default:
-                console.error("Not allowed data event: " + dataEvent.name);
-                break;
-            } 
-            break;
-          case "filter":
-            vm.status = "pending";
-            //vm.type = "loading";
-            if(!vm.datastatus){
-              vm.datastatus = {};
-            }
-            if(dataEvent.data.length){
-              for(var index in dataEvent.data){
-                vm.datastatus[angular.copy(dataEvent.data[index].field)] = {
-                  value: angular.copy(dataEvent.data[index].value),
-                  id: angular.copy(dataEvent.id)
-                }
-              }
-            }
-            else{
-              delete vm.datastatus[dataEvent.field];
-              if(Object.keys(vm.datastatus).length === 0 ){
-                vm.datastatus = undefined;
-              }
-            }
-            datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
-            break;
-          default:
-            console.error("Not allowed event: " + dataEvent.type);
-            break;
-        }
-      }
-      utilsService.forceRender($scope);
-    }
-
-    function buildFilterStt(dataEvent){
-      return {
-        filter: {
-          id: dataEvent.id,
-          data: dataEvent.data.map(
-            function(f){
-              //quotes for string identification
-              if(typeof f.value === "string"){
-                f.value = "\"" + f.value + "\""
-              }
-              return {
-                field: f.field,
-                op: "=",
-                exp: f.value
-              }
-            }
-          )
-        } , 
-        group:[], 
-        project:vm.projects
-      }
-    }
-
-    //Chartjs click event
-    vm.clickChartEventProcessorEmitter = function(points, evt){
-      var originField;
-      var originValue;
-      switch(vm.config.type){
-        case "line":
-          //originField = vm.measures[0].config.fields[0];
-          //originValue = points[0]._model.label;
-          break;
-        case "bar":
-          //find serie x field if there are diferent x field in measures
-          for(var index in vm.data){
-            if(vm.data[index][points[0]._index]){
-              originField = vm.measures[index].config.fields[0];
-              break;
-            }
-          }
-          originValue = points[0]._model.label;
-          break;
-        case "pie":
-          originField = vm.measures[0].config.fields[0];
-          originValue = points[0]._model.label;
-          break;
-      }
-      sendEmitterEvent(originField,originValue);
-    }
-
-    //leafletjs click marker event, by Point Id
-    vm.clickMarkerMapEventProcessorEmitter = function(event, args){
-      var originField = vm.measures[0].config.fields[2];
-      var originValue = args.model.id;
-      sendEmitterEvent(originField,originValue);
-    }
-
-    function sendEmitterEvent(originField,originValue){
-      if(vm.filterChaining){
-        var filterStt = angular.copy(vm.datastatus)||{}
-      }
-      else{
-        var filterStt = {}
-      }
-      filterStt[originField]={value: originValue, id: vm.id};
-      interactionService.sendBroadcastFilter(vm.id,filterStt);
-    }
-  }
-})();
-
-(function () {
-  'use strict';
-
   ElementController.$inject = ["$log", "$scope", "$mdDialog", "$sanitize", "$sce", "$rootScope", "gadgetManagerService"];
   angular.module('s2DashboardFramework')
     .component('element', {
@@ -3542,48 +3542,6 @@
 })();
 
 (function () {
-    'use strict';
-
-    RetryHttpProviderConfig.$inject = ["$httpProvider"];
-    angular.module('s2DashboardFramework').config(RetryHttpProviderConfig);
-
-    /** @ngInject */
-    function RetryHttpProviderConfig($httpProvider) {  
-        $httpProvider.interceptors.push(["$q", "$injector", function ($q, $injector) {
-            var incrementalTimeout = 1000;
-        
-            function retryRequest (httpConfig) {
-                var $timeout = $injector.get('$timeout');
-                var thisTimeout = incrementalTimeout;
-                incrementalTimeout *= 2;
-                return $timeout(function() {
-                    var $http = $injector.get('$http');
-                    return $http(httpConfig);
-                }, thisTimeout);
-            };
-        
-            return {
-                responseError: function (response) {
-                    debugger;
-                    if (response.status === 500) {
-                        if (incrementalTimeout < 5000) {
-                            return retryRequest(response.config);
-                        }
-                        else {
-                            console.error('The remote server seems to be busy at the moment. Please try again in later');
-                        }
-                    }
-                    else {
-                        incrementalTimeout = 1000;
-                    }
-                    return $q.reject(response);
-                }
-            };
-        }]); 
-    }
-
-})();
-(function () {
   'use strict';
 
   Sofia2HttpService.$inject = ["$http", "$log", "__env", "$rootScope"];
@@ -4258,6 +4216,48 @@ else{//Default config
 angular.module('s2DashboardFramework').constant('__env', env);
 
 (function () {
+    'use strict';
+
+    RetryHttpProviderConfig.$inject = ["$httpProvider"];
+    angular.module('s2DashboardFramework').config(RetryHttpProviderConfig);
+
+    /** @ngInject */
+    function RetryHttpProviderConfig($httpProvider) {  
+        $httpProvider.interceptors.push(["$q", "$injector", function ($q, $injector) {
+            var incrementalTimeout = 1000;
+        
+            function retryRequest (httpConfig) {
+                var $timeout = $injector.get('$timeout');
+                var thisTimeout = incrementalTimeout;
+                incrementalTimeout *= 2;
+                return $timeout(function() {
+                    var $http = $injector.get('$http');
+                    return $http(httpConfig);
+                }, thisTimeout);
+            };
+        
+            return {
+                responseError: function (response) {
+                    debugger;
+                    if (response.status === 500) {
+                        if (incrementalTimeout < 5000) {
+                            return retryRequest(response.config);
+                        }
+                        else {
+                            console.error('The remote server seems to be busy at the moment. Please try again in later');
+                        }
+                    }
+                    else {
+                        incrementalTimeout = 1000;
+                    }
+                    return $q.reject(response);
+                }
+            };
+        }]); 
+    }
+
+})();
+(function () {
   'use strict';
 
   config.$inject = ["$logProvider", "$compileProvider"];
@@ -4737,9 +4737,6 @@ angular.module('s2DashboardFramework').constant('__env', env);
 })();
 
 angular.module('s2DashboardFramework').run(['$templateCache', function($templateCache) {$templateCache.put('app/s2dashboard.html','<edit-dashboard ng-if=vm.editmode id=vm.id public=vm.public dashboard=vm.dashboard selectedpage=vm.selectedpage></edit-dashboard><ng-include src="\'app/partials/view/header.html\'"></ng-include><ng-include src="\'app/partials/view/sidenav.html\'"></ng-include><span><div ng-repeat="page in vm.dashboard.pages"><page page=page gridoptions=vm.dashboard.gridOptions editmode=vm.editmode selectedlayer=vm.selectedlayer class=flex ng-if=vm.checkIndex($index)></page></div></span>');
-$templateCache.put('app/partials/view/filterTooltip.html','<b>Applied filters:</b> <span class=no-wrap ng-repeat="(field, data) in vm.datastatus"><br><label>{{field}}</label>:<label md-truncate>{{vm.generateFilterInfo(data)}}</label><md-button class="md-icon-button md-warn" aria-label="Delete filter" ng-click=vm.deleteFilter(data.id,field)><md-icon>delete</md-icon></md-button></span>');
-$templateCache.put('app/partials/view/header.html','<md-toolbar ng-if=vm.dashboard.header.enable layout=row class=md-hue-2 layout-align="space-between center" ng-style="{\'height\': + vm.dashboard.header.height + \'px\', \'background\': vm.dashboard.header.backgroundColor}"><md-headline layout=row layout-align="start center" class=left-margin-10><img ng-if=vm.dashboard.header.logo.filedata ng-src={{vm.dashboard.header.logo.filedata}} ng-style="{\'height\': + vm.dashboard.header.logo.height + \'px\'}"><span ng-style="{\'color\': vm.dashboard.header.textColor}">{{\'&nbsp;\' + vm.dashboard.header.title}}</span><md-icon ng-style="{\'color\': vm.dashboard.header.iconColor}" ng-if=vm.dashboard.navigation.showBreadcrumbIcon>keyboard_arrow_right</md-icon><span ng-style="{\'color\': vm.dashboard.header.pageColor}" ng-if=vm.dashboard.navigation.showBreadcrumb>{{vm.dashboard.pages[vm.selectedpage].title}}</span></md-headline><md-button class=md-icon-button aria-label="Open Menu" ng-click=vm.sidenav.toggle();><md-tooltip md-direction=left>Toggle Menu</md-tooltip><md-icon>reorder</md-icon></md-button></md-toolbar>');
-$templateCache.put('app/partials/view/sidenav.html','<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id=left><header class=nav-header></header><md-content flex="" role=navigation class="_md flex"><md-subheader class=md-no-sticky>Pages</md-subheader><md-list class=md-hue-2><span ng-repeat="page in vm.dashboard.pages"><md-list-item md-colors="{background: ($index===vm.selectedpage ? \'primary\' : \'grey-A100\')}" ng-click=vm.setIndex($index) flex><md-icon>{{page.icon}}</md-icon><p>{{page.title}}</p></md-list-item></span></md-list></md-content></md-sidenav>');
 $templateCache.put('app/partials/edit/addGadgetDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Select Gadget to add</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container><label>Select gadget type</label><md-select ng-model=gadget md-on-open=loadGadgets()><md-option ng-value=gadget ng-repeat="gadget in gadgets"><em>{{gadget.identification}}</em></md-option></md-select></md-input-container><md-dialog-actions layout=row><span flex></span><md-button ng-click=cancel()>Cancel</md-button><md-button ng-click=addGadget()>Add Gadget</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/addGadgetTemplateDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Create using template?</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container><label>Select Template</label><md-select ng-model=template md-on-open=loadTemplates()><md-option ng-value=template ng-repeat="template in templates"><em>{{template.identification}}</em></md-option></md-select></md-input-container><md-dialog-actions layout=row><span flex></span><md-button ng-click=useTemplate()>Yes</md-button><md-button ng-click=noUseTemplate()>No</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/addGadgetTemplateParameterDialog.html','<md-dialog aria-label="Add Gadget"><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Select a content for the parameters</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-input-container class=md-dialog-content><label>Datasource</label><md-select required md-autofocus placeholder="Select new templace datasource" ng-model=config.datasource md-on-open=loadDatasources() ng-change=loadDatasourcesFields()><md-option ng-value={name:datasource.identification,refresh:datasource.refresh,type:datasource.mode,id:datasource.id} ng-repeat="datasource in datasources">{{datasource.identification}}</md-option></md-select></md-input-container><div flex=""><md-content><md-list class=md-dense flex=""><md-list-item class=md-3-line ng-repeat="item in parameters"><div class=md-list-item-text layout=column><span>{{ item.label }}</span><md-input-container ng-if="item.type==\'labelsText\'" class=md-dialog-content><p>string value :</p><input type=text ng-model=item.value></md-input-container><md-input-container ng-if="item.type==\'labelsNumber\'" class=md-dialog-content><p>number value :</p><input type=number ng-model=item.value></md-input-container><md-input-container ng-if="item.type==\'labelsds\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter from datasource" ng-model=item.value><md-option ng-value={field:datasourceField.field,type:datasourceField.type} ng-repeat="datasourceField in datasourceFields">{{datasourceField.field}}</md-option></md-select></md-input-container><md-input-container ng-if="item.type==\'labelsdspropertie\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter from datasource" ng-model=item.value><md-option ng-value={field:datasourceField.field,type:datasourceField.type} ng-repeat="datasourceField in datasourceFields">{{datasourceField.field}}</md-option></md-select></md-input-container><md-input-container ng-if="item.type==\'selects\'" class=md-dialog-content><p>value :</p><md-select required md-autofocus placeholder="Select parameter value" ng-model=item.value><md-option ng-value=optionsValue ng-repeat="optionsValue in item.optionsValue">{{optionsValue}}</md-option></md-select></md-input-container></div></md-list-item></md-list></md-content></div><md-dialog-actions layout=row><span flex></span><md-button ng-click=save()>Ok</md-button></md-dialog-actions></form></md-dialog>');
@@ -4756,8 +4753,11 @@ $templateCache.put('app/partials/edit/editPageButtons.html','<div class=sidenav-
 $templateCache.put('app/partials/edit/editPageSidenav.html','<md-sidenav class="site-sidenav md-sidenav-left md-whiteframe-4dp layout-padding" md-component-id=left md-is-locked-open=true><label class=md-headline>Grid Settings</label><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><md-input-container class=md-block flex-gt-sm><label>Dashboard Title</label><input ng-model=title></md-input-container></md-input-container><md-input-container class=flex><label>Grid Type</label><md-select aria-label="Grid type" ng-model=main.options.gridType ng-change=main.changedOptions() placeholder="Grid Type" class=flex><md-option value=fit>Fit to screen</md-option><md-option value=scrollVertical>Scroll Vertical</md-option><md-option value=scrollHorizontal>Scroll Horizontal</md-option><md-option value=fixed>Fixed</md-option><md-option value=verticalFixed>Vertical Fixed</md-option><md-option value=horizontalFixed>Horizontal Fixed</md-option></md-select></md-input-container><md-input-container class=flex><label>Compact Type</label><md-select aria-label="Compact type" ng-model=main.options.compactType ng-change=main.changedOptions() placeholder="Compact Type" class=flex><md-option value=none>None</md-option><md-option value=compactUp>Compact Up</md-option><md-option value=compactLeft>Compact Left</md-option><md-option value=compactLeft&Up>Compact Left & Up</md-option><md-option value=compactUp&Left>Compact Up & Left</md-option></md-select></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.swap ng-change=main.changedOptions() class=flex>Swap Items</md-checkbox><md-checkbox ng-model=main.options.pushItems ng-change=main.changedOptions() class=flex>Push Items</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.disablePushOnDrag ng-change=main.changedOptions() class=flex>Disable Push On Drag</md-checkbox><md-checkbox ng-model=main.options.disablePushOnResize ng-change=main.changedOptions() class=flex>Disable Push On Resize</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.pushDirections.north ng-change=main.changedOptions() class=flex>Push North</md-checkbox><md-checkbox ng-model=main.options.pushDirections.east ng-change=main.changedOptions() class=flex>Push East</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.pushDirections.south ng-change=main.changedOptions() class=flex>Push South</md-checkbox><md-checkbox ng-model=main.options.pushDirections.west ng-change=main.changedOptions() class=flex>Push West</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.draggable.enabled ng-change=main.changedOptions() class=flex>Drag Items</md-checkbox><md-checkbox ng-model=main.options.resizable.enabled ng-change=main.changedOptions() class=flex>Resize Items</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.pushResizeItems ng-change=main.changedOptions() class=flex>Push Resize Items</md-checkbox><md-input-container class=flex><label>Display grid lines</label><md-select aria-label="Display grid lines" ng-model=main.options.displayGrid placeholder="Display grid lines" ng-change=main.changedOptions()><md-option value=always>Always</md-option><md-option value=onDrag&Resize>On Drag & Resize</md-option><md-option value=none>None</md-option></md-select></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.minCols type=number placeholder="Min Grid Cols" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.maxCols type=number placeholder="Max Grid Cols" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.minRows type=number placeholder="Min Grid Rows" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.maxRows type=number placeholder="Max Grid Rows" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.margin min=0 max=30 step=1 type=number placeholder=Margin ng-change=main.changedOptions()></md-input-container><md-checkbox ng-model=main.options.outerMargin ng-change=main.changedOptions() class=flex>Outer Margin</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.mobileBreakpoint type=number placeholder="Mobile Breakpoint" ng-change=main.changedOptions()></md-input-container><md-checkbox ng-model=main.options.disableWindowResize ng-change=main.changedOptions() class=flex>Disable window resize</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.scrollToNewItems ng-change=main.changedOptions() class=flex>Scroll to new items</md-checkbox><md-checkbox ng-model=main.options.disableWarnings ng-change=main.changedOptions() class=flex>Disable console warnings</md-checkbox></div><label class=md-headline>Item Settings</label><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.maxItemCols type=number placeholder="Max Item Cols" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.minItemCols type=number placeholder="Min Item Cols" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.maxItemRows type=number placeholder="Max Item Rows" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.minItemRows type=number placeholder="Min Item Rows" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.maxItemArea type=number placeholder="Max Item Area" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.minItemArea type=number placeholder="Min Item Area" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.defaultItemRows type=number placeholder="Default Item Rows" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.defaultItemCols type=number placeholder="Default Item Cols" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.fixedColWidth type=number placeholder="Fixed Col Width" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.fixedRowHeight type=number placeholder="Fixed layout-row layout-align-start-center Height" ng-change=main.changedOptions()></md-input-container></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.keepFixedHeightInMobile ng-change=main.changedOptions() class=flex>Keep Fixed Height In Mobile</md-checkbox><md-checkbox ng-model=main.options.keepFixedWidthInMobile ng-change=main.changedOptions() class=flex>Keep Fixed Width In Mobile</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.enableEmptyCellClick ng-change=main.changedOptions() class=flex>Enable click to add</md-checkbox><md-checkbox ng-model=main.options.enableEmptyCellContextMenu ng-change=main.changedOptions() class=flex>Enable right click to add</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-checkbox ng-model=main.options.enableEmptyCellDrop ng-change=main.changedOptions() class=flex>Enable drop to add</md-checkbox><md-checkbox ng-model=main.options.enableEmptyCellDrag ng-change=main.changedOptions() class=flex>Enable drag to add</md-checkbox></div><div class="layout-row layout-align-start-center flex"><md-input-container class=flex><input ng-model=main.options.emptyCellDragMaxCols type=number placeholder="Drag Max Cols" ng-change=main.changedOptions()></md-input-container><md-input-container class=flex><input ng-model=main.options.emptyCellDragMaxRows type=number placeholder="Drag Max Rows" ng-change=main.changedOptions()></md-input-container></div></md-sidenav>');
 $templateCache.put('app/partials/edit/layersDialog.html','<md-dialog aria-label=Layers><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Page Layers</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Layers</md-subheader><md-list><md-list-item ng-repeat="layer in dashboard.pages[selectedpage].layers"><md-input-container flex=70><label>Layer name</label><input ng-model=layer.title required md-autofocus></md-input-container><md-input-container flex=30><md-button ng-if="!$first && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=up ng-click=moveUpLayer($index)><md-icon>arrow_upward</md-icon></md-button><md-button ng-if="!$last && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=down ng-click=moveDownLayer($index)><md-icon>arrow_downward</md-icon></md-button><md-button ng-if="dashboard.pages[selectedpage].layers.length > 1" class="md-icon-button md-warn" aria-label="Delete layer" ng-click=delete($index)><md-icon>remove_circle</md-icon></md-button></md-input-container></md-list-item></md-list><md-subheader>Add New Layer</md-subheader><md-list><md-list-item><md-input-container flex=70><label>Layer name</label><input ng-model=title required md-autofocus></md-input-container><md-input-container flex=30><md-button class="md-icon-button md-primary" aria-label="Add layer" ng-click=create()><md-icon>add_circle</md-icon></md-button></md-input-container></md-list-item></md-list></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');
 $templateCache.put('app/partials/edit/pagesDialog.html','<md-dialog aria-label=Pages><form ng-cloak><md-toolbar><div class=md-toolbar-tools><h2>Dashboard Pages</h2><span flex></span><md-button class=md-icon-button ng-click=cancel()><b>X</b></md-button></div></md-toolbar><md-dialog-content><md-subheader>Pages</md-subheader><md-list><md-list-item ng-repeat="page in dashboard.pages"><md-input-container flex=35><label>Page name</label><input ng-model=page.title required md-autofocus></md-input-container><md-autocomplete flex=35 ng-disabled=false md-no-cache=false md-selected-item=ctrl.icons[$index] md-search-text-change=ctrl.searchTextChange(ctrl.searchText) md-search-text=page.icon md-selected-item-change=ctrl.selectedItemChange(item) md-items="icon in queryIcon(page.icon)" md-item-text=icon md-min-length=0 md-menu-class=autocomplete-custom-template md-floating-label="Select icon of page"><md-item-template><span class=item-title><md-icon>{{icon}}</md-icon><span>{{icon}}</span></span></md-item-template></md-autocomplete><lf-ng-md-file-input ng-change=onFilesChange($index) lf-api=apiUpload[$index] lf-files=auxUpload[$index].file lf-placeholder="" lf-browse-label="Change Background Img" accept=image/* progress lf-filesize=5MB lf-remove-label=""></lf-ng-md-file-input><md-input-container flex=30><md-button ng-if="!$first && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=up ng-click=moveUpPage($index)><md-icon>arrow_upward</md-icon></md-button><md-button ng-if="!$last && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label=down ng-click=moveDownPage($index)><md-icon>arrow_downward</md-icon></md-button><md-button ng-if="dashboard.pages.length > 1" class="md-icon-button md-warn" aria-label="Delete page" ng-click=delete($index)><md-icon>remove_circle</md-icon></md-button></md-input-container></md-list-item></md-list><md-subheader>Add New Page</md-subheader><md-list><md-list-item><md-input-container flex=35><label>Page name</label><input ng-model=title required md-autofocus></md-input-container><md-autocomplete flex=35 ng-disabled=false md-no-cache=false md-selected-item=selectedIconItem md-search-text-change=ctrl.searchTextChange(ctrl.searchText) md-search-text=searchIconText md-selected-item-change=ctrl.selectedItemChange(item) md-items="icon in queryIcon(searchIconText)" md-item-text=icon md-min-length=0 md-menu-class=autocomplete-custom-template md-floating-label="Select icon of page"><md-item-template><span class=item-title><md-icon>{{icon}}</md-icon><span>{{icon}}</span></span></md-item-template></md-autocomplete><lf-ng-md-file-input lf-files=file lf-placeholder="" lf-browse-label="Change Background Img" accept=image/* progress lf-filesize=5MB lf-remove-label=""></lf-ng-md-file-input><md-input-container flex=30><md-button class="md-icon-button md-primary" aria-label="Add page" ng-click=create()><md-icon>add_circle</md-icon></md-button></md-input-container></md-list-item></md-list></md-dialog-content><md-dialog-actions layout=row><span flex></span><md-button ng-click=hide() class=md-primary>Close</md-button></md-dialog-actions></form></md-dialog>');
+$templateCache.put('app/partials/view/filterTooltip.html','<b>Applied filters:</b> <span class=no-wrap ng-repeat="(field, data) in vm.datastatus"><br><label>{{field}}</label>:<label md-truncate>{{vm.generateFilterInfo(data)}}</label><md-button class="md-icon-button md-warn" aria-label="Delete filter" ng-click=vm.deleteFilter(data.id,field)><md-icon>delete</md-icon></md-button></span>');
+$templateCache.put('app/partials/view/header.html','<md-toolbar ng-if=vm.dashboard.header.enable layout=row class=md-hue-2 layout-align="space-between center" ng-style="{\'height\': + vm.dashboard.header.height + \'px\', \'background\': vm.dashboard.header.backgroundColor}"><md-headline layout=row layout-align="start center" class=left-margin-10><img ng-if=vm.dashboard.header.logo.filedata ng-src={{vm.dashboard.header.logo.filedata}} ng-style="{\'height\': + vm.dashboard.header.logo.height + \'px\'}"><span ng-style="{\'color\': vm.dashboard.header.textColor}">{{\'&nbsp;\' + vm.dashboard.header.title}}</span><md-icon ng-style="{\'color\': vm.dashboard.header.iconColor}" ng-if=vm.dashboard.navigation.showBreadcrumbIcon>keyboard_arrow_right</md-icon><span ng-style="{\'color\': vm.dashboard.header.pageColor}" ng-if=vm.dashboard.navigation.showBreadcrumb>{{vm.dashboard.pages[vm.selectedpage].title}}</span></md-headline><md-button class=md-icon-button aria-label="Open Menu" ng-click=vm.sidenav.toggle();><md-tooltip md-direction=left>Toggle Menu</md-tooltip><md-icon>reorder</md-icon></md-button></md-toolbar>');
+$templateCache.put('app/partials/view/sidenav.html','<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id=left><header class=nav-header></header><md-content flex="" role=navigation class="_md flex"><md-subheader class=md-no-sticky>Pages</md-subheader><md-list class=md-hue-2><span ng-repeat="page in vm.dashboard.pages"><md-list-item md-colors="{background: ($index===vm.selectedpage ? \'primary\' : \'grey-A100\')}" ng-click=vm.setIndex($index) flex><md-icon>{{page.icon}}</md-icon><p>{{page.title}}</p></md-list-item></span></md-list></md-content></md-sidenav>');
+$templateCache.put('app/components/view/gadgetComponent/gadget.html','<div class=spinner-margin-top ng-if="vm.type == \'loading\'" layout=row layout-sm=column layout-align=space-around><md-progress-circular md-diameter=60></md-progress-circular></div><div class=spinner-overlay ng-if="vm.status == \'pending\'" layout=row layout-sm=column layout-align=space-around><md-progress-linear md-mode=indeterminate></md-progress-linear></div><div ng-if="vm.type == \'nodata\'" layout=row layout-sm=column layout-align=space-around><h3>No data found</h3></div><canvas ng-if="vm.type == \'line\'" chart-dataset-override=vm.datasetOverride chart-click=vm.clickChartEventProcessorEmitter class="chart chart-line" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'bar\'" chart-dataset-override=vm.datasetOverride chart-click=vm.clickChartEventProcessorEmitter class="chart chart-bar" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'pie\'" chart-click=vm.clickChartEventProcessorEmitter class="chart chart-doughnut" chart-data=vm.data chart-labels=vm.labels chart-options=vm.optionsChart></canvas><word-cloud ng-if="vm.type == \'wordcloud\'" words=vm.words width=vm.width height=vm.height padding=0 use-tooltip=false use-transition=true></word-cloud><leaflet id="{{\'lmap\' + vm.id}}" ng-if="vm.type == \'map\'" lf-center=vm.center markers=vm.markers height={{vm.height}} width=100%></leaflet>');
 $templateCache.put('app/components/view/elementComponent/element.html','<gridster-item item=vm.element ng-style="{ \'border-width\': vm.element.border.width + \'px\', \'border-color\': vm.element.border.color, \'border-radius\': vm.element.border.radius + \'px\', \'border-style\': \'solid\'}"><div class="element-container fullcontainer"><md-toolbar ng-if=vm.element.header.enable class="widget-header md-hue-2" ng-style="{\'background\':vm.element.header.backgroundColor, \'height\': vm.element.header.height + \'px\'}"><div class=md-toolbar-tools><md-icon ng-style="{\'color\':vm.element.header.title.iconColor}">{{vm.element.header.title.icon}}</md-icon><h5 flex ng-style="{\'color\':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5><md-icon class=cursor-hand ng-if=vm.datastatus tooltips tooltip-show-trigger=click tooltip-hide-trigger=click tooltip-close-button=true tooltip-size=small tooltip-template-url=app/partials/view/filterTooltip.html ng-attr-tooltip-side="{{vm.editmode?\'bottom\':\'bottom left\'}}">filter_list</md-icon><md-button ng-if=vm.editmode ng-click=vm.openEditContainerDialog() class=md-icon-button aria-label="Edit Container"><md-icon>format_paint</md-icon><md-tooltip>Edit container</md-tooltip></md-button><md-button ng-if="vm.editmode && vm.element.type == \'livehtml\'" ng-click=vm.openEditGadgetDialog() class=md-icon-button aria-label="Gadget Editor"><md-icon>mode_edit</md-icon><md-tooltip>Edit Gadget definition</md-tooltip></md-button><md-button ng-if=vm.editmode class="drag-handler md-icon-button"><md-icon>open_with</md-icon><md-tooltip>Move</md-tooltip></md-button><md-button ng-if=vm.editmode class="remove-button md-icon-button" ng-click=vm.deleteElement()><md-icon>delete</md-icon><md-tooltip>Remove</md-tooltip></md-button></div></md-toolbar><div ng-if="vm.editmode && !vm.element.header.enable" class=item-buttons><md-button ng-click=vm.openEditContainerDialog() class="md-raised md-icon-button" aria-label="Edit Container"><md-icon>format_paint</md-icon></md-button><md-button ng-click=vm.openEditGadgetDialog() ng-if="vm.element.type == \'livehtml\'" class="md-raised md-icon-button" aria-label="Gadget Editor"><md-icon>mode_edit</md-icon></md-button><md-button ng-if=vm.editmode class="drag-handler md-raised md-icon-button"><md-icon>open_with</md-icon></md-button><md-button ng-if=vm.editmode class="remove-button md-raised md-icon-button" ng-click=vm.deleteElement()><md-icon>delete</md-icon><md-tooltip>Remove</md-tooltip></md-button></div><livehtml ng-style="{\'background-color\':vm.element.backgroundColor, \'padding\': vm.element.padding + \'px\', \'height\': vm.calcHeight()}" ng-if="vm.element.type == \'livehtml\'" livecontent=vm.element.content datasource=vm.element.datasource ng-class=vm.element.id id=vm.element.id datastatus=vm.datastatus></livehtml><gadget ng-style="{\'background-color\':vm.element.backgroundColor, \'padding\': vm.element.padding + \'px\', \'display\': \'inline-block\', \'width\':\'100%\', \'height\': vm.calcHeight()}" ng-if="vm.element.type != \'livehtml\'" ng-class=vm.element.id id=vm.element.id datastatus=vm.datastatus></gadget></div></gridster-item>');
-$templateCache.put('app/components/edit/editDashboardComponent/edit.dashboard.html','<ng-include src="\'app/partials/edit/editDashboardButtons.html\'"></ng-include><ng-include src="\'app/partials/edit/editDashboardSidenav.html\'"></ng-include>');
 $templateCache.put('app/components/view/liveHTMLComponent/livehtml.html','<div id=testhtml>{{1+1}}</div>');
 $templateCache.put('app/components/view/pageComponent/page.html','<div class=page-dashboard-container ng-style="{\'background-image\':\'url(\' + vm.page.background.filedata + \')\'}"><span ng-repeat="layer in vm.page.layers"><gridster ng-if="(vm.page.combinelayers || vm.page.selectedlayer == $index) " options=vm.gridoptions class=flex><element ng-style="{\'z-index\':$parent.$index*500+1}" ng-if=item.id element=item editmode=vm.editmode ng-repeat="item in layer.gridboard"></element></gridster></span></div>');
-$templateCache.put('app/components/view/gadgetComponent/gadget.html','<div class=spinner-margin-top ng-if="vm.type == \'loading\'" layout=row layout-sm=column layout-align=space-around><md-progress-circular md-diameter=60></md-progress-circular></div><div class=spinner-overlay ng-if="vm.status == \'pending\'" layout=row layout-sm=column layout-align=space-around><md-progress-linear md-mode=indeterminate></md-progress-linear></div><div ng-if="vm.type == \'nodata\'" layout=row layout-sm=column layout-align=space-around><h3>No data found</h3></div><canvas ng-if="vm.type == \'line\'" chart-dataset-override=vm.datasetOverride chart-click=vm.clickChartEventProcessorEmitter class="chart chart-line" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'bar\'" chart-dataset-override=vm.datasetOverride chart-click=vm.clickChartEventProcessorEmitter class="chart chart-bar" chart-data=vm.data chart-labels=vm.labels chart-series=vm.series chart-options=vm.optionsChart></canvas><canvas ng-if="vm.type == \'pie\'" chart-click=vm.clickChartEventProcessorEmitter class="chart chart-doughnut" chart-data=vm.data chart-labels=vm.labels chart-options=vm.optionsChart></canvas><word-cloud ng-if="vm.type == \'wordcloud\'" words=vm.words width=vm.width height=vm.height padding=0 use-tooltip=false use-transition=true></word-cloud><leaflet id="{{\'lmap\' + vm.id}}" ng-if="vm.type == \'map\'" lf-center=vm.center markers=vm.markers height={{vm.height}} width=100%></leaflet>');}]);
+$templateCache.put('app/components/edit/editDashboardComponent/edit.dashboard.html','<ng-include src="\'app/partials/edit/editDashboardButtons.html\'"></ng-include><ng-include src="\'app/partials/edit/editDashboardSidenav.html\'"></ng-include>');}]);
