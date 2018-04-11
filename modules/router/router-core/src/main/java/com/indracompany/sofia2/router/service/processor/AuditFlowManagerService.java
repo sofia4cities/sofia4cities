@@ -57,7 +57,7 @@ public class AuditFlowManagerService {
 
 		OperationResultModel result = null;
 
-		if (!ANONYMOUS_USER.equals(commonParams.getUser())) {
+		if (!ANONYMOUS_USER.equals(commonParams.getUser()) && commonParams.getUser() != null) {
 
 			String ontology = ServiceUtils.getAuditCollectionName(commonParams.getUser());
 			OperationModel.Source operation = null;
@@ -66,6 +66,8 @@ public class AuditFlowManagerService {
 				operation = OperationModel.Source.AUDIT;
 			} else if (EventType.valueOf(commonParams.getEventType()).equals(EventType.IOTBROKER)) {
 				operation = OperationModel.Source.IOTBROKER;
+			} else {
+				operation = OperationModel.Source.AUDIT;
 			}
 
 			OperationModel model = OperationModel
@@ -82,7 +84,7 @@ public class AuditFlowManagerService {
 
 	private AuditParameters getAuditParameters(JSONObject jsonObj) throws JSONException {
 
-		String user = jsonObj.getString(USER_KEY);
+		String user = !(jsonObj.isNull(USER_KEY)) ? jsonObj.getString(USER_KEY) : null;
 		String eventType = jsonObj.getString(EVENT_TYPE_KEY);
 		String operationType = jsonObj.getString(OPERATION_TYPE_KEY);
 		return new AuditParameters(user, eventType, operationType);

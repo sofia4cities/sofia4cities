@@ -24,8 +24,7 @@ var DigitalTwinCreateController = function() {
 
 	var generateSchema=false
 	$("#createBtn").on('click',function(){
-		if(generateSchema){
-			if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined)
+		if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined){
 				DigitalTwinCreateController.submitform();
 		}else{
 			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: digitalTwinCreateJson.validations.schema});
@@ -34,10 +33,29 @@ var DigitalTwinCreateController = function() {
 		
 	});
 	
-	$("#updateBtn").on('click',function(){
+	$("#updateBtn").on('click',function(event){
+		event.preventDefault();
 		if(generateSchema){
-			if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined)
-				DigitalTwinCreateController.submitform();
+				$.ajax({
+					url : "/controlpanel/digitaltwintypes/getNumOfDevices/" + $("#identification").val(),
+					type : 'GET',
+					dataType: 'text', 
+					contentType: 'text/plain',
+					mimeType: 'text/plain',
+					success : function(data) {
+						if(data>0){
+							$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: digitalTwinCreateJson.validations.update});
+						}else{
+							if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#type").val()!='' && $("#type").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined){
+								DigitalTwinCreateController.submitform();
+							}
+						}
+					},
+					error : function(data, status, er) {
+						$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: er}); 
+					}
+				});
+			
 		}else{
 			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: digitalTwinCreateJson.validations.schema});
 			return false;
@@ -660,6 +678,6 @@ jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
 	AceEditor = ace.edit("aceEditor");
-	AceEditor.setValue("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction main(){}");
+	AceEditor.setValue("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction init(){}\nfunction main(){}");
 	DigitalTwinCreateController.init();
 });
