@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -29,7 +30,7 @@ public class IotBrokerAuditEventFactory {
 	
 	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyInsertMessage message, String messageText, IoTSession session, GatewayInfo info) {
 	
-		IotBrokerAuditEvent event = createIotBrokerAuditEvent(SSAPMessageTypes.INSERT, messageText, info);
+		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.INSERT, messageText, info);
 		
 		event.setOntology(message.getOntology());
 		event.setSession(session);
@@ -42,17 +43,16 @@ public class IotBrokerAuditEventFactory {
 	
 	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyJoinMessage message, String messageText, GatewayInfo info) {
 		
-		IotBrokerAuditEvent event = createIotBrokerAuditEvent(SSAPMessageTypes.JOIN,messageText, info);
+		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.JOIN,messageText, info);
 		event.setClientPlatform(message.getClientPlatform());
 		event.setClientPlatformInstance(message.getClientPlatformInstance());
-		event.setToken(message.getToken());
 		
 		return event;
 	}
 	
 	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyUpdateMessage message, String messageText, IoTSession session, GatewayInfo info) {
 		
-		IotBrokerAuditEvent event = createIotBrokerAuditEvent(message.getOntology(), message.getQuery(),SSAPMessageTypes.UPDATE, messageText, info);
+		IotBrokerAuditEvent event = createIotBrokerAuditEvent(message.getOntology(), message.getQuery(),OperationType.UPDATE, messageText, info);
 
 		event.setSession(session);
 		//event.getRemoteAddress();
@@ -61,7 +61,7 @@ public class IotBrokerAuditEventFactory {
 		return event;
 	}
 	
-	public static IotBrokerAuditEvent createIotBrokerAuditEvent(String ontology, String query, SSAPMessageTypes operationType, 
+	public static IotBrokerAuditEvent createIotBrokerAuditEvent(String ontology, String query, OperationType operationType, 
 																String messageText, GatewayInfo info) {
 		
 		IotBrokerAuditEvent event = createIotBrokerAuditEvent(operationType, messageText, info);
@@ -71,7 +71,7 @@ public class IotBrokerAuditEventFactory {
 		return event;
 	}
 	
-	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPMessageTypes operationType, String messageText, GatewayInfo info) {
+	public static IotBrokerAuditEvent createIotBrokerAuditEvent(OperationType operationType, String messageText, GatewayInfo info) {
 		IotBrokerAuditEvent event = new IotBrokerAuditEvent();
 		event.setId(UUID.randomUUID().toString());
 		event.setModule(Module.IOTBROKER);	

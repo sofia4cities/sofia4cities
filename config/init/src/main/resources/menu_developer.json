@@ -185,6 +185,14 @@
 				},
 				{
 					"title": {
+						"EN": "Audit",
+						"ES": "Auditoría"
+					},
+					"icon": "",
+					"url": "/controlpanel/audit/show"
+				},
+				{
+					"title": {
 						"EN": "Planned Tasks",
 						"ES": "Tareas Planificadas"
 					},

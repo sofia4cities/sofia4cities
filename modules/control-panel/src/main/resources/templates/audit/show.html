@@ -38,49 +38,10 @@
 		var queryResponse = {};
 		var queryErrorResponse = {};
 
-		
-		function changeType(){
-			var typeId = $("#types").val();
-			if(typeId!="all"){
-				$.ajax({ 
-					url: '/controlpanel/digitaltwindisplay/getDevices/'+typeId,
-					type: 'GET',
-					async: false,
-					success: function(data) { 
-						$("#devices").empty();
-						$("#devices").append('<option id="all" value="all" text="all">ALL(*)</option>');
-						$.each(data, function( index, device ) {
-							$("#devices").append("<option id="+ device +" value="+device+" text="+device+">"+device+"</option>");	
-						});
-						$("#devices").removeAttr("disabled");
-					},
-					error: function (xhr, textStatus, errorThrown) {
-		                console.log('a' + textStatus);
-		                return false;
-		            }
-				});
-			}else{
-				$("#devices").empty();
-				$("#devices").append('<option id="all" value="all" text="all">ALL(*)</option>');
-				$("#devices").attr("disabled", "disabled");
-			}
-
-		}
-		
-		function changeOperation(){
-			var operation = $("#operation").val();
-			if(operation=="custom"){
-				$("#eventName").removeAttr("disabled");
-			}else{
-				$("#eventName").val("");
-				$("#eventName").attr("disabled", "disabled");
-			}
-
-		}
-		
 		function getQueryExecuted(){
+			var operation = $("#operation").val();
 			
-			$("#Canvasrespuesta").load('/controlpanel/digitaltwindisplay/executeQuery', { 'type': $("#types").val(), 'device': $("#devices").val(), 'offset': $("#offset").val(), 'operation': $("#operation").val(), 'eventName': $("#eventName").val()},function(response,status,xhr){
+			$("#CanvasResponse").load('/controlpanel/audit/executeQuery', { 'offset': $("#offset").val(), 'operation': $("#operation").val()},function(response,status,xhr){
 				
 				queryResponse = $(response);				
 				
@@ -136,7 +97,7 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><span  th:text="#{digitaltwindisplay.breadcrumb.show}">DigitalTwin display</span></li>
+						<li><span  th:text="#{audit.breadcrumb.show}">Audit display</span></li>
 					</ul>						
 				</div>
 				<!-- END PAGE BAR -->
@@ -154,7 +115,7 @@
 									<i class="la la-table font-grey-gallery"></i>						
 									
 									<!-- FORM TITLE -->
-									<span  class="caption-subject font-grey-gallery uppercase" th:text="#{digitaltwindisplay.template.show} + ':'"> </span>
+									<span  class="caption-subject font-grey-gallery uppercase" th:text="#{audit.template.show} + ':'"> </span>
 									
 								</div>									
 								<div class="tools">
@@ -169,47 +130,28 @@
 									<div id="query-panel" class="col-md-12">									
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-sitemap"></i> <span th:text="#{digitaltwindisplay.queryon}">Consultas sobre </span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-sitemap"></i> <span th:text="#{audit.queryon}">Consult audit data </span></h3>											
 											</div>
 											<div class="panel-body no-space">	
 												<div class="panel-tools">	
 													<!-- OPCIONES DE CONSULTA -->
 													<div class="col-md-12 col-sm-11  margin-top-10 margin-bottom-10">
-														<fieldset class="col-sm-2">
-															<label class="" th:text="#{digitaltwindisplay.type} + ':'">Type</label>											
-															<select class="form-control" id="types" name="types" onChange="changeType();">
-																<option name="all" value="all" id="all"> ALL (*) </option>
-																<option th:each="type : ${types}" th:id="${type.user.userId}" th:data-description="${type.description}" data-type="general" th:value="${type.name}" th:text="${type.name}"  ></option>
-															</select>
-														</fieldset>
+														
 														<fieldset class="col-md-3">
-															<label class="" th:text="#{digitaltwindisplay.device} + ':'">Device</label>									
-															<select  class="form-control" id="devices" name="devices" disabled="disabled">
-																<option name="all" value="all" id="all"> ALL (*) </option>
+															<label class="" th:text="#{audit.operation} + ':'">Operation</label>									
+															<select  class="form-control" id="operation" name="operation" >
+																<option name="all" value="all" id="all" th:text="#{audit.operation.all}"> ALL (*) </option>
+																 
+																<option th:each="operation : ${operations}" th:id="${operation}" data-type="general" th:value="${operation}" th:text="${operation}"  ></option>
+																
 															</select>
-														</fieldset>
-														<fieldset class="col-md-2">
-															<label class="" th:text="#{digitaltwindisplay.operation} + ':'">Operation</label>									
-															<select  class="form-control" id="operation" name="operation" onChange="changeOperation();">
-																<option name="shadow" value="shadow"> SHADOW </option>
-																<option name="log" value="log"> LOG </option>
-																<option name="notebook" value="notebook"> NOTEBOOK </option>
-																<option name="rule" value="rule"> RULE </option>
-																<option name="flow" value="flow"> FLOW </option>
-																<option name="pipeline" value="pipeline"> PIPELINE </option>
-																<option name="custom" value="custom"> OTHER </option>
-															</select>
-														</fieldset>
-														<fieldset class="col-md-2">
-															<label class="" th:text="#{digitaltwindisplay.custom.eventname} + ':'">Custom Event Name</label>									
-															<input  class="form-control" id="eventName" name="eventName" disabled="disabled" th:placeholder="#{digitaltwindisplay.custom.eventname}"/>
-														</fieldset>
+														</fieldset>	
 														<fieldset id="fieldset_offset" class="col-md-3">
-															<label class="" th:text="#{digitaltwindisplay.offset} + ':'">Offset</label>																
+															<label class="" th:text="#{audit.offset} + ':'">Offset</label>																
 															<input class="form-control" name="offset" id="offset"/>															
 														</fieldset>
 													</div>
-													<div class="btn-group" style="padding-top: 34px;">
+													<div class="btn-group" style="padding-top: 10px;">
 														<button type="button" class="btn btn-sm btn-primary" onclick="getQueryExecuted()" id="executeQuery"><i class="fa fa-play"></i> <span th:text="#{database.execQuery}">Ejecutar Query</span> </button>
 													</div>	
 												</div>
@@ -224,14 +166,14 @@
 										<!-- PANEL DE RESULTADOS -->
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> <span th:text="#{database.results}">Resultados sobre </span> <span id="query-ontologia-result" class="bold uppercase">DEVICE</span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> <span th:text="#{database.results}">Resultados sobre </span> <span id="query-ontologia-result" class="bold uppercase">AUDIT</span></h3>											
 											</div>
 											<div class="panel-body no-space">
 												<div class="clearfix"></div>
 												
 												<!-- RESPUESTA DE CONSULTA -->
 												<div class="col-md-12 margin-top-10 margin-bottom-20">
-													<div class="hide" id="Canvasrespuesta">
+													<div class="hide" id="CanvasResponse">
 														<div id="theQueryResponse" th:fragment="query" th:text="${queryResult}"></div>														
 													</div>
 													<div id="jsoneditor" data-loaded="false"></div>

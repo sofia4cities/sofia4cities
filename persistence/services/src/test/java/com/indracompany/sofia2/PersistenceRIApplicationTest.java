@@ -12,23 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.audit.notify;
+package com.indracompany.sofia2;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import com.hazelcast.core.HazelcastInstance;
+@SpringBootApplication
+@EnableJpaAuditing
+@EnableConfigurationProperties
+public class PersistenceRIApplicationTest {
 
-@Service
-public class EventSenderImpl implements EventRouter {
-
-	@Autowired
-	private HazelcastInstance instance;
-	
-	@Override
-	public void notify(String event) {
-		instance.getQueue("audit").offer(event);
-
+	public static void main(String[] args) {
+		SpringApplication.run(PersistenceRIApplicationTest.class, args);
 	}
-
 }
