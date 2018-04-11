@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -154,7 +156,7 @@ public class InitConfigDB {
 	@Autowired
 	MarketAssetRepository marketAssetRepository;
 
-	// @PostConstruct
+	@PostConstruct
 	@Test
 	public void init() {
 		log.info("Start initConfigDB...");
@@ -650,7 +652,7 @@ public class InitConfigDB {
 			log.info("Adding menu for role ADMIN");
 			ConsoleMenu menu = new ConsoleMenu();
 			menu.setId("1");
-			menu.setJson(loadFromResources("menu_admin.json"));
+			menu.setJson(loadFromResources("menu/menu_admin.json"));
 			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_ADMINISTRATOR.toString()));
 			this.consoleMenuRepository.save(menu);
 		} catch (Exception e) {
@@ -660,7 +662,7 @@ public class InitConfigDB {
 			log.info("Adding menu for role DEVELOPER");
 			ConsoleMenu menu = new ConsoleMenu();
 			menu.setId("2");
-			menu.setJson(loadFromResources("menu_developer.json"));
+			menu.setJson(loadFromResources("menu/menu_developer.json"));
 			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
 			this.consoleMenuRepository.save(menu);
 		} catch (Exception e) {
@@ -670,7 +672,7 @@ public class InitConfigDB {
 			log.info("Adding menu for role USER");
 			ConsoleMenu menu = new ConsoleMenu();
 			menu.setId("3");
-			menu.setJson(loadFromResources("menu_user.json"));
+			menu.setJson(loadFromResources("menu/menu_user.json"));
 			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_USER.toString()));
 			this.consoleMenuRepository.save(menu);
 		} catch (Exception e) {
@@ -801,7 +803,7 @@ public class InitConfigDB {
 			DataModel dataModel = new DataModel();
 			dataModel.setName("Alarm");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Alarm.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Alarm.json"));
 			dataModel.setDescription("Base Alarm: assetId, timestamp, severity, source, details and status..");
 			dataModel.setLabels("Alarm,General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -810,7 +812,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Audit");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Audit.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Audit.json"));
 			dataModel.setDescription("Base Audit");
 			dataModel.setLabels("Audit,General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -819,7 +821,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Device");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Device.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Device.json"));
 			dataModel.setDescription("Base Device");
 			dataModel.setLabels("Audit,General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -828,7 +830,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("EmptyBase");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_EmptyBase.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_EmptyBase.json"));
 			dataModel.setDescription("Base DataModel");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -837,7 +839,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Feed");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Feed.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Feed.json"));
 			dataModel.setDescription("Base Feed");
 			dataModel.setLabels("Audit,General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -846,7 +848,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Twitter");
 			dataModel.setTypeEnum(DataModel.MainType.SocialMedia);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Twitter.json"));
 			dataModel.setDescription("Twitter DataModel");
 			dataModel.setLabels("Twitter,Social Media");
 			dataModel.setUser(getUserAdministrator());
@@ -855,7 +857,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("BasicSensor");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_BasicSensor.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_BasicSensor.json"));
 			dataModel.setDescription("DataModel for sensor sending measures for an assetId");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -864,7 +866,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-AirQualityObserved");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityObserved.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-AirQualityObserved.json"));
 			dataModel.setDescription("An observation of air quality conditions at a certain place and time");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -873,7 +875,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-AirQualityStation");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityStation.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-AirQualityStation.json"));
 			dataModel.setDescription("Air Quality Station observing quality conditions at a certain place and time");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -882,7 +884,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-AirQualityThreshold");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityThreshold.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-AirQualityThreshold.json"));
 			dataModel.setDescription(
 					"Provides the air quality thresholds in Europe. Air quality thresholds allow to calculate an air quality index (AQI).");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
@@ -892,7 +894,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-Device");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Device.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-Device.json"));
 			dataModel.setDescription(
 					"A Device is a tangible object which contains some logic and is producer and/or consumer of data. A Device is always assumed to be capable of communicating electronically via a network.");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
@@ -902,7 +904,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-KPI");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-KPI.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-KPI.json"));
 			dataModel.setDescription(
 					"Key Performance Indicator (KPI) is a type of performance measurement. KPIs evaluate the success of an organization or of a particular activity in which it engages.");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
@@ -912,7 +914,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-OffstreetParking");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-OffstreetParking.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-OffstreetParking.json"));
 			dataModel.setDescription(
 					"A site, off street, intended to park vehicles, managed independently and with suitable and clearly marked access points (entrances and exits).");
 			dataModel.setLabels("General,IoT,Smart Cities");
@@ -922,7 +924,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-Road");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Road.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-Road.json"));
 			dataModel.setDescription("Contains a harmonised geographic and contextual description of a road.");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -931,7 +933,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-StreetLight");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-StreetLight.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-StreetLight.json"));
 			dataModel.setDescription("GSMA Model that represents an urban streetlight");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -941,7 +943,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-Vehicle");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Vehicle.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-Vehicle.json"));
 			dataModel.setDescription("A harmonised description of a Vehicle");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -950,7 +952,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-WasteContainer");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WasteContainer.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-WasteContainer.json"));
 			dataModel.setDescription("GSMA WasteContainer");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -959,7 +961,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-WeatherObserved");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WeatherObserved.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-WeatherObserved.json"));
 			dataModel.setDescription("An observation of weather conditions at a certain place and time.");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -968,7 +970,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-WeatherStation");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WeatherStation.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-WeatherStation.json"));
 			dataModel.setDescription("GSMA Weather Station Model");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -977,7 +979,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Request");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Request.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Request.json"));
 			dataModel.setDescription("Request for something.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -986,7 +988,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Response");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Response.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Response.json"));
 			dataModel.setDescription("Response for a request.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -995,7 +997,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("MobileElement");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_MobileElement.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_MobileElement.json"));
 			dataModel.setDescription("Generic Mobile Element representation.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -1004,7 +1006,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Log");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Log.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Log.json"));
 			dataModel.setDescription("Log representation.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -1013,7 +1015,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Issue");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Issue.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Issue.json"));
 			dataModel.setDescription("Issue representation.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -1111,7 +1113,7 @@ public class InitConfigDB {
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
-			ontology.setJsonSchema(loadFromResources("OntologySchema_Ticket.json"));
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_Ticket.json"));
 			ontology.setDescription("Ontology created for Ticketing");
 			ontology.setIdentification("Ticket");
 			ontology.setActive(true);
@@ -1122,7 +1124,7 @@ public class InitConfigDB {
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
-			ontology.setJsonSchema(loadFromResources("OntologySchema_HelsinkiPopulation.json"));
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_HelsinkiPopulation.json"));
 			ontology.setDescription("Ontology HelsinkiPopulation for testing");
 			ontology.setIdentification("HelsinkiPopulation");
 			ontology.setActive(true);
@@ -1137,7 +1139,7 @@ public class InitConfigDB {
 			}
 
 			ontology = new Ontology();
-			ontology.setJsonSchema(loadFromResources("OntologySchema_TweetSentiment.json"));
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_TweetSentiment.json"));
 			ontology.setDescription("TweetSentiment");
 			ontology.setIdentification("TweetSentiment");
 			ontology.setActive(true);
@@ -1152,7 +1154,7 @@ public class InitConfigDB {
 			}
 
 			ontology = new Ontology();
-			ontology.setJsonSchema(loadFromResources("OntologySchema_GeoAirQuality.json"));
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_GeoAirQuality.json"));
 			ontology.setDescription("Air quality retrieved from https://api.waqi.info/search");
 			ontology.setIdentification("GeoAirQuality");
 			ontology.setActive(true);
@@ -1167,7 +1169,7 @@ public class InitConfigDB {
 			}
 
 			ontology = new Ontology();
-			ontology.setJsonSchema(loadFromResources("OntologySchema_CityPopulation.json"));
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_CityPopulation.json"));
 			ontology.setDescription(
 					"Population of Urban Agglomerations with 300,000 Inhabitants or More in 2014, by Country, 1950-2030 (thousands)");
 			ontology.setIdentification("CityPopulation");
@@ -1183,7 +1185,7 @@ public class InitConfigDB {
 			}
 
 			ontology = new Ontology();
-			ontology.setJsonSchema(loadFromResources("OntologySchema_AirQuality_gr2.json"));
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality_gr2.json"));
 			ontology.setDescription("AirQuality_gr2");
 			ontology.setIdentification("AirQuality_gr2");
 			ontology.setActive(true);
@@ -1198,7 +1200,7 @@ public class InitConfigDB {
 			}
 
 			ontology = new Ontology();
-			ontology.setJsonSchema(loadFromResources("OntologySchema_AirQuality.json"));
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality.json"));
 			ontology.setDescription("AirQuality");
 			ontology.setIdentification("AirQuality");
 			ontology.setActive(true);
@@ -1213,7 +1215,7 @@ public class InitConfigDB {
 			}
 
 			ontology = new Ontology();
-			ontology.setJsonSchema(loadFromResources("OntologySchema_AirCOMeter.json"));
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirCOMeter.json"));
 			ontology.setDescription("AirCOMeter");
 			ontology.setIdentification("AirCOMeter");
 			ontology.setActive(true);
