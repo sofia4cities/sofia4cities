@@ -65,13 +65,14 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 	@Before("@annotation(auditable)")
 	public void beforeExecution(JoinPoint joinPoint, IotBrokerAuditable auditable) {
 
-		GatewayInfo info = (GatewayInfo) getTheObject(joinPoint, GatewayInfo.class);
-		SSAPMessage message = (SSAPMessage) getTheObject(joinPoint, SSAPMessage.class);
+		final GatewayInfo info = (GatewayInfo) getTheObject(joinPoint, GatewayInfo.class);
+		final SSAPMessage message = (SSAPMessage) getTheObject(joinPoint, SSAPMessage.class);
 
-		IotBrokerAuditEvent event = getEvent(message, info);
+		final IotBrokerAuditEvent event = getEvent(message, info);
 
-		if (event != null)
+		if (event != null) {
 			eventProducer.publish(event);
+		}
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -83,24 +84,34 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 	@AfterThrowing(pointcut = "@annotation(auditable)", throwing = "ex")
 	public void doRecoveryActions(JoinPoint joinPoint, Exception ex, IotBrokerAuditable auditable) {
 
-		String className = getClassName(joinPoint);
-		String methodName = getMethod(joinPoint).getName();
+		final String className = getClassName(joinPoint);
+		final String methodName = getMethod(joinPoint).getName();
 
-		GatewayInfo info = (GatewayInfo) getTheObject(joinPoint, GatewayInfo.class);
-		SSAPMessage message = (SSAPMessage) getTheObject(joinPoint, SSAPMessage.class);
+		final GatewayInfo info = (GatewayInfo) getTheObject(joinPoint, GatewayInfo.class);
+		final SSAPMessage message = (SSAPMessage) getTheObject(joinPoint, SSAPMessage.class);
 
 		Sofia2AuditError event = null;
 
 		if (message != null && info != null) {
 
-			IotBrokerAuditEvent iotEvent = getEvent(message, info);
+			final IotBrokerAuditEvent iotEvent = getEvent(message, info);
 
 			if (iotEvent != null) {
+				
+				IoTSession session = iotEvent.getSession();
 
-				String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology() + " Type : "
-						+ iotEvent.getOperationType() + " By User : " + iotEvent.getSession().getUserID();
+				if (session!=null) {
+					String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology() + " Type : "
+							+ iotEvent.getOperationType() + " By User : " + iotEvent.getSession().getUserID();
 
-				event = Sofia2EventFactory.createAuditEventError(joinPoint, messageOperation, Module.IOTBROKER, ex);
+					event = Sofia2EventFactory.createAuditEventError(joinPoint, messageOperation, Module.IOTBROKER, ex);
+				}
+				else {
+					String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology() + " Type : "
+							+ iotEvent.getOperationType();
+
+					event = Sofia2EventFactory.createAuditEventError(joinPoint, messageOperation, Module.IOTBROKER, ex);
+				}
 			}
 
 		} else {
@@ -125,25 +136,25 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 
 	}
 
-	private IotBrokerAuditEvent getEvent(SSAPMessage message, GatewayInfo info) {
+	public IotBrokerAuditEvent getEvent(SSAPMessage message, GatewayInfo info) {
 
-		IotBrokerAuditEvent event = null;
+		final IotBrokerAuditEvent event = null;
 
-		Optional<IoTSession> sessionPlugin = securityPluginManager.getSession(message.getSessionKey());
+		final Optional<IoTSession> sessionPlugin = securityPluginManager.getSession(message.getSessionKey());
 
 		if (SSAPMessageTypes.JOIN.equals(message.getMessageType())) {
 
-			SSAPBodyJoinMessage joinMessage = (SSAPBodyJoinMessage) message.getBody();
+			final SSAPBodyJoinMessage joinMessage = (SSAPBodyJoinMessage) message.getBody();
 			message.getMessageId();
 			joinMessage.getClientPlatform();
 			joinMessage.getClientPlatformInstance();
 			joinMessage.getToken();
-			String messageText = "Join message by clientPlatform  " + joinMessage.getClientPlatform();
+			final String messageText = "Join message by clientPlatform  " + joinMessage.getClientPlatform();
 			return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(joinMessage, messageText, info);
 
 		} else if (sessionPlugin.isPresent()) {
 
-			IoTSession session = sessionPlugin.get();
+			final IoTSession session = sessionPlugin.get();
 
 			switch (message.getMessageType()) {
 			case NONE:
@@ -153,23 +164,23 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 
 				break;
 			case INSERT:
-				SSAPBodyInsertMessage insertMessage = (SSAPBodyInsertMessage) message.getBody();
-				String insertMessageText = "Insert message on ontology " + insertMessage.getOntology() + " by user "
+				final SSAPBodyInsertMessage insertMessage = (SSAPBodyInsertMessage) message.getBody();
+				final String insertMessageText = "Insert message on ontology " + insertMessage.getOntology() + " by user "
 						+ session.getUserID();
 				return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(insertMessage, insertMessageText, session,
 						info);
 
 			case UPDATE_BY_ID:
-				SSAPBodyUpdateByIdMessage updateIdMessage = (SSAPBodyUpdateByIdMessage) message.getBody();
-				String updateMessageIdText = "Update ontology " + updateIdMessage.getOntology() + " by user "
+				final SSAPBodyUpdateByIdMessage updateIdMessage = (SSAPBodyUpdateByIdMessage) message.getBody();
+				final String updateMessageIdText = "Update ontology " + updateIdMessage.getOntology() + " by user "
 						+ session.getUserID();
 
 				break;
-			// return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(updateIdMessage,
-			// updateMessageText, session, info);
+				// return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(updateIdMessage,
+				// updateMessageText, session, info);
 			case UPDATE:
-				SSAPBodyUpdateMessage updateMessage = (SSAPBodyUpdateMessage) message.getBody();
-				String updateMessageText = "Update ontology " + updateMessage.getOntology() + " by user "
+				final SSAPBodyUpdateMessage updateMessage = (SSAPBodyUpdateMessage) message.getBody();
+				final String updateMessageText = "Update ontology " + updateMessage.getOntology() + " by user "
 						+ session.getUserID();
 				return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(updateMessage, updateMessageText, session,
 						info);
@@ -178,36 +189,36 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 				break;
 			case DELETE:
 
-				SSAPBodyDeleteMessage deletetMessage = (SSAPBodyDeleteMessage) message.getBody();
+				final SSAPBodyDeleteMessage deletetMessage = (SSAPBodyDeleteMessage) message.getBody();
 				deletetMessage.getOntology();
 				deletetMessage.getQuery();
 				break;
 			case QUERY:
-				SSAPBodyQueryMessage queryMessage = (SSAPBodyQueryMessage) message.getBody();
+				final SSAPBodyQueryMessage queryMessage = (SSAPBodyQueryMessage) message.getBody();
 				queryMessage.getOntology();
 				queryMessage.getQuery();
 				queryMessage.getQueryType();
 				queryMessage.getResultFormat();
 				break;
 			case SUBSCRIBE:
-				SSAPBodySubscribeMessage subscribeMessage = (SSAPBodySubscribeMessage) message.getBody();
+				final SSAPBodySubscribeMessage subscribeMessage = (SSAPBodySubscribeMessage) message.getBody();
 				subscribeMessage.getOntology();
 				subscribeMessage.getQuery();
 				subscribeMessage.getQueryType();
 				break;
 			case UNSUBSCRIBE:
-				SSAPBodyUnsubscribeMessage unsubscribeMessage = (SSAPBodyUnsubscribeMessage) message.getBody();
+				final SSAPBodyUnsubscribeMessage unsubscribeMessage = (SSAPBodyUnsubscribeMessage) message.getBody();
 				unsubscribeMessage.getSubscriptionId();
 				break;
 			case INDICATION:
-				SSAPBodyIndicationMessage indicationMessage = (SSAPBodyIndicationMessage) message.getBody();
+				final SSAPBodyIndicationMessage indicationMessage = (SSAPBodyIndicationMessage) message.getBody();
 				indicationMessage.getOntology();
 				indicationMessage.getQuery();
 				indicationMessage.getData();
 				indicationMessage.getSubsciptionId();
 				break;
 			case COMMAND:
-				SSAPBodyCommandMessage commandMessage = (SSAPBodyCommandMessage) message.getBody();
+				final SSAPBodyCommandMessage commandMessage = (SSAPBodyCommandMessage) message.getBody();
 				commandMessage.getCommand();
 				commandMessage.getCommandId();
 				break;

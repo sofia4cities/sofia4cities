@@ -420,14 +420,14 @@
             textColor: "hsl(220, 23%, 20%)"
           },
           backgroundColor: "hsl(0, 0%, 100%)",
-          height: "25"
+          height: "50"
         }
         newElem.backgroundColor ="white";
         newElem.padding = 0;
         newElem.border = {
-          color: "hsl(0, 0%, 82%)",
+          color: "hsl(0°, 0%, 80%)",
           width: 1,
-          radius: 1
+          radius: 5
         }
         if(type == 'livehtml'){         
           showAddGadgetTemplateDialog(type,newElem,vm.dashboard.pages[vm.selectedpage].layers[vm.dashboard.pages[vm.selectedpage].selectedlayer].gridboard); 
