@@ -24,6 +24,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -31,6 +32,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.client.configuration.MQTTSecureConfiguration;
 import com.indracompany.sofia2.client.exception.MQTTException;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -59,6 +61,7 @@ public class MQTTClient {
 	private String topic_subscription = "/topic/subscription";
 	private MqttClient client;
 	private Map<String, SubscriptionListener> subscriptions = new HashMap<String, SubscriptionListener>();
+	private MQTTSecureConfiguration sslConfig;
 
 	public enum QUERY_TYPE {
 		NATIVE, SQL
@@ -66,6 +69,12 @@ public class MQTTClient {
 
 	public MQTTClient(String brokerURI) {
 		this.brokerURI = brokerURI;
+	}
+
+	public MQTTClient(String brokerURI, MQTTSecureConfiguration sslConfig) {
+		this.brokerURI = brokerURI;
+		this.sslConfig = sslConfig;
+
 	}
 
 	/**
@@ -81,7 +90,7 @@ public class MQTTClient {
 	 *            Time in seconds for waiting response from Broker
 	 * @return The session key for the session established between client and IoT
 	 *         Broker
-	 * 
+	 * @throws MQTTException
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -101,7 +110,16 @@ public class MQTTClient {
 		try {
 			// Connect client MQTT
 			this.client = new MqttClient(brokerURI, clientPlatform, persistence);
-			this.client.connect();
+			// Unsecure connection
+			if (this.sslConfig == null)
+				this.client.connect();
+			else {
+
+				MqttConnectOptions options = new MqttConnectOptions();
+				options.setSocketFactory(this.sslConfig.configureSSLSocketFactory());
+				this.client.connect(options);
+			}
+
 			log.info("Connecting to broker MQTT at " + brokerURI);
 
 			this.client.subscribe(topic_message + "/" + client.getClientId(), new IMqttMessageListener() {
@@ -145,6 +163,8 @@ public class MQTTClient {
 		} catch (SSAPParseException e) {
 			log.error("Could not parse SSAP message");
 			throw new MQTTException("Could not parse SSAP message");
+		} catch (Exception e) {
+			throw new MQTTException("Error: " + e);
 		}
 
 		// if (this.sessionKey == null)

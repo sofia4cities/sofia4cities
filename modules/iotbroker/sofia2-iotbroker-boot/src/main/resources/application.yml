@@ -74,7 +74,7 @@ sofia2: #Config Sofia2 specific
           port: 8883
           jks_path: develkeystore.jks
           keystore_password: changeIt!
-          keymanager_passwrod: changeIt!
+          keymanager_password: changeIt!
         
       rest:
         enable: true

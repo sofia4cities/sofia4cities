@@ -53,12 +53,12 @@ public class LeaveProcessor implements MessageTypeProcessor {
 		JsonNode data;
 		try {
 			data = objectMapper.readTree(dataStr);
+			response.setBody(new SSAPBodyReturnMessage());
 			response.getBody().setData(data);
 		} catch (final IOException e) {
 			// TODO: LOG
 			throw new SSAPProcessorException("Couldn't generate body data message");
 		}
-		response.setBody(new SSAPBodyReturnMessage());
 		response.setDirection(SSAPMessageDirection.RESPONSE);
 		response.setMessageType(SSAPMessageTypes.LEAVE);
 		response.setSessionKey(sessionKey);
