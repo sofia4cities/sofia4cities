@@ -54,9 +54,11 @@ public class ESBaseApi {
 			client = new PreBuiltTransportClient(settings).addTransportAddress(getTransportAddress());
 
 			log.info(String.format("Settings %s ", client.settings().toString()));
+			System.out.println(String.format("Settings %s ", client.settings().toString()));
 		} catch (Exception e) {
 			log.info(String.format("Cannot Instantiate ElasticSearch Feature due to : %s ", e.getMessage()));
 			log.error(String.format("Cannot Instantiate ElasticSearch Feature due to : %s ", e.getMessage()));
+			System.out.println(String.format("Cannot Instantiate ElasticSearch Feature due to : %s ", e.getMessage()));
 		}
 		
 
@@ -119,7 +121,13 @@ public class ESBaseApi {
 	}
 
 	public TransportClient getClient() {
-		return client;
+		if (client==null) {
+			System.out.println("CLIENT IS NULL");
+			log.error("CLIENT IS NULL");
+			return null;
+		}
+		
+		else return client;
 	}
 
 }
