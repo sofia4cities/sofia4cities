@@ -6,6 +6,14 @@ spring:
       client.service-url: http://${SERVER_NAME}${server.contextPath}/  
       connect-timeout: 120000
       read-timeout: 150000
+   data.mongodb:
+      host: realtimedb      
+sofia2:
+  database.mongodb:
+    servers: realtimedb:27017
+   database.elasticsearch:
+      sql.connector.http.endpoint: http://elasticdb:9200
+      url: elasticdb    
 ## LOGGING CONF
 logging:
    path: /var/log/logs-s4c 

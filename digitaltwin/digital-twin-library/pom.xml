@@ -11,13 +11,6 @@
 	<name>digital-twin-library</name>
 	<description>Core library for Digital Twin Devices</description>
 
-	<!-- parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.10.RELEASE</version>
-		<relativePath/>
-	</parent-->
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -55,27 +48,12 @@
 			<artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
 			<version>3.2.2</version>
 		</dependency>
+		<!-- httpclient -->
+		<dependency>
+		    <groupId>org.apache.httpcomponents</groupId>
+		    <artifactId>httpclient</artifactId>
+		    <version>4.5</version>
+		</dependency>
+		
 	</dependencies>
-
-	<!-- build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			
-			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-compiler-plugin</artifactId>
-			    <version>3.3</version>
-			    <configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
-					<encoding>UTF-8</encoding>
-			    </configuration>
-			</plugin>	
-			
-		</plugins>
-	</build-->
-	
 </project>
