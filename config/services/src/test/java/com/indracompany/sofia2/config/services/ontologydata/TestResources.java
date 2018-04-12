@@ -217,8 +217,8 @@ class TestResources {
 			"                ]\n" + 
 			"            },\n" + 
 			"            \"measures\": {\n" + 
-			"                \"encrypted\": true, \n" +  //Encrypted array
 			"                \"type\": \"array\",\n" + 
+			"                \"encrypted\": true,\n" +
 			"                \"items\": {\n" + 
 			"                    \"type\": \"object\",\n" + 
 			"                    \"required\": [\n" + 
@@ -280,16 +280,17 @@ class TestResources {
 			"        \"properties\": {\n" + 
 			"            \"coordinates\": {\n" + 
 			"                \"type\": \"array\",\n" + 
+			"                \"encrypted\": true, \n" + //Encryption of arrays is supported
 			"                \"items\": [\n" + 
 			"                    {\n" + 
 			"                        \"type\": \"number\",\n" + 
-			"                        \"encrypted\": true, \n" +  //Encrypted into Array
+			"                        \"encrypted\": true, \n" +  //Direct Encryption into Array is not supported
 			"                        \"maximum\": 180,\n" + 
 			"                        \"minimum\": -180\n" + 
 			"                    },\n" + 
 			"                    {\n" + 
 			"                        \"type\": \"number\",\n" + 
-			"                        \"encrypted\": true, \n" +  //Encrypted into Array
+			"                        \"encrypted\": true, \n" +  //Direct Encryption into Array is not supported
 			"                        \"maximum\": 90,\n" + 
 			"                        \"minimum\": -90\n" + 
 			"                    }\n" + 

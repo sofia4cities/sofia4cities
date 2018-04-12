@@ -52,6 +52,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	
 	final private ObjectMapper objectMapper = new ObjectMapper();
 	
+	final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+	
 	final public static String ENCRYPT_PROPERTY = "encrypted";
 
 
@@ -60,26 +62,12 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		final String jsonSchema = ontology.getJsonSchema();
 		checkJsonCompliantWithSchema(data, jsonSchema);
 	}
-
-	void checkJsonCompliantWithSchema(final String dataString, final String schemaString)
-			throws DataSchemaValidationException {
-		JsonNode dataJson;
-		JsonNode schemaJson;
-		JsonSchema schema;
-		ProcessingReport report;
-		try {
-			dataJson = JsonLoader.fromString(dataString);
-			schemaJson = JsonLoader.fromString(schemaString);
-			final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-			schema = factory.getJsonSchema(schemaJson);
-			report = schema.validate(dataJson);
-		} catch (IOException e) {
-			throw new DataSchemaValidationException("Error reading data for checking schema compliance", e);
-		} catch (ProcessingException e) {
-			throw new DataSchemaValidationException("Error checking data schema compliance", e);
-
-		}
-
+	
+	void checkJsonCompliantWithSchema(final JsonNode data, final JsonNode schemaJson) throws ProcessingException, DataSchemaValidationException {
+		final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+		JsonSchema schema = factory.getJsonSchema(schemaJson);
+		ProcessingReport report = schema.validate(data);
+		
 		if (report != null && !report.isSuccess()) {
 			final Iterator<ProcessingMessage> it = report.iterator();
 			final StringBuffer msgerror = new StringBuffer();
@@ -91,6 +79,23 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			}
 
 			throw new DataSchemaValidationException(msgerror.toString());
+		}
+	}
+
+	void checkJsonCompliantWithSchema(final String dataString, final String schemaString)
+			throws DataSchemaValidationException {
+		JsonNode dataJson;
+		JsonNode schemaJson;
+		
+		try {
+			dataJson = JsonLoader.fromString(dataString);
+			schemaJson = JsonLoader.fromString(schemaString);
+			checkJsonCompliantWithSchema(dataJson, schemaJson);
+			
+		} catch (IOException e) {
+			throw new DataSchemaValidationException("Error reading data for checking schema compliance", e);
+		} catch (ProcessingException e) {
+			throw new DataSchemaValidationException("Error checking data schema compliance", e);
 		}
 	}
 
@@ -128,8 +133,9 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			final JsonNode jsonSchema = objectMapper.readTree(ontology.getJsonSchema());
 			final JsonNode jsonData = objectMapper.readTree(data);
 			String path = "#";
+			String schemaPointer = "";
 			
-			processProperties(jsonData, jsonSchema, jsonSchema, path);
+			processProperties(jsonData, jsonSchema, jsonSchema, path, schemaPointer);
 			
 			return jsonData.toString();
 		
@@ -139,7 +145,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		
 	}
 	
-	private void processProperties(JsonNode allData, JsonNode schema, JsonNode rootSchema, String path) {
+	private void processProperties(JsonNode allData, JsonNode schema, JsonNode rootSchema, String path, String schemaPointer) {
 		
 		JsonNode properties = schema.path("properties");
 		Iterator<Entry<String, JsonNode>> elements = properties.fields();
@@ -147,38 +153,92 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		while(elements.hasNext()) {
 			Entry<String, JsonNode> element = elements.next();
 			if (element != null) {
-				processProperty(allData, element, rootSchema, path+"/"+element.getKey());
+				processProperty(allData, element.getKey(), element.getValue(), rootSchema, path+"/"+element.getKey(), schemaPointer+"/"+"properties/"+element.getKey());
 			}
 		}
 	}
 	
-	private void processProperty(JsonNode allData, Entry<String, JsonNode> element, JsonNode rootSchema, String path) {
+	private void processProperty(JsonNode allData, String elementKey, JsonNode elementValue, JsonNode rootSchema, String path, String schemaPointer) {
 						
-		JsonNode ref = element.getValue().path("$ref");
+		JsonNode ref = elementValue.path("$ref");
 		if (!ref.isMissingNode()) {
 			String refString = ref.asText();
 			JsonNode referencedElement = getReferencedJsonNode(refString, rootSchema);
-			processProperties(allData, referencedElement, rootSchema, path);
+			String newSchemaPointer = refString.substring(refString.lastIndexOf("#/")).substring(1);
+			processProperties(allData, referencedElement, rootSchema, path, newSchemaPointer);
 		} else {
-			JsonNode encrypt = element.getValue().path(ENCRYPT_PROPERTY);
-			if (encrypt.asBoolean()) {
-				JsonNode data = getReferencedJsonNode(path, allData);
-				String dataToEncrypt = data.asText();
-				try {
-					String encrypted = PasswordEncoder.getInstance().encodeSHA256(dataToEncrypt);
-					String propertyPath = path.substring(0, path.lastIndexOf("/"));
-					JsonNode originalData = getReferencedJsonNode(propertyPath, allData);
-					((ObjectNode) originalData).put(element.getKey(), encrypted);
-				} catch (final Exception e) {
-					log.error("Error in encrypting data: " + e.getMessage());
-					throw new RuntimeException(e);
-				}	
-					
-			} else {
-				processProperties(allData, element.getValue(), rootSchema, path);
-			}
+			JsonNode oneOf = elementValue.path("oneOf");
+			if(!oneOf.isMissingNode()) {
+				//only one of the schemas is valid for the property
+				if (oneOf.isArray()) {
+					Iterator<JsonNode> miniSchemas = oneOf.elements();
+					JsonNode miniData = getReferencedJsonNode(path, allData);
+					boolean notFound = true;
+					while(notFound && miniSchemas.hasNext()) {
+						try {
+							JsonNode miniSchema = miniSchemas.next();							
+							JsonSchema schema = factory.getJsonSchema(rootSchema, schemaPointer); 
+							ProcessingReport report = schema.validate(miniData);
+							if (report.isSuccess()) {
+								notFound = false;
+								
+								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer);
+							}
+						} catch (ProcessingException e) {
+							//if it is not the valid schema it must be ignored
+							log.trace("Mini Schema skipped", e);
+						}
+					}
+				}
+			} else {	
+				JsonNode allOf = elementValue.path("allOf");
+				JsonNode anyOf = elementValue.path("anyOf");
+				Iterator<JsonNode> miniSchemas = null;
+				if (!anyOf.isMissingNode()) {
+					if (anyOf.isArray()) {
+						miniSchemas = anyOf.elements();
+					}
+				} else if (!allOf.isMissingNode()) {
+					if (allOf.isArray()) {
+						miniSchemas = allOf.elements();
+					}
+				}
+				
+				if (miniSchemas != null) {
+					JsonNode miniData = getReferencedJsonNode(path, allData);
+					while(miniSchemas.hasNext()) {
+						try {
+							JsonNode miniSchema = miniSchemas.next();							
+							JsonSchema schema = factory.getJsonSchema(rootSchema, schemaPointer); 
+							ProcessingReport report = schema.validate(miniData);
+							if (report.isSuccess()) {
+								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer);
+							}
+						} catch (ProcessingException e) {
+							//if it is not the valid schema it must be ignored
+							log.trace("Mini Schema skipped", e);
+						}
+					}
+				} else {
+					JsonNode encrypt = elementValue.path(ENCRYPT_PROPERTY);
+					if (encrypt.asBoolean()) {
+						JsonNode data = getReferencedJsonNode(path, allData);
+						String dataToEncrypt = data.asText();
+						try {
+							String encrypted = PasswordEncoder.getInstance().encodeSHA256(dataToEncrypt);
+							String propertyPath = path.substring(0, path.lastIndexOf("/"));
+							JsonNode originalData = getReferencedJsonNode(propertyPath, allData);
+							((ObjectNode) originalData).put(elementKey, encrypted);
+						} catch (final Exception e) {
+							log.error("Error in encrypting data: " + e.getMessage());
+							throw new RuntimeException(e);
+						}								
+					} else {						
+						processProperties(allData, elementValue, rootSchema, path, schemaPointer);						
+					}
+				}
+			}			
 		}
-		
 	}
 	
 	private JsonNode getReferencedJsonNode(String ref, JsonNode root) {

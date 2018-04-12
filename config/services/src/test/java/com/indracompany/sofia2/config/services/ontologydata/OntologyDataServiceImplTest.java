@@ -167,16 +167,21 @@ public class OntologyDataServiceImplTest {
 		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT);
 		JsonNode name = jsonData.findPath("image").path("media").path("name");
 		JsonNode mime = jsonData.findPath("image").path("media").path("mime");
+		JsonNode coordinates = jsonData.findPath("geometry").path("coordinates");
 		JsonNode measures = jsonData.findPath("measures");
 	
 		JsonNode jsonEncryptedData = objectMapper.readTree(encryptedData); 
 		JsonNode encryptedName = jsonEncryptedData.findPath("image").path("media").path("name");
 		JsonNode encryptedMime = jsonEncryptedData.findPath("image").path("media").path("mime");
+		JsonNode encryptedCoordinates = jsonEncryptedData.findPath("geometry").path("coordinates");
 		JsonNode encryptedMeasures = jsonEncryptedData.findPath("measures");
+
 		
 		assertFalse("Feed.image.media.name should be encrypted", name.toString().equals(encryptedName.toString()));
-		assertFalse("Feed.measures should be encrypted", measures.toString().equals(encryptedMeasures.toString()));
+		assertFalse("Feed.measures[0].name should be encrypted", measures.toString().equals(encryptedMeasures.toString()));
+		assertFalse("Feed.geometry.coordinates shoulb be encrypted", coordinates.toString().equals(encryptedCoordinates.toString()));
 		assertTrue("Feed.image.media.mime should not be encrypted", mime.toString().equals(encryptedMime.toString()));
+		
 		
 	}
 }
