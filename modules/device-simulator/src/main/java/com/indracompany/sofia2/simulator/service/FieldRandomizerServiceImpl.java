@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
@@ -74,28 +75,47 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				finalField = field;
 				// path= path + "/"+ field;
 			}
-			if (map.at(path).isArray())
-				path = path + "/0";
+			if (map.at(path).isArray()) {
+
+				((ArrayNode) map.at(path)).remove(Integer.valueOf(finalField).intValue());
+			}
 
 			switch (function) {
 			case FIXED_NUMBER:
-				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asDouble());
+				if (map.at(path).isArray())
+					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(),
+							json.path(field).get("value").asDouble());
+				else
+					((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asDouble());
 				break;
 			case FIXED_INTEGER:
-				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asInt());
+				if (map.at(path).isArray())
+					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(),
+							json.path(field).get("value").asInt());
+				else
+					((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asInt());
 				break;
 			case RANDOM_NUMBER:
-				((ObjectNode) map.at(path)).put(finalField,
-						this.randomizeDouble(json.path(field).get("from").asDouble(),
-								json.path(field).get("to").asDouble(), json.path(field).get("precision").asInt()));
+				if (map.at(path).isArray())
+					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(),
+							this.randomizeDouble(json.path(field).get("from").asDouble(),
+									json.path(field).get("to").asDouble(), json.path(field).get("precision").asInt()));
+				else
+					((ObjectNode) map.at(path)).put(finalField,
+							this.randomizeDouble(json.path(field).get("from").asDouble(),
+									json.path(field).get("to").asDouble(), json.path(field).get("precision").asInt()));
 				break;
 			case RANDOM_INTEGER:
+				if (map.at(path).isArray())
+					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(), this
+							.randomizeInt(json.path(field).get("from").asInt(), json.path(field).get("to").asInt()));
 				((ObjectNode) map.at(path)).put(finalField,
 						this.randomizeInt(json.path(field).get("from").asInt(), json.path(field).get("to").asInt()));
 				break;
 			case COSINE_NUMBER:
 				double angleCos = Math.toRadians(json.path(field).get("angle").asDouble());
 				double multiplierCos = json.path(field).get("multiplier").asDouble();
+
 				((ObjectNode) map.at(path)).put(finalField, Math.cos(angleCos) * multiplierCos);
 				break;
 			case SINE_NUMBER:

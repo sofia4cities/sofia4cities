@@ -39,16 +39,6 @@
 		},		
 		{
 			"title": {
-				"EN": "",
-				"ES": ""
-			},
-			"icon": "flaticon-more-v3",
-			"url": "",
-			"submenu": [
-			]
-		},
-		{
-			"title": {
 				"EN": "ADMINISTRATION",
 				"ES": "ADMINISTRACIÓN"
 			},
@@ -97,40 +87,6 @@
 				}
 			]
 		},	
-		{
-			"title": {
-				"EN": "TOOLS",
-				"ES": "HERRAMIENTAS"
-			},
-			"icon": "flaticon-open-box",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Query Tool",
-						"ES": "Herramienta Consultas"
-					},
-					"icon": "",
-					"url": "/controlpanel/querytool/show"
-				},
-				{
-					"title": {
-						"EN": "System Audit",
-						"ES": "Auditoría del Sisstema"
-					},
-					"icon": "",
-					"url": "/controlpanel/audit/show"
-				},
-				{
-					"title": {
-						"EN": "Planned Tasks",
-						"ES": "Tareas Planificadas"
-					},
-					"icon": "",
-					"url": "/controlpanel/planner/list"
-				}
-			]
-		},
 		{
 			"title": {
 				"EN": "",
@@ -318,6 +274,40 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/digitaltwindisplay/show"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "TOOLS",
+				"ES": "HERRAMIENTAS"
+			},
+			"icon": "flaticon-open-box",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Query Tool",
+						"ES": "Herramienta Consultas"
+					},
+					"icon": "",
+					"url": "/controlpanel/querytool/show"
+				},
+				{
+					"title": {
+						"EN": "System Audit",
+						"ES": "Auditoría del Sisstema"
+					},
+					"icon": "",
+					"url": "/controlpanel/audit/show"
+				},
+				{
+					"title": {
+						"EN": "Planned Tasks",
+						"ES": "Tareas Planificadas"
+					},
+					"icon": "",
+					"url": "/controlpanel/planner/list"
 				}
 			]
 		}
