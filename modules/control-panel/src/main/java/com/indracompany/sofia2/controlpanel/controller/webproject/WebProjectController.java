@@ -13,7 +13,6 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.webproject;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -126,7 +125,7 @@ public class WebProjectController {
 			utils.addRedirectMessage("webproject.update.error", redirect);
 			return "redirect:/webprojects/create";
 		}
-		return "redirect:/webprojects/show/" + id;
+		return "redirect:/webprojects/list";
 
 	}
 	

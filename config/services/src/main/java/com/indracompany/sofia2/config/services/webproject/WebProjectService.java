@@ -29,14 +29,15 @@ public interface WebProjectService {
 	List<String> getAllIdentifications();
 
 	void createWebProject(WebProject webProject, String userId);
+	
+	void updateWebProject(WebProject webProject, String userId);
 
 	WebProject getWebProjectById(String webProjectId, String userId);
 
-	void updateWebProject(WebProject webProject, String userId);
+	void deleteWebProject(WebProject webProject, String userId);
 
 	void uploadZip(MultipartFile file, String userId);
 
 	void uploadFile(MultipartFile file, String userId);
-
 
 }
