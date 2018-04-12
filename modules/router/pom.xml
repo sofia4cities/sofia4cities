@@ -23,6 +23,7 @@
 		<version.hawtio>1.5.6</version.hawtio>
 		<sofia2.version>${project.parent.version}</sofia2.version>
 		<version.spring-cloud>1.4.3.RELEASE</version.spring-cloud>
+		<elasticsearch.version>6.2.3</elasticsearch.version>
 	</properties>
 
 	<dependencies>

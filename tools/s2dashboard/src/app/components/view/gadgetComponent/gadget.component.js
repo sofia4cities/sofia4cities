@@ -126,6 +126,7 @@
       switch(vm.config.type){
         case "line":
         case "bar":
+        case "radar":
         case "pie":
           //Group X axis values
           var allLabelsField = [];
@@ -305,8 +306,19 @@
             if(!vm.datastatus){
               vm.datastatus = {};
             }
-            for(var index in dataEvent.data){
-              vm.datastatus[angular.copy(dataEvent.data[index].field)] = angular.copy(dataEvent.data[index].value);
+            if(dataEvent.data.length){
+              for(var index in dataEvent.data){
+                vm.datastatus[angular.copy(dataEvent.data[index].field)] = {
+                  value: angular.copy(dataEvent.data[index].value),
+                  id: angular.copy(dataEvent.id)
+                }
+              }
+            }
+            else{
+              delete vm.datastatus[dataEvent.field];
+              if(Object.keys(vm.datastatus).length === 0 ){
+                vm.datastatus = undefined;
+              }
             }
             datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
             break;
@@ -382,7 +394,7 @@
       else{
         var filterStt = {}
       }
-      filterStt[originField]=originValue;
+      filterStt[originField]={value: originValue, id: vm.id};
       interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
   }

@@ -138,8 +138,7 @@
 													<div class="col-md-4 col-sm-3 col-xs-6">
 														<div class="form-group">
 															<label  th:text="#{marketasset.type}">API</label>
-															<select id="marketassetType" name="marketassetType" class="form-control" type="text" maxlength="100" onchange="MarketAssetCreateController.changeType();" th:field="*{marketAssetType}">
-				                                    			<option value="" th:placeholder="#{gen.owner}" selected="selected" disabled="disabled" hidden="hidden"></option>
+															<select id="marketassetType" name="marketassetType" th:title="#{marketasset.type}" class="selectpicker form-control" type="text" maxlength="100" onchange="MarketAssetCreateController.changeType();" th:field="*{marketAssetType}">
 				                                    			<option th:each="marketassettype:${marketassettypes}" th:value="${marketassettype}" th:text="#{marketasset.type.__${marketassettype}__}">type</option>
 				                                    		</select>
 														</div>					                                           
@@ -224,8 +223,9 @@
 												<div id="fragments" th:if="(${marketasset.id} == null)"/>
 												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'API'))" th:include="marketasset/marketassetfragments::#APIMarketAssetFragment"/>
 												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'DOCUMENT'))" th:include="marketasset/marketassetfragments::#DOCUMENTMarketAssetFragment"/>
-												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'WEBPROJECT'))" th:include="marketasset/marketassetfragments::#WEBPROJECTMarketAssetFragment"/>
+												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'URLAPPLICATION'))" th:include="marketasset/marketassetfragments::#URLAPPLICATIONMarketAssetFragment"/>
 												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'APPLICATION'))" th:include="marketasset/marketassetfragments::#APPLICATIONMarketAssetFragment"/>
+												<div id="fragments" th:if="((${marketasset.id} != null) AND (${marketasset.marketAssetType.name()} == 'WEBPROJECT'))" th:include="marketasset/marketassetfragments::#WEBPROJECTMarketAssetFragment"/>
 												<input id="contentId" name="contentId" type="hidden" th:field="*{contentId}" />
 											</div>	
 											<!-- FORM BUTTONS -->
@@ -351,16 +351,18 @@
 	});
 	
 	function loadFragment(type, json_desc){
+		$('#detailedDescription').val(json_desc.detailedDescription);
 		if (type=='API'){
 			$('#apiId').val(json_desc.apiId);
 			$('#versions').val(json_desc.versions);
 			$('#apiDescription').val(json_desc.apiDescription);
 		} else if (type=='DOCUMENT'){
-			$('#detailedDescription').append(json_desc.detailedDescription);
+		} else if (type=='URLAPPLICATION'){
+			$('#functionality').val(json_desc.functionality);
+			$('#id_endpoint').val(json_desc.id_endpoint);
 		} else if (type=='APPLICATION'){
 			$('#installation').val(json_desc.installation);
 			$('#functionality').val(json_desc.functionality);
-			$('#detailedDescription').val(json_desc.detailedDescription);
 		} else if (type=='WEBPROJECT'){
 			$('#functionality').val(json_desc.functionality);
 			$('#id_endpoint').val(json_desc.id_endpoint);

@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -35,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.service.digitaltwin.device.DigitalTwinDeviceService;
 import com.indracompany.sofia2.config.service.digitaltwin.type.DigitalTwinTypeService;
 import com.indracompany.sofia2.config.services.exceptions.DigitalTwinServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
@@ -47,40 +49,44 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/digitaltwintypes")
 @Slf4j
 public class DigitalTwinTypeController {
-	
+
 	@Autowired
 	private AppWebUtils utils;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private DigitalTwinTypeService digitalTwinTypeService;
-	
+
 	@Autowired
-	private ManageDBRepository  mongoManageRepo;
-	
+	private DigitalTwinDeviceService digitalTwinDeviceService;
+
+	@Autowired
+	@Qualifier("MongoManageDBRepository")
+	private ManageDBRepository mongoManageRepo;
+
 	@PostMapping("/getNamesForAutocomplete")
 	public @ResponseBody List<String> getNamesForAutocomplete() {
 		return this.digitalTwinTypeService.getAllIdentifications();
 	}
-	
+
 	@GetMapping(value = "/create")
 	public String create(Model model) {
 		model.addAttribute("digitaltwintype", new DigitalTwinType());
 		return "digitaltwintypes/create";
 	}
-	
+
 	@GetMapping(value = "/update/{id}", produces = "text/html")
 	public String update(Model model, @PathVariable("id") String id) {
 		digitalTwinTypeService.getDigitalTwinToUpdate(model, id);
 		return "digitaltwintypes/create";
 	}
-	
+
 	@PostMapping(value = "/create")
 	@Transactional
-	public String createDigitalTwinType(Model model, @Valid DigitalTwinType digitalTwinType, BindingResult bindingResult,
-			RedirectAttributes redirect, HttpServletRequest httpServletRequest) {
+	public String createDigitalTwinType(Model model, @Valid DigitalTwinType digitalTwinType,
+			BindingResult bindingResult, RedirectAttributes redirect, HttpServletRequest httpServletRequest) {
 		if (bindingResult.hasErrors()) {
 			log.debug("Some digital twin type properties missing");
 			utils.addRedirectMessage("digitaltwintype.validation.error", redirect);
@@ -90,9 +96,12 @@ public class DigitalTwinTypeController {
 			User user = userService.getUser(utils.getUserId());
 			digitalTwinType.setUser(user);
 			digitalTwinTypeService.createDigitalTwinType(digitalTwinType, httpServletRequest);
-			//Create collections on mongo for properties and actions
-			mongoManageRepo.createTable4Ontology("TwinProperties" + digitalTwinType.getName().substring(0, 1).toUpperCase() + digitalTwinType.getName().substring(1), "{}");
-			mongoManageRepo.createTable4Ontology("TwinActions" + digitalTwinType.getName().substring(0, 1).toUpperCase() + digitalTwinType.getName().substring(1), "{}");
+			// Create collections on mongo for properties and actions
+			mongoManageRepo.createTable4Ontology("TwinProperties"
+					+ digitalTwinType.getName().substring(0, 1).toUpperCase() + digitalTwinType.getName().substring(1),
+					"{}");
+			mongoManageRepo.createTable4Ontology("TwinActions" + digitalTwinType.getName().substring(0, 1).toUpperCase()
+					+ digitalTwinType.getName().substring(1), "{}");
 		} catch (DigitalTwinServiceException e) {
 			log.error("Cannot create digital twin type because of:" + e.getMessage());
 			utils.addRedirectException(e, redirect);
@@ -100,40 +109,41 @@ public class DigitalTwinTypeController {
 		}
 		return "redirect:/digitaltwintypes/list";
 	}
-	
+
 	@GetMapping(value = "/list")
 	public String list(Model model) {
-		model.addAttribute("digitalTwinTypes",digitalTwinTypeService.getAll());
+		model.addAttribute("digitalTwinTypes", digitalTwinTypeService.getAll());
 		return "digitaltwintypes/list";
 	}
-	
+
 	@GetMapping(value = "/show/{id}")
-	public String show(Model model,@PathVariable("id") String id, RedirectAttributes redirect) {
+	public String show(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
 		DigitalTwinType type = digitalTwinTypeService.getDigitalTwinTypeById(id);
-		if(type!=null) {
+		if (type != null) {
 			model.addAttribute("digitaltwintype", type);
-			model.addAttribute("properties",digitalTwinTypeService.getPropertiesByDigitalId(id));
-			model.addAttribute("actions",digitalTwinTypeService.getActionsByDigitalId(id));
-			model.addAttribute("events",digitalTwinTypeService.getEventsByDigitalId(id));
-			model.addAttribute("logic",digitalTwinTypeService.getLogicByDigitalId(id));
-			
+			model.addAttribute("properties", digitalTwinTypeService.getPropertiesByDigitalId(id));
+			model.addAttribute("actions", digitalTwinTypeService.getActionsByDigitalId(id));
+			model.addAttribute("events", digitalTwinTypeService.getEventsByDigitalId(id));
+			model.addAttribute("logic", digitalTwinTypeService.getLogicByDigitalId(id));
+
 			return "digitaltwintypes/show";
-		}else {
+		} else {
 			utils.addRedirectMessage("digitaltwintype.notfound.error", redirect);
 			return "redirect:/digitaltwintypes/list";
 		}
 	}
-	
+
 	@PutMapping(value = "/update/{id}", produces = "text/html")
-	public String updateDigitalTwinType(Model model, @PathVariable("id") String id, @Valid DigitalTwinType digitalTwinType,
-			BindingResult bindingResult, RedirectAttributes redirect, HttpServletRequest httpServletRequest) {
+	public String updateDigitalTwinType(Model model, @PathVariable("id") String id,
+			@Valid DigitalTwinType digitalTwinType, BindingResult bindingResult, RedirectAttributes redirect,
+			HttpServletRequest httpServletRequest) {
 
 		if (bindingResult.hasErrors()) {
 			log.debug("Some digital twin type properties missing");
 			utils.addRedirectMessage("digitaltwintype.validation.error", redirect);
 			return "redirect:/digitaltwintypes/update/" + id;
 		}
-		
+
 		try {
 			User user = userService.getUser(utils.getUserId());
 			digitalTwinType.setUser(user);
@@ -146,7 +156,7 @@ public class DigitalTwinTypeController {
 		return "redirect:/digitaltwintypes/list";
 
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public String delete(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
 
@@ -162,6 +172,11 @@ public class DigitalTwinTypeController {
 		} else {
 			return "redirect:/digitaltwintypes/list";
 		}
+	}
+
+	@GetMapping("/getNumOfDevices/{type}")
+	public @ResponseBody Integer getNumOfDevices(@PathVariable("type") String type) {
+		return this.digitalTwinDeviceService.getNumOfDevicesByTypeId(type);
 	}
 
 }

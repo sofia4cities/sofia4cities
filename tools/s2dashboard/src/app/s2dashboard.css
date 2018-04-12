@@ -148,3 +148,21 @@ md-tooltip.tt-multiline {
   height:100%;
   z-index:90000
 }
+
+.no-wrap{
+  white-space: nowrap;
+  font-size:12px;
+  overflow: hidden
+}
+
+tip-arrow{
+  display: none
+}
+
+.cursor-hand{
+  cursor: pointer
+}
+
+.md-open-menu-container{
+  z-index: 10000 !important
+}

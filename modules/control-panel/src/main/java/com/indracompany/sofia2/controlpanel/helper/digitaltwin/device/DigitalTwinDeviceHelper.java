@@ -276,7 +276,11 @@ public class DigitalTwinDeviceHelper {
 		try {
 			File pathToExecutable = new File(mavenExecPath);
 			ProcessBuilder builder = new ProcessBuilder( pathToExecutable.getAbsolutePath(), "clean", "package");
-			builder.directory( new File(projectPath).getAbsoluteFile() ); // this is where you set the root folder for the executable to run with
+			File workingDirectory=new File(projectPath);
+			log.info("Sets working directory: {}", workingDirectory);
+			log.info("Absolute path: {}", workingDirectory);
+			
+			builder.directory( workingDirectory); // this is where you set the root folder for the executable to run with
 			builder.redirectErrorStream(true);
 			Process process =  builder.start();
 	
@@ -289,8 +293,6 @@ public class DigitalTwinDeviceHelper {
 			s.close();
 	
 			int result = process.waitFor();
-			//TODO --> Borrar
-			System.out.println(text);
 			log.info( "Process exited with result %d and output %s%n", result, text );
 		}catch(Exception e) {
 			log.error("Error compiling project", e);

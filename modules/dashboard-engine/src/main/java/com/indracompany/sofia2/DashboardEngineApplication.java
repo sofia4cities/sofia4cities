@@ -16,7 +16,7 @@ package com.indracompany.sofia2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages="com.indracompany.sofia2")
 public class DashboardEngineApplication {
 
     public static void main(String[] args) {

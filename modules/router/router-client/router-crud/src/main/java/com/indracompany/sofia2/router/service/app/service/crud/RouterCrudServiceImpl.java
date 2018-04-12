@@ -16,10 +16,10 @@ package com.indracompany.sofia2.router.service.app.service.crud;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.audit.aop.Auditable;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.services.BasicOpsPersistenceServiceFacade;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.router.audit.aop.Auditable;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -33,22 +33,24 @@ import lombok.extern.slf4j.Slf4j;
 public class RouterCrudServiceImpl implements RouterCrudService {
 
 	@Autowired
-	private QueryToolService queryToolService;
-
+	private QueryToolService  queryToolService;
+	
 	@Autowired
-	private BasicOpsDBRepository mongoBasicOpsDBRepository;
+	private BasicOpsPersistenceServiceFacade basicOpsService;
 
-	@Autowired
-	private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
-
+	
+	//@Autowired
+	//private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
+	
 	@Autowired
 	private OntologyDataService ontologyDataService;
+
 
 	@Override
 	@Auditable
 	public OperationResultModel insert(OperationModel operationModel) throws RouterCrudServiceException {
 
-		log.info("Router Crud Service Operation " + operationModel.toString());
+		log.info("Router Crud Service Operation "+operationModel.toString());
 
 		final OperationResultModel result = new OperationResultModel();
 
@@ -60,7 +62,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String OBJECT_ID = operationModel.getObjectId();
 		final String USER = operationModel.getUser();
 
-		String OUTPUT = "";
+		String OUTPUT="";
 		result.setMessage("OK");
 		result.setStatus(true);
 
@@ -68,14 +70,15 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 			ontologyDataService.checkOntologySchemaCompliance(BODY, ontologyName);
 			String bodyWithDataContext = ontologyDataService.addContextData(operationModel);
 			String encryptedDataInBODY = ontologyDataService.encryptData(bodyWithDataContext, ontologyName);
-			if (METHOD.equalsIgnoreCase("POST")
-					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				OUTPUT = mongoBasicOpsDBRepository.insert(ontologyName, encryptedDataInBODY);
+
+			if (METHOD.equalsIgnoreCase("POST") || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
+				OUTPUT = basicOpsService.insert(ontologyName, encryptedDataInBODY);
 			}
-		} catch (final Exception e) {
+		} 
+		catch (final Exception e) {
 			result.setResult("ERROR");
 			result.setStatus(false);
-			result.setMessage(e.getMessage() + ": " + e.getCause());
+			result.setMessage(e.getMessage());
 			result.setErrorCode("");
 			result.setOperation("INSERT");
 			throw new RouterCrudServiceException("Error inserting data", e, result);
@@ -85,13 +88,14 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		result.setOperation(METHOD);
 		return result;
 
+
 	}
 
 	@Override
 	@Auditable
 	public OperationResultModel update(OperationModel operationModel) {
 
-		log.info("Router Crud Service Operation " + operationModel.toString());
+		log.info("Router Crud Service Operation "+operationModel.toString());
 
 		final OperationResultModel result = new OperationResultModel();
 
@@ -102,7 +106,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String OBJECT_ID = operationModel.getObjectId();
 		final String USER = operationModel.getUser();
 
-		String OUTPUT = "";
+		String OUTPUT="";
 
 		result.setMessage("OK");
 		result.setStatus(true);
@@ -110,13 +114,13 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		try {
 			if (METHOD.equalsIgnoreCase("PUT") || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
 
-				if (OBJECT_ID != null && OBJECT_ID.length() > 0) {
-					mongoBasicOpsDBRepository.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);
-					OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
+				if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
+					basicOpsService.updateNativeByObjectIdAndBodyData(ontologyName, OBJECT_ID, BODY);
+					OUTPUT = basicOpsService.findById(ontologyName, OBJECT_ID);
 				}
 
 				else {
-					OUTPUT = "" + mongoBasicOpsDBRepository.updateNative(ontologyName, BODY);
+					OUTPUT = ""+basicOpsService.updateNative(ontologyName, BODY);
 				}
 
 			}
@@ -135,7 +139,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	@Auditable
 	public OperationResultModel delete(OperationModel operationModel) {
 
-		log.info("Router Crud Service Operation " + operationModel.toString());
+		log.info("Router Crud Service Operation "+operationModel.toString());
 
 		final OperationResultModel result = new OperationResultModel();
 
@@ -145,21 +149,20 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
 		final String USER = operationModel.getUser();
-		String OUTPUT = "";
+		String OUTPUT="";
 
 		result.setMessage("OK");
 		result.setStatus(true);
 
 		try {
-			if (METHOD.equalsIgnoreCase("DELETE")
-					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
+			if (METHOD.equalsIgnoreCase("DELETE") || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
 
-				if (OBJECT_ID != null && OBJECT_ID.length() > 0) {
-					OUTPUT = "" + mongoBasicOpsDBRepository.deleteNativeById(ontologyName, OBJECT_ID);
+				if (OBJECT_ID!=null && OBJECT_ID.length()>0) {
+					OUTPUT = ""+ basicOpsService.deleteNativeById(ontologyName, OBJECT_ID);
 				}
 
 				else {
-					OUTPUT = "" + mongoBasicOpsDBRepository.deleteNative(ontologyName, BODY);
+					OUTPUT = ""+ basicOpsService.deleteNative(ontologyName, BODY);
 				}
 
 			}
@@ -178,25 +181,29 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	@Auditable
 	public OperationResultModel query(OperationModel operationModel) {
 
-		log.info("Router Crud Service Operation " + operationModel.toString());
-		OperationResultModel result = null;
+		log.info("Router Crud Service Operation "+operationModel.toString());
+		OperationResultModel result=null;
 		final boolean cacheable = operationModel.isCacheable();
 		if (cacheable) {
-			log.info("DO CACHE OPERATION " + operationModel.toString());
-			result = routerCrudCachedOperationsService.queryCache(operationModel);
 
-		} else {
-			log.info("NOT CACHING, GO TO SOURCE " + operationModel.toString());
+			log.info("DO CACHE OPERATION "+operationModel.toString());
+			result= queryNoCache(operationModel);
+			
+		}
+		else {
+			log.info("NOT CACHING, GO TO SOURCE "+operationModel.toString());
+
 			result = queryNoCache(operationModel);
 		}
-
-		return result;
+			
+		return result;	
 
 	}
-
+	
+	
 	public OperationResultModel queryNoCache(OperationModel operationModel) {
 
-		log.info("Router NO CACHING Crud Service Operation " + operationModel.toString());
+		log.info("Router NO CACHING Crud Service Operation "+operationModel.toString());
 
 		final OperationResultModel result = new OperationResultModel();
 
@@ -208,31 +215,31 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		final String USER = operationModel.getUser();
 		final String CLIENTPLATFORM = operationModel.getClientPlatformId();
 
-		String OUTPUT = "";
+		String OUTPUT="";
 		result.setMessage("OK");
 		result.setStatus(true);
 
 		try {
 			if (METHOD.equalsIgnoreCase("GET") || METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
 
-				if (QUERY_TYPE != null) {
+				if (QUERY_TYPE !=null)
+				{
 					if (QUERY_TYPE.equalsIgnoreCase(QueryType.SQLLIKE.name())) {
-						// OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
-						OUTPUT = (!NullString(CLIENTPLATFORM))
-								? queryToolService.querySQLAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY,
-										0)
-								: queryToolService.querySQLAsJson(USER, ontologyName, BODY, 0);
-					} else if (QUERY_TYPE.equalsIgnoreCase(QueryType.NATIVE.name())) {
-						// OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
-						OUTPUT = (!NullString(CLIENTPLATFORM))
-								? queryToolService.queryNativeAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName,
-										BODY, 0, 0)
-								: queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0, 0);
-					} else {
-						OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
+						//						OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
+						OUTPUT = (!NullString(CLIENTPLATFORM))?queryToolService.querySQLAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0):
+															  queryToolService.querySQLAsJson(USER, ontologyName, BODY, 0);
 					}
-				} else {
-					OUTPUT = mongoBasicOpsDBRepository.findById(ontologyName, OBJECT_ID);
+					else if (QUERY_TYPE.equalsIgnoreCase(QueryType.NATIVE.name())) {
+						//						OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
+						OUTPUT = (!NullString(CLIENTPLATFORM))?queryToolService.queryNativeAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0, 0):
+															  queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0,0);
+					}
+					else {
+						OUTPUT = basicOpsService.findById(ontologyName, OBJECT_ID);
+					}
+				}
+				else {
+					OUTPUT = basicOpsService.findById(ontologyName, OBJECT_ID);
 				}
 			}
 		} catch (final Exception e) {
@@ -245,29 +252,30 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		result.setOperation(METHOD);
 		return result;
 	}
+	
+	
+	
 
 	@Override
-	// @Auditable
+	//@Auditable
 	public OperationResultModel execute(OperationModel operationModel) {
 
 		String METHOD = operationModel.getOperationType().name();
-
+		
 		OperationResultModel result = new OperationResultModel();
-
+	
 		try {
 			if (METHOD.equalsIgnoreCase("GET") || METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
-				result = query(operationModel);
+				 result = query(operationModel);
 			}
-
-			if (METHOD.equalsIgnoreCase("POST")
-					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
+			
+			if (METHOD.equalsIgnoreCase("POST") || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
 				result = insert(operationModel);
 			}
 			if (METHOD.equalsIgnoreCase("PUT") || METHOD.equalsIgnoreCase(OperationModel.OperationType.UPDATE.name())) {
 				result = update(operationModel);
 			}
-			if (METHOD.equalsIgnoreCase("DELETE")
-					|| METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
+			if (METHOD.equalsIgnoreCase("DELETE") || METHOD.equalsIgnoreCase(OperationModel.OperationType.DELETE.name())) {
 				result = delete(operationModel);
 			}
 		} catch (Exception e) {
@@ -275,6 +283,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		}
 		return result;
 	}
+
 
 	public QueryToolService getQueryToolService() {
 		return queryToolService;
@@ -284,21 +293,15 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		this.queryToolService = queryToolService;
 	}
 
-	public BasicOpsDBRepository getMongoBasicOpsDBRepository() {
-		return mongoBasicOpsDBRepository;
-	}
 
-	public void setMongoBasicOpsDBRepository(BasicOpsDBRepository mongoBasicOpsDBRepository) {
-		this.mongoBasicOpsDBRepository = mongoBasicOpsDBRepository;
-	}
+
+	
 
 	public static boolean NullString(String l) {
-		if (l == null)
-			return true;
-		else if (l != null && l.equalsIgnoreCase(""))
-			return true;
-		else
-			return false;
+		if (l==null) return true;
+		else if (l!=null && l.equalsIgnoreCase("")) return true;
+		else return false;
 	}
+	
 
 }

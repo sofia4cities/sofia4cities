@@ -33,7 +33,9 @@ import com.indracompany.sofia2.config.model.FlowNode;
 import com.indracompany.sofia2.config.model.FlowNode.MessageType;
 import com.indracompany.sofia2.config.model.FlowNode.Type;
 import com.indracompany.sofia2.config.model.NotificationEntity;
+import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.flow.FlowService;
 import com.indracompany.sofia2.config.services.flowdomain.FlowDomainService;
 import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
@@ -60,21 +62,36 @@ public class FlowNodeServiceIntegrationTest {
 	@Autowired
 	private OntologyService ontologyService;
 
+	@Autowired
+	private OntologyRepository ontologyRepository;
+
 	private String domainIdentification;
 	private String ontologyId;
 
 	@Before
 	public void setUp() {
 		// Create one domain, flow and notificator node
-		ontologyId = "OntologyTest";
-		domainIdentification = "DomainTest_" + UUID.randomUUID().toString().substring(0, 30);
-
+		String temp = UUID.randomUUID().toString().substring(0, 30);
+		ontologyId = "OntTest_" + temp;
+		domainIdentification = "DomainTest_" + temp;
 		User user = userService.getUser("developer");
+
+		Ontology ontology = new Ontology();
+		ontology.setJsonSchema("{}");
+		ontology.setDescription("Ontology for testing purposes.");
+		ontology.setIdentification(ontologyId);
+		ontology.setActive(true);
+		ontology.setRtdbClean(false);
+		ontology.setRtdbToHdb(false);
+		ontology.setPublic(true);
+		ontology.setUser(user);
+		ontologyService.createOntology(ontology);
+
 		FlowDomain domain = domainService.createFlowDomain(domainIdentification, user);
 
 		Flow flow = new Flow();
 		flow.setActive(true);
-		flow.setIdentification("Test Flow 1");
+		flow.setIdentification("Test Flow 1" + temp);
 		flow.setFlowDomain(domain);
 		flow.setNodeRedFlowId("nodeRedFlowId");
 
@@ -85,11 +102,11 @@ public class FlowNodeServiceIntegrationTest {
 		FlowNode node = new FlowNode();
 		node.setFlow(flow);
 		node.setNodeRedNodeId("nodeRedNodeId");
-		node.setIdentification("nodeIdentification");
+		node.setIdentification("nodeIdentification" + temp);
 		node.setFlowNodeType(Type.HTTP_NOTIFIER);
 		node.setMessageType(MessageType.INSERT);
 		node.setOntology(ontologyService.getOntologyByIdentification(ontologyId, user.getUserId()));
-		node.setPartialUrl("/notificationPoint");
+		node.setPartialUrl("/notificationPointTest");
 		nodeService.createFlowNode(node);
 	}
 
@@ -103,5 +120,6 @@ public class FlowNodeServiceIntegrationTest {
 	@After
 	public void cleanUp() {
 		domainService.deleteFlowdomain(this.domainIdentification);
+		ontologyRepository.delete(ontologyService.getOntologyByIdentification(ontologyId, "developer"));
 	}
 }

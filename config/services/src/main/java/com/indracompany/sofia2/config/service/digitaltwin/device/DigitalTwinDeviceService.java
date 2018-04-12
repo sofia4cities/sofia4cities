@@ -23,32 +23,36 @@ import org.springframework.ui.Model;
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 
 public interface DigitalTwinDeviceService {
-	
+
 	List<String> getAllIdentifications();
-	
+
 	List<DigitalTwinDevice> getAll();
-	
+
+	List<DigitalTwinDevice> getAllByUserId(String userId);
+
 	List<String> getAllDigitalTwinTypeNames();
-	
+
 	public String generateToken();
-	
+
 	public String getLogicFromType(String type);
-	
+
 	public void createDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice, HttpServletRequest httpServletRequest);
 
 	void getDigitalTwinToUpdate(Model model, String id);
 
 	DigitalTwinDevice getDigitalTwinDeviceById(String id);
-	
+
 	void updateDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice, HttpServletRequest httpServletRequest);
 
 	void deleteDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice);
-	
+
 	List<String> getDigitalTwinDevicesByTypeId(String typeId);
-	
+
 	List<String> getDigitalTwinDevicesIdsByUser(String user);
 
 	List<String> getDigitalTwinDevicesIdsByUserAndTypeId(String userId, String typeId);
-	
+
 	DigitalTwinDevice getDigitalTwinDevicebyName(String name);
+
+	Integer getNumOfDevicesByTypeId(String type);
 }

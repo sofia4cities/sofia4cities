@@ -158,6 +158,9 @@ var GadgetsTemplateCreateController = function() {
 	    case "label_ds":	    	
 	    	  return '\n<!--label-s4c  name="parameterName-'+ident+'" type="ds"-->';
 	        break;	  
+	    case "label_ds_parameter":	    	
+	    	  return '\n<!--label-s4c  name="parameterName-'+ident+'" type="ds_parameter"-->';
+	        break;	  
 	    case "select_options":	    	
 	   	  return '\n<!--select-s4c  name="parameterName-'+ident+'" type="ds" options="a,b,c" -->';	    	        
 	      break;
@@ -220,6 +223,9 @@ var GadgetsTemplateCreateController = function() {
 			}else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
 				
 				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+searchTagContentName(regexName,tag)+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterDsLabel+'</label></li>');
+			}else if(tag.replace(/\s/g, '').search('type="ds_parameter"')>=0 && tag.replace(/\s/g, '').search('label-s4c')>=0){
+				
+				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+searchTagContentName(regexName,tag)+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterDsPropertieLabel+'</label></li>');
 			}else if(tag.replace(/\s/g, '').search('type="ds"')>=0 && tag.replace(/\s/g, '').search('select-s4c')>=0){
 			
 				$('#parameters-form').append('<li class="list-group-item"><label class="bold">'+searchTagContentName(regexName,tag)+'&nbsp:&nbsp</label><label>'+gadgetTemplateCreateJson.parameterSelectLabel+'</label></li>');

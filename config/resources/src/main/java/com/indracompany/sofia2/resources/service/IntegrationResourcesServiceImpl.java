@@ -39,7 +39,7 @@ public class IntegrationResourcesServiceImpl implements IntegrationResourcesServ
 	}
 
 	public enum Module {
-		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager
+		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel
 	}
 
 

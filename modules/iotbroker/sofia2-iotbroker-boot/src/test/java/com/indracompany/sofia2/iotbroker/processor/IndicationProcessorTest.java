@@ -130,7 +130,7 @@ public class IndicationProcessorTest {
 		mockOntologies.deleteOntology(Person.class);
 	}
 
-	@Ignore
+	//	@Ignore
 	@Test
 	public void given_OneIndication_When_ItIsDelivered_Then_ItsProcessedAndDeliveredToClient() throws Exception {
 		final CompletableFuture<SSAPMessage<SSAPBodyIndicationMessage>> completableFuture = new CompletableFuture<>();

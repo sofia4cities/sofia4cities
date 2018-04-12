@@ -30,6 +30,32 @@
       compileContent();
     }
 
+   
+
+    $scope.parseDSArray = function(name){
+      var result=[];
+      var properties=[];
+      if(typeof name !="undefined" && name != null){
+      try {
+          for(var propertyName in $scope.ds[0]) {
+            properties.push(propertyName);
+          }
+          if(properties.indexOf(name) > -1){
+          for (var index = 0; index <  $scope.ds.length; index++) {             
+              
+                result.push($scope.ds[index][name]);               
+              }          
+            }        
+          
+      } catch (error) {
+        
+      }
+    }
+      return result;
+    }
+
+
+
     vm.$onChanges = function(changes,c,d,e) {
       if("datasource" in changes && changes["datasource"].currentValue){
         refreshSubscriptionDatasource(changes.datasource.currentValue, changes.datasource.previousValue)
@@ -46,13 +72,13 @@
 
     $scope.sendFilter = function(field, value){
       var filterStt = {};
-      filterStt[field]=value;
+      filterStt[field]={value: value, id: vm.id};
       interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
     
     $scope.sendFilterChain = function(field, value){
       var filterStt = angular.copy(vm.datastatus)||{};
-      filterStt[field]=value;
+      filterStt[field]={value: value, id: vm.id};
       interactionService.sendBroadcastFilter(vm.id,filterStt);
     }
 
@@ -137,8 +163,19 @@
             if(!vm.datastatus){
               vm.datastatus = {};
             }
-            for(var index in dataEvent.data){
-              vm.datastatus[angular.copy(dataEvent.data[index].field)] = angular.copy(dataEvent.data[index].value);
+            if(dataEvent.data.length){
+              for(var index in dataEvent.data){
+                vm.datastatus[angular.copy(dataEvent.data[index].field)] = {
+                  value: angular.copy(dataEvent.data[index].value),
+                  id: angular.copy(dataEvent.id)
+                }
+              }
+            }
+            else{
+              delete vm.datastatus[dataEvent.field];
+              if(Object.keys(vm.datastatus).length === 0 ){
+                vm.datastatus = undefined;
+              }
             }
             datasourceSolverService.updateDatasourceTriggerAndShot(vm.id,buildFilterStt(dataEvent));
             break;
