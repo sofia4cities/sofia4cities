@@ -141,7 +141,7 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 			String messageText = "Join message by clientPlatform  " + joinMessage.getClientPlatform();
 			return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(joinMessage, messageText, info);
 
-		} else if (sessionPlugin != null) {
+		} else if (sessionPlugin.isPresent()) {
 
 			IoTSession session = sessionPlugin.get();
 

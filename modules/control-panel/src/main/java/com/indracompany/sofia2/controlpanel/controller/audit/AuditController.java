@@ -62,8 +62,7 @@ public class AuditController {
 
 			String collection = ServiceUtils.getAuditCollectionName(utils.getUserId());
 
-			String query = "select message, type, timeStamp, user, ontology, "
-					+ "	operationType, module, extraData, otherType from " + collection;
+			String query = "select message, user, timeStamp, module, ontology, operationType, data from " + collection;
 
 			if (!operation.equalsIgnoreCase("all")) {
 				query += " where operationType = \"" + operation + "\"";
@@ -71,7 +70,7 @@ public class AuditController {
 
 			query += " order by timestamp desc limit " + Integer.parseInt(offset);
 
-			String queryResult = queryToolService.querySQLAsJson(utils.getUserId(), collection, query, 0);
+			String queryResult = queryToolService.querySQLAsJson(utils.getUserId(), collection, query.toLowerCase(), 0);
 			model.addAttribute("queryResult", queryResult);
 			result = "audit/show :: query";
 

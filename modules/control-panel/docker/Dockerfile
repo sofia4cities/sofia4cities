@@ -9,7 +9,7 @@ VOLUME /tmp
 ADD *-exec.jar app.jar
 
 # Web projects folder
-RUN mkdir -p  /usr/local/webprojects
+RUN mkdir -p /usr/local/webprojects
 
 EXPOSE 18080
 

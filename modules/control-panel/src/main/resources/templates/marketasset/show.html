@@ -223,7 +223,7 @@
 										<div class="marketasset-single-sidebar bordered marketasset-container">
 											<!-- back to market -->
 											<div class="form-group">
-												<button type="button" onclick="javascript:location.href='/controlpanel/marketasset/list';" class="btn blue-chambray padding-both-10 uppercase btn-md sbold btn-block"><i class="la la-arrow-left"></i> Back to Market</button>
+												<button type="button" onclick="javascript:location.href='/controlpanel/marketasset/list';" class="btn blue-chambray padding-both-10 uppercase btn-md sbold btn-block" th:text="#{marketasset.backtomarket}"><i class="la la-arrow-left"></i> </button>
 											</div>											
 											
 											<!-- SEARCH (pending) -->											
@@ -235,32 +235,23 @@
 											</div>
 											<!-- RECENT MARKETASSETS (pending) -->
 											<div class="marketasset-single-sidebar-recent">
-												<h3 class="marketasset-sidebar-title uppercase">Recent Market Assets</h3>
+												<h3 class="marketasset-sidebar-title uppercase" th:text="#{marketasset.recent.assets}">Recent Market Assets</h3>
 												<ul>
-													<li>
-														<a href="javascript:;">Dashboards Manuals</a>
-													</li>
-													<li>
-														<a href="javascript:;">How-to Devices</a>
-													</li>
-													<li>
-														<a href="javascript:;">Create Ontologies</a>
-													</li>
-													<li>
-														<a href="javascript:;">Sofia4Cities Admin Manual</a>
+													<li th:each="asset : ${fiveAssets}">
+														<a href="javascript:;" th:text="${asset.title}"></a>
 													</li>
 												</ul>
 											</div>
 											<!-- MARKETASSETS TECHNOLOGY TAGCLOUD  -->
 											<div class="marketasset-single-sidebar-tags">
-												<h3 class="marketasset-sidebar-title uppercase">Marketplace Technologies</h3>
+												<h3 class="marketasset-sidebar-title uppercase" th:text="#{marketasset.market.technologies}">Marketplace Technologies</h3>
 												<ul class="marketasset-post-tags">
 													<li th:each="technology : ${technologies}" class="uppercase"><a href="javascript:;" th:text="${technology}"></a></li>
 												</ul>
 											</div>
 											<!-- MARKET INTEREST LINKS (pending) -->
 											<div class="marketasset-single-sidebar-links">
-												<h3 class="marketasset-sidebar-title uppercase">Useful Links</h3>
+												<h3 class="marketasset-sidebar-title uppercase" th:text="#{marketasset.useful.links}">Useful Links</h3>
 												<ul>
 													<li><a href="javascript:;">Sofia4Cities Marketplace</a></li>
 													<li><a href="javascript:;">Ontologies</a></li>
@@ -408,6 +399,7 @@
 	});
 	
 	function loadFragment(type, json_desc){
+		var docId = [[${marketasset.contentId}]];
 		if (type=='API'){
 			$('#apiId').text(json_desc.apiId);
 			$('#versions').text(json_desc.versions);
@@ -415,6 +407,9 @@
 			$('#swaggerUI').attr("src", json_desc.swaggerUI);
 		} else if (type=='DOCUMENT'){
 			$('#detailedDescription').append(json_desc.detailedDescription);
+			if (docId == null) {
+				$('#DOCUMENTDiv').css('display', 'none')
+			}
 		} else if (type=='URLAPPLICATION'){
 			$('#functionality').text(json_desc.functionality);
 			$('#id_endpoint').text(json_desc.id_endpoint);
