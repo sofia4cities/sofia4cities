@@ -102,13 +102,12 @@ public class InsertProcessor implements MessageTypeProcessor {
 
 				responseMessage.getBody().setData(objectMapper.readTree("{\"id\":\"" + repositoryResponse + "\"}"));
 			} else {
-				log.error(result.getMessage());
 				throw new SSAPProcessorException(result.getMessage());
 			}
 
 		} catch (final Exception e1) {
 			log.error("Error processing Insert", e1);
-			throw new SSAPProcessorException("Response from repository on insert is not JSON compliant");
+			throw new SSAPProcessorException("Response from repository on insert is not JSON compliant, cause : " + e1);
 		}
 
 		return responseMessage;

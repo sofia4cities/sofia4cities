@@ -55,7 +55,8 @@ public class Sofia2EventFactory {
 
 		Date today = new Date();
 		event.setId(UUID.randomUUID().toString());
-		event.setTimeStamp(today);
+		event.setTimeStamp(today.getTime());
+		event.setFormatedTimeStamp(CalendarUtil.convert(today));
 		event.setMessage(message);
 		event.setType(EventType.ERROR);
 		setSecurityData(event);
@@ -71,7 +72,9 @@ public class Sofia2EventFactory {
 		setSecurityData(event);
 
 		event.setUser(audit.getPrincipal());
-		event.setTimeStamp(audit.getTimestamp());
+		event.setTimeStamp(audit.getTimestamp().getTime());
+		event.setFormatedTimeStamp(CalendarUtil.convert(audit.getTimestamp()));
+
 		event.setMessage(message);
 		event.setOtherType(audit.getType());
 		event.setExtraData(audit.getData());
@@ -113,7 +116,8 @@ public class Sofia2EventFactory {
 
 		event.setType(type);
 		Date today = new Date();
-		event.setTimeStamp(today);
+		event.setTimeStamp(today.getTime());
+		event.setFormatedTimeStamp(CalendarUtil.convert(today));
 		event.setMessage(message);
 		event.setId(UUID.randomUUID().toString());
 		setSecurityData(event);
@@ -125,7 +129,8 @@ public class Sofia2EventFactory {
 
 		Date today = new Date();
 
-		event.setTimeStamp(today);
+		event.setTimeStamp(today.getTime());
+		event.setFormatedTimeStamp(CalendarUtil.convert(today));
 		event.setMessage(message);
 		event.setId(UUID.randomUUID().toString());
 		setSecurityData(event);

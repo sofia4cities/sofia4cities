@@ -55,51 +55,51 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/digitaltwindevices")
 public class DigitalTwinDeviceController {
-	
+
 	@Autowired
 	private AppWebUtils utils;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private DigitalTwinDeviceService digitalTwinDeviceService;
-	
+
 	@Autowired
 	private DigitalTwinDeviceHelper digitalTwinDeviceHelper;
-	
+
 	@PostMapping("/getNamesForAutocomplete")
 	public @ResponseBody List<String> getNamesForAutocomplete() {
 		return this.digitalTwinDeviceService.getAllIdentifications();
 	}
-	
+
 	@GetMapping(value = "/create")
 	public String create(Model model) {
 		model.addAttribute("digitaltwindevice", new DigitalTwinDevice());
-		model.addAttribute("typesDigitalTwin",this.digitalTwinDeviceService.getAllDigitalTwinTypeNames());
+		model.addAttribute("typesDigitalTwin", this.digitalTwinDeviceService.getAllDigitalTwinTypeNames());
 		return "digitaltwindevices/create";
 	}
-	
+
 	@GetMapping(value = "/list")
 	public String list(Model model) {
-		model.addAttribute("digitalTwinDevices",digitalTwinDeviceService.getAll());
+		model.addAttribute("digitalTwinDevices", digitalTwinDeviceService.getAllByUserId(utils.getUserId()));
 		return "digitaltwindevices/list";
 	}
-	
+
 	@GetMapping(value = "/generateToken")
 	public @ResponseBody String generateToken() {
-		return digitalTwinDeviceService.generateToken();	
+		return digitalTwinDeviceService.generateToken();
 	}
-	
+
 	@GetMapping(value = "/getLogicFromType/{type}")
 	public @ResponseBody String getLogicFromType(@PathVariable("type") String type) {
-		return digitalTwinDeviceService.getLogicFromType(type);	
+		return digitalTwinDeviceService.getLogicFromType(type);
 	}
-	
+
 	@PostMapping(value = "/create")
 	@Transactional
-	public String createDigitalTwinDevice(Model model, @Valid DigitalTwinDevice digitalTwinDevice, BindingResult bindingResult,
-			RedirectAttributes redirect, HttpServletRequest httpServletRequest) {
+	public String createDigitalTwinDevice(Model model, @Valid DigitalTwinDevice digitalTwinDevice,
+			BindingResult bindingResult, RedirectAttributes redirect, HttpServletRequest httpServletRequest) {
 		if (bindingResult.hasErrors()) {
 			log.debug("Some digital twin device properties missing");
 			utils.addRedirectMessage("digitaltwindevice.create.error", redirect);
@@ -117,36 +117,37 @@ public class DigitalTwinDeviceController {
 		}
 		return "redirect:/digitaltwindevices/list";
 	}
-	
+
 	@GetMapping(value = "/show/{id}")
-	public String show(Model model,@PathVariable("id") String id, RedirectAttributes redirect) {
+	public String show(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
 		DigitalTwinDevice device = digitalTwinDeviceService.getDigitalTwinDeviceById(id);
-		if(device!=null) {
+		if (device != null) {
 			model.addAttribute("digitaltwindevice", device);
 			return "digitaltwindevices/show";
-		}else {
+		} else {
 			utils.addRedirectMessage("digitaltwindevice.notfound.error", redirect);
 			return "redirect:/digitaltwindevices/list";
 		}
 	}
-	
+
 	@GetMapping(value = "/update/{id}", produces = "text/html")
 	public String update(Model model, @PathVariable("id") String id) {
 		digitalTwinDeviceService.getDigitalTwinToUpdate(model, id);
-		model.addAttribute("typesDigitalTwin",this.digitalTwinDeviceService.getAllDigitalTwinTypeNames());
+		model.addAttribute("typesDigitalTwin", this.digitalTwinDeviceService.getAllDigitalTwinTypeNames());
 		return "digitaltwindevices/create";
 	}
-	
+
 	@PutMapping(value = "/update/{id}", produces = "text/html")
-	public String updateDigitalTwinDevice(Model model, @PathVariable("id") String id, @Valid DigitalTwinDevice digitalTwinDevice,
-			BindingResult bindingResult, RedirectAttributes redirect, HttpServletRequest httpServletRequest) {
+	public String updateDigitalTwinDevice(Model model, @PathVariable("id") String id,
+			@Valid DigitalTwinDevice digitalTwinDevice, BindingResult bindingResult, RedirectAttributes redirect,
+			HttpServletRequest httpServletRequest) {
 
 		if (bindingResult.hasErrors()) {
 			log.debug("Some digital twin device properties missing");
 			utils.addRedirectMessage("digitaltwindevice.validation.error", redirect);
 			return "redirect:/digitaltwindevices/update/" + id;
 		}
-		
+
 		try {
 			User user = userService.getUser(utils.getUserId());
 			digitalTwinDevice.setUser(user);
@@ -159,7 +160,7 @@ public class DigitalTwinDeviceController {
 		return "redirect:/digitaltwindevices/list";
 
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public String delete(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
 
@@ -176,17 +177,18 @@ public class DigitalTwinDeviceController {
 			return "redirect:/digitaltwindevices/list";
 		}
 	}
-	
+
 	@GetMapping(value = "/generateProject/{identification}/{compile}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public ResponseEntity<InputStreamResource> generateProject(@PathVariable("identification") String identification, @PathVariable("compile") Boolean compile)  throws FileNotFoundException{
-		
-		File zipFile= digitalTwinDeviceHelper.generateProject(identification, compile);
+	public ResponseEntity<InputStreamResource> generateProject(@PathVariable("identification") String identification,
+			@PathVariable("compile") Boolean compile) throws FileNotFoundException {
+
+		File zipFile = digitalTwinDeviceHelper.generateProject(identification, compile);
 
 		HttpHeaders respHeaders = new HttpHeaders();
 		respHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 		respHeaders.setContentDispositionFormData("attachment", zipFile.getName());
 		respHeaders.setContentLength(zipFile.length());
 		InputStreamResource isr = new InputStreamResource(new FileInputStream(zipFile));
-	    return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
+		return new ResponseEntity<InputStreamResource>(isr, respHeaders, HttpStatus.OK);
 	}
 }

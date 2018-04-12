@@ -14,6 +14,7 @@ RUN addgroup -g 1000 -S www-data \
  mkdir -p /etc/nginx/conf.d/ && \
  mkdir -p /var/www/html && \
  mkdir -p /etc/nginx/ssl && \
+ mkdir -p /usr/local/webprojects && \
  chown -R www-data:www-data /etc/nginx && \
  chown -R www-data:www-data /var/cache/nginx && \
  chmod 777 -R /etc/nginx && \
