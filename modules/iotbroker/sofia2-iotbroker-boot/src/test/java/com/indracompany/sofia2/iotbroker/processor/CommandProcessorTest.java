@@ -20,7 +20,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -88,7 +87,7 @@ public class CommandProcessorTest {
 		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
 		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, new Date(), "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
 		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
 	}
 

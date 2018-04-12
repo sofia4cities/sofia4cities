@@ -18,7 +18,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,7 +70,7 @@ public class JoinProcessorWithTokenTest {
 		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
 		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, new Date(), "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
 		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
 	}
 
