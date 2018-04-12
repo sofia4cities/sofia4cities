@@ -15,9 +15,11 @@ package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,16 +34,24 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
+import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
+import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.router.service.app.service.RouterSuscriptionService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -68,22 +78,37 @@ public class InsertProcessorTest {
 
 	@MockBean
 	DeviceManager deviceManager;
-
+	//	@MockBean
+	//	OntologyRepository ontologyRepository;
 	@MockBean
-	OntologyRepository ontologyRepository;
+	RouterService routerService;
+	@MockBean
+	RouterSuscriptionService routerSuscriptionService;
+	@MockBean
+	IotBrokerAuditableAspect iotBrokerAuditableAspect;
+
+	private void auditMocks() {
+		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
+		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
+		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, new Date(), "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
+	}
 
 	@Before
 	public void setUp() throws IOException, Exception {
-		mockOntologies.createOntology(Person.class);
-		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
+		auditMocks();
+		//		mockOntologies.createOntology(Person.class);
 
+		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 		subject = PojoGenerator.generatePerson();
 		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(Person.class.getSimpleName(), subject);
 	}
 
 	@After
 	public void tearDown() {
-		mockOntologies.deleteOntology(Person.class);
+		//		mockOntologies.deleteOntology(Person.class);
 	}
 
 	@Test
@@ -145,14 +170,19 @@ public class InsertProcessorTest {
 
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 		final IoTSession session = PojoGenerator.generateSession();
-		
-		Ontology ontology = new Ontology();
+
+		final Ontology ontology = new Ontology();
 		ontology.setJsonSchema(mockOntologies.getJSONSchema(Person.class));
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
-		when(ontologyRepository.findByIdentification(anyString())).thenReturn(ontology);
-		
+		//		when(ontologyRepository.findByIdentification(anyString())).thenReturn(ontology);
+
+		final String oid = UUID.randomUUID().toString();
+		final OperationResultModel value = RouterServiceGenerator.generateInserOk(oid );
+		when(routerService.insert(any())).thenReturn(value);
+
+
 		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
@@ -160,10 +190,9 @@ public class InsertProcessorTest {
 		final JsonNode data = responseMessage.getBody().getData();
 		final String strOid = data.at("/id").asText();
 
-		final String created = repository.findById(Person.class.getSimpleName(), strOid);
-		System.out.println(created);
-		Assert.assertNotNull(created);
-		Assert.assertTrue(created.contains("valid_user_id"));
+		//		final String created = repository.findById(Person.class.getSimpleName(), strOid);
+
+		Assert.assertEquals(oid, strOid);
 
 	}
 
