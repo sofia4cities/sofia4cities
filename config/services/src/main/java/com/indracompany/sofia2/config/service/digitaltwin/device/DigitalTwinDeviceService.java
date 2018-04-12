@@ -28,6 +28,8 @@ public interface DigitalTwinDeviceService {
 
 	List<DigitalTwinDevice> getAll();
 
+	List<DigitalTwinDevice> getAllByUserId(String userId);
+
 	List<String> getAllDigitalTwinTypeNames();
 
 	public String generateToken();
