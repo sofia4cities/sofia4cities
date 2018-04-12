@@ -14,28 +14,28 @@
  */
 package com.indracompany.sofia2.audit.bean;
 
-import java.util.Date;
 import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
 
 public class Sofia2AuditRemoteEvent extends Sofia2AuditEvent {
-	
+
 	private static final long serialVersionUID = -4289515073067938377L;
 
 	@Getter
 	@Setter
 	private String remoteAddress;
-	
+
 	public Sofia2AuditRemoteEvent() {
 		super();
 	}
 
-	public Sofia2AuditRemoteEvent(String message, String id, EventType type, Date timeStamp, String user,
-			String ontology, String operationType, Module module, Map<String, Object> extraData, 
+	public Sofia2AuditRemoteEvent(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
+			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
 			String otherType, String remoteAddress) {
-		super(message, id, type, timeStamp, user, ontology, operationType, module, extraData, otherType);
+		super(message, id, type, timeStamp, formatedTimeStamp, user, ontology, operationType, module, extraData,
+				otherType);
 		this.remoteAddress = remoteAddress;
 	}
 

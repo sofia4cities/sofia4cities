@@ -14,18 +14,16 @@
 package com.indracompany.sofia2.iotbroker.audit.bean;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Map;
 
 import com.indracompany.sofia2.audit.bean.Sofia2AuditRemoteEvent;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class IotBrokerAuditEvent extends Sofia2AuditRemoteEvent implements Serializable   {
+public class IotBrokerAuditEvent extends Sofia2AuditRemoteEvent implements Serializable {
 
 	private static final long serialVersionUID = -4179966151619124358L;
 
@@ -53,15 +51,16 @@ public class IotBrokerAuditEvent extends Sofia2AuditRemoteEvent implements Seria
 	@Setter
 	private String clientPlatformInstance;
 
-	public IotBrokerAuditEvent () {
+	public IotBrokerAuditEvent() {
 		super();
 	}
 
-	public IotBrokerAuditEvent(String message, String id, EventType type, Date timeStamp, String user, String ontology,
-			String operationType, Module module, Map<String, Object> extraData, String otherType,
-			String remoteAddress, IoTSession session, GatewayInfo gatewayInfo, String query, String data,
-			String clientPlatform, String clientPlatformInstance) {
-		super(message, id, type, timeStamp, user, ontology, operationType, module, extraData, otherType, remoteAddress);
+	public IotBrokerAuditEvent(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
+			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
+			String otherType, String remoteAddress, IoTSession session, GatewayInfo gatewayInfo, String query,
+			String data, String clientPlatform, String clientPlatformInstance) {
+		super(message, id, type, timeStamp, formatedTimeStamp, user, ontology, operationType, module, extraData,
+				otherType, remoteAddress);
 		this.session = session;
 		this.gatewayInfo = gatewayInfo;
 		this.query = query;
@@ -71,4 +70,3 @@ public class IotBrokerAuditEvent extends Sofia2AuditRemoteEvent implements Seria
 	}
 
 }
-

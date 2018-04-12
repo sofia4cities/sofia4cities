@@ -116,8 +116,9 @@
 					 
 					<div class="fieldset">
 					 	<div class="btn-group" data-toggle="buttons" >
-							<label class="btn btn-role btn-developer green active"><i class="fa fa-check"></i> <input class="toggle" name="roleName" th:text="#{login.role.developer}" type="radio" checked="checked"/> </label>
-							<label class="btn btn-role btn-user green"><i class="fa fa-user"></i> <input class="toggle" name="roleName" th:text="#{login.role.user}" type="radio"/> </label>
+							<label class="btn btn-role btn-developer green active"><i class="fa fa-check"></i> <input class="toggle" th:text="#{login.role.developer}" type="radio" checked="checked"/> </label>
+							<label class="btn btn-role btn-user green"><i class="fa fa-user"></i> <input class="toggle" th:text="#{login.role.user}" type="radio"/> </label>
+							<input id="roleName" type="hidden" name="roleName" value="developer" />
 						</div>
 						<span style="padding-left: 11px;"><i class="fa fa-info-circle"></i> <span th:text="#{login.role}">please select user role</span></span>	
 					
@@ -220,11 +221,16 @@
 			var developerRole = $('.btn-developer > i');
 			var userRole  = $('.btn-user > i');
 			
+			
+			
+			
 			if ($(this).hasClass('btn-developer') === true) {				
-				developerRole.hasClass('fa-user') ? (developerRole.removeClass().addClass('fa fa-check'),userRole.removeClass().addClass('fa fa-user')) : '';				 	
+				developerRole.hasClass('fa-user') ? (developerRole.removeClass().addClass('fa fa-check'),userRole.removeClass().addClass('fa fa-user')) : '';
+				$('#roleName').val('developer');
 			} 
 			else {			
-				userRole.hasClass('fa-user') ? (userRole.removeClass().addClass('fa fa-check'),developerRole.removeClass().addClass('fa fa-user')) : '';				 	
+				userRole.hasClass('fa-user') ? (userRole.removeClass().addClass('fa fa-check'),developerRole.removeClass().addClass('fa fa-user')) : '';		
+				$('#roleName').val('user');
 			}	
 		}); 		
 	
