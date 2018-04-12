@@ -73,13 +73,6 @@ public class MainPageController {
 		if(utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
 			model.addAttribute("kpis", mainService.createKPIs());
 			
-			// TEMPORALES
-			model.addAttribute("hasOntology", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()).size() > 0 ? true : false);
-			model.addAttribute("hasDevice", this.clientPlatformRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
-			model.addAttribute("hasDashboard",this.dashboardRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : null);
-			model.addAttribute("hasSimulation", this.deviceSimulationServicve.getSimulationsForUser(this.utils.getUserId()).size() > 0 ? true : false);
-			model.addAttribute("hasApi", this.apiRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
-			
 			return "main";
 		} else if (utils.getRole().equals(Role.Type.ROLE_DEVELOPER.name())) {
 			//FLOW
