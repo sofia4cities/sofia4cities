@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditable;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
@@ -54,9 +55,10 @@ public class MessageProcessorDelegate implements MessageProcessor {
 	@Autowired
 	private DeviceManager deviceManager;
 
-	//	@IotBrokerAuditable
+	@IotBrokerAuditable
 	@Override
-	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message, GatewayInfo info) {
+	public <T extends SSAPBodyMessage> SSAPMessage<SSAPBodyReturnMessage> process(SSAPMessage<T> message,
+			GatewayInfo info) {
 
 		// TODO: PRE-PROCESSORS
 		// DONE: PROCESS
@@ -83,8 +85,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			processor.validateMessage(message);
 			response = processor.process(message);
 
-
-			if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+			if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 				response.setDirection(SSAPMessageDirection.RESPONSE);
 				response.setMessageId(message.getMessageId());
 				response.setMessageType(message.getMessageType());
@@ -92,19 +93,15 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 			final SSAPMessage<SSAPBodyReturnMessage> resp = response;
 			Optional<IoTSession> session;
-			if(SSAPMessageTypes.JOIN.equals(message.getMessageType())) {
+			if (SSAPMessageTypes.JOIN.equals(message.getMessageType())) {
 				session = securityPluginManager.getSession(response.getSessionKey());
-			}
-			else {
+			} else {
 				session = securityPluginManager.getSession(message.getSessionKey());
 			}
 
 			session.ifPresent((s) -> {
 				deviceManager.registerActivity(message, resp, s, info);
 			});
-
-
-
 
 		} catch (final SSAPProcessorException e) {
 			response = SSAPUtils.generateErrorMessage(message, SSAPErrorCode.PROCESSOR,
@@ -138,7 +135,8 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			request = SSAPJsonParser.getInstance().deserialize(message);
 			response = this.process(request, info);
 		} catch (final SSAPParseException e) {
-			response = SSAPUtils.generateErrorMessage(request, SSAPErrorCode.PROCESSOR, "Request message is not parseable" + e.getMessage());
+			response = SSAPUtils.generateErrorMessage(request, SSAPErrorCode.PROCESSOR,
+					"Request message is not parseable" + e.getMessage());
 		}
 
 		try {
@@ -149,20 +147,20 @@ public class MessageProcessorDelegate implements MessageProcessor {
 
 	}
 
-	private Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(SSAPMessage<? extends SSAPBodyMessage> message)
-	{
+	private Optional<SSAPMessage<SSAPBodyReturnMessage>> validateMessage(
+			SSAPMessage<? extends SSAPBodyMessage> message) {
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
 
 		// Check presence of sessionKey and authorization of sessionKey
 		if (message.getBody().isSessionKeyMandatory() && StringUtils.isEmpty(message.getSessionKey())) {
-			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
-					String.format(MessageException.ERR_FIELD_IS_MANDATORY, "Sessionkey", message.getMessageType().name()));
+			response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR, String
+					.format(MessageException.ERR_FIELD_IS_MANDATORY, "Sessionkey", message.getMessageType().name()));
 
 			return Optional.of(response);
 		}
 
 		if (message.getBody().isSessionKeyMandatory()) {
-			if(!securityPluginManager.checkSessionKeyActive(message.getSessionKey())) {
+			if (!securityPluginManager.checkSessionKeyActive(message.getSessionKey())) {
 				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTENTICATION,
 						String.format(MessageException.ERR_SESSIONKEY_NOT_VALID, message.getMessageType().name()));
 			}
@@ -171,13 +169,14 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		// Check if ontology is present and autorization for ontology
 		if (message.getBody().isOntologyMandatory()) {
 			final SSAPBodyOntologyMessage body = (SSAPBodyOntologyMessage) message.getBody();
-			if(StringUtils.isEmpty(body.getOntology())) {
+			if (StringUtils.isEmpty(body.getOntology())) {
 				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.PROCESSOR,
 						String.format(MessageException.ERR_ONTOLOGY_SCHEMA, message.getMessageType().name()));
 				return Optional.of(response);
 			}
 
-			if(!securityPluginManager.checkAuthorization(message.getMessageType(), body.getOntology(), message.getSessionKey())) {
+			if (!securityPluginManager.checkAuthorization(message.getMessageType(), body.getOntology(),
+					message.getSessionKey())) {
 				response = SSAPMessageGenerator.generateResponseErrorMessage(message, SSAPErrorCode.AUTHORIZATION,
 						String.format(MessageException.ERR_ONTOLOGY_AUTH, message.getMessageType().name()));
 				return Optional.of(response);
@@ -208,7 +207,5 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		return filteredProcessors.get(0);
 
 	}
-
-
 
 }

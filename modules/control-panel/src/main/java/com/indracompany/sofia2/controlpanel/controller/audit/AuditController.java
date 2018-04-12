@@ -25,12 +25,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
-import com.indracompany.sofia2.config.model.DigitalTwinType;
-import com.indracompany.sofia2.config.service.digitaltwin.type.DigitalTwinTypeService;
 import com.indracompany.sofia2.config.services.utils.ServiceUtils;
-import com.indracompany.sofia2.controlpanel.controller.digitaltwin.device.DigitalTwinDeviceController;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
 
@@ -40,13 +36,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequestMapping("/audit")
 public class AuditController {
-	
+
 	@Autowired
 	private QueryToolService queryToolService;
-	
+
 	@Autowired
 	private AppWebUtils utils;
-	
+
 	@GetMapping("show")
 	public String show(Model model) {
 		List<OperationType> operations = new ArrayList<>();
@@ -56,30 +52,31 @@ public class AuditController {
 		model.addAttribute("operations", operations);
 		return "audit/show";
 	}
-	
+
 	@PostMapping("executeQuery")
-	public String query (Model model, @RequestParam String offset, @RequestParam String operation) {
-		
+	public String query(Model model, @RequestParam String offset, @RequestParam String operation) {
+
 		String result = null;
-		
+
 		try {
-			
+
 			String collection = ServiceUtils.getAuditCollectionName(utils.getUserId());
-			String query = "db." + collection + ".find({";
-			
+
+			String query = "select message, user, timeStamp, module, ontology, operationType, data from " + collection;
+
 			if (!operation.equalsIgnoreCase("all")) {
-				query += "operationType:'" + operation + "'";
+				query += " where operationType = \"" + operation + "\"";
 			}
-			
-			query += "}).sort({timestamp: -1}).limit("+Integer.parseInt(offset)+")";
-			
-			String queryResult = queryToolService.queryNativeAsJson(utils.getUserId(), collection, query);			
-			model.addAttribute("queryResult", utils.getAsObject(queryResult));
+
+			query += " order by timestamp desc limit " + Integer.parseInt(offset);
+
+			String queryResult = queryToolService.querySQLAsJson(utils.getUserId(), collection, query.toLowerCase(), 0);
+			model.addAttribute("queryResult", queryResult);
 			result = "audit/show :: query";
-		
-		} catch (JsonProcessingException e) {
+
+		} catch (Exception e) {
 			model.addAttribute("queryResult",
-			utils.getMessage("querytool.query.native.error", "Error malformed query"));
+					utils.getMessage("querytool.query.native.error", "Error malformed query"));
 		}
 		return result;
 	}

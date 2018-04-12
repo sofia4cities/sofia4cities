@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,14 +33,13 @@ public class Sofia2AuditEvent implements Serializable {
 	public static enum EventType {
 		USER, SECURITY, ERROR, DATA, GENERAL, IOTBROKER, APIMANAGER;
 	}
-	
+
 	public static enum Module {
 		CONTROLPANEL, APIMANAGER, IOTBROKER, FLOWENGINE, ROUTER
 	}
-	
+
 	public static enum OperationType {
-		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE,UPDATE_BY_ID, DELETE, 
-		DELETE_BY_ID, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND
+		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE, UPDATE_BY_ID, DELETE, DELETE_BY_ID, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND
 	}
 
 	@Getter
@@ -83,11 +81,11 @@ public class Sofia2AuditEvent implements Serializable {
 	@Getter
 	@Setter
 	protected String otherType;
-	
-	public Sofia2AuditEvent () { 
+
+	public Sofia2AuditEvent() {
 		super();
 	}
-	
+
 	public Sofia2AuditEvent(String message, String id, EventType type, Date timeStamp, String user, String ontology,
 			String operationType, Module module, Map<String, Object> extraData, String otherType) {
 		super();
@@ -109,16 +107,16 @@ public class Sofia2AuditEvent implements Serializable {
 				+ ", user=" + user + ", ontology=" + ontology + ", operationType=" + operationType + ", module="
 				+ module + ", extraData=" + extraData + ", otherType=" + otherType + "]";
 	}
-	
-	public String toJson ()  {	
-		
+
+	public String toJson() {
+
 		String json = "";
 		try {
 			return new ObjectMapper().writeValueAsString(this);
 		} catch (JsonProcessingException e) {
-			log.error("Error parsing audit event ",e);
-		}	
-		
+			log.error("Error parsing audit event ", e);
+		}
+
 		return json;
 	}
 

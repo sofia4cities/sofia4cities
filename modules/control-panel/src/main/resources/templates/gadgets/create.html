@@ -263,7 +263,15 @@
 	<link rel="stylesheet" href="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.css"/>
 	<script src="/controlpanel/static/dashboards/resources/lf-ng-md-file-input.min.js"></script>
 	<script src="/controlpanel/static/dashboards/scripts/app.js"></script>
-	
+	<script
+		th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}"
+		type="text/javascript"></script>
+	<script
+		th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}"
+		type="text/javascript"></script>
+		<script th:if="${lang} == 'es'"
+		th:src="@{/static/vendor/jquery-validation/localization/messages_es.min.js}"
+		type="text/javascript"></script>
 	<script th:inline="javascript">
 	
 	 $("#createBtn,#updateBtn").on("click", function() {
@@ -280,7 +288,7 @@
      	//else{
      	//	$("#config").val("{}");
      	//}
-     	$("#gadget_create_form").get(0).submit();
+     	//$("#gadget_create_form").get(0).submit();
      });
 	
 	var gadget= [ {
@@ -418,6 +426,22 @@
 		},
 		options:{
 		}
+	}, {
+		type : "radar",
+		icon : "/controlpanel/static/images/dashboards/radar.png",
+		attributes : [ {
+			name : "category",
+			types : [ "date", "number", "string"  ]
+		},{
+			name : "value",
+			types : [ "number" ]
+		} ],
+		series : {
+			maxseries : -1,
+			options : [				
+			]
+		},
+		options:{}
 	}
 
 	];
@@ -864,6 +888,16 @@
 			
 		}
 	)
+	
+	var gadgetCreateJson = { 		
+				"parameterTextLabel" : [[#{gadgettemplates.template.parameters.text.label}]],
+				"language" : currentLanguage,
+				"parameterNumberLabel" : [[#{gadgettemplates.template.parameters.number.label}]],	
+				"parameterDsLabel" : [[#{gadgettemplates.template.parameters.ds.label}]],
+				"parameterDsPropertieLabel" : [[#{gadgettemplates.template.parameters.name.ds.label}]],
+				"titleParametersSelected" : [[#{gadgettemplates.template.parameters.selected}]],				
+				"parameterSelectLabel" : [[#{gadgettemplates.template.parameters.label.select}]]};
+		
 	
 	</script>
 	

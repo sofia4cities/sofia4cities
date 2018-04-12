@@ -11,16 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2;
+package com.indracompany.sofia2.config.services.exceptions;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+public class WebProjectServiceException extends RuntimeException {
 
-@SpringBootApplication(scanBasePackages="com.indracompany.sofia2")
-public class DashboardEngineApplication {
+	private static final long serialVersionUID = 1L;
 
-    public static void main(String[] args) {
-        SpringApplication.run(DashboardEngineApplication.class, args);
-
-    }
+	public WebProjectServiceException(String message) {
+		super(message);
+	}
 }
