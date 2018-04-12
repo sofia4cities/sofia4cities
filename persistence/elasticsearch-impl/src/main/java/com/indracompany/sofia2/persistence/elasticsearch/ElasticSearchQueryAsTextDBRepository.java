@@ -29,31 +29,30 @@ import lombok.extern.slf4j.Slf4j;
 @Scope("prototype")
 @Slf4j
 public class ElasticSearchQueryAsTextDBRepository implements QueryAsTextDBRepository {
-	
+
 	@Autowired
 	@Qualifier("ElasticSearchBasicOpsDBRepository")
 	private BasicOpsDBRepository elasticSearchBasicOpsDBRepository;
-	
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		query=query.toLowerCase();
+		query = query.replaceAll(ontology, ontology.toLowerCase());
+		ontology = ontology.toLowerCase();
 		return elasticSearchBasicOpsDBRepository.queryNativeAsJson(ontology, query, offset, limit);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		query=query.toLowerCase();
+		query = query.replaceAll(ontology, ontology.toLowerCase());
+		ontology = ontology.toLowerCase();
 		return elasticSearchBasicOpsDBRepository.queryNativeAsJson(ontology, query);
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query, int offset) throws DBPersistenceException {
-		ontology=ontology.toLowerCase();
-		query=query.toLowerCase();
+		query = query.replaceAll(ontology, ontology.toLowerCase());
+		ontology = ontology.toLowerCase();
 		return elasticSearchBasicOpsDBRepository.querySQLAsJson(ontology, query, offset);
 	}
 

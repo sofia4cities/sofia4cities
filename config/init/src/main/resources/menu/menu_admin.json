@@ -2,171 +2,101 @@
 	"menu": "Sofia4Cities",
 	"rol": "ROLE_ADMINISTRATOR",
 	"noSession": "/console/login",
-	"navigation": [
+	"navigation": [		
 		{
 			"title": {
-				"EN": "DATA MODELLING",
-				"ES": "MODELADO DE DATOS"
+				"EN": "SYSTEM MONITORING",
+				"ES": "MONITORIZACIÓN DEL SISTEMA"
 			},
-			"icon": "flaticon-network",
+			"icon": "flaticon-refresh",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "Models/Ontologies",
-						"ES": "Modelos/Ontologías"
+						"EN": "Monitoring UI",
+						"ES": "Consola Monitorización"
 					},
 					"icon": "",
-					"url": "/controlpanel/ontologies/list"
+					"url": "/monitoring/"
+				},
+				{
+					"title": {
+						"EN": "Monitoring Dashboard",
+						"ES": "Dashboard Monitorización"
+					},
+					"icon": "",
+					"url": "/monitoring/"
+				},
+				{
+					"title": {
+						"EN": "Deployment UI",
+						"ES": "Consola Despliegue"
+					},
+					"icon": "",
+					"url": "https://rancher.sofia4cities.com/login/"
 				}
+			]
+		},		
+		{
+			"title": {
+				"EN": "",
+				"ES": ""
+			},
+			"icon": "flaticon-more-v3",
+			"url": "",
+			"submenu": [
 			]
 		},
 		{
 			"title": {
-				"EN": "DEVICES",
-				"ES": "DISPOSITIVOS"
+				"EN": "ADMINISTRATION",
+				"ES": "ADMINISTRACIÓN"
 			},
-			"icon": "flaticon-share",
+			"icon": "flaticon-cogwheel-2",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "Definition of Devices",
-						"ES": "Definición de Devices"
+						"EN": "Users Management",
+						"ES": "Gestión de Usuarios"
 					},
 					"icon": "",
-					"url": "/controlpanel/devices/list"
-				},
+					"url": "/controlpanel/users/list"
+				},			
 				{
 					"title": {
-						"EN": "Devices Simulator",
-						"ES": "Simulador de Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/devicesimulation/list"
-				},
-				{
-					"title": {
-						"EN": "Device Management",
-						"ES": "Gestión de Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/devices/management/show"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "INGEST & PROCESS",
-				"ES": "INGESTA Y PROCESADO"
-			},
-			"icon": "flaticon-analytics",
-			"url": "",
-			"submenu": [		
-				{
-					"title": {
-						"EN": "Flow Engine",
-						"ES": "Motor de Flujos"
-					},
-					"icon": "",
-					"url": "/controlpanel/flows/list"
-				},
-				{
-					"title": {
-						"EN": "Twitter Streams",
-						"ES": "Escucha en Twitter"
-					},
-					"icon": "",
-					"url": "/controlpanel/twitter/scheduledsearch/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "VISUALIZATION",
-				"ES": "VISUALIZACIÓN"
-			},
-			"icon": "flaticon-dashboard",
-			"url": "",
-			"submenu": [			
-				{
-					"title": {
-						"EN": "Dashboards",
-						"ES": "Dashboards"
-					},
-					"icon": "",
-					"url": "/controlpanel/dashboards/list"
-				},
-				{
-					"title": {
-						"EN": "Gadgets",
-						"ES": "Gadgets"
-					},
-					"icon": "",
-					"url": "/controlpanel/gadgets/list"
-				},
-				{
-					"title": {
-						"EN": "Gadget Templates",
-						"ES": "Plantillas Gadget  "
-					},
-					"icon": "",
-					"url": "/controlpanel/gadgettemplates/list"
-				},
-				{
-					"title": {
-						"EN": "Datasources",
-						"ES": "Fuentes de datos"
-					},
-					"icon": "",
-					"url": "/controlpanel/datasources/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "API MANAGER",
-				"ES": "API MANAGER"
-			},
-			"icon": "flaticon-layers",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "APIs Definition",
-						"ES": "Definición de APIs"
-					},
-					"icon": "",
-					"url": "/controlpanel/apimanager/list"
-				},
-				{
-					"title": {
-						"EN": "API Manager Tokens",
-						"ES": "Tokens del API Manager"
-					},
-					"icon": "",
-					"url": "/controlpanel/apimanager/token/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "MARKET",
-				"ES": "MARKET"
-			},
-			"icon": "flaticon-layers",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Market's Assets",
-						"ES": "Gestión Assets"
+						"EN": "Market Assets",
+						"ES": "Activos del Market"
 					},
 					"icon": "",
 					"url": "/controlpanel/marketasset/list"
+				},
+				{
+					"title": {
+						"EN": "Configuration Management",
+						"ES": "Gestión de Configuraciones"
+					},
+					"icon": "",
+					"url": "/controlpanel/configurations/list"
+				},
+				{
+					"title": {
+						"EN": "Web Projects Management",
+						"ES": "Gestión Proyectos Web"
+					},
+					"icon": "",
+					"url": "/controlpanel/webprojects/list"
+				},
+				{
+				    "title": {
+						"EN": "Data Models Management",
+						"ES": "Gestión DataModels"
+					},
+					"icon": "",
+					"url": "/controlpanel/datamodels/list"
 				}
 			]
-		},
+		},	
 		{
 			"title": {
 				"EN": "TOOLS",
@@ -177,7 +107,7 @@
 			"submenu": [
 				{
 					"title": {
-						"EN": "Database Query Tool",
+						"EN": "Query Tool",
 						"ES": "Herramienta Consultas"
 					},
 					"icon": "",
@@ -185,8 +115,8 @@
 				},
 				{
 					"title": {
-						"EN": "Audit",
-						"ES": "Auditoría"
+						"EN": "System Audit",
+						"ES": "Auditoría del Sisstema"
 					},
 					"icon": "",
 					"url": "/controlpanel/audit/show"
@@ -203,95 +133,191 @@
 		},
 		{
 			"title": {
-				"EN": "DIGITAL TWIN",
-				"ES": "DIGITAL TWIN"
+				"EN": "",
+				"ES": ""
 			},
-			"icon": "flaticon-open-box",
+			"icon": "flaticon-more-v3",
+			"url": "",
+			"submenu": [
+			]
+		},
+		{
+			"title": {
+				"EN": "DATA MODELLING",
+				"ES": "MODELADO DE DATOS"
+			},
+			"icon": "flaticon-network",
+			"url": "",
+			"submenu": [
+				{	
+					"title": {
+						"EN": "Ontologies Management",
+						"ES": "Gestión de Ontologías"
+					},
+					"icon": "",
+					"url": "/controlpanel/ontologies/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "DEVICES",
+				"ES": "DISPOSITIVOS"
+			},
+			"icon": "flaticon-truck",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "Management of Types",
-						"ES": "Gestión de tipos"
+						"EN": "Devices Management",
+						"ES": "Gestión de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/list"
+				},
+				{
+					"title": {
+						"EN": "Devices Simulator Management",
+						"ES": "Gestión de Simulaciones de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devicesimulation/list"
+				},
+				{
+					"title": {
+						"EN": "Device Status",
+						"ES": "Estado de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/management/show"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "INGEST & PROCESS",
+				"ES": "INGESTA Y PROCESADO"
+			},
+			"icon": "flaticon-car",
+			"url": "",
+			"submenu": [	
+				{
+					"title": {
+						"EN": "Flow Engine Management",
+						"ES": "Gestión de Motor de Flujos"
+					},
+					"icon": "",
+					"url": "/controlpanel/flows/list"
+				},
+				{
+					"title": {
+						"EN": "Twitter Streams Management",
+						"ES": "Gestión de Escuchas Twitter"
+					},
+					"icon": "",
+					"url": "/controlpanel/twitter/scheduledsearch/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "VISUALIZATION",
+				"ES": "VISUALIZACIÓN"
+			},
+			"icon": "flaticon-graph",
+			"url": "",
+			"submenu": [			
+				{
+					"title": {
+						"EN": "Dashboards Management",
+						"ES": "Gestión de Dashboards"
+					},
+					"icon": "",
+					"url": "/controlpanel/dashboards/list"
+				},
+				{
+					"title": {
+						"EN": "Gadgets Management",
+						"ES": "Gestión de Gadgets"
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgets/list"
+				},				
+     			{
+					"title": {
+						"EN": "Gadget Templates Management",
+						"ES": "Gestión de Plantillas de Gadget"
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgettemplates/list"
+				},
+				{
+					"title": {
+						"EN": "DataSources Management",
+						"ES": "Gestión de DataSources"
+					},
+					"icon": "",
+					"url": "/controlpanel/datasources/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "API MANAGER",
+				"ES": "API MANAGER"
+			},
+			"icon": "flaticon-multimedia",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "APIs Management",
+						"ES": "Gestión de APIs"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/list"
+				},
+				{
+					"title": {
+						"EN": "Tokens Management",
+						"ES": "Gestión de Tokens"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/token/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "DIGITAL TWIN",
+				"ES": "DIGITAL TWIN"
+			},
+			"icon": "flaticon-medical",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Digital Twin Types Management",
+						"ES": "Gestión de Digital Twin Types"
 					},
 					"icon": "",
 					"url": "/controlpanel/digitaltwintypes/list"
 				},
 				{
 					"title": {
-						"EN": "Management of Devices",
-						"ES": "Gestión de Dispositivos"
+						"EN": "Digital Twin Management",
+						"ES": "Gestión Digital Twins"
 					},
 					"icon": "",
 					"url": "/controlpanel/digitaltwindevices/list"
 				},
 				{
 					"title": {
-						"EN": "Display of Devices",
-						"ES": "Visualización de Dispositivos"
+						"EN": "Digital Twin Status",
+						"ES": "Estado Digital Twins"
 					},
 					"icon": "",
 					"url": "/controlpanel/digitaltwindisplay/show"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "PROJECTS",
-				"ES": "PROYECTOS"
-			},
-			"icon": "flaticon-open-box",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Web Projects",
-						"ES": "Proyectos Web"
-					},
-					"icon": "",
-					"url": "/controlpanel/webprojects/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "ADMINISTRATION",
-				"ES": "ADMINISTRACIÓN"
-			},
-			"icon": "flaticon-cogwheel-2",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Monitoring UI",
-						"ES": "Consola Monitorización"
-					},
-					"icon": "",
-					"url": "/controlpanel/"
-				},
-				{
-					"title": {
-						"EN": "Data Models",
-						"ES": "Modelos de Datos"
-					},
-					"icon": "",
-					"url": "/controlpanel/datamodels/list"
-				},
-				{
-					"title": {
-						"EN": "Users Management",
-						"ES": "Gestión de Usuarios"
-					},
-					"icon": "",
-					"url": "/controlpanel/users/list"
-				},
-				{
-					"title": {
-						"EN": "Configuration Management",
-						"ES": "Gestión de Configuraciones"
-					},
-					"icon": "",
-					"url": "/controlpanel/configurations/list"
 				}
 			]
 		}

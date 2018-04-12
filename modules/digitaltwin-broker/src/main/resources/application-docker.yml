@@ -11,9 +11,9 @@ spring:
 sofia2:
   database.mongodb:
     servers: realtimedb:27017
-   database.elasticsearch:
-      sql.connector.http.endpoint: http://elasticdb:9200
-      url: elasticdb    
+  database.elasticsearch:
+    sql.connector.http.endpoint: http://elasticdb:9200
+    url: elasticdb
 ## LOGGING CONF
 logging:
    path: /var/log/logs-s4c 

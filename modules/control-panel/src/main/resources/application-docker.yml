@@ -4,7 +4,7 @@ sofia2:
       quasar.connector.http.endpoint: http://quasar:10800/query/fs/
    database.elasticsearch:
       sql.connector.http.endpoint: http://elasticdb:9200
-      url: elasticdb        
+      url: elasticdb
    urls:
     iotbroker: https://${SERVER_NAME}           
    flowengine.services:
@@ -13,7 +13,7 @@ sofia2:
     proxyurl: https://${SERVER_NAME}/nodered/    
    webproject:
       rootfolder.path: /usr/local/webprojects/
-      baseurl: http://${SERVER_NAME}/controlpanel/webprojects/               
+      baseurl: http://${SERVER_NAME}/web/               
 
 spring:
    datasource:  
