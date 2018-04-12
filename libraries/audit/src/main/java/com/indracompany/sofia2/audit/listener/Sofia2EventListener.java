@@ -15,12 +15,27 @@
 package com.indracompany.sofia2.audit.listener;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
 import com.indracompany.sofia2.audit.notify.EventRouter;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Sofia2EventListener {
+	
 	
 	@Autowired
 	protected EventRouter eventRouter;
-
+	
+	@Async
+	@EventListener
+	void handleAsync(Sofia2AuditEvent event) throws JsonProcessingException {
+		log.info("Sofia2EventListener :: Default Event Processing detected : thread '{}' handling '{}' async event",  event.getType(),event.getMessage());
+		eventRouter.notify(event.toJson());
+	}
+	
 }

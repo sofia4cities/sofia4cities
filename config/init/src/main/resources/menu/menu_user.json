@@ -5,88 +5,30 @@
 	"navigation": [
 		{
 			"title": {
-				"EN": "DATA MODEL",
-				"ES": "MODELADO DE DATOS"
+				"EN": "SHARE & USE",
+				"ES": "COMPARTE Y USA"
 			},
-			"icon": "flaticon-network",
+			"icon": "flaticon-cart",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "Models/Ontologies",
-						"ES": "Modelos/Ontologías"
+						"EN": "My Market",
+						"ES": "Mi Market"
 					},
 					"icon": "",
-					"url": "/controlpanel/ontologies/list"
+					"url": "/controlpanel/marketasset/list"
 				}
 			]
 		},
 		{
 			"title": {
-				"EN": "VISUALIZATION",
-				"ES": "VISUALIZACIÓN"
+				"EN": "",
+				"ES": ""
 			},
-			"icon": "flaticon-dashboard",
+			"icon": "flaticon-more-v3",
 			"url": "",
-			"submenu": [			
-				{
-					"title": {
-						"EN": "Dashboards",
-						"ES": "Dashboards"
-					},
-					"icon": "",
-					"url": "/controlpanel/dashboards/list"
-				},
-				{
-					"title": {
-						"EN": "Gadgets",
-						"ES": "Gadgets"
-					},
-					"icon": "",
-					"url": "/controlpanel/gadgets/list"
-				},				
-				{
-					"title": {
-						"EN": "Gadget Templates",
-						"ES": "Plantillas Gadget  "
-					},
-					"icon": "",
-					"url": "/controlpanel/gadgettemplates/list"
-				},
-				{
-					"title": {
-						"EN": "Datasources",
-						"ES": "Fuentes de datos"
-					},
-					"icon": "",
-					"url": "/controlpanel/datasources/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "PUB:API MANAGER",
-				"ES": "PUB:API MANAGER"
-			},
-			"icon": "flaticon-layers",
-			"url": "",
-			"submenu": [		
-				{
-					"title": {
-						"EN": "APIs Definition",
-						"ES": "Definición de APIs"
-					},
-					"icon": "",
-					"url": "/controlpanel/apimanager/list"
-				},
-				{
-					"title": {
-						"EN": "API Manager Tokens",
-						"ES": "Tokens del API Manager"
-					},
-					"icon": "",
-					"url": "/controlpanel/apimanager/token/list"
-				}
+			"submenu": [
 			]
 		},
 		{
@@ -99,16 +41,8 @@
 			"submenu": [
 				{
 					"title": {
-						"EN": "Database Query Tool",
-						"ES": "Herramienta Consultas Base Datos"
-					},
-					"icon": "",
-					"url": "/controlpanel/querytool/show"
-				},
-				{
-					"title": {
-						"EN": "Audit",
-						"ES": "Auditoría"
+						"EN": "My Audit",
+						"ES": "Mi Auditoría"
 					},
 					"icon": "",
 					"url": "/controlpanel/audit/show"

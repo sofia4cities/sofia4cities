@@ -1559,9 +1559,9 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsSourcesInDashboard(){
         var gadgets = [];
-        var page = $scope.dashboard.pages[$scope.selectedpage];
-        for(var layerIndex in page.layers){
-          var layer = page.layers[layerIndex];
+        var page = $scope.dashboard.pages[$scope.selectedpage];       
+          for (var i = 0; i < page.layers.length; i++) {
+          var layer = page.layers[i];
           var gadgetsAux = layer.gridboard.filter(function(gadget){return typeGadgetList.indexOf(gadget.type) != -1});
           if(gadgetsAux.length){
             gadgets = gadgets.concat(gadgetsAux);
@@ -1573,9 +1573,9 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsInDashboard(){
         var gadgets = [];
-        var page = $scope.dashboard.pages[$scope.selectedpage];
-        for(var layerIndex in page.layers){
-          var layer = page.layers[layerIndex];
+        var page = $scope.dashboard.pages[$scope.selectedpage];      
+          for (var i = 0; i < page.layers.length; i++) {
+          var layer = page.layers[i];
           var gadgetsAux = layer.gridboard;
           if(gadgetsAux.length){
             gadgets = gadgets.concat(gadgetsAux);
@@ -1585,9 +1585,9 @@
       }
 
       function findGadgetInDashboard(gadgetId){
-        var page = $scope.dashboard.pages[$scope.selectedpage];
-        for(var layerIndex in page.layers){
-          var layer = page.layers[layerIndex];
+        var page = $scope.dashboard.pages[$scope.selectedpage];      
+          for (var i = 0; i < page.layers.length; i++) {
+          var layer = page.layers[i];
           var gadgets = layer.gridboard.filter(function(gadget){return gadget.id === gadgetId});
           if(gadgets.length){
             return gadgets[0];

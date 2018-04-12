@@ -16,7 +16,7 @@
 					<doTry>
 						<throttle id="defaultThrottler" timePeriodMillis="1000"
 							rejectExecution="true">
-							<constant>10</constant>
+							<constant>100</constant>
 							<to uri="direct:process-api" />
 						</throttle>
 						<doCatch>

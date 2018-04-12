@@ -243,7 +243,7 @@ public class InitConfigDB {
 			device.setLongitude("24.92333816559176");
 			device.setPort(10000);
 			device.setUrlSchema("http");
-			device.setUrl("http://localhost:8081/digitaltwinbroker");
+			device.setUrl("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker");
 			device.setLogic(
 					"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
 							+ System.getProperty("line.separator") + "function init(){"

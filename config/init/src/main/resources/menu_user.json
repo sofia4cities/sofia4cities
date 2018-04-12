@@ -1,0 +1,25 @@
+{
+	"menu": "Sofia4Cities",
+	"rol": "ROLE_USER",
+	"noSession": "/console/login",
+	"navigation": [
+		{
+			"title": {
+				"EN": "MARKET",
+				"ES": "MARKET"
+			},
+			"icon": "flaticon-layers",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Market's Assets",
+						"ES": "Gestión Assets"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
+				}
+			]
+		}
+	]
+}

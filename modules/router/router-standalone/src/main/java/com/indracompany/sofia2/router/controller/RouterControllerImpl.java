@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
-import com.indracompany.sofia2.audit.producer.EventProducer;
+import com.indracompany.sofia2.commons.audit.producer.EventProducer;
 import com.indracompany.sofia2.config.services.oauth.JWTService;
 import com.indracompany.sofia2.router.audit.aop.Auditable;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
