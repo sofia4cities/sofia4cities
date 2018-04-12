@@ -184,8 +184,6 @@ public class InitConfigDB {
 			init_OntologyCategory();
 			log.info("OK init_OntologyCategory");
 
-			initAuditOntology();
-			log.info("OK init_AuditOntology");
 
 			//
 			init_ClientPlatform();
@@ -243,7 +241,7 @@ public class InitConfigDB {
 			device.setLongitude("24.92333816559176");
 			device.setPort(10000);
 			device.setUrlSchema("http");
-			device.setUrl("http://localhost:8081/digitaltwinbroker");
+			device.setUrl("https://s4citiespro.westeurope.cloudapp.azure.com/digitaltwinbroker");
 			device.setLogic(
 					"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
 							+ System.getProperty("line.separator") + "function init(){"
@@ -1239,40 +1237,7 @@ public class InitConfigDB {
 
 	}
 
-	public void addAuditOntology(User user) {
-		if (ontologyRepository.findByIdentification("Audit_" + user.getUserId()) == null) {
-			Ontology ontology = new Ontology();
-			ontology.setJsonSchema("{}");
-			ontology.setIdentification("Audit_" + user.getUserId());
-			ontology.setDescription("Ontology Audit for user " + user.getUserId());
-			ontology.setActive(true);
-			ontology.setRtdbClean(true);
-			ontology.setRtdbToHdb(true);
-			ontology.setPublic(false);
-			ontology.setUser(user);
 
-			ontologyRepository.save(ontology);
-		}
-	}
-
-	public void initAuditOntology() {
-		log.info("adding audit ontologies...");
-
-		addAuditOntology(getUserAdministrator());
-
-		addAuditOntology(getUserDeveloper());
-
-		addAuditOntology(getUser());
-
-		addAuditOntology(getUserAnalytics());
-
-		addAuditOntology(getUserPartner());
-
-		addAuditOntology(getUserSysAdmin());
-
-		addAuditOntology(getUserOperations());
-
-	}
 
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");

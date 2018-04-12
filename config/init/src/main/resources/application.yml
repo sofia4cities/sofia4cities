@@ -10,6 +10,7 @@ sofia2: #Config Sofia2 specific
    init:
       configdb: true
       mongodb: true
+      elasticdb: true
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin

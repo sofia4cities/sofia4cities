@@ -23,6 +23,11 @@ var WebProjectCreateController = function() {
             }
         });
     }
+    
+	// REDIRECT URL
+	var navigateUrl = function(url){
+		window.location.href = url; 
+	}
 	
     // CONTROLLER PUBLIC FUNCTIONS 
 	return{
@@ -48,6 +53,7 @@ var WebProjectCreateController = function() {
 			logControl ? console.log(LIB_TITLE + ': uploadZip()') : '';	
 			uploadZip(); 
 		},
+		
 	};
 }();
 
