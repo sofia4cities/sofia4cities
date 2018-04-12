@@ -1,0 +1,315 @@
+{
+	"menu": "Sofia4Cities",
+	"rol": "ROLE_ADMINISTRATOR",
+	"noSession": "/console/login",
+	"navigation": [		
+		{
+			"title": {
+				"EN": "SYSTEM MONITORING",
+				"ES": "MONITORIZACIÓN DEL SISTEMA"
+			},
+			"icon": "flaticon-refresh",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Monitoring UI",
+						"ES": "Consola Monitorización"
+					},
+					"icon": "",
+					"url": "/monitoring/"
+				},
+				{
+					"title": {
+						"EN": "Monitoring Dashboard",
+						"ES": "Dashboard Monitorización"
+					},
+					"icon": "",
+					"url": "/monitoring/"
+				},
+				{
+					"title": {
+						"EN": "Deployment UI",
+						"ES": "Consola Despliegue"
+					},
+					"icon": "",
+					"url": "https://rancher.sofia4cities.com/login/"
+				}
+			]
+		},		
+		{
+			"title": {
+				"EN": "ADMINISTRATION",
+				"ES": "ADMINISTRACIÓN"
+			},
+			"icon": "flaticon-cogwheel-2",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Users Management",
+						"ES": "Gestión de Usuarios"
+					},
+					"icon": "",
+					"url": "/controlpanel/users/list"
+				},			
+				{
+					"title": {
+						"EN": "Market Assets",
+						"ES": "Activos del Market"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
+				},
+				{
+					"title": {
+						"EN": "Configuration Management",
+						"ES": "Gestión de Configuraciones"
+					},
+					"icon": "",
+					"url": "/controlpanel/configurations/list"
+				},
+				{
+					"title": {
+						"EN": "Web Projects Management",
+						"ES": "Gestión Proyectos Web"
+					},
+					"icon": "",
+					"url": "/controlpanel/webprojects/list"
+				},
+				{
+				    "title": {
+						"EN": "Data Models Management",
+						"ES": "Gestión DataModels"
+					},
+					"icon": "",
+					"url": "/controlpanel/datamodels/list"
+				}
+			]
+		},	
+		{
+			"title": {
+				"EN": "",
+				"ES": ""
+			},
+			"icon": "flaticon-more-v3",
+			"url": "",
+			"submenu": [
+			]
+		},
+		{
+			"title": {
+				"EN": "DATA MODELLING",
+				"ES": "MODELADO DE DATOS"
+			},
+			"icon": "flaticon-network",
+			"url": "",
+			"submenu": [
+				{	
+					"title": {
+						"EN": "Ontologies Management",
+						"ES": "Gestión de Ontologías"
+					},
+					"icon": "",
+					"url": "/controlpanel/ontologies/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "DEVICES",
+				"ES": "DISPOSITIVOS"
+			},
+			"icon": "flaticon-truck",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Devices Management",
+						"ES": "Gestión de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/list"
+				},
+				{
+					"title": {
+						"EN": "Devices Simulator Management",
+						"ES": "Gestión de Simulaciones de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devicesimulation/list"
+				},
+				{
+					"title": {
+						"EN": "Device Status",
+						"ES": "Estado de Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/management/show"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "INGEST & PROCESS",
+				"ES": "INGESTA Y PROCESADO"
+			},
+			"icon": "flaticon-car",
+			"url": "",
+			"submenu": [	
+				{
+					"title": {
+						"EN": "Flow Engine Management",
+						"ES": "Gestión de Motor de Flujos"
+					},
+					"icon": "",
+					"url": "/controlpanel/flows/list"
+				},
+				{
+					"title": {
+						"EN": "Twitter Streams Management",
+						"ES": "Gestión de Escuchas Twitter"
+					},
+					"icon": "",
+					"url": "/controlpanel/twitter/scheduledsearch/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "VISUALIZATION",
+				"ES": "VISUALIZACIÓN"
+			},
+			"icon": "flaticon-graph",
+			"url": "",
+			"submenu": [			
+				{
+					"title": {
+						"EN": "Dashboards Management",
+						"ES": "Gestión de Dashboards"
+					},
+					"icon": "",
+					"url": "/controlpanel/dashboards/list"
+				},
+				{
+					"title": {
+						"EN": "Gadgets Management",
+						"ES": "Gestión de Gadgets"
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgets/list"
+				},				
+     			{
+					"title": {
+						"EN": "Gadget Templates Management",
+						"ES": "Gestión de Plantillas de Gadget"
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgettemplates/list"
+				},
+				{
+					"title": {
+						"EN": "DataSources Management",
+						"ES": "Gestión de DataSources"
+					},
+					"icon": "",
+					"url": "/controlpanel/datasources/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "API MANAGER",
+				"ES": "API MANAGER"
+			},
+			"icon": "flaticon-multimedia",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "APIs Management",
+						"ES": "Gestión de APIs"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/list"
+				},
+				{
+					"title": {
+						"EN": "Tokens Management",
+						"ES": "Gestión de Tokens"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/token/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "DIGITAL TWIN",
+				"ES": "DIGITAL TWIN"
+			},
+			"icon": "flaticon-medical",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Digital Twin Types Management",
+						"ES": "Gestión de Digital Twin Types"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwintypes/list"
+				},
+				{
+					"title": {
+						"EN": "Digital Twin Management",
+						"ES": "Gestión Digital Twins"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwindevices/list"
+				},
+				{
+					"title": {
+						"EN": "Digital Twin Status",
+						"ES": "Estado Digital Twins"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwindisplay/show"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "TOOLS",
+				"ES": "HERRAMIENTAS"
+			},
+			"icon": "flaticon-open-box",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Query Tool",
+						"ES": "Herramienta Consultas"
+					},
+					"icon": "",
+					"url": "/controlpanel/querytool/show"
+				},
+				{
+					"title": {
+						"EN": "System Audit",
+						"ES": "Auditoría del Sisstema"
+					},
+					"icon": "",
+					"url": "/controlpanel/audit/show"
+				},
+				{
+					"title": {
+						"EN": "Planned Tasks",
+						"ES": "Tareas Planificadas"
+					},
+					"icon": "",
+					"url": "/controlpanel/planner/list"
+				}
+			]
+		}
+	]
+}

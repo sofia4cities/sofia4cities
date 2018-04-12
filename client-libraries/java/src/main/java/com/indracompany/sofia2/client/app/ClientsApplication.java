@@ -15,25 +15,50 @@
 package com.indracompany.sofia2.client.app;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 import com.indracompany.sofia2.client.MQTTClient;
 import com.indracompany.sofia2.client.MQTTClient.QUERY_TYPE;
-import com.indracompany.sofia2.client.RestClient;
 import com.indracompany.sofia2.client.SubscriptionListener;
+import com.indracompany.sofia2.client.configuration.MQTTSecureConfiguration;
 
 public class ClientsApplication {
 
-	public static void main(String[] args) throws InterruptedException, IOException {
+	public static void main(String[] args) throws InterruptedException, IOException, UnrecoverableKeyException,
+			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 
-		MQTTClient client = new MQTTClient("tcp://localhost:1883");
-		String token = "55f51b934e2240638ef23fd5e839ddb1";
-		String clientPlatform = "CPRestaurants";
-		String clientPlatformInstance = clientPlatform + ":MQTT";
-		String ontology = "Restaurants";
+		String url = "ssl://localhost:8883";
+		String keyStorePath = "S:\\sofia2-s4c\\modules\\iotbroker\\sofia2-iotbroker-boot\\src\\main\\resources\\clientdevelkeystore.jks";
+		String keyStorePassword = "changeIt!";
+
+		if (args.length == 3) {
+			url = args[0];
+			keyStorePath = args[1];
+			keyStorePassword = args[2];
+
+		} else if (args.length == 1) {
+			url = args[0];
+		}
+
+		MQTTSecureConfiguration sslConfig = new MQTTSecureConfiguration(keyStorePath, keyStorePassword);
+		MQTTClient clientSecure = new MQTTClient(url, sslConfig);
+
 		int timeout = 50;
-		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
-		String jsonData = "{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}";
-		String subsId = client.subscribe(ontology, "SELECT * FROM Restaurants", QUERY_TYPE.SQL, timeout,
+		String token = "e7ef0742d09d4de5a3687f0cfdf7f626";
+		String clientPlatform = "Ticketing App";
+		String clientPlatformInstance = clientPlatform + ":MQTT";
+		String ontology = "HelsinkiPopulation";
+		clientSecure.connect(token, clientPlatform, clientPlatformInstance, timeout);
+
+		String jsonData = "{ \"Helsinki\":{\"year\":1993, \"population\" : 3500, \"population_women\":1500, \"population_men\":2000}}";
+
+		clientSecure.publish(ontology, jsonData, timeout);
+
+		String subsId = clientSecure.subscribe(ontology, "SELECT * FROM " + ontology, QUERY_TYPE.SQL, timeout,
 				new SubscriptionListener() {
 
 					@Override
@@ -43,21 +68,15 @@ public class ClientsApplication {
 					}
 
 				});
-		client.unsubscribe(subsId);
-		// Thread.sleep(5000);
-		// //client.publish("Restaurants", jsonData, timeout);
-		// Thread.sleep(5000);
-		//
-		// while(true);
-		client.disconnect();
 
-		// RestClient restClient = new RestClient("http://localhost:8081/iotbroker");
-		// String sessionKey = restClient.connect(token, clientPlatform,
-		// clientPlatformInstance);
-		// String instance = "{\"BinaryOnt\":{
-		// \"Name\":\"string\",\"Image\":{\"data\":\"string\",\"media\":{\"name\":\"fichero.pdf\",\"storageArea\":\"SERIALIZED\",\"binaryEncoding\":\"Base64\",\"mime\":\"application/pdf\"}}}}";
-		// restClient.insertInstance(ontology, instance);
-		// restClient.disconnect();
-		//
+		clientSecure.publish(ontology, jsonData, timeout);
+
+		Thread.sleep(5000);
+		clientSecure.unsubscribe(subsId);
+
+		clientSecure.disconnect();
+
+		System.exit(0);
+
 	}
 }

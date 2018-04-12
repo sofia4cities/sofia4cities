@@ -26,6 +26,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +40,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	private AccessDeniedHandler accessDeniedHandler;
 	@Autowired
 	private AuthenticationProvider authenticationProvider;
+	
+	@Autowired
+	private LogoutSuccessHandler logoutSuccessHandler;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -48,7 +52,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 				.permitAll().antMatchers("/health/", "/info", "/metrics", "/trace", "/api", "/dashboards/**", "/gadgets/**", "/datasources/**").permitAll()
 				.antMatchers("/admin").hasAnyRole("ROLE_ADMINISTRATOR").antMatchers("/admin/**")
 				.hasAnyRole("ROLE_ADMINISTRATOR").anyRequest().authenticated().and().formLogin().loginPage("/login")
-				.defaultSuccessUrl("/main").permitAll().and().logout().permitAll().and().sessionManagement()
+				.defaultSuccessUrl("/main").permitAll().and().logout().logoutSuccessHandler(logoutSuccessHandler).permitAll().and().sessionManagement()
 				.invalidSessionUrl("/login").maximumSessions(10).expiredUrl("/login").maxSessionsPreventsLogin(false)
 				.sessionRegistry(sessionRegistry()).and().sessionFixation().none().and().exceptionHandling()
 				.accessDeniedHandler(accessDeniedHandler);

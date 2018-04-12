@@ -45,9 +45,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.indracompany.sofia2.api.init.LoadHelsinkiSampleData;
+
+import lombok.extern.slf4j.Slf4j;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApiManagerApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-
+@Slf4j
 public class ApiManagerInvokationTest {
 
 	@Autowired
@@ -71,6 +75,14 @@ public class ApiManagerInvokationTest {
 	@Before
 	public void setup() {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).addFilter(springSecurityFilterChain).build();
+		
+		LoadHelsinkiSampleData loader = wac.getBean(LoadHelsinkiSampleData.class);
+		
+		try {
+			loader.createAPI();
+		} catch (Exception e) {
+			log.info("Create API already executed");
+		}
 	}
 
 	private String obtainAccessToken(String username, String password) throws Exception {

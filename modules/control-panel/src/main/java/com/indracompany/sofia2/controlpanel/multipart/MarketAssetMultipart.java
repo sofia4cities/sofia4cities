@@ -163,6 +163,6 @@ public class MarketAssetMultipart {
 	
 	@Getter
 	@Setter
-	private String contentType;
+	private String contentId;
 	
 }

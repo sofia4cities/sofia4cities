@@ -13,7 +13,7 @@
     });
 
   /** @ngInject */
-  function ElementController($log, $scope, $mdDialog, $sanitize, $sce, $rootScope) {
+  function ElementController($log, $scope, $mdDialog, $sanitize, $sce, $rootScope, gadgetManagerService) {
     var vm = this;
     vm.$onInit = function () {
       inicializeIncomingsEvents();
@@ -27,11 +27,11 @@
       );
 
       /* Global handler by id */
-      $scope.$on(vm.element.id,
+      /*$scope.$on(vm.element.id,
         function(ev,data){
           angular.merge(vm.element,vm.element,data);
         }
-      );
+      );*/
     }
 
     vm.openEditContainerDialog = function (ev) {
@@ -1080,6 +1080,14 @@
 
     vm.deleteElement = function(){
       $rootScope.$broadcast("deleteElement",vm.element);
+    }
+
+    vm.generateFilterInfo = function(filter){
+      return filter.value + ' (' + gadgetManagerService.findGadgetById(filter.id).header.title.text + ')';
+    }
+
+    vm.deleteFilter = function(id, field){
+      $rootScope.$broadcast(vm.element.id,{id: id,type:'filter',data:[],field:field})
     }
   }
 })();

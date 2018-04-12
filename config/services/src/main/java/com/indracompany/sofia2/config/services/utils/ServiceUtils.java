@@ -27,6 +27,7 @@ import org.springframework.web.util.WebUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +37,8 @@ public class ServiceUtils {
 
 	@Autowired
 	private MessageSource messageSource;
+	
+	public static final String AUDIT_COLLECTION_NAME = "Audit_";
 	
 	public Authentication getAuthentication() {
 		return  SecurityContextHolder.getContext().getAuthentication();
@@ -103,5 +106,9 @@ public class ServiceUtils {
 //		}
 		
 		return user;
+	}
+	
+	public static String getAuditCollectionName (String userId) {		
+		return AUDIT_COLLECTION_NAME + userId;
 	}
 }

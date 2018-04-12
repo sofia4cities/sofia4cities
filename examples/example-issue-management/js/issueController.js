@@ -5,9 +5,9 @@ var IssueController = function() {
 	
 	var url = "http://localhost:8081/iotbroker/message";
 	var ontology = 'Ticket';
-	var device = 'Ticketing';
-	var token= '3c0b1c2d17bc47b0b24f3698b8bf6ed4';
-	var deviceInstance = new Date();
+	var device = 'Ticketing App';
+	var token= 'e7ef0742d09d4de5a3687f0cfdf7f626';
+	var deviceInstance = 'Ticketing App: Web';
 	var config ={};
 	var queryAll= 'db.' + ontology + '.find()'
 	var queryType= 'NATIVE';
@@ -18,7 +18,7 @@ var IssueController = function() {
 	var comboSelect;
 
 	var edit = function(id) {
-		var queryUpdate = 'db.' + ontology + '.update({\'_id\':{\'$oid\':\''+id+'\'}},{\'Status\':\''+$('#'+id +' select').val()+ '\'}';
+		var queryUpdate = 'db.' + ontology + '.update({\'_id\':{\'$oid\':\''+id+'\'}},{\'Ticket.Status\':\''+$('#'+id +' select').val()+ '\'}';
 		client.update(ontology,queryUpdate,function(response) {
 			
 			$('.btn-list').trigger('click');
@@ -30,7 +30,7 @@ var IssueController = function() {
 		
 		
 		var data ={'Ticket':{}};
-		var coordinates = {'coordinates': {'0':0.0,'1':0.0}};
+		var coordinates = {'coordinates': {}, 'type' : 'Point'};
 		var media ={'data': '', 'media':{}};
 		data['Ticket']['Identification']=$('#issue').val();
 		data['Ticket']['Status'] = 'PENDING';
@@ -38,8 +38,8 @@ var IssueController = function() {
 		data['Ticket']['Name']=$('#name').val();
 		data['Ticket']['Response_via']=$('#requesttype').val();
 		
-		coordinates['coordinates']['0'] =parseFloat($('#longitude').val());	
-		coordinates['coordinates']['1'] = parseFloat($('#latitude').val());
+		coordinates['coordinates']['0']=parseFloat($('#longitude').val());	
+		coordinates['coordinates']['1']= parseFloat($('#latitude').val());
 		
 		data['Ticket']['Coordinates']= coordinates;
 	
@@ -53,8 +53,6 @@ var IssueController = function() {
 			media['media']['binaryEncoding'] = 'Base64';
 			media['media']['mime'] = 'image/png';
 			data['Ticket']['File'] = media;
-		}else {
-			data['Ticket']['File']= null;
 		}
 		
 		

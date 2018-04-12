@@ -18,16 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hazelcast.core.HazelcastInstance;
-import com.indracompany.sofia2.audit.Sofia2AuditEvent;
 
 @Service
 public class EventSenderImpl implements EventRouter {
 
 	@Autowired
 	private HazelcastInstance instance;
-
+	
 	@Override
-	public void notify(Sofia2AuditEvent event) {
+	public void notify(String event) {
 		instance.getQueue("audit").offer(event);
 
 	}

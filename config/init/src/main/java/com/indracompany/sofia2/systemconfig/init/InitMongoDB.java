@@ -24,6 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
@@ -47,11 +48,15 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 public class InitMongoDB {
 
+	private static boolean started = false;
+
 	@Autowired
+	@Qualifier("MongoManageDBRepository")
 	ManageDBRepository manageDb;
 
 	@Autowired
 	BasicOpsDBRepository basicOps;
+
 	@Autowired
 	DataModelRepository dataModelRepository;
 	@Autowired
@@ -64,10 +69,17 @@ public class InitMongoDB {
 	@PostConstruct
 	@Test
 	public void init() {
-		String userDir = System.getProperty(USER_DIR);
-		init_AuditGeneral();
-		init_RestaurantsDataSet(userDir);
-		init_HelsinkiPopulationDataSet(userDir);
+		if (!started) {
+			started = true;
+			String userDir = System.getProperty(USER_DIR);
+			init_AuditGeneral();
+			init_RestaurantsDataSet(userDir);
+			init_HelsinkiPopulationDataSet(userDir);
+			init_DigitalTwinLogs();
+			init_DigitalTwinEvents();
+			init_DigitalTwinActionsTurbine();
+			init_DigitalTwinPropertiesTurbine();
+		}
 	}
 
 	private User getUserDeveloper() {
@@ -99,7 +111,7 @@ public class InitMongoDB {
 			}
 			if (ontologyRepository.findByIdentification("Restaurants") == null) {
 				Ontology ontology = new Ontology();
-				ontology.setJsonSchema(this.loadFromResources("Restaurants-schema.json"));
+				ontology.setJsonSchema(this.loadFromResources("examples/Restaurants-schema.json"));
 				ontology.setIdentification("Restaurants");
 				ontology.setDescription("Ontology Restaurants for testing");
 				ontology.setActive(true);
@@ -140,7 +152,7 @@ public class InitMongoDB {
 			}
 			if (ontologyRepository.findByIdentification("HelsinkiPopulation") == null) {
 				Ontology ontology = new Ontology();
-				ontology.setJsonSchema(this.loadFromResources("HelsinkiPopulation-schema.json"));
+				ontology.setJsonSchema(this.loadFromResources("examples/HelsinkiPopulation-schema.json"));
 				ontology.setIdentification("HelsinkiPopulation");
 				ontology.setDescription("Ontology HelsinkiPopulation for testing");
 				ontology.setActive(true);
@@ -166,7 +178,7 @@ public class InitMongoDB {
 			}
 			if (ontologyRepository.findByIdentification("androidIoTFrame") == null) {
 				Ontology ontology = new Ontology();
-				ontology.setJsonSchema(this.loadFromResources("androidIoTFrame-schema.json"));
+				ontology.setJsonSchema(this.loadFromResources("examples/androidIoTFrame-schema.json"));
 				ontology.setIdentification("androidIoTFrame");
 				ontology.setDescription("Ontology androidIoTFrame for measures");
 				ontology.setActive(true);
@@ -206,6 +218,70 @@ public class InitMongoDB {
 		}
 	}
 
+	public void init_DigitalTwinActionsTurbine() {
+		log.info("init TwinActionsTurbine for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinActionsTurbine") == 0) {
+			try {
+				log.info("No Collection TwinActionsTurbine...");
+				manageDb.createTable4Ontology("TwinActionsTurbine", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinActionsTurbine:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinActionsTurbine");
+			}
+		}
+	}
+
+	public void init_DigitalTwinPropertiesTurbine() {
+		log.info("init TwinPropertiesTurbine for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinPropertiesTurbine") == 0) {
+			try {
+				log.info("No Collection Logs...");
+				manageDb.createTable4Ontology("TwinPropertiesTurbine", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinPropertiesTurbine:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinPropertiesTurbine");
+			}
+		}
+	}
+
+	public void init_DigitalTwinLogs() {
+		log.info("init TwinLogs for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinLogs") == 0) {
+			try {
+				log.info("No Collection Logs...");
+				manageDb.createTable4Ontology("TwinLogs", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinLogs:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinLogs");
+			}
+		}
+	}
+
+	public void init_DigitalTwinEvents() {
+		log.info("init TwinEvents for Digital Twin");
+		/*
+		 * db.createCollection("Logs");
+		 */
+		if (basicOps.count("TwinEvents") == 0) {
+			try {
+				log.info("No Collection TwinEvents...");
+				manageDb.createTable4Ontology("TwinEvents", "{}");
+			} catch (Exception e) {
+				log.error("Error init_DigitalTwinEvents:" + e.getMessage());
+				manageDb.removeTable4Ontology("TwinEvents");
+			}
+		}
+	}
+
 	private String loadFromResources(String name) {
 		try {
 			return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(name).toURI())),
@@ -213,7 +289,8 @@ public class InitMongoDB {
 
 		} catch (Exception e) {
 			try {
-				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(), Charset.forName("UTF-8"));
+				return new String(IOUtils.toString(getClass().getClassLoader().getResourceAsStream(name)).getBytes(),
+						Charset.forName("UTF-8"));
 			} catch (IOException e1) {
 				log.error("**********************************************");
 				log.error("Error loading resource: " + name + ".Please check if this error affect your database");

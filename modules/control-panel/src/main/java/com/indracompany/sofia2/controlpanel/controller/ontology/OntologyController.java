@@ -129,23 +129,24 @@ public class OntologyController {
 		try {
 			Ontology ontology = this.ontologyService.getOntologyById(id, utils.getUserId());
 			if (ontology != null) {
-				
-				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(), utils.getUserId());
+
+				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(),
+						utils.getUserId());
 				List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
-	
+
 				for (OntologyUserAccess authorization : authorizations) {
 					authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
 				}
-	
+
 				List<User> users = userService.getAllUsers();
-	
+
 				model.addAttribute("authorizations", authorizationsDTO);
 				model.addAttribute("ontology", ontology);
 				model.addAttribute("users", users);
-	
+
 				this.populateForm(model);
 				return "ontologies/createwizard";
-		
+
 			} else
 				return "ontologies/create";
 		} catch (RuntimeException e) {
@@ -162,7 +163,7 @@ public class OntologyController {
 			utils.addRedirectMessage("ontology.validation.error", redirect);
 			return "redirect:/ontologies/update/" + id;
 		}
-		
+
 		try {
 			User user = userService.getUser(utils.getUserId());
 			ontology.setUser(user);
@@ -199,8 +200,9 @@ public class OntologyController {
 		try {
 			Ontology ontology = ontologyService.getOntologyById(id, utils.getUserId());
 			if (ontology != null) {
-				
-				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(), utils.getUserId());
+
+				List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(),
+						utils.getUserId());
 				List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
 
 				for (OntologyUserAccess authorization : authorizations) {
@@ -214,20 +216,20 @@ public class OntologyController {
 				model.addAttribute("users", users);
 
 				return "ontologies/show";
-				
+
 			} else {
 				utils.addRedirectMessage("ontology.notfound.error", redirect);
 				return "redirect:/ontologies/list";
 			}
-		} catch(OntologyServiceException e) {
+		} catch (OntologyServiceException e) {
 			return "redirect:/ontologies/list";
-		}			
+		}
 	}
-		
 
 	private void populateForm(Model model) {
 		model.addAttribute("dataModels", this.ontologyService.getAllDataModels());
 		model.addAttribute("dataModelTypes", this.ontologyService.getAllDataModelTypes());
+		model.addAttribute("rtdbs", this.ontologyService.getDatasources());
 	}
 
 	@PostMapping(value = "/authorization", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -241,10 +243,9 @@ public class OntologyController {
 			OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
 			return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.CREATED);
 
-		}catch (RuntimeException e) {
+		} catch (RuntimeException e) {
 			return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.BAD_REQUEST);
 		}
-			
 
 	}
 
@@ -254,7 +255,7 @@ public class OntologyController {
 		try {
 			ontologyService.deleteOntologyUserAccess(id, utils.getUserId());
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
-		} catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -265,10 +266,11 @@ public class OntologyController {
 
 		try {
 			ontologyService.updateOntologyUserAccess(id, accesstype, utils.getUserId());
-			OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id, utils.getUserId());
+			OntologyUserAccess ontologyUserAccessCreated = ontologyService.getOntologyUserAccessById(id,
+					utils.getUserId());
 			OntologyUserAccessDTO ontologyUserAccessDTO = new OntologyUserAccessDTO(ontologyUserAccessCreated);
 			return new ResponseEntity<OntologyUserAccessDTO>(ontologyUserAccessDTO, HttpStatus.OK);
-		} catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return new ResponseEntity<OntologyUserAccessDTO>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -278,14 +280,15 @@ public class OntologyController {
 
 		try {
 			Ontology ontology = ontologyService.getOntologyById(id, utils.getUserId());
-		
-			List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(), utils.getUserId());
+
+			List<OntologyUserAccess> authorizations = ontologyService.getOntologyUserAccesses(ontology.getId(),
+					utils.getUserId());
 			List<OntologyUserAccessDTO> authorizationsDTO = new ArrayList<OntologyUserAccessDTO>();
 			for (OntologyUserAccess authorization : authorizations) {
 				authorizationsDTO.add(new OntologyUserAccessDTO(authorization));
 			}
 			return new ResponseEntity<List<OntologyUserAccessDTO>>(authorizationsDTO, HttpStatus.OK);
-		} catch(RuntimeException e) {
+		} catch (RuntimeException e) {
 			return new ResponseEntity<List<OntologyUserAccessDTO>>(HttpStatus.BAD_REQUEST);
 		}
 	}

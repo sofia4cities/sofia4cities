@@ -14,28 +14,46 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
+import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Component("QueryAsTextElasticSearchDBRepository")
+@Scope("prototype")
+@Slf4j
 public class ElasticSearchQueryAsTextDBRepository implements QueryAsTextDBRepository {
+
+	@Autowired
+	@Qualifier("ElasticSearchBasicOpsDBRepository")
+	private BasicOpsDBRepository elasticSearchBasicOpsDBRepository;
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		query = query.replaceAll(ontology, ontology.toLowerCase());
+		ontology = ontology.toLowerCase();
+		return elasticSearchBasicOpsDBRepository.queryNativeAsJson(ontology, query, offset, limit);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		query = query.replaceAll(ontology, ontology.toLowerCase());
+		ontology = ontology.toLowerCase();
+		return elasticSearchBasicOpsDBRepository.queryNativeAsJson(ontology, query);
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query, int offset) throws DBPersistenceException {
-		// TODO Auto-generated method stub
-		return null;
+		query = query.replaceAll(ontology, ontology.toLowerCase());
+		ontology = ontology.toLowerCase();
+		return elasticSearchBasicOpsDBRepository.querySQLAsJson(ontology, query, offset);
 	}
 
 }

@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
@@ -33,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.indracompany.sofia2.config.model.ActionsDigitalTwinType;
 import com.indracompany.sofia2.config.model.ClientConnection;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
@@ -40,13 +42,21 @@ import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.DigitalTwinDevice;
+import com.indracompany.sofia2.config.model.DigitalTwinType;
+import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
+import com.indracompany.sofia2.config.model.EventsDigitalTwinType.Type;
 import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
+import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
+import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
+import com.indracompany.sofia2.config.model.PropertyDigitalTwinType;
+import com.indracompany.sofia2.config.model.PropertyDigitalTwinType.Direction;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
@@ -58,10 +68,13 @@ import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
+import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
 import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
+import com.indracompany.sofia2.config.repository.MarketAssetRepository;
 import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -80,8 +93,14 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 public class InitConfigDB {
 
+	private static boolean started = false;
 	private static User userCollaborator = null;
 	private static User userAdministrator = null;
+	private static User user = null;
+	private static User userAnalytics = null;
+	private static User userSysAdmin = null;
+	private static User userPartner = null;
+	private static User userOperation = null;
 	private static Token tokenAdministrator = null;
 	private static Ontology ontologyAdministrator = null;
 	private static GadgetDatasource gadgetDatasourceAdministrator = null;
@@ -127,87 +146,349 @@ public class InitConfigDB {
 	FlowDomainRepository domainRepository;
 
 	@Autowired
+	DigitalTwinTypeRepository digitalTwinTypeRepository;
+
+	@Autowired
+	DigitalTwinDeviceRepository digitalTwinDeviceRepository;
+
+	@Autowired
 	UserTokenRepository userTokenRepository;
+
+	@Autowired
+	MarketAssetRepository marketAssetRepository;
 
 	@PostConstruct
 	@Test
 	public void init() {
-		log.info("Start initConfigDB...");
-		// first we need to create users
-		init_RoleUser();
-		log.info("OK init_RoleUser");
-		init_User();
-		log.info("OK init_UserCDB");
-		//
-		init_DataModel();
-		log.info("OK init_DataModel");
-		init_OntologyCategory();
-		log.info("OK init_OntologyCategory");
-		init_Ontology();
-		log.info("OK init_Ontology");
-		init_OntologyUserAccess();
-		log.info("OK init_OntologyUserAccess");
-		init_OntologyUserAccessType();
-		log.info("OK init_OntologyUserAccessType");
-		
-		init_OntologyCategory();
-		log.info("OK init_OntologyCategory");
-	
-		//
-		init_ClientPlatform();
-		log.info("OK init_ClientPlatform");
-		init_ClientPlatformOntology();
-		log.info("OK init_ClientPlatformOntology");
-		init_ClientConnection();
-		log.info("OK init_ClientConnection");
-		//
-		init_Token();
-		log.info("OK init_Token");
+		if (!started) {
+			started = true;
 
-		init_UserToken();
-		log.info("OK USER_Token");
-		//
-		init_Dashboard();
-		log.info("OK init_Dashboard");
-		init_Gadget();
-		log.info("OK init_Gadget");
-		init_GadgetDatasource();
-		log.info("OK init_GadgetDatasource");
-		init_GadgetMeasure();
-		log.info("OK init_GadgetMeasure");
+			log.info("Start initConfigDB...");
+			// first we need to create users
+			init_RoleUser();
+			log.info("OK init_RoleUser");
+			init_User();
+			log.info("OK init_UserCDB");
+			//
+			init_DataModel();
+			log.info("OK init_DataModel");
+			init_OntologyCategory();
+			log.info("OK init_OntologyCategory");
+			init_Ontology();
+			log.info("OK init_Ontology");
+			init_OntologyUserAccess();
+			log.info("OK init_OntologyUserAccess");
+			init_OntologyUserAccessType();
+			log.info("OK init_OntologyUserAccessType");
 
+			init_OntologyCategory();
+			log.info("OK init_OntologyCategory");
 
-		init_Menu_ControlPanel();
-		log.info("OK init_ConsoleMenu");
-		init_Configuration();
-		log.info("OK init_Configuration");
+			initAuditOntology();
+			log.info("OK init_AuditOntology");
 
-		init_FlowDomain();
-		log.info("OK init_FlowDomain");
+			//
+			init_ClientPlatform();
+			log.info("OK init_ClientPlatform");
+			init_ClientPlatformOntology();
+			log.info("OK init_ClientPlatformOntology");
+			init_ClientConnection();
+			log.info("OK init_ClientConnection");
+			//
+			init_Token();
+			log.info("OK init_Token");
+
+			init_UserToken();
+			log.info("OK USER_Token");
+			//
+			init_Dashboard();
+			log.info("OK init_Dashboard");
+			init_Gadget();
+			log.info("OK init_Gadget");
+			init_GadgetDatasource();
+			log.info("OK init_GadgetDatasource");
+			init_GadgetMeasure();
+			log.info("OK init_GadgetMeasure");
+
+			init_Menu_ControlPanel();
+			log.info("OK init_ConsoleMenu");
+			init_Configuration();
+			log.info("OK init_Configuration");
+
+			init_FlowDomain();
+			log.info("OK init_FlowDomain");
+
+			init_DigitalTwinType();
+			log.info("OK init_DigitalTwinType");
+
+			init_DigitalTwinDevice();
+			log.info("OK init_DigitalTwinDevice");
+
+			init_market();
+			log.info("OK init_Market");
+
+		}
+
+	}
+
+	private void init_DigitalTwinDevice() {
+		log.info("init_DigitalTwinDevice");
+		if (this.digitalTwinDeviceRepository.count() == 0) {
+			DigitalTwinDevice device = new DigitalTwinDevice();
+			device.setContextPath("/turbine");
+			device.setDigitalKey("f0e50f5f8c754204a4ac601f29775c15");
+			device.setIdentification("TurbineHelsinki");
+			device.setIp("localhost");
+			device.setLatitude("60.17688297979675");
+			device.setLongitude("24.92333816559176");
+			device.setPort(10000);
+			device.setUrlSchema("http");
+			device.setUrl("http://localhost:8081/digitaltwinbroker");
+			device.setLogic(
+					"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
+							+ System.getProperty("line.separator") + "function init(){"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('Init TurbineHelsinki shadow');"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('alternatorTemp', 25.0);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('power', 50000.2);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('nacelleTemp', 25.9);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('rotorSpeed', 30);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('windDirection', 68);"
+							+ System.getProperty("line.separator") + "" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.sendUpdateShadow();" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('Send Update Shadow for init function');"
+							+ System.getProperty("line.separator") + "}" + System.getProperty("line.separator")
+							+ "function main(){" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('New loop');" + System.getProperty("line.separator")
+							+ "    var alternatorTemp = digitalTwinApi.getStatusValue('alternatorTemp');"
+							+ System.getProperty("line.separator") + "" + System.getProperty("line.separator")
+							+ "    alternatorTemp ++;" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('alternatorTemp', alternatorTemp);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('power', 50000.2);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('nacelleTemp', 25.9);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('rotorSpeed', 30);"
+							+ System.getProperty("line.separator")
+							+ "    digitalTwinApi.setStatusValue('windDirection', 68);"
+							+ System.getProperty("line.separator") + "" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.sendUpdateShadow();" + System.getProperty("line.separator")
+							+ "    digitalTwinApi.log('Send Update Shadow');" + System.getProperty("line.separator")
+							+ " " + System.getProperty("line.separator") + "   if(alternatorTemp>=30){"
+							+ System.getProperty("line.separator")
+							+ "      digitalTwinApi.sendCustomEvent('tempAlert');"
+							+ System.getProperty("line.separator") + "   }" + System.getProperty("line.separator") + "}"
+							+ System.getProperty("line.separator") + "" + System.getProperty("line.separator")
+							+ "var onActionConnectElectricNetwork=function(data){ }"
+							+ System.getProperty("line.separator")
+							+ "var onActionDisconnectElectricNetwork=function(data){ }"
+							+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }");
+			device.setTypeId(this.digitalTwinTypeRepository.findByName("Turbine"));
+			device.setUser(getUserDeveloper());
+			this.digitalTwinDeviceRepository.save(device);
+		}
+	}
+
+	private void init_DigitalTwinType() {
+		log.info("init_DigitalTwinType");
+
+		if (this.digitalTwinTypeRepository.count() == 0) {
+			DigitalTwinType type = new DigitalTwinType();
+			type.setName("Turbine");
+			type.setType("thing");
+			type.setDescription("Wind Turbine for electricity generation");
+			type.setJson(
+					"{\"title\":\"Turbine\",\"links\":{\"properties\":\"thing/Turbine/properties\",\"actions\":\"thing/Turbine/actions\",\"events\":\"thing/Turbine/events\"},\"description\":\"Wind Turbine for electricity generation\",\"properties\":{\"rotorSpeed\":{\"type\":\"int\",\"units\":\"rpm\",\"direction\":\"out\",\"description\":\"Rotor speed\"},\"maxRotorSpeed\":{\"type\":\"int\",\"units\":\"rpm\",\"direction\":\"in_out\",\"description\":\"Max allowed speed for the rotor\"},\"power\":{\"type\":\"double\",\"units\":\"wat/h\",\"direction\":\"out\",\"description\":\"Current Power generated by the turbine\"},\"alternatorTemp\":{\"type\":\"double\",\"units\":\"celsius\",\"direction\":\"out\",\"description\":\"Temperature of the alternator\"},\"nacelleTemp\":{\"type\":\"double\",\"units\":\"celsius\",\"direction\":\"out\",\"description\":\"Temperature into the nacelle\"},\"windDirection\":{\"type\":\"int\",\"units\":\"degrees\",\"direction\":\"out\",\"description\":\"Wind direction\"}},\"actions\":{\"connectElectricNetwork\":{\"description\":\"Connect the turbine to the electric network to provide power\"},\"disconnectElectricNetwork\":{\"description\":\"Disconnect the turbine to the electric network to prevent problems\"},\"limitRotorSpeed\":{\"description\":\"Limits the rotor speed\"}},\"events\":{\"register\":{\"description\":\"Register the device into the plaform\"},\"updateshadow\":{\"description\":\"Updates the shadow in the plaform\"},\"ping\":{\"description\":\"Ping the platform to keepalive the device\"},\"log\":{\"description\":\"Log information in plaform\"}}}");
+			type.setUser(getUserDeveloper());
+
+			Set<PropertyDigitalTwinType> properties = createPropertiesDT(type);
+			Set<ActionsDigitalTwinType> actions = createActionsDT(type);
+			Set<EventsDigitalTwinType> events = createEventsDT(type);
+			Set<LogicDigitalTwinType> logics = createLogicDT(type);
+
+			type.setPropertyDigitalTwinTypes(properties);
+			type.setActionDigitalTwinTypes(actions);
+			type.setEventDigitalTwinTypes(events);
+			type.setLogicDigitalTwinTypes(logics);
+
+			this.digitalTwinTypeRepository.save(type);
+		}
+	}
+
+	private Set<LogicDigitalTwinType> createLogicDT(DigitalTwinType type) {
+		Set<LogicDigitalTwinType> logics = new HashSet<LogicDigitalTwinType>();
+		LogicDigitalTwinType logic = new LogicDigitalTwinType();
+		logic.setTypeId(type);
+		logic.setLogic(
+				"var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();"
+						+ System.getProperty("line.separator") + "function init(){}"
+						+ System.getProperty("line.separator") + "function main(){}"
+						+ System.getProperty("line.separator") + "var onActionConnectElectricNetwork=function(data){  }"
+						+ System.getProperty("line.separator")
+						+ "var onActionDisconnectElectricNetwork=function(data){ }"
+						+ System.getProperty("line.separator") + "var onActionLimitRotorSpeed=function(data){ }");
+
+		logics.add(logic);
+		return logics;
+	}
+
+	private Set<EventsDigitalTwinType> createEventsDT(DigitalTwinType type) {
+		Set<EventsDigitalTwinType> events = new HashSet<EventsDigitalTwinType>();
+		EventsDigitalTwinType event = new EventsDigitalTwinType();
+		event.setName("ping");
+		event.setStatus(true);
+		event.setType(Type.PING);
+		event.setDescription("Ping the platform to keepalive the device");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("updateshadow");
+		event.setStatus(true);
+		event.setType(Type.UPDATE_SHADOW);
+		event.setDescription("Updates the shadow in the plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("log");
+		event.setStatus(true);
+		event.setType(Type.LOG);
+		event.setDescription("Log information in plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("register");
+		event.setStatus(true);
+		event.setType(Type.REGISTER);
+		event.setDescription("Register the device into the plaform");
+		event.setTypeId(type);
+		events.add(event);
+
+		event = new EventsDigitalTwinType();
+		event.setName("tempAlert");
+		event.setStatus(true);
+		event.setType(Type.OTHER);
+		event.setDescription("Send an Alarm when temperature is high.");
+		event.setTypeId(type);
+		events.add(event);
+
+		return events;
+	}
+
+	private Set<ActionsDigitalTwinType> createActionsDT(DigitalTwinType type) {
+		Set<ActionsDigitalTwinType> actions = new HashSet<ActionsDigitalTwinType>();
+		ActionsDigitalTwinType action = new ActionsDigitalTwinType();
+		action.setName("disconnectElectricNetwork");
+		action.setDescription("Disconnect the turbine to the electric network to prevent problems");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("connectElectricNetwork");
+		action.setDescription("Connect the turbine to the electric network to provide power");
+		action.setTypeId(type);
+		actions.add(action);
+
+		action = new ActionsDigitalTwinType();
+		action.setName("limitRotorSpeed");
+		action.setDescription("Limits the rotor speed");
+		action.setTypeId(type);
+		actions.add(action);
+
+		return actions;
+	}
+
+	private Set<PropertyDigitalTwinType> createPropertiesDT(DigitalTwinType type) {
+		Set<PropertyDigitalTwinType> props = new HashSet<PropertyDigitalTwinType>();
+		PropertyDigitalTwinType prop = new PropertyDigitalTwinType();
+		prop.setName("alternatorTemp");
+		prop.setType("double");
+		prop.setUnit("celsius");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Temperature of the alternator");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("power");
+		prop.setType("double");
+		prop.setUnit("wat/h");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Current Power generated by the turbine");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("nacelleTemp");
+		prop.setType("double");
+		prop.setUnit("celsius");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Temperature into the nacelle");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("rotorSpeed");
+		prop.setType("int");
+		prop.setUnit("rpm");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Rotor speed");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("maxRotorSpeed");
+		prop.setType("int");
+		prop.setUnit("rpm");
+		prop.setDirection(Direction.IN_OUT);
+		prop.setDescription("Max allowed speed for the rotor");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		prop = new PropertyDigitalTwinType();
+		prop.setName("windDirection");
+		prop.setType("int");
+		prop.setUnit("degrees");
+		prop.setDirection(Direction.OUT);
+		prop.setDescription("Wind direction");
+		prop.setTypeId(type);
+		props.add(prop);
+
+		return props;
 	}
 
 	private void init_FlowDomain() {
 		log.info("init_FlowDomain");
 		// Domain for administrator
-		FlowDomain domain = new FlowDomain();
-		domain.setActive(true);
-		domain.setIdentification("adminDomain");
-		domain.setUser(userCDBRepository.findByUserId("administrator"));
-		domain.setHome("/tmp/administrator");
-		domain.setState("START");
-		domain.setPort(8000);
-		domain.setServicePort(7000);
-		domainRepository.save(domain);
-		// Domain for developer
-		domain = new FlowDomain();
-		domain.setActive(true);
-		domain.setIdentification("devDomain");
-		domain.setUser(userCDBRepository.findByUserId("developer"));
-		domain.setHome("/tmp/developer");
-		domain.setState("START");
-		domain.setPort(8001);
-		domain.setServicePort(7001);
-		domainRepository.save(domain);
+		if (this.domainRepository.count() == 0) {
+			FlowDomain domain = new FlowDomain();
+			domain.setActive(true);
+			domain.setIdentification("adminDomain");
+			domain.setUser(userCDBRepository.findByUserId("administrator"));
+			domain.setHome("/tmp/administrator");
+			domain.setState("START");
+			domain.setPort(8000);
+			domain.setServicePort(7000);
+			domainRepository.save(domain);
+			// Domain for developer
+			domain = new FlowDomain();
+			domain.setActive(true);
+			domain.setIdentification("devDomain");
+			domain.setUser(userCDBRepository.findByUserId("developer"));
+			domain.setHome("/tmp/developer");
+			domain.setState("START");
+			domain.setPort(8001);
+			domain.setServicePort(7001);
+			domainRepository.save(domain);
+		}
 	}
 
 	private void init_Configuration() {
@@ -326,8 +607,8 @@ public class InitConfigDB {
 				throw new RuntimeException("There must be at least a Ontology with id=1 created");
 			log.info("No Client Platform Ontologies");
 			ClientPlatformOntology cpo = new ClientPlatformOntology();
-			cpo.setClientPlatform(this.clientPlatformRepository.findAll().get(0));
-			cpo.setOntology(this.ontologyRepository.findAll().get(0));
+			cpo.setClientPlatform(this.clientPlatformRepository.findByIdentification("Ticketing App"));
+			cpo.setOntology(this.ontologyRepository.findByIdentification("Ticket"));
 			cpo.setAccesEnum(ClientPlatformOntology.AccessType.ALL);
 			this.clientPlatformOntologyRepository.save(cpo);
 		}
@@ -352,6 +633,13 @@ public class InitConfigDB {
 			client.setEncryptionKey("f9dfe72e-7082-4fe8-ba37-3f569b30a691");
 			client.setDescription("ClientPatform created as Example");
 			clientPlatformRepository.save(client);
+			client = new ClientPlatform();
+			client.setId("3");
+			client.setUser(getUserDeveloper());
+			client.setIdentification("Ticketing App");
+			client.setEncryptionKey(UUID.randomUUID().toString());
+			client.setDescription("Platform client for issues and ticketing");
+			clientPlatformRepository.save(client);
 
 		}
 
@@ -370,7 +658,7 @@ public class InitConfigDB {
 			log.info("Adding menu for role ADMIN");
 			ConsoleMenu menu = new ConsoleMenu();
 			menu.setId("1");
-			menu.setJson(loadFromResources("menu_admin.json"));
+			menu.setJson(loadFromResources("menu/menu_admin.json"));
 			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_ADMINISTRATOR.toString()));
 			this.consoleMenuRepository.save(menu);
 		} catch (Exception e) {
@@ -380,7 +668,7 @@ public class InitConfigDB {
 			log.info("Adding menu for role DEVELOPER");
 			ConsoleMenu menu = new ConsoleMenu();
 			menu.setId("2");
-			menu.setJson(loadFromResources("menu_developer.json"));
+			menu.setJson(loadFromResources("menu/menu_developer.json"));
 			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
 			this.consoleMenuRepository.save(menu);
 		} catch (Exception e) {
@@ -390,7 +678,7 @@ public class InitConfigDB {
 			log.info("Adding menu for role USER");
 			ConsoleMenu menu = new ConsoleMenu();
 			menu.setId("3");
-			menu.setJson(loadFromResources("menu_user.json"));
+			menu.setJson(loadFromResources("menu/menu_user.json"));
 			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_USER.toString()));
 			this.consoleMenuRepository.save(menu);
 		} catch (Exception e) {
@@ -413,6 +701,17 @@ public class InitConfigDB {
 				log.error(e.getMessage());
 				return null;
 			}
+		}
+	}
+
+	private byte[] loadFileFromResources(String name) {
+		try {
+			return Files.readAllBytes((Paths.get(getClass().getClassLoader().getResource(name).toURI())));
+
+		} catch (Exception e) {
+			log.error("Error loading resource: " + name + ".Please check if this error affect your database");
+			log.error(e.getMessage());
+			return null;
 		}
 	}
 
@@ -444,6 +743,36 @@ public class InitConfigDB {
 		if (userAdministrator == null)
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
 		return userAdministrator;
+	}
+
+	private User getUser() {
+		if (user == null)
+			user = this.userCDBRepository.findByUserId("user");
+		return user;
+	}
+
+	private User getUserAnalytics() {
+		if (userAnalytics == null)
+			userAnalytics = this.userCDBRepository.findByUserId("analytics");
+		return userAnalytics;
+	}
+
+	private User getUserPartner() {
+		if (userPartner == null)
+			userPartner = this.userCDBRepository.findByUserId("partner");
+		return userPartner;
+	}
+
+	private User getUserSysAdmin() {
+		if (userSysAdmin == null)
+			userSysAdmin = this.userCDBRepository.findByUserId("sysadmin");
+		return userSysAdmin;
+	}
+
+	private User getUserOperations() {
+		if (userOperation == null)
+			userOperation = this.userCDBRepository.findByUserId("operations");
+		return userOperation;
 	}
 
 	private Token getTokenAdministrator() {
@@ -480,7 +809,7 @@ public class InitConfigDB {
 			DataModel dataModel = new DataModel();
 			dataModel.setName("Alarm");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Alarm.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Alarm.json"));
 			dataModel.setDescription("Base Alarm: assetId, timestamp, severity, source, details and status..");
 			dataModel.setLabels("Alarm,General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -489,7 +818,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Audit");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Audit.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Audit.json"));
 			dataModel.setDescription("Base Audit");
 			dataModel.setLabels("Audit,General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -498,7 +827,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Device");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Device.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Device.json"));
 			dataModel.setDescription("Base Device");
 			dataModel.setLabels("Audit,General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -507,7 +836,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("EmptyBase");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_EmptyBase.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_EmptyBase.json"));
 			dataModel.setDescription("Base DataModel");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -516,7 +845,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Feed");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Feed.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Feed.json"));
 			dataModel.setDescription("Base Feed");
 			dataModel.setLabels("Audit,General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -525,7 +854,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Twitter");
 			dataModel.setTypeEnum(DataModel.MainType.SocialMedia);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Twitter_Temp.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Twitter.json"));
 			dataModel.setDescription("Twitter DataModel");
 			dataModel.setLabels("Twitter,Social Media");
 			dataModel.setUser(getUserAdministrator());
@@ -534,7 +863,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("BasicSensor");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_BasicSensor.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_BasicSensor.json"));
 			dataModel.setDescription("DataModel for sensor sending measures for an assetId");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -543,7 +872,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-AirQualityObserved");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityObserved.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-AirQualityObserved.json"));
 			dataModel.setDescription("An observation of air quality conditions at a certain place and time");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -552,7 +881,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-AirQualityStation");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityStation.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-AirQualityStation.json"));
 			dataModel.setDescription("Air Quality Station observing quality conditions at a certain place and time");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -561,7 +890,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-AirQualityThreshold");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-AirQualityThreshold.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-AirQualityThreshold.json"));
 			dataModel.setDescription(
 					"Provides the air quality thresholds in Europe. Air quality thresholds allow to calculate an air quality index (AQI).");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
@@ -571,7 +900,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-Device");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Device.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-Device.json"));
 			dataModel.setDescription(
 					"A Device is a tangible object which contains some logic and is producer and/or consumer of data. A Device is always assumed to be capable of communicating electronically via a network.");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
@@ -581,7 +910,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-KPI");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-KPI.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-KPI.json"));
 			dataModel.setDescription(
 					"Key Performance Indicator (KPI) is a type of performance measurement. KPIs evaluate the success of an organization or of a particular activity in which it engages.");
 			dataModel.setLabels("General,IoT,GSMA,Smart Cities");
@@ -591,7 +920,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-OffstreetParking");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-OffstreetParking.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-OffstreetParking.json"));
 			dataModel.setDescription(
 					"A site, off street, intended to park vehicles, managed independently and with suitable and clearly marked access points (entrances and exits).");
 			dataModel.setLabels("General,IoT,Smart Cities");
@@ -601,7 +930,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-Road");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Road.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-Road.json"));
 			dataModel.setDescription("Contains a harmonised geographic and contextual description of a road.");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -610,7 +939,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-StreetLight");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-StreetLight.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-StreetLight.json"));
 			dataModel.setDescription("GSMA Model that represents an urban streetlight");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -620,7 +949,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-Vehicle");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-Vehicle.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-Vehicle.json"));
 			dataModel.setDescription("A harmonised description of a Vehicle");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -629,7 +958,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-WasteContainer");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WasteContainer.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-WasteContainer.json"));
 			dataModel.setDescription("GSMA WasteContainer");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -638,7 +967,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-WeatherObserved");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WeatherObserved.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-WeatherObserved.json"));
 			dataModel.setDescription("An observation of weather conditions at a certain place and time.");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -647,7 +976,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("GSMA-WeatherStation");
 			dataModel.setTypeEnum(DataModel.MainType.GSMA);
-			dataModel.setJsonSchema(loadFromResources("DataModel_GSMA-WeatherStation.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_GSMA-WeatherStation.json"));
 			dataModel.setDescription("GSMA Weather Station Model");
 			dataModel.setLabels("General,IoT,Smart Cities");
 			dataModel.setUser(getUserAdministrator());
@@ -656,7 +985,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Request");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Request.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Request.json"));
 			dataModel.setDescription("Request for something.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -665,7 +994,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Response");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Response.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Response.json"));
 			dataModel.setDescription("Response for a request.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -674,7 +1003,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("MobileElement");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
-			dataModel.setJsonSchema(loadFromResources("DataModel_MobileElement.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_MobileElement.json"));
 			dataModel.setDescription("Generic Mobile Element representation.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -683,7 +1012,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Log");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Log.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Log.json"));
 			dataModel.setDescription("Log representation.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -692,7 +1021,7 @@ public class InitConfigDB {
 			dataModel = new DataModel();
 			dataModel.setName("Issue");
 			dataModel.setTypeEnum(DataModel.MainType.General);
-			dataModel.setJsonSchema(loadFromResources("DataModel_Issue.json"));
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Issue.json"));
 			dataModel.setDescription("Issue representation.");
 			dataModel.setLabels("General,IoT");
 			dataModel.setUser(getUserAdministrator());
@@ -756,8 +1085,6 @@ public class InitConfigDB {
 
 	}
 
-
-
 	public void init_OntologyCategory() {
 
 		log.info("init OntologyCategory");
@@ -772,8 +1099,6 @@ public class InitConfigDB {
 		}
 
 	}
-
-
 
 	public void init_Ontology() {
 
@@ -794,10 +1119,9 @@ public class InitConfigDB {
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
-			ontology.setId("2");
-			ontology.setJsonSchema("{Data:,Temperature:}");
-			ontology.setDescription("Ontology created as example");
-			ontology.setIdentification("OntologyTest");
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_Ticket.json"));
+			ontology.setDescription("Ontology created for Ticketing");
+			ontology.setIdentification("Ticket");
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
@@ -805,7 +1129,148 @@ public class InitConfigDB {
 			ontology.setUser(getUserDeveloper());
 			ontologyRepository.save(ontology);
 
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_HelsinkiPopulation.json"));
+			ontology.setDescription("Ontology HelsinkiPopulation for testing");
+			ontology.setIdentification("HelsinkiPopulation");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			List<DataModel> dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_TweetSentiment.json"));
+			ontology.setDescription("TweetSentiment");
+			ontology.setIdentification("TweetSentiment");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_GeoAirQuality.json"));
+			ontology.setDescription("Air quality retrieved from https://api.waqi.info/search");
+			ontology.setIdentification("GeoAirQuality");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_CityPopulation.json"));
+			ontology.setDescription(
+					"Population of Urban Agglomerations with 300,000 Inhabitants or More in 2014, by Country, 1950-2030 (thousands)");
+			ontology.setIdentification("CityPopulation");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality_gr2.json"));
+			ontology.setDescription("AirQuality_gr2");
+			ontology.setIdentification("AirQuality_gr2");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality.json"));
+			ontology.setDescription("AirQuality");
+			ontology.setIdentification("AirQuality");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
+
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirCOMeter.json"));
+			ontology.setDescription("AirCOMeter");
+			ontology.setIdentification("AirCOMeter");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setUser(getUserDeveloper());
+			dataModels = dataModelRepository.findByName("EmptyBase");
+			if (!dataModels.isEmpty()) {
+				ontology.setDataModel(dataModels.get(0));
+				ontologyRepository.save(ontology);
+			}
+
 		}
+
+	}
+
+	public void addAuditOntology(User user) {
+		if (ontologyRepository.findByIdentification("Audit_" + user.getUserId()) == null) {
+			Ontology ontology = new Ontology();
+			ontology.setJsonSchema("{}");
+			ontology.setIdentification("Audit_" + user.getUserId());
+			ontology.setDescription("Ontology Audit for user " + user.getUserId());
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
+			ontology.setPublic(false);
+			ontology.setUser(user);
+
+			ontologyRepository.save(ontology);
+		}
+	}
+
+	public void initAuditOntology() {
+		log.info("adding audit ontologies...");
+
+		addAuditOntology(getUserAdministrator());
+
+		addAuditOntology(getUserDeveloper());
+
+		addAuditOntology(getUser());
+
+		addAuditOntology(getUserAnalytics());
+
+		addAuditOntology(getUserPartner());
+
+		addAuditOntology(getUserSysAdmin());
+
+		addAuditOntology(getUserOperations());
 
 	}
 
@@ -926,12 +1391,12 @@ public class InitConfigDB {
 			if (this.clientPlatformRepository.findAll().isEmpty())
 				throw new RuntimeException("You need to create ClientPlatform before Token");
 
-			ClientPlatform client = this.clientPlatformRepository.findAll().get(0);
+			ClientPlatform client = this.clientPlatformRepository.findByIdentification("Ticketing App");
 			Set<Token> hashSetTokens = new HashSet<Token>();
 
 			Token token = new Token();
 			token.setClientPlatform(client);
-			token.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
+			token.setToken("e7ef0742d09d4de5a3687f0cfdf7f626");
 			token.setActive(true);
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
@@ -1044,6 +1509,77 @@ public class InitConfigDB {
 				userCDBRepository.deleteAll();
 				throw new RuntimeException("Error creating users...ignoring creation rest of Tables");
 			}
+		}
+	}
+
+	public void init_market() {
+		log.info("init MarketPlace");
+		List<MarketAsset> marketAssets = this.marketAssetRepository.findAll();
+		if (marketAssets.isEmpty()) {
+			log.info("No market Assets...adding");
+			MarketAsset marketAsset = new MarketAsset();
+
+			marketAsset.setId("1");
+			marketAsset.setIdentification("TEST");
+
+			marketAsset.setUser(getUserDeveloper());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/marketAsset_TEST.json"));
+
+			marketAsset.setContent(loadFileFromResources("market/README.md"));
+			marketAsset.setContentId("README.md");
+
+			marketAsset.setImage(loadFileFromResources("market/population.png"));
+			marketAsset.setImageType("png");
+
+			marketAssetRepository.save(marketAsset);
+			
+			// Getting Started Guide
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("2");
+			marketAsset.setIdentification("GettingStartedGuide");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/GettingStartedGuide.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/select4cities.jpg"));
+			marketAsset.setImageType("jpg");
+
+			marketAssetRepository.save(marketAsset);
+			
+			// Sofia4Cities Architecture
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("3");
+			marketAsset.setIdentification("Sofia4CitiesArchitecture");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/Sofia4CitiesArchitecture.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/select4cities.jpg"));
+			marketAsset.setImageType("jpg");
+
+			marketAssetRepository.save(marketAsset);
 		}
 	}
 

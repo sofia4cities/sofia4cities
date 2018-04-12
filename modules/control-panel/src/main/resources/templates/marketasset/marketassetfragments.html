@@ -27,37 +27,26 @@
 			</div>
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12 margin-bottom-20">
+			<iframe id="swaggerUI" width="100%" height="100%" style="border: none;"></iframe>
+		</div>
+	</div>
 </div>
 
-<div th:fragment="APIMarketAssetFragmentShow"  id="APIMarketAssetFragmentShow">
-	<!-- <div class="row">
-		<div class="col-md-4 col-sm-6 col-xs-12 ">
-			<div class="form-group">
-				<label th:text="#{apimanager.id} + ':'">Identification</label>
-				<p id="apiId" name="apiId" class="form-control-static-block bold"></p>
-			</div>
+<div th:fragment="APIMarketAssetFragmentShow"  id="APIMarketAssetFragmentShow">	
+	<h3 style="margin-top: -5px; font-size: 15px;" class="uppercase margin-bottom-20 bold"><i class="flaticon-layers"></i> API RELATED INFORMATION</h3>
+	<!-- technology tags -->
+	<ul class="marketasset-post-tags">
+		<li class="uppercase "><a id="apiId" class="bg-grey-gallery font-grey-cararra" href="javascript:;">API</a></li>
+		<li class="uppercase"><a class="bg-grey-gallery font-grey-cararra" href="javascript:;">Ver. <span id="versions">1.0</span></a></li>
+	</ul>
+	<p class="margin-top-20" id="apiDescription"></p>
+	<div class="row">
+		<div class="col-md-12 col-sm-12 col-xs-12 margin-bottom-10">
+			<iframe id="swaggerUI" width="100%" height="100%" style="border: none;"></iframe>
 		</div>
-		<div class="col-md-1 col-sm-1 col-xs-12 ">
-			<div class="form-group">
-				<label th:text="#{apimanager.numversion} + ':'">Version</label>
-				<p id="versions" name="versions" class="form-control-static-block bold"></p>
-			</div>
-		</div>
-		<div class="col-md-7 col-sm-12 col-xs-12">
-			<div class="form-group">
-				<label class="description" for="descripcionapi">Description </label>
-				<textarea disabled="disabled" class="element textarea small form-control" id="apiDescription" name="apiDescription" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
-			</div>
-		</div>
-	</div> -->
-	
-		<h3 style="margin-top: -5px; font-size: 15px;" class="uppercase margin-bottom-20 bold"><i class="flaticon-layers"></i> API RELATED INFORMATION</h3>
-		<!-- technology tags -->
-		<ul class="marketasset-post-tags">
-			<li class="uppercase "><a id="apiId"    class="bg-grey-gallery font-grey-cararra" href="javascript:;">HelsinkiPopullationAPI</a></li>
-			<li class="uppercase"><a class="bg-grey-gallery font-grey-cararra" href="javascript:;">Ver. <span id="versions">1.0</span></a></li>
-		</ul>
-		<p class="margin-top-20" id="apiDescription"></p>
+	</div>
 </div>
 <!-- MARKETASSET API FRAGMENT-->
 
@@ -68,22 +57,23 @@
 			<div class="form-group">
 				<label th:text="#{marketasset.document}">Document</label>
 				<div class="clearfix"></div>
-				<div  class="margin-bottom-10">
-					<div class="btn-group">
-						<button class="btn btn-sm btn-outline grey-mint"><i class="fa fa-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.document}"> Download Document</span></button>
-						<button class="btn btn-sm btn-outline red-sunglo"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.document}"> Remove Document</span></button>
-					</div>
+				<div id="contentShow" th:style="*{contentId!= null AND contentId!= ''} ? 'display:block' : 'display:none'" class="margin-bottom-10">
+					<button type="button" class="btn btn-sm btn-outline grey-mint" name="removeDocBtn" th:onclick="'javascript:downloadContent();'"><i class="fa fa-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.document}"> Download Document</span></button>
+					<button type="button" class="btn btn-sm btn-outline red-sunglo" name="removeDocBtn" onclick="manageContent()"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.document}"> Remove Document</span></button>
 				</div>
-				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+				<div id="contentForm" th:style="*{contentId== null OR contentId== ''} ? 'display:block' : 'display:none'" class="margin-bottom-10">
+					<input id="content" name="content" class="btn btn-default" type="file" style="width:100%" onchange="loadContentId();"/>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
 <div th:fragment="DOCUMENTMarketAssetFragmentShow" id="DOCUMENTMarketAssetFragmentShow">
-	
-	<h3 style="font-size: 15px; margin-top: -5px;" class="uppercase margin-bottom-20 bold"><i class="flaticon-download"></i> <span>Download Document:</span></h3>
-	<div class="form-group col-md-3 no-space ">
-		<button type="button" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block" th:onclick="'javascript:descargarInforme(\'' + ${marketasset.id} + '\');'" ><i class="la la-download"></i> <span th:text="#{gen.download}">Download</span></button>
+	<div id="DOCUMENTDiv">
+		<h3 style="font-size: 15px; margin-top: -5px;" class="uppercase margin-bottom-20 bold"><i class="flaticon-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.document}"></span></h3>
+		<div class="form-group col-md-3 no-space ">
+			<button type="button" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block" th:onclick="'javascript:downloadContent();'" ><i class="la la-download"></i> <span th:text="#{gen.download}">Download</span></button>
+		</div>
 	</div>
 	<div class="clearfix"></div>
 	
@@ -111,21 +101,55 @@
 	<div class="row">
 		<div class="col-md-4 col-sm-12 col-xs-12">
 			<div class="form-group">
-				<label  th:text="#{marketasset.app}">Application</label>
-				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+				<label th:text="#{marketasset.app}">App</label>
+				<div class="clearfix"></div>
+				<div id="contentShow" th:style="*{contentId!= null AND contentId!= ''} ? 'display:block' : 'display:none'" class="margin-bottom-10">
+					<button type="button" class="btn btn-sm btn-outline grey-mint" name="removeDocBtn" th:onclick="'javascript:downloadContent();'"><i class="fa fa-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.document}"> Download Document</span></button>
+					<button type="button" class="btn btn-sm btn-outline red-sunglo" name="removeDocBtn" onclick="manageContent()"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.document}"> Remove Document</span></button>
+				</div>
+				<div id="contentForm" th:style="*{contentId== null OR contentId== ''} ? 'display:block' : 'display:none'" class="margin-bottom-10">
+					<input id="content" name="content" class="btn btn-default" type="file" style="width:100%" onchange="loadContentId();"/>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
 <div th:fragment="APPLICATIONMarketAssetFragmentShow" id="APPLICATIONMarketAssetFragmentShow">
-	<!-- <div class="row">
+	<h3 style="margin-top: -5px; font-size: 15px;" class="uppercase margin-bottom-20 bold"><i class="flaticon-app"></i> <span th:text="#{marketasset.installation}">Installation</span></h3>
+	<p class="margin-top-20" id="installation"></p>
+	
+	<h3 style="font-size: 15px;" class="uppercase  margin-top-40  margin-bottom-20 bold"><i class="flaticon-cogwheel"></i> <span th:text="#{marketasset.functionality}">Functionality</span></h3>
+	<p class="margin-top-20" id="functionality"></p>
+	
+	<h3 style="font-size: 15px; margin-top: -5px;" class="uppercase margin-top-40 margin-bottom-20 bold"><i class="flaticon-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.app}">Download Application:</span></h3>
+	<div class="form-group col-md-3 no-space ">
+		<button type="button" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block" th:onclick="'javascript:downloadContent();'" ><i class="la la-download"></i> <span th:text="#{gen.download}">Download</span></button>
+	</div>
+	<div class="clearfix"></div>
+		
+</div>
+<!-- MARKETASSET APPLICATION FRAGMENT-->
+
+<!-- MARKETASSET URLAPPLICATION FRAGMENT-->
+<div th:fragment="URLAPPLICATIONMarketAssetFragment" id="URLAPPLICATIONMarketAssetFragment">
+	<div class="row">
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			<div class="form-group">
-				<label class="installation" for="installation" th:text="#{marketasset.installation}">Installation </label>
-				<textarea disabled="disabled" class="element textarea small form-control" id="installation" name="installation" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
+				<label class="functionality" for="functionality" th:text="#{marketasset.functionality}">Functionality </label>
+				<textarea class="element textarea small form-control" id="functionality" name="functionality" style="background-color:#FFFFFF;border: 1px dotted #ccc"></textarea>
+			</div>	
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-8 col-sm-6 col-xs-12">
+			<div class="form-group">
+				<label  id="id_endpoint_label" th:text="#{marketasset.endpoint}">EndPoint</label>
+				<input id="id_endpoint" name="id_endpoint" class="form-control" type="text" maxlength="512"/>
 			</div>
 		</div>
 	</div>
+</div>
+<div th:fragment="URLAPPLICATIONMarketAssetFragmentShow" id="URLAPPLICATIONMarketAssetFragmentShow">
 	<div class="row">
 		<div class="col-md-12 col-sm-12 col-xs-12">
 			<div class="form-group">
@@ -135,27 +159,15 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-4 col-sm-12 col-xs-12">
+		<div class="col-md-8 col-sm-6 col-xs-12">
 			<div class="form-group">
-				<label  th:text="#{marketasset.app}">Application</label>
-				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
+				<label  id="id_endpoint_label" th:text="#{marketasset.endpoint}">EndPoint</label>
+				<p id="id_endpoint" name="id_endpoint" class="form-control-static-block bold"></p>
 			</div>
 		</div>
-	</div> -->
-	<h3 style="margin-top: -5px; font-size: 15px;" class="uppercase margin-bottom-20 bold"><i class="flaticon-app"></i> <span th:text="#{marketasset.installation}">Installation</span></h3>
-	<p class="margin-top-20" id="installation"></p>
-	
-	<h3 style="font-size: 15px;" class="uppercase  margin-top-40  margin-bottom-20 bold"><i class="flaticon-cogwheel"></i> <span th:text="#{marketasset.functionality}">Functionality</span></h3>
-	<p class="margin-top-20" id="functionality"></p>
-	
-	<h3 style="font-size: 15px;" class="uppercase margin-top-40 margin-bottom-20 bold"><i class="flaticon-download"></i> <span th:text="#{marketasset.app}">Application</span></h3>
-	<div class="form-group col-md-3 no-space ">
-		<button type="button" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block" th:onclick="'javascript:descargarApp(\'' + ${marketasset.id} + '\');'" ><i class="la la-download"></i> <span th:text="#{gen.download}">Download</span></button>
 	</div>
-	<div class="clearfix"></div>
-		
 </div>
-<!-- MARKETASSET APPLICATION FRAGMENT-->
+<!-- MARKETASSET URLAPPLICATION FRAGMENT-->
 
 <!-- MARKETASSET WEBPROJECT FRAGMENT-->
 <div th:fragment="WEBPROJECTMarketAssetFragment" id="WEBPROJECTMarketAssetFragment">
@@ -174,12 +186,6 @@
 				<input id="id_endpoint" name="id_endpoint" class="form-control" type="text" maxlength="512" readonly="readonly"/>
 			</div>
 		</div>
-		<div class="col-md-4 col-sm-12 col-xs-12">
-			<div class="form-group">
-				<label  th:text="#{marketasset.webproject}">Imagen</label>
-				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
-			</div>
-		</div>
 	</div>
 </div>
 <div th:fragment="WEBPROJECTMarketAssetFragmentShow" id="WEBPROJECTMarketAssetFragmentShow">
@@ -196,12 +202,6 @@
 			<div class="form-group">
 				<label  id="id_endpoint_label" th:text="#{marketasset.endpoint}">EndPoint</label>
 				<p id="id_endpoint" name="id_endpoint" class="form-control-static-block bold"></p>
-			</div>
-		</div>
-		<div class="col-md-4 col-sm-12 col-xs-12">
-			<div class="form-group">
-				<label  th:text="#{marketasset.webproject}">Imagen</label>
-				<input id="content" name="content" class="btn btn-default" type="file" style="width:100%"/>
 			</div>
 		</div>
 	</div>

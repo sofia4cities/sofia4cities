@@ -8,8 +8,8 @@ sofia2:
       base:
       advice:
     flowEngine:
-      base: https://s4citiespro.westeurope.cloudapp.azure.com/sofia2/flowengine/admin
-      advice: https://s4citiespro.westeurope.cloudapp.azure.com/nodered/
+      base: http://localhost:8082/flowengine
+      advice: http://localhost:5050/
     routerStandAlone:
       base: http://localhost:19100/
       advice: http://localhost:19100/router/router/advice/

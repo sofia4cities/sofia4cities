@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
-	private RoleRepository roleTypeRepository;
+	private RoleRepository roleRepository;
 	@Autowired
 	private UserTokenRepository userTokenRepository;
 	@Autowired
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<Role> getAllRoles() {
-		return roleTypeRepository.findAll();
+		return roleRepository.findAll();
 	}
 
 	@Override
@@ -129,13 +129,41 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void createUser(User user) {
+
+		if (user.getPassword().length() < 7) {
+			throw new UserServiceException("Password has to be at least 7 characters");
+		}
+
 		if (!this.userExists(user)) {
 			log.debug("User no exist, creating...");
-			user.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
+			user.setRole(this.roleRepository.findByName(user.getRole().getName()));
 			this.userRepository.save(user);
+
 		} else {
 			throw new UserServiceException("User already exists in Database");
 		}
+	}
+
+	@Override
+	public void registerRoleDeveloper(User user) {
+
+		user.setRole(getRole(Role.Type.ROLE_DEVELOPER));
+		user.setActive(true);
+		log.debug("Creating user with Role Developer default");
+
+		this.createUser(user);
+
+	}
+
+	@Override
+	public void registerRoleUser(User user) {
+
+		user.setActive(true);
+		user.setRole(getRole(Role.Type.ROLE_USER));
+		log.debug("Creating user with Role User default");
+
+		this.createUser(user);
+
 	}
 
 	@Override
@@ -162,7 +190,7 @@ public class UserServiceImpl implements UserService {
 			userDb.setEmail(user.getEmail());
 
 			if (user.getRole() != null)
-				userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
+				userDb.setRole(this.roleRepository.findByName(user.getRole().getName()));
 
 			// Update dateDeleted for in/active user
 			if (!userDb.isActive() && user.isActive()) {
@@ -185,7 +213,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Role getUserRole(String role) {
-		return this.roleTypeRepository.findByName(role);
+		return this.roleRepository.findByName(role);
 	}
 
 	@Override
@@ -200,59 +228,15 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	Role getRoleDeveloper() {
-		final Role r = new Role();
-		r.setName(Role.Type.ROLE_DEVELOPER.name());
-		r.setIdEnum(Role.Type.ROLE_DEVELOPER);
-		return r;
-	}
-
-	Role getRoleUser() {
-		final Role r = new Role();
-		r.setName(Role.Type.ROLE_USER.name());
-		r.setIdEnum(Role.Type.ROLE_USER);
-		return r;
+	Role getRole(Role.Type roleType) {
+		// final Role r = new Role();
+		// r.setName(roleType.name());
+		// r.setIdEnum(roleType);
+		// return r;
+		return this.roleRepository.findById(roleType.name());
 	}
 
 	@Override
-	public void registerRoleDeveloper(User user) {
-		// FIXME
-		if (user.getPassword().length() < 7) {
-			throw new UserServiceException("Password has to be at least 7 characters");
-		}
-		if (this.userExists(user)) {
-			throw new UserServiceException(
-					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
-		}
-
-		user.setRole(getRoleDeveloper());
-		user.setActive(true);
-		log.debug("Creating user with Role Developer default");
-
-		this.userRepository.save(user);
-
-	}
-
-	@Override
-	public void registerRoleUser(User user) {
-
-		if (user.getPassword().length() < 7) {
-			throw new UserServiceException("Password has to be at least 7 characters");
-		}
-		if (this.userExists(user)) {
-			throw new UserServiceException(
-					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
-		}
-		user.setActive(true);
-		user.setRole(getRoleUser());
-		log.debug("Creating user with Role User default");
-
-		this.userRepository.save(user);
-
-	}
-
-	@Override
-
 	public List<ClientPlatform> getClientsForUser(User user) {
 		List<ClientPlatform> clients = new ArrayList<ClientPlatform>();
 		clients = this.clientPlatformRepository.findByUser(user);
@@ -278,4 +262,5 @@ public class UserServiceImpl implements UserService {
 	public User getUserByIdentification(String identification) {
 		return userRepository.findByUserId(identification);
 	}
+
 }

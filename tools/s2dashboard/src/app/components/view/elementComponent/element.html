@@ -2,51 +2,53 @@
   <div class="element-container fullcontainer">
     <md-toolbar ng-if="vm.element.header.enable" class="widget-header md-hue-2" ng-style="{'background':vm.element.header.backgroundColor, 'height': vm.element.header.height + 'px'}">
       <div class="md-toolbar-tools">
-        <md-icon ng-style="{'color':vm.element.header.title.iconColor}">{{vm.element.header.title.icon}}</md-icon>
+        <md-icon ng-style="{'color':vm.element.header.title.iconColor,'font-size' : '20px'}">{{vm.element.header.title.icon}}</md-icon>
         <h5 flex ng-style="{'color':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5>
+
+        <md-icon  class="cursor-hand" style="font-size: 20px;color:hsl(220, 23%, 20%);" ng-if="vm.datastatus" tooltips tooltip-show-trigger="click" tooltip-hide-trigger="click" tooltip-close-button="true" tooltip-size="small" tooltip-template-url="app/partials/view/filterTooltip.html" ng-attr-tooltip-side="{{vm.editmode?'bottom':'bottom left'}}">filter_list</md-icon>
 
         <!--<md-button ng-click="toggleFullScreen()" class="md-icon-button" aria-label="Fullscreen">
           <md-icon>fullscreen</md-icon>
           <md-tooltip>Fullscreen</md-tooltip>
         </md-button> TODO in the future-->
         <!-- Edit mode -->
-        <md-button ng-if="vm.editmode" ng-click="vm.openEditContainerDialog()" class="md-icon-button" aria-label="Edit Container">
-          <md-icon>format_paint</md-icon>
+        <md-button ng-if="vm.editmode" ng-click="vm.openEditContainerDialog()" class="md-icon-button"  aria-label="Edit Container">
+          <md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);" >format_paint</md-icon>
           <md-tooltip>Edit container</md-tooltip>
         </md-button>
-        <md-button ng-if="vm.editmode && vm.element.type == 'livehtml'" ng-click="vm.openEditGadgetDialog()" class="md-icon-button" aria-label="Gadget Editor">
-          <md-icon>mode_edit</md-icon>
+        <md-button ng-if="vm.editmode && vm.element.type == 'livehtml'" ng-click="vm.openEditGadgetDialog()"  class="md-icon-button" aria-label="Gadget Editor">
+          <md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">mode_edit</md-icon>
           <md-tooltip>Edit Gadget definition</md-tooltip>
         </md-button>
-        <md-button ng-if="vm.editmode" class="drag-handler md-icon-button">
-          <md-icon>open_with</md-icon>
+        <md-button ng-if="vm.editmode"  class="drag-handler md-icon-button">
+          <md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">open_with</md-icon>
           <md-tooltip>Move</md-tooltip>
         </md-button>
-        <md-button ng-if="vm.editmode" class="remove-button md-icon-button" ng-click="vm.deleteElement()">
-          <md-icon>delete</md-icon>
+        <md-button ng-if="vm.editmode" class="remove-button md-icon-button"  ng-click="vm.deleteElement()">
+          <md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">delete</md-icon>
           <md-tooltip>Remove</md-tooltip>
         </md-button>
       </div>
     </md-toolbar>
     <div ng-if="vm.editmode && !vm.element.header.enable" class="item-buttons">
-      <md-button ng-click="vm.openEditContainerDialog()" class="md-raised md-icon-button" aria-label="Edit Container">
-        <md-icon>format_paint</md-icon>
+      <md-button ng-click="vm.openEditContainerDialog()"  class="md-raised md-icon-button" aria-label="Edit Container">
+        <md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">format_paint</md-icon>
       </md-button>
-      <md-button ng-click="vm.openEditGadgetDialog()" ng-if="vm.element.type == 'livehtml'" class="md-raised md-icon-button" aria-label="Gadget Editor">
-        <md-icon>mode_edit</md-icon>
+      <md-button ng-click="vm.openEditGadgetDialog()"  ng-if="vm.element.type == 'livehtml'" class="md-raised md-icon-button" aria-label="Gadget Editor">
+        <md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">mode_edit</md-icon>
       </md-button>
       <md-button ng-if="vm.editmode" class="drag-handler md-raised md-icon-button">
-        <md-icon>open_with</md-icon>
+        <md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);" >open_with</md-icon>
       </md-button>
-      <md-button ng-if="vm.editmode" class="remove-button md-raised md-icon-button" ng-click="vm.deleteElement()">
-        <md-icon>delete</md-icon>
+      <md-button ng-if="vm.editmode"  class="remove-button md-raised md-icon-button" ng-click="vm.deleteElement()">
+        <md-icon style="font-size: 20px;color:hsl(220, 23%, 20%);">delete</md-icon>
         <md-tooltip>Remove</md-tooltip>
       </md-button>
     </div>
 
     <!--<div ng-bind-html="vm.trustHTML(vm.element.content)" class="fullcontainer" flex ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}">
     </div>-->
-    <livehtml ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}" ng-if="vm.element.type == 'livehtml'" livecontent="vm.element.content" datasource="vm.element.datasource"></livehtml>
-    <gadget ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'display': 'inline-block', 'width':'100%', 'height': vm.calcHeight()}" ng-if="vm.element.type != 'livehtml'" id="vm.element.id"></gadget>
+    <livehtml ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}" ng-if="vm.element.type == 'livehtml'" livecontent="vm.element.content" datasource="vm.element.datasource" ng-class="vm.element.id" id="vm.element.id" datastatus="vm.datastatus"></livehtml>
+    <gadget ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'display': 'inline-block', 'width':'100%', 'height': vm.calcHeight()}" ng-if="vm.element.type != 'livehtml'" ng-class="vm.element.id" id="vm.element.id" datastatus="vm.datastatus"></gadget>
   </div>
 </gridster-item>

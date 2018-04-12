@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -36,6 +37,7 @@ import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
 public class MongoNativeManageDBRepositoryIntegrationTest {
 
 	@Autowired
+	@Qualifier("MongoManageDBRepository")
 	ManageDBRepository repository;
 
 	@Autowired

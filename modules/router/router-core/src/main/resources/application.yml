@@ -7,7 +7,7 @@ sofia2: #Config Sofia2 specific
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
-      servers: localhost:27017
+      servers: realtimedb:27017
       autoConnectRetry: true
       socketTimeout: 5000
       maxAutoConnectRetryTime: 5000
@@ -28,8 +28,7 @@ sofia2: #Config Sofia2 specific
       quasar.maxHttpConnectionsPerRoute: 10
       quasar.connectionTimeout.millis: 10000
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/
-   router.avoidsslverification: true 
-    
+   router.avoidsslverification: true
 #Security Config
 security:
     user:

@@ -13,6 +13,14 @@ management.security.enabled: false
 #security.basic.enabled: false
     
 sofia2: #Config Sofia2 specific
+   database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -64,13 +72,6 @@ spring: ## General Config
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update 
       properties.hibernate.enable_lazy_load_no_trans: true
-   mail: ##Mail configuration
-      host: smtp.gmail.com
-      username: sofia4cities@gmail.com
-      password: ----
-      port: 587
-      properties.mail.smtp.auth: true
-      properties.mail.smtp.starttls.enable: true
    jmx:
     enabled: true
 
