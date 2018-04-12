@@ -82,6 +82,7 @@ public class MarketAssetHelper {
 
 	public void populateMarketAssetListForm(Model model) {
 		model.addAttribute("marketassettypes", MarketAsset.MarketAssetType.values());
+		model.addAttribute("marketassetstates", MarketAsset.MarketAssetState.values());
 		model.addAttribute("marketassetmodes", MarketAsset.MarketAssetPaymentMode.values());
 		model.addAttribute("technologies", getTechnologies());
 	}
