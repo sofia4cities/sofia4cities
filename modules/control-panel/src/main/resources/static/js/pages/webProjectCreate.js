@@ -1,4 +1,4 @@
-var webProjectCreateController = function() {
+var WebProjectCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
     var APPNAME = 'Sofia4Cities Control Panel'; 
@@ -9,38 +9,60 @@ var webProjectCreateController = function() {
 	var internalLanguage = 'en';	
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
-	
-	
-	// CONTROLLER PUBLIC FUNCTIONS 
-	return{
-		uploadZip: function() {
-	    	//mostrarCapaLoading();
-	    	$("#pathZipUpload").val($("#identification").val());
-			$.ajax({
-	            type: 'post',
-	            url: '/controlpanel/webprojects/uploadZip',
-	            contentType: false,
-	            processData: false,
-	            data: new FormData($('#uploadZip')[0]),
-	            success: function () {
-	            	var fancytreeObject = treeObject.fancytree("getTree");
-	                fancytreeObject.reload({
-	                        contentType: "application/json; charset=utf-8",
-	                        url: "/controlpanel/webprojects/getFilesInPath",
-	                        data: "path=" + $("#identification").val(),
-	                        success: function(data){
-	                        	//esconderCapaLoading();
-	                            console.log("root zip reload");
-	                        },
-	                        error: function(){
-	                            //esconderCapaLoading();
-	                        }
-	                })
-	            },
-	            error: function(){
-	                //esconderCapaLoading();
-	            }
-	        });
-	    }
+
+    var uploadZip = function (){
+		$.ajax({
+            type: 'post',
+            url: '/controlpanel/webprojects/uploadZip',
+            contentType: false,
+            processData: false,
+            data: new FormData($('#upload_zip')[0]),
+            success: function () {
+            },
+            error: function(){
+            }
+        });
+    }
+    
+	// REDIRECT URL
+	var navigateUrl = function(url){
+		window.location.href = url; 
 	}
-}
+	
+    // CONTROLLER PUBLIC FUNCTIONS 
+	return{
+		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
+		load: function(Data) { 
+			logControl ? console.log(LIB_TITLE + ': load()') : '';
+		},
+		
+		// INIT() CONTROLLER INIT CALLS
+		init: function(){
+			logControl ? console.log(LIB_TITLE + ': init()') : '';
+			
+		},
+
+		// REDIRECT
+		go: function(url){
+			logControl ? console.log(LIB_TITLE + ': go()') : '';	
+			navigateUrl(url); 
+		},
+		
+		// uploadZip
+		uploadZip: function(url){
+			logControl ? console.log(LIB_TITLE + ': uploadZip()') : '';	
+			uploadZip(); 
+		},
+		
+	};
+}();
+
+// AUTO INIT CONTROLLER WHEN READY
+jQuery(document).ready(function() {
+	
+	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
+	WebProjectCreateController.load(webProjectCreateJson);	
+		
+	// AUTO INIT CONTROLLER.
+	WebProjectCreateController.init();
+});

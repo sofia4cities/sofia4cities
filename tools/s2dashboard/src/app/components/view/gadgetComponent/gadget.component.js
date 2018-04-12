@@ -126,6 +126,7 @@
       switch(vm.config.type){
         case "line":
         case "bar":
+        case "radar":
         case "pie":
           //Group X axis values
           var allLabelsField = [];
@@ -362,6 +363,16 @@
           //originValue = points[0]._model.label;
           break;
         case "bar":
+          //find serie x field if there are diferent x field in measures
+          for(var index in vm.data){
+            if(vm.data[index][points[0]._index]){
+              originField = vm.measures[index].config.fields[0];
+              break;
+            }
+          }
+          originValue = points[0]._model.label;
+          break;
+          case "radar":
           //find serie x field if there are diferent x field in measures
           for(var index in vm.data){
             if(vm.data[index][points[0]._index]){

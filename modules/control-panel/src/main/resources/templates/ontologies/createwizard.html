@@ -107,7 +107,7 @@
 										</a>
 									</li>																	
 									<li id="tab-autorizaciones" class=""><a href="#tab_2" data-toggle="tab" th:classappend="${ontology?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.authorizations}" >AUTORIZACIONES </span></a></li>
-									<li id="tab-advanced-options" class=""><a href="#tab_settings" data-toggle="tab" aria-expanded="true"><i class="flaticon-settings font-grey-gallery"></i> <span class="uppercase font-md" th:text="#{ontology.advancedsettings}" >Advanced Settings </span></a></li>
+									<li th:if="${ontology?.id == null}" id="tab-advanced-options" class=""><a href="#tab_settings" data-toggle="tab" aria-expanded="true"><i class="flaticon-settings font-grey-gallery"></i> <span class="uppercase font-md" th:text="#{ontology.advancedsettings}" >Advanced Settings </span></a></li>
 								</ul>
 								
 							</div>
@@ -283,6 +283,7 @@
 																											<th class="titulo-columnas" th:text="#{ontology.property}">Property</th>
 																											<th class="titulo-columnas" th:text="#{ontology.type.property}">Data type</th>
 																											<th class="titulo-columnas" th:text="#{ontology.required.property}">Required </th>
+																											<th class="titulo-columnas" >Encrypted</th>
 																											<th class="titulo-columnas" th:text="#{ontology.description}">Description</th>																															
 																											<th class="titulo-columnas" th:text="#{gen.options}">Options</th>
 																										</tr>
@@ -306,7 +307,14 @@
 																													<option value="required">Required</option>
 																													<option value="">Optional</option>
 																												</select>
-																																												</td>
+																											</td>
+																											<td width="125px">
+																												<select name="encrypted[]" class="form-control">
+																													<option value ="false">false</option>
+																													<option value ="true">true</option>
+																												</select>
+																											</td>
+																											
 																											<td><input type="text" name="descriptions[]" class="form-control"/></td>																									
 																											<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="OntologyCreateController.removeProperty(this)" th:text="#{gen.deleteBtn}">Remove</button></td>			
 																										</tr>

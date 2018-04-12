@@ -49,6 +49,7 @@ public class ESBaseApi {
 	void initializeIt() {
 		
 		try {
+			System.setProperty("es.set.netty.runtime.available.processors", "false");
 			Settings settings = Settings.builder().put("client.transport.ignore_cluster_name", true).build();
 			client = new PreBuiltTransportClient(settings).addTransportAddress(getTransportAddress());
 

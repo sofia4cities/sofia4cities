@@ -74,7 +74,7 @@ public class AuditFlowManagerService {
 					.builder(ontology, OperationType.INSERT, commonParams.getUser(), operation).body(item)
 					.queryType(QueryType.NONE).cacheable(false).build();
 
-			result = routerCrudService.insert(model);
+			result = routerCrudService.insertWithNoAudit(model);
 
 		}
 

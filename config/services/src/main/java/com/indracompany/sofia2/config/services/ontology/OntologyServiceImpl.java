@@ -66,7 +66,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		User sessionUser = this.userService.getUser(sessionUserId);
 		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
-			return ontologyRepository.findAll();
+			return ontologyRepository.findAllByOrderByIdentificationAsc();
 		} else {
 			return ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
 		}
@@ -76,7 +76,7 @@ public class OntologyServiceImpl implements OntologyService {
 	public List<Ontology> getOntologiesByUserId(String sessionUserId) {
 		User sessionUser = this.userService.getUser(sessionUserId);
 		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
-			return ontologyRepository.findAll();
+			return ontologyRepository.findAllByOrderByIdentificationAsc();
 		} else {
 			return ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
 		}

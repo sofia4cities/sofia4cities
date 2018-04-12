@@ -1,0 +1,6 @@
+{
+	"title":"Sofia4Cities Architecture Overview",
+	"technologies":"HTML,GIT",
+	"description":"An Architecture Overview of the Platform, with explanation of all the modules, executables, third-party libraries, HA,... that conforms the platform",
+	"detailedDescription":"Documentation about the fundamental concepts behind Sofia4Cities architecture and logical design can be found on the **GIT repository**:\n\n[**Platform Documentation**](https://github.com/sofia4cities/sofia4cities/tree/master/docs)\n\nThat section includes the open documentation of the platform. Among others you can find:\n\n- How to contribute description of the easy rules to follow to contribute to the evolution of the platform\n- How to execute in Development Environment this section explain how to install our Development Environment (at the moment for Windows), how to compile all the modules, load in the IDE of the DevEnv and execute some modules\n- How to execute in Docker this section explain how to create docker images of all the modules of the platform and how to execute it with Docker Compose\n\nThe Sofia4Cities Architecture overiew is accesible via this [**Link**](https://github.com/sofia4cities/sofia4cities/tree/master/docs/architecture-overview)"
+}

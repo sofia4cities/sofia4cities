@@ -112,14 +112,15 @@
 												<div class="list-inline text-left cd-filters">
 													<a href="#0" data-type="0" data-filter="ALL" class="btn btn-outline grey-gallery btn-sm margin-bottom-5 padding-both-10"><i class="la la-table font-lg hidden-xs"></i><span>ALL</span></a>
 													<a th:each="marketassettype, row :${marketassettypes}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassettype},data-type=${row.index}" class="btn btn-outline blue-chambray btn-sm margin-bottom-5  padding-both-10"> <span th:text="#{marketasset.type.__${marketassettype}__}"> Tipo de Proyecto</span></a>
+													<a th:each="marketassetstate, row :${marketassetstates}" th:href="@{'#' + ${row.index}}" th:attr="data-filter=${marketassetstate},data-type=${row.index}" class="btn btn-outline blue-chambray btn-sm margin-bottom-5  padding-both-10" style="float:right;margin-left: 5px;"> <span th:text="#{marketasset.state.__${marketassetstate}__}"> Estado</span></a>												
 												</div>
 											</div>											
 										</div>													
 									</div>
 									<div class="clearfix"></div>															
 									<div class="col-md-12 proyect-list margin-bottom-40" style="padding: 20px;">
-										<!-- ASSET CONTAINER class="project-container col-md-4 col-sm-6 col-xs-12 + project_type" -->
-										<div th:each="marketasset : ${marketAssets}" th:class="'project-container col-md-3 col-sm-6 col-xs-12 ' + ${#strings.replace(marketasset.marketAssetType,' ','')}">
+										<!-- ASSET CONTAINER class="project-container col-md-4 col-sm-6 col-xs-12 + project_type + proyect state" -->
+										<div th:each="marketasset : ${marketAssets}" th:class="'project-container col-md-3 col-sm-6 col-xs-12 ' + ${#strings.replace(marketasset.marketAssetType,' ','')} + ' '  + ${#strings.replace(marketasset.state,' ','')}">
 											<!-- ASSET PANEL va con fondo blanco, tocar panel-defautl para hacer un panel-white -->
 											<div class="panel panel-white effect-1">
 												<div class="panel-heading ">																						  
@@ -130,8 +131,10 @@
 													<div class="form-inline" style=" font-size: 20px; min-height: 20px">															
 														 <span th:each="tag : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label-marketasset" th:title="${tag}" th:alt="${tag}"><i th:class="'devicon-' + ${tag} +'-plain'"></i></span>															
 														 <div class="pull-right">
-														<span class="btn btn-xs green-turquoise tooltips" data-container="body" data-placement="top" th:attr="data-original-title=#{marketasset.paymentmode} + ': ' + ${marketasset.paymentMode}" th:text="${marketasset.paymentMode}" style="margin-top: 2px;"> FREE </span>
-													</div>
+														 	<span th:if="${marketasset.state.name()== 'REJECTED'}" class="btn btn-xs btn-outline red-sunglo" th:title="${marketasset.rejectionReason}"><i class="fa fa-ban font-md"></i> <span th:text="${marketasset.state}">State</span></span>
+														 	<span th:if="${marketasset.state.name()== 'PENDING'}" class="btn btn-xs btn-outline red-sunglo" ><i class="fa fa-ban font-md"></i> <span th:text="${marketasset.state}">State</span></span>
+															<span class="btn btn-xs green-turquoise tooltips" data-container="body" data-placement="top" th:attr="data-original-title=#{marketasset.paymentmode} + ': ' + ${marketasset.paymentMode}" th:text="${marketasset.paymentMode}" style="margin-top: 2px;"> FREE </span>
+														 </div>
 													</div>
 													
 												</div>
@@ -145,7 +148,6 @@
 												<div class="panel-footer" style="display: none;"> 
 													<div class="pull-left">
 														<span class="btn btn-xs btn-outline grey-mint"><i class="fa fa-user font-md"></i> <span th:text="${marketasset.user.userId}">User</span></span>
-														<span th:if="${marketasset.state.name()== 'REJECTED'}" class="btn btn-xs btn-outline red-sunglo" th:title="${marketasset.rejectionReason}"><i class="fa fa-ban font-md"></i> <span th:text="${marketasset.state}">State</span></span>
 													</div>
 													<div class="pull-right">
 														
