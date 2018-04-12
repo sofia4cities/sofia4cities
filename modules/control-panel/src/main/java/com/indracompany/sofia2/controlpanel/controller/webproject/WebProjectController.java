@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,6 +52,9 @@ public class WebProjectController {
 		
 	@Autowired
 	private AppWebUtils utils;
+	
+	@Value("${sofia2.webproject.baseurl:https://localhost:18080/web/}")
+	private String rootWWW = "";
 
 	@GetMapping(value = "/list", produces = "text/html")
 	public String list(Model model, HttpServletRequest request,
@@ -60,7 +64,8 @@ public class WebProjectController {
 		List<WebProject> webprojects = this.webProjectService
 				.getWebProjectsWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		model.addAttribute("webprojects", webprojects);
-
+		model.addAttribute("rootWWW", rootWWW);
+		
 		return "webprojects/list";
 	}
 	
