@@ -180,9 +180,18 @@
 																		</div>
 																	</div>
 																</div>			
-																
-																						
-															
+																<div class="col-md-3 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label class="" th:text="#{ontology.allowsCypherFields} + ':'">Allow Encription of Fields</label>
+																		<div class="mt-checkbox-list">
+																			<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.allowsCypherFields.help},data-title=#{ontology.allowsCypherFields}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.allowsCypherFields} +'?'">Allow Cypher Fields?</div>
+																				<input  id="allowsCypherFields" class="form-control no-remove"  name="allowsCypherFields" type="checkbox" th:field="*{allowsCypherFields}"  />
+																				<span></span><!-- necesario por estilos. -->
+																			</label>
+																		</div>
+																	</div>
+																</div>
+																																					
 															<!-- <div class="col-md-6 col-sm-12 col-xs-12">
 																<div class="col-md-6 col-sm-6 col-xs-12" >
 																	<div class="form-group">
@@ -283,7 +292,7 @@
 																											<th class="titulo-columnas" th:text="#{ontology.property}">Property</th>
 																											<th class="titulo-columnas" th:text="#{ontology.type.property}">Data type</th>
 																											<th class="titulo-columnas" th:text="#{ontology.required.property}">Required </th>
-																											<th class="titulo-columnas" >Encrypted</th>
+																											<th class="titulo-columnas" th:text="#{ontology.allowsCypherFields.property}">Encrypted </th>
 																											<th class="titulo-columnas" th:text="#{ontology.description}">Description</th>																															
 																											<th class="titulo-columnas" th:text="#{gen.options}">Options</th>
 																										</tr>
