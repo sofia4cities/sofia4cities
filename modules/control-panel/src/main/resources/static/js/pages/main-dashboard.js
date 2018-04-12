@@ -44,7 +44,8 @@ var MainDashboard = function() {
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
 			// init counterups
-			handleCounterup();			
+			handleCounterup();		
+				
 		}		
 	};
 }();
