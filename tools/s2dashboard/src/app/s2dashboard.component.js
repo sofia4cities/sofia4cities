@@ -415,12 +415,12 @@
           enable: true,
           title: {
             icon: "",
-            iconColor: "hsl(0, 0%, 100%)",
+            iconColor: "hsl(220, 23%, 20%)",
             text: type + "_" + (new Date()).getTime(),
-            textColor: "hsl(0, 0%, 100%)"
+            textColor: "hsl(220, 23%, 20%)"
           },
-          backgroundColor: "hsl(200, 23%, 64%)",
-          height: "37"
+          backgroundColor: "hsl(0, 0%, 100%)",
+          height: "25"
         }
         newElem.backgroundColor ="white";
         newElem.padding = 0;

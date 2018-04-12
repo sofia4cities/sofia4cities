@@ -20,7 +20,6 @@
         
             return {
                 responseError: function (response) {
-                    debugger;
                     if (response.status === 500) {
                         if (incrementalTimeout < 5000) {
                             return retryRequest(response.config);
