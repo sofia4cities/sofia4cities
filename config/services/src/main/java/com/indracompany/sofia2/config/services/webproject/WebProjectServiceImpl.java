@@ -51,7 +51,7 @@ public class WebProjectServiceImpl implements WebProjectService {
 	@Autowired
 	private UserService userService;
 
-	@Value("${sofia2.webproject.baseurl:https://localhost:18080/controlpanel/webprojects/}")
+	@Value("${sofia2.webproject.baseurl:https://localhost:18080/web/}")
 	private String rootWWW = "";
 
 	@Value("${sofia2.webproject.rootfolder.path:/usr/local/webprojects/}")
@@ -117,13 +117,16 @@ public class WebProjectServiceImpl implements WebProjectService {
 
 	@Override
 	public void createWebProject(WebProject webProject, String userId) {
+		checkFolder(webProject.getIdentification());
 		if (!webProjectExists(webProject.getIdentification())) {
 			log.debug("Web Project does not exist, creating..");
 			User user = this.userService.getUser(userId);
 			webProject.setUser(user);
+			if (webProject.getMainFile().isEmpty()) {
+				webProject.setMainFile("index.html");
+			}
 			createNewFolderWebProject(webProject.getIdentification(), userId);
 			this.webProjectRepository.save(webProject);
-			
 			
 		} else {
 			throw new WebProjectServiceException(
@@ -157,6 +160,7 @@ public class WebProjectServiceImpl implements WebProjectService {
 		}
 	}
 	
+	
 	public String getWebProjectURL(String identification) {
 		WebProject webProject = webProjectRepository.findByIdentification(identification);
 		return rootWWW + webProject.getIdentification() + "/" + webProject.getMainFile();
@@ -171,7 +175,6 @@ public class WebProjectServiceImpl implements WebProjectService {
 		if (wp != null) {
 			if (hasUserPermissionToEditWebProject(user, wp)) {
 				if (!webProjectExists(webProject.getIdentification())) {
-					wp.setIdentification(webProject.getIdentification());
 					wp.setDescription(webProject.getDescription());
 					wp.setMainFile(webProject.getMainFile());
 					this.webProjectRepository.save(wp);
@@ -187,15 +190,27 @@ public class WebProjectServiceImpl implements WebProjectService {
 	}
 
 	@Override
+	public void deleteWebProject(WebProject webProject, String userId) {
+		WebProject wp = this.webProjectRepository.findById(webProject.getId());
+		User user = this.userService.getUser(userId);
+		
+		if (hasUserPermissionToEditWebProject(user, wp)) {
+			deleteFolder(rootFolder + wp.getIdentification() + "/");
+			this.webProjectRepository.delete(webProject);
+		} else {
+			throw new WebProjectServiceException("The user is not authorized");
+		}
+	}
+	
+	@Override
 	public void uploadZip(MultipartFile file, String userId) {
 
 		String folder = rootFolder + userId + "/";
 		
 		try {
-
+			deleteFolder(folder);
 			uploadFileToFolder(file, folder);
 			unzipFile(folder, file.getOriginalFilename());
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -219,6 +234,7 @@ public class WebProjectServiceImpl implements WebProjectService {
 		String fileName = file.getOriginalFilename();
 		byte[] bytes = file.getBytes();
 
+		
 		InputStream is = new ByteArrayInputStream(bytes);
 
 		File folder = new File(path);
@@ -231,16 +247,26 @@ public class WebProjectServiceImpl implements WebProjectService {
 
 		IOUtils.copy(is, os);
 		
+		
 		is.close();
 		os.close();
+		
+		log.info(path + fileName + " uploaded");
 	}
 
 	private void checkFolder(String path) {
 		if (path.contains("..") || path.contains("\\")) {
-			throw new WebProjectServiceException("Error invalid folder name");
+			throw new WebProjectServiceException("Invalid folder name");
 		}
 	}
 
+	private void deleteFolder(String path) {
+		File folder = new File(path);
+		if (folder.exists()) {
+			folder.delete();
+		}
+	}
+	
 	private void checkWebProjectUser(String identification, String userId) {
 		WebProject webProject = webProjectRepository.findByIdentification(identification);
 
@@ -256,10 +282,13 @@ public class WebProjectServiceImpl implements WebProjectService {
 		File file = new File(rootFolder + userId + "/");
 		if (file.exists() && file.isDirectory()) {
 			File newFile = new File(rootFolder + identification + "/");
-			file.renameTo(newFile);
+			if (!file.renameTo(newFile)) {
+				throw new WebProjectServiceException("Cannot create web project folder");
+			}
+				
 		}
 		
-		
+		log.info("new folder created");
 	
 	}
 	
@@ -267,7 +296,7 @@ public class WebProjectServiceImpl implements WebProjectService {
 	private void unzipFile(String path, String fileName) {
 
 		File folder = new File(path + fileName);
-
+		log.info("unzip zip file: "+ folder);
 		if (folder.exists()) {
 				try {
 					ZipInputStream zis = new ZipInputStream(new FileInputStream(folder));
@@ -282,9 +311,9 @@ public class WebProjectServiceImpl implements WebProjectService {
 							
 						} else {
 							FileOutputStream fos = new FileOutputStream(path + ze.getName());
-							
+								
 							IOUtils.copy(zis, fos);
-							
+							log.info("unzip file: "+ ze.getName());
 							fos.close();
 							zis.closeEntry();
 						}
@@ -292,7 +321,9 @@ public class WebProjectServiceImpl implements WebProjectService {
 					zis.close();
 					
 					if (folder.exists()) {
-						folder.delete();
+						if (folder.delete()) {
+							log.info(folder + "deleted");
+						}
 					}
 							
 				} catch (FileNotFoundException e) {

@@ -607,26 +607,7 @@ var App = function() {
             // Hacks
             handleFixInputPlaceholderForIE(); //IE8 & IE9 input placeholder issue fix
 						
-			// PROTOTYPEs
-			// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
-			Array.prototype.unique = function() {
-				return this.filter(function (value, index, self) { 
-					return self.indexOf(value) === index;
-				});
-			};
-			
-			// ARRAY PROTROTYPE FOR REMOVE ELEMENT (not object) BY VALUE
-			Array.prototype.remove = function() {
-				var what, a = arguments, L = a.length, ax;				
-				while (L && this.length) {
-					what = a[--L];				
-					while ((ax = this.indexOf(what)) !== -1) {
-						console.log('AX: ' + ax);
-						this.splice(ax, 1);
-					}
-				}
-				return this;
-			};		
+					
         },
 
         //main function to initiate core javascript after ajax complete
