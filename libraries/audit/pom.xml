@@ -19,6 +19,14 @@
 	</properties>
 
 	<dependencies>
+	
+	
+	<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-commons</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+	
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

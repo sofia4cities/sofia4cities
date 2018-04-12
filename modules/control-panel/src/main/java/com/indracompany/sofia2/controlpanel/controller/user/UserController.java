@@ -238,7 +238,8 @@ public class UserController {
 						utils.addRedirectMessage("login.error.user.register", redirectAttributes);
 						return "redirect:/login";
 					}
-					if (nameRole.equals("user")) {
+					if (nameRole.toLowerCase().equals("user")) {
+
 						this.userService.registerRoleUser(user);
 						operations.createPostOperationsUser(user);
 						operations.createPostOntologyUser(user);
