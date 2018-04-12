@@ -27,4 +27,6 @@ public interface OntologyDataService {
 	public void checkOntologySchemaCompliance(final String data, final String ontologyName) throws DataSchemaValidationException;
 
 	public String addContextData(final OperationModel operationModel) throws JsonProcessingException, IOException;
+
+	public String encryptData(String data, String ontologyName) throws JsonProcessingException, IOException;
 }

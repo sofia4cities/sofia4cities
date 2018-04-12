@@ -182,7 +182,7 @@
 																</div>			
 																<div class="col-md-3 col-sm-6 col-xs-12">
 																	<div class="form-group">
-																		<label class="" th:text="#{ontology.allowsCypherFields} + ':'">Allow Cypher Fields</label>
+																		<label class="" th:text="#{ontology.allowsCypherFields} + ':'">Allow Encription of Fields</label>
 																		<div class="mt-checkbox-list">
 																			<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.allowsCypherFields.help},data-title=#{ontology.allowsCypherFields}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.allowsCypherFields} +'?'">Allow Cypher Fields?</div>
 																				<input  id="allowsCypherFields" class="form-control no-remove"  name="allowsCypherFields" type="checkbox" th:field="*{allowsCypherFields}"  />
@@ -191,8 +191,7 @@
 																		</div>
 																	</div>
 																</div>
-																						
-															
+																																					
 															<!-- <div class="col-md-6 col-sm-12 col-xs-12">
 																<div class="col-md-6 col-sm-6 col-xs-12" >
 																	<div class="form-group">
@@ -293,6 +292,7 @@
 																											<th class="titulo-columnas" th:text="#{ontology.property}">Property</th>
 																											<th class="titulo-columnas" th:text="#{ontology.type.property}">Data type</th>
 																											<th class="titulo-columnas" th:text="#{ontology.required.property}">Required </th>
+																											<th class="titulo-columnas" th:text="#{ontology.allowsCypherFields.property}">Encrypted </th>
 																											<th class="titulo-columnas" th:text="#{ontology.description}">Description</th>																															
 																											<th class="titulo-columnas" th:text="#{gen.options}">Options</th>
 																										</tr>
@@ -316,7 +316,13 @@
 																													<option value="required">Required</option>
 																													<option value="">Optional</option>
 																												</select>
-																																												</td>
+																											</td>
+																											<td width="125px">
+																												<select name="encrypted[]" onchange="OntologyCreateController.checkEncrypted(this)" class="form-control">
+																													<option value="">False</option>
+																													<option value="encrypted">True</option>
+																												</select>
+																											</td>
 																											<td><input type="text" name="descriptions[]" class="form-control"/></td>																									
 																											<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="OntologyCreateController.removeProperty(this)" th:text="#{gen.deleteBtn}">Remove</button></td>			
 																										</tr>
