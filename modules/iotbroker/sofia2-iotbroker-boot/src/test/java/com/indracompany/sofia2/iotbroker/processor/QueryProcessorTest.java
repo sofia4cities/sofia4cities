@@ -23,7 +23,6 @@ import java.util.Optional;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +33,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
-import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
+import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.router.service.app.service.RouterSuscriptionService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
@@ -63,8 +65,14 @@ public class QueryProcessorTest {
 	@MockBean
 	OntologyService ontologyService;
 
-	@Autowired
-	MockMongoOntologies mockOntologies;
+	//	@Autowired
+	//	MockMongoOntologies mockOntologies;
+
+	@MockBean
+	RouterService routerService;
+	@MockBean
+	RouterSuscriptionService routerSuscriptionService;
+
 
 	Person subject = PojoGenerator.generatePerson();
 	String subjectId;
@@ -91,7 +99,7 @@ public class QueryProcessorTest {
 	@Before
 	public void setUp() throws IOException, Exception {
 
-		mockOntologies.createOntology(Person.class);
+		//		mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
 		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
@@ -104,14 +112,16 @@ public class QueryProcessorTest {
 
 	@After
 	public void tearDown() {
-		mockOntologies.deleteOntology(Person.class);
+		//		mockOntologies.deleteOntology(Person.class);
 	}
 
 	@Test
-	@Ignore
-	public void given_OneQueryProcessor_When_ACorrectNativeQueryIsUsed_Then_TheResponseReturnsTheResults() {
+	public void given_OneQueryProcessor_When_ACorrectNativeQueryIsUsed_Then_TheResponseReturnsTheResults() throws Exception {
 		ssapQuery.getBody().setQuery("db.Person.find({})");
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage;
+
+		final OperationResultModel value = RouterServiceGenerator.generateInserOk("[{},{}]" );
+		when(routerService.query(any())).thenReturn(value);
 		responseMessage = queryProcessor.process(ssapQuery, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);

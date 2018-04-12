@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.junit.After;
@@ -40,7 +41,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
-import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
@@ -49,6 +49,8 @@ import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginMa
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.router.service.app.service.RouterSuscriptionService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyIndicationMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
@@ -76,9 +78,14 @@ public class IndicationProcessorTest {
 
 	@MockBean
 	SecurityPluginManager securityPluginManager;
+	@MockBean
+	RouterService routerService;
+	@MockBean
+	RouterSuscriptionService routerSuscriptionService;
+
 	//
-	@Autowired
-	MockMongoOntologies mockOntologies;
+	//	@Autowired
+	//	MockMongoOntologies mockOntologies;
 
 	@Autowired
 	SuscriptionModelRepository repositoy;
@@ -113,7 +120,7 @@ public class IndicationProcessorTest {
 		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
 		securityMocks();
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
-		mockOntologies.createOntology(Person.class);
+		//		mockOntologies.createOntology(Person.class);
 		//
 		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), session.getSessionKey(), SSAPQueryType.SQL, "select * from Person");
 		//
@@ -127,7 +134,7 @@ public class IndicationProcessorTest {
 	public void tearDown() {
 		//		repositoy.deleteBySuscriptionId(subjectSubscriptionId);
 		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
-		mockOntologies.deleteOntology(Person.class);
+		//		mockOntologies.deleteOntology(Person.class);
 	}
 
 	//	@Ignore
@@ -173,13 +180,19 @@ public class IndicationProcessorTest {
 	//TODO: Internal advice webservice it's not accesible in test context execution
 	@Ignore
 	@Test
-	public void given_OneSubsctiptionToOntologyThenWhenAninsertOccursThenAnIndicationIsReceived() {
+	public void given_OneSubsctiptionToOntologyThenWhenAninsertOccursThenAnIndicationIsReceived() throws Exception {
 
 		//		final CompletableFuture<SSAPMessage<SSAPBodyIndicationMessage>> future = new CompletableFuture<>();
 
 		ssapSbuscription.getBody().setQuery("db.Person.find({})");
 		ssapSbuscription.getBody().setQueryType(SSAPQueryType.NATIVE);
 		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
+
+
+		final String oid = UUID.randomUUID().toString();
+		final OperationResultModel value = RouterServiceGenerator.generateInserOk(oid );
+		when(routerService.insert(any())).thenReturn(value);
+
 		final SSAPMessage<SSAPBodyReturnMessage> responseInsert = processor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
 
 		try {

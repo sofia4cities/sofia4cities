@@ -19,6 +19,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,9 +33,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
+import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.router.service.app.service.RouterSuscriptionService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
@@ -54,6 +59,11 @@ public class SubscribeProcessorTest {
 
 	//	@Autowired
 	//	SuscriptionModelRepository repositoy;
+
+	@MockBean
+	RouterService routerService;
+	@MockBean
+	RouterSuscriptionService routerSuscriptionService;
 
 
 	SSAPMessage<SSAPBodySubscribeMessage> ssapSbuscription;
@@ -83,7 +93,11 @@ public class SubscribeProcessorTest {
 	}
 
 	@Test
-	public void given_OneSubsctiptionProcessorWhenSubscriptionArrivesThenSubscriptionIsStoredAndReturned() {
+	public void given_OneSubsctiptionProcessorWhenSubscriptionArrivesThenSubscriptionIsStoredAndReturned() throws Exception {
+
+		final OperationResultModel value = RouterServiceGenerator.generateSubscriptionOk(UUID.randomUUID().toString());
+		when(routerSuscriptionService.suscribe(any())).thenReturn(value);
+
 		final SSAPMessage<SSAPBodyReturnMessage> response = subscribeProcessor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
 		Assert.assertNotNull(response);
 		Assert.assertEquals(SSAPMessageDirection.RESPONSE, response.getDirection());
