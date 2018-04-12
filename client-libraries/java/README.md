@@ -70,3 +70,11 @@ If you don't want to use a secure connection, you may use standard MQTT protocol
 ## Disconnect
 
 -  To terminate the connection, call method "disconnect()".
+
+
+
+## Using executable example provided (.jar)
+
+-	A jar is provided to test this client. You can use it by executing "java -jar java-client.jar" with arguments "brokerURI", and optional "key store path" and "password" .
+
+![](./exampleExec.png) 
