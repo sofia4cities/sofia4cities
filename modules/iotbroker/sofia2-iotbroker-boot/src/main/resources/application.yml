@@ -60,7 +60,7 @@ sofia2: #Config Sofia2 specific
       stomp:
         enable: true
       moquette:
-        enable: true
+        enable: false
         port: 1883
         pool: 10
         host: 0.0.0.0

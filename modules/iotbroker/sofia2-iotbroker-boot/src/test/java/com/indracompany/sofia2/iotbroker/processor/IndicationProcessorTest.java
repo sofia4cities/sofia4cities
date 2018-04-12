@@ -15,13 +15,18 @@ package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -40,12 +45,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.config.model.SuscriptionNotificationsModel;
 import com.indracompany.sofia2.config.repository.SuscriptionModelRepository;
+import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
+import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -103,6 +114,20 @@ public class IndicationProcessorTest {
 	@MockBean
 	DeviceManager deviceManager;
 
+	@MockBean
+	SuscriptionModelRepository suscriptionModelRepository;
+
+	@MockBean
+	IotBrokerAuditableAspect iotBrokerAuditableAspect;
+
+	private void auditMocks() {
+		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
+		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
+		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, new Date(), "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
+	}
 
 
 
@@ -119,6 +144,7 @@ public class IndicationProcessorTest {
 	public void setUp() throws IOException, Exception {
 		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
 		securityMocks();
+		auditMocks();
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 		//		mockOntologies.createOntology(Person.class);
 		//
@@ -126,7 +152,14 @@ public class IndicationProcessorTest {
 		//
 		subject = PojoGenerator.generatePerson();
 		ssapInsertOperation = SSAPMessageGenerator.generateInsertMessage(Person.class.getSimpleName(), subject);
-		//
+
+
+		final List<SuscriptionNotificationsModel> value = new ArrayList<>();
+
+		final SuscriptionNotificationsModel sus = new SuscriptionNotificationsModel();
+		sus.setSessionKey(session.getSessionKey());
+		value.add(sus );
+		when(suscriptionModelRepository.findAllBySuscriptionId(any())).thenReturn(value );
 
 	}
 
@@ -152,6 +185,9 @@ public class IndicationProcessorTest {
 		ssapSbuscription.getBody().setQuery("db.Person.find({})");
 		ssapSbuscription.getBody().setQueryType(SSAPQueryType.NATIVE);
 		ssapSbuscription.setSessionKey(session.getSessionKey());
+		final OperationResultModel value = RouterServiceGenerator.generateSubscriptionOk(UUID.randomUUID().toString());
+		when(routerSuscriptionService.suscribe(any())).thenReturn(value);
+
 		final SSAPMessage<SSAPBodyReturnMessage> responseSubscription = processor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
 		final String subscriptionId = responseSubscription.getBody().getData().at("/subscriptionId").asText();
 		subjectSubscriptionId = subscriptionId;
@@ -168,7 +204,7 @@ public class IndicationProcessorTest {
 		final OperationResultModel result = mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
 				OperationResultModel.class);
 
-		indication = completableFuture.get();
+		indication = completableFuture.get(5, TimeUnit.SECONDS);
 		Assert.assertNotNull(indication);
 		Assert.assertEquals(session.getSessionKey(), indication.getSessionKey());
 		Assert.assertTrue(SSAPMessageDirection.REQUEST.equals(indication.getDirection()));

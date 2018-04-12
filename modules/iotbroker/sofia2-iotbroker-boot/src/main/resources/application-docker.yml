@@ -4,6 +4,8 @@ sofia2:
       quasar.connector.http.endpoint: http://quasar:10800/query/fs/       
    iotbroker.plugbable:
      gateway:
+       moquette:
+         enable: true
        rest:
          swaggerhost: ${SERVER_NAME}  
 
