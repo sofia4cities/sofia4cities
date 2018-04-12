@@ -158,7 +158,7 @@
 																		<span id="metainferror" class="help-block font-red hide"><i class="la la-warning"></i> Este campos es Obligatorio</span>
 																	</div>															
 																</div>															
-																<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+																<div class="col-md-2 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 																	<div class="form-group">
 																		<label class="" th:text="#{ontology.active} + ':'">Active</label>
 																		<div class="mt-checkbox-list">
@@ -169,7 +169,7 @@
 																		</div>
 																	</div>
 																</div>
-																<div class="col-md-3 col-sm-6 col-xs-12">
+																<div class="col-md-2 col-sm-6 col-xs-12">
 																	<div class="form-group">
 																		<label class="" th:text="#{ontology.public} + ':'">Public</label>
 																		<div class="mt-checkbox-list">
@@ -180,6 +180,17 @@
 																		</div>
 																	</div>
 																</div>			
+																<div class="col-md-2 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label class="" th:text="#{ontology.encrypted} + ':'">Encryted</label>
+																		<div class="mt-checkbox-list">
+																			<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.public} +'?'">Public?</div>
+																				<input  id="encrypted" class="form-control no-remove"  name="encrypted" type="checkbox" th:field="*{encrypted}"  />
+																				<span></span><!-- necesario por estilos. -->
+																			</label>
+																		</div>
+																	</div>
+																</div>
 																
 																						
 															
