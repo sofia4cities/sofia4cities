@@ -5,7 +5,9 @@ LABEL module.maintainer "plataformasofia2@indra.es" \
       module.name="elasticdb"
 
 ENV bootstrap.memory_lock=true \
-	ES_JAVA_OPTS="-Xms512m -Xmx512m"
+	ES_JAVA_OPTS="-Xms512m -Xmx512m" \
+	xpack.security.enabled=false \
+	http.host=0.0.0.0
 
 # Elastic Search custom configuration
 COPY --chown=elasticsearch:elasticsearch elasticsearch.yml /usr/share/elasticsearch/config/
