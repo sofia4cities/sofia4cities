@@ -38,16 +38,22 @@ public class ElasticSearchQueryAsTextDBRepository implements QueryAsTextDBReposi
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
+		query=query.toLowerCase();
 		return elasticSearchBasicOpsDBRepository.queryNativeAsJson(ontology, query, offset, limit);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
+		query=query.toLowerCase();
 		return elasticSearchBasicOpsDBRepository.queryNativeAsJson(ontology, query);
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query, int offset) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
+		query=query.toLowerCase();
 		return elasticSearchBasicOpsDBRepository.querySQLAsJson(ontology, query, offset);
 	}
 

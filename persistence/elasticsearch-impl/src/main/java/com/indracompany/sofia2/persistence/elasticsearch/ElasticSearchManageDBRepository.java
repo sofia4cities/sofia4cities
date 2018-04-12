@@ -62,9 +62,12 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public String createTable4Ontology(String ontology, String schema) throws DBPersistenceException {
+		
+		ontology=ontology.toLowerCase();
+		
 		try {
 			//String res =   connector.createIndex(database);
-			String res =   connector.createIndex(ontology);
+			String res =   connector.createIndex(ontology.toLowerCase());
 		} catch (Exception e) {
 			log.info("Resource already exists ");
 		}
@@ -86,16 +89,19 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public List<String> getListOfTables() throws DBPersistenceException {
+		
 		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public List<String> getListOfTables4Ontology(String ontology) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
 		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public void removeTable4Ontology(String ontology) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
 		//eSDeleteService.deleteAll(database, ontology);
 		eSDeleteService.deleteAll(ontology, ontology);
 
@@ -103,39 +109,46 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public void createIndex(String ontology, String attribute) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
 		throw new DBPersistenceException("Not Implemented Already");
 
 	}
 
 	@Override
 	public void createIndex(String ontology, String nameIndex, String attribute) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
 		throw new DBPersistenceException("Not Implemented Already");
 
 	}
 
 	@Override
 	public void createIndex(String sentence) throws DBPersistenceException {
+		
 		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public void dropIndex(String ontology, String indexName) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
 		throw new DBPersistenceException("Not Implemented Already");
 
 	}
 
 	@Override
 	public List<String> getListIndexes(String ontology) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
 		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public String getIndexes(String ontology) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
 		throw new DBPersistenceException("Not Implemented Already");
 	}
 
 	@Override
 	public void validateIndexes(String ontology, String schema) throws DBPersistenceException {
+		ontology=ontology.toLowerCase();
 		throw new DBPersistenceException("Not Implemented Already");
 
 	}

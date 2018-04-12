@@ -399,6 +399,7 @@
 	});
 	
 	function loadFragment(type, json_desc){
+		var docId = [[${marketasset.contentId}]];
 		if (type=='API'){
 			$('#apiId').text(json_desc.apiId);
 			$('#versions').text(json_desc.versions);
@@ -406,6 +407,9 @@
 			$('#swaggerUI').attr("src", json_desc.swaggerUI);
 		} else if (type=='DOCUMENT'){
 			$('#detailedDescription').append(json_desc.detailedDescription);
+			if (docId == null) {
+				$('#DOCUMENTDiv').css('display', 'none')
+			}
 		} else if (type=='URLAPPLICATION'){
 			$('#functionality').text(json_desc.functionality);
 			$('#id_endpoint').text(json_desc.id_endpoint);

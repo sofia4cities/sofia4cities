@@ -678,6 +678,6 @@ jQuery(document).ready(function() {
 	
 	DigitalTwinCreateController.load(digitalTwinCreateJson);
 	AceEditor = ace.edit("aceEditor");
-	AceEditor.setValue("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction main(){}");
+	AceEditor.setValue("var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();\nfunction init(){}\nfunction main(){}");
 	DigitalTwinCreateController.init();
 });

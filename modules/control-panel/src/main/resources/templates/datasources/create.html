@@ -38,19 +38,33 @@
 	
 	<!-- Funciones AJAX -->
 	<script th:inline="javascript">
-
+		/* <![CDATA[ */
 		function getQueryExecutedFragment() {
-			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#query").val(), 'queryType': 'SQL', 'ontologyIdentification': $("#query").val().slice($("#query").val().toLowerCase().indexOf("from") + 4).trim().split(" ")[0]});
+			
+			var query = $("#query").val();
+			var indexfrom = query.toLowerCase().indexOf("from ");
+			var indexOf = query.toLowerCase().indexOf(" ",indexfrom + 5);
+			if(indexOf == -1) {
+				indexOf = query.length;
+			}
+			var testOntology = query.substring(indexfrom + 5, indexOf).trim();
+			while(testOntology.startsWith("(") && indexfrom!=-1) {
+				indexfrom = query.toLowerCase().indexOf("from ",indexfrom);
+				indexOf = query.toLowerCase().indexOf(" ",indexfrom + 5);
+				if(indexOf == -1) {
+					indexOf = query.length;
+				}
+				testOntology = query.substring(indexfrom + 5, indexOf).trim();
+			}
+			
+			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#query").val(), 'queryType': 'SQL', 'ontologyIdentification': testOntology});
 			$("#dimensionsPanel").show();
 		} 
 	
-
 		function getOntologyFields() {
-
 			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
-
 		}
-	
+		/* ]]> */
 	</script>
 	
 	<!-- page-sidebar-closed to start page with collapsed menu -->

@@ -126,6 +126,7 @@
       switch(vm.config.type){
         case "line":
         case "bar":
+        case "radar":
         case "pie":
           //Group X axis values
           var allLabelsField = [];

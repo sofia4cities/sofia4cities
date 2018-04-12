@@ -19,7 +19,7 @@
     var ed = this;
 
     //Gadget source connection type list
-    var typeGadgetList = ["pie","bar","map","livehtml"];
+    var typeGadgetList = ["pie","bar","map","livehtml","radar"];
 
     ed.$onInit = function () {
       ed.selectedlayer = 0;
