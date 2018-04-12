@@ -14,21 +14,35 @@
  */
 package com.indracompany.sofia2.audit.bean;
 
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
-public class Sofia2AuthAuditEvent extends Sofia2AuditRemoteEvent {
+import lombok.extern.slf4j.Slf4j;
 
-	private static final long serialVersionUID = -146537921734143436L;
+@Slf4j
+public class CalendarUtil {
 
-	public Sofia2AuthAuditEvent() {
-		super();
+	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+	public static String convert(Date date) {
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		format.setTimeZone(tz);
+		return format.format(date);
 	}
 
-	public Sofia2AuthAuditEvent(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
-			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
-			String otherType, String remoteAddress) {
-		super(message, id, type, timeStamp, formatedTimeStamp, user, ontology, operationType, module, extraData,
-				otherType, remoteAddress);
+	public static Date convert(String stringDate) {
+
+		Date date = null;
+
+		try {
+			date = format.parse(stringDate);
+		} catch (ParseException e) {
+			log.error("Error converting date ", e);
+		}
+
+		return date;
 	}
 
 }
