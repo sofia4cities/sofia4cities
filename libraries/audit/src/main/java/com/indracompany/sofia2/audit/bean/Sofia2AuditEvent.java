@@ -15,7 +15,6 @@
 package com.indracompany.sofia2.audit.bean;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,7 +55,11 @@ public class Sofia2AuditEvent implements Serializable {
 
 	@Getter
 	@Setter
-	protected Date timeStamp;
+	protected long timeStamp;
+
+	@Getter
+	@Setter
+	protected String formatedTimeStamp;
 
 	@Getter
 	@Setter
@@ -86,13 +89,15 @@ public class Sofia2AuditEvent implements Serializable {
 		super();
 	}
 
-	public Sofia2AuditEvent(String message, String id, EventType type, Date timeStamp, String user, String ontology,
-			String operationType, Module module, Map<String, Object> extraData, String otherType) {
+	public Sofia2AuditEvent(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
+			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
+			String otherType) {
 		super();
 		this.message = message;
 		this.id = id;
 		this.type = type;
 		this.timeStamp = timeStamp;
+		this.formatedTimeStamp = formatedTimeStamp;
 		this.user = user;
 		this.ontology = ontology;
 		this.operationType = operationType;

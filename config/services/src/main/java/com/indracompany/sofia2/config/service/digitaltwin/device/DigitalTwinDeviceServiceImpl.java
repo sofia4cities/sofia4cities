@@ -199,4 +199,9 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService {
 		}
 	}
 
+	@Override
+	public List<DigitalTwinDevice> getAllByUserId(String userId) {
+		return this.digitalTwinDeviceRepo.findByUser(this.userService.getUser(userId));
+	}
+
 }
