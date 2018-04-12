@@ -5,7 +5,7 @@ sofia2:
    database.elasticsearch:
       sql.connector.http.endpoint: http://elasticdb:9200
       url: elasticdb            
-   iotbroker.plugbable:
+   iotbroker.plugable:
      gateway:
        moquette:
          enable: true
