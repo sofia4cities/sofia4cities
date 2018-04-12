@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,29 +35,30 @@ import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
+import com.indracompany.sofia2.commons.security.PasswordEncoder;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class OntologyDataServiceImpl implements OntologyDataService {
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
+	
+	final private ObjectMapper objectMapper = new ObjectMapper();
+	
+	final public static String ENCRYPT_PROPERTY = "encrypted";
 
-	@Override
-	public void checkOntologySchemaCompliance(final String data, final Ontology ontology)
+
+	private void checkOntologySchemaCompliance(final String data, final Ontology ontology)
 			throws DataSchemaValidationException {
 		final String jsonSchema = ontology.getJsonSchema();
 		checkJsonCompliantWithSchema(data, jsonSchema);
-	}
-
-	@Override
-	public void checkOntologySchemaCompliance(final String data, final String ontologyName)
-			throws DataSchemaValidationException {
-		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
-		checkOntologySchemaCompliance(data, ontology);
 	}
 
 	void checkJsonCompliantWithSchema(final String dataString, final String schemaString)
@@ -92,8 +94,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		}
 	}
 
-	@Override
-	public String addContextData(final OperationModel operationModel) throws JsonProcessingException, IOException {
+	String addContextData(final OperationModel operationModel) throws JsonProcessingException, IOException {
 
 		final String body = operationModel.getBody();
 		final String user = operationModel.getUser();
@@ -108,7 +109,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 				.clientConnection(clientConnection).clientPatform(clientPlatformId)
 				.clientPatformInstance(clientPlatoformInstance).clientSession(clientSession).build();
 
-		final ObjectMapper objectMapper = new ObjectMapper();
+		
 		final JsonNode jsonBody = objectMapper.readTree(body);
 		if (jsonBody.isObject()) {
 			final ObjectNode nodeBody = (ObjectNode) jsonBody;
@@ -118,6 +119,94 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			throw new IllegalStateException("Body should have a valid json object");
 		}
 
+	}
+
+	String encryptData(String data, Ontology ontology) throws IOException {
+		
+		if (ontology.isAllowsCypherFields()) {
+		
+			final JsonNode jsonSchema = objectMapper.readTree(ontology.getJsonSchema());
+			final JsonNode jsonData = objectMapper.readTree(data);
+			String path = "#";
+			
+			processProperties(jsonData, jsonSchema, jsonSchema, path);
+			
+			return jsonData.toString();
+		
+		} else {
+			return data;
+		}
+		
+	}
+	
+	private void processProperties(JsonNode allData, JsonNode schema, JsonNode rootSchema, String path) {
+		
+		JsonNode properties = schema.path("properties");
+		Iterator<Entry<String, JsonNode>> elements = properties.fields();
+		
+		while(elements.hasNext()) {
+			Entry<String, JsonNode> element = elements.next();
+			if (element != null) {
+				processProperty(allData, element, rootSchema, path+"/"+element.getKey());
+			}
+		}
+	}
+	
+	private void processProperty(JsonNode allData, Entry<String, JsonNode> element, JsonNode rootSchema, String path) {
+						
+		JsonNode ref = element.getValue().path("$ref");
+		if (!ref.isMissingNode()) {
+			String refString = ref.asText();
+			JsonNode referencedElement = getReferencedJsonNode(refString, rootSchema);
+			processProperties(allData, referencedElement, rootSchema, path);
+		} else {
+			JsonNode encrypt = element.getValue().path(ENCRYPT_PROPERTY);
+			if (encrypt.asBoolean()) {
+				JsonNode data = getReferencedJsonNode(path, allData);
+				String dataToEncrypt = data.asText();
+				try {
+					String encrypted = PasswordEncoder.getInstance().encodeSHA256(dataToEncrypt);
+					String propertyPath = path.substring(0, path.lastIndexOf("/"));
+					JsonNode originalData = getReferencedJsonNode(propertyPath, allData);
+					((ObjectNode) originalData).put(element.getKey(), encrypted);
+				} catch (final Exception e) {
+					log.error("Error in encrypting data: " + e.getMessage());
+					throw new RuntimeException(e);
+				}	
+					
+			} else {
+				processProperties(allData, element.getValue(), rootSchema, path);
+			}
+		}
+		
+	}
+	
+	private JsonNode getReferencedJsonNode(String ref, JsonNode root) {
+		String[] path = ref.split("/");
+		assert path[0].equals("#");
+		JsonNode referecedElement = root;
+		
+		for (int i = 1; i < path.length; i++) {
+			referecedElement = referecedElement.path(path[i]);
+		}
+		
+		return referecedElement;
+	}
+
+	@Override
+	public String preProcessInsertData(OperationModel operationModel) throws DataSchemaValidationException {
+		final String data = operationModel.getBody();
+		final String ontologyName = operationModel.getOntologyName();
+		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
+		checkOntologySchemaCompliance(data, ontology);
+		try {
+			String bodyWithDataContext = addContextData(operationModel);
+			String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
+			return encryptedDataInBODY;
+		} catch(IOException e) {
+			throw new RuntimeException("Error working with JSON data", e);
+		} 
+		
 	}
 
 }

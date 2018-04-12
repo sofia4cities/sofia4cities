@@ -21,11 +21,14 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
@@ -37,88 +40,29 @@ public class OntologyDataServiceImplTest {
 	@InjectMocks
 	OntologyDataServiceImpl service;
 	
-	private final String GOOD_JSON_SCHEMA = "{\n" + 
-			"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n" + 
-			"    \"title\": \"TMS-Commands\",\n" + 
-			"    \"type\": \"object\",\n" + 
-			"    \"required\": [\n" + 
-			"        \"Command\"\n" + 
-			"    ],\n" + 
-			"    \"properties\": {\n" + 
-			"        \"Command\": {\n" + 
-			"            \"type\": \"string\",\n" + 
-			"            \"$ref\": \"#/datos\"\n" + 
-			"        }\n" + 
-			"    },\n" + 
-			"    \"datos\": {\n" + 
-			"        \"description\": \"Info EmptyBase\",\n" + 
-			"        \"type\": \"object\",\n" + 
-			"        \"required\": [\n" + 
-			"            \"id\"\n" + 
-			"        ],\n" + 
-			"        \"properties\": {\n" + 
-			"            \"id\": {\n" + 
-			"                \"type\": \"string\"\n" + 
-			"            }\n" + 
-			"        }\n" + 
-			"    },\n" + 
-			"    \"description\": \"Ontologia para comandos de TMS\",\n" + 
-			"    \"additionalProperties\": true\n" + 
-			"}";
+	@Mock
+	private OntologyRepository ontologyRepository;
 	
-	private final String BAD_JSON_SCHEMA = "{\n" + 
-			"    \"$schema\": \"http://json-schema.org/draft-04/schema#\",\n" + 
-			"    \"title\": \"TMS-Commands\",\n" + 
-			"    \"type\": \"object\",\n" + 
-			"    \"required\": [\n" + 
-			"        \"Command\"\n" + 
-			"    ],\n" + 
-			"    \"properties\": {\n" + 
-			"        \"Command\": {\n" + 
-			"            \"type\": \"string\",\n" + 
-			"            \"$ref\": \"#/datos\"\n" + 
-			"        }\n" + 
-			"    },\n" + 
-			"    \"datos\": {\n" + 
-			"        \"description\": \"Info EmptyBase\",\n" + 
-			"        \"type\": \"object\",\n" + 
-			"        \"required\": [\n" + 
-			"            \"ERROR_ID_NAME\"\n" +   //Error in the id name
-			"        ],\n" + 
-			"        \"properties\": {\n" + 
-			"            \"id\": {\n" + 
-			"                \"type\": \"string\"\n" + 
-			"            }\n" + 
-			"        }\n" + 
-			"    },\n" + 
-			"    \"description\": \"Ontologia para comandos de TMS\",\n" + 
-			"    \"additionalProperties\": true\n" + 
-			"}";;
-	
-	private final String GOOD_JSON_DATA = "{\"Command\":{ \"id\":\"string\"}}";
-	
-	private final String NONVALID_JSON_DATA = "{\"Something\":{ \"id\":\"string\"}}"; //Something is not declared in the schema
-	
-	private final String BAD_JSON_DATA = "{Something\":{ \"id\":\"string\"}}"; //invalid JSON. Something should be surrounded by quotes.
+	private final ObjectMapper objectMapper = new ObjectMapper();
 	
 	@Test
 	public void given_OneValidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ExceptionIsNotLauched() throws DataSchemaValidationException {
-		service.checkJsonCompliantWithSchema(GOOD_JSON_DATA, GOOD_JSON_SCHEMA);
+		service.checkJsonCompliantWithSchema(TestResources.DATA_FOR_GOOD_JSON, TestResources.GOOD_JSON_SCHEMA);
 	}
 	
 	@Test(expected=DataSchemaValidationException.class)
 	public void given_OneInvalidJsonSchemaAndOneCompliantJson_When_TheJsonIsValidated_Then_ExceptionIsLauched() throws DataSchemaValidationException {
-		service.checkJsonCompliantWithSchema(GOOD_JSON_DATA, BAD_JSON_SCHEMA);
+		service.checkJsonCompliantWithSchema(TestResources.DATA_FOR_GOOD_JSON, TestResources.BAD_JSON_SCHEMA);
 	}
 	
 	@Test(expected=DataSchemaValidationException.class)
 	public void given_OneValidJsonSchemaAndOneNotCompliantJson_When_TheJsonIsValidated_Then_ItReturnsFalse() throws DataSchemaValidationException {
-		service.checkJsonCompliantWithSchema(NONVALID_JSON_DATA, GOOD_JSON_SCHEMA);
+		service.checkJsonCompliantWithSchema(TestResources.DATA_FOR_NONVALID_JSON, TestResources.GOOD_JSON_SCHEMA);
 	}
 	
 	@Test(expected=DataSchemaValidationException.class)
 	public void given_OneValidJsonSchemaAndOneIncorrectJson_When_TheJsonIsValidated_Then_ItReturnsFalse() throws DataSchemaValidationException {
-		service.checkJsonCompliantWithSchema(BAD_JSON_DATA, GOOD_JSON_SCHEMA);
+		service.checkJsonCompliantWithSchema(TestResources.DATA_FOR_BAD_JSON, TestResources.GOOD_JSON_SCHEMA);
 	}
 	
 	@Test
@@ -140,14 +84,13 @@ public class OntologyDataServiceImplTest {
 			.clientPlatformId(clientPlatformId)
 			.clientPlatformInstance(clientPlatformInstance)
 			.clientSession(clientSession)
-			.body(GOOD_JSON_DATA)
+			.body(TestResources.DATA_FOR_GOOD_JSON)
 			.cacheable(false)
 			.queryType(QueryType.NATIVE)
 			.build();
 		
 		String completeBody = service.addContextData(om);
 		assertTrue("The body should be created", completeBody != null);
-		final ObjectMapper objectMapper = new ObjectMapper();
 		final JsonNode jsonBody = objectMapper.readTree(completeBody);
 		
 		JsonNode contextData = jsonBody.findValue("contextData");
@@ -173,5 +116,67 @@ public class OntologyDataServiceImplTest {
 		
 		JsonNode clientSessionJSON = contextData.findValue("clientSession");
 		assertTrue("The clientSession should be created", clientSessionJSON.asText().equals(clientSession));
+	}
+	
+	
+	@Test
+	public void given_OneOntologyThatDoesNotAllowEncryption_When_AnInsertIsPerformed_Then_NothingIsDone() throws JsonProcessingException, IOException {
+		
+		final String ontologyName = "one";
+		final Ontology ontology = new Ontology();
+		ontology.setId("1");
+		ontology.setIdentification(ontologyName);
+		ontology.setJsonSchema(TestResources.GOOD_JSON_SCHEMA);
+		
+		String encryptedData = service.encryptData(TestResources.DATA_FOR_GOOD_JSON, ontology);
+		
+		assertTrue("If ontology does not allow encryption, data should not be encrypted", TestResources.DATA_FOR_GOOD_JSON.equals(encryptedData));
+	}
+			
+	@Test
+	public void given_OneOntologyThatDoesAllowEncryptionWithRefsInTheSchema_When_AnInsertIsPerformed_Then_CorrectDataIsEncripted() throws JsonProcessingException, IOException {
+		
+		final String ontologyName = "one";
+		final Ontology ontology = new Ontology();
+		ontology.setId("1");
+		ontology.setIdentification(ontologyName);
+		ontology.setJsonSchema(TestResources.SMALL_SCHEMA_WITH_ENCRYPTION);
+		ontology.setAllowsCypherFields(true);
+		
+		String encryptedData = service.encryptData(TestResources.DATA_FOR_GOOD_JSON, ontology);
+		
+		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_GOOD_JSON);
+		JsonNode id = jsonData.findPath("id");
+		JsonNode jsonEncryptedData = objectMapper.readTree(encryptedData); 
+		JsonNode encryptedId = jsonEncryptedData.findPath("id");
+				
+		assertFalse("Data should be encrypted", id.toString().equals(encryptedId.toString()));
+	}
+	
+	@Test
+	public void given_OneOntologyThatDoesAllowEncryptionWithSchemaWithArraysAndObjects_When_AnInsertIsPerformed_Then_CorrectDataIsEncripted() throws JsonProcessingException, IOException {
+		final String ontologyName = "one";
+		final Ontology ontology = new Ontology();
+		ontology.setId("1");
+		ontology.setIdentification(ontologyName);
+		ontology.setJsonSchema(TestResources.LONG_SCHEMA_WITH_ENCRYPTED);
+		ontology.setAllowsCypherFields(true);
+		
+		String encryptedData = service.encryptData(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT, ontology);
+		
+		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT);
+		JsonNode name = jsonData.findPath("image").path("media").path("name");
+		JsonNode mime = jsonData.findPath("image").path("media").path("mime");
+		JsonNode measures = jsonData.findPath("measures");
+	
+		JsonNode jsonEncryptedData = objectMapper.readTree(encryptedData); 
+		JsonNode encryptedName = jsonEncryptedData.findPath("image").path("media").path("name");
+		JsonNode encryptedMime = jsonEncryptedData.findPath("image").path("media").path("mime");
+		JsonNode encryptedMeasures = jsonEncryptedData.findPath("measures");
+		
+		assertFalse("Feed.image.media.name should be encrypted", name.toString().equals(encryptedName.toString()));
+		assertFalse("Feed.measures should be encrypted", measures.toString().equals(encryptedMeasures.toString()));
+		assertTrue("Feed.image.media.mime should not be encrypted", mime.toString().equals(encryptedMime.toString()));
+		
 	}
 }
