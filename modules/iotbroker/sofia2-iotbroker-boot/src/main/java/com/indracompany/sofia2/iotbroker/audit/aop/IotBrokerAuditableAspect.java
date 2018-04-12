@@ -97,11 +97,21 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 			final IotBrokerAuditEvent iotEvent = getEvent(message, info);
 
 			if (iotEvent != null) {
+				
+				IoTSession session = iotEvent.getSession();
 
-				final String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology() + " Type : "
-						+ iotEvent.getOperationType() + " By User : " + iotEvent.getSession().getUserID();
+				if (session!=null) {
+					String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology() + " Type : "
+							+ iotEvent.getOperationType() + " By User : " + iotEvent.getSession().getUserID();
 
-				event = Sofia2EventFactory.createAuditEventError(joinPoint, messageOperation, Module.IOTBROKER, ex);
+					event = Sofia2EventFactory.createAuditEventError(joinPoint, messageOperation, Module.IOTBROKER, ex);
+				}
+				else {
+					String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology() + " Type : "
+							+ iotEvent.getOperationType();
+
+					event = Sofia2EventFactory.createAuditEventError(joinPoint, messageOperation, Module.IOTBROKER, ex);
+				}
 			}
 
 		} else {
