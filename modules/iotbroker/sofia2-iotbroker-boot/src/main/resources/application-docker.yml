@@ -7,6 +7,8 @@ sofia2:
       url: elasticdb            
    iotbroker.plugbable:
      gateway:
+       moquette:
+         enable: true
        rest:
          swaggerhost: ${SERVER_NAME}  
 

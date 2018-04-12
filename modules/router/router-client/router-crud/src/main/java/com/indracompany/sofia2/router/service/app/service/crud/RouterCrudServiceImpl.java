@@ -301,7 +301,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		else return false;
 	}
 
-	public OperationResultModel insertNoAuditable(OperationModel model) throws RouterCrudServiceException {
+	public OperationResultModel insertWithNoAudit(OperationModel model) throws RouterCrudServiceException {
 		return insert(model);
 	}
 	
