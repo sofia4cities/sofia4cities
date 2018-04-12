@@ -44,7 +44,7 @@ public class BinarySerializer {
 
 		String data = base64.encode(IOUtils.toByteArray(new FileInputStream(file)));
 		((ObjectNode) mediaNode).put("binaryEncoding", Encoding.Base64.name());
-		((ObjectNode) mediaNode).put("mime", mime.name());
+		((ObjectNode) mediaNode).put("mime", mime.getValue());
 		((ObjectNode) mediaNode).put("name", file.getName());
 		((ObjectNode) mediaNode).put("storageArea", Storage.SERIALIZED.name());
 
