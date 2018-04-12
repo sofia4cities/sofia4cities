@@ -31,7 +31,15 @@ sofia2: #Config Sofia2 specific
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
-      digitaltwin.database: digital_twin      
+      digitaltwin.database: digital_twin  
+    database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300    
  
 spring:
    ## GENERAL CONFIG
