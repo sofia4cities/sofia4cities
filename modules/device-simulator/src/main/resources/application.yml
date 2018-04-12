@@ -13,7 +13,7 @@ spring:
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
-      client.metadata.user.password: $spring.boot.admin.password
+      client.metadata.user.password: ${spring.boot.admin.password}
    data.mongodb:
       database: sofia2_s4c # Database name.
   

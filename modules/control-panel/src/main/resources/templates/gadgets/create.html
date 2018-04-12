@@ -281,14 +281,13 @@
      	$("#jsonMeasures").val(JSON.stringify(measures));
      	$("#datasourcesMeasures").val(JSON.stringify([$("#datasources").val()]));
      	$("#type").val(gtype);
-     	//if(gtype === 'map'){
+     	
      		var scope = angular.element(document.getElementsByTagName('gadget')[0]).scope();
      		$("#config").val(JSON.stringify(scope.$$childHead.vm.config.config));
-     	//}
-     	//else{
-     	//	$("#config").val("{}");
-     	//}
-     	//$("#gadget_create_form").get(0).submit();
+     	
+     		  
+     		$("#gadget_create_form").get(0).submit();
+     	}
      });
 	
 	var gadget= [ {
@@ -889,14 +888,7 @@
 		}
 	)
 	
-	var gadgetCreateJson = { 		
-				"parameterTextLabel" : [[#{gadgettemplates.template.parameters.text.label}]],
-				"language" : currentLanguage,
-				"parameterNumberLabel" : [[#{gadgettemplates.template.parameters.number.label}]],	
-				"parameterDsLabel" : [[#{gadgettemplates.template.parameters.ds.label}]],
-				"parameterDsPropertieLabel" : [[#{gadgettemplates.template.parameters.name.ds.label}]],
-				"titleParametersSelected" : [[#{gadgettemplates.template.parameters.selected}]],				
-				"parameterSelectLabel" : [[#{gadgettemplates.template.parameters.label.select}]]};
+	
 		
 	
 	</script>
