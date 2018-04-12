@@ -37,20 +37,19 @@ import com.indracompany.sofia2.config.services.user.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Service
 @Slf4j
-public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
-	
+public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService {
+
 	@Autowired
 	private DigitalTwinDeviceRepository digitalTwinDeviceRepo;
-	
+
 	@Autowired
 	private DigitalTwinTypeRepository digitalTwinTypeRepo;
-	
+
 	@Autowired
 	private LogicDigitalTwinTypeRepository logicDigitalTwinTypeRepo;
-	
+
 	@Autowired
 	private UserService userService;
 
@@ -75,39 +74,41 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 	}
 
 	@Override
-	public String generateToken(){
+	public String generateToken() {
 		return UUID.randomUUID().toString().replaceAll("-", "");
 	}
 
 	@Override
 	public String getLogicFromType(String type) {
 		DigitalTwinType digitalTwinType = digitalTwinTypeRepo.findByName(type);
-		if(digitalTwinType!=null) {
+		if (digitalTwinType != null) {
 			LogicDigitalTwinType logic = logicDigitalTwinTypeRepo.findByTypeId(digitalTwinType);
-			if(logic!=null) {
+			if (logic != null) {
 				return logic.getLogic();
-			}else {
+			} else {
 				log.error("Error, logic not found for Digital Twin Type: " + type);
 				return null;
 			}
-		}else {
+		} else {
 			log.error("Error, Digital Twin Type not found: " + type);
 			return null;
 		}
-		
+
 	}
 
 	@Override
 	public void createDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice, HttpServletRequest httpServletRequest) {
 		try {
 			String type = httpServletRequest.getParameter("typeSelected").trim();
-			if(type!=null && type!="") {
+			if (type != null && type != "") {
 				DigitalTwinType digitalTwinType = this.digitalTwinTypeRepo.findByName(type);
-				if(digitalTwinType==null) {
+				if (digitalTwinType == null) {
 					log.error("Digital Twin Type : " + type + "doesn't exist.");
 					return;
 				}
-				digitalTwinDevice.setLogic(digitalTwinDevice.getLogic().replace("\\r", "").replace("\\n", System.getProperty("line.separator")).replace("\\t",  "   ").replace("\\\"", "'"));
+				digitalTwinDevice.setLogic(digitalTwinDevice.getLogic().replace("\\r", "")
+						.replace("\\n", System.getProperty("line.separator")).replace("\\t", "   ")
+						.replace("\\\"", "'"));
 				User user = userService.getUser(digitalTwinDevice.getUser().getUserId());
 				if (user != null) {
 					digitalTwinDevice.setUser(user);
@@ -116,8 +117,8 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 				} else {
 					log.error("Invalid user");
 					return;
-				}	
-			}else {
+				}
+			} else {
 				log.error("Invalid Digital Twin Type.");
 				return;
 			}
@@ -125,18 +126,18 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 			throw new DigitalTwinServiceException("Problems creating the digital twin device", e);
 		}
 	}
-	
+
 	@Override
 	public void getDigitalTwinToUpdate(Model model, String id) {
 		DigitalTwinDevice digitalTwinDevice = digitalTwinDeviceRepo.findById(id);
-		if(digitalTwinDevice!=null) {
+		if (digitalTwinDevice != null) {
 			model.addAttribute("digitaltwindevice", digitalTwinDevice);
 			model.addAttribute("typeDigital", digitalTwinDevice.getTypeId().getName());
-		}else {
+		} else {
 			log.error("DigitalTwinDevice with id:" + id + ", not found.");
 		}
 	}
-	
+
 	@Override
 	public DigitalTwinDevice getDigitalTwinDeviceById(String id) {
 		return digitalTwinDeviceRepo.findById(id);
@@ -144,13 +145,13 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 
 	@Override
 	public void updateDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice, HttpServletRequest httpServletRequest) {
-		//Update DigitalTwinDevice
+		// Update DigitalTwinDevice
 		DigitalTwinDevice digitalTwinDeviceDb = this.digitalTwinDeviceRepo.findById(digitalTwinDevice.getId());
-		
+
 		this.digitalTwinDeviceRepo.delete(digitalTwinDeviceDb);
 		this.createDigitalTwinDevice(digitalTwinDevice, httpServletRequest);
 	}
-	
+
 	@Override
 	public void deleteDigitalTwinDevice(DigitalTwinDevice digitalTwinDevice) {
 		this.digitalTwinDeviceRepo.delete(digitalTwinDevice);
@@ -159,26 +160,26 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 	@Override
 	public List<String> getDigitalTwinDevicesByTypeId(String typeId) {
 		return this.digitalTwinDeviceRepo.findNamesByTypeId(this.digitalTwinTypeRepo.findByName(typeId));
-		
+
 	}
 
 	@Override
 	public List<String> getDigitalTwinDevicesIdsByUser(String userId) {
 		User user = this.userService.getUser(userId);
-		if(user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			return this.digitalTwinDeviceRepo.findAllIds();
-		}else {
+		} else {
 			return this.digitalTwinDeviceRepo.findIdsByUser(this.userService.getUser(userId));
 		}
-		
+
 	}
-	
+
 	@Override
 	public List<String> getDigitalTwinDevicesIdsByUserAndTypeId(String userId, String typeId) {
 		User user = this.userService.getUser(userId);
-		if(user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			return this.digitalTwinDeviceRepo.findIdsByTypeId(this.digitalTwinTypeRepo.findByName(typeId));
-		}else {
+		} else {
 			return this.digitalTwinDeviceRepo.findIdsByUserAndTypeId(user, this.digitalTwinTypeRepo.findByName(typeId));
 		}
 	}
@@ -188,5 +189,19 @@ public class DigitalTwinDeviceServiceImpl implements DigitalTwinDeviceService{
 		return this.digitalTwinDeviceRepo.findByIdentification(name);
 	}
 
+	@Override
+	public Integer getNumOfDevicesByTypeId(String type) {
+		DigitalTwinType digitalTwinType = this.digitalTwinTypeRepo.findByName(type);
+		if (digitalTwinType != null) {
+			return this.digitalTwinDeviceRepo.findByTypeId(digitalTwinType).size();
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public List<DigitalTwinDevice> getAllByUserId(String userId) {
+		return this.digitalTwinDeviceRepo.findByUser(this.userService.getUser(userId));
+	}
 
 }

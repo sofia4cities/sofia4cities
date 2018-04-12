@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "EmptyBase Schema",
+    "type": "object",
+    "required": [
+        "EmptyBase"
+    ],
+    "properties": {
+        "EmptyBase": {
+            "type": "string",
+            "$ref": "#/datos"
+        }
+    },
+    "datos": {
+        "description": "Info EmptyBase",
+        "type": "object",
+        "required": [],
+        "properties": {}
+    }
+}

@@ -69,10 +69,11 @@
 	</div>
 </div>
 <div th:fragment="DOCUMENTMarketAssetFragmentShow" id="DOCUMENTMarketAssetFragmentShow">
-	
-	<h3 style="font-size: 15px; margin-top: -5px;" class="uppercase margin-bottom-20 bold"><i class="flaticon-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.document}"></span></h3>
-	<div class="form-group col-md-3 no-space ">
-		<button type="button" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block" th:onclick="'javascript:downloadContent();'" ><i class="la la-download"></i> <span th:text="#{gen.download}">Download</span></button>
+	<div id="DOCUMENTDiv">
+		<h3 style="font-size: 15px; margin-top: -5px;" class="uppercase margin-bottom-20 bold"><i class="flaticon-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.document}"></span></h3>
+		<div class="form-group col-md-3 no-space ">
+			<button type="button" class="btn btn-outline blue-chambray padding-both-10 uppercase btn-md sbold btn-block" th:onclick="'javascript:downloadContent();'" ><i class="la la-download"></i> <span th:text="#{gen.download}">Download</span></button>
+		</div>
 	</div>
 	<div class="clearfix"></div>
 	

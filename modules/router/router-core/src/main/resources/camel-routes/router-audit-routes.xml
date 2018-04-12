@@ -1,19 +1,29 @@
 <routes xmlns="http://camel.apache.org/schema/spring">
 
-	<!-- route id="start-hazelcast-queue-timer" errorHandlerRef="defaultEH">
-		<from uri="timer:foo?period=5000" />
-		<log message="Producer side: Sending data to Hazelcast Queue" />
-		<setBody><constant>HELLO</constant></setBody>
-		<to uri="hazelcast-queue:audit" />
-		<log message="Producer side: Sended data Async" />
-	</route-->
+	<!-- route id="start-hazelcast-queue-timer" errorHandlerRef="defaultEH"> 
+		<from uri="timer:foo?period=5000" /> <log message="Producer side: Sending 
+		data to Hazelcast Queue" /> <setBody><constant>HELLO</constant></setBody> 
+		<to uri="hazelcast-queue:audit" /> <log message="Producer side: Sended data 
+		Async" /> </route -->
 
 
 	<route id="start-hazelcast-queue-route" errorHandlerRef="defaultEH">
 		<from uri="hazelcast-queue:audit" />
 		<log message="Store Audit Event ${body}" />
-		<to uri="bean:auditFlowManagerService?method=audit" />
-		
+		<doTry>
+			<to uri="bean:auditFlowManagerService?method=audit" />
+			<doCatch>
+				<exception>java.lang.NullPointerException</exception>
+				<exception>java.io.IOException</exception>
+				<exception>java.lang.IllegalStateException</exception>
+				<exception>java.lang.Exception</exception>
+				<log message="Error processing Audit Event" loggingLevel="ERROR" />
+			</doCatch>
+		</doTry>
+
 	</route>
+
+
+
 
 </routes>
