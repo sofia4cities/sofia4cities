@@ -32,7 +32,7 @@ sofia2: #Config Sofia2 specific
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
       digitaltwin.database: digital_twin  
-    database.elasticsearch:
+   database.elasticsearch:
       database: sofia2_s4c_es
       sql.maxHttpConnections: 10
       sql.maxHttpConnectionsPerRoute: 10
