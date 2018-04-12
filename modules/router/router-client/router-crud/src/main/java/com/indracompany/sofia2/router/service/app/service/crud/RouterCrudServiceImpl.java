@@ -300,6 +300,10 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		else if (l!=null && l.equalsIgnoreCase("")) return true;
 		else return false;
 	}
+
+	public OperationResultModel insertNoAuditable(OperationModel model) throws RouterCrudServiceException {
+		return insert(model);
+	}
 	
 
 }

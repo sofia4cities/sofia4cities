@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.audit.producer;
+package com.indracompany.sofia2.commons.audit.producer;
 
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
 
