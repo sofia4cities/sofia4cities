@@ -38,7 +38,7 @@ sofia2: #Config Sofia2 specific
       password: #password
       readFromSecondaries: false
       queries.executionTimeout: 5000
-      queries.defaultLimit: 500
+      queries.defaultLimit: 2000
       queries.maxConcurrentQueries: 3
       writeConcern: UNACKNOWLEDGED
       tools.mongoexport.path: mongoexport
