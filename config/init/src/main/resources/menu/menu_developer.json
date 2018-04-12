@@ -5,6 +5,42 @@
 	"navigation": [
 		{
 			"title": {
+				"EN": "SHARE & USE",
+				"ES": "COMPARTE Y USA"
+			},
+			"icon": "flaticon-cart",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "My Market",
+						"ES": "Mi Market"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
+				},
+			    {
+					"title": {
+						"EN": "My Web Projects",
+						"ES": "Mis Proyectos Web"
+					},
+					"icon": "",
+					"url": "/controlpanel/webprojects/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "",
+				"ES": ""
+			},
+			"icon": "flaticon-more-v3",
+			"url": "",
+			"submenu": [
+			]
+		},
+		{
+			"title": {
 				"EN": "DATA MODELLING",
 				"ES": "MODELADO DE DATOS"
 			},
@@ -13,8 +49,8 @@
 			"submenu": [
 				{	
 					"title": {
-						"EN": "Models/Ontologies",
-						"ES": "Modelos/Ontologías"
+						"EN": "My Ontologies",
+						"ES": "Mis Ontologías"
 					},
 					"icon": "",
 					"url": "/controlpanel/ontologies/list"
@@ -31,24 +67,24 @@
 			"submenu": [
 				{
 					"title": {
-						"EN": "Definition of Devices",
-						"ES": "Definición de Devices"
+						"EN": "My Devices",
+						"ES": "Mis Dispositivos"
 					},
 					"icon": "",
 					"url": "/controlpanel/devices/list"
 				},
 				{
 					"title": {
-						"EN": "Devices Simulator",
-						"ES": "Simulador de Dispositivos"
+						"EN": "My Simulations",
+						"ES": "Mis Simulaciones"
 					},
 					"icon": "",
 					"url": "/controlpanel/devicesimulation/list"
 				},
 				{
 					"title": {
-						"EN": "Device Management",
-						"ES": "Gestión de Dispositivos"
+						"EN": "Status of My Devices",
+						"ES": "Estado de mis Dispositivos"
 					},
 					"icon": "",
 					"url": "/controlpanel/devices/management/show"
@@ -60,21 +96,21 @@
 				"EN": "INGEST & PROCESS",
 				"ES": "INGESTA Y PROCESADO"
 			},
-			"icon": "flaticon-analytics",
+			"icon": "flaticon-car",
 			"url": "",
 			"submenu": [	
 				{
 					"title": {
-						"EN": "Flow Engine",
-						"ES": "Motor de Flujos"
+						"EN": "My DataFlows",
+						"ES": "Mis Flujos de Datos"
 					},
 					"icon": "",
 					"url": "/controlpanel/flows/list"
 				},
 				{
 					"title": {
-						"EN": "Twitter Streams",
-						"ES": "Escucha en Twitter"
+						"EN": "My Twitter Listenings",
+						"ES": "Mis Escuchas en Twitter"
 					},
 					"icon": "",
 					"url": "/controlpanel/twitter/scheduledsearch/list"
@@ -86,37 +122,37 @@
 				"EN": "VISUALIZATION",
 				"ES": "VISUALIZACIÓN"
 			},
-			"icon": "flaticon-dashboard",
+			"icon": "flaticon-graph",
 			"url": "",
 			"submenu": [			
 				{
 					"title": {
-						"EN": "Dashboards",
-						"ES": "Dashboards"
+						"EN": "My Dashboards",
+						"ES": "Mis Dashboards"
 					},
 					"icon": "",
 					"url": "/controlpanel/dashboards/list"
 				},
 				{
 					"title": {
-						"EN": "Gadgets",
-						"ES": "Gadgets"
+						"EN": "My Gadgets",
+						"ES": "Mis Gadgets"
 					},
 					"icon": "",
 					"url": "/controlpanel/gadgets/list"
 				},				
      			{
 					"title": {
-						"EN": "Gadget Templates",
-						"ES": "Plantillas Gadget  "
+						"EN": "My Gadget Templates",
+						"ES": "Mis Plantillas de Gadget"
 					},
 					"icon": "",
 					"url": "/controlpanel/gadgettemplates/list"
 				},
 				{
 					"title": {
-						"EN": "Datasources",
-						"ES": "Fuentes de datos"
+						"EN": "My DataSources",
+						"ES": "Mis Fuentes de datos"
 					},
 					"icon": "",
 					"url": "/controlpanel/datasources/list"
@@ -128,21 +164,21 @@
 				"EN": "API MANAGER",
 				"ES": "API MANAGER"
 			},
-			"icon": "flaticon-layers",
+			"icon": "flaticon-multimedia",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "APIs Definition",
-						"ES": "Definición de APIs"
+						"EN": "My APIs",
+						"ES": "Mis APIs"
 					},
 					"icon": "",
 					"url": "/controlpanel/apimanager/list"
 				},
 				{
 					"title": {
-						"EN": "API Manager Tokens",
-						"ES": "Tokens del API Manager"
+						"EN": "My API-Tokens",
+						"ES": "Mis API-Tokens"
 					},
 					"icon": "",
 					"url": "/controlpanel/apimanager/token/list"
@@ -151,19 +187,35 @@
 		},
 		{
 			"title": {
-				"EN": "MARKET",
-				"ES": "MARKET"
+				"EN": "DIGITAL TWIN",
+				"ES": "DIGITAL TWIN"
 			},
-			"icon": "flaticon-layers",
+			"icon": "flaticon-medical",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "Market's Assets",
-						"ES": "Gestión Assets"
+						"EN": "My Digital Twin Types",
+						"ES": "Mis Definiciones de Digital Twin"
 					},
 					"icon": "",
-					"url": "/controlpanel/marketasset/list"
+					"url": "/controlpanel/digitaltwintypes/list"
+				},
+				{
+					"title": {
+						"EN": "My Digital Twins",
+						"ES": "Mis Digital Twins"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwindevices/list"
+				},
+				{
+					"title": {
+						"EN": "Digital Twin Status",
+						"ES": "Estado de mis Digital Twins"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwindisplay/show"
 				}
 			]
 		},
@@ -177,7 +229,7 @@
 			"submenu": [
 				{
 					"title": {
-						"EN": "Database Query Tool",
+						"EN": "Query Tool",
 						"ES": "Herramienta Consultas"
 					},
 					"icon": "",
@@ -185,71 +237,19 @@
 				},
 				{
 					"title": {
-						"EN": "Audit",
-						"ES": "Auditoría"
+						"EN": "My Audit",
+						"ES": "Mi Auditoría"
 					},
 					"icon": "",
 					"url": "/controlpanel/audit/show"
 				},
 				{
 					"title": {
-						"EN": "Planned Tasks",
-						"ES": "Tareas Planificadas"
+						"EN": "My Planned Tasks",
+						"ES": "Mis Tareas Planificadas"
 					},
 					"icon": "",
 					"url": "/controlpanel/planner/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "DIGITAL TWIN",
-				"ES": "DIGITAL TWIN"
-			},
-			"icon": "flaticon-open-box",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Management of Types",
-						"ES": "Gestión de tipos"
-					},
-					"icon": "",
-					"url": "/controlpanel/digitaltwintypes/list"
-				},
-				{
-					"title": {
-						"EN": "Management of Devices",
-						"ES": "Gestión de Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/digitaltwindevices/list"
-				},
-				{
-					"title": {
-						"EN": "Monitoring of Devices",
-						"ES": "Monitorización de Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/digitaltwindisplay/show"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "PROJECTS",
-				"ES": "PROYECTOS"
-			},
-			"icon": "flaticon-open-box",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "Web Projects",
-						"ES": "Proyectos Web"
-					},
-					"icon": "",
-					"url": "/controlpanel/webprojects/list"
 				}
 			]
 		}
