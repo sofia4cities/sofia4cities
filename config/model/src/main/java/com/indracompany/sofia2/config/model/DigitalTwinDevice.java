@@ -35,76 +35,76 @@ import lombok.Setter;
 @Configurable
 @Entity
 @Table(name = "DIGITAL_TWIN_DEVICE")
-public class DigitalTwinDevice extends AuditableEntityWithUUID{
-	
+public class DigitalTwinDevice extends AuditableEntityWithUUID {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "TYPE_ID", referencedColumnName = "ID", nullable = false)
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@Getter
 	@Setter
 	private DigitalTwinType typeId;
-	
+
 	@Column(name = "IDENTIFICATION", length = 50, unique = true, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String identification;
-	
-	@Column(name = "URL", length = 50, nullable = false)
+
+	@Column(name = "URL", length = 512, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String url;
-	
+
 	@Column(name = "URL_SCHEMA", length = 100, nullable = false)
 	@NotNull
 	@Getter
 	@Setter
 	private String urlSchema;
-	
+
 	@Column(name = "DIGITAL_KEY", length = 512, nullable = false)
 	@Getter
 	@Setter
 	@NotNull
 	private String DigitalKey;
-	
+
 	@Column(name = "IP", length = 512, nullable = false)
 	@Getter
 	@Setter
 	@NotNull
 	private String ip;
-	
+
 	@Column(name = "PORT", nullable = false)
 	@Getter
 	@Setter
 	@NotNull
 	private Integer port;
-	
+
 	@Column(name = "CONTEXT_PATH", length = 512, nullable = false)
 	@Getter
 	@Setter
 	@NotNull
 	private String contextPath;
-	
+
 	@Column(name = "LATITUDE", length = 512)
 	@Getter
 	@Setter
 	private String latitude;
-	
+
 	@Column(name = "LONGITUDE", length = 512)
 	@Getter
 	@Setter
 	private String longitude;
-	
+
 	@Column(name = "LOGIC")
 	@Lob
-    @Type(type = "org.hibernate.type.TextType")
+	@Type(type = "org.hibernate.type.TextType")
 	@Getter
 	@Setter
 	private String logic;
-	
+
 	@ManyToOne
 	@OnDelete(action = OnDeleteAction.NO_ACTION)
 	@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID", nullable = false)

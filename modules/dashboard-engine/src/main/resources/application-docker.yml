@@ -1,7 +1,10 @@
 sofia2:
    database.mongodb:
       servers: realtimedb:27017          
-      quasar.connector.http.endpoint: http://quasar:10800/query/fs/      
+      quasar.connector.http.endpoint: http://quasar:10800/query/fs/ 
+   database.elasticsearch:
+      sql.connector.http.endpoint: http://elasticdb:9200
+      url: elasticdb       
             
 spring:
    datasource:  
@@ -9,6 +12,8 @@ spring:
    boot.admin: #Spring Boot Admin Config    
       url: http://monitoringuiservice:19000/monitoring
       client.service-url: http://${SERVER_NAME}${server.contextPath}/
+   data.mongodb:
+      host: realtimedb      
 quartz:
     datasource:
       url: jdbc:mysql://schedulerdb:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
