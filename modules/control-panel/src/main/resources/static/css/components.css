@@ -13783,7 +13783,7 @@ Custimized Bootstrap Wells
 
 /*** Widget Thumb ***/
 .widget-thumb {
-  padding: 20px;
+  padding: 10px;
   border-radius: 4px; }
   .widget-thumb.bordered {
     border: 1px solid #e7ecf1; }
@@ -13795,29 +13795,29 @@ Custimized Bootstrap Wells
   .widget-thumb .widget-thumb-wrap {
     overflow: hidden; }
     .widget-thumb .widget-thumb-wrap .widget-thumb-icon {
-      float: left;
-      width: 60px;
-      height: 60px;
-      display: inline-block;
-      font-size: 20px;
-      line-height: 41px;
-      color: #fff;
-      text-align: center;
-      padding: 10px;
-      margin-right: 15px; }
+	float: left;
+	width: 60px;
+	height: 60px;
+	display: inline-block;
+	font-size: 30px;
+	line-height: 30px;
+	color: #fff;
+	text-align: center;
+	padding: 15px;
+	margin-right: 8px; border-radius: 6px; }
   .widget-thumb .widget-thumb-body {
     overflow: hidden; }
     .widget-thumb .widget-thumb-body .widget-thumb-subtitle {
       padding-top: 2px;
       display: block;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       color: #8e9daa; }
     .widget-thumb .widget-thumb-body .widget-thumb-body-stat {
       display: block;
-      font-size: 30px;
+      font-size: 25px;
       font-weight: 600;
-      color: #3e4f5e; }
+      color: #666; }
 
 /*** Widget Socials ***/
 .widget-socials {

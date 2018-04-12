@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
-	private RoleRepository roleTypeRepository;
+	private RoleRepository roleRepository;
 	@Autowired
 	private UserTokenRepository userTokenRepository;
 	@Autowired
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<Role> getAllRoles() {
-		return roleTypeRepository.findAll();
+		return roleRepository.findAll();
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
 
 		if (!this.userExists(user)) {
 			log.debug("User no exist, creating...");
-			user.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
+			user.setRole(this.roleRepository.findByName(user.getRole().getName()));
 			this.userRepository.save(user);
 
 		} else {
@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService {
 			userDb.setEmail(user.getEmail());
 
 			if (user.getRole() != null)
-				userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
+				userDb.setRole(this.roleRepository.findByName(user.getRole().getName()));
 
 			// Update dateDeleted for in/active user
 			if (!userDb.isActive() && user.isActive()) {
@@ -213,7 +213,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Role getUserRole(String role) {
-		return this.roleTypeRepository.findByName(role);
+		return this.roleRepository.findByName(role);
 	}
 
 	@Override
@@ -229,10 +229,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	Role getRole(Role.Type roleType) {
-		final Role r = new Role();
-		r.setName(roleType.name());
-		r.setIdEnum(roleType);
-		return r;
+		// final Role r = new Role();
+		// r.setName(roleType.name());
+		// r.setIdEnum(roleType);
+		// return r;
+		return this.roleRepository.findById(roleType.name());
 	}
 
 	@Override
