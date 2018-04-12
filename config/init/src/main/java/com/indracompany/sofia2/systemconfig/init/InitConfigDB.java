@@ -1535,7 +1535,49 @@ public class InitConfigDB {
 			marketAsset.setContentId("README.md");
 
 			marketAsset.setImage(loadFileFromResources("market/population.png"));
-			marketAsset.setImageType("population.png");
+			marketAsset.setImageType("png");
+
+			marketAssetRepository.save(marketAsset);
+			
+			// Getting Started Guide
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("2");
+			marketAsset.setIdentification("GettingStartedGuide");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/GettingStartedGuide.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/select4cities.jpg"));
+			marketAsset.setImageType("jpg");
+
+			marketAssetRepository.save(marketAsset);
+			
+			// Sofia4Cities Architecture
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("3");
+			marketAsset.setIdentification("Sofia4CitiesArchitecture");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/Sofia4CitiesArchitecture.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/select4cities.jpg"));
+			marketAsset.setImageType("jpg");
 
 			marketAssetRepository.save(marketAsset);
 		}
