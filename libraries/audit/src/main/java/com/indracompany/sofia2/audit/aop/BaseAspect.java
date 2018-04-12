@@ -21,7 +21,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.indracompany.sofia2.audit.producer.EventProducer;
+import com.indracompany.sofia2.commons.audit.producer.EventProducer;
 
 import lombok.extern.slf4j.Slf4j;
 

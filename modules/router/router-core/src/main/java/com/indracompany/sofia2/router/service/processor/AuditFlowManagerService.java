@@ -26,8 +26,8 @@ import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
-import com.indracompany.sofia2.router.service.app.service.RouterCrudService;
 import com.indracompany.sofia2.router.service.app.service.RouterCrudServiceException;
+import com.indracompany.sofia2.router.service.app.service.crud.RouterCrudServiceImpl;
 import com.indracompany.sofia2.router.service.processor.bean.AuditParameters;
 
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AuditFlowManagerService {
 
 	@Autowired
-	private RouterCrudService routerCrudService;
+	private RouterCrudServiceImpl routerCrudService;
 
 	private static final String USER_KEY = "user";
 	private static final String EVENT_TYPE_KEY = "type";
@@ -74,7 +74,7 @@ public class AuditFlowManagerService {
 					.builder(ontology, OperationType.INSERT, commonParams.getUser(), operation).body(item)
 					.queryType(QueryType.NONE).cacheable(false).build();
 
-			result = routerCrudService.insert(model);
+			result = routerCrudService.insertNoAuditable(model);
 
 		}
 
