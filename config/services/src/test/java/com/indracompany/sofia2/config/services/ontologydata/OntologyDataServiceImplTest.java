@@ -17,7 +17,6 @@ package com.indracompany.sofia2.config.services.ontologydata;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -129,12 +128,9 @@ public class OntologyDataServiceImplTest {
 		ontology.setIdentification(ontologyName);
 		ontology.setJsonSchema(TestResources.GOOD_JSON_SCHEMA);
 		
-		when(ontologyRepository.findByIdentification(ontologyName)).thenReturn(ontology);
-		
-		String encryptedData = service.encryptData(TestResources.DATA_FOR_GOOD_JSON, ontologyName);
+		String encryptedData = service.encryptData(TestResources.DATA_FOR_GOOD_JSON, ontology);
 		
 		assertTrue("If ontology does not allow encryption, data should not be encrypted", TestResources.DATA_FOR_GOOD_JSON.equals(encryptedData));
-		
 	}
 			
 	@Test
@@ -147,9 +143,7 @@ public class OntologyDataServiceImplTest {
 		ontology.setJsonSchema(TestResources.SMALL_SCHEMA_WITH_ENCRYPTION);
 		ontology.setAllowsCypherFields(true);
 		
-		when(ontologyRepository.findByIdentification(ontologyName)).thenReturn(ontology);
-		
-		String encryptedData = service.encryptData(TestResources.DATA_FOR_GOOD_JSON, ontologyName);
+		String encryptedData = service.encryptData(TestResources.DATA_FOR_GOOD_JSON, ontology);
 		
 		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_GOOD_JSON);
 		JsonNode id = jsonData.findPath("id");
@@ -168,9 +162,7 @@ public class OntologyDataServiceImplTest {
 		ontology.setJsonSchema(TestResources.LONG_SCHEMA_WITH_ENCRYPTED);
 		ontology.setAllowsCypherFields(true);
 		
-		when(ontologyRepository.findByIdentification(ontologyName)).thenReturn(ontology);
-		
-		String encryptedData = service.encryptData(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT, ontologyName);
+		String encryptedData = service.encryptData(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT, ontology);
 		
 		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT);
 		JsonNode name = jsonData.findPath("image").path("media").path("name");

@@ -67,12 +67,11 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		result.setStatus(true);
 
 		try {
-			ontologyDataService.checkOntologySchemaCompliance(BODY, ontologyName);
-			String bodyWithDataContext = ontologyDataService.addContextData(operationModel);
-			String encryptedDataInBODY = ontologyDataService.encryptData(bodyWithDataContext, ontologyName);
+			
+			String processedData = ontologyDataService.preProcessInsertData(operationModel);
 
 			if (METHOD.equalsIgnoreCase("POST") || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				OUTPUT = basicOpsService.insert(ontologyName, encryptedDataInBODY);
+				OUTPUT = basicOpsService.insert(ontologyName, processedData);
 			}
 		} 
 		catch (final Exception e) {

@@ -54,18 +54,11 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	
 	final public static String ENCRYPT_PROPERTY = "encrypted";
 
-	@Override
-	public void checkOntologySchemaCompliance(final String data, final Ontology ontology)
+
+	private void checkOntologySchemaCompliance(final String data, final Ontology ontology)
 			throws DataSchemaValidationException {
 		final String jsonSchema = ontology.getJsonSchema();
 		checkJsonCompliantWithSchema(data, jsonSchema);
-	}
-
-	@Override
-	public void checkOntologySchemaCompliance(final String data, final String ontologyName)
-			throws DataSchemaValidationException {
-		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
-		checkOntologySchemaCompliance(data, ontology);
 	}
 
 	void checkJsonCompliantWithSchema(final String dataString, final String schemaString)
@@ -101,8 +94,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		}
 	}
 
-	@Override
-	public String addContextData(final OperationModel operationModel) throws JsonProcessingException, IOException {
+	String addContextData(final OperationModel operationModel) throws JsonProcessingException, IOException {
 
 		final String body = operationModel.getBody();
 		final String user = operationModel.getUser();
@@ -129,9 +121,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 
 	}
 
-	@Override
-	public String encryptData(String data, String ontologyName) throws JsonProcessingException, IOException {
-		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
+	String encryptData(String data, Ontology ontology) throws IOException {
 		
 		if (ontology.isAllowsCypherFields()) {
 		
@@ -201,6 +191,22 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		}
 		
 		return referecedElement;
+	}
+
+	@Override
+	public String preProcessInsertData(OperationModel operationModel) throws DataSchemaValidationException {
+		final String data = operationModel.getBody();
+		final String ontologyName = operationModel.getOntologyName();
+		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
+		checkOntologySchemaCompliance(data, ontology);
+		try {
+			String bodyWithDataContext = addContextData(operationModel);
+			String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
+			return encryptedDataInBODY;
+		} catch(IOException e) {
+			throw new RuntimeException("Error working with JSON data", e);
+		} 
+		
 	}
 
 }
