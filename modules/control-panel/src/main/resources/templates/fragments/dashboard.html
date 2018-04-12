@@ -1,14 +1,15 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<!-- BEGIN GRAPH COMPONENT -->
+<!-- BEGIN DASHBOARD COMPONENT -->
 <div th:fragment="dashboardFragment" id="dashboardFragment">
 	
-	<!-- GRAPH SCRIPTS  -->	
+	<!-- DASHBOARD SCRIPTS  -->
+	<script type="text/javascript" th:src="@{/static/vendor/jquery/jquery.waypoints.min.js}"></script>
 	<script type="text/javascript" th:src="@{/static/vendor/jquery/jquery.counterup.min.js}"></script>
 		
 	<!-- DASHBOARD CONTROLLER JS -->
 	<script th:src="@{/static/js/pages/main-dashboard.js}"/>
 	 
-	<!-- BEGIN GRAPH INNER -->
+	<!-- BEGIN DASHBOARD INNER -->
 	<div class="row">
 		<div class="col-md-12 margin-top-10">
 			<div class="portlet light ">
@@ -85,17 +86,17 @@
 			</div>
 		</div>
 	</div>
-	<!-- END GRAPH INNER -->
+	<!-- END DASHBOARD INNER -->
 	
 			
-	<!-- GRAPH DATA TO SEND TO GRAPH CONTROLLER  --> 
+	<!-- DASHBOARD DATA TO SEND TO DASHBOARD CONTROLLER  --> 
 	<script type="text/javascript" th:inline="javascript"> 
 		var currentLanguage = [[${lang}]];		
 		var dashboardJson = {
 			"info": ''
 		};
 		// LOAD DATA TO USE IN GRAPHCONTROLLER
-		// GRAPH CONTROLLER LOAD AND INIT ITSELF
+		// DASHBOARD CONTROLLER LOAD AND INIT ITSELF
 	</script>
 </div>
-<!-- END GRAPH -->
+<!-- END DASHBOARD -->
