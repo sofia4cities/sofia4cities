@@ -166,14 +166,14 @@
 				<!-- MAIN ROW -->
 				<div class="row">					
 					<div class="col-md-12 col-sm-12">
+					
+						<!-- BEGIN ADMIN DASHBOARD INCLUDE -->
+						<div id="dashboardInclude" sec:authorize="hasAnyAuthority('ROLE_ADMINISTRATOR')" th:include="fragments/dashboard::#dashboardFragment" class="margin-top-10 margin-bottom-10"></div>
+						<!-- END DASHBOARD INCLUDE -->	
+					
 						<!-- BEGIN GRAPH INCLUDE -->
 						<div id="graphInclude" sec:authorize="hasAnyAuthority('ROLE_DEVELOPER','ROLE_DATASCIENTIST','ROLE_ADMINISTRATOR')" th:include="fragments/graph::#graphFragment" class="margin-top-10 margin-bottom-10"></div>
 						<!-- END GRAPH -->
-						
-						<!-- BEGIN ADMIN DASHBOARD INCLUDE -->
-						<div id="dashboardInclude" sec:authorize="hasAnyAuthority('ROLE_ADMINISTRATOR')" th:include="fragments/dashboard::#dashboardFragment" class="margin-top-10 margin-bottom-10"></div>
-						<!-- END GRAPH -->						
-						
 						
 					</div>
 				</div><!-- END MAIN ROW -->
