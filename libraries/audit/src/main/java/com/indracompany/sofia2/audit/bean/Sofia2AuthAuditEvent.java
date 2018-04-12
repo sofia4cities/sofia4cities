@@ -14,7 +14,6 @@
  */
 package com.indracompany.sofia2.audit.bean;
 
-import java.util.Date;
 import java.util.Map;
 
 public class Sofia2AuthAuditEvent extends Sofia2AuditRemoteEvent {
@@ -25,10 +24,11 @@ public class Sofia2AuthAuditEvent extends Sofia2AuditRemoteEvent {
 		super();
 	}
 
-	public Sofia2AuthAuditEvent(String message, String id, EventType type, Date timeStamp, String user, String ontology,
-			String operationType, Module module, Map<String, Object> extraData, String otherType,
-			String remoteAddress) {
-		super(message, id, type, timeStamp, user, ontology, operationType, module, extraData, otherType, remoteAddress);
+	public Sofia2AuthAuditEvent(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
+			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
+			String otherType, String remoteAddress) {
+		super(message, id, type, timeStamp, formatedTimeStamp, user, ontology, operationType, module, extraData,
+				otherType, remoteAddress);
 	}
 
 }

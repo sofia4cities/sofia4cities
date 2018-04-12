@@ -90,7 +90,7 @@ var GadgetsCreateController = function() {
 
 						 success1.show();
 			                error1.hide();
-							form.submit();
+			                form.submit();
 					}
 				});
 	}
@@ -119,7 +119,7 @@ var GadgetsCreateController = function() {
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
-			handleValidation();
+			//handleValidation();
 		},
 		
 		// REDIRECT
@@ -141,7 +141,7 @@ var GadgetsCreateController = function() {
 jQuery(document).ready(function() {
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
-	GadgetsCreateController.load(gadgetCreateJson);	
+	GadgetsCreateController.load();	
 		
 	// AUTO INIT CONTROLLER.
 	GadgetsCreateController.init();
