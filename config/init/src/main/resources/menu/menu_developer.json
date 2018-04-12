@@ -221,16 +221,6 @@
 		},
 		{
 			"title": {
-				"EN": "",
-				"ES": ""
-			},
-			"icon": "flaticon-more-v3",
-			"url": "",
-			"submenu": [
-			]
-		},
-		{
-			"title": {
 				"EN": "TOOLS",
 				"ES": "HERRAMIENTAS"
 			},
