@@ -258,15 +258,7 @@ public class MQTTClient {
 	 * Publishes a message through MQTT session.
 	 *
 	 * @param subscriptionId
-	 *            Subscription ID
-	 * @param query
-	 *            Query (to match conditions)
-	 * @param queryType
-	 *            Type of query: NATIVE, SQL
-	 * @param timeout
-	 *            Time in seconds for waiting subscription ACK
-	 * @param listener
-	 *            Listener that will handle messages related to the subscription
+	 *
 	 * @return The subscription ID
 	 */
 

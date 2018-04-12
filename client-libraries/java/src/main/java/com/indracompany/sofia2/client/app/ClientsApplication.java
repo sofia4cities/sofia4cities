@@ -54,7 +54,7 @@ public class ClientsApplication {
 		String ontology = "HelsinkiPopulation";
 		clientSecure.connect(token, clientPlatform, clientPlatformInstance, timeout);
 
-		String jsonData = "{\"HelsinkiPopulation\":{ \"year\":1993, \"population\" : 3500, \"population_woman\":1500, \"population_men\":2000}}";
+		String jsonData = "{ \"Helsinki\":{\"year\":1993, \"population\" : 3500, \"population_women\":1500, \"population_men\":2000}}";
 
 		clientSecure.publish(ontology, jsonData, timeout);
 
