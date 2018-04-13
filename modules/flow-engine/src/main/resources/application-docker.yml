@@ -8,7 +8,8 @@ sofia2:
       quasar.connector.http.endpoint: http://quasar:10800/query/fs/       
    database.elasticsearch:
       sql.connector.http.endpoint: http://elasticdb:9200
-      url: elasticdb         
+      url: elasticdb 
+      port: 9300        
 
 spring:
    datasource:  

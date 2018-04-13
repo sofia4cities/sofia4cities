@@ -380,7 +380,7 @@
               break;
             }
           }
-          originValue = points[0]._model.label;
+          originValue = points[0]._chart.config.data.labels[points[0]._index];
           break;
         case "pie":
           originField = vm.measures[0].config.fields[0];

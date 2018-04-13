@@ -32,13 +32,10 @@ public class DefaultController {
 	public String base() {
 		Authentication userAuthentication = utils.getAuthentication();
 		if (userAuthentication != null) {
-			if (userAuthentication.getName().toUpperCase().equals("ADMINISTRATOR")){
-				return "redirect:/main";
-			} else if (userAuthentication.getName().toUpperCase().equals("DEVELOPER")){
-				return "redirect:/main";
-			} else if (userAuthentication.getName().toUpperCase().equals("USER")){
+			if (userAuthentication.getName().toUpperCase().equals("USER")){
 				return "redirect:/marketasset/list";
-			}
+			}	
+			return "redirect:/main";	
 		}
 			
 		return "redirect:/login";

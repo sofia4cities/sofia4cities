@@ -84,7 +84,7 @@ public class MarketAssetController {
 		return "marketasset/show";
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_USER')")
 	@GetMapping(value = "/list" , produces = "text/html")
 	public String list(Model model,	@RequestParam(required = false) String marketassetId) {		
 		

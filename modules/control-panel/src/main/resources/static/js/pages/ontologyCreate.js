@@ -186,7 +186,6 @@ var OntologyCreateController = function() {
 			properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}},"type":{"type":"string","enum":["Point"]}}}');
 		}else {	
 			propString = '{' + updDesc +' '+ updEncryp +' "type": "' + type + '"}';
-			console.log('objStr: ' + propString );
 			properties[prop] = JSON.parse(propString);
 				
 		}

@@ -1114,6 +1114,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1125,6 +1126,7 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
 
 			ontology = new Ontology();
@@ -1136,11 +1138,14 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
+
 			List<DataModel> dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
+
 
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_TweetSentiment.json"));
@@ -1151,6 +1156,8 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
+
 			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
@@ -1166,6 +1173,8 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
+
 			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
@@ -1182,6 +1191,8 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
+
 			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
@@ -1197,6 +1208,8 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
+
 			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
@@ -1212,6 +1225,8 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
+
 			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
@@ -1227,12 +1242,13 @@ public class InitConfigDB {
 			ontology.setRtdbToHdb(false);
 			ontology.setPublic(true);
 			ontology.setUser(getUserDeveloper());
+			ontology.setAllowsCypherFields(false);
+
 			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
 		}
 
 	}

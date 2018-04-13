@@ -1,3 +1,14 @@
+/* CUSTOM CSS STYLE OVERRIDE FOR ANGULAR-MATERIAL */
+md-toolbar {
+  font-size: 14px;
+  min-height: 50px;
+  width: 100%; 
+  background-color: #212529;
+  -webkit-box-shadow: 0 1px 15px 1px rgba(113,106,202,.3);
+  -moz-box-shadow: 0 1px 15px 1px rgba(113,106,202,.3);
+  box-shadow: 0 1px 15px 1px rgba(113,106,202,.3); 
+}
+ 
 html, body {
   height: 100vh;
   margin: 0;
