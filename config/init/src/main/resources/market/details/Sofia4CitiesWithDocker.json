@@ -1,0 +1,6 @@
+{
+	"title":"Sofia4Cities with Docker",
+	"technologies":"HTML,GIT",
+	"description":"This document explain how to create docker images of all the modules of the platform and how to execute it with Docker Compose",
+	"detailedDescription":"The document main goal is to explain how to launch a deployment of the Platform in a local environment.\n\nAll the information can be found on this [**link**](https://github.com/sofia4cities/sofia4cities/tree/master/docs/how-to-execute-docker)\n\nThe process takes the following steps:\n\n- Step 1: Install Docker and Docker Compose\n- Step 2: Compile the sources with Maven to generate the artifacts (.jar)\n- Step 3: Generate Docker images of the platform\n- Step 4: Launch the execution of containers in the persistence layer\n- Step 5: Loading tables and data in configdb and realtimedb\n- Step 6: Launch the execution of the containers of the platform modules"
+}

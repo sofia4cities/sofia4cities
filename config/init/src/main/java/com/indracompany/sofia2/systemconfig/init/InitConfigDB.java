@@ -1499,32 +1499,12 @@ public class InitConfigDB {
 		if (marketAssets.isEmpty()) {
 			log.info("No market Assets...adding");
 			MarketAsset marketAsset = new MarketAsset();
-
-			marketAsset.setId("1");
-			marketAsset.setIdentification("TEST");
-
-			marketAsset.setUser(getUserDeveloper());
-
-			marketAsset.setPublic(true);
-			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
-			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
-			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
-
-			marketAsset.setJsonDesc(loadFromResources("market/marketAsset_TEST.json"));
-
-			marketAsset.setContent(loadFileFromResources("market/README.md"));
-			marketAsset.setContentId("README.md");
-
-			marketAsset.setImage(loadFileFromResources("market/population.png"));
-			marketAsset.setImageType("png");
-
-			marketAssetRepository.save(marketAsset);
 			
 			// Getting Started Guide
 			
 			marketAsset = new MarketAsset();
 
-			marketAsset.setId("2");
+			marketAsset.setId("1");
 			marketAsset.setIdentification("GettingStartedGuide");
 
 			marketAsset.setUser(getUserAdministrator());
@@ -1534,9 +1514,9 @@ public class InitConfigDB {
 			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
 
-			marketAsset.setJsonDesc(loadFromResources("market/GettingStartedGuide.json"));
+			marketAsset.setJsonDesc(loadFromResources("market/details/GettingStartedGuide.json"));
 
-			marketAsset.setImage(loadFileFromResources("market/select4cities.jpg"));
+			marketAsset.setImage(loadFileFromResources("market/img/select4cities.jpg"));
 			marketAsset.setImageType("jpg");
 
 			marketAssetRepository.save(marketAsset);
@@ -1545,7 +1525,7 @@ public class InitConfigDB {
 			
 			marketAsset = new MarketAsset();
 
-			marketAsset.setId("3");
+			marketAsset.setId("2");
 			marketAsset.setIdentification("Sofia4CitiesArchitecture");
 
 			marketAsset.setUser(getUserAdministrator());
@@ -1555,10 +1535,79 @@ public class InitConfigDB {
 			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
 
-			marketAsset.setJsonDesc(loadFromResources("market/Sofia4CitiesArchitecture.json"));
+			marketAsset.setJsonDesc(loadFromResources("market/details/Sofia4CitiesArchitecture.json"));
 
-			marketAsset.setImage(loadFileFromResources("market/select4cities.jpg"));
+			marketAsset.setImage(loadFileFromResources("market/img/select4cities.jpg"));
 			marketAsset.setImageType("jpg");
+
+			marketAssetRepository.save(marketAsset);
+			
+			// SOFIA4CITIES WITH DOCKER
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("3");
+			marketAsset.setIdentification("Sofia4CitiesWithDocker");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/details/Sofia4CitiesWithDocker.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/img/docker.png"));
+			marketAsset.setImageType("png");
+
+			marketAssetRepository.save(marketAsset);
+			
+			// API JAVA
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("4");
+			marketAsset.setIdentification("API JAVA");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/details/JavaAPI.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/img/jar-file.jpg"));
+			marketAsset.setImageType("jpg");
+			
+			marketAsset.setContent(loadFileFromResources("market/docs/java-client.jar"));
+			marketAsset.setContentId("java-client.jar");
+
+			marketAssetRepository.save(marketAsset);
+			
+			// DIGITAL TWIN
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("5");
+			marketAsset.setIdentification("DIGITAL TWIN EXAMPLE");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/details/DigitalTwin.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
+			marketAsset.setImageType("png");
+			
+			marketAsset.setContent(loadFileFromResources("market/docs/TurbineHelsinki.zip"));
+			marketAsset.setContentId("TurbineHelsinki.zip");
 
 			marketAssetRepository.save(marketAsset);
 		}
