@@ -87,4 +87,5 @@ A jar is provided to test this client. To use it you need to provide 3 arguments
 -	Path to key file ".jks" (Optional for MQTTS)
 - 	Password for key file (Optional for MQTTS)
 
+A .jks file is provided in the repository : 'clientdevelkeystore.jks', with password 'changeIt!'
 Example: java -jar java-client.jar "ssl://localhost:8883" "S:\examples\java-clients\clientdevelkeystore.jks" "changeIt!"
