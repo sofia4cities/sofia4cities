@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,9 +126,9 @@ public class WebProjectServiceImpl implements WebProjectService {
 			if (webProject.getMainFile().isEmpty()) {
 				webProject.setMainFile("index.html");
 			}
-			createNewFolderWebProject(webProject.getIdentification(), userId);
+			createFolderWebProject(webProject.getIdentification(), userId);
 			this.webProjectRepository.save(webProject);
-			
+
 		} else {
 			throw new WebProjectServiceException(
 					"Web Project with identification:" + webProject.getIdentification() + " already exists");
@@ -159,13 +160,11 @@ public class WebProjectServiceImpl implements WebProjectService {
 			return false;
 		}
 	}
-	
-	
+
 	public String getWebProjectURL(String identification) {
 		WebProject webProject = webProjectRepository.findByIdentification(identification);
 		return rootWWW + webProject.getIdentification() + "/" + webProject.getMainFile();
 	}
-	
 
 	@Override
 	public void updateWebProject(WebProject webProject, String userId) {
@@ -177,6 +176,7 @@ public class WebProjectServiceImpl implements WebProjectService {
 				if (!webProjectExists(webProject.getIdentification())) {
 					wp.setDescription(webProject.getDescription());
 					wp.setMainFile(webProject.getMainFile());
+					updateFolderWebProject(webProject.getIdentification(), userId);
 					this.webProjectRepository.save(wp);
 				} else {
 					throw new WebProjectServiceException(
@@ -193,7 +193,7 @@ public class WebProjectServiceImpl implements WebProjectService {
 	public void deleteWebProject(WebProject webProject, String userId) {
 		WebProject wp = this.webProjectRepository.findById(webProject.getId());
 		User user = this.userService.getUser(userId);
-		
+
 		if (hasUserPermissionToEditWebProject(user, wp)) {
 			deleteFolder(rootFolder + wp.getIdentification() + "/");
 			this.webProjectRepository.delete(webProject);
@@ -201,12 +201,26 @@ public class WebProjectServiceImpl implements WebProjectService {
 			throw new WebProjectServiceException("The user is not authorized");
 		}
 	}
+
+	@Override
+	public void deleteWebProjectById(String id, String userId) {
+		WebProject wp = this.webProjectRepository.findById(id);
+		User user = this.userService.getUser(userId);
+
+		if (hasUserPermissionToEditWebProject(user, wp)) {
+			deleteFolder(rootFolder + wp.getIdentification() + "/");
+			this.webProjectRepository.delete(wp);
+		} else {
+			throw new WebProjectServiceException("The user is not authorized");
+		}
+	}
+
 	
 	@Override
 	public void uploadZip(MultipartFile file, String userId) {
 
 		String folder = rootFolder + userId + "/";
-		
+
 		try {
 			deleteFolder(folder);
 			uploadFileToFolder(file, folder);
@@ -216,41 +230,26 @@ public class WebProjectServiceImpl implements WebProjectService {
 		}
 	}
 
-	@Override
-	public void uploadFile(MultipartFile file, String userId) {
-
-		String folder = rootFolder + userId + "/";
-		
-		try {
-			uploadFileToFolder(file, folder);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
-
 	private void uploadFileToFolder(MultipartFile file, String path) throws IOException {
 
 		String fileName = file.getOriginalFilename();
 		byte[] bytes = file.getBytes();
 
-		
 		InputStream is = new ByteArrayInputStream(bytes);
 
 		File folder = new File(path);
 		if (!folder.exists()) {
 			folder.mkdirs();
 		}
-		
+
 		String fullPath = path + fileName;
 		OutputStream os = new FileOutputStream(new File(fullPath));
 
 		IOUtils.copy(is, os);
-		
-		
+
 		is.close();
 		os.close();
-		
+
 		log.info(path + fileName + " uploaded");
 	}
 
@@ -260,83 +259,137 @@ public class WebProjectServiceImpl implements WebProjectService {
 		}
 	}
 
-	private void deleteFolder(String path) {
+/*	private void deleteFolder(String path) {
 		File folder = new File(path);
 		if (folder.exists()) {
 			folder.delete();
 		}
 	}
+*/	
 	
-	private void checkWebProjectUser(String identification, String userId) {
-		WebProject webProject = webProjectRepository.findByIdentification(identification);
-
-		User user = userService.getUser(userId);
-
-		if (webProject != null && !hasUserPermissionToEditWebProject(user, webProject)) {
-			throw new WebProjectServiceException("User can't edit this proyect");
-		}
+	public static void deleteFolder(String path) {
+		File folder = new File(path);
+	    File[] files = folder.listFiles();
+	    if(files!=null) { //some JVMs return null for empty dirs
+	        for(File f: files) {
+	            if(f.isDirectory()) {
+	                deleteFolder(f.getAbsolutePath());
+	            } else {
+	                f.delete();
+	            }
+	        }
+	    }
+	    folder.delete();
 	}
 
-	private void createNewFolderWebProject(String identification, String userId) {
-		
+	private void createFolderWebProject(String identification, String userId) {
+
 		File file = new File(rootFolder + userId + "/");
 		if (file.exists() && file.isDirectory()) {
 			File newFile = new File(rootFolder + identification + "/");
 			if (!file.renameTo(newFile)) {
-				throw new WebProjectServiceException("Cannot create web project folder");
+				throw new WebProjectServiceException(" Cannot create web project folder");
 			}
-				
 		}
-		
+
 		log.info("new folder created");
-	
 	}
-	
+
+	private void updateFolderWebProject(String identification, String userId) {
+
+		File file = new File(rootFolder + userId + "/");
+		if (file.exists() && file.isDirectory()) {
+			deleteFolder(rootFolder + identification + "/");
+			File newFile = new File(rootFolder + identification + "/");
+			if (!file.renameTo(newFile)) {
+				throw new WebProjectServiceException(" Cannot create web project folder");
+			}
+		}
+	}
 	
 	private void unzipFile(String path, String fileName) {
 
 		File folder = new File(path + fileName);
-		log.info("unzip zip file: "+ folder);
+		log.info("unzip zip file: " + folder);
 		if (folder.exists()) {
-				try {
-					ZipInputStream zis = new ZipInputStream(new FileInputStream(folder));
-					ZipEntry ze;
+			try {
+				ZipInputStream zis = new ZipInputStream(new FileInputStream(folder));
+				ZipEntry ze;
 
-					while (null != (ze = zis.getNextEntry())) {
-						
-						if (ze.isDirectory()) {
-							
-							File f = new File(path + ze.getName());
-							f.mkdirs();
-							
-						} else {
-							FileOutputStream fos = new FileOutputStream(path + ze.getName());
-								
-							IOUtils.copy(zis, fos);
-							log.info("unzip file: "+ ze.getName());
-							fos.close();
-							zis.closeEntry();
-						}
+				while (null != (ze = zis.getNextEntry())) {
+
+					if (ze.isDirectory()) {
+
+						File f = new File(path + ze.getName());
+						f.mkdirs();
+
+					} else {
+						FileOutputStream fos = new FileOutputStream(path + ze.getName());
+
+						IOUtils.copy(zis, fos);
+						log.info("unzip file: " + ze.getName());
+						fos.close();
+						zis.closeEntry();
 					}
-					zis.close();
-					
-					if (folder.exists()) {
-						if (folder.delete()) {
-							log.info(folder + "deleted");
-						}
-					}
-							
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
-			
+				zis.close();
+
+				if (folder.exists()) {
+					if (folder.delete()) {
+						log.info(folder + "deleted");
+					}
+				}
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		} else {
 
 		}
 	}
 
+	public void zipFile(String folder) {
 
+		File zipFolder = new File(folder);
+
+		if (zipFolder.exists()) {
+			File[] files = zipFolder.listFiles();
+			log.info("Number of files: " + files.length);
+
+			for (int i = 0; i < files.length; i++) {
+				log.info("File name: " + files[i].getName());
+				String extension = "";
+				for (int j = 0; j < files[i].getName().length(); j++) {
+					if (files[i].getName().charAt(j) == '.') {
+						extension = files[i].getName().substring(j, (int) files[i].getName().length());
+					}
+				}
+				try {
+					ZipOutputStream zous = new ZipOutputStream(
+							new FileOutputStream(folder + files[i].getName().replace(extension, ".zip")));
+
+					ZipEntry entry = new ZipEntry(files[i].getName());
+					zous.putNextEntry(entry);
+
+					log.info("File name:" + entry.getName());
+					FileInputStream fis = new FileInputStream(folder + entry.getName());
+					IOUtils.copy(fis, zous);
+					fis.close();
+					zous.closeEntry();
+					zous.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			log.info("Zip FileName: " + folder);
+		} else {
+			System.out.println("Folder not exist");
+		}
+	}
 
 }

@@ -11,13 +11,21 @@ var WebProjectCreateController = function() {
 	// CONTROLLER PRIVATE FUNCTIONS	
 
     var uploadZip = function (){
-		$.ajax({
+    	$('#updateBtn').attr('disabled','disabled');
+    	$('#createBtn').attr('disabled','disabled');    	
+    	$('#deleteBtn').attr('disabled','disabled');    	
+    	$('#resetBtn').attr('disabled','disabled');    	
+    	$.ajax({
             type: 'post',
             url: '/controlpanel/webprojects/uploadZip',
             contentType: false,
             processData: false,
             data: new FormData($('#upload_zip')[0]),
             success: function () {
+            	$('#updateBtn').removeAttr('disabled');
+            	$('#createBtn').removeAttr('disabled'); 
+            	$('#deleteBtn').removeAttr('disabled');    	
+            	$('#resetBtn').removeAttr('disabled');   
             },
             error: function(){
             }
@@ -52,7 +60,7 @@ var WebProjectCreateController = function() {
 		uploadZip: function(url){
 			logControl ? console.log(LIB_TITLE + ': uploadZip()') : '';	
 			uploadZip(); 
-		},
+		}
 		
 	};
 }();
