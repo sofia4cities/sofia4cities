@@ -1610,6 +1610,30 @@ public class InitConfigDB {
 			marketAsset.setContentId("TurbineHelsinki.zip");
 
 			marketAssetRepository.save(marketAsset);
+
+			// API NodeRED
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("6");
+			marketAsset.setIdentification("API NodeRED");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/details/API NodeRED.json"));
+
+			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
+			marketAsset.setImageType("png");
+			
+			marketAsset.setContent(loadFileFromResources("market/docs/API NodeRED sofia4cities.zip"));
+			marketAsset.setContentId("API NodeRED sofia4cities.zip");
+
+			marketAssetRepository.save(marketAsset);
 		}
 	}
 
