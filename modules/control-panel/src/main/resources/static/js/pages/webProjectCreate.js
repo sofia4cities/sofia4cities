@@ -10,6 +10,29 @@ var WebProjectCreateController = function() {
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
 
+	
+	$("#createBtn").on('click',function(){
+		event.preventDefault(); 
+		if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined){
+			WebProjectCreateController.submitform();
+		}else{
+			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: webProjectCreateJson.validform.emptyfields});
+			return false;
+		}
+		
+	});
+	
+	$("#updateBtn").on('click',function(){
+		event.preventDefault(); 
+		if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined){
+			WebProjectCreateController.submitform();
+		}else{
+			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: webProjectCreateJson.validform.emptyfields});
+			return false;
+		}
+		
+	});
+	
     var uploadZip = function (){
     	$('#updateBtn').attr('disabled','disabled');
     	$('#createBtn').attr('disabled','disabled');    	
@@ -37,6 +60,35 @@ var WebProjectCreateController = function() {
 		window.location.href = url; 
 	}
 	
+	// CLEAN FIELDS FORM
+	var cleanFields = function (formId) {
+		logControl ? console.log('cleanFields() -> ') : '';
+		
+		//CLEAR OUT THE VALIDATION ERRORS
+		$('#'+formId).validate().resetForm(); 
+		$('#'+formId).find('input:text, input:password, input:file, select, textarea').each(function(){
+			// CLEAN ALL EXCEPTS cssClass "no-remove" persistent fields
+			if(!$(this).hasClass("no-remove")){$(this).val('');}
+		});
+		
+		// CLEAN ALERT MSG
+		$('.alert-danger').hide();
+		
+	}
+	
+	// INIT TEMPLATE ELEMENTS
+	var initTemplateElements = function(){
+		logControl ? console.log('initTemplateElements() ->  resetForm,  currentLanguage: ' + currentLanguage) : '';
+		
+		// 	INPUT MASK FOR WEB PROJECT identification allow only letters, numbers and -_
+		$("#identification").inputmask({ regex: "[a-zA-Z0-9_-]*", greedy: false });
+		
+		// Reset form
+		$('#resetBtn').on('click',function(){ 
+			cleanFields('webproject_create_form');
+		});	
+	}	
+	
     // CONTROLLER PUBLIC FUNCTIONS 
 	return{
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
@@ -47,7 +99,7 @@ var WebProjectCreateController = function() {
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
-			
+			initTemplateElements();
 		},
 
 		// REDIRECT
@@ -60,7 +112,12 @@ var WebProjectCreateController = function() {
 		uploadZip: function(url){
 			logControl ? console.log(LIB_TITLE + ': uploadZip()') : '';	
 			uploadZip(); 
-		}
+		},
+		
+		submitform: function(){
+		
+			$("#webproject_create_form").submit();
+		},
 		
 	};
 }();
