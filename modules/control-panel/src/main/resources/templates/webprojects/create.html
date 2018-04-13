@@ -157,10 +157,10 @@
 													<div class="form-actions">
 														<div class="pull-right">
 															<!-- CREATE -->
-															<button th:if="${webproject?.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+															<button th:if="${webproject?.id} == null" id="createBtn" class="btn btn-square btn-success" name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 															
 															<!-- UPDATE -->
-															<button th:if="${webproject?.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+															<button th:if="${webproject?.id} != null" id="updateBtn" class="btn btn-square btn-warning" name="update" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 															
 															<!-- REMOVE -->
 															<button th:if="${webproject?.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'javascript:WebProjectCreateController.go(\'' + @{/webprojects/delete/} + ${webproject.id} + '\');'"><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
@@ -250,9 +250,12 @@
 	var currentLanguage = [[${lang}]];	
 	
 	var webProjectCreateJson = { 	
-			"language" : currentLanguage
+			"language" : currentLanguage,
+			"validform": {
+				"emptyfields": [[#{webproject.validations.emptyfields}]]
+			}
 		};   
-	
+		
 	</script>	
 </body>
 </html>

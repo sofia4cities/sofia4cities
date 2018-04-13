@@ -10,6 +10,29 @@ var WebProjectCreateController = function() {
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
 
+	
+	$("#createBtn").on('click',function(){
+		event.preventDefault(); 
+		if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined){
+			WebProjectCreateController.submitform();
+		}else{
+			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: webProjectCreateJson.validform.emptyfields});
+			return false;
+		}
+		
+	});
+	
+	$("#updateBtn").on('click',function(){
+		event.preventDefault(); 
+		if($("#identification").val()!='' && $("#identification").val()!=undefined && $("#description").val()!='' && $("#description").val()!=undefined){
+			WebProjectCreateController.submitform();
+		}else{
+			$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: webProjectCreateJson.validform.emptyfields});
+			return false;
+		}
+		
+	});
+	
     var uploadZip = function (){
     	$('#updateBtn').attr('disabled','disabled');
     	$('#createBtn').attr('disabled','disabled');    	
@@ -89,7 +112,12 @@ var WebProjectCreateController = function() {
 		uploadZip: function(url){
 			logControl ? console.log(LIB_TITLE + ': uploadZip()') : '';	
 			uploadZip(); 
-		}
+		},
+		
+		submitform: function(){
+		
+			$("#webproject_create_form").submit();
+		},
 		
 	};
 }();
