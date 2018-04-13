@@ -13,7 +13,7 @@
             selector = '#' + element[0].id + ' ';
         }
 
-        var table = '<table class="json-to-table table table-hover table-stiped">';
+        var table = '<div class="table-scrollable table-scrollable-borderless"><table class="json-to-table table table-hover table-striped">';
 
         table += '<thead><th class="jsl"></th>';
         table += $.fn.createTable.parseTableData(data, true);
@@ -21,7 +21,7 @@
         table += '<tbody>';
         table += $.fn.createTable.parseTableData(data, false);
         table += '</tbody>';
-        table += '</table>';
+        table += '</table></div>';
 
         element.html(table);
 
@@ -91,7 +91,7 @@
         var row = '';
 
         for (var i = 0; i < data.length; i++) {
-            if (thead === false) row += '<tr><td class="jsl">' + (i + 1) + '</td>';
+            if (thead === false) row += '<tr><td class="jsl text-center">' + (i + 1) + '</td>';
             $.each(data[i], function (key, value) {
                 if (thead === true) {
                     if (i === $.fn.createTable.getHighestColumnCount(data).when) {
