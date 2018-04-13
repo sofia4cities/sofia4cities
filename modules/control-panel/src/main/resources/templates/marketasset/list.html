@@ -128,11 +128,11 @@
 													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><div class="uppercase no-wrap text-truncate-md project-title" th:title="${marketasset.title}" th:text="${marketasset.title}" >Identification</div></a>
 													<a th:href="@{|/marketasset/show/${marketasset.id}|}"><img th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}"  style="border:none!important;"/>
 													<img th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${marketasset.description},data-title=${marketasset.title}" style="border:none!important;" /></a>
-													<div class="form-inline" style=" font-size: 20px; min-height: 20px">															
+													<div class="form-inline" style=" font-size: 20px; min-height: 25px; max-height: 25px">															
 														 <span th:each="tag : ${#strings.arraySplit(marketasset.technologies, ',')}" class="label-marketasset" th:title="${tag}" th:alt="${tag}"><i th:class="'devicon-' + ${tag} +'-plain'"></i></span>															
 														 <div class="pull-right">
 														 	<span th:if="${marketasset.state.name()== 'REJECTED'}" class="btn btn-xs btn-outline red-sunglo" th:title="${marketasset.rejectionReason}"><i class="fa fa-ban font-md"></i> <span th:text="${marketasset.state}">State</span></span>
-														 	<span th:if="${marketasset.state.name()== 'PENDING'}" class="btn btn-xs btn-outline red-sunglo" ><i class="fa fa-ban font-md"></i> <span th:text="${marketasset.state}">State</span></span>
+														 	<span th:if="${marketasset.state.name()== 'PENDING'}" class="btn btn-xs btn-outline blue-madison" ><i class="flaticon-signs-2 font-md"></i> <span th:text="${marketasset.state}">State</span></span>
 															<span class="btn btn-xs green-turquoise tooltips" data-container="body" data-placement="top" th:attr="data-original-title=#{marketasset.paymentmode} + ': ' + ${marketasset.paymentMode}" th:text="${marketasset.paymentMode}" style="margin-top: 2px;"> FREE </span>
 														 </div>
 													</div>

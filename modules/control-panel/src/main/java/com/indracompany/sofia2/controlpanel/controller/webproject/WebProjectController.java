@@ -21,9 +21,13 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,10 +53,10 @@ public class WebProjectController {
 
 	@Autowired
 	private WebProjectService webProjectService;
-		
+
 	@Autowired
 	private AppWebUtils utils;
-	
+
 	@Value("${sofia2.webproject.baseurl:https://localhost:18080/web/}")
 	private String rootWWW = "";
 
@@ -65,22 +69,22 @@ public class WebProjectController {
 				.getWebProjectsWithDescriptionAndIdentification(utils.getUserId(), identification, description);
 		model.addAttribute("webprojects", webprojects);
 		model.addAttribute("rootWWW", rootWWW);
-		
+
 		return "webprojects/list";
 	}
-	
+
 	@PostMapping("/getNamesForAutocomplete")
 	public @ResponseBody List<String> getNamesForAutocomplete() {
 		return this.webProjectService.getWebProjectsIdentifications(utils.getUserId());
 	}
-	
+
 	@GetMapping(value = "/create", produces = "text/html")
 	public String create(Model model, @Valid WebProject webProject, BindingResult bindingResult) {
 
 		if (bindingResult.hasErrors())
 			model.addAttribute("webproject", new WebProject());
 		return "webprojects/create";
-	}	
+	}
 
 	@PostMapping(value = "/create")
 	public String createWebProject(Model model, @Valid WebProject webProject, BindingResult bindingResult,
@@ -99,11 +103,12 @@ public class WebProjectController {
 		}
 		return "redirect:/webprojects/list";
 	}
-	
+
 	@GetMapping(value = "/update/{id}", produces = "text/html")
 	public String update(Model model, @PathVariable("id") String id) {
 		try {
 			WebProject webProject = this.webProjectService.getWebProjectById(id, utils.getUserId());
+
 			if (webProject != null) {
 				model.addAttribute("webproject", webProject);
 				return "webprojects/create";
@@ -133,34 +138,36 @@ public class WebProjectController {
 		return "redirect:/webprojects/list";
 
 	}
-	
-	
+
+	@GetMapping(value = "/delete/{id}")
+	public String deleteWebProject(Model model, @PathVariable("id") String id, RedirectAttributes redirect) {
+
+		WebProject webProject = webProjectService.getWebProjectById(id, utils.getUserId());
+		if (webProject != null) {
+			try {
+				this.webProjectService.deleteWebProject(webProject, utils.getUserId());
+			} catch (Exception e) {
+				utils.addRedirectMessage("webproject.delete.error", redirect);
+				return "redirect:/webprojects/list";
+			}
+			return "redirect:/webprojects/list";
+		} else {
+			return "redirect:/webprojects/list";
+		}
+	}
+
 	@PostMapping(value = "/uploadZip")
-	public @ResponseBody String uploadZip(MultipartHttpServletRequest request) {
-	
-        Iterator<String> itr = request.getFileNames();
-        String uploadedFile = itr.next();
-        MultipartFile file = request.getFile(uploadedFile);
-		
-		this.webProjectService.uploadZip(file, utils.getUserId());
-		
-		return "";
+	public @ResponseBody ResponseEntity<String> uploadZip(MultipartHttpServletRequest request) {
+
+		Iterator<String> itr = request.getFileNames();
+		String uploadedFile = itr.next();
+		MultipartFile file = request.getFile(uploadedFile);
+		try {
+			this.webProjectService.uploadZip(file, utils.getUserId());
+			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+		}
 	}
-	
-	
-	@PostMapping(value = "/uploadFile")
-	public @ResponseBody String uploadFile(MultipartHttpServletRequest request) {
-	
-        Iterator<String> itr = request.getFileNames();
-        String uploadedFile = itr.next();
-        MultipartFile file = request.getFile(uploadedFile);
 
-        webProjectService.uploadFile(file, utils.getUserId());
-	        
-
-	    return "";
-
-	}
-	
-	
 }

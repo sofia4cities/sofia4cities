@@ -202,9 +202,15 @@ public class MarketAssetController {
 		return "/marketasset/marketassetfragments :: #versions";
 	}
 	
+	
 	@RequestMapping(value = "/apidescription")
 	public @ResponseBody String apidescription(@RequestBody String apiData){
 		return (marketAssetHelper.getApiDescription(apiData));
+	}
+	
+	@RequestMapping(value = "/urlwebproject")
+	public @ResponseBody String urlwebproject(@RequestBody String webProjectData) {
+		return (marketAssetHelper.getUrlWebProjectData(webProjectData));
 	}
 
 	@RequestMapping(value = "/validateId")

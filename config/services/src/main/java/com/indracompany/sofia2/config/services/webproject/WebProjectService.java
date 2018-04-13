@@ -34,10 +34,10 @@ public interface WebProjectService {
 
 	WebProject getWebProjectById(String webProjectId, String userId);
 
-	void deleteWebProject(WebProject webProject, String userId);
-
+	void deleteWebProjectById(String webProjectId, String userId);
+	
 	void uploadZip(MultipartFile file, String userId);
 
-	void uploadFile(MultipartFile file, String userId);
+	void deleteWebProject(WebProject webProject, String userId);
 
 }

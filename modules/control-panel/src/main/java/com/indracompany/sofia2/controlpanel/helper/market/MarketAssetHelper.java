@@ -39,10 +39,12 @@ import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserComment;
 import com.indracompany.sofia2.config.model.UserRatings;
+import com.indracompany.sofia2.config.model.WebProject;
 import com.indracompany.sofia2.config.repository.ApiRepository;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
 import com.indracompany.sofia2.config.repository.UserCommentRepository;
 import com.indracompany.sofia2.config.repository.UserRatingsRepository;
+import com.indracompany.sofia2.config.repository.WebProjectRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.multipart.MarketAssetMultipart;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
@@ -58,6 +60,9 @@ public class MarketAssetHelper {
 	
 	@Autowired
 	ApiRepository apiRepository;
+	
+	@Autowired
+	WebProjectRepository webProjectRepository;
 	
 	@Autowired
 	private MarketAssetRepository marketAssetRepository;
@@ -79,6 +84,9 @@ public class MarketAssetHelper {
 	
 	@Value("${apimanager.services.api:/api-manager/services}")
 	private String apiServices;
+	
+	@Value("${sofia2.webproject.baseurl:https://localhost:18080/web/}")
+	private String rootWWW = "";
 
 	public void populateMarketAssetListForm(Model model) {
 		model.addAttribute("marketassettypes", MarketAsset.MarketAssetType.values());
@@ -156,9 +164,9 @@ public class MarketAssetHelper {
 
 	public void populateMarketAssetFragment(Model model, String type) {
 		
+		User user = this.userService.getUser(utils.getUserId());
+		
 		if (type.equals(MarketAsset.MarketAssetType.API.toString())) {
-			
-			User user = this.userService.getUser(utils.getUserId());
 			
 			List<Api> apiList = null;
 			
@@ -173,6 +181,23 @@ public class MarketAssetHelper {
 			model.addAttribute("apis", apis);
 		
 		} else if (type.equals(MarketAsset.MarketAssetType.WEBPROJECT.toString())){
+			
+			List<WebProject> webProjectList = null;
+			List<WebProject> webProjectListFiltered = null;
+			
+			webProjectList = webProjectRepository.findAll();
+			
+			if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString())){
+				webProjectListFiltered = webProjectList;
+			} else {
+				webProjectListFiltered = new ArrayList<WebProject>();
+				for (WebProject webProject : webProjectList) {
+					if (user.getUserId().equals(webProject.getUser().getUserId())){
+						webProjectListFiltered.add(webProject);
+					}
+				} 
+			}
+			model.addAttribute("webProjects", webProjectListFiltered);
 		} else if (type.equals(MarketAsset.MarketAssetType.DOCUMENT.toString())){
 		} else if (type.equals(MarketAsset.MarketAssetType.APPLICATION.toString())){
 		} else if (type.equals(MarketAsset.MarketAssetType.URLAPPLICATION.toString())){
@@ -355,6 +380,36 @@ public class MarketAssetHelper {
 			}		
 		}
 		return (technologiesMap.values());
+	}
+
+	public String getUrlWebProjectData(String webProjectData) {
+		
+		Map<String, String> obj;
+		String id= "";
+		
+		try {
+			obj = new ObjectMapper().readValue(webProjectData, new TypeReference<Map<String, String>>(){});
+			
+			id = obj.get("webprojectId");
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		WebProject webProject = webProjectRepository.findById(id);
+		
+		String webProjectUrl = rootWWW + webProject.getIdentification() + "/" + webProject.getMainFile();		
+		
+		JSONObject returnObject = new JSONObject();
+		
+		try {
+			returnObject.put("description", webProject.getDescription());
+			returnObject.put("webProjectUrl", webProjectUrl);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return (returnObject.toString());		
 	}
 
 }
