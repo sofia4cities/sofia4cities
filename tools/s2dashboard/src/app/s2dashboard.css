@@ -1,0 +1,168 @@
+html, body {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidenav-fab {
+  position: absolute;
+  z-index: 5;
+}
+
+md-sidenav {
+  overflow-x: hidden;
+  width: 30%;
+  max-width: 500px;
+  min-width: 400px;
+}
+
+gridster-item div.button-holder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+gridster-item{
+  background: transparent;
+}
+
+gridster-item .item-buttons{
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+}
+
+.widget-header{
+  min-height: 0px !important;
+}
+
+.destroy-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 100;
+}
+
+gridster-grid .column {
+  opacity: 1; /*Compability witch control panel*/
+}
+
+.transparent-color{
+  background-color: transparent !important
+}
+
+.left-margin-10{
+  margin-left: 10px
+}
+
+.toolbarButtons,.toolbarButtons label {
+  position: absolute;
+  right: 5%;
+  z-index: 3;
+  color: #fd0000 !important
+}
+
+/*Position to enable gridster layers*/
+gridster {
+  position: absolute !important;
+  background: transparent !important;
+}
+
+.md-dialog-container  {
+  z-index: 10500 !important;
+}
+
+.md-panel-outer-wrapper.md-panel-is-showing{
+  z-index: 10500 !important;
+}
+
+.md-select-menu-container.md-active.md-clickable{
+  z-index: 10501 !important;
+}
+
+md-sidenav {
+  z-index: 10500 !important;
+}
+
+md-backdrop {
+  z-index: 10000 !important;
+}
+
+.page-dashboard-container {
+  height:600px;
+  background-size: 100% 100%
+}
+
+.md-autocomplete-suggestions-container{
+  z-index: 10001 !important;
+}
+
+element{
+  width: 100%;
+  height: 100%;
+}
+
+/*Color picker fix*/
+.color-picker-input-wrapper{
+  width: 180px;
+  margin-bottom:20px
+}
+
+
+/*Full container*/
+.fullcontainer{
+  width: 100%;
+  height: 100%;
+  display: inline-block
+}
+
+/*Codemirror fix*/
+.CodeMirror-linenumber {
+  padding: 1px 8px 0 5px;
+}
+
+md-tooltip.tt-multiline {
+  height: auto !important;
+}
+
+.input-fields{
+  width:100%
+}
+
+.spinner-margin-top{
+  margin-top: 20%;
+}
+
+.spinner-overlay{
+  position:absolute;
+  width:100%;
+  height:100%;
+  z-index:90000
+}
+
+.no-wrap{
+  white-space: nowrap;
+  font-size:12px;
+  overflow: hidden
+}
+
+tip-arrow{
+  display: none
+}
+
+.cursor-hand{
+  cursor: pointer
+}
+
+.md-open-menu-container{
+  z-index: 10000 !important
+}

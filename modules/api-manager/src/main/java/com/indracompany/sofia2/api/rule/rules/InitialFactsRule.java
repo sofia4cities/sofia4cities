@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jeasy.rules.annotation.Action;
 import org.jeasy.rules.annotation.Condition;
@@ -63,10 +62,15 @@ public class InitialFactsRule {
 
 		String headerToken = RequestDumpUtil.getValue(ApiServiceInterface.AUTHENTICATION_HEADER, request);
 		
+		String jwtToken = RequestDumpUtil.extractJWTToken(request);
+		
 		headerToken = Optional.ofNullable(headerToken).orElse("");
 		
 		String method = request.getMethod();
 		String pathInfo = request.getPathInfo();
+		if (!pathInfo.endsWith("/")) {
+			pathInfo = pathInfo.concat("/");
+		}
 
 		String queryDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FILTER_PARAM, request)).orElse("");
 		String targetDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.TARGET_DB_PARAM, request)).orElse("");
@@ -84,6 +88,7 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.CONTENT_TYPE_INPUT, contentTypeInput);
 		data.put(ApiServiceInterface.CONTENT_TYPE_OUTPUT, contentTypeOutput);
 		data.put(ApiServiceInterface.CACHEABLE, cacheable);
+		data.put(ApiServiceInterface.JWT_TOKEN, jwtToken);
 		
 		facts.put(RuleManager.ACTION, method);
 		

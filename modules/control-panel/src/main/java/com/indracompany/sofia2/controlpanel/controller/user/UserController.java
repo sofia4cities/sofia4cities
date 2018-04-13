@@ -15,6 +15,7 @@ package com.indracompany.sofia2.controlpanel.controller.user;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.model.UserToken;
 import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
+import com.indracompany.sofia2.controlpanel.services.user.UserOperationsService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +52,9 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private AppWebUtils utils;
+
+	@Autowired
+	private UserOperationsService operations;
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@GetMapping(value = "/create", produces = "text/html")
@@ -121,6 +126,9 @@ public class UserController {
 		}
 		try {
 			this.userService.createUser(user);
+			operations.createPostOperationsUser(user);
+			operations.createPostOntologyUser(user);
+
 		} catch (UserServiceException e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
@@ -212,34 +220,48 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
-	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+	public String registerUserLogin(@ModelAttribute User user, RedirectAttributes redirectAttributes,
+			HttpServletRequest request) {
+		String nameRole = request.getParameter("roleName");
 
 		if (user != null) {
-
 			if (this.userService.emailExists(user)) {
-
 				log.debug("There is already an user with this email");
 				utils.addRedirectMessage("login.error.email.duplicate", redirectAttributes);
 				return "redirect:/login";
 			}
-
 			if (utils.paswordValidation(user.getPassword()) && (this.userService.emailExists(user) == false)) {
 
 				try {
-					this.userService.registerUser(user);
+					if (nameRole == null) {
+						log.debug("A role must be selected");
+						utils.addRedirectMessage("login.error.user.register", redirectAttributes);
+						return "redirect:/login";
+					}
+					if (nameRole.toLowerCase().equals("user")) {
+
+						this.userService.registerRoleUser(user);
+						operations.createPostOperationsUser(user);
+						operations.createPostOntologyUser(user);
+
+					} else {
+						this.userService.registerRoleDeveloper(user);
+						operations.createPostOperationsUser(user);
+						operations.createPostOntologyUser(user);
+					}
+
 					log.debug("User created from login");
 					utils.addRedirectMessage("login.register.created", redirectAttributes);
 					return "redirect:/login";
+
 				} catch (UserServiceException e) {
 					log.debug("This user already exist");
 					utils.addRedirectMessage("login.error.register", redirectAttributes);
 					return "redirect:/login";
 				}
-
 			}
-
 		}
 		return "redirect:/login?errorRegister";
-	}
 
+	}
 }

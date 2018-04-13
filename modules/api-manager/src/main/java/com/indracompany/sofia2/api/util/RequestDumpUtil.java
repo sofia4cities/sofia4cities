@@ -55,6 +55,15 @@ public class RequestDumpUtil {
     	return value;
     	
     }
+  
+  public static String extractJWTToken(HttpServletRequest request) {
+		String authorization = request.getHeader("Authorization");
+		if (authorization != null && authorization.contains("Bearer")) {
+			String tokenId = authorization.substring("Bearer".length() + 1);
+			return tokenId;
+		}
+		else return "";
+	}
     
  public static String getContentType(HttpServletRequest request ) {
     	

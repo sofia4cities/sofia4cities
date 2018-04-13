@@ -27,7 +27,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugbable.gateway.rest",
+		prefix="sofia2.iotbroker.plugable.gateway.rest",
 		name="enable",
 		havingValue="true"
 		)
@@ -35,7 +35,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-	@Value("${sofia2.iotbroker.plugbable.gateway.rest.swaggerhost:localhost}")
+	@Value("${sofia2.iotbroker.plugable.gateway.rest.swaggerhost:localhost}")
 	private String host;
 
 	@Bean

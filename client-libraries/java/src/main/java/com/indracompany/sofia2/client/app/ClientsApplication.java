@@ -14,23 +14,75 @@
  */
 package com.indracompany.sofia2.client.app;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
 import com.indracompany.sofia2.client.MQTTClient;
+import com.indracompany.sofia2.client.MQTTClient.QUERY_TYPE;
+import com.indracompany.sofia2.client.SubscriptionListener;
+import com.indracompany.sofia2.client.configuration.MQTTSecureConfiguration;
 
 public class ClientsApplication {
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException, UnrecoverableKeyException,
+			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 
-		MQTTClient client = new MQTTClient("tcp://localhost:1883");
-		String token = "3f77b9a6af8642c683e5d786217afb0b";
-		String clientPlatform = "RestaurantsCp";
-		String clientPlatformInstance = clientPlatform + ":mqtt";
-		int timeout = 5;
-		String sessionKey = client.connect(token, clientPlatform, clientPlatformInstance, timeout);
-		String jsonData ="{\"Restaurant\":{\"address\":{\"building\":null,\"coordinates\":{\"0\":null,\"1\":null},\"street\":null,\"zipcode\":null},\"borough\":null,\"cuisine\":null,\"grades\":{\"date\":\"6\",\"grade\":null,\"score\":null},\"name\":null,\"restaurant_id\":null}}"; 
+		String url = "";
+		String keyStorePath = "";
+		String keyStorePassword = "";
+		MQTTSecureConfiguration sslConfig = null;
+		MQTTClient clientSecure;
+
+		if (args.length == 3) {
+			url = args[0];
+			keyStorePath = args[1];
+			keyStorePassword = args[2];
+			sslConfig = new MQTTSecureConfiguration(keyStorePath, keyStorePassword);
+
+		} else if (args.length == 1) {
+			url = args[0];
+		}
+
+		if (sslConfig != null) {
+			clientSecure = new MQTTClient(url, sslConfig);
+		} else {
+			clientSecure = new MQTTClient(url);
+		}
+
+		int timeout = 50;
+		String token = "e7ef0742d09d4de5a3687f0cfdf7f626";
+		String clientPlatform = "Ticketing App";
+		String clientPlatformInstance = clientPlatform + ":MQTT";
+		String ontology = "HelsinkiPopulation";
+		clientSecure.connect(token, clientPlatform, clientPlatformInstance, timeout);
+
+		String jsonData = "{\"year\":1993, \"population\" : 3500, \"population_women\":1500, \"population_men\":2000}";
+
+		clientSecure.publish(ontology, jsonData, timeout);
+
+		String subsId = clientSecure.subscribe(ontology, "SELECT * FROM " + ontology, QUERY_TYPE.SQL, timeout,
+				new SubscriptionListener() {
+
+					@Override
+					public void onMessageArrived(String message) {
+						// System.out.println(message);
+
+					}
+
+				});
+
+		clientSecure.publish(ontology, jsonData, timeout);
+
 		Thread.sleep(5000);
-		client.publish("Restaurant", jsonData, timeout);
-		Thread.sleep(5000);
-		
-		client.disconnect();
+		clientSecure.unsubscribe(subsId);
+
+		clientSecure.disconnect();
+
+		System.exit(0);
+
 	}
 }

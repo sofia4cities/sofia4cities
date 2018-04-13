@@ -15,8 +15,7 @@ package com.indracompany.sofia2.config.services.exceptions;
 
 public class DashboardServiceException extends RuntimeException {
 
-	public DashboardServiceException(String message)
-	{
+	public DashboardServiceException(String message) {
 		super(message);
 	}
 }

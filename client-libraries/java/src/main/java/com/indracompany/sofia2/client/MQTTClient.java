@@ -15,6 +15,8 @@
 package com.indracompany.sofia2.client;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -22,22 +24,26 @@ import java.util.concurrent.TimeoutException;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.client.configuration.MQTTSecureConfiguration;
 import com.indracompany.sofia2.client.exception.MQTTException;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyUnsubscribeMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
+import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
 import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
@@ -48,13 +54,27 @@ public class MQTTClient {
 
 	private MemoryPersistence persistence = new MemoryPersistence();;
 	private String brokerURI;
-	private CompletableFuture<String> completableFutureMessage = new CompletableFuture<>();;
+	private CompletableFuture<String> completableFutureMessage = new CompletableFuture<>();
 	private String sessionKey;
-	private String topic = "/message";;
+	private String topic = "/message";
+	private String topic_message = "/topic/message";
+	private String topic_subscription = "/topic/subscription";
 	private MqttClient client;
+	private Map<String, SubscriptionListener> subscriptions = new HashMap<String, SubscriptionListener>();
+	private MQTTSecureConfiguration sslConfig;
+
+	public enum QUERY_TYPE {
+		NATIVE, SQL
+	};
 
 	public MQTTClient(String brokerURI) {
 		this.brokerURI = brokerURI;
+	}
+
+	public MQTTClient(String brokerURI, MQTTSecureConfiguration sslConfig) {
+		this.brokerURI = brokerURI;
+		this.sslConfig = sslConfig;
+
 	}
 
 	/**
@@ -70,7 +90,7 @@ public class MQTTClient {
 	 *            Time in seconds for waiting response from Broker
 	 * @return The session key for the session established between client and IoT
 	 *         Broker
-	 * 
+	 * @throws MQTTException
 	 */
 
 	@SuppressWarnings("unchecked")
@@ -90,14 +110,24 @@ public class MQTTClient {
 		try {
 			// Connect client MQTT
 			this.client = new MqttClient(brokerURI, clientPlatform, persistence);
-			this.client.connect();
+			// Unsecure connection
+			if (this.sslConfig == null) {
+				log.info("Connecting to broker MQTT without secure connection");
+				this.client.connect();
+			} else {
+				log.info("Connecting to broker MQTT with SSL");
+				MqttConnectOptions options = new MqttConnectOptions();
+				options.setSocketFactory(this.sslConfig.configureSSLSocketFactory());
+				this.client.connect(options);
+			}
+
 			log.info("Connecting to broker MQTT at " + brokerURI);
 
-			this.client.subscribe("/topic/message/" + client.getClientId(), new IMqttMessageListener() {
+			this.client.subscribe(topic_message + "/" + client.getClientId(), new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					final String response = new String(message.getPayload());
-					log.debug("Message arrived " + response);
+					// log.debug("Message arrived " + response);
 					completableFutureMessage.complete(response);
 					completableFutureMessage = new CompletableFuture<>();
 				}
@@ -112,10 +142,99 @@ public class MQTTClient {
 			// GET JOIN RESPONSE
 			String joinResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(joinResponse);
-			if (response.getSessionKey() != null)
+			if (response.getSessionKey() != null) {
 				this.sessionKey = response.getSessionKey();
-			log.info("Session Key established: " + this.sessionKey);
+				log.info("Session Key established: " + this.sessionKey);
+			} else
+				throw new MQTTException("Could not stablish connection, error code is "
+						+ response.getBody().getErrorCode() + ":" + response.getBody().getError());
 
+		} catch (MqttException e) {
+			log.error("Could not connect to MQTT broker");
+			throw new MQTTException("Could not connect to MQTT broker");
+		} catch (InterruptedException e) {
+			log.error("Could not retrieve message from broker, interrupted thread");
+			throw new MQTTException("Could not retrieve message from broker, interrupted thread");
+		} catch (ExecutionException e) {
+			log.error("Could not get result from retrieved message at CompletableFuture object");
+			throw new MQTTException("Could not get result from retrieved message at CompletableFuture object");
+		} catch (TimeoutException e) {
+			log.error("Timeout, could not retrieve session key");
+			throw new MQTTException("Timeout, could not retrieve session key");
+		} catch (SSAPParseException e) {
+			log.error("Could not parse SSAP message");
+			throw new MQTTException("Could not parse SSAP message");
+		} catch (Exception e) {
+			throw new MQTTException("Error: " + e);
+		}
+
+		// if (this.sessionKey == null)
+		// log.info("Session key is null, either Token or ClientPlatform params are not
+		// valid");
+
+		return this.sessionKey;
+	}
+
+	/**
+	 * Publishes a message through MQTT session.
+	 *
+	 * @param ontology
+	 *            Ontology to be subscribed
+	 * @param query
+	 *            Query (to match conditions)
+	 * @param queryType
+	 *            Type of query: NATIVE, SQL
+	 * @param timeout
+	 *            Time in seconds for waiting subscription ACK
+	 * @param listener
+	 *            Listener that will handle messages related to the subscription
+	 * @return The subscription ID
+	 */
+
+	public String subscribe(String ontology, String query, QUERY_TYPE queryType, int timeout,
+			SubscriptionListener listener) {
+
+		String subscriptionId = null;
+		final SSAPMessage<SSAPBodySubscribeMessage> subscription = new SSAPMessage<SSAPBodySubscribeMessage>();
+		subscription.setSessionKey(this.sessionKey);
+		final SSAPBodySubscribeMessage body = new SSAPBodySubscribeMessage();
+		body.setOntology(ontology);
+
+		switch (queryType) {
+		case NATIVE:
+			body.setQueryType(SSAPQueryType.NATIVE);
+		case SQL:
+			body.setQueryType(SSAPQueryType.SQL);
+		}
+
+		body.setQuery(query);
+		subscription.setBody(body);
+		subscription.setDirection(SSAPMessageDirection.REQUEST);
+		subscription.setMessageType(SSAPMessageTypes.SUBSCRIBE);
+
+		try {
+			final String subscriptionStr = SSAPJsonParser.getInstance().serialize(subscription);
+
+			final MqttMessage message = new MqttMessage(subscriptionStr.getBytes());
+			client.publish(topic, message);
+			log.info("Subscribed to query " + query);
+			// GET SUBS RESPONSE
+			String subsResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
+			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(subsResponse);
+			subscriptionId = response.getBody().getData().at("/subscriptionId").asText();
+
+			if (!subscriptions.containsKey(subscriptionId))
+				subscriptions.put(subscriptionId, listener);
+
+			this.client.subscribe(topic_subscription + "/" + this.sessionKey, new IMqttMessageListener() {
+				@Override
+				public void messageArrived(String topic, MqttMessage message) throws Exception {
+					log.info("Subscription message available");
+					final String response = new String(message.getPayload());
+					delegateMessageFromSubscription(response);
+
+				}
+			});
 		} catch (MqttException e) {
 			log.error("Could not connect to MQTT broker");
 			throw new MQTTException("Could not connect to MQTT broker");
@@ -133,10 +252,58 @@ public class MQTTClient {
 			throw new MQTTException("Could not parse SSAP message");
 		}
 
-		if (this.sessionKey == null)
-			log.info("Session key is null, either Token or ClientPlatform params are not valid");
+		return subscriptionId;
+	}
 
-		return this.sessionKey;
+	/**
+	 * Publishes a message through MQTT session.
+	 *
+	 * @param subscriptionId
+	 *
+	 * @return The subscription ID
+	 */
+
+	public void unsubscribe(String subscriptionId) {
+
+		final SSAPMessage<SSAPBodyUnsubscribeMessage> unsubscribe = new SSAPMessage<SSAPBodyUnsubscribeMessage>();
+		unsubscribe.setSessionKey(this.sessionKey);
+
+		final SSAPBodyUnsubscribeMessage body = new SSAPBodyUnsubscribeMessage();
+		body.setSubscriptionId(subscriptionId);
+
+		unsubscribe.setBody(body);
+		unsubscribe.setDirection(SSAPMessageDirection.REQUEST);
+		unsubscribe.setMessageType(SSAPMessageTypes.UNSUBSCRIBE);
+
+		try {
+			final String unsubscriptionStr = SSAPJsonParser.getInstance().serialize(unsubscribe);
+
+			final MqttMessage message = new MqttMessage(unsubscriptionStr.getBytes());
+			client.publish(topic, message);
+
+			// GET SUBS RESPONSE
+			String subsResponse = completableFutureMessage.get();
+			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(subsResponse);
+			if (response.getBody().isOk()) {
+				log.info("Unsubscribed successfully");
+				this.subscriptions.remove(subscriptionId);
+				client.unsubscribe(topic_subscription + "/" + this.sessionKey);
+			} else
+				log.error("Could not unsubscribe");
+
+		} catch (MqttException e) {
+			log.error("Could not connect to MQTT broker");
+			throw new MQTTException("Could not connect to MQTT broker");
+		} catch (InterruptedException e) {
+			log.error("Could not retrieve message from broker, interrupted thread");
+			throw new MQTTException("Could not retrieve message from broker, interrupted thread");
+		} catch (ExecutionException e) {
+			log.error("Could not get result from retrieved message at CompletableFuture object");
+			throw new MQTTException("Could not get result from retrieved message at CompletableFuture object");
+		} catch (SSAPParseException e) {
+			log.error("Could not parse SSAP message");
+			throw new MQTTException("Could not parse SSAP message");
+		}
 	}
 
 	/**
@@ -178,8 +345,10 @@ public class MQTTClient {
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(insertResponse);
 			if (response.getBody().isOk())
 				log.info("Message published");
-			else
-				log.error("Could not publish message");
+			else {
+				throw new MQTTException("Could not publish message \nError Code: " + response.getBody().getErrorCode()
+						+ ":\n" + response.getBody().getError());
+			}
 
 		} catch (JsonProcessingException e) {
 			log.error("Could not read json data, invalid format");
@@ -211,7 +380,7 @@ public class MQTTClient {
 	}
 
 	/**
-	 * Closses MQTT session.
+	 * Closes MQTT session.
 	 *
 	 **/
 	public void disconnect() {
@@ -243,4 +412,15 @@ public class MQTTClient {
 		log.info("Session clossed");
 
 	}
+
+	private void delegateMessageFromSubscription(String message) throws JsonProcessingException, IOException {
+
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode jsonMessage = mapper.readTree(message);
+		String subsId = jsonMessage.get("body").get("subsciptionId").asText();
+		SubscriptionListener listener = this.subscriptions.get(subsId);
+		listener.onMessageArrived(message);
+
+	}
+
 }

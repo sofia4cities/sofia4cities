@@ -64,39 +64,50 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 			connect.createCollection(DATABASE, ONT_NAME);
 		}
 		// 1º
-		ContextData data = new ContextData();
-		data.setClientConnection(UUID.randomUUID().toString());
-		data.setClientPatform(UUID.randomUUID().toString());
-		data.setClientSession(UUID.randomUUID().toString());
-		data.setTimezoneId(UUID.randomUUID().toString());
-		data.setUser("user");
+		ContextData data = ContextData.builder("user", 
+				UUID.randomUUID().toString(), 
+				UUID.randomUUID().toString())
+				.clientConnection(UUID.randomUUID().toString())
+				.clientPatform(UUID.randomUUID().toString())
+				.clientPatformInstance(UUID.randomUUID().toString())
+				.clientSession(UUID.randomUUID().toString())
+				.build();
 		ObjectMapper mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		
 		// 2º
-		data = new ContextData();
-		data.setClientConnection(UUID.randomUUID().toString());
-		data.setClientPatform(UUID.randomUUID().toString());
-		data.setClientSession(UUID.randomUUID().toString());
-		data.setTimezoneId(UUID.randomUUID().toString());
-		data.setUser("admin");
+		data = ContextData.builder("admin", 
+				UUID.randomUUID().toString(), 
+				UUID.randomUUID().toString())
+				.clientConnection(UUID.randomUUID().toString())
+				.clientPatform(UUID.randomUUID().toString())
+				.clientPatformInstance(UUID.randomUUID().toString())
+				.clientSession(UUID.randomUUID().toString())
+				.build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		
 		// 3º
-		data = new ContextData();
-		data.setClientConnection(UUID.randomUUID().toString());
-		data.setClientPatform(UUID.randomUUID().toString());
-		data.setClientSession(UUID.randomUUID().toString());
-		data.setTimezoneId(UUID.randomUUID().toString());
-		data.setUser("other");
+		data = ContextData.builder("other", 
+				UUID.randomUUID().toString(), 
+				UUID.randomUUID().toString())
+				.clientConnection(UUID.randomUUID().toString())
+				.clientPatform(UUID.randomUUID().toString())
+				.clientPatformInstance(UUID.randomUUID().toString())
+				.clientSession(UUID.randomUUID().toString())
+				.build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+		
 		// 4º
-		data = new ContextData();
-		data.setClientConnection(UUID.randomUUID().toString());
-		data.setClientPatform(UUID.randomUUID().toString());
-		data.setClientSession(UUID.randomUUID().toString());
-		data.setTimezoneId(UUID.randomUUID().toString());
-		data.setUser("other");
+		data = ContextData.builder("other", 
+				UUID.randomUUID().toString(), 
+				UUID.randomUUID().toString())
+				.clientConnection(UUID.randomUUID().toString())
+				.clientPatform(UUID.randomUUID().toString())
+				.clientPatformInstance(UUID.randomUUID().toString())
+				.clientSession(UUID.randomUUID().toString())
+				.build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 

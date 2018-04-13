@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-router</artifactId>
-		<version>5.0.0-rc2</version>
+		<version>5.1.0-rc1</version>
 		<relativePath>..</relativePath>
 	</parent>
 
@@ -42,6 +42,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
+			<version>${version.spring-cloud}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-hystrix</artifactId>
+			<version>${version.spring-cloud}</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>de.codecentric</groupId>
@@ -91,6 +104,18 @@
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-router-core</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-audit</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-security-jwt-jdbc-core-ri</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 

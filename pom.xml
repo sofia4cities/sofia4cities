@@ -4,14 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-parent</artifactId>
-	<version>5.0.0-rc2</version>
+	<version>5.1.0-rc1</version>
 	<packaging>pom</packaging>
 
 	<name>sofia2-parent</name>
 	<description>sofia2-parent</description>
 	
 	<properties>	
-		<sofia2.version>5.0.0-rc2</sofia2.version>
+		<sofia2.version>5.1.0-rc1</sofia2.version>
+		<sofia2.docker.version>v1.0.0</sofia2.docker.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -31,6 +32,8 @@
         <project.year>2013-2018</project.year>
         <project.organization.name>Indra Sistemas S.A. SPAIN</project.organization.name>
         <project.website>https://sofia2.com</project.website>
+		<freemarket.version>2.3.21</freemarket.version>	
+		<elasticsearch.version>6.2.3</elasticsearch.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -58,13 +61,26 @@
 				<artifactId>springfox-swagger-ui</artifactId>
 				<version>${springfox-swagger2.version}</version>
 			</dependency>
+			
+			<dependency>
+				<groupId>org.elasticsearch</groupId>
+				<artifactId>elasticsearch</artifactId>
+				<version>${elasticsearch.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.elasticsearch.client</groupId>
+				<artifactId>transport</artifactId>
+				<version>${elasticsearch.version}</version>
+			</dependency>
 	
 		
             <dependency>
 		    	<groupId>com.spotify</groupId>
 		    	<artifactId>docker-maven-plugin</artifactId>
 		    	<version>${docker-spotify.version}</version>
-			</dependency>						 
+			</dependency>	
+			
 		</dependencies>
 	</dependencyManagement>
 	
@@ -78,6 +94,7 @@
         <module>libraries/mail</module>
         <module>libraries/social</module>
         <module>libraries/flow-engine-services</module>
+        <module>libraries/audit</module>
 
 		<!--CONFIG -->
 		<module>config/model</module>
@@ -87,10 +104,15 @@
 		
 		<!--SECURITY-->		
 		<module>security/security-ui-ri</module>
+		<module>security/oauth/security-oauth2-ri</module>
+		<module>security/oauth/security-jwt-core-ri</module>
+		<module>security/oauth/security-jwt-jdbc-core-ri</module>
+		<module>security/oauth/security-jwt-authorization-ri</module>
 		
 		<!--PERSISTENCE-->
 		<module>persistence/interfaces</module>	
 		<module>persistence/mongodb-impl</module>		
+		<module>persistence/elasticsearch-impl</module>		
 		<module>persistence/services</module>				
 		
 		<module>contributions/spring-boot-admin-server-ui</module>
@@ -103,13 +125,13 @@
         <module>modules/api-manager</module>
 	<!--        <module>modules/scripting-engine</module-->
 		<module>modules/planner</module>
-		 <module>modules/router</module>
+	    <module>modules/router</module>
         <module>modules/flow-engine</module>
 		<module>modules/dashboard-engine</module>
 		<module>modules/device-simulator</module>
-		<!--
-        <module>api-manager</module>
-		-->
+		<module>modules/oauth-server</module>
+		<module>modules/digitaltwin-broker</module>	
+
 	</modules>
 	
 	<build>
@@ -168,25 +190,40 @@
 			  </dependencies>
 			</plugin>
 			<plugin>
-	          <groupId>org.jacoco</groupId>
-	          <artifactId>jacoco-maven-plugin</artifactId>
-	          <version>0.8.0</version>
-	          <executions>
-	            <execution>
-	              <id>default-prepare-agent</id>
-	              <goals>
-	                <goal>prepare-agent</goal>
-	              </goals>
-	            </execution>
-	            <execution>
-	              <id>default-report</id>
-	              <phase>prepare-package</phase>
-	              <goals>
-	                <goal>report</goal>
-	              </goals>
-	            </execution>
-	          </executions>
-	        </plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.0</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco.exec</destFile>
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<dataFile>${project.build.directory}/jacoco.exec</dataFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.21.0</version>
+				<configuration>
+						<argLine>${surefireArgLine}</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 		
 		<resources>

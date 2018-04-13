@@ -101,7 +101,10 @@ public class DeviceSimulatorController {
 			@RequestParam int interval) throws JsonProcessingException, IOException {
 
 		this.simulationService.createSimulation(identification, interval, utils.getUserId(),
-				this.simulationService.getDeviceSimulationJson(identification, clientPlatform, token, ontology, jsonMap));
+
+				this.simulationService.getDeviceSimulationJson(identification, clientPlatform, token, ontology,
+						jsonMap));
+
 		return "redirect:/devicesimulation/list";
 	}
 
@@ -154,7 +157,10 @@ public class DeviceSimulatorController {
 		if (simulation != null) {
 			if (!simulation.isActive()) {
 				this.simulationService.updateSimulation(identification, interval,
-						this.simulationService.getDeviceSimulationJson(identification, clientPlatform, token, ontology, jsonMap),
+
+						this.simulationService.getDeviceSimulationJson(identification, clientPlatform, token, ontology,
+								jsonMap),
+
 						simulation);
 				return "redirect:/devicesimulation/list";
 			} else {

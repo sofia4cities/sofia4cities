@@ -13,6 +13,9 @@
  */
 package com.indracompany.sofia2.router.client;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +28,7 @@ public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws KeyManagementException, NoSuchAlgorithmException {
        /* RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
         //String quote = restTemplate.getForObject("http://localhost:19100/router/router/node-red", String.class);

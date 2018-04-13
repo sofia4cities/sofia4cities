@@ -19,16 +19,16 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyOntologyMessage;
 
 public class SSAPBodyIndicationMessage extends SSAPBodyOntologyMessage {
 
-	private String subsciptionId;
+	private String subscriptionId;
 	private String query;
 	private JsonNode data;
 
 	public String getSubsciptionId() {
-		return subsciptionId;
+		return subscriptionId;
 	}
 
 	public void setSubsciptionId(String subsciptionId) {
-		this.subsciptionId = subsciptionId;
+		this.subscriptionId = subsciptionId;
 	}
 
 	public String getQuery() {

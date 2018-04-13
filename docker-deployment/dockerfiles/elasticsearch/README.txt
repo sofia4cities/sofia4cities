@@ -1,0 +1,1 @@
+EXECUTE IT ON HOST (The default value is 65536): sudo sysctl -w vm.max_map_count=262144

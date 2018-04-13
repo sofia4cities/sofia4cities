@@ -13,54 +13,50 @@
  */
 package com.indracompany.sofia2.controller;
 
-import com.indracompany.sofia2.dto.socket.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import com.indracompany.sofia2.dto.socket.InputMessage;
+import com.indracompany.sofia2.dto.socket.OutputMessage;
 import com.indracompany.sofia2.service.SolverService;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
 
 @Controller
 @Slf4j
 public class SocketController {
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-    
-    @Autowired
-    private SolverService solverService;
+	@Autowired
+	private SimpMessagingTemplate simpMessagingTemplate;
 
-    @CrossOrigin
-    @MessageMapping("/dsengine/solver/{id}")
-    //@SendTo("/secured/history")
-    public void response(@DestinationVariable("id") Long id, SimpMessageHeaderAccessor headerAccessor, InputMessage msg ) throws Exception {
-    	String dataSolved = solverService.solveDatasource(msg);
-        OutputMessage out = new OutputMessage(dataSolved, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()));
-        // 
-        simpMessagingTemplate.convertAndSend("/dsengine/broker/" + id, out);  
-    }
-    
-    /*private MessageHeaders createHeaders(String sessionId) {
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
-        headerAccessor.setSessionId(sessionId);
-        headerAccessor.setLeaveMutable(true);
-        return headerAccessor.getMessageHeaders();
-    }*/
+	@Autowired
+	private SolverService solverService;
+
+	@CrossOrigin
+	@MessageMapping("/dsengine/solver/{id}")
+	// @SendTo("/secured/history")
+	public void response(@DestinationVariable("id") Long id, SimpMessageHeaderAccessor headerAccessor, InputMessage msg)
+			throws Exception {
+		String dataSolved = solverService.solveDatasource(msg);
+		OutputMessage out = new OutputMessage(dataSolved,
+				new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()));
+		//
+		simpMessagingTemplate.convertAndSend("/dsengine/broker/" + id, out);
+	}
+
+	/*
+	 * private MessageHeaders createHeaders(String sessionId) {
+	 * SimpMessageHeaderAccessor headerAccessor =
+	 * SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
+	 * headerAccessor.setSessionId(sessionId); headerAccessor.setLeaveMutable(true);
+	 * return headerAccessor.getMessageHeaders(); }
+	 */
 }

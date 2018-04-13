@@ -93,9 +93,17 @@ public class TwitterStreamService {
 
 	public boolean isSubscribe(String id) {
 		if (listenersMap.containsKey(id))
-			return true;
-		else
+		{
+			if(listenersMap.get(id).getTwitterStream() == null)
+			{
+				listenersMap.remove(id);
+				streamMap.remove(id);
+				return false;
+			}else
+				return true;
+		}else 
 			return false;
+			
 	}
 
 }

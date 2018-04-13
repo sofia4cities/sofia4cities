@@ -13,7 +13,6 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.gadget;
 
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +38,6 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
-import org.springframework.security.access.AccessDeniedException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,160 +46,179 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GadgetDatasourceController {
 
-		@Autowired
-		private GadgetDatasourceService gadgetDatasourceService;
-		
-		@Autowired
-		private OntologyService ontologyService; 
-		
-		@Autowired
-		private UserService userService; 
-		
-		@Autowired
-		private QueryToolService queryToolService;
-		
-		@Autowired
-		private AppWebUtils utils;
-		
-		@RequestMapping(value = "/list", produces = "text/html")
-		public String list (Model uiModel, HttpServletRequest request) {
-					
-			String identification = request.getParameter("identification");
-			String description = request.getParameter("description");
-			
-			if(identification!=null){if(identification.equals("")) identification=null;}
-			if(description!=null){if(description.equals("")) description=null;}
+	@Autowired
+	private GadgetDatasourceService gadgetDatasourceService;
 
-			List<GadgetDatasource> datasource=this.gadgetDatasourceService.findGadgetDatasourceWithIdentificationAndDescription( identification, description, utils.getUserId());
-					
-			uiModel.addAttribute("datasources", datasource);
-			return "datasources/list";
-					
-		}
-			
-		@PostMapping( value="getNamesForAutocomplete")
-		public @ResponseBody List<String> getNamesForAutocomplete(){
-			return this.gadgetDatasourceService.getAllIdentifications();
-		}
-		
-		public void showDatasources(Model model) {
-			model.addAttribute("datasources", this.gadgetDatasourceService.getAllIdentifications());
-			
-		}
-		
-		@GetMapping(value = "/create", produces = "text/html")
-		public String createGadget(Model model) {
-			model.addAttribute("datasource",new GadgetDatasource());
-			model.addAttribute("ontologies", ontologyService.getOntologiesByUserId(utils.getUserId()));
-			return "datasources/create";
+	@Autowired
+	private OntologyService ontologyService;
 
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private QueryToolService queryToolService;
+
+	@Autowired
+	private AppWebUtils utils;
+
+	@RequestMapping(value = "/list", produces = "text/html")
+	public String list(Model uiModel, HttpServletRequest request) {
+
+		String identification = request.getParameter("identification");
+		String description = request.getParameter("description");
+
+		if (identification != null) {
+			if (identification.equals(""))
+				identification = null;
 		}
-		
-		@PostMapping(value = {"/create"})
-		public String createOntology(Model model,
-				@Valid GadgetDatasource gadgetDatasource, BindingResult bindingResult,
-				RedirectAttributes redirect) {
-			if(bindingResult.hasErrors())
-			{
-				log.debug("Some gadget datasource properties missing");
-				utils.addRedirectMessage("gadgetDatasource.validation.error", redirect);
-				return "redirect:/datasources/create";
-			}
-			try{
-				gadgetDatasource.setUser(this.userService.getUser(this.utils.getUserId()));
-				this.gadgetDatasourceService.createGadgetDatasource(gadgetDatasource);
-			}catch (GadgetDatasourceServiceException e)
-			{
-				log.debug("Cannot create gadget datasource");
-				utils.addRedirectMessage("gadgetDatasource.create.error", redirect);
-				return "redirect:/datasources/create";
-			}
-			return "redirect:/datasources/list";
-		}
-		
-		@GetMapping(value = "/update/{id}", produces = "text/html")
-		public String update(Model model, @PathVariable ("id") String id) {
-			GadgetDatasource gadgetDatasource = this.gadgetDatasourceService.getGadgetDatasourceById(id);
-			if(gadgetDatasource!=null){
-				if (!gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId()))
-					return "error/403";
-				model.addAttribute("datasource", gadgetDatasource);
-				return "datasources/create";
-			}else
-				return "error/404";
-			
-			
+		if (description != null) {
+			if (description.equals(""))
+				description = null;
 		}
 
-		@PutMapping(value = "/update/{id}", produces = "text/html")
-		public String updateGadgetDatasource(Model model, @PathVariable ("id") String id,
-				@Valid GadgetDatasource gadgetDatasource, BindingResult bindingResult,
-				RedirectAttributes redirect) {
-			
-			if(bindingResult.hasErrors())
-			{
-				log.debug("Some Gadget Datasource properties missing");
-				utils.addRedirectMessage("gadgetDatasource.validation.error", redirect);
-				return "redirect:/datasources/update/"+id;
-			}
+		List<GadgetDatasource> datasource = this.gadgetDatasourceService
+				.findGadgetDatasourceWithIdentificationAndDescription(identification, description, utils.getUserId());
+
+		uiModel.addAttribute("datasources", datasource);
+		return "datasources/list";
+
+	}
+
+	@PostMapping(value = "getNamesForAutocomplete")
+	public @ResponseBody List<String> getNamesForAutocomplete() {
+		return this.gadgetDatasourceService.getAllIdentifications();
+	}
+
+	public void showDatasources(Model model) {
+		model.addAttribute("datasources", this.gadgetDatasourceService.getAllIdentifications());
+
+	}
+
+	@GetMapping(value = "/create", produces = "text/html")
+	public String createGadget(Model model) {
+		model.addAttribute("datasource", new GadgetDatasource());
+		model.addAttribute("ontologies", ontologyService.getOntologiesByUserId(utils.getUserId()));
+		return "datasources/create";
+
+	}
+
+	@PostMapping(value = { "/create" })
+	public String createOntology(Model model, @Valid GadgetDatasource gadgetDatasource, BindingResult bindingResult,
+			RedirectAttributes redirect) {
+		if (bindingResult.hasErrors()) {
+			log.debug("Some gadget datasource properties missing");
+			utils.addRedirectMessage("gadgetDatasource.validation.error", redirect);
+			return "redirect:/datasources/create";
+		}
+		try {
+			gadgetDatasource.setUser(this.userService.getUser(this.utils.getUserId()));
+			this.gadgetDatasourceService.createGadgetDatasource(gadgetDatasource);
+		} catch (GadgetDatasourceServiceException e) {
+			log.debug("Cannot create gadget datasource");
+			utils.addRedirectMessage("gadgetDatasource.create.error", redirect);
+			return "redirect:/datasources/create";
+		}
+		return "redirect:/datasources/list";
+	}
+
+	@GetMapping(value = "/update/{id}", produces = "text/html")
+	public String update(Model model, @PathVariable("id") String id) {
+		GadgetDatasource gadgetDatasource = this.gadgetDatasourceService.getGadgetDatasourceById(id);
+		if (gadgetDatasource != null) {
 			if (!gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId()))
 				return "error/403";
-			try {
-				this.gadgetDatasourceService.updateGadgetDatasource(gadgetDatasource);
-			}catch (GadgetDatasourceServiceException e)
-			{
-				log.debug("Cannot update gadget datasource");
-				utils.addRedirectMessage("gadgetDatasource.update.error", redirect);
-				return "redirect:/datasources/create";
-			}
-			return "redirect:/datasources/list";
-		}
-		
-		@DeleteMapping("/{id}")
-		public String delete(Model model, @PathVariable("id") String id) {
+			model.addAttribute("datasource", gadgetDatasource);
+			return "datasources/create";
+		} else
+			return "error/404";
 
-			this.gadgetDatasourceService.deleteGadgetDatasource(id, utils.getUserId());
-			return "redirect:/datasources/list";
+	}
+
+	@PutMapping(value = "/update/{id}", produces = "text/html")
+	public String updateGadgetDatasource(Model model, @PathVariable("id") String id,
+			@Valid GadgetDatasource gadgetDatasource, BindingResult bindingResult, RedirectAttributes redirect) {
+
+		if (bindingResult.hasErrors()) {
+			log.debug("Some Gadget Datasource properties missing");
+			utils.addRedirectMessage("gadgetDatasource.validation.error", redirect);
+			return "redirect:/datasources/update/" + id;
 		}
-		
-		@GetMapping(value = "/getUserGadgetDatasources", produces="application/json")
-		public @ResponseBody List<GadgetDatasource> getUserGadgetDatasources(){
-			return this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId());
+		if (!gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId()))
+			return "error/403";
+		try {
+			this.gadgetDatasourceService.updateGadgetDatasource(gadgetDatasource);
+		} catch (GadgetDatasourceServiceException e) {
+			log.debug("Cannot update gadget datasource");
+			utils.addRedirectMessage("gadgetDatasource.update.error", redirect);
+			return "redirect:/datasources/create";
 		}
-		
-		@GetMapping(value = "/getDatasourceById/{id}", produces="application/json")
-		public @ResponseBody GadgetDatasource getDatasourceById(@PathVariable("id") String id){
-			//if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {
-				return this.gadgetDatasourceService.getGadgetDatasourceById(id);
-			//}
-			//else {
-			//	return null;
-			//}
-		}
-		
-		@GetMapping(value = "/getDatasourceByIdentification/{id}", produces="application/json")
-		public @ResponseBody GadgetDatasource getDatasourceByIdentification(@PathVariable("id") String id){
-			if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {
-				return this.gadgetDatasourceService.getDatasourceByIdentification(id);
-			}
-			else {
-				return null;
-			}
-		}
-		
-		@GetMapping(value = "/getSampleDatasource/{id}", produces="application/json")
-		public @ResponseBody String getSampleDatasource(@PathVariable("id") String datasourceId){
-			if (gadgetDatasourceService.hasUserPermission(datasourceId, this.utils.getUserId())) {
-				String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
-				GadgetDatasource gd = this.gadgetDatasourceService.getGadgetDatasourceById(datasourceId);
-				String query =  gd.getQuery();
-				int indexInit = query.toLowerCase().indexOf("from") + 4;
-				String aux = query.substring(indexInit);
-				String ontology = aux.trim().split(" ")[0]; 
-				return queryToolService.querySQLAsJson(this.utils.getUserId(),ontology, sampleQuery, 0);
-			}
-			else{
-				return "403";
-			}
+		return "redirect:/datasources/list";
+	}
+
+	@DeleteMapping("/{id}")
+	public String delete(Model model, @PathVariable("id") String id) {
+
+		this.gadgetDatasourceService.deleteGadgetDatasource(id, utils.getUserId());
+		return "redirect:/datasources/list";
+	}
+
+	@GetMapping(value = "/getUserGadgetDatasources", produces = "application/json")
+	public @ResponseBody List<GadgetDatasource> getUserGadgetDatasources() {
+		return this.gadgetDatasourceService.getUserGadgetDatasources(utils.getUserId());
+	}
+
+	@GetMapping(value = "/getDatasourceById/{id}", produces = "application/json")
+	public @ResponseBody GadgetDatasource getDatasourceById(@PathVariable("id") String id) {
+		// if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {
+		return this.gadgetDatasourceService.getGadgetDatasourceById(id);
+		// }
+		// else {
+		// return null;
+		// }
+	}
+
+	@GetMapping(value = "/getDatasourceByIdentification/{id}", produces = "application/json")
+	public @ResponseBody GadgetDatasource getDatasourceByIdentification(@PathVariable("id") String id) {
+		if (gadgetDatasourceService.hasUserPermission(id, this.utils.getUserId())) {
+			return this.gadgetDatasourceService.getDatasourceByIdentification(id);
+		} else {
+			return null;
 		}
 	}
+
+	@GetMapping(value = "/getSampleDatasource/{id}", produces = "application/json")
+	public @ResponseBody String getSampleDatasource(@PathVariable("id") String datasourceId) {
+		if (gadgetDatasourceService.hasUserPermission(datasourceId, this.utils.getUserId())) {
+			String sampleQuery = this.gadgetDatasourceService.getSampleQueryGadgetDatasourceById(datasourceId);
+			GadgetDatasource gd = this.gadgetDatasourceService.getGadgetDatasourceById(datasourceId);
+			String query = gd.getQuery();
+			String ontology = getOntologyFromDatasource(query);
+			return queryToolService.querySQLAsJson(this.utils.getUserId(), ontology, sampleQuery, 0);
+		} else {
+			return "403";
+		}
+	}
+	
+	private String getOntologyFromDatasource(String datasource) {
+		int indexfrom = datasource.toLowerCase().indexOf("from ");
+		int indexOf = datasource.toLowerCase().indexOf(" ",indexfrom + 5);
+		if(indexOf == -1) {
+			indexOf = datasource.length();
+		}
+		String testOntology = datasource.substring(indexfrom + 5, indexOf).trim();
+		while(testOntology.startsWith("(") && indexfrom!=-1) {
+			indexfrom = datasource.toLowerCase().indexOf("from ",indexfrom);
+			indexOf = datasource.toLowerCase().indexOf(" ",indexfrom + 5);
+			if(indexOf == -1) {
+				indexOf = datasource.length();
+			}
+			testOntology = datasource.substring(indexfrom + 5, indexOf).trim();
+		}
+		
+		if(indexfrom==-1) {
+			return "";
+		}
+		return testOntology;
+		
+	}
+}

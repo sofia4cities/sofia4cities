@@ -154,7 +154,10 @@ public class ApiManagerService {
 		String opIdentifier = pathInfo.substring(pathInfo.indexOf(apiIdentifier) + (apiIdentifier).length());
 		if (opIdentifier.startsWith("\\") || opIdentifier.startsWith("/")) {
 			opIdentifier = opIdentifier.substring(1);
+			// opIdentifier= opIdentifier.replace("/", "");
 		}
+
+		opIdentifier = opIdentifier.replace("/", "");
 
 		final List<ApiOperation> operaciones = apiOperationRepository.findByApiOrderByOperationDesc(api);
 
@@ -229,7 +232,6 @@ public class ApiManagerService {
 
 	public String buildQuery(String queryDb, HashMap<String, String> queryParametersValues) {
 		for (final String param : queryParametersValues.keySet()) {
-			final String value = queryParametersValues.get(param);
 			queryDb = queryDb.replace("{$" + param + "}", queryParametersValues.get(param));
 		}
 		return queryDb;

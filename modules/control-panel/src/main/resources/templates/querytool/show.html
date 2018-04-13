@@ -50,12 +50,12 @@
 				if (!IS_JSON){
 					var text=""+queryResponse.text();
 					// Our own JSON string to mark non JSON ERRORs
-					queryErrorResponse = '{ "error":{ "status": "Proccessing Error", "detail": { "message" : "'+text+'" }}}';											
+					queryErrorResponse = text;										
 				}
 				
 				if ($('#jsoneditor').attr('data-loaded') == 'false') { createEditor(); $('#jsoneditor').attr('data-loaded', true);	}				
-				if (IS_JSON) { editor.setText(queryResponse.text()); }else { editor.setText(queryErrorResponse); } 
-				editor.setMode('view');				
+				if (IS_JSON) { editor.setText(queryResponse.text()); editor.setMode('view'); }else { editor.setMode('text');  editor.setText(queryErrorResponse); } 
+								
 			});		
 			
 			

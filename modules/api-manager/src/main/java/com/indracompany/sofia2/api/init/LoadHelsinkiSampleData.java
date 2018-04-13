@@ -34,7 +34,7 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
 
 @Component
@@ -50,7 +50,7 @@ public class LoadHelsinkiSampleData implements ApplicationRunner {
 	MongoDbTemplateImpl connect;
 
 	@Autowired
-	BasicOpsDBRepository repository;
+	MongoBasicOpsDBRepository repository;
 
 	@Autowired
 	MongoTemplate nativeTemplate;
@@ -92,7 +92,7 @@ public class LoadHelsinkiSampleData implements ApplicationRunner {
 		return userAdministrator;
 	}
 
-	private void createAPI() throws Exception {
+	public void createAPI() throws Exception {
 		String token = "acbca01b-da32-469e-945d-05bb6cd1552e";
 		try {
 			Api theApi = apiService.findApi(APINAME, token);

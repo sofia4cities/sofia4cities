@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
-import com.indracompany.sofia2.router.util.SSLUtil;
+import com.indracompany.sofia2.commons.ssl.SSLUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,12 +46,8 @@ public class CamelConfig {
 	@Bean
 	@ConditionalOnMissingBean(RoutesCollector.class)
 	RoutesCollector routesCollector(ApplicationContext applicationContext, CamelConfigurationProperties config) {
-
-		Collection<CamelContextConfiguration> configurations = applicationContext
-				.getBeansOfType(CamelContextConfiguration.class).values();
-
-		return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations),
-				config);
+		Collection<CamelContextConfiguration> configurations = applicationContext.getBeansOfType(CamelContextConfiguration.class).values();
+		return new RoutesCollector(applicationContext, new ArrayList<CamelContextConfiguration>(configurations),config);
 	}
 
 	@Bean
@@ -60,7 +56,6 @@ public class CamelConfig {
 		processor.setApplicationContext(applicationContext);
 		return processor;
 	}
-	
 	
 	private static final String MSJ_SSL_ERROR = "Error configuring SSL verification in Router";
 	

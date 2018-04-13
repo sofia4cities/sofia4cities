@@ -10,6 +10,7 @@ sofia2: #Config Sofia2 specific
    init:
       configdb: true
       mongodb: true
+      elasticdb: true
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -30,7 +31,15 @@ sofia2: #Config Sofia2 specific
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
-      
+      digitaltwin.database: digital_twin  
+   database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300    
  
 spring:
    ## GENERAL CONFIG
@@ -39,7 +48,7 @@ spring:
    datasource:
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:
+      password: 
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.
@@ -55,6 +64,8 @@ spring:
             
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
    level:
       org.springframework: INFO
       com.example.boot.thymeleaf: INFO

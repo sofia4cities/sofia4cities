@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Chat WebSocket</title>
+        <title>Test javascript library</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.js"></script>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -45,7 +45,7 @@
 		<script type="text/javascript">
             
 			config = {"url":"http://localhost:8081/iotbroker/message", "debug" : true,
-					  "token":"f45ae34dd65e478983d2ffad6e4f4237", "clientPlatform": "GTKP-Example", "clientPlatformInstance":"kp01"};
+					  "token":"1984fd5137e74e26ad1e5163c88c9e60", "clientPlatform": "GTKP-Example", "clientPlatformInstance":"kp01"};
 					  
 			client = new SofiaClient();
 			client.configure(config);
@@ -75,8 +75,24 @@
 			function writeResult(divId, operation , result){
 				console.log(operation);
 				console.log(result);
-				content =  "<p>" + operation + "</p>" + "<pre>" + JSON.stringify(result,null,'\t') + "</pre>";
+				/*content =  "<p>" + operation + "</p>" + "<pre>" + JSON.stringify(result,null,'\t') + "</pre>";
 				$("#"+divId).html(content);
+				*/
+				$("#"+divId).html("");
+				
+				var jsonSchema = JSON.parse(JSON.stringify(result.body,null,'\t'));
+				var container = document.getElementById(''+divId);	
+				var options = {
+					mode: 'view',
+					theme: 'bootstrap3',			
+					modes: ['view'], // allowed modes
+					error: function (err) {
+						$.alert({title: 'ERROR!', theme: 'dark', style: 'red', content: err.toString()});
+						return false;
+					}
+				};
+				
+				editor = new jsoneditor.JSONEditor(container, options, jsonSchema);
 			}
 			
 			function connectTest(){
@@ -223,7 +239,9 @@
 				<div class="tab-content" id="myTabContent">
 				  <div class="tab-pane fade show active" id="connect" role="tabpanel" aria-labelledby="connect-tab">
 						<div class="form-group">
-							<button id="connect" onclick="connectTest();">Connect</button>
+							<p>
+								<button id="connect" onclick="connectTest();">Connect</button>
+							</p>
 						</div>
 						<div id= "responseDivJoinResult"></div>
 				  </div>
@@ -236,8 +254,9 @@
 							<label>Query:</label> 
 							<input type="text" id="tabQueryField"  class="form-control"  placeholder="Write a query..." value="db.testrober.find()"/>
 						</div>
-						<button id="sendMessage" onclick="sendQueryTest()">Test query</button>
-						
+						<p>
+							<button id="sendMessage" onclick="sendQueryTest()">Test query</button>
+						</p>
 						<div id= "responseDivQueryResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="insert" role="tabpanel" aria-labelledby="profile-tab">
@@ -249,7 +268,9 @@
 							<label>Instance: </label>
 							<input type="text" id="insertInstance" class="form-control" placeholder="Write instance to insert..." value="{&quot;&quot;:&quot;&quot;}"/>
 						</div>
-						<button id="sendInserMessage" onclick="sendInsertTest()">Test insert query</button>	
+						<p>
+							<button id="sendInserMessage" onclick="sendInsertTest()">Test insert query</button>
+						</p>	
 						<div id= "responseDivInsertResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="update" role="tabpanel" aria-labelledby="contact-tab">
@@ -261,7 +282,9 @@
 							<label>Query: </label>
 							<input type="text" id="tabUpdteField" class="form-control" placeholder="Write a query..." value=""/>
 						</div>
-						<button id="sendMessageUpdate" onclick="sendUpdate()">Test update</button>
+						<p>
+							<button id="sendMessageUpdate" onclick="sendUpdate()">Test update</button>
+						</p>
 						<div id= "responseDivUpdateResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="updateById" role="tabpanel" aria-labelledby="contact-tab">
@@ -277,7 +300,9 @@
 							<label>Instance:</label> 
 							<input type="text" id="updateInstance" class="form-control" placeholder="Write instance to update..." value="{&quot;&quot;:&quot;&quot;}"/>
 						</div>
-						<button id="sendMessageUpdate" onclick="sendUpdateByIdTest()">Test updateById</button>
+						<p>
+							<button id="sendMessageUpdate" onclick="sendUpdateByIdTest()">Test updateById</button>
+						</p>
 						<div id= "responseDivUpdateByIdResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="delete" role="tabpanel" aria-labelledby="contact-tab">
@@ -289,7 +314,9 @@
 							<label>Query:</label> 
 							<input type="text" id="tabDeleteField" class="form-control" placeholder="Write a query..." value="db.testrober.remove()"/>
 						</div>
-						<button id="sendMessageDelete" onclick="sendRemoveTest()">Test delete</button>
+						<p>
+							<button id="sendMessageDelete" onclick="sendRemoveTest()">Test delete</button>
+						</p>
 						<div id= "responseDivDeleteResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="deleteById" role="tabpanel" aria-labelledby="contact-tab">
@@ -301,7 +328,9 @@
 							<label>Id:</label> 
 							<input type="text" id="sofiaIdDelete" class="form-control" placeholder="write id..." value=""/>
 						</div>
-						<button id="sendMessageDelete" onclick="sendRemoveByIdTest()">Test deleteById</button>
+						<p>
+							<button id="sendMessageDelete" onclick="sendRemoveByIdTest()">Test deleteById</button>
+						</p>	
 						<div id= "responseDivDeleteByIdResult"></div>
 				  </div>
 				  <div class="tab-pane fade" id="simulate" role="tabpanel" aria-labelledby="profile-tab">
@@ -342,4 +371,5 @@
 		</div>
 
     </body>
+	<script src="./json/jsoneditor.js"></script>
 </html>

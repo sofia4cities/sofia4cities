@@ -55,11 +55,14 @@ public class FlowDomainController {
 	@Value("${sofia2.flowengine.services.request.timeout.ms:5000}")
 	private int restRequestTimeout;
 
-	@Value("${sofia2.flowengine.services.baseurl:http://localhost:8082/sofia2/flowengine/admin}")
+	@Value("${sofia2.flowengine.services.baseurl:http://localhost:8082/flowengine/admin}")
 	private String baseUrl;
 
 	@Value("${sofia2.flowengine.services.proxyurl:http://localhost:5050/}")
 	private String proxyUrl;
+	
+	@Value("${sofia2.controlpanel.avoidsslverification:false}")
+	private boolean avoidSSLVerification;
 
 	@Autowired
 	private FlowDomainService domainService;
@@ -74,10 +77,10 @@ public class FlowDomainController {
 	private AppWebUtils utils;
 
 	private FlowEngineService flowEngineService;
-
+	
 	@PostConstruct
 	public void init() {
-		this.flowEngineService = FlowEngineServiceFactory.getFlowEngineService(this.baseUrl, this.restRequestTimeout);
+		this.flowEngineService = FlowEngineServiceFactory.getFlowEngineService(this.baseUrl, this.restRequestTimeout, avoidSSLVerification);
 	}
 
 	@GetMapping(value = "/list", produces = "text/html")

@@ -54,7 +54,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 @ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugbable.gateway.rest",
+		prefix="sofia2.iotbroker.plugable.gateway.rest",
 		name="enable",
 		havingValue="true"
 		)
@@ -131,7 +131,7 @@ public class Rest {
 	@RequestMapping(value="/ontology/{ontology}", method=RequestMethod.GET)
 	public ResponseEntity<?> list(
 			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") @RequestParam(name="ontology") String ontology,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
 			@ApiParam(value = "Examples:\n\tNATIVE: db.temperature.find({})\n\tSQL: select * from temperature; ", required = true) @RequestParam(name="query") String query,
 			@ApiParam(value = "OPTIONS: NATIVE or SQL", required=true) @RequestParam(name="queryType") SSAPQueryType queryType) {
 

@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
-	private RoleRepository roleTypeRepository;
+	private RoleRepository roleRepository;
 	@Autowired
 	private UserTokenRepository userTokenRepository;
 	@Autowired
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<Role> getAllRoles() {
-		return roleTypeRepository.findAll();
+		return roleRepository.findAll();
 	}
 
 	@Override
@@ -129,13 +129,41 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void createUser(User user) {
+
+		if (user.getPassword().length() < 7) {
+			throw new UserServiceException("Password has to be at least 7 characters");
+		}
+
 		if (!this.userExists(user)) {
 			log.debug("User no exist, creating...");
-			user.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
+			user.setRole(this.roleRepository.findByName(user.getRole().getName()));
 			this.userRepository.save(user);
+
 		} else {
 			throw new UserServiceException("User already exists in Database");
 		}
+	}
+
+	@Override
+	public void registerRoleDeveloper(User user) {
+
+		user.setRole(getRole(Role.Type.ROLE_DEVELOPER));
+		user.setActive(true);
+		log.debug("Creating user with Role Developer default");
+
+		this.createUser(user);
+
+	}
+
+	@Override
+	public void registerRoleUser(User user) {
+
+		user.setActive(true);
+		user.setRole(getRole(Role.Type.ROLE_USER));
+		log.debug("Creating user with Role User default");
+
+		this.createUser(user);
+
 	}
 
 	@Override
@@ -148,12 +176,21 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUser(User user) {
+	public void updatePassword(User user) {
 		if (this.userExists(user)) {
 			final User userDb = this.userRepository.findByUserId(user.getUserId());
 			userDb.setPassword(user.getPassword());
+		}
+	}
+
+	@Override
+	public void updateUser(User user) {
+		if (this.userExists(user)) {
+			final User userDb = this.userRepository.findByUserId(user.getUserId());
 			userDb.setEmail(user.getEmail());
-			userDb.setRole(this.roleTypeRepository.findByName(user.getRole().getName()));
+
+			if (user.getRole() != null)
+				userDb.setRole(this.roleRepository.findByName(user.getRole().getName()));
 
 			// Update dateDeleted for in/active user
 			if (!userDb.isActive() && user.isActive()) {
@@ -176,7 +213,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Role getUserRole(String role) {
-		return this.roleTypeRepository.findByName(role);
+		return this.roleRepository.findByName(role);
 	}
 
 	@Override
@@ -191,39 +228,22 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	Role getRoleDeveloper() {
-		final Role r = new Role();
-		r.setName(Role.Type.ROLE_DEVELOPER.name());
-		r.setIdEnum(Role.Type.ROLE_DEVELOPER);
-		return r;
+	Role getRole(Role.Type roleType) {
+		// final Role r = new Role();
+		// r.setName(roleType.name());
+		// r.setIdEnum(roleType);
+		// return r;
+		return this.roleRepository.findById(roleType.name());
 	}
 
 	@Override
-	public void registerUser(User user) {
-		// FIXME
-		if (user.getPassword().length() < 7) {
-			throw new UserServiceException("Password has to be at least 7 characters");
-		}
-		if (this.userExists(user)) {
-			throw new UserServiceException(
-					"User ID:" + user.getUserId() + " exists in the system. Please select another User ID.");
-		}
-
-		user.setRole(getRoleDeveloper());
-		log.debug("Creating user with Role Developer default");
-
-		this.userRepository.save(user);
-
-	}
-
-	@Override
-
 	public List<ClientPlatform> getClientsForUser(User user) {
 		List<ClientPlatform> clients = new ArrayList<ClientPlatform>();
 		clients = this.clientPlatformRepository.findByUser(user);
 		return clients;
 	}
 
+	@Override
 	public UserToken getUserToken(String token) {
 		return userTokenRepository.findByToken(token);
 	}
@@ -242,4 +262,5 @@ public class UserServiceImpl implements UserService {
 	public User getUserByIdentification(String identification) {
 		return userRepository.findByUserId(identification);
 	}
+
 }

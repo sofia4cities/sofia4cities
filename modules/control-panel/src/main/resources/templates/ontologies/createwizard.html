@@ -107,6 +107,7 @@
 										</a>
 									</li>																	
 									<li id="tab-autorizaciones" class=""><a href="#tab_2" data-toggle="tab" th:classappend="${ontology?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.authorizations}" >AUTORIZACIONES </span></a></li>
+									<li th:if="${ontology?.id == null}" id="tab-advanced-options" class=""><a href="#tab_settings" data-toggle="tab" aria-expanded="true"><i class="flaticon-settings font-grey-gallery"></i> <span class="uppercase font-md" th:text="#{ontology.advancedsettings}" >Advanced Settings </span></a></li>
 								</ul>
 								
 							</div>
@@ -128,6 +129,7 @@
 												<form role="form" id="ontology_create_form" th:object="${ontology}" method="post" class="form">
 													<input id="datamodelid" class="hidden-validation" type="hidden" th:required="true" th:field="*{dataModel}" />											
 													<input id="jsonschema"  class="hidden-validation" type="hidden" th:required="true" th:field="*{jsonSchema}"  />
+													<input id="rtdb" name="rtdb" type="hidden" value="Mongo" th:field="*{rtdbDatasource}"/>
 													
 													
 													<!-- FORM ACTIONS FOR INSERT-->
@@ -156,7 +158,7 @@
 																		<span id="metainferror" class="help-block font-red hide"><i class="la la-warning"></i> Este campos es Obligatorio</span>
 																	</div>															
 																</div>															
-																<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+																<div class="col-md-2 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
 																	<div class="form-group">
 																		<label class="" th:text="#{ontology.active} + ':'">Active</label>
 																		<div class="mt-checkbox-list">
@@ -167,7 +169,7 @@
 																		</div>
 																	</div>
 																</div>
-																<div class="col-md-3 col-sm-6 col-xs-12">
+																<div class="col-md-2 col-sm-6 col-xs-12">
 																	<div class="form-group">
 																		<label class="" th:text="#{ontology.public} + ':'">Public</label>
 																		<div class="mt-checkbox-list">
@@ -178,9 +180,19 @@
 																		</div>
 																	</div>
 																</div>			
-																
-																						
-															
+
+																<div class="col-md-2 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label class="" th:text="#{ontology.allowsCypherFields} + ':'">Allow Encription of Fields</label>
+																		<div class="mt-checkbox-list">
+																			<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.allowsCypherFields.help},data-title=#{ontology.allowsCypherFields}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.allowsCypherFields} +'?'">Allow Cypher Fields?</div>
+																				<input  id="allowsCypherFields" class="form-control no-remove"  name="allowsCypherFields" type="checkbox" th:field="*{allowsCypherFields}"  />
+																				<span></span><!-- necesario por estilos. -->
+																			</label>
+																		</div>
+																	</div>
+																</div>
+
 															<!-- <div class="col-md-6 col-sm-12 col-xs-12">
 																<div class="col-md-6 col-sm-6 col-xs-12" >
 																	<div class="form-group">
@@ -227,6 +239,7 @@
 																		<ul class="nav nav-tabs pull-left">
 																			<li id="tab-plantilla" class="active"><a href="#tab_3" data-toggle="tab" aria-expanded="false"><i class="la la-file-o"></i> <span class="uppercase font-md" th:text="#{ontology.section.templates}">Ontology Templates</span></a></li>																	
 																			<li id="tab-esquema" class=""><a href="#tab_4" data-toggle="tab" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{ontology.section.schema}">Schema Generator and JSON Instances</span></a></li>
+																		
 																		</ul>
 																	</div>
 																	<div class="portlet-body">
@@ -280,6 +293,7 @@
 																											<th class="titulo-columnas" th:text="#{ontology.property}">Property</th>
 																											<th class="titulo-columnas" th:text="#{ontology.type.property}">Data type</th>
 																											<th class="titulo-columnas" th:text="#{ontology.required.property}">Required </th>
+																											<th class="titulo-columnas" th:text="#{ontology.allowsCypherFields.property}">Encrypted </th>
 																											<th class="titulo-columnas" th:text="#{ontology.description}">Description</th>																															
 																											<th class="titulo-columnas" th:text="#{gen.options}">Options</th>
 																										</tr>
@@ -291,7 +305,7 @@
 																												<!-- <input type="text" name="type[]"   onblur="OntologyCreateController.checkType(this)" class="form-control" placeholder="[string, number, object, timestamp, binary]" /> -->
 																												<select name="type[]" class="form-control" onchange="OntologyCreateController.checkType(this)">																																																				<option value="string">string</option>
 																													<option value="number">number</option>
-																													<option value="object">object</option>
+																													<option value="geometry">geometry</option>
 																													<option value="timestamp">timestamp</option>
 																													<option value="binary">binary</option>																											
 																													<option value="array">array</option>
@@ -303,7 +317,14 @@
 																													<option value="required">Required</option>
 																													<option value="">Optional</option>
 																												</select>
-																																												</td>
+																											</td>
+																											<td width="125px">
+																												<select name="encrypted[]" class="form-control">
+																													<option value ="false">false</option>
+																													<option value ="true">true</option>
+																												</select>
+																											</td>
+																											
 																											<td><input type="text" name="descriptions[]" class="form-control"/></td>																									
 																											<td><button type="button" data-property="" class="btn btn-sm btn-default green-haze btn-outline btn-mountable-remove" onclick="OntologyCreateController.removeProperty(this)" th:text="#{gen.deleteBtn}">Remove</button></td>			
 																										</tr>
@@ -442,6 +463,23 @@
 											</div>
 										</div>
 									</div>
+									<!-- ONTOLOGY ADVANCED SETTINGS -->
+									<div class="tab-pane " id="tab_settings">
+										<div class="row">
+											<div class="col-md-4 col-sm-6 col-xs-12">
+											<!-- RTDB SELECTION -->
+												<div class="form-group">
+													<label class="control-label" th:text="#{ontology.rtdbinstance}">User</label>
+													<select id="rtdbInstance" class="selectpicker form-control" data-live-search="true" data-width="100%" onchange="OntologyCreateController.setRtdbDatasource()" >
+														<option th:each="rtdb :${rtdbs}" th:value="${rtdb}" th:text="${rtdb}" ></option>														
+													</select>
+										
+													<hr/>
+													<b th:text="#{ontology.rtdb.warning}">Warning!</b>
+												</div>
+											</div>
+										</div>									
+									</div>									
 								</div>							
 							</div>
 						</div><!-- END PORTLET BASIC  -->

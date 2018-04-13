@@ -13,33 +13,33 @@
  */
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterServiceImpl;
 
 public class Application {
 
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
-
-    public static void main(String args[]) {
+    public static void main(String args[]) throws KeyManagementException, NoSuchAlgorithmException {
     	RouterServiceImpl impl = new RouterServiceImpl();
     	impl.setRouterStandaloneURL("http://localhost:19100/router/router/");
     	
     	NotificationModel input = new NotificationModel();
-    	OperationModel model = new OperationModel();
-    	
     	String query = "select * from product where name = \"name1\"";
-    	model.setOntologyName("product");
-    	model.setQueryType(QueryType.SQLLIKE);
-    	model.setBody(query);
-    	model.setUser("administrator");
-    	model.setOperationType(OperationType.GET);
+    	OperationModel model = OperationModel.builder(
+    			"product", 
+    			OperationType.GET, 
+    			"administrator", 
+    			Source.INTERNAL_ROUTER)
+    			.queryType(QueryType.SQLLIKE)
+    			.body(query)
+    			.build();
     	
 		input.setOperationModel(model);
     	

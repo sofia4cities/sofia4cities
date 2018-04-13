@@ -36,7 +36,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -48,6 +47,7 @@ import com.indracompany.sofia2.config.services.exceptions.ClientPlatformServiceE
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.twitter.TwitterListeningService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.services.twitter.TwitterControlService;
@@ -72,6 +72,8 @@ public class TwitterListeningController {
 	private ClientPlatformService clientPlatformService;
 	@Autowired
 	private TwitterControlService twitterControlService;
+	@Autowired
+	private TokenService tokenService;
 	@Autowired
 	private EntityDeletionService entityDeletionService;
 
@@ -114,6 +116,7 @@ public class TwitterListeningController {
 	@PostMapping("/scheduledsearch/create")
 	public String create(Model model, @Valid TwitterListening twitterListening, BindingResult bindingResult,
 			RedirectAttributes redirect, @RequestParam("_new") Boolean newOntology,
+			@RequestParam("_newclient") Boolean newClientPlatform,
 			@RequestParam(value = "ontologyId", required = false) String ontologyId,
 			@RequestParam(value = "clientPlatformId", required = false) String clientPlatformId) {
 
@@ -123,12 +126,12 @@ public class TwitterListeningController {
 			return "redirect:/twitter/scheduledsearch/create";
 		}
 
-		if (!newOntology) {
+		if (!newOntology && !newClientPlatform) {
 			if (twitterListening.getUser() == null)
 				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
 			twitterListening = this.twitterListeningService.createListening(twitterListening, this.utils.getUserId());
 
-		} else {
+		} else if (newClientPlatform && !ontologyId.equals("") && !clientPlatformId.equals("")) {
 
 			try {
 				Ontology ontology = this.twitterListeningService.createTwitterOntology(ontologyId);
@@ -159,6 +162,23 @@ public class TwitterListeningController {
 				e.printStackTrace();
 			}
 
+		} else if (newOntology && !ontologyId.equals("")) {
+			Ontology ontology = this.twitterListeningService.createTwitterOntology(ontologyId);
+			ontology.setUser(this.userService.getUser(this.utils.getUserId()));
+			ontologyService.createOntology(ontology);
+			ontology = ontologyService.getOntologyByIdentification(ontology.getIdentification(), utils.getUserId());
+
+			ClientPlatform client = this.clientPlatformService.getByIdentification(clientPlatformId);
+			if (ontology != null && client != null) {
+				this.clientPlatformService.createOntologyRelation(ontology, client);
+				Token token = this.tokenService.getToken(client);
+
+				twitterListening.setOntology(ontology);
+				twitterListening.setToken(token);
+				twitterListening.setUser(this.userService.getUser(this.utils.getUserId()));
+				this.twitterListeningService.createListening(twitterListening, utils.getUserId());
+			}
+
 		}
 		this.twitterControlService.scheduleTwitterListening(twitterListening);
 		return "redirect:/twitter/scheduledsearch/list";
@@ -168,6 +188,14 @@ public class TwitterListeningController {
 	@PostMapping("/scheduledsearch/getclients")
 	public @ResponseBody List<String> getClientsOntology(@RequestBody String ontologyId) {
 		return this.twitterListeningService.getClientsFromOntology(ontologyId, utils.getUserId());
+	}
+
+	@GetMapping("/scheduledsearch/getallclients")
+	public String getAllClients(Model model) {
+
+		model.addAttribute("clients",
+				this.twitterListeningService.getAllClientsForUser(this.userService.getUser(utils.getUserId())));
+		return "twitter/scheduledsearch/create :: clients";
 	}
 
 	@PostMapping("/scheduledsearch/gettokens")
@@ -210,7 +238,7 @@ public class TwitterListeningController {
 		if (listening != null) {
 			this.entityDeletionService.deleteTwitterListening(listening);
 			this.twitterControlService.unscheduleTwitterListening(listening);
-			
+
 		} else
 			this.utils.addRedirectMessage("scheduledsearch.delete.fail", redirect);
 
@@ -222,13 +250,13 @@ public class TwitterListeningController {
 	@GetMapping("/configurations/list")
 	public String listConfigurations(Model model) {
 		List<Configuration> configurations = this.configurationService.getConfigurations(
-				ConfigurationType.Type.TwitterConfiguration, this.userService.getUser(this.utils.getUserId()));
+				Configuration.Type.TwitterConfiguration, this.userService.getUser(this.utils.getUserId()));
 		model.addAttribute("configurations", configurations);
 		return "configurations/list";
 	}
 
 	public void populateFormData(Model model) {
-		model.addAttribute("configurationTypes", ConfigurationType.Type.TwitterConfiguration);
-		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
+		model.addAttribute("configurationTypes", Configuration.Type.TwitterConfiguration);
+//		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
 	}
 }

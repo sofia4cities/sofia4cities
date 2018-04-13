@@ -4,12 +4,12 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>5.1.0-rc1</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-java-clients</artifactId>
-	<version>5.0.0-SNAPSHOT</version>
+	<version>5.1.0-rc1</version>
 	<name>sofia2-java-clients</name>
 	<description>Java Clients for the IoTBroker
 </description>
@@ -31,6 +31,11 @@
 			<groupId>org.eclipse.paho</groupId>
 			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
 			<version>1.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>3.10.0</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -57,7 +57,7 @@ public class SimulatorSchedulerListenerConfig implements ApplicationListener<Con
 
 		} catch (SchedulerException | NotFoundException e) {
 
-			log.error("Error in Simulator Scheduler Listener", e);
+			log.error("Error on Simulator Scheduler Listener", e);
 
 		}
 

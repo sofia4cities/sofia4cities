@@ -21,10 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -32,8 +30,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.IntNode;
 
 @Service
 public class FieldRandomizerServiceImpl implements FieldRandomizerService {
@@ -67,33 +65,57 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				String array[] = field.split("\\.");
 				finalField = array[array.length - 1];
 				for (int s = 0; s < array.length - 1; s++) {
+					if (map.at(path).isArray())
+						path = path + "/0";
 					path = path + "/" + array[s];
+
 				}
 
 			} else {
 				finalField = field;
 				// path= path + "/"+ field;
 			}
+			if (map.at(path).isArray()) {
+
+				((ArrayNode) map.at(path)).remove(Integer.valueOf(finalField).intValue());
+			}
 
 			switch (function) {
 			case FIXED_NUMBER:
-				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asDouble());
+				if (map.at(path).isArray())
+					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(),
+							json.path(field).get("value").asDouble());
+				else
+					((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asDouble());
 				break;
 			case FIXED_INTEGER:
-				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asInt());
+				if (map.at(path).isArray())
+					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(),
+							json.path(field).get("value").asInt());
+				else
+					((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asInt());
 				break;
 			case RANDOM_NUMBER:
-				((ObjectNode) map.at(path)).put(finalField,
-						this.randomizeDouble(json.path(field).get("from").asDouble(),
-								json.path(field).get("to").asDouble(), json.path(field).get("precision").asInt()));
+				if (map.at(path).isArray())
+					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(),
+							this.randomizeDouble(json.path(field).get("from").asDouble(),
+									json.path(field).get("to").asDouble(), json.path(field).get("precision").asInt()));
+				else
+					((ObjectNode) map.at(path)).put(finalField,
+							this.randomizeDouble(json.path(field).get("from").asDouble(),
+									json.path(field).get("to").asDouble(), json.path(field).get("precision").asInt()));
 				break;
 			case RANDOM_INTEGER:
+				if (map.at(path).isArray())
+					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(), this
+							.randomizeInt(json.path(field).get("from").asInt(), json.path(field).get("to").asInt()));
 				((ObjectNode) map.at(path)).put(finalField,
 						this.randomizeInt(json.path(field).get("from").asInt(), json.path(field).get("to").asInt()));
 				break;
 			case COSINE_NUMBER:
 				double angleCos = Math.toRadians(json.path(field).get("angle").asDouble());
 				double multiplierCos = json.path(field).get("multiplier").asDouble();
+
 				((ObjectNode) map.at(path)).put(finalField, Math.cos(angleCos) * multiplierCos);
 				break;
 			case SINE_NUMBER:
@@ -102,11 +124,11 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				((ObjectNode) map.at(path)).put(finalField, Math.sin(angleSin) * multiplierSin);
 				break;
 			case FIXED_STRING:
-				((ObjectNode) map.at(path)).put(finalField, (String) json.path(field).get("value").asText());
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asText());
 				break;
 			case RANDOM_STRING:
 				((ObjectNode) map.at(path)).put(finalField,
-						(String) this.randomizeStrings(json.path(field).get("list").asText()));
+						this.randomizeStrings(json.path(field).get("list").asText()));
 				break;
 			case FIXED_DATE:
 				Date date;
@@ -117,28 +139,33 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 					date = new Date();
 				}
 				JsonNode dateJson = mapper.createObjectNode();
-				((ObjectNode) dateJson).put("$date", date.getTime());
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+				((ObjectNode) dateJson).put("$date", df.format(date));
 				((ObjectNode) map.at(path)).set(finalField, dateJson);
 
 				break;
 			case RANDOM_DATE:
 				Date dateFrom;
 				Date dateTo;
-				Date dateRandom=new Date();;
-				DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+				Date dateRandom = new Date();
+				;
+
 				try {
-					dateFrom = df.parse(json.path(field).get("from").asText());
-					dateTo = df.parse(json.path(field).get("to").asText());
+					DateFormat dfr = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+					dateFrom = dfr.parse(json.path(field).get("from").asText());
+					dateTo = dfr.parse(json.path(field).get("to").asText());
 					dateRandom = this.randomizeDate(dateFrom, dateTo);
 				} catch (ParseException e) {
 					dateRandom = new Date();
 				}
 				JsonNode dateRandomJson = mapper.createObjectNode();
-				((ObjectNode) dateRandomJson).put("$date", dateRandom.getTime());
+				df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+				((ObjectNode) dateRandomJson).put("$date", df.format(dateRandom));
 				((ObjectNode) map.at(path)).set(finalField, dateRandomJson);
 				break;
 			case NULL:
-				((ObjectNode) map.at(path)).set(finalField, null);
+				// ((ObjectNode) map.at(path)).put(finalField, "null");
 				break;
 
 			}
@@ -171,11 +198,12 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				.doubleValue();
 		return randomDoubleTruncated;
 	}
-	public Date randomizeDate (Date from, Date to) {
-		
+
+	public Date randomizeDate(Date from, Date to) {
+
 		ThreadLocalRandom th = ThreadLocalRandom.current();
 		Date randomDate = new Date(th.nextLong(from.getTime(), to.getTime()));
 		return randomDate;
-		
+
 	}
 }

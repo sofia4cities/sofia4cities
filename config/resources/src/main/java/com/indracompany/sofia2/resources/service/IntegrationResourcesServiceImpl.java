@@ -14,20 +14,119 @@
  */
 package com.indracompany.sofia2.resources.service;
 
-import java.util.Properties;
+import javax.annotation.PostConstruct;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+
+import com.indracompany.sofia2.config.components.Urls;
+import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
+
+@Service
 public class IntegrationResourcesServiceImpl implements IntegrationResourcesService {
 
-	private Properties env;
-	
-	private static String INTEGRATION_PREFIX="sofia2.module.integration.";
-	
-	public String getURL(String serviceKey) {
-		return env.getProperty(INTEGRATION_PREFIX+serviceKey, "RESOURCE_URL_NOT_FOUND");
+	@Autowired
+	private ConfigurationService configurationService;
+	@Autowired
+	private Environment environment;
+
+	private Urls urls;
+
+
+	public enum ServiceUrl {
+		base, advice, management, router, hawtio, swaggerUI, api, swaggerUIManagement, swaggerJson
 	}
 
-	public void setEnv(Properties env) {
-		this.env = env;
+	public enum Module {
+		iotbroker, scriptingEngine, flowEngine, routerStandAlone, apiManager, controlpanel
+	}
+
+
+	@PostConstruct
+	public void getActiveProfile() {
+		String[] profiles = environment.getActiveProfiles();
+		String activeProfile = "default";
+		if (profiles.length > 0)
+			activeProfile = profiles[0];
+		else 
+			activeProfile = environment.getDefaultProfiles()[0];
+		this.urls = this.configurationService.getEndpointsUrls(activeProfile);
+	}
+
+	@Override
+	public String getUrl(Module module, ServiceUrl service) {
+
+		switch (module) {
+		case iotbroker:
+			switch (service) {
+			case base:
+				return this.urls.getIotbroker().getBase();
+			case advice:
+				return this.urls.getIotbroker().getAdvice();
+			default:
+				break;
+			}
+			break;
+		case scriptingEngine:
+			switch (service) {
+			case base:
+				return this.urls.getScriptingEngine().getBase();
+			case advice:
+				return this.urls.getScriptingEngine().getAdvice();
+			default:
+				break;
+			}
+			break;
+		case flowEngine:
+			switch (service) {
+			case base:
+				return this.urls.getFlowEngine().getBase();
+			case advice:
+				return this.urls.getFlowEngine().getAdvice();
+			default:
+				break;
+			}
+			break;
+		case routerStandAlone:
+			switch (service) {
+			case base:
+				return this.urls.getRouterStandAlone().getBase();
+			case advice:
+				return this.urls.getRouterStandAlone().getAdvice();
+			case management:
+				return this.urls.getRouterStandAlone().getManagement();
+			case router:
+				return this.urls.getRouterStandAlone().getRouter();
+			case hawtio:
+				return this.urls.getRouterStandAlone().getHawtio();
+			case swaggerUI:
+				return this.urls.getRouterStandAlone().getSwaggerUI();
+			default:
+				break;
+			}
+			break;
+		case apiManager:
+			switch (service) {
+			case base:
+				return this.urls.getApiManager().getBase();
+			case api:
+				return this.urls.getApiManager().getApi();
+			case swaggerUI:
+				return this.urls.getApiManager().getSwaggerUI();
+			case swaggerUIManagement:
+				return this.urls.getApiManager().getSwaggerUIManagement();
+			case swaggerJson:
+				return this.urls.getApiManager().getSwaggerJson();
+
+			default:
+				break;
+			}
+
+			break;
+
+		}
+		return "RESOURCE_URL_NOT_FOUND";
 	}
 
 }
