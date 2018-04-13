@@ -35,379 +35,373 @@ import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel.EventTy
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterDigitalTwinService;
 
-
 @RestController
-@ConditionalOnProperty(
-		prefix="sofia2.digitaltwin.broker.rest",
-		name="enable",
-		havingValue="true"
-		)
+@ConditionalOnProperty(prefix = "sofia2.digitaltwin.broker.rest", name = "enable", havingValue = "true")
 @EnableAutoConfiguration
 public class EventGatewayImpl implements EventGateway {
-	
+
 	@Autowired
 	private DigitalTwinDeviceRepository deviceRepo;
-	
+
 	@Autowired
 	@Qualifier("routerDigitalTwinServiceImpl")
 	private RouterDigitalTwinService routerDigitalTwinService;
-	
+
 	@Override
-	public ResponseEntity<?> register(
-			@RequestHeader(value="Authorization") String apiKey,
-			@RequestBody JsonNode data){
-		
-		//Validation apikey
-		if(data.get("id")==null || data.get("endpoint")==null) {
+	public ResponseEntity<?> register(@RequestHeader(value = "Authorization") String apiKey,
+			@RequestBody JsonNode data) {
+
+		// Validation apikey
+		if (data.get("id") == null || data.get("endpoint") == null) {
 			return new ResponseEntity<>("id and endpoint are required", HttpStatus.BAD_REQUEST);
 		}
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-	
-		if(null==device) {
+
+		if (null == device) {
 			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
 		}
-		
-		if(apiKey.equals(device.getDigitalKey())) {
-			//Set endpoint
-			String deviceUrl=data.get("endpoint").asText();
-			
-			device.setUrl(deviceUrl);
+
+		if (apiKey.equals(device.getDigitalKey())) {
+			// Set endpoint
+			String deviceUrl = data.get("endpoint").asText();
+
+			String urlSchema = deviceUrl.split("://")[0];
+			String ip = deviceUrl.split("://")[1].split("/")[0].split(":")[0];
+			String port = deviceUrl.split("://")[1].split("/")[0].split(":")[1];
+			String contextPath;
+			if (deviceUrl.split("://")[1].split("/").length > 2) {
+				contextPath = deviceUrl.split("://")[1].split("/")[2];
+			} else {
+				contextPath = deviceUrl.split("://")[1].split("/")[1];
+			}
+
+			device.setUrlSchema(urlSchema);
+			device.setIp(ip);
+			device.setPort(Integer.parseInt(port));
+			device.setContextPath(contextPath);
+
 			deviceRepo.save(device);
-			
-			//insert the register event
+
+			// insert the register event
 			DigitalTwinModel model = new DigitalTwinModel();
 			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-			
+
 			model.setEvent(EventType.REGISTER);
 			model.setDeviceId(device.getId());
 			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			model.setEndpoint(deviceUrl);
-			
+
 			compositeModel.setDigitalTwinModel(model);
 			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
-			
+
 			OperationResultModel result = routerDigitalTwinService.insertLog(compositeModel);
-			if(!result.isStatus()) {
+			if (!result.isStatus()) {
 				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
 			}
-			
-		}else {
+
+		} else {
 			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
 		return new ResponseEntity<>("Device Registered", HttpStatus.OK);
 	}
-	
+
 	@Override
-	public ResponseEntity<?> ping(
-			@RequestHeader(value="Authorization") String apiKey,
-			@RequestBody  JsonNode data){
-		
-		//Validation apikey
-		if(data.get("id")==null) {
+	public ResponseEntity<?> ping(@RequestHeader(value = "Authorization") String apiKey, @RequestBody JsonNode data) {
+
+		// Validation apikey
+		if (data.get("id") == null) {
 			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
 		}
-		
+
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		
-		if(null==device) {
+
+		if (null == device) {
 			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
 		}
-		
-		if(apiKey.equals(device.getDigitalKey())) {
-			//Set last updated
+
+		if (apiKey.equals(device.getDigitalKey())) {
+			// Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
-			
-			//insert the ping event
+
+			// insert the ping event
 			DigitalTwinModel model = new DigitalTwinModel();
 			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-			
+
 			model.setEvent(EventType.PING);
 			model.setDeviceId(device.getId());
 			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
-			
+
 			compositeModel.setDigitalTwinModel(model);
 			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
-			
+
 			OperationResultModel result = routerDigitalTwinService.insertLog(compositeModel);
-			if(!result.isStatus()) {
+			if (!result.isStatus()) {
 				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
 			}
-			
-		}else {
+
+		} else {
 			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
 		return new ResponseEntity<>("Ping Successful", HttpStatus.OK);
 	}
-	
+
 	@Override
-	public ResponseEntity<?> log(
-			@RequestHeader(value="Authorization") String apiKey,
-			@RequestBody JsonNode data){
-		
-		if(data.get("id")==null || data.get("log")==null) {
+	public ResponseEntity<?> log(@RequestHeader(value = "Authorization") String apiKey, @RequestBody JsonNode data) {
+
+		if (data.get("id") == null || data.get("log") == null) {
 			return new ResponseEntity<>("id and log are required", HttpStatus.BAD_REQUEST);
 		}
 
-		
-		
-		//Validation apikey
+		// Validation apikey
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		
-		if(null==device) {
+
+		if (null == device) {
 			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
 		}
-		
-		if(apiKey.equals(device.getDigitalKey())) {
-			//Set last updated
+
+		if (apiKey.equals(device.getDigitalKey())) {
+			// Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
-			//insert trace of log
+			// insert trace of log
 			DigitalTwinModel model = new DigitalTwinModel();
 			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-			
+
 			model.setEvent(EventType.LOG);
 			model.setLog(data.get("log").asText());
 			model.setDeviceId(device.getId());
 			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
-			
+
 			compositeModel.setDigitalTwinModel(model);
 			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
-			
+
 			OperationResultModel result = routerDigitalTwinService.insertLog(compositeModel);
-			if(!result.isStatus()) {
+			if (!result.isStatus()) {
 				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
 			}
 			return new ResponseEntity<>(result.getResult(), HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
-		}
-	}
-	
-	@Override
-	public ResponseEntity<?> shadow(
-			@RequestHeader(value="Authorization") String apiKey,
-			@RequestBody JsonNode data){
-		
-		if(data.get("id")==null) {
-			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
-		}
-		
-		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		
-		if(null==device) {
-			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
-		}
-		
-		if(apiKey.equals(device.getDigitalKey())) {
-			
-			//Set last updated
-			device.setUpdatedAt(new Date());
-			deviceRepo.save(device);
-			
-			//insert shadow
-			DigitalTwinModel model = new DigitalTwinModel();
-			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-			
-			model.setEvent(EventType.SHADOW);
-			model.setStatus(data.get("status").toString());
-			model.setDeviceId(device.getId());
-			model.setDeviceName(device.getIdentification());
-			model.setType(device.getTypeId().getName());
-			
-			compositeModel.setDigitalTwinModel(model);
-			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
-			
-			OperationResultModel result = routerDigitalTwinService.updateShadow(compositeModel);
-			if(!result.isStatus()) {
-				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
-			}
-			//TODO update
-			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
-		}
-	}
-	
-	@Override
-	public ResponseEntity<?> notebook(
-			@RequestHeader(value="Authorization") String apiKey,
-			@RequestBody JsonNode data){
-		
-		if(data.get("id")==null) {
-			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
-		}
-		
-		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		
-		if(null==device) {
-			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
-		}
-		
-		if(apiKey.equals(device.getDigitalKey())) {
-			
-			//Set last updated
-			device.setUpdatedAt(new Date());
-			deviceRepo.save(device);
-			
-			//insert event
-			DigitalTwinModel model = new DigitalTwinModel();
-			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-			
-			model.setEvent(EventType.NOTEBOOK);
-			model.setStatus(data.get("status").toString());
-			model.setDeviceId(device.getId());
-			model.setDeviceName(device.getIdentification());
-			model.setType(device.getTypeId().getName());
-			
-			compositeModel.setDigitalTwinModel(model);
-			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
-			
-			OperationResultModel result = routerDigitalTwinService.insertEvent(compositeModel);
-			if(!result.isStatus()) {
-				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
-			}
-			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
-		}
-	}
-	
-	@Override
-	public ResponseEntity<?> flow(
-			@RequestHeader(value="Authorization") String apiKey,
-			@RequestBody JsonNode data){
-		
-		if(data.get("id")==null) {
-			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
-		}
-		
-		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		
-		if(null==device) {
-			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
-		}
-		
-		if(apiKey.equals(device.getDigitalKey())) {
-			
-			//Set last updated
-			device.setUpdatedAt(new Date());
-			deviceRepo.save(device);
-			
-			//insert event
-			DigitalTwinModel model = new DigitalTwinModel();
-			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-			
-			model.setEvent(EventType.FLOW);
-			model.setStatus(data.get("status").toString());
-			model.setDeviceId(device.getId());
-			model.setDeviceName(device.getIdentification());
-			model.setType(device.getTypeId().getName());
-			
-			compositeModel.setDigitalTwinModel(model);
-			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
-			
-			OperationResultModel result = routerDigitalTwinService.insertEvent(compositeModel);
-			if(!result.isStatus()) {
-				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
-			}
-			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
-		}else {
-			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
-		}
-	}
-	
-	@Override
-	public ResponseEntity<?> rule(
-			@RequestHeader(value="Authorization") String apiKey,
-			@RequestBody JsonNode data){
-		
-		if(data.get("id")==null) {
-			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
-		}
-		
-		//Validation apikey
-		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		
-		if(null==device) {
-			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
-		}
-		
-		if(apiKey.equals(device.getDigitalKey())) {
-			
-			//Set last updated
-			device.setUpdatedAt(new Date());
-			deviceRepo.save(device);
-			
-			//insert event
-			DigitalTwinModel model = new DigitalTwinModel();
-			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-			
-			model.setEvent(EventType.RULE);
-			model.setStatus(data.get("status").toString());
-			model.setDeviceId(device.getId());
-			model.setDeviceName(device.getIdentification());
-			model.setType(device.getTypeId().getName());
-			
-			compositeModel.setDigitalTwinModel(model);
-			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
-			
-			OperationResultModel result = routerDigitalTwinService.insertEvent(compositeModel);
-			if(!result.isStatus()) {
-				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
-			}
-			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
-		}else {
+		} else {
 			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
 	}
 
 	@Override
-	public ResponseEntity<?> custom(@RequestHeader(value="Authorization") String apiKey,
-			@RequestBody JsonNode data) {
-		if(data.get("id")==null) {
+	public ResponseEntity<?> shadow(@RequestHeader(value = "Authorization") String apiKey, @RequestBody JsonNode data) {
+
+		if (data.get("id") == null) {
 			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
 		}
-		
-		//Validation apikey
+
+		// Validation apikey
 		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
-		
-		if(null==device) {
+
+		if (null == device) {
 			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
 		}
-		
-		if(apiKey.equals(device.getDigitalKey())) {
-			
-			//Set last updated
+
+		if (apiKey.equals(device.getDigitalKey())) {
+
+			// Set last updated
 			device.setUpdatedAt(new Date());
 			deviceRepo.save(device);
-			
-			//insert event
+
+			// insert shadow
 			DigitalTwinModel model = new DigitalTwinModel();
 			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
-			
+
+			model.setEvent(EventType.SHADOW);
+			model.setStatus(data.get("status").toString());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
+			model.setType(device.getTypeId().getName());
+
+			compositeModel.setDigitalTwinModel(model);
+			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+			OperationResultModel result = routerDigitalTwinService.updateShadow(compositeModel);
+			if (!result.isStatus()) {
+				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
+			}
+			// TODO update
+			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> notebook(@RequestHeader(value = "Authorization") String apiKey,
+			@RequestBody JsonNode data) {
+
+		if (data.get("id") == null) {
+			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
+		}
+
+		// Validation apikey
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
+
+		if (null == device) {
+			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+
+		if (apiKey.equals(device.getDigitalKey())) {
+
+			// Set last updated
+			device.setUpdatedAt(new Date());
+			deviceRepo.save(device);
+
+			// insert event
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+
+			model.setEvent(EventType.NOTEBOOK);
+			model.setStatus(data.get("status").toString());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
+			model.setType(device.getTypeId().getName());
+
+			compositeModel.setDigitalTwinModel(model);
+			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+			OperationResultModel result = routerDigitalTwinService.insertEvent(compositeModel);
+			if (!result.isStatus()) {
+				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
+			}
+			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> flow(@RequestHeader(value = "Authorization") String apiKey, @RequestBody JsonNode data) {
+
+		if (data.get("id") == null) {
+			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
+		}
+
+		// Validation apikey
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
+
+		if (null == device) {
+			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+
+		if (apiKey.equals(device.getDigitalKey())) {
+
+			// Set last updated
+			device.setUpdatedAt(new Date());
+			deviceRepo.save(device);
+
+			// insert event
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+
+			model.setEvent(EventType.FLOW);
+			model.setStatus(data.get("status").toString());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
+			model.setType(device.getTypeId().getName());
+
+			compositeModel.setDigitalTwinModel(model);
+			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+			OperationResultModel result = routerDigitalTwinService.insertEvent(compositeModel);
+			if (!result.isStatus()) {
+				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
+			}
+			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> rule(@RequestHeader(value = "Authorization") String apiKey, @RequestBody JsonNode data) {
+
+		if (data.get("id") == null) {
+			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
+		}
+
+		// Validation apikey
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
+
+		if (null == device) {
+			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+
+		if (apiKey.equals(device.getDigitalKey())) {
+
+			// Set last updated
+			device.setUpdatedAt(new Date());
+			deviceRepo.save(device);
+
+			// insert event
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+
+			model.setEvent(EventType.RULE);
+			model.setStatus(data.get("status").toString());
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
+			model.setType(device.getTypeId().getName());
+
+			compositeModel.setDigitalTwinModel(model);
+			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+			OperationResultModel result = routerDigitalTwinService.insertEvent(compositeModel);
+			if (!result.isStatus()) {
+				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
+			}
+			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> custom(@RequestHeader(value = "Authorization") String apiKey, @RequestBody JsonNode data) {
+		if (data.get("id") == null) {
+			return new ResponseEntity<>("id is required", HttpStatus.BAD_REQUEST);
+		}
+
+		// Validation apikey
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").asText());
+
+		if (null == device) {
+			return new ResponseEntity<>("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+
+		if (apiKey.equals(device.getDigitalKey())) {
+
+			// Set last updated
+			device.setUpdatedAt(new Date());
+			deviceRepo.save(device);
+
+			// insert event
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+
 			model.setEvent(EventType.CUSTOM);
 			model.setStatus(data.get("status").toString());
 			model.setDeviceId(device.getId());
 			model.setDeviceName(device.getIdentification());
 			model.setType(device.getTypeId().getName());
 			model.setEventName(data.get("event").asText());
-			
+
 			compositeModel.setDigitalTwinModel(model);
 			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
-			
+
 			OperationResultModel result = routerDigitalTwinService.insertEvent(compositeModel);
-			if(!result.isStatus()) {
+			if (!result.isStatus()) {
 				return new ResponseEntity<>(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
 			}
 			return new ResponseEntity<>(result.getMessage(), HttpStatus.OK);
-		}else {
+		} else {
 			return new ResponseEntity<>("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
 	}

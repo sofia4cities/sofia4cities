@@ -37,6 +37,35 @@ var WebProjectCreateController = function() {
 		window.location.href = url; 
 	}
 	
+	// CLEAN FIELDS FORM
+	var cleanFields = function (formId) {
+		logControl ? console.log('cleanFields() -> ') : '';
+		
+		//CLEAR OUT THE VALIDATION ERRORS
+		$('#'+formId).validate().resetForm(); 
+		$('#'+formId).find('input:text, input:password, input:file, select, textarea').each(function(){
+			// CLEAN ALL EXCEPTS cssClass "no-remove" persistent fields
+			if(!$(this).hasClass("no-remove")){$(this).val('');}
+		});
+		
+		// CLEAN ALERT MSG
+		$('.alert-danger').hide();
+		
+	}
+	
+	// INIT TEMPLATE ELEMENTS
+	var initTemplateElements = function(){
+		logControl ? console.log('initTemplateElements() ->  resetForm,  currentLanguage: ' + currentLanguage) : '';
+		
+		// 	INPUT MASK FOR WEB PROJECT identification allow only letters, numbers and -_
+		$("#identification").inputmask({ regex: "[a-zA-Z0-9_-]*", greedy: false });
+		
+		// Reset form
+		$('#resetBtn').on('click',function(){ 
+			cleanFields('webproject_create_form');
+		});	
+	}	
+	
     // CONTROLLER PUBLIC FUNCTIONS 
 	return{
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
@@ -47,7 +76,7 @@ var WebProjectCreateController = function() {
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
-			
+			initTemplateElements();
 		},
 
 		// REDIRECT
