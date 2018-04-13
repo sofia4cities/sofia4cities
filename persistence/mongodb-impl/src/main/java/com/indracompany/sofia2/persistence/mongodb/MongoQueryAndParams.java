@@ -84,7 +84,7 @@ public class MongoQueryAndParams {
 			}
 			if (query.indexOf(".sort(") != -1) {
 				subquery = query.substring(query.indexOf(".sort("), query.length());
-				temp = subquery.substring(0 + 6, subquery.indexOf(")") + 1);
+				temp = subquery.substring(0 + 6, subquery.indexOf(")"));
 				this.sort = (Bson) JSON.parse(temp);
 			}
 			if (query.indexOf(".skip(") != -1) {

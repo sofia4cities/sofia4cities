@@ -15,10 +15,12 @@ package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -32,13 +34,21 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.indracompany.sofia2.iotbroker.mock.database.MockMongoOntologies;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
+import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
+import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
+import com.indracompany.sofia2.router.service.app.service.RouterSuscriptionService;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
@@ -53,12 +63,13 @@ public class DeleteProcessorTest {
 	@Autowired
 	ObjectMapper objectMapper;
 	@Autowired
-	BasicOpsDBRepository repository;
+	MongoBasicOpsDBRepository repository;
 	@MockBean
 	SecurityPluginManager securityPluginManager;
-
-	@Autowired
-	MockMongoOntologies mockOntologies;
+	@MockBean
+	RouterService routerService;
+	@MockBean
+	RouterSuscriptionService routerSuscriptionService;
 
 	Person subject = PojoGenerator.generatePerson();
 	String subjectId;
@@ -70,7 +81,19 @@ public class DeleteProcessorTest {
 	DeviceManager deviceManager;
 
 
+	@MockBean
+	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
+
+	private void auditMocks() {
+		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
+		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
+		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
+
+	}
 
 	private void securityMocks() {
 		final IoTSession session = PojoGenerator.generateSession();
@@ -83,7 +106,7 @@ public class DeleteProcessorTest {
 
 	@Before
 	public void setUp() throws IOException, Exception {
-		mockOntologies.createOntology(Person.class);
+		//		mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
 		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
@@ -93,17 +116,22 @@ public class DeleteProcessorTest {
 		ssapDeleteByIdtOperation = SSAPMessageGenerator.generateDeleteByIdMessage(Person.class.getSimpleName(), subjectId);
 
 		securityMocks();
+		auditMocks();
 	}
 
 	@After
 	public void tearDown() {
-		mockOntologies.deleteOntology(Person.class);
+		//		mockOntologies.deleteOntology(Person.class);
 	}
 
 	@Test
-	public void given_OneDeleteProcessor_When_ItProcessesOneValidDeleteById_Then_TheResponseIndicatesTheOperationWasPerformed() {
+	public void given_OneDeleteProcessor_When_ItProcessesOneValidDeleteById_Then_TheResponseIndicatesTheOperationWasPerformed() throws Exception {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
+
+		final OperationResultModel value = RouterServiceGenerator.generateUpdateDeleteResultOk(1);
+		when(routerService.delete(any())).thenReturn(value);
+
 		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
@@ -115,11 +143,15 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void given_OneDeleteProcessor_When_ItProccessesOneInvalidId_Then_TheResponseIndicatesTheOperationWasNotPerformed() {
+	public void given_OneDeleteProcessor_When_ItProccessesOneInvalidId_Then_TheResponseIndicatesTheOperationWasNotPerformed() throws Exception {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
 		ssapDeleteByIdtOperation.getBody().setId("5a9b2ef917f81f33589e06d3");
+
+		final OperationResultModel value = RouterServiceGenerator.generateUpdateDeleteResultOk(0);
+		when(routerService.delete(any())).thenReturn(value);
+
 		responseMessage = deleteProcessor.process(ssapDeleteByIdtOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
@@ -130,10 +162,14 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void given_OneDeleteProcessor_When_ItProccessesOneValidNativeQuery_TheResponseIndicatesTheOperationWasPerformed() {
+	public void given_OneDeleteProcessor_When_ItProccessesOneValidNativeQuery_TheResponseIndicatesTheOperationWasPerformed() throws Exception {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remove({})");
+
+		final OperationResultModel value = RouterServiceGenerator.generateUpdateDeleteResultOk(1);
+		when(routerService.delete(any())).thenReturn(value);
+
 		responseMessage = deleteProcessor.process(ssapDeletetOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
@@ -145,10 +181,14 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void given_OneDeleteProcessor_When_OneNativeQueryIsPerformedAndNoOccurrencesExist_Then_TheResponseIndicatesThatNoDeletionWasPerformed() {
+	public void given_OneDeleteProcessor_When_OneNativeQueryIsPerformedAndNoOccurrencesExist_Then_TheResponseIndicatesThatNoDeletionWasPerformed() throws Exception {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remove({\"name\":\"NO_OCURRENCE_NAME\"})");
+
+		final OperationResultModel value = RouterServiceGenerator.generateUpdateDeleteResultOk(0);
+		when(routerService.delete(any())).thenReturn(value);
+
 		responseMessage = deleteProcessor.process(ssapDeletetOperation, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);

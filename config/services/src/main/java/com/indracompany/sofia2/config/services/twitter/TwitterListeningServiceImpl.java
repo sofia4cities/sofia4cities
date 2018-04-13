@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConfigurationType;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Token;
@@ -80,7 +79,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 
 	@Override
 	public List<Configuration> getAllConfigurations() {
-		return this.configurationService.getConfigurations(ConfigurationType.Type.TwitterConfiguration);
+		return this.configurationService.getConfigurations(Configuration.Type.TwitterConfiguration);
 	}
 
 	@Override
@@ -142,7 +141,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 			newTwitterListening.setTopics(twitterListening.getTopics());
 			newTwitterListening.setDateFrom(twitterListening.getDateFrom());
 			newTwitterListening.setDateTo(twitterListening.getDateTo());
-			newTwitterListening.setJobName(twitterListening.getJobName());
+			//newTwitterListening.setJobName(twitterListening.getJobName());
 			this.twitterListeningRepository.save(newTwitterListening);
 		}
 
@@ -172,6 +171,7 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 		if (dataModelTwitter.getType().equals(DataModel.MainType.SocialMedia.toString()))
 			ontology.setDescription("Ontology created for tweet recollection");
 		ontology.setJsonSchema(dataModelTwitter.getJsonSchema());
+		ontology.setDataModel(dataModelTwitter);
 		ontology.setActive(true);
 		ontology.setPublic(false);
 		ontology.setRtdbClean(false);
@@ -184,6 +184,17 @@ public class TwitterListeningServiceImpl implements TwitterListeningService {
 	public TwitterListening getListeningByJobName(String jobName) {
 		return this.twitterListeningRepository.findByJobName(jobName);
 	}
+
+	@Override
+	public List<String> getAllClientsForUser(User userSessionId) {
+		List<String> clients = new ArrayList<String>();
+		for(ClientPlatform client : this.clientPlatformRepository.findByUser(userSessionId)) {
+			clients.add(client.getIdentification());
+		}
+		return clients;
+	}
+	
+	
 	
 	
 

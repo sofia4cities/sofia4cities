@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>5.1.0-rc1</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	
@@ -63,21 +63,22 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
-		<!--<dependency>
-    		<groupId>com.github.javafaker</groupId>
-    		<artifactId>javafaker</artifactId>
-    		<scope>test</scope>
-		</dependency>
-		<dependency>
-		    <groupId>org.everit.json</groupId>
-		    <artifactId>org.everit.json.schema</artifactId>
-		    <version>1.3.0</version>
-		</dependency>-->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
-		</dependency>		
+		</dependency>				
+		
+		<dependency>
+			<groupId>de.codecentric</groupId>
+			<artifactId>spring-boot-admin-starter-client</artifactId>
+			<version>${spring-boot-admin-starter-client.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		
 	</dependencies>	
 
 	<build>
@@ -102,7 +103,7 @@
 		      <configuration>
 		        <imageName>sofia2/dashboard</imageName>
 		        <imageTags>
-		           <imageTag>${sofia2.docker.version}</imageTag>
+		           <imageTag>${project.version}</imageTag>
 		        </imageTags>		        
 		        <dockerDirectory>docker</dockerDirectory>
 		        <resources>

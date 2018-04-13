@@ -18,7 +18,8 @@ import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 public interface RouterCrudService {
 	
-	public OperationResultModel insert (OperationModel operationModel);
+	public OperationResultModel insert (OperationModel operationModel) throws RouterCrudServiceException;
+	public OperationResultModel insertWithNoAudit (OperationModel operationModel) throws RouterCrudServiceException;
 	public OperationResultModel update (OperationModel model);
 	public OperationResultModel delete (OperationModel model);
 	public OperationResultModel query (OperationModel model);

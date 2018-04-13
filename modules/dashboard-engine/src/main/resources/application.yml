@@ -4,11 +4,18 @@ server:
   port: 8089
   contextPath: /dashboardengine
   
+  
+# all access to actuator endpoints without security
+management.security.enabled: false
+
 spring:
-  profiles: 
-    active: common
-    include: dummy-dev, localtest
-  ## JPA Config
+  application.name: sofia2-dashboard-engine
+  boot.admin: #Spring Boot Admin Config   
+      url: http://localhost:19000
+      username: operations
+      password: changeIt!
+      client.metadata.user.name: ${spring.boot.admin.username}
+      client.metadata.user.password: ${spring.boot.admin.password}
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
@@ -21,8 +28,7 @@ spring:
     hibernate.ddl-auto: update
 
 sofia2: #Config Sofia2 specific
-   dashboardengine:
-      
+   dashboardengine:      
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -36,7 +42,7 @@ sofia2: #Config Sofia2 specific
       password: #password
       readFromSecondaries: false
       queries.executionTimeout: 5000
-      queries.defaultLimit: 150
+      queries.defaultLimit: 2000
       queries.maxConcurrentQueries: 3
       writeConcern: UNACKNOWLEDGED
       tools.mongoexport.path: mongoexport
@@ -47,11 +53,17 @@ sofia2: #Config Sofia2 specific
       quasar.maxHttpConnectionsPerRoute: 10
       quasar.connectionTimeout.millis: 10000
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/
-      
+   database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
    level:
-      org.springframework: INFO
-      com.example.boot.thymeleaf: INFO
-      com.indra: DEBUG
-      org.hibernate: INFO
+      com.indra: DEBUG 

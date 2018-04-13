@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.router.service.CamelContextHandler;
+import com.indracompany.sofia2.router.camel.CamelContextHandler;
 import com.indracompany.sofia2.router.util.Utils;
 
 import io.swagger.annotations.ApiOperation;

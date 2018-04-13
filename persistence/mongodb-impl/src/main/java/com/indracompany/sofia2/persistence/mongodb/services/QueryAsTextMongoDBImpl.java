@@ -14,6 +14,8 @@
 package com.indracompany.sofia2.persistence.mongodb.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
@@ -24,14 +26,18 @@ import com.indracompany.sofia2.persistence.mongodb.UtilMongoDB;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Component("QueryAsTextMongoDBRepository")
+@Scope("prototype")
 @Slf4j
 public class QueryAsTextMongoDBImpl implements QueryAsTextDBRepository {
 
+	
 	@Autowired
+	@Qualifier("MongoBasicOpsDBRepository")
 	MongoBasicOpsDBRepository mongoRepo = null;
 
 	@Autowired
+	@Qualifier("MongoManageDBRepository")
 	MongoNativeManageDBRepository manageRepo = null;
 
 	@Autowired

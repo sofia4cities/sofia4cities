@@ -13,18 +13,22 @@
 */
 package com.indracompany.sofia2.simulator.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -36,10 +40,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.token.TokenService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
+@EnableScheduling
 @Slf4j
 public class PersistenceServiceImpl implements PersistenceService {
 
@@ -47,31 +55,42 @@ public class PersistenceServiceImpl implements PersistenceService {
 	private ClientPlatformService clientPlatformService;
 	@Autowired
 	private TokenService tokenService;
-
+	@Autowired
+	private IntegrationResourcesService intregationResourcesService;
 	private static final String UNAUTHORIZED_ONTOLOGY = "Unauthorized ontology";
 	private Map<String, String> sessionKeys;
-	@Value("${sofia2.iotbroker.server}")
+	private List<String> deviceBlackList;
+
 	private String iotbrokerUrl;
 
 	@PostConstruct
 	public void setUp() {
 		this.sessionKeys = new HashMap<String, String>();
+		this.iotbrokerUrl = this.intregationResourcesService.getUrl(Module.iotbroker, ServiceUrl.base);
+		this.deviceBlackList = new ArrayList<String>();
 	}
 
-	public void connectIotBrokerRest(String clientPlatform, String clientPlatformInstance) {
+	public void connectDeviceRest(String clientPlatform, String clientPlatformInstance) {
 		final Token token = this.tokenService.getToken(this.clientPlatformService.getByIdentification(clientPlatform));
 		final RestTemplate restTemplate = new RestTemplate();
 		final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(iotbrokerUrl + "/rest/client/join")
 				.queryParam("token", token.getToken()).queryParam("clientPlatform", clientPlatform)
 				.queryParam("clientPlatformId", clientPlatformInstance);
 		try {
+
 			final JsonNode response = restTemplate.getForObject(builder.build().encode().toUri(), JsonNode.class);
 			String sessionKey = response.get("sessionKey").asText();
 			log.info("Session Key :" + sessionKey);
 			if (sessionKey != null)
 				this.sessionKeys.put(clientPlatform, sessionKey);
 		} catch (Exception e) {
-			log.error("IoT broker down");
+			// log.error("IoT broker down");
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e1) {
+
+			}
+
 		}
 
 	}
@@ -100,13 +119,15 @@ public class PersistenceServiceImpl implements PersistenceService {
 			if (response.path("id").isMissingNode()
 					&& response.asText().equals(PersistenceServiceImpl.UNAUTHORIZED_ONTOLOGY)) {
 				log.debug("Attemping to renew session key");
-				this.connectIotBrokerRest(clientPlatform, clientPlatformInstance);
+				this.connectDeviceRest(clientPlatform, clientPlatformInstance);
 				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 			}
-
+			// Remove from black list, as it is still sending data
+			if (this.deviceBlackList.contains(clientPlatform))
+				this.deviceBlackList.remove(clientPlatform);
 			log.debug("Device " + clientPlatformInstance);
 		} else {
-			this.connectIotBrokerRest(clientPlatform, clientPlatformInstance);
+			this.connectDeviceRest(clientPlatform, clientPlatformInstance);
 			this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 		}
 	}
@@ -123,6 +144,18 @@ public class PersistenceServiceImpl implements PersistenceService {
 				String.class);
 		this.sessionKeys.remove(identification);
 		log.info("Closed session for device " + identification);
+	}
+
+	@Scheduled(fixedDelay = 60000)
+	private void disconnectBlackListedDevices() {
+		for (Iterator<String> iterator = this.deviceBlackList.iterator(); iterator.hasNext();) {
+			String device = iterator.next();
+			this.disconnectDeviceRest(device);
+			iterator.remove();
+		}
+		for (Map.Entry<String, String> entry : this.sessionKeys.entrySet()) {
+			this.deviceBlackList.add(entry.getKey());
+		}
 	}
 
 }

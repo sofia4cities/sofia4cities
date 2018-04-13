@@ -32,6 +32,7 @@ import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.model.Ontology;
+import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
 import com.indracompany.sofia2.config.model.OntologyUserAccess;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
 import com.indracompany.sofia2.config.model.Role;
@@ -65,7 +66,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		User sessionUser = this.userService.getUser(sessionUserId);
 		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
-			return ontologyRepository.findAll();
+			return ontologyRepository.findAllByOrderByIdentificationAsc();
 		} else {
 			return ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
 		}
@@ -75,7 +76,7 @@ public class OntologyServiceImpl implements OntologyService {
 	public List<Ontology> getOntologiesByUserId(String sessionUserId) {
 		User sessionUser = this.userService.getUser(sessionUserId);
 		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
-			return ontologyRepository.findAll();
+			return ontologyRepository.findAllByOrderByIdentificationAsc();
 		} else {
 			return ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
 		}
@@ -289,7 +290,7 @@ public class OntologyServiceImpl implements OntologyService {
 			if (!jsonNode.path("datos").path("properties").isMissingNode()) {
 				context = jsonNode.path("properties").fields().next().getKey();
 				jsonNode = jsonNode.path("datos").path("properties");
-				
+
 			} else
 				jsonNode = jsonNode.path("properties");
 
@@ -311,7 +312,7 @@ public class OntologyServiceImpl implements OntologyService {
 		}
 		// add Context to fields for query
 		if (!context.equals("")) {
-			Map<String,String> fieldsForQuery = new TreeMap<String,String>();
+			Map<String, String> fieldsForQuery = new TreeMap<String, String>();
 			for (Map.Entry<String, String> field : fields.entrySet()) {
 				String key = field.getKey();
 				String value = field.getValue();
@@ -341,6 +342,7 @@ public class OntologyServiceImpl implements OntologyService {
 				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 				ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 				ontologyDb.setMetainf(ontology.getMetainf());
+				ontologyDb.setAllowsCypherFields(ontology.isAllowsCypherFields());
 				this.ontologyRepository.save(ontologyDb);
 			} else {
 				throw new OntologyServiceException("The user is not authorized");
@@ -381,8 +383,10 @@ public class OntologyServiceImpl implements OntologyService {
 		if (isPropertyArray) {
 			if (!jsonNode.path(property).path("items").path("properties").isMissingNode())
 				jsonNode = jsonNode.path(property).path("items").path("properties");
-			else {
-				jsonNode = jsonNode.path(property).path("items").path("items");
+			else if (!jsonNode.path(property).path("properties").isMissingNode()) {
+				jsonNode = jsonNode.path(property).path("properties");
+			} else {
+				jsonNode = jsonNode.path(property).path("items");
 				int size = jsonNode.size();
 				for (int i = 0; i < size; i++) {
 					fields.put(parentField + "." + i, jsonNode.path(i).get("type").asText());
@@ -550,14 +554,14 @@ public class OntologyServiceImpl implements OntologyService {
 				.findByOntologyAndClientPlatform(ontologyId, clientPlatformId);
 
 		if (clientPlatformOntology != null) {
-			
-				switch (ClientPlatformOntology.AccessType.valueOf(clientPlatformOntology.getAccess())) {
-				case ALL:
-				case INSERT:
-					return true;
-				default:
-					return false;
-				} 
+
+			switch (ClientPlatformOntology.AccessType.valueOf(clientPlatformOntology.getAccess())) {
+			case ALL:
+			case INSERT:
+				return true;
+			default:
+				return false;
+			}
 		} else {
 			return false;
 		}
@@ -565,23 +569,28 @@ public class OntologyServiceImpl implements OntologyService {
 
 	@Override
 	public boolean hasClientPlatformPermisionForQuery(String clientPlatformId, String ontologyId) {
-		
+
 		ClientPlatformOntology clientPlatformOntology = this.clientPlatformOntologyRepository
 				.findByOntologyAndClientPlatform(ontologyId, clientPlatformId);
 
 		if (clientPlatformOntology != null) {
-			
-				switch (ClientPlatformOntology.AccessType.valueOf(clientPlatformOntology.getAccess())) {
-				case ALL:
-				case INSERT:
-				case QUERY:
-					return true;
-				default:
-					return false;
-				} 
+
+			switch (ClientPlatformOntology.AccessType.valueOf(clientPlatformOntology.getAccess())) {
+			case ALL:
+			case INSERT:
+			case QUERY:
+				return true;
+			default:
+				return false;
+			}
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public List<RtdbDatasource> getDatasources() {
+		return Arrays.asList(Ontology.RtdbDatasource.values());
 	}
 
 }

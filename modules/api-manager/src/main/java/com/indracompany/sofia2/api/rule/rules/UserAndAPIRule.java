@@ -25,13 +25,13 @@ import org.jeasy.rules.api.Facts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.api.rest.api.fiql.ApiFIQL;
 import com.indracompany.sofia2.api.rule.DefaultRuleBase;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.service.ApiServiceInterface;
 import com.indracompany.sofia2.api.service.api.ApiManagerService;
 import com.indracompany.sofia2.config.model.Api;
 import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.oauth.JWTService;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 @Component
@@ -42,10 +42,12 @@ public class UserAndAPIRule extends DefaultRuleBase {
 	private ApiManagerService apiManagerService;
 	
 	@Autowired
-	private ApiFIQL apiFIQL;
-	
-	@Autowired
 	private UserService userService;
+	
+	@Autowired(required=false)
+	private JWTService jwtService;
+	
+	
 
 	@Priority
 	public int getPriority() {
@@ -63,18 +65,29 @@ public class UserAndAPIRule extends DefaultRuleBase {
 
 	@Action
 	public void setFirstDerivedData(Facts facts) {
-		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
+		facts.get(RuleManager.REQUEST);
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
 		String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
 		String TOKEN = (String) data.get(ApiServiceInterface.AUTHENTICATION_HEADER);
+		String JWT_TOKEN = (String) data.get(ApiServiceInterface.JWT_TOKEN);
 		User user =null;
 		try {
 			user = userService.getUserByToken(TOKEN);
 		} catch (Exception e) {}
 		
 		Api api=null;
-		if (user==null) stopAllNextRules(facts, "User not Found by Token :"+TOKEN, DefaultRuleBase.ReasonType.GENERAL);
+		if (user==null) {
+			if (JWT_TOKEN.length()>0 && jwtService!=null) {
+				String userid = jwtService.extractToken(JWT_TOKEN);
+				if (userid!=null)
+					user=userService.getUser(userid);
+			}
+		}
+		if (user==null) {
+			stopAllNextRules(facts, "User not Found by Token :"+TOKEN, DefaultRuleBase.ReasonType.GENERAL);
+		}
+		
 		else {
 			api = apiManagerService.getApi(PATH_INFO, user);
 			if (api==null) stopAllNextRules(facts, "API not Found by Token :"+TOKEN +" and Path Info"+PATH_INFO,DefaultRuleBase.ReasonType.GENERAL );

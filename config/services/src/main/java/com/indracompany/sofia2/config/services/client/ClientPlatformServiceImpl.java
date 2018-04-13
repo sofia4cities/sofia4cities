@@ -271,4 +271,20 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 
 	}
 
+	@Override
+	public void createOntologyRelation(Ontology ontology, ClientPlatform clientPlatform) {
+		
+		final ClientPlatformOntology relation = new ClientPlatformOntology();
+		relation.setClientPlatform(clientPlatform);
+		relation.setAccess(AccessType.ALL.name());
+		relation.setOntology(ontology);
+		// If relation does not exist then create
+		if (this.clientPlatformOntologyRepository.findByOntologyAndClientPlatform(ontology.getIdentification(),
+				clientPlatform.getIdentification()) == null) {
+			this.clientPlatformOntologyRepository.save(relation);
+		}
+		
+	
+	}
+
 }

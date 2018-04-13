@@ -19,11 +19,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableMap;
 import com.indracompany.sofia2.config.model.NotificationEntity;
-import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 import com.indracompany.sofia2.router.service.app.model.AdviceNotificationModel;
 import com.indracompany.sofia2.router.service.app.service.AdviceNotificationService;
 
@@ -32,33 +34,36 @@ public class NodeRedAdviceNotificationService implements AdviceNotificationServi
 
 	@Autowired
 	FlowNodeService flowNodeService;
-	
+
 	@Autowired
 	OntologyRepository ontologyRepository;
-	
+
 	@Autowired
 	IntegrationResourcesService resourcesService;
-	
-	private static String ADVICE_URL="node-red.advice.url";
-	
+
+	static final ImmutableMap<String, String> HTTP_METHOD_TO_NODE_METHOD = new ImmutableMap.Builder<String, String>()
+			.put("POST", "INSERT").put("PUT", "UPDATE").put("DELETE", "DELETE").put("INSERT", "INSERT").build();
+
 	@Override
 	public List<AdviceNotificationModel> getAdviceNotificationModel(String ontologyName, String messageType) {
-		
-		List<NotificationEntity>  listNotifications=null;
-		List<AdviceNotificationModel> model =null;
-		String baseUrl = resourcesService.getURL(ADVICE_URL);
-		
+
+		List<NotificationEntity> listNotifications = null;
+		List<AdviceNotificationModel> model = null;
+		String baseUrl = resourcesService.getUrl(Module.flowEngine, ServiceUrl.advice);
+
 		try {
-			listNotifications = flowNodeService.getNotificationsByOntologyAndMessageType(ontologyName, messageType);
-		}catch (Exception e) {}
-		
-		if (listNotifications !=null)
-		{
+			listNotifications = flowNodeService.getNotificationsByOntologyAndMessageType(ontologyName,
+					HTTP_METHOD_TO_NODE_METHOD.get(messageType) != null ? HTTP_METHOD_TO_NODE_METHOD.get(messageType)
+							: messageType);
+		} catch (Exception e) {
+		}
+
+		if (listNotifications != null) {
 			model = new ArrayList<AdviceNotificationModel>();
 			for (NotificationEntity notificationEntity : listNotifications) {
 				AdviceNotificationModel advice = new AdviceNotificationModel();
 				advice.setEntityId(notificationEntity.getNotificationEntityId());
-				advice.setUrl(baseUrl+"/"+notificationEntity.getNotificationUrl());
+				advice.setUrl(baseUrl + "/" + notificationEntity.getNotificationUrl());
 				model.add(advice);
 			}
 		}

@@ -39,6 +39,12 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
+buildElasticSearchDB()
+{
+	echo "ElasticSearchDB image generation with Docker CLI: "
+	docker build -t sofia2/elasticdb:$1 .
+}
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -59,17 +65,17 @@ buildQuasar()
 
 prepareNodeRED()
 {
-	cp $homepath/../tools/Flow-Engine-Manager/*.zip $homepath/../modules/flow-engine/docker/nodered.zip
-	cd $homepath/../modules/flow-engine/docker
+	cp $homepath/../../tools/Flow-Engine-Manager/*.zip $homepath/../../modules/flow-engine/docker/nodered.zip
+	cd $homepath/../../modules/flow-engine/docker
 	unzip nodered.zip		
-	cp -f $homepath/dockerfiles/nodered/proxy-nodered.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/
-	cp -f $homepath/dockerfiles/nodered/sofia2-config-nodes-config.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/config/sofia2-config.js
-	cp -f $homepath/dockerfiles/nodered/sofia2-config-public-config.js $homepath/../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/public/config/sofia2-config.js	
+	cp -f $homepath/../dockerfiles/nodered/proxy-nodered.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/
+	cp -f $homepath/../dockerfiles/nodered/sofia2-config-nodes-config.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/nodes/config/sofia2-config.js
+	cp -f $homepath/../dockerfiles/nodered/sofia2-config-public-config.js $homepath/../../modules/flow-engine/docker/Flow-Engine-Manager/node_modules/node-red-sofia/public/config/sofia2-config.js	
 }
 
 removeNodeRED()
 {
-	cd $homepath/../modules/flow-engine/docker
+	cd $homepath/../../modules/flow-engine/docker
 	rm -rf Flow-Engine-Manager
 	rm nodered.zip		
 }
@@ -85,6 +91,9 @@ pushAllImages2Registry()
 	docker tag sofia2/realtimedb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/realtimedb:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/realtimedb:$1	
 	
+	docker tag sofia2/elasticdb:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/elasticdb:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/elasticdb:$1	
+	
 	docker tag sofia2/controlpanel:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/controlpanel:$1	
 	
@@ -99,6 +108,9 @@ pushAllImages2Registry()
 
 	docker tag sofia2/devicesimulator:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
+	
+	docker tag sofia2/digitaltwin:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1	
 	
 	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
@@ -153,39 +165,44 @@ homepath=$PWD
 if [ -z "$1" ]; then
 	# Generates images only if they are not present in local docker registry
 	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/control-panel/
+		cd $homepath/../../modules/control-panel/
 		buildImage "Control Panel"
 	fi	
 	
 	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
+		cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
 		buildImage "IoT Broker"
 	fi
 	
 	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
-		cd $homepath/../modules/api-manager/	
+		cd $homepath/../../modules/api-manager/	
 		buildImage "API Manager"
 	fi
 	
+	if [[ "$(docker images -q sofia2/digitaltwin 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../../modules/digitaltwin-broker/	
+		buildImage "Digital Twin"
+	fi	
+	
 	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/dashboard-engine/
+		cd $homepath/../../modules/dashboard-engine/
 		buildImage "Dashboard Engine"
 	fi
 	
 	if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/device-simulator/
+		cd $homepath/../../modules/device-simulator/
 		buildImage "Device Simulator"
 	fi	
 	
 	if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
-		cd $homepath/../modules/monitoring-ui/
+		cd $homepath/../../modules/monitoring-ui/
 		buildImage "Monitoring UI"
 	fi		
 	
 	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
  		prepareNodeRED		
 	
-		cd $homepath/../modules/flow-engine/
+		cd $homepath/../../modules/flow-engine/
 		buildImage "Flow Engine"
 		
 		removeNodeRED
@@ -194,30 +211,40 @@ fi
 
 # Generates images only if they are not present in local docker registry
 if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/configdb
+	cd $homepath/../dockerfiles/configdb
 	buildConfigDB latest
 fi
 
 if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/schedulerdb
+	cd $homepath/../dockerfiles/schedulerdb
 	buildSchedulerDB latest
 fi
 
 if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/realtimedb
+	cd $homepath/../dockerfiles/realtimedb
 	buildRealTimeDB latest
 fi
 
+if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
+	cd $homepath/../dockerfiles/elasticsearch
+	buildElasticSearchDB latest
+fi
+
 if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/nginx
+	cd $homepath/../dockerfiles/nginx
 	buildNginx latest
 fi
 
 if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/quasar
+	cd $homepath/../dockerfiles/quasar
 	buildQuasar latest
 fi
 
+if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+	cd $homepath/../../config/init/
+	buildImage "Config Init"
+fi
+	
 echo "Docker images successfully generated!"
 
 echo "Push Sofia2 images to private registry"
@@ -225,15 +252,18 @@ echo "Push Sofia2 images to private registry"
 pushImage2Registry configdb latest 
 pushImage2Registry schedulerdb latest 
 pushImage2Registry realtimedb latest 
+pushImage2Registry elasticdb latest
 pushImage2Registry controlpanel latest 
 pushImage2Registry iotbroker latest 
 pushImage2Registry apimanager latest 
 pushImage2Registry flowengine latest 
 pushImage2Registry devicesimulator latest 
+pushImage2Registry digitaltwin latest
 pushImage2Registry dashboard latest 
 pushImage2Registry monitoringui latest 
 pushImage2Registry nginx latest
 pushImage2Registry quasar latest 
+pushImage2Registry configinit latest 
 
 # pushAllImages2Registry latest
 

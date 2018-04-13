@@ -6,25 +6,21 @@ server: ## Config Web Server
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat
-      
-spring.application.name : smartstore
 
-spring.security.enabled: false
 management.security.enabled: false
 security.basic.enabled: false
 # all access to actuator endpoints without security
-management:
-  security:
-    enabled : false
-  port: 19100
 # turn on actuator health check
-endpoints:
-  health:
-    enabled : true
-  jmx:
-    enabled: true
      
 sofia2: #Config Sofia2 specific
+   database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -49,19 +45,15 @@ sofia2: #Config Sofia2 specific
       quasar.maxHttpConnectionsPerRoute: 10
       quasar.connectionTimeout.millis: 10000
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
-    
-#Security Config
-security:
-    user:
-       name: admin
-       password: admin
+      digitaltwin.database: digital_twin
    
 spring: ## General Config  
    application.name: sofia2-router
+   security.enabled: false
    boot.admin: #Spring Boot Admin Config  
       client: 
         enabled: false
-      url: http://localhost:18090
+      url: http://localhost:19000
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -85,8 +77,8 @@ spring: ## General Config
       properties.hibernate.enable_lazy_load_no_trans: true
    mail: ##Mail configuration
       host: smtp.gmail.com
-      username: sofia2oncloud@gmail.com
-      password: Indra2013!
+      username: sofia4cities@gmail.com
+      password: ----
       port: 587
       properties.mail.smtp.auth: true
       properties.mail.smtp.starttls.enable: true
@@ -100,12 +92,19 @@ spring: ## General Config
         
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
    level:
-      org.springframework: INFO
-      de.codecentric: DEBUG
-      com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
-      org.hibernate: INFO
+      
+## OAUTH    
+security:
+  signing-key: s1f41234pwqdqkl4l12ghg9853123sds1f41234pwqdqkl4l12ghg9853123sd
+  jwt:
+    client-id: sofia2_s4c
+    client-secret: sofia2_s4c
+    grant-type: authorization_code,refresh_token,password
+    scopes: openid
       
  
  

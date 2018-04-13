@@ -23,13 +23,13 @@ import org.springframework.context.annotation.Configuration;
 public class CamelServerConfig {
 	
 	@Bean
+	public ServletRegistrationBean servletRegistrationBean() {
+		return new ServletRegistrationBean(hystrixServlet(), "/camel-hystrix.stream");
+	}
+	
+	@Bean
 	public HystrixEventStreamServlet hystrixServlet() {
 		return new HystrixEventStreamServlet();
-	}
-
-	@Bean
-	public ServletRegistrationBean servletRegistrationBean() {
-		return new ServletRegistrationBean(new HystrixEventStreamServlet(), "/hystrix.stream");
 	}
 
 	@Bean

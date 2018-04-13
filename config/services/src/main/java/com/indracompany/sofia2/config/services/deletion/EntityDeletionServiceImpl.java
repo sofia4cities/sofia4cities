@@ -33,7 +33,6 @@ import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DeviceSimulationRepository;
-import com.indracompany.sofia2.config.repository.OntologyEmulatorRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.repository.TokenRepository;
@@ -47,8 +46,6 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
-	@Autowired
-	private OntologyEmulatorRepository ontologyEmulatorRepository;
 	@Autowired
 	private OntologyUserAccessRepository ontologyUserAccessRepository;
 	@Autowired
@@ -78,9 +75,6 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 			if (ontologyService.hasUserPermisionForChangeOntology(user, ontology)) {
 				if (this.clientPlatformOntologyRepository.findByOntology(ontology) != null) {
 					this.clientPlatformOntologyRepository.deleteByOntology(ontology);
-				}
-				if (this.ontologyEmulatorRepository.findByOntology(ontology) != null) {
-					this.ontologyEmulatorRepository.deleteByOntology(ontology);
 				}
 				if (this.ontologyUserAccessRepository.findByOntology(ontology) != null) {
 					this.ontologyUserAccessRepository.deleteByOntology(ontology);
@@ -158,10 +152,10 @@ public class EntityDeletionServiceImpl implements EntityDeletionService {
 	@Override
 	@Transactional
 	public void deleteDeviceSimulation(DeviceSimulation simulation) throws Exception {
-		if(!simulation.isActive())
+		if (!simulation.isActive())
 			this.deviceSimulationRepository.deleteById(simulation.getId());
 		else
 			throw new Exception("Simulation is currently running");
-		
+
 	}
 }

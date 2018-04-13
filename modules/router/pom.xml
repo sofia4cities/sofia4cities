@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>5.1.0-rc1</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	<groupId>com.indracompany.sofia2</groupId>
@@ -22,6 +22,8 @@
 		<version.swaggerui>2.7.0</version.swaggerui>
 		<version.hawtio>1.5.6</version.hawtio>
 		<sofia2.version>${project.parent.version}</sofia2.version>
+		<version.spring-cloud>1.4.3.RELEASE</version.spring-cloud>
+		<elasticsearch.version>6.2.3</elasticsearch.version>
 	</properties>
 
 	<dependencies>

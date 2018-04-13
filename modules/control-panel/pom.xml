@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
+		<version>5.1.0-rc1</version>
 		<relativePath>../..</relativePath>
 	</parent>
 
@@ -56,7 +56,18 @@
 			<artifactId>sofia2-flow-engine-services</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-router-core</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-audit</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
@@ -109,10 +120,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
-		<!-- DECIDIR CUAL Y CUANDO USAR <dependency> <groupId>org.springframework.boot</groupId> 
-			<artifactId>spring-boot-starter-jersey</artifactId> </dependency> <dependency> 
-			<groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-websocket</artifactId> 
-			</dependency> -->
 		<!-- SPRING BOOT ADMIN-CLIENT -->
 		<dependency>
 			<groupId>de.codecentric</groupId>
@@ -144,7 +151,17 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		<!-- JSON -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
+		<!-- freemarker -->
+		<dependency>
+		    <groupId>org.freemarker</groupId>
+		    <artifactId>freemarker</artifactId>
+		    <version>${freemarket.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -169,7 +186,7 @@
 		      <configuration>
 		        <imageName>sofia2/controlpanel</imageName>
 		        <imageTags>
-		           <imageTag>${sofia2.docker.version}</imageTag>
+		           <imageTag>${project.version}</imageTag>
 		        </imageTags>		        
 		        <dockerDirectory>docker</dockerDirectory>
 		        <resources>

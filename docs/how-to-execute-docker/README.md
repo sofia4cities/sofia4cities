@@ -42,7 +42,7 @@ To stop the containers: **ctrl + c** and write **docker-compose down**
 
 #### <a name="loaddata"></a>Step 5: Loading tables and data in configdb and realtimedb
 
-Once the containers of the persistence layer have been activated it is necessary to create tables (configdb) and collections (realtimedb) and close them with data, for that in the **config/init** directory we execute >**mvn spring-boot:execute**
+Once the containers of the persistence layer have been activated it is necessary to create tables (configdb) and collections (realtimedb) and close them with data, for that in the **config/init** directory we execute >**mvn spring-boot:run**
 
 ![](loaddata.png)
 

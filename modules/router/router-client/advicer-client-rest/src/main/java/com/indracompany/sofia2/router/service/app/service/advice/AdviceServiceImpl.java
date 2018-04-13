@@ -13,6 +13,10 @@
  */
 package com.indracompany.sofia2.router.service.app.service.advice;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.commons.ssl.SSLUtil;
 import com.indracompany.sofia2.router.client.RouterClient;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -38,19 +43,30 @@ public class AdviceServiceImpl
 		return execute(input);
 	}
 
+	@Value("${sofia2.router.avoidsslverification:false}")
+	private boolean avoidSSLVerification;
+
+	public AdviceServiceImpl() throws KeyManagementException, NoSuchAlgorithmException {
+		if (avoidSSLVerification) {
+			SSLUtil.turnOffSslChecking();
+		}
+	}
+
 	@Override
 	public OperationResultModel execute(NotificationCompositeModel input) {
 		final RestTemplate restTemplate = new RestTemplate();
 		restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.TEXT_PLAIN);
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		ObjectMapper mapper = new ObjectMapper();
 		HttpEntity<String> domainToStart;
 		try {
 			domainToStart = new HttpEntity<String>(mapper.writeValueAsString(input), headers);
 			OperationResultModel quote = restTemplate.postForObject(input.getUrl(), domainToStart,
 					OperationResultModel.class);
-			log.debug(quote.toString());
+			if (quote != null) {
+				log.debug(quote.toString());
+			}
 			return quote;
 		} catch (Exception e) {
 			log.error("Error while sending notification. Unable to parse notification to JSON. Cause = {}, message={}.",

@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM maven:3.5.3-jdk-8-alpine
 
 # Metadata
 LABEL module.maintainer="plataformasofia2@indra.es" \
@@ -7,6 +7,9 @@ LABEL module.maintainer="plataformasofia2@indra.es" \
 VOLUME /tmp
 
 ADD *-exec.jar app.jar
+
+# Web projects folder
+RUN mkdir -p /usr/local/webprojects
 
 EXPOSE 18080
 

@@ -57,6 +57,12 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
+buildElasticSearchDB()
+{
+	echo "ElasticSearchDB image generation with Docker CLI: "
+	docker build -t sofia2/elasticdb:$1 .
+}
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -109,11 +115,17 @@ pushAllImages2Registry()
 	docker tag sofia2/devicesimulator:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/devicesimulator:$1
 	
+	docker tag sofia2/digitaltwin:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/digitaltwin:$1	
+	
 	docker tag sofia2/dashboard:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1
 	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/dashboard:$1	
 	
 	docker tag sofia2/monitoringui:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1
-	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1							
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/monitoringui:$1	
+	
+	docker tag sofia2/configinit:$1 moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/configinit:$1
+	docker push moaf-nexus.westeurope.cloudapp.azure.com:443/sofia2/configinit:$1								
 }
 
 pushImage2Registry()
@@ -155,6 +167,11 @@ if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then
 	buildImage "API Manager"
 fi
 
+if [[ "$(docker images -q sofia2/digitaltwin 2> /dev/null)" == "" ]]; then	
+	cd $homepath/../../modules/digitaltwin-broker/	
+	buildImage "Digital Twin"
+fi
+
 if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
 	cd $homepath/../../modules/dashboard-engine/
 	buildImage "Dashboard Engine"
@@ -184,6 +201,11 @@ if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
 	buildNginx latest
 fi
 
+if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+	cd $homepath/../../config/init/
+	buildImage "Config Init"
+fi	
+
 if [ -z "$1" ]; then
 	echo "++++++++++++++++++++ Persistence layer generation..."
 	
@@ -203,6 +225,11 @@ if [ -z "$1" ]; then
 		buildRealTimeDB latest
 	fi
 	
+	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/elasticsearch
+		buildElasticSearchDB latest
+	fi	
+	
 	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/quasar
 		buildQuasar latest
@@ -210,7 +237,7 @@ if [ -z "$1" ]; then
 fi
 
 echo "Pushing all images to Docker registry"
-pushAllImages2Registry latest
+pushAllImages2Registry 5.0.0-rc2
 
 echo "Docker images successfully generated and pushed to local registry!"
 
@@ -218,11 +245,13 @@ echo "CleanUp local images"
 deleteImage controlpanel 
 deleteImage iotbroker 
 deleteImage apimanager 
+deleteImage digitaltwin
 deleteImage dashboard 
 deleteImage devicesimulator 
 deleteImage monitoringui 
 deleteImage flowengine
 deleteImage nginx
+deleteImage configinit
 
 deleteUntaggedImages
 removeOrphanVolumes

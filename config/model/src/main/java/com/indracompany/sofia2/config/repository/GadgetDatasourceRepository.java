@@ -25,23 +25,34 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.indracompany.sofia2.config.model.GadgetDatasource;
-import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
 
-public interface GadgetDatasourceRepository extends JpaRepository<GadgetDatasource,String>{
+public interface GadgetDatasourceRepository extends JpaRepository<GadgetDatasource, String> {
 
 	GadgetDatasource findById(String Id);
+
 	GadgetDatasource findByIdentification(String identification);
+
 	List<GadgetDatasource> findByUser(User user);
+
 	List<GadgetDatasource> findByIdentificationLike(String identification);
+
 	List<GadgetDatasource> findByMode(String mode);
-	List<GadgetDatasource> findByIdentificationContainingAndDescriptionContaining(String identification,String description);
+
+	List<GadgetDatasource> findByIdentificationContainingAndDescriptionContaining(String identification,
+			String description);
+
 	List<GadgetDatasource> findByIdentificationContaining(String identification);
+
 	List<GadgetDatasource> findByDescriptionContaining(String description);
-	List<GadgetDatasource> findByUserAndIdentificationContainingAndDescriptionContaining(User user ,String identification,String description);
+
+	List<GadgetDatasource> findByUserAndIdentificationContainingAndDescriptionContaining(User user,
+			String identification, String description);
+
 	List<GadgetDatasource> findByUserAndDescriptionContaining(User user, String description);
+
 	List<GadgetDatasource> findByUserAndIdentificationContaining(User user, String identification);
+
 	List<GadgetDatasource> findAllByOrderByIdentificationAsc();
-		
+
 }

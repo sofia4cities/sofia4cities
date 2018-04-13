@@ -13,6 +13,10 @@
  */
 package com.baeldung.springbootadminserver;
 
+import static org.junit.Assert.assertNotEquals;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +26,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.monitoring.configs.HazelcastConfig;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.NONE;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { HazelcastConfig.class }, webEnvironment = NONE)
+@Ignore
 public class HazelcastConfigIntegrationTest {
 
-    @Autowired private ApplicationContext applicationContext;
+	@Autowired
+	private ApplicationContext applicationContext;
 
-    @Test
-    public void given_TheApplicationContext_When_ItStarts_Then_TheHazelcastBeanIsCreated() {
-        assertNotEquals(applicationContext.getBean("hazelcast"), null);
-    }
+	@Test
+	public void given_TheApplicationContext_When_ItStarts_Then_TheHazelcastBeanIsCreated() {
+		assertNotEquals(applicationContext.getBean("hazelcast"), null);
+	}
 }

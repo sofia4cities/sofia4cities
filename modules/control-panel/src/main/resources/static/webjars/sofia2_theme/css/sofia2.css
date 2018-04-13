@@ -1,4 +1,5 @@
-/* logo */
+/* tex-logo */
+
 .text-logo-s4c{
 position: relative;
 color: white;
@@ -20,8 +21,11 @@ white-space: nowrap;
 .text-logo-s4c{ top: 12px; }
 .text-logo-panel{ top: 12px; left: 3px; }
 }
+	
 
-/* Page Header   ***********/
+/*********** 
+Page Header
+***********/
 /* Header search bar, toggler button & top menu */
 .page-header.navbar {
   /*background-color: #FFF;*/
@@ -794,6 +798,7 @@ padding-top: 2px;
     color: #333;
     background-color: #FFF !Important;
     border-color: #ddd;
+	padding: 6px 12px !important;
 }
 
 /*** AUTOCOMPLETE ***/
@@ -822,12 +827,30 @@ height: auto;
 display: flex;
  }
  
+ 
+ /* main */
+
+.main-block-toggle{
+	position: absolute;
+	top: 60px;
+	z-index: 1;
+	right: 86px;
+ -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;	
+}
+.hide-main-block{
+position: relative;
+right: -5px;
+top: 12px;
+}
+ 
  .maininfo{
 	 font-family: "Open sans";
 	 font-size: 13px;
 	 line-height: 16px;
-	 margin: 4px;
-	 
+	 margin: 4px;	 
  }
  
  .maininfo-shadow {
@@ -837,12 +860,30 @@ box-shadow: 0 0 50px 0 rgba(0, 0, 0, 0.15);
  }
  
 .main-block{
-background: #564FC1;
+/*background: #564FC1;*/
 padding: 30px 30px 0px 30px;
  margin-left: -20px;margin-right: -20px;
-background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
-background: linear-gradient(to right, #75b8f3, #9353e6);
+/*background: -webkit-linear-gradient(to right, #75b8f3, #9353e6);
+background: linear-gradient(to right, #75b8f3, #9353e6);*/
 } 
+
+.step-desc {
+	position: absolute;
+	background-color: rgba(0, 0, 0, 0.6);
+	color: ghostwhite;
+	border-radius: 4px;
+	padding: 10px;
+	z-index: 100;
+	width: auto;
+	top: 190px;
+	font-size: 13px;
+	letter-spacing: 0.3px;
+	display: block;
+	max-width: calc(-25% + 100vw);
+	margin-left: 60px;
+}
+
+.step-selected{ border-color: #555 !important; }
  
 /*** APIMANAGER OPERATIONS  ***/ 
 
@@ -922,21 +963,16 @@ background: linear-gradient(to right, #75b8f3, #9353e6);
 	margin-left: 5px;
 }
 
-/* main */
-
-.main-block-toggle{
-	position: absolute;
-	top: 60px;
-	z-index: 1;
-	right: 86px;
- -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease;	
+/*  marketplace assets images */
+.img-market{ 
+max-height: 125px; min-height: 125px; width:auto; margin: 5px 0px;  display: block; margin: 5px auto;
 }
-.hide-main-block{
-	position: relative;
-	right: 58px;
-	top: -10px;	
+
+.img-asset-show{
+max-height: 225px;
+margin: 0 auto;
+width: auto !important;
+border-radius: 10px;
+	
 }
 

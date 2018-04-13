@@ -1,5 +1,7 @@
-##--spring.config.name=controlpanel
 ##security.require_ssl: true
+
+
+
 server: ## Config Web Server
    port: 18080
    contextPath: /controlpanel
@@ -7,10 +9,22 @@ server: ## Config Web Server
       access_log_enabled: true
       basedir: target/tomcat
 
+# all access to actuator endpoints without security
+management.security.enabled: false
+
 sofia2: #Config Sofia2 specific
+   locale.default: en
    encription.key: sofia2
    devices:
       timeout_devices_inseconds:300
+   database.elasticsearch:
+      database: sofia2_s4c_es
+      sql.maxHttpConnections: 10
+      sql.maxHttpConnectionsPerRoute: 10
+      sql.connectionTimeout.millis: 10000
+      sql.connector.http.endpoint: http://localhost:9200
+      url: localhost
+      port: 9300
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -24,24 +38,27 @@ sofia2: #Config Sofia2 specific
       password: #password
       readFromSecondaries: false
       queries.executionTimeout: 5000
-      queries.defaultLimit: 50
+      queries.defaultLimit: 2000
       queries.maxConcurrentQueries: 3
       writeConcern: UNACKNOWLEDGED
       tools.mongoexport.path: mongoexport
       tools.mongoimport.path: mongoimport
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
+      digitaltwin.database: digital_twin
    urls:
     iotbroker: http://localhost:18080
     iotbroker.services: http://localhost:8080/sib/services
    paths:
-    ssap: /ssap
+      ssap: /ssap
    flowengine.services:
-    request.timeout.ms: 5000
-    baseurl: http://localhost:8082/sofia2/flowengine/admin   
-    proxyurl: http://localhost:5050/
-    
-management.security.enabled: false
+      request.timeout.ms: 5000
+      baseurl: http://localhost:8082/flowengine/admin   
+      proxyurl: http://localhost:5050/
+   controlpanel.avoidsslverification: true
+   webproject:
+      rootfolder.path: /usr/local/webprojects/
+      baseurl: http://localhost:18080/web/   
  
 spring: ## General Config  
    application.name: sofia2-control-panel
@@ -62,7 +79,7 @@ spring: ## General Config
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:
+   #   password: root
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.
@@ -77,17 +94,21 @@ spring: ## General Config
       hibernate.ddl-auto: update
       hibernate.temp.use_jdbc_metadata_defaults: false
    boot.admin: #Spring Boot Admin Config    
-      url: http://localhost:18090
+      url: http://localhost:19000/
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
-      client.metadata.user.password: $spring.boot.admin.password} 
+      client.metadata.user.password: ${spring.boot.admin.password}
+   http:
+      multipart:
+         max-file-size: 200Mb
+         max-request-size: 200Mb
       
 quartz:      
    datasource:
       url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password: 
+    #  password: root
       driver-class-name: com.mysql.jdbc.Driver
    jpa:
       ## Hibernate Properties
@@ -102,8 +123,12 @@ quartz:
            
 ## LOGGING CONF
 logging:
+   path: ./target/ 
+   file: ${spring.application.name}
    level:
-      org.springframework: INFO
-      com.example.boot.thymeleaf: INFO
       com.indra: DEBUG
-      org.hibernate: INFO
+      
+## Digital Twin
+digitaltwin:
+   temp.dir: /tmp
+   maven.exec.path: /usr/share/maven/bin/mvn

@@ -90,52 +90,26 @@ echo "##########################################################################
 
 homepath=$PWD
 
-# Generates images only if they are not present in local docker registry
-if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/control-panel/
-	buildImage "Control Panel"
-fi	
-
-if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
-	buildImage "IoT Broker"
-fi
-
-if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
-	cd $homepath/../modules/api-manager/	
-	buildImage "API Manager"
-fi
-
-if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/dashboard-engine/
-	buildImage "Dashboard Engine"
-fi
-
-if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/device-simulator/
-	buildImage "Device Simulator"
-fi	
-
-if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
-	cd $homepath/../modules/monitoring-ui/
-	buildImage "Monitoring UI"
-fi	
-
-if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
-		prepareNodeRED		
-
-	cd $homepath/../modules/flow-engine/
-	buildImage "Flow Engine"
-	
-	removeNodeRED
-fi
-
-if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
-	cd $homepath/dockerfiles/nginx
-	buildNginx latest
-fi
-
+# Only create persistence layer
 if [ -z "$1" ]; then
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/control-panel/
+		buildImage "Control Panel"
+	fi	
+	
+	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
+		cd $homepath/../modules/iotbroker/sofia2-iotbroker-boot/	
+		buildImage "IoT Broker"
+	fi
+	
+	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../modules/api-manager/	
+		buildImage "API Manager"
+	fi			
+fi
+
+if [ ! -z "$1" ]; then
 	echo "++++++++++++++++++++ Persistence layer generation..."
 	
 	# Generates images only if they are not present in local docker registry
@@ -158,6 +132,11 @@ if [ -z "$1" ]; then
 		cd $homepath/dockerfiles/quasar
 		buildQuasar latest
 	fi
+	
+	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+		cd $homepath/../config/init/
+		buildImage "Config Init"
+	fi	
 fi
 
 echo "Docker images successfully generated!"

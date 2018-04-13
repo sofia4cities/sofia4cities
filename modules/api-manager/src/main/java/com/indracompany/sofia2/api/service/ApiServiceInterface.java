@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 public interface ApiServiceInterface {
 	
 	public static final String AUTHENTICATION_HEADER="X-SOFIA2-APIKey";
+	public static final String JWT_TOKEN="JWT_TOKEN";
 	public static final String CACHEABLE="Cacheable";
 	
 	public static final String WEB_SERVICE_API = "webservice";

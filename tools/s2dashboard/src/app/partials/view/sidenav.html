@@ -1,0 +1,20 @@
+<md-sidenav class="md-sidenav-left md-whiteframe-4dp" md-component-id="left">
+  <header class="nav-header">
+      <!--<a ng-href="/" class="docs-logo" href="/">
+        <img src="https://scandasia.com/wp-content/uploads/2013/02/IMG-logo.png" alt="">
+        <h1 class="docs-logotype md-heading ng-isolate-scope">AngularJS Material</h1>
+      </a>-->
+  </header>
+
+  <md-content flex="" role="navigation" class="_md flex">
+    <md-subheader class="md-no-sticky">Pages</md-subheader>
+    <md-list class="md-hue-2">
+      <span ng-repeat="page in vm.dashboard.pages">
+        <md-list-item md-colors="{background: ($index===vm.selectedpage ? 'primary' : 'grey-A100')}" ng-click="vm.setIndex($index)" flex>
+            <md-icon>{{page.icon}}</md-icon>
+            <p>{{page.title}}</p>
+        </md-list-item>
+      </span>
+    </md-list>
+  </md-content>
+</md-sidenav>

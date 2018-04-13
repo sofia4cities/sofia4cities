@@ -107,7 +107,7 @@
 							<div class="portlet-body" style="display: block; height: auto;">
 								
 								<div class="row">
-									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+									<div class="col-md-12 alert-zone" id="alerts"><!-- ALERTS ZONE -->
 										<div class="alert alert-danger display-hide">
 											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
 										</div>
@@ -188,6 +188,15 @@
 															</label>									
 														</div>
 													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="mt-checkbox-list">
+															<label class="mt-checkbox font-md" ><i class="la la-lightbulb-o" ></i> <div class="inline" th:text="#{scheduledsearch.newclient}">New client?</div>
+															<input id="_checkboxnewclient" name="_newclient" type="hidden" class="form-control"/>
+															<input id="checkboxnewclient" name="newclient" type="checkbox" class="form-control" onchange="newOntologyAndClient()" />
+															<span></span><!-- needed by styles -->
+															</label>									
+														</div>
+													</div>
 												</div>
 												<!-- Ontologies,ClientPlatform,Tokens-->
 												<div class="row" id="row-not-new">
@@ -223,7 +232,7 @@
 															<label class="control-label" th:text="#{scheduledsearch.ontologies.target} + ':'">Ontologies</label>														
 															<div class="input-icon ">
 																<i class="fa"></i>
-																<input id="ontologyId" name="ontologyId" type="text"    maxlength="100" class="form-control no-remove"/>
+																<input id="ontologyId" type="text"    maxlength="100" class="form-control no-remove"/>
 															</div>													
 														</div>
 													</div>
@@ -232,12 +241,34 @@
 															<label class="control-label" th:text="#{scheduledsearch.clientplatform} + ':'">Platform Clients</label>
 															<div class="input-icon ">
 																<i class="fa"></i>
-																<input id="clientPlatformId" name="clientPlatformId" type="text" maxlength="100" class="form-control no-remove"/>
+																<input id="clientPlatformId" type="text" maxlength="100" class="form-control no-remove"/>
 															</div>											
 														</div>
 													</div>													
 												</div>
+												<div class="row" id="row-new-ontology" style="display:none">									
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{scheduledsearch.ontologies.target} + ':'">Ontologies</label>														
+															<div class="input-icon ">
+																<i class="fa"></i>
+																<input id="ontologyId2" type="text"    maxlength="100" class="form-control no-remove"/>
+															</div>													
+														</div>
+													</div>
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group" th:fragment="clients" id="fragmentClients">
+															<label class="control-label" th:text="#{scheduledsearch.clientplatform} + ':'">Platform Clients</label>
+															<select  id="clientPlatformId2" data-width="100%" class="select-picker form-control" data-live-search="true">
+																<option th:each="client :${clients}" th:value="${client}" th:text="${client}"></option>										
+															</select>										
+														</div>
+													</div>													
+												</div>
 											</div>
+											<input type="hidden" name="ontologyId"/>
+											<input type="hidden" name="clientPlatformId"/>
+											
 											<!-- FORM BUTTONS -->
 											<div class="form-actions">
 												<div class="pull-right">

@@ -20,24 +20,22 @@ import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.scheduler.job.BatchGenericExecutor;
 
-
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class DeviceSimulatorJobExecutor implements BatchGenericExecutor {
-	
+
 	@Autowired
 	private DeviceSimulatorJob deviceSimulatorJob;
+
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		
-		try
-		{
-			log.debug("Executed");
+
+		try {
 			deviceSimulatorJob.execute(context);
-		}catch(Exception e) {
-			//TO-DO
+		} catch (Exception e) {
+			log.warn("Error executing DeviceSimulatorJob:" + e.getMessage());
 		}
 	}
 
