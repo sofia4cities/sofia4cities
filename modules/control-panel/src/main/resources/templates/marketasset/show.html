@@ -138,7 +138,7 @@
 											</div>
 											<div class="marketasset-single-img col-md-4 col-sm-12">
 												<img class="img-responsive img-asset-show thumbnail"  th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" />
-												<img class="img-responsive img-asset-show thumbnail"  th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" />
+												<img class="img-responsive img-asset-show thumbnail"  th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/} + ${marketasset.marketAssetType.name()} + '.png'" />
 											</div>
 											<div class="marketasset-single-desc col-md-8 col-sm-12">												
 												<!-- description -->												
