@@ -54,7 +54,7 @@ public class ClientsApplication {
 		}
 
 		int timeout = 50;
-		String token = "e7ef0742d09d4de5a3687f0cfdf7f626";
+		String token = "1c7954dd4c7c47e0916e8ea64e3c9967";
 		String clientPlatform = "Ticketing App";
 		String clientPlatformInstance = clientPlatform + ":MQTT";
 		String ontology = "HelsinkiPopulation";

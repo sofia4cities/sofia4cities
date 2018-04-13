@@ -70,6 +70,13 @@ public class ElasticSearchBasicOpsDBRepositoryTest {
 	private String SQL_TEST = "select * from ";
 	//private String SQL_TEST = "select * from "+database+"/"+TEST_INDEX_ONLINE;
 	
+	
+	private String queryNative = "{\r\n" + 
+			"  \"match_all\" : {\r\n" + 
+			"    \"boost\" : 1.0\r\n" + 
+			"  }\r\n" + 
+			"}";
+	
 	@Before
 	public  void doBefore() throws Exception {	
 		System.out.println("up process...");
@@ -187,6 +194,31 @@ public class ElasticSearchBasicOpsDBRepositoryTest {
 			Assert.fail("testInsertCountDelete failure. " + e);
 		}
 	}
+	
+	@Test
+	public void testSearchQueryNative() {
+		try {
+			
+			log.info("testSearchQuery");
+			
+			String id = repository.insert(TEST_INDEX_ONLINE, JSON_TEST);
+			log.info("Returned inserted object with id "+id);
+			 
+			List<String> listData = repository.findAll(TEST_INDEX_ONLINE);
+			log.info("Returned list of found objects "+listData);
+			
+			
+			String output = repository.queryNativeAsJson(TEST_INDEX_ONLINE, queryNative);
+			
+			log.info("query native :"+output);
+			log.info("testSearchQuery END ");
+			
+			
+		} catch (Exception e) {
+			Assert.fail("testInsertCountDelete failure. " + e);
+		}
+	}
+
 
 	
 
