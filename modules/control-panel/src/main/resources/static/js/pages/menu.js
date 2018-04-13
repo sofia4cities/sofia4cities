@@ -21,6 +21,8 @@ var MenuController = function() {
 		,markUp_HTML	= ''
 		,page_LANG 		= ''
 		,menu_LANG 		= ''
+		,heading		= ''
+		.icon			= 'flaticon-more-v3'
 		,submenus 		= false;
 		
 		// NO-DATA NO-FUN!
@@ -75,13 +77,23 @@ var MenuController = function() {
 			}
 			else {
 				// NAV-ITEM WITHOUT SUBMENU
-				submenus = false;				
-				menu_HTML  +='<li class="nav-item">'
-							+'	<a href="'+ item.url +'" class="nav-link nav-toggle">'
-							+'		<i class="'+ item.icon +'"></i>'
-							+'		<span class="title">'+ item.title[ menu_LANG ] +'</span>'
-							+'	</a>'
-							+'</li>';
+				submenus = false;
+				// CHECK FOR SEPARATOR -> MENU WITHOUT SUBMENUS AND NULL LINK
+				if (item.url === ''){
+					icon = item.icon !== '' ? item.icon : icon; 
+					heading = item.title[ menu_LANG ] === '' ? '<i class="'+ icon +'"></i>'  : item.title[ menu_LANG ];
+					menu_HTML  +='<li class="heading text-center">'
+								+'	<h3 class="uppercase"> ' + heading + '</h3>'
+								+'</li>';
+				}
+				else{
+					menu_HTML  +='<li class="nav-item">'
+								+'	<a href="'+ item.url +'" class="nav-link nav-toggle">'
+								+'		<i class="'+ item.icon +'"></i>'
+								+'		<span class="title">'+ item.title[ menu_LANG ] +'</span>'
+								+'	</a>'
+								+'</li>';
+				}
 				
 				// ADD AND APPENTO MENU (.page-sidebar-menu) 
 				$(menu_HTML).appendTo($('.page-sidebar-menu'));				
