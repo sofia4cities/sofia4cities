@@ -14,4 +14,7 @@ ENV MYSQL_DATABASE sofia2_s4c
 # Ignore case
 RUN echo "lower_case_table_names = 1" >> /etc/my.cnf
 
+# Allow large files
+RUN echo "max_allowed_packet=536870912" >> /etc/my.cnf
+
 EXPOSE 3306
