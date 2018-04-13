@@ -2,11 +2,14 @@ var IssueController = function() {
 	
 	var client = new SofiaClient();
 	
-	
 	var apimanager = 'https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/oauth/token';
 	var iotbroker = "https://s4citiespro.westeurope.cloudapp.azure.com/iotbroker/message";
+	//var apimanager = 'http://localhost:19090/api-manager/oauth/token';
+	//var iotbroker = "http://localhost:8081/iotbroker/message";
+	
 	var ontology = 'Ticket';
 	var device = 'Ticketing App';
+	//var token= 'e7ef0742d09d4de5a3687f0cfdf7f626';
 	var token= '1c7954dd4c7c47e0916e8ea64e3c9967';
 	var deviceInstance = 'Ticketing App: Web';
 	var config ={};
