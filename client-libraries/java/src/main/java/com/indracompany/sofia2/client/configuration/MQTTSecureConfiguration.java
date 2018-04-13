@@ -20,17 +20,10 @@ public class MQTTSecureConfiguration {
 
 	private String keyStorePath;
 	private String password;
-	private final String DEFAULT_KEYSTORE_PATH = getClass().getResource("/clientdevelkeystore.jks").getPath();
-	private final String DEFAULT_KEYSTORE_PASSWORD = "changeIt!";
 
 	public MQTTSecureConfiguration(String keyStorePath, String password) {
-		if (keyStorePath == null || password == null) {
-			this.keyStorePath = DEFAULT_KEYSTORE_PATH;
-			this.password = DEFAULT_KEYSTORE_PASSWORD;
-		} else {
-			this.keyStorePath = keyStorePath;
-			this.password = password;
-		}
+		this.keyStorePath = keyStorePath;
+		this.password = password;
 
 	}
 

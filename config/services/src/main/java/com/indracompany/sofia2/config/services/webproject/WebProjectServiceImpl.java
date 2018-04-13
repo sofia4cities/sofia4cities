@@ -173,14 +173,14 @@ public class WebProjectServiceImpl implements WebProjectService {
 
 		if (wp != null) {
 			if (hasUserPermissionToEditWebProject(user, wp)) {
-				if (!webProjectExists(webProject.getIdentification())) {
+				if (webProjectExists(wp.getIdentification())) {
 					wp.setDescription(webProject.getDescription());
 					wp.setMainFile(webProject.getMainFile());
 					updateFolderWebProject(webProject.getIdentification(), userId);
 					this.webProjectRepository.save(wp);
 				} else {
 					throw new WebProjectServiceException(
-							"Web Project with identification:" + webProject.getIdentification() + " already exists");
+							"Web Project with identification:" + webProject.getIdentification() + " not exist");
 				}
 			} else {
 				throw new WebProjectServiceException("The user is not authorized");
@@ -258,14 +258,6 @@ public class WebProjectServiceImpl implements WebProjectService {
 			throw new WebProjectServiceException("Invalid folder name");
 		}
 	}
-
-/*	private void deleteFolder(String path) {
-		File folder = new File(path);
-		if (folder.exists()) {
-			folder.delete();
-		}
-	}
-*/	
 	
 	public static void deleteFolder(String path) {
 		File folder = new File(path);

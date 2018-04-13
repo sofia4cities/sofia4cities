@@ -82,7 +82,10 @@ If you don't want to use a secure connection, you may use standard MQTT protocol
 
 ## Using executable example provided (.jar)
 
-A jar is provided to test this client. You can use it by executing "java -jar java-client.jar" with arguments "brokerURI", and optional "key store path" and "password" .
+A jar is provided to test this client. To use it you need to provide 3 arguments:
+-	Broker URL (Mandatory)
+-	Path to key file ".jks" (Optional for MQTTS)
+- 	Password for key file (Optional for MQTTS)
 
-
-![](./exampleExec.png) 
+A .jks file is provided in the repository : 'clientdevelkeystore.jks', with password 'changeIt!'
+Example: java -jar java-client.jar "ssl://localhost:8883" "S:\examples\java-clients\clientdevelkeystore.jks" "changeIt!"
