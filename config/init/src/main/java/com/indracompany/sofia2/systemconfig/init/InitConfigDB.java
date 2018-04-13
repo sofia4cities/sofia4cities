@@ -1634,6 +1634,27 @@ public class InitConfigDB {
 			marketAsset.setContentId("API NodeRED sofia4cities.zip");
 
 			marketAssetRepository.save(marketAsset);
+			
+			// OAUTH2 Authentication
+			
+			marketAsset = new MarketAsset();
+
+			marketAsset.setId("7");
+			marketAsset.setIdentification("OAuth2AndJWT");
+
+			marketAsset.setUser(getUserAdministrator());
+
+			marketAsset.setPublic(true);
+			marketAsset.setState(MarketAsset.MarketAssetState.APPROVED);
+			marketAsset.setMarketAssetType(MarketAsset.MarketAssetType.DOCUMENT);
+			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
+
+			marketAsset.setJsonDesc(loadFromResources("market/details/Oauth2Authentication.json"));
+			
+			marketAsset.setContent(loadFileFromResources("market/docs/oauth2-authentication.zip"));
+			marketAsset.setContentId("oauth2-authentication.zip");
+
+			marketAssetRepository.save(marketAsset);
 		}
 	}
 

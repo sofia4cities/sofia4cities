@@ -59,7 +59,7 @@
 				<div class="clearfix"></div>
 				<div id="contentShow" th:style="*{contentId!= null AND contentId!= ''} ? 'display:block' : 'display:none'" class="margin-bottom-10">
 					<button type="button" class="btn btn-sm btn-outline grey-mint" name="removeDocBtn" th:onclick="'javascript:downloadContent();'"><i class="fa fa-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.document}"> Download Document</span></button>
-					<button type="button" class="btn btn-sm btn-outline red-sunglo" name="removeDocBtn" onclick="manageContent()"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.document}"> Remove Document</span></button>
+					<button type="button" class="btn btn-sm btn-outline red-sunglo" name="removeDocBtn" onclick="manageContent()"><i class="fa fa-times"></i> <span th:text="#{gen.deleteBtn} + ' ' + #{marketasset.document}"> Remove Document</span></button>
 				</div>
 				<div id="contentForm" th:style="*{contentId== null OR contentId== ''} ? 'display:block' : 'display:none'" class="margin-bottom-10">
 					<input id="content" name="content" class="btn btn-default" type="file" style="width:100%" onchange="loadContentId();"/>
@@ -105,7 +105,7 @@
 				<div class="clearfix"></div>
 				<div id="contentShow" th:style="*{contentId!= null AND contentId!= ''} ? 'display:block' : 'display:none'" class="margin-bottom-10">
 					<button type="button" class="btn btn-sm btn-outline grey-mint" name="removeDocBtn" th:onclick="'javascript:downloadContent();'"><i class="fa fa-download"></i> <span th:text="#{gen.download} + ' ' + #{marketasset.document}"> Download Document</span></button>
-					<button type="button" class="btn btn-sm btn-outline red-sunglo" name="removeDocBtn" onclick="manageContent()"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.document}"> Remove Document</span></button>
+					<button type="button" class="btn btn-sm btn-outline red-sunglo" name="removeDocBtn" onclick="manageContent()"><i class="fa fa-times"></i> <span th:text="#{gen.deleteBtn} + ' ' + #{marketasset.document}"> Remove Document</span></button>
 				</div>
 				<div id="contentForm" th:style="*{contentId== null OR contentId== ''} ? 'display:block' : 'display:none'" class="margin-bottom-10">
 					<input id="content" name="content" class="btn btn-default" type="file" style="width:100%" onchange="loadContentId();"/>
