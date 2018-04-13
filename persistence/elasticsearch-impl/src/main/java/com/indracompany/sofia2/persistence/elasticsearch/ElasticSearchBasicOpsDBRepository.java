@@ -108,7 +108,7 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public long updateNative(String collection, String query, String data) throws DBPersistenceException {
 		collection=collection.toLowerCase();
-		log.info(String.format("ElasticSearchBasicOpsDBRepository :Update Native"));
+		//log.info(String.format("ElasticSearchBasicOpsDBRepository :Update Native"));
 		SearchResponse output=null;
 		try {
 			//output = eSUpdateService.updateByQueryAndFilter(database, collection, data, query);
@@ -127,7 +127,7 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public List<String> queryNative(String ontology, String query) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNative: %s into elasticsearch %s %s", query, ontology));
+		//log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNative: %s into elasticsearch %s %s", query, ontology));
 		return eSDataService.findQueryData(query, ontology);
 	}
 
@@ -135,13 +135,13 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	public List<String> queryNative(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNative: %s into elasticsearch %s %s", query, ontology));
+		//log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNative: %s into elasticsearch %s %s", query, ontology));
 		return eSDataService.findQueryData(query, ontology);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
-		log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNativeAsJson: %s into elasticsearch %s %s", query, ontology));
+		//log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNativeAsJson: %s into elasticsearch %s %s", query, ontology));
 		return queryNative(ontology,query).get(0);
 	}
 
@@ -149,7 +149,7 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNativeAsJson: %s into elasticsearch %s %s", query, ontology));
+		//log.info(String.format("ElasticSearchBasicOpsDBRepository : queryNativeAsJson: %s into elasticsearch %s %s", query, ontology));
 		return queryNative(ontology,query).get(0);
 	}
 
