@@ -1,0 +1,6 @@
+{
+	"title":"API NodeRED",
+	"technologies":"NodeRED,Javascript",
+	"description":"Document that describes the main functionalities of the nodes developed to interact between NodeRED and Sofia4Cities platform",
+	"detailedDescription":"### **API NodeRED**\n\nThe attached document describes a guideline for the API use in NodeRED.\n\nThe nodes are available for download in: [https://www.npmjs.com/package/node-red-contrib-sofia4cities](https://www.npmjs.com/package/node-red-contrib-sofia4cities)\n\nIncluded guides:\n\n- **Ontology:**  Basic guide related Ontology and Devices.\n- **Insert:**  How to create and configure a flow to insert data in the platform.\n- **Query:**  How to retrieve data from the platform.\n- **Update:**  How to update the stored information.\n- **Delete:**  How to create a flow that removes the inserted data.\n- **Subscribe:**  How to create a MQTT subscription query flow."
+}
