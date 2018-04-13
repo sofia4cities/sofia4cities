@@ -23,9 +23,9 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
-import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 public class RouterServiceGenerator {
 
@@ -35,9 +35,9 @@ public class RouterServiceGenerator {
 		final NotificationCompositeModel model = new NotificationCompositeModel();
 		model.setNotificationModel(new NotificationModel());
 		model.getNotificationModel().setOperationModel(OperationModel.builder(
-				Person.class.getSimpleName(), 
-				OperationModel.OperationType.QUERY, 
-				session.getUserID(), 
+				Person.class.getSimpleName(),
+				OperationModel.OperationType.QUERY,
+				session.getUserID(),
 				Source.IOTBROKER)
 				.body(mapper.writeValueAsString(subject))
 				.clientPlatformId(mapper.writeValueAsString(subject))
@@ -58,6 +58,62 @@ public class RouterServiceGenerator {
 		model.setNotificationEntityId(subscriptionId);
 
 		return model;
+
+	}
+
+	public static OperationResultModel generateUpdateDeleteResultOk(int numInstancesModified) {
+		final OperationResultModel value = new OperationResultModel();
+		value.setErrorCode("");
+		value.setMessage("");
+		value.setOperation("");
+		value.setResult("" + numInstancesModified);
+		value.setStatus(true);
+
+		return value;
+	}
+
+	public static OperationResultModel generateUpdateByIdResultOk(String result) {
+		final OperationResultModel value = new OperationResultModel();
+		value.setErrorCode("");
+		value.setMessage("");
+		value.setOperation("");
+		value.setResult(result);
+		value.setStatus(true);
+
+		return value;
+	}
+
+	public static OperationResultModel generateInserOk(String instanceId) {
+		final OperationResultModel value = new OperationResultModel();
+		value.setErrorCode("");
+		value.setMessage("");
+		value.setOperation("");
+		value.setResult("" + instanceId);
+		value.setStatus(true);
+
+		return value;
+	}
+
+	public static OperationResultModel generateQueryOk(String result) {
+		final OperationResultModel value = new OperationResultModel();
+		value.setErrorCode("");
+		value.setMessage("");
+		value.setOperation("");
+		value.setResult(result);
+		value.setStatus(true);
+
+		return value;
+	}
+
+	public static OperationResultModel generateSubscriptionOk(String subscriptionId) {
+		final OperationResultModel value = new OperationResultModel();
+		value.setErrorCode("");
+		value.setMessage("");
+		value.setOperation("");
+		value.setResult(subscriptionId);
+		value.setStatus(true);
+
+		return value;
 
 	}
 

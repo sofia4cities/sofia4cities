@@ -4,9 +4,12 @@ sofia2:
       quasar.connector.http.endpoint: http://quasar:10800/query/fs/ 
    database.elasticsearch:
       sql.connector.http.endpoint: http://elasticdb:9200
-      url: elasticdb            
-   iotbroker.plugbable:
+      url: elasticdb
+      port: 9300            
+   iotbroker.plugable:
      gateway:
+       moquette:
+         enable: true
        rest:
          swaggerhost: ${SERVER_NAME}  
 

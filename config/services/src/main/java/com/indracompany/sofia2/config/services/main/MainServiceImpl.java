@@ -57,6 +57,14 @@ public class MainServiceImpl implements MainService {
 		KpisDTO kpisDTO = null;
 		ArrayList<KpisDTO> kpisDTOList = new ArrayList<KpisDTO>();
 		
+		//KPI Ontologies Number
+		kpisDTO = new KpisDTO();
+		long ontologyNumber = ontologyRepository.count();
+		kpisDTO.setValue(ontologyNumber);
+		kpisDTO.setIdentification("Ontologies");
+		
+		kpisDTOList.add(kpisDTO);
+		
 		//KPI Users Number
 		kpisDTO = new KpisDTO();
 		long usersNumber = userRepository.count();
@@ -64,12 +72,28 @@ public class MainServiceImpl implements MainService {
 		kpisDTO.setIdentification("Users");
 		
 		kpisDTOList.add(kpisDTO);
-
-		//KPI Ontologies Number
+	
+		//KPI Apis Number
 		kpisDTO = new KpisDTO();
-		long ontologyNumber = ontologyRepository.count();
-		kpisDTO.setValue(ontologyNumber);
-		kpisDTO.setIdentification("Ontologies");
+		long apiNumber = apiRepository.count();
+		kpisDTO.setValue(apiNumber);
+		kpisDTO.setIdentification("Apis");
+		
+		kpisDTOList.add(kpisDTO);
+		
+		//KPI Dashboards Number
+		kpisDTO = new KpisDTO();
+		long dashboardNumber = dashboardRepository.count();
+		kpisDTO.setValue(dashboardNumber);
+		kpisDTO.setIdentification("Dashboards");
+		
+		kpisDTOList.add(kpisDTO);
+
+		//KPI Gadgets Number
+		kpisDTO = new KpisDTO();
+		long gadgetNumber = gadgetRepository.count();
+		kpisDTO.setValue(gadgetNumber);
+		kpisDTO.setIdentification("Gadgets");
 		
 		kpisDTOList.add(kpisDTO);
 		
@@ -81,30 +105,7 @@ public class MainServiceImpl implements MainService {
 		
 		kpisDTOList.add(kpisDTO);
 		
-		//KPI Dashboards Number
-		kpisDTO = new KpisDTO();
-		long dashboardNumber = dashboardRepository.count();
-		kpisDTO.setValue(dashboardNumber);
-		kpisDTO.setIdentification("Dashboards");
-		
-		kpisDTOList.add(kpisDTO);
-		
-		//KPI Apis Number
-		kpisDTO = new KpisDTO();
-		long apiNumber = apiRepository.count();
-		kpisDTO.setValue(apiNumber);
-		kpisDTO.setIdentification("Apis");
-		
-		kpisDTOList.add(kpisDTO);
-		
-		//KPI Gadgets Number
-		kpisDTO = new KpisDTO();
-		long gadgetNumber = gadgetRepository.count();
-		kpisDTO.setValue(gadgetNumber);
-		kpisDTO.setIdentification("Gadgets");
-		
-		kpisDTOList.add(kpisDTO);
-
+	
 		return kpisDTOList;
 	}
 
