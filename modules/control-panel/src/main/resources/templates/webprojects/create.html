@@ -87,11 +87,11 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="portlet light bordered">
-							<div class="portlet-title tabbable-line">
+							<div class="portlet-title">
 								<div class="caption">
-									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:if="${webproject?.id} == null" th:text="#{webproject.template.create}"> Create New Web Project </span>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:if="${webproject?.id} != null" th:text="#{webproject.template.update} + ' ' + ${webproject.identification}"> Update Web Project </span>
+									<i class="fa fa-file-code-o font-grey-gallery"></i>
+									<span class="caption-subject font-grey-gallery uppercase" th:if="${webproject?.id} == null" th:text="#{webproject.template.create}"> Create New Web Project </span>
+									<span class="caption-subject font-grey-gallery uppercase" th:if="${webproject?.id} != null" th:text="#{webproject.template.update} + ' ' + ${webproject.identification}"> Update Web Project </span>
 								</div>
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
@@ -129,24 +129,25 @@
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
 																	<label class="" th:text="#{webproject.name} + ':'"> Name </label><span class="required"> (*)</span>
-																	<input th:tabindex="1" id="identification" type="text" th:required="true" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
+																	<input th:if="${webproject?.id} == null" th:tabindex="1" id="identification" type="text" th:required="true" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
+																	<input th:if="${webproject?.id} != null" th:tabindex="1" id="identification" type="text" th:required="true" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}" disabled="disabled"/>
 																</div>
 															</div>
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
-																	<label th:text="#{webproject.description}"> Description </label><span class="required"> (*)</span>
+																	<label th:text="#{webproject.description} + ':'"> Description </label><span class="required"> (*)</span>
 																	<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
 																</div>
 															</div>
-															<div class="col-md-8 col-sm-12 col-xs-12">
+															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
-																	<label th:text="#{webproject.mainFile}"> Main File </label>
+																	<label th:text="#{webproject.mainFile} + ':'"> Main File </label>
 																	<input th:tabindex="1" id="mainFile" type="text" maxlength="100" th:field="*{mainFile}" class="form-control " th:placeholder="index.html"/>														
 																</div>
 															</div>
-															<div class="col-md-4 col-sm-12 col-xs-12">
+															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
-																	<button id="uploadZIP" type="button" class="btn btn-square btn-default" name="uploadZIP"  th:value="#{webproject.uploadZIP}" onclick="$('#buttonLoadRootZip').click();"> <span th:text="#{webproject.uploadZIP}"> Upload ZIP </span></button>															
+																	<button id="uploadZIP" type="button" class="btn btn-square btn-default" name="uploadZIP"  th:value="#{webproject.uploadZIP}" onclick="$('#buttonLoadRootZip').click();"> <i class="fa fa-file-archive-o" style="padding-right:4px;"></i><span th:text="#{webproject.uploadZIP}"> Upload ZIP </span></button>															
 																</div>
 															</div>
 														</div>												

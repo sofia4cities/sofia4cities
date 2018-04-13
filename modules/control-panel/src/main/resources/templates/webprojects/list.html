@@ -142,6 +142,7 @@
 															<th class="titulo-columnas" th:text="#{webproject.identification}">Identification</th>
 															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{webproject.userId}" >Owner</span></th>
 															<th class="titulo-columnas" th:text="#{webproject.description}">Description</th>
+															<th class="titulo-columnas text-center" ><i class="fa fa-link"></i> <span th:text="#{webproject.url}" >URL</span></th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{webproject.createdAt}"> Created At </span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
@@ -154,6 +155,8 @@
 															<td class="text-center " th:text="${webproject.user.userId}"></td>
 															<!-- DESCRIPTION -->
 															<td class="text-left text-truncate-sm" th:title="${webproject.description}" th:text="${webproject.description}"></td>
+															<!-- URL -->
+															<td class="text-center" th:text="${rootWWW} + ${webproject.identification} + '/' + ${webproject.mainFile}"></td>
 															<!-- DATE -->
 															<td class="text-center" th:if="${webproject.createdAt!=null}" th:text="${#dates.format(webproject.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${webproject.createdAt==null}" th:text="${webproject.createdAt}"></td>
@@ -179,9 +182,10 @@
 													<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
 														<label class="toggle-vis" data-column="0" th:text="#{webproject.identification}"> Identification </label>
 														<label class="toggle-vis" data-column="1" th:text="#{webproject.userId}"> Owner </label>
-														<label class="toggle-vis" data-column="2" th:text="#{webproject.description}"> Description</label>
-														<label class="toggle-vis" data-column="3" th:text="#{webproject.createdAt}"> Created At</label>
-														<label class="toggle-vis" data-column="4" th:text="#{gen.options}" > Options</label>															
+														<label class="toggle-vis" data-column="3" th:text="#{webproject.description}"> Description</label>
+														<label class="toggle-vis" data-column="2" th:text="#{webproject.url}"> URL </label>
+														<label class="toggle-vis" data-column="4" th:text="#{webproject.createdAt}"> Created At</label>
+														<label class="toggle-vis" data-column="5" th:text="#{gen.options}" > Options</label>															
 													</div>
 												</div>												
 											</div>

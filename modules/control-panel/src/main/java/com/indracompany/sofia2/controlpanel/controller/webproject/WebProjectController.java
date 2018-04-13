@@ -131,7 +131,7 @@ public class WebProjectController {
 		} catch (WebProjectServiceException e) {
 			log.debug("Cannot update web project");
 			utils.addRedirectMessage("webproject.update.error", redirect);
-			return "redirect:/webprojects/create";
+			return "redirect:/webprojects/update/" + id;
 		}
 		return "redirect:/webprojects/list";
 
