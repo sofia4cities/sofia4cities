@@ -191,7 +191,7 @@ public class MarketAssetController {
 		
 		marketAssetHelper.populateMarketAssetFragment(model, type);
 		
-		return "/marketasset/marketassetfragments :: " + type + "MarketAssetFragment";
+		return "marketasset/marketassetfragments :: " + type + "MarketAssetFragment";
 	}
 	
 	@RequestMapping(value = "/apiversions/{identification}")
@@ -199,7 +199,7 @@ public class MarketAssetController {
 		
 		marketAssetHelper.populateApiVersions(model, identification);
 		
-		return "/marketasset/marketassetfragments :: #versions";
+		return "marketasset/marketassetfragments :: #versions";
 	}
 	
 	
