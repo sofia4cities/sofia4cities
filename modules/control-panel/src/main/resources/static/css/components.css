@@ -22969,3 +22969,5 @@ Custom color buttons
       .mt-content-row .mt-content-col-fixed .mt-content-sidebar {
         margin-left: 0; } 
 }
+/* markdown editor preview mode adjust padding */
+.md-editor > .md-preview { padding: 5px; }
