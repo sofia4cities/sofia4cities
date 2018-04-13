@@ -161,7 +161,7 @@
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + ${rootWWW} + ${webproject.identification} + '/' + ${webproject.mainFile} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:window.open(\'' + ${rootWWW} + ${webproject.identification} + '/' + ${webproject.mainFile} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
 																	<span  th:if="(${#authentication.name} == ${webproject.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/webprojects/update/${webproject.id}|} + '\');'"><i class="fa fa-edit"></i></span>

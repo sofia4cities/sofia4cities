@@ -138,13 +138,13 @@
 																	<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
 																</div>
 															</div>
-															<div class="col-md-12 col-sm-12 col-xs-12">
+															<div class="col-md-8 col-sm-12 col-xs-12">
 																<div class="form-group">
 																	<label th:text="#{webproject.mainFile}"> Main File </label>
 																	<input th:tabindex="1" id="mainFile" type="text" maxlength="100" th:field="*{mainFile}" class="form-control " th:placeholder="index.html"/>														
 																</div>
 															</div>
-															<div class="col-md-12 col-sm-12 col-xs-12">
+															<div class="col-md-4 col-sm-12 col-xs-12">
 																<div class="form-group">
 																	<button id="uploadZIP" type="button" class="btn btn-square btn-default" name="uploadZIP"  th:value="#{webproject.uploadZIP}" onclick="$('#buttonLoadRootZip').click();"> <span th:text="#{webproject.uploadZIP}"> Upload ZIP </span></button>															
 																</div>

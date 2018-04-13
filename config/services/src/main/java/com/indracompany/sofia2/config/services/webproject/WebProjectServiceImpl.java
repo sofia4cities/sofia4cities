@@ -258,14 +258,6 @@ public class WebProjectServiceImpl implements WebProjectService {
 			throw new WebProjectServiceException("Invalid folder name");
 		}
 	}
-
-/*	private void deleteFolder(String path) {
-		File folder = new File(path);
-		if (folder.exists()) {
-			folder.delete();
-		}
-	}
-*/	
 	
 	public static void deleteFolder(String path) {
 		File folder = new File(path);
