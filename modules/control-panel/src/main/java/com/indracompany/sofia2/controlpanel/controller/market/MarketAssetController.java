@@ -84,7 +84,7 @@ public class MarketAssetController {
 		return "marketasset/show";
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_USER')")
 	@GetMapping(value = "/list" , produces = "text/html")
 	public String list(Model model,	@RequestParam(required = false) String marketassetId) {		
 		
@@ -202,9 +202,15 @@ public class MarketAssetController {
 		return "/marketasset/marketassetfragments :: #versions";
 	}
 	
+	
 	@RequestMapping(value = "/apidescription")
 	public @ResponseBody String apidescription(@RequestBody String apiData){
 		return (marketAssetHelper.getApiDescription(apiData));
+	}
+	
+	@RequestMapping(value = "/urlwebproject")
+	public @ResponseBody String urlwebproject(@RequestBody String webProjectData) {
+		return (marketAssetHelper.getUrlWebProjectData(webProjectData));
 	}
 
 	@RequestMapping(value = "/validateId")

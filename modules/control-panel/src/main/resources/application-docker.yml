@@ -5,6 +5,7 @@ sofia2:
    database.elasticsearch:
       sql.connector.http.endpoint: http://elasticdb:9200
       url: elasticdb
+      port: 9300
    urls:
     iotbroker: https://${SERVER_NAME}           
    flowengine.services:

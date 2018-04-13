@@ -18161,17 +18161,6 @@ md-toolbar {
   .hide-print:not(.show-print):not(.show) {
     display: none !important; } }
 
-/* CUSTOM CSS STYLE OVERRIDE FOR ANGULAR-MATERIAL */
-md-toolbar {
-  font-size: 14px;
-  min-height: 50px;
-  width: 100%; 
-  background-color: #212529;
-  -webkit-box-shadow: 0 1px 15px 1px rgba(113,106,202,.3);
-  -moz-box-shadow: 0 1px 15px 1px rgba(113,106,202,.3);
-  box-shadow: 0 1px 15px 1px rgba(113,106,202,.3); 
-}
- 
 /*!
  * angularjs-color-picker v3.4.8
  * https://github.com/ruhley/angular-color-picker/

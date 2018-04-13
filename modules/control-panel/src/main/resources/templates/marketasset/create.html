@@ -167,7 +167,7 @@
 															<label  th:text="#{marketasset.image}">Image</label>
 															<div class="clearfix"></div>
 															<div id="imageShow" th:style="*{imageType} ? 'display:block' : 'display:none'">
-																<button id="removeImgBtn" type="button" class="btn btn-sm btn-outline red-sunglo" name="removeImgBtn" onclick="manageImg()"><i class="fa fa-times"></i> <span th:text="#{gen.remove} + ' ' + #{marketasset.image}"> Delete Image</span></button>
+																<button id="removeImgBtn" type="button" class="btn btn-sm btn-outline red-sunglo" name="removeImgBtn" onclick="manageImg()"><i class="fa fa-times"></i> <span th:text="#{gen.deleteBtn} + ' ' + #{marketasset.image}"> Delete Image</span></button>
 																<img id="showedImg" th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" class="img-responsive thumbnail" style="max-height: 135px; margin: 20px auto;"/>
 																<img id="showedImg" th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" class="img-responsive thumbnail" style="max-height: 135px; margin: 20px auto;"/>
 															</div>
@@ -365,7 +365,9 @@
 			$('#functionality').val(json_desc.functionality);
 		} else if (type=='WEBPROJECT'){
 			$('#functionality').val(json_desc.functionality);
-			$('#id_endpoint').val(json_desc.id_endpoint);
+			$('#id_endpoint_webproject').text(json_desc.id_endpoint_webproject);
+			$('#description_webproject').text(json_desc.description_webproject);
+			$('#webProjectId option:contains("' + json_desc.webProjectId + '")').prop('selected', true);
 		}
 		
 	};
