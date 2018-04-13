@@ -1582,7 +1582,7 @@ public class InitConfigDB {
 			marketAsset.setImage(loadFileFromResources("market/img/jar-file.jpg"));
 			marketAsset.setImageType("jpg");
 			
-			marketAsset.setContent(loadFileFromResources("market/docs/java-client.jar"));
+			marketAsset.setContent(loadFileFromResources("market/docs/java-client.zip"));
 			marketAsset.setContentId("java-client.jar");
 
 			marketAssetRepository.save(marketAsset);
