@@ -129,14 +129,14 @@
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
 																	<label class="" th:text="#{webproject.name} + ':'"> Name </label><span class="required"> (*)</span>
-																	<input th:if="${webproject?.id} == null" th:tabindex="1" id="identification" type="text" th:required="true" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
-																	<input th:if="${webproject?.id} != null" th:tabindex="1" id="identification" type="text" th:required="true" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}" disabled="disabled"/>
+																	<input th:if="${webproject?.id} == null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
+																	<input th:if="${webproject?.id} != null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}" disabled="disabled"/>
 																</div>
 															</div>
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
 																	<label th:text="#{webproject.description} + ':'"> Description </label><span class="required"> (*)</span>
-																	<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
+																	<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" cols="" rows=""></textarea>
 																</div>
 															</div>
 															<div class="col-md-12 col-sm-12 col-xs-12">
