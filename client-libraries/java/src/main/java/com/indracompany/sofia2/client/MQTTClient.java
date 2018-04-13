@@ -111,10 +111,11 @@ public class MQTTClient {
 			// Connect client MQTT
 			this.client = new MqttClient(brokerURI, clientPlatform, persistence);
 			// Unsecure connection
-			if (this.sslConfig == null)
+			if (this.sslConfig == null) {
+				log.info("Connecting to broker MQTT without secure connection");
 				this.client.connect();
-			else {
-
+			} else {
+				log.info("Connecting to broker MQTT with SSL");
 				MqttConnectOptions options = new MqttConnectOptions();
 				options.setSocketFactory(this.sslConfig.configureSSLSocketFactory());
 				this.client.connect(options);
@@ -126,7 +127,7 @@ public class MQTTClient {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					final String response = new String(message.getPayload());
-					log.debug("Message arrived " + response);
+					// log.debug("Message arrived " + response);
 					completableFutureMessage.complete(response);
 					completableFutureMessage = new CompletableFuture<>();
 				}
@@ -216,7 +217,7 @@ public class MQTTClient {
 
 			final MqttMessage message = new MqttMessage(subscriptionStr.getBytes());
 			client.publish(topic, message);
-
+			log.info("Subscribed to query " + query);
 			// GET SUBS RESPONSE
 			String subsResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> response = SSAPJsonParser.getInstance().deserialize(subsResponse);
@@ -228,7 +229,7 @@ public class MQTTClient {
 			this.client.subscribe(topic_subscription + "/" + this.sessionKey, new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
-					log.info("Subs message available");
+					log.info("Subscription message available");
 					final String response = new String(message.getPayload());
 					delegateMessageFromSubscription(response);
 
