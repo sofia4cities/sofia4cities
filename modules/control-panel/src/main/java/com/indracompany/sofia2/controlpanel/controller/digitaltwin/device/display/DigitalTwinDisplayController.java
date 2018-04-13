@@ -119,7 +119,9 @@ public class DigitalTwinDisplayController {
 							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.PIPELINE.name())
 							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.FLOW.name())
 							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.RULE.name())
-							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name())) {
+							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.CUSTOM.name())
+							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.REGISTER.name())
+							|| operation.equalsIgnoreCase(DigitalTwinModel.EventType.PING.name())) {
 
 						collection = EVENTS_COLLECTION;
 					}
