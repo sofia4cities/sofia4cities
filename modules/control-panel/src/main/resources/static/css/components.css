@@ -13796,15 +13796,17 @@ Custimized Bootstrap Wells
     overflow: hidden; }
     .widget-thumb .widget-thumb-wrap .widget-thumb-icon {
 	float: left;
-	width: 60px;
-	height: 60px;
+	width: 50px;
+	height: 50px;
 	display: inline-block;
 	font-size: 30px;
-	line-height: 30px;
+	line-height: 15px;
 	color: #fff;
 	text-align: center;
-	padding: 15px;
-	margin-right: 8px; border-radius: 6px; }
+	padding: 10px;
+	margin-right: 6px;
+	border-radius: 6px;  
+	}
   .widget-thumb .widget-thumb-body {
     overflow: hidden; }
     .widget-thumb .widget-thumb-body .widget-thumb-subtitle {
