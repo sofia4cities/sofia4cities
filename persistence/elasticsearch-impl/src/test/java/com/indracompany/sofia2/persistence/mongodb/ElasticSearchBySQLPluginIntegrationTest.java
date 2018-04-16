@@ -75,8 +75,13 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	@After
 	public  void tearDown() {
 		System.out.println("teardown process...");
-        deleteTestIndex(TEST_INDEX_ACCOUNT);
-        //connector.getClient().close();
+		try {
+			 deleteTestIndex(TEST_INDEX_ACCOUNT);
+		        //connector.getClient().close();
+		} catch (Exception e) {
+			log.error("Something happens when deleting indexes :"+e.getMessage());
+		}
+       
 	}
 	
 	

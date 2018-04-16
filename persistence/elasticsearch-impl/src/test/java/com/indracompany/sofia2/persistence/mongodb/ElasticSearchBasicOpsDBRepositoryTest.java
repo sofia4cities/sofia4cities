@@ -68,7 +68,6 @@ public class ElasticSearchBasicOpsDBRepositoryTest {
             "}";
 	
 	private String SQL_TEST = "select * from ";
-	//private String SQL_TEST = "select * from "+database+"/"+TEST_INDEX_ONLINE;
 	
 	
 	private String queryNative = "{\r\n" + 
@@ -213,7 +212,7 @@ public class ElasticSearchBasicOpsDBRepositoryTest {
 			log.info("query native :"+output);
 			log.info("testSearchQuery END ");
 			
-			
+			Assert.assertTrue(output!=null);
 		} catch (Exception e) {
 			Assert.fail("testInsertCountDelete failure. " + e);
 		}

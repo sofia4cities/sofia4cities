@@ -121,8 +121,8 @@ public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHt
 		try {
 			 res =  ElasticSearchUtil.parseElastiSearchResult(result);
 		} catch (JSONException e) {
-			log.error("Error Parsing ES Result", e);
-			throw new DBPersistenceException("Error Parsing ES Result", e);
+			log.error("Error Parsing ES Result", e.getMessage());
+			return result;
 		}
 		
 		return res;
@@ -142,8 +142,8 @@ public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHt
 		try {
 			 res =  ElasticSearchUtil.parseElastiSearchResult(result);
 		} catch (JSONException e) {
-			log.error("Error Parsing ES Result", e);
-			throw new DBPersistenceException("Error Parsing ES Result", e);
+			log.error("Error Parsing ES Result", e.getMessage());
+			return result;
 		}
 		
 		return res;
