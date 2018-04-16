@@ -86,9 +86,13 @@
 								</div>
 								<div class="actions margin-right-20">
 									<div class="btn-group">									
-										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>
+										<!--  cambio inicio -->
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../datamodels/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>
+										<!--  fin cambio -->									
 									</div>										
-								</div>								
+								</div>	
+															
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
