@@ -98,7 +98,7 @@
                         row += '<th>' + $.fn.humanize(key) + '</th>';
                     }
                 } else if (thead === false) {
-                	if(typeof response =='object'){
+                	if(typeof value =='object'){
                 		//JSONObject
                 		 row += '<td>' + JSON.stringify(value) + '</td>';
                 	}else{
