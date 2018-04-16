@@ -241,9 +241,8 @@ public class MarketAssetController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/updateState/{id}/{state}")
-	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, @RequestBody String reasonData){
-		marketAssetService.updateState(id, state, reasonData);
-		return "redirect:/marketasset/list";
+	public @ResponseBody String updateState(@PathVariable("id") String id, @PathVariable("state") String state, @RequestBody String reasonData){
+		return (marketAssetService.updateState(id, state, reasonData));
 	}
 	
 }
