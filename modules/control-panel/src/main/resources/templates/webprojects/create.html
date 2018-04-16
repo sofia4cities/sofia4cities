@@ -130,7 +130,7 @@
 																<div class="form-group">
 																	<label class="" th:text="#{webproject.name} + ':'"> Name </label><span class="required"> (*)</span>
 																	<input th:if="${webproject?.id} == null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
-																	<input th:if="${webproject?.id} != null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}" disabled="disabled"/>
+																	<input th:if="${webproject?.id} != null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}" readonly="readonly"/>																
 																</div>
 															</div>
 															<div class="col-md-12 col-sm-12 col-xs-12">
@@ -166,7 +166,7 @@
 															<button th:if="${webproject?.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'javascript:WebProjectCreateController.go(\'' + @{/webprojects/delete/} + ${webproject.id} + '\');'"><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 															
 															<!-- RESET -->
-															<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+															<button th:if="${webproject?.id} == null" id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
 															
 															<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 															

@@ -372,7 +372,7 @@ var MarketAssetCreateController = function() {
 		
 		// VALIDATE IDENTIFICATION
 		validateIdentification: function() {
-			logControl ? console.log(LIB_TITLE + ': validateImgSize()') : '';
+			logControl ? console.log(LIB_TITLE + ': validateId()') : '';
 			validateId();
 		},
 
