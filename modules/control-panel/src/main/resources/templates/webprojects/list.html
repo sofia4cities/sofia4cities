@@ -86,7 +86,7 @@
 								<div class="actions margin-right-20">
 									<div class="btn-group">									
 										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
-										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../webprojects/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../webprojects/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>									
 									</div>										
 								</div>								
 							</div>
@@ -142,6 +142,7 @@
 															<th class="titulo-columnas" th:text="#{webproject.identification}">Identification</th>
 															<th class="titulo-columnas text-center" ><i class="la la-user"></i> <span th:text="#{webproject.userId}" >Owner</span></th>
 															<th class="titulo-columnas" th:text="#{webproject.description}">Description</th>
+															<th class="titulo-columnas text-center" ><i class="fa fa-link"></i> <span th:text="#{webproject.url}" >URL</span></th>
 															<th class="titulo-columnas text-center" ><i class="la la-calendar"></i> <span th:text="#{webproject.createdAt}"> Created At </span></th>
 															<th class="titulo-columnas" dt:sortable="false"><i class="la la-wrench"></i> <span th:text="#{gen.options}"> Options</span></th>
 														</tr>
@@ -154,6 +155,8 @@
 															<td class="text-center " th:text="${webproject.user.userId}"></td>
 															<!-- DESCRIPTION -->
 															<td class="text-left text-truncate-sm" th:title="${webproject.description}" th:text="${webproject.description}"></td>
+															<!-- URL -->
+															<td class="text-center" th:text="${rootWWW} + ${webproject.identification} + '/' + ${webproject.mainFile}"></td>
 															<!-- DATE -->
 															<td class="text-center" th:if="${webproject.createdAt!=null}" th:text="${#dates.format(webproject.createdAt,'dd/MM/YYYY')}"></td>
 															<td class="text-center" th:if="${webproject.createdAt==null}" th:text="${webproject.createdAt}"></td>
@@ -161,7 +164,7 @@
 															<td class="icon" style="white-space: nowrap">
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
-																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + ${rootWWW} + ${webproject.identification} + '/' + ${webproject.mainFile} + '\');'"><i class="fa fa-eye"></i></span>
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:window.open(\'' + ${rootWWW} + ${webproject.identification} + '/' + ${webproject.mainFile} + '\');'"><i class="fa fa-eye"></i></span>
 																																																			
 																	<!-- EDIT -->
 																	<span  th:if="(${#authentication.name} == ${webproject.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR')" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/webprojects/update/${webproject.id}|} + '\');'"><i class="fa fa-edit"></i></span>
@@ -179,9 +182,10 @@
 													<div id="column_toggler" data-container="body" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
 														<label class="toggle-vis" data-column="0" th:text="#{webproject.identification}"> Identification </label>
 														<label class="toggle-vis" data-column="1" th:text="#{webproject.userId}"> Owner </label>
-														<label class="toggle-vis" data-column="2" th:text="#{webproject.description}"> Description</label>
-														<label class="toggle-vis" data-column="3" th:text="#{webproject.createdAt}"> Created At</label>
-														<label class="toggle-vis" data-column="4" th:text="#{gen.options}" > Options</label>															
+														<label class="toggle-vis" data-column="3" th:text="#{webproject.description}"> Description</label>
+														<label class="toggle-vis" data-column="2" th:text="#{webproject.url}"> URL </label>
+														<label class="toggle-vis" data-column="4" th:text="#{webproject.createdAt}"> Created At</label>
+														<label class="toggle-vis" data-column="5" th:text="#{gen.options}" > Options</label>															
 													</div>
 												</div>												
 											</div>

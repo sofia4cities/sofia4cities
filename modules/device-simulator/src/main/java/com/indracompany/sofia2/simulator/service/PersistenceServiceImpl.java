@@ -84,7 +84,13 @@ public class PersistenceServiceImpl implements PersistenceService {
 			if (sessionKey != null)
 				this.sessionKeys.put(clientPlatform, sessionKey);
 		} catch (Exception e) {
-			log.error("IoT broker down");
+			// log.error("IoT broker down");
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e1) {
+
+			}
+
 		}
 
 	}

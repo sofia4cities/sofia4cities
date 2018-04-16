@@ -31,30 +31,36 @@ public class ClientsApplication {
 	public static void main(String[] args) throws InterruptedException, IOException, UnrecoverableKeyException,
 			KeyManagementException, KeyStoreException, NoSuchAlgorithmException, CertificateException {
 
-		String url = "ssl://localhost:8883";
-		String keyStorePath = "S:\\sofia2-s4c\\modules\\iotbroker\\sofia2-iotbroker-boot\\src\\main\\resources\\clientdevelkeystore.jks";
-		String keyStorePassword = "changeIt!";
+		String url = "";
+		String keyStorePath = "";
+		String keyStorePassword = "";
+		MQTTSecureConfiguration sslConfig = null;
+		MQTTClient clientSecure;
 
 		if (args.length == 3) {
 			url = args[0];
 			keyStorePath = args[1];
 			keyStorePassword = args[2];
+			sslConfig = new MQTTSecureConfiguration(keyStorePath, keyStorePassword);
 
 		} else if (args.length == 1) {
 			url = args[0];
 		}
 
-		MQTTSecureConfiguration sslConfig = new MQTTSecureConfiguration(keyStorePath, keyStorePassword);
-		MQTTClient clientSecure = new MQTTClient(url, sslConfig);
+		if (sslConfig != null) {
+			clientSecure = new MQTTClient(url, sslConfig);
+		} else {
+			clientSecure = new MQTTClient(url);
+		}
 
 		int timeout = 50;
-		String token = "e7ef0742d09d4de5a3687f0cfdf7f626";
+		String token = "1c7954dd4c7c47e0916e8ea64e3c9967";
 		String clientPlatform = "Ticketing App";
 		String clientPlatformInstance = clientPlatform + ":MQTT";
 		String ontology = "HelsinkiPopulation";
 		clientSecure.connect(token, clientPlatform, clientPlatformInstance, timeout);
 
-		String jsonData = "{ \"Helsinki\":{\"year\":1993, \"population\" : 3500, \"population_women\":1500, \"population_men\":2000}}";
+		String jsonData = "{\"year\":1993, \"population\" : 3500, \"population_women\":1500, \"population_men\":2000}";
 
 		clientSecure.publish(ontology, jsonData, timeout);
 
@@ -63,7 +69,7 @@ public class ClientsApplication {
 
 					@Override
 					public void onMessageArrived(String message) {
-						System.out.println(message);
+						// System.out.println(message);
 
 					}
 

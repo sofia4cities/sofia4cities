@@ -13,19 +13,10 @@
  */
 package com.indracompany.sofia2.systemconfig.init;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,56 +25,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.indracompany.sofia2.config.model.ActionsDigitalTwinType;
-import com.indracompany.sofia2.config.model.ClientConnection;
-import com.indracompany.sofia2.config.model.ClientPlatform;
-import com.indracompany.sofia2.config.model.ClientPlatformOntology;
-import com.indracompany.sofia2.config.model.Configuration;
-import com.indracompany.sofia2.config.model.ConsoleMenu;
-import com.indracompany.sofia2.config.model.Dashboard;
-import com.indracompany.sofia2.config.model.DataModel;
-import com.indracompany.sofia2.config.model.DigitalTwinDevice;
-import com.indracompany.sofia2.config.model.DigitalTwinType;
-import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
-import com.indracompany.sofia2.config.model.EventsDigitalTwinType.Type;
-import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
-import com.indracompany.sofia2.config.model.FlowDomain;
 import com.indracompany.sofia2.config.model.Gadget;
 import com.indracompany.sofia2.config.model.GadgetDatasource;
-import com.indracompany.sofia2.config.model.GadgetMeasure;
-import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
-import com.indracompany.sofia2.config.model.MarketAsset;
 import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.config.model.OntologyCategory;
-import com.indracompany.sofia2.config.model.OntologyUserAccessType;
-import com.indracompany.sofia2.config.model.PropertyDigitalTwinType;
-import com.indracompany.sofia2.config.model.PropertyDigitalTwinType.Direction;
+import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.model.UserToken;
-import com.indracompany.sofia2.config.repository.ClientConnectionRepository;
-import com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository;
-import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
-import com.indracompany.sofia2.config.repository.ConfigurationRepository;
-import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
-import com.indracompany.sofia2.config.repository.DashboardRepository;
-import com.indracompany.sofia2.config.repository.DataModelRepository;
-import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
-import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
-import com.indracompany.sofia2.config.repository.FlowDomainRepository;
-import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
-import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
-import com.indracompany.sofia2.config.repository.GadgetRepository;
-import com.indracompany.sofia2.config.repository.MarketAssetRepository;
-import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
-import com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository;
 import com.indracompany.sofia2.config.repository.RoleRepository;
-import com.indracompany.sofia2.config.repository.TokenRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
-import com.indracompany.sofia2.config.repository.UserTokenRepository;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.utils.ServiceUtils;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
@@ -113,32 +64,29 @@ public class InitElasticSearchDB {
 	private static GadgetDatasource gadgetDatasourceAdministrator = null;
 	private static Gadget gadgetAdministrator = null;
 
-
 	@Autowired
 	private QueryToolService queryTool;
-		
+
 	@Autowired
 	private BasicOpsPersistenceServiceFacade basicOpsFacade;
-	
+
 	@Autowired
 	private ManageDBPersistenceServiceFacade manageFacade;
-	
 
 	@Autowired
 	private OntologyService ontologyService;
-	
+
 	@Autowired
 	private OntologyRepository ontologyRepository;
-	
+
 	@Autowired
 	private UserRepository userCDBRepository;
-	
+
 	@Autowired
 	private ESBaseApi connector;
-	
+
 	@Autowired
 	RoleRepository roleRepository;
-	
 
 	@PostConstruct
 	@Test
@@ -153,17 +101,15 @@ public class InitElasticSearchDB {
 			init_User();
 			log.info("OK init_UserCDB");
 
-
 			initAuditOntology();
 			log.info("OK init_AuditOntology");
 
 			//
-		
 
 		}
 
 	}
-	
+
 	private User getUserDeveloper() {
 		if (userCollaborator == null)
 			userCollaborator = this.userCDBRepository.findByUserId("developer");
@@ -205,7 +151,7 @@ public class InitElasticSearchDB {
 			userOperation = this.userCDBRepository.findByUserId("operations");
 		return userOperation;
 	}
-	
+
 	public void init_RoleUser() {
 		log.info("init init_RoleUser");
 		List<Role> types = this.roleRepository.findAll();
@@ -276,7 +222,7 @@ public class InitElasticSearchDB {
 
 		}
 	}
-	
+
 	public void init_User() {
 		log.info("init UserCDB");
 		List<User> types = this.userCDBRepository.findAll();
@@ -360,7 +306,7 @@ public class InitElasticSearchDB {
 			}
 		}
 	}
-	
+
 	public void createPostOperationsUser(User user) {
 
 		String collectionAuditName = ServiceUtils.getAuditCollectionName(user.getUserId());
@@ -408,15 +354,11 @@ public class InitElasticSearchDB {
 
 	}
 
-
-	
-
 	public void initAuditOntology() {
 		log.info("adding audit ontologies...");
 
 		createPostOperationsUser(getUserAdministrator());
 		createPostOntologyUser(getUserAdministrator());
-		
 
 		createPostOperationsUser(getUserDeveloper());
 		createPostOntologyUser(getUserDeveloper());

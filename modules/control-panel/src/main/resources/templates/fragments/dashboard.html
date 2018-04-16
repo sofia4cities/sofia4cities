@@ -37,8 +37,8 @@
 								<div class="widget-thumb-wrap">
 									<i class="widget-thumb-icon bg-green-turquoise flaticon-network"></i>
 									<div class="widget-thumb-body">
-										<span class="widget-thumb-subtitle">ONTOLOGIAS</span>
-										<span class="widget-thumb-body-stat" data-counter="counterup" th:text="${kpis[0].value}"></span>
+										<span class="widget-thumb-subtitle" th:text="#{kpis.ontology}">ONTOLOGIES</span>
+										<span class="widget-thumb-body-stat"  th:attr="data-value=${kpis[0].value},data-counter='counterup'">0</span>
 									</div>
 								</div>
 							</div>
@@ -51,8 +51,8 @@
 								<div class="widget-thumb-wrap">
 									<i class="widget-thumb-icon bg-red-sunglo flaticon-users"></i>
 									<div class="widget-thumb-body">
-										<span class="widget-thumb-subtitle">USUARIOS</span>
-										<span class="widget-thumb-body-stat" data-counter="counterup" th:text="${kpis[1].value}"></span>
+										<span class="widget-thumb-subtitle" th:text="#{kpis.users}">USERS</span>
+										<span class="widget-thumb-body-stat" th:attr="data-value=${kpis[1].value},data-counter='counterup'">0</span>
 									</div>
 								</div>
 							</div>
@@ -65,8 +65,8 @@
 								<div class="widget-thumb-wrap">
 									<i class="widget-thumb-icon bg-purple-plum flaticon-multimedia"></i>
 									<div class="widget-thumb-body">
-										<span class="widget-thumb-subtitle">APIs</span>
-										<span class="widget-thumb-body-stat" data-counter="counterup" th:text="${kpis[2].value}"></span>
+										<span class="widget-thumb-subtitle" th:text="#{kpis.apis}">APIs</span>
+										<span class="widget-thumb-body-stat"  th:attr="data-value=${kpis[2].value},data-counter='counterup'">0</span>
 									</div>
 								</div>
 							</div>
@@ -79,8 +79,8 @@
 								<div class="widget-thumb-wrap">
 									<i class="widget-thumb-icon bg-blue-sharp flaticon-graph"></i>
 									<div class="widget-thumb-body">
-										<span class="widget-thumb-subtitle">DASHBOARDS</span>
-										<span class="widget-thumb-body-stat" data-counter="counterup" th:text="${kpis[3].value}"></span>
+										<span class="widget-thumb-subtitle" th:text="#{kpis.dashboards}">DASHBOARDS</span>
+										<span class="widget-thumb-body-stat"  th:attr="data-value=${kpis[3].value},data-counter='counterup'">0</span>
 									</div>
 								</div>
 							</div>
@@ -93,8 +93,8 @@
 								<div class="widget-thumb-wrap">
 									<i class="widget-thumb-icon bg-blue-hoki flaticon-app "></i>
 									<div class="widget-thumb-body">
-										<span class="widget-thumb-subtitle">GADGETS</span>
-										<span class="widget-thumb-body-stat" data-counter="counterup" th:text="${kpis[4].value}"></span>
+										<span class="widget-thumb-subtitle" th:text="#{kpis.gadgets}">GADGETS</span>
+										<span class="widget-thumb-body-stat" th:attr="data-value=${kpis[4].value},data-counter='counterup'">0</span>
 									</div>
 								</div>
 							</div>
@@ -107,8 +107,8 @@
 								<div class="widget-thumb-wrap">
 									<i class="widget-thumb-icon bg-yellow-casablanca flaticon-truck "></i>
 									<div class="widget-thumb-body">
-										<span class="widget-thumb-subtitle">DISPOSITIVOS</span>
-										<span class="widget-thumb-body-stat" data-counter="counterup" th:text="${kpis[5].value}"></span>
+										<span class="widget-thumb-subtitle" th:text="#{kpis.devices}">DEVICES</span>
+										<span class="widget-thumb-body-stat"  th:attr="data-value=${kpis[5].value},data-counter='counterup'">0</span>
 									</div>
 								</div>
 							</div>

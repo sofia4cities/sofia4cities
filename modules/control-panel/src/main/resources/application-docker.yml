@@ -14,7 +14,7 @@ sofia2:
     proxyurl: https://${SERVER_NAME}/nodered/    
    webproject:
       rootfolder.path: /usr/local/webprojects/
-      baseurl: http://${SERVER_NAME}/web/               
+      baseurl: https://${SERVER_NAME}/web/               
 
 spring:
    datasource:  
