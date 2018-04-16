@@ -145,68 +145,136 @@ echo "#  |_____/ \___/ \___|_|\_\___|_|                                         
 echo "#                                                                                        #"
 echo "# Sofia2 Docker Image generation                                                         #"
 echo "# arg1 (opt) --> -1 if only want to create images for modules layer (skip persistence)   #"
-echo "# arg2 (opt) --> string represents the name of module to deploy image                    #"
+echo "#            --> string represents the name of module to deploy image                    #"
 echo "#                                                                                        #"
 echo "##########################################################################################"
 
 homepath=$PWD
 
-# Generates images only if they are not present in local docker registry
-if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
+if [ -z "$1" ]; then
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/control-panel/
+		buildImage "Control Panel"
+	fi	
+	
+	if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
+		buildImage "IoT Broker"
+	fi
+	
+	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../../modules/api-manager/	
+		buildImage "API Manager"
+	fi
+	
+	if [[ "$(docker images -q sofia2/digitaltwin 2> /dev/null)" == "" ]]; then	
+		cd $homepath/../../modules/digitaltwin-broker/	
+		buildImage "Digital Twin"
+	fi
+	
+	if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/dashboard-engine/
+		buildImage "Dashboard Engine"
+	fi
+	
+	if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/device-simulator/
+		buildImage "Device Simulator"
+	fi	
+	
+	if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../modules/monitoring-ui/
+		buildImage "Monitoring UI"
+	fi	
+	
+	if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
+			prepareNodeRED		
+	
+		cd $homepath/../../modules/flow-engine/
+		buildImage "Flow Engine"
+		
+		removeNodeRED
+	fi
+	
+	if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/nginx
+		buildNginx latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../config/init/
+		buildImage "Config Init"
+	fi	
+	
+	echo "Pushing all images to Docker registry"
+	pushAllImages2Registry latest
+
+fi
+
+if [[ "$1" == "controlpanel" ]]; then
 	cd $homepath/../../modules/control-panel/
 	buildImage "Control Panel"
-fi	
+	pushImage2Registry controlpanel latest 
+fi
 
-if [[ "$(docker images -q sofia2/iotbroker 2> /dev/null)" == "" ]]; then
+if [[ "$1" == "iotbroker" ]]; then
 	cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
 	buildImage "IoT Broker"
+	pushImage2Registry iotbroker latest 
 fi
 
-if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
+if [[ "$1" == "apimanager" ]]; then
 	cd $homepath/../../modules/api-manager/	
 	buildImage "API Manager"
+	pushImage2Registry apimanager latest 
 fi
 
-if [[ "$(docker images -q sofia2/digitaltwin 2> /dev/null)" == "" ]]; then	
+if [[ "$1" == "digitaltwin" ]]; then
 	cd $homepath/../../modules/digitaltwin-broker/	
 	buildImage "Digital Twin"
+	pushImage2Registry digitaltwin latest 
 fi
 
-if [[ "$(docker images -q sofia2/dashboard 2> /dev/null)" == "" ]]; then
+if [[ "$1" == "dashboard" ]]; then
 	cd $homepath/../../modules/dashboard-engine/
 	buildImage "Dashboard Engine"
+	pushImage2Registry dashboard latest 
 fi
 
-if [[ "$(docker images -q sofia2/devicesimulator 2> /dev/null)" == "" ]]; then
+if [[ "$1" == "devicesimulator" ]]; then
 	cd $homepath/../../modules/device-simulator/
 	buildImage "Device Simulator"
-fi	
+	pushImage2Registry devicesimulator latest 
+fi
 
-if [[ "$(docker images -q sofia2/monitoringui 2> /dev/null)" == "" ]]; then
+if [[ "$1" == "monitoringui" ]]; then
 	cd $homepath/../../modules/monitoring-ui/
 	buildImage "Monitoring UI"
-fi	
+	pushImage2Registry monitoringui latest 
+fi
 
-if [[ "$(docker images -q sofia2/flowengine 2> /dev/null)" == "" ]]; then		
-		prepareNodeRED		
-
+if [[ "$1" == "flowengine" ]]; then
+	prepareNodeRED		
+	
 	cd $homepath/../../modules/flow-engine/
 	buildImage "Flow Engine"
+	pushImage2Registry flowengine latest 
 	
 	removeNodeRED
 fi
 
-if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
+if [[ "$1" == "nginx" ]]; then
 	cd $homepath/../dockerfiles/nginx
 	buildNginx latest
 fi
 
-if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+if [[ "$1" == "configinit" ]]; then
 	cd $homepath/../../config/init/
 	buildImage "Config Init"
-fi	
+fi
 
-if [ -z "$1" ]; then
+if [ "$1" == -1 ]; then
 	echo "++++++++++++++++++++ Persistence layer generation..."
 	
 	# Generates images only if they are not present in local docker registry
@@ -235,9 +303,6 @@ if [ -z "$1" ]; then
 		buildQuasar latest
 	fi
 fi
-
-echo "Pushing all images to Docker registry"
-pushAllImages2Registry latest
 
 echo "Docker images successfully generated and pushed to local registry!"
 
