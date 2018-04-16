@@ -198,7 +198,7 @@
 															<h4 class="media-heading">
 																<b><a href="#" th:text="${comment.user.userId}"></a></b>
 																<span class="c-date" th:text="${comment.createdAt}">23 May 2015, 10:40AM</span>
-																<span th:if="((${#authentication.name} == ${comment.user.userId}) OR (${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="btn btn-xs btn-outline red-sunglo" data-container="body" th:title="#{proyectos_listado_button_eliminar}" th:data-original-title="#{proyectos_listado_button_eliminar}" th:onclick="'javascript:navigateUrl(\'' +@{/marketasset/deletecomment/__${marketasset.id}__/__${comment.id}__} + '\');'" ><i class="fa fa-trash font-md" style="top: 0px;"></i></span>
+																<span th:if="((${#authentication.name} == ${comment.user.userId}) OR (${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="btn btn-xs btn-outline red-sunglo" data-container="body" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:navigateUrl(\'' +@{/marketasset/deletecomment/__${marketasset.id}__/__${comment.id}__} + '\');'" ><i class="fa fa-trash font-md" style="top: 0px;"></i></span>
 															</h4>
 															<b><span th:text="${comment.title}"></span></b>
 															
