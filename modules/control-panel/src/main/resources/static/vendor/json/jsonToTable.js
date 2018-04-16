@@ -98,7 +98,12 @@
                         row += '<th>' + $.fn.humanize(key) + '</th>';
                     }
                 } else if (thead === false) {
-                    row += '<td>' + value + '</td>';
+                	if(typeof response =='object'){
+                		//JSONObject
+                		 row += '<td>' + JSON.stringify(value) + '</td>';
+                	}else{
+                		 row += '<td>' + value + '</td>';
+                	}
                 }
             });
             if (thead === false) row += '</tr>';
