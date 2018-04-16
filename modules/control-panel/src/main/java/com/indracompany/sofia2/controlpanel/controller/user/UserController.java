@@ -92,7 +92,11 @@ public class UserController {
 
 	@PutMapping(value = "/update/{id}")
 	public String update(@PathVariable("id") String id, @Valid User user, BindingResult bindingResult,
-			RedirectAttributes redirect) {
+			RedirectAttributes redirect, HttpServletRequest request) {
+
+		String newPass = request.getParameter("newpasswordbox");
+		String repeatPass = request.getParameter("repeatpasswordbox");
+		
 		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
 			return "redirect:/users/update/";
@@ -105,6 +109,15 @@ public class UserController {
 			user.setRole(this.userService.getUserRole(this.utils.getRole()));
 
 		try {
+			if ((!newPass.isEmpty()) && (!repeatPass.isEmpty())) {
+				if (newPass.equals(repeatPass)) {
+					user.setPassword(newPass);
+					this.userService.updatePassword(user);
+				} else {
+					utils.addRedirectMessage("user.update.error.password", redirect);
+					return "redirect:/users/show/" + user.getUserId();
+				}
+			}
 			this.userService.updateUser(user);
 		} catch (UserServiceException e) {
 			log.debug("Cannot update user");
