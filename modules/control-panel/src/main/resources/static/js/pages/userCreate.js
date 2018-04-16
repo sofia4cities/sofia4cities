@@ -130,7 +130,7 @@ var UserCreateController = function() {
 			},
 			// validation rules
             rules: {
-				userId:				{ minlength: 5, required: true },
+				userId:				{ minlength: 4, required: true },
                 fullName:			{ minlength: 5, required: true },
                 email:				{ required: true, email: true },
                 newpasswordbox:		{ required: true, minlength: 7, maxlength: 20 },

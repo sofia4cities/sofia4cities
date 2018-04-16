@@ -150,7 +150,7 @@
 																	<label th:text="#{user.id} + ':'">Identification</label>
 																	<div class="input-icon ">
 																		<i class="fa fa-credit-card"></i>
-																		<input id="userId" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"  th:readonly="*{userId}" th:classappend="${user.userId} ? no-remove : ''"  />
+																		<input id="userId" type="text" name="userId" th:required="true" minlength="4" maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"  th:readonly="*{userId}" th:classappend="${user.userId} ? no-remove : ''"  />
 																		<input id="password" type="hidden"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
 																		
 																	</div>															
@@ -337,9 +337,10 @@
 		"errorpasswordmsg" : [[#{user.update.error.password}]],
 		"succespasswordmsg" : [[#{user.update.success.password}]]
 	};
-	</script>					
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
+	</script>					
+	
 	<script type='text/javascript'> 
 		$(document).ready(function() {
 			$(".tab-pane").hide();
