@@ -11,13 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.mongodb;
+package com.indracompany.sofia2.persistence.elasticsearch;
 
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -35,9 +36,10 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
+@Ignore
 public class ElasticSearchBasicApiTest {
 	
-	 public final static String TEST_INDEX = "elasticsearch-test_index";
+	public final static String TEST_INDEX = "test"+System.currentTimeMillis();
 	 public final static String TEST_INDEX_GAME_OF_THRONES = TEST_INDEX + "_game_of_thrones";
 	 public final static String TEST_INDEX_ONLINE = TEST_INDEX + "_online";
 
@@ -126,7 +128,7 @@ public class ElasticSearchBasicApiTest {
 			
 			Assert.assertTrue(response.hasFailures()==false);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
+			Assert.fail("No connection. " + e);
 		}
 	}
 

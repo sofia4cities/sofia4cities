@@ -40,4 +40,6 @@ public interface WebProjectService {
 
 	void deleteWebProject(WebProject webProject, String userId);
 
+	boolean webProjectExists(String identification);
+
 }

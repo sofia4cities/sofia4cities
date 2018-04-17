@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.mongodb;
+package com.indracompany.sofia2.persistence.elasticsearch;
 
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -19,6 +19,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -41,11 +42,10 @@ import lombok.extern.slf4j.Slf4j;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
 // @ContextConfiguration(classes = EmbeddedMongoConfiguration.class)
-// @Ignore
+@Ignore
 public class ElasticSearchBySQLPluginIntegrationTest {
 
     public final static String TEST_INDEX_ACCOUNT = "account";
-
 	
 	@Autowired
 	ElasticSearchSQLDbHttpConnector httpConnector;
@@ -91,7 +91,7 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	}
 	
 	private  boolean prepareAccountsIndex() {
-		String dataMapping = "{  \"account\": {" +
+		String dataMapping = "{  \""+TEST_INDEX_ACCOUNT+"\": {" +
 				" \"properties\": {\n" +
 				"          \"gender\": {\n" +
 				"            \"type\": \"text\",\n" +
@@ -108,43 +108,43 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 				"       }"+
 				"   }" +
 				"}";
-		boolean response =  connector.createType(TEST_INDEX_ACCOUNT, "account", dataMapping);
+		boolean response =  connector.createType(TEST_INDEX_ACCOUNT, TEST_INDEX_ACCOUNT, dataMapping);
 		return response;
 	}
 	
 	@Test
 	public void given_MongoDbAndQuasar_When_AnSQLQueryIsExecuted_Then_MongoDb_ReturnsTheResult() {
 		try {
-			String query = "select * from account";
+			String query = "select * from "+TEST_INDEX_ACCOUNT;
 			String result = httpConnector.queryAsJson(query, 100);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
+			Assert.fail("No connection with ES. " + e);
 		}
 	}
 
 	@Test
 	public void testQueryAsTable() {
 		try {
-			String query = "select * from account";
+			String query = "select * from "+TEST_INDEX_ACCOUNT;
 			String result = httpConnector.queryAsJson(query, 0, 100);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
+			Assert.fail("No connection with ES. " + e);
 		}
 	}
 	
 	@Test
 	public void testQueryAsTableScroll() {
 		try {
-			String query = "select * from account";
+			String query = "select * from "+TEST_INDEX_ACCOUNT;
 			String result = httpConnector.queryAsJson(query, 10, 20);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
+			Assert.fail("No connection with ES. " + e);
 		}
 	}
 
