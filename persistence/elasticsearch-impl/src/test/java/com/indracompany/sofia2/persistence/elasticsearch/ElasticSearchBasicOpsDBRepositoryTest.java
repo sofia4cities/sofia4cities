@@ -19,6 +19,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -26,9 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchBasicOpsDBRepository;
-import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchManageDBRepository;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
+@Ignore
 public class ElasticSearchBasicOpsDBRepositoryTest {
 	
 	public final static String TEST_INDEX = "test"+System.currentTimeMillis();

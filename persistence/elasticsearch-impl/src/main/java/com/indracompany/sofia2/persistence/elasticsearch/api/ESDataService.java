@@ -80,7 +80,7 @@ public class ESDataService {
     public List<String> findQueryData(String jsonQueryString, String... indexes) {
         log.info("getPhraseQueryCount query =>" + jsonQueryString.toString());
         WrapperQueryBuilder build = QueryBuilders.wrapperQuery(jsonQueryString);
-        SearchHit[] hits = connector.getClient().prepareSearch(indexes).setQuery(build).execute().actionGet().getHits().getHits();
+        SearchHit[] hits = connector.getClient().prepareSearch().setIndices(indexes).setTypes(indexes).setQuery(build).execute().actionGet().getHits().getHits();
         List<String> list = new ArrayList<String>();
         for (SearchHit hit : hits) {
             // hit.sourceAsMap()
