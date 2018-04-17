@@ -21,17 +21,17 @@ public class OSDetector {
 	private static String OS = System.getProperty("os.name").toLowerCase();
 
 	public static void main(String[] args) {
-		System.out.println(OS);
+		log.debug(OS);
 		if (isWindows()) {
-			System.out.println("This is Windows");
+			log.debug("This is Windows");
 		} else if (isMac()) {
-			System.out.println("This is Mac");
+			log.debug("This is Mac");
 		} else if (isUnix()) {
-			System.out.println("This is Unix or Linux");
+			log.debug("This is Unix or Linux");
 		} else if (isSolaris()) {
-			System.out.println("This is Solaris");
+			log.debug("This is Solaris");
 		} else {
-			System.out.println("Your OS is not support!!");
+			log.debug("Your OS is not support!!");
 		}
 	}
 
@@ -44,7 +44,7 @@ public class OSDetector {
 	}
 
 	public static boolean isUnix() {
-		return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") > 0);
+		return (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0);
 	}
 
 	public static boolean isSolaris() {

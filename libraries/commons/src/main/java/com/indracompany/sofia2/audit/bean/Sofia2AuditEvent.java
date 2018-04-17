@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.audit.bean;
+
 import java.io.Serializable;
 import java.util.Map;
 
@@ -21,21 +22,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 public class Sofia2AuditEvent implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static enum EventType {
+	public enum EventType {
 		USER, SECURITY, ERROR, DATA, GENERAL, IOTBROKER, APIMANAGER;
 	}
 
-	public static enum Module {
+	public enum Module {
 		CONTROLPANEL, APIMANAGER, IOTBROKER, FLOWENGINE, ROUTER
 	}
 
-	public static enum OperationType {
+	public enum OperationType {
 		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE, UPDATE_BY_ID, DELETE, DELETE_BY_ID, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND
 	}
 
@@ -117,7 +119,7 @@ public class Sofia2AuditEvent implements Serializable {
 		try {
 			return new ObjectMapper().writeValueAsString(this);
 		} catch (JsonProcessingException e) {
-			//log.error("Error parsing audit event ", e);
+			log.error("Error parsing audit event ", e);
 		}
 
 		return json;
