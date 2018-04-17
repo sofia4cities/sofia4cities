@@ -37,6 +37,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.commons.testing.IntegrationTest;
+
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
@@ -80,8 +82,8 @@ public class InsertProcessorTest {
 
 	@MockBean
 	DeviceManager deviceManager;
-	//	@MockBean
-	//	OntologyRepository ontologyRepository;
+	// @MockBean
+	// OntologyRepository ontologyRepository;
 	@MockBean
 	RouterService routerService;
 	@MockBean
@@ -90,18 +92,22 @@ public class InsertProcessorTest {
 	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
 	private void auditMocks() {
-		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
-		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
-		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+		// doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(),
+		// any(), any());
+		// doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
+		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER,
+				10l, "formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType",
+				"remoteAddress", ResultOperationType.SUCCESS, "sessionKey", new GatewayInfo(), "query", "data",
+				"clientPlatform", "clientPlatformInstance");
 		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
 	}
 
 	@Before
 	public void setUp() throws IOException, Exception {
 		auditMocks();
-		//		mockOntologies.createOntology(Person.class);
+		// mockOntologies.createOntology(Person.class);
 
 		when(deviceManager.registerActivity(any(), any(), any(), any())).thenReturn(true);
 		subject = PojoGenerator.generatePerson();
@@ -110,7 +116,7 @@ public class InsertProcessorTest {
 
 	@After
 	public void tearDown() {
-		//		mockOntologies.deleteOntology(Person.class);
+		// mockOntologies.deleteOntology(Person.class);
 	}
 
 	@Test
@@ -119,7 +125,8 @@ public class InsertProcessorTest {
 		// Scenario: SessionKey is an Empty String
 		{
 			ssapInsertOperation.setSessionKey("");
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation,
+					PojoGenerator.generateGatewayInfo());
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -129,7 +136,8 @@ public class InsertProcessorTest {
 		// Scenario: SessionKey is null
 		{
 			ssapInsertOperation.setSessionKey(null);
-			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
+			final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation,
+					PojoGenerator.generateGatewayInfo());
 
 			Assert.assertNotNull(responseMessage);
 			Assert.assertNotNull(responseMessage.getBody());
@@ -139,13 +147,14 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void given_OneInsertProcessor_When_AnInvalidSessionIsUsed_Then_TheResponseIndicatesAuthorizationError () throws AuthorizationException {
+	public void given_OneInsertProcessor_When_AnInvalidSessionIsUsed_Then_TheResponseIndicatesAuthorizationError()
+			throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 
 		when(securityPluginManager.checkSessionKeyActive(any())).thenReturn(false);
 
-
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -154,12 +163,14 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void given_OneInsertProcessor_When_AnUnauthorizedOperationIsPerformed_Then_TheResponseIndicatesAnAuthorizationError () throws AuthorizationException {
+	public void given_OneInsertProcessor_When_AnUnauthorizedOperationIsPerformed_Then_TheResponseIndicatesAnAuthorizationError()
+			throws AuthorizationException {
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 
-		when(securityPluginManager.checkAuthorization(any(),anyString(),anyString())).thenReturn(false);
+		when(securityPluginManager.checkAuthorization(any(), anyString(), anyString())).thenReturn(false);
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -168,7 +179,8 @@ public class InsertProcessorTest {
 	}
 
 	@Test
-	public void given_OneInsertProcessor_When_AnAuthorizedOperationWithCorrectSessionIsPerformed_Then_TheResponseIndicatesTheDataIsInserted() throws IOException, Exception {
+	public void given_OneInsertProcessor_When_AnAuthorizedOperationWithCorrectSessionIsPerformed_Then_TheResponseIndicatesTheDataIsInserted()
+			throws IOException, Exception {
 
 		ssapInsertOperation.setSessionKey(UUID.randomUUID().toString());
 		final IoTSession session = PojoGenerator.generateSession();
@@ -178,21 +190,22 @@ public class InsertProcessorTest {
 
 		when(securityPluginManager.getSession(anyString())).thenReturn(Optional.of(session));
 		when(securityPluginManager.checkAuthorization(any(), any(), any())).thenReturn(true);
-		//		when(ontologyRepository.findByIdentification(anyString())).thenReturn(ontology);
+		// when(ontologyRepository.findByIdentification(anyString())).thenReturn(ontology);
 
 		final String oid = UUID.randomUUID().toString();
-		final OperationResultModel value = RouterServiceGenerator.generateInserOk(oid );
+		final OperationResultModel value = RouterServiceGenerator.generateInserOk(oid);
 		when(routerService.insert(any())).thenReturn(value);
 
-
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = insertProcessor.process(ssapInsertOperation,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
 		final JsonNode data = responseMessage.getBody().getData();
 		final String strOid = data.at("/id").asText();
 
-		//		final String created = repository.findById(Person.class.getSimpleName(), strOid);
+		// final String created = repository.findById(Person.class.getSimpleName(),
+		// strOid);
 
 		Assert.assertEquals(oid, strOid);
 

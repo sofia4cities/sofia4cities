@@ -14,15 +14,6 @@
  */
 package com.indracompany.sofia2.controlpanel.security;
 
-import org.springframework.stereotype.Component;
-
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
-import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
-import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
-import com.indracompany.sofia2.audit.notify.EventRouter;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -33,34 +24,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
+import org.springframework.stereotype.Component;
+
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
+import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
+import com.indracompany.sofia2.audit.notify.EventRouter;
 
 @Component
 public class SofiaLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
-	
+
 	@Autowired
 	EventRouter eventRouter;
 
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException {
-		
+
 		super.onLogoutSuccess(request, response, authentication);
-		
-		String user = (String)authentication.getPrincipal();
-		
-    	Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY, "Logout Success for user: " + user);
-    	
-    	s2event.setUser(user);
-    	s2event.setOperationType(OperationType.LOGOUT.name());
-    	s2event.setOtherType("LogoutEventSuccess");
-    	
+
+		String user = (String) authentication.getPrincipal();
+
+		Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY,
+				"Logout Success for user: " + user);
+
+		s2event.setUser(user);
+		s2event.setOperationType(OperationType.LOGOUT.name());
+		s2event.setOtherType("LogoutEventSuccess");
+		s2event.setResultOperation(ResultOperationType.SUCCESS);
 		if (authentication.getDetails() != null) {
-			WebAuthenticationDetails details2 = (WebAuthenticationDetails) authentication.getDetails();	
-			//s2event.setRemoteAddress(details2.getRemoteAddress());
-			//s2event.setSessionId(details2.getSessionId());	
+			WebAuthenticationDetails details2 = (WebAuthenticationDetails) authentication.getDetails();
+			// s2event.setRemoteAddress(details2.getRemoteAddress());
+			// s2event.setSessionId(details2.getSessionId());
 		}
 		s2event.setModule(Module.CONTROLPANEL);
 		eventRouter.notify(s2event.toJson());
-		
+
 	}
 }

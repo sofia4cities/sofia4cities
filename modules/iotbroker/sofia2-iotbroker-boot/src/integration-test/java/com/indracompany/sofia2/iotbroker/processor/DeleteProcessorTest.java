@@ -37,7 +37,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+
 import com.indracompany.sofia2.commons.testing.IntegrationTest;
+
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
@@ -83,17 +86,19 @@ public class DeleteProcessorTest {
 	@MockBean
 	DeviceManager deviceManager;
 
-
 	@MockBean
 	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
-
 	private void auditMocks() {
-		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
-		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
-		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+		// doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(),
+		// any(), any());
+		// doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
+		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER,
+				10l, "formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType",
+				"remoteAddress", ResultOperationType.SUCCESS, "sessionKey", new GatewayInfo(), "query", "data",
+				"clientPlatform", "clientPlatformInstance");
 		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
 
 	}
@@ -109,14 +114,17 @@ public class DeleteProcessorTest {
 
 	@Before
 	public void setUp() throws IOException, Exception {
-		//		mockOntologies.createOntology(Person.class);
+		// mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
-		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
-		//		subjectId = objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();
+		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(),
+				objectMapper.writeValueAsString(subject));
+		// subjectId =
+		// objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();
 		subjectId = subjectInsertResult;
 		ssapDeletetOperation = SSAPMessageGenerator.generateDeleteMessage(Person.class.getSimpleName(), "");
-		ssapDeleteByIdtOperation = SSAPMessageGenerator.generateDeleteByIdMessage(Person.class.getSimpleName(), subjectId);
+		ssapDeleteByIdtOperation = SSAPMessageGenerator.generateDeleteByIdMessage(Person.class.getSimpleName(),
+				subjectId);
 
 		securityMocks();
 		auditMocks();
@@ -124,11 +132,12 @@ public class DeleteProcessorTest {
 
 	@After
 	public void tearDown() {
-		//		mockOntologies.deleteOntology(Person.class);
+		// mockOntologies.deleteOntology(Person.class);
 	}
 
 	@Test
-	public void given_OneDeleteProcessor_When_ItProcessesOneValidDeleteById_Then_TheResponseIndicatesTheOperationWasPerformed() throws Exception {
+	public void given_OneDeleteProcessor_When_ItProcessesOneValidDeleteById_Then_TheResponseIndicatesTheOperationWasPerformed()
+			throws Exception {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
@@ -146,7 +155,8 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void given_OneDeleteProcessor_When_ItProccessesOneInvalidId_Then_TheResponseIndicatesTheOperationWasNotPerformed() throws Exception {
+	public void given_OneDeleteProcessor_When_ItProccessesOneInvalidId_Then_TheResponseIndicatesTheOperationWasNotPerformed()
+			throws Exception {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 
@@ -165,7 +175,8 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void given_OneDeleteProcessor_When_ItProccessesOneValidNativeQuery_TheResponseIndicatesTheOperationWasPerformed() throws Exception {
+	public void given_OneDeleteProcessor_When_ItProccessesOneValidNativeQuery_TheResponseIndicatesTheOperationWasPerformed()
+			throws Exception {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remove({})");
@@ -184,7 +195,8 @@ public class DeleteProcessorTest {
 	}
 
 	@Test
-	public void given_OneDeleteProcessor_When_OneNativeQueryIsPerformedAndNoOccurrencesExist_Then_TheResponseIndicatesThatNoDeletionWasPerformed() throws Exception {
+	public void given_OneDeleteProcessor_When_OneNativeQueryIsPerformedAndNoOccurrencesExist_Then_TheResponseIndicatesThatNoDeletionWasPerformed()
+			throws Exception {
 
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage = new SSAPMessage<>();
 		ssapDeletetOperation.getBody().setQuery("db.Person.remove({\"name\":\"NO_OCURRENCE_NAME\"})");
@@ -202,7 +214,7 @@ public class DeleteProcessorTest {
 
 	}
 
-	//TODO: Driver has to detect malformed queries
+	// TODO: Driver has to detect malformed queries
 	@Ignore
 	@Test
 	public void given_OneDeleteProcessor_When_OneMalFormedQueryIsProccesed_Then_TheResponseIndicatesThatNotDeletionWasPerformed() {
@@ -215,11 +227,10 @@ public class DeleteProcessorTest {
 		Assert.assertNotNull(responseMessage.getBody());
 		Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.ERROR));
 		Assert.assertFalse(responseMessage.getBody().isOk());
-		//		Assert.assertNotNull(responseMessage.getBody().getData());
-		//		Assert.assertEquals(0, responseMessage.getBody().getData().at("/nDeleted").asInt());
+		// Assert.assertNotNull(responseMessage.getBody().getData());
+		// Assert.assertEquals(0,
+		// responseMessage.getBody().getData().at("/nDeleted").asInt());
 
 	}
-
-
 
 }

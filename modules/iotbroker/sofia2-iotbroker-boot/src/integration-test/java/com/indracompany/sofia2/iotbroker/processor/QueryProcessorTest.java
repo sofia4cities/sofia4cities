@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.commons.testing.IntegrationTest;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
@@ -75,14 +76,13 @@ public class QueryProcessorTest {
 	@MockBean
 	OntologyService ontologyService;
 
-	//	@Autowired
-	//	MockMongoOntologies mockOntologies;
+	// @Autowired
+	// MockMongoOntologies mockOntologies;
 
 	@MockBean
 	RouterService routerService;
 	@MockBean
 	RouterSuscriptionService routerSuscriptionService;
-
 
 	Person subject = PojoGenerator.generatePerson();
 	String subjectId;
@@ -95,15 +95,17 @@ public class QueryProcessorTest {
 	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
 	private void auditMocks() {
-		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
-		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
-		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+		// doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(),
+		// any(), any());
+		// doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
+		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER,
+				10l, "formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType",
+				"remoteAddress", ResultOperationType.SUCCESS, "sessionKey", new GatewayInfo(), "query", "data",
+				"clientPlatform", "clientPlatformInstance");
 		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
 	}
-
-
 
 	private void securityMocks() {
 		final IoTSession session = PojoGenerator.generateSession();
@@ -120,10 +122,11 @@ public class QueryProcessorTest {
 	@Before
 	public void setUp() throws IOException, Exception {
 
-		//		mockOntologies.createOntology(Person.class);
+		// mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
-		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
+		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(),
+				objectMapper.writeValueAsString(subject));
 		subjectId = subjectInsertResult;
 		ssapQuery = SSAPMessageGenerator.generateQueryMessage(Person.class.getSimpleName(), SSAPQueryType.NATIVE, "");
 
@@ -133,28 +136,26 @@ public class QueryProcessorTest {
 
 	@After
 	public void tearDown() {
-		//		mockOntologies.deleteOntology(Person.class);
+		// mockOntologies.deleteOntology(Person.class);
 	}
 
 	@Test
-	public void given_OneQueryProcessor_When_ACorrectNativeQueryIsUsed_Then_TheResponseReturnsTheResults() throws Exception {
+	public void given_OneQueryProcessor_When_ACorrectNativeQueryIsUsed_Then_TheResponseReturnsTheResults()
+			throws Exception {
 		ssapQuery.getBody().setQuery("db.Person.find({})");
 		SSAPMessage<SSAPBodyReturnMessage> responseMessage;
 
-		final OperationResultModel value = RouterServiceGenerator.generateInserOk("[{},{}]" );
+		final OperationResultModel value = RouterServiceGenerator.generateInserOk("[{},{}]");
 		when(routerService.query(any())).thenReturn(value);
 		responseMessage = queryProcessor.process(ssapQuery, PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
-		//Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.RESPONSE));
+		// Assert.assertTrue(responseMessage.getDirection().equals(SSAPMessageDirection.RESPONSE));
 		Assert.assertNotNull(responseMessage.getBody().getData());
 		Assert.assertTrue(responseMessage.getBody().getData().isArray());
 		final ArrayNode array = (ArrayNode) responseMessage.getBody().getData();
 		Assert.assertTrue(array.size() > 0);
-
-
-
 
 	}
 }

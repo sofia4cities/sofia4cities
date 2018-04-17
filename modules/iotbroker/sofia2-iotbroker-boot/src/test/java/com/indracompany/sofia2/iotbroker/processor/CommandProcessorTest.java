@@ -43,6 +43,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
@@ -61,7 +62,7 @@ public class CommandProcessorTest {
 	@Autowired
 	private WebApplicationContext wac;
 	private ResultActions resultAction;
-	private final String URL_COMMAND_PATH  = "/commandAsync";
+	private final String URL_COMMAND_PATH = "/commandAsync";
 	@Autowired
 	ObjectMapper mapper;
 
@@ -84,15 +85,17 @@ public class CommandProcessorTest {
 	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
 	private void auditMocks() {
-		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
-		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
-		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+		// doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(),
+		// any(), any());
+		// doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
+		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER,
+				10l, "formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType",
+				"remoteAddress", ResultOperationType.SUCCESS, "sessionKey", new GatewayInfo(), "query", "data",
+				"clientPlatform", "clientPlatformInstance");
 		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
 	}
-
-
 
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
@@ -106,7 +109,7 @@ public class CommandProcessorTest {
 	@Before
 	public void setUp() throws IOException, Exception {
 		completableFutureCommand = new CompletableFuture<>();
-		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
+		// repositoy.deleteByOntologyName(Person.class.getSimpleName());
 		securityMocks();
 		auditMocks();
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
@@ -124,20 +127,19 @@ public class CommandProcessorTest {
 		});
 
 		final StringBuilder url = new StringBuilder(URL_COMMAND_PATH);
-		url.append("/test_command/?sessionKey="+session.getSessionKey());
+		url.append("/test_command/?sessionKey=" + session.getSessionKey());
 
-		resultAction = mockMvc.perform(MockMvcRequestBuilders.post(url.toString())
-				.accept(org.springframework.http.MediaType.APPLICATION_JSON)
-				.content("{}")
-				.contentType(org.springframework.http.MediaType.APPLICATION_JSON));
+		resultAction = mockMvc.perform(
+				MockMvcRequestBuilders.post(url.toString()).accept(org.springframework.http.MediaType.APPLICATION_JSON)
+						.content("{}").contentType(org.springframework.http.MediaType.APPLICATION_JSON));
 
 		resultAction.andExpect(status().is2xxSuccessful());
-		//		final Boolean result = mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
-		//				Boolean.class);
+		// final Boolean result =
+		// mapper.readValue(resultAction.andReturn().getResponse().getContentAsString(),
+		// Boolean.class);
 
 		final SSAPMessage<SSAPBodyCommandMessage> response = completableFutureCommand.get(10, TimeUnit.SECONDS);
 		Assert.assertNotNull(response);
 	}
-
 
 }

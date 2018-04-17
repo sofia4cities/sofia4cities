@@ -41,10 +41,10 @@ public class Sofia2AuditError extends Sofia2AuditEvent {
 
 	public Sofia2AuditError(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
 			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
-			String otherType) {
+			String otherType, ResultOperationType resultOperation) {
 
 		super(message, id, type, timeStamp, formatedTimeStamp, user, ontology, operationType, module, extraData,
-				otherType);
+				otherType, resultOperation);
 
 	}
 

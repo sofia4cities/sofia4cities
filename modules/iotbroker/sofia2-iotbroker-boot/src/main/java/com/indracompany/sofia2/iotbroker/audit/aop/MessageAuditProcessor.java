@@ -11,29 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.iotbroker.audit.listener;
+package com.indracompany.sofia2.iotbroker.audit.aop;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+import java.util.List;
 
-import com.indracompany.sofia2.audit.notify.EventRouter;
 import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
+import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
-import lombok.extern.slf4j.Slf4j;
+public interface MessageAuditProcessor {
 
-@Component
-@Slf4j
-public class IotBrokerAuditEventListener {
+	IotBrokerAuditEvent process(SSAPMessage<? extends SSAPBodyMessage> message, IoTSession session, GatewayInfo info);
 
-	@Autowired
-	private EventRouter eventRouter;
+	List<SSAPMessageTypes> getMessageTypes();
 
-	@EventListener
-	@Async
-	public void handleSofia2AuditErrorEvent(IotBrokerAuditEvent event) {
-		log.info("iotbroker audit event: " + event.toString());
-		eventRouter.notify(event.toJson());
-	}
 }
