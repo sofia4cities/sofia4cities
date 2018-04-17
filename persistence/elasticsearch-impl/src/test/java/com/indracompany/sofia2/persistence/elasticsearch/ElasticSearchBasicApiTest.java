@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.mongodb;
+package com.indracompany.sofia2.persistence.elasticsearch;
 
 import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ElasticSearchBasicApiTest {
 	
-	 public final static String TEST_INDEX = "elasticsearch-test_index";
+	public final static String TEST_INDEX = "test"+System.currentTimeMillis();
 	 public final static String TEST_INDEX_GAME_OF_THRONES = TEST_INDEX + "_game_of_thrones";
 	 public final static String TEST_INDEX_ONLINE = TEST_INDEX + "_online";
 
