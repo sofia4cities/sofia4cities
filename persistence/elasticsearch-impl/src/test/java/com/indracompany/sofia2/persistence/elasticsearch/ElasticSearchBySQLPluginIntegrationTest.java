@@ -45,7 +45,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ElasticSearchBySQLPluginIntegrationTest {
 
     public final static String TEST_INDEX_ACCOUNT = "account";
-
 	
 	@Autowired
 	ElasticSearchSQLDbHttpConnector httpConnector;
@@ -91,7 +90,7 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	}
 	
 	private  boolean prepareAccountsIndex() {
-		String dataMapping = "{  \"account\": {" +
+		String dataMapping = "{  \""+TEST_INDEX_ACCOUNT+"\": {" +
 				" \"properties\": {\n" +
 				"          \"gender\": {\n" +
 				"            \"type\": \"text\",\n" +
@@ -108,43 +107,43 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 				"       }"+
 				"   }" +
 				"}";
-		boolean response =  connector.createType(TEST_INDEX_ACCOUNT, "account", dataMapping);
+		boolean response =  connector.createType(TEST_INDEX_ACCOUNT, TEST_INDEX_ACCOUNT, dataMapping);
 		return response;
 	}
 	
 	@Test
 	public void given_MongoDbAndQuasar_When_AnSQLQueryIsExecuted_Then_MongoDb_ReturnsTheResult() {
 		try {
-			String query = "select * from account";
+			String query = "select * from "+TEST_INDEX_ACCOUNT;
 			String result = httpConnector.queryAsJson(query, 100);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
+			Assert.fail("No connection with ES. " + e);
 		}
 	}
 
 	@Test
 	public void testQueryAsTable() {
 		try {
-			String query = "select * from account";
+			String query = "select * from "+TEST_INDEX_ACCOUNT;
 			String result = httpConnector.queryAsJson(query, 0, 100);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
+			Assert.fail("No connection with ES. " + e);
 		}
 	}
 	
 	@Test
 	public void testQueryAsTableScroll() {
 		try {
-			String query = "select * from account";
+			String query = "select * from "+TEST_INDEX_ACCOUNT;
 			String result = httpConnector.queryAsJson(query, 10, 20);
 			log.info("Returned:" + result);
 			Assert.assertTrue(result.length() > 0);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
+			Assert.fail("No connection with ES. " + e);
 		}
 	}
 

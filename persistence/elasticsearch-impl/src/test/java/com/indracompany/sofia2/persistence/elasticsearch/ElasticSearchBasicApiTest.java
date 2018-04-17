@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ElasticSearchBasicApiTest {
 	
-	 public final static String TEST_INDEX = "elasticsearch-test_index";
+	public final static String TEST_INDEX = "test"+System.currentTimeMillis();
 	 public final static String TEST_INDEX_GAME_OF_THRONES = TEST_INDEX + "_game_of_thrones";
 	 public final static String TEST_INDEX_ONLINE = TEST_INDEX + "_online";
 
