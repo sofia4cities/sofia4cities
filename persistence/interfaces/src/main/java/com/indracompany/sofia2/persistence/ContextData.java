@@ -35,44 +35,53 @@ public class ContextData implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Getter private String clientPatform;
-	@Getter private String clientPatformInstance;
-	@Getter	private String clientConnection;
-	@Getter private String clientSession;
-	@Getter	final private String user;
-	@Getter final private String timezoneId;
-	@Getter final private String timestamp;
+	@Getter
+	private String clientPatform;
+	@Getter
+	private String clientPatformInstance;
+	@Getter
+	private String clientConnection;
+	@Getter
+	private String clientSession;
+	@Getter
+	final private String user;
+	@Getter
+	final private String timezoneId;
+	@Getter
+	final private String timestamp;
+	@Getter
+	final private long timestampMillis;
 
 	public ContextData(JsonNode node) {
-			
+
 		JsonNode clientPlatform = node.findValue("clientPatform");
 		if (clientPlatform != null) {
 			this.clientPatform = clientPlatform.asText();
 		} else {
 			this.clientPatform = "";
 		}
-		
+
 		JsonNode clientPatformInstance = node.findValue("clientPatformInstance");
 		if (clientPatformInstance != null) {
 			this.clientPatformInstance = clientPatformInstance.asText();
 		} else {
 			this.clientPatformInstance = "";
 		}
-		
+
 		JsonNode clientConnection = node.findValue("clientConnection");
 		if (clientConnection != null) {
 			this.clientConnection = clientConnection.asText();
 		} else {
 			this.clientConnection = "";
 		}
-		
+
 		JsonNode clientSession = node.findValue("clientSession");
 		if (clientSession != null) {
 			this.clientSession = clientSession.asText();
 		} else {
 			this.clientSession = "";
 		}
-			
+
 		JsonNode user = node.findValue("user");
 		if (user != null) {
 			this.user = user.asText();
@@ -93,6 +102,12 @@ public class ContextData implements Serializable {
 		} else {
 			this.timestamp = Calendar.getInstance(TimeZone.getTimeZone(this.timezoneId)).getTime().toString();
 		}
+		JsonNode timestampMillis = node.findValue("timestampMillis");
+		if (timestampMillis != null) {
+			this.timestampMillis = timestampMillis.asLong();
+		} else {
+			this.timestampMillis = System.currentTimeMillis();
+		}
 	}
 
 	public ContextData(ContextData other) {
@@ -103,6 +118,7 @@ public class ContextData implements Serializable {
 		this.clientSession = other.clientSession;
 		this.timezoneId = other.timezoneId;
 		this.timestamp = other.timestamp;
+		this.timestampMillis = other.timestampMillis;
 	}
 
 	@Override
@@ -117,7 +133,8 @@ public class ContextData implements Serializable {
 				&& Objects.equals(this.clientPatform, that.clientPatform)
 				&& Objects.equals(this.clientConnection, that.clientConnection)
 				&& Objects.equals(this.clientSession, that.clientSession)
-				&& Objects.equals(this.timezoneId, that.timezoneId) && Objects.equals(this.timestamp, that.timestamp);
+				&& Objects.equals(this.timezoneId, that.timezoneId) && Objects.equals(this.timestamp, that.timestamp)
+				&& Objects.equals(this.timestampMillis, that.timestampMillis);
 	}
 
 	@Override
@@ -125,7 +142,7 @@ public class ContextData implements Serializable {
 		return Objects.hash(user, clientPatform, clientPatformInstance, clientConnection, clientSession, timezoneId,
 				timestamp);
 	}
-	
+
 	private ContextData(Builder build) {
 		this.user = build.user;
 		this.timezoneId = build.timezoneId;
@@ -134,11 +151,12 @@ public class ContextData implements Serializable {
 		this.clientPatform = build.clientPatform;
 		this.clientPatformInstance = build.clientPatformInstance;
 		this.clientSession = build.clientSession;
+		this.timestampMillis = build.timestampMillis;
 	}
-	
-	public static Builder builder(String user, String timezoneId, String timestamp) {
-        return new Builder(user, timezoneId, timestamp);
-    }
+
+	public static Builder builder(String user, String timezoneId, String timestamp, long timestampMillis) {
+		return new Builder(user, timezoneId, timestamp, timestampMillis);
+	}
 
 	public static class Builder {
 		private String clientPatform;
@@ -148,11 +166,13 @@ public class ContextData implements Serializable {
 		private String user;
 		private String timezoneId;
 		private String timestamp;
-		
-		public Builder(String user, String timezoneId, String timestamp) {
+		private long timestampMillis;
+
+		public Builder(String user, String timezoneId, String timestamp, long timestampMillis) {
 			this.user = user;
 			this.timezoneId = timezoneId;
 			this.timestamp = timestamp;
+			this.timestampMillis = timestampMillis;
 		}
 
 		public ContextData build() {

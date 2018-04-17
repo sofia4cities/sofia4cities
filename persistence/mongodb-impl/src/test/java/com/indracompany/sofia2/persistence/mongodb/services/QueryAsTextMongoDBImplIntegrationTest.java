@@ -62,35 +62,28 @@ public class QueryAsTextMongoDBImplIntegrationTest {
 		if (!connect.collectionExists(DATABASE, ONT_NAME))
 			connect.createCollection(DATABASE, ONT_NAME);
 		// 1º
-		ContextData data = ContextData.builder("user", 
-				UUID.randomUUID().toString(), 
-				UUID.randomUUID().toString())
-				.clientConnection(UUID.randomUUID().toString())
-				.clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString())
-				.clientSession(UUID.randomUUID().toString())
+		ContextData data = ContextData
+				.builder("user", UUID.randomUUID().toString(), UUID.randomUUID().toString(), System.currentTimeMillis())
+				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 				.build();
 		ObjectMapper mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 		// 2º
-		data = ContextData.builder("admin", 
-				UUID.randomUUID().toString(), 
-				UUID.randomUUID().toString())
-				.clientConnection(UUID.randomUUID().toString())
-				.clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString())
-				.clientSession(UUID.randomUUID().toString())
+		data = ContextData
+				.builder("admin", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+						System.currentTimeMillis())
+				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 				.build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 		// 3º
-		data = ContextData.builder("other", 
-				UUID.randomUUID().toString(), 
-				UUID.randomUUID().toString())
-				.clientConnection(UUID.randomUUID().toString())
-				.clientPatform(UUID.randomUUID().toString())
-				.clientPatformInstance(UUID.randomUUID().toString())
-				.clientSession(UUID.randomUUID().toString())
+		data = ContextData
+				.builder("other", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+						System.currentTimeMillis())
+				.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+				.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 				.build();
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
