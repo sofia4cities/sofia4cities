@@ -126,7 +126,7 @@ public class ElasticSearchBasicApiTest {
 			
 			Assert.assertTrue(response.hasFailures()==false);
 		} catch (Exception e) {
-			Assert.fail("No connection with MongoDB by Quasar. " + e);
+			Assert.fail("No connection. " + e);
 		}
 	}
 
