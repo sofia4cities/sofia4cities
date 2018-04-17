@@ -13,6 +13,9 @@
  */
 package com.indracompany.sofia2.commons;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class OSDetector {
 
 	private static String OS = System.getProperty("os.name").toLowerCase();

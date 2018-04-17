@@ -14,7 +14,6 @@
  */
 package com.indracompany.sofia2.audit.bean;
 import java.io.Serializable;
-import java.util.EventObject;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 
 public class Sofia2AuditEvent implements Serializable {
