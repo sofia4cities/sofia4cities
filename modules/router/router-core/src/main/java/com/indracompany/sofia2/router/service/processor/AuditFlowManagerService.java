@@ -42,7 +42,6 @@ public class AuditFlowManagerService {
 	private static final String USER_KEY = "user";
 	private static final String EVENT_TYPE_KEY = "type";
 	private static final String OPERATION_TYPE_KEY = "operationType";
-	private static final String ANONYMOUS_USER = "anonymousUser";
 
 	public void audit(Exchange exchange) throws JSONException, RouterCrudServiceException {
 
@@ -57,7 +56,7 @@ public class AuditFlowManagerService {
 
 		OperationResultModel result = null;
 
-		if (!ANONYMOUS_USER.equals(commonParams.getUser()) && commonParams.getUser() != null) {
+		if (commonParams.getUser() != null) {
 
 			String ontology = ServiceUtils.getAuditCollectionName(commonParams.getUser());
 			OperationModel.Source operation = null;

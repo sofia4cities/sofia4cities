@@ -339,7 +339,8 @@ public class OntologyServiceImpl implements OntologyService {
 				if (!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
 					ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
 				ontologyDb.setJsonSchema(ontology.getJsonSchema());
-				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
+				if (ontology.getDataModel() != null)
+					ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 				ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 				ontologyDb.setMetainf(ontology.getMetainf());
 				ontologyDb.setAllowsCypherFields(ontology.isAllowsCypherFields());

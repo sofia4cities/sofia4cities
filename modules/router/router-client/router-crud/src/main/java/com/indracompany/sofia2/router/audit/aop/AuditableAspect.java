@@ -171,18 +171,18 @@ public class AuditableAspect extends BaseAspect {
 		OperationModel model = (OperationModel) getTheObject(joinPoint, OperationModel.class);
 
 		if (model != null) {
-			event = Sofia2EventFactory.createAuditEventError(joinPoint, null, Module.ROUTER, ex);
+
+			String messageOperation = ("Exception Detected while operation : " + model.getOntologyName() + " Type : "
+					+ model.getOperationType().name() + " By User : " + model.getUser());
+
+			event = Sofia2EventFactory.createAuditEventError(model.getUser(), messageOperation, Module.ROUTER, ex);
+
 			event.setOntology(model.getOntologyName());
 			event.setOperationType(model.getOperationType().name());
-			event.setUser(model.getUser());
-			event.setMessage("Exception Detected while operation : " + model.getOntologyName() + " Type : "
-					+ model.getOperationType().name() + " By User : " + model.getUser());
-		} else {
-			event = Sofia2EventFactory.createAuditEventError(joinPoint, null, Module.ROUTER, ex);
-		}
 
-		event.setMessage("Exception Detected");
-		event.setEx(ex);
+		} else {
+			event = Sofia2EventFactory.createAuditEventError("Exception Detected", Module.ROUTER, ex);
+		}
 
 		Sofia2EventFactory.setErrorDetails(event, ex);
 		eventProducer.publish(event);

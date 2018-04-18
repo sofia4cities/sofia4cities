@@ -27,6 +27,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.audit.aop.BaseAspect;
+import com.indracompany.sofia2.audit.bean.AuditConst;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
@@ -104,24 +105,21 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 						String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology()
 								+ " Type : " + iotEvent.getOperationType() + " By User : " + session.getUserID();
 
-						event = Sofia2EventFactory.createAuditEventError(joinPoint, messageOperation, Module.IOTBROKER,
-								ex);
+						event = Sofia2EventFactory.createAuditEventError(session.getUserID(), messageOperation,
+								Module.IOTBROKER, ex);
+
 					} else {
 						String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology()
 								+ " Type : " + iotEvent.getOperationType();
 
-						event = Sofia2EventFactory.createAuditEventError(joinPoint, messageOperation, Module.IOTBROKER,
-								ex);
+						event = Sofia2EventFactory.createAuditEventError(messageOperation, Module.IOTBROKER, ex);
 					}
 				}
 
 			} else {
 
-				event = Sofia2EventFactory.createAuditEventError(joinPoint, "", Module.IOTBROKER, ex);
+				event = Sofia2EventFactory.createAuditEventError("Exception Detected", Module.IOTBROKER, ex);
 			}
-
-			event.setMessage("Exception Detected");
-			event.setEx(ex);
 
 			Sofia2EventFactory.setErrorDetails(event, ex);
 
@@ -174,6 +172,10 @@ public class IotBrokerAuditableAspect extends BaseAspect {
 			event.setSessionKey(message.getSessionKey());
 			event.setClientPlatform(session.getClientPlatform());
 			event.setClientPlatformInstance(session.getClientPlatformInstance());
+		}
+
+		if (event.getUser() == null || "".equals(event.getUser())) {
+			event.setUser(AuditConst.ANONYMOUS_USER);
 		}
 
 		return event;

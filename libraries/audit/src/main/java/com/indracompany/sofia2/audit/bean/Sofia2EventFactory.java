@@ -17,12 +17,10 @@ package com.indracompany.sofia2.audit.bean;
 import java.util.Date;
 import java.util.UUID;
 
-import org.aspectj.lang.JoinPoint;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.indracompany.sofia2.audit.aop.BaseAspect;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 
@@ -31,23 +29,26 @@ import lombok.Builder;
 @Builder
 public class Sofia2EventFactory {
 
-	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message, Module module,
-			Exception e) {
-		Sofia2AuditError event = createAuditEventError(joinPoint, message, e);
-		event.setModule(module);
+	public static Sofia2AuditError createAuditEventError(String userId, String message, Module module, Exception e) {
+
+		Sofia2AuditError event = createAuditEventError(message, module, e);
+		event.setUser(userId);
+
 		return event;
+
 	}
 
-	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message, Exception e) {
-		Sofia2AuditError event = createAuditEventError(joinPoint, message);
+	public static Sofia2AuditError createAuditEventError(String message, Module module, Exception e) {
+
+		Sofia2AuditError event = createAuditEventError(message);
 		setErrorDetails(event, e);
+		event.setModule(module);
+
 		return createAuditEventError(event, message);
 	}
 
-	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message) {
+	public static Sofia2AuditError createAuditEventError(String message) {
 		Sofia2AuditError event = new Sofia2AuditError();
-		event.setClassName(BaseAspect.getClassName(joinPoint));
-		event.setMethodName(BaseAspect.getMethod(joinPoint).getName());
 		return createAuditEventError(event, message);
 	}
 
@@ -118,9 +119,12 @@ public class Sofia2EventFactory {
 	}
 
 	private static void setSecurityData(Sofia2AuditEvent event) {
+
 		if (SecurityContextHolder.getContext() != null
 				&& SecurityContextHolder.getContext().getAuthentication() != null) {
+
 			event.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
+
 		}
 	}
 
