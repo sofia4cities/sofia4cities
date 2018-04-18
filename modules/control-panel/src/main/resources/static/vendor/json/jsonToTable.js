@@ -112,7 +112,7 @@
                 	if(typeof value =='object'){
                 		//JSONObject
 						 objKey = i + key;
-                		 row += '<td class="text-center bg-grey-steel text-truncate-sm" onclick="showData(\''+objKey +'\',\''+ key +'\')"><div class="label bg-grey-mint label-sm">' + JSON.stringify(value) + '</div></td>';
+                		 row += '<td class="text-center bg-grey-steel text-truncate-sm pointer" onclick="showData(\''+objKey +'\',\''+ key +'\')"><div class="label bg-grey-mint label-sm">' + JSON.stringify(value) + '</div></td>';
 						 isObject = true;
 						 valueObjects.push({"key":objKey, "json":JSON.stringify(value,null,2)});
                 	}else{

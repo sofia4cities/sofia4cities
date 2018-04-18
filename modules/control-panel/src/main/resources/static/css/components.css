@@ -22842,6 +22842,7 @@ Custom color buttons
 .toggle-vis { cursor: pointer; }
 .sep{ padding-right: 10px;padding-left: 10px;  color: #98a6ba; }
 .panel-project { min-height: 200px; }
+.pointer { cursor: pointer; }
 
 /** ESTILOS PARA EL GRAFO-SOFIA2 INDEX **/
 #infoporlet			{position: absolute;top: 1px;left: calc(100% - 366px);box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.2), 0 2px 5px 0 rgba(0, 0, 0, 0.19);}
