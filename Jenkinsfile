@@ -57,7 +57,7 @@ pipeline {
 	   			}
 	   			
 	   			// Execute tests
-	   			sh "mvn verify -P dev,integration"			
+	   			sh "mvn verify -P integration"			
 					
 				sh "mvn sonar:sonar"	   			
 	   		}
