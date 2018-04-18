@@ -19,17 +19,15 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
+
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -37,17 +35,11 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-@Ignore
 public class ElasticSearchBasicOpsDBRepositoryTest {
 	
 	public final static String TEST_INDEX = "test"+System.currentTimeMillis();
 	public final static String TEST_INDEX_ONLINE = TEST_INDEX + "_online";
 	
-	@Value("${sofia2.database.elasticsearch.database:es_sofia2_s4c}")
-	@Getter
-	@Setter
-	private String database;
-
 	@Autowired
 	ElasticSearchBasicOpsDBRepository repository;
 	
@@ -68,12 +60,6 @@ public class ElasticSearchBasicOpsDBRepositoryTest {
 	
 	private String SQL_TEST = "select * from ";
 	
-	
-	private String queryNative = "{\r\n" + 
-			"  \"match_all\" : {\r\n" + 
-			"    \"boost\" : 1.0\r\n" + 
-			"  }\r\n" + 
-			"}";
 	
 	@Before
 	public  void doBefore() throws Exception {	
@@ -204,7 +190,7 @@ public class ElasticSearchBasicOpsDBRepositoryTest {
 			log.info("Returned list of found objects "+listData);
 			
 			
-			String output = repository.queryNativeAsJson(TEST_INDEX_ONLINE, queryNative);
+			String output = repository.queryNativeAsJson(TEST_INDEX_ONLINE, ESBaseApi.queryAll);
 			
 			log.info("query native :"+output);
 			log.info("testSearchQuery END ");

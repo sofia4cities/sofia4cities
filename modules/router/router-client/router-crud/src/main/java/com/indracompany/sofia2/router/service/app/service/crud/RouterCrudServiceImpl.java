@@ -39,8 +39,8 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	private BasicOpsPersistenceServiceFacade basicOpsService;
 
 	
-	//@Autowired
-	//private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
+	@Autowired
+	private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
 	
 	@Autowired
 	private OntologyDataService ontologyDataService;
@@ -186,7 +186,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		if (cacheable) {
 
 			log.info("DO CACHE OPERATION "+operationModel.toString());
-			result= queryNoCache(operationModel);
+			result= routerCrudCachedOperationsService.queryCache(operationModel);
 			
 		}
 		else {

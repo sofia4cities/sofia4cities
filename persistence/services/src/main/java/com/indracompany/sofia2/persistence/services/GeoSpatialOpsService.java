@@ -12,15 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.elasticsearch;
+package com.indracompany.sofia2.persistence.services;
 
-import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@Data
-public class ElasticSearchRequest {
-    
-    private String index;
-    private String type;
-    private String id;
+public class GeoSpatialOpsService {
+	
+	@Autowired
+	private BasicOpsPersistenceServiceFacade basicOpsFacade;
+	
+
+	
+
 
 }

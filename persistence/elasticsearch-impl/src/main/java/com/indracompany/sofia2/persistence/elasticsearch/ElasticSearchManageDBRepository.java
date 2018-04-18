@@ -44,17 +44,7 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 	@Autowired
 	private ESDeleteService eSDeleteService;
 	
-	/*@Value("${sofia2.database.elasticsearch.database:es_sofia2_s4c}")
-	@Getter
-	@Setter
-	private String database;*/
 	
-	private String createTestIndex(String index) {
-		String res =   connector.createIndex(index);
-		log.info("ElasticSearchManageDBRepository createTestIndex :"+index+" res: " +res);
-		return res;
-	}
-
 	@Override
 	public Map<String, Boolean> getStatusDatabase() throws DBPersistenceException {
 		throw new DBPersistenceException("Not Implemented Already");
@@ -62,12 +52,10 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public String createTable4Ontology(String ontology, String schema) throws DBPersistenceException {
-		
 		ontology=ontology.toLowerCase();
-		
 		try {
-			//String res =   connector.createIndex(database);
-			String res =   connector.createIndex(ontology.toLowerCase());
+			String res =   connector.createIndex(ontology);
+			log.info("Index result :  "+res);
 		} catch (Exception e) {
 			log.info("Resource already exists ");
 		}
@@ -81,10 +69,8 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 		
 		else {
 			boolean response =  connector.createType(ontology, ontology, schema);
-			//boolean response =  connector.createType(database, ontology, schema);
 			return ontology;
 		}
-	
 	}
 
 	@Override
@@ -102,7 +88,6 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 	@Override
 	public void removeTable4Ontology(String ontology) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		//eSDeleteService.deleteAll(database, ontology);
 		eSDeleteService.deleteAll(ontology, ontology);
 
 	}
@@ -123,7 +108,6 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public void createIndex(String sentence) throws DBPersistenceException {
-		
 		throw new DBPersistenceException("Not Implemented Already");
 	}
 
