@@ -21,13 +21,14 @@ import org.aspectj.lang.JoinPoint;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.indracompany.sofia2.audit.aop.BaseAspect;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 
+import lombok.Builder;
+
+@Builder
 public class Sofia2EventFactory {
 
 	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message, Module module,
@@ -47,12 +48,10 @@ public class Sofia2EventFactory {
 		Sofia2AuditError event = new Sofia2AuditError();
 		event.setClassName(BaseAspect.getClassName(joinPoint));
 		event.setMethodName(BaseAspect.getMethod(joinPoint).getName());
-
 		return createAuditEventError(event, message);
 	}
 
 	public static Sofia2AuditError createAuditEventError(Sofia2AuditError event, String message) {
-
 		Date today = new Date();
 		event.setId(UUID.randomUUID().toString());
 		event.setTimeStamp(today.getTime());
@@ -79,25 +78,6 @@ public class Sofia2EventFactory {
 		event.setOtherType(audit.getType());
 		event.setExtraData(audit.getData());
 		event.setType(type);
-
-		if (audit.getData().get("details") instanceof WebAuthenticationDetails) {
-			WebAuthenticationDetails details = (WebAuthenticationDetails) audit.getData().get("details");
-
-			// event.setRemoteAddress(details.getRemoteAddress());
-			// event.setSessionId(details.getSessionId());
-
-		}
-
-		else if (audit.getData().get("details") instanceof OAuth2AuthenticationDetails) {
-			OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails) audit.getData().get("details");
-
-			// event.setRemoteAddress(details.getRemoteAddress());
-			// event.setSessionId(details.getTokenValue());
-		}
-
-		// if (audit.getData().get("requestUrl")!=null)
-		// event.setRoute((String)audit.getData().get("requestUrl"));
-
 		return event;
 	}
 
@@ -141,21 +121,6 @@ public class Sofia2EventFactory {
 		if (SecurityContextHolder.getContext() != null
 				&& SecurityContextHolder.getContext().getAuthentication() != null) {
 			event.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
-
-			Object details = SecurityContextHolder.getContext().getAuthentication().getDetails();
-			if (details instanceof OAuth2AuthenticationDetails) {
-				// event.setSessionId(((OAuth2AuthenticationDetails)
-				// SecurityContextHolder.getContext().getAuthentication().getDetails()).getTokenValue());
-				// event.setRemoteAddress(((OAuth2AuthenticationDetails)
-				// details).getRemoteAddress());
-			}
-
-			else if (details instanceof WebAuthenticationDetails) {
-				// event.setSessionId(((WebAuthenticationDetails)
-				// SecurityContextHolder.getContext().getAuthentication().getDetails()).getSessionId());
-				// event.setRemoteAddress(((WebAuthenticationDetails)
-				// details).getRemoteAddress());
-			}
 		}
 	}
 
