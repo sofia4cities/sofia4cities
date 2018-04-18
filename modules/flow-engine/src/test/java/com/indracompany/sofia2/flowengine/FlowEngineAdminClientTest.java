@@ -21,6 +21,7 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -33,6 +34,7 @@ import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
 import com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClient;
 import com.indracompany.sofia2.flowengine.nodered.sync.NodeRedDomainSyncMonitor;
 
+@Ignore
 @RunWith(SpringRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest
