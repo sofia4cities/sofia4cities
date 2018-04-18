@@ -25,17 +25,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
-import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
-import com.indracompany.sofia2.audit.bean.Sofia2AuthAuditEvent;
-import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuthAuditEvent;
+import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.audit.notify.EventRouter;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,23 +42,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class Sofia2EventListener {
-	
-	
+
 	@Autowired
 	private EventRouter eventRouter;
-	
+
 	@Async
 	@EventListener
 	void handleAsync(Sofia2AuditEvent event) throws JsonProcessingException {
-		log.info("Sofia2EventListener :: Default Event Processing detected : thread '{}' handling '{}' async event",  event.getType(),event.getMessage());
+		log.info("Default Event Processing detected : thread '{}' handling '{}' async event", event.getType(),
+				event.getMessage());
 		eventRouter.notify(event.toJson());
 	}
-	
+
 	@EventListener
 	@Async
 	public void handleAuthenticationSuccessEvent(AuthenticationSuccessEvent event) {
-
-		log.debug("authentication success event for user " + event.getAuthentication().getPrincipal().toString());
+		log.info("Authentication success event for user " + event.getAuthentication().getPrincipal().toString());
 
 		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY,
 				"Login Success for User : " + event.getAuthentication().getPrincipal().toString());
@@ -76,15 +74,13 @@ public class Sofia2EventListener {
 			Object details = event.getAuthentication().getDetails();
 			setAuthValues(details, s2event);
 		}
-
 		getEventRouter().notify(s2event.toJson());
 	}
 
 	@EventListener
 	@Async
 	public void handleAuthenticationFailureBadCredentialsEvent(AuthenticationFailureBadCredentialsEvent event) {
-
-		log.debug("authentication failure bad credentials event for user "
+		log.info("authentication failure bad credentials event for user "
 				+ event.getAuthentication().getPrincipal().toString());
 
 		String message = "Login Failed (Incorrect Credentials) for User: "
@@ -92,16 +88,9 @@ public class Sofia2EventListener {
 
 		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY, message);
 
-		Object source = event.getSource();
-		if (source instanceof FilterInvocation) {
-			// s2event.setRoute(((FilterInvocation)
-			// errorEvent.getSource()).getRequestUrl());
-		}
 		s2event.setOperationType(OperationType.LOGIN.name());
 		s2event.setUser((String) event.getAuthentication().getPrincipal());
 		s2event.setOtherType(AuthorizationFailureEvent.class.getName());
-		// Sofia2EventFactory.setErrorDetails(s2event,
-		// errorEvent.getAccessDeniedException());
 
 		if (event.getAuthentication().getDetails() != null) {
 			Object details = event.getAuthentication().getDetails();
@@ -114,23 +103,15 @@ public class Sofia2EventListener {
 	@EventListener
 	@Async
 	public void handleAuthorizationFailureEvent(AuthorizationFailureEvent errorEvent) {
-
-		log.debug("authorization failure  event for user " + errorEvent.getAuthentication().getPrincipal().toString());
+		log.info("authorization failure  event for user " + errorEvent.getAuthentication().getPrincipal().toString());
 
 		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY,
 				"Login Failed (AuthorizationFailure) for User: "
 						+ errorEvent.getAuthentication().getPrincipal().toString());
 
-		Object source = errorEvent.getSource();
-		if (source instanceof FilterInvocation) {
-			// s2event.setRoute(((FilterInvocation)
-			// errorEvent.getSource()).getRequestUrl());
-		}
 		s2event.setOperationType(OperationType.LOGIN.name());
 		s2event.setUser((String) errorEvent.getAuthentication().getPrincipal());
 		s2event.setOtherType(AuthorizationFailureEvent.class.getName());
-		// Sofia2EventFactory.setErrorDetails(s2event,
-		// errorEvent.getAccessDeniedException());
 
 		if (errorEvent.getAuthentication().getDetails() != null) {
 			Object details = errorEvent.getAuthentication().getDetails();
@@ -148,7 +129,6 @@ public class Sofia2EventListener {
 			s2event.setModule(Module.CONTROLPANEL);
 		} else if (details instanceof OAuth2AuthenticationDetails) {
 			OAuth2AuthenticationDetails details2 = (OAuth2AuthenticationDetails) details;
-
 			s2event.setRemoteAddress(details2.getRemoteAddress());
 			// s2event.setSessionId(details2.getSessionId());
 			s2event.setModule(Module.APIMANAGER);
@@ -167,5 +147,5 @@ public class Sofia2EventListener {
 	public void setEventRouter(EventRouter eventRouter) {
 		this.eventRouter = eventRouter;
 	}
-	
+
 }

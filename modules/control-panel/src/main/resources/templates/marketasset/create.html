@@ -333,12 +333,14 @@
 	
 	var marketAssetCreateJson = {
 		"url": [[@{/marketasset}]],
+		"urlimg": [[@{/img/}]],
 		"validation_dates" : [[#{apimanager.valid.dateDeleted}]],
 		"close" : [[#{gen.closeBtn}]],		
 		"language" : currentLanguage,
 		"actionMode" : [[${marketasset.id}]],
 		"dateCreated" : [[${marketasset.createdAt}]],
-		"marketAssetmanager_identification_error" : [[#{marketasset.identification.error}]]
+		"marketAssetmanager_identification_error" : [[#{marketasset.identification.error}]],
+		"marketAssetmanager_image_error" : [[#{marketasset.image.error	}]]
 	};
 						
 	$(window).load(function(){  

@@ -87,7 +87,7 @@ public class IotBrokerAuditEventFactory {
 		event.setGatewayInfo(info);
 		Date today = new Date();
 		event.setTimeStamp(today.getTime());
-		event.setFormatedTimeStamp(CalendarUtil.convert(today));
+		event.setFormatedTimeStamp(CalendarUtil.builder().build().convert(today));
 		return event;
 	}
 
