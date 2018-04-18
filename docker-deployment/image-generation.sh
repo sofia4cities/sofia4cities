@@ -39,6 +39,12 @@ buildRealTimeDB()
 	docker build -t sofia2/realtimedb:$1 .
 }
 
+buildElasticDB() 
+{
+	echo "ElasticDB image generation with Docker CLI: "
+	docker build -t sofia2/elasticdb:$1 .
+}
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -132,6 +138,11 @@ if [ ! -z "$1" ]; then
 		cd $homepath/dockerfiles/quasar
 		buildQuasar latest
 	fi
+	
+	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/elasticsearch
+		buildElasticDB latest
+	fi	
 	
 	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
 		cd $homepath/../config/init/

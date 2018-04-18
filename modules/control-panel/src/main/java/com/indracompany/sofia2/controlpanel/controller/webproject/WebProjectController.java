@@ -92,29 +92,33 @@ public class WebProjectController {
 			utils.addRedirectMessage("webproject.validation.error", redirect);
 			return "redirect:/webprojects/create";
 		}
-		try {
-			webProjectService.createWebProject(webProject, utils.getUserId());
-		} catch (WebProjectServiceException e) {
-			log.error("Cannot create webproject because of:" + e.getMessage());
-			utils.addRedirectException(e, redirect);
+		if (!webProjectService.webProjectExists(webProject.getIdentification())) {
+			try {
+				webProjectService.createWebProject(webProject, utils.getUserId());
+			} catch (WebProjectServiceException e) {
+				log.error("Cannot create webproject because of: " + e.getMessage());
+				utils.addRedirectMessage("webproject.create.error", redirect);
+				return "redirect:/webprojects/create";
+			}
+		} else {
+			log.error("Cannot create webproject because of: " + "Web Project with identification: "
+					+ webProject.getIdentification() + " already exists");
+			utils.addRedirectMessage("webproject.validation.exists", redirect);
 			return "redirect:/webprojects/create";
 		}
+
 		return "redirect:/webprojects/list";
 	}
 
 	@GetMapping(value = "/update/{id}", produces = "text/html")
 	public String update(Model model, @PathVariable("id") String id) {
-		try {
-			WebProject webProject = this.webProjectService.getWebProjectById(id, utils.getUserId());
+		WebProject webProject = this.webProjectService.getWebProjectById(id, utils.getUserId());
 
-			if (webProject != null) {
-				model.addAttribute("webproject", webProject);
-				return "webprojects/create";
-			} else
-				return "webprojects/create";
-		} catch (RuntimeException e) {
+		if (webProject != null) {
+			model.addAttribute("webproject", webProject);
 			return "webprojects/create";
-		}
+		} else
+			return "webprojects/create";
 	}
 
 	@PutMapping(value = "/update/{id}", produces = "text/html")
@@ -129,7 +133,7 @@ public class WebProjectController {
 		try {
 			this.webProjectService.updateWebProject(webProject, utils.getUserId());
 		} catch (WebProjectServiceException e) {
-			log.debug("Cannot update web project");
+			log.error("Cannot update web project because of: " + e);
 			utils.addRedirectMessage("webproject.update.error", redirect);
 			return "redirect:/webprojects/update/" + id;
 		}
@@ -144,7 +148,8 @@ public class WebProjectController {
 		if (webProject != null) {
 			try {
 				this.webProjectService.deleteWebProject(webProject, utils.getUserId());
-			} catch (Exception e) {
+			} catch (WebProjectServiceException e) {
+				log.error("Cannot update web project because of: " + e);
 				utils.addRedirectMessage("webproject.delete.error", redirect);
 				return "redirect:/webprojects/list";
 			}
@@ -163,7 +168,7 @@ public class WebProjectController {
 		try {
 			this.webProjectService.uploadZip(file, utils.getUserId());
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
-		} catch (RuntimeException e) {
+		} catch (WebProjectServiceException e) {
 			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 		}
 	}

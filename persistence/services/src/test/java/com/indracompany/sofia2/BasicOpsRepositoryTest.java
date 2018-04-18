@@ -20,6 +20,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -45,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
+@Ignore
 public class BasicOpsRepositoryTest {
 	
 	public final static String TEST_INDEX = "test"+System.currentTimeMillis();
