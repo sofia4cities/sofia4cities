@@ -33,7 +33,7 @@ spring:
 quartz:      
    datasource:
       # This property has to be configured in a profile in the pom.xml. Currently, it is configured in the parent project.
-      url: "@quartzURL@"
+      url: "@sofia2.quartzURL@"
       username: root
       password:
       driver-class-name: com.mysql.jdbc.Driver
