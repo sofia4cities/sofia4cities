@@ -14,7 +14,9 @@
 package com.indracompany.sofia2.persistence.mongodb;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.commons.OSDetector;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
@@ -58,6 +61,16 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 	@Getter
 	@Setter
 	private String database;
+
+	@Value("${sofia2.database.mongodb.export.path:#{null}}")
+	@Getter
+	@Setter
+	private String exportPath;
+
+	@Value("${sofia2.database.mongodb.mongoexport.path:#{null}}")
+	@Getter
+	@Setter
+	private String mongoExportPath;
 
 	protected ObjectMapper objectMapper;
 
@@ -184,7 +197,9 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 				}
 			}
 			mongoDbConnector.createIndex(database, collection, new MongoDbIndex(indexKeys, indexOptions));
-		} catch (DBPersistenceException e) {
+		} catch (
+
+		DBPersistenceException e) {
 			log.error("createIndex" + e.getMessage());
 			throw new DBPersistenceException(e);
 		}
@@ -300,4 +315,31 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 		}
 	}
 
+	@Override
+	public void exportToJson(String ontology, long startDateMillis) throws DBPersistenceException {
+		String command = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-MM-hh-mm");
+		Runtime r = Runtime.getRuntime();
+		String query = "{'contextData.timestampMillis':{$lte:" + startDateMillis + "}}";
+		if (OSDetector.isWindows()) {
+			command = this.mongoExportPath + " --db " + this.database + " --collection " + ontology + " --query "
+					+ query + " --out " + this.exportPath + ontology + format.format(new Date()) + ".json";
+		} else {
+			command = this.mongoExportPath + " --db " + this.database + " --collection " + ontology + " --query "
+					+ query + " --out " + this.exportPath + ontology + format.format(new Date()) + ".json";
+		}
+
+		if (command != null)
+			try {
+
+				log.info("Executed: " + command);
+				r.exec(command).waitFor();
+				query = "{\"contextData.timestampMillis\":{$lte:" + startDateMillis + "}}";
+				this.mongoDbConnector.remove(this.database, ontology, query);
+
+			} catch (IOException | InterruptedException e) {
+				throw new DBPersistenceException("Could not execute command " + command);
+			}
+
+	}
 }

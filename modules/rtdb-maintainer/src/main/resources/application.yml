@@ -9,6 +9,8 @@ sofia2: #Config Sofia2 specific
       sql.connector.http.endpoint: http://localhost:9200
       url: localhost
       port: 9300
+      dump.path: S:/node_modules/.bin/elasticdump
+      elasticdump.path: s:/tools/elasticsearch/dump/
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin
@@ -30,6 +32,8 @@ sofia2: #Config Sofia2 specific
       tools.mongoshell.path: mongo
       tools.useSequentialOps: true
       digitaltwin.database: digital_twin
+      export.path: s:/tools/mongo/export/
+      mongoexport.path: s:/tools/mongo/bin/mongoexport
    
  
 spring: ## General Config  
@@ -66,10 +70,12 @@ quartz:
       # Hibernate ddl auto (create, create-drop, validate, update)
       properties.hibernate.hbm2ddl.auto: update
    autoStartupSchedulers:
+      - batchScheduler
+   
 
 ## LOGGING CONF
 logging:
    path: ./target/ 
    file: ${spring.application.name}
    level:
-      com.indra: DEBUG 
+      com.indra: INFO 

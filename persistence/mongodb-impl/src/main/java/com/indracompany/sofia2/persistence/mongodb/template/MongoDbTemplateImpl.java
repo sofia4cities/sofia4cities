@@ -671,6 +671,7 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 	@Override
 	public long remove(String database, String collection, BasicDBObject query) throws PersistenceException {
 		log.debug("Removing from MongoDB...Database= {} , collection = {} , query = {}.", database, collection, query);
+
 		MongoQueryAndParams mc = new MongoQueryAndParams();
 		try {
 			// mc.parseQuery(query, limit, offset);

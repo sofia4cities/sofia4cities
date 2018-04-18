@@ -1,8 +1,5 @@
 package com.indracompany.sofia2.rtdbmaintainer.job;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -15,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.indracompany.sofia2.commons.OSDetector;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
+import com.indracompany.sofia2.persistence.services.ManageDBPersistenceServiceFacade;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,32 +27,40 @@ public class RtdbMaintainerJob {
 	private String SOFIA2_DB_MONGO;
 	@Autowired
 	private OntologyService ontologyService;
-
+	@Autowired
+	private ManageDBPersistenceServiceFacade manageDBPersistenceServiceFacade;
 	private final static int CORE_POOL_SIZE = 10;
 	private final static int MAXIMUM_THREADS = 15;
 	private final static long KEEP_ALIVE = 20;
 
-	public void execute(JobExecutionContext context) {
+	public void execute(JobExecutionContext context) throws InterruptedException {
 
 		List<Ontology> ontologies = this.ontologyService.getCleanableOntologies();
+		if (ontologies.size() > 0) {
 
-		BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(ontologies.size());
+			TimeUnit timeUnit = (TimeUnit) context.getJobDetail().getJobDataMap().get("timeUnit");
+			long timeout = context.getJobDetail().getJobDataMap().getLongValue("timeout");
 
-		RtdbMaintainerThreadPoolExecutor executor = new RtdbMaintainerThreadPoolExecutor(CORE_POOL_SIZE,
-				MAXIMUM_THREADS, KEEP_ALIVE, TimeUnit.SECONDS, blockingQueue);
+			BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(ontologies.size());
+			RtdbMaintainerThreadPoolExecutor executor = new RtdbMaintainerThreadPoolExecutor(CORE_POOL_SIZE,
+					MAXIMUM_THREADS, KEEP_ALIVE, TimeUnit.SECONDS, blockingQueue);
+			executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
 
-		executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+				@Override
+				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+					// TODO Auto-generated method stub
 
-			@Override
-			public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-				// TODO Auto-generated method stub
+				}
+			});
+
+			for (Ontology ontology : ontologies) {
+				executor.execute(new RtdbMaintainerThread(ontology));
 
 			}
-		});
-
-		for (Ontology ontology : ontologies) {
-			executor.execute(new RtdbMaintainerThread(ontology));
+			executor.shutdown();
+			executor.awaitTermination(timeout, timeUnit);
 		}
+
 	}
 
 	public class RtdbMaintainerThread implements Runnable {
@@ -68,43 +73,14 @@ public class RtdbMaintainerJob {
 
 		@Override
 		public void run() {
-			String command = null;
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-MM");
-			Runtime r = Runtime.getRuntime();
-
-			long startDateMillis = System.currentTimeMillis(); // - this.ontology.getRtdbCleanLapse().getMilliseconds();
-
-			if (OSDetector.isWindows()) {
-				String query = "--query {'contextData.timestampMillis':{$lt:" + startDateMillis + "}}";
-				if (ontology.getRtdbDatasource().name().equals("Mongo")) {
-					command = "s:/tools/mongo/bin/mongoexport --db " + SOFIA2_DB_MONGO + " --collection "
-							+ ontology.getIdentification() + " " + query + " --out s:\\tools\\mongo\\export\\"
-							+ ontology.getIdentification() + format.format(new Date()) + ".json";
-					System.out.println(command);
-				} else {
-					// elasticsearch cmd windows
-				}
-
-			} else {
-				if (ontology.getRtdbDatasource().name().equals("Mongo")) {
-					command = "mongoexport --db " + SOFIA2_DB_MONGO + " --collection " + ontology.getIdentification()
-							+ " --out /tmp/mongo/export" + ontology.getIdentification() + format.format(new Date())
-							+ ".json";
-
-				} else {
-					// elasticsearch cmd linux
-				}
-
+			if (this.ontology.getRtdbCleanLapse() != null) {
+				long startDateMillis = System.currentTimeMillis();// -
+																	// this.ontology.getRtdbCleanLapse().getMilliseconds();
+				manageDBPersistenceServiceFacade.exportToJson(this.ontology.getRtdbDatasource(),
+						this.ontology.getIdentification(), startDateMillis);
 			}
-			if (command != null)
-				try {
-					r.exec(command);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 
 		}
-
 	}
 
 	public class RtdbMaintainerThreadPoolExecutor extends ThreadPoolExecutor {

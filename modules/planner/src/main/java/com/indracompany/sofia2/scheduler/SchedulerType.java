@@ -18,7 +18,7 @@ import com.indracompany.sofia2.scheduler.scheduler.instance.SchedulerNames;
 public enum SchedulerType {
 
 	Twitter(SchedulerNames.TWITTER_SCHEDULER_NAME), Script(SchedulerNames.SCRIPT_SCHEDULER_NAME), Simulation(
-			SchedulerNames.SIMULATION_SCHEDULER_NAME);
+			SchedulerNames.SIMULATION_SCHEDULER_NAME), Batch(SchedulerNames.BATCH_SCHEDULER_NAME);
 
 	private String schedulerName;
 

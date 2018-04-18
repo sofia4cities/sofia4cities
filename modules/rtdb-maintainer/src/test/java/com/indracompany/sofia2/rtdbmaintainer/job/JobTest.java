@@ -30,7 +30,7 @@ public class JobTest {
 	RtdbMaintainerJob job;
 
 	@Test
-	public void test_execution() {
+	public void test_execution() throws InterruptedException {
 		this.job.execute(new JobExecutionContext() {
 
 			@Override
@@ -147,6 +147,12 @@ public class JobTest {
 				return null;
 			}
 		});
+		// try {
+		// Thread.sleep(1000);
+		// } catch (InterruptedException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 }

@@ -159,4 +159,8 @@ public class MongoNativeBasicOpsDBRepositoryIntegrationTest {
 		}
 	}
 
+	@Test
+	public void delete_Document() {
+		this.connect.remove("sofia2_s4c", "Ticket", "{\"contextData.timestampMillis\":{$lte:1524047372993}}");
+	}
 }

@@ -18,7 +18,13 @@ public class RtdbMaintainerJobExecutor implements BatchGenericExecutor {
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		this.rtdbMaintainerJob.execute(context);
+		try {
+			this.rtdbMaintainerJob.execute(context);
+			log.info("Executed");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
