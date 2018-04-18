@@ -1032,25 +1032,25 @@ Utilities
  }
  
 .text-truncate-xs{
-  width: 150px;
+  width: 150px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .text-truncate-sm{
-  max-width: 250px;
+  max-width: 250px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .text-truncate-md{
-  max-width: 350px;
+  max-width: 350px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .text-truncate-lg{
-  max-width: 450px;
+  max-width: 450px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
