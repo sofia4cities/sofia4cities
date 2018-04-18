@@ -241,9 +241,28 @@
 			  <include>**/*.yml</include>
 			  <include>**/*.*</include>
 			</includes>
-		  </resource>	  
+		  </resource>
+		  	  
 		</resources>
 	</build>
+	
+	<profiles>
+		<profile>
+	        <id>local</id>
+	        <activation>
+		        <activeByDefault>true</activeByDefault>
+		    </activation>
+	        <properties>
+	            <quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</quartzURL>
+	        </properties>
+    	</profile>
+    	<profile>
+	        <id>integration</id>
+	        <properties>
+	            <quartzURL>jdbc:mysql://localhost:3307/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</quartzURL>
+	        </properties>
+	    </profile>
+	</profiles>
 	
 	
 </project>
