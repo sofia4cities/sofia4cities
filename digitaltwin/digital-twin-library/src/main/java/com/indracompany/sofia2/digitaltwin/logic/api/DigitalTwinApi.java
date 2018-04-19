@@ -25,36 +25,36 @@ import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Provides Digital Device API to Javascript Logic 
+ * Provides Digital Device API to Javascript Logic
+ * 
  * @author INDRA SISTEMAS
  *
  */
 @Slf4j
 @Component
 public class DigitalTwinApi {
-	
+
 	@Autowired
 	private EventManager eventManager;
-	
+
 	@Autowired
 	private IDigitalTwinStatus digitalTwinStatus;
 
 	private static DigitalTwinApi instance;
-	
+
 	@PostConstruct
 	public void init() {
-		instance=this;
+		instance = this;
 	}
-	
-	
+
 	public static DigitalTwinApi getInstance() {
 		return instance;
 	}
-	
+
 	public void log(String trace) {
 		eventManager.log(trace);
 	}
-	
+
 	public void setStatusValue(String property, Object value) {
 		try {
 			digitalTwinStatus.setProperty(property, value);
@@ -62,7 +62,7 @@ public class DigitalTwinApi {
 			log.error("Error setting status property {}", property, e);
 		}
 	}
-	
+
 	public Object getStatusValue(String property) {
 		try {
 			return digitalTwinStatus.getProperty(property);
@@ -71,12 +71,13 @@ public class DigitalTwinApi {
 			return null;
 		}
 	}
-	
+
 	public void sendUpdateShadow() {
 		eventManager.updateShadow(digitalTwinStatus.toMap());
 	}
-	
+
 	public void sendCustomEvent(String eventName) {
 		eventManager.sendCustomEvent(digitalTwinStatus.toMap(), eventName);
 	}
+
 }

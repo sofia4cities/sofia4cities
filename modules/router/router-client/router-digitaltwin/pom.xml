@@ -31,7 +31,7 @@
 				
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
-			<artifactId>sofia2-persistence-services</artifactId>
+			<artifactId>sofia2-persistence-mongodb</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
 		
