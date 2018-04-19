@@ -52,7 +52,7 @@ public class MailServiceIntegrationTest {
 		try {
 			mail.sendMail("lmgracia@indra.es", "Test", "Test");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 			Assert.fail("Error sending mail");
 		}
 	}
@@ -64,7 +64,7 @@ public class MailServiceIntegrationTest {
 			String htmlMail = "<html><body>Here is application.yml<body></html>";
 			mail.sendHtmlMail("lmgracia@indra.es", "Test", htmlMail, "application.yml");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 			Assert.fail("Error sending mail");
 		}
 	}

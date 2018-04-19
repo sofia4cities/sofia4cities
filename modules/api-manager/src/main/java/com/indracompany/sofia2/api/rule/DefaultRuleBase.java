@@ -30,7 +30,7 @@ public class DefaultRuleBase {
 	protected boolean canExecuteRule(Facts facts) {
 		Boolean bool = facts.get(RuleManager.STOP_STATE);
 		if (bool==null) return true;
-		if (bool=true) return false;
+		if (bool==true) return false;
 		else return true;
 		
 	}

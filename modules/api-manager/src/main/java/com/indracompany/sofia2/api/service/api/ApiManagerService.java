@@ -201,7 +201,7 @@ public class ApiManagerService {
 				} else if (customqueryparameter.getDataType().name()
 						.equalsIgnoreCase(ApiQueryParameter.DataType.string.name())) {
 					try {
-						paramvalue.toString();
+						//paramvalue.toString();
 						paramvalue = "\"" + paramvalue + "\"";
 					} catch (final Exception e) {
 						final Object parametros[] = { "$" + customqueryparameter.getName(), "String" };
@@ -281,7 +281,7 @@ public class ApiManagerService {
 			}
 
 		} catch (final IOException e) {
-			e.printStackTrace();
+			log.error("Error reading payload",e);
 		}
 		return buffer.toString();
 	}

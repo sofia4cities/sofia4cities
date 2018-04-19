@@ -43,7 +43,10 @@ import com.indracompany.sofia2.config.services.exceptions.TokenServiceException;
 import com.indracompany.sofia2.config.services.token.TokenService;
 import com.indracompany.sofia2.config.services.user.UserService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class ClientPlatformServiceImpl implements ClientPlatformService {
 	@Autowired
 	private ClientPlatformRepository clientPlatformRepository;
@@ -262,11 +265,11 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 					uDevice.getClientPlatformOntologies(), new TypeReference<List<ClientPlatformOntology>>() {
 					})));
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		}
 
 	}

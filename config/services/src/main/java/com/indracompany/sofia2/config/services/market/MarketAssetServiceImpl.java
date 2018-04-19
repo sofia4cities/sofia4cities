@@ -183,7 +183,7 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 			obj = new ObjectMapper().readValue(reason, new TypeReference<Map<String, String>>(){});
 			rejectReason = obj.get("rejectionReason");
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		}
 
 		MarketAsset marketAsset= marketAssetRepository.findById(id);

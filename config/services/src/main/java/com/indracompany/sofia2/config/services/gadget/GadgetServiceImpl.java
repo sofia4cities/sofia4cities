@@ -33,7 +33,10 @@ import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.services.exceptions.GadgetDatasourceServiceException;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class GadgetServiceImpl implements GadgetService {
 	
 	@Autowired
@@ -212,7 +215,7 @@ public class GadgetServiceImpl implements GadgetService {
 			listStr = objectMapper.readValue(inputStr, typeFactory.constructCollectionType(List.class, MeasureDto.class));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		}
 		return listStr;
 	}
@@ -225,7 +228,7 @@ public class GadgetServiceImpl implements GadgetService {
 			listStr = objectMapper.readValue(inputStr, typeFactory.constructCollectionType(List.class, String.class));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		}
 		return listStr;
 	}

@@ -58,6 +58,8 @@ public class ESNativeService {
 	@Value("${sofia2.database.elasticsearch.cluster.name:sofia2_s4c}")
 	private String clusterName;
 
+	private PreBuiltTransportClient preBuiltTransportClient;
+
 	@PostConstruct
 	void initializeIt() {
 
@@ -65,7 +67,8 @@ public class ESNativeService {
 			System.setProperty("es.set.netty.runtime.available.processors", "false");
 			Settings settings = Settings.builder().put("client.transport.ignore_cluster_name", true)
 					.put("client.transport.sniff", false).put("cluster.name", clusterName).build();
-			client = new PreBuiltTransportClient(settings).addTransportAddress(getTransportAddress());
+			preBuiltTransportClient = new PreBuiltTransportClient(settings);
+			client = preBuiltTransportClient.addTransportAddress(getTransportAddress());
 
 			log.info(String.format("Settings %s ", client.settings().toString()));
 			System.out.println(String.format("Settings %s ", client.settings().toString()));
