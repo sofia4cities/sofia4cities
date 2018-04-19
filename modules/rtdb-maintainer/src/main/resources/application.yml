@@ -9,8 +9,8 @@ sofia2: #Config Sofia2 specific
       sql.connector.http.endpoint: http://localhost:9200
       url: localhost
       port: 9300
-      dump.path: S:/node_modules/.bin/elasticdump
-      elasticdump.path: s:/tools/elasticsearch/dump/
+      elasticdump.path: S:/node_modules/.bin/elasticdump.cmd
+      dump.path: s:/tools/elasticsearch/dump/
    database.mongodb:
       database: sofia2_s4c
       authenticationDatabase:  #admin

@@ -184,7 +184,6 @@ public class InitConfigDB {
 			init_OntologyCategory();
 			log.info("OK init_OntologyCategory");
 
-
 			//
 			init_ClientPlatform();
 			log.info("OK init_ClientPlatform");
@@ -508,6 +507,14 @@ public class InitConfigDB {
 			config.setSuffix("lmgracia");
 			config.setDescription("Twitter");
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
+			this.configurationRepository.save(config);
+			//
+			config = new Configuration();
+			config.setType(Configuration.Type.SchedulingConfiguration);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment("default");
+			config.setDescription("RtdbMaintainer config");
+			config.setYmlConfig(loadFromResources("SchedulingConfiguration_default.yml"));
 			this.configurationRepository.save(config);
 			//
 
@@ -1146,7 +1153,6 @@ public class InitConfigDB {
 				ontologyRepository.save(ontology);
 			}
 
-
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_TweetSentiment.json"));
 			ontology.setDescription("TweetSentiment");
@@ -1252,8 +1258,6 @@ public class InitConfigDB {
 		}
 
 	}
-
-
 
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
@@ -1499,9 +1503,9 @@ public class InitConfigDB {
 		if (marketAssets.isEmpty()) {
 			log.info("No market Assets...adding");
 			MarketAsset marketAsset = new MarketAsset();
-			
+
 			// Getting Started Guide
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("1");
@@ -1520,9 +1524,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("jpg");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// Sofia4Cities Architecture
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("2");
@@ -1541,9 +1545,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("jpg");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// SOFIA4CITIES WITH DOCKER
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("3");
@@ -1562,9 +1566,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("png");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// API JAVA
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("4");
@@ -1581,14 +1585,14 @@ public class InitConfigDB {
 
 			marketAsset.setImage(loadFileFromResources("market/img/jar-file.jpg"));
 			marketAsset.setImageType("jpg");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/java-client.zip"));
 			marketAsset.setContentId("java-client.jar");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// DIGITAL TWIN
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("5");
@@ -1605,14 +1609,14 @@ public class InitConfigDB {
 
 			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
 			marketAsset.setImageType("png");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/TurbineHelsinki.zip"));
 			marketAsset.setContentId("TurbineHelsinki.zip");
 
 			marketAssetRepository.save(marketAsset);
 
 			// API NodeRED
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("6");
@@ -1629,14 +1633,14 @@ public class InitConfigDB {
 
 			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
 			marketAsset.setImageType("png");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/API NodeRED sofia4cities.zip"));
 			marketAsset.setContentId("API NodeRED sofia4cities.zip");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// OAUTH2 Authentication
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("7");
@@ -1650,7 +1654,7 @@ public class InitConfigDB {
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/Oauth2Authentication.json"));
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/oauth2-authentication.zip"));
 			marketAsset.setContentId("oauth2-authentication.zip");
 

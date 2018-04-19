@@ -179,16 +179,17 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 		String command = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-MM-hh-mm");
 		Runtime r = Runtime.getRuntime();
-		String query = " --searchBody {\"query\":{\"range\":{\"contextData.timestampMillis\":{\"lte\":"
+		String query = " --searchBody {\\\"query\\\":{\\\"range\\\":{\\\"contextData.timestampMillis\\\":{\\\"lte\\\":"
 				+ startDateMillis + "}}}}";
 
 		command = this.elasticDumpPath + " --input=" + this.elasticSearchEndpoint + "/" + ontology.toLowerCase()
 				+ " --output=" + this.dumpPath + ontology.toLowerCase() + format.format(new Date()) + ".json" + query
 				+ " --delete=true";
 		try {
+			log.info("Executed command: " + command);
 			r.exec(command).waitFor();
 		} catch (IOException | InterruptedException e) {
-			throw new DBPersistenceException("Could not execute command: " + command);
+			throw new DBPersistenceException("Could not execute command: " + command + e);
 		}
 
 	}

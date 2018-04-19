@@ -1,11 +1,29 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.rtdbmaintainer.job;
 
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +50,18 @@ public class RtdbMaintainerJob {
 	private final static int CORE_POOL_SIZE = 10;
 	private final static int MAXIMUM_THREADS = 15;
 	private final static long KEEP_ALIVE = 20;
+	private final static long DEFAULT_TIMEOUT = 10;
 
 	public void execute(JobExecutionContext context) throws InterruptedException {
 
 		List<Ontology> ontologies = this.ontologyService.getCleanableOntologies();
+
 		if (ontologies.size() > 0) {
 
 			TimeUnit timeUnit = (TimeUnit) context.getJobDetail().getJobDataMap().get("timeUnit");
 			long timeout = context.getJobDetail().getJobDataMap().getLongValue("timeout");
+			if (timeout == 0)
+				timeout = DEFAULT_TIMEOUT;
 
 			BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(ontologies.size());
 			RtdbMaintainerThreadPoolExecutor executor = new RtdbMaintainerThreadPoolExecutor(CORE_POOL_SIZE,
@@ -52,13 +74,36 @@ public class RtdbMaintainerJob {
 
 				}
 			});
+			//
+			List<CompletableFuture<String>> futureList = ontologies.stream()
+					.map(o -> CompletableFuture.supplyAsync(() -> {
+						manageDBPersistenceServiceFacade.exportToJson(o.getRtdbDatasource(), o.getIdentification(),
+								System.currentTimeMillis() - o.getRtdbCleanLapse().getMilliseconds());
 
-			for (Ontology ontology : ontologies) {
-				executor.execute(new RtdbMaintainerThread(ontology));
+						return "";
+					}, executor)).collect(Collectors.toList());
 
+			// List<String> results = futureList.stream().map((f) ->
+			// f.join()).collect(Collectors.toList());
+
+			CompletableFuture<Void> globalResut = CompletableFuture
+					.allOf(futureList.toArray(new CompletableFuture[futureList.size()]));
+
+			try {
+
+				globalResut.get(timeout, timeUnit);
+
+			} catch (ExecutionException | TimeoutException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			executor.shutdown();
-			executor.awaitTermination(timeout, timeUnit);
+
+			// for (Ontology ontology : ontologies) {
+			// executor.execute(new RtdbMaintainerThread(ontology));
+			//
+			// }
+			// executor.shutdown();
+			// executor.awaitTermination(timeout, timeUnit);
 		}
 
 	}
@@ -74,8 +119,7 @@ public class RtdbMaintainerJob {
 		@Override
 		public void run() {
 			if (this.ontology.getRtdbCleanLapse() != null) {
-				long startDateMillis = System.currentTimeMillis();// -
-																	// this.ontology.getRtdbCleanLapse().getMilliseconds();
+				long startDateMillis = System.currentTimeMillis() - this.ontology.getRtdbCleanLapse().getMilliseconds();
 				manageDBPersistenceServiceFacade.exportToJson(this.ontology.getRtdbDatasource(),
 						this.ontology.getIdentification(), startDateMillis);
 			}
