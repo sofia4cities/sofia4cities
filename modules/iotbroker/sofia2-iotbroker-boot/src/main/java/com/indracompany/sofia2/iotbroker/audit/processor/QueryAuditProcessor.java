@@ -42,7 +42,8 @@ public class QueryAuditProcessor implements MessageAuditProcessor {
 
 		String messageText = "Query message on ontology " + queryMessage.getOntology();
 
-		return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(queryMessage, messageText, session, info);
+		return IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(queryMessage, messageText,
+				session, info);
 	}
 
 	@Override

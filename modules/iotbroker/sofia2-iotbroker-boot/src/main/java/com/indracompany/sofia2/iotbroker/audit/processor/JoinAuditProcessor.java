@@ -41,7 +41,8 @@ public class JoinAuditProcessor implements MessageAuditProcessor {
 		log.debug("Processing join message");
 		final SSAPBodyJoinMessage joinMessage = (SSAPBodyJoinMessage) message.getBody();
 		final String messageText = "Join message by clientPlatform  " + joinMessage.getClientPlatform();
-		return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(joinMessage, messageText, session, info);
+		return IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(joinMessage, messageText, session,
+				info);
 
 	}
 

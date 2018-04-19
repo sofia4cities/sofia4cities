@@ -43,7 +43,8 @@ public class LeaveAuditProcessor implements MessageAuditProcessor {
 		if (session != null) {
 			messageText += " and user " + session.getUserID();
 		}
-		return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(OperationType.LEAVE, messageText, session, info);
+		return IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(OperationType.LEAVE, messageText,
+				session, info);
 	}
 
 	@Override

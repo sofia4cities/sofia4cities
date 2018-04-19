@@ -54,8 +54,8 @@ public class DeleteAuditProcessor implements MessageAuditProcessor {
 				deleteMessageText += " by user " + session.getUserID();
 			}
 
-			event = IotBrokerAuditEventFactory.createIotBrokerAuditEvent(deletetMessage, deleteMessageText, session,
-					info);
+			event = IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(deletetMessage,
+					deleteMessageText, session, info);
 
 		} else if (SSAPMessageTypes.DELETE_BY_ID.equals(message.getMessageType())) {
 
@@ -68,8 +68,8 @@ public class DeleteAuditProcessor implements MessageAuditProcessor {
 				deleteMessageText += "  and user  " + session.getUserID();
 			}
 
-			event = IotBrokerAuditEventFactory.createIotBrokerAuditEvent(deleteMessage, deleteMessageText, session,
-					info);
+			event = IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(deleteMessage,
+					deleteMessageText, session, info);
 		}
 
 		return event;

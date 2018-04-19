@@ -40,7 +40,8 @@ public class InsertAuditProcessor implements MessageAuditProcessor {
 		log.debug("Processing insert message");
 		SSAPBodyInsertMessage insertMessage = (SSAPBodyInsertMessage) message.getBody();
 		String insertMessageText = "Insert message on ontology " + insertMessage.getOntology();
-		return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(insertMessage, insertMessageText, session, info);
+		return IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(insertMessage, insertMessageText,
+				session, info);
 	}
 
 	@Override

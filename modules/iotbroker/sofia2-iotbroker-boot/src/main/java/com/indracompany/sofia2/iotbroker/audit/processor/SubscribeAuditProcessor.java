@@ -42,7 +42,8 @@ public class SubscribeAuditProcessor implements MessageAuditProcessor {
 
 		String messageText = "Subscribe message on ontology " + subscribeMessage.getOntology();
 
-		return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(subscribeMessage, messageText, session, info);
+		return IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(subscribeMessage, messageText,
+				session, info);
 
 	}
 

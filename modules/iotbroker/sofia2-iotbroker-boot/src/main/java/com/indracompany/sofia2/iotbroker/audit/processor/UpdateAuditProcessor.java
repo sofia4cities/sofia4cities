@@ -51,8 +51,8 @@ public class UpdateAuditProcessor implements MessageAuditProcessor {
 				updateMessageText += " by user " + session.getUserID();
 			}
 
-			event = IotBrokerAuditEventFactory.createIotBrokerAuditEvent(updateMessage, updateMessageText, session,
-					info);
+			event = IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(updateMessage,
+					updateMessageText, session, info);
 
 		} else if (SSAPMessageTypes.UPDATE_BY_ID.equals(message.getMessageType())) {
 
@@ -65,8 +65,8 @@ public class UpdateAuditProcessor implements MessageAuditProcessor {
 				updateMessageText += "  and user  " + session.getUserID();
 			}
 
-			event = IotBrokerAuditEventFactory.createIotBrokerAuditEvent(updateMessage, updateMessageText, session,
-					info);
+			event = IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(updateMessage,
+					updateMessageText, session, info);
 
 		}
 

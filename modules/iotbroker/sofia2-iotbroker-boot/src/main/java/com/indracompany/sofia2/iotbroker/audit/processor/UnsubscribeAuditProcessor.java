@@ -42,7 +42,8 @@ public class UnsubscribeAuditProcessor implements MessageAuditProcessor {
 		SSAPBodyUnsubscribeMessage unsubscribeMessage = (SSAPBodyUnsubscribeMessage) message.getBody();
 		String messageText = "Unsubscribe operation with subscription id " + unsubscribeMessage.getSubscriptionId();
 
-		return IotBrokerAuditEventFactory.createIotBrokerAuditEvent(unsubscribeMessage, messageText, session, info);
+		return IotBrokerAuditEventFactory.builder().build().createIotBrokerAuditEvent(unsubscribeMessage, messageText,
+				session, info);
 	}
 
 	@Override

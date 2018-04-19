@@ -43,7 +43,7 @@ public class Sofia2EventFactory {
 		Sofia2AuditError event = createAuditEventError(message);
 		setErrorDetails(event, e);
 		event.setModule(module);
-
+		event.setEx(e);
 		return createAuditEventError(event, message);
 	}
 
