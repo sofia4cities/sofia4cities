@@ -326,9 +326,25 @@
 		</resources>
 	</build>
 	
+
 	<profiles>
 		<profile>
-			<id>dev</id>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+		  </activation>
+			<properties>
+				<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+			</properties>
+		</profile>
+		<profile>
+			<id>integration</id>
+			<properties>
+				<sofia2.quartzURL>jdbc:mysql://localhost:3307/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+			</properties>
+		</profile>
+		<profile>
+			<id>unit-test</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 		  </activation>
@@ -339,10 +355,9 @@
 			</properties>
 	  </profile>
 	  <profile>
-			<id>integration</id>
+			<id>integration-test</id>
 			<properties>
-				<sofia2.quartzURL>jdbc:mysql://localhost:3307/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
-				<skip.unit.tests>false</skip.unit.tests>
+				<skip.unit.tests>true</skip.unit.tests>
 			  <skip.integration.tests>false</skip.integration.tests>
 			</properties>
 	  </profile>

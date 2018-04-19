@@ -46,7 +46,7 @@ pipeline {
 				}
 				
 		    	// Only compile and generate artifacts
-	        	sh "mvn clean install -P no-test"
+	        	sh "mvn clean install -P integration,no-test"
 	   							
 				// Load Sofia2 CDB and BDTR					
 	   			dir("${env.SYSTEMCONFIG}") {
@@ -57,7 +57,7 @@ pipeline {
 	   			}
 	   			
 	   			// Execute tests
-	   			sh "mvn verify -P integration"
+	   			sh "mvn verify -P integration,unit-test,integration-test"
 					
 				sh "mvn sonar:sonar"
 	   		}
