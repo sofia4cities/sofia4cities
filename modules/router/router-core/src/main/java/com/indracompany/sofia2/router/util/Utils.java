@@ -211,13 +211,13 @@ public class Utils {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			
 		} finally {
 			if (br != null) {
 				try {
 					br.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					
 				}
 			}
 		}

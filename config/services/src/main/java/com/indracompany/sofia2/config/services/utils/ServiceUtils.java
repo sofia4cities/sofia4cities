@@ -80,7 +80,7 @@ public class ServiceUtils {
 			JsonNode tree = objectMapper.readValue(json,JsonNode.class);
 			formattedJson = tree.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		}
 		
 		return formattedJson;

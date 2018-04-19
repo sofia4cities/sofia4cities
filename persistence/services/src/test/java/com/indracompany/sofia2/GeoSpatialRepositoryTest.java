@@ -101,7 +101,7 @@ public class GeoSpatialRepositoryTest {
 	
 	@Before
 	public  void doBefore() throws Exception {	
-		System.out.println("up process...");
+		log.info("up process...");
 		
 		doBefore1();
 		doBefore2();
@@ -109,7 +109,7 @@ public class GeoSpatialRepositoryTest {
 	}
 	
 	public  void doBefore1() throws Exception {	
-		System.out.println("doBefore1 up process...");
+		log.info("doBefore1 up process...");
 		
 		File in = new ClassPathResource("type.json").getFile();
 		String TYPE = FileUtils.readFileToString(in);
@@ -154,7 +154,7 @@ public class GeoSpatialRepositoryTest {
 	}
 	
 	public  void doBefore2() throws Exception {	
-		System.out.println("doBefore2 up process...");
+		log.info("doBefore2 up process...");
 		
 		File in = new ClassPathResource("type_mongo.json").getFile();
 		String TYPE = FileUtils.readFileToString(in);
@@ -196,7 +196,7 @@ public class GeoSpatialRepositoryTest {
 	
 	@After
 	public  void tearDown() {
-		System.out.println("teardown process...");
+		log.info("teardown process...");
 	
 		
 		try {

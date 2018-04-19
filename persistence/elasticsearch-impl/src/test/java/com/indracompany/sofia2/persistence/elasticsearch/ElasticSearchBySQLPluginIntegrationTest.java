@@ -63,7 +63,7 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 		
 		connector.deleteIndex(TEST_INDEX_ACCOUNT);
 		connector.createIndex(TEST_INDEX_ACCOUNT);
-	    System.out.println(prepareAccountsIndex());
+		prepareAccountsIndex();
 	    
 	    String jsonPath = "src/test/resources/accounts.json";
 	    List<String> list = ESInsertService.readLines(new File(jsonPath));
@@ -79,7 +79,7 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	
 	@After
 	public  void tearDown() {
-		System.out.println("teardown process...");
+		log.info("teardown process...");
 		try {
 			 deleteTestIndex(TEST_INDEX_ACCOUNT);
 		} catch (Exception e) {
@@ -91,7 +91,7 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	
 	private void deleteTestIndex(String index) {
 		boolean res =  connector.deleteIndex(index);
-		System.out.println("deleteTestIndex :"+res);
+		log.info("deleteTestIndex :"+res);
 	}
 	
 	private  boolean prepareAccountsIndex() {

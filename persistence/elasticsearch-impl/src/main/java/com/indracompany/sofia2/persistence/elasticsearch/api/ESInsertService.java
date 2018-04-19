@@ -98,17 +98,27 @@ public class ESInsertService {
 	}
 	
 	public static List<String> readLines(File file) throws Exception {
-	      if (!file.exists()) {
-	          return new ArrayList<String>();
-	      }
-	      BufferedReader reader = new BufferedReader(new FileReader(file));
-	      List<String> results = new ArrayList<String>();
-	      String line = reader.readLine();
-	      while (line != null) {
-	          results.add(line);
-	          line = reader.readLine();
-	      }
-	      return results;
-	  }
+		if (!file.exists()) {
+			return new ArrayList<String>();
+		}
+
+		BufferedReader reader=null;
+		List<String> results = new ArrayList<String>();
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			
+			String line = reader.readLine();
+			while (line != null) {
+				results.add(line);
+				line = reader.readLine();
+			}
+			return results;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			reader.close();
+		}
+
+	}
 
 }

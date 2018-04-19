@@ -91,12 +91,12 @@ public class BaseAspect {
 	}
 
 	class MethodStats {
-		public String methodName;
-		public String className;
-		public long count;
-		public long totalTime;
-		public long lastTotalTime;
-		public long maxTime;
+		private String methodName;
+		private String className;
+		private long count;
+		private long totalTime;
+		private long lastTotalTime;
+		private long maxTime;
 
 		public MethodStats(String className, String methodName) {
 			this.className = className;

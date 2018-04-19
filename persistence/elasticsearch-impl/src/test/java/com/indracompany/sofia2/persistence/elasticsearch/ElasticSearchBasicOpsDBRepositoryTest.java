@@ -65,13 +65,13 @@ public class ElasticSearchBasicOpsDBRepositoryTest {
 	
 	@Before
 	public  void doBefore() throws Exception {	
-		System.out.println("up process...");
+		log.info("up process...");
 		manage.createTable4Ontology(TEST_INDEX_ONLINE, "");
 	}
 	
 	@After
 	public  void tearDown() {
-		System.out.println("teardown process...");
+		log.info("teardown process...");
 		try {
 			manage.removeTable4Ontology(TEST_INDEX_ONLINE);
 		} catch (Exception e) {
