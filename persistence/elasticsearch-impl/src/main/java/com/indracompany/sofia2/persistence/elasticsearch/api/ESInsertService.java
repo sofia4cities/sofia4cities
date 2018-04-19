@@ -40,13 +40,12 @@ public class ESInsertService {
 	@Autowired
 	ESBaseApi connector;
 
+	@Deprecated
 	public String load(String index, String type, String jsonDoc) throws Exception {
 
 		Bulk bulk = new Bulk.Builder().addAction(new Index.Builder(jsonDoc).index(index).type(type).build()).build();
 
 		BulkResult result = connector.getHttpClient().execute(bulk);
-
-		log.info("Document has been inserted..." + result.getJsonString());
 
 		log.info("Document has been inserted..." + result.getJsonString());
 
@@ -65,8 +64,12 @@ public class ESInsertService {
 		List<BulkWriteResult> listResult = new ArrayList<BulkWriteResult>();
 		
 		List<Index> list = new ArrayList<Index>();
-		for (String string : jsonDoc) {
-			Index i = new Index.Builder(string).index(index).type(type).build();
+		for (String s : jsonDoc) {
+			
+			s = s.replaceAll("\\n", "");
+			s = s.replaceAll("\\r", "");
+			
+			Index i = new Index.Builder(s).index(index).type(type).build();
 			list.add(i);
 		}
 			

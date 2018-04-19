@@ -72,7 +72,7 @@ public class ElasticSearchBasicApiTest {
 	}
 	
 	 private boolean  prepareGameOfThronesIndex() {
-	        String dataMapping = "{  \"gotCharacters\": { " +
+	        String dataMapping = "{  \""+TEST_INDEX_GAME_OF_THRONES+"\": { " +
 	                " \"properties\": {\n" +
 	                " \"nickname\": {\n" +
 	                "\"type\":\"text\", "+
@@ -98,7 +98,7 @@ public class ElasticSearchBasicApiTest {
 	                "}"+
 	                "} } }";
 	        
-	        boolean response =  connector.createType(TEST_INDEX_GAME_OF_THRONES, "gotCharacters", dataMapping);
+	        boolean response =  connector.createType(TEST_INDEX_GAME_OF_THRONES, TEST_INDEX_GAME_OF_THRONES, dataMapping);
 	        log.info("prepareGameOfThronesIndex :"+response);
 	        return response;
 	       

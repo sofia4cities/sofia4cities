@@ -14,6 +14,7 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.action.search.SearchResponse;
@@ -63,13 +64,16 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	public String insert(String ontology, String instance) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
 		log.info(String.format("ElasticSearchBasicOpsDBRepository : Loading content: %s into elasticsearch  %s", instance, ontology));
-		String output;
+		List<BulkWriteResult> output=null;
 		try {
-			output = eSInsertService.load(ontology, ontology, instance);
+			List<String> instances = new ArrayList<String>();
+			instances.add(instance);
+			output = eSInsertService.load(ontology, ontology, instances);
+			return output.get(0).getId();
 		} catch (Exception e) {
 			throw new DBPersistenceException("Error inserting instance :"+instance+" into :"+ontology,e);
 		}
-		return output;
+		
 	}
 
 	@Override
