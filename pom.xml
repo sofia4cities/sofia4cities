@@ -328,24 +328,31 @@
 	
 	<profiles>
 		<profile>
-	        <id>dev</id>
-	        <activation>
-		        <activeByDefault>true</activeByDefault>
-		    </activation>
-	        <properties>
-	            <sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
-	            <skip.unit.tests>false</skip.unit.tests>
-    			<skip.integration.tests>true</skip.integration.tests>
-	        </properties>
-    	</profile>
-    	<profile>
-	        <id>integration</id>
-	        <properties>
-	            <sofia2.quartzURL>jdbc:mysql://localhost:3307/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
-	            <skip.unit.tests>false</skip.unit.tests>
-    			<skip.integration.tests>false</skip.integration.tests>
-	        </properties>
-	    </profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+		  </activation>
+			<properties>
+				<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+				<skip.unit.tests>false</skip.unit.tests>
+			  <skip.integration.tests>true</skip.integration.tests>
+			</properties>
+	  </profile>
+	  <profile>
+			<id>integration</id>
+			<properties>
+				<sofia2.quartzURL>jdbc:mysql://localhost:3307/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+				<skip.unit.tests>false</skip.unit.tests>
+			  <skip.integration.tests>false</skip.integration.tests>
+			</properties>
+	  </profile>
+		<profile>
+			<id>no-test</id>
+			<properties>
+				<skip.unit.tests>true</skip.unit.tests>
+			  <skip.integration.tests>true</skip.integration.tests>
+			</properties>
+		</profile>
 	</profiles>
 	
 	
