@@ -69,6 +69,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
+@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class IndicationProcessorTest {

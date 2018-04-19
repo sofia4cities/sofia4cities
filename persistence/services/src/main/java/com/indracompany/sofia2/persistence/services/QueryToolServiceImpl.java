@@ -56,13 +56,13 @@ public class QueryToolServiceImpl implements QueryToolService {
 	@Autowired
 	ClientPlatformService clientPlatformService;
 
-	private void hasUserPermission(String user, String ontology) throws Exception {
+	private void hasUserPermission(String user, String ontology) throws DBPersistenceException {
 		if (!ontologyService.hasUserPermissionForQuery(user, ontology)) {
-			throw new Exception("User:" + user + " has nos permission to query ontology " + ontology);
+			throw new DBPersistenceException("User:" + user + " has nos permission to query ontology " + ontology);
 		}
 	}
 	
-	private QueryAsTextDBRepository getInstance(String ontologyId, String sessionUserId) throws Exception {
+	private QueryAsTextDBRepository getInstance(String ontologyId, String sessionUserId) throws DBPersistenceException {
 		Ontology  ds = ontologyService.getOntologyByIdentification(ontologyId, sessionUserId);
 		RtdbDatasource dataSource =  ds.getRtdbDatasource();
 		if (dataSource.name().equals("Mongo")) return queryMongo;
@@ -70,7 +70,7 @@ public class QueryToolServiceImpl implements QueryToolService {
 		else return queryMongo;
 	}
 	
-	private QueryAsTextDBRepository getInstanceClientPlatform(String ontologyId, String clientP) throws Exception {
+	private QueryAsTextDBRepository getInstanceClientPlatform(String ontologyId, String clientP) throws DBPersistenceException {
 		ClientPlatform cp = clientPlatformService.getByIdentification(clientP);
 		
 		List<Ontology>  ds = ontologyService.getOntologiesByClientPlatform(cp);
@@ -80,15 +80,19 @@ public class QueryToolServiceImpl implements QueryToolService {
                 .findAny()                                      
                 .orElse(null); 
 		
-		RtdbDatasource dataSource =  result1.getRtdbDatasource();
-		if (dataSource.name().equals("Mongo")) return queryMongo;
-		else if (dataSource.name().equals("ElasticSearch")) return queryElasticSearch; 
+		if (result1!=null) {
+			RtdbDatasource dataSource =  result1.getRtdbDatasource();
+			if (dataSource.name().equals("Mongo")) return queryMongo;
+			else if (dataSource.name().equals("ElasticSearch")) return queryElasticSearch; 
+			else return queryMongo;
+		}
 		else return queryMongo;
+
 	}
 
-	private void hasClientPlatformPermisionForQuery(String clientPlatform, String ontology) throws Exception{
+	private void hasClientPlatformPermisionForQuery(String clientPlatform, String ontology) throws DBPersistenceException{
 		if (!ontologyService.hasClientPlatformPermisionForQuery(clientPlatform, ontology)) {
-			throw new Exception("Client Platform:" + clientPlatform + " has nos permission to query ontology " + ontology);
+			throw new DBPersistenceException("Client Platform:" + clientPlatform + " has nos permission to query ontology " + ontology);
 		}
 	}
 	

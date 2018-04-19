@@ -46,20 +46,20 @@ pipeline {
 				}
 				
 		    	// Only compile and generate artifacts
-	        	sh "mvn clean install -DskipTests"	   		
+	        	sh "mvn clean install -P integration,no-test"
 	   							
 				// Load Sofia2 CDB and BDTR					
 	   			dir("${env.SYSTEMCONFIG}") {
 					// Wait until configdb and realtimedb are up and running
 					sleep 10
 						
-					sh "mvn spring-boot:run"	  			
+					sh "mvn spring-boot:run"
 	   			}
 	   			
 	   			// Execute tests
-	   			sh "mvn test"			
+	   			sh "mvn verify -P integration,unit-test,integration-test"
 					
-				sh "mvn sonar:sonar"	   			
+				sh "mvn sonar:sonar"
 	   		}
 	   }	 
    

@@ -13,8 +13,10 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch;
 
-import org.elasticsearch.action.admin.cluster.node.info.NodesInfoResponse;
-import org.elasticsearch.action.bulk.BulkResponse;
+import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,19 +31,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESInsertService;
+import com.indracompany.sofia2.persistence.elasticsearch.api.ESNativeService;
 import com.indracompany.sofia2.persistence.elasticsearch.sql.connector.ElasticSearchSQLDbHttpConnector;
 
 import lombok.extern.slf4j.Slf4j;
 
-/**
- *
- * @author Luis Miguel Gracia
- */
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
-// @ContextConfiguration(classes = EmbeddedMongoConfiguration.class)
 @Ignore
 public class ElasticSearchBySQLPluginIntegrationTest {
 
@@ -51,33 +50,38 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	ElasticSearchSQLDbHttpConnector httpConnector;
 	
 	@Autowired
-	ESInsertService insertService;
+	ESNativeService esNativeService;
 
 	@Autowired
 	ESBaseApi connector;
 	
+	@Autowired
+	ESInsertService sSInsertService;
+	
 	@Before
 	public  void doBefore() throws Exception {
 		
-		NodesInfoResponse nodeInfos = connector.getClient().admin().cluster().prepareNodesInfo().get();
-		String clusterName = nodeInfos.getClusterName().value();
-		System.out.println(String.format("Found cluster... cluster name: %s", clusterName));
 		connector.deleteIndex(TEST_INDEX_ACCOUNT);
 		connector.createIndex(TEST_INDEX_ACCOUNT);
-	    System.out.println(prepareAccountsIndex());
+		prepareAccountsIndex();
 	    
-		BulkResponse response2 = insertService.loadBulkFromFileResource(TEST_INDEX_ACCOUNT,"src/test/resources/accounts.json");
-		System.out.println("Loaded Bulk :"+ response2.getItems().length);
+	    String jsonPath = "src/test/resources/accounts.json";
+	    List<String> list = ESInsertService.readLines(new File(jsonPath));
+	    
+	    List<String> result = list.stream()               
+                .filter(x -> x.startsWith("{\"account_number\""))    
+                .collect(Collectors.toList());  
+		
+	    sSInsertService.load(TEST_INDEX_ACCOUNT, TEST_INDEX_ACCOUNT, result);
 		
 		Thread.sleep(10000);
 	}
 	
 	@After
 	public  void tearDown() {
-		System.out.println("teardown process...");
+		log.info("teardown process...");
 		try {
 			 deleteTestIndex(TEST_INDEX_ACCOUNT);
-		        //connector.getClient().close();
 		} catch (Exception e) {
 			log.error("Something happens when deleting indexes :"+e.getMessage());
 		}
@@ -87,7 +91,7 @@ public class ElasticSearchBySQLPluginIntegrationTest {
 	
 	private void deleteTestIndex(String index) {
 		boolean res =  connector.deleteIndex(index);
-		System.out.println("deleteTestIndex :"+res);
+		log.info("deleteTestIndex :"+res);
 	}
 	
 	private  boolean prepareAccountsIndex() {

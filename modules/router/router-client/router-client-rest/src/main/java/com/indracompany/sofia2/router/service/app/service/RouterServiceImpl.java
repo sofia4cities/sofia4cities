@@ -28,7 +28,10 @@ import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.model.SuscriptionModel;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service("routerServiceImpl")
+@Slf4j
 public class RouterServiceImpl implements RouterService, RouterClient<NotificationModel,OperationResultModel >{
 
 	@Value("${sofia2.flowengine.home.base:http://localhost:19100/router/router/}")
@@ -69,7 +72,7 @@ public class RouterServiceImpl implements RouterService, RouterClient<Notificati
 		}
 
 		//OperationResultModel quote = restTemplate.postForObject(routerStandaloneURL,input, OperationResultModel.class);
-		System.out.println(quote.toString());
+		log.info(quote.toString());
 		return quote;
 	}
 

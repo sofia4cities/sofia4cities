@@ -124,23 +124,34 @@ public class UserController {
 			utils.addRedirectMessage("user.update.error", redirect);
 			return "redirect:/users/create";
 		}
-		utils.addRedirectMessage("user.update.success", redirect);
 		return "redirect:/users/show/" + user.getUserId();
 
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/create")
-	public String create(@Valid User user, BindingResult bindingResult, RedirectAttributes redirect) {
+	public String create(@Valid User user, BindingResult bindingResult, RedirectAttributes redirect, HttpServletRequest request) {
 		if (bindingResult.hasErrors()) {
 			log.debug("Some user properties missing");
 			utils.addRedirectMessage("user.create.error", redirect);
 			return "redirect:/users/create";
 		}
 		try {
-			this.userService.createUser(user);
-			operations.createPostOperationsUser(user);
-			operations.createPostOntologyUser(user);
+			String newPass = request.getParameter("newpasswordbox");
+			String repeatPass = request.getParameter("repeatpasswordbox");
+			if ((!newPass.isEmpty()) && (!repeatPass.isEmpty())) {
+				if (newPass.equals(repeatPass)) {
+					user.setPassword(newPass);
+					this.userService.createUser(user);
+					operations.createPostOperationsUser(user);
+					operations.createPostOntologyUser(user);
+					return "redirect:/users/list";
+				}
+			}
+			
+			log.debug("Password is not valid");
+			utils.addRedirectMessage("user.create.error", redirect);
+			return "redirect:/users/create";
 
 		} catch (UserServiceException e) {
 			log.debug("Cannot update user that does not exist");
@@ -148,8 +159,7 @@ public class UserController {
 			return "redirect:/users/create";
 		}
 
-		utils.addRedirectMessage("user.create.success", redirect);
-		return "redirect:/users/list";
+		
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")

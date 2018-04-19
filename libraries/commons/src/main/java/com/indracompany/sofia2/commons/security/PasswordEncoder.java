@@ -16,11 +16,14 @@ package com.indracompany.sofia2.commons.security;
 import java.security.MessageDigest;
 import java.util.Base64;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class PasswordEncoder {
 	private static PasswordEncoder instance;
-	private final static int ITERATION_COUNT = 5;
+	private static final int ITERATION_COUNT = 5;
 
-	private final static String SALT_KEY = "PveFT7isDjGYFTaYhc2Fzw==";
+	private static final String SALT_KEY = "PveFT7isDjGYFTaYhc2Fzw==";
 
 	private PasswordEncoder() {
 	}
@@ -56,7 +59,7 @@ public class PasswordEncoder {
 		return encodedPassword;
 	}
 
-	private byte[] base64ToByte(String str) throws Exception {
+	private byte[] base64ToByte(String str) throws IllegalArgumentException {
 		return Base64.getDecoder().decode(str);
 	}
 
@@ -65,23 +68,21 @@ public class PasswordEncoder {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String password = "Secrete@343";
-		String saltKey = "PveFT7isDjGYFTaYhc2Fzw==";
-		String hash1, hash2 = null;
+		String pass = "Secrete@343";
+		String hash1 = null;
+		String hash2 = null;
 
 		// Assume from UI
 		PasswordEncoder encoder1 = PasswordEncoder.getInstance();
-		hash1 = encoder1.encodeSHA256(password, saltKey);
-		System.out.println(hash1);
+		hash1 = encoder1.encodeSHA256(pass, SALT_KEY);
 
 		// Assume the same present in db
 		PasswordEncoder encoder2 = PasswordEncoder.getInstance();
-		hash2 = encoder2.encodeSHA256(password, saltKey);
-		System.out.println(hash2);
+		hash2 = encoder2.encodeSHA256(pass, SALT_KEY);
 
 		if (hash1.equalsIgnoreCase(hash2))
-			System.out.println("Both hash Matches..");
+			log.debug("Both hash Matches..");
 		else
-			System.out.println("Hash matches fails..");
+			log.debug("Hash matches fails..");
 	}
 }

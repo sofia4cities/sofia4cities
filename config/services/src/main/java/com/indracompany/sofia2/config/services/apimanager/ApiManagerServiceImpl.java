@@ -159,11 +159,11 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		try {
 			operationsJson = objectMapper.readValue(operationsObject, new TypeReference<List<OperationJson>>(){});
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		}
 		
 		AuthenticationJson authenticationJson = null;

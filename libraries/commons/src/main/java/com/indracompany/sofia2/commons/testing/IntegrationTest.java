@@ -12,15 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.elasticsearch;
+package com.indracompany.sofia2.commons.testing;
 
-import lombok.Data;
-
-@Data
-public class ElasticSearchRequest {
-    
-    private String index;
-    private String type;
-    private String id;
+public interface IntegrationTest {
 
 }

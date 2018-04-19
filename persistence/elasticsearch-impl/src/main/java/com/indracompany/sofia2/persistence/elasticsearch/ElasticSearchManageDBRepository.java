@@ -84,10 +84,10 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 	public String createTable4Ontology(String ontology, String schema) throws DBPersistenceException {
 
 		ontology = ontology.toLowerCase();
-
 		try {
-			// String res = connector.createIndex(database);
-			String res = connector.createIndex(ontology.toLowerCase());
+			String res = connector.createIndex(ontology);
+			log.info("Index result :  " + res);
+
 		} catch (Exception e) {
 			log.info("Resource already exists ");
 		}
@@ -101,8 +101,8 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 		}
 
 		else {
+
 			boolean response = connector.createType(ontology, ontology, schema);
-			// boolean response = connector.createType(database, ontology, schema);
 			return ontology;
 		}
 
@@ -122,8 +122,8 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public void removeTable4Ontology(String ontology) throws DBPersistenceException {
+
 		ontology = ontology.toLowerCase();
-		// eSDeleteService.deleteAll(database, ontology);
 		eSDeleteService.deleteAll(ontology, ontology);
 
 	}
@@ -144,7 +144,6 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public void createIndex(String sentence) throws DBPersistenceException {
-
 		throw new DBPersistenceException("Not Implemented Already");
 	}
 

@@ -5,6 +5,7 @@
 server: ## Config Web Server
    port: 18080
    contextPath: /controlpanel
+   max-http-header-size: 10000000
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat

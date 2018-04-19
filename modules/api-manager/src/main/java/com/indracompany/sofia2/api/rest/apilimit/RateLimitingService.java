@@ -31,6 +31,8 @@ public class RateLimitingService {
 
 	private int permits=5;
 	private TimeUnit timePeriod = TimeUnit.SECONDS;
+	
+	private static final Object lock1 = new Object();
 
 	public boolean processRateLimit(String clientId, int permits) {
 		if (clientId == null) {
@@ -45,7 +47,7 @@ public class RateLimitingService {
 		if (limiters.containsKey(clientId)) {
 			return limiters.get(clientId);
 		} else {
-			synchronized (clientId.intern()) {
+			synchronized (lock1) {
 				if (limiters.containsKey(clientId)) {
 					return limiters.get(clientId);
 				}
