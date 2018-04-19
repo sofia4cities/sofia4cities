@@ -27,9 +27,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest()
 @SpringBootApplication
+@Slf4j
 public class MailServiceIntegrationTest {
 	public static void main(String[] args) {
 		SpringApplication.run(MailServiceIntegrationTest.class, args);
