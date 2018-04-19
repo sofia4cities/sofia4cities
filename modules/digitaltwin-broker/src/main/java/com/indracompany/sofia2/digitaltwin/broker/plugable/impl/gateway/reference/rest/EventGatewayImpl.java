@@ -78,7 +78,11 @@ public class EventGatewayImpl implements EventGateway {
 			device.setUrlSchema(urlSchema);
 			device.setIp(ip);
 			device.setPort(Integer.parseInt(port));
-			device.setContextPath(contextPath);
+			if (!contextPath.startsWith("/")) {
+				device.setContextPath("/" + contextPath);
+			} else {
+				device.setContextPath(contextPath);
+			}
 
 			deviceRepo.save(device);
 
