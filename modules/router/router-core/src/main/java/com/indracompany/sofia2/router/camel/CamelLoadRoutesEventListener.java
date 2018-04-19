@@ -26,7 +26,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class CamelLoadRoutesEventListener {
 
 	@Autowired
@@ -43,14 +46,14 @@ public class CamelLoadRoutesEventListener {
 				Resource[] resource = applicationContext.getResources("classpath*:camel-routes/*.xml");
 				if (resource != null) {
 					for (Resource r : resource) {
-						System.out.println("Loading Camel Set of Routes :" + r.getFilename() + " " + r.getURL());
+						log.info("Loading Camel Set of Routes :" + r.getFilename() + " " + r.getURL());
 						loadRoutes(r.getInputStream());
 					}
 				}
 			} catch (Exception e) {
 			}
-			System.out.println("Router Event Loader -> Camel Context Status is: " + camelContextHandler.getDefaultCamelContext().getStatus());
-			System.out.println("Router Event Loader -> Camel Total Number of Routes Loaded :"
+			log.info("Router Event Loader -> Camel Context Status is: " + camelContextHandler.getDefaultCamelContext().getStatus());
+			log.info("Router Event Loader -> Camel Total Number of Routes Loaded :"
 					+ camelContextHandler.getDefaultCamelContext().getRoutes().size());
 
 		}
@@ -74,7 +77,7 @@ public class CamelLoadRoutesEventListener {
 
 	@EventListener({ ApplicationReadyEvent.class })
 	void contextRefreshedEvent() {
-		System.out.println("Router Event Loader -> ApplicationReadyEvent happened, loading Camel Routes");
+		log.info("Router Event Loader -> ApplicationReadyEvent happened, loading Camel Routes");
 		context();
 	}
 }

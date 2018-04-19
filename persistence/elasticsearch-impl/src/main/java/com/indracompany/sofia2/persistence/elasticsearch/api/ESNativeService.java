@@ -69,13 +69,11 @@ public class ESNativeService {
 					.put("client.transport.sniff", false).put("cluster.name", clusterName).build();
 			preBuiltTransportClient = new PreBuiltTransportClient(settings);
 			client = preBuiltTransportClient.addTransportAddress(getTransportAddress());
-
 			log.info(String.format("Settings %s ", client.settings().toString()));
-			System.out.println(String.format("Settings %s ", client.settings().toString()));
 		} catch (Exception e) {
 			log.info(String.format("Cannot Instantiate ElasticSearch Feature due to : %s ", e.getMessage()));
 			log.error(String.format("Cannot Instantiate ElasticSearch Feature due to : %s ", e.getMessage()));
-			System.out.println(String.format("Cannot Instantiate ElasticSearch Feature due to : %s ", e.getMessage()));
+			
 		}
 
 	}
@@ -87,7 +85,6 @@ public class ESNativeService {
 
 	public TransportClient getClient() {
 		if (client == null) {
-			System.out.println("CLIENT IS NULL");
 			log.error("CLIENT IS NULL");
 			return null;
 		}

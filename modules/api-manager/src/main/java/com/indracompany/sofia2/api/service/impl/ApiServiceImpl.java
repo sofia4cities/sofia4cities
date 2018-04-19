@@ -51,8 +51,10 @@ import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 import io.prometheus.client.spring.web.PrometheusTimeMethod;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class ApiServiceImpl extends ApiManagerService implements ApiServiceInterface, Processor {
 	
 	@Autowired
@@ -263,19 +265,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 			REASON=((String)facts.get(RuleManager.REASON));
 			REASON_TYPE=((String)facts.get(RuleManager.REASON_TYPE));
 		}
-		System.out.println(hashPP(data));
-		
-		User user = (User) data.get(ApiServiceInterface.USER);
-		Api api = (Api) data.get(ApiServiceInterface.API);
-		String PATH_INFO = (String) data.get(ApiServiceInterface.PATH_INFO);
-		String METHOD = (String) data.get(ApiServiceInterface.METHOD);
-		String BODY = (String) data.get(ApiServiceInterface.BODY);
-		String QUERY_TYPE = (String) data.get(ApiServiceInterface.QUERY_TYPE);
-		String QUERY = (String) data.get(ApiServiceInterface.QUERY);
-		String TARGET_DB_PARAM = (String) data.get(ApiServiceInterface.TARGET_DB_PARAM);
-		String FORMAT_RESULT = (String) data.get(ApiServiceInterface.FORMAT_RESULT);
-		String OBJECT_ID = (String) data.get(ApiServiceInterface.OBJECT_ID);
-		
+		log.debug(hashPP(data));
+				
 		sendResponse(response, HttpServletResponse.SC_OK, hashPP(data)+"\n"+REASON,null,null);
 
 	}

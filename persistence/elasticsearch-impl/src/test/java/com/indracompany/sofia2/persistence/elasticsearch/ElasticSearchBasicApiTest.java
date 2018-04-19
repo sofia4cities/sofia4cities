@@ -54,13 +54,13 @@ public class ElasticSearchBasicApiTest {
 	
 	private String createTestIndex(String index) {
 		String res =   connector.createIndex(index);
-		System.out.println("createTestIndex :"+res);
+		log.info("createTestIndex :"+res);
 		return res;
 	}
 	
 	@After
 	public  void tearDown() {
-		System.out.println("teardown process...");
+		log.info("teardown process...");
 		
 		try {	
 	        deleteTestIndex(TEST_INDEX_GAME_OF_THRONES);
@@ -99,14 +99,14 @@ public class ElasticSearchBasicApiTest {
 	                "} } }";
 	        
 	        boolean response =  connector.createType(TEST_INDEX_GAME_OF_THRONES, "gotCharacters", dataMapping);
-	        System.out.println("prepareGameOfThronesIndex :"+response);
+	        log.info("prepareGameOfThronesIndex :"+response);
 	        return response;
 	       
 	    }
 
 	private void deleteTestIndex(String index) {
 		boolean res =  connector.deleteIndex(index);
-		System.out.println("deleteTestIndex :"+res);
+		log.info("deleteTestIndex :"+res);
 	}
 
 	@Test
@@ -125,7 +125,7 @@ public class ElasticSearchBasicApiTest {
 				
 			List<BulkWriteResult> r =sSInsertService.load(TEST_INDEX_ONLINE, TEST_INDEX_ONLINE, result);
 
-			System.out.println("Loaded Bulk :"+ r.size());
+			log.info("Loaded Bulk :"+ r.size());
 		
 			deleteTestIndex(TEST_INDEX_GAME_OF_THRONES);
 			createTestIndex(TEST_INDEX_GAME_OF_THRONES);
@@ -140,7 +140,7 @@ public class ElasticSearchBasicApiTest {
 				
 			 r =sSInsertService.load(TEST_INDEX_GAME_OF_THRONES, TEST_INDEX_GAME_OF_THRONES, result);
 
-			System.out.println("Loaded Bulk :"+ r.size());
+			 log.info("Loaded Bulk :"+ r.size());
 					
 
 			

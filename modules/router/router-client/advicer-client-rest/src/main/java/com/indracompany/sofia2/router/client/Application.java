@@ -29,15 +29,6 @@ public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     public static void main(String args[]) throws KeyManagementException, NoSuchAlgorithmException {
-       /* RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor("admin", "admin"));
-        //String quote = restTemplate.getForObject("http://localhost:19100/router/router/node-red", String.class);
-        Notification input = new Notification();
-        input.setBody("hey");
-        input.setObjectId("id");
-        Notification quote = restTemplate.postForObject("http://localhost:19100/router/router/test-operation",input, Notification.class);
-        System.out.println(quote.toString());
-        */
         
     	OperationResultModel input = new OperationResultModel();
     	NotificationCompositeModel model = new NotificationCompositeModel();

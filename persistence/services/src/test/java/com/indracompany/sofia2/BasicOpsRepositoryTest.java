@@ -96,7 +96,7 @@ public class BasicOpsRepositoryTest {
 	
 	@Before
 	public  void doBefore() throws Exception {	
-		System.out.println("up process...");
+		log.info("up process...");
 		
 		connector.deleteIndex("test*");
 		
@@ -155,7 +155,7 @@ public class BasicOpsRepositoryTest {
 	
 	@After
 	public  void tearDown() {
-		System.out.println("teardown process...");
+		log.info("teardown process...");
 		try {
 			manageFacade.removeTable4Ontology(TEST_INDEX_ONLINE);
 			manageFacade.removeTable4Ontology(TEST_INDEX_ONLINE_ELASTIC);
