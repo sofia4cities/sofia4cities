@@ -52,6 +52,15 @@ public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, 
 		else return mongoBasicOps;
 	}
 	
+	public Ontology getOntology(String ontologyId) {
+		return ontologyRepository.findByIdentification(ontologyId);
+	}
+	
+	public RtdbDatasource getOntologyDataSource(String ontologyId) {
+		Ontology  ds =  ontologyRepository.findByIdentification(ontologyId);
+		return ds.getRtdbDatasource();
+	}
+	
 	private BasicOpsDBRepository getInstance(RtdbDatasource dataSource) throws DBPersistenceException {
 		if (dataSource.name().equals("Mongo")) return mongoBasicOps;
 		else if (dataSource.name().equals("ElasticSearch")) return elasticBasicOps; 

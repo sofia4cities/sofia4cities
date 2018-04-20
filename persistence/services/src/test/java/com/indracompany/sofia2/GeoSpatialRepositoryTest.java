@@ -42,6 +42,7 @@ import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
 import com.indracompany.sofia2.persistence.services.BasicOpsPersistenceServiceFacade;
+import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService;
 import com.indracompany.sofia2.persistence.services.ManageDBPersistenceServiceFacade;
 import com.indracompany.sofia2.persistence.services.util.MustacheUtil;
 
@@ -82,6 +83,9 @@ public class GeoSpatialRepositoryTest {
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
+	@Autowired
+	private GeoSpatialOpsService geoService;
+	
 	private User getUserAdministrator() {
 		if (userAdministrator == null)
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
@@ -91,6 +95,7 @@ public class GeoSpatialRepositoryTest {
 	private String SQL_TEST = "select * from ";
 	private String partial_envelope =  "partial_envelope.json";
 	private String partial_polygon =   "partial_polygon.json";
+	private String partial_polygon_agnostic =   "partial_polygon_agnostic.json";
 	private String partial_polygon_mongo =   "partial_polygon_mongo.json";
 
 	
@@ -295,6 +300,22 @@ public class GeoSpatialRepositoryTest {
 			log.info("result  "+listQ);
 			
 			Assert.assertTrue(listDataES!=null);
+		} catch (Exception e) {
+			Assert.fail("testInsertCountDelete failure. " + e);
+		}
+	}
+	
+	@Test
+	public void testGeoService() {
+		try {
+			
+		
+			partial_polygon_agnostic = getString(partial_polygon_agnostic);
+			
+			List<String> listQ = geoService.intersects(TEST_INDEX, partial_polygon_agnostic);
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
 		} catch (Exception e) {
 			Assert.fail("testInsertCountDelete failure. " + e);
 		}
