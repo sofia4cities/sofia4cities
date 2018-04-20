@@ -9,7 +9,7 @@ spring:
    data.mongodb:
       host: realtimedb
    elasticsearch.jest:
-      uris: http://elastic:9200         
+      uris: http://elasticdb:9200         
 sofia2:
   database.mongodb:
     servers: realtimedb:27017
