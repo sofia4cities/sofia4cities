@@ -88,24 +88,55 @@
 
     $.fn.createTable.parseTableData = function (data, thead) {
 
-        var row = '';
-
-        for (var i = 0; i < data.length; i++) {
-            if (thead === false) row += '<tr><td class="jsl text-center">' + (i + 1) + '</td>';
+        var row = '';		
+		var Cols = $.fn.createTable.getHighestColumnCount(data);
+		var colspan = Cols["max"] + 1;
+		var isObject = false;
+		var objKey = '';
+		var keyType = '';
+		
+				
+		console.log(' Data: ' + JSON.stringify(data) + ' colspan: ' + colspan);
+		
+        for (var i = 0; i < data.length; i++) {			
+            if (thead === false) row += '<tr><td class="jsl text-center">' + (i + 1) + '</td>';			
             $.each(data[i], function (key, value) {
+				isObject = false;
+				console.log('key: ' + key);
                 if (thead === true) {
                     if (i === $.fn.createTable.getHighestColumnCount(data).when) {
-                        row += '<th>' + $.fn.humanize(key) + '</th>';
+						if(typeof value == 'object'){ keyType = "<small>(Object)</small>";   } else { keyType = ''; }
+                        row += '<th>' + $.fn.humanize(key) + ' ' + keyType + '</th>';
                     }
                 } else if (thead === false) {
-                    row += '<td>' + value + '</td>';
+                	if(typeof value =='object'){
+                		//JSONObject
+						 objKey = i + key;
+                		 row += '<td class="text-center bg-grey-steel text-truncate-sm pointer" onclick="showData(\''+objKey +'\',\''+ key +'\')"><div class="label bg-grey-mint label-sm">' + JSON.stringify(value) + '</div></td>';
+						 isObject = true;
+						 valueObjects.push({"key":objKey, "json":JSON.stringify(value,null,2)});
+                	}else{
+                		 row += '<td class="text-truncate-sm no-wrap" title="'+ value +'">' + value + '</td>';						 
+                	}
                 }
             });
-            if (thead === false) row += '</tr>';
+            if (thead === false) { 
+				row += '</tr>';									
+				
+			}
         }
 
-        return row;
+        return row;	
     };
+	
+	 // second iteration objects inside table.
+	 $.fn.createTable.parseDataElement = function (data,id) {
+		 
+		var additionalRow = ''; 
+		 
+		return additionalRow;
+	 }
+	
 
     $.fn.getObjectLength = function (object) {
 

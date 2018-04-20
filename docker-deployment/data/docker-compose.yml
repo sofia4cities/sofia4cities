@@ -16,7 +16,7 @@ services:
     ports:
       - "3306:3306"
     depends_on:
-     - "realtimedb"
+     - "realtimedb"      
   schedulerdb:
     image: ${REPOSITORY}sofia2/schedulerdb:${IMAGETAG}
     container_name: schedulerdb

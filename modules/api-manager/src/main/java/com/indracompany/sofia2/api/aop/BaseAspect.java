@@ -30,33 +30,23 @@ public class BaseAspect {
 	private static long methodWarningThreshold = 1000;
 
 	public Method getMethod(JoinPoint joinPoint) {
-
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		Method method = signature.getMethod();
-		return method;
+		return  signature.getMethod();
 	}
 
 	public Object getMethodInvocation(JoinPoint joinPoint) {
-
 		MethodInvocationProceedingJoinPoint point = (MethodInvocationProceedingJoinPoint) joinPoint;
-
-		Object c = point.getThis();
-
-		return c;
+		return  point.getThis();
 	}
 
 	public String getClassName(JoinPoint joinPoint) {
-
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		String method = signature.getClass().getName();
-		return method;
+		return signature.getClass().getName();
 	}
 
 	public Class getClass(JoinPoint joinPoint) {
-
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-		Class method = signature.getClass();
-		return method;
+		return signature.getClass();
 	}
 
 	public void updateStats(String className, String methodName, long elapsedTime) {
@@ -91,16 +81,64 @@ public class BaseAspect {
 	}
 
 	class MethodStats {
-		public String methodName;
-		public String className;
-		public long count;
-		public long totalTime;
-		public long lastTotalTime;
-		public long maxTime;
+		private String methodName;
+		private String className;
+		private long count;
+		private long totalTime;
+		private long lastTotalTime;
+		private long maxTime;
 
 		public MethodStats(String className, String methodName) {
 			this.className = className;
 			this.methodName = methodName;
+		}
+
+		public String getMethodName() {
+			return methodName;
+		}
+
+		public void setMethodName(String methodName) {
+			this.methodName = methodName;
+		}
+
+		public String getClassName() {
+			return className;
+		}
+
+		public void setClassName(String className) {
+			this.className = className;
+		}
+
+		public long getCount() {
+			return count;
+		}
+
+		public void setCount(long count) {
+			this.count = count;
+		}
+
+		public long getTotalTime() {
+			return totalTime;
+		}
+
+		public void setTotalTime(long totalTime) {
+			this.totalTime = totalTime;
+		}
+
+		public long getLastTotalTime() {
+			return lastTotalTime;
+		}
+
+		public void setLastTotalTime(long lastTotalTime) {
+			this.lastTotalTime = lastTotalTime;
+		}
+
+		public long getMaxTime() {
+			return maxTime;
+		}
+
+		public void setMaxTime(long maxTime) {
+			this.maxTime = maxTime;
 		}
 	}
 

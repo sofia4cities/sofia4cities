@@ -14,6 +14,9 @@ spring:
       client.service-url: http://${SERVER_NAME}${server.contextPath}/
    data.mongodb:
       host: realtimedb      
+   elasticsearch.jest:
+      uris: http://elasticdb:9200
+   
 quartz:
     datasource:
       url: jdbc:mysql://schedulerdb:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false

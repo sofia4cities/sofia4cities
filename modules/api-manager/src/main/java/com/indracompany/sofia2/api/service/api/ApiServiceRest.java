@@ -393,7 +393,7 @@ public class ApiServiceRest {
 		if (apiSecurityService.isAdmin(user) || user.getUserId().equals(api.getUser().getUserId()) || user.getUserId().equals(suscriptor)){
 			return true;
 		} else {
-			throw new AuthorizationServiceException("com.indra.sofia2.web.api.services.NoPermisosOperacionUsuario") ;
+			return false;
 		}
 	}
 	
@@ -416,7 +416,7 @@ public class ApiServiceRest {
 		if (authorizedOrSuscriptor(suscripcion.getApi(), tokenUsuario, suscripcion.getUser().getUserId())){
 			try {
 				List<ApiSuscription> apiUpdate = findApiSuscriptions(suscripcion.getApi(), suscripcion.getUser());
-				if (apiUpdate!=null && apiUpdate.size()>0 ) {
+				if (apiUpdate!=null && apiUpdate.size()>0 && apiUpdate.get(0)!=null ) {
 					apiUpdate.get(0).setIsActive(suscripcion.getIsActive());
 					apiUpdate.get(0).setInitDate(suscripcion.getInitDate());
 					apiUpdate.get(0).setEndDate(suscripcion.getEndDate());

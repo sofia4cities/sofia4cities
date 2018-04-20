@@ -27,9 +27,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest()
 @SpringBootApplication
+@Slf4j
 public class MailServiceIntegrationTest {
 	public static void main(String[] args) {
 		SpringApplication.run(MailServiceIntegrationTest.class, args);
@@ -52,7 +55,7 @@ public class MailServiceIntegrationTest {
 		try {
 			mail.sendMail("lmgracia@indra.es", "Test", "Test");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 			Assert.fail("Error sending mail");
 		}
 	}
@@ -64,7 +67,7 @@ public class MailServiceIntegrationTest {
 			String htmlMail = "<html><body>Here is application.yml<body></html>";
 			mail.sendHtmlMail("lmgracia@indra.es", "Test", htmlMail, "application.yml");
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 			Assert.fail("Error sending mail");
 		}
 	}

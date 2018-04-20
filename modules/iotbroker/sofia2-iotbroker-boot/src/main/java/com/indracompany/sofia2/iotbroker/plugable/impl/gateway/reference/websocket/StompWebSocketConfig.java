@@ -19,15 +19,14 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
-@ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugable.gateway.stomp",
-		name="enable",
-		havingValue="true"
-		)
+@ConditionalOnProperty(prefix = "sofia2.iotbroker.plugable.gateway.stomp", name = "enable", havingValue = "true")
 @Configuration
 @EnableWebSocketMessageBroker
 public class StompWebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
+
+	public static final int BUFFER_MAX_SIZE = 102400 * 1024;
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -39,5 +38,11 @@ public class StompWebSocketConfig extends AbstractWebSocketMessageBrokerConfigur
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/message");
 		registry.addEndpoint("/message").setAllowedOrigins("*").withSockJS();
+	}
+
+	@Override
+	public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+		registration.setMessageSizeLimit(BUFFER_MAX_SIZE);
+		registration.setSendBufferSizeLimit(BUFFER_MAX_SIZE);
 	}
 }

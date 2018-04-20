@@ -159,17 +159,19 @@ public class RouterFlowManagerService {
 
 		log.debug("adviceScriptsAndNodereds: Begin");
 
-		NotificationCompositeModel compositeModel = (NotificationCompositeModel) header;
+		NotificationCompositeModel compositeModelHeader = (NotificationCompositeModel) header;
+		NotificationCompositeModel compositeModelTemp = new NotificationCompositeModel();
+		compositeModelTemp.setNotificationModel(compositeModelHeader.getNotificationModel());
 		AdviceNotificationModel entity = (AdviceNotificationModel) exchange.getIn().getBody();
 
-		compositeModel.setUrl(entity.getUrl());
-		compositeModel.setNotificationEntityId(entity.getEntityId());
+		compositeModelTemp.setUrl(entity.getUrl());
+		compositeModelTemp.setNotificationEntityId(entity.getEntityId());
 
 		SuscriptionModel model = entity.getSuscriptionModel();
 		if (model != null) {
 			OperationModel operationModel = OperationModel
 					.builder(model.getOntologyName(), OperationType.QUERY, model.getUser(), Source.INTERNAL_ROUTER)
-					.body(appendOIDForSQL(model.getQuery(), compositeModel.getOperationResultModel().getResult()))
+					.body(appendOIDForSQL(model.getQuery(), compositeModelHeader.getOperationResultModel().getResult()))
 					.queryType(QueryType.valueOf(model.getQueryType().name())).build();
 
 			OperationResultModel result = null;
@@ -180,7 +182,7 @@ public class RouterFlowManagerService {
 			}
 
 			if (result != null) {
-				compositeModel.setOperationResultModel(result);
+				compositeModelTemp.setOperationResultModel(result);
 			}
 
 		}
@@ -189,13 +191,13 @@ public class RouterFlowManagerService {
 		fallback.setResult("ERROR");
 		fallback.setStatus(false);
 		fallback.setMessage("Operation Failed. Returned Default FallBack with :" + entity.getEntityId() + " URL: "
-				+ compositeModel.getUrl());
+				+ compositeModelTemp.getUrl());
 
 		RouterClientGateway<NotificationCompositeModel, OperationResultModel> adviceGateway = clientsFactory
 				.createAdviceGateway("advice", "adviceGroup");
 		adviceGateway.setFallback(fallback);
 
-		OperationResultModel ret = adviceGateway.execute(compositeModel);
+		OperationResultModel ret = adviceGateway.execute(compositeModelTemp);
 
 		log.debug("adviceScriptsAndNodereds: END");
 		return ret;

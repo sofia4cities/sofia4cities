@@ -35,6 +35,37 @@ img {
   max-width: 100%;
 }
 
+.form-login {
+  max-width: 300px;
+  padding: 19px 29px 29px;
+  margin: 0 auto 20px;
+  background-color: #fff;  
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+.form-login .form-login-heading,
+.form-login .checkbox {
+  margin-bottom: 10px;
+}
+.form-login input[type="text"],
+.form-login input[type="password"] {
+  height: auto;
+  margin-bottom: 15px;
+  padding: 7px 9px;
+}
+
+.error-message {
+  display: none;
+}
+
+.error .error-message {
+  display: initial;
+}
+
 input, textarea {
   font-family: "Poppins", sans-serif;
   font-size: 14px;
@@ -79,6 +110,48 @@ header[role=banner]::after {
   display: table;
   clear: both;
 }
+
+.form-form {
+    padding: 2em;
+  }
+  .form-form .fieldset {
+    margin: 2em 0;
+  }
+  .form-form .fieldset:first-child {
+    margin-top: 0;
+  }
+  .form-form .fieldset:last-child {
+    margin-bottom: 0;
+  }
+  .form-form input.has-padding {
+    padding: 16px 20px 16px 50px;
+  }
+  .form-form input[type=submit] {
+    padding: 16px 0;
+  }
+  
+
+
+
+  .cd-user-modal-container {
+    margin: 6em auto;
+  }
+  .cd-user-modal-container .cd-switcher a {
+    height: 70px;
+    line-height: 70px;
+  }
+    header[role=banner] {
+    height: 80px;
+  }
+  header[role=banner] #cd-logo {
+    margin: 20px 0 0 5%;
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+  }
+  
 @media only screen and (min-width: 768px) {
   header[role=banner] {
     height: 80px;
@@ -128,6 +201,53 @@ header[role=banner]::after {
   border-top: 1px solid #3b3d4b;
   color: #FFF;
 }
+
+ .main-nav {
+    width: auto;
+    height: auto;
+    background: none;
+    cursor: auto;
+  }
+  .main-nav ul {
+    position: static;
+    width: auto;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+    line-height: 80px;
+  }
+  .main-nav ul.is-visible {
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+  }
+  .main-nav li {
+    display: inline-block;
+    margin-left: 1em;
+  }
+  .main-nav li:nth-last-child(2) {
+    margin-left: 2em;
+  }
+  .main-nav a {
+    display: inline-block;
+    height: auto;
+    line-height: normal;
+    background: transparent;
+  }
+  .main-nav a.cd-signin, .main-nav a.cd-signup {
+    padding: .6em 1em;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50em;
+  }
+  .main-nav a.cd-signup {
+    background: #2f889a;
+    border: none;
+  }
+
 @media only screen and (min-width: 768px) {
   .main-nav {
     width: auto;

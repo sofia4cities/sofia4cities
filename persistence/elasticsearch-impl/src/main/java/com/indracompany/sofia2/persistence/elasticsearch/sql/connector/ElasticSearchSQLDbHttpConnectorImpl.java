@@ -167,6 +167,7 @@ public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHt
 		} catch (Exception e) {
 			log.error("Unable to send message: error detected while building POST request.", e);
 		}
+		
 		if (httpGet != null) {
 			try {
 				log.info("Send message: to {}.", endpoint);
