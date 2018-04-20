@@ -70,7 +70,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 		this.deviceBlackList = new ArrayList<String>();
 	}
 
-	public void connectDeviceRest(String clientPlatform, String clientPlatformInstance) {
+	public void connectDeviceRest(String clientPlatform, String clientPlatformInstance) throws InterruptedException {
 		final Token token = this.tokenService.getToken(this.clientPlatformService.getByIdentification(clientPlatform));
 		final RestTemplate restTemplate = new RestTemplate();
 		final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(iotbrokerUrl + "/rest/client/join")
@@ -84,12 +84,8 @@ public class PersistenceServiceImpl implements PersistenceService {
 			if (sessionKey != null)
 				this.sessionKeys.put(clientPlatform, sessionKey);
 		} catch (Exception e) {
-			// log.error("IoT broker down");
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e1) {
 
-			}
+			Thread.sleep(5000);
 
 		}
 
