@@ -32,7 +32,6 @@ import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 
 
-//TODO Implement
 @Service
 public class ApiSecurityService {
 
@@ -116,7 +115,8 @@ public class ApiSecurityService {
 				for(ApiSuscription suscripcion:lSuscripcionesApi){
 					if(suscripcion.getEndDate()==null){
 						autorizado=true;
-					}else if(suscripcion.getEndDate().after(new Date())){
+					}
+					if(suscripcion.getEndDate()!=null && suscripcion.getEndDate().after(new Date())){
 						autorizado=true;
 					}
 				}
@@ -164,17 +164,17 @@ public class ApiSecurityService {
 			for (OntologyUserAccess usuarioOntologia : uo){
 				if (usuarioOntologia.getOntology().getId().equals(ontology.getId())){
 					//If the user has full permissions to perform the operation permit
-					if (usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.ALL.name())){
+					if (usuarioOntologia.getOntologyUserAccessType() !=null && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.ALL.name())){
 						authorize=true;
 						break;
 						//In another case it is found that has the minimum permissions to perform the operation	
 					}else{
 						//If we insert permissions can perform any operation except query
-						if (insert && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.INSERT.name())){
+						if (insert && usuarioOntologia.getOntologyUserAccessType() !=null && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.INSERT.name())){
 							authorize=true;
 							break;
 							//If they are readable and has read permission can perform the operation	
-						}else if (!insert && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.QUERY.name())){
+						}else if (!insert && usuarioOntologia.getOntologyUserAccessType() !=null && usuarioOntologia.getOntologyUserAccessType().getName().equalsIgnoreCase(OntologyUserAccessType.Type.QUERY.name())){
 							authorize=true;
 							break;
 						}

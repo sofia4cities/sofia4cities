@@ -1,3 +1,4 @@
+
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
 <html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
@@ -5,7 +6,6 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
 		<meta http-equiv="Content-Language" th:content="${lang}"/>
 		<title th:text="#{name.app}"/>
-
 		
 		<!-- WEB FONTs -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
@@ -17,7 +17,6 @@
             }
           });
 		</script>
-
 		<!-- STYLE SHEETS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
@@ -25,7 +24,6 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
 		<!-- THEME -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
-
 		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND BOOSTRAP-TIMEPICKER  -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker3.min.css}"/>	
@@ -35,7 +33,6 @@
 	
 	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
 	<body class="page-header-fixed  page-content-white page-sidebar-closed">
-
 	<!-- MAIN PAGE WRAPPER -->
 	<div class="page-wrapper">
 	
@@ -80,13 +77,9 @@
 				<div class="row">
 					<div class="col-md-12">						
 						<div class="portlet light bordered">
-							<div class="portlet-title">
+							<div class="portlet-title tabbable-line">
 								<div class="caption">
-									<i class="la la-users font-grey-gallery"></i>						
 									
-									<!-- FORM TITLE -->
-									<span th:if="${user.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.create} + ':'"> New User</span>
-									<span th:if="${user.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.update} + ' ' + ${user.userId} + ':'"> Update User</span>
 								</div>									
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>																			
@@ -98,151 +91,207 @@
 									<span th:if="${user.userId} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
 								</div>
 								
-							</div>
+								<!-- USER TABS SECTIONS -->
+								<ul class="nav nav-tabs pull-left">
+									<li id="tab-datos" class="activetab">
+										<a href="#tab1" data-toggle="tab" aria-expanded="true">
+											<i class="flaticon-user font-grey-gallery"></i>									
+											<!-- FORM TITLE -->
+											<span th:if="${user.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.create} " > New User</span>
+											<span th:if="${user.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.update} + ' ' + ${user.userId} " > Update User</span>
+										</a>
+									</li>																	
+									<li id="tab-password" class="">
+										<a href="#tab2" data-toggle="tab" aria-expanded="false">
+											<i class="la la-block"></i> 
+											<span th:if="${user.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.password.update}" >Add password</span> 
+											<span th:if="${user.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.password.update}" >Modificar contraseña</span>
+										</a>
+									</li>
+								</ul>				
+									
+									
+								
+							</div> <!-- End portlet-title -->
 							<div class="portlet-body" style="display: block; height: auto;">
 								
-								<div class="row">
+									
+									
 									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
 										<div class="alert alert-danger display-hide">
 											<button class="close" data-close="alert"></button> 
 											<span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>
+										<div class="alert alert-error-pass display-hide">
+											<button class="close" data-close="alert"></button> 
+											<span text="Las contraseñas no coinciden">Las contraseñas no coinciden.</span>
 										</div>										
-                                        <div class="alert alert-success display-hide">
+										 <!--  <div class="alert alert-success display-hide">
 											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
-										</div>								
+										</div> -->				
 									</div>
-									<div class="col-md-12">										
-										<form role="form" id="user_create_form" th:object="${user}" method="post" class="form">
-											<!-- FORM ACTIONS FOR INSERT-->
-											<input th:if="${user.userId} == null" type="hidden" name="action" th:value="@{/users/create}"/>
-											
-											<!-- FORM ACTIONS FOR UPDATE -->											
-											<input th:if="${user.userId} != null" type="hidden" name="action" th:value="@{/users/update}"/>
-											<input th:if="${user.userId} != null" type="hidden" name="_method" value="PUT"/>											
-											
-											<div class="form-body">
-												<!-- user, name and email -->
-												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label th:text="#{user.id} + ':'">Identification</label>
-															<div class="input-icon ">
-																<i class="fa fa-credit-card"></i>
-																<input id="userId" type="text" name="userId" th:required="true"  maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"  th:readonly="*{userId}" th:classappend="${user.userId} ? no-remove : ''"  />
-																
-															</div>															
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label" th:text="#{user.password} + ':'">Password</label>
-															<div class="input-icon ">
-																<i class="fas fa-key"></i>
-																<input id="password" class="form-control " th:field="*{password}" maxlength="50" name="password" type="password"  th:placeholder="#{user.password}" th:required="true" title="Must contain at least: one uppercase letter, one lowercase letter and a number or simbol. Password must be between 7 and 20 characters." pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />  
-						
-															</div>															
-														</div>
-													</div>
-													
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="" th:text="#{user.name} + ':'">Name</label>
-															<div class="input-icon ">
-																<i class="fa fa-user"></i>
-																<input id="fullName" type="text"  th:required="true"  maxlength="50" th:field="*{fullName}" class="form-control " th:placeholder="#{user.name}"/>
-															</div>	
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label"><i class="la la-envelope-o"></i> <span th:text="#{user.email} + ':'">eMail</span></label>
-															<div class="input-icon ">
-																<i class="fa fa-envelope-o"></i>
-																<input id="email" type="text"  th:required="true"  maxlength="50" th:field="*{email}" class="form-control " th:placeholder="#{user.email}"/>
-															</div>
-														</div>
-													</div>													
-												</div>
-												<!-- Role, created-at, removed-at -->
-												<div class="row">
-													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')">
-														<div class="form-group">
-															<label class="control-label" th:text="#{user.rolTypeName} + ':'">Role</label>
-															<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" th:field="*{role.name}" th:required="true">
-																<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>
-															</select>
-														</div>
-													</div>
-													<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
-														<div class="form-group">
-															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateCreated} + ':'">Created At</span></label>
-															<div class="input-icon ">
-																<i class="fa fa-calendar-o"></i>
-																<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{createdAt}" class="form-control datetime no-remove"  th:readonly="*{createdAt}" th:placeholder="#{user.dateCreated}"/>
-															</div>
-														</div>
-													</div>
-													<div class="col-md-2 col-sm-6 col-xs-12">
-														<!-- <div class="form-group">
-															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
-															<div class="input-icon ">
-																<i class="fa fa-calendar-o"></i>																
-																<input id="datedeleted" type="text" maxlength="50"  class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
-															</div>
-														</div> -->
-														<div class="form-group">
-															<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
-															<div class="input-icon ">
-																<i class="fa fa-calendar-o"></i>																
-																<input id="datedeleted" type="text" maxlength="50"  class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
-															</div>
-														</div>
-														
-														
-													</div>
-													<div class="col-md-2 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
-														<div class="form-group">
-															<label class="" th:text="#{user.active} + '?'">Active</label>
-															<div class="mt-checkbox-list">
-																<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.active.help},data-title=#{user.active}"><i class="la la-lightbulb-o"></i> <div class="inline" th:text="#{user.active}">User Active?</div>
-																	<input id="checkboxactive" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
-																	<span></span><!-- needed by styles -->
-																</label>																													
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-											<!-- FORM BUTTONS -->
-											<div class="form-actions">
-												<div class="pull-right">
-													<!-- CREATE -->
-													<button th:if="${user.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
-													
-													<!-- UPDATE -->
-													<button th:if="${user.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
-													
-													<!-- REMOVE -->
-													<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'UserCreateController.deleteUser(\'' + ${user.userId} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
-																										
+									<div class="tab-content">
+									<div class="row">
+										<div class="col-md-12">										
+											<form role="form" id="user_create_form" th:object="${user}" method="post" class="form">
+												<!-- FORM ACTIONS FOR INSERT-->
+												<input th:if="${user.userId} == null" type="hidden" name="actions" th:value="@{/users/create}"/>
 												
-													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+												<!-- FORM ACTIONS FOR UPDATE -->											
+												<input th:if="${user.userId} != null" type="hidden" name="actions" th:value="@{/users/update}"/>
+												<input th:if="${user.userId} != null" type="hidden" name="_method" value="PUT"/>											
+																
+																							
+												<div class="form-body">
+													<!-- user, name and email -->
+													<div class="tab-pane active" id="tab1"><!--Begin tab1 -->
+														<div class="row">
+															<div class="col-md-3 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label th:text="#{user.id} + ':'">Identification</label>
+																	<div class="input-icon ">
+																		<i class="fa fa-credit-card"></i>
+																		<input id="userId" type="text" name="userId" th:required="true" minlength="4" maxlength="50" th:field="*{userId}" class="form-control " th:placeholder="#{user.id}"  th:readonly="*{userId}" th:classappend="${user.userId} ? no-remove : ''"  />
+																		<input id="password" type="hidden"  th:required="true"  maxlength="50" th:field="*{password}" class="form-control " th:placeholder="#{user.password}"/>
+																		
+																	</div>															
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label class="" th:text="#{user.name} + ':'">Name</label>
+																	<div class="input-icon ">
+																		<i class="fa fa-user"></i>
+																		<input id="fullName" type="text"  th:required="true"  maxlength="50" th:field="*{fullName}" class="form-control " th:placeholder="#{user.name}"/>
+																	</div>	
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-6 col-xs-12">
+																<div class="form-group">
+																	<label class="control-label"><i class="la la-envelope-o"></i> <span th:text="#{user.email} + ':'">eMail</span></label>
+																	<div class="input-icon ">
+																		<i class="fa fa-envelope-o"></i>
+																		<input id="email" type="text"  th:required="true"  maxlength="50" th:field="*{email}" class="form-control " th:placeholder="#{user.email}"/>
+																	</div>
+																</div>
+															</div>													
+														</div>
+														<!-- Role, created-at, removed-at -->
+														<div class="row">
+															<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')">
+																<div class="form-group">
+																	<label class="control-label" th:text="#{user.rolTypeName} + ':'">Role</label>
+																	<select id="roles" class="selectpicker form-control" data-live-search="true" data-width="100%" th:title="#{user.rolTypeName}" th:field="*{role.name}" th:required="true">
+																		<option th:each="role:${roleTypes}" th:value="${role.name}" th:text="${role.name}" ></option>
+																	</select>
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+																<div class="form-group">
+																	<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateCreated} + ':'">Created At</span></label>
+																	<div class="input-icon ">
+																		<i class="fa fa-calendar-o"></i>
+																		<input id="datecreated" type="text"  th:required="true"  maxlength="50" th:field="*{createdAt}" class="form-control datetime no-remove"  th:readonly="*{createdAt}" th:placeholder="#{user.dateCreated}"/>
+																	</div>
+																</div>
+															</div>
+															<div class="col-md-2 col-sm-6 col-xs-12">
+																<!-- <div class="form-group">
+																	<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
+																	<div class="input-icon ">
+																		<i class="fa fa-calendar-o"></i>																
+																		<input id="datedeleted" type="text" maxlength="50"  class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
+																	</div>
+																</div> -->
+																<div class="form-group">
+																	<label class=""><i class="la la-calendar"></i> <span th:text="#{user.dateDeleted} + ':'">Deleted At</span></label>
+																	<div class="input-icon ">
+																		<i class="fa fa-calendar-o"></i>																
+																		<input id="datedeleted" type="text" maxlength="50"  class="form-control datetime"  th:placeholder="#{user.dateDeleted}"/>
+																	</div>
+																</div>
+																
+																
+															</div>
+															<div class="col-md-2 col-sm-6 col-xs-12" sec:authorize="!hasAuthority('ROLE_PARTNER')">
+																<div class="form-group">
+																	<label class="" th:text="#{user.active} + '?'">Active</label>
+																	<div class="mt-checkbox-list">
+																		<label class="mt-checkbox font-md popovers" data-trigger="hover" data-placement="top" data-container="body" th:attr="data-content=#{user.active.help},data-title=#{user.active}"><i class="la la-lightbulb-o"></i> <div class="inline" th:text="#{user.active}">User Active?</div>
+																			<input id="checkboxactive" name="active" type="checkbox" class="form-control" th:field="*{active}" th:checked="checked"/>
+																			<span></span><!-- needed by styles -->
+																		</label>																													
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div> <!-- End tab1 -->
 													
-													<!-- CANCEL TO-DO: authentication and control -->
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-												</div>
-											</div>											
-										</form>
-										
-										<!-- AUXILIAR FORM TO DELETE USER -->
-										<form id="delete_user_form" class="delete-user hide"  th:action="@{'/users/'+${user.userId}}"  method="post">
-											<input type="hidden" name="_method" value="DELETE"/>
-											<input type="hidden" name="userId" th:value="${user.userId}"/>
-										</form>										
-									</div>									
-								</div>
-							</div>
+													<div class="tab-pane" id="tab2"> <!-- Begin tab2 -->
+														<div class="row">
+															<div class="col-md-3 col-sm-5 col-xs-12">
+																<div class="form-group">
+																	<label class="popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=#{user.password.help},data-title=#{user.password}"><i class="la la-lightbulb-o"></i> <span th:text="#{user.new.password}+ ':'" >Password</span></label>
+																	<div class="input-icon ">
+																		<i class="la la-key"></i>
+																		<input id="newpasswordbox" name="newpasswordbox" type="password" th:required="true" maxlength="20" class="form-control" placeholder="Password" pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" />   
+																	</div>
+																</div>
+															</div>
+															<div class="col-md-3 col-sm-5 col-xs-12">
+																<div class="form-group">
+																
+																	<label class="popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=#{user.password.help},data-title=#{user.password}"><i class="la la-lightbulb-o"></i> <span th:text="#{user.repeat.password}+ ':'" >Password</span></label>
+																	<div class="input-icon ">
+																		<i class="la la-key" ></i>
+																		<input id="repeatpasswordbox" name="repeatpasswordbox" type="password" th:required="true" maxlength="20" class="form-control" placeholder="Password" data-rule-equalTo="#newpasswordbox" pattern= "(?=^.{7,20}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$" /> 
+																	</div>
+																</div>
+															</div>													
+															
+																<div class="col-md-3 col-sm-5 col-xs-12">
+																	<div class="form-group">
+																		<label></label>
+																		<span id="passwordmsg" style="position:relative;margin-top: 25px;display:  block;"></span>
+																			
+																		</div>
+																</div>													
+															
+														</div>
+													</div> <!-- End tab2 -->	
+													
+												</div> <!--  End form-body -->
+												<!-- FORM BUTTONS -->
+												<div class="form-actions">
+													<div class="pull-right">
+														<!-- CREATE -->
+														<button th:if="${user.userId} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+														
+														<!-- UPDATE -->
+														<button th:if="${user.userId} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  action="verifySamePass()" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}" > Edit</span></button>
+														
+														<!-- REMOVE -->
+														<button th:if="${user.userId} != null" sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'UserCreateController.deleteUser(\'' + ${user.userId} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+																											
+													
+														<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+														
+														<!-- CANCEL TO-DO: authentication and control -->
+														<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+														<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:UserCreateController.go(\'' + @{/users/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+													</div>
+												</div>											
+											</form>
+											
+											<!-- AUXILIAR FORM TO DELETE USER -->
+											<form id="delete_user_form" class="delete-user hide"  th:action="@{'/users/'+${user.userId}}"  method="post">
+												<input type="hidden" name="_method" value="DELETE"/>
+												<input type="hidden" name="userId" th:value="${user.userId}"/>
+											</form>										
+										</div>
+									</div> <!--  END CLASS ROW -->
+								</div> <!--  END TAB CONTENT -->
+							</div> <!-- END PORTLET BODY -->
 						</div><!-- END PORTLET BASIC  -->						
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->
@@ -286,12 +335,28 @@
 		"actionMode" : [[${user.userId}]],
 		"dateCreated" : [[${user.createdAt}]],				
 		"dateDeleted" : [[${user.dateDeleted}]],
+		"errorpasswordmsg" : [[#{user.update.error.password}]],
+		"succespasswordmsg" : [[#{user.update.success.password}]]
 	};
-						
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF
+	</script>					
 	
+	<script type='text/javascript'> 
+		$(document).ready(function() {
+			$(".tab-pane").hide();
+			$(".tab-pane:first").show();
+			$("ul.nav-tabs li").click(function() {
+				 
+				$(".tab-pane").hide();
+										
+				var activetab = $(this).find("a").attr("href");
+				$(activetab).fadeIn();
+				return false;
+			});
+		});
    
 	</script>	
+		
 </body>
 </html>

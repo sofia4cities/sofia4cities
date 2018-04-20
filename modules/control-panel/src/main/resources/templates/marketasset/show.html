@@ -138,7 +138,7 @@
 											</div>
 											<div class="marketasset-single-img col-md-4 col-sm-12">
 												<img class="img-responsive img-asset-show thumbnail"  th:if="${not #lists.isEmpty(marketasset.image)}" th:src="@{/marketasset/} + ${marketasset.id + '/getImage'}" />
-												<img class="img-responsive img-asset-show thumbnail"  th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/API.png}" />
+												<img class="img-responsive img-asset-show thumbnail"  th:if="${#lists.isEmpty(marketasset.image)}" th:src="@{/img/} + ${marketasset.marketAssetType.name()} + '.png'" />
 											</div>
 											<div class="marketasset-single-desc col-md-8 col-sm-12">												
 												<!-- description -->												
@@ -165,6 +165,9 @@
 											
 											<!-- APPLICATION FRAGMENT -->
 											<div class="marketasset-single-foot" id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'APPLICATION')" th:include="marketasset/marketassetfragments::#APPLICATIONMarketAssetFragmentShow"/>
+
+											<!-- APPLICATION FRAGMENT -->
+											<div class="marketasset-single-foot" id="fragments" th:if="(${marketasset.marketAssetType.name()} == 'WEBPROJECT')" th:include="marketasset/marketassetfragments::#WEBPROJECTMarketAssetFragmentShow"/>
 											
 											<!-- COMMENTS PENDING -->
 											<div class="marketasset-comments" style="display: block;">
@@ -195,7 +198,7 @@
 															<h4 class="media-heading">
 																<b><a href="#" th:text="${comment.user.userId}"></a></b>
 																<span class="c-date" th:text="${comment.createdAt}">23 May 2015, 10:40AM</span>
-																<span th:if="((${#authentication.name} == ${comment.user.userId}) OR (${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="btn btn-xs btn-outline red-sunglo" data-container="body" th:title="#{proyectos_listado_button_eliminar}" th:data-original-title="#{proyectos_listado_button_eliminar}" th:onclick="'javascript:navigateUrl(\'' +@{/marketasset/deletecomment/__${marketasset.id}__/__${comment.id}__} + '\');'" ><i class="fa fa-trash font-md" style="top: 0px;"></i></span>
+																<span th:if="((${#authentication.name} == ${comment.user.userId}) OR (${#authentication.name} == ${marketasset.user.userId}) OR (${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'))" class="btn btn-xs btn-outline red-sunglo" data-container="body" th:title="#{gen.deleteBtn}" th:data-original-title="#{gen.deleteBtn}" th:onclick="'javascript:navigateUrl(\'' +@{/marketasset/deletecomment/__${marketasset.id}__/__${comment.id}__} + '\');'" ><i class="fa fa-trash font-md" style="top: 0px;"></i></span>
 															</h4>
 															<b><span th:text="${comment.title}"></span></b>
 															
@@ -253,11 +256,9 @@
 											<div class="marketasset-single-sidebar-links">
 												<h3 class="marketasset-sidebar-title uppercase" th:text="#{marketasset.useful.links}">Useful Links</h3>
 												<ul>
-													<li><a href="javascript:;">Sofia4Cities Marketplace</a></li>
-													<li><a href="javascript:;">Ontologies</a></li>
-													<li><a href="javascript:;">Console Manual</a></li>
-													<li><a href="javascript:;">Sofia4Cities Features</a></li>
-													<li><a href="javascript:;">Terms and Conditions</a></li>
+													<li><a href="https://www.sofia4cities.com/index.html">Sofia4Cities</a></li>
+													<li><a href="https://github.com/sofia4cities">Sofia4Cities GIT</a></li>
+													<li><a href="https://github.com/sofia4cities/sofia4cities/tree/master/docs/getting-started">Getting Started</a></li>
 												</ul>
 											</div>											
 										</div>
@@ -416,9 +417,14 @@
 		} else if (type=='APPLICATION'){
 			$('#functionality').text(json_desc.functionality);
 			$('#installation').text(json_desc.installation);
+			if (docId == null) {
+				$('#DOCUMENTDiv').css('display', 'none')
+			}
 		} else if (type=='WEBPROJECT'){
 			$('#functionality').text(json_desc.functionality);
-			$('#id_endpoint').val(json_desc.id_endpoint);
+			$('#webProjectId').text(json_desc.webProjectId);
+			$('#id_endpoint_webproject').text(json_desc.id_endpoint_webproject);
+			$('#description_webproject').text(json_desc.description_webproject);
 		}
 		
 	};

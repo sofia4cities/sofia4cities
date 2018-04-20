@@ -39,8 +39,8 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 	private BasicOpsPersistenceServiceFacade basicOpsService;
 
 	
-	//@Autowired
-	//private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
+	@Autowired
+	private RouterCrudCachedOperationsService routerCrudCachedOperationsService;
 	
 	@Autowired
 	private OntologyDataService ontologyDataService;
@@ -67,10 +67,11 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		result.setStatus(true);
 
 		try {
-			ontologyDataService.checkOntologySchemaCompliance(BODY, ontologyName);
-			String bodyWithDataContext = ontologyDataService.addContextData(operationModel);
+			
+			String processedData = ontologyDataService.preProcessInsertData(operationModel);
+
 			if (METHOD.equalsIgnoreCase("POST") || METHOD.equalsIgnoreCase(OperationModel.OperationType.INSERT.name())) {
-				OUTPUT = basicOpsService.insert(ontologyName, bodyWithDataContext);
+				OUTPUT = basicOpsService.insert(ontologyName, processedData);
 			}
 		} 
 		catch (final Exception e) {
@@ -185,7 +186,7 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		if (cacheable) {
 
 			log.info("DO CACHE OPERATION "+operationModel.toString());
-			result= queryNoCache(operationModel);
+			result= routerCrudCachedOperationsService.queryCache(operationModel);
 			
 		}
 		else {
@@ -299,6 +300,10 @@ public class RouterCrudServiceImpl implements RouterCrudService {
 		if (l==null) return true;
 		else if (l!=null && l.equalsIgnoreCase("")) return true;
 		else return false;
+	}
+
+	public OperationResultModel insertWithNoAudit(OperationModel model) throws RouterCrudServiceException {
+		return insert(model);
 	}
 	
 

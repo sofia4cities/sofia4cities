@@ -14,7 +14,6 @@
  */
 package com.indracompany.sofia2.audit.bean;
 
-import java.util.Date;
 import java.util.Map;
 
 import lombok.Getter;
@@ -23,37 +22,39 @@ import lombok.Setter;
 public class Sofia2AuditError extends Sofia2AuditEvent {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Getter
 	@Setter
 	private Exception ex;
-	
+
 	@Getter
 	@Setter
 	private String className;
-	
+
 	@Getter
 	@Setter
 	private String methodName;
-	
-	public Sofia2AuditError () {
+
+	public Sofia2AuditError() {
 		super();
 	}
-	
-	public Sofia2AuditError(String message, String id, EventType type, Date timeStamp, String user, String ontology,
-			String operationType, Module module, Map<String, Object> extraData, String otherType) {
-		
-		super(message, id, type, timeStamp, user, ontology, operationType, module, extraData, otherType);
-		
+
+	public Sofia2AuditError(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
+			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
+			String otherType) {
+
+		super(message, id, type, timeStamp, formatedTimeStamp, user, ontology, operationType, module, extraData,
+				otherType);
+
 	}
-	
+
 	@Override
 	public String toString() {
-		
+
 		return "Sofia2AuditError [message=" + message + ", id=" + id + ", type=" + type + ", timeStamp=" + timeStamp
 				+ ", user=" + user + ", ontology=" + ontology + ", operationType=" + operationType + ", module="
-				+ module + ", ex=" + ex + ", extraData="+ extraData + ", otherType=" + otherType 
-				+ ", className=" + className + ", methodName=" + methodName + "]";
+				+ module + ", ex=" + ex + ", extraData=" + extraData + ", otherType=" + otherType + ", className="
+				+ className + ", methodName=" + methodName + "]";
 	}
 
 }

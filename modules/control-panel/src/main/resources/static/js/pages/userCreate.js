@@ -130,13 +130,14 @@ var UserCreateController = function() {
 			},
 			// validation rules
             rules: {
-				userId:		{ minlength: 5, required: true },
-                fullName:	{ minlength: 5, required: true },
-                email:		{ required: true, email: true },
-                password:	{ required: true, minlength: 7, maxlength: 20 },
-                roles:		{ required: true },
-				datecreated:{ date: true, required: true },
-				datedeleted:{ date: true }
+				userId:				{ minlength: 4, required: true },
+                fullName:			{ minlength: 5, required: true },
+                email:				{ required: true, email: true },
+                newpasswordbox:		{ required: true, minlength: 7, maxlength: 20 },
+                repeatpasswordbox:	{ required: true, minlength: 7, maxlength: 20,  equalTo : "#newpasswordbox" }, 
+                roles:				{ required: true },
+				datecreated:		{ date: true, required: true },
+				datedeleted:		{ date: true }
             },
             invalidHandler: function(event, validator) { //display error alert on form submit              
                 success1.hide();
@@ -182,6 +183,15 @@ var UserCreateController = function() {
 		// selectpicker validate fix when handleValidation()
 		$('.selectpicker').on('change', function () {
 			$(this).valid();
+		});
+		
+		$('#newpasswordbox, #repeatpasswordbox').on('keyup', function (){
+			
+			if($ ('#newpasswordbox').val() == $('#repeatpasswordbox').val() ){
+				$('#passwordmsg').html(userCreateReg.succespasswordmsg).css('color','green');
+			}else{
+				$('#passwordmsg').html(userCreateReg.errorpasswordmsg).css('color','red');
+			}
 		});
 		
 				

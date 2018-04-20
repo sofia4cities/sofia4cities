@@ -1,5 +1,5 @@
 <!doctype html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:with="lang=${#locale.language}" th:lang="${lang}">
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -33,28 +33,28 @@
 
 		<div class="cd-user-modal-container"> <!-- this is the container wrapper -->
 			<ul class="cd-switcher">
-				<li><a href="#0">Login</a></li>
+				<li><a href="#0">Sofia4Cities SpringBoot Admin </a></li>
 			</ul>
 
 			<div id="cd-login"> <!-- log in form -->					
 								
 								
-					<form class="form-login" action="login" method="post">
+					<form class="cd-form" action="login" method="post">
 					<!-- <p class="fieldset">
 						<label class="image-replace cd-email" for="signin-email">E-mail</label>
 						<input class="full-width has-padding has-border" id="signin-email" type="email" placeholder="E-mail"/>
 						<span class="cd-error-message">Error message here!</span>
 					</p> -->
 					<p class="fieldset">
-						<label class="image-replace cd-username" for="signup-username">Username</label>
+						<label class="image-replace cd-username" for="signup-username">Username </label>
 						<input class="full-width has-padding has-border" id="username" name="username" type="text" placeholder="Username" />
-						<span class="cd-error-message">Invalid username</span>
+						<!--<span class="cd-error-message">Invalid username</span>-->
 					</p>
 
 					<p class="fieldset">
-						<label class="image-replace cd-password" for="signin-password">Password</label>
+						<label class="image-replace cd-password" for="signin-password">Password  </label>
 						<input class="full-width has-padding has-border" id="password" name="password" type="password" placeholder="Password" />
-						<span class="cd-error-message">Invalid password</span>
+						<!--<span class="cd-error-message">Invalid password</span>-->
 					</p>
 
 					<p class="fieldset">

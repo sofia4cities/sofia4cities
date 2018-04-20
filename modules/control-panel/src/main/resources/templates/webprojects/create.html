@@ -87,11 +87,11 @@
 				<div class="row">
 					<div class="col-md-12">
 						<div class="portlet light bordered">
-							<div class="portlet-title tabbable-line">
+							<div class="portlet-title">
 								<div class="caption">
-									<i class="icon-list font-grey-gallery"></i>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:if="${webproject?.id} == null" th:text="#{webproject.template.create}"> Create New Web Project </span>
-									<span class="caption-subject bold font-grey-gallery uppercase" th:if="${webproject?.id} != null" th:text="#{webproject.template.update} + ' ' + ${webproject.identification}"> Update Web Project </span>
+									<i class="fa fa-file-code-o font-grey-gallery"></i>
+									<span class="caption-subject font-grey-gallery uppercase" th:if="${webproject?.id} == null" th:text="#{webproject.template.create}"> Create New Web Project </span>
+									<span class="caption-subject font-grey-gallery uppercase" th:if="${webproject?.id} != null" th:text="#{webproject.template.update} + ' ' + ${webproject.identification}"> Update Web Project </span>
 								</div>
 								<div class="tools">
 									<a href="" class="collapse" data-original-title="" title=""> </a>
@@ -129,19 +129,25 @@
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
 																	<label class="" th:text="#{webproject.name} + ':'"> Name </label><span class="required"> (*)</span>
-																	<input th:tabindex="1" id="identification" type="text" th:required="true" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
+																	<input th:if="${webproject?.id} == null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
+																	<input th:if="${webproject?.id} != null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}" readonly="readonly"/>																
 																</div>
 															</div>
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
-																	<label th:text="#{webproject.description}"> Description </label><span class="required"> (*)</span>
-																	<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
+																	<label th:text="#{webproject.description} + ':'"> Description </label><span class="required"> (*)</span>
+																	<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" cols="" rows=""></textarea>
 																</div>
 															</div>
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
-																	<label th:text="#{webproject.mainFile}"> Main File </label>
+																	<label th:text="#{webproject.mainFile} + ':'"> Main File </label>
 																	<input th:tabindex="1" id="mainFile" type="text" maxlength="100" th:field="*{mainFile}" class="form-control " th:placeholder="index.html"/>														
+																</div>
+															</div>
+															<div class="col-md-12 col-sm-12 col-xs-12">
+																<div class="form-group">
+																	<button id="uploadZIP" type="button" class="btn btn-square btn-default" name="uploadZIP"  th:value="#{webproject.uploadZIP}" onclick="$('#buttonLoadRootZip').click();"> <i class="fa fa-file-archive-o" style="padding-right:4px;"></i><span th:text="#{webproject.uploadZIP}"> Upload ZIP </span></button>															
 																</div>
 															</div>
 														</div>												
@@ -151,66 +157,42 @@
 													<div class="form-actions">
 														<div class="pull-right">
 															<!-- CREATE -->
-															<button th:if="${webproject?.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+															<button th:if="${webproject?.id} == null" id="createBtn" class="btn btn-square btn-success" name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 															
 															<!-- UPDATE -->
-															<button th:if="${webproject?.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+															<button th:if="${webproject?.id} != null" id="updateBtn" class="btn btn-square btn-warning" name="update" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 															
 															<!-- REMOVE -->
-															<button th:if="${webproject?.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+															<button th:if="${webproject?.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'javascript:WebProjectCreateController.go(\'' + @{/webprojects/delete/} + ${webproject.id} + '\');'"><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 															
 															<!-- RESET -->
-															<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+															<button th:if="${webproject?.id} == null" id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
 															
 															<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 															
 															<!-- CANCEL TO-DO: authentication and control -->
-															<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:OntologyCreateController.go(\'' + @{/} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-															<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:OntologyCreateController.go(\'' + @{/ontologies/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+															<button id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:WebProjectCreateController.go(\'' + @{/webprojects/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
 														</div>
 													</div>
 												</form>
-												
-												<div>
-													<form id="upload_zip" enctype="multipart/form-data" method="post" action="/controlpanel/webprojects/uploadZip">
-						                                <input class="form-group button_text" 
-						                                        id="buttonLoadRootZip" type="file"
-						                                        accept=".zip"
-						                                        style="display:none"
-						                                        onchange="uploadZip()"
-						                                        th:for="#{webproject.uploadZIP}"
-						                                        th:name="#{webproject.uploadZIP}"
-						                                        />
-						                                <input type="hidden" id="pathZipUpload" name="path" for="path" value=""/>
-														<button id="uploadZIP" type="button" class="btn btn-square btn-default" name="uploadZIP"  th:value="#{webproject.uploadZIP}" onclick="$('#buttonLoadRootZip').click();"> <span th:text="#{webproject.uploadZIP}"> Upload ZIP </span></button>
-					                               		<input type="submit" style="display:none" value="submitZip" id="submitZip" />
-													
-													
-													</form>
-	<!-- 											   <fieldset >
-						                                <button 
-							                                id="buttonOpenProjectWeb" type="button"
-							                                class="btn btn-square btn-default"
-							                                onclick="window.openProject()"
-							                                th:value="#{proyectoweb_formulario_visualizar}"
-							                                th:name="#{proyectoweb_formulario_visualizar}" ></button>
-						                             </fieldset>
-	  -->                            				
-												<!--  	<form id="upload_file" enctype="multipart/form-data" method="post" action="/controlpanel/webprojects/uploadFile">
-				                                        <input class="form-group button_text" 
-				                                                id="buttonLoadFile" type="file"
-				                                                style="display:none"
-				                                                onchange="uploadFile()"
-				                                                th:for="#{webproject.uploadFile}"
-				                                                th:name="#{webproject.uploadFile}" 
-				                                                />
-				                                        <input type="hidden" id="pathFileUpload" name="path" for="path" value=""/>
-				                                        <button id="uploadFile" type="button" class="btn btn-square btn-default" name="uploadFile"  th:value="#{webproject.uploadFile}" onclick="$('#buttonLoadFile').click();"> <span th:text="#{webproject.uploadFile}"> Upload File </span></button>
-				                                        <input type="submit" style="display:none" value="submitFile" id="submitFile" />
-				                                    </form>
-				                                    -->
-												</div>
-												
+												<!-- AUXILIAR FORM TO DELETE WEBPROJECT -->
+												<form id="delete_webproject_form" class="delete-webproject hide"  th:action="@{'/webprojects/'+${webproject.id}}"  method="post">
+													<input type="hidden" name="_method" value="DELETE"/>
+													<input id="delete-webprojectId" type="hidden" name="webprojectId" th:value="${webproject.id}"/>
+												</form>
+												<!-- AUXILIAR FORM TO UPLOAD ZIP -->
+												<form id="upload_zip" enctype="multipart/form-data" method="post" action="/controlpanel/webprojects/uploadZip">
+					                                <input class="form-group button_text" 
+					                                        id="buttonLoadRootZip" type="file"
+					                                        accept=".zip"
+					                                        style="display:none"
+					                                        onchange="WebProjectCreateController.uploadZip()"
+					                                        th:for="#{webproject.uploadZIP}"
+					                                        th:name="#{webproject.uploadZIP}"
+					                                        />
+					                                <input type="hidden" id="pathZipUpload" name="path" for="path" value=""/>
+				                               		<input type="submit" style="display:none" value="submitLoadZip" id="submitLoadZip" />
+												</form>	
 											</div>
 										</div>
 									</div>
@@ -267,38 +249,14 @@
 			
 	var currentLanguage = [[${lang}]];	
 	
-	
-    function uploadZip(){
-    	//mostrarCapaLoading();
-    	$("#pathZipUpload").val($("#identificacion").val());
-		$.ajax({
-            type: 'post',
-            url: '/controlpanel/webprojects/uploadZip',
-            contentType: false,
-            processData: false,
-            data: new FormData($('#upload_zip')[0]),
-            success: function () {
-            	/*var fancytreeObject = treeObject.fancytree("getTree");
-                fancytreeObject.reload({
-                        contentType: "application/json; charset=utf-8",
-                        url: "/controlpanel/webprojects/getFilesInPath",
-                        data: "path=" + $("#identificacion").val(),
-                        success: function(data){
-                //        	esconderCapaLoading();
-                            console.log("root zip reload");
-                        },
-                        error: function(){
-                //            esconderCapaLoading();
-                        }
-                })*/
-            },
-            error: function(){
-            //    esconderCapaLoading();
-            }
-        });
-    }
-    
-	
+	var webProjectCreateJson = { 	
+			"language" : currentLanguage,
+			"validform": {
+				"emptyfields": [[#{webproject.validation.emptyfields}]],
+				"zipnotuploaded": [[#{webproject.uploadzip.error}]]
+			}
+		};   
+		
 	</script>	
 </body>
 </html>

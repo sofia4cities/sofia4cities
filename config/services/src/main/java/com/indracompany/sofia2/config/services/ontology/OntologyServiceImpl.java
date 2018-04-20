@@ -66,7 +66,7 @@ public class OntologyServiceImpl implements OntologyService {
 
 		User sessionUser = this.userService.getUser(sessionUserId);
 		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
-			return ontologyRepository.findAll();
+			return ontologyRepository.findAllByOrderByIdentificationAsc();
 		} else {
 			return ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
 		}
@@ -76,7 +76,7 @@ public class OntologyServiceImpl implements OntologyService {
 	public List<Ontology> getOntologiesByUserId(String sessionUserId) {
 		User sessionUser = this.userService.getUser(sessionUserId);
 		if (sessionUser.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
-			return ontologyRepository.findAll();
+			return ontologyRepository.findAllByOrderByIdentificationAsc();
 		} else {
 			return ontologyRepository.findByUserAndOntologyUserAccessAndAllPermissions(sessionUser);
 		}
@@ -342,6 +342,7 @@ public class OntologyServiceImpl implements OntologyService {
 				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 				ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 				ontologyDb.setMetainf(ontology.getMetainf());
+				ontologyDb.setAllowsCypherFields(ontology.isAllowsCypherFields());
 				this.ontologyRepository.save(ontologyDb);
 			} else {
 				throw new OntologyServiceException("The user is not authorized");

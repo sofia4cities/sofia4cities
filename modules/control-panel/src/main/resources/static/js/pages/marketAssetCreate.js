@@ -44,6 +44,8 @@ var MarketAssetCreateController = function() {
     	var url =  marketAssetCreateReg.url + "/fragment";
 	    if ($('#marketassetType').val() != '') {
 	        url = url + '/' + $('#marketassetType').val();
+	        $('#showedImgPreview').attr('src', marketAssetCreateReg.urlimg + $('#marketassetType').val() + ".png" );
+	        $("#image").val(null);
 	    }
 	    $("#fragments").load(url);
 	    $("#versions").val("");
@@ -57,6 +59,26 @@ var MarketAssetCreateController = function() {
 	    }
 	    $("#versions").load(url);
 	    $("#apiDescription").val("");
+	}
+    
+    var loadUrlWebProyect = function(){
+		var webprojectId = $('#webProjectId').val();
+
+        $.ajax({
+            url: marketAssetCreateReg.url + "/urlwebproject",
+            type: 'POST',
+            data: JSON.stringify({"webprojectId": webprojectId}),
+            dataType: 'text',
+            contentType: 'text/plain',
+            mimeType: 'text/plain',
+            success: function(data) {
+            	dataJson = JSON.parse(data);
+                $("#id_endpoint_webproject").text(dataJson.webProjectUrl);
+                $("#description_webproject").val(dataJson.description);
+            },
+            error: function(data,status,er) {
+            }
+        });
 	}
 	
     var loadDescription = function(){
@@ -319,7 +341,9 @@ var MarketAssetCreateController = function() {
 			json_desc.functionality=$('#functionality').val();
 		} else if (type=='WEBPROJECT'){
 			json_desc.functionality=$('#functionality').val();
-			json_desc.id_endpoint=$('#id_endpoint').val();
+			json_desc.webProjectId=$('#webProjectId').text().trim();
+			json_desc.id_endpoint_webproject=$('#id_endpoint_webproject').text();
+			json_desc.description_webproject=$('#description_webproject').val();
 		}
 
 		$("#json_desc").val(JSON.stringify(json_desc));
@@ -328,6 +352,7 @@ var MarketAssetCreateController = function() {
     function validateImgSize() {
         if ($('#image').prop('files') && $('#image').prop('files')[0].size>60*1024){
         	showGenericErrorDialog('Error', marketAssetCreateReg.marketAssetmanager_image_error);
+        	$("#image").val(null);
         	$('#showedImg').val("");
          } else if ($('#image').prop('files')) {
         	 reader.readAsDataURL($("#image").prop('files')[0]);
@@ -350,7 +375,7 @@ var MarketAssetCreateController = function() {
 		
 		// VALIDATE IDENTIFICATION
 		validateIdentification: function() {
-			logControl ? console.log(LIB_TITLE + ': validateImgSize()') : '';
+			logControl ? console.log(LIB_TITLE + ': validateId()') : '';
 			validateId();
 		},
 
@@ -370,6 +395,12 @@ var MarketAssetCreateController = function() {
 		changeDescription: function() {
 			logControl ? console.log(LIB_TITLE + ': changeDescription()') : '';
 			loadDescription();
+		},
+		
+		// MARKET ASSET API VERSIONS LOAD
+		changeURLWebProject: function() {
+			logControl ? console.log(LIB_TITLE + ': changeURLWebProject()') : '';
+			loadUrlWebProyect();
 		},
 		
 		// MARKET ASSET DESCRIPTION LOAD

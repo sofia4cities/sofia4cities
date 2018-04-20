@@ -2,12 +2,17 @@ var IssueController = function() {
 	
 	var client = new SofiaClient();
 	
-	
-	var url = "http://localhost:8081/iotbroker/message";
+	//var apimanager = 'https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/oauth/token';
+	//var iotbroker = "https://s4citiespro.westeurope.cloudapp.azure.com/iotbroker/message";
+	//var apimanager = 'http://localhost:19090/api-manager/oauth/token';
+	//var iotbroker = "http://localhost:8081/iotbroker/message";
+	var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
+	var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
 	var ontology = 'Ticket';
 	var device = 'Ticketing App';
 	var token= 'e7ef0742d09d4de5a3687f0cfdf7f626';
-	var deviceInstance = new Date();
+	//var token= '1c7954dd4c7c47e0916e8ea64e3c9967';
+	var deviceInstance = 'Ticketing App: Web';
 	var config ={};
 	var queryAll= 'db.' + ontology + '.find()'
 	var queryType= 'NATIVE';
@@ -161,7 +166,7 @@ var IssueController = function() {
 		},
 		init: function(){
 
-			config['url'] = url;
+			config['url'] = iotbroker;
 			config['token'] = token;
 			config['clientPlatform'] = device;
 			config['clientPlatformInstance'] = deviceInstance;
@@ -202,7 +207,7 @@ var IssueController = function() {
 						var username = $("#username").val();
 						var password = $("#password").val();
 
-						var url_base = 'http://localhost:19090/api-manager/oauth/token';
+						
 
 						// The auth_token is the base64 encoded string for the API 
 						// application.
@@ -216,7 +221,7 @@ var IssueController = function() {
 							'password' : password
 						}
 						$.ajax({
-							'url' : url_base,
+							'url' : apimanager,
 							'type' : 'POST',
 							'content-Type' : 'x-www-form-urlencoded',
 							'dataType' : 'json',

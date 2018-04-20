@@ -23,6 +23,15 @@
 				<h1>HTML Plain API Manager TESTER by OAUTH2 Authentication</h1>
 			</div>
 		</header>
+		
+		<form>
+			<div class="form-group">
+				<label for="url">Base URL</label> 
+				<textarea class="form-control" rows="5" id="url">https://rancher.sofia4cities.com</textarea>
+			</div>
+			
+
+		</form>
 
 		<form>
 			<div class="form-group">
@@ -56,7 +65,7 @@
 			<label 	for="get">click to TEST API</label> 
 			<input id="get" type="button" value="get" />
 			
-			<textarea class="form-control" rows="5" id="api">http://localhost:19090/api-manager/server/api/v1/HelsinkiPopulationAPI/getPopulation</textarea>
+			<textarea class="form-control" rows="5" id="api">https://rancher.sofia4cities.com/api-manager/server/api/v1/HelsinkiPopulationAPI/getPopulation</textarea>
 			<label>The Result</label> 
 			<textarea class="form-control" rows="5" id="data"></textarea>
 		</div>
@@ -90,8 +99,9 @@
 						function() {
 							var username = $("input#username").val();
 							var password = $("input#password").val();
+							var url = $("textarea#url").val();
 
-							var url_base = 'http://localhost:19090/api-manager/oauth/token';
+							var url_base = url+'/api-manager/oauth/token';
 
 							// The auth_token is the base64 encoded string for the API 
 							// application.
@@ -134,6 +144,9 @@
 				.click(
 						function() {
 							var api = $("textarea#api").val();
+							var url2 = $("textarea#url").val();
+
+							
 							
 							$.ajax({
 										type : "GET",
@@ -166,10 +179,11 @@
 		.click(
 				function() {
 				
-					
+					var url2 = $("textarea#url").val();
+
 					$.ajax({
 								type : "GET",
-								url : "http://localhost:19090/api-manager/oauth-api/api-ops",
+								url : url2+"/api-manager/oauth-api/api-ops",
 								dataType : 'json',
 								headers : {
 									'Authorization' : 'Bearer '
@@ -179,6 +193,8 @@
 									
 									$('#result_ops')
 											.val(JSON.stringify(data));
+									$('#api')
+									.val(url2+data);
 								},
 								error : function(req, status, err) {
 									console.log('something went wrong',

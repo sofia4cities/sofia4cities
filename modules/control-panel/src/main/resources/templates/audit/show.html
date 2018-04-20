@@ -37,6 +37,7 @@
 		
 		var queryResponse = {};
 		var queryErrorResponse = {};
+		var dataJSON = {};
 
 		function getQueryExecuted(){
 			var operation = $("#operation").val();
@@ -56,7 +57,13 @@
 				}
 				
 				if ($('#jsoneditor').attr('data-loaded') == 'false') { createEditor(); $('#jsoneditor').attr('data-loaded', true);	}				
-				if (IS_JSON) { editor.setText(queryResponse.text()); editor.setMode('view'); }else { editor.setMode('text');  editor.setText(queryErrorResponse); } 
+				if (IS_JSON) { 
+					dataJSON = queryResponse.text();
+					if ($('.table-viewer').is(':visible')){ $('.btn-table-toggle').trigger('click'); }
+					editor.setText(queryResponse.text());
+					editor.setMode('view');
+				}
+				else { editor.setMode('text');  editor.setText(queryErrorResponse); } 
 								
 			});		
 			
@@ -148,7 +155,7 @@
 														</fieldset>	
 														<fieldset id="fieldset_offset" class="col-md-3">
 															<label class="" th:text="#{audit.offset} + ':'">Offset</label>																
-															<input class="form-control" name="offset" id="offset"/>															
+															<input class="form-control" name="offset" id="offset" th:value="50"/>															
 														</fieldset>
 													</div>
 													<div class="btn-group" style="padding-top: 10px;">
@@ -166,7 +173,11 @@
 										<!-- PANEL DE RESULTADOS -->
 										<div class="panel panel-default">
 											<div class="panel-heading panel-sofia2">
-												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> <span th:text="#{database.results}">Resultados sobre </span> <span id="query-ontologia-result" class="bold uppercase">AUDIT</span></h3>											
+												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> 
+												<span th:text="#{database.results}">Resultados sobre </span> 
+												<span id="query-ontologia-result" class="bold uppercase">AUDIT</span>
+												<span class="pull-right" style="margin-top: -6px;"><button class="btn btn-sm btn-table-toggle btn-primary"><i class="fa fa-table"></i> Table Viewer Toggle</button></span>
+												</h3>											
 											</div>
 											<div class="panel-body no-space">
 												<div class="clearfix"></div>
@@ -177,6 +188,8 @@
 														<div id="theQueryResponse" th:fragment="query" th:text="${queryResult}"></div>														
 													</div>
 													<div id="jsoneditor" data-loaded="false"></div>
+													<div class="table-viewer" style="display: none;" data-loaded="false"></div>
+													
 													<div class="clearfix"></div>
 												</div>
 												<div id="example" class="col-md-12">
@@ -225,6 +238,7 @@
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
 	<script th:src="@{/static/vendor/jquery/jquery.autocomplete.js}"/>
 	<script th:src="@{/static/vendor/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js}"/>
+	<script th:src="@{/static/vendor/json/jsonToTable.js}"/>
 
 	<script th:inline="javascript"> 
 	//<![CDATA[
@@ -422,8 +436,27 @@
 		spinnerEach.bind("keydown", function (event) { event.preventDefault(); });
 		
 		if("[[${QUERY}]]" != "null"){                 
-            $('#querySql').innerHTML = "[[${QUERY}]]";
-        }
+            $('#querySql').innerHTML = "[[${QUERY}]]";			
+		}
+		
+		$('.btn-table-toggle').on('click',function(){
+		
+			if (editor){ 
+				if ($('.table-viewer').is(':visible')){					
+					$('#jsoneditor').fadeIn();
+					$('.table-viewer').fadeOut();
+				}
+				else{
+				$('#jsoneditor').fadeOut();
+				$('.table-viewer').createTable(JSON.parse(dataJSON), {});
+				$('.table-viewer').fadeIn();
+				
+				}		
+			}
+			else { return; }
+			
+		
+		});
 		
 	});		
 	

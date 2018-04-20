@@ -53,26 +53,23 @@
 			<div class="page-content">
 				
 				<!-- BEGIN PAGE -->
-				<div class="main-block mt-element-step">
+				<div sec:authorize="!hasAuthority('ROLE_ADMINISTRATOR')" class="main-block mt-element-step">
 				
 					<!-- description and elements zone -->
 					<div class="step-desc hide">
 						<i id="step-desc-close" class="la la-close pull-right" style="font-size: 18px;padding: 2px;position: inherit;right: 12px;"></i>
 						<div class="step-desc-content" style="padding-right: 15px;">
-						<table class="table table-light table-condensed" style="margin-bottom: 0;">
-							<tbody>
-								<tr>
-									<td width="3%"><i id="stepdescicon" class="flaticon-network" style="font-size: 30px; color: ghostwhite; padding: 2px;"></i></td>
-									<td id="stepdesctext" style="color: ghostwhite;" width="60%" th:text="#{flow.ontology.description}">desc...</td>
-									<td style="vertical-align: super !important;" class=""><a id="stepdesclink" type="button" href="" class="btn default btn-sm btn-outline sbold uppercase"><i id="stepdescbtn" class="fa fa-link"></i> <span>Ontologías</span></a></td>
-								</tr>
-							</tbody>
-						</table>
-
+							<table class="table table-light table-condensed" style="margin-bottom: 0;">
+								<tbody>
+									<tr>
+										<td width="3%"><i id="stepdescicon" class="flaticon-network" style="font-size: 30px; color: ghostwhite; padding: 2px;"></i></td>
+										<td id="stepdesctext" style="color: ghostwhite;" width="60%" th:text="#{flow.ontology.description}">desc...</td>
+										<td style="vertical-align: super !important;" class=""><a id="stepdesclink" type="button" href="" class="btn default btn-sm btn-outline sbold uppercase"><i id="stepdescbtn" class="fa fa-link"></i> <span>Ontologías</span></a></td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
-
-					</div>
-					
+					</div>					
 				
 					<div class="row step-line">					
 						<div class="col-md-2 col-sm-3 col-xs-6 mt-step-col first ">
@@ -93,7 +90,7 @@
 							<div class="mt-step-content font-grey-steel flow-description" th:text="#{flow.device.description}">...</div>
 							<div class="mt-step-cta">
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasDevice} ? bg-green : bg-red">
-								  <i class="flaticon-share"></i> 
+								  <i class="flaticon-truck"></i> 
 								</span>
 								<button th:if="${hasDevice}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:if="${not hasDevice}">
@@ -106,7 +103,7 @@
 							<div class="mt-step-content font-grey-steel flow-description" th:text="#{flow.simulate.description}">...</div>
 							<div class="mt-step-cta">
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasSimulation} ? bg-green : bg-red">
-								  <i class="flaticon-analytics "></i>
+								  <i class="flaticon-car"></i>
 								</span>
 								<button th:if="${hasSimulation}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:if="${not hasSimulation}">
@@ -119,7 +116,7 @@
 							<div class="mt-step-content font-grey-steel flow-description" th:text="#{flow.visualize.description}">...</div>
 							<div class="mt-step-cta">
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/dashboards/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasDashboard} ? bg-green : bg-red">
-								  <i class="flaticon-dashboard"></i> 
+								  <i class="flaticon-graph"></i> 
 								</span>
 								<button th:if="${hasDashboard}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/dashboards/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:unless="${hasDashboard}">
@@ -145,7 +142,7 @@
 							<div class="mt-step-content font-grey-steel flow-description" th:text="#{flow.api.description}">...</div>
 							<div class="mt-step-cta">
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'" class="btn mt-step-number font-grey-steel" th:classappend="${hasApi} ? bg-green : bg-red">
-							  <i class="flaticon-layers"></i>  
+							  <i class="flaticon-multimedia "></i>  
 							</span>
 								<button th:if="${hasApi}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'" th:text="#{flow.button}">GO</button>
 								<div class="mt-step-done" th:if="${not hasApi}">
@@ -165,10 +162,15 @@
 				
 				<!-- MAIN ROW -->
 				<div class="row">					
-					<div class="col-md-12 col-sm-12">
+					<div class="col-md-12 col-sm-12 margin-top-10">					
+						<!-- BEGIN ADMIN DASHBOARD INCLUDE -->
+						<div id="dashboardInclude" sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" th:include="fragments/dashboard::#dashboardFragment" class="margin-top-10"></div>
+						<!-- END DASHBOARD INCLUDE -->	
+					
 						<!-- BEGIN GRAPH INCLUDE -->
-						<div id="graphInclude" sec:authorize="hasAnyAuthority('ROLE_DEVELOPER','ROLE_DATASCIENTIST','ROLE_ADMINISTRATOR')" th:include="fragments/graph::#graphFragment" class="margin-top-10 margin-bottom-10"></div>
+						<div id="graphInclude" sec:authorize="hasAnyAuthority('ROLE_DEVELOPER','ROLE_DATASCIENTIST','ROLE_ADMINISTRATOR')" th:include="fragments/graph::#graphFragment" class="margin-bottom-10"></div>
 						<!-- END GRAPH -->
+						
 					</div>
 				</div><!-- END MAIN ROW -->
 			</div><!-- END CONTENT BODY -->

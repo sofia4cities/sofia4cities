@@ -14,11 +14,13 @@
  */
 package com.indracompany.sofia2.router.audit.aop;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -26,9 +28,9 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.audit.aop.BaseAspect;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
-import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
@@ -87,7 +89,7 @@ public class AuditableAspect extends BaseAspect {
 		return proceed;
 	}
 
-	@Before("@annotation(auditable)")
+	// @Before("@annotation(auditable)")
 	public void beforeExecution(JoinPoint joinPoint, Auditable auditable) {
 		String className = getClassName(joinPoint);
 		String methodName = getMethod(joinPoint).getName();
@@ -116,7 +118,7 @@ public class AuditableAspect extends BaseAspect {
 	}
 
 	@SuppressWarnings("rawtypes")
-	// @AfterReturning(pointcut = "@annotation(auditable)", returning = "retVal")
+	@AfterReturning(pointcut = "@annotation(auditable)", returning = "retVal")
 	public void afterReturningExecution(JoinPoint joinPoint, Object retVal, Auditable auditable) {
 
 		String className = getClassName(joinPoint);
@@ -125,7 +127,7 @@ public class AuditableAspect extends BaseAspect {
 		if (retVal != null) {
 
 			Sofia2AuditEvent event = Sofia2RouterEventFactory.createAuditEvent(joinPoint, auditable, EventType.DATA,
-					"Returned Execution of :" + className + "-> " + methodName);
+					"Execution of :" + className + "-> " + methodName);
 
 			if (retVal instanceof ResponseEntity) {
 				ResponseEntity response = (ResponseEntity) retVal;
@@ -142,22 +144,23 @@ public class AuditableAspect extends BaseAspect {
 				event.setOntology(model.getOntologyName());
 				event.setOperationType(model.getOperationType().name());
 				event.setUser(model.getUser());
-				event.setMessage(
-						"Returned operation : " + model.getOntologyName() + " Type : " + model.getOperationType().name()
-								+ " By User : " + model.getUser() + " REsponse Message: " + response.getMessage());
+				event.setMessage("operation for Ontology : " + model.getOntologyName() + " Type : "
+						+ model.getOperationType().name() + " By User : " + model.getUser() + " Has a Response: "
+						+ response.getMessage());
+
+				Map<String, Object> data = new HashMap<String, Object>();
+				data.put("data", retVal);
+				// event.setExtraData(data);
+
+				eventProducer.publish(event);
 			}
 
 			// not storing returned value at this moment.. Do I need?
 
-			/*
-			 * Map<String, Object> data= new HashMap<String,Object>(); data.put("data",
-			 * retVal); event.setData(data);
-			 */
-			eventProducer.publish(event);
 		}
 	}
 
-	@AfterThrowing(pointcut = "@annotation(auditable)", throwing = "ex")
+	// @AfterThrowing(pointcut = "@annotation(auditable)", throwing = "ex")
 	public void doRecoveryActions(JoinPoint joinPoint, Exception ex, Auditable auditable) {
 
 		String className = getClassName(joinPoint);
@@ -166,9 +169,9 @@ public class AuditableAspect extends BaseAspect {
 		Sofia2AuditError event = null;
 
 		OperationModel model = (OperationModel) getTheObject(joinPoint, OperationModel.class);
-		
+
 		if (model != null) {
-			event = Sofia2EventFactory.createAuditEventError(joinPoint, null, Module.ROUTER, ex); 
+			event = Sofia2EventFactory.createAuditEventError(joinPoint, null, Module.ROUTER, ex);
 			event.setOntology(model.getOntologyName());
 			event.setOperationType(model.getOperationType().name());
 			event.setUser(model.getUser());
@@ -180,7 +183,7 @@ public class AuditableAspect extends BaseAspect {
 
 		event.setMessage("Exception Detected");
 		event.setEx(ex);
-		
+
 		Sofia2EventFactory.setErrorDetails(event, ex);
 		eventProducer.publish(event);
 
@@ -191,7 +194,5 @@ public class AuditableAspect extends BaseAspect {
 				+ ex.getClass().getName());
 
 	}
-
-	
 
 }

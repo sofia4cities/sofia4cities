@@ -39,7 +39,7 @@ public class ApiCamelContextHandler implements BeanFactoryAware {
 	@Autowired
 	private CamelConfigurationProperties camelConfigurationProperties;
 
-	private static String DEFAULT_CONTEXT_CAMEL = "camel-context-reference";
+	private static final String DEFAULT_CONTEXT_CAMEL = "camel-context-reference";
 
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) {
@@ -55,8 +55,7 @@ public class ApiCamelContextHandler implements BeanFactoryAware {
 	}
 
 	public Resource loadCamelContextResource(String resourceLocation) {
-		Resource resource = applicationContext.getResource(resourceLocation);
-		return resource;
+		return applicationContext.getResource(resourceLocation);
 	}
 
 	public CamelContext getCamelContext(String id) {
@@ -74,7 +73,7 @@ public class ApiCamelContextHandler implements BeanFactoryAware {
 		return getCamelContext(DEFAULT_CONTEXT_CAMEL);
 	}
 
-	@SuppressWarnings("deprecation")
+	
 	private CamelContext camelContext(String contextName) {
 		CamelContext camelContext = new SpringCamelContext(applicationContext);
 		SpringCamelContext.setNoStart(true);
@@ -87,12 +86,12 @@ public class ApiCamelContextHandler implements BeanFactoryAware {
 		}
 
 		if (camelConfigurationProperties.getLogDebugMaxChars() > 0) {
-			camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS,
+			camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS,
 					"" + camelConfigurationProperties.getLogDebugMaxChars());
 
 		}
 
-		camelContext.setStreamCaching(camelConfigurationProperties.isStreamCaching());
+		camelContext.setStreamCaching(camelConfigurationProperties.isStreamCachingEnabled());
 		camelContext.setTracing(camelConfigurationProperties.isTracing());
 		camelContext.setMessageHistory(camelConfigurationProperties.isMessageHistory());
 		camelContext.setHandleFault(camelConfigurationProperties.isHandleFault());
@@ -113,9 +112,6 @@ public class ApiCamelContextHandler implements BeanFactoryAware {
 		ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
 		configurableBeanFactory.registerSingleton(contextName, camelContext);
 
-		/*
-		 * try { camelContext.start(); } catch (Exception e) { // Log error }
-		 */
 		return camelContext;
 	}
 

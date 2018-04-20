@@ -4,14 +4,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-parent</artifactId>
-	<version>5.1.0-SNAPSHOT</version>
+	<version>5.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>sofia2-parent</name>
 	<description>sofia2-parent</description>
 	
 	<properties>	
-		<sofia2.version>5.1.0-SNAPSHOT</sofia2.version>
+		<sofia2.version>5.2.0-SNAPSHOT</sofia2.version>
 		<sofia2.docker.version>v1.0.0</sofia2.docker.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -34,6 +34,8 @@
         <project.website>https://sofia2.com</project.website>
 		<freemarket.version>2.3.21</freemarket.version>	
 		<elasticsearch.version>6.2.3</elasticsearch.version>
+		<skip.unit.tests>true</skip.unit.tests>
+		<skip.integration.tests>true</skip.integration.tests>
 	</properties>
 	
 	<dependencyManagement>
@@ -195,7 +197,7 @@
 				<version>0.8.0</version>
 				<executions>
 					<execution>
-						<id>default-prepare-agent</id>
+						<id>pre-unit-test</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
@@ -205,35 +207,109 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>default-report</id>
-						<phase>prepare-package</phase>
+						<id>post-unit-test</id>
+						<phase>test</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
 						<configuration>
 							<dataFile>${project.build.directory}/jacoco.exec</dataFile>
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco</outputDirectory>
 						</configuration>
 					</execution>
-				</executions>
+					<execution>
+			            <id>pre-integration-test</id>
+			            <phase>pre-integration-test</phase>
+			            <goals>
+			                <goal>prepare-agent</goal>
+			            </goals>
+			            <configuration>			                
+			                <destFile>${project.build.directory}/jacoco-it.exec</destFile>			             
+			                <propertyName>failsafeArgLine</propertyName>
+			            </configuration>
+			        </execution>
+			        <execution>
+			            <id>post-integration-test</id>
+			            <phase>post-integration-test</phase>
+			            <goals>
+			                <goal>report</goal>
+			            </goals>
+			            <configuration>			                
+			                <dataFile>${project.build.directory}/jacoco-it.exec</dataFile>			               
+			                <outputDirectory>${project.reporting.outputDirectory}/jacoco-it</outputDirectory>
+			            </configuration>
+			        </execution>
+				</executions>				
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.21.0</version>
 				<configuration>
-						<argLine>${surefireArgLine}</argLine>
+			      <argLine>${surefireArgLine}</argLine>
+				  <skipTests>${skip.unit.tests}</skipTests>
+				  <excludedGroups>com.indracompany.sofia2.commons.testing.IntegrationTest</excludedGroups>
 				</configuration>
 			</plugin>
+			<plugin>
+			  <groupId>org.codehaus.mojo</groupId>
+              <artifactId>build-helper-maven-plugin</artifactId>
+              <version>3.0.0</version>
+              <executions>
+		        <execution>
+		          <id>add-integration-test-sources</id>
+		          <phase>generate-test-sources</phase>
+		          <goals>
+		            <goal>add-test-source</goal>
+		          </goals>
+		          <configuration>
+		            <sources>
+		              <source>src/integration-test/java</source>
+		            </sources>
+		          </configuration>
+		        </execution>
+		        <execution>
+                  <id>add-integration-test-resources</id>
+                  <phase>generate-test-resources</phase>
+                  <goals>
+                    <goal>add-test-resource</goal>
+                  </goals>
+                  <configuration>
+                    <resources>
+                      <resource>
+                        <filtering>true</filtering>
+                        <directory>src/integration-test/resources</directory>
+                      </resource>
+                    </resources>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-failsafe-plugin</artifactId>
+              <version>2.21.0</version>
+              <executions>
+                <execution>
+                  <id>integration-tests</id>
+                  <goals>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
+                  </goals>
+                  <configuration>
+                    <includes>
+                      <include>**/*.java</include>
+                    </includes>
+                    <groups>com.indracompany.sofia2.commons.testing.IntegrationTest</groups>
+                    <skipTests>${skip.integration.tests}</skipTests>
+                    <argLine>${failsafeArgLine}</argLine>
+                  </configuration>
+                </execution>
+              </executions>
+           </plugin>
 		</plugins>
 		
-		<resources>
-		  <resource>
-			<directory>src/test/resources</directory>
-			<includes>
-			  <include>**/*.properties</include>
-			  <include>**/*.yml</include>
-			</includes>
-		  </resource>	  
+		<resources> 
 		  <resource>
 			<directory>src/main/resources</directory>
 			<includes>
@@ -241,9 +317,59 @@
 			  <include>**/*.yml</include>
 			  <include>**/*.*</include>
 			</includes>
-		  </resource>	  
+		  </resource>
 		</resources>
 	</build>
+	
+
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+		  </activation>
+			<properties>
+				<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+			</properties>
+		</profile>
+		<profile>
+			<id>integration</id>
+			<properties>
+				<sofia2.quartzURL>jdbc:mysql://localhost:3307/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
+			</properties>
+		</profile>
+		<profile>
+			<id>unit-test</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+		  </activation>
+			<properties>
+			  <skip.unit.tests>false</skip.unit.tests>
+			</properties>
+	  </profile>
+	  <profile>
+			<id>integration-test</id>
+			<properties>
+			  <skip.integration.tests>false</skip.integration.tests>
+			</properties>
+	  </profile>
+		<profile>
+			<id>no-test</id>
+			<properties>
+			  <skip.unit.tests>true</skip.unit.tests>
+			  <skip.integration.tests>true</skip.integration.tests>
+			</properties>
+		</profile>
+	</profiles>
+	<reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.21.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
 	
 	
 </project>

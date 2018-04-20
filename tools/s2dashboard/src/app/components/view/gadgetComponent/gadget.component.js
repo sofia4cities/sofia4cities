@@ -22,8 +22,10 @@
     vm.type = "loading";
     vm.config = {};//Gadget database config
     vm.measures = [];
-    vm.status = "initial"
-
+    vm.status = "initial";
+    vm.selected = [];
+    vm.notSmall=true;
+ 
     //Chaining filters, used to propagate own filters to child elements
     vm.filterChaining=true;
 
@@ -234,6 +236,19 @@
           redrawLeafletMap();
           $scope.$on("$resize",redrawLeafletMap);
           break;
+          case "table":
+          vm.data=data;
+          if(data.length>0){
+            var i = 0;
+            for(var propertyName in data[0]) {
+              vm.measures[i].config.order = propertyName;
+              i++;
+           }
+          }          
+          vm.config.config.tablePagination.limitOptions = vm.config.config.tablePagination.options.limitSelect ? [5, 10, 20, 50 ,100]  : undefined;
+          redrawTable();
+          $scope.$on("$resize",redrawTable);
+          break;
       }
 
       vm.type = vm.config.type;//Activate gadget
@@ -261,6 +276,18 @@
       vm.width = width;
       vm.height = height;
     }
+
+    function redrawTable(){
+     var element = $element[0];   
+      var width = element.offsetWidth;
+      
+      if(width<600){
+        vm.notSmall=false;
+      }else{
+        vm.notSmall=true;
+      }
+    }
+
 
     function redrawLeafletMap(){
       var element = $element[0];
@@ -379,6 +406,16 @@
           }
           originValue = points[0]._model.label;
           break;
+          case "radar":
+          //find serie x field if there are diferent x field in measures
+          for(var index in vm.data){
+            if(vm.data[index][points[0]._index]){
+              originField = vm.measures[index].config.fields[0];
+              break;
+            }
+          }
+          originValue = points[0]._chart.config.data.labels[points[0]._index];
+          break;
         case "pie":
           originField = vm.measures[0].config.fields[0];
           originValue = points[0]._model.label;
@@ -393,6 +430,17 @@
       var originValue = args.model.id;
       sendEmitterEvent(originField,originValue);
     }
+
+    vm.selectItemTable = function (item) {
+      console.log(item, 'was selected');
+      for (var index = 0; index < vm.measures.length; index++) {
+        var element = vm.measures[index];
+        var originField = element.config.fields[0];
+        var originValue = item[element.config.order];
+        sendEmitterEvent(originField,originValue);
+      }      
+    };
+  
 
     function sendEmitterEvent(originField,originValue){
       if(vm.filterChaining){

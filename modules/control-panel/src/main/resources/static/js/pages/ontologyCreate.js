@@ -32,6 +32,8 @@ var OntologyCreateController = function() {
 		var required 		= [];
 		var propObj			= {};
 		var propRequired	= '';
+		var propDescription	= '';
+		var propEncrypted	= 'false';
 		
 		// Required
 		if ( jsonData.hasOwnProperty('datos') ){ required = jsonData.datos.required; } else { required = jsonData.required;  }
@@ -43,13 +45,22 @@ var OntologyCreateController = function() {
 		$.each( properties, function (key, object){			
 			if (object){
 				console.log('|--- Key: '+ key );
-				$.each(object, function (propKey, propValue){					
+				$.each(object, function (propKey, propValue){
+
+					if ( propKey == 'encrypted'){						
+						propEncrypted = propValue === true ? 'true' : 'false';
+					}
+					
+					if ( propKey == 'description'){
+						propDescription = propValue !== '' ?  propValue  : '';
+					}
 					if ( propKey == 'type'){ 						
 						// check required						
 						propRequired = $.inArray( key, required ) > -1 ? propRequired = 'required' : propRequired = '';
 						
+						
 						// add property to properties
-						propObj = {"property": key, "type": propValue, "required": propRequired, "description": ''};
+						propObj = {"property": key, "type": propValue, "required": propRequired, "encrypted": propEncrypted , "descriptions": propDescription};
 						jsonFormatted.push(propObj);						
 					}
 				});
@@ -115,11 +126,13 @@ var OntologyCreateController = function() {
 		// properties, types and required arrays
 		var updateProperties = $("input[name='property\\[\\]']").map(function(){ if ($(this).val() !== ''){ return $(this).val(); }}).get();				
 		var updateTypes = $("select[name='type\\[\\]']").map(function(){return $(this).val();}).get();
-		var updateRequired = $("select[name='required\\[\\]']").map(function(){return $(this).val();}).get();		
+		var updateRequired = $("select[name='required\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateDescription = $("input[name='descriptions\\[\\]']").map(function(){return $(this).val();}).get();
+		var updateEncrypted = $("select[name='encrypted\\[\\]']").map(function(){return $(this).val();}).get();
 		
 		var schemaObj = {};
 		
-		logControl ? console.log('|--- CURRENT: ' + updateProperties + ' types: ' + updateTypes + ' required: ' + updateRequired): '';
+		logControl ? console.log('|--- CURRENT: ' + updateProperties + ' types: ' + updateTypes + ' required: ' + updateRequired + ' description: ' + updateDescription + ' Encrypted: ' + updateEncrypted ): '';
 		
 		checkUnique = updateProperties.unique();
 		if (updateProperties.length !== checkUnique.length)  { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: ontologyCreateReg.validations.duplicates}); return false; } 
@@ -136,9 +149,9 @@ var OntologyCreateController = function() {
 		if ( updateProperties.length ){	
 			$.each(updateProperties, function( index, value ) {
 				propIndex = updateProperties.indexOf(value);
-				logControl ? console.log('index: ' + propIndex + ' | property: ' + updateProperties[propIndex] + ' type: ' + updateTypes[propIndex] + ' required: ' + updateRequired[propIndex]) : '';
+				logControl ? console.log('index: ' + propIndex + ' | property: ' + updateProperties[propIndex] + ' type: ' + updateTypes[propIndex] + ' required: ' + updateRequired[propIndex] + 'description: ' + updateDescription[propIndex] + ' encrypted: ' + updateEncrypted[propIndex]) : '';
 					// update property on Schema /current are stored in schema var.  (property,type,required)
-					updateProperty(updateProperties[propIndex], updateTypes[propIndex], updateRequired[propIndex] );					
+					updateProperty(updateProperties[propIndex], updateTypes[propIndex], updateRequired[propIndex], updateDescription[propIndex], updateEncrypted[propIndex]  );					
 			});			
 		}
 		
@@ -148,13 +161,15 @@ var OntologyCreateController = function() {
 	
 	
 	// AUX. UPDATE PROPERTY IN SCHEMA FOR EACH NEW PROPERTY ADDED
-	var updateProperty = function(prop, type, req){
+	var updateProperty = function(prop, type, req, desc, encrypt){
 		logControl ? console.log('|---   updateProperty() -> ') : '';
 		
 		var properties = [];
 		var requires = [];
-		
-		
+		var propString = '';
+		var updDesc = desc !== '' ? '"description": "'+ desc + '",' : '';
+		var updEncryp = encrypt === 'true' ? '"encrypted": '+ encrypt + ',' : '';
+				
 		if 		(typeof schema == 'string'){ data = JSON.parse(schema); }
 		else if (typeof schema == 'object'){ data = schema; } else { $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: ontologyCreateReg.validations.noschema}); return false; }		
 			
@@ -163,13 +178,15 @@ var OntologyCreateController = function() {
 	
 		// ADD PROPERTY+TYPE
 		if (type == 'timestamp'){
-			properties[prop] = {"type": "object", "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}	
-		} else if(type == 'binary'){
-			properties[prop] = {"type": "object", "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg", "image/png"]}}}},"additionalProperties": false}
+			propString = '{"type": "object", '+ updDesc +' '+ updEncryp +' "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}';
+			properties[prop] = JSON.parse(propString);	
+		} else if(type == 'binary') {
+			properties[prop] = JSON.parse('{"type": "object", '+ updDesc +' '+ updEncryp +' "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg", "image/png"]}}}},"additionalProperties": false}');
 		}else if(type == 'geometry'){
-			properties[prop] = {"type":"object","required":["coordinates","type"],"properties":{"coordinates":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}},"type":{"type":"string","enum":["Point"]}}}
-		}else {			
-			properties[prop] = { "type": type}
+			properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}},"type":{"type":"string","enum":["Point"]}}}');
+		}else {	
+			propString = '{' + updDesc +' '+ updEncryp +' "type": "' + type + '"}';
+			properties[prop] = JSON.parse(propString);
 				
 		}
 		
@@ -982,6 +999,27 @@ var OntologyCreateController = function() {
 			createEditor();
 			initTemplateElements();
 			dataModeltemplateCounters();
+			
+			// PROTOTYPEs
+			// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
+			Array.prototype.unique = function() {
+				return this.filter(function (value, index, self) { 
+					return self.indexOf(value) === index;
+				});
+			};
+			
+			// ARRAY PROTROTYPE FOR REMOVE ELEMENT (not object) BY VALUE
+			Array.prototype.remove = function() {
+				var what, a = arguments, L = a.length, ax;				
+				while (L && this.length) {
+					what = a[--L];				
+					while ((ax = this.indexOf(what)) !== -1) {
+						console.log('AX: ' + ax);
+						this.splice(ax, 1);
+					}
+				}
+				return this;
+			};
 			
 			
 		},

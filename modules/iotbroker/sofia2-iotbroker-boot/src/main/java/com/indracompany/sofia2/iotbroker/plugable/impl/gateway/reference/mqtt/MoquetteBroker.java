@@ -46,11 +46,7 @@ import io.netty.handler.codec.mqtt.MqttPublishMessage;
 import io.netty.handler.codec.mqtt.MqttQoS;
 import lombok.extern.slf4j.Slf4j;
 
-@ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugable.gateway.moquette",
-		name="enable",
-		havingValue="true"
-		)
+@ConditionalOnProperty(prefix = "sofia2.iotbroker.plugable.gateway.moquette", name = "enable", havingValue = "true")
 @Slf4j
 @Component
 public class MoquetteBroker {
@@ -91,7 +87,7 @@ public class MoquetteBroker {
 	@Value("${sofia2.iotbroker.plugable.gateway.moquette.ssl.keystore_password:changeIt!}")
 	public String keyStorePassword;
 
-	@Value("${sofia2.iotbroker.plugable.gateway.moquette.ssl.keymanager_passwrod:changeIt!}")
+	@Value("${sofia2.iotbroker.plugable.gateway.moquette.ssl.keymanager_password:changeIt!}")
 	public String keyManagerPassword;
 
 	@Autowired
@@ -120,11 +116,8 @@ public class MoquetteBroker {
 			final String response = MoquetteBroker.this.processor.process(playload, getGatewayInfo());
 
 			final MqttPublishMessage message = MqttMessageBuilders.publish()
-					.topicName(outbound_topic + "/" + msg.getClientID())
-					.retained(false)
-					.qos(MqttQoS.EXACTLY_ONCE)
-					.payload(Unpooled.copiedBuffer(response.getBytes()))
-					.build();
+					.topicName(outbound_topic + "/" + msg.getClientID()).retained(false).qos(MqttQoS.EXACTLY_ONCE)
+					.payload(Unpooled.copiedBuffer(response.getBytes())).build();
 
 			MoquetteBroker.this.getServer().internalPublish(message, msg.getClientID());
 		}
@@ -134,39 +127,32 @@ public class MoquetteBroker {
 	public void init() {
 		try {
 
-			subscriptor.addSubscriptionListener("mqtt_gateway",
-					(s) ->{
-						String playload="";
-						try {
-							playload = SSAPJsonParser.getInstance().serialize(s);
-						} catch (final SSAPParseException e) {
-							log.error("Error serializing indicator message" + e.getMessage());
-						}
-						final MqttPublishMessage message = MqttMessageBuilders.publish()
-								.topicName(subscription_topic + "/" + s.getSessionKey())
-								.retained(false)
-								.qos(MqttQoS.EXACTLY_ONCE)
-								.payload(Unpooled.copiedBuffer(playload.getBytes()))
-								.build();
+			subscriptor.addSubscriptionListener("mqtt_gateway", (s) -> {
+				String playload = "";
+				try {
+					playload = SSAPJsonParser.getInstance().serialize(s);
+				} catch (final SSAPParseException e) {
+					log.error("Error serializing indicator message" + e.getMessage());
+				}
+				final MqttPublishMessage message = MqttMessageBuilders.publish()
+						.topicName(subscription_topic + "/" + s.getSessionKey()).retained(false)
+						.qos(MqttQoS.EXACTLY_ONCE).payload(Unpooled.copiedBuffer(playload.getBytes())).build();
 
-						MoquetteBroker.this.getServer().internalPublish(message, s.getSessionKey());
-					});
+				MoquetteBroker.this.getServer().internalPublish(message, s.getSessionKey());
+			});
 
 			subscriptor.addCommandListener("mqtt_gateway",
 
 					(s) -> {
-						String playload="";
+						String playload = "";
 						try {
 							playload = SSAPJsonParser.getInstance().serialize(s);
 						} catch (final SSAPParseException e) {
 							log.error("Error serializing indicator message" + e.getMessage());
 						}
 						final MqttPublishMessage message = MqttMessageBuilders.publish()
-								.topicName(command_topic + "/" + s.getSessionKey())
-								.retained(false)
-								.qos(MqttQoS.EXACTLY_ONCE)
-								.payload(Unpooled.copiedBuffer(playload.getBytes()))
-								.build();
+								.topicName(command_topic + "/" + s.getSessionKey()).retained(false)
+								.qos(MqttQoS.EXACTLY_ONCE).payload(Unpooled.copiedBuffer(playload.getBytes())).build();
 
 						MoquetteBroker.this.getServer().internalPublish(message, s.getSessionKey());
 						return null;
@@ -179,13 +165,12 @@ public class MoquetteBroker {
 			brokerProperties.put(BrokerConstants.BROKER_INTERCEPTOR_THREAD_POOL_SIZE, pool);
 			brokerProperties.put(BrokerConstants.HOST_PROPERTY_NAME, host);
 
-			if(sslEnabled) {
+			if (sslEnabled) {
 				brokerProperties.put(BrokerConstants.JKS_PATH_PROPERTY_NAME, jksPath);
 				brokerProperties.put(BrokerConstants.KEY_STORE_PASSWORD_PROPERTY_NAME, keyStorePassword);
 				brokerProperties.put(BrokerConstants.KEY_MANAGER_PASSWORD_PROPERTY_NAME, keyManagerPassword);
 				brokerProperties.put(BrokerConstants.SSL_PORT_PROPERTY_NAME, "8883");
 			}
-
 
 			final MemoryConfig memoryConfig = new MemoryConfig(brokerProperties);
 			server.startServer(memoryConfig);
@@ -205,13 +190,12 @@ public class MoquetteBroker {
 	}
 
 	@PreDestroy
-	public  void stopServer()  {
+	public void stopServer() {
 		log.info("Stopping Moquette server...");
 		try {
 			this.server.stopServer();
 		} catch (final Throwable e) {
-			log.error("Unable to stop Moquette server. Cause = {}, errorMessage = {}.", e.getCause(),
-					e.getMessage());
+			log.error("Unable to stop Moquette server. Cause = {}, errorMessage = {}.", e.getCause(), e.getMessage());
 			throw new RuntimeException("Unable to stop Moquette server.", e);
 		}
 		log.info("The Moquette server has been stopped.");

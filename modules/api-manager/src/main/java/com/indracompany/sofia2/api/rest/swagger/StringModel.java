@@ -170,18 +170,6 @@ public class StringModel extends AbstractModel {
 		return true;
 	}
 
-	public Object clone() {
-    	StringModel cloned = new StringModel();
-        super.cloneTo(cloned);
 
-        cloned.properties = this.properties;
-        cloned.type = this.type;
-        cloned.description = this.description;
-        cloned.items = this.items;
-        cloned.example = this.example;
-
-        return cloned;
-
-    }
 
 }

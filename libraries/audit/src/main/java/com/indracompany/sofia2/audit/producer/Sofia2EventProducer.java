@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent;
+import com.indracompany.sofia2.commons.audit.producer.EventProducer;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,8 +31,9 @@ public class Sofia2EventProducer implements EventProducer{
 	ApplicationEventPublisher publisher;
 
 	public void publish(Sofia2AuditEvent event) {
-		log.info("Sofia2EventProducer :: thread '{}' handling '{}' publish Event", Thread.currentThread(), event);
+		log.info("Sofia2EventProducer :: thread '{}' handling '{}' publish Event to Application Event Publisher: ", Thread.currentThread(), event.getMessage());
 		publisher.publishEvent(event);
 	}
+
 	
 }

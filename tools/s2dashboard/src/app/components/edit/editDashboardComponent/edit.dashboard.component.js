@@ -19,7 +19,7 @@
     var ed = this;
 
     //Gadget source connection type list
-    var typeGadgetList = ["pie","bar","map","livehtml","radar"];
+    var typeGadgetList = ["pie","bar","map","livehtml","radar","table"];
 
     ed.$onInit = function () {
       ed.selectedlayer = 0;
@@ -1498,6 +1498,11 @@
             $scope.emitterDatasource = gadgetMeasures[0].datasource.identification;
             $scope.gadgetEmitterFields = utilsService.sort_unique(gadgetMeasures.map(function(m){return m.config.fields[0]})).map(function(m){return {field:m}});
             break;
+          case "radar":
+            var gadgetMeasures = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm.measures;
+            $scope.emitterDatasource = gadgetMeasures[0].datasource.identification;
+            $scope.gadgetEmitterFields = utilsService.sort_unique(gadgetMeasures.map(function(m){return m.config.fields[0]})).map(function(m){return {field:m}});
+            break;
           case "map":
             var gadgetMeasures = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm.measures;
             $scope.emitterDatasource = gadgetMeasures[0].datasource.identification;
@@ -1512,6 +1517,11 @@
               }
             )
             $scope.gadgetEmitterFields = [];
+            break;
+            case "table":
+            var gadgetMeasures = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm.measures;
+            $scope.emitterDatasource = gadgetMeasures[0].datasource.identification;
+            $scope.gadgetEmitterFields = utilsService.sort_unique(gadgetMeasures.map(function(m){return m.config.fields[0]})).map(function(m){return {field:m}});
             break;
         }
       }
@@ -1559,9 +1569,9 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsSourcesInDashboard(){
         var gadgets = [];
-        var page = $scope.dashboard.pages[$scope.selectedpage];
-        for(var layerIndex in page.layers){
-          var layer = page.layers[layerIndex];
+        var page = $scope.dashboard.pages[$scope.selectedpage];       
+          for (var i = 0; i < page.layers.length; i++) {
+          var layer = page.layers[i];
           var gadgetsAux = layer.gridboard.filter(function(gadget){return typeGadgetList.indexOf(gadget.type) != -1});
           if(gadgetsAux.length){
             gadgets = gadgets.concat(gadgetsAux);
@@ -1573,9 +1583,9 @@
       //Generate gadget list of posible Sources of interactions: pie, bar, livehtml
       function getGadgetsInDashboard(){
         var gadgets = [];
-        var page = $scope.dashboard.pages[$scope.selectedpage];
-        for(var layerIndex in page.layers){
-          var layer = page.layers[layerIndex];
+        var page = $scope.dashboard.pages[$scope.selectedpage];      
+          for (var i = 0; i < page.layers.length; i++) {
+          var layer = page.layers[i];
           var gadgetsAux = layer.gridboard;
           if(gadgetsAux.length){
             gadgets = gadgets.concat(gadgetsAux);
@@ -1585,9 +1595,9 @@
       }
 
       function findGadgetInDashboard(gadgetId){
-        var page = $scope.dashboard.pages[$scope.selectedpage];
-        for(var layerIndex in page.layers){
-          var layer = page.layers[layerIndex];
+        var page = $scope.dashboard.pages[$scope.selectedpage];      
+          for (var i = 0; i < page.layers.length; i++) {
+          var layer = page.layers[i];
           var gadgets = layer.gridboard.filter(function(gadget){return gadget.id === gadgetId});
           if(gadgets.length){
             return gadgets[0];

@@ -14,6 +14,7 @@
 package com.indracompany.sofia2.controlpanel.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +29,16 @@ public class DefaultController {
 	private AppWebUtils utils;
 
 	@GetMapping("/")
-
 	public String base() {
-		if (utils.getAuthentication() != null)
-			return "redirect:/main";
-		return "/login";
+		Authentication userAuthentication = utils.getAuthentication();
+		if (userAuthentication != null) {
+			if (userAuthentication.getName().toUpperCase().equals("USER")){
+				return "redirect:/marketasset/list";
+			}	
+			return "redirect:/main";	
+		}
+			
+		return "redirect:/login";
 	}
 
 	@GetMapping("/home")

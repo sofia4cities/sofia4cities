@@ -6,7 +6,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
-	<camelContext id="camel-context-reference" errorHandlerRef="defaultEH" streamCache="true" trace="true" xmlns="http://camel.apache.org/schema/spring">
+	<camelContext id="camel-context-reference" errorHandlerRef="defaultEH" streamCache="true" trace="false" xmlns="http://camel.apache.org/schema/spring">
 	
 		<errorHandler id="defaultEH">
             <redeliveryPolicy maximumRedeliveries="10" retryAttemptedLogLevel="WARN" redeliveryDelay="5000"/>

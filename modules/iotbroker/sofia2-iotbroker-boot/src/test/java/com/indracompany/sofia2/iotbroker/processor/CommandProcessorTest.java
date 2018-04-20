@@ -15,16 +15,19 @@ package com.indracompany.sofia2.iotbroker.processor;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +41,19 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
+import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
+import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyCommandMessage;
 
-//@Ignore
+@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CommandProcessorTest {
@@ -72,6 +80,17 @@ public class CommandProcessorTest {
 	@MockBean
 	DeviceManager deviceManager;
 
+	@MockBean
+	IotBrokerAuditableAspect iotBrokerAuditableAspect;
+
+	private void auditMocks() {
+		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
+		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
+		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+
+		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
+		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
+	}
 
 
 
@@ -89,6 +108,7 @@ public class CommandProcessorTest {
 		completableFutureCommand = new CompletableFuture<>();
 		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
 		securityMocks();
+		auditMocks();
 		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
 
 		ssapCommand = SSAPMessageGenerator.generateCommandMessage(session.getSessionKey());

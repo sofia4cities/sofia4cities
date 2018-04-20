@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.ssap.binary.Base64;
+import com.indracompany.sofia2.ssap.binary.BinarySizeException;
 import com.indracompany.sofia2.ssap.binary.Encoder;
 import com.indracompany.sofia2.ssap.binary.Encoding;
 import com.indracompany.sofia2.ssap.binary.Mime;
@@ -34,7 +35,11 @@ import com.indracompany.sofia2.ssap.binary.Storage;
 public class BinarySerializer {
 
 	// Method for Base64 encoding
-	public JsonNode getJsonBinary(String fieldName, File file, Mime mime) throws FileNotFoundException, IOException {
+	public JsonNode getJsonBinary(String fieldName, File file, Mime mime)
+			throws FileNotFoundException, IOException, BinarySizeException {
+
+		if (file.length() > 1000000)
+			throw new BinarySizeException("File is too large, max bytes 1000000");
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode returnNode = mapper.createObjectNode();
@@ -44,7 +49,7 @@ public class BinarySerializer {
 
 		String data = base64.encode(IOUtils.toByteArray(new FileInputStream(file)));
 		((ObjectNode) mediaNode).put("binaryEncoding", Encoding.Base64.name());
-		((ObjectNode) mediaNode).put("mime", mime.name());
+		((ObjectNode) mediaNode).put("mime", mime.getValue());
 		((ObjectNode) mediaNode).put("name", file.getName());
 		((ObjectNode) mediaNode).put("storageArea", Storage.SERIALIZED.name());
 

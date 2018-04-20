@@ -160,7 +160,7 @@
 																<div class="col-md-12 col-sm-6 col-xs-12">
 																	<div class="form-group">
 																		<label th:text="#{digitaltwindevice.broker.endpoint}">Broker Endpoint</label>
-																		<p class="form-control-static-block bold" th:text="*{url}">  </p>
+																		<p class="form-control-static-block bold text-truncate-lg" th:text="*{url}" th:tittle="*{url}">  </p>
 																	</div>
 																</div>
 																<div class="col-md-12 col-sm-6 col-xs-12">
@@ -276,7 +276,7 @@
 		// init when Document is ready
 		
 		var aceEditor = ace.edit("aceEditor");
-		aceEditor.setValue(logic.substring(1,logic.length-1));
+		aceEditor.setValue(logic);
 		
 	});
 	

@@ -20,6 +20,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
@@ -45,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @Slf4j
+@Ignore
 public class BasicOpsRepositoryTest {
 	
 	public final static String TEST_INDEX = "test"+System.currentTimeMillis();
@@ -94,7 +96,7 @@ public class BasicOpsRepositoryTest {
 	
 	@Before
 	public  void doBefore() throws Exception {	
-		System.out.println("up process...");
+		log.info("up process...");
 		
 		connector.deleteIndex("test*");
 		
@@ -153,7 +155,7 @@ public class BasicOpsRepositoryTest {
 	
 	@After
 	public  void tearDown() {
-		System.out.println("teardown process...");
+		log.info("teardown process...");
 		try {
 			manageFacade.removeTable4Ontology(TEST_INDEX_ONLINE);
 			manageFacade.removeTable4Ontology(TEST_INDEX_ONLINE_ELASTIC);

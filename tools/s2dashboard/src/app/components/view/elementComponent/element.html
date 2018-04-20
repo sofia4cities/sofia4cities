@@ -5,7 +5,7 @@
         <md-icon ng-style="{'color':vm.element.header.title.iconColor,'font-size' : '20px'}">{{vm.element.header.title.icon}}</md-icon>
         <h5 flex ng-style="{'color':vm.element.header.title.textColor}" md-truncate>{{vm.element.header.title.text}}</h5>
 
-        <md-icon class="cursor-hand" ng-if="vm.datastatus" tooltips tooltip-show-trigger="click" tooltip-hide-trigger="click" tooltip-close-button="true" tooltip-size="small" tooltip-template-url="app/partials/view/filterTooltip.html" ng-attr-tooltip-side="{{vm.editmode?'bottom':'bottom left'}}">filter_list</md-icon>
+        <md-icon  class="cursor-hand" style="font-size: 20px;color:hsl(220, 23%, 20%);" ng-if="vm.datastatus" tooltips tooltip-show-trigger="click" tooltip-hide-trigger="click" tooltip-close-button="true" tooltip-size="small" tooltip-template-url="app/partials/view/filterTooltip.html" ng-attr-tooltip-side="{{vm.editmode?'bottom':'bottom left'}}">filter_list</md-icon>
 
         <!--<md-button ng-click="toggleFullScreen()" class="md-icon-button" aria-label="Fullscreen">
           <md-icon>fullscreen</md-icon>
@@ -50,5 +50,6 @@
     </div>-->
     <livehtml ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'height': vm.calcHeight()}" ng-if="vm.element.type == 'livehtml'" livecontent="vm.element.content" datasource="vm.element.datasource" ng-class="vm.element.id" id="vm.element.id" datastatus="vm.datastatus"></livehtml>
     <gadget ng-style="{'background-color':vm.element.backgroundColor, 'padding': vm.element.padding + 'px', 'display': 'inline-block', 'width':'100%', 'height': vm.calcHeight()}" ng-if="vm.element.type != 'livehtml'" ng-class="vm.element.id" id="vm.element.id" datastatus="vm.datastatus"></gadget>
+    
   </div>
 </gridster-item>

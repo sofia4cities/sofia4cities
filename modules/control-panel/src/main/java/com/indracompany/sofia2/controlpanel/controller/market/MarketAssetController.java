@@ -84,7 +84,7 @@ public class MarketAssetController {
 		return "marketasset/show";
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER')")
+	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_USER')")
 	@GetMapping(value = "/list" , produces = "text/html")
 	public String list(Model model,	@RequestParam(required = false) String marketassetId) {		
 		
@@ -108,7 +108,7 @@ public class MarketAssetController {
 			
 			String apiId = marketAssetService.createMarketAsset(marketAssetHelper.marketAssetMultipartMap(marketAssetMultipart));
 
-			return "redirect:/marketasset/show/" + utils.encodeUrlPathSegment(apiId, request);
+			return "redirect:/marketasset/show/" + apiId;
 		} catch (Exception e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
@@ -178,20 +178,13 @@ public class MarketAssetController {
 		return "redirect:/marketasset/show/" + marketassetid;
 	}
 	
-	@GetMapping(value = "/invoke/{id}" , produces = "text/html")
-	public String invoker(Model model, @PathVariable("id") String apiId) {
-		
-		//apiManagerHelper.populateApiManagerInvokeForm(model, apiId);
-		
-		return "apimanager/invoke";
-	}
 	
 	@RequestMapping(value = "/fragment/{type}")
 	public String fragment(Model model, @PathVariable("type") String type) {
 		
 		marketAssetHelper.populateMarketAssetFragment(model, type);
 		
-		return "/marketasset/marketassetfragments :: " + type + "MarketAssetFragment";
+		return "marketasset/marketassetfragments :: " + type + "MarketAssetFragment";
 	}
 	
 	@RequestMapping(value = "/apiversions/{identification}")
@@ -199,12 +192,18 @@ public class MarketAssetController {
 		
 		marketAssetHelper.populateApiVersions(model, identification);
 		
-		return "/marketasset/marketassetfragments :: #versions";
+		return "marketasset/marketassetfragments :: #versions";
 	}
+	
 	
 	@RequestMapping(value = "/apidescription")
 	public @ResponseBody String apidescription(@RequestBody String apiData){
 		return (marketAssetHelper.getApiDescription(apiData));
+	}
+	
+	@RequestMapping(value = "/urlwebproject")
+	public @ResponseBody String urlwebproject(@RequestBody String webProjectData) {
+		return (marketAssetHelper.getUrlWebProjectData(webProjectData));
 	}
 
 	@RequestMapping(value = "/validateId")
@@ -242,9 +241,8 @@ public class MarketAssetController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/updateState/{id}/{state}")
-	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, @RequestBody String reasonData){
-		marketAssetService.updateState(id, state, reasonData);
-		return "redirect:/apimanager/list";
+	public @ResponseBody String updateState(@PathVariable("id") String id, @PathVariable("state") String state, @RequestBody String reasonData){
+		return (marketAssetService.updateState(id, state, reasonData));
 	}
 	
 }

@@ -16,6 +16,7 @@ package com.indracompany.sofia2.iotbroker.audit.bean;
 import java.util.Date;
 import java.util.UUID;
 
+import com.indracompany.sofia2.audit.bean.CalendarUtil;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
@@ -24,63 +25,69 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUpdateMessage;
-import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 public class IotBrokerAuditEventFactory {
-	
-	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyInsertMessage message, String messageText, IoTSession session, GatewayInfo info) {
-	
+
+	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyInsertMessage message, String messageText,
+			IoTSession session, GatewayInfo info) {
+
 		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.INSERT, messageText, info);
-		
+
 		event.setOntology(message.getOntology());
 		event.setSession(session);
 		event.setData(message.getData().toString());
-		//event.getRemoteAddress();
+		// event.getRemoteAddress();
 		event.setUser(session.getUserID());
-		
+
 		return event;
 	}
-	
-	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyJoinMessage message, String messageText, GatewayInfo info) {
-		
-		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.JOIN,messageText, info);
+
+	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyJoinMessage message, String messageText,
+			GatewayInfo info) {
+
+		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.JOIN, messageText, info);
 		event.setClientPlatform(message.getClientPlatform());
 		event.setClientPlatformInstance(message.getClientPlatformInstance());
-		
+
 		return event;
 	}
-	
-	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyUpdateMessage message, String messageText, IoTSession session, GatewayInfo info) {
-		
-		IotBrokerAuditEvent event = createIotBrokerAuditEvent(message.getOntology(), message.getQuery(),OperationType.UPDATE, messageText, info);
+
+	public static IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyUpdateMessage message, String messageText,
+			IoTSession session, GatewayInfo info) {
+
+		IotBrokerAuditEvent event = createIotBrokerAuditEvent(message.getOntology(), message.getQuery(),
+				OperationType.UPDATE, messageText, info);
 
 		event.setSession(session);
-		//event.getRemoteAddress();
+		// event.getRemoteAddress();
 		event.setUser(session.getUserID());
-		
+
 		return event;
 	}
-	
-	public static IotBrokerAuditEvent createIotBrokerAuditEvent(String ontology, String query, OperationType operationType, 
-																String messageText, GatewayInfo info) {
-		
+
+	public static IotBrokerAuditEvent createIotBrokerAuditEvent(String ontology, String query,
+			OperationType operationType, String messageText, GatewayInfo info) {
+
 		IotBrokerAuditEvent event = createIotBrokerAuditEvent(operationType, messageText, info);
-		
+
 		event.setOntology(ontology);
 		event.setQuery(query);
 		return event;
 	}
-	
-	public static IotBrokerAuditEvent createIotBrokerAuditEvent(OperationType operationType, String messageText, GatewayInfo info) {
+
+	public static IotBrokerAuditEvent createIotBrokerAuditEvent(OperationType operationType, String messageText,
+			GatewayInfo info) {
 		IotBrokerAuditEvent event = new IotBrokerAuditEvent();
 		event.setId(UUID.randomUUID().toString());
-		event.setModule(Module.IOTBROKER);	
+		event.setModule(Module.IOTBROKER);
 		event.setType(EventType.IOTBROKER);
 		event.setOperationType(operationType.name());
-		//event.getRemoteAddress();
+		// event.getRemoteAddress();
 		event.setMessage(messageText);
 		event.setGatewayInfo(info);
-		event.setTimeStamp(new Date());
+		Date today = new Date();
+		event.setTimeStamp(today.getTime());
+		event.setFormatedTimeStamp(CalendarUtil.builder().build().convert(today));
 		return event;
 	}
 

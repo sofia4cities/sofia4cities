@@ -172,18 +172,18 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 			IOUtils.copy(bis, out);
 			response.flushBuffer();   
 		} catch (IOException e) {
-		}   
+		}
 	}
 
 	@Override
-	public void updateState(String id, String state, String reason) {
+	public String updateState(String id, String state, String reason) {
 		Map<String, String> obj;
 		String rejectReason = "";
 		try {
 			obj = new ObjectMapper().readValue(reason, new TypeReference<Map<String, String>>(){});
 			rejectReason = obj.get("rejectionReason");
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error("Exception reached "+e.getMessage(),e);
 		}
 
 		MarketAsset marketAsset= marketAssetRepository.findById(id);
@@ -192,6 +192,8 @@ public class MarketAssetServiceImpl implements MarketAssetService {
 		marketAsset.setState(MarketAssetState.valueOf(state));
 		
 		marketAssetRepository.save(marketAsset);
+		
+		return state;
 	}
 
 	@Override
