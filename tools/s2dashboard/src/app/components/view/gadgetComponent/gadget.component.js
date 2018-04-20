@@ -16,7 +16,7 @@
     });
 
   /** @ngInject */
-  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService, leafletMarkerEvents) {
+  function GadgetController($log, $scope, $element, $window, $mdCompiler, $compile, datasourceSolverService, sofia2HttpService, interactionService, utilsService, leafletMarkerEvents, leafletData) {
     var vm = this;
     vm.ds = [];
     vm.type = "loading";
@@ -197,6 +197,12 @@
           $scope.$on("$resize",redrawWordCloud);
           break;
         case "map":
+          leafletData.getDirectiveControls('lmap' + vm.id).then(function (controls) {
+            if(controls.markers){
+              controls.markers.clean();
+            }
+          });
+
           vm.center = vm.center || vm.config.config.center;
           vm.markers = data.map(
             function(d){
@@ -214,6 +220,7 @@
               }
             }
           )
+
           $scope.events = {
             markers: {
                 enable: leafletMarkerEvents.getAvailableEvents(),
