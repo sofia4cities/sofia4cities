@@ -19,6 +19,7 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Order
 @Component
 @Slf4j
+@ConditionalOnExpression("${sofia2.iotbroker.audit.enabled:true}")
 public class IotBrokerAuditableAspect extends BaseAspect {
 
 	@Autowired
