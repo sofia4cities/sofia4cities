@@ -16,15 +16,7 @@ services:
     ports:
       - "3306:3306"
     depends_on:
-     - "realtimedb"
-  elasticdb:
-    image: ${REPOSITORY}sofia2/elasticdb:${IMAGETAG}
-    container_name: elasticdb
-    networks:
-      - datanetwork
-    ports:
-      - "9300:9300"
-      - "9200:9200"  
+     - "realtimedb"      
   schedulerdb:
     image: ${REPOSITORY}sofia2/schedulerdb:${IMAGETAG}
     container_name: schedulerdb
