@@ -9,15 +9,15 @@
 		<version>5.2.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
-	
+
 	<artifactId>sofia2-iotbroker-boot</artifactId>
 	<packaging>jar</packaging>
 
 	<name>sofia2-iotbroker-boot</name>
 	<description>Sofia4Cities IoT Broker</description>
-		
+
 	<properties>
-    <license.dir>${project.parent.basedir}</license.dir>
+		<license.dir>${project.parent.basedir}</license.dir>
 	</properties>
 
 	<dependencies>
@@ -30,17 +30,23 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-websocket</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
 		</dependency>
-		 
+
 		<dependency>
-		    <groupId>org.springframework</groupId>
-		    <artifactId>spring-messaging</artifactId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-messaging</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
@@ -58,9 +64,9 @@
 			<version>${sofia2.version}</version>
 		</dependency>
 		<dependency>
-    		<groupId>com.github.javafaker</groupId>
-    		<artifactId>javafaker</artifactId>
-    		<scope>test</scope>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
@@ -77,26 +83,26 @@
 			<artifactId>jackson-module-jsonSchema</artifactId>
 		</dependency>
 		<dependency>
-		    <groupId>io.springfox</groupId>
-		    <artifactId>springfox-swagger2</artifactId>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
 		</dependency>
-		
-<!-- 		GATEWAY MOQUETTE	 -->
+
+		<!-- GATEWAY MOQUETTE -->
 		<dependency>
-		      <groupId>io.moquette</groupId>
-		      <artifactId>moquette-broker</artifactId>
-		      <version>0.10</version>
-		</dependency>		
+			<groupId>io.moquette</groupId>
+			<artifactId>moquette-broker</artifactId>
+			<version>0.10</version>
+		</dependency>
 		<dependency>
-	        <groupId>org.eclipse.paho</groupId>
-	        <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
-	        <version>1.2.0</version>
-	    </dependency>
-		
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -106,62 +112,81 @@
 			<groupId>de.codecentric</groupId>
 			<artifactId>spring-boot-admin-starter-client</artifactId>
 			<version>${spring-boot-admin-starter-client.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+		<!-- TESTING PERFORMANCE -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
 		
-	</dependencies>	
-	
+		</dependency>
+		<dependency>
+			<groupId>org.databene</groupId>
+			<artifactId>contiperf</artifactId>
+			<version>2.4.3</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
 	<repositories>
-  <repository>
-    <id>bintray</id>
-    <url>https://jcenter.bintray.com</url>
-    <releases>
-      <enabled>true</enabled>
-    </releases>
-    <snapshots>
-      <enabled>false</enabled>
-    </snapshots>
-  </repository>
-  <repository>
-        <id>Eclipse Paho Repo</id>
-        <url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
-    </repository>
-</repositories>
+		<repository>
+			<id>bintray</id>
+			<url>https://jcenter.bintray.com</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>Eclipse Paho Repo</id>
+			<url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
+		</repository>
+	</repositories>
 
 	<build>
 		<plugins>
-		  <plugin>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-maven-plugin</artifactId>
-			<executions>
-			  <execution>
-				<goals>
-				  <goal>repackage</goal>
-				</goals>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+						<configuration>
+							<classifier>exec</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
 				<configuration>
-				  <classifier>exec</classifier>
+					<imageName>sofia2/iotbroker</imageName>
+					<imageTags>
+						<imageTag>${sofia2.docker.version}</imageTag>
+					</imageTags>
+					<dockerDirectory>docker</dockerDirectory>
+					<resources>
+						<resource>
+							<targetPath>/</targetPath>
+							<directory>${project.build.directory}</directory>
+							<include>${project.build.finalName}-exec.jar</include>
+						</resource>
+					</resources>
 				</configuration>
-			  </execution>
-			</executions>
-		  </plugin>
-		    <plugin>
-		      <groupId>com.spotify</groupId>
-		      <artifactId>docker-maven-plugin</artifactId>   		      
-		      <configuration>
-		        <imageName>sofia2/iotbroker</imageName>
-		        <imageTags>
-		           <imageTag>${sofia2.docker.version}</imageTag>
-		        </imageTags>		        
-		        <dockerDirectory>docker</dockerDirectory>
-		        <resources>
-		           <resource>
-		             <targetPath>/</targetPath>
-		             <directory>${project.build.directory}</directory>
-		             <include>${project.build.finalName}-exec.jar</include>
-		           </resource>
-		        </resources>
-		      </configuration>
-		    </plugin>		  
+			</plugin>
 		</plugins>
-  </build>
+	</build>
 
 </project>
