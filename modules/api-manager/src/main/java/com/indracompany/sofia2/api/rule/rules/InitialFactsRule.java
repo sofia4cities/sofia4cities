@@ -51,31 +51,39 @@ public class InitialFactsRule {
 	@Action
 	public void setFirstDerivedData(Facts facts) {
 		HttpServletRequest request = (HttpServletRequest) facts.get(RuleManager.REQUEST);
-		
-		
+
 		Map<String, Object> data = (Map<String, Object>) facts.get(RuleManager.FACTS);
 
-		String query = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY, request)).orElse("");
-		String queryType = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY_TYPE, request)).orElse(QueryType.NONE.name());
-		String contentTypeInput= RequestDumpUtil.getContentType(request);
-		String contentTypeOutput= Optional.ofNullable(RequestDumpUtil.getValueFromRequest("accept", request)).orElse("");
+		String query = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY, request))
+				.orElse("");
+		String queryType = Optional
+				.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.QUERY_TYPE, request))
+				.orElse(QueryType.NONE.name());
+		String contentTypeInput = RequestDumpUtil.getContentType(request);
+		String contentTypeOutput = Optional.ofNullable(RequestDumpUtil.getValueFromRequest("accept", request))
+				.orElse("");
 
 		String headerToken = RequestDumpUtil.getValue(ApiServiceInterface.AUTHENTICATION_HEADER, request);
-		
+
 		String jwtToken = RequestDumpUtil.extractJWTToken(request);
-		
+
 		headerToken = Optional.ofNullable(headerToken).orElse("");
-		
+
 		String method = request.getMethod();
 		String pathInfo = request.getPathInfo();
 		if (!pathInfo.endsWith("/")) {
 			pathInfo = pathInfo.concat("/");
 		}
 
-		String queryDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FILTER_PARAM, request)).orElse("");
-		String targetDb = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.TARGET_DB_PARAM, request)).orElse("");
-		String formatResult = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FORMAT_RESULT, request)).orElse("");
-		String cacheable = Optional.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.CACHEABLE, request)).orElse("");
+		String queryDb = Optional
+				.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FILTER_PARAM, request)).orElse("");
+		String targetDb = Optional
+				.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.TARGET_DB_PARAM, request))
+				.orElse("");
+		String formatResult = Optional
+				.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.FORMAT_RESULT, request)).orElse("");
+		String cacheable = Optional
+				.ofNullable(RequestDumpUtil.getValueFromRequest(ApiServiceInterface.CACHEABLE, request)).orElse("");
 
 		data.put(ApiServiceInterface.QUERY, query);
 		data.put(ApiServiceInterface.QUERY_TYPE, queryType);
@@ -89,10 +97,8 @@ public class InitialFactsRule {
 		data.put(ApiServiceInterface.CONTENT_TYPE_OUTPUT, contentTypeOutput);
 		data.put(ApiServiceInterface.CACHEABLE, cacheable);
 		data.put(ApiServiceInterface.JWT_TOKEN, jwtToken);
-		
+		data.put(ApiServiceInterface.REMOTE_ADDRESS, request.getRemoteAddr());
 		facts.put(RuleManager.ACTION, method);
-		
-		
 
 	}
 }

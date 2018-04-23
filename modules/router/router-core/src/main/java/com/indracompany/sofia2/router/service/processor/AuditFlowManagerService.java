@@ -20,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hazelcast.collection.impl.common.DataAwareItemEvent;
+import com.indracompany.sofia2.audit.bean.AuditConst;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.config.services.utils.ServiceUtils;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
@@ -38,6 +41,9 @@ public class AuditFlowManagerService {
 
 	@Autowired
 	private RouterCrudService routerCrudService;
+
+	@Autowired
+	private UserService userService;
 
 	private static final String USER_KEY = "user";
 	private static final String EVENT_TYPE_KEY = "type";
@@ -57,6 +63,16 @@ public class AuditFlowManagerService {
 		OperationResultModel result = null;
 
 		if (commonParams.getUser() != null) {
+
+			if (!AuditConst.ANONYMOUS_USER.equals(commonParams.getUser())) {
+
+				User user = userService.getUser(commonParams.getUser());
+
+				if (user == null) {
+					log.info("the user " + commonParams.getUser() + " does not exists so change to anonymous user");
+					commonParams.setUser(AuditConst.ANONYMOUS_USER);
+				}
+			}
 
 			String ontology = ServiceUtils.getAuditCollectionName(commonParams.getUser());
 			OperationModel.Source operation = null;

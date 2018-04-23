@@ -48,7 +48,7 @@ public class SofiaLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
 		String user = (String) authentication.getPrincipal();
 
-		Sofia2AuditEvent s2event = Sofia2EventFactory.createAuditEvent(EventType.SECURITY,
+		Sofia2AuditEvent s2event = Sofia2EventFactory.builder().build().createAuditEvent(EventType.SECURITY,
 				"Logout Success for user: " + user);
 
 		s2event.setUser(user);

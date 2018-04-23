@@ -85,23 +85,25 @@ public class IotBrokerAuditProcessor {
 					String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology()
 							+ " Type : " + iotEvent.getOperationType() + " By User : " + session.getUserID();
 
-					event = Sofia2EventFactory.createAuditEventError(session.getUserID(), messageOperation,
-							Module.IOTBROKER, ex);
+					event = Sofia2EventFactory.builder().build().createAuditEventError(session.getUserID(),
+							messageOperation, Module.IOTBROKER, ex);
 
 				} else {
 					String messageOperation = "Exception Detected while operation : " + iotEvent.getOntology()
 							+ " Type : " + iotEvent.getOperationType();
 
-					event = Sofia2EventFactory.createAuditEventError(messageOperation, Module.IOTBROKER, ex);
+					event = Sofia2EventFactory.builder().build().createAuditEventError(messageOperation,
+							Module.IOTBROKER, ex);
 				}
 			}
 
 		} else {
 
-			event = Sofia2EventFactory.createAuditEventError("Exception Detected", Module.IOTBROKER, ex);
+			event = Sofia2EventFactory.builder().build().createAuditEventError("Exception Detected", Module.IOTBROKER,
+					ex);
 		}
 
-		Sofia2EventFactory.setErrorDetails(event, ex);
+		Sofia2EventFactory.builder().build().setErrorDetails(event, ex);
 
 		return event;
 	}

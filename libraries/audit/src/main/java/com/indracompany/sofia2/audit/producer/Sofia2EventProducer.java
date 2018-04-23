@@ -31,8 +31,9 @@ public class Sofia2EventProducer implements EventProducer {
 	ApplicationEventPublisher publisher;
 
 	public void publish(Sofia2AuditEvent event) {
+
 		log.info("Sofia2EventProducer :: thread '{}' handling '{}' publish Event to Application Event Publisher: ",
-				Thread.currentThread(), event.getMessage());
+				Thread.currentThread(), (event != null) ? event.getMessage() : "");
 
 		if (event != null) {
 			publisher.publishEvent(event);

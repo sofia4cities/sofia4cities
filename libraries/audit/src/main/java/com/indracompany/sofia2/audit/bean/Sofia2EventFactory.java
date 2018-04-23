@@ -29,7 +29,14 @@ import lombok.Builder;
 @Builder
 public class Sofia2EventFactory {
 
-	public static Sofia2AuditError createAuditEventError(String userId, String message, Module module, Exception e) {
+	public Sofia2AuditError createAuditEventError(String userId, String message, String remoteAddress, Module module,
+			Exception e) {
+		Sofia2AuditError event = createAuditEventError(userId, message, module, e);
+		event.setRemoteAddress(remoteAddress);
+		return event;
+	}
+
+	public Sofia2AuditError createAuditEventError(String userId, String message, Module module, Exception e) {
 
 		Sofia2AuditError event = createAuditEventError(message, module, e);
 		event.setUser(userId);
@@ -38,7 +45,7 @@ public class Sofia2EventFactory {
 
 	}
 
-	public static Sofia2AuditError createAuditEventError(String message, Module module, Exception e) {
+	public Sofia2AuditError createAuditEventError(String message, Module module, Exception e) {
 
 		Sofia2AuditError event = createAuditEventError(message);
 		setErrorDetails(event, e);
@@ -47,12 +54,12 @@ public class Sofia2EventFactory {
 		return createAuditEventError(event, message);
 	}
 
-	public static Sofia2AuditError createAuditEventError(String message) {
+	public Sofia2AuditError createAuditEventError(String message) {
 		Sofia2AuditError event = new Sofia2AuditError();
 		return createAuditEventError(event, message);
 	}
 
-	public static Sofia2AuditError createAuditEventError(Sofia2AuditError event, String message) {
+	public Sofia2AuditError createAuditEventError(Sofia2AuditError event, String message) {
 		Date today = new Date();
 		event.setId(UUID.randomUUID().toString());
 		event.setTimeStamp(today.getTime());
@@ -63,8 +70,7 @@ public class Sofia2EventFactory {
 		return event;
 	}
 
-	public static Sofia2AuditEvent createAuditEvent(AuditApplicationEvent actualAuditEvent, EventType type,
-			String message) {
+	public Sofia2AuditEvent createAuditEvent(AuditApplicationEvent actualAuditEvent, EventType type, String message) {
 		Sofia2AuditEvent event = new Sofia2AuditEvent();
 
 		AuditEvent audit = actualAuditEvent.getAuditEvent();
@@ -82,18 +88,17 @@ public class Sofia2EventFactory {
 		return event;
 	}
 
-	public static Sofia2AuditEvent createAuditEvent(EventType type, String message) {
+	public Sofia2AuditEvent createAuditEvent(EventType type, String message) {
 		Sofia2AuditEvent event = new Sofia2AuditEvent();
 		return createAuditEvent(event, type, message);
 	}
 
-	public static Sofia2AuthAuditEvent createAuditAuthEvent(EventType type, String message) {
+	public Sofia2AuthAuditEvent createAuditAuthEvent(EventType type, String message) {
 		Sofia2AuthAuditEvent event = new Sofia2AuthAuditEvent();
 		return createAuditAuthEvent(event, type, message);
 	}
 
-	public static Sofia2AuthAuditEvent createAuditAuthEvent(Sofia2AuthAuditEvent event, EventType type,
-			String message) {
+	public Sofia2AuthAuditEvent createAuditAuthEvent(Sofia2AuthAuditEvent event, EventType type, String message) {
 
 		event.setType(type);
 		Date today = new Date();
@@ -105,7 +110,7 @@ public class Sofia2EventFactory {
 		return event;
 	}
 
-	public static Sofia2AuditEvent createAuditEvent(Sofia2AuditEvent event, EventType type, String message) {
+	public Sofia2AuditEvent createAuditEvent(Sofia2AuditEvent event, EventType type, String message) {
 		event.setType(type);
 
 		Date today = new Date();
@@ -118,7 +123,7 @@ public class Sofia2EventFactory {
 		return event;
 	}
 
-	private static void setSecurityData(Sofia2AuditEvent event) {
+	private void setSecurityData(Sofia2AuditEvent event) {
 
 		if (SecurityContextHolder.getContext() != null
 				&& SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -128,7 +133,7 @@ public class Sofia2EventFactory {
 		}
 	}
 
-	public static void setErrorDetails(Sofia2AuditError event, final Throwable cause) {
+	public void setErrorDetails(Sofia2AuditError event, final Throwable cause) {
 		if (cause != null) {
 			Throwable rootCause = cause;
 			while (rootCause.getCause() != null && rootCause.getCause() != rootCause)

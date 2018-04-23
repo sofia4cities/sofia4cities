@@ -59,7 +59,7 @@ public class Sofia2EventListener {
 	public void handleAuthenticationSuccessEvent(AuthenticationSuccessEvent event) {
 		log.info("Authentication success event for user " + event.getAuthentication().getPrincipal().toString());
 
-		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY,
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.builder().build().createAuditAuthEvent(EventType.SECURITY,
 				"Login Success for User : " + event.getAuthentication().getPrincipal().toString());
 
 		Object source = event.getSource();
@@ -86,7 +86,8 @@ public class Sofia2EventListener {
 		String message = "Login Failed (Incorrect Credentials) for User: "
 				+ event.getAuthentication().getPrincipal().toString();
 
-		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY, message);
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.builder().build().createAuditAuthEvent(EventType.SECURITY,
+				message);
 
 		s2event.setOperationType(OperationType.LOGIN.name());
 		s2event.setUser((String) event.getAuthentication().getPrincipal());
@@ -109,7 +110,7 @@ public class Sofia2EventListener {
 	public void handleAuthorizationFailureEvent(AuthorizationFailureEvent errorEvent) {
 		log.info("authorization failure  event for user " + errorEvent.getAuthentication().getPrincipal().toString());
 
-		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.createAuditAuthEvent(EventType.SECURITY,
+		Sofia2AuthAuditEvent s2event = Sofia2EventFactory.builder().build().createAuditAuthEvent(EventType.SECURITY,
 				"Login Failed (AuthorizationFailure) for User: "
 						+ errorEvent.getAuthentication().getPrincipal().toString());
 
