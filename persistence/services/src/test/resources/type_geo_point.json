@@ -1,0 +1,15 @@
+{
+		"pin": {
+			"properties": {
+				"geometry": {
+					"type": "geo_point"
+				},
+				"name": {
+					"type": "text"
+				},
+				"subject": {
+					"type": "text"
+				}
+			}
+		}
+}

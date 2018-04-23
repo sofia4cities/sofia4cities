@@ -7,7 +7,9 @@ spring:
       connect-timeout: 120000
       read-timeout: 150000
    data.mongodb:
-      host: realtimedb      
+      host: realtimedb
+   elasticsearch.jest:
+      uris: http://elasticdb:9200         
 sofia2:
   database.mongodb:
     servers: realtimedb:27017

@@ -141,6 +141,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		} else if (METHOD.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
 			operationType = OperationType.DELETE;
 		}
+		else operationType=OperationType.QUERY;
 		
 		
 		OperationModel model = OperationModel.builder(

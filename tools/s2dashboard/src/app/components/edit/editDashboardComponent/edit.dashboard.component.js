@@ -19,7 +19,7 @@
     var ed = this;
 
     //Gadget source connection type list
-    var typeGadgetList = ["pie","bar","map","livehtml","radar"];
+    var typeGadgetList = ["pie","bar","map","livehtml","radar","table"];
 
     ed.$onInit = function () {
       ed.selectedlayer = 0;
@@ -1517,6 +1517,11 @@
               }
             )
             $scope.gadgetEmitterFields = [];
+            break;
+            case "table":
+            var gadgetMeasures = angular.element(document.getElementsByClassName(gadget.id)[0]).scope().$$childHead.vm.measures;
+            $scope.emitterDatasource = gadgetMeasures[0].datasource.identification;
+            $scope.gadgetEmitterFields = utilsService.sort_unique(gadgetMeasures.map(function(m){return m.config.fields[0]})).map(function(m){return {field:m}});
             break;
         }
       }

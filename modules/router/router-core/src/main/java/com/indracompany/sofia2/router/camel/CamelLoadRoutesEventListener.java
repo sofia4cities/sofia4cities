@@ -61,7 +61,7 @@ public class CamelLoadRoutesEventListener {
 			return "OK";
 	}
 
-	public String loadRoutes(InputStream is) {
+	public void loadRoutes(InputStream is) {
 		RoutesDefinition routes = null;
 		try {
 			CamelContext context = camelContextHandler.getDefaultCamelContext();
@@ -69,10 +69,10 @@ public class CamelLoadRoutesEventListener {
 			List<RouteDefinition> list = routes.getRoutes();
 			context.addRouteDefinitions(list);
 			context.startAllRoutes();
+			log.info("Route Definition Loaded: "+ routes);
 		} catch (Exception e) {
-			// Log error
+			log.error("Something happens loading routes ",e);
 		}
-		return routes.toString();
 	}
 
 	@EventListener({ ApplicationReadyEvent.class })

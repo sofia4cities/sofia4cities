@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,6 @@ import org.springframework.web.util.WebUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -92,20 +92,20 @@ public class ServiceUtils {
 		if(auth instanceof AnonymousAuthenticationToken){
 			return null;
 		}
-//		if (auth!=null){
-//			if (auth.getDetails()!=null){
-//				if (auth instanceof SocialAuthenticationToken){
-//					user = (User)((SocialAuthenticationToken)auth).getPrincipal();
-//				}else{
-//					user = ((AuthenticationContainer)((UsernamePasswordAuthenticationToken)auth).getDetails()).getUserDetail();
-//					if (user==null){
-//						user = User.findUser((((AuthenticationContainer)((UsernamePasswordAuthenticationToken)auth).getDetails()).getUserDetail()).getId());
-//					}
-//				}
-//			}
-//		}
+		/*if (auth!=null){
+			if (auth.getDetails()!=null){
+			if (auth instanceof SocialAuthenticationToken){
+					user = (User)((SocialAuthenticationToken)auth).getPrincipal();
+				}else{
+					user = ((AuthenticationContainer)((UsernamePasswordAuthenticationToken)auth).getDetails()).getUserDetail();
+					if (user==null){
+						user = User.findUser((((AuthenticationContainer)((UsernamePasswordAuthenticationToken)auth).getDetails()).getUserDetail()).getId());
+					}
+				}
+			}
+		}*/
 		
-		return user;
+		return null;
 	}
 	
 	public static String getAuditCollectionName (String userId) {		

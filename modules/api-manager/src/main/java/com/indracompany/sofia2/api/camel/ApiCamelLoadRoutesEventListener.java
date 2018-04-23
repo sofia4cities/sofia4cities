@@ -27,7 +27,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class ApiCamelLoadRoutesEventListener {
 
 	@Autowired
@@ -44,15 +47,15 @@ public class ApiCamelLoadRoutesEventListener {
 				Resource[] resource = applicationContext.getResources("classpath*:camel-routes/*.xml");
 				if (resource != null) {
 					for (Resource r : resource) {
-						System.out.println("Loading Camel Set of Routes :"+r.getFilename()+" "+r.getURL());
+						log.info("Loading Camel Set of Routes :"+r.getFilename()+" "+r.getURL());
 						loadRoutes(r.getInputStream());
 					}
 				}
 			} catch (Exception e) {
 			}
 			
-			System.out.println("API Manager Event Loader -> Camel Context Status is: " + camelContextHandler.getDefaultCamelContext().getStatus());
-			System.out.println("API Manager Event Loader -> Camel Total Number of Routes Loaded :"
+			log.info("API Manager Event Loader -> Camel Context Status is: " + camelContextHandler.getDefaultCamelContext().getStatus());
+			log.info("API Manager Event Loader -> Camel Total Number of Routes Loaded :"
 					+ camelContextHandler.getDefaultCamelContext().getRoutes().size());
 			
 		}
@@ -60,7 +63,7 @@ public class ApiCamelLoadRoutesEventListener {
 			return "OK";
 	}
 
-	public String loadRoutes(InputStream is) {
+	public void loadRoutes(InputStream is) {
 		RoutesDefinition routes = null;
 		try {
 			CamelContext context = camelContextHandler.getDefaultCamelContext();
@@ -68,15 +71,15 @@ public class ApiCamelLoadRoutesEventListener {
 			List<RouteDefinition> list = routes.getRoutes();
 			context.addRouteDefinitions(list);
 			context.startAllRoutes();
+			log.info("Route Definition Loaded: "+ routes);
 		} catch (Exception e) {
-			// Log error
+			log.error("Something happens loading routes ",e);
 		}
-		return routes.toString();
 	}
 
 	@EventListener({ ApplicationReadyEvent.class })
 	void contextRefreshedEvent() {
-		System.out.println("API Manager Event Loader -> ApplicationReadyEvent happened, loading Camel Routes");
+		log.info("API Manager Event Loader -> ApplicationReadyEvent happened, loading Camel Routes");
 		context();
 	}
 }

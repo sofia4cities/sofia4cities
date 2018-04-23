@@ -13,3 +13,21 @@
 <canvas ng-if="vm.type == 'radar'" chart-dataset-override="vm.datasetOverride" chart-click="vm.clickChartEventProcessorEmitter" class="chart chart-radar" chart-data="vm.data" chart-labels="vm.labels" chart-series="vm.series" chart-options="vm.optionsChart"></canvas>
 <word-cloud ng-if="vm.type == 'wordcloud'" words="vm.words" width="vm.width" height="vm.height" padding="0" use-tooltip="false" use-transition="true">    </word-cloud>
 <leaflet id="{{'lmap' + vm.id}}" ng-if="vm.type == 'map'" lf-center="vm.center" markers="vm.markers" height="{{vm.height}}" width="100%"></leaflet>
+
+<md-table-container ng-style="{'height': 'calc(100% - '+{{vm.config.config.tablePagination.style.trHeightFooter}}+'px'+')'}" ng-if="vm.type == 'table'">
+    
+  <table md-table  md-progress="promise" md-row-select="vm.config.config.tablePagination.options.rowSelection" ng-model="vm.selected" >
+    <thead  md-head ng-if="!vm.config.config.tablePagination.options.decapitate" ng-style="{'background-color':vm.config.config.tablePagination.style.backGroundTHead}"  md-order="vm.config.config.tablePagination.order"   >
+      <tr md-row ng-style="{'height':vm.config.config.tablePagination.style.trHeightHead}" >
+        <th ng-style="{'color':vm.config.config.tablePagination.style.textColorTHead}" md-column ng-repeat="measure in vm.measures" md-order-by="{{measure.config.order}}"><span>{{measure.config.name}}</span></th>       
+      </tr>
+    </thead>
+    <tbody md-body  >
+      <tr md-row md-auto-select="true" md-on-select="vm.selectItemTable" md-select="dat" ng-style="{'height':vm.config.config.tablePagination.style.trHeightBody}"  ng-repeat="dat in vm.data | orderBy: vm.config.config.tablePagination.order |  limitTo: vm.config.config.tablePagination.limit : (vm.config.config.tablePagination.page -1) * vm.config.config.tablePagination.limit">
+         
+        <td  ng-style="{'color':vm.config.config.tablePagination.style.textColorBody}" md-cell ng-repeat="value in dat" >{{value}}</td> 
+      </tr>
+    </tbody>
+  </table>
+</md-table-container>
+<md-table-pagination ng-if="vm.type == 'table'" md-limit="vm.config.config.tablePagination.limit" md-limit-options="vm.notSmall ? vm.config.config.tablePagination.limitOptions : undefined" md-page="vm.config.config.tablePagination.page" md-total="{{vm.data.length}}" md-page-select="vm.config.config.tablePagination.options.pageSelect && vm.notSmall" md-boundary-links="vm.config.config.tablePagination.options.boundaryLinks && vm.notSmall" ng-style="{'background-color':vm.config.config.tablePagination.style.backGroundTFooter,'height':vm.config.config.tablePagination.style.trHeightFooter, 'color':vm.config.config.tablePagination.style.textColorFooter}" ></md-table-pagination>

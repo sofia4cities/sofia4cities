@@ -43,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 
+	private static final String NOT_IMPLEMENTED_ALREADY = "Not Implemented Already";
 	@Autowired
 	private ESCountService eSCountService;
 	@Autowired
@@ -164,7 +165,7 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String querySQLAsTable(String ontology, String query) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override
@@ -177,7 +178,7 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String querySQLAsTable(String ontology, String query, int offset) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override

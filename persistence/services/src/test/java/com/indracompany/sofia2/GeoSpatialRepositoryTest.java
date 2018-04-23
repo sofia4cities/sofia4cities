@@ -42,6 +42,7 @@ import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
 import com.indracompany.sofia2.persistence.services.BasicOpsPersistenceServiceFacade;
+import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService;
 import com.indracompany.sofia2.persistence.services.ManageDBPersistenceServiceFacade;
 import com.indracompany.sofia2.persistence.services.util.MustacheUtil;
 
@@ -56,6 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 public class GeoSpatialRepositoryTest {
 	
 	public final static String TEST_INDEX = "doc";
+	public final static String TEST_INDEX_PIN = "pin";
 	public final static String TEST_INDEX_MONGO = TEST_INDEX+System.currentTimeMillis() ;
 	
 	private static User userAdministrator = null;
@@ -82,6 +84,9 @@ public class GeoSpatialRepositoryTest {
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
+	@Autowired
+	private GeoSpatialOpsService geoService;
+	
 	private User getUserAdministrator() {
 		if (userAdministrator == null)
 			userAdministrator = this.userCDBRepository.findByUserId("administrator");
@@ -91,6 +96,7 @@ public class GeoSpatialRepositoryTest {
 	private String SQL_TEST = "select * from ";
 	private String partial_envelope =  "partial_envelope.json";
 	private String partial_polygon =   "partial_polygon.json";
+	private String partial_polygon_agnostic =   "partial_polygon_agnostic.json";
 	private String partial_polygon_mongo =   "partial_polygon_mongo.json";
 
 	
@@ -104,6 +110,7 @@ public class GeoSpatialRepositoryTest {
 		log.info("up process...");
 		
 		doBefore1();
+		doBefore3();
 		doBefore2();
 		
 	}
@@ -140,6 +147,51 @@ public class GeoSpatialRepositoryTest {
 			manageFacade.createTable4Ontology(TEST_INDEX, TYPE);
 		
 			String idES = basicOpsFacade.insert(TEST_INDEX, DATA);
+		
+			log.info("Returned ES inserted object with id "+idES);
+	
+
+			Thread.sleep(10000);
+		
+		} catch (Exception e) {
+			log.info("Issue creating table4ontology "+e);
+		}
+		
+		
+	}
+	
+	public  void doBefore3() throws Exception {	
+		log.info("doBefore3 up process...");
+		
+		File in = new ClassPathResource("type_geo_point.json").getFile();
+		String TYPE = FileUtils.readFileToString(in);
+			
+		File data = new ClassPathResource("type_geo_point_data.json").getFile();
+		String DATA  = FileUtils.readFileToString(data);
+			
+		connector.deleteIndex(TEST_INDEX_PIN);
+		
+		try {
+			Ontology ontology = new Ontology();
+			ontology.setJsonSchema(TYPE);
+			ontology.setIdentification(TEST_INDEX_PIN);
+			ontology.setDescription(TEST_INDEX_PIN);
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
+			ontology.setPublic(true);
+			ontology.setRtdbDatasource(RtdbDatasource.ElasticSearch);
+			ontology.setUser(getUserAdministrator());
+			
+			
+			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX_PIN, getUserAdministrator().getUserId());
+			if (index1==null)
+				ontologyService.createOntology(ontology);
+			
+			
+			manageFacade.createTable4Ontology(TEST_INDEX_PIN, TYPE);
+		
+			String idES = basicOpsFacade.insert(TEST_INDEX_PIN, DATA);
 		
 			log.info("Returned ES inserted object with id "+idES);
 	
@@ -300,6 +352,33 @@ public class GeoSpatialRepositoryTest {
 		}
 	}
 	
+	@Test
+	public void testGeoService() {
+		try {
+		
+			partial_polygon_agnostic = getString(partial_polygon_agnostic);
+			
+			List<String> listQ = geoService.intersects(TEST_INDEX, partial_polygon_agnostic);
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoService failure. " + e);
+		}
+	}
+	
+	@Test
+	public void testGeoServiceNear() {
+		try {
+			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+			List<String> listQ = geoService.near(TEST_INDEX_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceNear failure. " + e);
+		}
+	}
 
 	
 	
