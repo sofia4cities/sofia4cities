@@ -16,8 +16,6 @@ package com.indracompany.sofia2.persistence.services;
 
 import java.util.List;
 
-import org.json.JSONObject;
-import org.skyscreamer.jsonassert.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
