@@ -42,7 +42,7 @@ quartz:
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
-      properties.hibernate.hbm2ddl.auto: create
+      properties.hibernate.hbm2ddl.auto: update
       properties.hibernate.hbm2ddl.import_files: /quartz-schema.sql
    autoStartupSchedulers:
       - simulationScheduler
