@@ -87,12 +87,9 @@ public class GeoSpatialRepositoryTest {
 		return userAdministrator;
 	}
 			
-	private String partial_envelope =  "partial_envelope.json";
-	private String partial_polygon =   "partial_polygon.json";
 	private String partial_polygon_agnostic =   "partial_polygon_agnostic.json";
-	private String partial_polygon_mongo =   "partial_polygon_mongo.json";
 
-	
+
 	public static String getString(String file) throws IOException {
 		File in = new ClassPathResource(file).getFile();
 		return FileUtils.readFileToString(in);
