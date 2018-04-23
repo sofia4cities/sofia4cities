@@ -13,10 +13,12 @@
  */
 package com.indracompany.sofia2.simulator.service;
 
+import java.io.IOException;
+
 public interface PersistenceService {
 
 	void insertOntologyInstance(String instance, String ontology, String user, String clientPlatform,
-			String clientPlatformInstance) throws Exception;
+			String clientPlatformInstance) throws InterruptedException, IOException;
 
 	void disconnectDeviceRest(String identification);
 

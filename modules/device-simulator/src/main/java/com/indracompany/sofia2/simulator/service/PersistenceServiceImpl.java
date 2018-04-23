@@ -13,6 +13,7 @@
 */
 package com.indracompany.sofia2.simulator.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -58,6 +60,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 	@Autowired
 	private IntegrationResourcesService intregationResourcesService;
 	private static final String UNAUTHORIZED_ONTOLOGY = "Unauthorized ontology";
+	@Getter
 	private Map<String, String> sessionKeys;
 	private List<String> deviceBlackList;
 
@@ -65,9 +68,9 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@PostConstruct
 	public void setUp() {
-		this.sessionKeys = new HashMap<String, String>();
+		this.sessionKeys = new HashMap<>();
 		this.iotbrokerUrl = this.intregationResourcesService.getUrl(Module.iotbroker, ServiceUrl.base);
-		this.deviceBlackList = new ArrayList<String>();
+		this.deviceBlackList = new ArrayList<>();
 	}
 
 	public void connectDeviceRest(String clientPlatform, String clientPlatformInstance) throws InterruptedException {
@@ -83,8 +86,8 @@ public class PersistenceServiceImpl implements PersistenceService {
 			log.info("Session Key :" + sessionKey);
 			if (sessionKey != null)
 				this.sessionKeys.put(clientPlatform, sessionKey);
-		} catch (Exception e) {
-
+		} catch (RuntimeException e) {
+			log.trace("Fail to connect, trying to reconnect");
 			Thread.sleep(5000);
 
 		}
@@ -93,11 +96,11 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@Override
 	public void insertOntologyInstance(String instance, String ontology, String user, String clientPlatform,
-			String clientPlatformInstance) throws Exception {
+			String clientPlatformInstance) throws InterruptedException, IOException {
 
 		if (this.sessionKeys.get(clientPlatform) != null) {
 
-			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
+			MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 			headers.add("Authorization", this.sessionKeys.get(clientPlatform));
 			headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 
@@ -106,7 +109,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 			final RestTemplate restTemplate = new RestTemplate();
 			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(ontologyData, headers);
+			HttpEntity<JsonNode> request = new HttpEntity<>(ontologyData, headers);
 
 			JsonNode response = restTemplate.postForObject(this.iotbrokerUrl + "/rest/ontology/" + ontology, request,
 					JsonNode.class);
@@ -118,7 +121,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 				this.connectDeviceRest(clientPlatform, clientPlatformInstance);
 				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 			}
-			// Remove from black list, as it is still sending data
+
 			if (this.deviceBlackList.contains(clientPlatform))
 				this.deviceBlackList.remove(clientPlatform);
 			log.debug("Device " + clientPlatformInstance);
@@ -136,7 +139,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 		headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
 
 		final RestTemplate restTemplate = new RestTemplate();
-		restTemplate.exchange(iotbrokerUrl + "/rest/client/leave", HttpMethod.GET, new HttpEntity<String>(headers),
+		restTemplate.exchange(iotbrokerUrl + "/rest/client/leave", HttpMethod.GET, new HttpEntity<>(headers),
 				String.class);
 		this.sessionKeys.remove(identification);
 		log.info("Closed session for device " + identification);
