@@ -20,13 +20,15 @@ import com.indracompany.sofia2.config.model.DataModel;
 public interface DataModelService {
 
 	void deleteDataModel(String id);
-	
+
 	void createDataModel(DataModel dataModel);
 
 	List<DataModel> getAllDataModels();
 
 	List<DataModel> getDataModelsByCriteria(String dataModelId, String name, String description);
-	
+
 	DataModel getDataModelById(String dataModelId);
+
+	DataModel getDataModelByName(String dataModelName);
 
 }

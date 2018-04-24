@@ -354,7 +354,7 @@ public class OntologyServiceImpl implements OntologyService {
 	// TODO it should be checked that onotologies are assigned to the session
 	// user.
 	@Override
-	public void createOntology(Ontology ontology) {
+	public void createOntology(Ontology ontology) throws OntologyServiceException {
 		try {
 			if (ontologyRepository.findByIdentification(ontology.getIdentification()) == null) {
 

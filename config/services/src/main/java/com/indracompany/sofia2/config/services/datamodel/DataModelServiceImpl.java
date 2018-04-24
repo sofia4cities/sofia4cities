@@ -22,14 +22,14 @@ import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 
 @Service
-public class DataModelServiceImpl implements DataModelService{
-	
+public class DataModelServiceImpl implements DataModelService {
+
 	@Autowired
 	private DataModelRepository dataModelRepository;
 
 	@Override
 	public void deleteDataModel(String id) {
-		dataModelRepository.delete(id);		
+		dataModelRepository.delete(id);
 	}
 
 	@Override
@@ -50,6 +50,11 @@ public class DataModelServiceImpl implements DataModelService{
 	@Override
 	public DataModel getDataModelById(String dataModelId) {
 		return dataModelRepository.findById(dataModelId);
+	}
+
+	@Override
+	public DataModel getDataModelByName(String dataModelName) {
+		return dataModelRepository.findByName(dataModelName).get(0);
 	}
 
 }
