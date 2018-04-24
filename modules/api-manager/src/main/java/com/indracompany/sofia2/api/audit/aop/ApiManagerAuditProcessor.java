@@ -46,14 +46,16 @@ public class ApiManagerAuditProcessor {
 
 				User user = (User) exchange.getIn().getHeader(ApiServiceInterface.USER);
 
-				String userId = (user != null) ? user.getUserId() : AuditConst.ANONYMOUS_USER;
-				String ontologyId = (ontology != null) ? ontology.getIdentification() : null;
+				String userId = getUserId(user);
+				String ontologyId = getOntologyId(ontology);
+				String operation = getOperation(operationType);
+
 				Date today = new Date();
 
 				event = ApiManagerAuditEvent.builder().id(UUID.randomUUID().toString()).module(Module.APIMANAGER)
-						.type(EventType.APIMANAGER).operationType((operationType != null) ? operationType.name() : null)
-						.resultOperation(ResultOperationType.ERROR).remoteAddress(remoteAddress).message(reason)
-						.data(body).ontology(ontologyId).query(query).timeStamp(today.getTime()).user(userId)
+						.type(EventType.APIMANAGER).operationType(operation).resultOperation(ResultOperationType.ERROR)
+						.remoteAddress(remoteAddress).message(reason).data(body).ontology(ontologyId).query(query)
+						.timeStamp(today.getTime()).user(userId)
 						.formatedTimeStamp(CalendarUtil.builder().build().convert(today)).build();
 
 			}
@@ -76,14 +78,19 @@ public class ApiManagerAuditProcessor {
 		User user = (User) data.get(ApiServiceInterface.USER);
 
 		OperationType operationType = getAuditOperationFromMethod(method);
+		String operation = getOperation(operationType);
 
 		Date today = new Date();
-		String message = "";
+
+		String userId = getUserId(user);
+		String ontologyId = getOntologyId(ontology);
+
+		String message = operation + " on ontology " + ontologyId + " by user " + userId;
 
 		ApiManagerAuditEvent event = ApiManagerAuditEvent.builder().id(UUID.randomUUID().toString())
-				.module(Module.APIMANAGER).type(EventType.APIMANAGER).operationType(operationType.name())
+				.module(Module.APIMANAGER).type(EventType.APIMANAGER).operationType(operation)
 				.resultOperation(ResultOperationType.SUCCESS).remoteAddress(remoteAddress).message(message).data(body)
-				.ontology(ontology.getIdentification()).query(query).timeStamp(today.getTime()).user(user.getUserId())
+				.ontology(ontologyId).query(query).timeStamp(today.getTime()).user(userId)
 				.formatedTimeStamp(CalendarUtil.builder().build().convert(today)).build();
 
 		return event;
@@ -97,12 +104,15 @@ public class ApiManagerAuditProcessor {
 		User user = (User) data.get(ApiServiceInterface.USER);
 
 		OperationType operationType = getAuditOperationFromMethod(method);
+		String operation = getOperation(operationType);
 
-		String messageOperation = "Exception Detected while operation : " + ontology.getId() + " Type : "
-				+ operationType.name();
+		String userId = getUserId(user);
+		String ontologyId = getOntologyId(ontology);
 
-		Sofia2AuditError event = Sofia2EventFactory.builder().build().createAuditEventError(user.getUserId(),
-				messageOperation, remoteAddress, Module.APIMANAGER, ex);
+		String messageOperation = "Exception Detected while operation : " + ontologyId + " Type : " + operation;
+
+		Sofia2AuditError event = Sofia2EventFactory.builder().build().createAuditEventError(userId, messageOperation,
+				remoteAddress, Module.APIMANAGER, ex);
 
 		return event;
 	}
@@ -122,19 +132,38 @@ public class ApiManagerAuditProcessor {
 		log.debug("get audit operation from method " + method);
 		OperationType operationType = null;
 
-		if (method.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
-			operationType = OperationType.QUERY;
-		} else if (method.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
-			operationType = OperationType.INSERT;
-		} else if (method.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
-			operationType = OperationType.UPDATE;
-		} else if (method.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
-			operationType = OperationType.DELETE;
+		if (method != null) {
+
+			if (method.equalsIgnoreCase(ApiOperation.Type.GET.name())) {
+				operationType = OperationType.QUERY;
+			} else if (method.equalsIgnoreCase(ApiOperation.Type.POST.name())) {
+				operationType = OperationType.INSERT;
+			} else if (method.equalsIgnoreCase(ApiOperation.Type.PUT.name())) {
+				operationType = OperationType.UPDATE;
+			} else if (method.equalsIgnoreCase(ApiOperation.Type.DELETE.name())) {
+				operationType = OperationType.DELETE;
+			}
 		}
 
 		log.debug("the audit operation is " + operationType);
 
 		return operationType;
+
+	}
+
+	public String getUserId(User user) {
+		String userId = (user != null) ? user.getUserId() : AuditConst.ANONYMOUS_USER;
+		return userId;
+	}
+
+	public String getOntologyId(Ontology ontology) {
+		String ontologyId = (ontology != null) ? ontology.getIdentification() : null;
+		return ontologyId;
+	}
+
+	public String getOperation(OperationType operationType) {
+		String operation = (operationType != null) ? operationType.name() : "";
+		return operation;
 	}
 
 }
