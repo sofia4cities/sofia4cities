@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,7 +30,7 @@ public class Sofia2AuditEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum EventType {
-		USER, SECURITY, ERROR, DATA, GENERAL, IOTBROKER, APIMANAGER;
+		USER, SECURITY, ERROR, DATA, GENERAL, IOTBROKER, APIMANAGER, FLOWENGINE;
 	}
 
 	public enum Module {
@@ -39,7 +38,7 @@ public class Sofia2AuditEvent implements Serializable {
 	}
 
 	public enum OperationType {
-		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE, UPDATE_BY_ID, DELETE, DELETE_BY_ID, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND
+		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE, UPDATE_BY_ID, DELETE, DELETE_BY_ID, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND, START, STOP
 	}
 
 	public static enum ResultOperationType {
