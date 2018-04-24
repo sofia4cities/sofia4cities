@@ -37,7 +37,10 @@ import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
+@Slf4j
 public class LoadHelsinkiSampleData implements ApplicationRunner {
 
 	@Autowired
@@ -116,7 +119,7 @@ public class LoadHelsinkiSampleData implements ApplicationRunner {
 			apiService.createApi(api, token);
 			ApiDTO out = apiFIQL.toApiDTO(apiService.findApi(APINAME, token));
 			
-			System.out.println(out);
+			log.info(out.toString());
 		}
 
 	}
@@ -149,7 +152,7 @@ public class LoadHelsinkiSampleData implements ApplicationRunner {
 		Product data = PojoFactoryLoadData.createProduct("name1");
 		ObjectMapper mapper = new ObjectMapper();
 		
-		System.out.println(mapper.writeValueAsString(data));
+		log.info(mapper.writeValueAsString(data));
 		
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 		int init = 17;

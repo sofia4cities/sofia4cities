@@ -4,17 +4,17 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.1.0-rc1</version>
+		<version>5.2.0-SNAPSHOT</version>
 		<relativePath>../..</relativePath>
 	</parent>
 	<groupId>com.indracompany.sofia2</groupId>
 	<artifactId>sofia2-persistence-services</artifactId>
-	<version>5.1.0-rc1</version>
+	<version>5.2.0-SNAPSHOT</version>
 	<name>sofia2-persistence-services</name>
 	<description>Services of the Persistences</description>
 	<properties>
 		<license.dir>${project.parent.basedir}</license.dir>
-	
+
 	</properties>
 	<dependencies>
 
@@ -34,41 +34,46 @@
 			<artifactId>sofia2-persistence-elasticsearch</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
-	
+
+		<dependency>
+			<groupId>com.github.spullara.mustache.java</groupId>
+			<artifactId>compiler</artifactId>
+			<version>0.9.5</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			
+
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>

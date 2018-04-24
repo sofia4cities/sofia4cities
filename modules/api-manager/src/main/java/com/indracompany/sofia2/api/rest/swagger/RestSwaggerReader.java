@@ -46,34 +46,33 @@ import io.swagger.models.parameters.Parameter;
 
 public class RestSwaggerReader {
 
-	public static String SWAGGER_VERSION = "2.0";
 
-	public static String INFO_VERSION = "Apache 2.0 License";
-	public static String INFO_TITLE = "Sofia2Cities API Manager";
-	public static String INFO_DESCRIPTION = "Select4Cities ";
+	private static final String INFO_VERSION = "Apache 2.0 License";
+	private static final String INFO_TITLE = "Sofia2Cities API Manager";
+	private static final String INFO_DESCRIPTION = "Select4Cities ";
 
-	public static String LICENSE_NAME = "1.0.0";
-	public static String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
-	public static String BASE_PATH = "/api-manager/server/api";
+	private static final String LICENSE_NAME = "1.0.0";
+	private static final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
+	private static final String BASE_PATH = "/api-manager/server/api";
 
-	public static String CONTACT_NAME = "The Sofia2 Select4Cities Team";
-	public static String CONTACT_URL = "https://www.sofia4cities.com";
-	public static String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
+	private static final String CONTACT_NAME = "The Sofia2 Select4Cities Team";
+	private static final String CONTACT_URL = "https://www.sofia4cities.com";
+	private static final String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
 	
-	public static String dataTypeValueSeparator="|";
+	private static final String dataTypeValueSeparator="|";
 
 
-	public static String XSOFIA2APIKey = "X-SOFIA2-APIKey";
-	public static String XSOFIAEXTENSION = "x-sofia2-extension";
+	private static final String XSOFIA2APIKey = "X-SOFIA2-APIKey";
+	private static final String XSOFIAEXTENSION = "x-sofia2-extension";
 
-	static List<String> PRODUCES = new ArrayList<String>(
+	private static List<String> PRODUCES = new ArrayList<String>(
 			Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_ATOM_XML, MediaType.TEXT_PLAIN));
-	static List<String> CONSUMES = new ArrayList<String>(Arrays.asList(MediaType.APPLICATION_JSON,MediaType.APPLICATION_ATOM_XML));
+	private static List<String> CONSUMES = new ArrayList<String>(Arrays.asList(MediaType.APPLICATION_JSON,MediaType.APPLICATION_ATOM_XML));
 	
-	static List<String> CACHEABLE = new ArrayList<String>(Arrays.asList("false","true"));
+	private static List<String> CACHEABLE = new ArrayList<String>(Arrays.asList("false","true"));
 
-	static Map<String, Response> responses = new HashMap<String, Response>();
-	static List<Scheme> schemes = new ArrayList<Scheme>();
+	private static Map<String, Response> responses = new HashMap<String, Response>();
+	private static List<Scheme> schemes = new ArrayList<Scheme>();
 
 	static {
 

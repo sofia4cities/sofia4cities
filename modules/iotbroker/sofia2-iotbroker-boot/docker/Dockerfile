@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 
-# Metadata
+# metadata
 LABEL module.maintainer="plataformasofia2@indra.es" \
 	  module.name="iotbroker"	
 
@@ -8,6 +8,20 @@ VOLUME /tmp
 
 ADD *-exec.jar app.jar
 
+# logs folder
+RUN mkdir -p /var/log/logs-s4c && \
+	mkdir ./target
+	
+# create sofia user/group
+RUN addgroup -S sofia -g 433 && adduser -u 431 -S -g sofia -h /usr/local -s /sbin/nologin sofia 
+
+RUN chown -R sofia:sofia /usr/local && \
+    chown -R sofia:sofia /var/log/logs-s4c && \
+    chown -R sofia:sofia ./target && \    
+    chown sofia:sofia app.jar
+  
+USER sofia
+    
 EXPOSE 8081 1883 8883
 
 ENV JAVA_OPTS="" \

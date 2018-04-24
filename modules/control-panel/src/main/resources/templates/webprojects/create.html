@@ -129,14 +129,14 @@
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
 																	<label class="" th:text="#{webproject.name} + ':'"> Name </label><span class="required"> (*)</span>
-																	<input th:if="${webproject?.id} == null" th:tabindex="1" id="identification" type="text" th:required="true" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
-																	<input th:if="${webproject?.id} != null" th:tabindex="1" id="identification" type="text" th:required="true" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}" disabled="disabled"/>
+																	<input th:if="${webproject?.id} == null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}"/>
+																	<input th:if="${webproject?.id} != null" th:tabindex="1" id="identification" type="text" maxlength="50" th:field="*{identification}" class="form-control "  th:placeholder="#{webproject.name}" readonly="readonly"/>																
 																</div>
 															</div>
 															<div class="col-md-12 col-sm-12 col-xs-12">
 																<div class="form-group">
 																	<label th:text="#{webproject.description} + ':'"> Description </label><span class="required"> (*)</span>
-																	<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" th:required="true"  cols="" rows=""></textarea>
+																	<textarea th:tabindex="3" class="element textarea small form-control" id="description" name="description" maxlength="512" th:field="*{description}" cols="" rows=""></textarea>
 																</div>
 															</div>
 															<div class="col-md-12 col-sm-12 col-xs-12">
@@ -157,16 +157,16 @@
 													<div class="form-actions">
 														<div class="pull-right">
 															<!-- CREATE -->
-															<button th:if="${webproject?.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+															<button th:if="${webproject?.id} == null" id="createBtn" class="btn btn-square btn-success" name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
 															
 															<!-- UPDATE -->
-															<button th:if="${webproject?.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+															<button th:if="${webproject?.id} != null" id="updateBtn" class="btn btn-square btn-warning" name="update" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
 															
 															<!-- REMOVE -->
 															<button th:if="${webproject?.id} != null" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'javascript:WebProjectCreateController.go(\'' + @{/webprojects/delete/} + ${webproject.id} + '\');'"><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
 															
 															<!-- RESET -->
-															<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+															<button th:if="${webproject?.id} == null" id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
 															
 															<span class="sep" th:text="#{gen.sepBtn}"> or </span>
 															
@@ -250,9 +250,13 @@
 	var currentLanguage = [[${lang}]];	
 	
 	var webProjectCreateJson = { 	
-			"language" : currentLanguage
+			"language" : currentLanguage,
+			"validform": {
+				"emptyfields": [[#{webproject.validation.emptyfields}]],
+				"zipnotuploaded": [[#{webproject.uploadzip.error}]]
+			}
 		};   
-	
+		
 	</script>	
 </body>
 </html>

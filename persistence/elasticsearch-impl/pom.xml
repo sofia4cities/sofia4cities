@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.indracompany.sofia2</groupId>
 		<artifactId>sofia2-parent</artifactId>
-		<version>5.1.0-rc1</version>
+		<version>5.2.0-SNAPSHOT</version>
 		<relativePath>../..</relativePath>
 	</parent>
 
@@ -47,33 +47,29 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- Apache HTTP client dependencies -->
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>24.1-jre</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.elasticsearch</groupId>
 			<artifactId>elasticsearch</artifactId>
 			<version>${elasticsearch.version}</version>
-			
 		</dependency>
-
 
 
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>transport</artifactId>
 			<version>${elasticsearch.version}</version>
-			
 		</dependency>
 
 		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>24.1-jre</version>
+			<groupId>io.searchbox</groupId>
+			<artifactId>jest</artifactId>
+			<version>2.0.4</version>
 		</dependency>
 
 	</dependencies>
@@ -84,20 +80,19 @@
 				<groupId>org.elasticsearch</groupId>
 				<artifactId>elasticsearch</artifactId>
 				<version>${elasticsearch.version}</version>
-				
+
 			</dependency>
 
 			<dependency>
 				<groupId>org.elasticsearch.client</groupId>
 				<artifactId>transport</artifactId>
 				<version>${elasticsearch.version}</version>
-				
+
 			</dependency>
 
 		</dependencies>
 
 	</dependencyManagement>
-
 
 	<!-- <plugins> -->
 	<!-- <plugin> -->

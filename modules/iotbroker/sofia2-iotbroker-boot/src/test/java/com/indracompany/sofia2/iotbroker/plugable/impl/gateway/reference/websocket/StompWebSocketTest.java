@@ -32,6 +32,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +75,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
 
-//@Ignore
+@Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@SpringBootTest

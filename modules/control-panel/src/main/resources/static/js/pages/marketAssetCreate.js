@@ -44,6 +44,8 @@ var MarketAssetCreateController = function() {
     	var url =  marketAssetCreateReg.url + "/fragment";
 	    if ($('#marketassetType').val() != '') {
 	        url = url + '/' + $('#marketassetType').val();
+	        $('#showedImgPreview').attr('src', marketAssetCreateReg.urlimg + $('#marketassetType').val() + ".png" );
+	        $("#image").val(null);
 	    }
 	    $("#fragments").load(url);
 	    $("#versions").val("");
@@ -350,6 +352,7 @@ var MarketAssetCreateController = function() {
     function validateImgSize() {
         if ($('#image').prop('files') && $('#image').prop('files')[0].size>60*1024){
         	showGenericErrorDialog('Error', marketAssetCreateReg.marketAssetmanager_image_error);
+        	$("#image").val(null);
         	$('#showedImg').val("");
          } else if ($('#image').prop('files')) {
         	 reader.readAsDataURL($("#image").prop('files')[0]);
@@ -372,7 +375,7 @@ var MarketAssetCreateController = function() {
 		
 		// VALIDATE IDENTIFICATION
 		validateIdentification: function() {
-			logControl ? console.log(LIB_TITLE + ': validateImgSize()') : '';
+			logControl ? console.log(LIB_TITLE + ': validateId()') : '';
 			validateId();
 		},
 

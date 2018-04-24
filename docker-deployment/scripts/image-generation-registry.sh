@@ -146,6 +146,7 @@ echo "#  |_____/ \___/ \___|_|\_\___|_|                                         
 echo "#                                                                                        #"
 echo "# Sofia2 Docker Image generation                                                         #"
 echo "# arg1 (opt) --> -1 if only want to create images for persistence layer                  #"
+echo "#            --> string name module to deploy to Docker Registry                         #"
 echo "#                                                                                        #"
 echo "##########################################################################################"
 
@@ -209,62 +210,117 @@ if [ -z "$1" ]; then
 	fi	
 fi
 
-# Generates images only if they are not present in local docker registry
-if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/../dockerfiles/configdb
-	buildConfigDB latest
+if [[ "$1" == "controlpanel" ]]; then
+	cd $homepath/../../modules/control-panel/
+	buildImage "Control Panel"
+	pushImage2Registry controlpanel latest 
 fi
 
-if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/../dockerfiles/schedulerdb
-	buildSchedulerDB latest
+if [[ "$1" == "iotbroker" ]]; then
+	cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
+	buildImage "IoT Broker"
+	pushImage2Registry iotbroker latest 
 fi
 
-if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
-	cd $homepath/../dockerfiles/realtimedb
-	buildRealTimeDB latest
+if [[ "$1" == "apimanager" ]]; then
+	cd $homepath/../../modules/api-manager/	
+	buildImage "API Manager"
+	pushImage2Registry apimanager latest 
 fi
 
-if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
-	cd $homepath/../dockerfiles/elasticsearch
-	buildElasticSearchDB latest
+if [[ "$1" == "digitaltwin" ]]; then
+	cd $homepath/../../modules/digitaltwin-broker/	
+	buildImage "Digital Twin"
+	pushImage2Registry digitaltwin latest 
 fi
 
-if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
-	cd $homepath/../dockerfiles/nginx
-	buildNginx latest
+if [[ "$1" == "dashboard" ]]; then
+	cd $homepath/../../modules/dashboard-engine/
+	buildImage "Dashboard Engine"
+	pushImage2Registry dashboard latest 
 fi
 
-if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
-	cd $homepath/../dockerfiles/quasar
-	buildQuasar latest
+if [[ "$1" == "devicesimulator" ]]; then
+	cd $homepath/../../modules/device-simulator/
+	buildImage "Device Simulator"
+	pushImage2Registry devicesimulator latest 
 fi
 
-if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
-	cd $homepath/../../config/init/
-	buildImage "Config Init"
+if [[ "$1" == "monitoringui" ]]; then
+	cd $homepath/../../modules/monitoring-ui/
+	buildImage "Monitoring UI"
+	pushImage2Registry monitoringui latest 
+fi
+
+if [[ "$1" == "flowengine" ]]; then
+	prepareNodeRED		
+	
+	cd $homepath/../../modules/flow-engine/
+	buildImage "Flow Engine"
+	pushImage2Registry flowengine latest 
+	
+	removeNodeRED
+fi
+
+
+if [[ "$1" == -1 ]]; then
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/configdb
+		buildConfigDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/schedulerdb
+		buildSchedulerDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/realtimedb
+		buildRealTimeDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/elasticsearch
+		buildElasticSearchDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/nginx 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/nginx
+		buildNginx latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
+		cd $homepath/../dockerfiles/quasar
+		buildQuasar latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+		cd $homepath/../../config/init/
+		buildImage "Config Init"
+	fi
 fi
 	
 echo "Docker images successfully generated!"
 
 echo "Push Sofia2 images to private registry"
 
-pushImage2Registry configdb latest 
-pushImage2Registry schedulerdb latest 
-pushImage2Registry realtimedb latest 
-pushImage2Registry elasticdb latest
-pushImage2Registry controlpanel latest 
-pushImage2Registry iotbroker latest 
-pushImage2Registry apimanager latest 
-pushImage2Registry flowengine latest 
-pushImage2Registry devicesimulator latest 
-pushImage2Registry digitaltwin latest
-pushImage2Registry dashboard latest 
-pushImage2Registry monitoringui latest 
-pushImage2Registry nginx latest
-pushImage2Registry quasar latest 
-pushImage2Registry configinit latest 
-
-# pushAllImages2Registry latest
+if [ -z "$1" ]; then
+	pushImage2Registry configdb latest 
+	pushImage2Registry schedulerdb latest 
+	pushImage2Registry realtimedb latest 
+	pushImage2Registry elasticdb latest
+	pushImage2Registry controlpanel latest 
+	pushImage2Registry iotbroker latest 
+	pushImage2Registry apimanager latest 
+	pushImage2Registry flowengine latest 
+	pushImage2Registry devicesimulator latest 
+	pushImage2Registry digitaltwin latest
+	pushImage2Registry dashboard latest 
+	pushImage2Registry monitoringui latest 
+	pushImage2Registry nginx latest
+	pushImage2Registry quasar latest 
+	pushImage2Registry configinit latest 
+fi
 
 exit 0

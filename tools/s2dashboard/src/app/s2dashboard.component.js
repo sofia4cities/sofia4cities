@@ -264,7 +264,7 @@
           /**we look for the parameters in the source code to create the form */
           $scope.getPredefinedParameters = function(){
             var str =  $scope.config.content;
-           	var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+           	var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\-->/g;
 		        var regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
             var regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
 		        var found=[];
@@ -319,7 +319,7 @@
             /** this function Replace parameteres for his selected values*/
             function parseProperties(){
               var str =  $scope.config.content;
-              var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+              var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\-->/g;
               var regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
               var regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
               var found=[];

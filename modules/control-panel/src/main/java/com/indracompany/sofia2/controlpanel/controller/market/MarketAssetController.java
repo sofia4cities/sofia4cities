@@ -108,7 +108,7 @@ public class MarketAssetController {
 			
 			String apiId = marketAssetService.createMarketAsset(marketAssetHelper.marketAssetMultipartMap(marketAssetMultipart));
 
-			return "redirect:/marketasset/show/" + utils.encodeUrlPathSegment(apiId, request);
+			return "redirect:/marketasset/show/" + apiId;
 		} catch (Exception e) {
 			log.debug("Cannot update user that does not exist");
 			utils.addRedirectMessage("user.create.error", redirect);
@@ -178,13 +178,6 @@ public class MarketAssetController {
 		return "redirect:/marketasset/show/" + marketassetid;
 	}
 	
-	@GetMapping(value = "/invoke/{id}" , produces = "text/html")
-	public String invoker(Model model, @PathVariable("id") String apiId) {
-		
-		//apiManagerHelper.populateApiManagerInvokeForm(model, apiId);
-		
-		return "apimanager/invoke";
-	}
 	
 	@RequestMapping(value = "/fragment/{type}")
 	public String fragment(Model model, @PathVariable("type") String type) {
@@ -248,9 +241,8 @@ public class MarketAssetController {
 	
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR')")
 	@PostMapping(value = "/updateState/{id}/{state}")
-	public String updateState(@PathVariable("id") String id, @PathVariable("state") String state, @RequestBody String reasonData){
-		marketAssetService.updateState(id, state, reasonData);
-		return "redirect:/apimanager/list";
+	public @ResponseBody String updateState(@PathVariable("id") String id, @PathVariable("state") String state, @RequestBody String reasonData){
+		return (marketAssetService.updateState(id, state, reasonData));
 	}
 	
 }

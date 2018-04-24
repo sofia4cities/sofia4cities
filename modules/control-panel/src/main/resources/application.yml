@@ -5,6 +5,7 @@
 server: ## Config Web Server
    port: 18080
    contextPath: /controlpanel
+   max-http-header-size: 10000000
    tomcat:
       access_log_enabled: true
       basedir: target/tomcat
@@ -58,7 +59,7 @@ sofia2: #Config Sofia2 specific
    controlpanel.avoidsslverification: true
    webproject:
       rootfolder.path: /usr/local/webprojects/
-      baseurl: http://localhost:18080/web/   
+      baseurl: https://localhost:18080/web/   
  
 spring: ## General Config  
    application.name: sofia2-control-panel
@@ -115,7 +116,7 @@ quartz:
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
-      properties.hibernate.hbm2ddl.auto: create
+      properties.hibernate.hbm2ddl.auto: update
       properties.hibernate.hbm2ddl.import_files: /quartz-schema.sql
    autoStartupSchedulers:
       #- scriptScheduler

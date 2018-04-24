@@ -17,12 +17,17 @@ package com.indracompany.sofia2.simulator.job;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,8 +57,14 @@ public class DeviceSimulatorTest {
 	private String user;
 	private String json;
 	private String jsonSchema;
-
 	@Mock
+	JobExecutionContext jobContext;
+	@Mock
+	JobDetail jobDetail;
+	@Mock
+	JobDataMap jobDataMap;
+	@Mock
+
 	private Ontology ontology;
 
 	@Before
@@ -70,6 +81,10 @@ public class DeviceSimulatorTest {
 
 		Mockito.doNothing().when(this.persistenceService).insertOntologyInstance(any(), any(), any(), any(), any());
 		when(this.ontologyService.getOntologyByIdentification(any(), any())).thenReturn(this.ontology);
+		when(this.jobContext.getJobDetail()).thenReturn(this.jobDetail);
+		when(this.jobDetail.getJobDataMap()).thenReturn(this.jobDataMap);
+		when(this.jobDataMap.getString("userId")).thenReturn("administrator");
+		when(this.jobDataMap.getString("json")).thenReturn(this.json);
 
 	}
 
@@ -82,4 +97,13 @@ public class DeviceSimulatorTest {
 		Assert.assertTrue(randomInstance.get("Ontology").get("Temp").asInt() <= 35);
 	}
 
+	@Test
+	public void Test_JobExecution() throws IOException {
+		this.deviceSimulatorJob.execute(this.jobContext);
+	}
+
+	@Test
+	public void Test_fails_when_schema_is_invalid() {
+
+	}
 }

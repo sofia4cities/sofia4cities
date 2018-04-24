@@ -14,23 +14,25 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch.api;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.HashMap;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.io.ByteStreams;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
+import io.searchbox.core.Bulk;
+import io.searchbox.core.BulkResult;
+import io.searchbox.core.Index;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -39,73 +41,89 @@ public class ESInsertService {
 
 	@Autowired
 	ESBaseApi connector;
-
-    public String load(String index, String type, String jsonDoc ) throws Exception {
-    	
-    	log.info(String.format("Loading content: %s into elasticsearch %s %s", jsonDoc, index, type));
-    	JSONObject dataAsJson=null;
+	
+	
+	private void fixPosibleNonCapitalizedGeometryPoint(String s) {
 		try {
-			dataAsJson = new JSONObject(jsonDoc);
-		} catch (JSONException e) {
-			throw new Exception(String.format("Failed during Parsing JSON String %s. failure message: %s", jsonDoc, e.getMessage()));
+			JsonObject o = new JsonParser().parse(s).getAsJsonObject();
+			JsonObject geometry = (JsonObject)o.get("geometry");
+			JsonElement type = geometry.get("type");
+			String value = type.getAsString();
+			geometry.addProperty("type", value.toLowerCase());
+			
+		} catch (Exception e) {}
+		
+	}
+
+	public List<BulkWriteResult> load(String index, String type, List<String> jsonDoc) {
+
+		List<BulkWriteResult> listResult = new ArrayList<BulkWriteResult>();
+		
+		List<Index> list = new ArrayList<Index>();
+		for (String s : jsonDoc) {
+			
+			s = s.replaceAll("\\n", "");
+			s = s.replaceAll("\\r", "");
+			
+			fixPosibleNonCapitalizedGeometryPoint(s);
+			
+			Index i = new Index.Builder(s).index(index).type(type).build();
+			list.add(i);
 		}
-    	
-    	IndexResponse response= connector.getClient().prepareIndex(index, type).setSource(jsonDoc, XContentType.JSON).get();
-    	return response.getId();
-    }
-    
-  
-    public boolean loadBulkFromArray(String index, String type, List<String> docs)  throws Exception {
-    	log.info(String.format("Ingest content: %s Size of Files into elasticsearch %s %s", docs.size(), index, type));
-        BulkRequestBuilder bulkRequest = connector.getClient().prepareBulk();
-        docs.forEach(doc -> bulkRequest.add(connector.getClient().prepareIndex(index, type).setSource(doc)));
-       
-        if(bulkRequest.get().hasFailures()) {
-  			throw new Exception(String.format("Failed during bulk load of files "));
-  		}
-        return bulkRequest.get().hasFailures();
-    }
-    
-    public BulkResponse loadBulkFromFile(String index, File jsonPath) throws Exception {
-  		log.info(String.format("Loading file %s into elasticsearch cluster", jsonPath));
+			
+		Bulk bulk = new Bulk.Builder().addAction(list).build();
+		BulkResult result;
+		try {
+			result = connector.getHttpClient().execute(bulk);
+			JsonArray object = result.getJsonObject().get("items").getAsJsonArray();
+			
+			for (int i=0; i < object.size(); i++) {
+				JsonElement element = object.get(i);
+				JsonObject o = element.getAsJsonObject();
+				JsonObject the= o.get("index").getAsJsonObject();
+				String id =  the.get("_id").getAsString();
+				String created =  the.get("result").getAsString();
+				
+				BulkWriteResult bulkr = new BulkWriteResult();
+				bulkr.setId(id);
+				bulkr.setErrorMessage(created);
+				bulkr.setOk(true);
+				listResult.add(bulkr);
 
-  		BulkRequestBuilder bulkBuilder = connector.getClient().prepareBulk();
-  		byte[] buffer = ByteStreams.toByteArray(new FileInputStream(jsonPath));
-  		bulkBuilder.add(buffer, 0, buffer.length, index, null, XContentType.JSON);
-  		BulkResponse response = bulkBuilder.get();
+			}
+		} catch (IOException e) {
+			log.error("Error Loading document "+e.getMessage(),e);
+		}
+		
+		log.info("Documents has been inserted..." + listResult.size());
 
-  		if(response.hasFailures()) {
-  			throw new Exception(String.format("Failed during bulk load of file %s. failure message: %s", jsonPath, response.buildFailureMessage()));
-  		}
-  		return response;
-  	}
-    
-    public BulkResponse loadBulkFromFileResource(String index, String jsonPath) throws Exception {
-  		log.info(String.format("Loading file %s into elasticsearch cluster", jsonPath));
+		return listResult;
+		
 
-  		BulkRequestBuilder bulkBuilder = connector.getClient().prepareBulk();
-  		byte[] buffer = ByteStreams.toByteArray(new FileInputStream(jsonPath));
-  		bulkBuilder.add(buffer, 0, buffer.length, index, null, XContentType.JSON);
-  		BulkResponse response = bulkBuilder.get();
+	}
+	
+	public static List<String> readLines(File file) throws Exception {
+		if (!file.exists()) {
+			return new ArrayList<String>();
+		}
 
-  		if(response.hasFailures()) {
-  			throw new Exception(String.format("Failed during bulk load of file %s. failure message: %s", jsonPath, response.buildFailureMessage()));
-  		}
-  		return response;
-  	}
-      
-    public BulkResponse loadBulkFromJson(String index, String content) throws Exception {
-  	
-    	BulkRequestBuilder bulkBuilder = connector.getClient().prepareBulk();
-    	byte[] buffer = content.getBytes();
-    	bulkBuilder.add(buffer, 0, buffer.length, index, null, XContentType.JSON);
-  		BulkResponse response = bulkBuilder.get();
-  		
-  		if(response.hasFailures()) {
-  			throw new Exception(String.format("Failed during bulk load failure message: %s", response.buildFailureMessage()));
-  		}
-  		return response;
-    }
+		BufferedReader reader=null;
+		List<String> results = new ArrayList<String>();
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			
+			String line = reader.readLine();
+			while (line != null) {
+				results.add(line);
+				line = reader.readLine();
+			}
+			return results;
+		} catch (Exception e) {
+			return new ArrayList<String>();
+		} finally {
+			if (reader!=null)reader.close();
+		}
 
+	}
 
 }
