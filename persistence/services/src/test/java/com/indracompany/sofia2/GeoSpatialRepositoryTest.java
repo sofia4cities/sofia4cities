@@ -40,6 +40,8 @@ import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.persistence.services.BasicOpsPersistenceServiceFacade;
 import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService;
 import com.indracompany.sofia2.persistence.services.ManageDBPersistenceServiceFacade;
+import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService.GeoQueries;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,6 +76,9 @@ public class GeoSpatialRepositoryTest {
 	
 	@Autowired
 	private UserRepository userCDBRepository;
+	
+	@Autowired
+	QueryToolService queryToolService;
 	
 	
 	ObjectMapper mapper = new ObjectMapper();
@@ -400,6 +405,7 @@ public class GeoSpatialRepositoryTest {
 			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX_PIN));
 			log.info(">>>>>>>>>>>>> testGeoServiceNear");
 			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+			
 			List<String> listQ = geoService.near(TEST_INDEX_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
 			
 			log.info("result  "+listQ);
@@ -425,6 +431,27 @@ public class GeoSpatialRepositoryTest {
 		}
 	}
 	
+	@Test
+	public void testGeoServiceByQueryTool() {
+		try {
+			log.info(">>>>>>>>>>>>> testGeoServiceByQueryTool");
+			
+			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+			List<String> listQ = geoService.near(TEST_INDEX_MONGO_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
+			log.info("result  "+listQ);
+			String query = geoService.getQuery(GeoQueries.near, TEST_INDEX_MONGO_PIN, "geometry","40", "-70", TWO_HUNDRED_KILOMETERS);
+			
+			
+			log.info(">>>>>>>>>>>>> USE of querytool with the GetQuery Generator of GeoService");
+			
+			String result = queryToolService.queryNativeAsJson(getUserAdministrator().getUserId(), TEST_INDEX_MONGO_PIN, query);
+			
+			log.info("result QueryTool "+result);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceNearMongo failure. " + e);
+		}
+	}
 	
 
 }
