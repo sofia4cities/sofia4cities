@@ -37,6 +37,7 @@ import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
 import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -236,6 +237,20 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 			throw new DBPersistenceException(e);
 		}
 	}
+	
+	private void computeGeometryIndex(String collection, String name, Map<String, Object> proper) {
+		log.debug("computeGeometryIndex", collection, name);
+		Map<String, Object> geo = (Map<String, Object>)proper.getOrDefault("geometry", null);
+		if (geo!=null) {
+			createIndex(collection,"geometry","2dsphere");
+			ensureGeoIndex(collection,"geometry");
+			
+		}
+		if (!name.isEmpty()) {
+			createIndex(collection, name + ".geometry: \"2dsphere\"");
+		}
+		log.debug("DONE : computeGeometryIndex", collection, name);
+	}
 
 	@Override
 	public void validateIndexes(String collection, String schema) throws DBPersistenceException {
@@ -258,6 +273,7 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 						if (!name.isEmpty()) {
 							createIndex(collection, name + ".geometry: \"2dsphere\"");
 						}
+						computeGeometryIndex(collection, name, proper);
 					}
 				} catch (JsonParseException e) {
 					log.error("validateIndexes", e);
@@ -288,6 +304,20 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 			throw new DBPersistenceException(e);
 		}
 	}
+	
+	
+
+	
+	public void ensureGeoIndex(String ontology, String attribute)  {
+		try {
+			log.debug("ensureGeoIndex", ontology, attribute);
+			mongoDbConnector.createIndex(database, ontology, Indexes.geo2dsphere(attribute));
+		} catch (DBPersistenceException e) {
+			log.error("createIndex", e, attribute);
+			
+		}
+	}
+	
 
 	@Override
 	public void createIndex(String ontology, String name, String attribute) throws DBPersistenceException {

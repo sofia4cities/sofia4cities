@@ -30,6 +30,7 @@ import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 import lombok.extern.slf4j.Slf4j;
 
+
 @Service
 @Slf4j
 public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, NativeBasicOpsRepository{

@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.mongodb.MongoQueryAndParams;
@@ -48,6 +49,7 @@ import com.indracompany.sofia2.persistence.mongodb.UtilMongoDB;
 import com.indracompany.sofia2.persistence.mongodb.config.MongoDbCredentials;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.MongoBulkWriteException;
 import com.mongodb.MongoClient;
@@ -358,6 +360,21 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 			throw new PersistenceException(errorMessage, e);
 		}
 	}
+	
+	@Override
+	public void createIndex(String database, String collection,Bson geo2dsphere) {
+		log.debug("Creating geo2dsphere indexes. Database = {}, Collection = {}", database, collection);
+		try {
+			MongoCollection<?> dbCollection = getCollection(database, collection, BasicDBObject.class);
+			dbCollection.createIndex(geo2dsphere);
+		} catch (Throwable e) {
+			String errorMessage = String.format(
+					"Unable to geo2dsphere create indexes with the given keys. Database = %s , collection = %s, cause = %s , errorMessage = %s.",
+					database, collection, e.getCause(), e.getMessage());
+			log.error(errorMessage);
+			throw new PersistenceException(errorMessage, e);
+		}
+	}
 
 	@Override
 	public MongoIterable<BasicDBObject> aggregate(String database, String collection, List<BasicDBObject> pipeline)
@@ -555,12 +572,44 @@ public class MongoDbTemplateImpl implements MongoDbTemplate {
 			throw new PersistenceException(errorMessage, e);
 		}
 	}
+	
+	private void fixPosibleNonCapitalizedGeometryPoint(BasicDBObject doc) {
+		try {
+			Object geometry = (Object)doc.get("geometry");
+			
+			if (geometry instanceof BasicDBObject) {
+				BasicDBObject object = (BasicDBObject) geometry;
+				if (object!=null) {
+					String type = (String)object.get("type");
+					if (type!=null)
+						object.put("type", StringUtils.capitalize(type));
+				}
+				
+			}
+			else if (geometry instanceof BasicDBList) {
+				BasicDBList object = (BasicDBList) geometry;
+				BasicDBObject coordinates = new BasicDBObject();
+				coordinates.put("coordinates", object.copy());
+				coordinates.put("type", "Point");
+				doc.remove(geometry);
+				doc.put("geometry", coordinates);
+				
+			}
+			
+		
+		} catch (Exception e) {}
+		
+	}
 
 	@Override
 	public ObjectId insert(String database, String collection, BasicDBObject doc) throws PersistenceException {
 		log.debug(
 				"Inserting the object into MongoDB. Database = {} , collection = {} , document = {}, writeConcern = {}.",
 				database, collection, doc, writeConcern);
+		
+		
+		fixPosibleNonCapitalizedGeometryPoint(doc);
+		
 		MongoCollection<BasicDBObject> dbCollection = getCollection(database, collection, BasicDBObject.class);
 		try {
 			dbCollection.insertOne(doc);
