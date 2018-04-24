@@ -29,7 +29,7 @@ public class MustacheUtil {
         return mf;
     }
     
-    private static String executeTemplate(Mustache m, Map<String, Object> context) throws IOException {
+    public static String executeTemplate(Mustache m, Map<String, Object> context) throws IOException {
         StringWriter writer = new StringWriter();
         m.execute(writer, context).flush();
         return writer.toString();

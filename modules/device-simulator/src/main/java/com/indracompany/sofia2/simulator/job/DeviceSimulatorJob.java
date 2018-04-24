@@ -23,7 +23,6 @@ import org.quartz.JobExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -44,14 +43,20 @@ public class DeviceSimulatorJob {
 	private FieldRandomizerService fieldRandomizerService;
 	@Autowired
 	private PersistenceService persistenceService;
-
+	private final static String PATH_DATA = "datos";
+	private final static String PATH_PROPERTIES = "properties";
+	private final static String DATE_VAR = "$date";
+	private final static String NUMBER_VAR = "number";
+	private final static String STRING_VAR = "string";
+	private final static String OBJECT_VAR = "object";
+	private final static String ARRAY_VAR = "array";
 	private JsonNode schema;
 
-	public void execute(JobExecutionContext context) throws JsonProcessingException, IOException {
+	public void execute(JobExecutionContext context) throws IOException {
 
 		String user = context.getJobDetail().getJobDataMap().getString("userId");
 		String json = context.getJobDetail().getJobDataMap().getString("json");
-		String id = context.getJobDetail().getJobDataMap().getString("id");
+
 		try {
 			this.generateInstance(user, json);
 		} catch (Exception e) {
@@ -70,7 +75,7 @@ public class DeviceSimulatorJob {
 		String clientPlatformInstance = jsonInstance.get("clientPlatformInstance").asText();
 		String ontology = jsonInstance.get("ontology").asText();
 
-		JsonNode ontologySchema = this.generateJsonSchema(ontology, user);
+		JsonNode ontologySchema = this.generateJson(ontology, user);
 		JsonNode fieldAndValues = this.fieldRandomizerService.randomizeFields(jsonInstance.path("fields"),
 				ontologySchema);
 
@@ -80,7 +85,7 @@ public class DeviceSimulatorJob {
 		return fieldAndValues;
 	}
 
-	private JsonNode generateJsonSchema(String ontology, String user) throws JsonProcessingException, IOException {
+	private JsonNode generateJson(String ontology, String user) throws IOException {
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode ontologySchema = mapper
@@ -88,28 +93,28 @@ public class DeviceSimulatorJob {
 		this.schema = ontologySchema;
 		JsonNode fieldsSchema = mapper.createObjectNode();
 
-		if (!ontologySchema.path("datos").isMissingNode()) {
+		if (!ontologySchema.path(PATH_DATA).isMissingNode()) {
 
-			Iterator<String> fields = ontologySchema.path("datos").path("properties").fieldNames();
-			ontologySchema = ontologySchema.path("datos").path("properties");
+			Iterator<String> fields = ontologySchema.path(PATH_DATA).path(PATH_PROPERTIES).fieldNames();
+			ontologySchema = ontologySchema.path(PATH_DATA).path(PATH_PROPERTIES);
 			while (fields.hasNext()) {
 				String field = fields.next();
-				if (ontologySchema.path(field).get("type").asText().equals("string"))
+				if (ontologySchema.path(field).get("type").asText().equals(STRING_VAR))
 					if (!ontologySchema.path(field).path("enum").isMissingNode())
 						((ObjectNode) fieldsSchema).put(field, ontologySchema.path(field).get("enum").get(0).asText());
 					else {
-						if (field.equals("$date"))
+						if (field.equals(DATE_VAR))
 							((ObjectNode) fieldsSchema).put(field, this.getCurrentDate());
 						else
 							((ObjectNode) fieldsSchema).put(field, "");
 					}
-				else if (ontologySchema.path(field).get("type").asText().equals("number"))
+				else if (ontologySchema.path(field).get("type").asText().equals(NUMBER_VAR))
 					((ObjectNode) fieldsSchema).put(field, 0);
-				else if (ontologySchema.path(field).get("type").asText().equals("object")) {
-					JsonNode object = this.createObjectNode(ontologySchema.path(field));
+				else if (ontologySchema.path(field).get("type").asText().equals(OBJECT_VAR)) {
+					JsonNode object = this.createObject(ontologySchema.path(field));
 					((ObjectNode) fieldsSchema).set(field, object);
-				} else if (ontologySchema.path(field).get("type").asText().equals("array")) {
-					JsonNode object = this.createArrayNode(ontologySchema.path(field));
+				} else if (ontologySchema.path(field).get("type").asText().equals(ARRAY_VAR)) {
+					JsonNode object = this.createArray(ontologySchema.path(field));
 					JsonNode arrayNode = mapper.createArrayNode();
 					((ArrayNode) arrayNode).add(object);
 					((ObjectNode) fieldsSchema).set(field, arrayNode);
@@ -119,38 +124,38 @@ public class DeviceSimulatorJob {
 		}
 		String context = mapper
 				.readTree(this.ontologyService.getOntologyByIdentification(ontology, user).getJsonSchema())
-				.get("properties").fields().next().getKey();
+				.get(PATH_PROPERTIES).fields().next().getKey();
 		return mapper.createObjectNode().set(context, fieldsSchema);
 
 	}
 
-	private JsonNode createObjectNode(JsonNode fieldNode) {
+	private JsonNode createObject(JsonNode fieldNode) {
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode objectNode = mapper.createObjectNode();
 
-		if (!fieldNode.path("properties").isMissingNode()) {
-			fieldNode = fieldNode.path("properties");
+		if (!fieldNode.path(PATH_PROPERTIES).isMissingNode()) {
+			fieldNode = fieldNode.path(PATH_PROPERTIES);
 			Iterator<String> fields = fieldNode.fieldNames();
 
 			while (fields.hasNext()) {
 				String field = fields.next();
-				if (fieldNode.path(field).get("type").asText().equals("string"))
+				if (fieldNode.path(field).get("type").asText().equals(STRING_VAR))
 					if (!fieldNode.path(field).path("enum").isMissingNode())
 						((ObjectNode) objectNode).put(field, fieldNode.path(field).get("enum").get(0).asText());
 					else {
-						if (field.equals("$date"))
+						if (field.equals(DATE_VAR))
 							((ObjectNode) objectNode).put(field, this.getCurrentDate());
 						else
 							((ObjectNode) objectNode).put(field, "");
 					}
-				else if (fieldNode.path(field).get("type").asText().equals("number"))
+				else if (fieldNode.path(field).get("type").asText().equals(NUMBER_VAR))
 					((ObjectNode) objectNode).put(field, 0);
-				else if (fieldNode.path(field).get("type").asText().equals("object")) {
-					JsonNode object = this.createObjectNode(fieldNode.path(field));
+				else if (fieldNode.path(field).get("type").asText().equals(OBJECT_VAR)) {
+					JsonNode object = this.createObject(fieldNode.path(field));
 					((ObjectNode) objectNode).set(field, object);
-				} else if (fieldNode.path(field).get("type").asText().equals("array")) {
-					JsonNode object = this.createArrayNode(fieldNode.path(field));
+				} else if (fieldNode.path(field).get("type").asText().equals(ARRAY_VAR)) {
+					JsonNode object = this.createArray(fieldNode.path(field));
 					if (!object.isArray()) {
 						JsonNode arrayNode = mapper.createArrayNode();
 						((ArrayNode) arrayNode).add(object);
@@ -167,7 +172,7 @@ public class DeviceSimulatorJob {
 				String objectType = fields.next();
 				if (objectType.equals("oneOf") || objectType.equals("anyOf")) {
 					String property = fieldNode.get(objectType).get(0).get("$ref").asText().replace("#/", "");
-					objectNode = this.createObjectNode(this.schema.path(property));
+					objectNode = this.createObject(this.schema.path(property));
 				}
 			}
 
@@ -176,38 +181,30 @@ public class DeviceSimulatorJob {
 		return objectNode;
 	}
 
-	private JsonNode createArrayNode(JsonNode fieldNode) {
+	private JsonNode createArray(JsonNode fieldNode) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode objectNode = mapper.createObjectNode();
 
-		if (!fieldNode.path("properties").isMissingNode()) {
-			fieldNode = fieldNode.path("properties");
+		if (!fieldNode.path(PATH_PROPERTIES).isMissingNode()) {
+			fieldNode = fieldNode.path(PATH_PROPERTIES);
 			Iterator<String> fields = fieldNode.fieldNames();
 
 			while (fields.hasNext()) {
 				String field = fields.next();
-				if (fieldNode.path(field).get("type").asText().equals("string"))
+				if (fieldNode.path(field).get("type").asText().equals(STRING_VAR))
 					if (!fieldNode.path(field).path("enum").isMissingNode())
 						((ObjectNode) objectNode).put(field, fieldNode.path(field).get("enum").get(0).asText());
 					else {
-						if (field.equals("$date"))
+						if (field.equals(DATE_VAR))
 							((ObjectNode) objectNode).put(field, this.getCurrentDate());
 						else
 							((ObjectNode) objectNode).put(field, "");
 					}
-				else if (fieldNode.path(field).get("type").asText().equals("number"))
+				else if (fieldNode.path(field).get("type").asText().equals(NUMBER_VAR))
 					((ObjectNode) objectNode).put(field, 0);
-				else if (fieldNode.path(field).get("type").asText().equals("object")) {
-					JsonNode object = this.createObjectNode(fieldNode.path(field));
-					return object;
+				else if (fieldNode.path(field).get("type").asText().equals(OBJECT_VAR)) {
+					return this.createObject(fieldNode.path(field));
 				}
-				// ((ObjectNode) objectNode).set(field, object);
-				// else if (fieldNode.path(field).get("type").asText().equals("array")) {
-				// JsonNode object = this.createArrayNode(fieldNode.path(field));
-				// JsonNode arrayNode = mapper.createArrayNode();
-				// ((ArrayNode) arrayNode).add(object);
-				// ((ObjectNode) objectNode).set(field, arrayNode);
-				// }
 
 			}
 
@@ -219,33 +216,25 @@ public class DeviceSimulatorJob {
 
 			for (int i = 0; i < size; i++) {
 				String type;
-				String fieldName;
-				boolean isEnum;
 
 				if (fieldNode.isArray()) {
 					type = fieldNode.get(i).get("type").asText();
 					for (int j = 0; j < size; j++) {
 						JsonNode nodeAux = mapper.createObjectNode();
-						if (type.equals("string")) {
+						if (type.equals(STRING_VAR)) {
 
-							// ((ObjectNode) nodeAux).put(String.valueOf(j), "");
 							((ObjectNode) nodeAux).put(String.valueOf(j), "");
-							((ArrayNode) nodeArray).add("");
-						} else if (type.equals("number")) {
-							// ((ObjectNode) nodeAux).put(String.valueOf(j), 0);
-							((ObjectNode) nodeAux).put(String.valueOf(j), 0);
-							((ArrayNode) nodeArray).add(0);
+							nodeArray.add("");
+						} else if (type.equals(NUMBER_VAR)) {
 
-						} else if (type.equals("object")) {
-							JsonNode object = this.createObjectNode(fieldNode);
+							((ObjectNode) nodeAux).put(String.valueOf(j), 0);
+							nodeArray.add(0);
+
+						} else if (type.equals(OBJECT_VAR)) {
+							JsonNode object = this.createObject(fieldNode);
 							return object;
 						}
-						// else if (type.equals("array")) {
-						// JsonNode object = this.createArrayNode(fieldNode.path(i));
-						// JsonNode arrayNode = mapper.createArrayNode();
-						// ((ArrayNode) arrayNode).add(object);
-						// ((ObjectNode) objectNode).set(String.valueOf(i), arrayNode);
-						// }
+
 					}
 					if (!nodeArray.isNull())
 						return nodeArray;
@@ -254,18 +243,18 @@ public class DeviceSimulatorJob {
 					type = fieldNode.get("type").asText();
 
 				}
-				if (type.equals("string")) {
+				if (type.equals(STRING_VAR)) {
 
-					((ArrayNode) nodeArray).add("");
+					nodeArray.add("");
 
-				} else if (type.equals("number")) {
-					((ArrayNode) nodeArray).add(0);
+				} else if (type.equals(NUMBER_VAR)) {
+					nodeArray.add(0);
 
-				} else if (type.equals("object")) {
-					JsonNode object = this.createObjectNode(fieldNode);
+				} else if (type.equals(OBJECT_VAR)) {
+					JsonNode object = this.createObject(fieldNode);
 					return object;
-				} else if (type.equals("array")) {
-					JsonNode object = this.createArrayNode(fieldNode.path(i));
+				} else if (type.equals(ARRAY_VAR)) {
+					JsonNode object = this.createArray(fieldNode.path(i));
 					JsonNode arrayNode = mapper.createArrayNode();
 					((ArrayNode) arrayNode).add(object);
 					((ObjectNode) objectNode).set(String.valueOf(i), arrayNode);
@@ -279,7 +268,6 @@ public class DeviceSimulatorJob {
 
 		return objectNode;
 	}
-	// TODO jsonnode para fecha
 
 	private String getCurrentDate() {
 		DateFormat dfr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");

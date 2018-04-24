@@ -1,13 +1,13 @@
 {
-		"newdoc": {
+		"newpin": {
 			"properties": {
 				"geometry": {
-					"type": "geo_shape"
+					"type": "geo_point"
 				},
 				"name": {
 					"type": "text"
 				},
-				"job": {
+				"subject": {
 					"type": "text"
 				}
 			}
