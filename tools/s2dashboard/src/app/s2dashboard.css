@@ -57,7 +57,7 @@ gridster-grid .column {
 }
 
 .transparent-color{
-  background-color: transparent !important
+  background-color: #000000e8 !important
 }
 
 .left-margin-10{
@@ -166,3 +166,4 @@ tip-arrow{
 .md-open-menu-container{
   z-index: 10000 !important
 }
+
