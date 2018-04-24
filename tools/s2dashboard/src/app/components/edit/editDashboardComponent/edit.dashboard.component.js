@@ -1221,6 +1221,7 @@
         newPage.layers = [newLayer];
         newPage.background = {}
         newPage.background.file = angular.copy($scope.file);
+        newPage.background.color="hsl(0, 0%, 100%)";
         newPage.selectedlayer= 0;
         dashboard.pages.push(newPage);
         $scope.title = "";

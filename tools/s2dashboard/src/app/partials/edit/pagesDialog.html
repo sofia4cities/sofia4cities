@@ -38,10 +38,15 @@
               </span>
             </md-item-template>
           </md-autocomplete>
-
+         
+          <md-input-container flex="35">
+            <label>Background Color</label>
+           
+          <color-picker options="{restrictToFormat:false, preserveInputFormat:false}" ng-model="page.background.color"></color-picker>
+          </md-input-container>
 
           <lf-ng-md-file-input ng-change="onFilesChange($index)" lf-api="apiUpload[$index]" lf-files="auxUpload[$index].file" lf-placeholder="" lf-browse-label="Change Background Img" accept="image/*" progress lf-filesize="5MB" lf-remove-label=""></lf-ng-md-file-input>
-
+ 
 
           <md-input-container flex="30">
             <md-button ng-if="!$first && dashboard.pages.length > 1" class="md-icon-button md-primary" aria-label="up" ng-click="moveUpPage($index)">

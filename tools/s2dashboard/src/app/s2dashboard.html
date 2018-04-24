@@ -13,8 +13,8 @@
 <!-- end sidenav partial -->
 
 <span>
-  <div ng-repeat="page in vm.dashboard.pages">
-    <page page="page" gridoptions="vm.dashboard.gridOptions" editmode="vm.editmode" selectedlayer="vm.selectedlayer" class="flex" ng-if="vm.checkIndex($index)"></page>
+  <div ng-style="vm.dashboard.header.enable && {'height': 'calc(100% - '+{{vm.dashboard.header.height}}+'px'+')'} || {'height': '100%'}" ng-repeat="page in vm.dashboard.pages">
+    <page page="page" gridoptions="vm.dashboard.gridOptions" dashboardheader="vm.dashboard.header" editmode="vm.editmode" selectedlayer="vm.selectedlayer" class="flex" ng-if="vm.checkIndex($index)"></page>
   </div>
 </span>
 <!--</section>-->
