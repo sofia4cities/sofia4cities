@@ -85,11 +85,11 @@
 									<span class="caption-subject font-grey-gallery uppercase" th:text="#{json2ont.tool.title}"> JSON to Ontology Tool</span>
 								</div>									
 								<div class="tools">
-									<a href="" class="collapse" data-original-title="" title=""> </a>																			
+									<a href="" class="expand" data-original-title="" title=""> </a>																			
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
 								</div>															
 							</div>
-							<div class="portlet-body" style="display: block; height: auto;">
+							<div class="portlet-body" style="display: none; height: auto;">
 								
 								<div class="row">
 									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
@@ -105,10 +105,12 @@
 											
 											<div class="form-body">
 											<div class="row">
+											<div class="col-md-6 col-sm-12 col-xs-12">
 												<div class="form-group">
 												    <label for="file" th:text="#{json2ont.inputfile}">File input</label>
-												    <input id="file" type="file" class="form-control-file"  onchange="loadJsonFromDoc(this.files)" accept=".xml,.csv"/>
+												    <input id="file" type="file" class="form-control-file"  onchange="loadJsonFromDoc(this.files)" accept=".json,.xml,.csv"/>
 												 </div>
+											</div>
 											</div>
 											<!-- Json-->
 												<div class="row">
@@ -128,12 +130,33 @@
 															<label th:text="#{json2ont.jsonschema}">JSON</label>														
 															<textarea id="schemaTextArea" name="schema"  th:required="true"  class="form-control" rows="5" data-min-rows='5'></textarea>
 															<div class="pull-right">
-																<button  onclick="createOntology()" id="createOnt" type="button" class="btn btn-square btn-success" th:value="#{json2ont.createont}" ><span th:text="#{json2ont.createont}"> Beautify</span></button>
+																<button  onclick="modalOntology()" id="createOnt" type="button" class="btn btn-square btn-success" th:value="#{json2ont.createont}" ><span th:text="#{json2ont.createont}"> Create ontology</span></button>
 															</div>
 														</div>
 														<div class="clearfix"></div>
 													</div>																				
 												</div>
+											</div>
+											<!-- Modal -->
+											<div id="ontologyData" class="modal fade" role="dialog">
+											  <div class="modal-dialog modal-sm">
+											
+											    <!-- Modal content-->
+											    <div class="modal-content">
+											      <div class="modal-header">
+											        <button type="button" class="close" data-dismiss="modal"></button>
+											        <h4 class="modal-title">New Ontology</h4>
+											      </div>		
+											      <div class="modal-body">
+											      <input type="text" id="ontologyIdentification" placeholder="Ontology Identification"/>
+											      <input type="text" id="ontologyDescription" placeholder="Ontology Description"/>
+											      </div>									      
+											      <div class="modal-footer">
+											        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="createOntology()">Submit</button>
+											      </div>
+											    </div>
+											
+											  </div>
 											</div>
 											<!-- Modal -->
 											<div id="returnAction" class="modal fade" role="dialog">
@@ -143,7 +166,7 @@
 											    <div class="modal-content">
 											      <div class="modal-header">
 											        <button type="button" class="close" data-dismiss="modal"></button>
-											        <h4 class="modal-title">r</h4>
+											        <h4 class="modal-title" id="response">r</h4>
 											      </div>											      
 											      <div class="modal-footer">
 											        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -152,23 +175,94 @@
 											
 											  </div>
 											</div>
-											<!-- FORM BUTTONS -->
-											<div class="form-actions">
-												<div class="pull-right">
-													<!-- CREATE 
-													<button id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
-													-->
-													<!-- CANCEL TO-DO: authentication and control
-													<button  id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:navigateUrl(\'' + @{/main} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
-													 -->
-												</div>
-											</div>											
+																				
 										</form>
 										
 									</div>									
 								</div>
 							</div>
-						</div><!-- END PORTLET BASIC  -->						
+						</div><!-- END PORTLET BASIC  -->
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="la la-users font-grey-gallery"></i>
+									<!-- FORM TITLE -->
+									<span class="caption-subject font-grey-gallery uppercase" th:text="#{json2ont.toolimport.title}"> JSON import</span>
+								</div>									
+								<div class="tools">
+									<a href="" class="expand" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>															
+							</div>
+							<div class="portlet-body" style="display: none; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
+									</div>
+									<div class="col-md-12">										
+										<form role="form" id="json2ont_form" method="post" class="form">											
+											
+											<div class="form-body">
+											<div class="row">
+											<div class="col-md-6 col-sm-12 col-xs-12">
+												<div class="form-group">
+												    <label for="file" th:text="#{json2ont.inputfile}">File input</label>
+												    <input id="file" type="file" class="form-control-file"  onchange="loadJsonFromDoc(this.files)" accept=".json,.xml,.csv"/>
+												 </div>
+											</div>
+											<div class="col-md-3 col-sm-6 col-xs-12">
+												<div class="form-group">
+													<label class="control-label" th:text="#{json2ont.selectont} + ':'">Ontologies</label>
+													<select id="ontology" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{json2ont.selectont}">
+														<option th:each="ontology :${ontologies}" th:value="${ontology.identification}" th:text="${ontology.identification}" ></option>																
+													</select>													
+												</div>
+											</div>	
+											</div>
+											<!-- Json-->
+												<div class="row">
+													<div class="col-md-12 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{json2ont.json}">JSON</label>														
+															<textarea id="jsonImportTextArea" name="jsonImport"  th:required="true"  class="form-control" rows="5" data-min-rows='5'></textarea>
+															<div class="pull-right">
+																<button  onclick="beautifyJson()" id="beautify" type="button" class="btn btn-square btn-primary" th:value="#{json2ont.beautify}" ><span th:text="#{json2ont.beautify}"> Beautify</span></button>														
+																<button  onclick="importBulkJson()" id="createOnt" type="button" class="btn btn-square btn-success" th:value="#{json2ont.createont}" ><span th:text="#{json2ont.import}"> Import to Ontology</span></button>														
+															</div>
+														</div>
+														<div class="clearfix"></div>
+													</div>																				
+												</div>
+												<!-- Modal -->
+												<div id="ErrorOntSelect" class="modal fade" role="dialog">
+												  <div class="modal-dialog modal-sm">
+												
+												    <!-- Modal content-->
+												    <div class="modal-content">
+												      <div class="modal-header">
+												        <button type="button" class="close" data-dismiss="modal"></button>
+												        <h4 class="modal-title" id="errorSelect"></h4>
+												      </div>											      
+												      <div class="modal-footer">
+												        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+												      </div>
+												    </div>
+												
+												  </div>
+												</div>
+											</div>										
+										</form>
+										
+									</div>									
+								</div>
+							</div>
+						</div>						
 					</div><!-- END COL-12 -->						
 				</div><!-- END MAIN ROW -->
 			</div><!-- END CONTENT BODY -->
@@ -203,6 +297,9 @@
 	<script th:src="@{/static/js/utils/schemaGen.js}"/>
 	<script th:src="@{/static/js/utils/xml2json.js}"/>
 	<script th:src="@{/static/js/utils/csv2json.js}"/>
+	<script th:src="@{/static/js/utils/underscore.js}"/>
+	<script th:src="@{/static/js/utils/underscoreString.js}"/>
+
 
 	<!-- BEAUTIFIER -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify.js"></script>
@@ -244,30 +341,65 @@
             lineWrapping: true
 
         });
+        myTextArea = document.getElementById('jsonImportTextArea');
+        myCodeMirrorJsonImport = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "application/ld+json",
+        	autoCloseBrackets: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",
+            lineWrapping: true
+
+        });
+        myCodeMirrorJsonImport.setSize("100%",300);
 		myCodeMirror.setSize("100%", 500);
 		myCodeMirrorSchema.setSize("100%", 500);
     };
 	
 
     var generateSchema = function (){
-    	myCodeMirrorSchema.setValue(processJSON(myCodeMirror.getValue()));
+    	if(JSON.parse(myCodeMirror.getValue()).length == null){
+    		myCodeMirrorSchema.setValue(processJSON(myCodeMirror.getValue()));
+    	}else{
+    		var json = JSON.parse(myCodeMirror.getValue())[0];
+    		myCodeMirrorSchema.setValue(processJSON(JSON.stringify(json)));
+    	}
+    	
     }
 	var beautifyJson = function() {
 		myCodeMirror.setValue(js_beautify(myCodeMirror.getValue()));
+		myCodeMirrorJsonImport.setValue(js_beautify(myCodeMirrorJsonImport.getValue()));
 	};
+	
+	var importBulkJson = function() {
+		if($('#ontology').val() == ""){
+			$('#errorSelect').text("Select ontology first");
+			$('#ErrorOntSelect').modal("show");
+		}else{
+			var arrayJson = [{}];
+			arrayJson= JSON.parse(myCodeMirrorJsonImport.getValue());
+			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':JSON.stringify(arrayJson), 'ontologyIdentification': $('#ontology').val()}, function(data){
+				
+			});
+		}
+		
+	}
+	var modalOntology = function() {
+		$('#ontologyData').modal("show");
+	}
 	
 	var createOntology = function() {
 		try{
 			JSON.parse(myCodeMirrorSchema.getValue());
 		}catch{
-			$('.modal-title').text(invalidSchema);
+			$('#response').text(invalidSchema);
 			$('#returnAction').modal("show");
 		}
-		jQuery.post('/controlpanel/jsontool/createontology',{'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue(), 'ontologyIdentification':JSON.parse(myCodeMirrorSchema.getValue()).required[0]}, function(data){
+		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue()}, function(data){
 			if(data=='ok'){
-				$('.modal-title').text(ontologyCreated);
+				$('#response').text(ontologyCreated);
 			}else{
-				$('.modal-title').text(ontologyExists);
+				$('#response').text(ontologyExists);
 			}
 			
 			$('#returnAction').modal("show");
@@ -282,21 +414,38 @@
 			reader.onloadend = function () {
 				var x2js = new X2JS();
 				myCodeMirror.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
+				myCodeMirrorJsonImport.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
 				beautifyJson();
 				
 			}
 			
-		}else if (files[0].name.indexOf("csv")!=-1){
-			Papa.parse(files[0],{
-			    complete: function(results) {
-			       results.data;
-			    }});
-			/*reader.readAsText(files[0]);
+		}else if (files[0].name.indexOf(".csv")!=-1){
+			reader.readAsText(files[0]);
 			reader.onloadend = function () {
-				myCodeMirror.setValue(JSON.stringify(Papa.parse(reader.result)));
-			}*/
+				myCodeMirror.setValue(csvJSON(reader.result));
+				myCodeMirrorJsonImport.setValue(csvJSON(reader.result));
+				beautifyJson();
+			}
 			
+		}else if (files[0].type == "application/json"){
+			reader.readAsText(files[0]);
+			reader.onloadend = function () {
+				var jsonData = reader.result;
+				jsonData = jsonData.replace(/[\r]/g, '');
+				var arrayJson = [];
+				var dataSplitted = jsonData.split("\n");
+				var i;
+				for(var i in dataSplitted){
+					if(dataSplitted[i] != "") {
+						arrayJson.push(JSON.parse(dataSplitted[i]));
+					}
+				}
+				myCodeMirror.setValue(JSON.stringify(arrayJson));
+				myCodeMirrorJsonImport.setValue(JSON.stringify(arrayJson));
+				beautifyJson();
+			}
 		}
+		
 
 		
 		

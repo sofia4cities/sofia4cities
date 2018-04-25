@@ -1,5 +1,7 @@
 package com.indracompany.sofia2.controlpanel.controller.jsontool;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,12 +11,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.services.datamodel.DataModelService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.router.service.app.model.NotificationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
+import com.indracompany.sofia2.router.service.app.model.OperationModel.Source;
+import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
+import com.indracompany.sofia2.router.service.app.service.RouterService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,28 +42,59 @@ public class JsonToolController {
 	private AppWebUtils utils;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private RouterService routerService;
 
 	private static final String DATAMODEL_DEFAULT_NAME = "EmptyBase";
 
 	@GetMapping("show")
-	public String show() {
+	public String show(Model model) {
+		model.addAttribute("ontologies", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()));
 		return "json2ontologytool/import";
 	}
 
 	@PostMapping("createontology")
 	public @ResponseBody String createOntology(Model model, @RequestParam String ontologyIdentification,
-			@RequestParam String schema, @RequestParam String instance) {
+			@RequestParam String ontologyDescription, @RequestParam String schema, @RequestParam String instance) {
 		Ontology ontology = new Ontology();
 		ontology.setJsonSchema(schema);
 		ontology.setIdentification(ontologyIdentification);
 		ontology.setActive(true);
 		ontology.setDataModel(this.dataModelService.getDataModelByName(DATAMODEL_DEFAULT_NAME));
-		ontology.setDescription(ontologyIdentification + " created from schema");
+		ontology.setDescription(ontologyDescription);
 		ontology.setUser(this.userService.getUser(this.utils.getUserId()));
 		try {
 			this.ontologyService.createOntology(ontology);
 		} catch (OntologyServiceException e) {
 			return "ko";
+		}
+
+		return "ok";
+	}
+
+	@PostMapping("importbulkdata")
+	public @ResponseBody String importBulkData(Model model, @RequestParam String data,
+			@RequestParam String ontologyIdentification) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			JsonNode node = mapper.readTree(data);
+			final OperationModel operation;
+			if (node.isArray()) {
+				operation = new OperationModel.Builder(ontologyIdentification, OperationType.INSERT,
+						this.utils.getUserId(), Source.INTERNAL_ROUTER).body(node.toString())
+								.queryType(QueryType.NATIVE).build();
+				final NotificationModel modelNotification = new NotificationModel();
+				modelNotification.setOperationModel(operation);
+
+				try {
+					final OperationResultModel response = routerService.insert(modelNotification);
+				} catch (Exception e) {
+					return "Could not insert data";
+				}
+			}
+
+		} catch (IOException e) {
+			return "Not valid JSON";
 		}
 
 		return "ok";
