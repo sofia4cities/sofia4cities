@@ -1,0 +1,477 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+
+		
+		<!-- WEB FONTs -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND CODEMIRROR  -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neat.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/ambiance.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neo.css}"/>
+		
+				
+	</head>	
+	
+	<!-- page-sidebar-closed to START WITH MENU COLLAPSED. -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>
+			
+		<!-- BEGIN SIDEBAR INCLUDE (MENU) -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+			
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+				
+				<!-- BEGIN PAGE BAR AND BREADCRUM-->
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><span  th:text="#{json2ont.breadcrumb.show}">JSON to Ontology Tool </span></li>
+					</ul>						
+				</div>
+				<!-- END PAGE BAR -->
+				
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{json2ont.tool.title}">JSON to Ontology Tool </span></h1>
+				<!-- END PAGE TITLE-->			
+				
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">						
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="la la-users font-grey-gallery"></i>
+									<!-- FORM TITLE -->
+									<span class="caption-subject font-grey-gallery uppercase" th:text="#{json2ont.tool.title}"> JSON to Ontology Tool</span>
+								</div>									
+								<div class="tools">
+									<a href="" class="expand" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>															
+							</div>
+							<div class="portlet-body" style="display: none; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
+									</div>
+									<div class="col-md-12">										
+										<form role="form" id="json2ont_form" method="post" class="form">											
+											
+											<div class="form-body">
+											<div class="row">
+											<div class="col-md-6 col-sm-12 col-xs-12">
+												<div class="form-group">
+												    <label for="file" th:text="#{json2ont.inputfile}">File input</label>
+												    <input id="file" type="file" class="form-control-file"  onchange="loadJsonFromDoc(this.files)" accept=".json,.xml,.csv"/>
+												 </div>
+											</div>
+											</div>
+											<!-- Json-->
+												<div class="row">
+													<div class="col-md-6 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{json2ont.json}">JSON</label>														
+															<textarea id="jsonTextArea" name="json"  th:required="true"  class="form-control" rows="5" data-min-rows='5'></textarea>
+															<div class="pull-right">
+																<button  onclick="beautifyJson()" id="beautify" type="button" class="btn btn-square btn-primary" th:value="#{json2ont.beautify}" ><span th:text="#{json2ont.beautify}"> Beautify</span></button>
+																<button onclick="generateSchema()" id="schemagen" type="button" class="btn btn-square btn-info" th:value="#{json2ont.schemagen}" ><span th:text="#{json2ont.schemagen}" > Generate Schema</span></button>
+															</div>
+														</div>
+														<div class="clearfix"></div>
+													</div>	
+													<div class="col-md-6 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{json2ont.jsonschema}">JSON</label>														
+															<textarea id="schemaTextArea" name="schema"  th:required="true"  class="form-control" rows="5" data-min-rows='5'></textarea>
+															<div class="pull-right">
+																<button  onclick="modalOntology()" id="createOnt" type="button" class="btn btn-square btn-success" th:value="#{json2ont.createont}" ><span th:text="#{json2ont.createont}"> Create ontology</span></button>
+															</div>
+														</div>
+														<div class="clearfix"></div>
+													</div>																				
+												</div>
+											</div>
+											<!-- Modal -->
+											<div id="ontologyData" class="modal fade" role="dialog">
+											  <div class="modal-dialog modal-sm">
+											
+											    <!-- Modal content-->
+											    <div class="modal-content">
+											      <div class="modal-header">
+											        <button type="button" class="close" data-dismiss="modal"></button>
+											        <h4 class="modal-title">New Ontology</h4>
+											      </div>		
+											      <div class="modal-body">
+											      <input type="text" id="ontologyIdentification" placeholder="Ontology Identification"/>
+											      <input type="text" id="ontologyDescription" placeholder="Ontology Description"/>
+											      </div>									      
+											      <div class="modal-footer">
+											        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="createOntology()">Submit</button>
+											      </div>
+											    </div>
+											
+											  </div>
+											</div>
+											
+																				
+										</form>
+										
+									</div>									
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC  -->
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="la la-users font-grey-gallery"></i>
+									<!-- FORM TITLE -->
+									<span class="caption-subject font-grey-gallery uppercase" th:text="#{json2ont.toolimport.title}"> JSON import</span>
+								</div>									
+								<div class="tools">
+									<a href="" class="expand" data-original-title="" title=""> </a>																			
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
+								</div>															
+							</div>
+							<div class="portlet-body" style="display: none; height: auto;">
+								
+								<div class="row">
+									<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>
+                                        <div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
+									</div>
+									<div class="col-md-12">										
+										<form role="form" id="json2ont_form" method="post" class="form">											
+											
+											<div class="form-body">
+											<div class="row">
+											<div class="col-md-6 col-sm-12 col-xs-12">
+												<div class="form-group">
+												    <label for="file" th:text="#{json2ont.inputfile}">File input</label>
+												    <input id="file" type="file" class="form-control-file"  onchange="loadJsonFromDoc(this.files)" accept=".json,.xml,.csv"/>
+												 </div>
+											</div>
+											<div class="col-md-3 col-sm-6 col-xs-12">
+												<div class="form-group">
+													<label class="control-label" th:text="#{json2ont.selectont} + ':'">Ontologies</label>
+													<select id="ontology" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{json2ont.selectont}">
+														<option th:each="ontology :${ontologies}" th:value="${ontology.identification}" th:text="${ontology.identification}" ></option>																
+													</select>													
+												</div>
+											</div>	
+											</div>
+											<!-- Json-->
+												<div class="row">
+													<div class="col-md-12 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label th:text="#{json2ont.json}">JSON</label>														
+															<textarea id="jsonImportTextArea" name="jsonImport"  th:required="true"  class="form-control" rows="5" data-min-rows='5'></textarea>
+															<div class="pull-right">
+																<button  onclick="beautifyJson()" id="beautify" type="button" class="btn btn-square btn-primary" th:value="#{json2ont.beautify}" ><span th:text="#{json2ont.beautify}"> Beautify</span></button>														
+																<button  onclick="importBulkJson()" id="createOnt" type="button" class="btn btn-square btn-success" th:value="#{json2ont.createont}" ><span th:text="#{json2ont.import}"> Import to Ontology</span></button>														
+															</div>
+														</div>
+														<div class="clearfix"></div>
+													</div>																				
+												</div>
+												<!-- Modal -->
+												<div id="ErrorOntSelect" class="modal fade" role="dialog">
+												  <div class="modal-dialog modal-sm">
+												
+												    <!-- Modal content-->
+												    <div class="modal-content">
+												      <div class="modal-header">
+												        <button type="button" class="close" data-dismiss="modal"></button>
+												        <h4 class="modal-title" id="errorSelect"></h4>
+												      </div>											      
+												      <div class="modal-footer">
+												        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+												      </div>
+												    </div>
+												
+												  </div>
+												</div>
+											</div>										
+										</form>
+										<!-- Modal -->
+											<div id="returnAction" class="modal fade" role="dialog">
+											  <div class="modal-dialog modal-sm">
+											
+											    <!-- Modal content-->
+											    <div class="modal-content">
+											      <div class="modal-header">
+											        <button type="button" class="close" data-dismiss="modal"></button>
+											        <h4 class="modal-title" id="response">r</h4>
+											      </div>											      
+											      <div class="modal-footer">
+											        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+											      </div>
+											    </div>
+											
+											  </div>
+											</div>
+										
+									</div>									
+								</div>
+							</div>
+						</div>						
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>
+	
+	<!-- CORE JS CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-datepicker/bootstrap-datepicker.min.js}"/>
+	<script th:src="@{/static/vendor/codemirror/lib/codemirror.js}"/>
+	<script th:src="@{/static/vendor/codemirror/mode/javascript/javascript.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/matchbrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/closebrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/selection/active-line.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/comment/comment.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/comment/continuecomment.js}" />
+	
+	
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}" type="text/javascript"></script>
+    <script th:src="@{/static/vendor/jquery-validation/additional-methods.min.js}" type="text/javascript"></script>
+	
+		
+	<!-- UTILS -->	
+	<script th:src="@{/static/js/utils/schemaGen.js}"/>
+	<script th:src="@{/static/js/utils/xml2json.js}"/>
+	<script th:src="@{/static/js/utils/csv2json.js}"/>
+	<script th:src="@{/static/js/utils/underscore.js}"/>
+	<script th:src="@{/static/js/utils/underscoreString.js}"/>
+
+
+	<!-- BEAUTIFIER -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify-css.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.7.5/beautify-html.js"></script>
+	
+		
+	<!-- MAIN INIT -->
+	<script  th:inline="javascript">
+
+	
+
+	function navigateUrl(url){  window.location.href = url;	}
+	var currentLanguage = [[${lang}]];	
+	var myCodeMirror;
+	var myCodeMirrorSchema;
+	var ontologyExists=[[#{json2ont.ontexists}]];
+	var ontologyCreated=[[#{json2ont.ontcreated}]];
+	var invalidSchema = [[#{json2ont.invalidschema}]];
+	var handleCodeMirror = function () {
+		
+        var myTextArea = document.getElementById('jsonTextArea');
+        myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "application/ld+json",
+        	autoCloseBrackets: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",
+            lineWrapping: true
+
+        });
+        myTextArea = document.getElementById('schemaTextArea');
+        myCodeMirrorSchema = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "application/ld+json",
+        	autoCloseBrackets: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",
+            lineWrapping: true
+
+        });
+        myTextArea = document.getElementById('jsonImportTextArea');
+        myCodeMirrorJsonImport = CodeMirror.fromTextArea(myTextArea, {
+        	mode: "application/ld+json",
+        	autoCloseBrackets: true,
+            matchBrackets: true,
+            styleActiveLine: true,
+            theme:"material",
+            lineWrapping: true
+
+        });
+        myCodeMirrorJsonImport.setSize("100%",300);
+		myCodeMirror.setSize("100%", 500);
+		myCodeMirrorSchema.setSize("100%", 500);
+    };
+	
+
+    var generateSchema = function (){
+    	if(JSON.parse(myCodeMirror.getValue()).length == null){
+    		myCodeMirrorSchema.setValue(processJSON(myCodeMirror.getValue()));
+    	}else{
+    		var json = JSON.parse(myCodeMirror.getValue())[0];
+    		myCodeMirrorSchema.setValue(processJSON(JSON.stringify(json)));
+    	}
+    	
+    }
+	var beautifyJson = function() {
+		myCodeMirror.setValue(js_beautify(myCodeMirror.getValue()));
+		myCodeMirrorJsonImport.setValue(js_beautify(myCodeMirrorJsonImport.getValue()));
+	};
+	
+	var importBulkJson = function() {
+		if($('#ontology').val() == ""){
+			$('#errorSelect').text("Select ontology first");
+			$('#ErrorOntSelect').modal("show");
+		}else{
+			var arrayJson = [{}];
+			arrayJson= JSON.parse(myCodeMirrorJsonImport.getValue());
+			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':JSON.stringify(arrayJson), 'ontologyIdentification': $('#ontology').val()}, function(data){
+				if(data != "Error"){
+					if(JSON.parse(myCodeMirrorJsonImport.getValue()).length != null){
+						$('#response').text(data + " ontologies inserted of type " + $('#ontology').val());
+					}else{
+						$('#response').text("Ontology inserted of type " + $('#ontology').val());
+					}
+					$('#returnAction').modal("show");
+				}else{
+					$('#response').text(data);
+					$('#returnAction').modal("show");
+				}
+				
+			});
+		}
+		
+	}
+	var modalOntology = function() {
+		$('#ontologyData').modal("show");
+	}
+	
+	var createOntology = function() {
+		try{
+			JSON.parse(myCodeMirrorSchema.getValue());
+		}catch{
+			$('#response').text(invalidSchema);
+			$('#returnAction').modal("show");
+		}
+		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue()}, function(data){
+			if(data=='ok'){
+				$('#response').text(ontologyCreated);
+			}else{
+				$('#response').text(ontologyExists);
+			}
+			
+			$('#returnAction').modal("show");
+		});
+		
+	}
+
+	var loadJsonFromDoc = function(files){
+		var reader = new FileReader();
+		if(files[0].type == "text/xml"){
+			reader.readAsText(files[0]);
+			reader.onloadend = function () {
+				var x2js = new X2JS();
+				myCodeMirror.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
+				myCodeMirrorJsonImport.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
+				beautifyJson();
+				
+			}
+			
+		}else if (files[0].name.indexOf(".csv")!=-1){
+			reader.readAsText(files[0]);
+			reader.onloadend = function () {
+				myCodeMirror.setValue(csvJSON(reader.result));
+				myCodeMirrorJsonImport.setValue(csvJSON(reader.result));
+				beautifyJson();
+			}
+			
+		}else if (files[0].type == "application/json"){
+			reader.readAsText(files[0]);
+			reader.onloadend = function () {
+				var jsonData = reader.result;
+				jsonData = jsonData.replace(/[\r]/g, '');
+				var arrayJson = [];
+				var dataSplitted = jsonData.split("\n");
+				var i;
+				for(var i in dataSplitted){
+					if(dataSplitted[i] != "") {
+						arrayJson.push(JSON.parse(dataSplitted[i]));
+					}
+				}
+				myCodeMirror.setValue(JSON.stringify(arrayJson));
+				myCodeMirrorJsonImport.setValue(JSON.stringify(arrayJson));
+				beautifyJson();
+			}
+		}
+		
+
+		
+		
+	};
+	
+	$(document).ready(function(){
+		handleCodeMirror();
+		
+	});
+		
+	// LOAD DATA TO USE IN MENUCONTROLLER
+	// MENU CONTROLLER LOAD AND INIT ITSELF
+	
+   
+	</script>	
+</body>
+</html>

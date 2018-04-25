@@ -16,26 +16,25 @@ package com.indracompany.sofia2.config.services.datamodel;
 import java.util.List;
 
 import com.indracompany.sofia2.config.model.DataModel;
-import com.indracompany.sofia2.config.model.DataModel.MainType;
 
 public interface DataModelService {
 
 	void deleteDataModel(String id);
-	
+
 	void createDataModel(DataModel dataModel);
-	
+
 	List<DataModel.MainType> getAllDataModelsTypes();
 
 	List<DataModel> getAllDataModels();
 
 	List<DataModel> getDataModelsByCriteria(String dataModelId, String name, String description);
-	
+
 	DataModel getDataModelById(String dataModelId);
-	
+
 	boolean dataModelExists(DataModel datamodel);
-	
+
 	void updateDataModel(DataModel datamodel);
-	
+
 	DataModel getDataModelByName(String dataModelName);
-	
+
 }

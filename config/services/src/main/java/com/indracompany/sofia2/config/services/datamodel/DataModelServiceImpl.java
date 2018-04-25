@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.DataModel;
@@ -25,14 +24,14 @@ import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 
 @Service
-public class DataModelServiceImpl implements DataModelService{
-	
+public class DataModelServiceImpl implements DataModelService {
+
 	@Autowired
 	private DataModelRepository dataModelRepository;
 
 	@Override
 	public void deleteDataModel(String id) {
-		dataModelRepository.delete(id);		
+		dataModelRepository.delete(id);
 	}
 
 	@Override
@@ -41,11 +40,11 @@ public class DataModelServiceImpl implements DataModelService{
 	}
 
 	@Override
-	public List<MainType> getAllDataModelsTypes(){
+	public List<MainType> getAllDataModelsTypes() {
 		List<MainType> types = Arrays.asList(DataModel.MainType.values());
 		return types;
 	}
-	
+
 	@Override
 	public List<DataModel> getAllDataModels() {
 		return dataModelRepository.findAll();
@@ -69,8 +68,8 @@ public class DataModelServiceImpl implements DataModelService{
 	@Override
 	public boolean dataModelExists(DataModel datamodel) {
 		DataModel datamodelList = dataModelRepository.findDatamodelsByName(datamodel.getName());
-		 
-		if(datamodelList == null)
+
+		if (datamodelList == null)
 			return false;
 		return true;
 	}
@@ -78,7 +77,7 @@ public class DataModelServiceImpl implements DataModelService{
 	@Override
 	public void updateDataModel(DataModel datamodel) {
 		DataModel oldDataModel = this.dataModelRepository.findById(datamodel.getId());
-		if(oldDataModel != null) {
+		if (oldDataModel != null) {
 			oldDataModel.setName(datamodel.getName());
 			oldDataModel.setLabels(datamodel.getLabels());
 			oldDataModel.setType(datamodel.getType());
@@ -87,4 +86,5 @@ public class DataModelServiceImpl implements DataModelService{
 			this.dataModelRepository.save(oldDataModel);
 		}
 	}
+
 }
