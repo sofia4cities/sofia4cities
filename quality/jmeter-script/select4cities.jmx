@@ -53,7 +53,7 @@
                 </elementProp>
               </collectionProp>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">s4citiespro.westeurope.cloudapp.azure.com</stringProp>
+            <stringProp name="HTTPSampler.domain">rancher.sofia4cities.com</stringProp>
             <stringProp name="HTTPSampler.port"></stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
@@ -128,7 +128,7 @@
                 </elementProp>
               </collectionProp>
             </elementProp>
-            <stringProp name="HTTPSampler.domain">s4citiespro.westeurope.cloudapp.azure.com</stringProp>
+            <stringProp name="HTTPSampler.domain">rancher.sofia4cities.com</stringProp>
             <stringProp name="HTTPSampler.port"></stringProp>
             <stringProp name="HTTPSampler.protocol">https</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
