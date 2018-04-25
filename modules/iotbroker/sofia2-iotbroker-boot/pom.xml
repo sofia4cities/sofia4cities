@@ -119,20 +119,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		<!-- TESTING PERFORMANCE -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-		
-		</dependency>
-		<dependency>
-			<groupId>org.databene</groupId>
-			<artifactId>contiperf</artifactId>
-			<version>2.4.3</version>
-			<scope>test</scope>
-		</dependency>
-
 	</dependencies>
 
 	<repositories>
