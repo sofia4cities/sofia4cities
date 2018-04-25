@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 import io.searchbox.core.Bulk;
@@ -40,6 +41,19 @@ public class ESInsertService {
 
 	@Autowired
 	ESBaseApi connector;
+	
+	
+	private void fixPosibleNonCapitalizedGeometryPoint(String s) {
+		try {
+			JsonObject o = new JsonParser().parse(s).getAsJsonObject();
+			JsonObject geometry = (JsonObject)o.get("geometry");
+			JsonElement type = geometry.get("type");
+			String value = type.getAsString();
+			geometry.addProperty("type", value.toLowerCase());
+			
+		} catch (Exception e) {}
+		
+	}
 
 	public List<BulkWriteResult> load(String index, String type, List<String> jsonDoc) {
 
@@ -50,6 +64,8 @@ public class ESInsertService {
 			
 			s = s.replaceAll("\\n", "");
 			s = s.replaceAll("\\r", "");
+			
+			fixPosibleNonCapitalizedGeometryPoint(s);
 			
 			Index i = new Index.Builder(s).index(index).type(type).build();
 			list.add(i);

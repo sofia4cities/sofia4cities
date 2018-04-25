@@ -158,7 +158,7 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String querySQLAsJson(String ontology, String query) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		return elasticSearchSQLDbHttpConnector.queryAsJson(query, 0);
+		return elasticSearchSQLDbHttpConnector.queryAsJson(query, 200);
 	}
 
 	//TODO IMPLEMENT
@@ -184,7 +184,7 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String findAllAsJson(String ontology) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		String output = eSDataService.findQueryDataAsJson(ontology);
+		String output = eSDataService.findAllByTypeAsJson(ontology,200);
 		return output;
 	}
 

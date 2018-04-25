@@ -46,8 +46,8 @@ public class ESBaseApi {
 	
 	public static String queryAllSize = "{\r\n" + 
 			"  \"size\": [SIZE]\r\n" + 
-			"  \"from\": 0\r\n" + 
-			"  \"query\":\r\n" + 
+			"  ,\"from\": 0\r\n" + 
+			"  ,\"query\":\r\n" + 
 			"   {\r\n" + 
 			"    \"match_all\": {}\r\n" + 
 			"   }\r\n" + 
@@ -55,12 +55,17 @@ public class ESBaseApi {
 	
 	public static String queryAllSizeFromTo = "{\r\n" + 
 			"  \"size\": [SIZE]\r\n" + 
-			"  \"from\": [FROM]\r\n" + 
-			"  \"query\":\r\n" + 
+			"  ,\"from\": [FROM]\r\n" + 
+			"  ,\"query\":\r\n" + 
 			"   {\r\n" + 
 			"    \"match_all\": {}\r\n" + 
 			"   }\r\n" + 
 			"}";
+	
+	public static String queryAllSizeFromToQuery = "{\r\n" + 
+			"  \"size\": [SIZE]\r\n" + 
+			"  ,\"from\": [FROM]\r\n" + 
+			"  ,[QUERY] }";
 
 	public static final String queryAll = "{\r\n" + 
 			"\"query\" : {\r\n" + 
