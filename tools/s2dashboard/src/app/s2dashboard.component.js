@@ -37,7 +37,12 @@
           if(vm.dashboard.interactionHash){
             interactionService.setInteractionHash(vm.dashboard.interactionHash);
           }
-
+          vm.dashboard.gridOptions.displayGrid = "none";
+          if(!vm.editmode){           
+            vm.dashboard.gridOptions.draggable.enabled = false;
+            vm.dashboard.gridOptions.resizable.enabled = false;
+            vm.dashboard.gridOptions.enableEmptyCellDrop = false;
+          }
           gadgetManagerService.setDashboardModelAndPage(vm.dashboard,vm.selectedpage);
         }
       ).catch(

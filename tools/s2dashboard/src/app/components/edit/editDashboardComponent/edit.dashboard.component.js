@@ -1659,7 +1659,9 @@
 
       //Get gadget JSON and return string info for UI
       $scope.prettyGadgetInfo = function(gadget){
-        return gadget.header.title.text + " (" + gadget.type + ")"
+       
+          return gadget.header.title.text + " (" + gadget.type + ")";
+        
       }
 
       $scope.generateGadgetInfo = function (gadgetId){
@@ -1697,7 +1699,7 @@
         var page = $scope.dashboard.pages[$scope.selectedpage];      
           for (var i = 0; i < page.layers.length; i++) {
           var layer = page.layers[i];
-          var gadgetsAux = layer.gridboard;
+          var gadgetsAux = layer.gridboard.filter(function(gadget){return typeof gadget.id != "undefined"});
           if(gadgetsAux.length){
             gadgets = gadgets.concat(gadgetsAux);
           }
