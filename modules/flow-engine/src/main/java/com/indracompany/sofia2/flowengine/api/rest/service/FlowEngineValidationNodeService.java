@@ -12,22 +12,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.flowengine.audit.aop;
+package com.indracompany.sofia2.flowengine.api.rest.service;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import com.indracompany.sofia2.config.model.User;
+import com.indracompany.sofia2.flowengine.api.rest.pojo.DecodedAuthentication;
+import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
+import com.indracompany.sofia2.flowengine.exception.ResourceNotFoundException;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+public interface FlowEngineValidationNodeService {
 
-@Documented
-@Retention(RUNTIME)
-@Target(METHOD)
-public @interface FlowEngineAuditable {
+	User validateUserCredentials(String userId, String password)
+			throws ResourceNotFoundException, NotAuthorizedException;
 
-	String doNotify() default "yes";
-
-	String module() default "FLOWENGINE";
-
+	DecodedAuthentication decodeAuth(String authentication) throws IllegalArgumentException;
 }

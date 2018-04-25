@@ -146,6 +146,7 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	}
 
 	@Override
+	@FlowEngineAuditable
 	public void deleteFlowEngineDomain(String domainId) {
 		checkIsSynchronized();
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);

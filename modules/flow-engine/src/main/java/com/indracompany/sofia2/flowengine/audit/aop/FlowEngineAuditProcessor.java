@@ -16,7 +16,10 @@ import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.audit.bean.Sofia2EventFactory;
 import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
 import com.indracompany.sofia2.config.model.FlowDomain;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
+import com.indracompany.sofia2.flowengine.api.rest.pojo.DecodedAuthentication;
+import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineValidationNodeService;
 import com.indracompany.sofia2.flowengine.audit.bean.FlowEngineAuditEvent;
 import com.indracompany.sofia2.flowengine.audit.bean.FlowEngineAuditEvent.FlowEngineAuditEventBuilder;
 
@@ -28,6 +31,9 @@ public class FlowEngineAuditProcessor {
 
 	@Autowired
 	private FlowDomainRepository domainRepository;
+
+	@Autowired
+	private FlowEngineValidationNodeService flowEngineValidationNodeService;
 
 	public String getUserId(String domainId) {
 
@@ -57,46 +63,87 @@ public class FlowEngineAuditProcessor {
 		return userId;
 	}
 
-	public FlowEngineAuditEvent getEvent(String methodName, String retVal, FlowEngineDomain domain) {
+	public FlowEngineAuditEvent getEvent(String methodName, String retVal, FlowEngineDomain domain,
+			OperationType operation) {
 
 		log.debug("getEvent for operation " + methodName + " and return value " + retVal);
 		String userId = getUserId(domain);
-		Date today = new Date();
 
 		FlowEngineAuditEventBuilder builder = FlowEngineAuditEvent.builder();
 
+		ResultOperationType resultOperation = null;
+		String message = null;
+
 		if (!"OK".equals(retVal)) {
 			builder.message(retVal);
-			builder.resultOperation(ResultOperationType.ERROR);
+			message = retVal;
+			resultOperation = ResultOperationType.ERROR;
 		} else {
-			String message = "Executed operation " + methodName + " for domain " + domain.getDomain() + " by user "
-					+ userId;
-			builder.message(message);
-			builder.resultOperation(ResultOperationType.SUCCESS);
+			message = "Executed operation " + methodName + " for domain " + domain.getDomain() + " by user " + userId;
+			resultOperation = ResultOperationType.SUCCESS;
 		}
 
-		FlowEngineAuditEvent event = builder.domain(domain.getDomain()).id(UUID.randomUUID().toString())
-				.module(Module.FLOWENGINE).type(EventType.FLOWENGINE).operationType(OperationType.START.name())
-				.timeStamp(today.getTime()).user(userId)
-				.formatedTimeStamp(CalendarUtil.builder().build().convert(today)).build();
+		FlowEngineAuditEvent event = getEvent(domain.getDomain(), userId, operation, message, resultOperation);
 
 		return event;
 	}
 
-	public FlowEngineAuditEvent getEvent(String methodName, String domainId) {
+	public FlowEngineAuditEvent getEvent(String methodName, String domainId, OperationType operation) {
 
 		log.debug("getEvent for operation " + methodName + " and domain " + domainId);
 		String userId = getUserId(domainId);
-		Date today = new Date();
 
 		String message = "Executed operation " + methodName + " for domain " + domainId + " by user " + userId;
 
-		FlowEngineAuditEvent event = FlowEngineAuditEvent.builder().domain(domainId).id(UUID.randomUUID().toString())
-				.module(Module.FLOWENGINE).type(EventType.FLOWENGINE).operationType(OperationType.START.name())
-				.timeStamp(today.getTime()).user(userId).message(message).resultOperation(ResultOperationType.SUCCESS)
-				.formatedTimeStamp(CalendarUtil.builder().build().convert(today)).build();
+		FlowEngineAuditEvent event = getEvent(domainId, userId, operation, message, ResultOperationType.SUCCESS);
 
 		return event;
+	}
+
+	public FlowEngineAuditEvent getQueryEvent(String ontology, String query, String queryType, String retVal,
+			String authentication) {
+		String message = "Query message on ontology " + ontology;
+		return getEvent(ontology, query, queryType, null, message, authentication, OperationType.QUERY);
+	}
+
+	public FlowEngineAuditEvent getInsertEvent(String ontology, String data, String retVal, String authentication) {
+		String message = "Executed insert on ontology " + ontology;
+		return getEvent(ontology, null, null, data, message, authentication, OperationType.INSERT);
+	}
+
+	public FlowEngineAuditEvent getEvent(String ontology, String query, String queryType, String data, String message,
+			String authentication, OperationType operation) {
+
+		log.debug("getEvent for operation");
+		FlowEngineAuditEvent event = null;
+
+		try {
+
+			final DecodedAuthentication decodedAuth = flowEngineValidationNodeService.decodeAuth(authentication);
+			final User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+					decodedAuth.getPassword());
+
+			event = getEvent(null, sofia2User.getUserId(), operation, message, ResultOperationType.SUCCESS);
+			event.setData(data);
+			event.setOntology(ontology);
+			event.setQuery(query);
+
+		} catch (Exception e) {
+			log.error("error processing getEvent submit operation ", e);
+		}
+
+		return event;
+	}
+
+	public FlowEngineAuditEvent getEvent(String domain, String user, OperationType operation, String message,
+			ResultOperationType result) {
+
+		Date today = new Date();
+
+		return FlowEngineAuditEvent.builder().id(UUID.randomUUID().toString()).module(Module.FLOWENGINE)
+				.type(EventType.FLOWENGINE).operationType(operation.name()).timeStamp(today.getTime()).user(user)
+				.message(message).resultOperation(result)
+				.formatedTimeStamp(CalendarUtil.builder().build().convert(today)).build();
 	}
 
 	public Sofia2AuditError getErrorEvent(String methodName, FlowEngineDomain domain, Exception ex) {
@@ -106,7 +153,31 @@ public class FlowEngineAuditProcessor {
 		String messageOperation = "Exception Detected while executing " + methodName + " for domain : "
 				+ domain.getDomain();
 
-		Sofia2AuditError event = Sofia2EventFactory.builder().build().createAuditEventError(userId, messageOperation,
+		return getErrorEvent(userId, messageOperation, ex);
+	}
+
+	public Sofia2AuditError getErrorEvent(String methodName, String message, String authentication, Exception ex) {
+
+		Sofia2AuditError event = null;
+
+		try {
+
+			final DecodedAuthentication decodedAuth = flowEngineValidationNodeService.decodeAuth(authentication);
+			final User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+					decodedAuth.getPassword());
+
+			event = getErrorEvent(sofia2User.getUserId(),
+					"Exception Detected while executing " + methodName + ", " + message, ex);
+		} catch (Exception e) {
+
+		}
+
+		return event;
+	}
+
+	public Sofia2AuditError getErrorEvent(String userId, String message, Exception ex) {
+
+		Sofia2AuditError event = Sofia2EventFactory.builder().build().createAuditEventError(userId, message,
 				Module.FLOWENGINE, ex);
 
 		return event;
