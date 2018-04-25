@@ -14,6 +14,7 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.action.search.SearchResponse;
@@ -42,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 
+	private static final String NOT_IMPLEMENTED_ALREADY = "Not Implemented Already";
 	@Autowired
 	private ESCountService eSCountService;
 	@Autowired
@@ -63,13 +65,16 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	public String insert(String ontology, String instance) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
 		log.info(String.format("ElasticSearchBasicOpsDBRepository : Loading content: %s into elasticsearch  %s", instance, ontology));
-		String output;
+		List<BulkWriteResult> output=null;
 		try {
-			output = eSInsertService.load(ontology, ontology, instance);
+			List<String> instances = new ArrayList<String>();
+			instances.add(instance);
+			output = eSInsertService.load(ontology, ontology, instances);
+			return output.get(0).getId();
 		} catch (Exception e) {
 			throw new DBPersistenceException("Error inserting instance :"+instance+" into :"+ontology,e);
 		}
-		return output;
+		
 	}
 
 	@Override
@@ -153,14 +158,14 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String querySQLAsJson(String ontology, String query) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		return elasticSearchSQLDbHttpConnector.queryAsJson(query, 0);
+		return elasticSearchSQLDbHttpConnector.queryAsJson(query, 200);
 	}
 
 	//TODO IMPLEMENT
 	@Override
 	public String querySQLAsTable(String ontology, String query) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override
@@ -173,13 +178,13 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Override
 	public String querySQLAsTable(String ontology, String query, int offset) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override
 	public String findAllAsJson(String ontology) throws DBPersistenceException {
 		ontology=ontology.toLowerCase();
-		String output = eSDataService.findQueryDataAsJson(ontology);
+		String output = eSDataService.findAllByTypeAsJson(ontology,200);
 		return output;
 	}
 

@@ -9,7 +9,8 @@
       bindings:{
         page:"=",
         editmode:"<",
-        gridoptions:"<"
+        gridoptions:"<",
+        dashboardheader:"<"
       }
     });
 

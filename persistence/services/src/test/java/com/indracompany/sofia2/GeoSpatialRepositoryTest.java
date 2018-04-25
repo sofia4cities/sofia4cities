@@ -15,12 +15,9 @@ package com.indracompany.sofia2;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -40,10 +37,11 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
-import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
 import com.indracompany.sofia2.persistence.services.BasicOpsPersistenceServiceFacade;
+import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService;
 import com.indracompany.sofia2.persistence.services.ManageDBPersistenceServiceFacade;
-import com.indracompany.sofia2.persistence.services.util.MustacheUtil;
+import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.persistence.services.GeoSpatialOpsService.GeoQueries;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,12 +49,14 @@ import lombok.extern.slf4j.Slf4j;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 @Slf4j
+@Ignore
 public class GeoSpatialRepositoryTest {
 	
-	public final static String TEST_INDEX = "doc";
+	public final static String TEST_INDEX = "newdoc";
+	public final static String TEST_INDEX_PIN = "newpin";
 	public final static String TEST_INDEX_MONGO = TEST_INDEX+System.currentTimeMillis() ;
+	public final static String TEST_INDEX_MONGO_PIN = TEST_INDEX_PIN+System.currentTimeMillis() ;
 	
 	private static User userAdministrator = null;
 
@@ -78,9 +78,13 @@ public class GeoSpatialRepositoryTest {
 	private UserRepository userCDBRepository;
 	
 	@Autowired
-	private ESBaseApi connector;
+	QueryToolService queryToolService;
+	
 	
 	ObjectMapper mapper = new ObjectMapper();
+	
+	@Autowired
+	private GeoSpatialOpsService geoService;
 	
 	private User getUserAdministrator() {
 		if (userAdministrator == null)
@@ -88,12 +92,9 @@ public class GeoSpatialRepositoryTest {
 		return userAdministrator;
 	}
 			
-	private String SQL_TEST = "select * from ";
-	private String partial_envelope =  "partial_envelope.json";
-	private String partial_polygon =   "partial_polygon.json";
-	private String partial_polygon_mongo =   "partial_polygon_mongo.json";
+	private String partial_polygon_agnostic =   "partial_polygon_agnostic.json";
 
-	
+
 	public static String getString(String file) throws IOException {
 		File in = new ClassPathResource(file).getFile();
 		return FileUtils.readFileToString(in);
@@ -104,7 +105,9 @@ public class GeoSpatialRepositoryTest {
 		log.info("up process...");
 		
 		doBefore1();
+		doBefore3();
 		doBefore2();
+		doBefore4();
 		
 	}
 	
@@ -117,7 +120,17 @@ public class GeoSpatialRepositoryTest {
 		File data = new ClassPathResource("type_data.json").getFile();
 		String DATA  = FileUtils.readFileToString(data);
 			
-		connector.deleteIndex(TEST_INDEX);
+		try {
+			manageFacade.removeTable4Ontology(TEST_INDEX);	
+		} catch (Exception e) {
+			log.info("Issue deleting table4ontology "+e);
+		}
+		
+		try {
+			ontologyRepository.deleteById(TEST_INDEX);
+		} catch (Exception e) {
+			log.info("Issue deleting TEST_INDEX_ONLINE_ELASTIC "+e);
+		}
 		
 		try {
 			Ontology ontology = new Ontology();
@@ -133,18 +146,133 @@ public class GeoSpatialRepositoryTest {
 			
 			
 			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX, getUserAdministrator().getUserId());
-			if (index1==null)
-				ontologyService.createOntology(ontology);
-			
-			
-			manageFacade.createTable4Ontology(TEST_INDEX, TYPE);
-		
+			if (index1==null) {
+				try {
+					ontologyService.createOntology(ontology);
+				} catch (Exception e) {}
+				
+				try {
+					manageFacade.createTable4Ontology(TEST_INDEX, TYPE);
+				} catch (Exception e) {}
+				
+				
+			}
+				
 			String idES = basicOpsFacade.insert(TEST_INDEX, DATA);
-		
-			log.info("Returned ES inserted object with id "+idES);
+			
+			log.info("doBefore1 object with id "+idES);
 	
 
-			Thread.sleep(10000);
+		
+		} catch (Exception e) {
+			log.info("doBefore1 "+e);
+		}
+		
+		
+	}
+	
+	public  void doBefore3() throws Exception {	
+		log.info("doBefore3 up process...");
+		
+		File in = new ClassPathResource("type_geo_point.json").getFile();
+		String TYPE = FileUtils.readFileToString(in);
+			
+		File data = new ClassPathResource("type_geo_point_data.json").getFile();
+		String DATA  = FileUtils.readFileToString(data);
+			
+		try {
+			manageFacade.removeTable4Ontology(TEST_INDEX_PIN);	
+		} catch (Exception e) {
+			log.info("Issue deleting table4ontology "+e);
+		}
+		
+		try {
+			ontologyRepository.deleteById(TEST_INDEX_PIN);
+		} catch (Exception e) {
+			log.info("Issue deleting TEST_INDEX_ONLINE_ELASTIC "+e);
+		}
+		
+		try {
+			Ontology ontology = new Ontology();
+			ontology.setJsonSchema(TYPE);
+			ontology.setIdentification(TEST_INDEX_PIN);
+			ontology.setDescription(TEST_INDEX_PIN);
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
+			ontology.setPublic(true);
+			ontology.setRtdbDatasource(RtdbDatasource.ElasticSearch);
+			ontology.setUser(getUserAdministrator());
+			
+			
+			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX_PIN, getUserAdministrator().getUserId());
+			if (index1==null) {
+				try {
+					ontologyService.createOntology(ontology);
+				} catch (Exception e) {}
+				try {
+					manageFacade.createTable4Ontology(TEST_INDEX_PIN, TYPE);
+				} catch (Exception e) {}
+				
+			}
+				
+			String idES = basicOpsFacade.insert(TEST_INDEX_PIN, DATA);
+			
+			log.info("doBefore3 inserted object with id "+idES);
+			
+	
+
+		
+		
+		} catch (Exception e) {
+			log.info("doBefore3 "+e);
+		}
+		
+		
+	}
+	
+	public  void doBefore4() throws Exception {	
+		log.info("doBefore4 up process...");
+		
+		File in = new ClassPathResource("type_geo_mongo.json").getFile();
+		String TYPE = FileUtils.readFileToString(in);
+			
+		File data = new ClassPathResource("type_geo_point_data.json").getFile();
+		String DATA  = FileUtils.readFileToString(data);
+			
+		
+		try {
+			Ontology ontology = new Ontology();
+			ontology.setJsonSchema(TYPE);
+			ontology.setIdentification(TEST_INDEX_MONGO_PIN);
+			ontology.setDescription(TEST_INDEX_MONGO_PIN);
+			ontology.setActive(true);
+			ontology.setRtdbClean(true);
+			ontology.setRtdbToHdb(true);
+			ontology.setPublic(true);
+			ontology.setRtdbDatasource(RtdbDatasource.Mongo);
+			ontology.setUser(getUserAdministrator());
+			
+			
+			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX_MONGO_PIN, getUserAdministrator().getUserId());
+			if (index1==null) {
+				try {
+					ontologyService.createOntology(ontology);
+				} catch (Exception e) {}
+				
+				try {
+					manageFacade.createTable4Ontology(TEST_INDEX_MONGO_PIN, TYPE);
+				} catch (Exception e) {}
+				
+			}
+				
+			
+			String idES = basicOpsFacade.insert(TEST_INDEX_MONGO_PIN, DATA);
+			
+			log.info("doBefore4 inserted object with id "+idES);
+	
+
+		
 		
 		} catch (Exception e) {
 			log.info("Issue creating table4ontology "+e);
@@ -177,131 +305,153 @@ public class GeoSpatialRepositoryTest {
 			
 			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX_MONGO, getUserAdministrator().getUserId());
 			if (index1==null) {
-				ontologyService.createOntology(ontology);
+				try {
+					ontologyService.createOntology(ontology);
+				} catch (Exception e) {}
+				
+				try {
+					manageFacade.createTable4Ontology(TEST_INDEX_MONGO, TYPE);
+				} catch (Exception e) {}
 				
 				
-				manageFacade.createTable4Ontology(TEST_INDEX_MONGO, TYPE);
-				manageFacade.createIndex(TEST_INDEX_MONGO,"geometry","2dsphere");
-			
-				String idES = basicOpsFacade.insert(TEST_INDEX_MONGO, DATA);
-				log.info("Returned ES inserted object with id "+idES);
 			}
 				
+			String idES = basicOpsFacade.insert(TEST_INDEX_MONGO, DATA);
+			log.info("doBefore2 inserted object with id "+idES);
+			
+			
+				
 		} catch (Exception e) {
-			log.info("Issue creating table4ontology "+e);
+			log.info("doBefore2 "+e);
 		}
 		
 		
-	}
-	
-	@After
-	public  void tearDown() {
-		log.info("teardown process...");
-	
-		
-		try {
-			manageFacade.removeTable4Ontology(TEST_INDEX);	
-		} catch (Exception e) {
-			log.info("Issue deleting table4ontology "+e);
-		}
-		
-		try {
-			ontologyRepository.deleteById(TEST_INDEX);
-		} catch (Exception e) {
-			log.info("Issue deleting TEST_INDEX_ONLINE_ELASTIC "+e);
-		}
-		
-		/*try {
-			manageFacade.removeTable4Ontology(TEST_INDEX_MONGO);	
-		} catch (Exception e) {
-			log.info("Issue deleting table4ontology "+e);
-		}
-		
-		try {
-			ontologyRepository.deleteById(TEST_INDEX_MONGO);
-		} catch (Exception e) {
-			log.info("Issue deleting TEST_INDEX_ONLINE_ELASTIC "+e);
-		}*/
-	}
-	
-	@Test
-	public void testSearchQueryFindAllElasticSearch() {
-		try {
-			
-			partial_envelope = getString(partial_envelope);
-			partial_polygon = getString(partial_polygon);
-			
-			log.info("testSearchQueryFindAll");
-		
-			List<String> listDataES = basicOpsFacade.findAll(TEST_INDEX);
-			log.info("Returned list of found objects "+listDataES);
-			
-			Map<String, Object> context = new HashMap<>();
-			context.put("ontology", TEST_INDEX);
-			context.put("field", "geometry");
-			context.put("partial",partial_envelope);
-			
-			
-			String simple =  MustacheUtil.executeTemplate("todo.mustache", context);
-			List<String> list = basicOpsFacade.queryNative(TEST_INDEX, simple);
-			
-			log.info("result  "+list);
-			
-			String output =  MustacheUtil.executeTemplate("geo.intersects.elasticsearch.mustache", context);
-			
-			log.info("matched with template  "+output);
-		
-			List<String> listQ = basicOpsFacade.queryNative(TEST_INDEX, output);
-			
-			context.put("partial",partial_polygon);
-			output =  MustacheUtil.executeTemplate("geo.intersects.elasticsearch.mustache", context);
-			
-			log.info("matched with template  "+output);
-			
-			 listQ = basicOpsFacade.queryNative(TEST_INDEX, output);
-			
-			log.info("result  "+listQ);
-			
-			Assert.assertTrue(listDataES!=null);
-		} catch (Exception e) {
-			Assert.fail("testInsertCountDelete failure. " + e);
-		}
-	}
-	
-	@Test
-	public void testSearchQueryFindAllMongo() {
-		try {
-			
-			partial_polygon_mongo = getString(partial_polygon_mongo);
-			
-			log.info("testSearchQueryFindAll");
-		
-			List<String> listDataES = basicOpsFacade.findAll(TEST_INDEX_MONGO);
-			log.info("Returned list of found objects "+listDataES);
-			
-			Map<String, Object> context = new HashMap<>();
-			context.put("ontology", TEST_INDEX_MONGO);
-			context.put("field", "geometry");
-			context.put("partial",partial_polygon_mongo);
-			
-			
-			String output =  MustacheUtil.executeTemplate("geo.intersects.mongo.mustache", context);
-			
-			log.info("matched with template  "+output);
-		
-			List<String> listQ = basicOpsFacade.queryNative(TEST_INDEX_MONGO, output);
-			
-			
-			log.info("result  "+listQ);
-			
-			Assert.assertTrue(listDataES!=null);
-		} catch (Exception e) {
-			Assert.fail("testInsertCountDelete failure. " + e);
-		}
 	}
 	
 
 	
+	@Test
+	public void testGeoServiceElasticWithin() {
+		try {
+			Thread.sleep(10000);
+			log.info(">>>>>>>>>>>>> testGeoServiceElasticWithin");
+			partial_polygon_agnostic = getString(partial_polygon_agnostic);
+			
+			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX));
+			
+			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX, 10));
+			
+			List<String> listQ = geoService.within(TEST_INDEX, partial_polygon_agnostic);
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceElasticWithin failure. " + e);
+		}
+	}
+	@Test
+	public void testGeoServiceMongoWithin() {
+		try {
+			log.info(">>>>>>>>>>>>> testGeoServiceMongoWithin");
+			partial_polygon_agnostic = getString(partial_polygon_agnostic);
+			
+			List<String> listQ = geoService.within(TEST_INDEX_MONGO, partial_polygon_agnostic);
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceMongoWithin failure. " + e);
+		}
+	}
+	
+	
+	@Test
+	public void testGeoServiceElastic() {
+		try {
+			Thread.sleep(10000);
+			log.info(">>>>>>>>>>>>> testGeoServiceElastic");
+			partial_polygon_agnostic = getString(partial_polygon_agnostic);
+			
+			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX));
+			
+			List<String> listQ = geoService.intersects(TEST_INDEX, partial_polygon_agnostic);
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceElastic failure. " + e);
+		}
+	}
+	
+	@Test
+	public void testGeoServiceMongo() {
+		try {
+			log.info(">>>>>>>>>>>>> testGeoServiceMongo");
+			partial_polygon_agnostic = getString(partial_polygon_agnostic);
+			
+			List<String> listQ = geoService.intersects(TEST_INDEX_MONGO, partial_polygon_agnostic);
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceMongo failure. " + e);
+		}
+	}
+	
+	@Test
+	public void testGeoServiceNear() {
+		try {
+			Thread.sleep(10000);
+			log.info(basicOpsFacade.findAllAsJson(TEST_INDEX_PIN));
+			log.info(">>>>>>>>>>>>> testGeoServiceNear");
+			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+			
+			List<String> listQ = geoService.near(TEST_INDEX_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceNear failure. " + e);
+		}
+	}
+
+	
+	@Test
+	public void testGeoServiceNearMongo() {
+		try {
+			log.info(">>>>>>>>>>>>> testGeoServiceNearMongo");
+			
+			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+			List<String> listQ = geoService.near(TEST_INDEX_MONGO_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
+			
+			log.info("result  "+listQ);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceNearMongo failure. " + e);
+		}
+	}
+	
+	@Test
+	public void testGeoServiceByQueryTool() {
+		try {
+			log.info(">>>>>>>>>>>>> testGeoServiceByQueryTool");
+			
+			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+			List<String> listQ = geoService.near(TEST_INDEX_MONGO_PIN, TWO_HUNDRED_KILOMETERS, "40", "-70");
+			log.info("result  "+listQ);
+			String query = geoService.getQuery(GeoQueries.near, TEST_INDEX_MONGO_PIN, "geometry","40", "-70", TWO_HUNDRED_KILOMETERS);
+			
+			
+			log.info(">>>>>>>>>>>>> USE of querytool with the GetQuery Generator of GeoService");
+			
+			String result = queryToolService.queryNativeAsJson(getUserAdministrator().getUserId(), TEST_INDEX_MONGO_PIN, query);
+			
+			log.info("result QueryTool "+result);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceNearMongo failure. " + e);
+		}
+	}
 	
 
 }

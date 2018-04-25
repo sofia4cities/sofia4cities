@@ -1,7 +1,7 @@
 
-<div class="page-dashboard-container" ng-style="{'background-image':'url(' + vm.page.background.filedata + ')'}">
+<div class="page-dashboard-container" ng-style="{'background-image':'url(' + vm.page.background.filedata + ')','background-color': vm.page.background.color }">
   <span ng-repeat="layer in vm.page.layers">
-    <gridster ng-if="(vm.page.combinelayers || vm.page.selectedlayer == $index) " options="vm.gridoptions" class="flex">
+    <gridster  ng-style="vm.dashboardheader.enable && {'height': 'calc(100% - '+{{vm.dashboardheader.height}}+'px'+')'} || {'height': '100%'}" ng-if="(vm.page.combinelayers || vm.page.selectedlayer == $index) " options="vm.gridoptions" class="flex">
         <element ng-style="{'z-index':$parent.$index*500+1}" ng-if="item.id" element="item" editmode="vm.editmode" ng-repeat="item in layer.gridboard"></element>
     </gridster>
   </span>

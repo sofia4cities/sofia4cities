@@ -30,6 +30,7 @@ import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 import lombok.extern.slf4j.Slf4j;
 
+
 @Service
 @Slf4j
 public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, NativeBasicOpsRepository{
@@ -50,6 +51,15 @@ public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, 
 		if (dataSource.name().equals("Mongo")) return mongoBasicOps;
 		else if (dataSource.name().equals("ElasticSearch")) return elasticBasicOps; 
 		else return mongoBasicOps;
+	}
+	
+	public Ontology getOntology(String ontologyId) {
+		return ontologyRepository.findByIdentification(ontologyId);
+	}
+	
+	public RtdbDatasource getOntologyDataSource(String ontologyId) {
+		Ontology  ds =  ontologyRepository.findByIdentification(ontologyId);
+		return ds.getRtdbDatasource();
 	}
 	
 	private BasicOpsDBRepository getInstance(RtdbDatasource dataSource) throws DBPersistenceException {
