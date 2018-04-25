@@ -86,9 +86,12 @@
 								</div>
 								<div class="actions margin-right-20">
 									<div class="btn-group">									
-										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>									
+										<button id="search-toggle" type="button" class="btn grey-mint sbold btn-outline" onclick="$('#searchFilter').toggleClass('hide')"><i class="fa fa-search"></i> <span th:text="#{gen.search}"> Search </span></button>
+										<button sec:authorize="hasAuthority('ROLE_ADMINISTRATOR')" type="button" class="btn grey-mint  btn-outline sbold" onclick="location.href='../datamodels/create'" ><i class="fa fa-plus"></i> <span th:text="#{gen.create}">New </span></button>
+																		
 									</div>										
-								</div>								
+								</div>	
+															
 							</div>
 							<div class="portlet-body" style="display: block; height: auto;">
 								
@@ -181,6 +184,9 @@
 																<div class="grupo-iconos">
 																	<!-- VIEW -->															
 																	<span th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/datamodels/show/${datamodel.id}|} + '\');'"><i class="fa fa-eye"></i></span>																			
+																	
+																	<!-- EDIT -->
+																	<span th:tittle="#{gen.edit}" class="btn btn-warning btn-sm sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/datamodels/update/${datamodel.id}|} + '\');'"><i class="fa fa-edit"></i></span>
 																</div>
 															</td>													
 														</tr>
@@ -249,6 +255,8 @@
 	
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.js}"/>
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>
 	<script th:src="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.js}"/>
 	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>

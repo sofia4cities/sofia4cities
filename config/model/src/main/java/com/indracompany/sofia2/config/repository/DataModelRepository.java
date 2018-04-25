@@ -30,8 +30,11 @@ import com.indracompany.sofia2.config.model.DataModel;
 public interface DataModelRepository extends JpaRepository<DataModel, String> {
 
 	DataModel findById(String id);
-
-	List<DataModel> findByName(String name);
+	
+	@Query("SELECT o "
+			+ "FROM DataModel AS o "
+			+ "WHERE o.name LIKE %:name% ")
+	List<DataModel> findDatamodelsByName(@Param(value = "name") String name);
 
 	List<DataModel> findByType(String type);
 
@@ -47,4 +50,9 @@ public interface DataModelRepository extends JpaRepository<DataModel, String> {
 			@Param(value = "name") String name, 
 			@Param(value = "description") String description
 	);
+	
+	@Query("SELECT o "
+			+ "FROM DataModel AS o "
+			+ "WHERE o.name LIKE %:name% ")
+	DataModel findByName(@Param(value = "name") String name);
 }
