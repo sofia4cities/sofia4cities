@@ -13,12 +13,14 @@
  */
 package com.indracompany.sofia2.config.services.datamodel;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.DataModel.MainType;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 
 @Service
@@ -35,6 +37,12 @@ public class DataModelServiceImpl implements DataModelService {
 	@Override
 	public void createDataModel(DataModel dataModel) {
 		dataModelRepository.save(dataModel);
+	}
+
+	@Override
+	public List<MainType> getAllDataModelsTypes() {
+		List<MainType> types = Arrays.asList(DataModel.MainType.values());
+		return types;
 	}
 
 	@Override
@@ -55,6 +63,28 @@ public class DataModelServiceImpl implements DataModelService {
 	@Override
 	public DataModel getDataModelByName(String dataModelName) {
 		return dataModelRepository.findByName(dataModelName).get(0);
+	}
+
+	@Override
+	public boolean dataModelExists(DataModel datamodel) {
+		DataModel datamodelList = dataModelRepository.findDatamodelsByName(datamodel.getName());
+
+		if (datamodelList == null)
+			return false;
+		return true;
+	}
+
+	@Override
+	public void updateDataModel(DataModel datamodel) {
+		DataModel oldDataModel = this.dataModelRepository.findById(datamodel.getId());
+		if (oldDataModel != null) {
+			oldDataModel.setName(datamodel.getName());
+			oldDataModel.setLabels(datamodel.getLabels());
+			oldDataModel.setType(datamodel.getType());
+			oldDataModel.setDescription(datamodel.getDescription());
+			oldDataModel.setJsonSchema(datamodel.getJsonSchema());
+			this.dataModelRepository.save(oldDataModel);
+		}
 	}
 
 }

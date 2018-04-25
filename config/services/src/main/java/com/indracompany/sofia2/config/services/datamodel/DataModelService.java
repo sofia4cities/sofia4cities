@@ -23,11 +23,17 @@ public interface DataModelService {
 
 	void createDataModel(DataModel dataModel);
 
+	List<DataModel.MainType> getAllDataModelsTypes();
+
 	List<DataModel> getAllDataModels();
 
 	List<DataModel> getDataModelsByCriteria(String dataModelId, String name, String description);
 
 	DataModel getDataModelById(String dataModelId);
+
+	boolean dataModelExists(DataModel datamodel);
+
+	void updateDataModel(DataModel datamodel);
 
 	DataModel getDataModelByName(String dataModelName);
 

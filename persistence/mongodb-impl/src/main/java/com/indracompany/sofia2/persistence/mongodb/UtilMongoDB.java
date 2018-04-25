@@ -25,9 +25,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.persistence.ContextData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.util.CalendarAdapter;
 import com.mongodb.client.MongoIterable;
 
 import lombok.extern.slf4j.Slf4j;

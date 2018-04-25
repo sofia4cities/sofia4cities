@@ -184,7 +184,6 @@ public class InitConfigDB {
 			init_OntologyCategory();
 			log.info("OK init_OntologyCategory");
 
-
 			//
 			init_ClientPlatform();
 			log.info("OK init_ClientPlatform");
@@ -638,7 +637,13 @@ public class InitConfigDB {
 			client.setEncryptionKey(UUID.randomUUID().toString());
 			client.setDescription("Platform client for issues and ticketing");
 			clientPlatformRepository.save(client);
-
+			client = new ClientPlatform();
+			client.setId("4");
+			client.setUser(getUserAdministrator());
+			client.setIdentification("ContPerf device");
+			client.setEncryptionKey(UUID.randomUUID().toString());
+			client.setDescription("Device for continuous performance testing");
+			clientPlatformRepository.save(client);
 		}
 
 	}
@@ -1102,9 +1107,11 @@ public class InitConfigDB {
 
 		log.info("init Ontology");
 		List<Ontology> ontologies = this.ontologyRepository.findAll();
-		if (ontologies.isEmpty()) {
-			log.info("No ontologies..adding");
-			Ontology ontology = new Ontology();
+		List<DataModel> dataModels;
+
+		log.info("No ontologies..adding");
+		Ontology ontology = new Ontology();
+		if (this.ontologyRepository.findByIdentification("OntologyMaster") == null) {
 			ontology.setId("1");
 			ontology.setJsonSchema("{}");
 			ontology.setIdentification("OntologyMaster");
@@ -1116,7 +1123,8 @@ public class InitConfigDB {
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
-
+		}
+		if (this.ontologyRepository.findByIdentification("Ticket") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_Ticket.json"));
 			ontology.setDescription("Ontology created for Ticketing");
@@ -1125,10 +1133,26 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
+			ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
-
+		}
+		if (this.ontologyRepository.findByIdentification("ContPerf") == null) {
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_ContPerf.json"));
+			ontology.setDescription("Ontology created for performance testing");
+			ontology.setIdentification("ContPerf");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
+			ontology.setUser(getUserAdministrator());
+			ontology.setAllowsCypherFields(false);
+			ontologyRepository.save(ontology);
+		}
+		if (this.ontologyRepository.findByIdentification("HelsinkiPopulation") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_HelsinkiPopulation.json"));
 			ontology.setDescription("Ontology HelsinkiPopulation for testing");
@@ -1140,13 +1164,13 @@ public class InitConfigDB {
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 
-			List<DataModel> dataModels = dataModelRepository.findByName("EmptyBase");
+			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
-
+		}
+		if (this.ontologyRepository.findByIdentification("TweetSentiment") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_TweetSentiment.json"));
 			ontology.setDescription("TweetSentiment");
@@ -1163,7 +1187,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("GeoAirQuality") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_GeoAirQuality.json"));
 			ontology.setDescription("Air quality retrieved from https://api.waqi.info/search");
@@ -1180,7 +1205,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("CityPopulation") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_CityPopulation.json"));
 			ontology.setDescription(
@@ -1198,7 +1224,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirQuality_gr2") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality_gr2.json"));
 			ontology.setDescription("AirQuality_gr2");
@@ -1215,7 +1242,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirQuality") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality.json"));
 			ontology.setDescription("AirQuality");
@@ -1232,7 +1260,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirCOMeter") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirCOMeter.json"));
 			ontology.setDescription("AirCOMeter");
@@ -1250,10 +1279,7 @@ public class InitConfigDB {
 				ontologyRepository.save(ontology);
 			}
 		}
-
 	}
-
-
 
 	public void init_OntologyUserAccess() {
 		log.info("init OntologyUserAccess");
@@ -1382,6 +1408,12 @@ public class InitConfigDB {
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
 			tokenRepository.save(token);
+
+			client = this.clientPlatformRepository.findByIdentification("ContPerf device");
+			token = new Token();
+			token.setClientPlatform(client);
+			token.setToken("56686a5a0d7e497d9cafbbbd4b2563ee");
+			tokenRepository.save(token);
 		}
 
 	}
@@ -1499,9 +1531,9 @@ public class InitConfigDB {
 		if (marketAssets.isEmpty()) {
 			log.info("No market Assets...adding");
 			MarketAsset marketAsset = new MarketAsset();
-			
+
 			// Getting Started Guide
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("1");
@@ -1520,9 +1552,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("jpg");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// Sofia4Cities Architecture
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("2");
@@ -1541,9 +1573,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("jpg");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// SOFIA4CITIES WITH DOCKER
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("3");
@@ -1562,9 +1594,9 @@ public class InitConfigDB {
 			marketAsset.setImageType("png");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// API JAVA
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("4");
@@ -1581,14 +1613,14 @@ public class InitConfigDB {
 
 			marketAsset.setImage(loadFileFromResources("market/img/jar-file.jpg"));
 			marketAsset.setImageType("jpg");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/java-client.zip"));
 			marketAsset.setContentId("java-client.jar");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// DIGITAL TWIN
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("5");
@@ -1605,14 +1637,14 @@ public class InitConfigDB {
 
 			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
 			marketAsset.setImageType("png");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/TurbineHelsinki.zip"));
 			marketAsset.setContentId("TurbineHelsinki.zip");
 
 			marketAssetRepository.save(marketAsset);
 
 			// API NodeRED
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("6");
@@ -1629,14 +1661,14 @@ public class InitConfigDB {
 
 			marketAsset.setImage(loadFileFromResources("market/img/jgears.png"));
 			marketAsset.setImageType("png");
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/API NodeRED sofia4cities.zip"));
 			marketAsset.setContentId("API NodeRED sofia4cities.zip");
 
 			marketAssetRepository.save(marketAsset);
-			
+
 			// OAUTH2 Authentication
-			
+
 			marketAsset = new MarketAsset();
 
 			marketAsset.setId("7");
@@ -1650,7 +1682,7 @@ public class InitConfigDB {
 			marketAsset.setPaymentMode(MarketAsset.MarketAssetPaymentMode.FREE);
 
 			marketAsset.setJsonDesc(loadFromResources("market/details/Oauth2Authentication.json"));
-			
+
 			marketAsset.setContent(loadFileFromResources("market/docs/oauth2-authentication.zip"));
 			marketAsset.setContentId("oauth2-authentication.zip");
 

@@ -962,7 +962,7 @@
       ed.global = {
         style: {
           header:{
-            height: 64,
+            height: 25,
             enable: "initial",
             backgroundColor: "initial",
             title: {
@@ -1314,12 +1314,12 @@
                 textColor: "none"
               },
               backgroundColor: "none",
-              height: 64
+              height: 25
             },
             backgroundColor: "initial",
             padding: 0,
             border: {
-              color: "black",
+              color: "hsl(232, 1%, 82%)",
               width: 1,
               radius: 5
             }
@@ -1659,7 +1659,9 @@
 
       //Get gadget JSON and return string info for UI
       $scope.prettyGadgetInfo = function(gadget){
-        return gadget.header.title.text + " (" + gadget.type + ")"
+       
+          return gadget.header.title.text + " (" + gadget.type + ")";
+        
       }
 
       $scope.generateGadgetInfo = function (gadgetId){
@@ -1697,7 +1699,7 @@
         var page = $scope.dashboard.pages[$scope.selectedpage];      
           for (var i = 0; i < page.layers.length; i++) {
           var layer = page.layers[i];
-          var gadgetsAux = layer.gridboard;
+          var gadgetsAux = layer.gridboard.filter(function(gadget){return typeof gadget.id != "undefined"});
           if(gadgetsAux.length){
             gadgets = gadgets.concat(gadgetsAux);
           }

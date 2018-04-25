@@ -36,6 +36,7 @@ import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
+import com.indracompany.sofia2.persistence.util.JSONPersistenceUtilsMongo;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 
@@ -238,14 +239,20 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 		}
 	}
 	
-	private void computeGeometryIndex(String collection, String name, Map<String, Object> proper) {
+	private void computeGeometryIndex(String collection, String name, String schema) {
 		log.debug("computeGeometryIndex", collection, name);
-		Map<String, Object> geo = (Map<String, Object>)proper.getOrDefault("geometry", null);
-		if (geo!=null) {
-			createIndex(collection,"geometry","2dsphere");
-			ensureGeoIndex(collection,"geometry");
-			
+		
+		try {
+			List<String> list = JSONPersistenceUtilsMongo.getGeoIndexes(schema);
+			if (list!=null && list.size()>0)
+				for (String string : list) {
+					createIndex(collection,string,"2dsphere");
+					ensureGeoIndex(collection,string);
+				}
+		} catch (Exception e) {
+			log.error("Cannot create geo indexes: "+e.getMessage(),e);
 		}
+
 		if (!name.isEmpty()) {
 			createIndex(collection, name + ".geometry: \"2dsphere\"");
 		}
@@ -273,7 +280,7 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 						if (!name.isEmpty()) {
 							createIndex(collection, name + ".geometry: \"2dsphere\"");
 						}
-						computeGeometryIndex(collection, name, proper);
+						computeGeometryIndex(collection, name,schema);
 					}
 				} catch (JsonParseException e) {
 					log.error("validateIndexes", e);
@@ -291,6 +298,7 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 			}
 		}
 	}
+	
 
 	@Override
 	public void createIndex(String ontology, String attribute) throws DBPersistenceException {

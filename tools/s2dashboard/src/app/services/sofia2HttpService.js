@@ -44,7 +44,7 @@
         return $http.put(__env.endpointSofia2ControlPanel + '/dashboards/savemodel/' + id, {"model":dashboard.data.model,"visible":dashboard.public});
       }
       vm.deleteDashboard = function(id){
-        return $http.delete(__env.endpointSofia2ControlPanel + '/dashboards/' + id);
+        return $http.put(__env.endpointSofia2ControlPanel + '/dashboards/delete/' + id,{});
       }
 
       vm.setDashboardEngineCredentialsAndLogin = function () {

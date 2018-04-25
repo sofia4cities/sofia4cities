@@ -52,7 +52,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MQTTClient {
 
-	private MemoryPersistence persistence = new MemoryPersistence();;
+	private MemoryPersistence persistence = new MemoryPersistence();
 	private String brokerURI;
 	private CompletableFuture<String> completableFutureMessage = new CompletableFuture<>();
 	private String sessionKey;
