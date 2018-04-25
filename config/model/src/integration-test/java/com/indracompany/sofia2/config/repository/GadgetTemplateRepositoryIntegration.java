@@ -51,7 +51,7 @@ public class GadgetTemplateRepositoryIntegration {
 	UserRepository userRepository;
 
 	private User getUserCollaborator() {
-		return this.userRepository.findByUserId("collaborator");
+		return this.userRepository.findByUserId("developer");
 	}
 
 	@Before
