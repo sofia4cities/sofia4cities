@@ -56,6 +56,7 @@ public class GeoSpatialRepositoryTest {
 	public final static String TEST_INDEX = "newdoc";
 	public final static String TEST_INDEX_PIN = "newpin";
 	public final static String TEST_INDEX_MONGO = TEST_INDEX+System.currentTimeMillis() ;
+	public final static String TEST_INDEX_MONGO_AGNOSTIC = TEST_INDEX+System.currentTimeMillis()+"agnostic" ;
 	public final static String TEST_INDEX_MONGO_PIN = TEST_INDEX_PIN+System.currentTimeMillis() ;
 	
 	private static User userAdministrator = null;
@@ -104,231 +105,88 @@ public class GeoSpatialRepositoryTest {
 	public  void doBefore() throws Exception {	
 		log.info("up process...");
 		
-		doBefore1();
-		doBefore3();
-		doBefore2();
-		doBefore4();
-		
-	}
-	
-	public  void doBefore1() throws Exception {	
-		log.info("doBefore1 up process...");
 		
 		File in = new ClassPathResource("type.json").getFile();
 		String TYPE = FileUtils.readFileToString(in);
 			
 		File data = new ClassPathResource("type_data.json").getFile();
 		String DATA  = FileUtils.readFileToString(data);
-			
-		try {
-			manageFacade.removeTable4Ontology(TEST_INDEX);	
-		} catch (Exception e) {
-			log.info("Issue deleting table4ontology "+e);
-		}
 		
-		try {
-			ontologyRepository.deleteById(TEST_INDEX);
-		} catch (Exception e) {
-			log.info("Issue deleting TEST_INDEX_ONLINE_ELASTIC "+e);
-		}
+		doBeforeALL(TYPE, DATA, TEST_INDEX,RtdbDatasource.ElasticSearch);
 		
-		try {
-			Ontology ontology = new Ontology();
-			ontology.setJsonSchema(TYPE);
-			ontology.setIdentification(TEST_INDEX);
-			ontology.setDescription(TEST_INDEX);
-			ontology.setActive(true);
-			ontology.setRtdbClean(true);
-			ontology.setRtdbToHdb(true);
-			ontology.setPublic(true);
-			ontology.setRtdbDatasource(RtdbDatasource.ElasticSearch);
-			ontology.setUser(getUserAdministrator());
+		in = new ClassPathResource("type_geo_point.json").getFile();
+		TYPE = FileUtils.readFileToString(in);
 			
-			
-			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX, getUserAdministrator().getUserId());
-			if (index1==null) {
-				try {
-					ontologyService.createOntology(ontology);
-				} catch (Exception e) {}
+		data = new ClassPathResource("type_geo_point_data.json").getFile();
+		DATA  = FileUtils.readFileToString(data);
+		 
+		doBeforeALL(TYPE, DATA, TEST_INDEX_PIN,RtdbDatasource.ElasticSearch);
+		 
+		in = new ClassPathResource("type_geo_mongo.json").getFile();
+		TYPE = FileUtils.readFileToString(in);
 				
-				try {
-					manageFacade.createTable4Ontology(TEST_INDEX, TYPE);
-				} catch (Exception e) {}
-				
-				
-			}
-				
-			String idES = basicOpsFacade.insert(TEST_INDEX, DATA);
-			
-			log.info("doBefore1 object with id "+idES);
+		data = new ClassPathResource("type_geo_point_data.json").getFile();
+		DATA  = FileUtils.readFileToString(data);
+		
+		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO_PIN,RtdbDatasource.Mongo);
 	
-
+		in = new ClassPathResource("type_mongo.json").getFile();
+		TYPE = FileUtils.readFileToString(in);
+		 
+		data = new ClassPathResource("type_data.json").getFile();
+		DATA  = FileUtils.readFileToString(data);
+		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO,RtdbDatasource.Mongo);
 		
-		} catch (Exception e) {
-			log.info("doBefore1 "+e);
-		}
+		in = new ClassPathResource("type_geo_mongo.json").getFile();
+		TYPE = FileUtils.readFileToString(in);
+		 
+		data = new ClassPathResource("type_geo_point_data.json").getFile();
+		DATA  = FileUtils.readFileToString(data);
+		doBeforeALL(TYPE, DATA, TEST_INDEX_MONGO_AGNOSTIC,RtdbDatasource.ElasticSearch);
 		
 		
+		 
 	}
 	
-	public  void doBefore3() throws Exception {	
-		log.info("doBefore3 up process...");
-		
-		File in = new ClassPathResource("type_geo_point.json").getFile();
-		String TYPE = FileUtils.readFileToString(in);
-			
-		File data = new ClassPathResource("type_geo_point_data.json").getFile();
-		String DATA  = FileUtils.readFileToString(data);
-			
-		try {
-			manageFacade.removeTable4Ontology(TEST_INDEX_PIN);	
-		} catch (Exception e) {
-			log.info("Issue deleting table4ontology "+e);
-		}
-		
-		try {
-			ontologyRepository.deleteById(TEST_INDEX_PIN);
-		} catch (Exception e) {
-			log.info("Issue deleting TEST_INDEX_ONLINE_ELASTIC "+e);
-		}
-		
-		try {
-			Ontology ontology = new Ontology();
-			ontology.setJsonSchema(TYPE);
-			ontology.setIdentification(TEST_INDEX_PIN);
-			ontology.setDescription(TEST_INDEX_PIN);
-			ontology.setActive(true);
-			ontology.setRtdbClean(true);
-			ontology.setRtdbToHdb(true);
-			ontology.setPublic(true);
-			ontology.setRtdbDatasource(RtdbDatasource.ElasticSearch);
-			ontology.setUser(getUserAdministrator());
-			
-			
-			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX_PIN, getUserAdministrator().getUserId());
-			if (index1==null) {
-				try {
-					ontologyService.createOntology(ontology);
-				} catch (Exception e) {}
-				try {
-					manageFacade.createTable4Ontology(TEST_INDEX_PIN, TYPE);
-				} catch (Exception e) {}
-				
-			}
-				
-			String idES = basicOpsFacade.insert(TEST_INDEX_PIN, DATA);
-			
-			log.info("doBefore3 inserted object with id "+idES);
-			
-	
 
-		
-		
-		} catch (Exception e) {
-			log.info("doBefore3 "+e);
-		}
-		
-		
-	}
 	
-	public  void doBefore4() throws Exception {	
+	public  void doBeforeALL(String TYPE, String DATA, String ontologyName, RtdbDatasource dataSource) throws Exception {	
 		log.info("doBefore4 up process...");
-		
-		File in = new ClassPathResource("type_geo_mongo.json").getFile();
-		String TYPE = FileUtils.readFileToString(in);
-			
-		File data = new ClassPathResource("type_geo_point_data.json").getFile();
-		String DATA  = FileUtils.readFileToString(data);
-			
+
 		
 		try {
 			Ontology ontology = new Ontology();
 			ontology.setJsonSchema(TYPE);
-			ontology.setIdentification(TEST_INDEX_MONGO_PIN);
-			ontology.setDescription(TEST_INDEX_MONGO_PIN);
+			ontology.setIdentification(ontologyName);
+			ontology.setDescription(ontologyName);
 			ontology.setActive(true);
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
-			ontology.setRtdbDatasource(RtdbDatasource.Mongo);
+			ontology.setRtdbDatasource(dataSource);
 			ontology.setUser(getUserAdministrator());
 			
 			
-			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX_MONGO_PIN, getUserAdministrator().getUserId());
+			Ontology index1 = ontologyService.getOntologyByIdentification(ontologyName, getUserAdministrator().getUserId());
 			if (index1==null) {
 				try {
 					ontologyService.createOntology(ontology);
 				} catch (Exception e) {}
 				
 				try {
-					manageFacade.createTable4Ontology(TEST_INDEX_MONGO_PIN, TYPE);
+					manageFacade.createTable4Ontology(ontologyName, TYPE);
 				} catch (Exception e) {}
 				
 			}
-				
-			
-			String idES = basicOpsFacade.insert(TEST_INDEX_MONGO_PIN, DATA);
-			
+					
+			String idES = basicOpsFacade.insert(ontologyName, DATA);
 			log.info("doBefore4 inserted object with id "+idES);
-	
 
-		
-		
 		} catch (Exception e) {
 			log.info("Issue creating table4ontology "+e);
 		}
-		
-		
-	}
 	
-	public  void doBefore2() throws Exception {	
-		log.info("doBefore2 up process...");
-		
-		File in = new ClassPathResource("type_mongo.json").getFile();
-		String TYPE = FileUtils.readFileToString(in);
-			
-		File data = new ClassPathResource("type_data.json").getFile();
-		String DATA  = FileUtils.readFileToString(data);
-		
-		try {
-			Ontology ontology = new Ontology();
-			ontology.setJsonSchema(TYPE);
-			ontology.setIdentification(TEST_INDEX_MONGO);
-			ontology.setDescription(TEST_INDEX_MONGO);
-			ontology.setActive(true);
-			ontology.setRtdbClean(true);
-			ontology.setRtdbToHdb(true);
-			ontology.setPublic(true);
-			ontology.setRtdbDatasource(RtdbDatasource.Mongo);
-			ontology.setUser(getUserAdministrator());
-			
-			
-			Ontology index1 = ontologyService.getOntologyByIdentification(TEST_INDEX_MONGO, getUserAdministrator().getUserId());
-			if (index1==null) {
-				try {
-					ontologyService.createOntology(ontology);
-				} catch (Exception e) {}
-				
-				try {
-					manageFacade.createTable4Ontology(TEST_INDEX_MONGO, TYPE);
-				} catch (Exception e) {}
-				
-				
-			}
-				
-			String idES = basicOpsFacade.insert(TEST_INDEX_MONGO, DATA);
-			log.info("doBefore2 inserted object with id "+idES);
-			
-			
-				
-		} catch (Exception e) {
-			log.info("doBefore2 "+e);
-		}
-		
-		
 	}
-	
-
 	
 	@Test
 	public void testGeoServiceElasticWithin() {
@@ -445,6 +303,28 @@ public class GeoSpatialRepositoryTest {
 			log.info(">>>>>>>>>>>>> USE of querytool with the GetQuery Generator of GeoService");
 			
 			String result = queryToolService.queryNativeAsJson(getUserAdministrator().getUserId(), TEST_INDEX_MONGO_PIN, query);
+			
+			log.info("result QueryTool "+result);
+			Assert.assertTrue(listQ!=null);
+		} catch (Exception e) {
+			Assert.fail("testGeoServiceNearMongo failure. " + e);
+		}
+	}
+	
+	@Test
+	public void testGeoServiceByQueryToolAgnostic() {
+		try {
+			log.info(">>>>>>>>>>>>> testGeoServiceByQueryToolAgnostic");
+			
+			String TWO_HUNDRED_KILOMETERS=""+(1000*200);
+			List<String> listQ = geoService.near(TEST_INDEX_MONGO_AGNOSTIC, TWO_HUNDRED_KILOMETERS, "40", "-70");
+			log.info("result  "+listQ);
+			String query = geoService.getQuery(GeoQueries.near, TEST_INDEX_MONGO_AGNOSTIC, "geometry","40", "-70", TWO_HUNDRED_KILOMETERS);
+			
+			
+			log.info(">>>>>>>>>>>>> USE of querytool with the GetQuery Generator of GeoService");
+			
+			String result = queryToolService.queryNativeAsJson(getUserAdministrator().getUserId(), TEST_INDEX_MONGO_AGNOSTIC, query);
 			
 			log.info("result QueryTool "+result);
 			Assert.assertTrue(listQ!=null);

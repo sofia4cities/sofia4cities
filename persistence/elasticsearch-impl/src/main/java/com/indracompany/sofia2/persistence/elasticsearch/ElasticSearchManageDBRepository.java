@@ -17,6 +17,7 @@ package com.indracompany.sofia2.persistence.elasticsearch;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -27,6 +28,7 @@ import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESDeleteService;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
+import com.indracompany.sofia2.persistence.util.JSONPersistenceUtilsElasticSearch;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -62,14 +64,23 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 			log.info("Resource already exists ");
 		}
 		
-		if (schema.equals("")) schema="{}";
-		if (schema.equals("{}")) {
+		if (JSONPersistenceUtilsElasticSearch.isJSONSchema(schema)) {
+			try {
+				schema = JSONPersistenceUtilsElasticSearch.getElasticSearchSchemaFromJSONSchema(ontology, schema);
+			} catch (JSONException e) {
+				log.error("Cannot generate ElasticSearch effective Schema, turn to default "+e.getMessage(),e);
+				schema="{}";
+			}
+		}
+		
+		else if (schema.equals("")) schema="{}";
+		else if (schema.equals("{}")) {
 			log.info("No schema is declared");
 		}
 		
-		else {
-			connector.createType(ontology, ontology, schema);
-		}
+		connector.createType(ontology, ontology, schema);
+		
+		
 		return ontology;
 	}
 
