@@ -31,14 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.DataModel;
-import com.indracompany.sofia2.config.model.User;
-import com.indracompany.sofia2.config.model.WebProject;
 import com.indracompany.sofia2.config.services.datamodel.DataModelService;
 import com.indracompany.sofia2.config.services.exceptions.DataModelServiceException;
-import com.indracompany.sofia2.config.services.exceptions.UserServiceException;
-import com.indracompany.sofia2.config.services.exceptions.WebProjectServiceException;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
@@ -134,7 +129,7 @@ public class DataModelController {
 			datamodel.setUser(userService.getUserByIdentification(utils.getUserId()));
 			dataModelService.createDataModel(datamodel);
 			log.error("DataModel created correctly");
-			return "redirect:/datamodels/list"; // show/"+ datamodel.getId(); //show/"+ datamodel.getId();
+			return "redirect:/datamodels/list"; 
 			
 		}catch (DataModelServiceException e) {
 			log.error("Cannot create datamodel " );

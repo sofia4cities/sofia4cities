@@ -141,7 +141,7 @@
 															<label class="">Name</label>
 															<div class="input-icon ">
 																<i class="fa fa-user"></i>
-																<input id="datamodelName" name="datamodelName" type="text" th:required="true" maxlength="50" th:field="*{name}" class="form-control no-remove" th:placeholder="Name"/>
+																<input id="datamodelName" name="datamodelName" type="text"  maxlength="50" th:field="*{name}" class="form-control no-remove" th:placeholder="Name" th:required="true"/>
 															</div>
 														</div>
 													</div>	
@@ -152,8 +152,6 @@
 																<option th:each="dataModelType:${dataModelTypes}" th:value="${dataModelType}" th:text="${dataModelType}" >User</option>
 															</select>		
 															
-															<!--  <input  id="datamodelTypes" name="datamodelTypes" type="text" maxlength="100" th:field="*{type}" class="form-control no-remove" placeholder="type" th:required="true" /> 
-															-->
 														</div>
 													</div>
 													
@@ -162,7 +160,7 @@
 													<div class="col-md-6 col-sm-6 col-xs-12">
 														<div class="form-group">
 															<label class="control-label" >Labels</label>
-															<input  id="datamodelLabel" name="datamodelLabel" type="text"  th:required="true"  maxlength="100" th:field="*{labels}" class="form-control no-remove" placeholder="Indicate the label sepaated by  ','" />
+															<input  id="datamodelLabel" name="datamodelLabel" type="text"  maxlength="100" th:field="*{labels}" class="form-control no-remove" placeholder="Indicate the label sepaated by  ','" th:required="true"  />
 														</div>
 													</div>
 												</div>

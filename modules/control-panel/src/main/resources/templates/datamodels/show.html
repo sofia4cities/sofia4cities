@@ -10,12 +10,12 @@
 		<!-- WEB FONTs -->
 		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
 		<script>
-          WebFont.load({
-            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
-            active: function() {
-                sessionStorage.fonts = true;
-            }
-          });
+			WebFont.load({
+				google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+				active: function() {
+				sessionStorage.fonts = true;
+				}
+			});
 		</script>
 
 		<!-- STYLE SHEETS -->
@@ -24,9 +24,9 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
 		<!-- THEME -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>		
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
 		
-				<!-- CODEMIRROR -->
+		<!-- CODEMIRROR -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
 		
@@ -60,7 +60,7 @@
 			<!-- BEGIN CONTENT BODY -->
 			<div class="page-content">
 			
-                <div class="alert alert-success display-hide">
+				<div class="alert alert-success display-hide">
 					<span th:text="${globalMessage}"></span>
 				</div>		
 				
@@ -70,7 +70,7 @@
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
 						<li><a th:href="@{/datamodels/list}"> <span th:text="#{datamodel.breadcrumb.list}">Data Models</span></a><i class="fa fa-circle"></i></li>
 						<li>
-							<span th:text="#{datamodel.breadcrumb.show}">Show Data Model</span>							
+							<span th:text="#{datamodel.breadcrumb.show}">Show Data Model</span>	
 						</li>
 					</ul>						
 				</div>
@@ -129,14 +129,12 @@
 															<label class="control-label" th:text="#{datamodel.type} + ':'">Data Model Type</label>
 															<p id="viewType" name="viewType" class="form-control-static-block bold" th:text="*{type} "> Data Model type </p>
 														</div>
-													</div>												
+													</div>
 												</div>
-												<div class="row">																																
+												<div class="row">
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
 															<label class="control-label"><i class="flaticon-network"></i> <span th:text="#{datamodel.jsonschema}">Data Model Schema</span></label>														
-														<!--	<textarea  readonly="true" id="jsoneditor" name="jsoneditor"  th:field="*{jsonSchema}" class="form-control bold autoExpand" rows="6" data-min-rows='5'></textarea>
-														-->
 															<textarea readonly="true" id="ymlDataModel" name="ymlDataModel"  th:required="true" th:field="*{jsonSchema}" class="form-control-static-block bold autoExpand" rows="6" data-min-rows='5' ></textarea>
 														</div>
 														<div class="clearfix"></div>
@@ -153,7 +151,6 @@
 													<!-- MODIFY TO-DO: == and != has the same onClick? check! -->
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/datamodels/update/} + ${dataModel.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')"  th:if="${#strings.arrayJoin(#authentication.authorities,'')} != 'ROLE_ADMINISTRATOR'" id="editBtn" type="button" class="btn btn-square btn-warning" name="edit"  value="Edit" th:onclick="'javascript:navigateUrl(\'' + @{/datamodels/update/} + ${dataModel.id} + '\');'" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit </span></button>
-													
 													
 													<!-- REMOVE TO-DO: caducado -->
 													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'deleteDataModelConfirmation(\'' + ${dataModel.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
@@ -211,29 +208,6 @@
 	<script th:src="@{/static/vendor/ace/mode-json.js}"/>
 	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
 	
-	<!-- TEMPLATE CONTROLLER  	
-	<script th:src="@{/static/js/pages/dataModelCreate.js}"/>
--->
-	<!-- MAIN INIT --> <!-- 
-
-
-		// CONTROLLER PRIVATE FUNCTIONS
-		
-		$("#createBtn").on('click',function(){
-			event.preventDefault(); 
-			if($("#viewName").val()!='' && $("#viewName").val()!=undefined && $("#viewDescription").val()!='' && $("#viewDescription").val()!=undefined) {
-				dataModelCreateController.submitform();
-			}else{
-				$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: dataModelViewJson.validform.emptyfields});
-				return false;
-			}
-			
-		});
-		
-		
-		</script>
-	-->
-		
 	 <!-- MAIN INIT -->
 	<script  th:inline="javascript">
 	var showLog = 1; // console.log toggle

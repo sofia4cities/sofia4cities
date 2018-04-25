@@ -74,16 +74,7 @@ public class DataModelServiceImpl implements DataModelService{
 			return false;
 		return true;
 	}
-/*
-	@Override
-	public boolean dataModelExists(DataModel datamodel) {
-		List<DataModel> datamodelList = dataModelRepository.findByName(datamodel.getName());
-		 
-		if(datamodelList == null || datamodelList.size() == 0)
-			return false;
-		return true;
-	}
-*/
+
 	@Override
 	public void updateDataModel(DataModel datamodel) {
 		DataModel oldDataModel = this.dataModelRepository.findById(datamodel.getId());
