@@ -26,11 +26,10 @@ public class EnableAsyncConfiguration {
 
 	@Bean
 	TaskExecutor taskExecutor() {
-		//return new SimpleAsyncTaskExecutor();
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setMaxPoolSize(100);
-        executor.initialize();
-        return executor;
+		executor.setMaxPoolSize(100);
+		executor.initialize();
+		return executor;
 	}
 
 }

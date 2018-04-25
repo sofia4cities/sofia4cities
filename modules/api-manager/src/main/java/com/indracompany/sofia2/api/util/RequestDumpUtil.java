@@ -79,7 +79,7 @@ public class RequestDumpUtil {
 
     public static void dumpRequest(StringBuilder sb, HttpServletRequest request) {
         sb.append(INDENT).append("[Class] ").append(request.getClass().getName()).append(", instance=" + request.toString().trim()).append(LF);
-        sb.append(INDENT).append("[RequestedSessionId] ").append(request.getRequestedSessionId()).append(LF);
+       // sb.append(INDENT).append("[RequestedSessionId] ").append(request.getRequestedSessionId()).append(LF);
         sb.append(INDENT).append("[RequestURI] ").append(request.getRequestURI()).append(LF);
         sb.append(INDENT).append("[ServletPath] ").append(request.getServletPath()).append(LF);
         sb.append(INDENT).append("[CharacterEncoding] ").append(request.getCharacterEncoding()).append(LF);

@@ -14,26 +14,17 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch.api;
 
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.WrapperQueryBuilder;
-import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.DeleteByQueryAction;
-import org.elasticsearch.search.SearchHit;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.searchbox.client.JestResult;
+import io.searchbox.core.Delete;
+import io.searchbox.core.DeleteByQuery;
+import io.searchbox.core.DocumentResult;
 import lombok.extern.slf4j.Slf4j;
 
-/***
- * add delete by query plugin to Elastisearch $ bin/plugin install
- * delete-by-query
- */
 @Service
 @Slf4j
 public class ESDeleteService {
@@ -43,50 +34,40 @@ public class ESDeleteService {
 
 	public boolean deleteById(String index, String type, String id) {
 		try {
-			DeleteResponse deleteResponse = connector.getClient().prepareDelete(index, type, id).get();
-			if (deleteResponse != null) {
-				deleteResponse.status();
-				deleteResponse.toString();
-				log.info("Document has been deleted...");
-				return true;
-			}
+			DocumentResult d = connector.getHttpClient().execute(new Delete.Builder(id)
+		            .index(index)
+		            .type(type)
+		            .build());
+			
+			log.info("Document has been deleted..."+id+" "+ d.isSucceeded());
+			
+			return d.isSucceeded();
+			
 		} catch (Exception ex) {
 			log.error("Exception occurred while delete Document : " + ex, ex);
 		}
 		return false;
 	}
-
+	
 	public boolean deleteAll(String index, String type) {
-		BulkRequestBuilder bulkRequest = connector.getClient().prepareBulk();
-		SearchResponse response = connector.getClient().prepareSearch(index).setTypes(type).setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setExplain(true).execute().actionGet();
-		for (SearchHit hit : response.getHits()) {
-			String id = hit.getId();
-			bulkRequest.add(connector.getClient().prepareDelete(index, type, id).request());
+		long result = deleteByQuery(index,type,connector.queryAll);
+		if (result==-1) return false;
+		else return true;
+	}
+	
+	public long deleteByQuery(String index,String type , String jsonQueryString) {
+		 DeleteByQuery deleteByQuery = new DeleteByQuery.Builder(jsonQueryString)
+	                .addIndex(index)
+	                .addType(type)
+	                .build();
+		 try {
+			JestResult result = connector.getHttpClient().execute(deleteByQuery);
+			if (result.isSucceeded())
+				return result.getJsonObject().getAsJsonObject("_indices").getAsJsonObject(index).get("deleted").getAsLong();
+			else return -1;
+		} catch (IOException e) {
+			log.error("Exception occurred while delete Document : " + e, e);
+			return -1;
 		}
-		BulkResponse bulkResponse = bulkRequest.get();	
-		log.info("Documents have been deleted...");
-		return bulkResponse.hasFailures() == true ? false : true;
-	}
-	
-	public boolean deleteAllOld(String index, String type) {
-		DeleteIndexResponse response = null;
-		
-		if(connector.getClient().admin().indices().prepareExists(index).get().isExists()){
-			response = 	connector.getClient().admin().indices().prepareDelete(index).get();
-	      }
-		log.info("Documents have been deleted...");
-		return response.isAcknowledged() == true ? false : true;
-	}
-	
-	  
-
-	public long deleteByQuery(String index , String jsonQueryString) {
-		WrapperQueryBuilder build = QueryBuilders.wrapperQuery(jsonQueryString);
-		BulkByScrollResponse response = DeleteByQueryAction.INSTANCE.newRequestBuilder(connector.getClient())
-			    .filter(build) 
-			    .source(index)                                  
-			    .get();                                             
-		long deleted = response.getDeleted();    
-		return deleted;
 	}
 }

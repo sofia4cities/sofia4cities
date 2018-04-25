@@ -34,7 +34,8 @@
 		
 		<!-- Funciones AJAX -->
 		<script th:inline="javascript">
-		
+		 //<![CDATA[ 
+		var valueObjects = [];
 		var queryResponse = {};
 		var queryErrorResponse = {};
 		var dataJSON = {};
@@ -71,8 +72,50 @@
 			if ($('#result-panel').hasClass('hide')){ $('#result-panel').toggleClass('hide'); } 
 
 		}
-
+		
+		
+			function showData(key,str){	
+				
+				$('#jsonDatatTitle').text(str);
+				var str = valueObjects.find(x => x.key === key).json;
+				if (str === 'null') { return false; }
+				jsonToModal = syntaxHighlight(str);
+				document.getElementById("jsonDataView").innerHTML = jsonToModal;
+				$('#jsonModal').modal();
+				
+		
+				//alert(' data: ' + JSON.stringify(valueObjects.find(x => x.key === key).json));		
+		};
+		
+		function syntaxHighlight(json) {
+			json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+				var cls = 'number';
+				if (/^"/.test(match)) {
+					if (/:$/.test(match)) {
+						cls = 'key';
+					} else {
+						cls = 'string';
+					}
+				} else if (/true|false/.test(match)) {
+					cls = 'boolean';
+				} else if (/null/.test(match)) {
+					cls = 'null';
+				}
+				return '<span class="' + cls + '">' + match + '</span>';
+			});
+		};
+		//]]>
 		</script>
+		
+		<style>
+			pre { padding: 10px; margin: 10px; }
+			.string { color: #179ca8; }
+			.number { color: #FFCC00; }
+			.boolean { color: #659be0; }
+			.null { color: #337ab7; }
+			.key { color: #525e64; }
+		</style>
 
 	</head>	
 	
@@ -176,7 +219,7 @@
 												<h3 class="panel-title uppercase font-grey-mint"><i class="fa fa-database"></i> 
 												<span th:text="#{database.results}">Resultados sobre </span> 
 												<span id="query-ontologia-result" class="bold uppercase">AUDIT</span>
-												<span class="pull-right" style="margin-top: -6px;"><button class="btn btn-sm btn-table-toggle btn-primary"><i class="fa fa-table"></i> Table Viewer Toggle</button></span>
+												<span class="pull-right" style="margin-top: -6px;"><button class="btn btn-sm btn-table-toggle btn-primary"><i class="fa fa-table"></i> <span th:text="#{gen.tableViewToggle}">Table Viewer Toggle</span></button></span>
 												</h3>											
 											</div>
 											<div class="panel-body no-space">
@@ -225,6 +268,32 @@
 		
 	</div>
 	</div>
+	
+	
+	
+	<!-- JSON OBJECTS MODAL -->
+	<!-- Modal -->
+	<div id="jsonModal" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title"><span th:text="#{gen.json}">JSON value for </span> <span id="jsonDatatTitle" class="bold"></span> </h4>
+				</div>
+				<div class="modal-body">
+					<pre id="jsonDataView"></pre>
+				</div>
+				<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> <span th:text="#{gen.closeBtn}">Close</span></button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	
+	
 	<!-- CORE JS CONTROLLERS -->
 	<script th:src="@{/static/js/app.js}"/>
 	<script th:src="@{/static/js/layout.js}"/>

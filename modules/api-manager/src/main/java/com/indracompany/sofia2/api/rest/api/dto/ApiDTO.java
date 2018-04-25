@@ -120,9 +120,5 @@ public class ApiDTO implements Cloneable, Serializable {
 	@Setter
 	private AutenticacionDTO authentication;
 
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
 
 }

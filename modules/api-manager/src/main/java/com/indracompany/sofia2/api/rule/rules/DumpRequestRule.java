@@ -27,8 +27,11 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.api.rule.RuleManager;
 import com.indracompany.sofia2.api.util.RequestDumpUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
 @Rule
+@Slf4j
 public class DumpRequestRule {
 
 	@Priority
@@ -57,7 +60,7 @@ public class DumpRequestRule {
 		RequestDumpUtil.dumpRequestParameter(sb, request);
 		RequestDumpUtil.dumpRequestSessionAttribute(sb, request);
 
-		System.out.println(sb.toString());
+		log.debug(sb.toString());
 
 		// data.put(ApiServiceInterface.DUMP, sb.toString());
 

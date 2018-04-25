@@ -104,6 +104,7 @@
 									<li id="tab-password" class="">
 										<a href="#tab2" data-toggle="tab" aria-expanded="false">
 											<i class="la la-block"></i> 
+											<span th:if="${user.userId} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.password.update}" >Add password</span> 
 											<span th:if="${user.userId} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{user.template.password.update}" >Modificar contraseña</span>
 										</a>
 									</li>

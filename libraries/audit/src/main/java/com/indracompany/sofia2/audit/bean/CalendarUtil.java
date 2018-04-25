@@ -19,29 +19,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Builder
 public class CalendarUtil {
 
-	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	@Builder.Default
+	private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-	public static String convert(Date date) {
+	public String convert(Date date) {
 		TimeZone tz = TimeZone.getTimeZone("UTC");
 		format.setTimeZone(tz);
 		return format.format(date);
 	}
 
-	public static Date convert(String stringDate) {
-
+	public Date convert(String stringDate) {
 		Date date = null;
-
 		try {
 			date = format.parse(stringDate);
 		} catch (ParseException e) {
 			log.error("Error converting date ", e);
 		}
-
 		return date;
 	}
 

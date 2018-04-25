@@ -13,14 +13,17 @@
  * limitations under the License.
  */
 package com.indracompany.sofia2.persistence.elasticsearch.api;
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.WrapperQueryBuilder;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.searchbox.core.Count;
+import io.searchbox.core.CountResult;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -30,26 +33,42 @@ public class ESCountService {
 	@Autowired
 	ESBaseApi connector;
 
-    public long getMatchAllQueryCountByType(String type, String... indexes) {
-        QueryBuilder query = matchAllQuery();
-        log.info("getMatchAllQueryCount query =>"+ query.toString());
-        long count = connector.getClient().prepareSearch(indexes).setQuery(query).setTypes(type).setSize(0).execute().actionGet().getHits().getTotalHits();
-        return count;
-    }
-    
-    public long getMatchAllQueryCount(String... indexes) {
-        QueryBuilder query = matchAllQuery();
-        log.info("getMatchAllQueryCount query =>"+ query.toString());
-        long count = connector.getClient().prepareSearch(indexes).setQuery(query).setSize(0).execute().actionGet().getHits().getTotalHits();
-        return count;
-    }
+	public long getMatchAllQueryCountByType(String type, String... indexes) {
+		String query = ESBaseApi.queryAll;
 
+		List<String> list = new ArrayList<String>(Arrays.asList(indexes));
+		Count count = null;
+		if (type == null) {
+			count = new Count.Builder().query(query).addIndex(list).build();
+		} else {
+			count = new Count.Builder().query(query).addIndex(list).addType(type).build();
+		}
 
-    public long getQueryCount(String jsonQueryString,String... indexes) {
-    	log.info("getQueryCount query =>"+ jsonQueryString.toString());
-        WrapperQueryBuilder build = QueryBuilders.wrapperQuery(jsonQueryString);
-        long count = connector.getClient().prepareSearch(indexes).setQuery(build).setSize(0).execute().actionGet().getHits().getTotalHits();
-        return count;
-    }
+		CountResult result;
+		try {
+			result = connector.getHttpClient().execute(count);
+			return result.getCount().longValue();
+		} catch (IOException e) {
+			log.error("Error counting type " + e.getMessage());
+			return -1;
+		}
+
+	}
+
+	public long getMatchAllQueryCount(String... indexes) {
+		return getMatchAllQueryCountByType(null, indexes);
+	}
+
+	public long getQueryCount(String jsonQueryString, String... indexes) {
+		List<String> list = new ArrayList<String>(Arrays.asList(indexes));
+		try {
+			CountResult result = connector.getHttpClient()
+					.execute(new Count.Builder().addIndex(list).query(jsonQueryString).build());
+			return result.getCount().longValue();
+		} catch (IOException e) {
+			log.error("Error counting type " + e.getMessage());
+			return -1;
+		}
+	}
 
 }

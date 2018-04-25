@@ -1,65 +1,58 @@
 <md-bottom-sheet class="md-grid" layout="column">
   <div layout="row" layout-align="center center" ng-cloak>
-    <h4>Drag&Drop your gadget to the grid panel</h4>
+    <h5>Drag&Drop your gadget to the grid panel</h5>
   </div>
   <div ng-cloak>
-    <md-list flex layout="row" layout-align="center center">
-      <md-list-item>
-        <div>
-          <md-button id="line" class="md-grid-item-content" draggable>
+
+      <div layout="row"  layout-align="center center" layout-wrap>
+          <div flex="12">
+          <md-button id="line"  draggable>
             <md-icon>show_chart</md-icon>
             <div class="md-grid-text"> Line Chart </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="bar" class="md-grid-item-content" draggable>
+        <div flex="12">
+          <md-button id="bar"  draggable>
             <md-icon>insert_chart</md-icon>
             <div class="md-grid-text"> Bar Chart </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="pie" class="md-grid-item-content" draggable>
+        <div flex="12">
+          <md-button id="pie"  draggable>
             <md-icon>pie_chart</md-icon>
             <div class="md-grid-text"> Pie Chart </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="wordcloud" class="md-grid-item-content" draggable>
+        <div flex="12">
+          <md-button id="wordcloud"  draggable>
             <md-icon>sort_by_alpha</md-icon>
             <div class="md-grid-text">Wordcloud</div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="map" class="md-grid-item-content" draggable>
+        <div flex="12">
+          <md-button id="map"  draggable>
             <md-icon>map</md-icon>
             <div class="md-grid-text"> Map </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="radar" class="md-grid-item-content" draggable>
+        <div flex="12">
+          <md-button id="radar"  draggable>
             <md-icon>track_changes</md-icon>
             <div class="md-grid-text"> Radar </div>
           </md-button>
         </div>
-      </md-list-item>
-      <md-list-item>
-        <div>
-          <md-button id="livehtml" class="md-grid-item-content" draggable>
+        <div flex="12">
+          <md-button id="livehtml"  draggable>
             <md-icon>art_track</md-icon>
             <div class="md-grid-text"> Live HTML </div>
           </md-button>
         </div>
-      </md-list-item>
-    </md-list>
+        <div flex="12">
+          <md-button id="table" draggable>
+            <md-icon>view_list</md-icon>
+            <div class="md-grid-text">Table </div>
+          </md-button>
+     
+        </div>
   </div>
 </md-bottom-sheet>

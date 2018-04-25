@@ -141,7 +141,7 @@ var GadgetsCreateController = function() {
 jQuery(document).ready(function() {
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
-	GadgetsCreateController.load();	
+	GadgetsCreateController.load(gadgetCreateJson);	
 		
 	// AUTO INIT CONTROLLER.
 	GadgetsCreateController.init();

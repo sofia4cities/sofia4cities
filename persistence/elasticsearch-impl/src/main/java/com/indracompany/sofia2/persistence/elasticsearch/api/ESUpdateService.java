@@ -14,21 +14,14 @@
  */
 package com.indracompany.sofia2.persistence.elasticsearch.api;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.WrapperQueryBuilder;
-import org.elasticsearch.index.reindex.UpdateByQueryAction;
-import org.elasticsearch.index.reindex.UpdateByQueryRequestBuilder;
-import org.elasticsearch.script.Script;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.searchbox.core.DocumentResult;
+import io.searchbox.core.Update;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -38,77 +31,19 @@ public class ESUpdateService {
 	@Autowired
 	ESBaseApi connector;
 
-	public UpdateResponse updateIndex(String index, String type, String id, String jsonString) throws InterruptedException, ExecutionException {
-		UpdateResponse response = null;
-        
-		log.info("updateIndex ");
-		response = connector.getClient().prepareUpdate(index, type, id)
-				.setDoc(jsonString)
-				.execute().get();
-		log.info("response " + response);
-		return response;
+	public boolean updateIndex(String index, String type, String id, String jsonString) throws InterruptedException, ExecutionException {
+		
+		 try {
+			 
+			 String updater = "{\"doc\":"+jsonString+"}";
+			 
+			DocumentResult result = connector.getHttpClient().execute(new Update.Builder(updater).index(index).type(type).id(id).build());
+			return result.isSucceeded();
+		} catch (IOException e) {
+			log.error("Error Updating document "+e);
+			return false;
+		}
 
     }
-	
-	public UpdateResponse updateById(String index, String type, String id, String jsonString ) throws InterruptedException, ExecutionException{
-		log.info("updateById ");
-	
-		UpdateResponse response = null;
-		
-		UpdateRequest updateRequest = new UpdateRequest();
-		updateRequest.index(index);
-		updateRequest.type(type);
-		updateRequest.id(id);
-		updateRequest.doc(jsonString, XContentType.JSON);
-	     
-		response = connector.getClient().update(updateRequest).get();
-		log.info("updateById response " + response);
-		return response;
-
-	}
-	 
-	 
-	 public SearchResponse updateByQuery(String index, String type, String jsonScript ) throws InterruptedException, ExecutionException{
-		 
-		 log.info("updateByQuery ");
-		 SearchResponse response = null ;
-		 
-		 UpdateByQueryRequestBuilder ubqrb = UpdateByQueryAction.INSTANCE.newRequestBuilder(connector.getClient());
-
-		 Script script = new Script(jsonScript);
-		 
-		 response=  ubqrb.source(index)
-		 	.script(script)
-		 	.source().setTypes(type)
-		 	.execute()
-		 	.get();
-		
-		 log.info("updateByQuery response " + response);
-		 return response;
-  
-	 }
-	 
-	 public SearchResponse updateByQueryAndFilter(String index, String type, String jsonScript, String jsonFilter ) throws InterruptedException, ExecutionException{
-		 
-		 log.info("updateByQuery ");
-		 SearchResponse response = null ;
-		 
-		 UpdateByQueryRequestBuilder ubqrb = UpdateByQueryAction.INSTANCE.newRequestBuilder(connector.getClient());
-
-		 Script script = new Script(jsonScript);
-		 
-		 WrapperQueryBuilder build = QueryBuilders.wrapperQuery(jsonFilter);
-		 response=  ubqrb.source(index)
-				 .script(script)
-				 .filter(build)
-				 .source().setTypes(type)
-				 .execute()
-				 .get();
-		
-		 log.info("updateByQuery response " + response);
-		 return response;
-  
-	 }
-
 	
 }

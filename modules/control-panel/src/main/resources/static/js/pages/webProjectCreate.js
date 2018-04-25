@@ -51,6 +51,8 @@ var WebProjectCreateController = function() {
             	$('#resetBtn').removeAttr('disabled');   
             },
             error: function(){
+            	$.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: webProjectCreateJson.validform.zipnotuploaded});
+    			return false;
             }
         });
     }

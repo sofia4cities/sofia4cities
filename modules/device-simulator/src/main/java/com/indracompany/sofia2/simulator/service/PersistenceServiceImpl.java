@@ -13,6 +13,7 @@
 */
 package com.indracompany.sofia2.simulator.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,21 +23,11 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.token.TokenService;
@@ -44,6 +35,7 @@ import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
 import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -52,12 +44,15 @@ import lombok.extern.slf4j.Slf4j;
 public class PersistenceServiceImpl implements PersistenceService {
 
 	@Autowired
+	private RestService restService;
+	@Autowired
 	private ClientPlatformService clientPlatformService;
 	@Autowired
 	private TokenService tokenService;
 	@Autowired
 	private IntegrationResourcesService intregationResourcesService;
 	private static final String UNAUTHORIZED_ONTOLOGY = "Unauthorized ontology";
+	@Getter
 	private Map<String, String> sessionKeys;
 	private List<String> deviceBlackList;
 
@@ -65,31 +60,24 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@PostConstruct
 	public void setUp() {
-		this.sessionKeys = new HashMap<String, String>();
+		this.sessionKeys = new HashMap<>();
 		this.iotbrokerUrl = this.intregationResourcesService.getUrl(Module.iotbroker, ServiceUrl.base);
-		this.deviceBlackList = new ArrayList<String>();
+		this.deviceBlackList = new ArrayList<>();
 	}
 
-	public void connectDeviceRest(String clientPlatform, String clientPlatformInstance) {
+	public void connectDeviceRest(String clientPlatform, String clientPlatformInstance) throws InterruptedException {
 		final Token token = this.tokenService.getToken(this.clientPlatformService.getByIdentification(clientPlatform));
-		final RestTemplate restTemplate = new RestTemplate();
-		final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(iotbrokerUrl + "/rest/client/join")
-				.queryParam("token", token.getToken()).queryParam("clientPlatform", clientPlatform)
-				.queryParam("clientPlatformId", clientPlatformInstance);
-		try {
 
-			final JsonNode response = restTemplate.getForObject(builder.build().encode().toUri(), JsonNode.class);
+		try {
+			final JsonNode response = this.restService.connectRest(iotbrokerUrl, token, clientPlatform,
+					clientPlatformInstance);
 			String sessionKey = response.get("sessionKey").asText();
 			log.info("Session Key :" + sessionKey);
 			if (sessionKey != null)
 				this.sessionKeys.put(clientPlatform, sessionKey);
-		} catch (Exception e) {
-			// log.error("IoT broker down");
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e1) {
-
-			}
+		} catch (RuntimeException e) {
+			log.trace("Fail to connect, trying to reconnect");
+			Thread.sleep(5000);
 
 		}
 
@@ -97,23 +85,12 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@Override
 	public void insertOntologyInstance(String instance, String ontology, String user, String clientPlatform,
-			String clientPlatformInstance) throws Exception {
+			String clientPlatformInstance) throws InterruptedException, IOException {
 
 		if (this.sessionKeys.get(clientPlatform) != null) {
 
-			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-			headers.add("Authorization", this.sessionKeys.get(clientPlatform));
-			headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
-
-			final ObjectMapper mapper = new ObjectMapper();
-			final JsonNode ontologyData = mapper.readTree(instance);
-
-			final RestTemplate restTemplate = new RestTemplate();
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			HttpEntity<JsonNode> request = new HttpEntity<JsonNode>(ontologyData, headers);
-
-			JsonNode response = restTemplate.postForObject(this.iotbrokerUrl + "/rest/ontology/" + ontology, request,
-					JsonNode.class);
+			JsonNode response = this.restService.insertRest(iotbrokerUrl, instance, ontology,
+					this.sessionKeys.get(clientPlatform));
 			log.debug("Response from Rest Service: " + response.asText());
 
 			if (response.path("id").isMissingNode()
@@ -122,7 +99,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 				this.connectDeviceRest(clientPlatform, clientPlatformInstance);
 				this.insertOntologyInstance(instance, ontology, user, clientPlatform, clientPlatformInstance);
 			}
-			// Remove from black list, as it is still sending data
+
 			if (this.deviceBlackList.contains(clientPlatform))
 				this.deviceBlackList.remove(clientPlatform);
 			log.debug("Device " + clientPlatformInstance);
@@ -134,14 +111,7 @@ public class PersistenceServiceImpl implements PersistenceService {
 
 	@Override
 	public void disconnectDeviceRest(String identification) {
-
-		final HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", this.sessionKeys.get(identification));
-		headers.add("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE);
-
-		final RestTemplate restTemplate = new RestTemplate();
-		restTemplate.exchange(iotbrokerUrl + "/rest/client/leave", HttpMethod.GET, new HttpEntity<String>(headers),
-				String.class);
+		this.restService.disconnectRest(iotbrokerUrl, this.sessionKeys.get(identification));
 		this.sessionKeys.remove(identification);
 		log.info("Closed session for device " + identification);
 	}
