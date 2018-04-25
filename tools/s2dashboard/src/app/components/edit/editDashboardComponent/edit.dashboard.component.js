@@ -962,7 +962,7 @@
       ed.global = {
         style: {
           header:{
-            height: 64,
+            height: 25,
             enable: "initial",
             backgroundColor: "initial",
             title: {
@@ -1314,12 +1314,12 @@
                 textColor: "none"
               },
               backgroundColor: "none",
-              height: 64
+              height: 25
             },
             backgroundColor: "initial",
             padding: 0,
             border: {
-              color: "black",
+              color: "hsl(232, 1%, 82%)",
               width: 1,
               radius: 5
             }
