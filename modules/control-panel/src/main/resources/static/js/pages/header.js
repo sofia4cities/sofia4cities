@@ -185,6 +185,43 @@ var HeaderController = function() {
 			}
 		});		
 	}
+	
+	// DATAMODEL-CONFIRM-DIALOG
+	var showDataModelConfirmDialog = function(formId){
+
+		// i18 labels
+		var Remove = headerReg.btnEliminar;
+		var Close = headerReg.btnCancelar;
+		var	Content = headerReg.dataModelConfirm;
+		var Title = headerReg.titleConfirm + ':';
+
+		// datamodel-confirm DIALOG SYSTEM.
+		$.confirm({
+			icon: 'fa fa-warning',
+			title: Title,
+			theme: 'dark',
+			columnClass: 'medium',
+			content: Content,
+			draggable: true,
+			dragWindowGap: 100,
+			backgroundDismiss: true,
+			closeIcon: true,
+			buttons: {
+				remove: {
+					text: Remove,
+					btnClass: 'btn btn-sm btn-danger btn-outline',
+					action: function(){ 
+						if ( document.forms[formId] ) { document.forms[formId].submit(); } else { $.alert({title: 'ERROR!',content: 'NO FORM SELECTED!'}); }
+					}
+				},
+				close: {
+					text: Close,
+					btnClass: 'btn btn-sm btn-default btn-outline',
+					action: function (){} //GENERIC CLOSE.		
+				}
+			}
+		});		
+	}
 
 	// CONFIG-CONFIRM-DIALOG
 	var showScheduledSearchConfirmDialog = function(formId){
@@ -737,6 +774,11 @@ var HeaderController = function() {
 		showConfigurationConfirmDialog : function(formId){		
 			logControl ? console.log('showConfigurationConfirmDialog()...') : '';
 			showConfigurationConfirmDialog(formId);
+		},
+		// DATAMODEL-CONFIRM-DIALOG
+		showDataModelConfirmDialog : function(formId){		
+			logControl ? console.log('showDataModelConfirmDialog()...') : '';
+			showDataModelConfirmDialog(formId);
 		},
 		// SCHEDULEDSEARCH-CONFIRM-DIALOG
 		showScheduledSearchConfirmDialog : function(formId){		
