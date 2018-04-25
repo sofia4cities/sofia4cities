@@ -63,12 +63,12 @@ public class DataModelServiceImpl implements DataModelService{
 
 	@Override
 	public DataModel getDataModelByName(String dataModelName) {
-		return dataModelRepository.findByName(dataModelName);
+		return dataModelRepository.findByName(dataModelName).get(0);
 	}
 
 	@Override
 	public boolean dataModelExists(DataModel datamodel) {
-		DataModel datamodelList = dataModelRepository.findByName(datamodel.getName());
+		DataModel datamodelList = dataModelRepository.findDatamodelsByName(datamodel.getName());
 		 
 		if(datamodelList == null)
 			return false;
