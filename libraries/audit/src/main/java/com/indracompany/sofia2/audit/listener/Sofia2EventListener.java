@@ -28,6 +28,8 @@ import org.springframework.security.oauth2.provider.authentication.OAuth2Authent
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditError;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.OperationType;
@@ -45,14 +47,13 @@ public class Sofia2EventListener {
 	@Autowired
 	private EventRouter eventRouter;
 
-	/*
-	 * @Async
-	 * 
-	 * @EventListener void handleAsync(Sofia2AuditEvent event) throws
-	 * JsonProcessingException { log.
-	 * info("Sofia2EventListener :: Default Event Processing detected : thread '{}' handling '{}' async event"
-	 * , event.getType(), event.getMessage()); eventRouter.notify(event.toJson()); }
-	 */
+	@Async
+	@EventListener
+	void handleAsync(Sofia2AuditError event) throws JsonProcessingException {
+		log.info("Sofia2EventListener :: Default Event Processing detected : thread '{}' handling '{}' async event",
+				event.getType(), event.getMessage());
+		eventRouter.notify(event.toJson());
+	}
 
 	@EventListener
 	@Async

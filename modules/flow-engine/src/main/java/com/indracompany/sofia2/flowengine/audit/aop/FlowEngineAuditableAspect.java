@@ -109,7 +109,9 @@ public class FlowEngineAuditableAspect extends BaseAspect {
 		eventProducer.publish(event);
 	}
 
-	@AfterThrowing(pointcut = "@annotation(auditable) && args(domain,..)", throwing = "ex")
+	@AfterThrowing(pointcut = "@annotation(auditable) && args(domain,..)"
+			+ " && (execution (* com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClientImpl.startFlowEngineDomain(..))"
+			+ " || execution (* com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClientImpl.createFlowengineDomain(..)))", throwing = "ex")
 	public void doRecoveryActions(JoinPoint joinPoint, Exception ex, FlowEngineAuditable auditable,
 			FlowEngineDomain domain) {
 
@@ -118,6 +120,25 @@ public class FlowEngineAuditableAspect extends BaseAspect {
 		try {
 			Method method = getMethod(joinPoint);
 			Sofia2AuditError event = flowEngineAuditProcessor.getErrorEvent(method.getName(), domain, ex);
+			eventProducer.publish(event);
+
+		} catch (Exception e) {
+			log.error("error auditing apimanager doRecoveryActions", e);
+		}
+	}
+
+	@AfterThrowing(pointcut = "@annotation(auditable) && args(domain,..)"
+			+ " && (execution (* com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClientImpl.stopFlowEngineDomain(..))"
+			+ " || execution (* com.indracompany.sofia2.flowengine.nodered.communication.NodeRedAdminClientImpl.deleteFlowEngineDomain(..)))", throwing = "ex")
+	public void doRecoveryActionsDoamin(JoinPoint joinPoint, Exception ex, FlowEngineAuditable auditable,
+			String domain) {
+
+		log.debug("execute aspect flowengineAuditable method doRecoveryActions");
+
+		try {
+			Method method = getMethod(joinPoint);
+			String message = "Exception Detected while executing " + method.getName() + " for domain : " + domain;
+			Sofia2AuditError event = flowEngineAuditProcessor.getErrorEvent(method.getName(), message, domain, ex);
 			eventProducer.publish(event);
 
 		} catch (Exception e) {
@@ -134,9 +155,10 @@ public class FlowEngineAuditableAspect extends BaseAspect {
 
 		try {
 			Method method = getMethod(joinPoint);
-			String message = "operation query on ontology " + ontology + " with query " + query;
-			Sofia2AuditError event = flowEngineAuditProcessor.getErrorEvent(method.getName(), message, authentication,
-					ex);
+			String message = "Exception Detected while executing " + method.getName() + ", "
+					+ "operation query on ontology " + ontology + " with query " + query;
+
+			Sofia2AuditError event = flowEngineAuditProcessor.getErrorEvent(message, authentication, ex);
 
 			eventProducer.publish(event);
 
@@ -154,9 +176,10 @@ public class FlowEngineAuditableAspect extends BaseAspect {
 		try {
 
 			Method method = getMethod(joinPoint);
-			String message = "Operation insert on ontology " + ontology + " with data " + data;
-			Sofia2AuditError event = flowEngineAuditProcessor.getErrorEvent(method.getName(), message, authentication,
-					ex);
+			String message = "Exception Detected while executing " + method.getName() + ", "
+					+ "Operation insert on ontology " + ontology + " with data " + data;
+
+			Sofia2AuditError event = flowEngineAuditProcessor.getErrorEvent(message, authentication, ex);
 
 			eventProducer.publish(event);
 

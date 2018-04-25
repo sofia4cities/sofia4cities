@@ -66,6 +66,7 @@ public class Sofia2EventFactory {
 		event.setFormatedTimeStamp(CalendarUtil.builder().build().convert(today));
 		event.setMessage(message);
 		event.setType(EventType.ERROR);
+		event.setOperationType("");
 		setSecurityData(event);
 		return event;
 	}

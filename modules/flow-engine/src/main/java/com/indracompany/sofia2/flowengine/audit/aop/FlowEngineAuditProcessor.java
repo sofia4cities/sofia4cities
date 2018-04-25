@@ -1,3 +1,17 @@
+/**
+ * Copyright Indra Sistemas, S.A.
+ * 2013-2018 SPAIN
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.indracompany.sofia2.flowengine.audit.aop;
 
 import java.util.Date;
@@ -153,10 +167,10 @@ public class FlowEngineAuditProcessor {
 		String messageOperation = "Exception Detected while executing " + methodName + " for domain : "
 				+ domain.getDomain();
 
-		return getErrorEvent(userId, messageOperation, ex);
+		return createErrorEvent(userId, messageOperation, ex);
 	}
 
-	public Sofia2AuditError getErrorEvent(String methodName, String message, String authentication, Exception ex) {
+	public Sofia2AuditError getErrorEvent(String message, String authentication, Exception ex) {
 
 		Sofia2AuditError event = null;
 
@@ -166,16 +180,20 @@ public class FlowEngineAuditProcessor {
 			final User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
 					decodedAuth.getPassword());
 
-			event = getErrorEvent(sofia2User.getUserId(),
-					"Exception Detected while executing " + methodName + ", " + message, ex);
+			event = createErrorEvent(sofia2User.getUserId(), message, ex);
 		} catch (Exception e) {
-
+			log.error("error getting error event", e);
 		}
 
 		return event;
 	}
 
-	public Sofia2AuditError getErrorEvent(String userId, String message, Exception ex) {
+	public Sofia2AuditError getErrorEvent(String method, String message, String domain, Exception ex) {
+		String userId = getUserId(domain);
+		return createErrorEvent(userId, message, ex);
+	}
+
+	public Sofia2AuditError createErrorEvent(String userId, String message, Exception ex) {
 
 		Sofia2AuditError event = Sofia2EventFactory.builder().build().createAuditEventError(userId, message,
 				Module.FLOWENGINE, ex);
