@@ -16,8 +16,10 @@ package com.indracompany.sofia2.config.services.ontologydata;
 
 import java.io.IOException;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -49,25 +52,31 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
-	
+
 	final private ObjectMapper objectMapper = new ObjectMapper();
-	
+
 	final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
-	
+
 	final public static String ENCRYPT_PROPERTY = "encrypted";
 
-
-	private void checkOntologySchemaCompliance(final String data, final Ontology ontology)
+	private void checkOntologySchemaCompliance(final JsonNode data, final Ontology ontology)
 			throws DataSchemaValidationException {
-		final String jsonSchema = ontology.getJsonSchema();
-		checkJsonCompliantWithSchema(data, jsonSchema);
+		try {
+			final JsonNode jsonSchema = objectMapper.readTree(ontology.getJsonSchema());
+			checkJsonCompliantWithSchema(data, jsonSchema);
+		} catch (IOException e) {
+			throw new DataSchemaValidationException("Error reading data for checking schema compliance", e);
+		} catch (ProcessingException e) {
+			throw new DataSchemaValidationException("Error checking data schema compliance", e);
+		}
 	}
-	
-	void checkJsonCompliantWithSchema(final JsonNode data, final JsonNode schemaJson) throws ProcessingException, DataSchemaValidationException {
+
+	void checkJsonCompliantWithSchema(final JsonNode data, final JsonNode schemaJson)
+			throws ProcessingException, DataSchemaValidationException {
 		final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 		JsonSchema schema = factory.getJsonSchema(schemaJson);
 		ProcessingReport report = schema.validate(data);
-		
+
 		if (report != null && !report.isSuccess()) {
 			final Iterator<ProcessingMessage> it = report.iterator();
 			final StringBuffer msgerror = new StringBuffer();
@@ -86,12 +95,12 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			throws DataSchemaValidationException {
 		JsonNode dataJson;
 		JsonNode schemaJson;
-		
+
 		try {
 			dataJson = JsonLoader.fromString(dataString);
 			schemaJson = JsonLoader.fromString(schemaString);
 			checkJsonCompliantWithSchema(dataJson, schemaJson);
-			
+
 		} catch (IOException e) {
 			throw new DataSchemaValidationException("Error reading data for checking schema compliance", e);
 		} catch (ProcessingException e) {
@@ -99,7 +108,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		}
 	}
 
-	String addContextData(final OperationModel operationModel) throws JsonProcessingException, IOException {
+	String addContextData(final OperationModel operationModel, JsonNode data)
+			throws JsonProcessingException, IOException {
 
 		final String body = operationModel.getBody();
 		final String user = operationModel.getUser();
@@ -114,8 +124,11 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 				.clientConnection(clientConnection).clientPatform(clientPlatformId)
 				.clientPatformInstance(clientPlatoformInstance).clientSession(clientSession).build();
 
-		
-		final JsonNode jsonBody = objectMapper.readTree(body);
+		final JsonNode jsonBody;
+		if (data == null)
+			jsonBody = objectMapper.readTree(body);
+		else
+			jsonBody = data;
 		if (jsonBody.isObject()) {
 			final ObjectNode nodeBody = (ObjectNode) jsonBody;
 			nodeBody.set("contextData", objectMapper.valueToTree(contextData));
@@ -127,39 +140,42 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	}
 
 	String encryptData(String data, Ontology ontology) throws IOException {
-		
+
 		if (ontology.isAllowsCypherFields()) {
-		
+
 			final JsonNode jsonSchema = objectMapper.readTree(ontology.getJsonSchema());
 			final JsonNode jsonData = objectMapper.readTree(data);
 			String path = "#";
 			String schemaPointer = "";
-			
+
 			processProperties(jsonData, jsonSchema, jsonSchema, path, schemaPointer);
-			
+
 			return jsonData.toString();
-		
+
 		} else {
 			return data;
 		}
-		
+
 	}
-	
-	private void processProperties(JsonNode allData, JsonNode schema, JsonNode rootSchema, String path, String schemaPointer) {
-		
+
+	private void processProperties(JsonNode allData, JsonNode schema, JsonNode rootSchema, String path,
+			String schemaPointer) {
+
 		JsonNode properties = schema.path("properties");
 		Iterator<Entry<String, JsonNode>> elements = properties.fields();
-		
-		while(elements.hasNext()) {
+
+		while (elements.hasNext()) {
 			Entry<String, JsonNode> element = elements.next();
 			if (element != null) {
-				processProperty(allData, element.getKey(), element.getValue(), rootSchema, path+"/"+element.getKey(), schemaPointer+"/"+"properties/"+element.getKey());
+				processProperty(allData, element.getKey(), element.getValue(), rootSchema,
+						path + "/" + element.getKey(), schemaPointer + "/" + "properties/" + element.getKey());
 			}
 		}
 	}
-	
-	private void processProperty(JsonNode allData, String elementKey, JsonNode elementValue, JsonNode rootSchema, String path, String schemaPointer) {
-						
+
+	private void processProperty(JsonNode allData, String elementKey, JsonNode elementValue, JsonNode rootSchema,
+			String path, String schemaPointer) {
+
 		JsonNode ref = elementValue.path("$ref");
 		if (!ref.isMissingNode()) {
 			String refString = ref.asText();
@@ -168,29 +184,29 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			processProperties(allData, referencedElement, rootSchema, path, newSchemaPointer);
 		} else {
 			JsonNode oneOf = elementValue.path("oneOf");
-			if(!oneOf.isMissingNode()) {
-				//only one of the schemas is valid for the property
+			if (!oneOf.isMissingNode()) {
+				// only one of the schemas is valid for the property
 				if (oneOf.isArray()) {
 					Iterator<JsonNode> miniSchemas = oneOf.elements();
 					JsonNode miniData = getReferencedJsonNode(path, allData);
 					boolean notFound = true;
-					while(notFound && miniSchemas.hasNext()) {
+					while (notFound && miniSchemas.hasNext()) {
 						try {
-							JsonNode miniSchema = miniSchemas.next();							
-							JsonSchema schema = factory.getJsonSchema(rootSchema, schemaPointer); 
+							JsonNode miniSchema = miniSchemas.next();
+							JsonSchema schema = factory.getJsonSchema(rootSchema, schemaPointer);
 							ProcessingReport report = schema.validate(miniData);
 							if (report.isSuccess()) {
 								notFound = false;
-								
+
 								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer);
 							}
 						} catch (ProcessingException e) {
-							//if it is not the valid schema it must be ignored
+							// if it is not the valid schema it must be ignored
 							log.trace("Mini Schema skipped", e);
 						}
 					}
 				}
-			} else {	
+			} else {
 				JsonNode allOf = elementValue.path("allOf");
 				JsonNode anyOf = elementValue.path("anyOf");
 				Iterator<JsonNode> miniSchemas = null;
@@ -203,19 +219,19 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 						miniSchemas = allOf.elements();
 					}
 				}
-				
+
 				if (miniSchemas != null) {
 					JsonNode miniData = getReferencedJsonNode(path, allData);
-					while(miniSchemas.hasNext()) {
+					while (miniSchemas.hasNext()) {
 						try {
-							JsonNode miniSchema = miniSchemas.next();							
-							JsonSchema schema = factory.getJsonSchema(rootSchema, schemaPointer); 
+							JsonNode miniSchema = miniSchemas.next();
+							JsonSchema schema = factory.getJsonSchema(rootSchema, schemaPointer);
 							ProcessingReport report = schema.validate(miniData);
 							if (report.isSuccess()) {
 								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer);
 							}
 						} catch (ProcessingException e) {
-							//if it is not the valid schema it must be ignored
+							// if it is not the valid schema it must be ignored
 							log.trace("Mini Schema skipped", e);
 						}
 					}
@@ -232,41 +248,58 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 						} catch (final Exception e) {
 							log.error("Error in encrypting data: " + e.getMessage());
 							throw new RuntimeException(e);
-						}								
-					} else {						
-						processProperties(allData, elementValue, rootSchema, path, schemaPointer);						
+						}
+					} else {
+						processProperties(allData, elementValue, rootSchema, path, schemaPointer);
 					}
 				}
-			}			
+			}
 		}
 	}
-	
+
 	private JsonNode getReferencedJsonNode(String ref, JsonNode root) {
 		String[] path = ref.split("/");
 		assert path[0].equals("#");
 		JsonNode referecedElement = root;
-		
+
 		for (int i = 1; i < path.length; i++) {
 			referecedElement = referecedElement.path(path[i]);
 		}
-		
+
 		return referecedElement;
 	}
 
 	@Override
-	public String preProcessInsertData(OperationModel operationModel) throws DataSchemaValidationException {
-		final String data = operationModel.getBody();
+	public List<String> preProcessInsertData(OperationModel operationModel)
+			throws DataSchemaValidationException, IOException {
 		final String ontologyName = operationModel.getOntologyName();
 		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
-		checkOntologySchemaCompliance(data, ontology);
-		try {
-			String bodyWithDataContext = addContextData(operationModel);
-			String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
-			return encryptedDataInBODY;
-		} catch(IOException e) {
-			throw new RuntimeException("Error working with JSON data", e);
-		} 
-		
+		final JsonNode dataNode = objectMapper.readTree(operationModel.getBody());
+		List<String> encryptedData = new ArrayList<>();
+		if (dataNode.isArray()) {
+			for (JsonNode instance : (ArrayNode) dataNode) {
+				checkOntologySchemaCompliance(instance, ontology);
+				try {
+					String bodyWithDataContext = addContextData(operationModel, instance);
+					String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
+					encryptedData.add(encryptedDataInBODY);
+				} catch (IOException e) {
+					throw new RuntimeException("Error working with JSON data", e);
+				}
+			}
+		} else {
+			checkOntologySchemaCompliance(dataNode, ontology);
+			try {
+				String bodyWithDataContext = addContextData(operationModel, null);
+				String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
+				encryptedData.add(encryptedDataInBODY);
+			} catch (IOException e) {
+				throw new RuntimeException("Error working with JSON data", e);
+			}
+
+		}
+		return encryptedData;
+
 	}
 
 }

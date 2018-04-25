@@ -14,11 +14,14 @@
  */
 package com.indracompany.sofia2.config.services.ontologydata;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+import java.util.List;
+
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 
 public interface OntologyDataService {
-	
-	public String preProcessInsertData(final OperationModel operationModel) throws DataSchemaValidationException, JsonProcessingException;
+
+	public List<String> preProcessInsertData(final OperationModel operationModel)
+			throws DataSchemaValidationException, IOException;
 
 }

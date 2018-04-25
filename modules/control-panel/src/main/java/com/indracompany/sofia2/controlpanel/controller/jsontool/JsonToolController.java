@@ -47,7 +47,7 @@ public class JsonToolController {
 
 	private static final String DATAMODEL_DEFAULT_NAME = "EmptyBase";
 
-	@GetMapping("show")
+	@GetMapping("tools")
 	public String show(Model model) {
 		model.addAttribute("ontologies", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()));
 		return "json2ontologytool/import";
@@ -79,24 +79,24 @@ public class JsonToolController {
 		try {
 			JsonNode node = mapper.readTree(data);
 			final OperationModel operation;
-			if (node.isArray()) {
-				operation = new OperationModel.Builder(ontologyIdentification, OperationType.INSERT,
-						this.utils.getUserId(), Source.INTERNAL_ROUTER).body(node.toString())
-								.queryType(QueryType.NATIVE).build();
-				final NotificationModel modelNotification = new NotificationModel();
-				modelNotification.setOperationModel(operation);
 
-				try {
-					final OperationResultModel response = routerService.insert(modelNotification);
-				} catch (Exception e) {
-					return "Could not insert data";
-				}
+			operation = new OperationModel.Builder(ontologyIdentification, OperationType.INSERT, this.utils.getUserId(),
+					Source.INTERNAL_ROUTER).body(node.toString()).queryType(QueryType.NATIVE).build();
+			final NotificationModel modelNotification = new NotificationModel();
+			modelNotification.setOperationModel(operation);
+
+			try {
+				final OperationResultModel response = routerService.insert(modelNotification);
+				if (response.getMessage().equals("OK"))
+					return response.getResult();
+			} catch (Exception e) {
+				return "Could not insert data";
 			}
 
 		} catch (IOException e) {
 			return "Not valid JSON";
 		}
 
-		return "ok";
+		return "Error";
 	}
 }
