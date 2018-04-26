@@ -79,11 +79,13 @@ public class ServiceUtils {
 		try {
 			JsonNode tree = objectMapper.readValue(json,JsonNode.class);
 			formattedJson = tree.toString();
+			return formattedJson;
 		} catch (Exception e) {
 			log.error("Exception reached "+e.getMessage(),e);
+			return null;
 		}
 		
-		return formattedJson;
+		
 	}
 	
 	public static User getUser(){

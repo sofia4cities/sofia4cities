@@ -420,9 +420,10 @@ public class ApiServiceRest {
 					apiUpdate.get(0).setIsActive(suscripcion.getIsActive());
 					apiUpdate.get(0).setInitDate(suscripcion.getInitDate());
 					apiUpdate.get(0).setEndDate(suscripcion.getEndDate());
+					apiSuscriptionRepository.save(apiUpdate.get(0));
 				}
 				
-				apiSuscriptionRepository.save(apiUpdate.get(0));
+				
 			} catch (Exception e) {
 				throw new IllegalArgumentException("com.indra.sofia2.web.api.services.SuscripcionNoExiste");
 			}
