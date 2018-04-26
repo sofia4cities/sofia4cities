@@ -16,8 +16,10 @@ package com.indracompany.sofia2.config.services.ontologydata;
 
 import java.io.IOException;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -56,10 +59,16 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 
 	final public static String ENCRYPT_PROPERTY = "encrypted";
 
-	private void checkOntologySchemaCompliance(final String data, final Ontology ontology)
+	private void checkOntologySchemaCompliance(final JsonNode data, final Ontology ontology)
 			throws DataSchemaValidationException {
-		final String jsonSchema = ontology.getJsonSchema();
-		checkJsonCompliantWithSchema(data, jsonSchema);
+		try {
+			final JsonNode jsonSchema = objectMapper.readTree(ontology.getJsonSchema());
+			checkJsonCompliantWithSchema(data, jsonSchema);
+		} catch (IOException e) {
+			throw new DataSchemaValidationException("Error reading data for checking schema compliance", e);
+		} catch (ProcessingException e) {
+			throw new DataSchemaValidationException("Error checking data schema compliance", e);
+		}
 	}
 
 	void checkJsonCompliantWithSchema(final JsonNode data, final JsonNode schemaJson)
@@ -99,7 +108,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		}
 	}
 
-	String addContextData(final OperationModel operationModel) throws JsonProcessingException, IOException {
+	String addContextData(final OperationModel operationModel, JsonNode data)
+			throws JsonProcessingException, IOException {
 
 		final String body = operationModel.getBody();
 		final String user = operationModel.getUser();
@@ -115,7 +125,11 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 				.clientConnection(clientConnection).clientPatform(clientPlatformId)
 				.clientPatformInstance(clientPlatoformInstance).clientSession(clientSession).build();
 
-		final JsonNode jsonBody = objectMapper.readTree(body);
+		final JsonNode jsonBody;
+		if (data == null)
+			jsonBody = objectMapper.readTree(body);
+		else
+			jsonBody = data;
 		if (jsonBody.isObject()) {
 			final ObjectNode nodeBody = (ObjectNode) jsonBody;
 			nodeBody.set("contextData", objectMapper.valueToTree(contextData));
@@ -257,18 +271,35 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	}
 
 	@Override
-	public String preProcessInsertData(OperationModel operationModel) throws DataSchemaValidationException {
-		final String data = operationModel.getBody();
+	public List<String> preProcessInsertData(OperationModel operationModel)
+			throws DataSchemaValidationException, IOException {
 		final String ontologyName = operationModel.getOntologyName();
 		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
-		checkOntologySchemaCompliance(data, ontology);
-		try {
-			String bodyWithDataContext = addContextData(operationModel);
-			String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
-			return encryptedDataInBODY;
-		} catch (IOException e) {
-			throw new RuntimeException("Error working with JSON data", e);
+		final JsonNode dataNode = objectMapper.readTree(operationModel.getBody());
+		List<String> encryptedData = new ArrayList<>();
+		if (dataNode.isArray()) {
+			for (JsonNode instance : (ArrayNode) dataNode) {
+				checkOntologySchemaCompliance(instance, ontology);
+				try {
+					String bodyWithDataContext = addContextData(operationModel, instance);
+					String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
+					encryptedData.add(encryptedDataInBODY);
+				} catch (IOException e) {
+					throw new RuntimeException("Error working with JSON data", e);
+				}
+			}
+		} else {
+			checkOntologySchemaCompliance(dataNode, ontology);
+			try {
+				String bodyWithDataContext = addContextData(operationModel, null);
+				String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
+				encryptedData.add(encryptedDataInBODY);
+			} catch (IOException e) {
+				throw new RuntimeException("Error working with JSON data", e);
+			}
+
 		}
+		return encryptedData;
 
 	}
 

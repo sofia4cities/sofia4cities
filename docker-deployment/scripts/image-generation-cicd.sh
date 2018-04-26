@@ -208,7 +208,7 @@ if [ -z "$1" ]; then
 	fi	
 	
 	echo "Pushing all images to Docker registry"
-	pushAllImages2Registry latest
+	pushAllImages2Registry 5.1.0-rc2
 
 fi
 

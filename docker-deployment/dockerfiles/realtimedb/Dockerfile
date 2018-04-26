@@ -1,4 +1,4 @@
-FROM mongo:3.4
+FROM mongo:latest
 
 # Metadata
 LABEL module.maintainer="plataformasofia2@indra.es" \

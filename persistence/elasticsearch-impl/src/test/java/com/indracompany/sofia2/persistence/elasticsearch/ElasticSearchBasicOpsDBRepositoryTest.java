@@ -35,8 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Ignore
 @Slf4j
+@Ignore
 public class ElasticSearchBasicOpsDBRepositoryTest {
 	
 	public final static String TEST_INDEX = "test"+System.currentTimeMillis();

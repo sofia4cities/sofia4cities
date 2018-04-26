@@ -39,7 +39,9 @@ import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
+import com.indracompany.sofia2.persistence.util.JSONPersistenceUtilsMongo;
 import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -197,9 +199,8 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 				}
 			}
 			mongoDbConnector.createIndex(database, collection, new MongoDbIndex(indexKeys, indexOptions));
-		} catch (
 
-		DBPersistenceException e) {
+		} catch (DBPersistenceException e) {
 			log.error("createIndex" + e.getMessage());
 			throw new DBPersistenceException(e);
 		}
@@ -252,6 +253,26 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 		}
 	}
 
+	private void computeGeometryIndex(String collection, String name, String schema) {
+		log.debug("computeGeometryIndex", collection, name);
+
+		try {
+			List<String> list = JSONPersistenceUtilsMongo.getGeoIndexes(schema);
+			if (list != null && list.size() > 0)
+				for (String string : list) {
+					createIndex(collection, string, "2dsphere");
+					ensureGeoIndex(collection, string);
+				}
+		} catch (Exception e) {
+			log.error("Cannot create geo indexes: " + e.getMessage(), e);
+		}
+
+		if (!name.isEmpty()) {
+			createIndex(collection, name + ".geometry: \"2dsphere\"");
+		}
+		log.debug("DONE : computeGeometryIndex", collection, name);
+	}
+
 	@Override
 	public void validateIndexes(String collection, String schema) throws DBPersistenceException {
 		log.debug("validateIndexes", collection, schema);
@@ -273,6 +294,9 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 						if (!name.isEmpty()) {
 							createIndex(collection, name + ".geometry: \"2dsphere\"");
 						}
+
+						computeGeometryIndex(collection, name, schema);
+
 					}
 				} catch (JsonParseException e) {
 					log.error("validateIndexes", e);
@@ -301,6 +325,16 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 		} catch (DBPersistenceException e) {
 			log.error("createIndex", e, attribute);
 			throw new DBPersistenceException(e);
+		}
+	}
+
+	public void ensureGeoIndex(String ontology, String attribute) {
+		try {
+			log.debug("ensureGeoIndex", ontology, attribute);
+			mongoDbConnector.createIndex(database, ontology, Indexes.geo2dsphere(attribute));
+		} catch (DBPersistenceException e) {
+			log.error("createIndex", e, attribute);
+
 		}
 	}
 
@@ -342,4 +376,5 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 			}
 
 	}
+
 }

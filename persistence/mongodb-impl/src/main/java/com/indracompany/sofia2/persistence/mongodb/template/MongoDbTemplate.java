@@ -372,4 +372,6 @@ public interface MongoDbTemplate extends Serializable {
 	 * Exists collection
 	 */
 	Boolean collectionExists(String database, String collection);
+
+	void createIndex(String database, String ontology, Bson geo2dsphere);
 }

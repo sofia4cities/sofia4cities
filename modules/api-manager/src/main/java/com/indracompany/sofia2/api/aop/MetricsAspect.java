@@ -66,7 +66,7 @@ public class MetricsAspect extends BaseAspect {
 	@Before("execution(* com.indracompany.sofia2.api.rest.api.*.*(..))")
 	public void beforeSampleCreation(JoinPoint joinPoint) {
 
-		//counterService.increment("counter.calls.beforeSampleCreation");
+		counterService.increment("counter.calls.beforeSampleCreation");
 		log.info("Controller @Before for " + getMethod(joinPoint) + " Method Invoked: "+ joinPoint.getSignature().getName());
 
 		if (joinPoint.getArgs() != null) {
@@ -82,7 +82,7 @@ public class MetricsAspect extends BaseAspect {
 	@AfterReturning(pointcut = "execution(* com.indracompany.sofia2.api.rest.api.*.*(..))", returning = "retVal")
 	public void logServiceAccess(JoinPoint joinPoint, Object retVal) {
 		
-		//counterService.increment("counter.calls.logServiceAccess");
+		counterService.increment("counter.calls.logServiceAccess");
 		
 		log.info("Controller @AfterReturning for " + getMethod(joinPoint) + "  Completed: " + joinPoint);
 		
@@ -96,14 +96,9 @@ public class MetricsAspect extends BaseAspect {
 	public void doRecoveryActions(JoinPoint joinPoint, Exception ex) {
 		
 		//counterService.increment("counter.calls.doRecoveryActions");
-		
-		log.info("Controller @AfterThrowing Setter Called");
-		log.info("Controller @AfterThrowing for " + getMethod(joinPoint) + " Method Invoked: "+ joinPoint.getSignature().getName());
-		log.info("Controller @AfterThrowing for " + getMethod(joinPoint) + " Exception Message: " + ex.getMessage());
-		log.info("Controller @AfterThrowing for " + getMethod(joinPoint) + " Exception Class: "
-				+ ex.getClass().getName());
+		log.info("After Throwing " + getMethod(joinPoint) + " Method Invoked: "+ joinPoint.getSignature().getName());
+		log.info(" Exception Message: " + ex.getMessage());
 
-		
 	}
 
 }

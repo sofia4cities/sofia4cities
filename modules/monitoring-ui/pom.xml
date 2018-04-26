@@ -11,7 +11,7 @@
 
     <groupId>com.indracompany.sofia2</groupId>
     <artifactId>sofia2-monitoring-ui</artifactId>	
-	<version>${sofia2.version}</version>
+
     <packaging>jar</packaging>
 	
     <name>sofia2-monitoring-ui</name>
@@ -147,7 +147,7 @@
 		      <configuration>
 		        <imageName>sofia2/monitoringui</imageName>
 		        <imageTags>
-		           <imageTag>${sofia2.docker.version}</imageTag>
+		           <imageTag>${project.version}</imageTag>
 		        </imageTags>		        
 		        <dockerDirectory>docker</dockerDirectory>
 		        <resources>

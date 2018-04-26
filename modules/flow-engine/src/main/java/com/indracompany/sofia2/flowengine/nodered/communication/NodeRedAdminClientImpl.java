@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomain;
 import com.indracompany.sofia2.commons.flow.engine.dto.FlowEngineDomainStatus;
+import com.indracompany.sofia2.flowengine.audit.aop.FlowEngineAuditable;
 import com.indracompany.sofia2.flowengine.exception.NodeRedAdminServiceException;
 import com.indracompany.sofia2.flowengine.exception.NotSynchronizedToCdbException;
 import com.indracompany.sofia2.flowengine.nodered.communication.dto.SynchronizeDomainStatusRequest;
@@ -95,6 +96,7 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	}
 
 	@Override
+	@FlowEngineAuditable
 	public void stopFlowEngineDomain(String domain) {
 		checkIsSynchronized();
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
@@ -108,6 +110,7 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	}
 
 	@Override
+	@FlowEngineAuditable
 	public String startFlowEngineDomain(FlowEngineDomain domain) {
 		String response = null;
 		checkIsSynchronized();
@@ -125,6 +128,7 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	}
 
 	@Override
+	@FlowEngineAuditable
 	public String createFlowengineDomain(FlowEngineDomain domain) {
 		String response = null;
 		checkIsSynchronized();
@@ -142,6 +146,7 @@ public class NodeRedAdminClientImpl implements NodeRedAdminClient {
 	}
 
 	@Override
+	@FlowEngineAuditable
 	public void deleteFlowEngineDomain(String domainId) {
 		checkIsSynchronized();
 		RestTemplate restTemplate = new RestTemplate(httpRequestFactory);

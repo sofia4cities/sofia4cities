@@ -179,7 +179,7 @@
 												 
 												 <!-- CONFIG GADGET -->
 												 <div id="configContainer" class="hide col-md-12 margin-bottom-20">
-													<h4><i class="fa fa-wrench"></i> Gadget Axis config:</h4>
+													
 													<!-- DYNAMICAL CONFIG -->
 													<div id="configGadget"></div>
 													<div class="pull-left margin-bottom-20">														
@@ -189,11 +189,11 @@
 												 
 												 <!-- MEASURES -->
 												 <div id="measuresContainer" class="hide col-md-12 margin-bottom-20">
-													<h4><i class="fa fa-edit"></i> Measures:</h4>
+													<h4 ><i class="fa fa-edit"></i><span th:text="#{gadgets.measures}"></span></h4>
 													<!-- DYNAMICAL MEASURES -->
 													<div id="measures"></div>
 													<div class="pull-left margin-bottom-20">														
-														<button id="addMore" style="display:none;margin-left: 30px;margin-top: 5px;" class="btn green-haze btn-sm btn-outline uppercase" onclick="addFormSttByType(event,true)"><i class="fa fa-plus"></i> Add measure</button>
+														<button id="addMore" style="display:none;margin-left: 30px;margin-top: 5px;" class="btn green-haze btn-sm btn-outline uppercase" onclick="addFormSttByType(event,true)" th:text="#{gadgets.add.measure}"><i class="fa fa-plus"></i> Add measure</button>
 													</div>
 												 </div>
 												<!-- VIEWER -->
@@ -283,6 +283,7 @@
      	$("#type").val(gtype);
      	
      		var scope = angular.element(document.getElementsByTagName('gadget')[0]).scope();
+     		
      		$("#config").val(JSON.stringify(scope.$$childHead.vm.config.config));
      	
      		  
@@ -441,9 +442,30 @@
 			]
 		},
 		options:{}
+	},{
+		type : "table",
+		icon : "/controlpanel/static/images/dashboards/table.png",
+		attributes : [ {
+			name : "field",
+			types : [ "number", "string", "boolean"]
+		}],
+		series : {
+			maxseries : -1,
+			options : [
+				/*{
+				"type" : "transform",
+				"name" : "Trasnform",
+				"default" : "",
+				"jsonFields" : ["transform"]
+			}*/
+			]
+		},
+		options:{}
 	}
 
 	];
+	
+	
 	
 	//De momento pruebo sin parámetros. Añado en JSON en la función..
 	function showGadgetSelect(){
@@ -594,6 +616,9 @@
 				case "boolean":
 					mhtml += '<input onchange="refreshGadget()" class="gsoption form-control" type="checkbox"/>'
 					break;
+				case "transform":
+					mhtml += '<input onchange="refreshGadget()" class="gsoption form-control" data-live-search="true" data-width="100%"/>';
+					break;
 			}
 			mhtml	+= '</div>'
 		}
@@ -713,8 +738,38 @@
 						gconfig.scales.yAxes.push(ax)
 					}
 					scope.$$childHead.vm.config = {config:gconfig,type:gtype};	
+				}else if(gtype == "table"){
+
+					var gconfig = {tablePagination :{      
+						      limit: $('#limit').val(),
+						      page: 1,
+						      limitOptions : [5, 10, 20, 50 ,100],
+						      style:{
+						    	  backGroundTHead:$('#backGroundTHead').val(),
+						    	  backGroundTFooter:$('#backGroundTFooter').val(),
+						    	  trHeightHead:$('#trHeightHead').val(),
+						    	  trHeightBody:$('#trHeightBody').val(),
+						    	  trHeightFooter:$('#trHeightFooter').val(),
+						    	  textColorTHead:$('#textColorTHead').val(),
+						    	  textColorBody:$('#textColorBody').val(),
+						    	  textColorFooter:$('#textColorFooter').val()
+						      
+						      },
+						      options : {
+						        rowSelection: $("#rowSelection").is(':checked'),
+						        multiSelect: false,
+						        autoSelect: false,
+						        decapitate: $("#decapitate").is(':checked'),
+						        largeEditDialog: false,
+						        boundaryLinks:  $('#boundaryLinks').is(':checked'),
+						        limitSelect: $('#limitSelect').is(':checked'),
+						        pageSelect: $('#pageSelect').is(':checked')
+						      }
+						    }};
+					scope.$$childHead.vm.config = {config:gconfig,type:gtype};	
 				}
 				else{
+					
 					scope.$$childHead.vm.config = {config:$("#config").val()?$("#config").val():"{}",type:gtype};	
 				}
 	        }
@@ -754,10 +809,12 @@
 			else{
 				jsonConfig = JSON.parse($("#config").val());
 			}
+			var gchtml = '<h4><i class="fa fa-wrench"></i> Gadget Axis config:</h4>';
 			for(var index=0; index<jsonConfig.scales.yAxes.length;index++){
-				var gchtml = '';
+				//var gchtml = '';
 				var axis = jsonConfig.scales.yAxes[index];
 				var i =  parseInt(axis.id.slice(1));
+				
 				gchtml += '<div class="gcserie col-md-12">';
 				gchtml += '<div class="form-group col-md-2">';
 				gchtml += '<label class="control-label">ID</label>';
@@ -807,6 +864,145 @@
 				$("#configGadget").html(gchtml);
 			}
 			
+		    } 
+		else if(gtype=="table" ){
+			
+			if ( $('#configContainer').hasClass('hide') === true ){ 
+				$('#configContainer').removeClass('hide');
+			}
+			var jsonConfig;
+			if(!$("#config").val() || $("#config").val() === "{}"){
+				
+				jsonConfig = {tablePagination :{      
+					      limit: 5,
+					      page: 1,
+					      order:'',
+					      limitOptions : [5, 10, 20, 50 ,100],
+					      style:{
+					    	  backGroundTHead: "#dfdfdf",
+					    	  backGroundTFooter: "#dfdfdf",
+					    	  trHeightHead: "30",
+					          trHeightBody: "30",
+					          trHeightFooter: "30",
+					          textColorTHead: "#555",
+					    	  textColorBody:"#555",
+					    	  textColorFooter:"#555"
+					      },
+					      options : {
+					        rowSelection: false,
+					        multiSelect: false,
+					        autoSelect: true,
+					        decapitate: false,
+					        largeEditDialog: false,
+					        boundaryLinks: true,
+					        limitSelect: true,
+					        pageSelect: true
+					      }
+					    }};
+			}
+			else{
+				jsonConfig = JSON.parse($("#config").val());
+			}
+			
+				 var gchtml = '<h4><i class="fa fa-wrench"></i>'+gadgetCreateJson.table_config+'</h4>';			
+				 var limit = jsonConfig.tablePagination.limit;
+			     var page = jsonConfig.tablePagination.page;
+			     var limitOptions = jsonConfig.tablePagination.limitOptions;
+			     var rowSelection =jsonConfig.tablePagination.options.rowSelection;
+			   //  var multiSelect= jsonConfig.tablePagination.options.multiSelect;
+			   //  var autoSelect= jsonConfig.tablePagination.options.autoSelect;
+			     var decapitate= jsonConfig.tablePagination.options.decapitate;
+			   //  var largeEditDialog= jsonConfig.tablePagination.options.largeEditDialog;
+			     var boundaryLinks= jsonConfig.tablePagination.options.boundaryLinks;
+			     var limitSelect= jsonConfig.tablePagination.options.limitSelect;
+			     var pageSelect= jsonConfig.tablePagination.options.pageSelect;
+			     
+			     var backGroundTHead= jsonConfig.tablePagination.style.backGroundTHead;
+			     var backGroundTFooter= jsonConfig.tablePagination.style.backGroundTFooter;
+			     var trHeightHead= jsonConfig.tablePagination.style.trHeightHead;
+			     var trHeightBody= jsonConfig.tablePagination.style.trHeightBody;
+			     var trHeightFooter= jsonConfig.tablePagination.style.trHeightFooter;
+			     var textColorTHead= jsonConfig.tablePagination.style.textColorTHead;
+			     var textColorBody= jsonConfig.tablePagination.style.textColorBody;
+			     var textColorFooter= jsonConfig.tablePagination.style.textColorFooter;
+			     
+				gchtml += '<div class="gcserie col-md-12">';
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.hide_header+'</label>';
+				 if(decapitate) decapitate = "checked";
+				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="decapitate" ' + decapitate + '/>';
+				gchtml += '</div>';
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.selectable_rows+'</label>';
+				 if(rowSelection) rowSelection = "checked";
+				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="rowSelection" ' + rowSelection + '/>';
+				gchtml += '</div>';
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.boundaryLinks+'</label>';
+				if(boundaryLinks) boundaryLinks = "checked";
+				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="boundaryLinks" ' + boundaryLinks + '/>';
+				gchtml += '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.limitSelect+'</label>';
+				if(limitSelect) limitSelect = "checked";
+				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="limitSelect" ' + limitSelect + '/>';
+				gchtml += '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.page_select+'</label>';
+				if(pageSelect) pageSelect = "checked";
+				gchtml += '<input type="checkbox" onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="pageSelect" ' + pageSelect + '/>';
+				gchtml += '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.pagination_limit+'</label>';
+				gchtml += '<select onchange="refreshGadget()" class="form-control" data-live-search="true" data-width="100%" id="limit">';
+				for(var i=0; i<limitOptions.length; i++){
+					gchtml += '<option selected="selected" value="'+limitOptions[i]+'">'+limitOptions[i]+'</option>';
+				}
+				gchtml +='</select>';			
+				gchtml	+= '</div>';
+				gchtml += '</div>'
+				gchtml += '<div class="gcserie col-md-12">';
+				gchtml += '<div class="form-group col-md-3">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.head_background_color+'</label>';				
+				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="backGroundTHead" type="color" value="'+backGroundTHead+'"/>'
+				gchtml += '</div>'
+				gchtml += '<div class="form-group col-md-3">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.footer_background_color+'</label>';				
+				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="backGroundTFooter" type="color" value="'+backGroundTFooter+'"/>'
+				gchtml += '</div>'
+				
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.head_height+'</label>';				
+				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightHead" type="number" min="0" value="'+trHeightHead+'"/>'
+				gchtml += '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.body_row_height+'</label>';				
+				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightBody" type="number" min="0" value="'+trHeightBody+'"/>'
+				gchtml += '</div>'
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.footer_height+'</label>';				
+				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="trHeightFooter" type="number" min="0" value="'+trHeightFooter+'"/>'
+				gchtml += '</div>'
+				gchtml	+= '</div>'
+				gchtml += '<div class="gcserie col-md-12">';
+				gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.head_text_color+'</label>';				
+				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorTHead" type="color" value="'+textColorTHead+'"/>'
+				gchtml += '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.body_text_color+'</label>';				
+				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorBody" type="color" value="'+textColorBody+'"/>'
+				gchtml += '</div>'
+					gchtml += '<div class="form-group col-md-2">';
+				gchtml += '<label class="control-label">'+gadgetCreateJson.footer_text_color+'</label>';				
+				gchtml += '<input onchange="refreshGadget()" class=" form-control" id="textColorFooter" type="color" value="'+textColorFooter+'"/>'
+				gchtml += '</div>'
+				
+				gchtml += '</div>'
+				gchtml	+= '</div>';
+				$("#configGadget").append(gchtml);				
+				$("#addMoreAxes").hide();				
+					
 		}
 		$.get("/controlpanel/datasources/getSampleDatasource/" + $("#datasources").val(), function (jsonString){
 			
@@ -888,7 +1084,31 @@
 		}
 	)
 	
+    var currentLanguage = [[${lang}]];	
 	
+	var gadgetCreateJson = { 
+	
+	"table_config" :[[#{gadgets.table.config}]],
+	"hide_header" :[[#{gadgets.hide.header}]],
+	"selectable_rows" :[[#{gadgets.selectable.rows}]],
+	"boundaryLinks" :[[#{gadgets.boundaryLinks}]],
+	"limitSelect" :[[#{gadgets.limitSelect}]],
+	"page_select" :[[#{gadgets.page.select}]],
+	"pagination_limit" :[[#{gadgets.pagination.limit}]],
+	"head_background_color" : [[#{gadgets.head.background.color}]],
+	"footer_background_color" :[[#{gadgets.footer.background.color}]],
+	"head_height" :[[#{gadgets.head.height}]],
+	"body_row_height" :[[#{gadgets.body.row.height}]],
+	"footer_height" :[[#{gadgets.footer.height}]],
+	"head_text_color" : [[#{gadgets.head.text.color}]],
+	"body_text_color" :[[#{gadgets.body.text.color}]],
+	"footer_text_color" :[[#{gadgets.footer.text.color}]],
+	"measures" :[[#{gadgets.measures}]]
+	
+	
+	
+	};
+		
 		
 	
 	</script>

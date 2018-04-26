@@ -17,6 +17,7 @@ package com.indracompany.sofia2.persistence.elasticsearch.api;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 import io.searchbox.core.Bulk;
@@ -39,57 +41,60 @@ public class ESInsertService {
 
 	@Autowired
 	ESBaseApi connector;
-
-	public String load(String index, String type, String jsonDoc) throws Exception {
-
-		Bulk bulk = new Bulk.Builder().addAction(new Index.Builder(jsonDoc).index(index).type(type).build()).build();
-
-		BulkResult result = connector.getHttpClient().execute(bulk);
-
-		log.info("Document has been inserted..." + result.getJsonString());
-
-		log.info("Document has been inserted..." + result.getJsonString());
-
-		JsonObject object = result.getJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject();
-		log.info("Object "+object);
-		
-		JsonObject the= object.get("index").getAsJsonObject();
-		return the.get("_id").getAsString();
-		
-
-	}
 	
-	public List<BulkWriteResult> load(String index, String type, List<String> jsonDoc) throws Exception {
-
+	
+	private void fixPosibleNonCapitalizedGeometryPoint(String s) {
+		try {
+			JsonObject o = new JsonParser().parse(s).getAsJsonObject();
+			JsonObject geometry = (JsonObject)o.get("geometry");
+			JsonElement type = geometry.get("type");
+			String value = type.getAsString();
+			geometry.addProperty("type", value.toLowerCase());
+			
+		} catch (Exception e) {}
 		
+	}
+
+	public List<BulkWriteResult> load(String index, String type, List<String> jsonDoc) {
+
 		List<BulkWriteResult> listResult = new ArrayList<BulkWriteResult>();
 		
 		List<Index> list = new ArrayList<Index>();
-		for (String string : jsonDoc) {
-			Index i = new Index.Builder(string).index(index).type(type).build();
+		for (String s : jsonDoc) {
+			
+			s = s.replaceAll("\\n", "");
+			s = s.replaceAll("\\r", "");
+			
+			fixPosibleNonCapitalizedGeometryPoint(s);
+			
+			Index i = new Index.Builder(s).index(index).type(type).build();
 			list.add(i);
 		}
 			
 		Bulk bulk = new Bulk.Builder().addAction(list).build();
-		BulkResult result = connector.getHttpClient().execute(bulk);
-		
-		JsonArray object = result.getJsonObject().get("items").getAsJsonArray();
-	
-		for (int i=0; i < object.size(); i++) {
-			JsonElement element = object.get(i);
-			JsonObject o = element.getAsJsonObject();
-			JsonObject the= o.get("index").getAsJsonObject();
-			String id =  the.get("_id").getAsString();
-			String created =  the.get("result").getAsString();
+		BulkResult result;
+		try {
+			result = connector.getHttpClient().execute(bulk);
+			JsonArray object = result.getJsonObject().get("items").getAsJsonArray();
 			
-			BulkWriteResult bulkr = new BulkWriteResult();
-			bulkr.setId(id);
-			bulkr.setErrorMessage(created);
-			bulkr.setOk(true);
-			listResult.add(bulkr);
+			for (int i=0; i < object.size(); i++) {
+				JsonElement element = object.get(i);
+				JsonObject o = element.getAsJsonObject();
+				JsonObject the= o.get("index").getAsJsonObject();
+				String id =  the.get("_id").getAsString();
+				String created =  the.get("result").getAsString();
+				
+				BulkWriteResult bulkr = new BulkWriteResult();
+				bulkr.setId(id);
+				bulkr.setErrorMessage(created);
+				bulkr.setOk(true);
+				listResult.add(bulkr);
 
+			}
+		} catch (IOException e) {
+			log.error("Error Loading document "+e.getMessage(),e);
 		}
-
+		
 		log.info("Documents has been inserted..." + listResult.size());
 
 		return listResult;
@@ -114,9 +119,9 @@ public class ESInsertService {
 			}
 			return results;
 		} catch (Exception e) {
-			return null;
+			return new ArrayList<String>();
 		} finally {
-			reader.close();
+			if (reader!=null)reader.close();
 		}
 
 	}

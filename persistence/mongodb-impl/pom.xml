@@ -14,82 +14,93 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<license.dir>${project.parent.basedir}</license.dir>
+    <license.dir>${project.parent.basedir}</license.dir>
 	</properties>
-
-	<dependencies>
+	
+	<dependencies>		
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-interfaces</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-commons</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
-		<dependency>
+	
+	    <dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
-		</dependency>
-
+        </dependency>
+						
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.persistence/persistence-api -->
-		<dependency> <!--si ponemos javax-persistence-1.0.2 no funciona en ejecución -->
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.1-api</artifactId>
-			<version>1.0.0.Final</version>
+		<dependency> <!--si ponemos javax-persistence-1.0.2 no funciona en ejecución-->
+		  <groupId>org.hibernate.javax.persistence</groupId>
+		  <artifactId>hibernate-jpa-2.1-api</artifactId>
+		  <version>1.0.0.Final</version>
 		</dependency>
-		<!-- <dependency> <groupId>de.flapdoodle.embed</groupId> <artifactId>de.flapdoodle.embed.mongo</artifactId> 
-			<scope>test</scope> </dependency> <dependency> <groupId>cz.jirutka.spring</groupId> 
-			<artifactId>embedmongo-spring</artifactId> <scope>test</scope> </dependency> -->
-
+		<!--
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cz.jirutka.spring</groupId>
+			<artifactId>embedmongo-spring</artifactId>
+			<scope>test</scope>
+		</dependency>
+		-->
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
+		  <groupId>joda-time</groupId>
+		  <artifactId>joda-time</artifactId>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-
+		
 		<!-- Apache HTTP client dependencies -->
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>${httpclient.version}</version>
-		</dependency>
-
-
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+	  
+	  
 	</dependencies>
 
-	<!-- <plugins> -->
-	<!-- <plugin> -->
-	<!-- <groupId>org.springframework.boot</groupId> -->
-	<!-- <artifactId>spring-boot-maven-plugin</artifactId> -->
-	<!-- <configuration> -->
-	<!-- <classifier>exec</classifier> -->
-	<!-- </configuration> -->
-	<!-- </plugin> -->
-	<!-- </plugins> -->
-	<!-- </build> -->
+<!-- 		<plugins> -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.springframework.boot</groupId> -->
+<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
+<!-- 				<configuration> -->
+<!-- 					<classifier>exec</classifier> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+<!-- 		</plugins> -->
+<!-- 	</build> -->
 
 
 </project>

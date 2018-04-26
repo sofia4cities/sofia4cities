@@ -645,7 +645,13 @@ public class InitConfigDB {
 			client.setEncryptionKey(UUID.randomUUID().toString());
 			client.setDescription("Platform client for issues and ticketing");
 			clientPlatformRepository.save(client);
-
+			client = new ClientPlatform();
+			client.setId("4");
+			client.setUser(getUserAdministrator());
+			client.setIdentification("ContPerf device");
+			client.setEncryptionKey(UUID.randomUUID().toString());
+			client.setDescription("Device for continuous performance testing");
+			clientPlatformRepository.save(client);
 		}
 
 	}
@@ -1109,9 +1115,11 @@ public class InitConfigDB {
 
 		log.info("init Ontology");
 		List<Ontology> ontologies = this.ontologyRepository.findAll();
-		if (ontologies.isEmpty()) {
-			log.info("No ontologies..adding");
-			Ontology ontology = new Ontology();
+		List<DataModel> dataModels;
+
+		log.info("No ontologies..adding");
+		Ontology ontology = new Ontology();
+		if (this.ontologyRepository.findByIdentification("OntologyMaster") == null) {
 			ontology.setId("1");
 			ontology.setJsonSchema("{}");
 			ontology.setIdentification("OntologyMaster");
@@ -1123,7 +1131,8 @@ public class InitConfigDB {
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
-
+		}
+		if (this.ontologyRepository.findByIdentification("Ticket") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_Ticket.json"));
 			ontology.setDescription("Ontology created for Ticketing");
@@ -1132,10 +1141,26 @@ public class InitConfigDB {
 			ontology.setRtdbClean(true);
 			ontology.setRtdbToHdb(true);
 			ontology.setPublic(true);
+			ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 			ontologyRepository.save(ontology);
-
+		}
+		if (this.ontologyRepository.findByIdentification("ContPerf") == null) {
+			ontology = new Ontology();
+			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_ContPerf.json"));
+			ontology.setDescription("Ontology created for performance testing");
+			ontology.setIdentification("ContPerf");
+			ontology.setActive(true);
+			ontology.setRtdbClean(false);
+			ontology.setRtdbToHdb(false);
+			ontology.setPublic(true);
+			ontology.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
+			ontology.setUser(getUserAdministrator());
+			ontology.setAllowsCypherFields(false);
+			ontologyRepository.save(ontology);
+		}
+		if (this.ontologyRepository.findByIdentification("HelsinkiPopulation") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_HelsinkiPopulation.json"));
 			ontology.setDescription("Ontology HelsinkiPopulation for testing");
@@ -1147,12 +1172,14 @@ public class InitConfigDB {
 			ontology.setUser(getUserDeveloper());
 			ontology.setAllowsCypherFields(false);
 
-			List<DataModel> dataModels = dataModelRepository.findByName("EmptyBase");
+			dataModels = dataModelRepository.findByName("EmptyBase");
 			if (!dataModels.isEmpty()) {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
 
+		}
+		if (this.ontologyRepository.findByIdentification("TweetSentiment") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_TweetSentiment.json"));
 			ontology.setDescription("TweetSentiment");
@@ -1169,7 +1196,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("GeoAirQuality") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_GeoAirQuality.json"));
 			ontology.setDescription("Air quality retrieved from https://api.waqi.info/search");
@@ -1186,7 +1214,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("CityPopulation") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_CityPopulation.json"));
 			ontology.setDescription(
@@ -1204,7 +1233,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirQuality_gr2") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality_gr2.json"));
 			ontology.setDescription("AirQuality_gr2");
@@ -1221,7 +1251,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirQuality") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirQuality.json"));
 			ontology.setDescription("AirQuality");
@@ -1238,7 +1269,8 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
-
+		}
+		if (this.ontologyRepository.findByIdentification("AirCOMeter") == null) {
 			ontology = new Ontology();
 			ontology.setJsonSchema(loadFromResources("examples/OntologySchema_AirCOMeter.json"));
 			ontology.setDescription("AirCOMeter");
@@ -1256,7 +1288,6 @@ public class InitConfigDB {
 				ontologyRepository.save(ontology);
 			}
 		}
-
 	}
 
 	public void init_OntologyUserAccess() {
@@ -1385,6 +1416,12 @@ public class InitConfigDB {
 			token.setActive(true);
 			hashSetTokens.add(token);
 			client.setTokens(hashSetTokens);
+			tokenRepository.save(token);
+
+			client = this.clientPlatformRepository.findByIdentification("ContPerf device");
+			token = new Token();
+			token.setClientPlatform(client);
+			token.setToken("56686a5a0d7e497d9cafbbbd4b2563ee");
 			tokenRepository.save(token);
 		}
 

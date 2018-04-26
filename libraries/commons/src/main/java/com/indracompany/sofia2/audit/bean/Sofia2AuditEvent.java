@@ -30,7 +30,7 @@ public class Sofia2AuditEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum EventType {
-		USER, SECURITY, ERROR, DATA, GENERAL, IOTBROKER, APIMANAGER;
+		USER, SECURITY, ERROR, DATA, GENERAL, IOTBROKER, APIMANAGER, FLOWENGINE;
 	}
 
 	public enum Module {
@@ -38,7 +38,11 @@ public class Sofia2AuditEvent implements Serializable {
 	}
 
 	public enum OperationType {
-		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE, UPDATE_BY_ID, DELETE, DELETE_BY_ID, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND
+		LOGIN, LOGOUT, JOIN, LEAVE, INSERT, UPDATE, UPDATE_BY_ID, DELETE, DELETE_BY_ID, QUERY, SUBSCRIBE, UNSUBSCRIBE, INDICATION, COMMAND, START, STOP
+	}
+
+	public static enum ResultOperationType {
+		ERROR, SUCCESS
 	}
 
 	@Getter
@@ -85,13 +89,17 @@ public class Sofia2AuditEvent implements Serializable {
 	@Setter
 	protected String otherType;
 
+	@Getter
+	@Setter
+	protected ResultOperationType resultOperation;
+
 	public Sofia2AuditEvent() {
 		super();
 	}
 
 	public Sofia2AuditEvent(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
 			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
-			String otherType) {
+			String otherType, ResultOperationType resultOperation) {
 		super();
 		this.message = message;
 		this.id = id;
@@ -104,13 +112,15 @@ public class Sofia2AuditEvent implements Serializable {
 		this.module = module;
 		this.extraData = extraData;
 		this.otherType = otherType;
+		this.resultOperation = resultOperation;
 	}
 
 	@Override
 	public String toString() {
 		return "Sofia2AuditEvent [message=" + message + ", id=" + id + ", type=" + type + ", timeStamp=" + timeStamp
 				+ ", user=" + user + ", ontology=" + ontology + ", operationType=" + operationType + ", module="
-				+ module + ", extraData=" + extraData + ", otherType=" + otherType + "]";
+				+ module + ", extraData=" + extraData + ", otherType=" + otherType + ", result=" + resultOperation
+				+ "]";
 	}
 
 	public String toJson() {

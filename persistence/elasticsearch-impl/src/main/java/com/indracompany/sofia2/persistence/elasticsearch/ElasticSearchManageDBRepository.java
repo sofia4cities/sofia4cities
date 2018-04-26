@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -30,6 +31,7 @@ import com.indracompany.sofia2.persistence.elasticsearch.api.ESBaseApi;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESDeleteService;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
+import com.indracompany.sofia2.persistence.util.JSONPersistenceUtilsElasticSearch;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +42,8 @@ import lombok.extern.slf4j.Slf4j;
 @Lazy
 @Slf4j
 public class ElasticSearchManageDBRepository implements ManageDBRepository {
+
+	private static final String NOT_IMPLEMENTED_ALREADY = "Not Implemented Already";
 
 	@Autowired
 	ESBaseApi connector;
@@ -77,7 +81,7 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public Map<String, Boolean> getStatusDatabase() throws DBPersistenceException {
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override
@@ -92,32 +96,40 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 			log.info("Resource already exists ");
 		}
 
-		if (schema.equals(""))
+		if (JSONPersistenceUtilsElasticSearch.isJSONSchema(schema)) {
+			try {
+				schema = JSONPersistenceUtilsElasticSearch.getElasticSearchSchemaFromJSONSchema(ontology, schema);
+			} catch (JSONException e) {
+				log.error("Cannot generate ElasticSearch effective Schema, turn to default " + e.getMessage(), e);
+				schema = "{}";
+			}
+		}
+
+		else if (schema.equals(""))
 			schema = "{}";
+		else if (schema.equals("{}")) {
 
-		if (schema.equals("{}")) {
 			log.info("No schema is declared");
-			return ontology;
 		}
 
-		else {
+		connector.createType(ontology, ontology, schema);
 
-			boolean response = connector.createType(ontology, ontology, schema);
-			return ontology;
-		}
+		return ontology;
 
 	}
 
 	@Override
 	public List<String> getListOfTables() throws DBPersistenceException {
 
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
+
 	}
 
 	@Override
 	public List<String> getListOfTables4Ontology(String ontology) throws DBPersistenceException {
 		ontology = ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
+
 	}
 
 	@Override
@@ -130,46 +142,52 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public void createIndex(String ontology, String attribute) throws DBPersistenceException {
+
 		ontology = ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 
 	}
 
 	@Override
 	public void createIndex(String ontology, String nameIndex, String attribute) throws DBPersistenceException {
 		ontology = ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 
 	}
 
 	@Override
 	public void createIndex(String sentence) throws DBPersistenceException {
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override
 	public void dropIndex(String ontology, String indexName) throws DBPersistenceException {
+
 		ontology = ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 
 	}
 
 	@Override
 	public List<String> getListIndexes(String ontology) throws DBPersistenceException {
+
 		ontology = ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
+
 	}
 
 	@Override
 	public String getIndexes(String ontology) throws DBPersistenceException {
+
 		ontology = ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 	}
 
 	@Override
 	public void validateIndexes(String ontology, String schema) throws DBPersistenceException {
+
 		ontology = ontology.toLowerCase();
-		throw new DBPersistenceException("Not Implemented Already");
+		throw new DBPersistenceException(NOT_IMPLEMENTED_ALREADY);
 
 	}
 

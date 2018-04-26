@@ -167,13 +167,10 @@
 																<div class="grupo-iconos text-center">
 																	<!-- VIEW -->		
 																														
-																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/view/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>
-																																																			
-																	<!-- EDIT -->
-																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit}" th:data-original-title="#{gen.edit}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editor/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-edit"></i></span>
+																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/view/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>																																																			
 																	
 																	<!-- Full EDIT -->
-																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} + ' FullScreen'" th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
+																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} " th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
 																	
 																	<!-- URL -->
 																	<span  class="btn btn-sm green-haze sbold tooltips" data-container="body" data-placement="bottom" title="URL Dashboard" data-original-title="URL Dashboard" th:onclick="'javascript:showDashboardURLDialog(\'' + @{|/dashboards/view/${dashboard.id}} + '\');'"><i class="fa fa-link"></i></span>
@@ -316,7 +313,7 @@
 				"/controlpanel/dashboards/create", 
 				{identification : name}
 			).done(function(id){
-				navigateUrl("/controlpanel/dashboards/editor/" + id)}
+				navigateUrl("/controlpanel/dashboards/editfull/" + id)}
 			).fail(
 				function(e){
 					console.log("Error creating dashboard, message detail: " + e.responseText);

@@ -14,4 +14,7 @@ ENV MYSQL_DATABASE sofia2_s4c_scheduler
 # Ignore case
 RUN echo "lower_case_table_names = 1" >> /etc/my.cnf
 
+# Copy to images mysql path
+COPY quartz-schema.sql /docker-entrypoint-initdb.d/quartz-schema.sql
+
 EXPOSE 3306

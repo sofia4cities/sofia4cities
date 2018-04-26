@@ -37,7 +37,12 @@
           if(vm.dashboard.interactionHash){
             interactionService.setInteractionHash(vm.dashboard.interactionHash);
           }
-
+          vm.dashboard.gridOptions.displayGrid = "none";
+          if(!vm.editmode){           
+            vm.dashboard.gridOptions.draggable.enabled = false;
+            vm.dashboard.gridOptions.resizable.enabled = false;
+            vm.dashboard.gridOptions.enableEmptyCellDrop = false;
+          }
           gadgetManagerService.setDashboardModelAndPage(vm.dashboard,vm.selectedpage);
         }
       ).catch(
@@ -264,7 +269,7 @@
           /**we look for the parameters in the source code to create the form */
           $scope.getPredefinedParameters = function(){
             var str =  $scope.config.content;
-           	var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+           	var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\-->/g;
 		        var regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
             var regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
 		        var found=[];
@@ -319,7 +324,7 @@
             /** this function Replace parameteres for his selected values*/
             function parseProperties(){
               var str =  $scope.config.content;
-              var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\>/g;
+              var regexTag =  /<![\-\-\s\w\>\=\"\'\,\:\+\_\/]*\-->/g;
               var regexName = /name\s*=\s*\"[\s\w\>\=\-\'\+\_\/]*\s*\"/g;
               var regexOptions = /options\s*=\s*\"[\s\w\>\=\-\'\:\,\+\_\/]*\s*\"/g;
               var found=[];
@@ -420,12 +425,12 @@
             textColor: "hsl(220, 23%, 20%)"
           },
           backgroundColor: "hsl(0, 0%, 100%)",
-          height: "50"
+          height: "25"
         }
         newElem.backgroundColor ="white";
         newElem.padding = 0;
         newElem.border = {
-          color: "hsl(0°, 0%, 80%)",
+          color: "#c7c7c7de",
           width: 1,
           radius: 5
         }
