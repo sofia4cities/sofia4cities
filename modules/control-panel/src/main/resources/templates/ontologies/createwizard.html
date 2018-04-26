@@ -174,7 +174,7 @@
 																<div class="col-md-2 col-sm-6 col-xs-12">
 																	<div class="form-group">
 																		<label class="" th:text="#{ontology.public} + ':'">Public</label>
-																		<div class="mt-checkbox-list">
+																		<div class="mt-checkbox-list"> 
 																			<label class="mt-checkbox popovers font-sm" data-trigger="hover" data-placement="top" data-container="body"  th:attr="data-content=#{ontology.public.help},data-title=#{ontology.public}"><i class="la la-lightbulb-o font-md"></i> <div class="inline font-xs" th:text="#{ontology.public} +'?'">Public?</div>
 																				<input  id="public" class="form-control no-remove"  name="public" type="checkbox" th:field="*{public}"  />
 																				<span></span><!-- necesario por estilos. -->
@@ -306,7 +306,9 @@
 																											<td>
 																												<!-- <input type="text" name="type[]"   onblur="OntologyCreateController.checkType(this)" class="form-control" placeholder="[string, number, object, timestamp, binary]" /> -->
 																												<select name="type[]" class="form-control" onchange="OntologyCreateController.checkType(this)">																																																				<option value="string">string</option>
+																													<option value="object">object</option>
 																													<option value="number">number</option>
+																													<option value="integer">integer</option>
 																													<option value="geometry">geometry</option>
 																													<option value="timestamp">timestamp</option>
 																													<option value="binary">binary</option>																											
