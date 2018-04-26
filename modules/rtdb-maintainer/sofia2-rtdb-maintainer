@@ -7026,3 +7026,337 @@ Using default security password: 32d49d39-a1cc-4e4d-b4d9-de2ad9ea4d5d
 2018-04-17 19:03:18.902  INFO 8852 --- [Thread-9] org.quartz.core.QuartzScheduler          : Scheduler SimpleQuartzScheduler_$_SIMPLE_NON_CLUSTERED shutdown complete.
 2018-04-17 19:03:18.932  INFO 8852 --- [Thread-9] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'sofia'
 2018-04-17 19:03:18.936  INFO 8852 --- [Thread-9] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'quartz'
+2018-04-26 10:31:53.200  WARN 13732 --- [main] ory$DuplicateJsonObjectContextCustomizer : 
+
+Found multiple occurrences of org.json.JSONObject on the class path:
+
+	jar:file:/s:/m2_repo/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar!/org/json/JSONObject.class
+	jar:file:/s:/m2_repo/org/json/json/20140107/json-20140107.jar!/org/json/JSONObject.class
+
+You may wish to exclude one of them to ensure predictable runtime behaviour
+
+2018-04-26 10:31:53.261  INFO 13732 --- [main] c.i.s.r.job.RtdbMaintainerJobTest        : Starting RtdbMaintainerJobTest on FJGCORNEJO10 with PID 13732 (started by fjgcornejo in S:\sofia2-s4c\modules\rtdb-maintainer)
+2018-04-26 10:31:53.262  INFO 13732 --- [main] c.i.s.r.job.RtdbMaintainerJobTest        : No active profile set, falling back to default profiles: default
+2018-04-26 10:31:53.359  INFO 13732 --- [main] o.s.w.c.s.GenericWebApplicationContext   : Refreshing org.springframework.web.context.support.GenericWebApplicationContext@7f09ff10: startup date [Thu Apr 26 10:31:53 CEST 2018]; root of context hierarchy
+2018-04-26 10:31:57.100  INFO 13732 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2018-04-26 10:31:57.277  INFO 13732 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2018-04-26 10:31:58.512  INFO 13732 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2018-04-26 10:31:58.869  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.WebProjectRepository.
+2018-04-26 10:31:58.874  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ApiQueryParameterRepository.
+2018-04-26 10:31:58.875  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ApiOperationRepository.
+2018-04-26 10:31:58.876  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.TwitterListeningRepository.
+2018-04-26 10:31:58.877  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.GadgetRepository.
+2018-04-26 10:31:58.878  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ApiRepository.
+2018-04-26 10:31:58.879  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ConfigurationRepository.
+2018-04-26 10:31:58.879  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ApiAuthenticationRepository.
+2018-04-26 10:31:58.880  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ConsoleMenuRepository.
+2018-04-26 10:31:58.883  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OntologyUserAccessRepository.
+2018-04-26 10:31:58.885  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.FlowDomainRepository.
+2018-04-26 10:31:58.886  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.EventsDigitalTwinTypeRepository.
+2018-04-26 10:31:58.887  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.scheduler.repository.ScheduledJobRepository.
+2018-04-26 10:31:58.888  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OAuthAccessTokenRepository.
+2018-04-26 10:31:58.889  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.DeviceRepository.
+2018-04-26 10:31:58.893  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.PropertyDigitalTwinTypeRepository.
+2018-04-26 10:31:58.894  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.TokenRepository.
+2018-04-26 10:31:58.896  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.GadgetDatasourceRepository.
+2018-04-26 10:31:58.897  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.RoleRepository.
+2018-04-26 10:31:58.898  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ApiAuthenticationAttributeRepository.
+2018-04-26 10:31:58.899  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.DashboardRepository.
+2018-04-26 10:31:58.900  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository.
+2018-04-26 10:31:58.900  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OAuthClientTokenRepository.
+2018-04-26 10:31:58.901  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ApiAuthenticationParameterRepository.
+2018-04-26 10:31:58.902  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.MarketAssetRepository.
+2018-04-26 10:31:58.909  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.UserRatingsRepository.
+2018-04-26 10:31:58.910  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.UserRepository.
+2018-04-26 10:31:58.913  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.FlowRepository.
+2018-04-26 10:31:58.914  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OntologyRepository.
+2018-04-26 10:31:58.919  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ApiSuscriptionRepository.
+2018-04-26 10:31:58.921  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ApiHeaderRepository.
+2018-04-26 10:31:58.923  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.FlowNodeRepository.
+2018-04-26 10:31:58.923  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OntologyCategoryRepository.
+2018-04-26 10:31:58.924  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.DataModelRepository.
+2018-04-26 10:31:58.925  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OntologyUserAccessTypeRepository.
+2018-04-26 10:31:58.926  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.DeviceSimulationRepository.
+2018-04-26 10:31:58.927  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ClientConnectionRepository.
+2018-04-26 10:31:58.929  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OAuthClientDetailsRepository.
+2018-04-26 10:31:58.930  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.GadgetMeasureRepository.
+2018-04-26 10:31:58.931  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.UserTokenRepository.
+2018-04-26 10:31:58.933  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.UserCommentRepository.
+2018-04-26 10:31:58.934  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ClientPlatformOntologyRepository.
+2018-04-26 10:31:58.942  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OAuthRefreshTokenRepository.
+2018-04-26 10:31:58.944  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.LogicDigitalTwinTypeRepository.
+2018-04-26 10:31:58.947  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.GadgetTemplateRepository.
+2018-04-26 10:31:58.948  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ClientPlatformRepository.
+2018-04-26 10:31:58.949  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.SuscriptionModelRepository.
+2018-04-26 10:31:58.952  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.UserApiRepository.
+2018-04-26 10:31:58.957  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.ActionsDigitalTwinTypeRepository.
+2018-04-26 10:31:58.961  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.OAuthCodeRepository.
+2018-04-26 10:31:58.964  INFO 13732 --- [main] .RepositoryConfigurationExtensionSupport : Spring Data MongoDB - Could not safely identify store assignment for repository candidate interface com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository.
+2018-04-26 10:32:01.964  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.507  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.512  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.518  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.525  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.532  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.539  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.545  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.550  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.556  WARN 13732 --- [main] o.a.tomcat.jdbc.pool.PooledConnection    : Not loading a JDBC driver as driverClassName property is null.
+2018-04-26 10:32:02.734  INFO 13732 --- [main] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'quartz'
+2018-04-26 10:32:02.773  INFO 13732 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: quartz
+	...]
+2018-04-26 10:32:02.937  INFO 13732 --- [main] org.hibernate.Version                    : HHH000412: Hibernate Core {5.0.12.Final}
+2018-04-26 10:32:02.940  INFO 13732 --- [main] org.hibernate.cfg.Environment            : HHH000206: hibernate.properties not found
+2018-04-26 10:32:02.944  INFO 13732 --- [main] org.hibernate.cfg.Environment            : HHH000021: Bytecode provider name : javassist
+2018-04-26 10:32:03.125  INFO 13732 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2018-04-26 10:32:03.583  INFO 13732 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2018-04-26 10:32:04.495  INFO 13732 --- [main] org.hibernate.tool.hbm2ddl.SchemaUpdate  : HHH000228: Running hbm2ddl schema update
+2018-04-26 10:32:04.884  INFO 13732 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'quartz'
+2018-04-26 10:32:04.984  INFO 13732 --- [main] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'sofia'
+2018-04-26 10:32:04.987  INFO 13732 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: sofia
+	...]
+2018-04-26 10:32:05.019  INFO 13732 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5Dialect
+2018-04-26 10:32:06.322  INFO 13732 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'sofia'
+2018-04-26 10:32:07.809  INFO 13732 --- [main] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
+2018-04-26 10:32:08.812  INFO 13732 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2018-04-26 10:32:08.813  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.2.3 created.
+2018-04-26 10:32:08.824  INFO 13732 --- [main] org.quartz.simpl.RAMJobStore             : RAMJobStore initialized.
+2018-04-26 10:32:08.827  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.2.3) 'SimpleQuartzScheduler' with instanceId 'SIMPLE_NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.ZeroSizeThreadPool' - with 0 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2018-04-26 10:32:08.828  INFO 13732 --- [main] org.quartz.impl.DirectSchedulerFactory   : Quartz scheduler 'SimpleQuartzScheduler
+2018-04-26 10:32:08.828  INFO 13732 --- [main] org.quartz.impl.DirectSchedulerFactory   : Quartz scheduler version: 2.2.3
+2018-04-26 10:32:09.109  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2018-04-26 10:32:09.152  INFO 13732 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2018-04-26 10:32:09.169  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.2.3 created.
+2018-04-26 10:32:09.174  INFO 13732 --- [main] o.s.s.quartz.LocalDataSourceJobStore     : Using db table-based data access locking (synchronization).
+2018-04-26 10:32:09.181  INFO 13732 --- [main] o.s.s.quartz.LocalDataSourceJobStore     : JobStoreCMT initialized.
+2018-04-26 10:32:09.181  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.2.3) 'batchScheduler' with instanceId 'FJGCORNEJO101524731529144'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 25 threads.
+  Using job-store 'org.springframework.scheduling.quartz.LocalDataSourceJobStore' - which supports persistence. and is clustered.
+
+2018-04-26 10:32:09.183  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'batchScheduler' initialized from an externally provided properties instance.
+2018-04-26 10:32:09.185  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.2.3
+2018-04-26 10:32:09.187  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : JobFactory set to: com.indracompany.sofia2.scheduler.config.AutowiringSpringBeanJobFactory@22822136
+2018-04-26 10:32:09.228  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2018-04-26 10:32:09.231  INFO 13732 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2018-04-26 10:32:09.231  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.2.3 created.
+2018-04-26 10:32:09.232  INFO 13732 --- [main] o.s.s.quartz.LocalDataSourceJobStore     : Using db table-based data access locking (synchronization).
+2018-04-26 10:32:09.232  INFO 13732 --- [main] o.s.s.quartz.LocalDataSourceJobStore     : JobStoreCMT initialized.
+2018-04-26 10:32:09.232  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.2.3) 'scriptScheduler' with instanceId 'FJGCORNEJO101524731529229'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 25 threads.
+  Using job-store 'org.springframework.scheduling.quartz.LocalDataSourceJobStore' - which supports persistence. and is clustered.
+
+2018-04-26 10:32:09.232  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'scriptScheduler' initialized from an externally provided properties instance.
+2018-04-26 10:32:09.232  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.2.3
+2018-04-26 10:32:09.233  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : JobFactory set to: com.indracompany.sofia2.scheduler.config.AutowiringSpringBeanJobFactory@22822136
+2018-04-26 10:32:09.271  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2018-04-26 10:32:09.274  INFO 13732 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2018-04-26 10:32:09.274  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.2.3 created.
+2018-04-26 10:32:09.275  INFO 13732 --- [main] o.s.s.quartz.LocalDataSourceJobStore     : Using db table-based data access locking (synchronization).
+2018-04-26 10:32:09.275  INFO 13732 --- [main] o.s.s.quartz.LocalDataSourceJobStore     : JobStoreCMT initialized.
+2018-04-26 10:32:09.275  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.2.3) 'simulationScheduler' with instanceId 'FJGCORNEJO101524731529272'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 25 threads.
+  Using job-store 'org.springframework.scheduling.quartz.LocalDataSourceJobStore' - which supports persistence. and is clustered.
+
+2018-04-26 10:32:09.275  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'simulationScheduler' initialized from an externally provided properties instance.
+2018-04-26 10:32:09.275  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.2.3
+2018-04-26 10:32:09.275  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : JobFactory set to: com.indracompany.sofia2.scheduler.config.AutowiringSpringBeanJobFactory@22822136
+2018-04-26 10:32:09.300  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2018-04-26 10:32:09.303  INFO 13732 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2018-04-26 10:32:09.303  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.2.3 created.
+2018-04-26 10:32:09.304  INFO 13732 --- [main] o.s.s.quartz.LocalDataSourceJobStore     : Using db table-based data access locking (synchronization).
+2018-04-26 10:32:09.304  INFO 13732 --- [main] o.s.s.quartz.LocalDataSourceJobStore     : JobStoreCMT initialized.
+2018-04-26 10:32:09.304  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.2.3) 'twitterScheduler' with instanceId 'FJGCORNEJO101524731529300'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 25 threads.
+  Using job-store 'org.springframework.scheduling.quartz.LocalDataSourceJobStore' - which supports persistence. and is clustered.
+
+2018-04-26 10:32:09.304  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'twitterScheduler' initialized from an externally provided properties instance.
+2018-04-26 10:32:09.304  INFO 13732 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.2.3
+2018-04-26 10:32:09.304  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : JobFactory set to: com.indracompany.sofia2.scheduler.config.AutowiringSpringBeanJobFactory@22822136
+2018-04-26 10:32:09.515  WARN 13732 --- [main] c.i.s.p.m.config.MongoDbCredentials      : The authentication database, the username or the password has not been specified. MongoDB authentication will be DISABLED.
+2018-04-26 10:32:09.523  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Initializing MongoDB connector...
+2018-04-26 10:32:09.524  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Parsing MongoDB servers property...
+2018-04-26 10:32:09.524  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Registering MongoDB server localhost:27017.
+2018-04-26 10:32:09.525  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Configuring MongoDB client...
+2018-04-26 10:32:09.607  WARN 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : The MongoDB connector has been configured in single-server mode. The configured WriteConcern level (WriteConcern{w=UNACKNOWLEDGED, wTimeout=null ms, fsync=null, journal=null) will be ignored.
+2018-04-26 10:32:10.022  INFO 13732 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=MULTIPLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50}
+2018-04-26 10:32:10.023  INFO 13732 --- [main] org.mongodb.driver.cluster               : Adding discovered server localhost:27017 to client view of cluster
+2018-04-26 10:32:10.190  INFO 13732 --- [cluster-ClusterId{value='5ae18e8a7c81fe35a467bced', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:1, serverValue:2515}] to localhost:27017
+2018-04-26 10:32:10.193  INFO 13732 --- [cluster-ClusterId{value='5ae18e8a7c81fe35a467bced', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=783590}
+2018-04-26 10:32:10.195  INFO 13732 --- [cluster-ClusterId{value='5ae18e8a7c81fe35a467bced', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Discovered cluster type of STANDALONE
+2018-04-26 10:32:10.353  INFO 13732 --- [main] io.searchbox.client.AbstractJestClient   : Setting server pool to a list of 1 servers: [http://localhost:9200]
+2018-04-26 10:32:10.355  INFO 13732 --- [main] io.searchbox.client.JestClientFactory    : Using multi thread/connection supporting pooling connection manager
+2018-04-26 10:32:10.567  INFO 13732 --- [main] io.searchbox.client.JestClientFactory    : Using default GSON instance
+2018-04-26 10:32:10.567  INFO 13732 --- [main] io.searchbox.client.JestClientFactory    : Node Discovery disabled...
+2018-04-26 10:32:10.567  INFO 13732 --- [main] io.searchbox.client.JestClientFactory    : Idle connection reaping disabled...
+2018-04-26 10:32:14.223  INFO 13732 --- [main] c.i.s.p.e.api.ESNativeService            : Connection details: host: localhost. port:9300.
+2018-04-26 10:32:14.634  INFO 13732 --- [main] c.i.s.p.e.api.ESNativeService            : Settings {"client.transport.ignore_cluster_name":"true","client.transport.sniff":"false","client.type":"transport","cluster.name":"sofia2_s4c","http.type.default":"netty4","network.server":"false","node.name":"_client_","transport.ping_schedule":"5s","transport.type.default":"netty4"} 
+2018-04-26 10:32:14.657  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Initializing MongoDB connector...
+2018-04-26 10:32:14.657  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Parsing MongoDB servers property...
+2018-04-26 10:32:14.657  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Registering MongoDB server localhost:27017.
+2018-04-26 10:32:14.658  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Configuring MongoDB client...
+2018-04-26 10:32:14.659  WARN 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : The MongoDB connector has been configured in single-server mode. The configured WriteConcern level (WriteConcern{w=UNACKNOWLEDGED, wTimeout=null ms, fsync=null, journal=null) will be ignored.
+2018-04-26 10:32:14.660  INFO 13732 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=MULTIPLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50}
+2018-04-26 10:32:14.660  INFO 13732 --- [main] org.mongodb.driver.cluster               : Adding discovered server localhost:27017 to client view of cluster
+2018-04-26 10:32:14.687  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcee', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:2, serverValue:2516}] to localhost:27017
+2018-04-26 10:32:14.689  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcee', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=1037128}
+2018-04-26 10:32:14.690  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcee', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Discovered cluster type of STANDALONE
+2018-04-26 10:32:14.727  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Loading Mustache Template :geo.intersects.elasticsearch.mustache jar:file:/s:/m2_repo/com/indracompany/sofia2/sofia2-persistence-services/5.2.0-SNAPSHOT/sofia2-persistence-services-5.2.0-SNAPSHOT.jar!/mustache-templates/geo.intersects.elasticsearch.mustache
+2018-04-26 10:32:14.758  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Template Definition Loaded: geo.intersects.elasticsearch.mustache
+2018-04-26 10:32:14.759  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Loading Mustache Template :geo.intersects.mongo.mustache jar:file:/s:/m2_repo/com/indracompany/sofia2/sofia2-persistence-services/5.2.0-SNAPSHOT/sofia2-persistence-services-5.2.0-SNAPSHOT.jar!/mustache-templates/geo.intersects.mongo.mustache
+2018-04-26 10:32:14.759  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Template Definition Loaded: geo.intersects.mongo.mustache
+2018-04-26 10:32:14.759  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Loading Mustache Template :geo.near.elasticsearch.mustache jar:file:/s:/m2_repo/com/indracompany/sofia2/sofia2-persistence-services/5.2.0-SNAPSHOT/sofia2-persistence-services-5.2.0-SNAPSHOT.jar!/mustache-templates/geo.near.elasticsearch.mustache
+2018-04-26 10:32:14.760  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Template Definition Loaded: geo.near.elasticsearch.mustache
+2018-04-26 10:32:14.760  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Loading Mustache Template :geo.near.mongo.mustache jar:file:/s:/m2_repo/com/indracompany/sofia2/sofia2-persistence-services/5.2.0-SNAPSHOT/sofia2-persistence-services-5.2.0-SNAPSHOT.jar!/mustache-templates/geo.near.mongo.mustache
+2018-04-26 10:32:14.761  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Template Definition Loaded: geo.near.mongo.mustache
+2018-04-26 10:32:14.761  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Loading Mustache Template :geo.within.elasticsearch.mustache jar:file:/s:/m2_repo/com/indracompany/sofia2/sofia2-persistence-services/5.2.0-SNAPSHOT/sofia2-persistence-services-5.2.0-SNAPSHOT.jar!/mustache-templates/geo.within.elasticsearch.mustache
+2018-04-26 10:32:14.762  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Template Definition Loaded: geo.within.elasticsearch.mustache
+2018-04-26 10:32:14.762  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Loading Mustache Template :geo.within.mongo.mustache jar:file:/s:/m2_repo/com/indracompany/sofia2/sofia2-persistence-services/5.2.0-SNAPSHOT/sofia2-persistence-services-5.2.0-SNAPSHOT.jar!/mustache-templates/geo.within.mongo.mustache
+2018-04-26 10:32:14.762  INFO 13732 --- [main] c.i.s.p.services.GeoSpatialOpsService    : Template Definition Loaded: geo.within.mongo.mustache
+2018-04-26 10:32:14.777  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Initializing MongoDB connector...
+2018-04-26 10:32:14.777  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Parsing MongoDB servers property...
+2018-04-26 10:32:14.778  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Registering MongoDB server localhost:27017.
+2018-04-26 10:32:14.778  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Configuring MongoDB client...
+2018-04-26 10:32:14.779  WARN 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : The MongoDB connector has been configured in single-server mode. The configured WriteConcern level (WriteConcern{w=UNACKNOWLEDGED, wTimeout=null ms, fsync=null, journal=null) will be ignored.
+2018-04-26 10:32:14.780  INFO 13732 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=MULTIPLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50}
+2018-04-26 10:32:14.780  INFO 13732 --- [main] org.mongodb.driver.cluster               : Adding discovered server localhost:27017 to client view of cluster
+2018-04-26 10:32:14.785  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Initializing MongoDB connector...
+2018-04-26 10:32:14.785  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Parsing MongoDB servers property...
+2018-04-26 10:32:14.785  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Registering MongoDB server localhost:27017.
+2018-04-26 10:32:14.785  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Configuring MongoDB client...
+2018-04-26 10:32:14.785  WARN 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : The MongoDB connector has been configured in single-server mode. The configured WriteConcern level (WriteConcern{w=UNACKNOWLEDGED, wTimeout=null ms, fsync=null, journal=null) will be ignored.
+2018-04-26 10:32:14.786  INFO 13732 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=MULTIPLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50}
+2018-04-26 10:32:14.786  INFO 13732 --- [main] org.mongodb.driver.cluster               : Adding discovered server localhost:27017 to client view of cluster
+2018-04-26 10:32:14.796  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Initializing MongoDB connector...
+2018-04-26 10:32:14.796  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Parsing MongoDB servers property...
+2018-04-26 10:32:14.796  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Registering MongoDB server localhost:27017.
+2018-04-26 10:32:14.797  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Configuring MongoDB client...
+2018-04-26 10:32:14.797  WARN 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : The MongoDB connector has been configured in single-server mode. The configured WriteConcern level (WriteConcern{w=UNACKNOWLEDGED, wTimeout=null ms, fsync=null, journal=null) will be ignored.
+2018-04-26 10:32:14.797  INFO 13732 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=MULTIPLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50}
+2018-04-26 10:32:14.798  INFO 13732 --- [main] org.mongodb.driver.cluster               : Adding discovered server localhost:27017 to client view of cluster
+2018-04-26 10:32:14.875  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcef', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:3, serverValue:2517}] to localhost:27017
+2018-04-26 10:32:14.876  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcef', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=691692}
+2018-04-26 10:32:14.877  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcef', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Discovered cluster type of STANDALONE
+2018-04-26 10:32:14.922  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcf0', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:4, serverValue:2518}] to localhost:27017
+2018-04-26 10:32:14.923  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcf0', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=837333}
+2018-04-26 10:32:14.924  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcf0', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Discovered cluster type of STANDALONE
+2018-04-26 10:32:14.942  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcf1', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:5, serverValue:2519}] to localhost:27017
+2018-04-26 10:32:14.943  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcf1', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=930871}
+2018-04-26 10:32:14.944  INFO 13732 --- [cluster-ClusterId{value='5ae18e8e7c81fe35a467bcf1', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Discovered cluster type of STANDALONE
+2018-04-26 10:32:15.277  INFO 13732 --- [main] o.s.b.t.m.w.SpringBootMockServletContext : jolokia: No access restrictor found, access to any MBean is allowed
+2018-04-26 10:32:18.164  INFO 13732 --- [main] b.a.s.AuthenticationManagerConfiguration : 
+
+Using default security password: 3d5cdd3e-18b1-46c6-9dc4-c96baa00f1f5
+
+2018-04-26 10:32:18.639  INFO 13732 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/scheduler/resume/{jobName}],methods=[GET],produces=[application/json;charset=UTF-8]}" onto public com.indracompany.sofia2.scheduler.scheduler.bean.response.ResponseInfo com.indracompany.sofia2.scheduler.scheduler.controller.SchedulerDefaultController.resume(java.lang.String)
+2018-04-26 10:32:18.641  INFO 13732 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/scheduler/list/{username}],methods=[GET],produces=[application/json;charset=UTF-8]}" onto public java.util.List<com.indracompany.sofia2.scheduler.scheduler.bean.ListTaskInfo> com.indracompany.sofia2.scheduler.scheduler.controller.SchedulerDefaultController.list(java.lang.String)
+2018-04-26 10:32:18.642  INFO 13732 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/scheduler/schedule],methods=[POST],consumes=[application/json;charset=UTF-8],produces=[application/json;charset=UTF-8]}" onto public com.indracompany.sofia2.scheduler.scheduler.bean.response.ScheduleResponseInfo com.indracompany.sofia2.scheduler.scheduler.controller.SchedulerDefaultController.schedule(com.indracompany.sofia2.scheduler.scheduler.bean.TaskInfo)
+2018-04-26 10:32:18.642  INFO 13732 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/scheduler/unschedule/{jobName}],methods=[GET],produces=[application/json;charset=UTF-8]}" onto public com.indracompany.sofia2.scheduler.scheduler.bean.response.ResponseInfo com.indracompany.sofia2.scheduler.scheduler.controller.SchedulerDefaultController.unschedule(java.lang.String)
+2018-04-26 10:32:18.643  INFO 13732 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/scheduler/pause/{jobName}],methods=[GET],produces=[application/json;charset=UTF-8]}" onto public com.indracompany.sofia2.scheduler.scheduler.bean.response.ResponseInfo com.indracompany.sofia2.scheduler.scheduler.controller.SchedulerDefaultController.pause(java.lang.String)
+2018-04-26 10:32:18.649  INFO 13732 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2018-04-26 10:32:18.650  INFO 13732 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2018-04-26 10:32:18.757  INFO 13732 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-04-26 10:32:18.757  INFO 13732 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-04-26 10:32:18.820  INFO 13732 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2018-04-26 10:32:18.964  INFO 13732 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=SINGLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=500}
+2018-04-26 10:32:18.980  INFO 13732 --- [cluster-ClusterId{value='5ae18e927c81fe35a467bcf2', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:6, serverValue:2520}] to localhost:27017
+2018-04-26 10:32:18.982  INFO 13732 --- [cluster-ClusterId{value='5ae18e927c81fe35a467bcf2', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=1036307}
+2018-04-26 10:32:20.161  INFO 13732 --- [main] io.searchbox.client.AbstractJestClient   : Setting server pool to a list of 1 servers: [http://localhost:9200]
+2018-04-26 10:32:20.162  INFO 13732 --- [main] io.searchbox.client.JestClientFactory    : Using multi thread/connection supporting pooling connection manager
+2018-04-26 10:32:20.167  INFO 13732 --- [main] io.searchbox.client.JestClientFactory    : Using custom GSON instance
+2018-04-26 10:32:20.167  INFO 13732 --- [main] io.searchbox.client.JestClientFactory    : Node Discovery disabled...
+2018-04-26 10:32:20.167  INFO 13732 --- [main] io.searchbox.client.JestClientFactory    : Idle connection reaping disabled...
+2018-04-26 10:32:20.638  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/heapdump || /heapdump.json],methods=[GET],produces=[application/octet-stream]}" onto public void org.springframework.boot.actuate.endpoint.mvc.HeapdumpMvcEndpoint.invoke(boolean,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException,javax.servlet.ServletException
+2018-04-26 10:32:20.643  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/loggers/{name:.*}],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.LoggersMvcEndpoint.get(java.lang.String)
+2018-04-26 10:32:20.645  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/loggers/{name:.*}],methods=[POST],consumes=[application/vnd.spring-boot.actuator.v1+json || application/json],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.LoggersMvcEndpoint.set(java.lang.String,java.util.Map<java.lang.String, java.lang.String>)
+2018-04-26 10:32:20.646  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/loggers || /loggers.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.649  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/logfile || /logfile.json],methods=[GET || HEAD]}" onto public void org.springframework.boot.actuate.endpoint.mvc.LogFileMvcEndpoint.invoke(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws javax.servlet.ServletException,java.io.IOException
+2018-04-26 10:32:20.653  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.656  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/health || /health.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.HealthMvcEndpoint.invoke(javax.servlet.http.HttpServletRequest,java.security.Principal)
+2018-04-26 10:32:20.662  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/trace || /trace.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.664  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/configprops || /configprops.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.667  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/dump || /dump.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.672  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/env/{name:.*}],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EnvironmentMvcEndpoint.value(java.lang.String)
+2018-04-26 10:32:20.672  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/env || /env.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.675  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/mappings || /mappings.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.676  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/info || /info.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.678  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/auditevents || /auditevents.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public org.springframework.http.ResponseEntity<?> org.springframework.boot.actuate.endpoint.mvc.AuditEventsMvcEndpoint.findByPrincipalAndAfterAndType(java.lang.String,java.util.Date,java.lang.String)
+2018-04-26 10:32:20.679  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/beans || /beans.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.684  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/jolokia/**]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.actuate.endpoint.mvc.JolokiaMvcEndpoint.handle(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.lang.Exception
+2018-04-26 10:32:20.687  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/metrics/{name:.*}],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.MetricsMvcEndpoint.value(java.lang.String)
+2018-04-26 10:32:20.689  INFO 13732 --- [main] o.s.b.a.e.mvc.EndpointHandlerMapping     : Mapped "{[/metrics || /metrics.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()
+2018-04-26 10:32:20.749  INFO 13732 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: org.springframework.boot.actuate.autoconfigure.ManagementWebSecurityAutoConfiguration$LazyEndpointPathRequestMatcher@55c4b779, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2376fc7a, org.springframework.security.web.context.SecurityContextPersistenceFilter@6d6e3b1, org.springframework.security.web.header.HeaderWriterFilter@4e902033, org.springframework.web.filter.CorsFilter@7eaecfd9, org.springframework.security.web.authentication.logout.LogoutFilter@4cf2da5d, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@f673b9c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5480a6ad, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5f867b9, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2c737129, org.springframework.security.web.session.SessionManagementFilter@7cd877a8, org.springframework.security.web.access.ExceptionTranslationFilter@68840ae8, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@c471dbd]
+2018-04-26 10:32:20.765  INFO 13732 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: org.springframework.security.web.util.matcher.AnyRequestMatcher@1, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@c3cf1b3, org.springframework.security.web.context.SecurityContextPersistenceFilter@72016ec9, org.springframework.security.web.header.HeaderWriterFilter@7a11b499, org.springframework.web.filter.CorsFilter@670b48fe, org.springframework.security.web.authentication.logout.LogoutFilter@1f2afb7f, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@61509d92, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1612485d, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2fcf5c37, org.springframework.security.web.session.SessionManagementFilter@1d328060, org.springframework.security.web.access.ExceptionTranslationFilter@6b3f0fb4, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@4f101625]
+2018-04-26 10:32:21.712  INFO 13732 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.web.context.support.GenericWebApplicationContext@7f09ff10: startup date [Thu Apr 26 10:31:53 CEST 2018]; root of context hierarchy
+2018-04-26 10:32:22.554  INFO 13732 --- [main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 2147483647
+2018-04-26 10:32:22.554  INFO 13732 --- [main] o.s.s.quartz.SchedulerFactoryBean        : Starting Quartz Scheduler now
+2018-04-26 10:32:22.648  INFO 13732 --- [main] org.quartz.core.QuartzScheduler          : Scheduler batchScheduler_$_FJGCORNEJO101524731529144 started.
+2018-04-26 10:32:22.833  INFO 13732 --- [main] c.i.s.s.s.service.impl.TaskServiceImpl   : check if exists job [jobname: RtdbMaintainerJob-Batch]
+2018-04-26 10:32:22.834  INFO 13732 --- [main] o.h.h.i.QueryTranslatorFactoryInitiator  : HHH000397: Using ASTQueryTranslatorFactory
+2018-04-26 10:32:22.839  INFO 13732 --- [main] c.i.s.s.s.service.impl.TaskServiceImpl   : Job with name RtdbMaintainerJob-Batch not found
+2018-04-26 10:32:22.839  INFO 13732 --- [main] c.i.s.s.s.service.impl.TaskServiceImpl   : add job [jobname: RtdbMaintainerJob-Batch, groupName: Batch-Group]
+2018-04-26 10:32:22.840  INFO 13732 --- [main] c.i.s.s.s.service.impl.TaskServiceImpl   : check if exists job [jobname: RtdbMaintainerJob-Batch]
+2018-04-26 10:32:22.843  INFO 13732 --- [main] c.i.s.s.s.service.impl.TaskServiceImpl   : Job with name RtdbMaintainerJob-Batch not found
+2018-04-26 10:32:23.123  INFO 13732 --- [main] c.i.s.s.s.service.impl.TaskServiceImpl   : job added
+2018-04-26 10:32:23.124  INFO 13732 --- [main] c.i.s.r.job.RtdbMaintainerJobTest        : Started RtdbMaintainerJobTest in 30.767 seconds (JVM running for 33.234)
+2018-04-26 10:32:23.147  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Initializing MongoDB connector...
+2018-04-26 10:32:23.147  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Parsing MongoDB servers property...
+2018-04-26 10:32:23.148  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Registering MongoDB server localhost:27017.
+2018-04-26 10:32:23.148  INFO 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : Configuring MongoDB client...
+2018-04-26 10:32:23.148  WARN 13732 --- [main] c.i.s.p.m.template.MongoDbTemplateImpl   : The MongoDB connector has been configured in single-server mode. The configured WriteConcern level (WriteConcern{w=UNACKNOWLEDGED, wTimeout=null ms, fsync=null, journal=null) will be ignored.
+2018-04-26 10:32:23.148  INFO 13732 --- [main] org.mongodb.driver.cluster               : Cluster created with settings {hosts=[localhost:27017], mode=MULTIPLE, requiredClusterType=UNKNOWN, serverSelectionTimeout='30000 ms', maxWaitQueueSize=50}
+2018-04-26 10:32:23.148  INFO 13732 --- [main] org.mongodb.driver.cluster               : Adding discovered server localhost:27017 to client view of cluster
+2018-04-26 10:32:23.155  INFO 13732 --- [cluster-ClusterId{value='5ae18e977c81fe35a467bcf3', description='null'}-localhost:27017] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:7, serverValue:2521}] to localhost:27017
+2018-04-26 10:32:23.156  INFO 13732 --- [cluster-ClusterId{value='5ae18e977c81fe35a467bcf3', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=localhost:27017, type=STANDALONE, state=CONNECTED, ok=true, version=ServerVersion{versionList=[3, 4, 2]}, minWireVersion=0, maxWireVersion=5, maxDocumentSize=16777216, roundTripTimeNanos=543179}
+2018-04-26 10:32:23.157  INFO 13732 --- [cluster-ClusterId{value='5ae18e977c81fe35a467bcf3', description='null'}-localhost:27017] org.mongodb.driver.cluster               : Discovered cluster type of STANDALONE
+2018-04-26 10:32:23.298  INFO 13732 --- [main] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:8, serverValue:2522}] to localhost:27017
+2018-04-26 10:32:23.409  INFO 13732 --- [pool-8-thread-1] c.i.s.p.m.MongoNativeManageDBRepository  : Executed: s:/tools/mongo/bin/mongoexport --db sofia2_s4c --collection HelsinkiPopulation --query {'contextData.timestampMillis':{$lte:1525765914480}} --out s:/tools/mongo/export/HelsinkiPopulation2018-26-04-10-32.json
+2018-04-26 10:32:24.275  INFO 13732 --- [pool-8-thread-1] org.mongodb.driver.connection            : Opened connection [connectionId{localValue:9, serverValue:2524}] to localhost:27017
+2018-04-26 10:32:29.449  INFO 13732 --- [Thread-11] o.s.w.c.s.GenericWebApplicationContext   : Closing org.springframework.web.context.support.GenericWebApplicationContext@7f09ff10: startup date [Thu Apr 26 10:31:53 CEST 2018]; root of context hierarchy
+2018-04-26 10:32:29.470  INFO 13732 --- [Thread-11] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 2147483647
+2018-04-26 10:32:29.687  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler batchScheduler_$_FJGCORNEJO101524731529144 paused.
+2018-04-26 10:32:29.702  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler twitterScheduler_$_FJGCORNEJO101524731529300 shutting down.
+2018-04-26 10:32:29.702  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler twitterScheduler_$_FJGCORNEJO101524731529300 paused.
+2018-04-26 10:32:29.704  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler twitterScheduler_$_FJGCORNEJO101524731529300 shutdown complete.
+2018-04-26 10:32:29.704  INFO 13732 --- [Thread-11] o.s.s.quartz.SchedulerFactoryBean        : Shutting down Quartz Scheduler
+2018-04-26 10:32:29.705  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler simulationScheduler_$_FJGCORNEJO101524731529272 shutting down.
+2018-04-26 10:32:29.705  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler simulationScheduler_$_FJGCORNEJO101524731529272 paused.
+2018-04-26 10:32:29.706  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler simulationScheduler_$_FJGCORNEJO101524731529272 shutdown complete.
+2018-04-26 10:32:29.706  INFO 13732 --- [Thread-11] o.s.s.quartz.SchedulerFactoryBean        : Shutting down Quartz Scheduler
+2018-04-26 10:32:29.706  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler scriptScheduler_$_FJGCORNEJO101524731529229 shutting down.
+2018-04-26 10:32:29.707  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler scriptScheduler_$_FJGCORNEJO101524731529229 paused.
+2018-04-26 10:32:29.708  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler scriptScheduler_$_FJGCORNEJO101524731529229 shutdown complete.
+2018-04-26 10:32:29.709  INFO 13732 --- [Thread-11] o.s.s.quartz.SchedulerFactoryBean        : Shutting down Quartz Scheduler
+2018-04-26 10:32:29.709  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler batchScheduler_$_FJGCORNEJO101524731529144 shutting down.
+2018-04-26 10:32:29.709  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler batchScheduler_$_FJGCORNEJO101524731529144 paused.
+2018-04-26 10:32:29.711  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler batchScheduler_$_FJGCORNEJO101524731529144 shutdown complete.
+2018-04-26 10:32:29.712  INFO 13732 --- [Thread-11] o.s.s.quartz.SchedulerFactoryBean        : Shutting down Quartz Scheduler
+2018-04-26 10:32:29.712  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler SimpleQuartzScheduler_$_SIMPLE_NON_CLUSTERED shutting down.
+2018-04-26 10:32:29.712  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler SimpleQuartzScheduler_$_SIMPLE_NON_CLUSTERED paused.
+2018-04-26 10:32:29.713  INFO 13732 --- [Thread-11] org.quartz.core.QuartzScheduler          : Scheduler SimpleQuartzScheduler_$_SIMPLE_NON_CLUSTERED shutdown complete.
+2018-04-26 10:32:29.731  INFO 13732 --- [Thread-11] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'sofia'
+2018-04-26 10:32:29.734  INFO 13732 --- [Thread-11] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'quartz'

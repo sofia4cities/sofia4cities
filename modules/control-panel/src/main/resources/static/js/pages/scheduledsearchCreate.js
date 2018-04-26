@@ -37,8 +37,8 @@ function submitForm()
 
 		if(ontologyExist==false && clientExist==false) {
 		
-			$('input[name=ontologyId]').val($('#ontologyId2').val());
-			$('input[name=clientPlatformId]').val($('#clientPlatformId2').val());
+			$('input[name=ontologyId]').val($('#ontologyId').val());
+			$('input[name=clientPlatformId]').val($('#clientPlatformId').val());
 			$('#scheduledsearch_create_form').submit();
 		}else{
 			if(ontologyExist==true) 
@@ -458,8 +458,8 @@ var ScheduledSearchController= function()
 			
 			dateFrom = $('#dateFrom').val();
 			dateTo = $('#dateTo').val();
-			dateFromFormatted = dateFrom.split("-")[2] + "/" + dateFrom.split("-")[1] + "/" +dateFrom.split("-")[0] + " " + dateFrom.split(" ")[1].split(".")[0];
-			dateToFormatted = dateTo.split("-")[2] + "/" + dateTo.split("-")[1] + "/" +dateTo.split("-")[0] + " " + dateTo.split(" ")[1].split(".")[0];
+			dateFromFormatted = dateFrom.split("-")[1] + "/" + dateFrom.split(" ")[0].split("-")[2] + "/" +dateFrom.split("-")[0] + " " + dateFrom.split(" ")[1].split(".")[0];
+			dateToFormatted = dateTo.split("-")[1] + "/" + dateTo.split(" ")[0].split("-")[2] + "/" +dateTo.split("-")[0] + " " + dateTo.split(" ")[1].split(".")[0];
 			$('#dateFrom').datetimepicker({
 				format: currentFormat,
 				locale: currentLanguage,

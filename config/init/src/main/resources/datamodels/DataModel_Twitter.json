@@ -16,7 +16,7 @@
         "type": "object",
         "required": [
             "tweet_id",
-            "tweet_creatdat",
+            "tweet_createdat",
             "tweet_source",
             "tweet_text",
             "tweet_user_id",
@@ -54,7 +54,7 @@
             "tweet_id": {
                 "type": "string"
             },
-            "tweet_creatdat": {
+            "tweet_createdat": {
                 "type": "object",
                 "properties": {
                     "$date": {
