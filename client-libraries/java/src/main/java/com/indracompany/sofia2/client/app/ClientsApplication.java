@@ -78,7 +78,7 @@ public class ClientsApplication {
 		clientSecure.publish(ontology, jsonData, timeout);
 
 		Thread.sleep(5000);
-		clientSecure.unsubscribe(subsId);
+		// clientSecure.unsubscribe(subsId);
 
 		clientSecure.disconnect();
 

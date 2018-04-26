@@ -308,6 +308,14 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/planner/list"
+				},
+				{
+					"title": {
+						"EN": "JSON import Tools",
+						"ES": "Herramientas de importación"
+					},
+					"icon": "",
+					"url": "/controlpanel/jsontool/tools"
 				}
 			]
 		}

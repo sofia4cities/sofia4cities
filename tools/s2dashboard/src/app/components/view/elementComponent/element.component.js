@@ -1074,7 +1074,7 @@
     }
 
     vm.calcHeight = function(){
-      vm.element.header.height = (vm.element.header.height=='inherit'?64:vm.element.header.height);
+      vm.element.header.height = (vm.element.header.height=='inherit'?25:vm.element.header.height);
       return "calc(100% - " + (vm.element.header.enable?vm.element.header.height:0) + "px)";
     }
 

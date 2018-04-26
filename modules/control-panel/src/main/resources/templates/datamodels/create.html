@@ -1,0 +1,267 @@
+<!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
+<html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">	
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<meta http-equiv="Content-Language" th:content="${lang}"/>
+		<title th:text="#{name.app}"/>
+		
+		<!-- BEGIN WEB FONT -->
+		<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>
+		<script>
+          WebFont.load({
+            google: {"families":["Poppins:300,400,500,600,700","Open Sans:300,400,500,600,700"]},
+            active: function() {
+                sessionStorage.fonts = true;
+            }
+          });
+		</script>
+
+		<!-- STYLE SHEETS -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/bootstrap.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/components.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/plugins.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/css/layout.css}"/>
+		<!-- THEME -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/webjars/sofia2_theme/css/sofia2.css}"/>
+		
+		<!-- PLUGINS STYLE SHEETS: BOOSTRAP-SELECT AND CODEMIRROR  -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neat.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/ambiance.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neo.css}"/>
+		
+		<!-- JSON EDITOR -->
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/json/jsoneditor.css}"/>
+		
+	</head>	
+	
+	<!-- page-sidebar-closed to start page with collapsed menu -->
+	<body class="page-header-fixed  page-content-white page-sidebar-closed">
+
+	<!-- MAIN PAGE WRAPPER -->
+	<div class="page-wrapper">
+	
+		<!-- BEGIN HEADER INCLUDE -->
+		<div th:include="fragments/header::#headerFragment" class="page-header navbar navbar-fixed-top"></div>
+		<!-- END HEADER -->
+		
+		<!-- BEGIN HEADER AND CONTENT DIVIDER -->
+		<div class="clearfix"> </div>		
+			
+		<!-- BEGIN SIDEBAR -->
+		<div th:include="fragments/menu::#menuFragment" class="page-sidebar-wrapper"></div>
+		<!-- END SIDEBAR -->
+		
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			
+			<!-- BEGIN CONTENT BODY -->
+			<div class="page-content">
+									
+				<!-- BEGIN PAGE BAR AND BREADCRUM -->
+				
+				<div class="page-bar margin-bottom-20">
+					<ul class="page-breadcrumb">
+						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/datamodels/list}"> <span th:text="#{datamodel.breadcrumb.list}"> Data Models List </span></a><i class="fa fa-circle"></i></li>
+						<li>
+							<span th:if="${datamodel?.id} == null" th:text="#{datamodel.breadcrumb.new}"> New Data Model</span>
+							<span th:if="${datamodel?.id} != null" th:text="#{datamodel.breadcrumb.update}">Update Data Model </span>
+						</li>
+					</ul>						
+				</div>
+				
+				<!-- END PAGE BAR -->
+			
+				<!-- BEGIN PAGE TITLE-->
+				<h1 class="page-title hide "><span th:text="#{name.app}"> Sofia4Cities Control Panel</span></h1>
+				<!-- END PAGE TITLE-->
+			
+				<!-- MAIN ROW -->
+				<div class="row">
+					<div class="col-md-12">
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="fa fa-file-code-o font-grey-gallery"></i>
+									<!-- FORM TITLE -->
+									<span th:if="${datamodel?.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{datamodel.create}"> Create Data Model</span>
+									<span th:if="${datamodel?.id} != null" class="caption-subject font-grey-gallery uppercase" > Update Data Model</span>
+								</div>									
+								<div class="tools">
+									<a href="" class="collapse" data-original-title="" title=""> </a>
+									<a href="" class="fullscreen" data-original-title="" title=""> </a>
+								</div>
+								<div class="actions">
+								<!-- ACTION INDICATORs -->									
+								<span th:if="${datamodel?.id} == null" class="label label-success label-sm uppercase"><i class="fa fa-plus"></i> <span th:text="#{gen.mode.insert}">Insert</span></span>
+								<span th:if="${datamodel.id} != null" class="label label-warning label-sm uppercase bold "><i class="fa fa-edit"></i> <span th:text="#{gen.mode.update}">Update</span></span>
+							</div>
+							</div>
+							
+							
+								
+							<div class="portlet-body" style="display: block; height: auto;">
+								
+								<div class="row">
+									<!-- BEGIN ALERTS ZONE -->
+									<div class="col-md-12 alert-zone">
+										<div class="alert alert-danger display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.error}">You have some form errors. Please check below.</span>
+										</div>
+											<div class="alert alert-success display-hide">
+											<button class="close" data-close="alert"></button> <span th:text="#{gen.form.success}">Your form validation is successful!</span>
+										</div>								
+									</div> <!--  END ALERTS ZONE -->
+									<!-- BEGIN FORM -->
+									<div class="col-md-12">										
+										<form role="form" id="datamodel_create_form" th:object="${datamodel}"  method="post" class="form">
+											<!-- FORM ACTIONS FOR INSERT -->
+											<input th:if="${datamodel.id} == null" type="hidden" name="action" th:value="@{/datamodels/create}"/>
+													
+											<!-- FORM ACTIONS FOR UPDATE -->
+											<input th:if="${datamodel?.id} != null" type="hidden" name="action" th:value="@{'/datamodels/update/'+${datamodel.id}}"/>
+											<input th:if="${datamodel?.id} != null" type="hidden" name="_method" value="PUT"/>
+											
+											<div class="form-body">
+											
+												<div class="row">
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group ">
+															<label class="" th:text="#{datamodel.name} + ':'">Name</label>
+															<div class="input-icon ">
+																<i class="fa fa-user"></i>
+																<input id="datamodelName" name="datamodelName" type="text"  maxlength="50" th:field="*{name}" class="form-control no-remove" th:placeholder="#{datamodel.name}" th:required="true"/>
+															</div>
+														</div>
+													</div>	
+													<div class="col-md-3 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{datamodel.type} + ':'">Data Model Type</label>
+															<select id="dataModelTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{datamodel.type}" th:field="*{type}" th:required="true">
+																<option th:each="dataModelType:${dataModelTypes}" th:value="${dataModelType}" th:text="${dataModelType}" >User</option>
+															</select>		
+															
+														</div>
+													</div>
+													
+												</div>	
+												<div class ="row">
+													<div class="col-md-6 col-sm-6 col-xs-12">
+														<div class="form-group" >
+															<label class="control-label" th:text="#{datamodel.labels} + ':'" >Labels</label>
+															<input  id="datamodelLabel" name="datamodelLabel" type="text"  maxlength="100" th:field="*{labels}" class="form-control no-remove" th:placeholder="#{datamodel.labels.list}" th:required="true"  />
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													
+													<div class="col-md-6 col-sm-6 col-xs-12">
+														<div class="form-group">
+															<label class="control-label" th:text="#{datamodel.description}+ ':'">Description</label>
+															<input id="datamodelDescription" name="datamodelDescription" type="text" th:required="true" maxlength="50" th:field="*{description}" class="form-control no-remove" th:placeholder="#{datamodel.description}"/>													
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-12 col-sm-12 col-xs-12">
+														<div class="form-group">
+															<label class="control-label"><i class="flaticon-network"></i> <span th:text="#{datamodel.jsonschema} + ':'">Data Model Schema</span></label>														
+															<textarea id="jsonSchemaDatamodel" name="jsonSchemaDatamodel"  th:required="true" th:field="*{jsonSchema}" class="form-control" rows="5" data-min-rows='5'></textarea>
+														</div>
+														<div class="clearfix"></div>
+													</div>
+												</div>
+											</div> 
+																						
+											<div class="form-actions">
+												<div class="pull-right">
+													<!-- CREATE--> 
+													<button th:if="${datamodel.name} == null" id="createBtn" class="btn btn-square btn-success"  name="create"><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
+													
+													<!-- UPDATE -->
+													<button th:if="${datamodel.name} != null" id="updateBtn" class="btn btn-square btn-warning" name="update" th:value="#{gen.editBtn}" ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
+													 												
+													<!-- REMOVE -->
+													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'dataModelCreateController.deleteDataModel(\'' + ${dataModel?.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
+													
+													<!-- RESET -->
+													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
+																																													
+													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
+													
+													<!-- CANCEL -->
+													<button th:if="${#strings.arrayJoin(#authentication.authorities,'')} == 'ROLE_ADMINISTRATOR'" id="cancelBtn" type="button" class="btn btn-square btn-outline red-sunglo" name="cancel"  th:value="#{gen.cancelBtn}" value="cancel" th:onclick="'javascript:dataModelCreateController.go(\'' + @{/datamodels/list} + '\');'"><i class="la la-times"></i><span th:text="#{gen.cancelBtn}"> Cancel </span></button>
+												</div>
+											</div>
+										</form>
+										<!-- AUXILIAR FORM TO DELETE DATAMODEL -->										
+										<form id="delete_dataModel_form" class="delete-dataModel hide"  action=""  method="post">
+											<input type="hidden" name="_method" value="DELETE"/>
+											<input type="hidden" name="id" th:value="${datamodel?.id}"/>
+										</form>
+									</div> <!-- END FORM -->
+								</div>
+							</div>
+						</div><!-- END PORTLET BASIC LIGHT -->							
+					</div><!-- END COL-12 -->						
+				</div><!-- END MAIN ROW -->				
+			</div><!-- END CONTENT BODY -->
+		</div><!-- END CONTENT page-content-wrapper -->		
+	</div>
+	<!-- END MAIN PAGE WRAPPER -->
+	
+	<!-- FOOTER-INCLUDE -->
+	<footer th:include="fragments/footer::#footerFragment" class="page-footer"> </footer>	
+	
+	<!-- CORE CONTROLLERS -->
+	<script th:src="@{/static/js/app.js}"/>
+	<script th:src="@{/static/js/layout.js}"/>
+	
+	<!-- PLUGINS -->
+	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
+	<script th:src="@{/static/vendor/jquery-validation/jquery.validate.js}"/>
+		<script th:src="@{/static/vendor/jquery-validation/jquery.validate.min.js}"/>
+	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>
+	<script th:src="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}"/>
+
+	<script th:src="@{/static/vendor/codemirror/lib/codemirror.js}"/>
+	<script th:src="@{/static/vendor/codemirror/mode/yaml/yaml.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/matchbrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/selection/active-line.js}" />
+	
+	<!-- JSON EDITOR -->
+	<script th:src="@{/static/vendor/json/json2.min.js}"/>
+	<script th:src="@{/static/vendor/json/jsoneditor.js}"/>
+	
+	<script th:src="@{/static/vendor/ace/ace.js}" charset="utf-8"/>
+	<script th:src="@{/static/vendor/ace/mode-json.js}"/>
+	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
+	
+
+		
+	<!-- TEMPLATE CONTROLLER  -->	
+	<script th:src="@{/static/js/pages/dataModelCreate.js}"/>
+	
+	<!-- MAIN INIT -->
+	<script  th:inline="javascript">
+
+	function navigateUrl(url){  window.location.href = url;	}
+	var currentLanguage = [[${lang}]];	
+	
+	var dataModelCreateJson = { 	
+			"language" : currentLanguage,
+			"validform": {
+				"emptyfields": [[#{datamodel.validations.emptyfields}]]
+			}
+		};   
+		
+	
+	</script>	
+</body>
+</html>
+  

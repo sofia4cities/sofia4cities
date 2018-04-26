@@ -35,6 +35,7 @@ sofia2: #Config Sofia2 specific
          initial.delay.sec: 20
       admin.url: http://localhost:10000
       node.path: node4
+      audit.enabled: true
       launcher:
          path: /opt/nodeRed/Flow-Engine-Manager/
          job: app.js

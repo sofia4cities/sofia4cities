@@ -216,19 +216,23 @@ public class TwitterListeningController {
 	public void loadOntologiesAndConfigurations(Model model) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		List<Ontology> ontologies = new ArrayList<Ontology>();
+		List<Ontology> ontologiesSocial = new ArrayList<>();
 		if (utils.isAdministrator()) {
 			configurations = this.twitterListeningService.getAllConfigurations();
 			ontologies = this.ontologyService.getAllOntologies(utils.getUserId());
 		} else {
-			configurations = this.twitterListeningService.getConfigurationsByUserId(this.utils.getUserId());
-			for (Ontology ontology : this.ontologyService.getOntologiesByUserId(this.utils.getUserId())) {
-				if (ontology.getDataModel().getType().equals(DataModel.MainType.SocialMedia)) {
-					ontologies.add(ontology);
+			configurations = this.twitterListeningService.getAllConfigurations();
+			ontologies = this.ontologyService.getOntologiesByUserId(this.utils.getUserId());
+		}
+		for (Ontology ontology : ontologies) {
+			if (ontology.getDataModel() != null) {
+				if (ontology.getDataModel().getType().equals(DataModel.MainType.SocialMedia.name())) {
+					ontologiesSocial.add(ontology);
 				}
 			}
 		}
 		model.addAttribute("configurations", configurations);
-		model.addAttribute("ontologies", ontologies);
+		model.addAttribute("ontologies", ontologiesSocial);
 
 	}
 
@@ -257,6 +261,7 @@ public class TwitterListeningController {
 
 	public void populateFormData(Model model) {
 		model.addAttribute("configurationTypes", Configuration.Type.TwitterConfiguration);
-//		model.addAttribute("environments", this.configurationService.getEnvironmentValues());
+		// model.addAttribute("environments",
+		// this.configurationService.getEnvironmentValues());
 	}
 }

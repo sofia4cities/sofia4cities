@@ -17,12 +17,10 @@ package com.indracompany.sofia2.audit.bean;
 import java.util.Date;
 import java.util.UUID;
 
-import org.aspectj.lang.JoinPoint;
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.listener.AuditApplicationEvent;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.indracompany.sofia2.audit.aop.BaseAspect;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 
@@ -31,39 +29,49 @@ import lombok.Builder;
 @Builder
 public class Sofia2EventFactory {
 
-	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message, Module module,
+	public Sofia2AuditError createAuditEventError(String userId, String message, String remoteAddress, Module module,
 			Exception e) {
-		Sofia2AuditError event = createAuditEventError(joinPoint, message, e);
-		event.setModule(module);
+		Sofia2AuditError event = createAuditEventError(userId, message, module, e);
+		event.setRemoteAddress(remoteAddress);
 		return event;
 	}
 
-	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message, Exception e) {
-		Sofia2AuditError event = createAuditEventError(joinPoint, message);
+	public Sofia2AuditError createAuditEventError(String userId, String message, Module module, Exception e) {
+
+		Sofia2AuditError event = createAuditEventError(message, module, e);
+		event.setUser(userId);
+
+		return event;
+
+	}
+
+	public Sofia2AuditError createAuditEventError(String message, Module module, Exception e) {
+
+		Sofia2AuditError event = createAuditEventError(message);
 		setErrorDetails(event, e);
+		event.setModule(module);
+		event.setEx(e);
 		return createAuditEventError(event, message);
 	}
 
-	public static Sofia2AuditError createAuditEventError(JoinPoint joinPoint, String message) {
+	public Sofia2AuditError createAuditEventError(String message) {
 		Sofia2AuditError event = new Sofia2AuditError();
-		event.setClassName(BaseAspect.getClassName(joinPoint));
-		event.setMethodName(BaseAspect.getMethod(joinPoint).getName());
 		return createAuditEventError(event, message);
 	}
 
-	public static Sofia2AuditError createAuditEventError(Sofia2AuditError event, String message) {
+	public Sofia2AuditError createAuditEventError(Sofia2AuditError event, String message) {
 		Date today = new Date();
 		event.setId(UUID.randomUUID().toString());
 		event.setTimeStamp(today.getTime());
 		event.setFormatedTimeStamp(CalendarUtil.builder().build().convert(today));
 		event.setMessage(message);
 		event.setType(EventType.ERROR);
+		event.setOperationType("");
 		setSecurityData(event);
 		return event;
 	}
 
-	public static Sofia2AuditEvent createAuditEvent(AuditApplicationEvent actualAuditEvent, EventType type,
-			String message) {
+	public Sofia2AuditEvent createAuditEvent(AuditApplicationEvent actualAuditEvent, EventType type, String message) {
 		Sofia2AuditEvent event = new Sofia2AuditEvent();
 
 		AuditEvent audit = actualAuditEvent.getAuditEvent();
@@ -81,18 +89,17 @@ public class Sofia2EventFactory {
 		return event;
 	}
 
-	public static Sofia2AuditEvent createAuditEvent(EventType type, String message) {
+	public Sofia2AuditEvent createAuditEvent(EventType type, String message) {
 		Sofia2AuditEvent event = new Sofia2AuditEvent();
 		return createAuditEvent(event, type, message);
 	}
 
-	public static Sofia2AuthAuditEvent createAuditAuthEvent(EventType type, String message) {
+	public Sofia2AuthAuditEvent createAuditAuthEvent(EventType type, String message) {
 		Sofia2AuthAuditEvent event = new Sofia2AuthAuditEvent();
 		return createAuditAuthEvent(event, type, message);
 	}
 
-	public static Sofia2AuthAuditEvent createAuditAuthEvent(Sofia2AuthAuditEvent event, EventType type,
-			String message) {
+	public Sofia2AuthAuditEvent createAuditAuthEvent(Sofia2AuthAuditEvent event, EventType type, String message) {
 
 		event.setType(type);
 		Date today = new Date();
@@ -104,7 +111,7 @@ public class Sofia2EventFactory {
 		return event;
 	}
 
-	public static Sofia2AuditEvent createAuditEvent(Sofia2AuditEvent event, EventType type, String message) {
+	public Sofia2AuditEvent createAuditEvent(Sofia2AuditEvent event, EventType type, String message) {
 		event.setType(type);
 
 		Date today = new Date();
@@ -117,14 +124,17 @@ public class Sofia2EventFactory {
 		return event;
 	}
 
-	private static void setSecurityData(Sofia2AuditEvent event) {
+	private void setSecurityData(Sofia2AuditEvent event) {
+
 		if (SecurityContextHolder.getContext() != null
 				&& SecurityContextHolder.getContext().getAuthentication() != null) {
+
 			event.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
+
 		}
 	}
 
-	public static void setErrorDetails(Sofia2AuditError event, final Throwable cause) {
+	public void setErrorDetails(Sofia2AuditError event, final Throwable cause) {
 		if (cause != null) {
 			Throwable rootCause = cause;
 			while (rootCause.getCause() != null && rootCause.getCause() != rootCause)

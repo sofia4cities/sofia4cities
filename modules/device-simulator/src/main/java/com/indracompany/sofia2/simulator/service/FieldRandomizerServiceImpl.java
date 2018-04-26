@@ -35,7 +35,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
 public class FieldRandomizerServiceImpl implements FieldRandomizerService {
-
+	private final static String PATH_PROPERTIES = "properties";
 	private static final String FIXED_NUMBER = "FIXED_NUMBER";
 	private static final String FIXED_STRING = "FIXED_STRING";
 	private static final String FIXED_DATE = "FIXED_DATE";
@@ -53,13 +53,17 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 		ObjectMapper mapper = new ObjectMapper();
 
 		JsonNode map = schema;
-		String context = schema.fields().next().getKey();
+
 		Iterator<String> fields = json.fieldNames();
 		while (fields.hasNext()) {
 			String field = fields.next();
 			String function = json.path(field).get("function").asText();
 			String finalField = null;
-			String path = "/" + context;
+			String path = new String();
+			if (schema.path(PATH_PROPERTIES).size() == 1) {
+				String context = schema.fields().next().getKey();
+				path = "/" + context;
+			}
 
 			if (field.contains(".")) {
 				String array[] = field.split("\\.");

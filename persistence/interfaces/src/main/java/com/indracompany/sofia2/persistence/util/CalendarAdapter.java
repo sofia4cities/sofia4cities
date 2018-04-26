@@ -46,7 +46,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 public final class CalendarAdapter {
 
-	private static SimpleDateFormat format;
+	private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");;
 
 	private static final Pattern TZ_REGEX = Pattern.compile("([+-][0-9][0-9]):?([0-9][0-9])$");
 
@@ -165,7 +165,6 @@ public final class CalendarAdapter {
 	 * @return
 	 */
 	public static String marshal(Calendar arg0) {
-		format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		return format.format(arg0.getTime());
 	}
 

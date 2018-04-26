@@ -14,27 +14,33 @@
 	<packaging>jar</packaging>
 
 	<properties>
-    <license.dir>${project.parent.basedir}</license.dir>
+		<license.dir>${project.parent.basedir}</license.dir>
 	</properties>
-	
-	<dependencies>		
-	    <dependency>
+
+	<dependencies>
+		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-ssap</artifactId>
 			<version>${sofia2.version}</version>
-        </dependency>
-		
-		<dependency>
-		  <groupId>joda-time</groupId>
-		  <artifactId>joda-time</artifactId>
 		</dependency>
-	
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+		</dependency>
+		
+		<!-- JSON -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-			  
+
 	</dependencies>
 
 </project>

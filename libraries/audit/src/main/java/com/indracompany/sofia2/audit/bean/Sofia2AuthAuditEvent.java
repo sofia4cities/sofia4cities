@@ -26,9 +26,9 @@ public class Sofia2AuthAuditEvent extends Sofia2AuditRemoteEvent {
 
 	public Sofia2AuthAuditEvent(String message, String id, EventType type, long timeStamp, String formatedTimeStamp,
 			String user, String ontology, String operationType, Module module, Map<String, Object> extraData,
-			String otherType, String remoteAddress) {
+			String otherType, String remoteAddress, ResultOperationType resultOperation) {
 		super(message, id, type, timeStamp, formatedTimeStamp, user, ontology, operationType, module, extraData,
-				otherType, remoteAddress);
+				otherType, remoteAddress, resultOperation);
 	}
 
 }

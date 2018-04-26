@@ -335,11 +335,13 @@ public class OntologyServiceImpl implements OntologyService {
 				ontologyDb.setDescription(ontology.getDescription());
 				ontologyDb.setIdentification(ontology.getIdentification());
 				ontologyDb.setRtdbClean(ontology.isRtdbClean());
+				ontologyDb.setRtdbCleanLapse(ontology.getRtdbCleanLapse());
 				ontologyDb.setRtdbToHdb(ontology.isRtdbToHdb());
 				if (!ontology.getUser().getUserId().equals(ontologyDb.getUser().getUserId()))
 					ontologyDb.setUser(this.userService.getUser(ontology.getUser().getUserId()));
 				ontologyDb.setJsonSchema(ontology.getJsonSchema());
-				ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
+				if (ontology.getDataModel() != null)
+					ontologyDb.setDataModel(this.dataModelRepository.findById(ontology.getDataModel().getId()));
 				ontologyDb.setDataModelVersion(ontology.getDataModelVersion());
 				ontologyDb.setMetainf(ontology.getMetainf());
 				ontologyDb.setAllowsCypherFields(ontology.isAllowsCypherFields());
@@ -354,7 +356,7 @@ public class OntologyServiceImpl implements OntologyService {
 	// TODO it should be checked that onotologies are assigned to the session
 	// user.
 	@Override
-	public void createOntology(Ontology ontology) {
+	public void createOntology(Ontology ontology) throws OntologyServiceException {
 		try {
 			if (ontologyRepository.findByIdentification(ontology.getIdentification()) == null) {
 
@@ -591,6 +593,11 @@ public class OntologyServiceImpl implements OntologyService {
 	@Override
 	public List<RtdbDatasource> getDatasources() {
 		return Arrays.asList(Ontology.RtdbDatasource.values());
+	}
+
+	@Override
+	public List<Ontology> getCleanableOntologies() {
+		return this.ontologyRepository.findByRtdbCleanTrue();
 	}
 
 }

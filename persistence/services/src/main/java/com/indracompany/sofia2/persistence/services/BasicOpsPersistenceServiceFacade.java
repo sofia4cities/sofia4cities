@@ -30,60 +30,62 @@ import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Service
 @Slf4j
-public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, NativeBasicOpsRepository{
+public class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, NativeBasicOpsRepository {
 
 	@Autowired
 	private ElasticSearchBasicOpsDBRepository elasticBasicOps;
-	
+
 	@Autowired
 	private MongoBasicOpsDBRepository mongoBasicOps;
-	
+
 	@Autowired
 	OntologyRepository ontologyRepository;
-	
-	
+
 	private BasicOpsDBRepository getInstance(String ontologyId) throws DBPersistenceException {
-		Ontology  ds = ontologyRepository.findByIdentification(ontologyId);
-		RtdbDatasource dataSource =  ds.getRtdbDatasource();
-		if (dataSource.name().equals("Mongo")) return mongoBasicOps;
-		else if (dataSource.name().equals("ElasticSearch")) return elasticBasicOps; 
-		else return mongoBasicOps;
+		Ontology ds = ontologyRepository.findByIdentification(ontologyId);
+		RtdbDatasource dataSource = ds.getRtdbDatasource();
+		if (dataSource.name().equals("Mongo"))
+			return mongoBasicOps;
+		else if (dataSource.name().equals("ElasticSearch"))
+			return elasticBasicOps;
+		else
+			return mongoBasicOps;
 	}
-	
+
 	public Ontology getOntology(String ontologyId) {
 		return ontologyRepository.findByIdentification(ontologyId);
 	}
-	
+
 	public RtdbDatasource getOntologyDataSource(String ontologyId) {
-		Ontology  ds =  ontologyRepository.findByIdentification(ontologyId);
+		Ontology ds = ontologyRepository.findByIdentification(ontologyId);
 		return ds.getRtdbDatasource();
 	}
-	
+
 	private BasicOpsDBRepository getInstance(RtdbDatasource dataSource) throws DBPersistenceException {
-		if (dataSource.name().equals("Mongo")) return mongoBasicOps;
-		else if (dataSource.name().equals("ElasticSearch")) return elasticBasicOps; 
-		else return mongoBasicOps;
+		if (dataSource.name().equals("Mongo"))
+			return mongoBasicOps;
+		else if (dataSource.name().equals("ElasticSearch"))
+			return elasticBasicOps;
+		else
+			return mongoBasicOps;
 	}
-	
-	
-	public long updateNative(RtdbDatasource dataSource, String collection, String query, String data) throws DBPersistenceException {
+
+	public long updateNative(RtdbDatasource dataSource, String collection, String query, String data)
+			throws DBPersistenceException {
 		return getInstance(dataSource).updateNative(collection, query, data);
 	}
 
-	
 	public long deleteNative(RtdbDatasource dataSource, String collection, String query) throws DBPersistenceException {
 		return getInstance(dataSource).deleteNative(collection, query);
 	}
 
-	
-	public long countNative(RtdbDatasource dataSource, String collectionName, String query) throws DBPersistenceException {
+	public long countNative(RtdbDatasource dataSource, String collectionName, String query)
+			throws DBPersistenceException {
 		return getInstance(dataSource).countNative(collectionName, query);
 	}
-	
-	
+
 	@Override
 	public String insert(String ontology, String instance) throws DBPersistenceException {
 		return getInstance(ontology).insert(ontology, instance);
@@ -92,60 +94,59 @@ public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, 
 	@Override
 	public List<BulkWriteResult> insertBulk(String ontology, List<String> instances, boolean order, boolean includeIds)
 			throws DBPersistenceException {
-		return getInstance(ontology).insertBulk(ontology,instances, order,includeIds);
+		return getInstance(ontology).insertBulk(ontology, instances, order, includeIds);
 	}
 
 	@Override
 	public long updateNative(String ontology, String updateStmt) throws DBPersistenceException {
-		return getInstance(ontology).updateNative(ontology,updateStmt);
+		return getInstance(ontology).updateNative(ontology, updateStmt);
 	}
-
 
 	@Override
 	public List<String> queryNative(String ontology, String query) throws DBPersistenceException {
-		return getInstance(ontology).queryNative(ontology,query);
+		return getInstance(ontology).queryNative(ontology, query);
 	}
 
 	@Override
 	public List<String> queryNative(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		return getInstance(ontology).queryNative(ontology,query,offset,limit);
+		return getInstance(ontology).queryNative(ontology, query, offset, limit);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
-		return getInstance(ontology).queryNativeAsJson(ontology,query);
+		return getInstance(ontology).queryNativeAsJson(ontology, query);
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		return getInstance(ontology).queryNativeAsJson(ontology,query,offset,limit);
+		return getInstance(ontology).queryNativeAsJson(ontology, query, offset, limit);
 	}
 
 	@Override
 	public String findById(String ontology, String objectId) throws DBPersistenceException {
-		return getInstance(ontology).findById(ontology,objectId);
+		return getInstance(ontology).findById(ontology, objectId);
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query) throws DBPersistenceException {
-		return getInstance(ontology).querySQLAsJson(ontology,query);
+		return getInstance(ontology).querySQLAsJson(ontology, query);
 	}
 
 	@Override
 	public String querySQLAsTable(String ontology, String query) throws DBPersistenceException {
-		return getInstance(ontology).querySQLAsTable(ontology,query);
+		return getInstance(ontology).querySQLAsTable(ontology, query);
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query, int offset) throws DBPersistenceException {
-		return getInstance(ontology).querySQLAsJson(ontology,query,offset);
+		return getInstance(ontology).querySQLAsJson(ontology, query, offset);
 	}
 
 	@Override
 	public String querySQLAsTable(String ontology, String query, int offset) throws DBPersistenceException {
-		return getInstance(ontology).querySQLAsTable(ontology,query,offset);
+		return getInstance(ontology).querySQLAsTable(ontology, query, offset);
 	}
 
 	@Override
@@ -155,7 +156,7 @@ public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, 
 
 	@Override
 	public String findAllAsJson(String ontology, int limit) throws DBPersistenceException {
-		return getInstance(ontology).findAllAsJson(ontology,limit);
+		return getInstance(ontology).findAllAsJson(ontology, limit);
 	}
 
 	@Override
@@ -165,7 +166,7 @@ public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, 
 
 	@Override
 	public List<String> findAll(String ontology, int limit) throws DBPersistenceException {
-		return getInstance(ontology).findAll(ontology,limit);
+		return getInstance(ontology).findAll(ontology, limit);
 	}
 
 	@Override
@@ -178,36 +179,30 @@ public  class BasicOpsPersistenceServiceFacade implements BasicOpsDBRepository, 
 		return getInstance(ontology).delete(ontology);
 	}
 
-	
 	@Override
 	public long deleteNativeById(String ontologyName, String objectId) throws DBPersistenceException {
-		return getInstance(ontologyName).deleteNativeById(ontologyName,objectId);
+		return getInstance(ontologyName).deleteNativeById(ontologyName, objectId);
 	}
 
 	@Override
 	public long updateNativeByObjectIdAndBodyData(String ontologyName, String objectId, String body)
 			throws DBPersistenceException {
-		return getInstance(ontologyName).updateNativeByObjectIdAndBodyData(ontologyName,objectId,body);
+		return getInstance(ontologyName).updateNativeByObjectIdAndBodyData(ontologyName, objectId, body);
 	}
 
 	@Override
 	public long updateNative(String collection, String query, String data) throws DBPersistenceException {
-		return getInstance(collection).updateNative(collection,query,data);
+		return getInstance(collection).updateNative(collection, query, data);
 	}
 
 	@Override
 	public long deleteNative(String collection, String query) throws DBPersistenceException {
-		return getInstance(collection).deleteNative(collection,query);
+		return getInstance(collection).deleteNative(collection, query);
 	}
 
 	@Override
 	public long countNative(String collectionName, String query) throws DBPersistenceException {
-		return getInstance(collectionName).countNative(collectionName,query);
+		return getInstance(collectionName).countNative(collectionName, query);
 	}
 
-	
-
-
-	
-	
 }

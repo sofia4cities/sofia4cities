@@ -14,7 +14,9 @@
 package com.indracompany.sofia2.persistence.mongodb;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +34,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.commons.OSDetector;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.index.MongoDbIndex;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
+import com.indracompany.sofia2.persistence.util.JSONPersistenceUtilsMongo;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 
@@ -59,6 +63,16 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 	@Getter
 	@Setter
 	private String database;
+
+	@Value("${sofia2.database.mongodb.export.path:#{null}}")
+	@Getter
+	@Setter
+	private String exportPath;
+
+	@Value("${sofia2.database.mongodb.mongoexport.path:#{null}}")
+	@Getter
+	@Setter
+	private String mongoExportPath;
 
 	protected ObjectMapper objectMapper;
 
@@ -185,6 +199,7 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 				}
 			}
 			mongoDbConnector.createIndex(database, collection, new MongoDbIndex(indexKeys, indexOptions));
+
 		} catch (DBPersistenceException e) {
 			log.error("createIndex" + e.getMessage());
 			throw new DBPersistenceException(e);
@@ -237,15 +252,21 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 			throw new DBPersistenceException(e);
 		}
 	}
-	
-	private void computeGeometryIndex(String collection, String name, Map<String, Object> proper) {
+
+	private void computeGeometryIndex(String collection, String name, String schema) {
 		log.debug("computeGeometryIndex", collection, name);
-		Map<String, Object> geo = (Map<String, Object>)proper.getOrDefault("geometry", null);
-		if (geo!=null) {
-			createIndex(collection,"geometry","2dsphere");
-			ensureGeoIndex(collection,"geometry");
-			
+
+		try {
+			List<String> list = JSONPersistenceUtilsMongo.getGeoIndexes(schema);
+			if (list != null && list.size() > 0)
+				for (String string : list) {
+					createIndex(collection, string, "2dsphere");
+					ensureGeoIndex(collection, string);
+				}
+		} catch (Exception e) {
+			log.error("Cannot create geo indexes: " + e.getMessage(), e);
 		}
+
 		if (!name.isEmpty()) {
 			createIndex(collection, name + ".geometry: \"2dsphere\"");
 		}
@@ -273,7 +294,9 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 						if (!name.isEmpty()) {
 							createIndex(collection, name + ".geometry: \"2dsphere\"");
 						}
-						computeGeometryIndex(collection, name, proper);
+
+						computeGeometryIndex(collection, name, schema);
+
 					}
 				} catch (JsonParseException e) {
 					log.error("validateIndexes", e);
@@ -304,20 +327,16 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 			throw new DBPersistenceException(e);
 		}
 	}
-	
-	
 
-	
-	public void ensureGeoIndex(String ontology, String attribute)  {
+	public void ensureGeoIndex(String ontology, String attribute) {
 		try {
 			log.debug("ensureGeoIndex", ontology, attribute);
 			mongoDbConnector.createIndex(database, ontology, Indexes.geo2dsphere(attribute));
 		} catch (DBPersistenceException e) {
 			log.error("createIndex", e, attribute);
-			
+
 		}
 	}
-	
 
 	@Override
 	public void createIndex(String ontology, String name, String attribute) throws DBPersistenceException {
@@ -328,6 +347,34 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 			log.error("createIndex", e, attribute);
 			throw new DBPersistenceException(e);
 		}
+	}
+
+	@Override
+	public void exportToJson(String ontology, long startDateMillis) throws DBPersistenceException {
+		String command = null;
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-MM-hh-mm");
+		Runtime r = Runtime.getRuntime();
+		String query = "{'contextData.timestampMillis':{$lte:" + startDateMillis + "}}";
+		if (OSDetector.isWindows()) {
+			command = this.mongoExportPath + " --db " + this.database + " --collection " + ontology + " --query "
+					+ query + " --out " + this.exportPath + ontology + format.format(new Date()) + ".json";
+		} else {
+			command = this.mongoExportPath + " --db " + this.database + " --collection " + ontology + " --query "
+					+ query + " --out " + this.exportPath + ontology + format.format(new Date()) + ".json";
+		}
+
+		if (command != null)
+			try {
+
+				log.info("Executed: " + command);
+				r.exec(command).waitFor();
+				query = "{\"contextData.timestampMillis\":{$lte:" + startDateMillis + "}}";
+				this.mongoDbConnector.remove(this.database, ontology, query);
+
+			} catch (IOException | InterruptedException e) {
+				throw new DBPersistenceException("Could not execute command " + command);
+			}
+
 	}
 
 }

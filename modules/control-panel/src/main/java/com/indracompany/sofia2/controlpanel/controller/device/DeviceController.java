@@ -223,8 +223,7 @@ public class DeviceController {
 	private void mapOntologiesToJson(Model model, ClientPlatform device, DeviceCreateDTO deviceDTO) {
 		ObjectMapper mapper = new ObjectMapper();
 		ArrayNode arrayNode = mapper.createArrayNode();
-		List<Ontology> ontologies = ontologyService.getOntologiesWithDescriptionAndIdentification(utils.getUserId(),
-				null, null);
+		List<Ontology> ontologies = ontologyService.getOntologiesByUserId(utils.getUserId());
 
 		for (ClientPlatformOntology cpo : device.getClientPlatformOntologies()) {
 			ObjectNode on = mapper.createObjectNode();

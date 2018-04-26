@@ -1,0 +1,17 @@
+FROM centos/mysql-57-centos7
+
+# Metadata
+LABEL module.maintainer="plataformasofia2@indra.es" \
+	  module.name="configdb"	
+
+# MySQL environment
+ENV MYSQL_ROOT_PASSWORD="changeIt!" \
+    MYSQL_USER="indra" \
+    MYSQL_PASSWORD="select4cities2018" \
+    MYSQL_DATABASE="sofia2_s4c" \
+    MYSQL_MAX_ALLOWED_PACKET="536870912" \
+    MYSQL_LOWER_CASE_TABLE_NAMES="1"
+
+USER mysql
+
+EXPOSE 3306

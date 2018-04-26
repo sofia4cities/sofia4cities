@@ -37,11 +37,12 @@ import com.indracompany.sofia2.config.services.flow.FlowService;
 import com.indracompany.sofia2.config.services.flowdomain.FlowDomainService;
 import com.indracompany.sofia2.config.services.flownode.FlowNodeService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
-import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.DecodedAuthentication;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.DeployRequestRecord;
 import com.indracompany.sofia2.flowengine.api.rest.pojo.UserDomainValidationRequest;
 import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineNodeService;
+import com.indracompany.sofia2.flowengine.api.rest.service.FlowEngineValidationNodeService;
+import com.indracompany.sofia2.flowengine.audit.aop.FlowEngineAuditable;
 import com.indracompany.sofia2.flowengine.exception.NodeRedAdminServiceException;
 import com.indracompany.sofia2.flowengine.exception.NotAllowedException;
 import com.indracompany.sofia2.flowengine.exception.NotAuthorizedException;
@@ -89,7 +90,7 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	private ClientPlatformService clientPlatformService;
 
 	@Autowired
-	private UserService userService;
+	private FlowEngineValidationNodeService flowEngineValidationNodeService;
 
 	@Override
 	public String deploymentNotification(String json) {
@@ -156,8 +157,9 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throws ResourceNotFoundException, NotAuthorizedException {
 
 		final List<String> response = new ArrayList<>();
-		final DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		final DecodedAuthentication decodedAuth = flowEngineValidationNodeService.decodeAuth(authentication);
+		final User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword());
 
 		List<Ontology> ontologies = null;
 		switch (sofia2User.getRole().getId()) {
@@ -182,8 +184,9 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 
 		final List<String> response = new ArrayList<>();
 
-		final DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		final DecodedAuthentication decodedAuth = flowEngineValidationNodeService.decodeAuth(authentication);
+		final User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword());
 
 		List<ClientPlatform> clientPlatforms = null;
 		switch (sofia2User.getRole().getId()) {
@@ -207,8 +210,10 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throws ResourceNotFoundException, NotAuthorizedException, NotAllowedException, IllegalArgumentException {
 
 		String response = null;
-		final DecodedAuthentication decodedAuth = decodeAuth(request.getAuthentication());
-		final User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		final DecodedAuthentication decodedAuth = flowEngineValidationNodeService
+				.decodeAuth(request.getAuthentication());
+		final User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword());
 
 		if (request.getDomainId() == null) {
 			throw new IllegalArgumentException("DomainId must be specified.");
@@ -237,12 +242,14 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 	}
 
 	@Override
-	public String submitQuery(String ontologyIdentificator, String queryType, String query, String authentication)
+	@FlowEngineAuditable
+	public String submitQuery(String ontology, String queryType, String query, String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException, NotFoundException, JsonProcessingException,
 			DBPersistenceException {
 
-		DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		DecodedAuthentication decodedAuth = flowEngineValidationNodeService.decodeAuth(authentication);
+		User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword());
 
 		QueryType type;
 
@@ -255,15 +262,10 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 			throw new IllegalArgumentException(
 					"Invalid value " + queryType + " for queryType. Possible values are: SQL, NATIVE.");
 		}
-		
-		OperationModel operationModel = OperationModel.builder(
-				ontologyIdentificator,
-				OperationType.QUERY,
-				sofia2User.getUserId(),
-				OperationModel.Source.FLOWENGINE)
-				.body(query)
-				.queryType(type)
-				.build();
+
+		OperationModel operationModel = OperationModel
+				.builder(ontology, OperationType.QUERY, sofia2User.getUserId(), OperationModel.Source.FLOWENGINE)
+				.body(query).queryType(type).build();
 
 		OperationResultModel result = null;
 		try {
@@ -273,56 +275,27 @@ public class FlowEngineNodeServiceImpl implements FlowEngineNodeService {
 		} catch (Exception e) {
 
 			log.error("Error executing query. Ontology={}, QueryType ={}, Query = {}. Cause = {}, Message = {}.",
-					ontologyIdentificator, queryType, query, e.getCause(), e.getMessage());
-			throw new NodeRedAdminServiceException("Error executing query. Ontology=" + ontologyIdentificator
-					+ ", QueryType =" + queryType + ", Query = " + query + ". Cause = " + e.getCause() + ", Message = "
-					+ e.getMessage() + ".");
+					ontology, queryType, query, e.getCause(), e.getMessage());
+			throw new NodeRedAdminServiceException(
+					"Error executing query. Ontology=" + ontology + ", QueryType =" + queryType + ", Query = " + query
+							+ ". Cause = " + e.getCause() + ", Message = " + e.getMessage() + ".");
 		}
 		// TODO: Check response state
 		return result.getResult();
 	}
 
-	private User validateUserCredentials(String userId, String password)
-			throws ResourceNotFoundException, NotAuthorizedException {
-		if (userId == null || password == null || userId.isEmpty() || password.isEmpty()) {
-			log.error("User or password cannot be empty.");
-			throw new IllegalArgumentException("User or password cannot be empty.");
-		}
-
-		final User sofia2User = userService.getUser(userId);
-		if (sofia2User == null) {
-			log.error("Requested user does not exist");
-			throw new ResourceNotFoundException("Requested user does not exist");
-		}
-		if (!sofia2User.getPassword().equals(password)) {
-			log.error("Password for user " + userId + " does not match.");
-			throw new NotAuthorizedException("Password for user " + userId + " does not match.");
-		}
-		return sofia2User;
-	}
-
-	private DecodedAuthentication decodeAuth(String authentication) throws IllegalArgumentException {
-		try {
-			return new DecodedAuthentication(authentication);
-		} catch (final Exception e) {
-			throw new IllegalArgumentException("Authentication is null or cannot be decoded.");
-		}
-	}
-
 	@Override
+	@FlowEngineAuditable
 	public String submitInsert(String ontology, String data, String authentication)
 			throws ResourceNotFoundException, NotAuthorizedException, JsonProcessingException, NotFoundException {
 
-		DecodedAuthentication decodedAuth = decodeAuth(authentication);
-		User sofia2User = validateUserCredentials(decodedAuth.getUserId(), decodedAuth.getPassword());
+		DecodedAuthentication decodedAuth = flowEngineValidationNodeService.decodeAuth(authentication);
+		User sofia2User = flowEngineValidationNodeService.validateUserCredentials(decodedAuth.getUserId(),
+				decodedAuth.getPassword());
 
-		OperationModel operationModel = OperationModel.builder(
-				ontology,
-				OperationType.INSERT,
-				sofia2User.getUserId(),
-				OperationModel.Source.FLOWENGINE)
-				.body(data)
-				.build();
+		OperationModel operationModel = OperationModel
+				.builder(ontology, OperationType.INSERT, sofia2User.getUserId(), OperationModel.Source.FLOWENGINE)
+				.body(data).build();
 
 		OperationResultModel result = null;
 

@@ -293,12 +293,12 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 		apimemory.setEndpointExt(api.getEndpointExt());
 		apimemory.setMetaInf(api.getMetaInf());
 		
-		if (api.getCachetimeout()!=null && !api.getCachetimeout().equals("")){
+		if (api.getCachetimeout()!=null){
 			apimemory.setCachetimeout(api.getCachetimeout());
 		} else {
 			apimemory.setCachetimeout(null);
 		}
-		if (api.getApilimit()!=null && !api.getApilimit().equals("")){
+		if (api.getApilimit()!=null){
 			Integer apiLimit=api.getApilimit();
 			if (apiLimit < 5) {
 				apiLimit = 5;
