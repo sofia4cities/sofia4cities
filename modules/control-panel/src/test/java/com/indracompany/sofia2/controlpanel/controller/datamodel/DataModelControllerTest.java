@@ -35,7 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.services.datamodel.DataModelService;
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataModelControllerTest {
@@ -43,6 +45,8 @@ public class DataModelControllerTest {
 	@Mock
     private DataModelService dataModelService;
 	
+	@Mock
+	private AppWebUtils utils;
 	
 	private MockMvc mockMvc;
 	
@@ -77,11 +81,18 @@ public class DataModelControllerTest {
     
     @Test
     public void given_ThereIsOneDataModel_When_TheCorrectIdIsProvidedToShow_Then_TheDetailsOfTheDataModelIsShown() throws Exception {
+    	String userId = "administrator";
+    	User user = new User();
+    	user.setUserId(userId);
+    	
     	DataModel dm = new DataModel();
     	String id = "1";
     	dm.setId(id);
+    	dm.setUser(user);
+    	
     	
     	given(dataModelService.getDataModelById(id)).willReturn(dm);
+    	given(utils.getUserId()).willReturn(userId);
     	
     	mockMvc.perform(get("/datamodels/show/"+id))
     			.andExpect(view().name("datamodels/show"))
@@ -90,15 +101,14 @@ public class DataModelControllerTest {
     }
     
     @Test
-    public void given_ThereIsOneDataModel_When_AnInvalidIdIsProvidedToShow_Then_ItIsRedirectedToList() throws Exception {
-    	DataModel dm = new DataModel();
+    public void given_ThereIsOneDataModel_When_AnInvalidIdIsProvidedToShow_Then_ItShowsView404() throws Exception {
+
     	String id = "1";
-    	dm.setId(id);
     	
     	given(dataModelService.getDataModelById(id)).willReturn(null);
     	
     	mockMvc.perform(get("/datamodels/show/"+id))
-    			.andExpect(redirectedUrl("/datamodels/list"));    	
+    			.andExpect(view().name("error/404"));    	
     }
     
     @Test
@@ -110,7 +120,7 @@ public class DataModelControllerTest {
     	doThrow(new PersistentObjectException("Any Database Error")).when(dataModelService).getDataModelById(id);
     	
     	mockMvc.perform(get("/datamodels/show/"+id))
-    			.andExpect(redirectedUrl("/datamodels/list"));    	
+    			.andExpect(view().name("datamodels/list")); 	
     }
     
 }
