@@ -168,7 +168,7 @@ public class InitConfigDB {
 			init_RoleUser();
 			log.info("OK init_RoleUser");
 			init_User();
-			log.info("OK init_UserCDB");
+			log.info("OK init_User");
 			//
 			init_DataModel();
 			log.info("OK init_DataModel");
@@ -1474,7 +1474,15 @@ public class InitConfigDB {
 				type.setEmail("developer@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
-
+				userCDBRepository.save(type);
+				//
+				type = new User();
+				type.setUserId("demo_developer");
+				type.setPassword("changeIt!");
+				type.setFullName("Demo Developer of the Platform");
+				type.setEmail("demo_developer@sofia2.com");
+				type.setActive(true);
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DEVELOPER.toString()));
 				userCDBRepository.save(type);
 				//
 				type = new User();
@@ -1484,7 +1492,15 @@ public class InitConfigDB {
 				type.setEmail("user@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ROLE_USER.toString()));
-
+				userCDBRepository.save(type);
+				//
+				type = new User();
+				type.setUserId("demo_user");
+				type.setPassword("changeIt!");
+				type.setFullName("Demo User of the Platform");
+				type.setEmail("demo_user@sofia2.com");
+				type.setActive(true);
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_USER.toString()));
 				userCDBRepository.save(type);
 				//
 				type = new User();
