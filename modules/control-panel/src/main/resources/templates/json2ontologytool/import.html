@@ -72,8 +72,22 @@
 				
 				<!-- BEGIN PAGE TITLE-->
 				<h1 class="page-title hide "><span th:text="#{json2ont.tool.title}">JSON to Ontology Tool </span></h1>
-				<!-- END PAGE TITLE-->			
-				
+				<!-- END PAGE TITLE-->		
+				<!-- Modal -->
+				<div id="returnAction" class="modal fade" role="dialog">
+					<div class="modal-dialog modal-sm">
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"></button>
+							<h4 class="modal-title" id="response">r</h4>
+						</div>											      
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+					</div>
+				</div>	
 				<!-- MAIN ROW -->
 				<div class="row">
 					<div class="col-md-12">						
