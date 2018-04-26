@@ -36,14 +36,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.commons.testing.IntegrationTest;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
-import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterService;
@@ -66,14 +65,13 @@ public class SubscribeProcessorTest {
 	@MockBean
 	SecurityPluginManager securityPluginManager;
 
-	//	@Autowired
-	//	SuscriptionModelRepository repositoy;
+	// @Autowired
+	// SuscriptionModelRepository repositoy;
 
 	@MockBean
 	RouterService routerService;
 	@MockBean
 	RouterSuscriptionService routerSuscriptionService;
-
 
 	SSAPMessage<SSAPBodySubscribeMessage> ssapSbuscription;
 	IoTSession session;
@@ -84,15 +82,16 @@ public class SubscribeProcessorTest {
 	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
 	private void auditMocks() {
-		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
-		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
-		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+		try {
+			doNothing().when(iotBrokerAuditableAspect).processTx(any(), any(), any(), any());
+			doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
-		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-
-
 
 	private void securityMocks() {
 		session = PojoGenerator.generateSession();
@@ -105,20 +104,23 @@ public class SubscribeProcessorTest {
 
 	@Before
 	public void setUp() throws IOException, Exception {
-		//		repositoy.deleteByOntologyName(Person.class.getSimpleName());
+		// repositoy.deleteByOntologyName(Person.class.getSimpleName());
 		securityMocks();
 		auditMocks();
-		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(), session.getSessionKey(), SSAPQueryType.SQL, "select * from Person");
+		ssapSbuscription = SSAPMessageGenerator.generateSubscriptionMessage(Person.class.getSimpleName(),
+				session.getSessionKey(), SSAPQueryType.SQL, "select * from Person");
 
 	}
 
 	@Test
-	public void given_OneSubsctiptionProcessorWhenSubscriptionArrivesThenSubscriptionIsStoredAndReturned() throws Exception {
+	public void given_OneSubsctiptionProcessorWhenSubscriptionArrivesThenSubscriptionIsStoredAndReturned()
+			throws Exception {
 
 		final OperationResultModel value = RouterServiceGenerator.generateSubscriptionOk(UUID.randomUUID().toString());
 		when(routerSuscriptionService.suscribe(any())).thenReturn(value);
 
-		final SSAPMessage<SSAPBodyReturnMessage> response = subscribeProcessor.process(ssapSbuscription, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> response = subscribeProcessor.process(ssapSbuscription,
+				PojoGenerator.generateGatewayInfo());
 		Assert.assertNotNull(response);
 		Assert.assertEquals(SSAPMessageDirection.RESPONSE, response.getDirection());
 		Assert.assertEquals(SSAPMessageTypes.SUBSCRIBE, response.getMessageType());

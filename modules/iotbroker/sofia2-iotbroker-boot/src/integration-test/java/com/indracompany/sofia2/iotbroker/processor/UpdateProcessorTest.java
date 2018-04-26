@@ -29,7 +29,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.	SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -37,14 +37,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.EventType;
 import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.Module;
 import com.indracompany.sofia2.commons.testing.IntegrationTest;
+import com.indracompany.sofia2.audit.bean.Sofia2AuditEvent.ResultOperationType;
 import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditableAspect;
-import com.indracompany.sofia2.iotbroker.audit.bean.IotBrokerAuditEvent;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
 import com.indracompany.sofia2.iotbroker.mock.pojo.PojoGenerator;
 import com.indracompany.sofia2.iotbroker.mock.router.RouterServiceGenerator;
 import com.indracompany.sofia2.iotbroker.mock.ssap.SSAPMessageGenerator;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -73,8 +72,8 @@ public class UpdateProcessorTest {
 	@MockBean
 	SecurityPluginManager securityPluginManager;
 
-	//	@Autowired
-	//	MockMongoOntologies mockOntologies;
+	// @Autowired
+	// MockMongoOntologies mockOntologies;
 
 	@MockBean
 	RouterService routerService;
@@ -94,15 +93,17 @@ public class UpdateProcessorTest {
 	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
 	private void auditMocks() {
-		doNothing().when(iotBrokerAuditableAspect).afterReturningExecution(any(), any(), any());
-		doNothing().when(iotBrokerAuditableAspect).beforeExecution(any(), any());
-		doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(),any(),any());
+		try {
 
-		final IotBrokerAuditEvent evt = new IotBrokerAuditEvent("", UUID.randomUUID().toString(), EventType.IOTBROKER, 10l,"formatedTimeStamp", "user", "ontology", "operationType", Module.IOTBROKER, null, "otherType", "remoteAddress", new IoTSession(), new GatewayInfo(), "query", "data", "clientPlatform", "clientPlatformInstance");
-		when(iotBrokerAuditableAspect.getEvent(any(), any())).thenReturn(evt);
+			doNothing().when(iotBrokerAuditableAspect).processTx(any(), any(), any(), any());
+			doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
+
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
-
-
 
 	private void securityMocks() {
 		final IoTSession session = PojoGenerator.generateSession();
@@ -117,11 +118,13 @@ public class UpdateProcessorTest {
 	public void setUp() throws IOException, Exception {
 
 		subject = PojoGenerator.generatePerson();
-		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
+		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(),
+				objectMapper.writeValueAsString(subject));
 		subjectId = subjectInsertResult;
 		ssapUpdate = SSAPMessageGenerator.generateUpdateMessage(Person.class.getSimpleName(), "");
 		final Person subjectModified = PojoGenerator.generatePerson();
-		ssapUpdateById = SSAPMessageGenerator.generateUpdateByIdtMessage(Person.class.getSimpleName(), objectMapper.valueToTree(subjectModified));
+		ssapUpdateById = SSAPMessageGenerator.generateUpdateByIdtMessage(Person.class.getSimpleName(),
+				objectMapper.valueToTree(subjectModified));
 		ssapUpdateById.getBody().setId(subjectId);
 
 		securityMocks();
@@ -130,18 +133,21 @@ public class UpdateProcessorTest {
 
 	@After
 	public void tearDown() {
-		//		mockOntologies.deleteOntology(Person.class);
+		// mockOntologies.deleteOntology(Person.class);
 	}
 
 	@Test
-	public void given_OneUpdateProcessor_When_OneOccurrenceIsUpdated_Then_TheResponseIndicatesItIsUpdated() throws Exception {
+	public void given_OneUpdateProcessor_When_OneOccurrenceIsUpdated_Then_TheResponseIndicatesItIsUpdated()
+			throws Exception {
 
-		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
+		ssapUpdate.getBody().setQuery(
+				"db.Person.update({\"name\":\"" + subject.getName() + "\"},{$set: { \"name\": \"NAME_NEW\" }})");
 
 		final OperationResultModel value = RouterServiceGenerator.generateUpdateDeleteResultOk(1);
 		when(routerService.update(any())).thenReturn(value);
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -152,16 +158,19 @@ public class UpdateProcessorTest {
 	}
 
 	@Test
-	public void given_OneUpdateProcessor_Then_TwoOccurrencesAreUpdated_ThenTheResponseIndicatesTheTwoOccurrencesWereUpdated() throws Exception {
+	public void given_OneUpdateProcessor_Then_TwoOccurrencesAreUpdated_ThenTheResponseIndicatesTheTwoOccurrencesWereUpdated()
+			throws Exception {
 
 		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
 		repository.insert(Person.class.getSimpleName(), objectMapper.writeValueAsString(subject));
 
-		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
+		ssapUpdate.getBody().setQuery(
+				"db.Person.update({\"name\":\"" + subject.getName() + "\"},{$set: { \"name\": \"NAME_NEW\" }})");
 
 		final OperationResultModel value = RouterServiceGenerator.generateUpdateDeleteResultOk(3);
 		when(routerService.update(any())).thenReturn(value);
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -175,12 +184,14 @@ public class UpdateProcessorTest {
 
 		repository.delete(Person.class.getSimpleName());
 
-		ssapUpdate.getBody().setQuery("db.Person.update({\"name\":\""+subject.getName()+"\"},{$set: { \"name\": \"NAME_NEW\" }})");
+		ssapUpdate.getBody().setQuery(
+				"db.Person.update({\"name\":\"" + subject.getName() + "\"},{$set: { \"name\": \"NAME_NEW\" }})");
 
 		final OperationResultModel value = RouterServiceGenerator.generateUpdateDeleteResultOk(0);
 		when(routerService.update(any())).thenReturn(value);
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdate,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -194,7 +205,8 @@ public class UpdateProcessorTest {
 
 		final OperationResultModel value = RouterServiceGenerator.generateUpdateByIdResultOk("{}");
 		when(routerService.update(any())).thenReturn(value);
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -210,7 +222,8 @@ public class UpdateProcessorTest {
 		final OperationResultModel value = RouterServiceGenerator.generateUpdateByIdResultOk("{}");
 		when(routerService.update(any())).thenReturn(value);
 
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -227,8 +240,8 @@ public class UpdateProcessorTest {
 		final OperationResultModel value = RouterServiceGenerator.generateUpdateByIdResultOk("ERROR");
 		when(routerService.update(any())).thenReturn(value);
 
-
-		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById, PojoGenerator.generateGatewayInfo());
+		final SSAPMessage<SSAPBodyReturnMessage> responseMessage = updateProcessor.process(ssapUpdateById,
+				PojoGenerator.generateGatewayInfo());
 
 		Assert.assertNotNull(responseMessage);
 		Assert.assertNotNull(responseMessage.getBody());
@@ -236,11 +249,11 @@ public class UpdateProcessorTest {
 		Assert.assertFalse(responseMessage.getBody().isOk());
 	}
 
-
-	//TODO: Check if update corrupts schema by id
-	//TODO: Check if update corrupts schema by query
-	//TODO: Try too update ontology without permissions
-	//TODO: Try too update ontology without permissions in query (query ontology is different from field ontology in protocol)
-	//TODO: Try a not update query
+	// TODO: Check if update corrupts schema by id
+	// TODO: Check if update corrupts schema by query
+	// TODO: Try too update ontology without permissions
+	// TODO: Try too update ontology without permissions in query (query ontology is
+	// different from field ontology in protocol)
+	// TODO: Try a not update query
 
 }

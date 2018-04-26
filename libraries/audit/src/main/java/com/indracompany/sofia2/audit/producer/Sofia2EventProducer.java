@@ -25,15 +25,19 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class Sofia2EventProducer implements EventProducer{
-	
+public class Sofia2EventProducer implements EventProducer {
+
 	@Autowired
 	ApplicationEventPublisher publisher;
 
 	public void publish(Sofia2AuditEvent event) {
-		log.info("Sofia2EventProducer :: thread '{}' handling '{}' publish Event to Application Event Publisher: ", Thread.currentThread(), event.getMessage());
-		publisher.publishEvent(event);
+
+		log.info("Sofia2EventProducer :: thread '{}' handling '{}' publish Event to Application Event Publisher: ",
+				Thread.currentThread(), (event != null) ? event.getMessage() : "");
+
+		if (event != null) {
+			publisher.publishEvent(event);
+		}
 	}
 
-	
 }
