@@ -47,6 +47,7 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 	private static final String RANDOM_DATE = "RANDOM_DATE";
 	private static final String RANDOM_STRING = "RANDOM_STRING";
 	private static final String NULL = "NULL";
+	private static final String VALUE = "value";
 
 	@Override
 	public JsonNode randomizeFields(JsonNode json, JsonNode schema) {
@@ -88,16 +89,16 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 			case FIXED_NUMBER:
 				if (map.at(path).isArray())
 					((ArrayNode) map.at(path)).insert(Integer.valueOf(finalField).intValue(),
-							json.path(field).get("value").asDouble());
+							json.path(field).get(VALUE).asDouble());
 				else
-					((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asDouble());
+					((ObjectNode) map.at(path)).put(finalField, json.path(field).get(VALUE).asDouble());
 				break;
 			case FIXED_INTEGER:
 				if (map.at(path).isArray())
 					((ArrayNode) map.at(path)).insert(Integer.parseInt(finalField),
-							json.path(field).get("value").asInt());
+							json.path(field).get(VALUE).asInt());
 				else
-					((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asInt());
+					((ObjectNode) map.at(path)).put(finalField, json.path(field).get(VALUE).asInt());
 				break;
 			case RANDOM_NUMBER:
 				if (map.at(path).isArray())
@@ -128,7 +129,7 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				((ObjectNode) map.at(path)).put(finalField, Math.sin(angleSin) * multiplierSin);
 				break;
 			case FIXED_STRING:
-				((ObjectNode) map.at(path)).put(finalField, json.path(field).get("value").asText());
+				((ObjectNode) map.at(path)).put(finalField, json.path(field).get(VALUE).asText());
 				break;
 			case RANDOM_STRING:
 				((ObjectNode) map.at(path)).put(finalField,
@@ -138,7 +139,7 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				Date date;
 				try {
 					DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-					date = df.parse(json.path(field).get("value").asText());
+					date = df.parse(json.path(field).get(VALUE).asText());
 				} catch (ParseException e) {
 					date = new Date();
 				}
