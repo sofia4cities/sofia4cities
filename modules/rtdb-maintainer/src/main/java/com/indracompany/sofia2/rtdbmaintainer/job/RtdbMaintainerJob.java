@@ -64,8 +64,8 @@ public class RtdbMaintainerJob {
 				timeout = DEFAULT_TIMEOUT;
 
 			BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(ontologies.size());
-			RtdbMaintainerThreadPoolExecutor executor = new RtdbMaintainerThreadPoolExecutor(CORE_POOL_SIZE,
-					MAXIMUM_THREADS, KEEP_ALIVE, TimeUnit.SECONDS, blockingQueue);
+			ThreadPoolExecutor executor = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_THREADS, KEEP_ALIVE,
+					TimeUnit.SECONDS, blockingQueue);
 			executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
 
 				@Override
@@ -77,9 +77,7 @@ public class RtdbMaintainerJob {
 			//
 			List<CompletableFuture<String>> futureList = ontologies.stream()
 					.map(o -> CompletableFuture.supplyAsync(() -> {
-						manageDBPersistenceServiceFacade.exportToJson(o.getRtdbDatasource(), o.getIdentification(),
-								System.currentTimeMillis() - o.getRtdbCleanLapse().getMilliseconds());
-
+						performExport(o);
 						return "";
 					}, executor)).collect(Collectors.toList());
 
@@ -97,43 +95,13 @@ public class RtdbMaintainerJob {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			// for (Ontology ontology : ontologies) {
-			// executor.execute(new RtdbMaintainerThread(ontology));
-			//
-			// }
-			// executor.shutdown();
-			// executor.awaitTermination(timeout, timeUnit);
 		}
 
 	}
 
-	public class RtdbMaintainerThread implements Runnable {
-
-		private Ontology ontology;
-
-		public RtdbMaintainerThread(Ontology ontology) {
-			this.ontology = ontology;
-		}
-
-		@Override
-		public void run() {
-			if (this.ontology.getRtdbCleanLapse() != null) {
-				long startDateMillis = System.currentTimeMillis() - this.ontology.getRtdbCleanLapse().getMilliseconds();
-				manageDBPersistenceServiceFacade.exportToJson(this.ontology.getRtdbDatasource(),
-						this.ontology.getIdentification(), startDateMillis);
-			}
-
-		}
-	}
-
-	public class RtdbMaintainerThreadPoolExecutor extends ThreadPoolExecutor {
-
-		public RtdbMaintainerThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
-				TimeUnit unit, BlockingQueue<Runnable> workQueue) {
-			super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
-		}
-
+	public void performExport(Ontology ontology) {
+		manageDBPersistenceServiceFacade.exportToJson(ontology.getRtdbDatasource(), ontology.getIdentification(),
+				System.currentTimeMillis() - ontology.getRtdbCleanLapse().getMilliseconds());
 	}
 
 }
