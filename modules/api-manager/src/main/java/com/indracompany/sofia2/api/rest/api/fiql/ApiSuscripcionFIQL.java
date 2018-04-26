@@ -48,9 +48,9 @@ public class ApiSuscripcionFIQL {
 	@Autowired
 	private ApiServiceRest apiService;
 
-	static Locale locale = LocaleContextHolder.getLocale();
+	private Locale locale = LocaleContextHolder.getLocale();
 
-	static DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+	private DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
 	public List<ApiSuscripcionDTO> toApiSuscripcionDTO(List<ApiSuscription> suscripciones) {
 		List<ApiSuscripcionDTO> suscripcionesDTO = new ArrayList<ApiSuscripcionDTO>();

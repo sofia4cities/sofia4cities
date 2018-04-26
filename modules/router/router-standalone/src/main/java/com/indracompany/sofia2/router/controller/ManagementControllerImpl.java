@@ -77,8 +77,8 @@ public class ManagementControllerImpl  {
 	public String camelRoutesLoadIntoContext( String name, String context) throws Exception {
 		
 		String TEST_PATH_QUALITY = defaultPath+context+".xml";
-		String routes = loadRoutes(TEST_PATH_QUALITY,name);
-		return routes.toString();
+		loadRoutes(TEST_PATH_QUALITY,name);
+		return TEST_PATH_QUALITY;
 	}
 	
 	@RequestMapping(value = "/camel/context/load", method = RequestMethod.POST)
@@ -90,7 +90,7 @@ public class ManagementControllerImpl  {
 		return TEST_PATH_QUALITY.toString();
 	}
 	
-	public String loadRoutes(String routestr, String name) {
+	public void loadRoutes(String routestr, String name) {
 		RoutesDefinition routes=null;
 		if (routestr != null && !routestr.isEmpty()) {
 			try {
@@ -104,7 +104,7 @@ public class ManagementControllerImpl  {
 			}
 			
 		}
-			return routes.toString();
+			
 	}
 
 }
