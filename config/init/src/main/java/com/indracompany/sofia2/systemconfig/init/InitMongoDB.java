@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.stereotype.Component;
@@ -67,6 +68,9 @@ public class InitMongoDB {
 
 	private final String USER_DIR = "user.dir";
 
+	@Value("${sofia2.database.mongodb.database:sofia2_s4c}")
+	private String mongodb_name;
+
 	@PostConstruct
 	@Test
 	public void init() {
@@ -74,8 +78,8 @@ public class InitMongoDB {
 			started = true;
 			String userDir = System.getProperty(USER_DIR);
 			init_AuditGeneral();
-			init_RestaurantsDataSet(userDir);
-			init_HelsinkiPopulationDataSet(userDir);
+			init_RestaurantsDataSet();
+			init_HelsinkiPopulationDataSet();
 			init_DigitalTwinLogs();
 			init_DigitalTwinEvents();
 			init_DigitalTwinActionsTurbine();
@@ -88,19 +92,23 @@ public class InitMongoDB {
 		return userCollaborator;
 	}
 
-	public void init_RestaurantsDataSet(String path) {
+	public void init_RestaurantsDataSet() {
 		try {
 			log.info("init RestaurantsDataSet");
 			if (basicOps.count("Restaurants") == 0) {
 				Runtime r = Runtime.getRuntime();
 				String command = null;
 
+				String filename = Paths
+						.get(getClass().getClassLoader().getResource("examples/restaurants-dataset.json").toURI())
+						.toFile().getAbsolutePath();
+
 				if (OSDetector.isWindows()) {
-					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection Restaurants --drop --file "
-							+ path + "/src/main/resources/restaurants-dataset.json";
+					command = "s:/tools/mongo/bin/mongoimport --db " + mongodb_name
+							+ " --collection Restaurants --drop --file " + filename;
 				} else {
-					command = "mongoimport --db sofia2_s4c --collection Restaurants --drop --file " + path
-							+ "/src/main/resources/restaurants-dataset.json";
+					command = "mongoimport --db " + mongodb_name + " --collection Restaurants --drop --file "
+							+ filename;
 
 				}
 				r.exec(command);
@@ -130,18 +138,23 @@ public class InitMongoDB {
 		}
 	}
 
-	public void init_HelsinkiPopulationDataSet(String path) {
+	public void init_HelsinkiPopulationDataSet() {
 		try {
 			log.info("init init_HelsinkiPopulationDataSet");
 			if (basicOps.count("HelsinkiPopulation") == 0) {
 				Runtime r = Runtime.getRuntime();
 				String command = null;
+
+				String filename = Paths.get(
+						getClass().getClassLoader().getResource("examples/HelsinkiPopulation-dataset.json").toURI())
+						.toFile().getAbsolutePath();
+
 				if (OSDetector.isWindows()) {
-					command = "s:/tools/mongo/bin/mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file "
-							+ path + "/src/main/resources/HelsinkiPopulation-dataset.json";
+					command = "s:/tools/mongo/bin/mongoimport --db " + mongodb_name
+							+ " --collection HelsinkiPopulation --drop --file " + filename;
 				} else {
-					command = "mongoimport --db sofia2_s4c --collection HelsinkiPopulation --drop --file " + path
-							+ "/src/main/resources/HelsinkiPopulation-dataset.json";
+					command = "mongoimport --db " + mongodb_name + " --collection HelsinkiPopulation --drop --file "
+							+ filename;
 
 				}
 				r.exec(command);
