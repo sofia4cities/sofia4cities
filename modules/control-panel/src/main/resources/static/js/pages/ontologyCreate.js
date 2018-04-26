@@ -1280,6 +1280,17 @@ var OntologyCreateController = function() {
 		// GENERATE DUMMY ONTOLOGY INSTANCES
 		setRtdbDatasource: function(){
 			$('#rtdb').val($('#rtdbInstance').val());
+		},
+		// GENERATE DUMMY ONTOLOGY INSTANCES
+		setRtdbCleanLapse: function(){
+			var optSelected = $('#rtdbCleanLapseOpt').val();
+			$('#rtdbCleanLapse').val(optSelected);
+			if(optSelected != 'Never'){
+				$('#rtdbClean').val(true);
+			}else{
+				$('#rtdbClean').val(false);
+			}
+				
 		}
 	};
 }();

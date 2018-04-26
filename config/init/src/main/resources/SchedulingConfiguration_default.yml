@@ -1,0 +1,5 @@
+RtdbMaintainer: 
+  cron: "0 59 23 1/1 * ? *"
+  timeout: 24
+  timeUnit: HOURS
+  

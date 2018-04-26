@@ -93,4 +93,6 @@ public interface OntologyRepository extends JpaRepository<Ontology, String> {
 
 	void deleteById(String id);
 
+	List<Ontology> findByRtdbCleanTrue();
+
 }

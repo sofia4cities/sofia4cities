@@ -1,6 +1,7 @@
 /**
  * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,15 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.scheduler.scheduler.instance;
+package com.indracompany.sofia2.rtdbmaintainer;
 
-public class SchedulerNames {
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.ComponentScan;
 
-	public static final String SCRIPT_SCHEDULER_NAME = "scriptScheduler";
-	public static final String TWITTER_SCHEDULER_NAME = "twitterScheduler";
-	public static final String SIMULATION_SCHEDULER_NAME = "simulationScheduler";
-	public static final String BATCH_SCHEDULER_NAME = "batchScheduler";
+@SpringBootApplication
+@EnableCaching(proxyTargetClass = true)
+@ComponentScan("com.indracompany.sofia2")
+public class RtdbMaintainerApplication {
 
-	private SchedulerNames() {
+	public static void main(String[] args) {
+		SpringApplication.run(RtdbMaintainerApplication.class, args);
 	}
+
 }

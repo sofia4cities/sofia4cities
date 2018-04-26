@@ -107,27 +107,23 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 			if (connect.collectionExists("sofia2_s4c", "contextData"))
 				connect.dropCollection("sofia2_s4c", "contextData");
 			connect.createCollection("sofia2_s4c", "contextData");
-			ContextData data = ContextData.builder("user1", 
-					UUID.randomUUID().toString(), 
-					UUID.randomUUID().toString())
-					.clientConnection(UUID.randomUUID().toString())
-					.clientPatform(UUID.randomUUID().toString())
-					.clientPatformInstance(UUID.randomUUID().toString())
-					.clientSession(UUID.randomUUID().toString())
+			ContextData data = ContextData
+					.builder("user1", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+							System.currentTimeMillis())
+					.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
-			
+
 			ObjectMapper mapper = new ObjectMapper();
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
-			
-			data = ContextData.builder("user2", 
-					UUID.randomUUID().toString(), 
-					UUID.randomUUID().toString())
-					.clientConnection(UUID.randomUUID().toString())
-					.clientPatform(UUID.randomUUID().toString())
-					.clientPatformInstance(UUID.randomUUID().toString())
-					.clientSession(UUID.randomUUID().toString())
+
+			data = ContextData
+					.builder("user2", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+							System.currentTimeMillis())
+					.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
-			
+
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
 			int numIndex = repository.getListIndexes("contextData").size();
@@ -146,26 +142,22 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 			if (connect.collectionExists("sofia2_s4c", "contextData"))
 				connect.dropCollection("sofia2_s4c", "contextData");
 			connect.createCollection("sofia2_s4c", "contextData");
-			ContextData data = ContextData.builder("user1", 
-					UUID.randomUUID().toString(), 
-					UUID.randomUUID().toString())
-					.clientConnection(UUID.randomUUID().toString())
-					.clientPatform(UUID.randomUUID().toString())
-					.clientPatformInstance(UUID.randomUUID().toString())
-					.clientSession(UUID.randomUUID().toString())
+			ContextData data = ContextData
+					.builder("user1", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+							System.currentTimeMillis())
+					.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
 			ObjectMapper mapper = new ObjectMapper();
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
-			
-			data = ContextData.builder("user2", 
-					UUID.randomUUID().toString(), 
-					UUID.randomUUID().toString())
-					.clientConnection(UUID.randomUUID().toString())
-					.clientPatform(UUID.randomUUID().toString())
-					.clientPatformInstance(UUID.randomUUID().toString())
-					.clientSession(UUID.randomUUID().toString())
+
+			data = ContextData
+					.builder("user2", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+							System.currentTimeMillis())
+					.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
-			
+
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
 			int numIndex = repository.getListIndexes("contextData").size();
@@ -186,26 +178,22 @@ public class MongoNativeManageDBRepositoryIntegrationTest {
 			if (connect.collectionExists("sofia2_s4c", "contextData"))
 				connect.dropCollection("sofia2_s4c", "contextData");
 			connect.createCollection("sofia2_s4c", "contextData");
-			ContextData data = ContextData.builder("user1", 
-					UUID.randomUUID().toString(), 
-					UUID.randomUUID().toString())
-					.clientConnection(UUID.randomUUID().toString())
-					.clientPatform(UUID.randomUUID().toString())
-					.clientPatformInstance(UUID.randomUUID().toString())
-					.clientSession(UUID.randomUUID().toString())
+			ContextData data = ContextData
+					.builder("user1", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+							System.currentTimeMillis())
+					.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
-			
+
 			ObjectMapper mapper = new ObjectMapper();
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
-			data = ContextData.builder("user1", 
-					UUID.randomUUID().toString(), 
-					UUID.randomUUID().toString())
-					.clientConnection(UUID.randomUUID().toString())
-					.clientPatform(UUID.randomUUID().toString())
-					.clientPatformInstance(UUID.randomUUID().toString())
-					.clientSession(UUID.randomUUID().toString())
+			data = ContextData
+					.builder("user1", UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+							System.currentTimeMillis())
+					.clientConnection(UUID.randomUUID().toString()).clientPatform(UUID.randomUUID().toString())
+					.clientPatformInstance(UUID.randomUUID().toString()).clientSession(UUID.randomUUID().toString())
 					.build();
-			
+
 			basicOps.insert("contextData", mapper.writeValueAsString(data));
 			Assert.assertEquals(basicOps.count("contextData"), 2);
 			int numIndex = repository.getListIndexes("contextData").size();

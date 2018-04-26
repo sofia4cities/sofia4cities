@@ -53,4 +53,6 @@ public interface ManageDBRepository {
 
 	public void validateIndexes(String ontology, String schema) throws DBPersistenceException;
 
+	public void exportToJson(String ontology, long startDateMillis) throws DBPersistenceException;
+
 }

@@ -120,7 +120,8 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 
 		final String timezoneId = ZoneId.systemDefault().toString();
 		final String timestamp = Calendar.getInstance(TimeZone.getTimeZone(timezoneId)).getTime().toString();
-		final ContextData contextData = ContextData.builder(user, timezoneId, timestamp)
+		final long timestampMillis = System.currentTimeMillis();
+		final ContextData contextData = ContextData.builder(user, timezoneId, timestamp, timestampMillis)
 				.clientConnection(clientConnection).clientPatform(clientPlatformId)
 				.clientPatformInstance(clientPlatoformInstance).clientSession(clientSession).build();
 

@@ -509,6 +509,14 @@ public class InitConfigDB {
 			config.setYmlConfig(loadFromResources("TwitterConfiguration.yml"));
 			this.configurationRepository.save(config);
 			//
+			config = new Configuration();
+			config.setType(Configuration.Type.SchedulingConfiguration);
+			config.setUser(getUserAdministrator());
+			config.setEnvironment("default");
+			config.setDescription("RtdbMaintainer config");
+			config.setYmlConfig(loadFromResources("SchedulingConfiguration_default.yml"));
+			this.configurationRepository.save(config);
+			//
 
 			config = new Configuration();
 			config.setType(Configuration.Type.EndpointModulesConfiguration);
@@ -1169,6 +1177,7 @@ public class InitConfigDB {
 				ontology.setDataModel(dataModels.get(0));
 				ontologyRepository.save(ontology);
 			}
+
 		}
 		if (this.ontologyRepository.findByIdentification("TweetSentiment") == null) {
 			ontology = new Ontology();

@@ -75,8 +75,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		if (oldConfiguration != null)
 			throw new ConfigServiceException(
 					"You cann´t create a Configuration that exists:" + configuration.toString());
-		oldConfiguration = this.configurationRepository.findByTypeAndEnvironmentAndSuffix(
-				configuration.getType(), configuration.getEnvironment(), configuration.getSuffix());
+		oldConfiguration = this.configurationRepository.findByTypeAndEnvironmentAndSuffix(configuration.getType(),
+				configuration.getEnvironment(), configuration.getSuffix());
 		if (oldConfiguration != null)
 			throw new ConfigServiceException(
 					"Exist a configuration of this type for the environment and suffix:" + configuration.toString());
@@ -160,7 +160,10 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public Configuration getConfiguration(Configuration.Type type, String environment, String suffix) {
-		return this.configurationRepository.findByTypeAndEnvironmentAndSuffix(type, environment, suffix);
+		if (suffix == null)
+			return this.configurationRepository.findByTypeAndEnvironment(type, environment);
+		else
+			return this.configurationRepository.findByTypeAndEnvironmentAndSuffix(type, environment, suffix);
 	}
 
 	@Override
@@ -170,11 +173,12 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 
 	@Override
 	public Urls getEndpointsUrls(String environment) {
-		Configuration config = this.configurationRepository.findByTypeAndEnvironment(Configuration.Type.EndpointModulesConfiguration, environment);
+		Configuration config = this.configurationRepository
+				.findByTypeAndEnvironment(Configuration.Type.EndpointModulesConfiguration, environment);
 		Constructor constructor = new Constructor(ModulesUrls.class);
 		Yaml yamlUrls = new Yaml(constructor);
 		return (Urls) yamlUrls.loadAs(config.getYmlConfig(), ModulesUrls.class).getSofia2().get("urls");
-		
+
 	}
 
 	@Override
