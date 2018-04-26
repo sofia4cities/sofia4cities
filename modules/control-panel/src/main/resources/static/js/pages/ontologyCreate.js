@@ -12,7 +12,7 @@ var OntologyCreateController = function() {
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.	
 	var internalLanguage = 'en';	
-	var validTypes = ["string","number","date","timestamp","array","binary","geometry"]; // Valid property types	
+	var validTypes = ["object","string","number","integer","date","timestamp","array","binary","geometry"]; // Valid property types	
 	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableModel2 = $('#ontology_autthorizations').find('tr.authorization-model')[0].outerHTML;
 	var validJsonSchema = false;
@@ -1074,6 +1074,7 @@ var OntologyCreateController = function() {
 			var currentType = currentTypeValue.toLowerCase();
 			// if type is a valid type, assign this value , if not, string by default.
 			propType = $.inArray( currentType, validTypes ) > -1 ?  currentType : 'string';
+			logControl ? console.log('checkType: ' +propType ) : '';
 			$(obj).val(propType);
 		},
 		
