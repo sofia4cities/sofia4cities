@@ -1,5 +1,5 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
+<html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">	
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
@@ -66,20 +66,13 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/datamodels/list}"> <span> Data Models List </span></a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/datamodels/list}"> <span th:text="#{datamodel.breadcrumb.list}"> Data Models List </span></a><i class="fa fa-circle"></i></li>
 						<li>
-							<span th:if="${datamodel?.id} == null" > New Data Model</span>
-							<span th:if="${datamodel?.id} != null"> Update Data Model </span>
+							<span th:if="${datamodel?.id} == null" th:text="#{datamodel.breadcrumb.new}"> New Data Model</span>
+							<span th:if="${datamodel?.id} != null" th:text="#{datamodel.breadcrumb.update}">Update Data Model </span>
 						</li>
 					</ul>						
 				</div>
-				<!--  
-				<div class="page-bar margin-bottom-20">
-					<ul class="page-breadcrumb">
-						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/datamodel/list}"> <span th:text="#{datamodel.breadcrumb.prev}">Data Models</span></a><i class="fa fa-circle"></i></li>						
-					</ul>						
-				</div>-->
 				
 				<!-- END PAGE BAR -->
 			
@@ -95,7 +88,7 @@
 								<div class="caption">
 									<i class="fa fa-file-code-o font-grey-gallery"></i>
 									<!-- FORM TITLE -->
-									<span th:if="${datamodel?.id} == null" class="caption-subject font-grey-gallery uppercase" > Create Data Model</span>
+									<span th:if="${datamodel?.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{datamodel.create}"> Create Data Model</span>
 									<span th:if="${datamodel?.id} != null" class="caption-subject font-grey-gallery uppercase" > Update Data Model</span>
 								</div>									
 								<div class="tools">
@@ -138,17 +131,17 @@
 												<div class="row">
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group ">
-															<label class="">Name</label>
+															<label class="" th:text="#{datamodel.name} + ':'">Name</label>
 															<div class="input-icon ">
 																<i class="fa fa-user"></i>
-																<input id="datamodelName" name="datamodelName" type="text"  maxlength="50" th:field="*{name}" class="form-control no-remove" th:placeholder="Name" th:required="true"/>
+																<input id="datamodelName" name="datamodelName" type="text"  maxlength="50" th:field="*{name}" class="form-control no-remove" th:placeholder="#{datamodel.name}" th:required="true"/>
 															</div>
 														</div>
 													</div>	
 													<div class="col-md-3 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label">Data Model Type</label>
-															<select id="dataModelTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" title="DataModel type" th:field="*{type}" th:required="true">
+															<label class="control-label" th:text="#{datamodel.type} + ':'">Data Model Type</label>
+															<select id="dataModelTypes" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{datamodel.type}" th:field="*{type}" th:required="true">
 																<option th:each="dataModelType:${dataModelTypes}" th:value="${dataModelType}" th:text="${dataModelType}" >User</option>
 															</select>		
 															
@@ -158,9 +151,9 @@
 												</div>	
 												<div class ="row">
 													<div class="col-md-6 col-sm-6 col-xs-12">
-														<div class="form-group">
-															<label class="control-label" >Labels</label>
-															<input  id="datamodelLabel" name="datamodelLabel" type="text"  maxlength="100" th:field="*{labels}" class="form-control no-remove" placeholder="Indicate the label sepaated by  ','" th:required="true"  />
+														<div class="form-group" >
+															<label class="control-label" th:text="#{datamodel.labels} + ':'" >Labels</label>
+															<input  id="datamodelLabel" name="datamodelLabel" type="text"  maxlength="100" th:field="*{labels}" class="form-control no-remove" th:placeholder="#{datamodel.labels.list}" th:required="true"  />
 														</div>
 													</div>
 												</div>
@@ -168,39 +161,22 @@
 													
 													<div class="col-md-6 col-sm-6 col-xs-12">
 														<div class="form-group">
-															<label class="control-label" >Description</label>
-															<input id="datamodelDescription" name="datamodelDescription" type="text" th:required="true" maxlength="50" th:field="*{description}" class="form-control no-remove" th:placeholder="Description"/>													
+															<label class="control-label" th:text="#{datamodel.description}+ ':'">Description</label>
+															<input id="datamodelDescription" name="datamodelDescription" type="text" th:required="true" maxlength="50" th:field="*{description}" class="form-control no-remove" th:placeholder="#{datamodel.description}"/>													
 														</div>
 													</div>
 												</div>
 												<div class="row">
 													<div class="col-md-12 col-sm-12 col-xs-12">
 														<div class="form-group">
-															<label class="control-label"><i class="flaticon-network"></i> <span th:text="#{datamodel.jsonschema}">Data Model Schema</span></label>														
+															<label class="control-label"><i class="flaticon-network"></i> <span th:text="#{datamodel.jsonschema} + ':'">Data Model Schema</span></label>														
 															<textarea id="jsonSchemaDatamodel" name="jsonSchemaDatamodel"  th:required="true" th:field="*{jsonSchema}" class="form-control" rows="5" data-min-rows='5'></textarea>
 														</div>
 														<div class="clearfix"></div>
 													</div>
 												</div>
 											</div> 
-											<!-- FORM BUTTONS 
-											<div class="form-actions">
-												<div class="pull-right">
-													<!- CREATE 
-													<button th:if="${datamodel.id} == null" id="createBtn" type="submit" class="btn btn-square btn-success" name="create"  th:value="#{gen.createBtn}" ><i class="la la-check"></i> <span th:text="#{gen.createBtn}"> New</span></button>
-													<!- UPDATE 
-													<button th:if="${datamodel.id} != null" id="updateBtn" type="submit" class="btn btn-square btn-warning" name="update"  th:value="#{gen.editBtn}"  ><i class="la la-edit"></i> <span th:text="#{gen.editBtn}"> Edit</span></button>
-											
-													<!- REMOVE  
-													<button sec:authorize="!hasAuthority('ROLE_PARTNER')" id="deleteBtn" type="button" class="btn btn-square btn-danger" name="delete"  value="Remove" th:onclick="'ConfigurationsCreateController.deleteConfiguration(\'' + ${configuration?.id} + '\');'" ><i class="la la-trash"></i> <span th:text="#{gen.deleteBtn}"> Delete </span></button>
-													
-													<!- RESET 												
-													<button id="resetBtn" type="button" class="btn btn-square btn-default" name="reset"  th:value="#{gen.resetBtn}" ><i class="la la-refresh"></i> <span th:text="#{gen.resetBtn}"> Reset</span></button>
-													<span class="sep" th:text="#{gen.sepBtn}"> or </span>
-													
-												</div>
-											</div>	-->
-											
+																						
 											<div class="form-actions">
 												<div class="pull-right">
 													<!-- CREATE--> 
@@ -266,6 +242,8 @@
 	<script th:src="@{/static/vendor/ace/mode-json.js}"/>
 	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
 	
+
+		
 	<!-- TEMPLATE CONTROLLER  -->	
 	<script th:src="@{/static/js/pages/dataModelCreate.js}"/>
 	
