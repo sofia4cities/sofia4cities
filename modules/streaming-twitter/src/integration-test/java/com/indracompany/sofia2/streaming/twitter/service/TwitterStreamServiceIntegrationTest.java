@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import org.springframework.social.twitter.api.Tweet;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.indracompany.sofia2.commons.testing.IntegrationTest;
 import com.indracompany.sofia2.config.components.TwitterConfiguration;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.services.configuration.ConfigurationService;
@@ -47,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest(classes = StreamingTwitterApplication.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @ContextConfiguration(classes = StreamingTwitterApplication.class)
+@Category(IntegrationTest.class)
 @Slf4j
 public class TwitterStreamServiceIntegrationTest {
 
