@@ -27,6 +27,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.mockito.Mock;
@@ -41,19 +42,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.indracompany.sofia2.commons.testing.IntegrationTest;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Ontology.RtdbCleanLapse;
 import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
-import com.indracompany.sofia2.persistence.mongodb.MongoQueryAndParams;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
-
-import lombok.extern.slf4j.Slf4j;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@Slf4j
+@Category(IntegrationTest.class)
 public class RtdbMaintainerJobTest {
 
 	@Autowired
@@ -108,7 +107,6 @@ public class RtdbMaintainerJobTest {
 		Thread.sleep(5000);
 		Assert.assertTrue(fileExport.exists());
 		Assert.assertTrue(fileExport.length() > 0);
-		MongoQueryAndParams mq = new MongoQueryAndParams();
 		String query = "{\"contextData.timestampMillis\":{\"$eq\":100}}";
 		Assert.assertTrue(mongoDbConnector.remove(MONGO_DATABASE, ONTOLOGY, query) == 0);
 
