@@ -5,5 +5,7 @@ sofia2: #Config Sofia2 specific
       port: 9300
 
 spring:
+   elasticsearch.jest:
+      uris: http://elasticdb:9200
    datasource:
       url: jdbc:mysql://configdb:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
