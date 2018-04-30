@@ -295,6 +295,41 @@ public class QueryToolDBRepositoryTest {
 		}
 	}
 	
+	@Test
+	public void testSearchQuery3() {
+		try {
+			
+			log.info("testSearchQuery 22222");
+			
+			
+			String sql = SQL_TEST+""+TEST_INDEX_ONLINE;
+
+			String outpoutSQL2 = queryTool.querySQLAsJson(getUserAdministrator().getUserId(), TEST_INDEX_ONLINE, sql, 0);
+			
+			log.info("Returned SQL "+outpoutSQL2);
+			
+			JSONArray jsonObj2 = new JSONArray(outpoutSQL2);
+			
+			log.info("testSearchQuery END ");
+			
+			outpoutSQL2 = queryTool.querySQLAsJson(getUserAdministrator().getUserId(), TEST_INDEX_ONLINE, sql, 0);
+			
+			log.info("Returned SQL "+outpoutSQL2);
+			
+			jsonObj2 = new JSONArray(outpoutSQL2);
+			
+			outpoutSQL2 = queryTool.querySQLAsJson(getUserAdministrator().getUserId(), TEST_INDEX_ONLINE, sql, 0);
+			
+			log.info("Returned SQL "+outpoutSQL2);
+			
+			jsonObj2 = new JSONArray(outpoutSQL2);
+			
+			
+			Assert.assertTrue(jsonObj2!=null);
+		} catch (Exception e) {
+			Assert.fail("testSearchQuery failure. " + e);
+		}
+	}
 	
 
 	

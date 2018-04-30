@@ -43,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Lazy
 @Slf4j
+@Deprecated
 public class QuasarMongoDBbHttpConnectorImpl implements QuasarMongoDBbHttpConnector {
 
 	public final static String ACCEPT_TEXT_CSV = "text/csv; columnDelimiter=|&rowDelimiter=;&quoteChar='&escapeChar=\\\\";

@@ -42,9 +42,8 @@ import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Component
-@Lazy
 @Slf4j
+@Deprecated
 public class ElasticSearchSQLDbHttpConnectorImpl implements ElasticSearchSQLDbHttpConnector {
 
 	public final static String ACCEPT_TEXT_CSV = "text/csv; columnDelimiter=|&rowDelimiter=;&quoteChar='&escapeChar=\\\\";
