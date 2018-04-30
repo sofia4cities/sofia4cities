@@ -19,7 +19,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -32,7 +31,7 @@ import org.springframework.stereotype.Service;
 
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
-import com.indracompany.sofia2.persistence.services.ManageDBPersistenceServiceFacade;
+import com.indracompany.sofia2.rtdbmaintainer.service.RtdbExportDeleteService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,7 +45,7 @@ public class RtdbMaintainerJob {
 	@Autowired
 	private OntologyService ontologyService;
 	@Autowired
-	private ManageDBPersistenceServiceFacade manageDBPersistenceServiceFacade;
+	private RtdbExportDeleteService rtdbExportDeleteService;
 	private final static int CORE_POOL_SIZE = 10;
 	private final static int MAXIMUM_THREADS = 15;
 	private final static long KEEP_ALIVE = 20;
@@ -66,23 +65,13 @@ public class RtdbMaintainerJob {
 			BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(ontologies.size());
 			ThreadPoolExecutor executor = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_THREADS, KEEP_ALIVE,
 					TimeUnit.SECONDS, blockingQueue);
-			executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
 
-				@Override
-				public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-					// TODO Auto-generated method stub
-
-				}
-			});
-			//
 			List<CompletableFuture<String>> futureList = ontologies.stream()
 					.map(o -> CompletableFuture.supplyAsync(() -> {
-						performExport(o);
-						return "";
+						String query = this.rtdbExportDeleteService.performExport(o);
+						this.rtdbExportDeleteService.performDelete(o, query);
+						return query;
 					}, executor)).collect(Collectors.toList());
-
-			// List<String> results = futureList.stream().map((f) ->
-			// f.join()).collect(Collectors.toList());
 
 			CompletableFuture<Void> globalResut = CompletableFuture
 					.allOf(futureList.toArray(new CompletableFuture[futureList.size()]));
@@ -92,16 +81,11 @@ public class RtdbMaintainerJob {
 				globalResut.get(timeout, timeUnit);
 
 			} catch (ExecutionException | TimeoutException e) {
-				// TODO Auto-generated catch block
+				log.error("Timeout Exception while executing batch job Rtdb Maintainer ");
 				e.printStackTrace();
 			}
 		}
 
-	}
-
-	public void performExport(Ontology ontology) {
-		manageDBPersistenceServiceFacade.exportToJson(ontology.getRtdbDatasource(), ontology.getIdentification(),
-				System.currentTimeMillis() - ontology.getRtdbCleanLapse().getMilliseconds());
 	}
 
 }

@@ -24,6 +24,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-router-core</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-services</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>

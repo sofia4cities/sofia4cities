@@ -192,23 +192,28 @@ public class ElasticSearchManageDBRepository implements ManageDBRepository {
 	}
 
 	@Override
-	public void exportToJson(String ontology, long startDateMillis) throws DBPersistenceException {
+	public String exportToJson(String ontology, long startDateMillis) throws DBPersistenceException {
 		String command = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-MM-hh-mm");
 		Runtime r = Runtime.getRuntime();
 		String query = " --searchBody {\\\"query\\\":{\\\"range\\\":{\\\"contextData.timestampMillis\\\":{\\\"lte\\\":"
 				+ startDateMillis + "}}}}";
-
+		String path = this.dumpPath + ontology.toLowerCase() + format.format(new Date()) + ".json";
 		command = this.elasticDumpPath + " --input=" + this.elasticSearchEndpoint + "/" + ontology.toLowerCase()
-				+ " --output=" + this.dumpPath + ontology.toLowerCase() + format.format(new Date()) + ".json" + query
-				+ " --delete=true";
+				+ " --output=" + path + query + " --delete=false";
 		try {
-			log.info("Executed command: " + command);
+			log.debug("Executed command: " + command);
 			r.exec(command).waitFor();
 		} catch (IOException | InterruptedException e) {
 			throw new DBPersistenceException("Could not execute command: " + command + e);
 		}
+		return query;
+	}
 
+	@Override
+	public long deleteAfterExport(String ontology, String query) {
+
+		return this.eSDeleteService.deleteByQuery(ontology, ontology, query);
 	}
 
 }
