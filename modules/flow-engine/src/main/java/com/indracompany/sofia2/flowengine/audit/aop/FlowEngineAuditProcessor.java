@@ -154,7 +154,7 @@ public class FlowEngineAuditProcessor {
 
 		Date today = new Date();
 
-		return FlowEngineAuditEvent.builder().id(UUID.randomUUID().toString()).module(Module.FLOWENGINE)
+		return FlowEngineAuditEvent.builder().id(UUID.randomUUID().toString()).module(Module.FLOWENGINE).domain(domain)
 				.type(EventType.FLOWENGINE).operationType(operation.name()).timeStamp(today.getTime()).user(user)
 				.message(message).resultOperation(result)
 				.formatedTimeStamp(CalendarUtil.builder().build().convert(today)).build();
