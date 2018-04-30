@@ -342,6 +342,7 @@
 			$('#issueForm').removeClass('hide');
 			$('#issueList').addClass('hide');
 			$('#issueSearch').addClass('hide');
+			$('#issueLogin').addClass("hide");
 			document.querySelector('.scrolltoform').scrollIntoView({ behavior: 'smooth' , block: 'start'});
 			
 		});	

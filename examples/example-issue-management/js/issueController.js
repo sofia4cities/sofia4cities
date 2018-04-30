@@ -4,10 +4,10 @@ var IssueController = function() {
 	
 	//var apimanager = 'https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/oauth/token';
 	//var iotbroker = "https://s4citiespro.westeurope.cloudapp.azure.com/iotbroker/message";
-	var apimanager = 'http://localhost:19090/api-manager/oauth/token';
-	var iotbroker = "http://localhost:8081/iotbroker/message";
-	//var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
-	//var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
+	//var apimanager = 'http://localhost:19090/api-manager/oauth/token';
+	//var iotbroker = "http://localhost:8081/iotbroker/message";
+	var apimanager = 'https://rancher.sofia4cities.com/api-manager/oauth/token';
+	var iotbroker = "https://rancher.sofia4cities.com/iotbroker/message";
 	var ontology = 'Ticket';
 	var device = 'Ticketing App';
 	var token= 'e7ef0742d09d4de5a3687f0cfdf7f626';
@@ -18,7 +18,7 @@ var IssueController = function() {
 	var queryType= 'NATIVE';
 	var isAuthenticated = false;
 	var states = ['PENDING','DONE','WORKING', 'STOPPED'];
-
+	var filesToUpload=[];
 
 	var comboSelect;
 
@@ -52,7 +52,12 @@ var IssueController = function() {
 		data['Ticket']['Description']=$('#description').val();;
 		
 		if($("#b64").val() != "") {
-			media['data'] = $("#b64").val();
+			for (var i = filesToUpload.length - 1; i >= 0; i--) {
+				media['data']= media['data'] + filesToUpload[i];
+				if(i!=0) {
+					media['data'] = media['data'] +";";
+				}
+			}
 			media['media']['name'] = document.getElementById('file').files[0].name;
 			media['media']['storageArea'] = 'SERIALIZED'
 			media['media']['binaryEncoding'] = 'Base64';
@@ -93,8 +98,17 @@ var IssueController = function() {
 					htmlStatus = status;
 				}
 				if(issue.Ticket.File != null) {
-					var htmlImage = '<div class="jpreview-image img-responsive thumbnail" style="background-image: url(data:'
-						+ issue.Ticket.File.media.mime + ';' + issue.Ticket.File.media.binaryEncoding + ',' + issue.Ticket.File.data + ')" ></div>'
+					var allFiles = issue.Ticket.File.data.split(";");
+					var htmlImage="";
+					for (var j = allFiles.length - 1; j >= 0; j--) {
+						
+						htmlImage = htmlImage + '<div class="jpreview-image img-responsive thumbnail" style="background-image: url(data:'
+						+ issue.Ticket.File.media.mime + ';' + issue.Ticket.File.media.binaryEncoding + ',' + allFiles[j] + ')" ></div>'
+					}
+					//var htmlImage = '<div class="jpreview-image img-responsive thumbnail" style="background-image: url(data:'
+					//	+ issue.Ticket.File.media.mime + ';' + issue.Ticket.File.media.binaryEncoding + ',' + issue.Ticket.File.data + ')" ></div>'
+					
+
 					$('#tableAllIssues tbody').append('<tr id="'+issue._id.$oid+'"><td>'+i+'</td><td>'
 							+issue._id.$oid+'</td><td>'
 							+issue.Ticket.Identification+'</td><td>'
@@ -124,20 +138,21 @@ var IssueController = function() {
 	};
 	
 	var readFile = function() {
-		  
-		  if (this.files && this.files[0]) {
-		    
-		    var FR= new FileReader();
-		    
-		    FR.addEventListener("load", function(e) {
-		      //document.getElementById("img").src= e.target.result;
-		    	var base64 = e.target.result.split(",")[1];
-		      $("#b64").val(base64);
-		    }); 
-		    
-		    FR.readAsDataURL( this.files[0] );
-		  }
-		  
+		  for (var i = 0; i < this.files.length; i++) { //for multiple files          
+		    (function(file) {
+		        var name = file.name;
+		        var reader = new FileReader();  
+		        reader.onload = function(e) {  
+		           	var base64 = e.target.result.split(",")[1];
+				    $("#b64").val(base64);
+				    filesToUpload.push(base64);
+			
+		        }
+		        console.log(file.name +" loaded");
+		        reader.readAsDataURL( file );
+		    })(this.files[i]);
+		}
+		 
 		}
 	
 	var queryForIssue = function (response) {
@@ -188,6 +203,7 @@ var IssueController = function() {
 			$('.btn-list').on('click',function(){
 				if(isAuthenticated == true){
 					client.query(ontology, queryAll, queryType,  function(response){queryFor(response)});
+					document.querySelector('.scrolltosearch').scrollIntoView({ behavior: 'smooth' , block: 'start'});
 				}else {
 					$('#issueForm').addClass('hide');
 					$('#issueList').addClass('hide');
