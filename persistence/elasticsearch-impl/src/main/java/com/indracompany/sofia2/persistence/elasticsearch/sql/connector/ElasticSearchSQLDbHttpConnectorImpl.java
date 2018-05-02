@@ -34,8 +34,6 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchUtil;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
