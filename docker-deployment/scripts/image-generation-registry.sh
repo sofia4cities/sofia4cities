@@ -135,6 +135,16 @@ pushImage2Registry()
 	fi	
 }
 
+pushImage2OCPRegistry()
+{
+	echo "¿Deploy "$1 " image to OCP registry y/n: "
+	read confirmation
+	if [ "$confirmation" == "y" ]; then
+		docker tag sofia/$1:$2 docker-registry-default.ocp.52.233.186.149.nip.io/sofia2/$1:$2
+		docker push docker-registry-default.ocp.52.233.186.149.nip.io/sofia2/$1:$2		
+	fi	
+}
+
 echo "##########################################################################################"
 echo "#                                                                                        #"
 echo "#   _____             _                                                                  #"              
@@ -145,10 +155,15 @@ echo "#  | |__| | (_) | (__|   <  __/ |                                         
 echo "#  |_____/ \___/ \___|_|\_\___|_|                                                        #"                
 echo "#                                                                                        #"
 echo "# Sofia2 Docker Image generation                                                         #"
-echo "# arg1 (opt) --> -1 if only want to create images for persistence layer                  #"
-echo "#            --> string name module to deploy to Docker Registry                         #"
+echo "# config.properties -> ONLYPERSISTENCE -> true -> only database images                   #"
+echo "#                                      -> false -> all module images                     #"
+echo "#                      DEPLOY2OCPREGISTRY -> true -> deploy images to OCP registry       #"
+echo "#                                         -> false -> deploy images to private registry  #"
 echo "#                                                                                        #"
 echo "##########################################################################################"
+
+# Load configuration file
+source config.properties
 
 if [ -z "$1" ]; then
 	echo "Continue? y/n: "
@@ -163,7 +178,7 @@ fi
 homepath=$PWD
 
 # Only create persistence layer
-if [ -z "$1" ]; then
+if [ "$ONLYPERSISTENCE" = false ]; then
 	# Generates images only if they are not present in local docker registry
 	if [[ "$(docker images -q sofia2/controlpanel 2> /dev/null)" == "" ]]; then
 		cd $homepath/../../modules/control-panel/
@@ -210,60 +225,7 @@ if [ -z "$1" ]; then
 	fi	
 fi
 
-if [[ "$1" == "controlpanel" ]]; then
-	cd $homepath/../../modules/control-panel/
-	buildImage "Control Panel"
-	pushImage2Registry controlpanel latest 
-fi
-
-if [[ "$1" == "iotbroker" ]]; then
-	cd $homepath/../../modules/iotbroker/sofia2-iotbroker-boot/	
-	buildImage "IoT Broker"
-	pushImage2Registry iotbroker latest 
-fi
-
-if [[ "$1" == "apimanager" ]]; then
-	cd $homepath/../../modules/api-manager/	
-	buildImage "API Manager"
-	pushImage2Registry apimanager latest 
-fi
-
-if [[ "$1" == "digitaltwin" ]]; then
-	cd $homepath/../../modules/digitaltwin-broker/	
-	buildImage "Digital Twin"
-	pushImage2Registry digitaltwin latest 
-fi
-
-if [[ "$1" == "dashboard" ]]; then
-	cd $homepath/../../modules/dashboard-engine/
-	buildImage "Dashboard Engine"
-	pushImage2Registry dashboard latest 
-fi
-
-if [[ "$1" == "devicesimulator" ]]; then
-	cd $homepath/../../modules/device-simulator/
-	buildImage "Device Simulator"
-	pushImage2Registry devicesimulator latest 
-fi
-
-if [[ "$1" == "monitoringui" ]]; then
-	cd $homepath/../../modules/monitoring-ui/
-	buildImage "Monitoring UI"
-	pushImage2Registry monitoringui latest 
-fi
-
-if [[ "$1" == "flowengine" ]]; then
-	prepareNodeRED		
-	
-	cd $homepath/../../modules/flow-engine/
-	buildImage "Flow Engine"
-	pushImage2Registry flowengine latest 
-	
-	removeNodeRED
-fi
-
-
-if [[ "$1" == -1 ]]; then
+if [[ "$ONLYPERSISTENCE" = true ]]; then
 	# Generates images only if they are not present in local docker registry
 	if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/../dockerfiles/configdb
@@ -303,9 +265,27 @@ fi
 	
 echo "Docker images successfully generated!"
 
-echo "Push Sofia2 images to private registry"
+if [ "$DEPLOY2OCPREGISTRY" = true ]; then
+	echo "Deploying images to OCP registry..."
 
-if [ -z "$1" ]; then
+	pushImage2OCPRegistry configdb latest 
+	pushImage2OCPRegistry schedulerdb latest 
+	pushImage2OCPRegistry realtimedb latest 
+	pushImage2OCPRegistry elasticdb latest
+	pushImage2OCPRegistry controlpanel latest 
+	pushImage2OCPRegistry iotbroker latest 
+	pushImage2OCPRegistry apimanager latest 
+	pushImage2OCPRegistry flowengine latest 
+	pushImage2OCPRegistry devicesimulator latest 
+	pushImage2OCPRegistry digitaltwin latest
+	pushImage2OCPRegistry dashboard latest 
+	pushImage2OCPRegistry monitoringui latest 
+	pushImage2OCPRegistry nginx latest
+	pushImage2OCPRegistry quasar latest 
+	pushImage2OCPRegistry configinit latest	
+else
+    echo "Push Sofia2 images to private registry"
+	
 	pushImage2Registry configdb latest 
 	pushImage2Registry schedulerdb latest 
 	pushImage2Registry realtimedb latest 
