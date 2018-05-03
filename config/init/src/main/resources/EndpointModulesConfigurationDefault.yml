@@ -18,9 +18,8 @@ sofia2:
       hawtio: http://localhost:20000/hawtio/index.html
       swaggerUI: http://localhost:20000/router/swagger-ui.html
     apiManager:
-      base: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/
-      api: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/
-      swaggerUI: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/swagger-ui.html?url=
-      swaggerUIManagement: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
-      swaggerJson: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/services/management/swagger/
-        
+      base: https://localhost:19100/api-manager/
+      api: https://localhost:19100/api-manager/server/api/
+      swaggerUI: https://localhost:19100/api-manager/swagger-ui.html?url=
+      swaggerUIManagement: https://localhost:19100/api-manager/services/management/api-docs?url=/api-manager/services/management/swagger.json
+      swaggerJson: https://localhost:19100/api-manager/services/management/swagger/
