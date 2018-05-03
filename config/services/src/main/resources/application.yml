@@ -29,9 +29,9 @@ sofia2: #Config Sofia2 FlowEngine specific
    flowengine:
          port:
             domain:
-               min: 8000
-               max: 8500
+               min: 28000
+               max: 28500
             service:
-               min: 7000
-               max: 7500
+               min: 27000
+               max: 27500
          home.base: /tmp/
