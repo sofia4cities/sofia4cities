@@ -24,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.codec.binary.Base64;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -55,6 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest(classes = ApiManagerApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @Slf4j
 @Category(IntegrationTest.class)
+@Ignore
 public class ApiManagerInvokationTest {
 
 	@Autowired
