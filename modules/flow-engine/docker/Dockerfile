@@ -34,7 +34,7 @@ RUN chown -R sofia:sofia /usr/local && \
     
 USER sofia
 
-EXPOSE 10000 8082 5050
+EXPOSE 10000 20100 5050
 
 COPY docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]

@@ -51,7 +51,7 @@ sofia2: #Config Sofia2 specific
 spring: ## General Config  
    application.name: sofia2-api-manager
    boot.admin: #Spring Boot Admin Config    
-      url: http://localhost:19000
+      url: http://localhost:18100
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}

@@ -1,7 +1,7 @@
 ##--spring.config.name=apimanager
 ##security.require_ssl: true
 server: ## Config Web Server
-   port: 19100
+   port: 20000
    contextPath: /router
    tomcat:
       access_log_enabled: true
@@ -53,7 +53,7 @@ spring: ## General Config
    boot.admin: #Spring Boot Admin Config  
       client: 
         enabled: false
-      url: http://localhost:19000
+      url: http://localhost:18100
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}

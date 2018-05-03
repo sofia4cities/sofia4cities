@@ -22,7 +22,7 @@ RUN chown -R sofia:sofia /usr/local && \
     
 USER sofia
     
-EXPOSE 19090
+EXPOSE 19100
 
 ENV JAVA_OPTS="" \
     SERVER_NAME=localhost

@@ -4,7 +4,7 @@ management.security.enabled: false
 
 ## Config Web Server
 server:
-   port: 8081
+   port: 19000
    contextPath: /iotbroker
 spring:
   application.name: sofia2-iot-broker
@@ -19,7 +19,7 @@ spring:
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
   boot.admin: #Spring Boot Admin Config    
-    url: http://localhost:19000
+    url: http://localhost:18100
     username: operations
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}
@@ -79,7 +79,7 @@ sofia2: #Config Sofia2 specific
         
       rest:
         enable: true
-        swaggerhost: localhost:8081    
+        swaggerhost: localhost:19000    
         
 ## LOGGING CONF
 logging:

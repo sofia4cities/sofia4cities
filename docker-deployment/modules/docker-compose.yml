@@ -7,7 +7,7 @@ services:
     networks:
       - data_datanetwork
     ports:
-     - "8091:18080"
+     - "8091:18000"
     external_links:
      - configdb
      - schedulerdb
@@ -18,7 +18,7 @@ services:
     networks:
       - data_datanetwork
     ports:
-     - "8092:8081"
+     - "8092:19000"
     external_links:
      - configdb
      - schedulerdb
@@ -29,7 +29,7 @@ services:
     networks:
       - data_datanetwork
     ports:
-     - "8093:19090"
+     - "8093:19100"
     external_links:
      - configdb
      - schedulerdb

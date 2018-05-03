@@ -4,7 +4,7 @@ management.security.enabled: false
 
 ## Config Web Server
 server:
-   port: 8081
+   port: 19300
    contextPath: /digitaltwinbroker
 spring:
   application.name: sofia2-digitaltwin-broker
@@ -19,7 +19,7 @@ spring:
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
   boot.admin: #Spring Boot Admin Config    
-    url: http://localhost:19000
+    url: http://localhost:18100
     username: operations
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}
@@ -29,7 +29,7 @@ sofia2: #Config Sofia2 specific
   digitaltwin.broker:
       rest:
         enable: true
-        swaggerhost: localhost:8081   
+        swaggerhost: localhost:19300   
   database.mongodb:
     database: sofia2_s4c
     authenticationDatabase:  #admin

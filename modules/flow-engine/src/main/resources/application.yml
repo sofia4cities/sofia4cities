@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 20100
   contextPath: /flowengine
 
 # all access to actuator endpoints without security
@@ -19,7 +19,7 @@ spring:
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate.ddl-auto: update
   boot.admin: #Spring Boot Admin Config 
-    url: http://localhost:19000
+    url: http://localhost:18100
     username: operations
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}

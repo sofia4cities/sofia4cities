@@ -30,7 +30,7 @@ RUN keytool -noprompt -import -v -trustcacerts -alias rancherserver -file /usr/l
 	  
 USER sofia
 
-EXPOSE 19000
+EXPOSE 18100
 
 ENV JAVA_OPTS="" \
     SERVER_NAME=localhost
