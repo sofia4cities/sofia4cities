@@ -323,6 +323,7 @@
 	
 		
 	<!-- MAIN INIT -->
+	<script th:src="@{/static/js/pages/jsontools.js}"/>
 	<script  th:inline="javascript">
 
 	
@@ -433,49 +434,8 @@
 		
 	}
 
-	var loadJsonFromDoc = function(files){
-		var reader = new FileReader();
-		if(files[0].type == "text/xml"){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				var x2js = new X2JS();
-				myCodeMirror.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
-				myCodeMirrorJsonImport.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
-				beautifyJson();
-				
-			}
 			
-		}else if (files[0].name.indexOf(".csv")!=-1){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				myCodeMirror.setValue(csvJSON(reader.result));
-				myCodeMirrorJsonImport.setValue(csvJSON(reader.result));
-				beautifyJson();
-			}
-			
-		}else if (files[0].type == "application/json"){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				var jsonData = reader.result;
-				jsonData = jsonData.replace(/[\r]/g, '');
-				var arrayJson = [];
-				var dataSplitted = jsonData.split("\n");
-				var i;
-				for(var i in dataSplitted){
-					if(dataSplitted[i] != "") {
-						arrayJson.push(JSON.parse(dataSplitted[i]));
-					}
-				}
-				myCodeMirror.setValue(JSON.stringify(arrayJson));
-				myCodeMirrorJsonImport.setValue(JSON.stringify(arrayJson));
-				beautifyJson();
-			}
-		}
-		
 
-		
-		
-	};
 	
 	$(document).ready(function(){
 		handleCodeMirror();
