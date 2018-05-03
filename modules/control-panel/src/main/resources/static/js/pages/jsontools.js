@@ -81,7 +81,7 @@ var loadJsonFromDoc = function(files){
 							var jsonData = JSON.parse(content);
 							myCodeMirror.setValue(content);
 							myCodeMirrorJsonImport.setValue(content);
-						}catch{
+						}catch(err){
 							var jsonData = content.replace(/[\r]/g, '');
 							var arrayJson = [];
 							var dataSplitted = jsonData.split("\n");
