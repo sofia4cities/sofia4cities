@@ -21,7 +21,9 @@ package com.indracompany.sofia2.config.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -42,11 +44,12 @@ public class Device extends AuditableEntityWithUUID {
 		OK, ERROR;
 	}
 
-	@Column(name = "CLIENT_PLATFORM", length = 255, unique = false, nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "CLIENT_PLATFORM_ID", referencedColumnName = "ID", nullable = false)
 	@NotNull
 	@Getter
 	@Setter
-	private String clientPlatform;
+	private ClientPlatform clientPlatform;
 
 	@Column(name = "IDENTIFICATION", length = 255, unique = true, nullable = false)
 	@NotNull
@@ -76,12 +79,12 @@ public class Device extends AuditableEntityWithUUID {
 	@Setter
 	private String jsonActions;
 
-	@Column(name = "DESCRIPTION", nullable = true)
+	@Column(name = "PROTOCOL", nullable = true)
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
 	@Getter
 	@Setter
-	private String description;
+	private String protocol;
 
 	@Column(name = "SESSION_KEY", length = 512, nullable = false)
 	@NotNull
@@ -94,7 +97,5 @@ public class Device extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private boolean disabled;
-
-
 
 }

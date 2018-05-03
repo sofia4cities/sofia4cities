@@ -22,6 +22,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Device;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DeviceRepository;
@@ -38,33 +39,34 @@ public class DeviceServiceImpl implements DeviceService {
 	public List<Device> getAll() {
 		return deviceRepository.findAll();
 	}
-	@Override
-	public List<Device> getByClientPlatformId(String clientPlatformId) {
 
-		final List<Device> devices = deviceRepository.findByClientPlatform(clientPlatformId);
+	@Override
+	public List<Device> getByClientPlatformId(ClientPlatform clientPlatform) {
+
+		final List<Device> devices = deviceRepository.findByClientPlatform(clientPlatform);
 
 		return devices;
 	}
-
 
 	@Override
 	public void createDevice(Device device) {
 		deviceRepository.save(device);
 	}
+
 	@Override
 	public void updateDevice(Device device) {
 		deviceRepository.save(device);
 	}
+
 	@Override
 	@Transactional
 	public int updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(boolean status, boolean disabled, Date date) {
 		return deviceRepository.updateDeviceStatusByUpdatedAt(status, disabled, date);
 	}
+
 	@Override
-	public List<Device> getByClientPlatformIdAndIdentification(String clientPlatformId, String identification) {
-		return deviceRepository.findByClientPlatformAndIdentification(clientPlatformId, identification);
+	public List<Device> getByClientPlatformIdAndIdentification(ClientPlatform clientPlatform, String identification) {
+		return deviceRepository.findByClientPlatformAndIdentification(clientPlatform, identification);
 	}
-
-
 
 }

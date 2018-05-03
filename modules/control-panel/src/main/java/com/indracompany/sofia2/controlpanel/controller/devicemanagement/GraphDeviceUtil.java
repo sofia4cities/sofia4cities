@@ -89,7 +89,7 @@ public class GraphDeviceUtil {
 
 		for (ClientPlatform clientPlatform : clientPlatforms) {
 
-			List<Device> listDevice = deviceRepository.findByClientPlatform(clientPlatform.getId());
+			List<Device> listDevice = deviceRepository.findByClientPlatform(clientPlatform);
 
 			String clientImage = IMAGE_CLIENT;
 			if (listDevice != null && listDevice.size() > 0) {
@@ -130,7 +130,7 @@ public class GraphDeviceUtil {
 						}
 					}
 
-					arrayLinks.add(new GraphDeviceDTO(clientPlatform.getId(), device.getId(), device.getDescription(),
+					arrayLinks.add(new GraphDeviceDTO(clientPlatform.getId(), device.getId(), device.getProtocol(),
 							device.getJsonActions(), "clientplatform", "clientplatform",
 							clientPlatform.getIdentification(), device.getIdentification(), state,
 							this.urlImages + image, device.getStatus(), state, device.getSessionKey(),

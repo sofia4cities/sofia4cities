@@ -35,7 +35,6 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 @EnableScheduling
 @Component
@@ -45,31 +44,29 @@ public class DeviceManagerDelegate implements DeviceManager {
 	ClientPlatformService clientPlatformService;
 	@Autowired
 	DeviceService deviceService;
-	//	ExecutorService executor = Executors.newFixedThreadPool(10);
+	// ExecutorService executor = Executors.newFixedThreadPool(10);
 
-	//TODO: Make async event processing
+	// TODO: Make async event processing
 	@Override
-	public <T extends SSAPBodyMessage> boolean registerActivity(
-			SSAPMessage<T> request,
-			SSAPMessage<SSAPBodyReturnMessage> response,
-			IoTSession session,
-			GatewayInfo info) {
+	public <T extends SSAPBodyMessage> boolean registerActivity(SSAPMessage<T> request,
+			SSAPMessage<SSAPBodyReturnMessage> response, IoTSession session, GatewayInfo info) {
 
-		final List<Device> devices= deviceService.getByClientPlatformIdAndIdentification(session.getClientPlatformID(), session.getClientPlatformInstance());
+		final List<Device> devices = deviceService.getByClientPlatformIdAndIdentification(
+				this.clientPlatformService.getByIdentification(session.getClientPlatform()),
+				session.getClientPlatformInstance());
 		Device device = null;
 
-		if(devices.size() > 0) {
+		if (devices.size() > 0) {
 			device = devices.get(0);
-		}
-		else {
+		} else {
 			device = new Device();
-			device.setClientPlatform(session.getClientPlatformID());
+			device.setClientPlatform(this.clientPlatformService.getByIdentification(session.getClientPlatform()));
 			device.setIdentification(session.getClientPlatformInstance());
-			device.setDescription("PROTOCOL: " + info.getProtocol());
+			device.setProtocol(info.getProtocol());
 
 		}
 
-		switch(request.getMessageType()) {
+		switch (request.getMessageType()) {
 		case JOIN:
 			touchDevice(device, session, true, info);
 			break;
@@ -84,7 +81,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 		return true;
 	}
 
-	@Scheduled(fixedDelay=60000)
+	@Scheduled(fixedDelay = 60000)
 	public void updatingDevicesPeriodic() {
 		updatingDevices();
 	}
@@ -97,32 +94,31 @@ public class DeviceManagerDelegate implements DeviceManager {
 	private void updatingDevices() {
 		log.info("Start Updating all devices");
 		final Calendar c = Calendar.getInstance();
-		long millis = c.getTimeInMillis() - 5*60*1000l;
+		long millis = c.getTimeInMillis() - 5 * 60 * 1000l;
 		c.setTimeInMillis(millis);
 
-		//Setting connected false when 5 minutes without activity
+		// Setting connected false when 5 minutes without activity
 		int n = deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, false, c.getTime());
 		log.info("End Updating all devices:" + n + " disconected");
 
-		//Setting disabled a true when 1 day witout activity
-		millis = c.getTimeInMillis() - 24*60*60*1000l;
+		// Setting disabled a true when 1 day witout activity
+		millis = c.getTimeInMillis() - 24 * 60 * 60 * 1000l;
 		c.setTimeInMillis(millis);
 		n = deviceService.updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(false, true, c.getTime());
 		log.info("End Updating all devices:" + n + " disabled");
-
 
 	}
 
 	private void touchDevice(Device device, IoTSession session, boolean connected, GatewayInfo info) {
 		log.info("Start Updating device " + device.getIdentification());
 		device.setAccesEnum(Device.StatusType.OK);
-		device.setClientPlatform(session.getClientPlatformID());
+		device.setClientPlatform(this.clientPlatformService.getByIdentification(session.getClientPlatform()));
 		device.setIdentification(session.getClientPlatformInstance());
 		device.setSessionKey(session.getSessionKey());
 		device.setStatus("OK");
 		device.setConnected(connected);
 		device.setDisabled(false);
-		device.setDescription("PROTOCOL: " + info.getProtocol());
+		device.setProtocol(info.getProtocol());
 		device.setUpdatedAt(new Date());
 		deviceService.updateDevice(device);
 		log.info("End Updating device " + device.getIdentification());
