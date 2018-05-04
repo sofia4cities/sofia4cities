@@ -46,7 +46,7 @@ var loadJsonFromDoc = function(files){
 						var blob = files[0].slice(offset , offset + chunk_size);
 						reader.readAsText(blob);	
 					}else{
-						var content = chunks.join("");
+						var content = chunks.join("").replace(/\"/g, '');
 						myCodeMirror.setValue(csvJSON(content));
 						myCodeMirrorJsonImport.setValue(csvJSON(content));
 						
@@ -81,7 +81,7 @@ var loadJsonFromDoc = function(files){
 							var jsonData = JSON.parse(content);
 							myCodeMirror.setValue(content);
 							myCodeMirrorJsonImport.setValue(content);
-						}catch{
+						}catch(err){
 							var jsonData = content.replace(/[\r]/g, '');
 							var arrayJson = [];
 							var dataSplitted = jsonData.split("\n");

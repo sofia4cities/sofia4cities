@@ -413,12 +413,12 @@
 	}
 	var modalOntology = function() {
 		$('#ontologyData').modal("show");
-	}
+	};
 	
 	var createOntology = function() {
 		try{
 			JSON.parse(myCodeMirrorSchema.getValue());
-		}catch{
+		}catch(err){
 			$('#response').text(invalidSchema);
 			$('#returnAction').modal("show");
 		}
