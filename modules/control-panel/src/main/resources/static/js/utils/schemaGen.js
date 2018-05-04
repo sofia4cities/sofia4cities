@@ -36,9 +36,9 @@ function buildSwaggerJSON(data) {
     };
     keys.forEach(function (x) {
         var typeData = typeOf(data[x]);
-        if (["array", "object", "null"].indexOf(typeData) === -1)
+        if (["array", "object", "null", "string"].indexOf(typeData) === -1)
             op.properties[x] = {
-                "type": typeData
+                "type": [typeData, "null"]
             };
         else {
             switch (typeData) {
@@ -72,7 +72,7 @@ function buildSwaggerJSON(data) {
                     break;
                 case "null":
                 	op.properties[x] ={
-                		"type" : ["string", "number"]
+                		"type" : ["string", "number", "null"]
                 	};
                 	for(var i= op.required.length-1; i>=0; i--){
                 		if(op.required[i] == x){
@@ -81,6 +81,17 @@ function buildSwaggerJSON(data) {
                 		}
                 	}
                 	break;
+                case "string":
+                	/*if(!isNaN(Date.parse(data[x]))){
+                		op.properties[x] = {
+                                "type": ["string","null"],
+                                "format":["date-time","date"]
+                		};
+                	}else{*/
+                		op.properties[x] = {
+                                "type": [typeData, "null"]
+                            };
+                	//}
                 default:
                     console.warn("skipping ", typeData);
                     break;
