@@ -51,6 +51,7 @@ import lombok.extern.slf4j.Slf4j;
 @ContextConfiguration(classes = StreamingTwitterApplication.class)
 @Category(IntegrationTest.class)
 @Slf4j
+@Ignore
 public class TwitterStreamServiceIntegrationTest {
 
 	@Autowired

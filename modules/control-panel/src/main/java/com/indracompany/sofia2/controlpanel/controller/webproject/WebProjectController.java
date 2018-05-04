@@ -55,7 +55,7 @@ public class WebProjectController {
 	@Autowired
 	private AppWebUtils utils;
 
-	@Value("${sofia2.webproject.baseurl:https://localhost:18080/web/}")
+	@Value("${sofia2.webproject.baseurl:https://localhost:18000/web/}")
 	private String rootWWW = "";
 
 	@GetMapping(value = "/list", produces = "text/html")
