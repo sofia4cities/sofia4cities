@@ -26,7 +26,7 @@ spring:
 
 quartz:      
    datasource:
-      url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      url: "@sofia2.quartzURL@"
       username: root
       password:
       driver-class-name: com.mysql.jdbc.Driver
