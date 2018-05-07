@@ -98,4 +98,9 @@ public class Device extends AuditableEntityWithUUID {
 	@Setter
 	private boolean disabled;
 
+	@Column(name = "tags")
+	@Getter
+	@Setter
+	private String tags;
+
 }

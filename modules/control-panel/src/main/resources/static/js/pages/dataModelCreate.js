@@ -11,7 +11,7 @@ var dataModelCreateController  = function(){
 	
 	// CONTROLLER PRIVATE FUNCTIONS
 	
-	$("#createBtn").on('click',function(){
+	$("#createBtn").on('click',function(event){
 		event.preventDefault(); 
 		if($("#datamodelName").val()!='' && $("#datamodelName").val()!=undefined && $("#datamodelDescription").val()!='' && $("#datamodelDescription").val()!=undefined) {
 			dataModelCreateController.submitform();
@@ -28,7 +28,7 @@ var dataModelCreateController  = function(){
 	});
 
 	
-	$("#updateBtn").on('click',function(){
+	$("#updateBtn").on('click',function(event){
 		event.preventDefault(); 
 		if($("#datamodelName").val()!='' && $("#datamodelName").val()!=undefined && $("#datamodelDescription").val()!='' && $("#datamodelDescription").val()!=undefined){
 			dataModelCreateController.submitform();

@@ -22,13 +22,15 @@ import com.indracompany.sofia2.config.model.Device;
 
 public interface DeviceService {
 
-	public List<Device> getByClientPlatformIdAndIdentification(ClientPlatform clientPlatform, String identification);
+	List<Device> getByClientPlatformIdAndIdentification(ClientPlatform clientPlatform, String identification);
 
-	public void createDevice(Device device);
+	void createDevice(Device device);
 
-	public void updateDevice(Device device);
+	void updateDevice(Device device);
 
-	public List<Device> getAll();
+	List<Device> getAll();
+
+	Device getById(String id);
 
 	int updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(boolean status, boolean disabled, Date date);
 

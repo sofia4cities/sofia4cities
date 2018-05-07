@@ -30,8 +30,10 @@ import com.indracompany.sofia2.config.services.device.DeviceService;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +65,11 @@ public class DeviceManagerDelegate implements DeviceManager {
 			device.setClientPlatform(this.clientPlatformService.getByIdentification(session.getClientPlatform()));
 			device.setIdentification(session.getClientPlatformInstance());
 			device.setProtocol(info.getProtocol());
+			if (request.getMessageType().equals(SSAPMessageTypes.JOIN)) {
+				SSAPBodyJoinMessage body = (SSAPBodyJoinMessage) request.getBody();
+				device.setJsonActions(
+						body.getDeviceConfiguration() != null ? body.getDeviceConfiguration().toString() : null);
+			}
 
 		}
 
