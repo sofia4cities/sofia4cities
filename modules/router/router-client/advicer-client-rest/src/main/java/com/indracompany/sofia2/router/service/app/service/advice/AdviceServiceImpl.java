@@ -13,6 +13,10 @@
  */
 package com.indracompany.sofia2.router.service.app.service.advice;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.commons.ssl.SSLUtil;
 import com.indracompany.sofia2.router.client.RouterClient;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
@@ -30,14 +35,22 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service("adviceServiceImpl")
-public class AdviceServiceImpl 	implements AdviceService, RouterClient<NotificationCompositeModel, OperationResultModel> {
+public class AdviceServiceImpl
+		implements AdviceService, RouterClient<NotificationCompositeModel, OperationResultModel> {
 
 	@Override
 	public OperationResultModel advicePostProcessing(NotificationCompositeModel input) {
 		return execute(input);
 	}
 
+	@Value("${sofia2.router.avoidsslverification:false}")
+	private boolean avoidSSLVerification;
 
+	public AdviceServiceImpl() throws KeyManagementException, NoSuchAlgorithmException {
+		if (avoidSSLVerification) {
+			SSLUtil.turnOffSslChecking();
+		}
+	}
 
 	@Override
 	public OperationResultModel execute(NotificationCompositeModel input) {
