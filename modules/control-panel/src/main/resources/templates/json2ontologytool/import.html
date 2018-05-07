@@ -394,6 +394,7 @@
 		}else{
 			var arrayJson = [{}];
 			arrayJson= JSON.parse(myCodeMirrorJsonImport.getValue());
+			var maxInstantesPerPost = 100;
 			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':JSON.stringify(arrayJson), 'ontologyIdentification': $('#ontology').val()}, function(data){
 				if(data != "Error"){
 					if(JSON.parse(myCodeMirrorJsonImport.getValue()).length != null){
@@ -408,6 +409,28 @@
 				}
 				
 			});
+			
+			/*$.ajax({
+				  url:"/controlpanel/jsontool/importbulkdata",
+				  type:"POST",
+				  data:{'data':arrayJson},
+				  contentType:"application/json; charset=utf-8",
+				  dataType:"json",
+				  success: function(data){
+						if(data != "Error"){
+							if(JSON.parse(myCodeMirrorJsonImport.getValue()).length != null){
+								$('#response').text(data + " ontologies inserted of type " + $('#ontology').val());
+							}else{
+								$('#response').text("Ontology inserted of type " + $('#ontology').val());
+							}
+							$('#returnAction').modal("show");
+						}else{
+							$('#response').text(data);
+							$('#returnAction').modal("show");
+						}
+						
+					}
+				});*/
 		}
 		
 	}
@@ -422,7 +445,7 @@
 			$('#response').text(invalidSchema);
 			$('#returnAction').modal("show");
 		}
-		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue()}, function(data){
+		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'schema': myCodeMirrorSchema.getValue()}, function(data){
 			if(data=='ok'){
 				$('#response').text(ontologyCreated);
 			}else{
