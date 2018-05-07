@@ -24,13 +24,21 @@ buildImage()
 buildConfigDB()
 {
 	echo "ConfigDB image generation with Docker CLI: "
-	docker build -t sofia2/configdb:$1 .
+	if [ "$DEPLOY2OCPREGISTRY" = true ]; then
+		docker build -t sofia2/configdb:$1 -f Dockerfile.ocp .	
+	else
+		docker build -t sofia2/configdb:$1 .
+	fi
 }
 
 buildSchedulerDB()
 {
 	echo "SchedulerDB image generation with Docker CLI: "
-	docker build -t sofia2/schedulerdb:$1 .
+	if [ "$DEPLOY2OCPREGISTRY" = true ]; then
+		docker build -t sofia2/schedulerdb:$1 -f Dockerfile.ocp .	
+	else
+		docker build -t sofia2/schedulerdb:$1 .
+	fi	
 }
 
 buildRealTimeDB()
