@@ -122,9 +122,9 @@
 		      <groupId>com.spotify</groupId>
 		      <artifactId>docker-maven-plugin</artifactId>   		      
 		      <configuration>
-		        <imageName>sofia2/flowengine</imageName>
+		        <imageName>${docker.image.username}/flowengine</imageName>
 		        <imageTags>
-		           <imageTag>${sofia2.docker.version}</imageTag>
+		           <imageTag>${project.version}</imageTag>
 		        </imageTags>		        
 		        <dockerDirectory>docker</dockerDirectory>
 		        <resources>
