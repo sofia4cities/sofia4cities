@@ -69,4 +69,9 @@ public class DeviceServiceImpl implements DeviceService {
 		return deviceRepository.findByClientPlatformAndIdentification(clientPlatform, identification);
 	}
 
+	@Override
+	public Device getById(String id) {
+		return this.deviceRepository.findById(id);
+	}
+
 }

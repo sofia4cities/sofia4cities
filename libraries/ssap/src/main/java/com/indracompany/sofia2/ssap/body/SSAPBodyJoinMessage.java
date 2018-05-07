@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.ssap.body;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public class SSAPBodyJoinMessage extends SSAPBodyMessage {
@@ -20,22 +21,36 @@ public class SSAPBodyJoinMessage extends SSAPBodyMessage {
 	private String token;
 	private String clientPlatform;
 	private String clientPlatformInstance;
+	private JsonNode deviceConfiguration;
 
 	public String getToken() {
 		return token;
 	}
+
 	public void setToken(String token) {
 		this.token = token;
 	}
+
 	public String getClientPlatform() {
 		return clientPlatform;
 	}
+
 	public void setClientPlatform(String clientPlatform) {
 		this.clientPlatform = clientPlatform;
 	}
+
+	public JsonNode getDeviceConfiguration() {
+		return deviceConfiguration;
+	}
+
+	public void setDeviceConfiguration(JsonNode deviceConfiguration) {
+		this.deviceConfiguration = deviceConfiguration;
+	}
+
 	public String getClientPlatformInstance() {
 		return clientPlatformInstance;
 	}
+
 	public void setClientPlatformInstance(String clientPlatformInstance) {
 		this.clientPlatformInstance = clientPlatformInstance;
 	}

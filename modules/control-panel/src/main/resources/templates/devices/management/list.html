@@ -130,6 +130,9 @@
 																class="la la-credit-card"></i> <span
 																th:text="#{device.id}">Identification</span></th>
 															<th class="titulo-columnas"><i
+																class="la flaticon-user"></i> <span
+																th:text="#{device.clientplatform}">Platform Client</span></th>
+															<th class="titulo-columnas"><i
 																class="la flaticon-share"></i> <span
 																th:text="#{device.connected}">Connected</span></th>
 															<th class="titulo-columnas"><i
@@ -150,6 +153,9 @@
 															<!-- IDENTIFICATION -->
 															<td class="text-left no-wrap bold internalId"
 																th:text="${device.identification}"></td>
+															<!-- PLATFORM CLIENT -->
+															<td class="text-left no-wrap bold internalId"
+																th:text="${device.clientPlatform.identification}"></td>
 															<!-- CONNECTED -->
 															<td class="text-left no-wrap bold"
 																th:if="${device.connected}" th:text="#{device.connected.true}"></td>
@@ -160,7 +166,7 @@
 
 															<!-- PROTOCOL -->
 															<td class="text-left no-wrap bold"
-																th:text="${#strings.replace(device.description,'PROTOCOL: ', '')}"></td>
+																th:text="${device.protocol}"></td>
 															<!-- STATUS -->
 															<td class="text-center"
 																th:text="${device.status}"></td>
@@ -219,16 +225,18 @@
 													<div id="column_toggler"
 														class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
 														<label class="toggle-vis" data-column="0"
-															th:text="#{device.id}"> Identification</label> <label
-															class="toggle-vis" data-column="1"
-															th:text="#{device.connected}"> Connected</label> <label
+															th:text="#{device.id}"> Identification</label> 
+															<label class="toggle-vis" data-column="1"
+															th:text="#{device.clientplatform}"> Platform Client</label><label
 															class="toggle-vis" data-column="2"
-															th:text="#{device.lastcon}"> Last Connected</label> <label
+															th:text="#{device.connected}"> Connected</label> <label
 															class="toggle-vis" data-column="3"
-															th:text="#{device.protocol}"> Protocol</label> <label
+															th:text="#{device.lastcon}"> Last Connected</label> <label
 															class="toggle-vis" data-column="4"
-															th:text="#{device.status}"> Status</label> <label
+															th:text="#{device.protocol}"> Protocol</label> <label
 															class="toggle-vis" data-column="5"
+															th:text="#{device.status}"> Status</label> <label
+															class="toggle-vis" data-column="6"
 															th:text="#{gen.options}"> Options</label>
 													</div>
 

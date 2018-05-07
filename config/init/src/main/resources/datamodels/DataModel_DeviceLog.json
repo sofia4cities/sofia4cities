@@ -1,0 +1,65 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "asdasds",
+    "type": "object",
+    "required": [
+        "DeviceLog"
+    ],
+    "properties": {
+        "DeviceLog": {
+            "type": "string",
+            "$ref": "#/datos"
+        }
+    },
+    "datos": {
+        "description": "Info DeviceLog",
+        "type": "object",
+        "required": [
+            "Status",
+            "Level",
+            "Message"
+        ],
+        "properties": {
+            "Coordinates": {
+                "type": "object",
+                "required": [
+                    "coordinates",
+                    "type"
+                ],
+                "properties": {
+                    "coordinates": {
+                        "type": "object",
+                        "properties": {
+                            "latitude": {
+                                "type": "number"
+                            },
+                            "longitude": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "Point"
+                        ]
+                    }
+                }
+            },
+            "Status": {
+                "type": "string"
+            },
+            "Level": {
+                "type": "string"
+            },
+            "Message": {
+                "type": "string"
+            },
+            "ExtaOptions": {
+                "type": "string"
+            }
+        }
+    },
+    "description": "Device logging",
+    "additionalProperties": true
+}
