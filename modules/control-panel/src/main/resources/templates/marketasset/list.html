@@ -257,10 +257,10 @@
 		
 		// INICIALIZACIÓN DE BUSCADORES LIVE-SEARCH FALTA CAMBIAR SOBRE QUE LO HACE PARA QUE LO HAGA SOBRE PROYECTOS
 		$('.btn-search-proyect').keyup(function() {
-		
+			
 			var searchValue = $(this).val().toLowerCase();
 			// selector para coger todos los span donde están los títulos de los proyectos.
-			var Proyectos = $('div.project-container > div.panel.panel-white > div.panel-heading > span.project-title');			
+			var Proyectos = $('div.project-container > div.panel.panel-white > div.panel-heading > a > div.project-title');			
 			
 			// live-search 
 			var matchProjects = '';
