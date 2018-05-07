@@ -33,7 +33,7 @@ Within the docker-deployment directory we execute the script **./image-generatio
 
 #### <a name="composedata"></a>Step 4: Launch the execution of containers in the persistence layer
 
-In the **docker-deployment / data** directory, in a shell, we execute docker-compose up, this will launch the persistence layer of the Platform
+In the **docker-deployment / data** directory, in a shell, we execute **docker-compose up**, this will launch the persistence layer of the Platform
 (configdb, schedulerdb, realtimedb and quasar) with Docker containers, once you have finished, go to Step 5.
 
 To stop the containers: **ctrl + c** and write **docker-compose down**
