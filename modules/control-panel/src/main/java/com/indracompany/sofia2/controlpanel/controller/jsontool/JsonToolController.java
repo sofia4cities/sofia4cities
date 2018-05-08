@@ -64,6 +64,7 @@ public class JsonToolController {
 
 	private static final String DATAMODEL_DEFAULT_NAME = "EmptyBase";
 	private static final String SCHEMA_DRAFT_VERSION = "http://json-schema.org/draft-04/schema#";
+	private static final String PATH_PROPERTIES = "properties";
 
 	@GetMapping("tools")
 	public String show(Model model) {
@@ -117,6 +118,20 @@ public class JsonToolController {
 		}
 
 		return "Error";
+	}
+
+	@PostMapping("/getParentNodeOfSchema")
+	public @ResponseBody String parentNode(@RequestParam String id) throws IOException {
+		final Ontology ontology = this.ontologyService.getOntologyByIdentification(id, this.utils.getUserId());
+		if (ontology != null) {
+			final String jsonSchema = ontology.getJsonSchema();
+
+			final JsonNode schema = this.mapper.readTree(jsonSchema);
+			if (schema.path(PATH_PROPERTIES).size() == 1) {
+				return schema.path(PATH_PROPERTIES).fieldNames().next();
+			}
+		}
+		return "";
 	}
 
 	public JsonNode completeSchema(String schema, String identification, String description) throws IOException {
