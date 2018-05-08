@@ -14,21 +14,22 @@
  */
 package com.indracompany.sofia2.config.services.ontologydata;
 
-import java.io.IOException;
-import java.util.List;
+public class OntologyDataJsonProblemException extends Exception{
+	private static final long serialVersionUID = 1L;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.indracompany.sofia2.config.model.Ontology;
-import com.indracompany.sofia2.router.service.app.model.OperationModel;
+	public OntologyDataJsonProblemException() {
+		super();
+	}
 
-public interface OntologyDataService {
+	public OntologyDataJsonProblemException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-	public List<String> preProcessInsertData(final OperationModel operationModel)
-			throws DataSchemaValidationException, IOException;
-	
-	public void checkOntologySchemaCompliance(final JsonNode data, final Ontology ontology)throws DataSchemaValidationException ;
+	public OntologyDataJsonProblemException(String message) {
+		super(message);
+	}
 
-	public String decrypt(String data, String ontologyName, String user) throws OntologyDataUnauthorizedException, OntologyDataJsonProblemException;
-
+	public OntologyDataJsonProblemException(Throwable cause) {
+		super(cause);
+	}
 }
-	
