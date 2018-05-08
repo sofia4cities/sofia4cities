@@ -31,6 +31,7 @@ import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyLogMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
@@ -75,13 +76,16 @@ public class DeviceManagerDelegate implements DeviceManager {
 
 		switch (request.getMessageType()) {
 		case JOIN:
-			touchDevice(device, session, true, info);
+			touchDevice(device, session, true, info, null);
 			break;
 		case LEAVE:
-			touchDevice(device, session, false, info);
+			touchDevice(device, session, false, info, null);
 			break;
+		case LOG:
+			SSAPBodyLogMessage logMessage = (SSAPBodyLogMessage) request.getBody();
+			touchDevice(device, session, true, info, logMessage.getStatus().name());
 		default:
-			touchDevice(device, session, true, info);
+			touchDevice(device, session, true, info, null);
 			break;
 		}
 
@@ -116,13 +120,12 @@ public class DeviceManagerDelegate implements DeviceManager {
 
 	}
 
-	private void touchDevice(Device device, IoTSession session, boolean connected, GatewayInfo info) {
+	private void touchDevice(Device device, IoTSession session, boolean connected, GatewayInfo info, String status) {
 		log.info("Start Updating device " + device.getIdentification());
-		device.setAccesEnum(Device.StatusType.OK);
+		device.setStatus(status == null ? Device.StatusType.OK.name() : status);
 		device.setClientPlatform(this.clientPlatformService.getByIdentification(session.getClientPlatform()));
 		device.setIdentification(session.getClientPlatformInstance());
 		device.setSessionKey(session.getSessionKey());
-		device.setStatus("OK");
 		device.setConnected(connected);
 		device.setDisabled(false);
 		device.setProtocol(info.getProtocol());

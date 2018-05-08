@@ -21,6 +21,7 @@ import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
 
 public interface DeviceManager {
 
-	public <T extends SSAPBodyMessage>boolean registerActivity(SSAPMessage<T> request, SSAPMessage<SSAPBodyReturnMessage> response, IoTSession session, GatewayInfo info);
+	public <T extends SSAPBodyMessage> boolean registerActivity(SSAPMessage<T> request,
+			SSAPMessage<SSAPBodyReturnMessage> response, IoTSession session, GatewayInfo info);
 
 }
