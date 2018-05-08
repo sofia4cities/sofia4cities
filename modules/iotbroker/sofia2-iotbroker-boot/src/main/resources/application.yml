@@ -80,6 +80,20 @@ sofia2: #Config Sofia2 specific
       rest:
         enable: true
         swaggerhost: localhost:19000    
+      kafka:
+        enable: false
+        host: localhost
+        port: 9092
+        partitions: 1
+        replication: 1
+        prefix: ontology_
+        group: ontologyGroup
+        topic.pattern: ontology.*
+        router.topic: router
+        consumer.consumersCount : 10
+        consumer.seekTo : beginning 
+        consumer.group : kafkaGroup
+        consumer.maxPollRecords : 5000
         
 ## LOGGING CONF
 logging:

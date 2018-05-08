@@ -41,7 +41,9 @@
 		var dataJSON = {};
 		function getQueryExecutedFragment() {			        
 			$("#Canvasrespuesta").load('/controlpanel/querytool/query', { 'query': $("#querySql").val(), 'queryType': $("#typeQuery").val(), 'ontologyIdentification': $("#selector_ontologias").val()},function(response,status,xhr){
-				
+			
+				historicalQuerys();
+				document.getElementById("historicalQuery").value = null; 
 				queryResponse = $(response);	
 				
 				// check for valid json, or server string error like java.lang.Exception...
@@ -66,9 +68,65 @@
 			
 			$('#query-ontologia-result').text('' + $('#selector_ontologias').val());		
 			if ($('#result-panel').hasClass('hide')){ $('#result-panel').toggleClass('hide'); } 			
-		} 
+		}
 	
-
+		
+		function historicalQuerys(){
+			
+			var newQuery = $("#querySql").val();
+			var maxSize = 10;
+			
+			if(!isQueryExist(newQuery, maxSize)){
+				
+				var select = document.getElementById('historicalQuery');
+			
+				if (localStorage.clickcount) {
+			        localStorage.clickcount = Number(localStorage.clickcount)+1;
+			    } else {
+			        localStorage.clickcount = 1;
+			    }
+				
+				if(localStorage.clickcount<=maxSize){
+					localStorage.setItem("Option_"+localStorage.clickcount, newQuery);
+					$('#historicalQuery').append('<option id="Option_'+localStorage.clickcount +'">'+localStorage.getItem("Option_"+localStorage.clickcount)+'</option>');
+					
+				}else{
+					
+					for(var i=1;i<maxSize;i++){
+						localStorage.setItem("Option_"+i, localStorage.getItem("Option_"+(i+1)));
+						document.getElementById('Option_'+i).innerHTML = $('#Option_'+(i+1)).val();
+					}
+					
+					localStorage.setItem("Option_"+maxSize, newQuery);
+					document.getElementById('Option_'+maxSize).innerHTML = localStorage.getItem("Option_"+maxSize);
+										
+				}
+			}
+	  	}
+		
+		function isQueryExist(shearchQuery, size){
+			var string = null;
+			
+			for(var i=1;i<=size;i++){
+				if( (localStorage.getItem("Option_"+(i))) != null){
+					string = $('#Option_'+i).val();
+					if(shearchQuery == string){
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		function historicalSelected(){
+			var selected = document.getElementById("historicalQuery");
+			localStorage.setItem("selectedOptionHistorical", selected.value);
+			document.getElementById("querySql").value = selected.value; 
+			document.getElementById("historicalQuery").value = selected.value;
+			
+		}
+	
+		
 		function getOntologyFields() {
 			$("#fields").load('/controlpanel/querytool/ontologyfields', { 'ontologyIdentification': $("#selector_ontologias").val()})
 		}		
@@ -322,11 +380,19 @@
 											<!-- FIN CREACION DE CONSULTA -->											
 											</div>
 											<div class="panel-footer bg-white"> 
-												<div class="pull-left col-md-10 col-sm-8 col-xs-12">
-													<textarea id="querySql" class="element textarea extra-small form-control"></textarea>
+												<div class="pull-left col-md-5 col-sm-4 col-xs-12" id="divHistorical">
+													<label class="control-label" th:text="#{querytool.historical.query}" >Historical: </label>
+														<select class=" show-tick form-control" id="historicalQuery" placeholder="" onchange="historicalSelected()">
+														</select>
+												</div>	
+												<div class="pull-left col-md-5 col-sm-4 col-xs-12">
+													<label class="control-label" th:text="#{querytool.query}">Query: </label>
+													 <textarea  id="querySql" class="element textarea extra-small form-control" style="margin: 0px 2.28516px 0px 0px; height: 33px; width: 600px;" ></textarea> <!-- action="changeTextArea()"></textarea>-->
+													
 												</div>											
 												<div class="pull-right col-md-2 col-sm-4 col-xs-12">
 													<div class="btn-group">
+														<br/>
 														<!-- <button type="button" class="btn btn-sm btn-primary" onClick="createQuery()"><i class="fa fa-edit"></i> Generar Query</button> no hace falta cuando todo haga refresh -->
 														<button type="button" class="btn btn-sm btn-primary" onclick="getQueryExecutedFragment()" id="executeQuery"><i class="fa fa-play"></i> <span th:text="#{database.execQuery}">Ejecutar Query</span> </button>
 													</div>											
@@ -1365,6 +1431,8 @@
 			
 		}
 		
+		
+		
 		//]]>     
 			  
 	</script> 
@@ -1458,7 +1526,11 @@
 			
 		
 		});
-		
+		//Refresh page and reset localStorage.clickount
+		$(window).unload(function(){
+			  localStorage.clickcount = 0;
+			  localStorage.clear();
+			});
 		
 		
 	});		
