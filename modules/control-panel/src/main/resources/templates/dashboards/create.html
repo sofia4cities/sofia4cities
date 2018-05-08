@@ -144,7 +144,7 @@
 
 											<!-- FORM ACTIONS FOR UPDATE -->
 											<input th:if="${dashboard.id} != null" type="hidden"
-												name="action" th:value="@{/dashboard/updateaccess}" /> <input
+												name="action" th:value="@{/dashboard/dashboardconf}" /> <input
 												th:if="${dashboard.id} != null" type="hidden" name="_method"
 												value="PUT" />
 											<!--  <input type="hidden" name="userId" th:value="${dashboard.userId}"/>-->
@@ -178,8 +178,7 @@
 																	th:required="true" maxlength="100"
 																	th:field="*{description}" class="form-control "
 																	th:placeholder="#{gen.description}"
-																	th:readonly="*{description}"
-																	th:classappend="${dashboard.id} ? no-remove : ''" />
+																	 />
 															</div>
 														</div>
 													</div>
@@ -298,7 +297,7 @@
 													<!-- RESET authorizations-->
 													<button id="resetBtn" type="button" th:if="${dashboard.id} != null" 
 														class="btn btn-square btn-default" name="reset"
-														th:onclick="'DashboardsCreateController.go(\'' + @{/dashboards/updateaccess/} + ${dashboard.id} + '\');'"
+														th:onclick="'DashboardsCreateController.go(\'' + @{/dashboards/dashboardconf/} + ${dashboard.id} + '\');'"
 														th:value="#{gen.resetBtn}">
 														<i class="la la-refresh"></i> <span
 															th:text="#{gen.resetBtn}"> Reset</span>
@@ -326,7 +325,7 @@
 
 											<!-- FORM ACTIONS FOR UPDATE -->
 											<input th:if="${dashboard.id} != null" type="hidden"
-												name="action" th:value="@{/dashboard/updateaccess}" /> <input
+												name="action" th:value="@{/dashboard/dashboardconf}" /> <input
 												th:if="${dashboard.id} != null" type="hidden" name="_method"
 												value="PUT" />
 											<!--  <input type="hidden" name="userId" th:value="${dashboard.userId}"/>-->

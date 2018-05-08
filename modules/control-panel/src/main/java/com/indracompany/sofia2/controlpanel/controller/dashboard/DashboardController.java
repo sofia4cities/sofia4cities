@@ -124,7 +124,7 @@ public class DashboardController {
 		}
 	}
 
-	@PutMapping(value = { "/updateaccess/{id}" })
+	@PutMapping(value = { "/dashboardconf/{id}" })
 	public String saveUpdateDashboard(Model model, @Valid DashboardCreateDTO dashboard, @PathVariable("id") String id,
 			BindingResult bindingResult, RedirectAttributes redirect) {
 		if (bindingResult.hasErrors()) {
@@ -145,11 +145,11 @@ public class DashboardController {
 
 		} catch (DashboardServiceException e) {
 			utils.addRedirectException(e, redirect);
-			return "redirect:/dashboards/updateaccess/" + dashboard.getId();
+			return "redirect:/dashboards/dashboardconf/" + dashboard.getId();
 		}
 	}
 
-	@GetMapping(value = "/updateaccess/{id}", produces = "text/html")
+	@GetMapping(value = "/dashboardconf/{id}", produces = "text/html")
 	public String updateDashboard(Model model, @PathVariable("id") String id) {
 		Dashboard dashboard = this.dashboardService.getDashboardEditById(id, utils.getUserId());
 

@@ -162,28 +162,20 @@ var DashboardsCreateController = function() {
                 label.closest('.form-group').removeClass('has-error');
             },
 			// ALL OK, THEN SUBMIT.
-            submitHandler: function(form) {
-            		
-            	
-            	    var formAux = $('#dashboard_aux_create_form');
-            	   
+            submitHandler: function(form) {            		
+            	    var formAux = $('#dashboard_aux_create_form');            	   
             	    $('#identification_aux').val($('#identification').val());
-            	    $('#description_aux').val( $('#description').val());  
-            	    
-            	    $('#authorizations_aux').val(JSON.stringify(tableToObj( document.getElementById('dashboard_autthorizations') )));
-            	
+            	    $('#description_aux').val( $('#description').val());             	    
+            	    $('#authorizations_aux').val(JSON.stringify(tableToObj( document.getElementById('dashboard_autthorizations') )));            	
             	    $('#checkboxPublic_aux').val( $('#checkboxPublic').prop('checked'));
             	    success1.show();
-					error1.hide();
-					
-					formAux.submit();
-				
+					error1.hide();					
+					formAux.submit();				
 			}
         });
     }
 	
-	var tableToObj = function( table ) {
-		
+	var tableToObj = function( table ) {		
 	    var trs = table.rows,
 	        trl = trs.length,
 	        i = 0,

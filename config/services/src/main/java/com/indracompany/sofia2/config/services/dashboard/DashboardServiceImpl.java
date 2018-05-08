@@ -397,6 +397,7 @@ public class DashboardServiceImpl implements DashboardService {
 		} else {
 			Dashboard d = dashboardRepository.findById(dashboard.getId());
 			d.setPublic(dashboard.getPublicAccess());
+			d.setDescription(dashboard.getDescription());
 			this.dashboardRepository.save(d);
 			return d.getId();
 		}
