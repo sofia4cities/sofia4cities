@@ -22,6 +22,7 @@ package com.indracompany.sofia2.persistence.interfaces;
 import java.util.List;
 import java.util.Map;
 
+import com.indracompany.sofia2.persistence.common.DescribeColumnData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 
 public interface ManageDBRepository {
@@ -56,5 +57,7 @@ public interface ManageDBRepository {
 	public String exportToJson(String ontology, long startDateMillis) throws DBPersistenceException;
 
 	public long deleteAfterExport(String ontology, String query);
+
+	List<DescribeColumnData> describeTable(String name);
 
 }
