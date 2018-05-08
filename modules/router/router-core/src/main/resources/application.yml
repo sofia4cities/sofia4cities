@@ -29,6 +29,23 @@ sofia2: #Config Sofia2 specific
       quasar.connectionTimeout.millis: 10000
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/
    router.avoidsslverification: true
+
+   iotbroker.plugable:
+    gateway:
+      kafka:
+        enable: false
+        host: localhost
+        port: 9092
+        partitions: 1
+        replication: 1
+        prefix: ontology_
+        group: ontologyGroup
+        topic.pattern: ontology.*
+        router.topic: router
+        consumer.consumersCount : 10
+        consumer.seekTo : beginning 
+        consumer.group : kafkaGroup
+        consumer.maxPollRecords : 5000
 #Security Config
 security:
     user:

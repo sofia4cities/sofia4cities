@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.router.service.processor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.ApiOperation;
 import com.indracompany.sofia2.router.client.RouterClientGateway;
 import com.indracompany.sofia2.router.service.ClientsConfigFactory;
@@ -60,6 +64,8 @@ public class RouterFlowManagerService {
 
 	@Autowired
 	private CamelContext camelContext;
+	
+	ObjectMapper mapper = new ObjectMapper();
 
 	private String executeCrudOperationsRoute = "direct:execute-crud-operations";
 
@@ -81,6 +87,28 @@ public class RouterFlowManagerService {
 			return output;
 		}
 	}
+	
+	public void preProcessNotification( Exchange exchange) throws IOException  {
+		
+		
+		String body  = (String)exchange.getIn().getBody();
+		
+		NotificationModel obj;
+		try {
+			obj = mapper.readValue(body, NotificationModel.class);
+			NotificationCompositeModel compositeModel = new NotificationCompositeModel();
+			compositeModel.setNotificationModel(obj);
+			
+			ProducerTemplate t = camelContext.createProducerTemplate();
+			NotificationCompositeModel result = (NotificationCompositeModel) t.requestBody(executeCrudOperationsRoute,compositeModel);
+		} catch (IOException e) {
+			log.error("Error Preprocessing input message from Kafka",e);
+			throw e;
+		}
+		
+		
+	}
+	
 
 	public void executeCrudOperations(Exchange exchange) {
 		log.debug("executeCrudOperations: Begin");

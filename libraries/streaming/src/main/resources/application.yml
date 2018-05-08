@@ -1,0 +1,114 @@
+##--spring.config.name=apimanager
+##security.require_ssl: true
+server: ## Config Web Server
+   port: 19090
+   contextPath: /router
+   tomcat:
+      access_log_enabled: true
+      basedir: target/tomcat
+spring.application.name : router-core
+     
+sofia2: #Config Sofia2 specific
+   database.mongodb:
+      database: sofia2_s4c
+      authenticationDatabase:  #admin
+      servers: realtimedb:27017
+      autoConnectRetry: true
+      socketTimeout: 5000
+      maxAutoConnectRetryTime: 5000
+      maxWaitTime: 5000
+      useAuth: false
+      username: #username
+      password: #password
+      readFromSecondaries: false
+      queries.executionTimeout: 5000
+      queries.defaultLimit: 150
+      queries.maxConcurrentQueries: 3
+      writeConcern: UNACKNOWLEDGED
+      tools.mongoexport.path: mongoexport
+      tools.mongoimport.path: mongoimport
+      tools.mongoshell.path: mongo
+      tools.useSequentialOps: true
+      quasar.maxHttpConnections: 10
+      quasar.maxHttpConnectionsPerRoute: 10
+      quasar.connectionTimeout.millis: 10000
+      quasar.connector.http.endpoint: http://localhost:18200/query/fs/
+   router.avoidsslverification: true
+#Security Config
+security:
+    user:
+       name: admin
+       password: admin
+   
+spring: ## General Config  
+   application.name: sofia2-router
+   boot.admin: #Spring Boot Admin Config    
+      url: http://localhost:18090
+      username: operations
+      password: changeIt!
+      client.metadata.user.name: ${spring.boot.admin.username}
+      client.metadata.user.password: $spring.boot.admin.password} 
+   datasource: ## JPA Config
+      url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+      username: root
+      password:
+      # Number of ms to wait before throwing an exception if no connection is available.
+      tomcat.max-wait: 10000
+      # Maximum number of active connections that can be allocated from this pool at the same time.
+      tomcat.max-active: 50
+      # Validate the connection before borrowing it from the pool.
+      tomcat.test-on-borrow: true
+   jpa:
+      ## Hibernate Properties
+      # The SQL dialect makes Hibernate generate better SQL for the chosen database
+      properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+      # Hibernate ddl auto (create, create-drop, validate, update)
+      hibernate.ddl-auto: update 
+      properties.hibernate.enable_lazy_load_no_trans: true
+   mail: ##Mail configuration
+      host: smtp.gmail.com
+      username: sofia2oncloud@gmail.com
+      password: Indra2013!
+      port: 587
+      properties.mail.smtp.auth: true
+      properties.mail.smtp.starttls.enable: true
+   jmx:
+    enabled: true
+    
+   # Embedded ActiveMQ Configuration Example
+   activemq:
+      broker-url: vm://localhost
+
+        
+## LOGGING CONF
+logging:
+   level:
+      org.springframework: INFO
+      de.codecentric: DEBUG
+      com.example.boot.thymeleaf: INFO
+      com.indra: DEBUG
+      org.hibernate: INFO
+
+kafka.host : localhost
+kafka.port : 9092
+
+kafka.serializerClass : kafka.serializer.StringEncoder
+
+# Producer properties
+producer.topic : TestLog
+producer.partitioner : org.apache.camel.example.kafka.StringPartitioner
+
+# Consumer properties 
+
+# One consumer can listen to more than one topics.[ TestLog,AccessLog ] 
+consumer.topic : TestLog
+consumer.group : kafkaGroup
+consumer.maxPollRecords : 5000
+
+# No of consumers that connect to Kafka server
+consumer.consumersCount : 1
+
+# Get records from the begining
+consumer.seekTo : beginning      
+ 
+ 
