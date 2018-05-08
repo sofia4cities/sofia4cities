@@ -56,7 +56,11 @@ buildElasticSearchDB()
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
-	docker build -t $USERNAME/nginx:$1 .		
+	if [ "$PUSH2OCPREGISTRY" = true ]; then
+		docker build -t $USERNAME/nginx:$1 -f Dockerfile.ocp .	
+	else
+		docker build -t $USERNAME/nginx:$1 .
+	fi		
 }
 
 buildQuasar()
