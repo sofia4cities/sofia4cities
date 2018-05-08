@@ -1,3 +1,8 @@
+var authorizationsArr 		= []; // add authorizations
+var authorizationUpdateArr  = []; // get authorizations of the ontology
+var authorizationsIds 		= []; // get authorizations ids for actions
+var authorizationObj 		= {}; // object to receive authorizations responses.
+
 var DashboardsCreateController = function() {
     
 	// DEFAULT PARAMETERS, VAR, CONSTS. 
@@ -7,17 +12,18 @@ var DashboardsCreateController = function() {
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.	
 	var internalLanguage = 'en';	
+	var mountableModel2 = $('#dashboard_autthorizations').find('tr.authorization-model')[0].outerHTML;
 	
-	function initDatapicker(){
-		var dateCreated = $("#datecreated").datepicker('getDate');
-	}
 	
 	// CONTROLLER PRIVATE FUNCTIONS	
 	
+	// REDIRECT URL
+	var navigateUrl = function(url) {
+		window.location.href = url;
+	}
 	// DELETE DASHBOARD
 	var deleteDashboardConfirmation = function(dashboardId){
-		console.log('deleteDashoardConfirmation() -> formId: '+ dashboardId);
-		
+		console.log('deleteDashoardConfirmation() -> formId: '+ dashboardId);		
 		// no Id no fun!
 		if ( !dashboardId ) {$.alert({title: 'ERROR!',type: 'red' , theme: 'dark', content: 'NO DASHBOARD-FORM SELECTED!'}); return false; }
 		
@@ -27,12 +33,192 @@ var DashboardsCreateController = function() {
 		HeaderController.showConfirmDialogDashboard('delete_dashboard_form');
 	}
 	
+	
+	// return position to find authId.
+	var foundIndex = function(what,item,arr){
+		var found = '';
+		arr.forEach(function(element, index, array) {
+			if ( what === element[item]){ found = index;  console.log("a[" + index + "] = " + element[item] + ' Founded in position: ' + found ); } 
+			
+		});		
+		return found;
+	}
+	
+	
+	
+	var authorization = function(action,user,description,accesstype,btn){
+		logControl ? console.log('|---> authorization()') : '';	
+		
+		var response = {};
+		
+		if (action === 'insert'){	
+			var propAuth = {"users":user,"description":description,"accesstypes": accesstype};
+			
+			authorizationsArr.push(propAuth);	
+			// TO-HTML
+			if ($('#authorizations').attr('data-loaded') === 'true'){
+				$('#dashboard_autthorizations > tbody').html("");
+				$('#dashboard_autthorizations > tbody').append(mountableModel2);
+			}
+			console.log('authorizationsArr: ' + authorizationsArr.length + ' Arr: ' + JSON.stringify(authorizationsArr));
+			$('#dashboard_autthorizations').mounTable(authorizationsArr,{
+				model: '.authorization-model',
+				noDebug: false							
+			});
+			
+			// hide info , disable user and show table
+			$('#alert-authorizations').toggle($('#alert-authorizations').hasClass('hide'));			
+			$("#users").selectpicker('deselectAll');
+			$("#users option[value=" + user + "]").prop('disabled', true);
+			$("#users").selectpicker('refresh');
+			$('#authorizations').removeClass('hide');
+			$('#authorizations').attr('data-loaded',true);
+		}
+	
+		if (action  === 'delete'){
+			
+			authorizationsArr.splice(user, 1);
+			// refresh interface				
+			
+				$(btn).closest('tr').remove();
+				$("#users option[value=" + user + "]").prop('disabled', false);						
+				$("#users").selectpicker('deselectAll');
+				$("#users").selectpicker('refresh');
+				if (authorizationsArr.length == 0){
+					$('#alert-authorizations').toggle(!$('#alert-authorizations').is(':visible'));					
+					$('#authorizations').addClass('hide');
+					
+				}	
+		}	
+	};
+	
+	var initAccess = function (){
+		
+		//authorizationsArr
+		var authoriz = JSON.parse(dashboardCreateReg.authorizationsSaved);
+		var users = dashboardCreateReg.users;
+		if(authoriz!=null){
+			for (var i = 0; i < authoriz.length; i++) {
+				for (var j = 0; j < users.length; j++) {
+					if(authoriz[i].users===users[j].userId){
+						authoriz[i].description=users[j].fullName;
+						break;
+					}				
+				}			
+			}
+			
+			for (var i = 0; i < authoriz.length; i++) {
+				authorization('insert',authoriz[i].users,authoriz[i].description,authoriz[i].accesstypes,'');			
+			}	
+		}
+	}
+	
+	
+	// FORM VALIDATION
+	var handleValidation = function() {
+		logControl ? console.log('handleValidation() -> ') : '';
+        // for more info visit the official plugin documentation: 
+        // http://docs.jquery.com/Plugins/Validation
+		
+        var form1 = $('#dashboard_create_form');
+        var error1 = $('.alert-danger');
+        var success1 = $('.alert-success');
+		
+					
+		// set current language
+		currentLanguage = dashboardCreateReg.language || LANGUAGE;
+		
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block help-block-error', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: ":hidden:not('.selectpicker, .hidden-validation')", // validate all fields including form hidden input but not selectpicker
+			lang: currentLanguage,			
+			// validation rules
+            rules: {				
+                identification:	{ minlength: 5, required: true },
+				description:	{ minlength: 5, required: true }
+            },
+            invalidHandler: function(event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+            errorPlacement: function(error, element) {				
+                if 		( element.is(':checkbox'))	{ error.insertAfter(element.closest(".md-checkbox-list, .md-checkbox-inline, .checkbox-list, .checkbox-inline")); }
+				else if ( element.is(':radio'))		{ error.insertAfter(element.closest(".md-radio-list, .md-radio-inline, .radio-list,.radio-inline")); }
+				else if ( element.is(':hidden'))	{ 
+					if ($('#datamodelid').val() === '') { $('#datamodelError').removeClass('hide');} 					
+				}				
+				else { error.insertAfter(element); }
+            },
+            highlight: function(element) { // hightlight error inputs
+                $(element).closest('.form-group').addClass('has-error'); 
+            },
+            unhighlight: function(element) { // revert the change done by hightlight
+                $(element).closest('.form-group').removeClass('has-error');
+            },
+            success: function(label) {
+                label.closest('.form-group').removeClass('has-error');
+            },
+			// ALL OK, THEN SUBMIT.
+            submitHandler: function(form) {
+            		
+            	
+            	    var formAux = $('#dashboard_aux_create_form');
+            	   
+            	    $('#identification_aux').val($('#identification').val());
+            	    $('#description_aux').val( $('#description').val());  
+            	    
+            	    $('#authorizations_aux').val(JSON.stringify(tableToObj( document.getElementById('dashboard_autthorizations') )));
+            	
+            	    $('#checkboxPublic_aux').val( $('#checkboxPublic').prop('checked'));
+            	    success1.show();
+					error1.hide();
+					
+					formAux.submit();
+				
+			}
+        });
+    }
+	
+	var tableToObj = function( table ) {
+		
+	    var trs = table.rows,
+	        trl = trs.length,
+	        i = 0,
+	        j = 0,
+	        keys = ["users","description","accesstypes"],
+	        obj, ret = [];
+
+	    for (; i < trl; i++) {
+	        if (i > 0) {
+	        	 if(trs[i].children.length>0){
+		            obj = {};
+		           
+		            for (j = 0; j < trs[i].children.length-1; j++) {
+		                obj[keys[j]] = trs[i].children[j].children[0].value;
+		            }
+		            ret.push(obj);
+	        	 }
+	        }
+	    }
+	    //validation
+	    
+	    for (var k = ret.length-1; k >=0 ; k--) {
+	    	if(ret[k].users === null || ret[k].users.length===0){
+	    		ret.splice(k, 1);
+	    	}
+	    }
+	    return ret;
+	};
+	
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{		
 		// LOAD() JSON LOAD FROM TEMPLATE TO CONTROLLER
 		load: function(Data) { 
 			logControl ? console.log(LIB_TITLE + ': load()') : '';
-			return ontologyCreateReg = Data;
+			return dashboardCreateReg = Data;
 		},	
 		
 		// INIT() CONTROLLER INIT CALLS
@@ -40,10 +226,14 @@ var DashboardsCreateController = function() {
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			/*EDITION MODE*/
 			/*Hide dimensions*/
+			
 			if(!$("[name='id']").val()){
 				$("#dimensionsPanel").hide();
 			}
-			initDatapicker();
+			handleValidation();
+			
+		
+			initAccess();
 		},
 		
 		// REDIRECT
@@ -69,7 +259,28 @@ var DashboardsCreateController = function() {
 		    }
 	
 			return iterate(JSON.parse(jsonString), '');
+		},// INSERT AUTHORIZATION
+		insertAuthorization: function(){
+			logControl ? console.log(LIB_TITLE + ': insertAuthorization()') : '';
+			
+				// UPDATE MODE ONLY AND VALUES on user and accesstype
+			if (($('#users').val() !== '') && ($("#users option:selected").attr('disabled') !== 'disabled') && ($('#accesstypes').val() !== '')){
+					
+					// AJAX INSERT (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
+					authorization('insert',$('#users').val(),$('#users')[0].selectedOptions[0].text,$('#accesstypes').val(),'');
+								
+				} else {  $.alert({title: 'ERROR!', theme: 'dark', type: 'red', content: dashboardCreateReg.validations.authuser}); }
+			
 		},
+		
+		// REMOVE authorization
+		removeAuthorization: function(obj){
+			logControl ? console.log(LIB_TITLE + ': removeAuthorization()') : '';
+				// AJAX REMOVE (ACTION,ONTOLOGYID,USER,ACCESSTYPE) returns object with data.
+				var selUser = $(obj).closest('tr').find("input[name='users\\[\\]']").val();					
+				authorization('delete', selUser, '','', obj );				
+		
+		},		
 		
 		// DELETE GADGET DATASOURCE 
 		deleteDashboard: function(dashboardId){
@@ -84,7 +295,7 @@ var DashboardsCreateController = function() {
 jQuery(document).ready(function() {
 	
 	// LOADING JSON DATA FROM THE TEMPLATE (CONST, i18, ...)
-	DashboardsCreateController.load();	
+	DashboardsCreateController.load(dashboardCreateJson);	
 		
 	// AUTO INIT CONTROLLER.
 	DashboardsCreateController.init();
