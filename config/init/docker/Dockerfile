@@ -19,7 +19,8 @@ RUN addgroup -S sofia -g 433 && adduser -u 431 -S -g sofia -h /usr/local -s /sbi
 RUN chown -R sofia:sofia /usr/local && \
     chown -R sofia:sofia /var/log/logs-s4c && \
     chown -R sofia:sofia ./target && \    
-    chown sofia:sofia app.jar
+    chown sofia:sofia app.jar && \
+    chmod -R 777 ./target
     
 USER sofia
 
