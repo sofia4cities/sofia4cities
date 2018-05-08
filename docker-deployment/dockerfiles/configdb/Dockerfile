@@ -2,7 +2,7 @@ FROM mysql/mysql-server:5.7
 
 # Metadata
 LABEL module.maintainer="plataformasofia2@indra.es" \
-	  module.name="schedulerdb"	
+	  module.name="configdb"	
 
 # MySQL environment
 ENV MYSQL_ROOT_PASSWORD=changeIt! \
