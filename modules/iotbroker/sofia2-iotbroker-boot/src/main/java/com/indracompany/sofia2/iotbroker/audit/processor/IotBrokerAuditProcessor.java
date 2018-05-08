@@ -159,7 +159,7 @@ public class IotBrokerAuditProcessor {
 
 		Optional<IoTSession> sessionPlugin = securityPluginManager.getSession(message.getSessionKey());
 
-		if (sessionPlugin.isPresent()) {
+		if (sessionPlugin !=  null && sessionPlugin.isPresent()) {
 			session = sessionPlugin.get();
 		}
 

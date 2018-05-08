@@ -61,7 +61,7 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 			String function = json.path(field).get("function").asText();
 			String finalField = null;
 			String path = new String();
-			if (schema.path(PATH_PROPERTIES).size() == 1) {
+			if (schema.size() == 1) {
 				String context = schema.fields().next().getKey();
 				path = "/" + context;
 			}

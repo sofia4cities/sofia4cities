@@ -2,8 +2,8 @@
 sofia2:
   urls: 
     iotbroker:
-      base: http://iotbrokerservice:8081/iotbroker
-      advice: http://iotbrokerservice:8081/iotbroker/advice
+      base: http://iotbrokerservice:19000/iotbroker
+      advice: http://iotbrokerservice:19000/iotbroker/advice
     scriptingEngine:
       base:
       advice:
@@ -11,12 +11,12 @@ sofia2:
       base: https://s4citiespro.westeurope.cloudapp.azure.com/flowengine/
       advice: https://s4citiespro.westeurope.cloudapp.azure.com/nodered/
     routerStandAlone:
-      base: http://localhost:19100/
-      advice: http://localhost:19100/router/router/advice/
-      management: http://localhost:19100/router/management/
-      router: http://localhost:19100/router/router/
-      hawtio: http://localhost:19100/hawtio/index.html
-      swaggerUI: http://localhost:19100/router/swagger-ui.html
+      base: http://localhost:20000/
+      advice: http://localhost:20000/router/router/advice/
+      management: http://localhost:20000/router/management/
+      router: http://localhost:20000/router/router/
+      hawtio: http://localhost:20000/hawtio/index.html
+      swaggerUI: http://localhost:20000/router/swagger-ui.html
     apiManager:
       base: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/
       api: https://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/

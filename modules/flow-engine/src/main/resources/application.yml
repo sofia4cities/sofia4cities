@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 20100
   contextPath: /flowengine
 
 # all access to actuator endpoints without security
@@ -11,7 +11,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
-    password: 
+    password: changeIt!
   jpa:
     ## Hibernate Properties
     # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -19,13 +19,13 @@ spring:
     # Hibernate ddl auto (create, create-drop, validate, update)
     hibernate.ddl-auto: update
   boot.admin: #Spring Boot Admin Config 
-    url: http://localhost:19000
+    url: http://localhost:18100
     username: operations
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}
     client.metadata.user.password: ${spring.boot.admin.password}
-    service-base-url: http://localhost:8082
-    client.service-url: http://localhost:8082
+    service-base-url: http://localhost:20100
+    client.service-url: http://localhost:20100
     
 sofia2: #Config Sofia2 specific
    router.avoidsslverification: true
@@ -47,11 +47,11 @@ sofia2: #Config Sofia2 specific
          reboot.delay.seconds: 10
          port:
             domain:
-               min: 8000
-               max: 8500
+               min: 28000
+               max: 28500
             service:
-               min: 7000
-               max: 7500
+               min: 27000
+               max: 27500
       services:
          domain:
             status: /getDomainStatusMF

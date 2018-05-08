@@ -62,7 +62,6 @@ import com.indracompany.sofia2.ssap.enums.SSAPErrorCode;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Category(IntegrationTest.class)
-@Ignore
 public class InsertProcessorTest {
 
 	@Autowired

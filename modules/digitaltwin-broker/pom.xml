@@ -139,7 +139,7 @@
 		      <groupId>com.spotify</groupId>
 		      <artifactId>docker-maven-plugin</artifactId>   		      
 		      <configuration>
-		        <imageName>sofia2/digitaltwin</imageName>
+		        <imageName>${docker.image.username}/digitaltwin</imageName>
 		        <imageTags>
 		           <imageTag>${project.version}</imageTag>
 		        </imageTags>		        

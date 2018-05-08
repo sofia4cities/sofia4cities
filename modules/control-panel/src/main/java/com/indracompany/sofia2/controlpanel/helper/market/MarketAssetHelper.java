@@ -85,7 +85,7 @@ public class MarketAssetHelper {
 	@Value("${apimanager.services.api:/api-manager/services}")
 	private String apiServices;
 	
-	@Value("${sofia2.webproject.baseurl:https://localhost:18080/web/}")
+	@Value("${sofia2.webproject.baseurl:https://localhost:18000/web/}")
 	private String rootWWW = "";
 
 	public void populateMarketAssetListForm(Model model) {

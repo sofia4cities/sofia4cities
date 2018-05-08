@@ -217,7 +217,7 @@
 											<div class="col-md-3 col-sm-6 col-xs-12">
 												<div class="form-group">
 													<label class="control-label" th:text="#{json2ont.selectont} + ':'">Ontologies</label>
-													<select id="ontology" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{json2ont.selectont}">
+													<select id="ontology" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{json2ont.selectont}" onchange="getParentNode()">
 														<option th:each="ontology :${ontologies}" th:value="${ontology.identification}" th:text="${ontology.identification}" ></option>																
 													</select>													
 												</div>
@@ -323,6 +323,7 @@
 	
 		
 	<!-- MAIN INIT -->
+	<script th:src="@{/static/js/pages/jsontools.js}"/>
 	<script  th:inline="javascript">
 
 	
@@ -334,6 +335,7 @@
 	var ontologyExists=[[#{json2ont.ontexists}]];
 	var ontologyCreated=[[#{json2ont.ontcreated}]];
 	var invalidSchema = [[#{json2ont.invalidschema}]];
+	var ontologyHasParentNode = [[#{json2ont.hasparentnode}]];
 	var handleCodeMirror = function () {
 		
         var myTextArea = document.getElementById('jsonTextArea');
@@ -391,9 +393,27 @@
 			$('#errorSelect').text("Select ontology first");
 			$('#ErrorOntSelect').modal("show");
 		}else{
-			var arrayJson = [{}];
-			arrayJson= JSON.parse(myCodeMirrorJsonImport.getValue());
-			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':JSON.stringify(arrayJson), 'ontologyIdentification': $('#ontology').val()}, function(data){
+			var arrayJson = myCodeMirrorJsonImport.getValue();
+			if(parentNode != null){
+				var arrayJson = JSON.parse(myCodeMirrorJsonImport.getValue());
+				var newArray = [];
+				if(arrayJson.length != null){
+					for(var i= arrayJson.length-1; i>=0 ; i--){
+						var newObject={};
+						newObject[parentNode]=arrayJson[i];
+						newArray.push(newObject);					
+					}
+					
+				}else{
+					var newObject={};
+					newObject[parentNode]=arrayJson;
+					newArray=newObject;
+				}
+				arrayJson = JSON.stringify(newArray);
+					
+				
+			}
+			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':arrayJson, 'ontologyIdentification': $('#ontology').val()}, function(data){
 				if(data != "Error"){
 					if(JSON.parse(myCodeMirrorJsonImport.getValue()).length != null){
 						$('#response').text(data + " ontologies inserted of type " + $('#ontology').val());
@@ -412,12 +432,12 @@
 	}
 	var modalOntology = function() {
 		$('#ontologyData').modal("show");
-	}
+	};
 	
 	var createOntology = function() {
 		try{
 			JSON.parse(myCodeMirrorSchema.getValue());
-		}catch{
+		}catch(err){
 			$('#response').text(invalidSchema);
 			$('#returnAction').modal("show");
 		}
@@ -432,50 +452,19 @@
 		});
 		
 	}
+	var parentNode;
+	var getParentNode = function () {
+		jQuery.post('/controlpanel/jsontool/getParentNodeOfSchema',{'id' : $('#ontology').val()}, function(data){
+			if(data != ""){
+				parentNode = data;
+				$('#response').text(ontologyHasParentNode);
+				$('#returnAction').modal("show");
+			}
+		});
+	}
 
-	var loadJsonFromDoc = function(files){
-		var reader = new FileReader();
-		if(files[0].type == "text/xml"){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				var x2js = new X2JS();
-				myCodeMirror.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
-				myCodeMirrorJsonImport.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
-				beautifyJson();
-				
-			}
 			
-		}else if (files[0].name.indexOf(".csv")!=-1){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				myCodeMirror.setValue(csvJSON(reader.result));
-				myCodeMirrorJsonImport.setValue(csvJSON(reader.result));
-				beautifyJson();
-			}
-			
-		}else if (files[0].type == "application/json"){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				var jsonData = reader.result;
-				jsonData = jsonData.replace(/[\r]/g, '');
-				var arrayJson = [];
-				var dataSplitted = jsonData.split("\n");
-				var i;
-				for(var i in dataSplitted){
-					if(dataSplitted[i] != "") {
-						arrayJson.push(JSON.parse(dataSplitted[i]));
-					}
-				}
-				myCodeMirror.setValue(JSON.stringify(arrayJson));
-				myCodeMirrorJsonImport.setValue(JSON.stringify(arrayJson));
-				beautifyJson();
-			}
-		}
-		
 
-		
-		
-	};
 	
 	$(document).ready(function(){
 		handleCodeMirror();

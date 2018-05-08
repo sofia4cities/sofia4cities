@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.services.datamodel.DataModelService;
 import com.indracompany.sofia2.config.services.exceptions.OntologyServiceException;
@@ -59,7 +60,11 @@ public class JsonToolController {
 	@Autowired
 	private RouterService routerService;
 
+	private ObjectMapper mapper = new ObjectMapper();
+
 	private static final String DATAMODEL_DEFAULT_NAME = "EmptyBase";
+	private static final String SCHEMA_DRAFT_VERSION = "http://json-schema.org/draft-04/schema#";
+	private static final String PATH_PROPERTIES = "properties";
 
 	@GetMapping("tools")
 	public String show(Model model) {
@@ -69,9 +74,10 @@ public class JsonToolController {
 
 	@PostMapping("createontology")
 	public @ResponseBody String createOntology(Model model, @RequestParam String ontologyIdentification,
-			@RequestParam String ontologyDescription, @RequestParam String schema, @RequestParam String instance) {
+			@RequestParam String ontologyDescription, @RequestParam String schema, @RequestParam String instance)
+			throws IOException {
 		Ontology ontology = new Ontology();
-		ontology.setJsonSchema(schema);
+		ontology.setJsonSchema(this.completeSchema(schema, ontologyIdentification, ontologyDescription).toString());
 		ontology.setIdentification(ontologyIdentification);
 		ontology.setActive(true);
 		ontology.setDataModel(this.dataModelService.getDataModelByName(DATAMODEL_DEFAULT_NAME));
@@ -112,5 +118,31 @@ public class JsonToolController {
 		}
 
 		return "Error";
+	}
+
+	@PostMapping("/getParentNodeOfSchema")
+	public @ResponseBody String parentNode(@RequestParam String id) throws IOException {
+		final Ontology ontology = this.ontologyService.getOntologyByIdentification(id, this.utils.getUserId());
+		if (ontology != null) {
+			final String jsonSchema = ontology.getJsonSchema();
+
+			final JsonNode schema = this.mapper.readTree(jsonSchema);
+			if (schema.path(PATH_PROPERTIES).size() == 1) {
+				return schema.path(PATH_PROPERTIES).fieldNames().next();
+			}
+		}
+		return "";
+	}
+
+	public JsonNode completeSchema(String schema, String identification, String description) throws IOException {
+		JsonNode schemaSubTree = mapper.readTree(schema);
+		((ObjectNode) schemaSubTree).put("type", "object");
+		((ObjectNode) schemaSubTree).put("description", "Info " + identification);
+
+		((ObjectNode) schemaSubTree).put("$schema", SCHEMA_DRAFT_VERSION);
+		((ObjectNode) schemaSubTree).put("title", identification);
+
+		((ObjectNode) schemaSubTree).put("additionalProperties", true);
+		return schemaSubTree;
 	}
 }

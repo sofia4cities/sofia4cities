@@ -1,7 +1,7 @@
 ##--spring.config.name=controlpanel
 ##security.require_ssl: true
 server: ## Config Web Server
-   port: 19000
+   port: 18100
    contextPath: /monitoring
    tomcat:
       access_log_enabled: true
@@ -21,7 +21,7 @@ spring: ## General Config
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:
+      password: changeIt!
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.

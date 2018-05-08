@@ -12,7 +12,7 @@
 	
 	<properties>	
 		<sofia2.version>5.2.0-SNAPSHOT</sofia2.version>
-		<sofia2.docker.version>v1.0.0</sofia2.docker.version>
+		<docker.image.username>onesait</docker.image.username>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
@@ -34,8 +34,9 @@
         <project.website>https://sofia2.com</project.website>
 		<freemarket.version>2.3.21</freemarket.version>	
 		<elasticsearch.version>6.2.3</elasticsearch.version>
-		<skip.unit.tests>true</skip.unit.tests>
+		<skip.unit.tests>false</skip.unit.tests>
 		<skip.integration.tests>true</skip.integration.tests>
+		<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
 	</properties>
 	
 	<dependencyManagement>
@@ -97,6 +98,7 @@
         <module>libraries/social</module>
         <module>libraries/flow-engine-services</module>
         <module>libraries/audit</module>
+        <module>libraries/streaming</module>
 
 		<!--CONFIG -->
 		<module>config/model</module>
@@ -119,7 +121,11 @@
 		
 		<module>contributions/spring-boot-admin-server-ui</module>
 		<module>contributions/spring-boot-admin-server-ui-login</module>
-		
+
+		<!--THEMES -->
+		<module>themes/openplatform</module>
+		<module>themes/select4cities</module>
+
 		<!--MODULES-->
 		<module>modules/iotbroker</module>		
 		<module>modules/control-panel</module>		
@@ -136,6 +142,7 @@
 
 		<module>modules/rtdb-maintainer</module>
 		<module>modules/streaming-twitter</module>
+
 	</modules>
 	
 	<build>
@@ -327,9 +334,6 @@
 	<profiles>
 		<profile>
 			<id>development</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-		  </activation>
 			<properties>
 				<sofia2.quartzURL>jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false</sofia2.quartzURL>
 			</properties>
@@ -342,19 +346,16 @@
 		</profile>
 		<profile>
 			<id>unit-test</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-		  </activation>
 			<properties>
 			  <skip.unit.tests>false</skip.unit.tests>
 			</properties>
-	  </profile>
-	  <profile>
+	    </profile>
+	    <profile>
 			<id>integration-test</id>
 			<properties>
 			  <skip.integration.tests>false</skip.integration.tests>
 			</properties>
-	  </profile>
+	    </profile>
 		<profile>
 			<id>no-test</id>
 			<properties>
@@ -372,7 +373,5 @@
       </plugin>
     </plugins>
   </reporting>
-	
-	
 </project>
 	
