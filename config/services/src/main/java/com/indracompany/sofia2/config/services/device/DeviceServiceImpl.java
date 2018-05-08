@@ -74,4 +74,12 @@ public class DeviceServiceImpl implements DeviceService {
 		return this.deviceRepository.findById(id);
 	}
 
+	@Override
+	public void patchDevice(String deviceId, String tags) {
+		Device device = this.deviceRepository.findById(deviceId);
+		device.setTags(tags);
+		this.deviceRepository.save(device);
+
+	}
+
 }

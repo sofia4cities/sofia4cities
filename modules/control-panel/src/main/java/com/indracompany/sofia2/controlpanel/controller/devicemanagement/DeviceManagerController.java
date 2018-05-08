@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,6 +74,13 @@ public class DeviceManagerController {
 
 		return "devices/management/list";
 
+	}
+
+	@PatchMapping
+	public String update(Model model, @RequestParam String id, @RequestParam String tags) {
+
+		this.deviceService.patchDevice(id, tags);
+		return "redirect:/devices/management/show/" + id;
 	}
 
 	@GetMapping("/show")

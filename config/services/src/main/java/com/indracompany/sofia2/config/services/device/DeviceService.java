@@ -28,6 +28,8 @@ public interface DeviceService {
 
 	void updateDevice(Device device);
 
+	void patchDevice(String deviceId, String tags);
+
 	List<Device> getAll();
 
 	Device getById(String id);

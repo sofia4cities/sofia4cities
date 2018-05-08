@@ -28,7 +28,7 @@
 		
 		<!-- PLUGINS -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
-		<link rel="stylesheet" type="text/css" media="all" href="@{/controlpanel/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css}"/>
 		<!-- JSON EDITOR -->
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/json/jsoneditor.css}"/>
 		
@@ -65,7 +65,7 @@
 				<div class="page-bar margin-bottom-20">
 					<ul class="page-breadcrumb">
 						<li><i class="la la-home"></i> <a th:href="@{/}">Home</a><i class="fa fa-circle"></i></li>
-						<li><a th:href="@{/ontologies/list}"> <span th:text="#{device.management.breadcrumb.list}">Devices </span></a><i class="fa fa-circle"></i></li>
+						<li><a th:href="@{/devices/management/list}"> <span th:text="#{device.management.breadcrumb.list}">Devices </span></a><i class="fa fa-circle"></i></li>
 						<li>
 							<span th:text="#{device.management.breadcrumb.show}">Show Device</span>							
 						</li>
@@ -109,7 +109,12 @@
 											<div class="col-md-12 alert-zone"><!-- ALERTS ZONE -->																
 											</div>
 											<div class="col-md-12">										
-												<form role="form" id="ontology_view_form" action="show.html" th:object="${device}" th:action="@{|/controlpanel/devices/management/${id}|}"  method="post" class="form">
+												<form role="form" id="device_view_form" th:object="${device}" th:action="@{/devices/management}" method="post" class="form">
+												<!-- FORM ACTIONS FOR UPDATE(PATCH) -->							
+												<input	type="hidden" name="_method"
+													value="PATCH" />											
+												<input type="hidden" name="id" th:value="*{id}"/>		
+													
 													<div class="form-body">
 														<!-- identification -->
 														<div class="row">													
@@ -146,16 +151,27 @@
 															<div class="row">	
 															<div class="col-md-3 col-sm-12 col-xs-12">
 																<div class="form-group">
-																	
+																	<div class="bootstrap-tagsinput">
 																		<label class="control-label"><i class="la la-tags"></i> <span th:text="#{device.tags} + ':'">Tags</span></label>
-																		<p class="form-control-static-block bold" th:text="*{tags}" />
-																												
+																		<input  data-msg="Tags for the device" th:tabindex="2" id="tags" name="tags" data-role="tagsinput" class="form-control tagsinput" type="text" th:field="*{tags}" data-minlength="2" pattern=".{2,}"></input>
+																	</div>			
 																</div>
 																
 															</div>	
+												
 															</div>												
 														
-														</div>																			
+														</div>
+														<div class="form-actions">
+															<div class="pull-left">
+																<button id="submitBtn"
+																	type="submit" class="btn btn-square btn-success"
+																	 th:value="#{gen.editBtn}">
+																	<span
+																		th:text="#{gen.editBtn}"> New</span>
+																</button>	
+															</div>
+														</div>																	
 												</form>
 												
 												
@@ -202,6 +218,7 @@
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
+	<script th:src="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js}" type="text/javascript"></script>
 	
 	<!-- JSON EDITOR -->	
 	<script th:src="@{/static/vendor/json/jsoneditor.js}"/>

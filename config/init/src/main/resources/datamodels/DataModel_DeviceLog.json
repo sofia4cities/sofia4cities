@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "title": "asdasds",
+    "title": "DeviceLog",
     "type": "object",
     "required": [
         "DeviceLog"
@@ -17,7 +17,9 @@
         "required": [
             "Status",
             "Level",
-            "Message"
+            "Message",
+            "Device",
+            "Timestamp"
         ],
         "properties": {
             "Coordinates": {
@@ -57,6 +59,21 @@
             },
             "ExtaOptions": {
                 "type": "string"
+            },
+            "Device": {
+                "type": "string"
+            },
+            "Timestamp": {
+                "type": "object",
+                "required": [
+                    "$date"
+                ],
+                "properties": {
+                    "$date": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
             }
         }
     },
