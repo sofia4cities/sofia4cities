@@ -18,9 +18,15 @@
 
 	<properties>
 		<license.dir>${project.parent.basedir}</license.dir>
+		<controlpanel.theme>sofia2-select4cities-theme</controlpanel.theme>
 	</properties>
 
 	<dependencies>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>${controlpanel.theme}</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-services</artifactId>
@@ -61,6 +67,7 @@
 			<artifactId>sofia2-router-core</artifactId>
 			<version>${sofia2.version}</version>
 		</dependency>
+		
 
 
 		<dependency>
@@ -165,6 +172,7 @@
 	</dependencies>
 
 	<build>
+	
 	    <resources>
 	        <resource>
 	            <filtering>true</filtering>
@@ -181,7 +189,7 @@
 	            </includes>
 	        </resource>	        
 	    </resources>
-    
+   
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -218,5 +226,18 @@
 		</plugins>
 	</build>
 
-
+	<profiles>
+		<profile>
+			<id>onesaitplatform</id>
+			<properties>
+			  <controlpanel.theme>sofia2-onesaitplatform-theme</controlpanel.theme>
+			</properties>
+		</profile>
+		<profile>
+			<id>select4cities</id>		
+			<properties>
+			  <controlpanel.theme>sofia2-select4cities-theme</controlpanel.theme>
+			</properties>
+		</profile>		
+	</profiles>
 </project>

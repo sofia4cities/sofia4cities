@@ -134,4 +134,4 @@ digitaltwin:
    temp.dir: /tmp
    maven.exec.path: /usr/share/maven/bin/mvn
    
-build.version: @project.version@   
+build.version: "@project.version@"   
