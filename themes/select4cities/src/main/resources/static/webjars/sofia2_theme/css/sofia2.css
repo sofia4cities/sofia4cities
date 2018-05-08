@@ -8,18 +8,19 @@ left: 2px;
 font-size: 15px;	
 }
 
-.text-logo-panel{
+.text-logo-panel {
 color: darkturquoise;
 position: relative;
 top: 3px;
 left: 1px;
 font-size: 11px;
 white-space: nowrap;
+display: block;
 }
 
 @media (max-width: 992px) {
-.text-logo-s4c{ top: 12px; }
-.text-logo-panel{ top: 12px; left: 3px; }
+.text-logo-s4c{ top: 8px; }
+.text-logo-panel{ top: 8px; left: 3px; }
 }
 	
 
@@ -250,7 +251,7 @@ Page Header
     .page-header.navbar .hor-menu.hor-menu-light .navbar-nav > li > .dropdown-menu {
       border-top: 0; }
 	  
-	  .page-header.navbar .page-logo { background-color: #212529;}
+	  .page-header.navbar .page-logo { background-color: #212529; width: 340px; }
 
 /* Page sidebar */
 .page-sidebar-closed.page-sidebar-fixed .page-sidebar:hover,
