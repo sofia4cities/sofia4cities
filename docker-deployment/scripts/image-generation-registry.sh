@@ -148,7 +148,7 @@ pushImage2OCPRegistry()
 	echo "¿Deploy "$1 " image to OCP registry y/n: "
 	read confirmation
 	if [ "$confirmation" == "y" ]; then
-		docker tag sofia/$1:$2 docker-registry-default.ocp.52.233.186.149.nip.io/$USERNAME/$1:$2
+		docker tag $USERNAME/$1:$2 docker-registry-default.ocp.52.233.186.149.nip.io/$USERNAME/$1:$2
 		docker push docker-registry-default.ocp.52.233.186.149.nip.io/$USERNAME/$1:$2		
 	fi	
 }
