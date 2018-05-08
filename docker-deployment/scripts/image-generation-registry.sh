@@ -56,7 +56,11 @@ buildElasticSearchDB()
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
-	docker build -t $USERNAME/nginx:$1 .		
+	if [ "$PUSH2OCPREGISTRY" = true ]; then
+		docker build -t $USERNAME/nginx:$1 -f Dockerfile.ocp .	
+	else
+		docker build -t $USERNAME/nginx:$1 .
+	fi		
 }
 
 buildQuasar()
@@ -148,7 +152,7 @@ pushImage2OCPRegistry()
 	echo "¿Deploy "$1 " image to OCP registry y/n: "
 	read confirmation
 	if [ "$confirmation" == "y" ]; then
-		docker tag sofia/$1:$2 docker-registry-default.ocp.52.233.186.149.nip.io/$USERNAME/$1:$2
+		docker tag $USERNAME/$1:$2 docker-registry-default.ocp.52.233.186.149.nip.io/$USERNAME/$1:$2
 		docker push docker-registry-default.ocp.52.233.186.149.nip.io/$USERNAME/$1:$2		
 	fi	
 }

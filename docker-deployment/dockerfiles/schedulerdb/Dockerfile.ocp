@@ -10,10 +10,11 @@ ENV MYSQL_ROOT_PASSWORD="changeIt!" \
     MYSQL_PASSWORD="select4cities2018" \
     MYSQL_DATABASE="sofia2_s4c_scheduler" \
     MYSQL_MAX_ALLOWED_PACKET="536870912" \
-    MYSQL_LOWER_CASE_TABLE_NAMES="1"  
+    MYSQL_LOWER_CASE_TABLE_NAMES="1"
 
 # Copy to images mysql path
-COPY quartz-schema.sql /docker-entrypoint-initdb.d/quartz-schema.sql
+COPY quartz-schema.sql /usr/share/container-scripts/mysql/init/quartz-schema.sql
+COPY 60-init-quartz-database.sh /usr/share/container-scripts/mysql/init/
 
 USER mysql
 
