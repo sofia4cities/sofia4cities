@@ -1,5 +1,5 @@
 <!-- Copyright Indra Sistemas, S.A. 2013-2018 SPAIN -->
-<html xmlns:th="http://www.thymeleaf.org"  th:with="lang=${#locale.language}" th:lang="${lang}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://www.thymeleaf.org/dandelion/datatables" th:with="lang=${#locale.language}" th:lang="${lang}">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
@@ -140,9 +140,17 @@
 																</div>
 																<div class="col-md-3 col-sm-6 col-xs-12">
 																	<div class="form-group">
-																		<label class="control-label" th:text="#{device.connected} + ':'">Protocol</label>
-																		<p class="form-control-static-block bold" th:if="*{connected == true}" th:text="#{device.connected.true}"></p>
-																		<p class="form-control-static-block bold" th:if="*{connected == false}" th:text="#{device.connected.false}"></p>
+																		<label class="control-label" th:text="#{device.lasstatus} + ':'">Last Status</label>
+																		<p class="form-control-static-block bold" th:text="*{status}"></p>
+																	</div>
+																</div>
+																<div class="col-md-3 col-sm-6 col-xs-12">
+																	<div class="form-group">
+																		<label class="control-label" th:text="#{device.connected}">Connected</label>
+																		<p class="form-control-static-block form-control-static-no-border bold">
+																			<span th:if="*{connected}"  class="label label-sm label-success"><i class="fa fa-check"></i></span>
+																			<span th:if="!*{connected}" class="label label-sm label-danger" title="NO"><i class="fa fa-warning"></i></span>
+																		</p>
 																	</div>
 																</div>
 															</div>
@@ -180,10 +188,61 @@
 										</div>
 									</div>
 									<div class="tab-pane " id="tab_2">
-									<!-- AUTHORIZATIONS -->
-										<div class="row">
-											
-										</div>
+												<table id="logTable" class="table table-hover table-striped" dt:table="true"
+													dt:filterPlaceholder="none"
+													dt:paginationtype="full_numbers" >
+													<thead>
+														<tr class="cabecera-tabla">
+															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.message}" >Message</span></th>
+															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.status}" >Status</span></th>
+															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.level}" >Level</span></th>
+															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{device.management.timestamp}" >Timestamp</span></th>
+															<th class="titulo-columnas"><i class="la la-wrench"></i> <span th:text="#{device.management.location}"> Location</span></th>
+														</tr>
+													</thead>
+														<tbody th:remove="all-but-first">
+															<tr th:each="logInstance : ${logs}" pages:paginate="10">
+																<!-- Message -->
+																<td class="text-left no-wrap bold" th:text="${logInstance.message}"></td>
+																<!-- Status -->
+																<td class="text-left no-wrap bold" th:text="${logInstance.status}"></td>
+																<!-- Level -->													
+																<td class="text-left no-wrap bold" th:text="${logInstance.level}"></td>
+																<!-- Timestamp -->
+																<td class="text-left no-wrap bold" th:text="${logInstance.timestamp}"></td>
+																<!-- Location -->
+																<td class="text-left no-wrap bold" th:if="${logInstance.location != null}" th:text="${'['+logInstance.location.x +',' +logInstance.location.y +']'}"></td>
+																
+															</tr>
+														</tbody>
+														
+												</table>
+												<br/>
+												<div class="col-md-12 col-sm-12 col-xs-12">
+													<div class="form-actions">
+														<div class="row">
+															<b th:text="#{device.management.queryinfo1}">For complete log go to </b> <a th:href="@{/querytool/show}">Query Tool</a>
+															<b th:text="#{device.management.queryinfo2}">and execute query </b> <i th:text="${query}"></i>
+														</div>
+													</div>
+												</div>
+												<hr/>
+												<!-- TABLE COLUMNS CONTAINER SHOW/HIDE -->
+												
+												<div id="dataTable-vis-toggle" class="btn-group margin-left-10 hide">
+													<a href="javascript:;" data-toggle="dropdown" aria-expanded="false" class="btn btn-square btn-sm btn-default ">
+														<i class="fa fa-eye"></i> Columns <i class="fa fa-angle-down"></i>
+													</a>
+													<div id="column_toggler" class="dropdown-menu hold-on-click dropdown-checkboxes pull-right">
+														<label class="toggle-vis" data-column="0" th:text="#{device.management.message}" > Message</label>
+														<label class="toggle-vis" data-column="1" th:text="#{device.management.status}"> Status</label>
+														<label class="toggle-vis" data-column="2" th:text="#{device.management.level}">Level</label>
+														<label class="toggle-vis" data-column="3" th:text="#{device.management.timestamp}">Timestamp</label>
+														<label class="toggle-vis" data-column="4" th:text="#{device.management.location}"> Location</label>
+													</div>
+												</div>	
+												
+												
 										
 									</div>
 									<!-- ONTOLOGY ADVANCED SETTINGS -->
@@ -235,9 +294,11 @@
     //<![CDATA[ 
 	
 	
-	// DATATABLES LANGUAJE FROM PROPERTIES.
+	// DATATABLES LANGUAJE FROM PROPERTIES.	
 	datatable_lang = [[#{datatables_lang}]];	
 	var languageJson = JSON.parse(datatable_lang);
+	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
+
 	
 	
 	
@@ -250,6 +311,16 @@
 	// MAIN WHEN READY
 	$( document ).ready(function() {
 		// init when Document is ready
+		//SHOW/HIDE DATATABLE COLUMNS HANDLER
+		$('label.toggle-vis').on( 'click', function (e) {
+			e.preventDefault(); 
+			// Get the column API object
+			var column = $('#logTable').DataTable().column( $(this).attr('data-column') ); 
+			// Toggle the visibility
+			column.visible( ! column.visible() );			
+			// toggle Text
+			$(this).toggleClass('text-muted line-through');			
+		});	
 		
 		
 	});

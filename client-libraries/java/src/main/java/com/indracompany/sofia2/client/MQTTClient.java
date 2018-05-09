@@ -14,6 +14,7 @@
  */
 package com.indracompany.sofia2.client;
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,12 +40,15 @@ import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyLeaveMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyLogMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUnsubscribeMessage;
+import com.indracompany.sofia2.ssap.enums.SSAPLogLevel;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageDirection;
 import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 import com.indracompany.sofia2.ssap.enums.SSAPQueryType;
+import com.indracompany.sofia2.ssap.enums.SSAPStatusType;
 import com.indracompany.sofia2.ssap.json.SSAPJsonParser;
 import com.indracompany.sofia2.ssap.json.Exception.SSAPParseException;
 
@@ -317,6 +322,55 @@ public class MQTTClient {
 	 *            Time in seconds for waiting response from Broker
 	 * 
 	 */
+
+	@SuppressWarnings("unchecked")
+	public void log(String clientPlatform) {
+		final SSAPMessage<SSAPBodyLogMessage> log = new SSAPMessage<>();
+		final SSAPBodyLogMessage body = new SSAPBodyLogMessage();
+		log.setDirection(SSAPMessageDirection.REQUEST);
+		log.setMessageType(SSAPMessageTypes.LOG);
+		log.setSessionKey(this.sessionKey);
+		Point2D.Double coordinates = new Point2D.Double(40.8888, 90.2234);
+		coordinates.setLocation(coordinates);
+		body.setCoordinates(coordinates);
+		body.setLevel(SSAPLogLevel.INFO);
+		body.setMessage("Keep alive log message");
+		body.setStatus(SSAPStatusType.UP);
+		log.setBody(body);
+
+		final MqttMessage mqttLog = new MqttMessage();
+		try {
+			mqttLog.setPayload(SSAPJsonParser.getInstance().serialize(log).getBytes());
+			this.client.publish(topic, mqttLog);
+			String response = completableFutureMessage.get(5000, TimeUnit.SECONDS);
+			SSAPMessage<SSAPBodyReturnMessage> responseSSAP = SSAPJsonParser.getInstance().deserialize(response);
+			if (responseSSAP.getBody().isOk())
+				MQTTClient.log.info("Message published");
+			else {
+
+				throw new MQTTException("Could not publish message \nError Code: "
+						+ responseSSAP.getBody().getErrorCode() + ":\n" + responseSSAP.getBody().getError());
+			}
+		} catch (SSAPParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MqttPersistenceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (TimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	public void publish(String ontology, String jsonData, int timeout) {

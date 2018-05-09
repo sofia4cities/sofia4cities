@@ -14,6 +14,7 @@
  */
 package com.indracompany.sofia2.config.services.device;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,11 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.indracompany.sofia2.config.components.LogOntology;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Device;
 import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
@@ -34,6 +40,8 @@ public class DeviceServiceImpl implements DeviceService {
 	DeviceRepository deviceRepository;
 	@Autowired
 	ClientPlatformRepository clientPlatformRepository;
+	@Autowired
+	ObjectMapper mapper;
 
 	@Override
 	public List<Device> getAll() {
@@ -80,6 +88,18 @@ public class DeviceServiceImpl implements DeviceService {
 		device.setTags(tags);
 		this.deviceRepository.save(device);
 
+	}
+
+	@Override
+	public List<LogOntology> getLogInstances(String resultFromQueryTool) throws IOException {
+		ArrayNode arrayResult = (ArrayNode) mapper.readTree(resultFromQueryTool);
+		ArrayNode newArray = mapper.createArrayNode();
+		for (JsonNode node : arrayResult) {
+			newArray.add(node.get("value").get("DeviceLog"));
+		}
+
+		return mapper.readValue(newArray.toString(), new TypeReference<List<LogOntology>>() {
+		});
 	}
 
 }

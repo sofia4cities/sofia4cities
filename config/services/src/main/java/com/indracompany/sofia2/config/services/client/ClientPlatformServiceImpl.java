@@ -319,7 +319,8 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 
 	@Override
 	public Ontology getDeviceLogOntology(ClientPlatform client) {
-		return this.ontologyRepository.findByIdentification(LOG_ONTOLOGY_PREFIX + client.getIdentification());
+		return this.ontologyRepository
+				.findByIdentification((LOG_ONTOLOGY_PREFIX + client.getIdentification()).replaceAll(" ", ""));
 	}
 
 }

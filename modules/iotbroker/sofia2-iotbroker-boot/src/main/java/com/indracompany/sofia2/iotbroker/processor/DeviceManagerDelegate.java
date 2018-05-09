@@ -13,6 +13,9 @@
  */
 package com.indracompany.sofia2.iotbroker.processor;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +27,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Device;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.device.DeviceService;
@@ -47,6 +54,8 @@ public class DeviceManagerDelegate implements DeviceManager {
 	ClientPlatformService clientPlatformService;
 	@Autowired
 	DeviceService deviceService;
+
+	ObjectMapper mapper = new ObjectMapper();
 	// ExecutorService executor = Executors.newFixedThreadPool(10);
 
 	// TODO: Make async event processing
@@ -132,6 +141,45 @@ public class DeviceManagerDelegate implements DeviceManager {
 		device.setUpdatedAt(new Date());
 		deviceService.updateDevice(device);
 		log.info("End Updating device " + device.getIdentification());
+	}
+
+	@SuppressWarnings("restriction")
+	@Override
+	public JsonNode createDeviceLog(ClientPlatform client, String deviceId, SSAPBodyLogMessage logMessage)
+			throws IOException {
+		Device device = this.deviceService.getByClientPlatformIdAndIdentification(client, deviceId).get(0);
+		double longitude = logMessage.getCoordinates() == null ? 0 : logMessage.getCoordinates().getX();
+		double latitude = logMessage.getCoordinates() == null ? 0 : logMessage.getCoordinates().getY();
+		return this.createLogInstance(device, logMessage.getStatus().name(), logMessage.getLevel().name(),
+				logMessage.getMessage(), logMessage.getExtraData().toString(), longitude, latitude);
+
+	}
+
+	public JsonNode createLogInstance(Device device, String status, String level, String message, String extraOptions,
+			double longitude, double latitude) throws IOException {
+
+		JsonNode root = mapper.createObjectNode();
+		JsonNode properties = mapper.createObjectNode();
+		((ObjectNode) properties).put("device", device.getIdentification());
+		((ObjectNode) properties).put("level", level);
+		((ObjectNode) properties).put("status", status);
+		((ObjectNode) properties).put("message", message);
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		((ObjectNode) properties).put("timestamp", df.format(new Date()));
+		if (extraOptions != null)
+			((ObjectNode) properties).put("extraOptions", extraOptions);
+		if (longitude != 0 & latitude != 0) {
+			JsonNode subcoordinates = mapper.createObjectNode();
+			((ObjectNode) subcoordinates).put("latitude", latitude);
+			((ObjectNode) subcoordinates).put("longitude", longitude);
+			JsonNode coordinates = mapper.createObjectNode();
+			((ObjectNode) coordinates).set("coordinates", subcoordinates);
+			((ObjectNode) coordinates).put("type", "Point");
+			((ObjectNode) properties).set("location", coordinates);
+		}
+		((ObjectNode) root).set("DeviceLog", properties);
+		return root;
+
 	}
 
 }

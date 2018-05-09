@@ -14,9 +14,11 @@
  */
 package com.indracompany.sofia2.config.services.device;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import com.indracompany.sofia2.config.components.LogOntology;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Device;
 
@@ -37,4 +39,6 @@ public interface DeviceService {
 	int updateDeviceStatusAndDisableWhenUpdatedAtLessThanDate(boolean status, boolean disabled, Date date);
 
 	List<Device> getByClientPlatformId(ClientPlatform clientPlatform);
+
+	List<LogOntology> getLogInstances(String resultFromQueryTool) throws IOException;
 }

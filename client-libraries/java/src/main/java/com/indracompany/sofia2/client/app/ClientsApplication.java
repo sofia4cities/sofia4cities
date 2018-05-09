@@ -22,8 +22,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import com.indracompany.sofia2.client.MQTTClient;
-import com.indracompany.sofia2.client.MQTTClient.QUERY_TYPE;
-import com.indracompany.sofia2.client.SubscriptionListener;
 import com.indracompany.sofia2.client.configuration.MQTTSecureConfiguration;
 
 public class ClientsApplication {
@@ -57,26 +55,28 @@ public class ClientsApplication {
 		String token = "e7ef0742d09d4de5a3687f0cfdf7f626";
 		String clientPlatform = "Ticketing App";
 		String clientPlatformInstance = clientPlatform + ":MQTT";
-		String ontology = "HelsinkiPopulation";
+		String ontology = "Ticket";
 		clientSecure.connect(token, clientPlatform, clientPlatformInstance, timeout);
 
-		String jsonData = "{\"year\":1993, \"population\" : 3500, \"population_women\":1500, \"population_men\":2000}";
+		// String jsonData = "{\"year\":1993, \"population\" : 3500,
+		// \"population_women\":1500, \"population_men\":2000}";
 
-		clientSecure.publish(ontology, jsonData, timeout);
+		// clientSecure.publish(ontology, jsonData, timeout);
 
-		String subsId = clientSecure.subscribe(ontology, "SELECT * FROM " + ontology, QUERY_TYPE.SQL, timeout,
-				new SubscriptionListener() {
-
-					@Override
-					public void onMessageArrived(String message) {
-						// System.out.println(message);
-
-					}
-
-				});
-
-		clientSecure.publish(ontology, jsonData, timeout);
-
+		// String subsId = clientSecure.subscribe(ontology, "SELECT * FROM " + ontology,
+		// QUERY_TYPE.SQL, timeout,
+		// new SubscriptionListener() {
+		//
+		// @Override
+		// public void onMessageArrived(String message) {
+		// // System.out.println(message);
+		//
+		// }
+		//
+		// });
+		//
+		// clientSecure.publish(ontology, jsonData, timeout);
+		clientSecure.log(clientPlatform);
 		Thread.sleep(5000);
 		// clientSecure.unsubscribe(subsId);
 

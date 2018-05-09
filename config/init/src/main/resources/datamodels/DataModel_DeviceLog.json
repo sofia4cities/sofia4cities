@@ -15,14 +15,14 @@
         "description": "Info DeviceLog",
         "type": "object",
         "required": [
-            "Status",
-            "Level",
-            "Message",
-            "Device",
-            "Timestamp"
+            "status",
+            "level",
+            "message",
+            "device",
+            "timestamp"
         ],
         "properties": {
-            "Coordinates": {
+            "location": {
                 "type": "object",
                 "required": [
                     "coordinates",
@@ -48,32 +48,24 @@
                     }
                 }
             },
-            "Status": {
+            "status": {
                 "type": "string"
             },
-            "Level": {
+            "level": {
                 "type": "string"
             },
-            "Message": {
+            "message": {
                 "type": "string"
             },
-            "ExtaOptions": {
+            "extaOptions": {
                 "type": "string"
             },
-            "Device": {
+            "device": {
                 "type": "string"
             },
-            "Timestamp": {
-                "type": "object",
-                "required": [
-                    "$date"
-                ],
-                "properties": {
-                    "$date": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                }
+            "timestamp": {
+                "type": "string",
+                "format": "date-time"
             }
         }
     },

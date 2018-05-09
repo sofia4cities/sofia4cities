@@ -13,6 +13,7 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.devicemanagement;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.indracompany.sofia2.config.services.device.DeviceService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.persistence.services.QueryToolService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,9 +56,13 @@ public class DeviceManagerController {
 	private DeviceService deviceService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private QueryToolService queryToolService;
 
 	@Autowired
 	private GraphDeviceUtil graphDeviceUtil;
+
+	private static final String LOG_PREFIX = "LOG_";
 
 	@GetMapping(value = "/list", produces = "text/html")
 	public String list(Model model, @RequestParam(required = false) String identification,
@@ -89,11 +95,18 @@ public class DeviceManagerController {
 	}
 
 	@GetMapping("/show/{id}")
-	public String info(Model model, RedirectAttributes redirect, @PathVariable String id) {
+	public String info(Model model, RedirectAttributes redirect, @PathVariable String id) throws IOException {
 		Device device = this.deviceService.getById(id);
 		if (null == device)
 			return "redirect:/devices/management/list";
 		model.addAttribute("device", device);
+		String ontology = LOG_PREFIX + device.getClientPlatform().getIdentification().replaceAll(" ", "");
+		String query = "select * from " + ontology + " as c where c.DeviceLog.device = \"" + device.getIdentification()
+				+ "\" ORDER BY c.contextData.timestampMillis Desc limit 50";
+		String result = this.queryToolService.querySQLAsJson(this.utils.getUserId(), ontology, query, 0);
+
+		model.addAttribute("query", query);
+		model.addAttribute("logs", this.deviceService.getLogInstances(result));
 		return "devices/management/info";
 	}
 
