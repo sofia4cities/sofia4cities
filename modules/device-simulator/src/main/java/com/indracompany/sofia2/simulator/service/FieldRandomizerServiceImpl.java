@@ -143,11 +143,13 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				} catch (ParseException e) {
 					date = new Date();
 				}
-				JsonNode dateJson = mapper.createObjectNode();
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-
-				((ObjectNode) dateJson).put("$date", df.format(date));
-				((ObjectNode) map.at(path)).set(finalField, dateJson);
+				JsonNode dateJson = mapper.createObjectNode();
+				if (!map.at(path).path(finalField).path("$date").isMissingNode()) {
+					((ObjectNode) dateJson).put("$date", df.format(date));
+					((ObjectNode) map.at(path)).set(finalField, dateJson);
+				} else
+					((ObjectNode) map.at(path)).put(finalField, df.format(date));
 
 				break;
 			case RANDOM_DATE:
@@ -163,10 +165,15 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				} catch (ParseException e) {
 					dateRandom = new Date();
 				}
-				JsonNode dateRandomJson = mapper.createObjectNode();
 				df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-				((ObjectNode) dateRandomJson).put("$date", df.format(dateRandom));
-				((ObjectNode) map.at(path)).set(finalField, dateRandomJson);
+				JsonNode dateRandomJson = mapper.createObjectNode();
+				if (!map.at(path).path(finalField).path("$date").isMissingNode()) {
+					((ObjectNode) dateRandomJson).put("$date", df.format(dateRandom));
+					((ObjectNode) map.at(path)).set(finalField, dateRandomJson);
+				} else {
+					((ObjectNode) map.at(path)).put(finalField, df.format(dateRandom));
+				}
+
 				break;
 			case NULL:
 

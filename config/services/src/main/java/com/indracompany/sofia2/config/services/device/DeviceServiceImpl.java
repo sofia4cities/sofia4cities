@@ -92,14 +92,19 @@ public class DeviceServiceImpl implements DeviceService {
 
 	@Override
 	public List<LogOntology> getLogInstances(String resultFromQueryTool) throws IOException {
-		ArrayNode arrayResult = (ArrayNode) mapper.readTree(resultFromQueryTool);
-		ArrayNode newArray = mapper.createArrayNode();
-		for (JsonNode node : arrayResult) {
-			newArray.add(node.get("value").get("DeviceLog"));
+		try {
+			ArrayNode arrayResult = (ArrayNode) mapper.readTree(resultFromQueryTool);
+			ArrayNode newArray = mapper.createArrayNode();
+			for (JsonNode node : arrayResult) {
+				newArray.add(node.get("value").get("DeviceLog"));
+			}
+
+			return mapper.readValue(newArray.toString(), new TypeReference<List<LogOntology>>() {
+			});
+		} catch (RuntimeException re) {
+			return null;
 		}
 
-		return mapper.readValue(newArray.toString(), new TypeReference<List<LogOntology>>() {
-		});
 	}
 
 }

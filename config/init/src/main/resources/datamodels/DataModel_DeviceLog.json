@@ -57,7 +57,7 @@
             "message": {
                 "type": "string"
             },
-            "extaOptions": {
+            "extraOptions": {
                 "type": "string"
             },
             "device": {

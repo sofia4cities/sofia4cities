@@ -71,7 +71,7 @@ public class MessageProcessorDelegate implements MessageProcessor {
 		// DONE: RETURN
 
 		SSAPMessage<SSAPBodyReturnMessage> response = null;
-
+		Optional<IoTSession> session = null;
 		try {
 
 			final Optional<SSAPMessage<SSAPBodyReturnMessage>> validation = this.validateMessage(message);
@@ -81,6 +81,10 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			}
 
 			final MessageTypeProcessor processor = proxyProcesor(message);
+
+			if (SSAPMessageTypes.LEAVE.equals(message.getMessageType())) {
+				session = securityPluginManager.getSession(message.getSessionKey());
+			}
 
 			processor.validateMessage(message);
 			response = processor.process(message);
@@ -92,10 +96,10 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			}
 
 			final SSAPMessage<SSAPBodyReturnMessage> resp = response;
-			Optional<IoTSession> session;
+
 			if (SSAPMessageTypes.JOIN.equals(message.getMessageType())) {
 				session = securityPluginManager.getSession(response.getSessionKey());
-			} else {
+			} else if (!SSAPMessageTypes.LEAVE.equals(message.getMessageType())) {
 				session = securityPluginManager.getSession(message.getSessionKey());
 			}
 
