@@ -164,7 +164,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 		((ObjectNode) properties).put("level", level);
 		((ObjectNode) properties).put("status", status);
 		((ObjectNode) properties).put("message", message);
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		((ObjectNode) properties).put("timestamp", df.format(new Date()));
 		if (extraOptions != null)
 			((ObjectNode) properties).put("extraOptions", extraOptions);

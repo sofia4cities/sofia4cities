@@ -143,7 +143,7 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				} catch (ParseException e) {
 					date = new Date();
 				}
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 				JsonNode dateJson = mapper.createObjectNode();
 				if (!map.at(path).path(finalField).path("$date").isMissingNode()) {
 					((ObjectNode) dateJson).put("$date", df.format(date));
@@ -165,7 +165,7 @@ public class FieldRandomizerServiceImpl implements FieldRandomizerService {
 				} catch (ParseException e) {
 					dateRandom = new Date();
 				}
-				df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+				df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 				JsonNode dateRandomJson = mapper.createObjectNode();
 				if (!map.at(path).path(finalField).path("$date").isMissingNode()) {
 					((ObjectNode) dateRandomJson).put("$date", df.format(dateRandom));
