@@ -28,7 +28,7 @@ quartz:
    datasource:
       url: "@sofia2.quartzURL@"
       username: root
-      # password:
+      password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
    jpa:
       ## Hibernate Properties

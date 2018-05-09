@@ -24,6 +24,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -80,7 +81,8 @@ public class ApiQueryParameter extends AuditableEntityWithUUID {
 	@Setter
 	private String description;
 
-	@Column(name = "QUERY_VALUE", length = 512)
+	@Column(name = "QUERY_VALUE")
+	@Lob
 	@Getter
 	@Setter
 	private String value;
