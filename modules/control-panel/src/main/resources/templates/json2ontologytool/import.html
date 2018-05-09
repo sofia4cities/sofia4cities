@@ -413,7 +413,7 @@
 					
 				
 			}
-			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':arrayJson, 'ontologyIdentification': $('#ontology').val()}, function(data){
+			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':fileLoaded, 'ontologyIdentification': $('#ontology').val()}, function(data){
 				if(data != "Error"){
 					if(JSON.parse(myCodeMirrorJsonImport.getValue()).length != null){
 						$('#response').text(data + " ontologies inserted of type " + $('#ontology').val());
