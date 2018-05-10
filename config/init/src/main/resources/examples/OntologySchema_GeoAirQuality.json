@@ -12,7 +12,7 @@
         }
     },
     "datos": {
-        "description": "Info GeoAirQuality",
+        "description": "Info EmptyBase",
         "type": "object",
         "required": [
             "stationName",
@@ -24,7 +24,8 @@
             "o3",
             "no2",
             "so2",
-            "geometry"
+            "geometry",
+            "aqi"
         ],
         "properties": {
             "stationName": {
@@ -34,16 +35,7 @@
                 "type": "string"
             },
             "timestamp": {
-                "type": "object",
-                "required": [
-                    "$date"
-                ],
-                "properties": {
-                    "$date": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                }
+                "type": "object"
             },
             "city": {
                 "type": "string"
@@ -65,9 +57,19 @@
             },
             "geometry": {
                 "type": "object"
+            },
+            "aqi": {
+                "type": "number",
+                "enum": [
+                    "good",
+                    "moderate",
+                    "unhealthy-sensitive",
+                    "unhealthy",
+                    "very-unhealthy"
+                ]
             }
         }
     },
-    "description": "Air quality retrieved from https://api.waqi.info/search",
+    "description": "GeoAirQuality",
     "additionalProperties": true
 }
