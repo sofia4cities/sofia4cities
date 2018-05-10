@@ -72,8 +72,8 @@ public class SwaggerConfig  {
 	private static final String CONTACT_URL = "https://www.sofia4cities.com";
 	private static final String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
 	
-
-    private ApiInfo apiInfo() {
+	@Bean
+    public ApiInfo apiInfo() {
         return new ApiInfoBuilder().title(INFO_TITLE).description(INFO_DESCRIPTION)
                 .termsOfServiceUrl(CONTACT_URL)
                 .contact(new Contact(CONTACT_NAME, CONTACT_URL, CONTACT_EMAIL))

@@ -31,13 +31,18 @@ import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.filter.OAuth2AuthenticationFailureEvent;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.BearerTokenExtractor;
 import org.springframework.security.oauth2.provider.authentication.TokenExtractor;
@@ -45,8 +50,11 @@ import org.springframework.web.util.UrlPathHelper;
 
 import com.indracompany.sofia2.config.services.oauth.JWTService;
 
+import groovy.util.logging.Slf4j;
+
 @Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class CheckSecurityFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(CheckSecurityFilter.class);
@@ -54,6 +62,9 @@ public class CheckSecurityFilter implements Filter {
     private static final boolean CONDITION = true;
     
     private TokenExtractor tokenExtractor = new BearerTokenExtractor();
+    
+    @Autowired(required=false)
+    private ApplicationEventPublisher eventPublisher;
     
 	@Autowired(required=false)
 	private JWTService jwtService;
@@ -143,6 +154,8 @@ public class CheckSecurityFilter implements Filter {
          	    // Create a new session and add the security context.
          	    HttpSession session = req.getSession(true);
          	    session.setAttribute("SPRING_SECURITY_CONTEXT", securityContext);
+         	    
+         	    publish(new AuthenticationSuccessEvent(authRequest));
          		
          		return info.getUserAuthentication();
          	}
@@ -151,7 +164,9 @@ public class CheckSecurityFilter implements Filter {
          	}
          	
 			} catch (Exception e) {
-				logger.error(e.getMessage(),e);
+				logger.error(e.getMessage());
+				BadCredentialsException bad = new BadCredentialsException("Could not obtain access token", e);
+				publish(new OAuth2AuthenticationFailureEvent(bad));
 				
 			}
     	return null;
@@ -176,7 +191,11 @@ public class CheckSecurityFilter implements Filter {
         logger.debug("CheckSecurityFilter WebFilter >> ");
     }
 
-
+    private void publish(ApplicationEvent event) {
+		if (eventPublisher!=null) {
+			eventPublisher.publishEvent(event);
+		}
+	}
 
 	public TokenExtractor getTokenExtractor() {
 		return tokenExtractor;
