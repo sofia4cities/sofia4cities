@@ -31,6 +31,9 @@ import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.DeviceRepository;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
 @Component
 public class GraphDeviceUtil {
@@ -47,7 +50,8 @@ public class GraphDeviceUtil {
 	private AppWebUtils utils;
 	@Autowired
 	private UserService userService;
-	@Value("${sofia2.urls.iotbroker}")
+	@Autowired
+	private IntegrationResourcesService intregationResourcesService;
 	private String url;
 
 	@Value("${sofia2.devices.timeout_devices_inseconds:300}")
@@ -66,8 +70,8 @@ public class GraphDeviceUtil {
 	@PostConstruct
 	public void init() {
 		// initialize URLS
-
-		this.urlImages = this.url + "/controlpanel/static/images/";
+		this.url = this.intregationResourcesService.getUrl(Module.controlpanel, ServiceUrl.base);
+		this.urlImages = this.url + "/static/images/";
 	}
 
 	public List<GraphDeviceDTO> constructGraphWithClientPlatformsForUser() {

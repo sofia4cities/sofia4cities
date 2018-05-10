@@ -105,7 +105,7 @@ public class DeviceManagerController {
 				+ "\" ORDER BY c.contextData.timestampMillis Desc limit 50";
 		String result = this.queryToolService.querySQLAsJson(this.utils.getUserId(), ontology, query, 0);
 
-		model.addAttribute("query", query);
+		model.addAttribute("query", query.replace(" limit 50", ""));
 		model.addAttribute("logs", this.deviceService.getLogInstances(result));
 		return "devices/management/info";
 	}

@@ -28,6 +28,7 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteByIdMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyDeleteMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyInsertMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
+import com.indracompany.sofia2.ssap.body.SSAPBodyLogMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyQueryMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodySubscribeMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyUnsubscribeMessage;
@@ -70,6 +71,14 @@ public class IotBrokerAuditEventFactory {
 			IoTSession session, GatewayInfo info) {
 
 		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.UNSUBSCRIBE, messageText, session, info);
+
+		return event;
+	}
+
+	public IotBrokerAuditEvent createIotBrokerAuditEvent(SSAPBodyLogMessage message, String messageText,
+			IoTSession session, GatewayInfo info) {
+
+		IotBrokerAuditEvent event = createIotBrokerAuditEvent(OperationType.LOG, messageText, session, info);
 
 		return event;
 	}
