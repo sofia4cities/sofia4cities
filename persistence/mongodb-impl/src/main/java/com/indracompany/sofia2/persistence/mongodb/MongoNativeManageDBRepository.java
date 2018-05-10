@@ -350,23 +350,24 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 	}
 
 	@Override
-	public void exportToJson(String ontology, long startDateMillis) throws DBPersistenceException {
+	public String exportToJson(String ontology, long startDateMillis) throws DBPersistenceException {
 		String command = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-dd-MM-hh-mm");
 		Runtime r = Runtime.getRuntime();
 		String query = "{'contextData.timestampMillis':{$lte:" + startDateMillis + "}}";
+		String path = this.exportPath + ontology + format.format(new Date()) + ".json";
 		if (OSDetector.isWindows()) {
 			command = this.mongoExportPath + " --db " + this.database + " --collection " + ontology + " --query "
-					+ query + " --out " + this.exportPath + ontology + format.format(new Date()) + ".json";
+					+ query + " --out " + path;
 		} else {
 			command = this.mongoExportPath + " --db " + this.database + " --collection " + ontology + " --query "
-					+ query + " --out " + this.exportPath + ontology + format.format(new Date()) + ".json";
+					+ query + " --out " + path;
 		}
 
 		if (command != null)
 			try {
 
-				log.info("Executed: " + command);
+				log.debug("Executed: " + command);
 				r.exec(command).waitFor();
 				query = "{\"contextData.timestampMillis\":{$lte:" + startDateMillis + "}}";
 				this.mongoDbConnector.remove(this.database, ontology, query);
@@ -374,7 +375,12 @@ public class MongoNativeManageDBRepository implements ManageDBRepository {
 			} catch (IOException | InterruptedException e) {
 				throw new DBPersistenceException("Could not execute command " + command);
 			}
+		return query;
+	}
 
+	@Override
+	public long deleteAfterExport(String ontology, String query) {
+		return this.mongoDbConnector.remove(this.database, ontology, query);
 	}
 
 }

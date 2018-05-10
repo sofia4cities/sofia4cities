@@ -3,7 +3,7 @@
 
 
 server: ## Config Web Server
-   port: 18080
+   port: 18000
    contextPath: /controlpanel
    max-http-header-size: 10000000
    tomcat:
@@ -48,18 +48,28 @@ sofia2: #Config Sofia2 specific
       tools.useSequentialOps: true
       digitaltwin.database: digital_twin
    urls:
-    iotbroker: http://localhost:18080
-    iotbroker.services: http://localhost:8080/sib/services
+    iotbroker: http://localhost:19000
+    iotbroker.services: http://localhost:19000/sib/services
    paths:
       ssap: /ssap
    flowengine.services:
       request.timeout.ms: 5000
-      baseurl: http://localhost:8082/flowengine/admin   
+      baseurl: http://localhost:20100/flowengine/admin   
       proxyurl: http://localhost:5050/
    controlpanel.avoidsslverification: true
    webproject:
       rootfolder.path: /usr/local/webprojects/
-      baseurl: https://localhost:18080/web/   
+      baseurl: https://localhost:18000/web/        
+   iotbroker.plugable:
+     gateway:
+      kafka:
+        prefix: ontology_
+        group: ontologyGroup
+        topic.pattern: ontology.*
+        router.topic: router
+        consumer.consumersCount : 10
+        consumer.group : kafkaGroup
+        consumer.maxPollRecords : 5000 
    analytics.notebook:
       zeppelinProtocol: http
       zeppelinHostname: 192.168.99.100
@@ -92,7 +102,7 @@ spring: ## General Config
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-   #   password: root
+      password: changeIt!
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.
@@ -107,7 +117,7 @@ spring: ## General Config
       hibernate.ddl-auto: update
       hibernate.temp.use_jdbc_metadata_defaults: false
    boot.admin: #Spring Boot Admin Config    
-      url: http://localhost:19000/
+      url: http://localhost:18100/
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -121,7 +131,7 @@ quartz:
    datasource:
       url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-    #  password: root
+      password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
    jpa:
       ## Hibernate Properties
@@ -145,3 +155,15 @@ logging:
 digitaltwin:
    temp.dir: /tmp
    maven.exec.path: /usr/share/maven/bin/mvn
+   
+build.version: "@project.version@"   
+
+
+#oauth configurations
+security:
+  signing-key: s1f41234pwqdqkl4l12ghg9853123sds1f41234pwqdqkl4l12ghg9853123sd
+  jwt:
+    client-id: sofia2_s4c
+    client-secret: sofia2_s4c
+    grant-type: authorization_code,refresh_token,password
+    scopes: openid

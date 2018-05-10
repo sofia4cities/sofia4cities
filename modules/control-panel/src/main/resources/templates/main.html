@@ -79,8 +79,8 @@
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasOntology} ? bg-green : bg-red">
 								  	<i class="flaticon-network"></i> 
 								</span>
-								<button th:if="${hasOntology}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/list} + '\');'" th:text="#{flow.button}">GO</button>
-								<div class="mt-step-done" th:if="${not hasOntology}">
+								<button th:if="${not hasOntology}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/ontologies/list} + '\');'" th:text="#{flow.button}">GO</button>
+								<div class="mt-step-done" th:if="${hasOntology}">
 									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>									
 								</div>
 							</div>
@@ -92,8 +92,8 @@
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasDevice} ? bg-green : bg-red">
 								  <i class="flaticon-truck"></i> 
 								</span>
-								<button th:if="${hasDevice}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" th:text="#{flow.button}">GO</button>
-								<div class="mt-step-done" th:if="${not hasDevice}">
+								<button th:if="${not hasDevice}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" th:text="#{flow.button}">GO</button>
+								<div class="mt-step-done" th:if="${hasDevice}">
 									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
@@ -105,8 +105,8 @@
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasSimulation} ? bg-green : bg-red">
 								  <i class="flaticon-car"></i>
 								</span>
-								<button th:if="${hasSimulation}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'" th:text="#{flow.button}">GO</button>
-								<div class="mt-step-done" th:if="${not hasSimulation}">
+								<button th:if="${not hasSimulation}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devicesimulation/list} + '\');'" th:text="#{flow.button}">GO</button>
+								<div class="mt-step-done" th:if="${hasSimulation}">
 									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
@@ -118,8 +118,8 @@
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/dashboards/list} + '\');'" class="btn mt-step-number font-grey" th:classappend="${hasDashboard} ? bg-green : bg-red">
 								  <i class="flaticon-graph"></i> 
 								</span>
-								<button th:if="${hasDashboard}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/dashboards/list} + '\');'" th:text="#{flow.button}">GO</button>
-								<div class="mt-step-done" th:unless="${hasDashboard}">
+								<button th:if="${not hasDashboard}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/dashboards/list} + '\');'" th:text="#{flow.button}">GO</button>
+								<div class="mt-step-done" th:if="${hasDashboard}">
 									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
@@ -131,8 +131,8 @@
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" class="btn mt-step-number bg-blue font-grey">
 								  <i class="flaticon-multimedia-1"></i> 
 								</span>
-								<button th:if="${hasDevice}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" th:text="#{flow.button}">GO</button>
-								<div class="mt-step-done" th:if="${not hasDevice}">
+								<button th:if="${not hasDevice}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/devices/list} + '\');'" th:text="#{flow.button}">GO</button>
+								<div class="mt-step-done" th:if="${hasDevice}">
 									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>
@@ -144,8 +144,8 @@
 								<span th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'" class="btn mt-step-number font-grey-steel" th:classappend="${hasApi} ? bg-green : bg-red">
 							  <i class="flaticon-multimedia "></i>  
 							</span>
-								<button th:if="${hasApi}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'" th:text="#{flow.button}">GO</button>
-								<div class="mt-step-done" th:if="${not hasApi}">
+								<button th:if="${not hasApi}" class="btn blue-sharp mt-step-button" th:onclick="'javascript:navigateUrl(\'' + @{/apimanager/list} + '\');'" th:text="#{flow.button}">GO</button>
+								<div class="mt-step-done" th:if="${hasApi}">
 									<p style="margin-right: 10px"><i class="la la-check"></i> <span th:text="#{flow.done}">Done</span></p>	
 								</div>
 							</div>

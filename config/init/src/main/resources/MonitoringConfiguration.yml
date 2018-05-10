@@ -1,6 +1,6 @@
 spring:
    boot.admin: #Spring Boot Admin Config    
-      url: http://localhost:18090
+      url: http://localhost:18100
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}

@@ -56,7 +56,7 @@ public class SofiaLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 		s2event.setOtherType("LogoutEventSuccess");
 		s2event.setResultOperation(ResultOperationType.SUCCESS);
 		if (authentication.getDetails() != null) {
-			WebAuthenticationDetails details2 = (WebAuthenticationDetails) authentication.getDetails();
+			//WebAuthenticationDetails details2 = (WebAuthenticationDetails) authentication.getDetails();
 			// s2event.setRemoteAddress(details2.getRemoteAddress());
 			// s2event.setSessionId(details2.getSessionId());
 		}

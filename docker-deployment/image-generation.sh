@@ -80,6 +80,42 @@ removeNodeRED()
 	rm nodered.zip		
 }
 
+buildPersistence()
+{
+	echo "++++++++++++++++++++ Persistence layer generation..."
+	
+	# Generates images only if they are not present in local docker registry
+	if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/configdb
+		buildConfigDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/schedulerdb
+		buildSchedulerDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/realtimedb
+		buildRealTimeDB latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/quasar
+		buildQuasar latest
+	fi
+	
+	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/elasticsearch
+		buildElasticDB latest
+	fi	
+	
+	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
+		cd $homepath/../config/init/
+		buildImage "Config Init"
+	fi		
+}
+
 echo "##########################################################################################"
 echo "#                                                                                        #"
 echo "#   _____             _                                                                  #"              
@@ -112,42 +148,15 @@ if [ -z "$1" ]; then
 	if [[ "$(docker images -q sofia2/apimanager 2> /dev/null)" == "" ]]; then	
 		cd $homepath/../modules/api-manager/	
 		buildImage "API Manager"
-	fi			
+	fi	
+	
+	# Persistence layer image generation
+	buildPersistence		
 fi
 
 if [ ! -z "$1" ]; then
-	echo "++++++++++++++++++++ Persistence layer generation..."
-	
-	# Generates images only if they are not present in local docker registry
-	if [[ "$(docker images -q sofia2/configdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/configdb
-		buildConfigDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/schedulerdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/schedulerdb
-		buildSchedulerDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/realtimedb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/realtimedb
-		buildRealTimeDB latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/quasar 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/quasar
-		buildQuasar latest
-	fi
-	
-	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/elasticsearch
-		buildElasticDB latest
-	fi	
-	
-	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then
-		cd $homepath/../config/init/
-		buildImage "Config Init"
-	fi	
+	# Persistence layer image generation
+	buildPersistence
 fi
 
 echo "Docker images successfully generated!"

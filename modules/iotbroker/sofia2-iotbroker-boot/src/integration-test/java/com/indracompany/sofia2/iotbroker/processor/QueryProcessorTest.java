@@ -88,13 +88,15 @@ public class QueryProcessorTest {
 	@MockBean
 	DeviceManager deviceManager;
 
-	@MockBean
-	IotBrokerAuditableAspect iotBrokerAuditableAspect;
+//	@MockBean
+//	IotBrokerAuditableAspect iotBrokerAuditableAspect;
 
 	private void auditMocks() {
 		try {
-			doNothing().when(iotBrokerAuditableAspect).processTx(any(), any(), any(), any());
-			doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
+			//TODO it is not possible to mock processTx in this way. It returns a value.
+			//TODO Furthermore, it is an @Around aspect, so it executes before and after the jointpoint method. 			
+//			doNothing().when(iotBrokerAuditableAspect).processTx(any(), any(), any(), any());
+//			doNothing().when(iotBrokerAuditableAspect).doRecoveryActions(any(), any(), any(), any(), any());
 
 		} catch (Throwable e) {
 			// TODO Auto-generated catch block

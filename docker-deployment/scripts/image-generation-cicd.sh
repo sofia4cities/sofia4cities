@@ -208,7 +208,7 @@ if [ -z "$1" ]; then
 	fi	
 	
 	echo "Pushing all images to Docker registry"
-	pushAllImages2Registry 5.1.0-rc2
+	pushAllImages2Registry latest
 
 fi
 
@@ -267,11 +267,13 @@ fi
 if [[ "$1" == "nginx" ]]; then
 	cd $homepath/../dockerfiles/nginx
 	buildNginx latest
+	pushImage2Registry nginx latest
 fi
 
 if [[ "$1" == "configinit" ]]; then
 	cd $homepath/../../config/init/
 	buildImage "Config Init"
+	pushImage2Registry configinit latest
 fi
 
 if [ "$1" == -1 ]; then

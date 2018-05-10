@@ -241,7 +241,7 @@
 												<h3 class="marketasset-sidebar-title uppercase" th:text="#{marketasset.recent.assets}">Recent Market Assets</h3>
 												<ul>
 													<li th:each="asset : ${fiveAssets}">
-														<a href="javascript:;" th:text="${asset.title}"></a>
+														<a th:href="@{|/marketasset/show/${asset.id}|}" th:text="${asset.title}"></a>
 													</li>
 												</ul>
 											</div>

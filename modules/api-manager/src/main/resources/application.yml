@@ -1,7 +1,7 @@
 ##--spring.config.name=apimanager
 ##security.require_ssl: true
 server: ## Config Web Server
-   port: 19090
+   port: 19100
    contextPath: /api-manager
    tomcat:
       access_log_enabled: true
@@ -51,7 +51,7 @@ sofia2: #Config Sofia2 specific
 spring: ## General Config  
    application.name: sofia2-api-manager
    boot.admin: #Spring Boot Admin Config    
-      url: http://localhost:19000
+      url: http://localhost:18100
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -59,7 +59,7 @@ spring: ## General Config
    datasource: ## JPA Config
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password:
+      password: changeIt!
       # Number of ms to wait before throwing an exception if no connection is available.
       tomcat.max-wait: 10000
       # Maximum number of active connections that can be allocated from this pool at the same time.

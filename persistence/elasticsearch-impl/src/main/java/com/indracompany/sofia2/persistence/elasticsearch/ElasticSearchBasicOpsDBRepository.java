@@ -29,7 +29,7 @@ import com.indracompany.sofia2.persistence.elasticsearch.api.ESDeleteService;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESInsertService;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESNativeService;
 import com.indracompany.sofia2.persistence.elasticsearch.api.ESUpdateService;
-import com.indracompany.sofia2.persistence.elasticsearch.sql.connector.ElasticSearchSQLDbHttpConnector;
+import com.indracompany.sofia2.persistence.elasticsearch.sql.connector.ElasticSearchSQLDbHttpImpl;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
@@ -55,7 +55,7 @@ public class ElasticSearchBasicOpsDBRepository implements BasicOpsDBRepository {
 	@Autowired
 	private ESUpdateService eSUpdateService;
 	@Autowired
-	private ElasticSearchSQLDbHttpConnector elasticSearchSQLDbHttpConnector;
+	private ElasticSearchSQLDbHttpImpl elasticSearchSQLDbHttpConnector;
 	
 	@Autowired
 	private ESNativeService eSNativeService;

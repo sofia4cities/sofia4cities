@@ -1,7 +1,7 @@
 app:
   name: dashboardengine
 server:
-  port: 8089
+  port: 18300
   contextPath: /dashboardengine
   
   
@@ -11,7 +11,7 @@ management.security.enabled: false
 spring:
   application.name: sofia2-dashboard-engine
   boot.admin: #Spring Boot Admin Config   
-      url: http://localhost:19000
+      url: http://localhost:18100
       username: operations
       password: changeIt!
       client.metadata.user.name: ${spring.boot.admin.username}
@@ -19,7 +19,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
-    password: 
+    password: changeIt!
   jpa:
     ## Hibernate Properties
     # The SQL dialect makes Hibernate generate better SQL for the chosen database

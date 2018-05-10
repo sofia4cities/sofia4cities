@@ -420,7 +420,7 @@
 				                <input id="id_name_op_customsql" name="id_name_op_customsql" class="element text medium form-control" style="display:inline;width:50%;" type="text" maxlength="50" onblur="ApiCustomOpsController.validateName(this);"/>
 				                <br/><br/>
 				                <label class="description" th:text="#{apimanager.customsql.query}" th:title="#{apimanager.customsql.query.info}"></label>
-				                <input style="margin-left: 10px; margin-right: 20px; width: 95%" id="id_query_op_customsql" th:title="#{apimanager.customsql.query.info}" name="id_query_op_customsql" class="form-control" type="text" maxlength="512" onblur="ApiCustomOpsController.loadParamsQuery(this.value);"/>
+				                <input style="margin-left: 10px; margin-right: 20px; width: 95%" id="id_query_op_customsql" th:title="#{apimanager.customsql.query.info}" name="id_query_op_customsql" class="form-control" type="text" onblur="ApiCustomOpsController.loadParamsQuery(this.value);"/>
 				                <br/>
 			                     <div class="group_top_bg" th:text="#{apimanager.customsql.paramsquery}"/>
 			                     <div style="border:0px">

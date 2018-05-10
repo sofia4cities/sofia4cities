@@ -1,5 +1,5 @@
 /**
- * Copyright Indra Sistemas, S.A.
+mvn   * Copyright Indra Sistemas, S.A.
  * 2013-2018 SPAIN
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -241,7 +241,7 @@ public class OntologyControllerTest {
     
     
     @Test
-    public void given_OneOntology_When_OneNotAuthorizedUserWantsToCreateAUserAccessç_Then_TheUserAccessIsNotCreatedAndABadRequestIsResponsed() throws Exception {
+    public void given_OneOntology_When_OneNotAuthorizedUserWantsToCreateAUserAccess_Then_TheUserAccessIsNotCreatedAndABadRequestIsResponsed() throws Exception {
     	OntologyUserAccess access = ontologyUserAccessCreator("ontologyId", "userOntology", "user", "ALL", "accessId");
     	String sessionUserId = "unknown";
     	

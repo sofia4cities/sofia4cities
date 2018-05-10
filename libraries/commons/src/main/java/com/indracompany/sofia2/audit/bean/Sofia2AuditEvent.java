@@ -30,11 +30,11 @@ public class Sofia2AuditEvent implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public enum EventType {
-		USER, SECURITY, ERROR, DATA, GENERAL, IOTBROKER, APIMANAGER, FLOWENGINE;
+		USER, SECURITY, ERROR, DATA, GENERAL, IOTBROKER, APIMANAGER, FLOWENGINE, BATCH;
 	}
 
 	public enum Module {
-		CONTROLPANEL, APIMANAGER, IOTBROKER, FLOWENGINE, ROUTER
+		CONTROLPANEL, APIMANAGER, IOTBROKER, FLOWENGINE, ROUTER, RTDBMAINTAINER
 	}
 
 	public enum OperationType {

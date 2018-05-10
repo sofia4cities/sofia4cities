@@ -58,7 +58,7 @@ public class MainPageController {
 	private ApiRepository apiRepository;
 	@Autowired
 	private MainService mainService;
-	
+
 	@Value("${sofia2.urls.iotbroker}")
 	String url;
 
@@ -69,31 +69,49 @@ public class MainPageController {
 		// Remove PrettyPrinted
 		String menu = utils.validateAndReturnJson(jsonMenu);
 		utils.setSessionAttribute(request, "menu", menu);
-		
-		if(utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
+
+		if (utils.getRole().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
 			model.addAttribute("kpis", mainService.createKPIs());
-			
+
 			return "main";
 		} else if (utils.getRole().equals(Role.Type.ROLE_DEVELOPER.name())) {
-			//FLOW
-			model.addAttribute("hasOntology", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()).size() > 0 ? true : false);
-			model.addAttribute("hasDevice", this.clientPlatformRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
-			model.addAttribute("hasDashboard",this.dashboardRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : null);
-			model.addAttribute("hasSimulation", this.deviceSimulationServicve.getSimulationsForUser(this.utils.getUserId()).size() > 0 ? true : false);
-			model.addAttribute("hasApi", this.apiRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
-			
+			// FLOW
+			model.addAttribute("hasOntology",
+					this.ontologyService.getOntologiesByUserId(this.utils.getUserId()).size() > 0 ? true : false);
+			model.addAttribute("hasDevice", this.clientPlatformRepository
+					.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
+			model.addAttribute("hasDashboard",
+					this.dashboardRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0
+							? true
+							: false);
+			model.addAttribute("hasSimulation",
+					this.deviceSimulationServicve.getSimulationsForUser(this.utils.getUserId()).size() > 0 ? true
+							: false);
+			model.addAttribute("hasApi",
+					this.apiRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true
+							: false);
+
 			return "main";
 		} else if (utils.getRole().equals(Role.Type.ROLE_USER.name())) {
 			return "redirect:/marketasset/list";
 		}
-		
-		//FLOW
-		model.addAttribute("hasOntology", this.ontologyService.getOntologiesByUserId(this.utils.getUserId()).size() > 0 ? true : false);
-		model.addAttribute("hasDevice", this.clientPlatformRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
-		model.addAttribute("hasDashboard",this.dashboardRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : null);
-		model.addAttribute("hasSimulation", this.deviceSimulationServicve.getSimulationsForUser(this.utils.getUserId()).size() > 0 ? true : false);
-		model.addAttribute("hasApi", this.apiRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true : false);
-		
+
+		// FLOW
+		model.addAttribute("hasOntology",
+				this.ontologyService.getOntologiesByUserId(this.utils.getUserId()).size() > 0 ? true : false);
+		model.addAttribute("hasDevice",
+				this.clientPlatformRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0
+						? true
+						: false);
+		model.addAttribute("hasDashboard",
+				this.dashboardRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true
+						: false);
+		model.addAttribute("hasSimulation",
+				this.deviceSimulationServicve.getSimulationsForUser(this.utils.getUserId()).size() > 0 ? true : false);
+		model.addAttribute("hasApi",
+				this.apiRepository.findByUser(this.userService.getUser(this.utils.getUserId())).size() > 0 ? true
+						: false);
+
 		return "main";
 	}
 

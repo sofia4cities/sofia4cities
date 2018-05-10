@@ -41,6 +41,7 @@ import com.indracompany.sofia2.config.model.ClientPlatformOntology;
 import com.indracompany.sofia2.config.model.Configuration;
 import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
+import com.indracompany.sofia2.config.model.DashboardUserAccessType;
 import com.indracompany.sofia2.config.model.DataModel;
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
@@ -68,6 +69,7 @@ import com.indracompany.sofia2.config.repository.ClientPlatformRepository;
 import com.indracompany.sofia2.config.repository.ConfigurationRepository;
 import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
+import com.indracompany.sofia2.config.repository.DashboardUserAccessTypeRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
@@ -135,6 +137,8 @@ public class InitConfigDB {
 	OntologyUserAccessRepository ontologyUserAccessRepository;
 	@Autowired
 	OntologyUserAccessTypeRepository ontologyUserAccessTypeRepository;
+	@Autowired
+	DashboardUserAccessTypeRepository dashboardUserAccessTypeRepository;
 	@Autowired
 	RoleRepository roleRepository;
 	@Autowired
@@ -205,6 +209,8 @@ public class InitConfigDB {
 			//
 			init_Dashboard();
 			log.info("OK init_Dashboard");
+			init_DashboardUserAccessType();
+			log.info("OK init_DashboardUserAccessType");
 			init_Gadget();
 			log.info("OK init_Gadget");
 			init_GadgetDatasource();
@@ -1340,6 +1346,27 @@ public class InitConfigDB {
 			type.setName("INSERT");
 			type.setDescription("Todos los permisos");
 			this.ontologyUserAccessTypeRepository.save(type);
+		}
+
+	}
+
+	public void init_DashboardUserAccessType() {
+
+		log.info("init DashboardUserAccessType");
+		List<DashboardUserAccessType> types = this.dashboardUserAccessTypeRepository.findAll();
+		if (types.isEmpty()) {
+			log.info("No user access types found...adding");
+			DashboardUserAccessType type = new DashboardUserAccessType();
+			type.setId(1);
+			type.setName("EDIT");
+			type.setDescription("view and edit access");
+			this.dashboardUserAccessTypeRepository.save(type);
+			type = new DashboardUserAccessType();
+			type.setId(2);
+			type.setName("VIEW");
+			type.setDescription("view access");
+			this.dashboardUserAccessTypeRepository.save(type);
+
 		}
 
 	}

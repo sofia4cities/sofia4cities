@@ -3,7 +3,7 @@ spring:
    datasource:
       url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
       username: root
-      password: 
+      password: changeIt!
       driver-class-name: com.mysql.jdbc.Driver
    jpa:
       ## Hibernate Properties

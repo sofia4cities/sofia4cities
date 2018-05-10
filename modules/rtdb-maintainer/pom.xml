@@ -17,11 +17,21 @@
 	<name>sofia2-rtdb-maintainer</name>
 	<description>Maintainer for RTDBs </description>
 	<dependencies>
-		    <dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-audit</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.indracompany.sofia2</groupId>
+			<artifactId>sofia2-router-core</artifactId>
+			<version>${sofia2.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sofia2-persistence-services</artifactId>
 			<version>${sofia2.version}</version>
-        </dependency>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

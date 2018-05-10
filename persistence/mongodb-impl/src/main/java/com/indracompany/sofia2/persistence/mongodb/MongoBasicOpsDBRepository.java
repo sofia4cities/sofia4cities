@@ -38,7 +38,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
-import com.indracompany.sofia2.persistence.mongodb.quasar.connector.QuasarMongoDBbHttpConnector;
+import com.indracompany.sofia2.persistence.mongodb.quasar.connector.QuasarMongoDBbHttpImpl;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplate;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 import com.mongodb.BasicDBObject;
@@ -61,7 +61,7 @@ public class MongoBasicOpsDBRepository implements BasicOpsDBRepository {
 	private MongoDbTemplate mongoDbConnector;
 
 	@Autowired
-	private QuasarMongoDBbHttpConnector quasarMongoConnector;
+	private QuasarMongoDBbHttpImpl quasarMongoConnector;
 
 	@Value("${sofia2.database.mongodb.database:sofia2_s4c}")
 	@Getter

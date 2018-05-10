@@ -4,14 +4,14 @@ management.security.enabled: false
 
 ## Config Web Server
 server:
-   port: 8081
+   port: 19000
    contextPath: /iotbroker
 spring:
   application.name: sofia2-iot-broker
   datasource:
     url: jdbc:mysql://localhost:3306/sofia2_s4c?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
     username: root
-    password: 
+    password: changeIt!
     jpa:
       ## Hibernate Properties
       # The SQL dialect makes Hibernate generate better SQL for the chosen database
@@ -19,7 +19,7 @@ spring:
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
   boot.admin: #Spring Boot Admin Config    
-    url: http://localhost:19000
+    url: http://localhost:18100
     username: operations
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}
@@ -79,7 +79,21 @@ sofia2: #Config Sofia2 specific
         
       rest:
         enable: true
-        swaggerhost: localhost:8081    
+        swaggerhost: localhost:19000    
+      kafka:
+        enable: false
+        host: localhost
+        port: 9092
+        partitions: 1
+        replication: 1
+        prefix: ontology_
+        group: ontologyGroup
+        topic.pattern: ontology.*
+        router.topic: router
+        consumer.consumersCount : 10
+        consumer.seekTo : beginning 
+        consumer.group : kafkaGroup
+        consumer.maxPollRecords : 5000
         
 ## LOGGING CONF
 logging:

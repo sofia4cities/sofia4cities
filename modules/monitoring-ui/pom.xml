@@ -145,7 +145,7 @@
 		      <groupId>com.spotify</groupId>
 		      <artifactId>docker-maven-plugin</artifactId>   		      
 		      <configuration>
-		        <imageName>sofia2/monitoringui</imageName>
+		        <imageName>${docker.image.username}/monitoringui</imageName>
 		        <imageTags>
 		           <imageTag>${project.version}</imageTag>
 		        </imageTags>		        

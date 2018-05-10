@@ -59,7 +59,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 
 	final public static String ENCRYPT_PROPERTY = "encrypted";
 
-	private void checkOntologySchemaCompliance(final JsonNode data, final Ontology ontology)
+	public void checkOntologySchemaCompliance(final JsonNode data, final Ontology ontology)
 			throws DataSchemaValidationException {
 		try {
 			final JsonNode jsonSchema = objectMapper.readTree(ontology.getJsonSchema());

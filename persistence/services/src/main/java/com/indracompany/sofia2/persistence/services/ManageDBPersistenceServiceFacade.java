@@ -144,16 +144,26 @@ public class ManageDBPersistenceServiceFacade implements ManageDBRepository, Nat
 	}
 
 	@Override
-	public void exportToJson(String ontology, long startDateMillis) {
+	public String exportToJson(String ontology, long startDateMillis) {
 		throw new DBPersistenceException(
 				"Method not executable, please use same definition with RtdbDatasource parameter");
 
 	}
 
-	public void exportToJson(RtdbDatasource rtdbDatasource, String ontology, long startDateMillis)
+	public String exportToJson(RtdbDatasource rtdbDatasource, String ontology, long startDateMillis)
 			throws DBPersistenceException {
-		getInstance(rtdbDatasource).exportToJson(ontology, startDateMillis);
+		return getInstance(rtdbDatasource).exportToJson(ontology, startDateMillis);
 
+	}
+
+	@Override
+	public long deleteAfterExport(String ontology, String query) {
+		throw new DBPersistenceException(
+				"Method not executable, please use same definition with RtdbDatasource parameter");
+	}
+
+	public long deleteAfterExport(RtdbDatasource rtdbDatasource, String ontology, String query) {
+		return getInstance(rtdbDatasource).deleteAfterExport(ontology, query);
 	}
 
 }

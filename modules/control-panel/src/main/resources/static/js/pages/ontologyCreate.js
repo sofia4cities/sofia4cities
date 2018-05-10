@@ -12,7 +12,7 @@ var OntologyCreateController = function() {
 	var LANGUAGE = ['es'];
 	var currentLanguage = ''; // loaded from template.	
 	var internalLanguage = 'en';	
-	var validTypes = ["object","string","number","integer","date","timestamp","array","binary","geometry"]; // Valid property types	
+	var validTypes = ["object","string","number","integer","date","timestamp","array","geometry","file"]; // Valid property types	
 	var mountableModel = $('#datamodel_properties').find('tr.mountable-model')[0].outerHTML; // save html-model for when select new datamodel, is remove current and create a new one.
 	var mountableModel2 = $('#ontology_autthorizations').find('tr.authorization-model')[0].outerHTML;
 	var validJsonSchema = false;
@@ -34,6 +34,9 @@ var OntologyCreateController = function() {
 		var propRequired	= '';
 		var propDescription	= '';
 		var propEncrypted	= 'false';
+		var isFile			= false;
+		var isGeometry		= false;
+		var objectType		= '';
 		
 		// Required
 		if ( jsonData.hasOwnProperty('datos') ){ required = jsonData.datos.required; } else { required = jsonData.required;  }
@@ -44,23 +47,31 @@ var OntologyCreateController = function() {
 		// KEY and VALUE (value or object, or array...)
 		$.each( properties, function (key, object){			
 			if (object){
+				isFile = false;
+				isGeometry = false;
 				console.log('|--- Key: '+ key );
-				$.each(object, function (propKey, propValue){
-
+				$.each(object, function (propKey, propValue){					
 					if ( propKey == 'encrypted'){						
 						propEncrypted = propValue === true ? 'true' : 'false';
 					}
 					
 					if ( propKey == 'description'){
 						propDescription = propValue !== '' ?  propValue  : '';
-					}
+					}	
+					
+					// add property to properties
 					if ( propKey == 'type'){ 						
 						// check required						
 						propRequired = $.inArray( key, required ) > -1 ? propRequired = 'required' : propRequired = '';
 						
-						
-						// add property to properties
-						propObj = {"property": key, "type": propValue, "required": propRequired, "encrypted": propEncrypted , "descriptions": propDescription};
+						// try to find geometry object
+						// try to find file object
+						if ( object.hasOwnProperty('properties')) { if (object.properties.hasOwnProperty('media')){ isFile = true;  } }
+						if ( object.hasOwnProperty('properties')) { if (object.properties.hasOwnProperty('coordinates')){ isGeometry = true;  }}
+						if (isFile) { objectType = 'file';  } else if (isGeometry) { objectType = 'geometry'; } else { objectType = propValue; }
+												
+						// adding properties 
+						propObj = {"property": key, "type": objectType, "required": propRequired, "encrypted": propEncrypted , "descriptions": propDescription};
 						jsonFormatted.push(propObj);						
 					}
 				});
@@ -180,7 +191,7 @@ var OntologyCreateController = function() {
 		if (type == 'timestamp'){
 			propString = '{"type": "object", '+ updDesc +' '+ updEncryp +' "required": ["$date"],"properties": {"$date": {"type": "string","format": "date-time"}}}';
 			properties[prop] = JSON.parse(propString);	
-		} else if(type == 'binary') {
+		} else if(type == 'file') {
 			properties[prop] = JSON.parse('{"type": "object", '+ updDesc +' '+ updEncryp +' "required": ["data","media"],"properties": {"data": {"type": "string"},"media": {"type": "object", "required": ["name","storageArea","binaryEncoding","mime"],"properties": {"name":{"type": "string"},"storageArea": {"type": "string","enum": ["SERIALIZED","DATABASE","URL"]},"binaryEncoding": {"type": "string","enum": ["Base64"]},"mime": {"type": "string","enum": ["application/pdf","image/jpeg", "image/png"]}}}},"additionalProperties": false}');
 		}else if(type == 'geometry'){
 			properties[prop] = JSON.parse('{"type":"object",  '+ updDesc +' '+ updEncryp +' "required":["coordinates","type"],"properties":{"coordinates":{"type":"object","properties":{"latitude":{"type":"number"},"longitude":{"type":"number"}}},"type":{"type":"string","enum":["Point"]}}}');

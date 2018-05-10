@@ -186,7 +186,8 @@
 									<i class="la la-users font-grey-gallery"></i>
 									<!-- FORM TITLE -->
 									<span class="caption-subject font-grey-gallery uppercase" th:text="#{json2ont.toolimport.title}"> JSON import</span>
-								</div>									
+								</div>
+																	
 								<div class="tools">
 									<a href="" class="expand" data-original-title="" title=""> </a>																			
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
@@ -217,7 +218,7 @@
 											<div class="col-md-3 col-sm-6 col-xs-12">
 												<div class="form-group">
 													<label class="control-label" th:text="#{json2ont.selectont} + ':'">Ontologies</label>
-													<select id="ontology" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{json2ont.selectont}">
+													<select id="ontology" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{json2ont.selectont}" onchange="getParentNode()">
 														<option th:each="ontology :${ontologies}" th:value="${ontology.identification}" th:text="${ontology.identification}" ></option>																
 													</select>													
 												</div>
@@ -278,7 +279,37 @@
 								</div>
 							</div>
 						</div>						
-					</div><!-- END COL-12 -->						
+					</div><!-- END COL-12 -->
+					<!-- Modal -->
+					<div id="progressBarModal" class="modal fade" role="dialog">
+						 <div class="modal-dialog modal-sm">
+											
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"></button>
+									<h4 class="modal-title">Progress</h4>
+								</div>
+								<div class="modal-body">
+								<div class="progress">
+									  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
+									  aria-valuemin="0" aria-valuemax="100" style="width:0%" id="importProgress">
+									    
+									  </div>
+								</div>
+								<div id="progressResult">
+								
+								</div>
+								</div>										      
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								</div>
+							</div>
+											
+							</div>
+					</div>
+									
+									
 				</div><!-- END MAIN ROW -->
 			</div><!-- END CONTENT BODY -->
 		</div><!-- END CONTENT page-content-wrapper -->		
@@ -323,6 +354,7 @@
 	
 		
 	<!-- MAIN INIT -->
+	<script th:src="@{/static/js/pages/jsontools.js}"/>
 	<script  th:inline="javascript">
 
 	
@@ -334,6 +366,7 @@
 	var ontologyExists=[[#{json2ont.ontexists}]];
 	var ontologyCreated=[[#{json2ont.ontcreated}]];
 	var invalidSchema = [[#{json2ont.invalidschema}]];
+	var ontologyHasParentNode = [[#{json2ont.hasparentnode}]];
 	var handleCodeMirror = function () {
 		
         var myTextArea = document.getElementById('jsonTextArea');
@@ -386,38 +419,15 @@
 		myCodeMirrorJsonImport.setValue(js_beautify(myCodeMirrorJsonImport.getValue()));
 	};
 	
-	var importBulkJson = function() {
-		if($('#ontology').val() == ""){
-			$('#errorSelect').text("Select ontology first");
-			$('#ErrorOntSelect').modal("show");
-		}else{
-			var arrayJson = [{}];
-			arrayJson= JSON.parse(myCodeMirrorJsonImport.getValue());
-			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':JSON.stringify(arrayJson), 'ontologyIdentification': $('#ontology').val()}, function(data){
-				if(data != "Error"){
-					if(JSON.parse(myCodeMirrorJsonImport.getValue()).length != null){
-						$('#response').text(data + " ontologies inserted of type " + $('#ontology').val());
-					}else{
-						$('#response').text("Ontology inserted of type " + $('#ontology').val());
-					}
-					$('#returnAction').modal("show");
-				}else{
-					$('#response').text(data);
-					$('#returnAction').modal("show");
-				}
-				
-			});
-		}
-		
-	}
+
 	var modalOntology = function() {
 		$('#ontologyData').modal("show");
-	}
+	};
 	
 	var createOntology = function() {
 		try{
 			JSON.parse(myCodeMirrorSchema.getValue());
-		}catch{
+		}catch(err){
 			$('#response').text(invalidSchema);
 			$('#returnAction').modal("show");
 		}
@@ -432,50 +442,19 @@
 		});
 		
 	}
+	var parentNode;
+	var getParentNode = function () {
+		jQuery.post('/controlpanel/jsontool/getParentNodeOfSchema',{'id' : $('#ontology').val()}, function(data){
+			if(data != ""){
+				parentNode = data;
+				$('#response').text(ontologyHasParentNode);
+				$('#returnAction').modal("show");
+			}
+		});
+	}
 
-	var loadJsonFromDoc = function(files){
-		var reader = new FileReader();
-		if(files[0].type == "text/xml"){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				var x2js = new X2JS();
-				myCodeMirror.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
-				myCodeMirrorJsonImport.setValue(JSON.stringify(x2js.xml_str2json(reader.result)));
-				beautifyJson();
-				
-			}
 			
-		}else if (files[0].name.indexOf(".csv")!=-1){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				myCodeMirror.setValue(csvJSON(reader.result));
-				myCodeMirrorJsonImport.setValue(csvJSON(reader.result));
-				beautifyJson();
-			}
-			
-		}else if (files[0].type == "application/json"){
-			reader.readAsText(files[0]);
-			reader.onloadend = function () {
-				var jsonData = reader.result;
-				jsonData = jsonData.replace(/[\r]/g, '');
-				var arrayJson = [];
-				var dataSplitted = jsonData.split("\n");
-				var i;
-				for(var i in dataSplitted){
-					if(dataSplitted[i] != "") {
-						arrayJson.push(JSON.parse(dataSplitted[i]));
-					}
-				}
-				myCodeMirror.setValue(JSON.stringify(arrayJson));
-				myCodeMirrorJsonImport.setValue(JSON.stringify(arrayJson));
-				beautifyJson();
-			}
-		}
-		
 
-		
-		
-	};
 	
 	$(document).ready(function(){
 		handleCodeMirror();
