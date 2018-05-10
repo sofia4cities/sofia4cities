@@ -150,9 +150,12 @@ var importBulkJson = function() {
 			var infLimit=0;
 			var supLimit=200;
 			var increment =200;
+			$('#importProgress').attr('aria-valuenow', '0%').css('width','0%');
+			
 			$('#importProgress').removeClass('progress-bar-success');
 			$('#importProgress').removeClass('progress-bar-danger');
 			$('#progressBarModal').modal("show");
+			$('#importProgress').text('');
 			for(var s=arrayJson.length; s>=0; s--) {
 				
 				if(infLimit > arrayJson.length){
