@@ -88,6 +88,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		        		"/swagger-resources/**",
 		        		"/swagger-ui.html").permitAll()
 				.antMatchers("/oauth/").permitAll()
+				.antMatchers("/api-ops","/api-ops/**").permitAll()
 				.antMatchers("/management","/management/**").permitAll()
 				.antMatchers("/admin").hasAnyRole("ROLE_ADMINISTRATOR").antMatchers("/admin/**")
 				.hasAnyRole("ROLE_ADMINISTRATOR").anyRequest().authenticated().and().formLogin().loginPage("/login")

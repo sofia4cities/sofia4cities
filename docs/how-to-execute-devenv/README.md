@@ -15,7 +15,7 @@
 	3. Also configure your name and email:
 		1. git config --global user.name my_name
 		2. git config --global user.email my_mail 
-	4. Execute >**git clone https://github.com/sofia4cities/sofia4cities.git**. This creates directory s:\sources\sofia4cities\ with the master branch of repository sofia4cities
+	4. Execute >**git clone https://sofia2-devops.westeurope.cloudapp.azure.com/gitlab/sofia2-projects/sofia2-s4c/**. This creates directory s:\sources\sofia4cities\ with the master branch of repository sofia4cities
 	(you need to have an account and access to this GIT repository as a prerequisite first)
 
 ### 2. How to compile and prepare Sofia4Cities with DevEnv in Windows 
@@ -45,7 +45,7 @@
 	1. Execute **S:\scripts\RTDB_console.bat**. In the console enter:
 		1. show databases; 
 		2. If it is not listed >use sofia2_s4c
-3. Start **RealTime Database SQL-Service** with command **S:\scripts\RTDB_SQLServer_start.bat**
+3. Start **RealTime Database SQL-Service** with command **S:\scripts\RTDB_HTTPSQLServer_start.bat**
 4. From a console created with S:\start.bat go to **S:\sources\sofia4cities\modules\control-panel** and execute >**mvn spring-boot:run**.
 5. This execute ControlPanel in [http://localhost:18090/controlpanel/)(http://localhost:18080/controlpanel/).
 6. You can access as developer with developer/changeIt! or as administrator with administrator/changeIt!.

@@ -72,8 +72,8 @@ public class SwaggerConfig  {
 	private static final String CONTACT_URL = "https://www.sofia4cities.com";
 	private static final String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
 	
-
-    private ApiInfo apiInfo() {
+	@Bean
+    public ApiInfo apiInfo() {
         return new ApiInfoBuilder().title(INFO_TITLE).description(INFO_DESCRIPTION)
                 .termsOfServiceUrl(CONTACT_URL)
                 .contact(new Contact(CONTACT_NAME, CONTACT_URL, CONTACT_EMAIL))
@@ -89,7 +89,7 @@ public class SwaggerConfig  {
 
 	
 	@Bean
-	public Docket testApi() {
+	public Docket authenticationAPI() {
 
 		//Adding Header
 		ParameterBuilder aParameterBuilder = new ParameterBuilder();
@@ -102,16 +102,17 @@ public class SwaggerConfig  {
 				.groupName("sofia2-oauth2")
 				.select()
 				.apis(RequestHandlerSelectors.any())
-				.paths(buildPathSelectorTest())
+				.paths(buildPathSelectorAuthentication())
 				.build()
 				.globalOperationParameters(addRestParameters(aParameterBuilder,aParameters));
 	}
 
 	@SuppressWarnings("unchecked")
-	private Predicate<String> buildPathSelectorTest() {
+	private Predicate<String> buildPathSelectorAuthentication() {
 		return or (
 				regex("/oauth-api.*"),
 				regex("/oauth.*"),
+				regex("/api-ops.*"),
 				regex("/sofia2-oauth.*"),
 				regex("/management.*"));
 	}
