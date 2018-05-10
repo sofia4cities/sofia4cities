@@ -60,7 +60,18 @@ sofia2: #Config Sofia2 specific
    webproject:
       rootfolder.path: /usr/local/webprojects/
       baseurl: https://localhost:18000/web/   
- 
+      
+   iotbroker.plugable:
+     gateway:
+      kafka:
+        prefix: ontology_
+        group: ontologyGroup
+        topic.pattern: ontology.*
+        router.topic: router
+        consumer.consumersCount : 10
+        consumer.group : kafkaGroup
+        consumer.maxPollRecords : 5000 
+        
 spring: ## General Config  
    application.name: sofia2-control-panel
    thymeleaf: ## Thymeleaf Config
@@ -135,3 +146,13 @@ digitaltwin:
    maven.exec.path: /usr/share/maven/bin/mvn
    
 build.version: "@project.version@"   
+
+
+#oauth configurations
+security:
+  signing-key: s1f41234pwqdqkl4l12ghg9853123sds1f41234pwqdqkl4l12ghg9853123sd
+  jwt:
+    client-id: sofia2_s4c
+    client-secret: sofia2_s4c
+    grant-type: authorization_code,refresh_token,password
+    scopes: openid

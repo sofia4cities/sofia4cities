@@ -12,18 +12,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.config.services.oauth;
+package com.indracompany.sofia2.controlpanel.config;
 
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.security.core.Authentication;
+import com.indracompany.sofia2.controlpanel.controller.management.model.ErrorServiceResponse;
 
+import lombok.extern.slf4j.Slf4j;
 
-public interface JWTService {
-	public String extractToken(HttpServletRequest request);
-	public String extractToken(String tokenId);	
-	public Object extractTokenPrincipal(String tokenId);
-	public Authentication getAuthentication(String tokenId);
+@RestController
+@Slf4j
+@RequestMapping("management")
+public class BaseRestServices {
+
+	public ErrorServiceResponse processError(Exception e) {
+
+		ErrorServiceResponse response = new ErrorServiceResponse();
+
+		
+
+		return response;
+	}
+
 	
-
 }
