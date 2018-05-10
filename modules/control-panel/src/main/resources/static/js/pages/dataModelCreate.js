@@ -94,12 +94,14 @@ var dataModelCreateController  = function(){
 		
         var myTextArea = document.getElementById('jsonSchemaDatamodel');
         var myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
-        	mode: "text/x-yaml",
+        	mode: "application/ld+json",
+        	autoCloseBrackets: true,          
             lineNumbers: false,
             foldGutter: true,
             matchBrackets: true,
             styleActiveLine: true,
-            theme:"material",         
+            theme:"material",  
+            lineWrapping: true
 
         });
 		myCodeMirror.setSize("100%", 350);
