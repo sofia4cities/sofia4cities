@@ -21,31 +21,41 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.http.client.ClientProtocolException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import com.indracompany.sofia2.config.model.Notebook;
+import com.indracompany.sofia2.config.model.User;
 
 public interface NotebookService {
 
+	public Notebook saveDBNotebook(String name, String idzep, User user);
+
 	public Notebook createEmptyNotebook(String name, String userId);
-	
+
 	public Notebook importNotebook(String name, String data, String userId);
-	
+
 	public Notebook cloneNotebook(String name, String idzep, String userId);
-	
+
 	public ResponseEntity<byte[]> exportNotebook(String id, String ususerIder);
-	
+
 	public void removeNotebook(String id, String userId);
-	
-	public String loginOrGetWSTokenAdmin();
-	
+
 	public String loginOrGetWSToken();
-	
+
+	public String loginOrGetWSTokenAdmin();
+
 	public ResponseEntity<String> sendHttp(HttpServletRequest requestServlet, HttpMethod httpMethod, String body)
 			throws URISyntaxException, ClientProtocolException, IOException;
-	
+
+	public ResponseEntity<String> sendHttp(String url, HttpMethod httpMethod, String body) 
+			throws URISyntaxException, ClientProtocolException, IOException;
+
+	public ResponseEntity<String> sendHttp(String url, HttpMethod httpMethod, String body, HttpHeaders headers)
+			throws URISyntaxException, ClientProtocolException, IOException;
+
 	public Notebook getNotebook(String identification, String userId);
-	
+
 	public List<Notebook> getNotebooks(String userId);
 }
