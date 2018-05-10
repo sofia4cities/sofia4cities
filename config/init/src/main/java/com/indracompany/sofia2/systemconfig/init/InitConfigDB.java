@@ -52,6 +52,7 @@ import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
 import com.indracompany.sofia2.config.model.MarketAsset;
+import com.indracompany.sofia2.config.model.Notebook;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
@@ -75,6 +76,7 @@ import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
+import com.indracompany.sofia2.config.repository.NotebookRepository;
 import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -157,6 +159,9 @@ public class InitConfigDB {
 	@Autowired
 	MarketAssetRepository marketAssetRepository;
 
+	@Autowired
+	NotebookRepository notebookRepository;
+	
 	@PostConstruct
 	@Test
 	public void init() {
@@ -223,7 +228,9 @@ public class InitConfigDB {
 
 			init_market();
 			log.info("OK init_Market");
-
+			
+			init_notebook();
+			log.info("OK init_Notebook");
 		}
 
 	}
@@ -694,6 +701,16 @@ public class InitConfigDB {
 			this.consoleMenuRepository.save(menu);
 		} catch (Exception e) {
 			log.error("Error adding menu for role USER");
+		}
+		try {
+			log.info("Adding menu for role ANALYTIC");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("4");
+			menu.setJson(loadFromResources("menu/menu_analytic.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DATASCIENTIST.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role ANALYTIC");
 		}
 	}
 
@@ -1743,5 +1760,25 @@ public class InitConfigDB {
 	 * 
 	 * } }
 	 */
+	
+	public void init_notebook() {
+		log.info("init notebook");
+		List<Notebook> notebook = this.notebookRepository.findAll();
+		if (notebook.isEmpty()) {
 
+			try {
+				User user = getUserAnalytics();
+				Notebook n = new Notebook();
+
+				n.setUser(user);
+				n.setIdentification("Analytics s4c notebook tutorial");
+				// Default zeppelin notebook tutorial ID
+				n.setIdzep("2A94M5J1Z");
+				notebookRepository.save(n);
+			} catch (Exception e) {
+				log.info("Could not create notebook");
+			}
+
+		}
+	}
 }

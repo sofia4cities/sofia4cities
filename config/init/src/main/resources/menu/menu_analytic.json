@@ -1,0 +1,283 @@
+{
+	"menu": "Sofia4Cities",
+	"rol": "ROLE_DEVELOPER",
+	"noSession": "/console/login",
+	"navigation": [
+		{
+			"title": {
+				"EN": "SHARE & USE",
+				"ES": "COMPARTE Y USA"
+			},
+			"icon": "flaticon-cart",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "My Market",
+						"ES": "Mi Market"
+					},
+					"icon": "",
+					"url": "/controlpanel/marketasset/list"
+				},
+			    {
+					"title": {
+						"EN": "My Web Projects",
+						"ES": "Mis Proyectos Web"
+					},
+					"icon": "",
+					"url": "/controlpanel/webprojects/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "",
+				"ES": ""
+			},
+			"icon": "flaticon-more-v3",
+			"url": "",
+			"submenu": [
+			]
+		},
+		{
+			"title": {
+				"EN": "DATA MODELLING",
+				"ES": "MODELADO DE DATOS"
+			},
+			"icon": "flaticon-network",
+			"url": "",
+			"submenu": [
+				{	
+					"title": {
+						"EN": "My Ontologies",
+						"ES": "Mis Ontologías"
+					},
+					"icon": "",
+					"url": "/controlpanel/ontologies/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "DEVICES",
+				"ES": "DISPOSITIVOS"
+			},
+			"icon": "flaticon-share",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "My Devices",
+						"ES": "Mis Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/list"
+				},
+				{
+					"title": {
+						"EN": "My Simulations",
+						"ES": "Mis Simulaciones"
+					},
+					"icon": "",
+					"url": "/controlpanel/devicesimulation/list"
+				},
+				{
+					"title": {
+						"EN": "Status of My Devices",
+						"ES": "Estado de mis Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/management/show"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "INGEST & PROCESS",
+				"ES": "INGESTA Y PROCESADO"
+			},
+			"icon": "flaticon-car",
+			"url": "",
+			"submenu": [	
+				{
+					"title": {
+						"EN": "My DataFlows",
+						"ES": "Mis Flujos de Datos"
+					},
+					"icon": "",
+					"url": "/controlpanel/flows/list"
+				},
+				{
+					"title": {
+						"EN": "My Twitter Listenings",
+						"ES": "Mis Escuchas en Twitter"
+					},
+					"icon": "",
+					"url": "/controlpanel/twitter/scheduledsearch/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "VISUALIZATION",
+				"ES": "VISUALIZACIÓN"
+			},
+			"icon": "flaticon-graph",
+			"url": "",
+			"submenu": [			
+				{
+					"title": {
+						"EN": "My Dashboards",
+						"ES": "Mis Dashboards"
+					},
+					"icon": "",
+					"url": "/controlpanel/dashboards/list"
+				},
+				{
+					"title": {
+						"EN": "My Gadgets",
+						"ES": "Mis Gadgets"
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgets/list"
+				},				
+     			{
+					"title": {
+						"EN": "My Gadget Templates",
+						"ES": "Mis Plantillas de Gadget"
+					},
+					"icon": "",
+					"url": "/controlpanel/gadgettemplates/list"
+				},
+				{
+					"title": {
+						"EN": "My DataSources",
+						"ES": "Mis Fuentes de datos"
+					},
+					"icon": "",
+					"url": "/controlpanel/datasources/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "API MANAGER",
+				"ES": "API MANAGER"
+			},
+			"icon": "flaticon-multimedia",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "My APIs",
+						"ES": "Mis APIs"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/list"
+				},
+				{
+					"title": {
+						"EN": "My API-Tokens",
+						"ES": "Mis API-Tokens"
+					},
+					"icon": "",
+					"url": "/controlpanel/apimanager/token/list"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "DIGITAL TWIN",
+				"ES": "DIGITAL TWIN"
+			},
+			"icon": "flaticon-medical",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "My Digital Twin Types",
+						"ES": "Mis Definiciones de Digital Twin"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwintypes/list"
+				},
+				{
+					"title": {
+						"EN": "My Digital Twins",
+						"ES": "Mis Digital Twins"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwindevices/list"
+				},
+				{
+					"title": {
+						"EN": "Digital Twin Status",
+						"ES": "Estado de mis Digital Twins"
+					},
+					"icon": "",
+					"url": "/controlpanel/digitaltwindisplay/show"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "TOOLS",
+				"ES": "HERRAMIENTAS"
+			},
+			"icon": "flaticon-open-box",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "Query Tool",
+						"ES": "Herramienta Consultas"
+					},
+					"icon": "",
+					"url": "/controlpanel/querytool/show"
+				},
+				{
+					"title": {
+						"EN": "My Audit",
+						"ES": "Mi Auditoría"
+					},
+					"icon": "",
+					"url": "/controlpanel/audit/show"
+				},
+				{
+					"title": {
+						"EN": "My Planned Tasks",
+						"ES": "Mis Tareas Planificadas"
+					},
+					"icon": "",
+					"url": "/controlpanel/planner/list"
+				},
+				{
+					"title": {
+						"EN": "JSON import Tools",
+						"ES": "Herramientas de importación"
+					},
+					"icon": "",
+					"url": "/controlpanel/jsontool/tools"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "Analytics",
+				"ES": "Analytics"
+			},
+			"icon": "flaticon-analytics",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "My Notebooks",
+						"ES": "Mis Notebooks"
+					},
+					"icon": "",
+					"url": "/controlpanel/notebooks/list"
+				}
+			]
+		}
+	]
+}
