@@ -14,8 +14,11 @@
 package com.indracompany.sofia2.controlpanel.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -27,6 +30,9 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +41,20 @@ import lombok.extern.slf4j.Slf4j;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Slf4j
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	@Bean
+    public FilterRegistrationBean corsFilterOauth() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
 
 	@Autowired
 	private AccessDeniedHandler accessDeniedHandler;
@@ -47,9 +67,28 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
-		http.csrf().disable().authorizeRequests().antMatchers("/", "/home", "/favicon.ico").permitAll()
-				.antMatchers("/api/applications", "/api/applications/").permitAll().antMatchers("/users/register")
-				.permitAll().antMatchers("/health/", "/info", "/metrics", "/trace", "/api", "/dashboards/**", "/gadgets/**", "/datasources/**").permitAll()
+		http.csrf().disable().authorizeRequests()
+				.antMatchers("/", 
+						"/home", 
+						"/favicon.ico").permitAll()
+				.antMatchers("/api/applications", 
+						"/api/applications/").permitAll()
+				.antMatchers("/users/register").permitAll()
+				.antMatchers("/health/", 
+						"/info", 
+						"/metrics", 
+						"/trace", 
+						"/api", 
+						"/dashboards/**", 
+						"/gadgets/**", 
+						"/datasources/**",	
+						"/v2/api-docs/",
+		        		"/v2/api-docs/**",
+		        		"/swagger-resources/",
+		        		"/swagger-resources/**",
+		        		"/swagger-ui.html").permitAll()
+				.antMatchers("/oauth/").permitAll()
+				.antMatchers("/management","/management/**").permitAll()
 				.antMatchers("/admin").hasAnyRole("ROLE_ADMINISTRATOR").antMatchers("/admin/**")
 				.hasAnyRole("ROLE_ADMINISTRATOR").anyRequest().authenticated().and().formLogin().loginPage("/login")
 				.defaultSuccessUrl("/main").permitAll().and().logout().logoutSuccessHandler(logoutSuccessHandler).permitAll().and().sessionManagement()
@@ -70,7 +109,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
+		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**","/webjars/**");
 	}
 
 }
