@@ -59,14 +59,7 @@
                 "type": "object"
             },
             "aqi": {
-                "type": "number",
-                "enum": [
-                    "good",
-                    "moderate",
-                    "unhealthy-sensitive",
-                    "unhealthy",
-                    "very-unhealthy"
-                ]
+                "type": "number"
             }
         }
     },
