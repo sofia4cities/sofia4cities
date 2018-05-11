@@ -27,9 +27,14 @@ RUN chown -R sofia:sofia /usr/local && \
 COPY sofia4cities.crt /usr/local/
 COPY server.key /usr/local/
 
+COPY ocpserver.crt /usr/local/
+COPY ocpserver.key /usr/local/
+
 # Import certificates
 RUN keytool -noprompt -import -v -trustcacerts -alias rancherserver -file /usr/local/sofia4cities.crt \
 	-keystore /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts -keypass changeit -storepass changeit
+RUN keytool -noprompt -import -v -trustcacerts -alias openshiftserver -file /usr/local/ocpserver.crt \
+	-keystore /usr/lib/jvm/java-1.8-openjdk/jre/lib/security/cacerts -keypass changeit -storepass changeit	
 	  
 USER sofia
 

@@ -47,6 +47,16 @@ sofia2: #Config Sofia2 specific
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
    router.avoidsslverification: true
    apimanager.audit.enabled: true
+   iotbroker.plugable:
+     gateway:
+      kafka:
+        prefix: ontology_
+        group: ontologyGroup
+        topic.pattern: ontology.*
+        router.topic: router
+        consumer.consumersCount : 10
+        consumer.group : kafkaGroup
+        consumer.maxPollRecords : 5000 
     
 spring: ## General Config  
    application.name: sofia2-api-manager

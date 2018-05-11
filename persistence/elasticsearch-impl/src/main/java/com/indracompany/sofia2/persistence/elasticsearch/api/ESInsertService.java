@@ -91,8 +91,8 @@ public class ESInsertService {
 				listResult.add(bulkr);
 
 			}
-		} catch (IOException e) {
-			log.error("Error Loading document "+e.getMessage(),e);
+		} catch (Exception e) {
+			log.error("Error Loading document "+e.getMessage());
 		}
 		
 		log.info("Documents has been inserted..." + listResult.size());
