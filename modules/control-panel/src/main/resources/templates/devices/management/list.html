@@ -40,6 +40,8 @@
 	th:href="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.css}" />
 <link rel="stylesheet" type="text/css" media="all"
 	th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}" />
+<link rel="stylesheet" type="text/css" media="all"
+	th:href="@{/static/vendor/leaflet/leaflet.css}" />
 
 </head>
 
@@ -133,6 +135,9 @@
 																class="la flaticon-user"></i> <span
 																th:text="#{device.clientplatform}">Platform Client</span></th>
 															<th class="titulo-columnas"><i
+																class="la flaticon-user"></i> <span
+																th:text="#{device.tags}">tags</span></th>
+															<th class="titulo-columnas"><i
 																class="la flaticon-share"></i> <span
 																th:text="#{device.connected}">Connected</span></th>
 															<th class="titulo-columnas"><i
@@ -150,12 +155,16 @@
 													</thead>
 													<tbody th:remove="all-but-first">
 														<tr th:each="device : ${devices}" pages:paginate="10">
+
 															<!-- IDENTIFICATION -->
 															<td class="text-left no-wrap bold internalId"
 																th:text="${device.identification}"></td>
 															<!-- PLATFORM CLIENT -->
 															<td class="text-left no-wrap bold internalId"
 																th:text="${device.clientPlatform.identification}"></td>
+															<!-- TAGS -->
+															<td class="text-left no-wrap bold internalId"
+																th:text="${device.tags}"></td>
 															<!-- CONNECTED -->
 															<td class="text-center"
 																th:if="${device.connected}"><span class="label label-success"><i class="fa fa-check-circle"></i></span></td>
@@ -227,16 +236,23 @@
 														<label class="toggle-vis" data-column="0"
 															th:text="#{device.id}"> Identification</label> 
 															<label class="toggle-vis" data-column="1"
-															th:text="#{device.clientplatform}"> Platform Client</label><label
-															class="toggle-vis" data-column="2"
-															th:text="#{device.connected}"> Connected</label> <label
+															th:text="#{device.clientplatform}"> Platform Client</label>
+															<label class="toggle-vis" data-column="2"
+															th:text="#{device.tags}"> tags</label>
+															<label
 															class="toggle-vis" data-column="3"
-															th:text="#{device.lastcon}"> Last Connected</label> <label
-															class="toggle-vis" data-column="4"
-															th:text="#{device.protocol}"> Protocol</label> <label
-															class="toggle-vis" data-column="5"
-															th:text="#{device.status}"> Status</label> <label
+															th:text="#{device.connected}"> Connected</label> 
+															<label
+															class="toggle-vis text-muted line-through" data-column="4"
+															th:text="#{device.lastcon}"> Last Connected</label> 
+															<label
+															class="toggle-vis text-muted line-through" data-column="5"
+															th:text="#{device.protocol}"> Protocol</label> 
+															<label
 															class="toggle-vis" data-column="6"
+															th:text="#{device.status}"> Status</label> 
+															<label
+															class="toggle-vis" data-column="7"
 															th:text="#{gen.options}"> Options</label>
 													</div>
 
@@ -248,6 +264,26 @@
 							</div>
 						</div>
 						<!-- END PORTLET BASIC LIGHT -->
+						<!--  PORTLET MAP -->
+						<div class="portlet light bordered">
+							<div class="portlet-title">
+								<div class="caption">
+									<i class="icon-list font-grey-gallery"></i> <span
+										class="caption-subject bold font-grey-gallery uppercase"
+										th:text="#{device.template.management.map}"> Devices location</span>
+									<!-- <span class="caption-helper">Subtitulo de contenedor</span> -->
+								</div>
+								<div class="tools">
+									<a href="" class="expand" data-original-title="" title="">
+									</a> <a href="" class="fullscreen" data-original-title="" title="">
+									</a>
+								</div>
+							</div>
+							<div class="portlet-body" style="display: none; height: auto;" id="portlet-body">
+								<div id="devicesLocation" style="height:500px">									
+								</div>							
+							</div>							
+						</div>							
 					</div>
 					<!-- END COL-12 -->
 				</div>
@@ -273,10 +309,10 @@
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}" />
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}" />
-	<script
-		th:src="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.js}" />
-	<script
-		th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}" />
+	<script	th:src="@{/static/vendor/datatable/features/filtering/jquery.dataTables.yadcf.js}" />
+	<script	th:src="@{/static/vendor/bootstrap-select/bootstrap-select.min.js}" />
+	<script th:src="@{/static/vendor/leaflet/leaflet.js}" />
+	<script th:src="@{/static/js/utils/leafLetMap.js}" />
 
 
 	<script th:inline="javascript">	
@@ -284,7 +320,9 @@
 	// TEMPLATE SEARCH FORM
 	var identification = [[${param.identification}]] || '';	
 	var ontologies = [[${param.ontologies}]] || '';
-
+	
+	
+	
 	
 	//GET SEARCH DATA
 	identification ? $('#identification').val(identification) : identification = '';
@@ -308,7 +346,8 @@
 	
 	//<![CDATA[
 	function navigateUrl(url){  window.location.href = url;	}
-	
+	var devices=[[${devicesJson}]];
+	devices = JSON.parse(devices);
 	// MAIN WHEN READY
 	$( document ).ready(function() {
 	
@@ -469,8 +508,12 @@
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
 		
+		//Load map
+		setUpMap('devicesLocation');
 		//DATATABLE 
 		var oTable = $('#devicesTable').DataTable();
+		oTable.column(3).visible(false);
+		oTable.column(4).visible(false);
 		
 		// SHOW/HIDE DATATABLES COLUMN INIT 		
 		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		

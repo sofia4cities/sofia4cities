@@ -25,6 +25,7 @@ public class SSAPBodyLogMessage extends SSAPBodyMessage {
 
 	public SSAPLogLevel level;
 	public String message;
+	public SSAPStatusType status;
 	public JsonNode extraData;
 	public Point2D.Double coordinates;
 
@@ -35,8 +36,6 @@ public class SSAPBodyLogMessage extends SSAPBodyMessage {
 	public void setCoordinates(Point2D.Double coordinates) {
 		this.coordinates = coordinates;
 	}
-
-	public SSAPStatusType status;
 
 	public SSAPLogLevel getLevel() {
 		return level;

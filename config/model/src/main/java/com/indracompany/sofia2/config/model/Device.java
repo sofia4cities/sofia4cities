@@ -41,7 +41,7 @@ import lombok.Setter;
 public class Device extends AuditableEntityWithUUID {
 
 	public static enum StatusType {
-		OK, ERROR, WARNING, COMPLETED, EXECUTED, UP, DOWN
+		OK, ERROR, WARNING, COMPLETED, EXECUTED, UP, DOWN, CRITICAL
 	}
 
 	@ManyToOne
@@ -102,5 +102,10 @@ public class Device extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String tags;
+
+	@Column(name = "location")
+	@Getter
+	@Setter
+	private double[] location;
 
 }

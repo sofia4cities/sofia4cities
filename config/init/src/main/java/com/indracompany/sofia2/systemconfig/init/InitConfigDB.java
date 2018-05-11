@@ -842,6 +842,15 @@ public class InitConfigDB {
 			dataModelRepository.save(dataModel);
 			//
 			dataModel = new DataModel();
+			dataModel.setName("DeviceLog");
+			dataModel.setTypeEnum(DataModel.MainType.IoT);
+			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_DeviceLog.json"));
+			dataModel.setDescription("Data model for device logging");
+			dataModel.setLabels("General,IoT,Log");
+			dataModel.setUser(getUserAdministrator());
+			dataModelRepository.save(dataModel);
+			//
+			dataModel = new DataModel();
 			dataModel.setName("Device");
 			dataModel.setTypeEnum(DataModel.MainType.IoT);
 			dataModel.setJsonSchema(loadFromResources("datamodels/DataModel_Device.json"));

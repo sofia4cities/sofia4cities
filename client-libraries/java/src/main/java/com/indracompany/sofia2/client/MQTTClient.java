@@ -28,7 +28,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -71,6 +70,10 @@ public class MQTTClient {
 	public enum QUERY_TYPE {
 		NATIVE, SQL
 	};
+
+	public enum STATUS_TYPE {
+		OK, ERROR, WARNING, COMPLETED, EXECUTED, UP, DOWN, CRITICAL
+	}
 
 	public MQTTClient(String brokerURI) {
 		this.brokerURI = brokerURI;
@@ -198,7 +201,6 @@ public class MQTTClient {
 
 	public String subscribe(String ontology, String query, QUERY_TYPE queryType, int timeout,
 			SubscriptionListener listener) {
-
 		String subscriptionId = null;
 		final SSAPMessage<SSAPBodySubscribeMessage> subscription = new SSAPMessage<SSAPBodySubscribeMessage>();
 		subscription.setSessionKey(this.sessionKey);
@@ -324,51 +326,68 @@ public class MQTTClient {
 	 */
 
 	@SuppressWarnings("unchecked")
-	public void log(String clientPlatform) {
-		final SSAPMessage<SSAPBodyLogMessage> log = new SSAPMessage<>();
+	public void log(String clientPlatform, String message, double latitude, double longitude, STATUS_TYPE status,
+			long timeout) {
+		final SSAPMessage<SSAPBodyLogMessage> logMessage = new SSAPMessage<>();
 		final SSAPBodyLogMessage body = new SSAPBodyLogMessage();
-		log.setDirection(SSAPMessageDirection.REQUEST);
-		log.setMessageType(SSAPMessageTypes.LOG);
-		log.setSessionKey(this.sessionKey);
-		Point2D.Double coordinates = new Point2D.Double(40.8888, 90.2234);
+		logMessage.setDirection(SSAPMessageDirection.REQUEST);
+		logMessage.setMessageType(SSAPMessageTypes.LOG);
+		logMessage.setSessionKey(this.sessionKey);
+		Point2D.Double coordinates = new Point2D.Double(latitude, longitude);
 		coordinates.setLocation(coordinates);
 		body.setCoordinates(coordinates);
 		body.setLevel(SSAPLogLevel.INFO);
-		body.setMessage("Keep alive log message");
-		body.setStatus(SSAPStatusType.UP);
-		log.setBody(body);
+		body.setMessage(message);
+		switch (status) {
+		case UP:
+			body.setStatus(SSAPStatusType.UP);
+		case DOWN:
+			body.setStatus(SSAPStatusType.DOWN);
+		case WARNING:
+			body.setStatus(SSAPStatusType.WARNING);
+		case ERROR:
+			body.setStatus(SSAPStatusType.ERROR);
+		case EXECUTED:
+			body.setStatus(SSAPStatusType.EXECUTED);
+		case COMPLETED:
+			body.setStatus(SSAPStatusType.COMPLETED);
+		case OK:
+			body.setStatus(SSAPStatusType.OK);
+		case CRITICAL:
+			body.setStatus(SSAPStatusType.CRITICAL);
+
+		}
+
+		logMessage.setBody(body);
 
 		final MqttMessage mqttLog = new MqttMessage();
 		try {
-			mqttLog.setPayload(SSAPJsonParser.getInstance().serialize(log).getBytes());
+			mqttLog.setPayload(SSAPJsonParser.getInstance().serialize(logMessage).getBytes());
 			this.client.publish(topic, mqttLog);
-			String response = completableFutureMessage.get(5000, TimeUnit.SECONDS);
+			String response = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> responseSSAP = SSAPJsonParser.getInstance().deserialize(response);
 			if (responseSSAP.getBody().isOk())
-				MQTTClient.log.info("Message published");
+				log.info("Message published");
 			else {
 
 				throw new MQTTException("Could not publish message \nError Code: "
 						+ responseSSAP.getBody().getErrorCode() + ":\n" + responseSSAP.getBody().getError());
 			}
 		} catch (SSAPParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (MqttPersistenceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Could not parse SSAP message");
+			throw new MQTTException("Could not parse SSAP message");
 		} catch (MqttException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Could not connect to MQTT broker");
+			throw new MQTTException("Could not disconnect from MQTT broker");
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Could not retrieve message from broker, interrupted thread");
+			throw new MQTTException("Could not retrieve message from broker, interrupted thread");
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Could not get result from retrieved message at CompletableFuture object");
+			throw new MQTTException("Could not get result from retrieved message at CompletableFuture object");
 		} catch (TimeoutException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Timeout, could not retrieve session key");
+			throw new MQTTException("Timeout, could not retrieve session key");
 		}
 	}
 

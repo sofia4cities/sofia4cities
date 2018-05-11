@@ -85,16 +85,17 @@ public class DeviceManagerDelegate implements DeviceManager {
 
 		switch (request.getMessageType()) {
 		case JOIN:
-			touchDevice(device, session, true, info, null);
+			touchDevice(device, session, true, info, null, null);
 			break;
 		case LEAVE:
-			touchDevice(device, session, false, info, null);
+			touchDevice(device, session, false, info, null, null);
 			break;
 		case LOG:
 			SSAPBodyLogMessage logMessage = (SSAPBodyLogMessage) request.getBody();
-			touchDevice(device, session, true, info, logMessage.getStatus().name());
+			double[] location = { logMessage.getCoordinates().getX(), logMessage.getCoordinates().getY() };
+			touchDevice(device, session, true, info, logMessage.getStatus().name(), location);
 		default:
-			touchDevice(device, session, true, info, null);
+			touchDevice(device, session, true, info, null, null);
 			break;
 		}
 
@@ -129,7 +130,8 @@ public class DeviceManagerDelegate implements DeviceManager {
 
 	}
 
-	private void touchDevice(Device device, IoTSession session, boolean connected, GatewayInfo info, String status) {
+	private void touchDevice(Device device, IoTSession session, boolean connected, GatewayInfo info, String status,
+			double[] location) {
 		log.info("Start Updating device " + device.getIdentification());
 		device.setStatus(status == null ? Device.StatusType.OK.name() : status);
 		device.setClientPlatform(this.clientPlatformService.getByIdentification(session.getClientPlatform()));
@@ -139,11 +141,12 @@ public class DeviceManagerDelegate implements DeviceManager {
 		device.setDisabled(false);
 		device.setProtocol(info.getProtocol());
 		device.setUpdatedAt(new Date());
+		if (location != null)
+			device.setLocation(location);
 		deviceService.updateDevice(device);
 		log.info("End Updating device " + device.getIdentification());
 	}
 
-	@SuppressWarnings("restriction")
 	@Override
 	public JsonNode createDeviceLog(ClientPlatform client, String deviceId, SSAPBodyLogMessage logMessage)
 			throws IOException {

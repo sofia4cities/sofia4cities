@@ -22,6 +22,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 
 import com.indracompany.sofia2.client.MQTTClient;
+import com.indracompany.sofia2.client.MQTTClient.STATUS_TYPE;
 import com.indracompany.sofia2.client.configuration.MQTTSecureConfiguration;
 
 public class ClientsApplication {
@@ -76,8 +77,9 @@ public class ClientsApplication {
 		// });
 		//
 		// clientSecure.publish(ontology, jsonData, timeout);
-		clientSecure.log(clientPlatform);
+		clientSecure.log(clientPlatform, "Battery low", 40.529424, 3.641471, STATUS_TYPE.WARNING, timeout);
 		Thread.sleep(5000);
+		clientSecure.log(clientPlatform, "Battery critical", 40.529424, 3.641471, STATUS_TYPE.CRITICAL, timeout);
 		// clientSecure.unsubscribe(subsId);
 
 		clientSecure.disconnect();
