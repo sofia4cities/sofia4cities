@@ -59,8 +59,7 @@ sofia2: #Config Sofia2 specific
    controlpanel.avoidsslverification: true
    webproject:
       rootfolder.path: /usr/local/webprojects/
-      baseurl: https://localhost:18000/web/   
-      
+      baseurl: https://localhost:18000/web/        
    iotbroker.plugable:
      gateway:
       kafka:
@@ -71,7 +70,19 @@ sofia2: #Config Sofia2 specific
         consumer.consumersCount : 10
         consumer.group : kafkaGroup
         consumer.maxPollRecords : 5000 
-        
+   analytics.notebook:
+      zeppelinProtocol: http
+      zeppelinHostname: 192.168.99.100
+      zeppelinPort: 8080
+      zeppelinPathname: 
+      shiroAdminUsername: admin
+      shiroAdminPass: password1
+      shiroUsername: user1
+      shiroPass: password2
+      restUsername: userrest
+      restPass: passrest
+      notebookInfoPath: /api/notebook/
+      restTimeout.millis: 10000
 spring: ## General Config  
    application.name: sofia2-control-panel
    thymeleaf: ## Thymeleaf Config

@@ -158,6 +158,7 @@ var ApiCustomOpsController = function() {
         var id_type_op_customsql = $('#id_type_op_customsql').val();
         var id_name_op_customsql = $('#id_name_op_customsql').val();
         var errorQuery = isValidQuery($('#id_query_op_customsql').val());
+        var postProcess = myCodeMirrorJs.getValue();
 
         var desc_op_customsql = $('#id_desc_op_customsql').val();
         if (id_type_op_customsql!=null && id_type_op_customsql!="" && id_name_op_customsql!=null && id_name_op_customsql!="" && desc_op_customsql!=null && desc_op_customsql!=""){
@@ -166,7 +167,7 @@ var ApiCustomOpsController = function() {
 	                 if (!ApiCreateController.existOperation(id_name_op_customsql)){
 	                     var querystrings = new Array();
 	                     var headers = new Array();
-	                     var operation = {identification: id_name_op_customsql, description: desc_op_customsql , operation: id_type_op_customsql, path: "", querystrings: querystrings, headers: headers};
+	                     var operation = {identification: id_name_op_customsql, description: desc_op_customsql , operation: id_type_op_customsql, path: "", postprocess: postProcess, querystrings: querystrings, headers: headers};
 
 	                     saveParamQueryCustomsql(operation);
 
@@ -183,6 +184,7 @@ var ApiCustomOpsController = function() {
 	                     if (operations [i].identification == name_op_edit_customsql){
 	                    	 operations [i].description=desc_op_customsql;
 	                    	 operations [i].operation=id_type_op_customsql;
+	                    	 operations [i].postprocess=postProcess;
 
 	                    	 operations [i].querystrings = new Array();
 
@@ -349,7 +351,13 @@ var ApiCustomOpsController = function() {
             }
 
             loadParamsQueryValues(operation.querystrings);
-
+            if (operation.postprocess!=null && operation.postprocess!=""){
+            	myCodeMirrorJs.setValue(operation.postprocess);
+            	$('#id_postprocess_op_customsql').show();
+            } else {
+            	$('#id_postprocess_op_customsql').hide();
+            }
+            
             $('#id_name_op_customsql').prop('disabled', true);
         } else {
         	$('#id_name_op_customsql').val("");
@@ -357,11 +365,17 @@ var ApiCustomOpsController = function() {
         	$('#id_desc_op_customsql').val("");
         			
         	loadParamsFromQuery("", "");
+        	
+        	myCodeMirrorJs.setValue("");
 
             $('#id_name_op_customsql').prop('disabled', false);
 
         }
         $('#dialog-customsql').modal('toggle');
+        setTimeout(function() {
+        	myCodeMirrorJs.refresh();
+    	},600);
+
     }
 
 
@@ -413,6 +427,7 @@ var ApiCustomOpsController = function() {
 			logControl ? console.log(LIB_TITLE + ': load()') : '';
 			return apiCustomOpsReg = Data;
 		},
+
 		
 		// INIT() CONTROLLER INIT CALLS
 		init: function(){

@@ -94,6 +94,21 @@
 						<simple>["MESSAGE EXCEPTION","${exception.message}"]</simple>
 					</setBody>
 				</doCatch>
+				
+				<to uri="direct:post-process" />
+			</doTry>
+		</route>
+		
+		<route id="post-process">
+			<from uri="direct:post-process" />
+
+			<doTry>
+				<to uri="bean:apiServiceImpl?method=postProcess" />
+				<doCatch>
+					<exception>java.lang.Exception</exception>
+					<log message="Error processing OUTPUT API ${exception.message}" loggingLevel="ERROR" />
+					<to uri="direct:set-default-headers" />
+				</doCatch>
 				<to uri="direct:process-output" />
 			</doTry>
 		</route>
