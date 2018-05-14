@@ -54,7 +54,7 @@ public class DeviceSimulationServiceImpl implements DeviceSimulationService {
 		List<String> clientIdentifications = new ArrayList<String>();
 		List<ClientPlatform> clients = new ArrayList<ClientPlatform>();
 		User user = this.userService.getUser(userId);
-		if (user.getRole().getName().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
+		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.name())) {
 
 			clients = this.clientPlatformRepository.findAll();
 
