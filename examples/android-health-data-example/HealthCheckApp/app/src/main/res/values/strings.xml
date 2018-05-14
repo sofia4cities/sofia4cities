@@ -13,4 +13,21 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="prompt_height">Height (cm)</string>
+    <string name="prompt_weight">Weight (kg)</string>
+    <string name="prompt_sys_pressure">Systolic arterial pressure (mm Hg)</string>
+    <string name="prompt_dia_pressure">Diastolic arterial pressure (mm Hg)</string>
+    <string name="prompt_comments">Comments</string>
+
+    <string name="action_store_form">Store on S4C Platform</string>
+    <string name="action_send_form">Share data with a specialist</string>
+
 </resources>
