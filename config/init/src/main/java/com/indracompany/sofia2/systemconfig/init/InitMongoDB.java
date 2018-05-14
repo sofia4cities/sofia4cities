@@ -228,10 +228,10 @@ public class InitMongoDB {
 			ticket.setAllowsCypherFields(false);
 			ontologyRepository.save(ticket);
 		}
-		manageDb.createTable4Ontology(ticket.getIdentification(), ticket.getJsonSchema());
 
 		try {
 			if (basicOps.count("Ticket") == 0) {
+				manageDb.createTable4Ontology(ticket.getIdentification(), ticket.getJsonSchema());
 				Runtime r = Runtime.getRuntime();
 				String command = null;
 

@@ -43,6 +43,7 @@ import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DashboardUserAccessType;
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.DeviceSimulation;
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
@@ -71,6 +72,7 @@ import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardUserAccessTypeRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.DeviceSimulationRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
@@ -165,7 +167,10 @@ public class InitConfigDB {
 
 	@Autowired
 	NotebookRepository notebookRepository;
-	
+
+	@Autowired
+	DeviceSimulationRepository simulationRepository;
+
 	@PostConstruct
 	@Test
 	public void init() {
@@ -234,9 +239,30 @@ public class InitConfigDB {
 
 			init_market();
 			log.info("OK init_Market");
-			
+
 			init_notebook();
 			log.info("OK init_Notebook");
+
+			init_simulations();
+			log.info("OK init_simulations");
+		}
+
+	}
+
+	private void init_simulations() {
+		DeviceSimulation simulation = this.simulationRepository.findByIdentification("Issue generator");
+		if (simulation == null) {
+			simulation = new DeviceSimulation();
+			simulation.setActive(false);
+			simulation.setCron("0/5 * * ? * * *");
+			simulation.setIdentification("Issue generator");
+			simulation.setInterval(5);
+			simulation.setJson(loadFromResources("simulations/DeviceSimulation_example1.json"));
+			simulation.setClientPlatform(this.clientPlatformRepository.findByIdentification("Ticketing App"));
+			simulation.setOntology(this.ontologyRepository.findByIdentification("Ticket"));
+			simulation.setToken(this.tokenRepository.findByClientPlatform(simulation.getClientPlatform()).get(0));
+			simulation.setUser(getUserDeveloper());
+			this.simulationRepository.save(simulation);
 		}
 
 	}
@@ -1787,7 +1813,7 @@ public class InitConfigDB {
 	 * 
 	 * } }
 	 */
-	
+
 	public void init_notebook() {
 		log.info("init notebook");
 		List<Notebook> notebook = this.notebookRepository.findAll();
