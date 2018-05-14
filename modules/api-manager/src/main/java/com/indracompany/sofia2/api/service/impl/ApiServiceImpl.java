@@ -176,6 +176,14 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		exchange.getIn().setBody(data);
 		return data;
 	}
+	
+	@PrometheusTimeMethod(name = "postProcess", help = "postProcess")
+	@Timed
+	public Map<String, Object> postProcess(Map<String, Object> data, Exchange exchange) throws Exception {
+
+		
+		return data;
+	}
 
 	@PrometheusTimeMethod(name = "processOutput", help = "processOutput")
 	@Timed

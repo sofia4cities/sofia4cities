@@ -216,7 +216,8 @@ public class ApiManagerHelper {
 			operationJson.setOperation(operation.getOperation().toString());
 			operationJson.setPath(operation.getPath());
 			operationJson.setEndpoint(operation.getEndpoint());
-						
+			operationJson.setPostprocess(operation.getPostProcess());	
+			
 			List<HeaderJson> headers = new ArrayList<HeaderJson>();
 			
 			for (ApiHeader header : operation.getApiheaders()) {

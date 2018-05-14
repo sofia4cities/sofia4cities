@@ -210,11 +210,15 @@ public class DashboardController {
 	}
 
 	@GetMapping(value = "/view/{id}", produces = "text/html")
-	public String viewerDashboard(Model model, @PathVariable("id") String id) {
-		model.addAttribute("dashboard", dashboardService.getDashboardById(id, utils.getUserId()));
-		model.addAttribute("credentials", dashboardService.getCredentialsString(utils.getUserId()));
-		model.addAttribute("edition", false);
-		return "dashboards/view";
+	public String viewerDashboard(Model model, @PathVariable("id") String id, HttpServletRequest request) {
+		if (dashboardService.hasUserViewPermission(id, utils.getUserId())) {
+			model.addAttribute("dashboard", dashboardService.getDashboardById(id, utils.getUserId()));
+			model.addAttribute("credentials", dashboardService.getCredentialsString(utils.getUserId()));
+			model.addAttribute("edition", false);
+			return "dashboards/view";
+		} else {
+			return "redirect:/403";
+		}
 	}
 
 	@PutMapping(value = "/save/{id}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
