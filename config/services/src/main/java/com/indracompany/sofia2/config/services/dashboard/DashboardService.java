@@ -55,4 +55,6 @@ public interface DashboardService {
 
 	boolean hasUserEditPermission(String id, String userId);
 
+	boolean hasUserViewPermission(String id, String userId);
+
 }

@@ -32,12 +32,12 @@ public class DefaultController {
 	public String base() {
 		Authentication userAuthentication = utils.getAuthentication();
 		if (userAuthentication != null) {
-			if (userAuthentication.getName().toUpperCase().equals("USER")){
+			if (userAuthentication.getName().toUpperCase().equals("USER")) {
 				return "redirect:/marketasset/list";
-			}	
-			return "redirect:/main";	
+			}
+			return "redirect:/main";
 		}
-			
+
 		return "redirect:/login";
 	}
 
@@ -58,8 +58,9 @@ public class DefaultController {
 	}
 
 	@GetMapping("/403")
-	public String error403() {
-		return "error/403";
+	public String error403(Model model) {
+		model.addAttribute("users", new User());
+		return "login";
 	}
 
 	@GetMapping("/404")
