@@ -54,23 +54,33 @@ function resetChat(){
     $("ul").empty();
 }
 
+function buttonPressed(msg){
+    insertChat("me",msg);
+    sendMsg(msg); 
+}
+
+function sendMsg(text){
+    var url = 'http://localhost:8080/message?msg=' + text
+    $.get(url, 
+        function(returnedData){
+            console.log(returnedData);
+            var data = JSON.parse(returnedData);
+            $(".bot-orders").empty();
+            data.buttons.forEach(function(element) {
+                var button = '<button class="pressed" onclick="buttonPressed(\''+element+'\')">'+element+'</button>';
+                $(".bot-orders").append(button);
+            });
+            insertChat("you",data.msg);
+        });    
+}
+
+
 $(".mytext").on("keydown", function(e){
     if (e.which == 13){
         var text = $(this).val();
         if (text !== ""){
             insertChat("me", text);  
-            var url = 'http://localhost:8080/message?msg=' + text
-            $.get(url, 
-                function(returnedData){
-                    console.log(returnedData);
-                    var data = JSON.parse(returnedData);
-                    $(".bot-orders").empty();
-                    data.buttons.forEach(function(element) {
-                    	var button = '<button class="pressed">'+element+'</button>';
-                        $(".bot-orders").append(button)
-                    });
-                    insertChat("you",data.msg);
-                });            
+            sendMsg(text);        
             $(this).val('');
         }
     }

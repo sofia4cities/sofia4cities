@@ -15,7 +15,6 @@
 package com.indracompany.sofia2.client;
 
 import java.io.IOException;
-import java.net.URL;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +44,6 @@ public class RestClient {
 
 	private String sessionKey;
 	private String restServer;
-	private final static String IOTBROKER_CONTEXT = "iotbroker";
-	private final static String IOTBROKER_URL = "http://localhost:8081/iotbroker";
 	private final static String JOIN_GET = "rest/client/join";
 	private final static String LEAVE_GET = "rest/client/leave";
 	private final static String LIST_GET = "rest/ontology";
@@ -67,13 +64,40 @@ public class RestClient {
 	 *            The device/client identification
 	 * @param clientPlatformInstance
 	 *            The instance of the device
-	 * @param timeout
-	 *            Time in seconds for waiting response from Broker
 	 * @return The session key for the session established between client and IoT
 	 *         Broker
 	 * 
 	 */
 	public String connect(String token, String clientPlatform, String clientPlatformInstance) throws IOException {
+		client = new OkHttpClient();
+		return createConnection(token, clientPlatform, clientPlatformInstance);
+	}
+	
+	/**
+	 * Creates a REST session.
+	 *
+	 * @param token
+	 *            The token associated with the device/client
+	 * @param clientPlatform
+	 *            The device/client identification
+	 * @param clientPlatformInstance
+	 *            The instance of the device
+	 * @param avoidSSLValidation
+	 *            Indicates if the connection will avoid to validate SSL certificates           
+	 * @return The session key for the session established between client and IoT
+	 *         Broker
+	 * 
+	 */
+	public String connect(String token, String clientPlatform, String clientPlatformInstance, boolean avoidSSLValidation) throws IOException {
+		if (avoidSSLValidation) {
+			client = getUnsafeOkHttpClient();
+		} else {
+			client = new OkHttpClient();
+		}
+		return createConnection(token, clientPlatform, clientPlatformInstance);
+	}
+	
+	private String createConnection(String token, String clientPlatform, String clientPlatformInstance) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
 
 		HttpUrl urlJoinWithParams = new HttpUrl.Builder().scheme(HttpUrl.parse(this.restServer).scheme())
@@ -82,8 +106,6 @@ public class RestClient {
 				.addQueryParameter("token", token).addQueryParameter("clientPlatform", clientPlatform)
 				.addEncodedQueryParameter("clientPlatformId", clientPlatformInstance).build();
 		Request request = new Request.Builder().url(urlJoinWithParams).get().build();
-
-		client = new OkHttpClient();
 
 		Response response = client.newCall(request).execute();
 		log.info("Trying to join Iotbroker...");
@@ -97,7 +119,6 @@ public class RestClient {
 		}
 
 		return this.sessionKey;
-
 	}
 
 	public List<JsonNode> getOntologyInstances(String ontology) {
