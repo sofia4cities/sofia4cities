@@ -14,10 +14,10 @@
         </properties>
 
         <groupId>com.indracompany.sofia2</groupId>
-        <artifactId>sofia2-select4cities-theme</artifactId>
+        <artifactId>sofia2-sofia2-theme</artifactId>
         <packaging>jar</packaging>
 
-        <name>onesait platform Select4Cities theme</name>
-        <description>A theme for Select4Cities project</description>
+        <name>onesait platform Sofia2 theme</name>
+        <description>A theme for Sofia2 project</description>
         
 </project>
