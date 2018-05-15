@@ -162,19 +162,7 @@
 	
 	<script type="text/javascript" th:inline="javascript">	
 	
-	// TEMPLATE SEARCH FORM.
-	var sname = [[${param.name}]] || '';
-	var stype = [[${param.type}]] || '';
 	
-	sname ? $('#name').val(sname) : sname = '';
-	stype ? $('#type').val(stype) : stype = '';
-	console.log('SEARCHING ... [ Name: ' + sname + ' Type: ' + stype + ']');
-	if (( sname != '') || (stype != '')) { $('#search-toggle').trigger('click'); }
-	
-	// DATATABLES LANGUAJE FROM PROPERTIES.
-	datatable_lang = [[#{datatables_lang}]];	
-	var languageJson = JSON.parse(datatable_lang);
-	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
 
 	</script>
 	
@@ -191,73 +179,55 @@
 	$( document ).ready(function() {
 	
 	
-		// AUTO COMPLETE ON DASHBOARD IDENTIFICATION/NAME
-		$.ajax({ url: "getNamesForAutocomplete", type: 'POST', dataType: 'json', contentType: 'application/json', mimeType: 'application/json',
-			success: function (source) {			 
-						var namesArray = new Array();
-						for( var i = 0; i < source.length; i++ ){
-							namesArray[i] = { value: source[i] , data: source[i]};
-						}
-						
-						// INIT AJAX AUTO COMPLETE
-				$('#identification').autocomplete({ 
-					lookup: namesArray,
-					lookupFilter: function(suggestion, originalQuery, queryLowerCase) {
-						var re = new RegExp('\\b' + $.Autocomplete.utils.escapeRegExChars(queryLowerCase), 'gi');
-						return re.test(suggestion.value);
-					}	
-				});
+	
+		// SET ANIMACIÓN BLOQUES DE PROYECTO
+		$('.panel-white').hover(function() {
+			$(this).addClass('bg-grey-mint font-grey-cararra',800);
+		}, function() {
+			$(this).removeClass('bg-grey-mint font-grey-cararra',100);
+		});
+		
+		// INICIALIZACIÓN DE BUSCADORES LIVE-SEARCH FALTA CAMBIAR SOBRE QUE LO HACE PARA QUE LO HAGA SOBRE PROYECTOS
+		$('.btn-search-proyect').keyup(function() {
+			
+			var searchValue = $(this).val().toLowerCase();
+			// selector para coger todos los span donde están los títulos de los proyectos.
+			var Proyectos = $('div.project-container > div.panel.panel-white > div.panel-heading > a > div.project-title');			
+			
+			// live-search 
+			var matchProjects = '';
+			if (searchValue !== '') {
+				Proyectos.each(function( index ){				
+					if (index < 0) return;
+					var projectTitle = $(this).text().toLowerCase();				
+					if ( projectTitle.includes(searchValue) ){
+						//lo incluye: hacemos algo para remarcar el título o lo que se nos ocurra, o nada.
+						console.log($(this).text() + ' << ' + searchValue + '-> SI');
+						 $(this).parents("div.project-container").show();	
+					}
+					else {
+						// no lo incluye
+						console.log($(this).text() + ' << ' + searchValue + ' -> NO');
+						$(this).parents("div.project-container").hide();	
+					}
+				});				
 			}
+			else{
+				// si hay algún proyecto oculto lo volvemos a mostrar	
+				$('div.project-container').show();
+			}		
 		});
+
 		
-		//SHOW/HIDE DATATABLE COLUMNS HANDLER
-		$('label.toggle-vis').on( 'click', function (e) {
-			e.preventDefault(); 
-			// Get the column API object
-			var column = $('#dashboards').DataTable().column( $(this).attr('data-column') ); 
-			// Toggle the visibility
-			column.visible( ! column.visible() );			
-			// toggle Text
-			$(this).toggleClass('text-muted line-through');			
-		});	
 		
-		// SEARCH FORM RESET
-		$('#reset_dashboard').on('click',function(){
-			$('#form_dashboard')[0].reset();
-			$('#form_dashboard')[0].submit();
-		});
 		
-		var createDashboard = function(name){
-			$.post(
-				"/controlpanel/dashboards/create", 
-				{identification : name}
-			).done(function(id){
-				navigateUrl("/controlpanel/dashboards/editfull/" + id)}
-			).fail(
-				function(e){
-					console.log("Error creating dashboard, message detail: " + e.responseText);
-				}
-			)
-		}
 		
-		// SEARCH FORM
-		$('#search_dashboard').on('click',function(){ $('#form_dashboard')[0].submit(); });
 		
+	
 		
 		
 	});
 	 
-	// MAIN WHEN LOAD
-	$(window).load(function(){  
-		
-		// SHOW/HIDE DATATABLES COLUMN INIT 		
-		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
-		$('#dataTable-vis-toggle').removeClass('hide');
-		
-		// HIDE COLUMNS (DeESCRIPTION,  CREATEDAT)		
-		$.each([ 2,4 ],function(ind,value){ $("label.toggle-vis[data-column='"+ value +"']").trigger('click'); });
-		
-	});	
 	
 	
 	//]]>
