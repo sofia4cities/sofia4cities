@@ -109,7 +109,7 @@ public class InitConfigDB {
 	private static User userOperation = null;
 	private static Token tokenAdministrator = null;
 	private static Ontology ontologyAdministrator = null;
-	private static GadgetDatasource gadgetDatasourceAdministrator = null;
+	private static GadgetDatasource gadgetDatasourceDeveloper = null;
 	private static Gadget gadgetAdministrator = null;
 
 	@Autowired
@@ -782,7 +782,7 @@ public class InitConfigDB {
 		if (dashboards.isEmpty()) {
 			log.info("No dashboards...adding");
 			Dashboard dashboard = new Dashboard();
-			dashboard.setIdentification("TempDashboard");
+			dashboard.setIdentification("TempDeveloperDashboard");
 			dashboard.setDescription("Dashboard analytics restaurants");
 			dashboard.setJsoni18n("");
 			dashboard.setCustomcss("");
@@ -792,7 +792,7 @@ public class InitConfigDB {
 							+ getGadget().getId()
 							+ "\",\"content\":\"bar\",\"type\":\"bar\",\"header\":{\"enable\":true,\"title\":{\"icon\":\"\",\"iconColor\":\"hsl(220, 23%, 20%)\",\"text\":\"My Gadget\",\"textColor\":\"hsl(220, 23%, 20%)\"},\"backgroundColor\":\"hsl(0, 0%, 100%)\",\"height\":\"25\"},\"backgroundColor\":\"white\",\"padding\":0,\"border\":{\"color\":\"#c7c7c7de\",\"width\":1,\"radius\":5},\"$$hashKey\":\"object:107\"}],\"title\":\"baseLayer\",\"$$hashKey\":\"object:23\"}],\"selectedlayer\":0,\"combinelayers\":false,\"$$hashKey\":\"object:4\"}],\"gridOptions\":{\"gridType\":\"fit\",\"compactType\":\"none\",\"margin\":3,\"outerMargin\":true,\"mobileBreakpoint\":640,\"minCols\":20,\"maxCols\":100,\"minRows\":20,\"maxRows\":100,\"maxItemCols\":5000,\"minItemCols\":1,\"maxItemRows\":5000,\"minItemRows\":1,\"maxItemArea\":25000,\"minItemArea\":1,\"defaultItemCols\":4,\"defaultItemRows\":4,\"fixedColWidth\":250,\"fixedRowHeight\":250,\"enableEmptyCellClick\":false,\"enableEmptyCellContextMenu\":false,\"enableEmptyCellDrop\":true,\"enableEmptyCellDrag\":false,\"emptyCellDragMaxCols\":5000,\"emptyCellDragMaxRows\":5000,\"draggable\":{\"delayStart\":100,\"enabled\":true,\"ignoreContent\":true,\"dragHandleClass\":\"drag-handler\"},\"resizable\":{\"delayStart\":0,\"enabled\":true},\"swap\":false,\"pushItems\":true,\"disablePushOnDrag\":false,\"disablePushOnResize\":false,\"pushDirections\":{\"north\":true,\"east\":true,\"south\":true,\"west\":true},\"pushResizeItems\":false,\"displayGrid\":\"none\",\"disableWindowResize\":false,\"disableWarnings\":false,\"scrollToNewItems\":true,\"api\":{}},\"interactionHash\":{\"1\":[],\"livehtml_1526292431685\":[],\"b163b6e4-a8d2-4c3b-b964-5efecf0dd3a0\":[]}}");
 			dashboard.setPublic(true);
-			dashboard.setUser(getUserAdministrator());
+			dashboard.setUser(getUserDeveloper());
 
 			dashboardRepository.save(dashboard);
 		}
@@ -857,17 +857,10 @@ public class InitConfigDB {
 		return ontologyAdministrator;
 	}
 
-	private GadgetDatasource getGadgetDatasourceAdministrator() {
-		if (gadgetDatasourceAdministrator == null)
-			gadgetDatasourceAdministrator = this.gadgetDatasourceRepository.findAll().get(0);
-		return gadgetDatasourceAdministrator;
-	}
-
-	private Gadget getGadgetAdministrator() {
-		if (gadgetAdministrator == null)
-			gadgetAdministrator = this.gadgetRepository.findAll().get(0);
-		return gadgetAdministrator;
-
+	private GadgetDatasource getGadgetDatasourceDeveloper() {
+		if (gadgetDatasourceDeveloper == null)
+			gadgetDatasourceDeveloper = this.gadgetDatasourceRepository.findAll().get(0);
+		return gadgetDatasourceDeveloper;
 	}
 
 	public void init_DataModel() {
@@ -1105,14 +1098,13 @@ public class InitConfigDB {
 		if (gadgets.isEmpty()) {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
-			gadget.setId("1");
 			gadget.setIdentification("My Gadget");
 			gadget.setPublic(false);
 			gadget.setDescription("gadget cousin score");
 			gadget.setType("bar");
 			gadget.setConfig(
 					"{\"scales\":{\"yAxes\":[{\"id\":\"#0\",\"display\":true,\"type\":\"linear\",\"position\":\"left\",\"scaleLabel\":{\"labelString\":\"\",\"display\":true}}]}}");
-			gadget.setUser(getUserAdministrator());
+			gadget.setUser(getUserDeveloper());
 			gadgetRepository.save(gadget);
 		}
 	}
@@ -1124,7 +1116,6 @@ public class InitConfigDB {
 		if (gadgetDatasource.isEmpty()) {
 			log.info("No gadget querys ...");
 			GadgetDatasource gadgetDatasources = new GadgetDatasource();
-			gadgetDatasources.setId("1");
 			gadgetDatasources.setIdentification("DsRawRestaurants");
 			gadgetDatasources.setMode("query");
 			gadgetDatasources.setQuery("select * from Restaurants");
@@ -1133,7 +1124,7 @@ public class InitConfigDB {
 			gadgetDatasources.setOntology(null);
 			gadgetDatasources.setMaxvalues(150);
 			gadgetDatasources.setConfig("[]");
-			gadgetDatasources.setUser(getUserAdministrator());
+			gadgetDatasources.setUser(getUserDeveloper());
 			gadgetDatasourceRepository.save(gadgetDatasources);
 		}
 
@@ -1146,12 +1137,10 @@ public class InitConfigDB {
 		if (gadgetMeasures.isEmpty()) {
 			log.info("No gadget measures ...");
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			// inicializo el id?
-			// gadgetMeasure.setId("1");
-			gadgetMeasure.setDatasource(getGadgetDatasourceAdministrator());
+			gadgetMeasure.setDatasource(getGadgetDatasourceDeveloper());
 			gadgetMeasure.setConfig(
 					"{\"fields\":[\"cuisine\",\"grades[0].score\"],\"name\":\"score\",\"config\":{\"backgroundColor\":\"#000000\",\"borderColor\":\"#000000\",\"pointBackgroundColor\":\"#000000\",\"yAxisID\":\"#0\"}}");
-			gadgetMeasure.setGadget(getGadgetAdministrator());
+			gadgetMeasure.setGadget(getGadget());
 			gadgetMeasureRepository.save(gadgetMeasure);
 		}
 
