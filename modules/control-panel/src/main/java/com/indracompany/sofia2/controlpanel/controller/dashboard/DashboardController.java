@@ -64,6 +64,8 @@ public class DashboardController {
 	@Autowired
 	private AppWebUtils utils;
 
+	private final String BLOCK_PRIOR_LOGIN = "block_prior_login";
+
 	@RequestMapping(value = "/list", produces = "text/html")
 	public String list(Model uiModel, HttpServletRequest request,
 			@RequestParam(required = false, name = "identification") String identification,
@@ -85,6 +87,30 @@ public class DashboardController {
 		uiModel.addAttribute("dashboards", dashboard);
 
 		return "dashboards/list";
+
+	}
+
+	@RequestMapping(value = "/viewerlist", produces = "text/html")
+	public String viewerlist(Model uiModel, HttpServletRequest request,
+			@RequestParam(required = false, name = "identification") String identification,
+			@RequestParam(required = false, name = "description") String description) {
+
+		// Scaping "" string values for parameters
+		if (identification != null) {
+			if (identification.equals(""))
+				identification = null;
+		}
+		if (description != null) {
+			if (description.equals(""))
+				description = null;
+		}
+
+		List<DashboardDTO> dashboard = this.dashboardService
+				.findDashboardWithIdentificationAndDescription(identification, description, utils.getUserId());
+
+		uiModel.addAttribute("dashboards", dashboard);
+
+		return "dashboards/viewerlist";
 
 	}
 
@@ -215,8 +241,10 @@ public class DashboardController {
 			model.addAttribute("dashboard", dashboardService.getDashboardById(id, utils.getUserId()));
 			model.addAttribute("credentials", dashboardService.getCredentialsString(utils.getUserId()));
 			model.addAttribute("edition", false);
+			request.getSession().removeAttribute(BLOCK_PRIOR_LOGIN);
 			return "dashboards/view";
 		} else {
+			request.getSession().setAttribute(BLOCK_PRIOR_LOGIN, request.getRequestURI());
 			return "redirect:/403";
 		}
 	}

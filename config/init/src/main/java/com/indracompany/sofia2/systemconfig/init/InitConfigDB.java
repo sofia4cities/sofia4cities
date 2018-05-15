@@ -745,6 +745,16 @@ public class InitConfigDB {
 		} catch (Exception e) {
 			log.error("Error adding menu for role ANALYTIC");
 		}
+		try {
+			log.info("Adding menu for role DATAVIEWER");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("5");
+			menu.setJson(loadFromResources("menu/menu_dataviewer.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DATAVIEWER.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role DATAVIEWER");
+		}
 	}
 
 	private String loadFromResources(String name) {
@@ -1460,6 +1470,12 @@ public class InitConfigDB {
 				typeSon.setRoleParent(typeParent);
 				roleRepository.save(typeSon);
 
+				type = new Role();
+				type.setIdEnum(Role.Type.ROLE_DATAVIEWER);
+				type.setName("DataViewer");
+				type.setDescription("DataViewer User of the Platform");
+				roleRepository.save(type);
+
 			} catch (Exception e) {
 				log.error("Error initRoleType:" + e.getMessage());
 				roleRepository.deleteAll();
@@ -1611,6 +1627,15 @@ public class InitConfigDB {
 				type.setEmail("operations@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ROLE_OPERATIONS.toString()));
+				userCDBRepository.save(type);
+				//
+				type = new User();
+				type.setUserId("dataviewer");
+				type.setPassword("changeIt!");
+				type.setFullName("DataViewer User of the Platform");
+				type.setEmail("dataviewer@sofia2.com");
+				type.setActive(true);
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DATAVIEWER.toString()));
 				userCDBRepository.save(type);
 				//
 			} catch (Exception e) {
