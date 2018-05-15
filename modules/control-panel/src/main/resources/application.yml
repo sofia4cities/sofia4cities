@@ -126,7 +126,11 @@ spring: ## General Config
       multipart:
          max-file-size: 200Mb
          max-request-size: 200Mb
-      
+
+spring.elasticsearch.jest.uris: ${sofia2.database.elasticsearch.sql.connector.http.endpoint}
+spring.elasticsearch.jest.read-timeout: ${sofia2.database.elasticsearch.sql.connectionTimeout.millis}
+
+        
 quartz:      
    datasource:
       url: jdbc:mysql://localhost:3306/sofia2_s4c_scheduler?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false

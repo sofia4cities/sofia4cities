@@ -3,6 +3,7 @@ package com.indracompany.sofia2.android.healthcheckapp;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -28,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -252,6 +254,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 connection.connect();
 
+                Intent mInt = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(mInt);
+                finish();
+
                 if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
                     final StringBuilder output = new StringBuilder("Request URL " + url);
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -264,6 +270,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     connection.disconnect();
 
                     JSONObject jsonJOIN = new JSONObject(responseOutput.toString());
+
+                    Intent firstIntent = new Intent(getApplicationContext(),MainActivity.class);
+                    firstIntent.putExtra("accessToken",jsonJOIN.getString("access_token"));
+                    firstIntent.putExtra("username",mUsername);
+                    startActivity(firstIntent);
+                    finish();
 
                 }
 
