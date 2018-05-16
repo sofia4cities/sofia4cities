@@ -13,10 +13,9 @@
  */
 package com.indracompany.sofia2.controlpanel.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,6 +33,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.indracompany.sofia2.config.model.Role;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,8 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AppWebUtils {
 
-	public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
-	
 	@Autowired
 	private MessageSource messageSource;
 
@@ -65,7 +63,27 @@ public class AppWebUtils {
 	}
 
 	public boolean isAdministrator() {
-		if (getRole().equals(ADMINISTRATOR))
+		if (getRole().equals(Role.Type.ROLE_ADMINISTRATOR.toString()))
+			return true;
+		return false;
+	}
+
+	public boolean isAuthenticated() {
+		Authentication auth = getAuthentication();
+		if (auth == null) {
+			return false;
+		}
+		return true;
+	}
+
+	public boolean isUser() {
+		if (getRole().equals(Role.Type.ROLE_USER.toString()))
+			return true;
+		return false;
+	}
+
+	public boolean isDataViewer() {
+		if (getRole().equals(Role.Type.ROLE_DATAVIEWER.toString()))
 			return true;
 		return false;
 	}
@@ -106,16 +124,13 @@ public class AppWebUtils {
 		return formattedJson;
 	}
 
-	
 	public boolean paswordValidation(String data) {
-		
+
 		Pattern pattern = Pattern.compile("(?=^.{7,20}$)((?=.*\\d)|(?=.*\\W+))(?![.\\n])(?=.*[A-Z])(?=.*[a-z]).*$");
 		Matcher matcher = pattern.matcher(data);
 		return matcher.find();
-	
+
 	}
-	
-	
 
 	public String beautifyJson(String json) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);

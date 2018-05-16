@@ -162,8 +162,14 @@
 											        <h4 class="modal-title">New Ontology</h4>
 											      </div>		
 											      <div class="modal-body">
-											      <input type="text" id="ontologyIdentification" placeholder="Ontology Identification"/>
-											      <input type="text" id="ontologyDescription" placeholder="Ontology Description"/>
+											      <div class="form-group">
+												      <input class="form-control no-remove" type="text" id="ontologyIdentification" placeholder="Ontology Identification"/>
+												      <input class="form-control no-remove" type="text" id="ontologyDescription" placeholder="Ontology Description"/>
+												      
+													  <select id="datasource" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%" th:title="#{json2ont.rtdbdatasource}">
+														<option th:each="datasource :${datasources}" th:value="${datasource}" th:text="${datasource}" ></option>																
+													</select>
+												  </div>
 											      </div>									      
 											      <div class="modal-footer">
 											        <button type="button" class="btn btn-success" data-dismiss="modal" onclick="createOntology()">Submit</button>
@@ -186,7 +192,8 @@
 									<i class="la la-users font-grey-gallery"></i>
 									<!-- FORM TITLE -->
 									<span class="caption-subject font-grey-gallery uppercase" th:text="#{json2ont.toolimport.title}"> JSON import</span>
-								</div>									
+								</div>
+																	
 								<div class="tools">
 									<a href="" class="expand" data-original-title="" title=""> </a>																			
 									<a href="" class="fullscreen" data-original-title="" title=""> </a>										
@@ -278,7 +285,37 @@
 								</div>
 							</div>
 						</div>						
-					</div><!-- END COL-12 -->						
+					</div><!-- END COL-12 -->
+					<!-- Modal -->
+					<div id="progressBarModal" class="modal fade" role="dialog">
+						 <div class="modal-dialog modal-sm">
+											
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal"></button>
+									<h4 class="modal-title">Progress</h4>
+								</div>
+								<div class="modal-body">
+								<div class="progress">
+									  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
+									  aria-valuemin="0" aria-valuemax="100" style="width:0%" id="importProgress">
+									    
+									  </div>
+								</div>
+								<div id="progressResult">
+								
+								</div>
+								</div>										      
+								<div class="modal-footer">
+									<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+								</div>
+							</div>
+											
+							</div>
+					</div>
+									
+									
 				</div><!-- END MAIN ROW -->
 			</div><!-- END CONTENT BODY -->
 		</div><!-- END CONTENT page-content-wrapper -->		
@@ -388,49 +425,9 @@
 		myCodeMirrorJsonImport.setValue(js_beautify(myCodeMirrorJsonImport.getValue()));
 	};
 	
-	var importBulkJson = function() {
-		if($('#ontology').val() == ""){
-			$('#errorSelect').text("Select ontology first");
-			$('#ErrorOntSelect').modal("show");
-		}else{
-			var arrayJson = myCodeMirrorJsonImport.getValue();
-			if(parentNode != null){
-				var arrayJson = JSON.parse(myCodeMirrorJsonImport.getValue());
-				var newArray = [];
-				if(arrayJson.length != null){
-					for(var i= arrayJson.length-1; i>=0 ; i--){
-						var newObject={};
-						newObject[parentNode]=arrayJson[i];
-						newArray.push(newObject);					
-					}
-					
-				}else{
-					var newObject={};
-					newObject[parentNode]=arrayJson;
-					newArray=newObject;
-				}
-				arrayJson = JSON.stringify(newArray);
-					
-				
-			}
-			jQuery.post('/controlpanel/jsontool/importbulkdata', {'data':arrayJson, 'ontologyIdentification': $('#ontology').val()}, function(data){
-				if(data != "Error"){
-					if(JSON.parse(myCodeMirrorJsonImport.getValue()).length != null){
-						$('#response').text(data + " ontologies inserted of type " + $('#ontology').val());
-					}else{
-						$('#response').text("Ontology inserted of type " + $('#ontology').val());
-					}
-					$('#returnAction').modal("show");
-				}else{
-					$('#response').text(data);
-					$('#returnAction').modal("show");
-				}
-				
-			});
-		}
-		
-	}
+
 	var modalOntology = function() {
+		generateSchema();
 		$('#ontologyData').modal("show");
 	};
 	
@@ -441,7 +438,7 @@
 			$('#response').text(invalidSchema);
 			$('#returnAction').modal("show");
 		}
-		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue()}, function(data){
+		jQuery.post('/controlpanel/jsontool/createontology',{'ontologyDescription':$('#ontologyDescription').val(),'ontologyIdentification':$('#ontologyIdentification').val(),'instance': myCodeMirror.getValue(),'schema': myCodeMirrorSchema.getValue(), 'datasource' : $('#datasource').val()}, function(data){
 			if(data=='ok'){
 				$('#response').text(ontologyCreated);
 			}else{

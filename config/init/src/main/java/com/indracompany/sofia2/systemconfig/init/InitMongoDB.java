@@ -84,6 +84,7 @@ public class InitMongoDB {
 			init_DigitalTwinEvents();
 			init_DigitalTwinActionsTurbine();
 			init_DigitalTwinPropertiesTurbine();
+			init_TicketDataSet();
 		}
 	}
 
@@ -207,6 +208,54 @@ public class InitMongoDB {
 		} catch (Exception e) {
 			log.error("Error creating init_androidIoTFrame DataSet...ignoring", e);
 		}
+	}
+
+	public void init_TicketDataSet() {
+
+		log.info("init init_TicketDataSet");
+		Ontology ticket = this.ontologyRepository.findByIdentification("Ticket");
+		if (ticket == null) {
+			ticket = new Ontology();
+			ticket.setJsonSchema(loadFromResources("examples/OntologySchema_Ticket.json"));
+			ticket.setDescription("Ontology created for Ticketing");
+			ticket.setIdentification("Ticket");
+			ticket.setActive(true);
+			ticket.setRtdbClean(true);
+			ticket.setRtdbToHdb(true);
+			ticket.setPublic(true);
+			ticket.setDataModel(this.dataModelRepository.findByName("EmptyBase").get(0));
+			ticket.setUser(getUserDeveloper());
+			ticket.setAllowsCypherFields(false);
+			ontologyRepository.save(ticket);
+		}
+
+		try {
+			if (basicOps.count("Ticket") == 0) {
+				manageDb.createTable4Ontology(ticket.getIdentification(), ticket.getJsonSchema());
+				Runtime r = Runtime.getRuntime();
+				String command = null;
+
+				String filename;
+
+				filename = Paths.get(getClass().getClassLoader().getResource("examples/Ticket-dataset.json").toURI())
+						.toFile().getAbsolutePath();
+
+				if (OSDetector.isWindows()) {
+					command = "s:/tools/mongo/bin/mongoimport --db " + mongodb_name
+							+ " --collection Ticket --drop --file " + filename;
+				} else {
+					command = "mongoimport --db " + mongodb_name + " --collection Ticket --drop --file " + filename;
+
+				}
+
+				r.exec(command);
+
+				log.info("Reading JSON into Database...");
+			}
+		} catch (Exception e) {
+			log.error("Error creating Ticket DataSet...ignoring", e);
+		}
+
 	}
 
 	public void init_AuditGeneral() {

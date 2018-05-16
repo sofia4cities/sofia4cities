@@ -94,6 +94,8 @@ public class MainPageController {
 			return "main";
 		} else if (utils.getRole().equals(Role.Type.ROLE_USER.name())) {
 			return "redirect:/marketasset/list";
+		} else if (utils.getRole().equals(Role.Type.ROLE_DATAVIEWER.name())) {
+			return "redirect:/dashboards/viewerlist";
 		}
 
 		// FLOW

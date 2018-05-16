@@ -311,11 +311,29 @@
 				},
 				{
 					"title": {
-						"EN": "JSON import Tools",
+						"EN": "Data Import Tools",
 						"ES": "Herramientas de importación"
 					},
 					"icon": "",
 					"url": "/controlpanel/jsontool/tools"
+				}
+			]
+		},
+		{
+			"title": {
+				"EN": "Analytics",
+				"ES": "Analytics"
+			},
+			"icon": "flaticon-analytics",
+			"url": "",
+			"submenu": [
+				{
+					"title": {
+						"EN": "My Notebooks",
+						"ES": "Mis Notebooks"
+					},
+					"icon": "",
+					"url": "/controlpanel/notebooks/list"
 				}
 			]
 		}

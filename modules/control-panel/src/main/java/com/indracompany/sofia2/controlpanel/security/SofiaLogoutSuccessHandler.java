@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +44,6 @@ public class SofiaLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 			throws IOException, ServletException {
 
 		super.onLogoutSuccess(request, response, authentication);
-
 		String user = (String) authentication.getPrincipal();
 
 		Sofia2AuditEvent s2event = Sofia2EventFactory.builder().build().createAuditEvent(EventType.SECURITY,
@@ -55,11 +53,12 @@ public class SofiaLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 		s2event.setOperationType(OperationType.LOGOUT.name());
 		s2event.setOtherType("LogoutEventSuccess");
 		s2event.setResultOperation(ResultOperationType.SUCCESS);
-		if (authentication.getDetails() != null) {
-			WebAuthenticationDetails details2 = (WebAuthenticationDetails) authentication.getDetails();
-			// s2event.setRemoteAddress(details2.getRemoteAddress());
-			// s2event.setSessionId(details2.getSessionId());
-		}
+		// if (authentication.getDetails() != null) {
+		// WebAuthenticationDetails details2 = (WebAuthenticationDetails)
+		// authentication.getDetails();
+		// s2event.setRemoteAddress(details2.getRemoteAddress());
+		// s2event.setSessionId(details2.getSessionId());
+		// }
 		s2event.setModule(Module.CONTROLPANEL);
 		eventRouter.notify(s2event.toJson());
 

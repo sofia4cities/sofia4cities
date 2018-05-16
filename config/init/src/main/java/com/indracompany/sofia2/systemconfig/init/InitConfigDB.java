@@ -43,6 +43,7 @@ import com.indracompany.sofia2.config.model.ConsoleMenu;
 import com.indracompany.sofia2.config.model.Dashboard;
 import com.indracompany.sofia2.config.model.DashboardUserAccessType;
 import com.indracompany.sofia2.config.model.DataModel;
+import com.indracompany.sofia2.config.model.DeviceSimulation;
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.model.DigitalTwinType;
 import com.indracompany.sofia2.config.model.EventsDigitalTwinType;
@@ -53,6 +54,7 @@ import com.indracompany.sofia2.config.model.GadgetDatasource;
 import com.indracompany.sofia2.config.model.GadgetMeasure;
 import com.indracompany.sofia2.config.model.LogicDigitalTwinType;
 import com.indracompany.sofia2.config.model.MarketAsset;
+import com.indracompany.sofia2.config.model.Notebook;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.OntologyCategory;
 import com.indracompany.sofia2.config.model.OntologyUserAccessType;
@@ -70,6 +72,7 @@ import com.indracompany.sofia2.config.repository.ConsoleMenuRepository;
 import com.indracompany.sofia2.config.repository.DashboardRepository;
 import com.indracompany.sofia2.config.repository.DashboardUserAccessTypeRepository;
 import com.indracompany.sofia2.config.repository.DataModelRepository;
+import com.indracompany.sofia2.config.repository.DeviceSimulationRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
 import com.indracompany.sofia2.config.repository.DigitalTwinTypeRepository;
 import com.indracompany.sofia2.config.repository.FlowDomainRepository;
@@ -77,6 +80,7 @@ import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.config.repository.GadgetMeasureRepository;
 import com.indracompany.sofia2.config.repository.GadgetRepository;
 import com.indracompany.sofia2.config.repository.MarketAssetRepository;
+import com.indracompany.sofia2.config.repository.NotebookRepository;
 import com.indracompany.sofia2.config.repository.OntologyCategoryRepository;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.OntologyUserAccessRepository;
@@ -105,7 +109,7 @@ public class InitConfigDB {
 	private static User userOperation = null;
 	private static Token tokenAdministrator = null;
 	private static Ontology ontologyAdministrator = null;
-	private static GadgetDatasource gadgetDatasourceAdministrator = null;
+	private static GadgetDatasource gadgetDatasourceDeveloper = null;
 	private static Gadget gadgetAdministrator = null;
 
 	@Autowired
@@ -161,6 +165,12 @@ public class InitConfigDB {
 	@Autowired
 	MarketAssetRepository marketAssetRepository;
 
+	@Autowired
+	NotebookRepository notebookRepository;
+
+	@Autowired
+	DeviceSimulationRepository simulationRepository;
+
 	@PostConstruct
 	@Test
 	public void init() {
@@ -201,17 +211,18 @@ public class InitConfigDB {
 
 			init_UserToken();
 			log.info("OK USER_Token");
-			//
+
+			init_GadgetDatasource();
+			log.info("OK init_GadgetDatasource");
+			init_Gadget();
+			log.info("OK init_Gadget");
+			init_GadgetMeasure();
+			log.info("OK init_GadgetMeasure");
+
 			init_Dashboard();
 			log.info("OK init_Dashboard");
 			init_DashboardUserAccessType();
 			log.info("OK init_DashboardUserAccessType");
-			init_Gadget();
-			log.info("OK init_Gadget");
-			init_GadgetDatasource();
-			log.info("OK init_GadgetDatasource");
-			init_GadgetMeasure();
-			log.info("OK init_GadgetMeasure");
 
 			init_Menu_ControlPanel();
 			log.info("OK init_ConsoleMenu");
@@ -230,6 +241,29 @@ public class InitConfigDB {
 			init_market();
 			log.info("OK init_Market");
 
+			init_notebook();
+			log.info("OK init_Notebook");
+
+			init_simulations();
+			log.info("OK init_simulations");
+		}
+
+	}
+
+	private void init_simulations() {
+		DeviceSimulation simulation = this.simulationRepository.findByIdentification("Issue generator");
+		if (simulation == null) {
+			simulation = new DeviceSimulation();
+			simulation.setActive(false);
+			simulation.setCron("0/5 * * ? * * *");
+			simulation.setIdentification("Issue generator");
+			simulation.setInterval(5);
+			simulation.setJson(loadFromResources("simulations/DeviceSimulation_example1.json"));
+			simulation.setClientPlatform(this.clientPlatformRepository.findByIdentification("Ticketing App"));
+			simulation.setOntology(this.ontologyRepository.findByIdentification("Ticket"));
+			simulation.setToken(this.tokenRepository.findByClientPlatform(simulation.getClientPlatform()).get(0));
+			simulation.setUser(getUserDeveloper());
+			this.simulationRepository.save(simulation);
 		}
 
 	}
@@ -701,6 +735,26 @@ public class InitConfigDB {
 		} catch (Exception e) {
 			log.error("Error adding menu for role USER");
 		}
+		try {
+			log.info("Adding menu for role ANALYTIC");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("4");
+			menu.setJson(loadFromResources("menu/menu_analytic.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DATASCIENTIST.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role ANALYTIC");
+		}
+		try {
+			log.info("Adding menu for role DATAVIEWER");
+			ConsoleMenu menu = new ConsoleMenu();
+			menu.setId("5");
+			menu.setJson(loadFromResources("menu/menu_dataviewer.json"));
+			menu.setRoleType(roleRepository.findById(Role.Type.ROLE_DATAVIEWER.toString()));
+			this.consoleMenuRepository.save(menu);
+		} catch (Exception e) {
+			log.error("Error adding menu for role DATAVIEWER");
+		}
 	}
 
 	private String loadFromResources(String name) {
@@ -738,16 +792,25 @@ public class InitConfigDB {
 		if (dashboards.isEmpty()) {
 			log.info("No dashboards...adding");
 			Dashboard dashboard = new Dashboard();
-			dashboard.setIdentification("TempDashboard");
-			dashboard.setDescription("Dashboard show temperatures around the country");
+			dashboard.setIdentification("TempDeveloperDashboard");
+			dashboard.setDescription("Dashboard analytics restaurants");
 			dashboard.setJsoni18n("");
 			dashboard.setCustomcss("");
 			dashboard.setCustomjs("");
+			dashboard.setModel(
+					"{\"header\":{\"title\":\"My new s4c Dashboard\",\"enable\":true,\"height\":56,\"logo\":{\"height\":48},\"backgroundColor\":\"hsl(220, 23%, 20%)\",\"textColor\":\"hsl(0, 0%, 100%)\",\"iconColor\":\"hsl(0, 0%, 100%)\",\"pageColor\":\"hsl(0, 0%, 100%)\"},\"navigation\":{\"showBreadcrumbIcon\":true,\"showBreadcrumb\":true},\"pages\":[{\"title\":\"New Page\",\"icon\":\"apps\",\"background\":{\"file\":[]},\"layers\":[{\"gridboard\":[{\"$$hashKey\":\"object:64\"},{\"x\":0,\"y\":0,\"cols\":20,\"rows\":7,\"id\":\""
+							+ getGadget().getId()
+							+ "\",\"content\":\"bar\",\"type\":\"bar\",\"header\":{\"enable\":true,\"title\":{\"icon\":\"\",\"iconColor\":\"hsl(220, 23%, 20%)\",\"text\":\"My Gadget\",\"textColor\":\"hsl(220, 23%, 20%)\"},\"backgroundColor\":\"hsl(0, 0%, 100%)\",\"height\":\"25\"},\"backgroundColor\":\"white\",\"padding\":0,\"border\":{\"color\":\"#c7c7c7de\",\"width\":1,\"radius\":5},\"$$hashKey\":\"object:107\"}],\"title\":\"baseLayer\",\"$$hashKey\":\"object:23\"}],\"selectedlayer\":0,\"combinelayers\":false,\"$$hashKey\":\"object:4\"}],\"gridOptions\":{\"gridType\":\"fit\",\"compactType\":\"none\",\"margin\":3,\"outerMargin\":true,\"mobileBreakpoint\":640,\"minCols\":20,\"maxCols\":100,\"minRows\":20,\"maxRows\":100,\"maxItemCols\":5000,\"minItemCols\":1,\"maxItemRows\":5000,\"minItemRows\":1,\"maxItemArea\":25000,\"minItemArea\":1,\"defaultItemCols\":4,\"defaultItemRows\":4,\"fixedColWidth\":250,\"fixedRowHeight\":250,\"enableEmptyCellClick\":false,\"enableEmptyCellContextMenu\":false,\"enableEmptyCellDrop\":true,\"enableEmptyCellDrag\":false,\"emptyCellDragMaxCols\":5000,\"emptyCellDragMaxRows\":5000,\"draggable\":{\"delayStart\":100,\"enabled\":true,\"ignoreContent\":true,\"dragHandleClass\":\"drag-handler\"},\"resizable\":{\"delayStart\":0,\"enabled\":true},\"swap\":false,\"pushItems\":true,\"disablePushOnDrag\":false,\"disablePushOnResize\":false,\"pushDirections\":{\"north\":true,\"east\":true,\"south\":true,\"west\":true},\"pushResizeItems\":false,\"displayGrid\":\"none\",\"disableWindowResize\":false,\"disableWarnings\":false,\"scrollToNewItems\":true,\"api\":{}},\"interactionHash\":{\"1\":[],\"livehtml_1526292431685\":[],\"b163b6e4-a8d2-4c3b-b964-5efecf0dd3a0\":[]}}");
 			dashboard.setPublic(true);
-			dashboard.setUser(getUserAdministrator());
+			dashboard.setUser(getUserDeveloper());
 
 			dashboardRepository.save(dashboard);
 		}
+	}
+
+	private Gadget getGadget() {
+		List<Gadget> gadgets = this.gadgetRepository.findAll();
+		return gadgets.get(0);
 	}
 
 	private User getUserDeveloper() {
@@ -804,17 +867,10 @@ public class InitConfigDB {
 		return ontologyAdministrator;
 	}
 
-	private GadgetDatasource getGadgetDatasourceAdministrator() {
-		if (gadgetDatasourceAdministrator == null)
-			gadgetDatasourceAdministrator = this.gadgetDatasourceRepository.findAll().get(0);
-		return gadgetDatasourceAdministrator;
-	}
-
-	private Gadget getGadgetAdministrator() {
-		if (gadgetAdministrator == null)
-			gadgetAdministrator = this.gadgetRepository.findAll().get(0);
-		return gadgetAdministrator;
-
+	private GadgetDatasource getGadgetDatasourceDeveloper() {
+		if (gadgetDatasourceDeveloper == null)
+			gadgetDatasourceDeveloper = this.gadgetDatasourceRepository.findAll().get(0);
+		return gadgetDatasourceDeveloper;
 	}
 
 	public void init_DataModel() {
@@ -1052,13 +1108,13 @@ public class InitConfigDB {
 		if (gadgets.isEmpty()) {
 			log.info("No gadgets ...");
 			Gadget gadget = new Gadget();
-
 			gadget.setIdentification("My Gadget");
-			gadget.setPublic(true);
-			gadget.setDescription("This is my new RT gadget for temperature evolution");
-			gadget.setType("Area");
-			gadget.setConfig("");
-			gadget.setUser(getUserAdministrator());
+			gadget.setPublic(false);
+			gadget.setDescription("gadget cousin score");
+			gadget.setType("bar");
+			gadget.setConfig(
+					"{\"scales\":{\"yAxes\":[{\"id\":\"#0\",\"display\":true,\"type\":\"linear\",\"position\":\"left\",\"scaleLabel\":{\"labelString\":\"\",\"display\":true}}]}}");
+			gadget.setUser(getUserDeveloper());
 			gadgetRepository.save(gadget);
 		}
 	}
@@ -1070,16 +1126,15 @@ public class InitConfigDB {
 		if (gadgetDatasource.isEmpty()) {
 			log.info("No gadget querys ...");
 			GadgetDatasource gadgetDatasources = new GadgetDatasource();
-			gadgetDatasources.setId("1");
 			gadgetDatasources.setIdentification("DsRawRestaurants");
-			gadgetDatasources.setMode("Query");
-			gadgetDatasources.setQuery("select * from Restaurants limit 100");
+			gadgetDatasources.setMode("query");
+			gadgetDatasources.setQuery("select * from Restaurants");
 			gadgetDatasources.setDbtype("RTDB");
 			gadgetDatasources.setRefresh(0);
 			gadgetDatasources.setOntology(null);
 			gadgetDatasources.setMaxvalues(150);
 			gadgetDatasources.setConfig("[]");
-			gadgetDatasources.setUser(getUserAdministrator());
+			gadgetDatasources.setUser(getUserDeveloper());
 			gadgetDatasourceRepository.save(gadgetDatasources);
 		}
 
@@ -1092,11 +1147,10 @@ public class InitConfigDB {
 		if (gadgetMeasures.isEmpty()) {
 			log.info("No gadget measures ...");
 			GadgetMeasure gadgetMeasure = new GadgetMeasure();
-			// inicializo el id?
-			// gadgetMeasure.setId("1");
-			gadgetMeasure.setDatasource(getGadgetDatasourceAdministrator());
-			gadgetMeasure.setConfig("'field':'temperature','transformation':''}],'name':'Avg. Temperature'");
-			gadgetMeasure.setGadget(getGadgetAdministrator());
+			gadgetMeasure.setDatasource(getGadgetDatasourceDeveloper());
+			gadgetMeasure.setConfig(
+					"{\"fields\":[\"cuisine\",\"grades[0].score\"],\"name\":\"score\",\"config\":{\"backgroundColor\":\"#000000\",\"borderColor\":\"#000000\",\"pointBackgroundColor\":\"#000000\",\"yAxisID\":\"#0\"}}");
+			gadgetMeasure.setGadget(getGadget());
 			gadgetMeasureRepository.save(gadgetMeasure);
 		}
 
@@ -1416,6 +1470,12 @@ public class InitConfigDB {
 				typeSon.setRoleParent(typeParent);
 				roleRepository.save(typeSon);
 
+				type = new Role();
+				type.setIdEnum(Role.Type.ROLE_DATAVIEWER);
+				type.setName("DataViewer");
+				type.setDescription("DataViewer User of the Platform");
+				roleRepository.save(type);
+
 			} catch (Exception e) {
 				log.error("Error initRoleType:" + e.getMessage());
 				roleRepository.deleteAll();
@@ -1567,6 +1627,15 @@ public class InitConfigDB {
 				type.setEmail("operations@sofia2.com");
 				type.setActive(true);
 				type.setRole(this.roleRepository.findById(Role.Type.ROLE_OPERATIONS.toString()));
+				userCDBRepository.save(type);
+				//
+				type = new User();
+				type.setUserId("dataviewer");
+				type.setPassword("changeIt!");
+				type.setFullName("DataViewer User of the Platform");
+				type.setEmail("dataviewer@sofia2.com");
+				type.setActive(true);
+				type.setRole(this.roleRepository.findById(Role.Type.ROLE_DATAVIEWER.toString()));
 				userCDBRepository.save(type);
 				//
 			} catch (Exception e) {
@@ -1771,4 +1840,24 @@ public class InitConfigDB {
 	 * } }
 	 */
 
+	public void init_notebook() {
+		log.info("init notebook");
+		List<Notebook> notebook = this.notebookRepository.findAll();
+		if (notebook.isEmpty()) {
+
+			try {
+				User user = getUserAnalytics();
+				Notebook n = new Notebook();
+
+				n.setUser(user);
+				n.setIdentification("Analytics s4c notebook tutorial");
+				// Default zeppelin notebook tutorial ID
+				n.setIdzep("2A94M5J1Z");
+				notebookRepository.save(n);
+			} catch (Exception e) {
+				log.info("Could not create notebook");
+			}
+
+		}
+	}
 }
