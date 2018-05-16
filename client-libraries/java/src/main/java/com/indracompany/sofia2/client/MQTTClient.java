@@ -341,20 +341,28 @@ public class MQTTClient {
 		switch (status) {
 		case UP:
 			body.setStatus(SSAPStatusType.UP);
+			break;
 		case DOWN:
 			body.setStatus(SSAPStatusType.DOWN);
+			break;
 		case WARNING:
 			body.setStatus(SSAPStatusType.WARNING);
+			break;
 		case ERROR:
 			body.setStatus(SSAPStatusType.ERROR);
+			break;
 		case EXECUTED:
 			body.setStatus(SSAPStatusType.EXECUTED);
+			break;
 		case COMPLETED:
 			body.setStatus(SSAPStatusType.COMPLETED);
+			break;
 		case OK:
 			body.setStatus(SSAPStatusType.OK);
+			break;
 		case CRITICAL:
 			body.setStatus(SSAPStatusType.CRITICAL);
+			break;
 
 		}
 

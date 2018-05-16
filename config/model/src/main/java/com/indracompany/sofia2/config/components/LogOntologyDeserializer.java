@@ -57,7 +57,7 @@ public class LogOntologyDeserializer extends StdDeserializer<LogOntology> {
 		if (node.get(LOCATION) != null)
 			location = new Point2D.Double(node.get(LOCATION).get(COORDINATES).get(LATITUDE).asDouble(),
 					node.get(LOCATION).get(COORDINATES).get(LONGITUDE).asDouble());
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		Date timestamp = null;
 		try {
 			timestamp = df.parse(node.get(TIMESTAMP).asText());

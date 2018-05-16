@@ -104,7 +104,10 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			}
 
 			session.ifPresent((s) -> {
-				deviceManager.registerActivity(message, resp, s, info);
+				
+					deviceManager.registerActivity(message, resp, s, info);
+				
+
 			});
 
 		} catch (final SSAPProcessorException e) {

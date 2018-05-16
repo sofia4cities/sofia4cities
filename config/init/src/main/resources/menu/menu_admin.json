@@ -117,16 +117,16 @@
 		},
 		{
 			"title": {
-				"EN": "CLIENTS & DEVICES",
-				"ES": "CLIENTES Y DISPOSITIVOS"
+				"EN": "DEVICES",
+				"ES": "DEVICES"
 			},
 			"icon": "flaticon-truck",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "Platform Clients",
-						"ES": "Clientes de Plataforma"
+						"EN": "Device Templates",
+						"ES": "Definición de Devices"
 					},
 					"icon": "",
 					"url": "/controlpanel/devices/list"
@@ -141,7 +141,7 @@
 				},
 				{
 					"title": {
-						"EN": "Devices Simulator Management",
+						"EN": "Device Simulator Management",
 						"ES": "Gestión de Simulaciones de Dispositivos"
 					},
 					"icon": "",

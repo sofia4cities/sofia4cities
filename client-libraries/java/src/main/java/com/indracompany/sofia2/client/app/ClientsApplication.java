@@ -55,7 +55,7 @@ public class ClientsApplication {
 		int timeout = 50;
 		String token = "e7ef0742d09d4de5a3687f0cfdf7f626";
 		String clientPlatform = "Ticketing App";
-		String clientPlatformInstance = clientPlatform + ":MQTT";
+		String clientPlatformInstance = "Raspberry pi 3";
 		String ontology = "Ticket";
 		clientSecure.connect(token, clientPlatform, clientPlatformInstance, timeout);
 
@@ -77,12 +77,13 @@ public class ClientsApplication {
 		// });
 		//
 		// clientSecure.publish(ontology, jsonData, timeout);
-		clientSecure.log(clientPlatform, "Battery low", 40.529424, 3.641471, STATUS_TYPE.WARNING, timeout);
-		Thread.sleep(5000);
-		clientSecure.log(clientPlatform, "Battery critical", 40.529424, 3.641471, STATUS_TYPE.CRITICAL, timeout);
+		clientSecure.log(clientPlatform, "Battery low", 40.448277, -3.490684, STATUS_TYPE.ERROR, timeout);
+		// Thread.sleep(5000);
+		// clientSecure.log(clientPlatform, "Battery critical", 40.407816, -3.714255,
+		// STATUS_TYPE.ERROR, timeout);
 		// clientSecure.unsubscribe(subsId);
 
-		clientSecure.disconnect();
+		// clientSecure.disconnect();
 
 		System.exit(0);
 

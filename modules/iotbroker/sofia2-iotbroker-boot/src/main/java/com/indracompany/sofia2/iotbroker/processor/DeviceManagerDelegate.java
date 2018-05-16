@@ -94,6 +94,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 			SSAPBodyLogMessage logMessage = (SSAPBodyLogMessage) request.getBody();
 			double[] location = { logMessage.getCoordinates().getX(), logMessage.getCoordinates().getY() };
 			touchDevice(device, session, true, info, logMessage.getStatus().name(), location);
+			break;
 		default:
 			touchDevice(device, session, true, info, null, null);
 			break;
