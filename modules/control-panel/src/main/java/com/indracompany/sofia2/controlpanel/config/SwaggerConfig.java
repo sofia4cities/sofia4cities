@@ -89,7 +89,7 @@ public class SwaggerConfig  {
 
 	
 	@Bean
-	public Docket authenticationAPI() {
+	public Docket ManagementAPI() {
 
 		//Adding Header
 		ParameterBuilder aParameterBuilder = new ParameterBuilder();
@@ -99,24 +99,45 @@ public class SwaggerConfig  {
 		aParameters.add(aParameterBuilder.build());
 
 		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("sofia2-oauth2")
+				.groupName("management")
 				.select()
 				.apis(RequestHandlerSelectors.any())
-				.paths(buildPathSelectorAuthentication())
+				.paths(buildPathSelectorManagement())
 				.build()
 				.globalOperationParameters(addRestParameters(aParameterBuilder,aParameters));
 	}
 
 	@SuppressWarnings("unchecked")
-	private Predicate<String> buildPathSelectorAuthentication() {
+	private Predicate<String> buildPathSelectorManagement() {
 		return or (
 				regex("/oauth-api.*"),
 				regex("/oauth.*"),
-				regex("/api-ops.*"),
 				regex("/sofia2-oauth.*"),
 				regex("/management.*"));
 	}
 	
+	
+	@Bean
+	public Docket ApiOpsAPI() {
+
+		//Adding Header
+		ParameterBuilder aParameterBuilder = new ParameterBuilder();
+		List<Parameter> aParameters = new ArrayList<Parameter>();
+		
+		return new Docket(DocumentationType.SWAGGER_2)
+				.groupName("api-ops")
+				.select()
+				.apis(RequestHandlerSelectors.any())
+				.paths(buildPathSelectorApiOps())
+				.build()
+				.globalOperationParameters(addRestParameters(aParameterBuilder,aParameters));
+	}
+
+	@SuppressWarnings("unchecked")
+	private Predicate<String> buildPathSelectorApiOps() {
+		return or (
+				regex("/api-ops.*"));
+	}
 
 	
 }

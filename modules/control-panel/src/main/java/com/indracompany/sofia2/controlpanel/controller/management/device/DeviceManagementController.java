@@ -23,7 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.indracompany.sofia2.controlpanel.controller.management.BaseRestServices;
+import com.indracompany.sofia2.controlpanel.controller.management.ApiOpsRestServices;
 import com.indracompany.sofia2.controlpanel.controller.management.model.ErrorServiceResponse;
 import com.indracompany.sofia2.controlpanel.controller.management.model.ResponseGeneric;
 
@@ -34,12 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 @Api(value="Device Management")
 @RestController
 @Slf4j
-public class DeviceManagementController extends BaseRestServices {
+public class DeviceManagementController extends ApiOpsRestServices {
 	
 	
 	@ApiOperation(value = "Devices Management")
 	@GetMapping(OP_DEVICES)
-	
 	public ResponseEntity<ResponseGeneric> devices() {
 
 		ResponseGeneric response = new ResponseGeneric();
@@ -47,10 +46,7 @@ public class DeviceManagementController extends BaseRestServices {
 			log.info(OP_DEVICES + " Request: Entry");
 			
 			
-			//TODO debugging purposes
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			log.info(authentication.toString());
-			
+		
 		
 
 		} catch (Exception e) {
