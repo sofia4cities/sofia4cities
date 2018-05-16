@@ -18,7 +18,7 @@
 buildImage()
 {
 	echo "Docker image generation with spotify plugin for module: "$1 
-	mvn clean package docker:build -Dmaven.test.skip=true
+	mvn clean package docker:build -Dmaven.test.skip=true -Ponesaitplatform
 }
 
 buildConfigDB()

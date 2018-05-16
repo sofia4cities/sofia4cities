@@ -92,6 +92,8 @@ spring: ## General Config
       properties.hibernate.enable_lazy_load_no_trans: true
    jmx:
     enabled: true
+spring.elasticsearch.jest.uris: ${sofia2.database.elasticsearch.sql.connector.http.endpoint}
+spring.elasticsearch.jest.read-timeout: ${sofia2.database.elasticsearch.sql.connectionTimeout.millis}
 
 ## CXF      
 cxf:

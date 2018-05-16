@@ -13,6 +13,8 @@
  */
 package com.indracompany.sofia2.iotbroker.plugable.impl.gateway.reference.rest;
 
+import java.util.Optional;
+
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.indracompany.sofia2.config.services.ontologydata.OntologyDataJsonProblemException;
+import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
+import com.indracompany.sofia2.config.services.ontologydata.OntologyDataUnauthorizedException;
+import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
+import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -73,6 +80,12 @@ public class Rest {
 
 	@Autowired
 	GatewayNotifier subscriptor;
+	
+	@Autowired
+	private OntologyDataService ontologyDataService;
+	
+	@Autowired
+	SecurityPluginManager securityPluginManager;
 
 	@PostConstruct
 	private void init() {
@@ -281,6 +294,41 @@ public class Rest {
 		else {
 			return formResponseError(response);
 		}
+	}
+	
+	
+	//TODO move business logic to an internal component.
+	//TODO use processors to implement the business logic.
+	//TODO standardization of exceptions.
+	@RequestMapping(value="/ontology/decrypt/{ontology}", method=RequestMethod.POST)
+	public ResponseEntity<?> decryptById(
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
+			@ApiParam(value = "Json data representing ontology instance", required = true) @RequestBody String data){
+				
+		final Optional<IoTSession> session = securityPluginManager.getSession(sessionKey);
+		
+		if (session.isPresent()) {
+			String user = session.get().getUserID();
+			
+			String decryptedData = null;
+			try {
+				decryptedData = ontologyDataService.decrypt(data, ontology, user);
+			} catch (OntologyDataUnauthorizedException e) {
+				return new ResponseEntity<>("Only the ontology owner can decrypt data", HttpStatus.UNAUTHORIZED); 
+			} catch (OntologyDataJsonProblemException e) {
+				return new ResponseEntity<>("Error processing data", HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+			if(decryptedData != null) {
+				return new ResponseEntity<>(decryptedData, HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
+			}
+		} else {
+			return new ResponseEntity<>("A valid user is necessary", HttpStatus.UNAUTHORIZED);
+		}		
 	}
 
 

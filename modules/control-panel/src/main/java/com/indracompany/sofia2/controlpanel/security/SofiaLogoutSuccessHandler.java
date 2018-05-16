@@ -19,11 +19,9 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -40,19 +38,11 @@ public class SofiaLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
 	@Autowired
 	EventRouter eventRouter;
-	private final String BLOCK_PRIOR_LOGIN = "block_prior_login";
-	private final String URL_PRIOR_LOGIN = "url_prior_login";
 
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException {
 
-		// clean session
-		HttpSession session = request.getSession();
-		if (session != null) {
-			session.removeAttribute(URL_PRIOR_LOGIN);
-			session.removeAttribute(BLOCK_PRIOR_LOGIN);
-		}
 		super.onLogoutSuccess(request, response, authentication);
 		String user = (String) authentication.getPrincipal();
 
@@ -63,11 +53,12 @@ public class SofiaLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 		s2event.setOperationType(OperationType.LOGOUT.name());
 		s2event.setOtherType("LogoutEventSuccess");
 		s2event.setResultOperation(ResultOperationType.SUCCESS);
-	//	if (authentication.getDetails() != null) {
-			//WebAuthenticationDetails details2 = (WebAuthenticationDetails) authentication.getDetails();
-			// s2event.setRemoteAddress(details2.getRemoteAddress());
-			// s2event.setSessionId(details2.getSessionId());
-	//	}
+		// if (authentication.getDetails() != null) {
+		// WebAuthenticationDetails details2 = (WebAuthenticationDetails)
+		// authentication.getDetails();
+		// s2event.setRemoteAddress(details2.getRemoteAddress());
+		// s2event.setSessionId(details2.getSessionId());
+		// }
 		s2event.setModule(Module.CONTROLPANEL);
 		eventRouter.notify(s2event.toJson());
 

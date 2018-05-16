@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 public class Securityhandler implements AuthenticationSuccessHandler {
 
 	private final String BLOCK_PRIOR_LOGIN = "block_prior_login";
-	private final String URL_PRIOR_LOGIN = "url_prior_login";
 	private final String URI_CONTROLPANEL = "/controlpanel";
 	private final String URI_MAIN = "/main";
 
@@ -41,7 +40,7 @@ public class Securityhandler implements AuthenticationSuccessHandler {
 			String redirectUrl = (String) session.getAttribute(BLOCK_PRIOR_LOGIN);
 			if (redirectUrl != null) {
 				// we do not forget to clean this attribute from session
-				session.removeAttribute(URL_PRIOR_LOGIN);
+
 				session.removeAttribute(BLOCK_PRIOR_LOGIN);
 				// then we redirect
 				response.sendRedirect(request.getContextPath() + redirectUrl.replace(URI_CONTROLPANEL, ""));

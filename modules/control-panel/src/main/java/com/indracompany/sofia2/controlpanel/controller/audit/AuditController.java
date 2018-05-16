@@ -14,7 +14,7 @@
  */
 package com.indracompany.sofia2.controlpanel.controller.audit;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +45,8 @@ public class AuditController {
 
 	@GetMapping("show")
 	public String show(Model model) {
-		List<OperationType> operations = new ArrayList<>();
-		operations.add(OperationType.LOGIN);
-		operations.add(OperationType.LOGOUT);
-		operations.add(OperationType.INSERT);
+
+		List<OperationType> operations = Arrays.asList(OperationType.values());
 		model.addAttribute("operations", operations);
 		return "audit/show";
 	}
