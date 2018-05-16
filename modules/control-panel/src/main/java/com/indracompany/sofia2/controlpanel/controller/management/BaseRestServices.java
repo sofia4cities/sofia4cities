@@ -26,10 +26,10 @@ public class BaseRestServices {
 
 		ErrorServiceResponse response = new ErrorServiceResponse();
 
-		
-
 		return response;
 	}
+	
+	
 
 	
 }
