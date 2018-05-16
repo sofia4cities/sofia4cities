@@ -18,8 +18,8 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.mock.pojo.Person;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -29,22 +29,17 @@ import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 
 public class RouterServiceGenerator {
 
-
-	public static NotificationCompositeModel generateNotificationCompositeModel(String subscriptionId, Person subject, IoTSession session) throws JsonProcessingException {
+	public static NotificationCompositeModel generateNotificationCompositeModel(String subscriptionId, Person subject,
+			IoTSession session) throws JsonProcessingException {
 		final ObjectMapper mapper = new ObjectMapper();
 		final NotificationCompositeModel model = new NotificationCompositeModel();
 		model.setNotificationModel(new NotificationModel());
-		model.getNotificationModel().setOperationModel(OperationModel.builder(
-				Person.class.getSimpleName(),
-				OperationModel.OperationType.QUERY,
-				session.getUserID(),
-				Source.IOTBROKER)
-				.body(mapper.writeValueAsString(subject))
-				.clientPlatformId(mapper.writeValueAsString(subject))
-				.queryType(QueryType.NATIVE)
-				.objectId(UUID.randomUUID().toString())
-				.build()
-				);
+		model.getNotificationModel()
+				.setOperationModel(OperationModel
+						.builder(Person.class.getSimpleName(), OperationModel.OperationType.QUERY, session.getUserID(),
+								Source.IOTBROKER)
+						.body(mapper.writeValueAsString(subject)).clientPlatformId(mapper.writeValueAsString(subject))
+						.queryType(QueryType.NATIVE).objectId(UUID.randomUUID().toString()).build());
 
 		model.setNotificationEntityId(subscriptionId);
 		model.setOperationResultModel(new OperationResultModel());
@@ -116,6 +111,5 @@ public class RouterServiceGenerator {
 		return value;
 
 	}
-
 
 }

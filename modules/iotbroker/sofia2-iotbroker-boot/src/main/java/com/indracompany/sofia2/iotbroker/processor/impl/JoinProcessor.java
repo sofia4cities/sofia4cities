@@ -23,12 +23,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPComplianceException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
@@ -62,23 +62,24 @@ public class JoinProcessor implements MessageTypeProcessor {
 		}
 
 		if (StringUtils.isEmpty(join.getBody().getToken())) {
-			throw new SSAPComplianceException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "token", message.getMessageType().name()));
+			throw new SSAPComplianceException(
+					String.format(MessageException.ERR_FIELD_IS_MANDATORY, "token", message.getMessageType().name()));
 		}
 
-		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(), join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance(), join.getSessionKey());
-		session.ifPresent( s -> {
+		final Optional<IoTSession> session = securityManager.authenticate(join.getBody().getToken(),
+				join.getBody().getClientPlatform(), join.getBody().getClientPlatformInstance(), join.getSessionKey());
+		session.ifPresent(s -> {
 			response.setSessionKey(s.getSessionKey());
 			try {
-				response.getBody().setData(mapper.readTree("{\"sessionKey\":\""+s.getSessionKey()+"\"}"));
+				response.getBody().setData(mapper.readTree("{\"sessionKey\":\"" + s.getSessionKey() + "\"}"));
 			} catch (final IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
+		});
 
-		} );
-
-		if ( !StringUtils.isEmpty(response.getSessionKey()) ) {
+		if (!StringUtils.isEmpty(response.getSessionKey())) {
 			response.setDirection(SSAPMessageDirection.RESPONSE);
 			response.setMessageId(join.getMessageId());
 			response.setMessageType(SSAPMessageTypes.JOIN);
@@ -98,9 +99,10 @@ public class JoinProcessor implements MessageTypeProcessor {
 	public boolean validateMessage(SSAPMessage<? extends SSAPBodyMessage> message) throws SSAPProcessorException {
 		final SSAPMessage<SSAPBodyJoinMessage> join = (SSAPMessage<SSAPBodyJoinMessage>) message;
 
-		if(StringUtils.isEmpty(join.getBody().getClientPlatform()) || StringUtils.isEmpty(join.getBody().getClientPlatformInstance()))
-		{
-			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "ClientPlatform",join.getMessageType().name()));
+		if (StringUtils.isEmpty(join.getBody().getClientPlatform())
+				|| StringUtils.isEmpty(join.getBody().getClientPlatformInstance())) {
+			throw new SSAPProcessorException(String.format(MessageException.ERR_FIELD_IS_MANDATORY, "ClientPlatform",
+					join.getMessageType().name()));
 		}
 
 		return true;

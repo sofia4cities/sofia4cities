@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.audit.aop.IotBrokerAuditable;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthenticationException;
@@ -31,7 +32,6 @@ import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException
 import com.indracompany.sofia2.iotbroker.common.util.SSAPUtils;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
@@ -104,9 +104,8 @@ public class MessageProcessorDelegate implements MessageProcessor {
 			}
 
 			session.ifPresent((s) -> {
-				
-					deviceManager.registerActivity(message, resp, s, info);
-				
+
+				deviceManager.registerActivity(message, resp, s, info);
 
 			});
 

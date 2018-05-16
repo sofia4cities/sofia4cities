@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
@@ -29,7 +30,6 @@ import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.DeviceManager;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
@@ -73,14 +73,14 @@ public class LogProcessor implements MessageTypeProcessor {
 				ontology = this.clientPlatformService.createDeviceLogOntology(client.getIdentification());
 		}
 		if (client != null) {
-			JsonNode instance = this.deviceManager.createDeviceLog(client, session.get().getClientPlatformInstance(),
+			JsonNode instance = this.deviceManager.createDeviceLog(client, session.get().getDevice(),
 					logMessage.getBody());
 			final OperationModel model = OperationModel
 					.builder(ontology.getIdentification(), OperationType.POST, client.getUser().getUserId(),
 							Source.IOTBROKER)
 					.body(instance.toString()).queryType(QueryType.NATIVE).clientPlatformId(client.getIdentification())
-					.clientPlatformInstance(session.get().getClientPlatformInstance())
-					.clientSession(logMessage.getSessionKey()).clientConnection("").build();
+					.clientPlatformInstance(session.get().getDevice()).clientSession(logMessage.getSessionKey())
+					.clientConnection("").build();
 
 			final NotificationModel modelNotification = new NotificationModel();
 			modelNotification.setOperationModel(model);

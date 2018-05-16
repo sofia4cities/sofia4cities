@@ -18,6 +18,15 @@ spring:
       properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
       # Hibernate ddl auto (create, create-drop, validate, update)
       hibernate.ddl-auto: update
+      show-sql: true
+      properties:
+         hibernate.cache.use_second_level_cache: true
+         hibernate.cache.use_query_cache: false
+         hibernate.cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+         hibernate.generate_statistics: true
+         hibernate.search.default.directory_provider: ram
+         hibernate.format_sql: true
+         javax.persistence.sharedCache.mode: ENABLE_SELECTIVE
   boot.admin: #Spring Boot Admin Config    
     url: http://localhost:18100
     username: operations

@@ -21,13 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.common.MessageException;
 import com.indracompany.sofia2.iotbroker.common.exception.AuthorizationException;
 import com.indracompany.sofia2.iotbroker.common.exception.BaseException;
 import com.indracompany.sofia2.iotbroker.common.exception.OntologySchemaException;
 import com.indracompany.sofia2.iotbroker.common.exception.SSAPProcessorException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.MessageTypeProcessor;
 import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
@@ -74,7 +74,7 @@ public class InsertProcessor implements MessageTypeProcessor {
 		if (session.isPresent()) {
 			user = session.get().getUserID();
 			clientPlatformId = session.get().getClientPlatform();
-			clientPlatformInstance = session.get().getClientPlatformInstance();
+			clientPlatformInstance = session.get().getDevice();
 		}
 
 		final OperationModel model = OperationModel

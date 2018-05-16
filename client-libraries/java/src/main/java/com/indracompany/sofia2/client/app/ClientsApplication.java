@@ -78,7 +78,8 @@ public class ClientsApplication {
 		//
 		// clientSecure.publish(ontology, jsonData, timeout);
 		clientSecure.log(clientPlatform, "Battery low", 40.448277, -3.490684, STATUS_TYPE.ERROR, timeout);
-		// Thread.sleep(5000);
+		Thread.sleep(15000);
+		clientSecure.log(clientPlatform, "Battery low", 40.448277, -3.490684, STATUS_TYPE.ERROR, timeout);
 		// clientSecure.log(clientPlatform, "Battery critical", 40.407816, -3.714255,
 		// STATUS_TYPE.ERROR, timeout);
 		// clientSecure.unsubscribe(subsId);

@@ -32,10 +32,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.config.model.ClientPlatform;
 import com.indracompany.sofia2.config.model.Device;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.device.DeviceService;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyLogMessage;
@@ -64,8 +64,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 			SSAPMessage<SSAPBodyReturnMessage> response, IoTSession session, GatewayInfo info) {
 
 		final List<Device> devices = deviceService.getByClientPlatformIdAndIdentification(
-				this.clientPlatformService.getByIdentification(session.getClientPlatform()),
-				session.getClientPlatformInstance());
+				this.clientPlatformService.getByIdentification(session.getClientPlatform()), session.getDevice());
 		Device device = null;
 
 		if (devices.size() > 0) {
@@ -73,7 +72,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 		} else {
 			device = new Device();
 			device.setClientPlatform(this.clientPlatformService.getByIdentification(session.getClientPlatform()));
-			device.setIdentification(session.getClientPlatformInstance());
+			device.setIdentification(session.getDevice());
 			device.setProtocol(info.getProtocol());
 			if (request.getMessageType().equals(SSAPMessageTypes.JOIN)) {
 				SSAPBodyJoinMessage body = (SSAPBodyJoinMessage) request.getBody();
@@ -136,7 +135,7 @@ public class DeviceManagerDelegate implements DeviceManager {
 		log.info("Start Updating device " + device.getIdentification());
 		device.setStatus(status == null ? Device.StatusType.OK.name() : status);
 		device.setClientPlatform(this.clientPlatformService.getByIdentification(session.getClientPlatform()));
-		device.setIdentification(session.getClientPlatformInstance());
+		device.setIdentification(session.getDevice());
 		device.setSessionKey(session.getSessionKey());
 		device.setConnected(connected);
 		device.setDisabled(false);

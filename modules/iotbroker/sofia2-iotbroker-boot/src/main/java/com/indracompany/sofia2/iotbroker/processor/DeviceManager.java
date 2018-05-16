@@ -17,8 +17,8 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.indracompany.sofia2.config.model.ClientPlatform;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.ssap.SSAPMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyLogMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
