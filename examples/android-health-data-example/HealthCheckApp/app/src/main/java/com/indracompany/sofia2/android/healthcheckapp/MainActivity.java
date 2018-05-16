@@ -19,6 +19,8 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, FormFragment.OnFragmentInteractionListener {
 
+    protected String mAccessToken = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mAccessToken = getIntent().getStringExtra("accessToken");
     }
 
     @Override
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity
 
         // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack("form").commit();
 
         // Highlight the selected item has been done by NavigationView
         item.setChecked(true);
