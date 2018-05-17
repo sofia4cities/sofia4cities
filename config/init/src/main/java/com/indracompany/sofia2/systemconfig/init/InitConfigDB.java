@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -1529,10 +1530,10 @@ public class InitConfigDB {
 		List<UserToken> tokens = this.userTokenRepository.findAll();
 		if (tokens.isEmpty()) {
 			List<User> userList = this.userCDBRepository.findAll();
-			
+
 			for (Iterator<User> iterator = userList.iterator(); iterator.hasNext();) {
 				User user = (User) iterator.next();
-				
+
 				UserToken userToken = new UserToken();
 
 				userToken.setToken(UUID.randomUUID().toString().replaceAll("-", ""));

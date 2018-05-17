@@ -32,12 +32,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.indracompany.sofia2.config.model.IoTSession;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataJsonProblemException;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataService;
 import com.indracompany.sofia2.config.services.ontologydata.OntologyDataUnauthorizedException;
 import com.indracompany.sofia2.iotbroker.plugable.impl.security.SecurityPluginManager;
 import com.indracompany.sofia2.iotbroker.plugable.interfaces.gateway.GatewayInfo;
-import com.indracompany.sofia2.iotbroker.plugable.interfaces.security.IoTSession;
 import com.indracompany.sofia2.iotbroker.processor.GatewayNotifier;
 import com.indracompany.sofia2.iotbroker.processor.MessageProcessor;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -60,19 +60,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
-@ConditionalOnProperty(
-		prefix="sofia2.iotbroker.plugable.gateway.rest",
-		name="enable",
-		havingValue="true"
-		)
+@ConditionalOnProperty(prefix = "sofia2.iotbroker.plugable.gateway.rest", name = "enable", havingValue = "true")
 @RestController
-@RequestMapping(path="/rest"
-//produces= MediaType.APPLICATION_JSON_UTF8_VALUE,
-//consumes=MediaType.APPLICATION_JSON_UTF8_VALUE
-		)
+@RequestMapping(path = "/rest"
+// produces= MediaType.APPLICATION_JSON_UTF8_VALUE,
+// consumes=MediaType.APPLICATION_JSON_UTF8_VALUE
+)
 @EnableAutoConfiguration
 @CrossOrigin(origins = "*")
-@Api(value="rest", description="Sofia4Cities operations for devices")
+@Api(value = "rest", description = "Sofia4Cities operations for devices")
 public class Rest {
 
 	@Autowired
@@ -80,49 +76,47 @@ public class Rest {
 
 	@Autowired
 	GatewayNotifier subscriptor;
-	
+
 	@Autowired
 	private OntologyDataService ontologyDataService;
-	
+
 	@Autowired
 	SecurityPluginManager securityPluginManager;
 
 	@PostConstruct
 	private void init() {
-		subscriptor.addSubscriptionListener("rest_gateway",  (s) -> System.out.println("rest_gateway fake processing") );
+		subscriptor.addSubscriptionListener("rest_gateway", (s) -> System.out.println("rest_gateway fake processing"));
 	}
 
 	@ApiOperation(value = "Logs a client device into Sofia4Cities with token.\nReturns a sessionKey to use in further operations")
-	@RequestMapping(value="/client/join", method=RequestMethod.GET)
+	@RequestMapping(value = "/client/join", method = RequestMethod.GET)
 	public ResponseEntity<?> join(
-			@ApiParam(value = "Token asociated to client platform", required = true) @RequestParam(name="token") String token,
-			@ApiParam(value = "Client Platform asociated to token", required = true) @RequestParam(name="clientPlatform") String clientPlatform,
-			@ApiParam(value = "Desired ClientPlatform id. the value is chosen from user", required = true) @RequestParam(name="clientPlatformId") String clientPlatformId) {
+			@ApiParam(value = "Token asociated to client platform", required = true) @RequestParam(name = "token") String token,
+			@ApiParam(value = "Client Platform asociated to token", required = true) @RequestParam(name = "clientPlatform") String clientPlatform,
+			@ApiParam(value = "Desired ClientPlatform id. the value is chosen from user", required = true) @RequestParam(name = "clientPlatformId") String clientPlatformId) {
 
 		final SSAPMessage<SSAPBodyJoinMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyJoinMessage());
 
 		request.setDirection(SSAPMessageDirection.REQUEST);
 		request.setMessageType(SSAPMessageTypes.JOIN);
-		//		request.setSessionKey();
+		// request.setSessionKey();
 		request.getBody().setToken(token);
 		request.getBody().setClientPlatform(clientPlatform);
 		request.getBody().setClientPlatformInstance(clientPlatformId);
 
-
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
-		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
-		}
-		else {
+		} else {
 			return formResponseError(response);
 		}
 	}
 
 	@ApiOperation(value = "Logs out a client device into Sofia4Cities with token")
-	@RequestMapping(value="/client/leave", method=RequestMethod.GET)
+	@RequestMapping(value = "/client/leave", method = RequestMethod.GET)
 	public ResponseEntity<?> leave(
-			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey) {
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value = "Authorization") String sessionKey) {
 
 		final SSAPMessage<SSAPBodyLeaveMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyLeaveMessage());
@@ -132,21 +126,20 @@ public class Rest {
 		request.setSessionKey(sessionKey);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
-		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
-		}
-		else {
+		} else {
 			return formResponseError(response);
 		}
 	}
 
 	@ApiOperation(value = "Get a list of instances of a ontology data")
-	@RequestMapping(value="/ontology/{ontology}", method=RequestMethod.GET)
+	@RequestMapping(value = "/ontology/{ontology}", method = RequestMethod.GET)
 	public ResponseEntity<?> list(
-			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value = "Authorization") String sessionKey,
 			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Examples:\n\tNATIVE: db.temperature.find({})\n\tSQL: select * from temperature; ", required = true) @RequestParam(name="query") String query,
-			@ApiParam(value = "OPTIONS: NATIVE or SQL", required=true) @RequestParam(name="queryType") SSAPQueryType queryType) {
+			@ApiParam(value = "Examples:\n\tNATIVE: db.temperature.find({})\n\tSQL: select * from temperature; ", required = true) @RequestParam(name = "query") String query,
+			@ApiParam(value = "OPTIONS: NATIVE or SQL", required = true) @RequestParam(name = "queryType") SSAPQueryType queryType) {
 
 		final SSAPMessage<SSAPBodyQueryMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyQueryMessage());
@@ -161,19 +154,18 @@ public class Rest {
 		request.getBody().setResultFormat(SSAPQueryResultFormat.JSON);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
-		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
-		}
-		else {
+		} else {
 			return formResponseError(response);
 		}
 	}
 
 	@ApiOperation(value = "Inserts a instance of a ontology expresed in json format")
-	@RequestMapping(value="/ontology/{ontology}", method=RequestMethod.POST)
+	@RequestMapping(value = "/ontology/{ontology}", method = RequestMethod.POST)
 	public ResponseEntity<?> create(
-			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology")  String ontology,
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value = "Authorization") String sessionKey,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
 			@ApiParam(value = "Json data representing ontology instance", required = true) @RequestBody JsonNode data) {
 
 		final SSAPMessage<SSAPBodyInsertMessage> request = new SSAPMessage<>();
@@ -186,21 +178,20 @@ public class Rest {
 		request.getBody().setData(data);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
-		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
-		}
-		else {
+		} else {
 			return formResponseError(response);
 		}
 	}
 
 	@ApiOperation(value = "Updates a instance of a ontology expresed in json format")
-	@RequestMapping(value="/ontology/{ontology}/{id}", method=RequestMethod.PUT)
+	@RequestMapping(value = "/ontology/{ontology}/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<?> updateById(
-			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Ontology identification to perform operation", required=true) @PathVariable("id") String id,
-			@ApiParam(value = "Json data representing ontology instance", required = true)  @RequestBody JsonNode data) {
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value = "Authorization") String sessionKey,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
+			@ApiParam(value = "Ontology identification to perform operation", required = true) @PathVariable("id") String id,
+			@ApiParam(value = "Json data representing ontology instance", required = true) @RequestBody JsonNode data) {
 
 		final SSAPMessage<SSAPBodyUpdateByIdMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyUpdateByIdMessage());
@@ -213,20 +204,19 @@ public class Rest {
 		request.getBody().setData(data);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
-		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
-		}
-		else {
+		} else {
 			return formResponseError(response);
 		}
 	}
 
 	@ApiOperation(value = "Updates a instance or instances of a ontology with a mongoDB update query")
-	@RequestMapping(value="/ontology/{ontology}", method=RequestMethod.PUT)
+	@RequestMapping(value = "/ontology/{ontology}", method = RequestMethod.PUT)
 	public ResponseEntity<?> updateByQuery(
-			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Examples: NATIVE: db.temperature.update({\"location\":\"Helsinki\"}, { $set:{\"value\":15}})", required = true) @RequestParam(name="query") String query) {
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value = "Authorization") String sessionKey,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
+			@ApiParam(value = "Examples: NATIVE: db.temperature.update({\"location\":\"Helsinki\"}, { $set:{\"value\":15}})", required = true) @RequestParam(name = "query") String query) {
 
 		final SSAPMessage<SSAPBodyUpdateMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyUpdateMessage());
@@ -238,20 +228,19 @@ public class Rest {
 		request.getBody().setQuery(query);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
-		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
-		}
-		else {
+		} else {
 			return formResponseError(response);
 		}
 	}
 
 	@ApiOperation(value = "Delete a instance or instances of a ontology with a mongoDB remove query")
-	@RequestMapping(value="/ontology/{ontology}", method=RequestMethod.DELETE)
+	@RequestMapping(value = "/ontology/{ontology}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteByQuery(
-			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Examples: NATIVE: db.temperature.update({\"value\":15})", required=true) @RequestParam(name="query") String query) {
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value = "Authorization") String sessionKey,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
+			@ApiParam(value = "Examples: NATIVE: db.temperature.update({\"value\":15})", required = true) @RequestParam(name = "query") String query) {
 
 		final SSAPMessage<SSAPBodyDeleteMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyDeleteMessage());
@@ -263,20 +252,19 @@ public class Rest {
 		request.getBody().setQuery(query);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
-		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
-		}
-		else {
+		} else {
 			return formResponseError(response);
 		}
 	}
 
 	@ApiOperation(value = "Delete a instance of a ontology")
-	@RequestMapping(value="/ontology/{ontology}/{id}", method=RequestMethod.DELETE)
+	@RequestMapping(value = "/ontology/{ontology}/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<?> deleteById(
-			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Ontology identification to perform operation", required=true) @PathVariable("id") String id) {
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value = "Authorization") String sessionKey,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
+			@ApiParam(value = "Ontology identification to perform operation", required = true) @PathVariable("id") String id) {
 
 		final SSAPMessage<SSAPBodyDeleteByIdMessage> request = new SSAPMessage<>();
 		request.setBody(new SSAPBodyDeleteByIdMessage());
@@ -288,50 +276,45 @@ public class Rest {
 		request.getBody().setOntology(ontology);
 
 		final SSAPMessage<SSAPBodyReturnMessage> response = processor.process(request, getGatewayInfo());
-		if(!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
+		if (!SSAPMessageDirection.ERROR.equals(response.getDirection())) {
 			return new ResponseEntity<>(response.getBody().getData(), HttpStatus.OK);
-		}
-		else {
+		} else {
 			return formResponseError(response);
 		}
 	}
-	
-	
-	//TODO move business logic to an internal component.
-	//TODO use processors to implement the business logic.
-	//TODO standardization of exceptions.
-	@RequestMapping(value="/ontology/decrypt/{ontology}", method=RequestMethod.POST)
+
+	// TODO move business logic to an internal component.
+	// TODO use processors to implement the business logic.
+	// TODO standardization of exceptions.
+	@RequestMapping(value = "/ontology/decrypt/{ontology}", method = RequestMethod.POST)
 	public ResponseEntity<?> decryptById(
-			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value="Authorization") String sessionKey,
-			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true)  @PathVariable("ontology") String ontology,
-			@ApiParam(value = "Json data representing ontology instance", required = true) @RequestBody String data){
-				
+			@ApiParam(value = "SessionKey provided from join operation", required = true) @RequestHeader(value = "Authorization") String sessionKey,
+			@ApiParam(value = "Ontology to perform operation. Client platform must have granted permissions ", required = true) @PathVariable("ontology") String ontology,
+			@ApiParam(value = "Json data representing ontology instance", required = true) @RequestBody String data) {
+
 		final Optional<IoTSession> session = securityPluginManager.getSession(sessionKey);
-		
+
 		if (session.isPresent()) {
 			String user = session.get().getUserID();
-			
+
 			String decryptedData = null;
 			try {
 				decryptedData = ontologyDataService.decrypt(data, ontology, user);
 			} catch (OntologyDataUnauthorizedException e) {
-				return new ResponseEntity<>("Only the ontology owner can decrypt data", HttpStatus.UNAUTHORIZED); 
+				return new ResponseEntity<>("Only the ontology owner can decrypt data", HttpStatus.UNAUTHORIZED);
 			} catch (OntologyDataJsonProblemException e) {
 				return new ResponseEntity<>("Error processing data", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 
-			if(decryptedData != null) {
+			if (decryptedData != null) {
 				return new ResponseEntity<>(decryptedData, HttpStatus.OK);
-			}
-			else {
+			} else {
 				return new ResponseEntity<>("Error", HttpStatus.BAD_REQUEST);
 			}
 		} else {
 			return new ResponseEntity<>("A valid user is necessary", HttpStatus.UNAUTHORIZED);
-		}		
+		}
 	}
-
-
 
 	private ResponseEntity<?> formResponseError(SSAPMessage<SSAPBodyReturnMessage> response) {
 		final SSAPErrorCode code = response.getBody().getErrorCode();
@@ -365,6 +348,5 @@ public class Rest {
 
 		return info;
 	}
-
 
 }

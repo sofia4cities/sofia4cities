@@ -276,14 +276,12 @@
 											</div>																		
 										</div>	
 										<hr/>
-
+										<label class="control-label bold" th:text="#{device.management.commandlogs}"></label>
+										<hr/>
 										<table id="commandLogTable" class="table table-hover table-striped" dt:table="true"
 													dt:filterPlaceholder="none" dt:sortable="false"
 													>
-													<thead>
-														<tr>
-															<th th:text="#{device.management.commandlogs}">COMMAND LOGS</th>
-														</tr>
+													<thead>											
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.message}" >Message</span></th>
 															
@@ -434,7 +432,8 @@
 		 else  editor.setValue("{\""+command+"\" : "+input.value+"}");
 		 editor.refresh();
 	}
-	
+	var executedOK =[[#{device.management.executedok}]];
+	var executedKO =[[#{device.management.executedko}]];
 	var executeCommand = function(command){
 		$.ajax({
 		    url: iotbrokerUrl+'/commandAsync/'+command,
@@ -446,7 +445,11 @@
 		    },
 		    dataType: 'json',
 		    success: function (data) {
-		        console.info(data);
+		        if(data == true){
+		        	alert();
+		        }else{
+		        	alert();
+		        }
 		    }
 		});
 	}
