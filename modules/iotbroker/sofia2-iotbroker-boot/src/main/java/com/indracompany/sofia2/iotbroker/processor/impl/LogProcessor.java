@@ -78,9 +78,9 @@ public class LogProcessor implements MessageTypeProcessor {
 			final OperationModel model = OperationModel
 					.builder(ontology.getIdentification(), OperationType.POST, client.getUser().getUserId(),
 							Source.IOTBROKER)
-					.body(instance.toString()).queryType(QueryType.NATIVE).clientPlatformId(client.getIdentification())
-					.clientPlatformInstance(session.get().getDevice()).clientSession(logMessage.getSessionKey())
-					.clientConnection("").build();
+					.body(instance.toString()).queryType(QueryType.NATIVE).deviceTemplate(client.getIdentification())
+					.device(session.get().getDevice()).clientSession(logMessage.getSessionKey()).clientConnection("")
+					.build();
 
 			final NotificationModel modelNotification = new NotificationModel();
 			modelNotification.setOperationModel(model);

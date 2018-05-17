@@ -38,7 +38,7 @@ public class RouterServiceGenerator {
 				.setOperationModel(OperationModel
 						.builder(Person.class.getSimpleName(), OperationModel.OperationType.QUERY, session.getUserID(),
 								Source.IOTBROKER)
-						.body(mapper.writeValueAsString(subject)).clientPlatformId(mapper.writeValueAsString(subject))
+						.body(mapper.writeValueAsString(subject)).deviceTemplate(mapper.writeValueAsString(subject))
 						.queryType(QueryType.NATIVE).objectId(UUID.randomUUID().toString()).build());
 
 		model.setNotificationEntityId(subscriptionId);

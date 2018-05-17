@@ -84,16 +84,16 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		final Optional<IoTSession> session = securityPluginManager.getSession(updateMessage.getSessionKey());
 
 		String user = null;
-		String clientPlatformId = null;
+		String deviceTemplate = null;
 
 		if (session.isPresent()) {
 			user = session.get().getUserID();
-			clientPlatformId = session.get().getClientPlatform();
+			deviceTemplate = session.get().getClientPlatform();
 		}
 
 		final OperationModel model = OperationModel
 				.builder(updateMessage.getBody().getOntology(), OperationType.PUT, user, Source.IOTBROKER)
-				.clientPlatformId(clientPlatformId).queryType(QueryType.NATIVE).body(updateMessage.getBody().getQuery())
+				.deviceTemplate(deviceTemplate).queryType(QueryType.NATIVE).body(updateMessage.getBody().getQuery())
 				.build();
 
 		final NotificationModel modelNotification = new NotificationModel();
@@ -131,17 +131,17 @@ public class UpdateProcessor implements MessageTypeProcessor {
 		final Optional<IoTSession> session = securityPluginManager.getSession(updateMessage.getSessionKey());
 
 		String user = null;
-		String clientPlatformId = null;
+		String deviceTemplate = null;
 
 		if (session.isPresent()) {
 			user = session.get().getUserID();
-			clientPlatformId = session.get().getClientPlatform();
+			deviceTemplate = session.get().getClientPlatform();
 		}
 
 		final OperationModel model = OperationModel
 				.builder(updateMessage.getBody().getOntology(), OperationType.PUT, user, Source.IOTBROKER)
 				.objectId(updateMessage.getBody().getId()).queryType(QueryType.NATIVE)
-				.body(updateMessage.getBody().getData().toString()).clientPlatformId(clientPlatformId).build();
+				.body(updateMessage.getBody().getData().toString()).deviceTemplate(deviceTemplate).build();
 
 		final NotificationModel modelNotification = new NotificationModel();
 		modelNotification.setOperationModel(model);

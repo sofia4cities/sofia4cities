@@ -80,11 +80,10 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		final Optional<IoTSession> session = securityPluginManager.getSession(message.getSessionKey());
 
 		String user = session.isPresent() ? session.get().getUserID() : null;
-		String clientPlatformId = session.isPresent() ? session.get().getClientPlatform() : null;
+		String deviceTemplate = session.isPresent() ? session.get().getClientPlatform() : null;
 		final OperationModel model = OperationModel
 				.builder(message.getBody().getOntology(), OperationType.DELETE, user, OperationModel.Source.IOTBROKER)
-				.objectId(message.getBody().getId()).queryType(QueryType.NATIVE).clientPlatformId(clientPlatformId)
-				.build();
+				.objectId(message.getBody().getId()).queryType(QueryType.NATIVE).deviceTemplate(deviceTemplate).build();
 
 		final NotificationModel modelNotification = new NotificationModel();
 		modelNotification.setOperationModel(model);
@@ -120,11 +119,10 @@ public class DeleteProcessor implements MessageTypeProcessor {
 		final Optional<IoTSession> session = securityPluginManager.getSession(message.getSessionKey());
 
 		String user = session.isPresent() ? session.get().getUserID() : null;
-		String clientPlatformId = session.isPresent() ? session.get().getClientPlatform() : null;
+		String deviceTemplate = session.isPresent() ? session.get().getClientPlatform() : null;
 		final OperationModel model = OperationModel
 				.builder(message.getBody().getOntology(), OperationType.DELETE, user, Source.IOTBROKER)
-				.queryType(QueryType.NATIVE).body(message.getBody().getQuery()).clientPlatformId(clientPlatformId)
-				.build();
+				.queryType(QueryType.NATIVE).body(message.getBody().getQuery()).deviceTemplate(deviceTemplate).build();
 
 		final NotificationModel modelNotification = new NotificationModel();
 		modelNotification.setOperationModel(model);

@@ -28,33 +28,36 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-@CacheConfig(cacheNames={"queries"})
+@CacheConfig(cacheNames = { "queries" })
 public class RouterCrudCachedOperationsService {
-	
+
 	@Autowired
-	private QueryToolService  queryToolService;
-	
+	private QueryToolService queryToolService;
+
 	@Autowired
 	private BasicOpsPersistenceServiceFacade basicOpsService;
-	
+
 	@Cacheable("queries")
 	public OperationResultModel queryCache(OperationModel operationModel) {
-		
-		log.info("Router CACHE EXPLICIT Crud Service Operation "+operationModel.toString());
+
+		log.info("Router CACHE EXPLICIT Crud Service Operation " + operationModel.toString());
 		OperationResultModel result = queryNoCache(operationModel);
 		return result;
 
 	}
-	
+
 	public static boolean NullString(String l) {
-		if (l==null) return true;
-		else if (l!=null && l.equalsIgnoreCase("")) return true;
-		else return false;
+		if (l == null)
+			return true;
+		else if (l != null && l.equalsIgnoreCase(""))
+			return true;
+		else
+			return false;
 	}
-	
+
 	public OperationResultModel queryNoCache(OperationModel operationModel) {
 
-		log.info("Router NO CACHING Crud Service Operation "+operationModel.toString());
+		log.info("Router NO CACHING Crud Service Operation " + operationModel.toString());
 
 		final OperationResultModel result = new OperationResultModel();
 
@@ -64,32 +67,32 @@ public class RouterCrudCachedOperationsService {
 		final String ontologyName = operationModel.getOntologyName();
 		final String OBJECT_ID = operationModel.getObjectId();
 		final String USER = operationModel.getUser();
-		final String CLIENTPLATFORM = operationModel.getClientPlatformId();
+		final String CLIENTPLATFORM = operationModel.getDeviceTemplate();
 
-		String OUTPUT="";
+		String OUTPUT = "";
 		result.setMessage("OK");
 		result.setStatus(true);
 
 		try {
 			if (METHOD.equalsIgnoreCase("GET") || METHOD.equalsIgnoreCase(OperationModel.OperationType.QUERY.name())) {
 
-				if (QUERY_TYPE !=null)
-				{
+				if (QUERY_TYPE != null) {
 					if (QUERY_TYPE.equalsIgnoreCase(QueryType.SQLLIKE.name())) {
-						//						OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
-						OUTPUT = (!NullString(CLIENTPLATFORM))?queryToolService.querySQLAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0):
-															  queryToolService.querySQLAsJson(USER, ontologyName, BODY, 0);
-					}
-					else if (QUERY_TYPE.equalsIgnoreCase(QueryType.NATIVE.name())) {
-						//						OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
-						OUTPUT = (!NullString(CLIENTPLATFORM))?queryToolService.queryNativeAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY, 0, 0):
-															  queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0,0);
-					}
-					else {
+						// OUTPUT = queryToolService.querySQLAsJson(ontologyName, QUERY, 0);
+						OUTPUT = (!NullString(CLIENTPLATFORM))
+								? queryToolService.querySQLAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName, BODY,
+										0)
+								: queryToolService.querySQLAsJson(USER, ontologyName, BODY, 0);
+					} else if (QUERY_TYPE.equalsIgnoreCase(QueryType.NATIVE.name())) {
+						// OUTPUT = queryToolService.queryNativeAsJson(ontologyName, QUERY, 0,0);
+						OUTPUT = (!NullString(CLIENTPLATFORM))
+								? queryToolService.queryNativeAsJsonForPlatformClient(CLIENTPLATFORM, ontologyName,
+										BODY, 0, 0)
+								: queryToolService.queryNativeAsJson(USER, ontologyName, BODY, 0, 0);
+					} else {
 						OUTPUT = basicOpsService.findById(ontologyName, OBJECT_ID);
 					}
-				}
-				else {
+				} else {
 					OUTPUT = basicOpsService.findById(ontologyName, OBJECT_ID);
 				}
 			}

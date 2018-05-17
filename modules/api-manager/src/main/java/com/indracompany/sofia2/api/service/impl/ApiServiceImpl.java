@@ -15,9 +15,7 @@ package com.indracompany.sofia2.api.service.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -71,7 +69,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 	@Autowired
 	private RouterOperationsServiceFacade facade;
-	
+
 	private Invocable invocable;
 
 	@SuppressWarnings("unchecked")
@@ -166,7 +164,7 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		OperationModel model = OperationModel
 				.builder(ontology.getIdentification(), OperationType.valueOf(operationType.name()), user.getUserId(),
 						OperationModel.Source.APIMANAGER)
-				.body(body).queryType(QueryType.valueOf(QUERY_TYPE)).objectId(OBJECT_ID).clientPlatformId("")
+				.body(body).queryType(QueryType.valueOf(QUERY_TYPE)).objectId(OBJECT_ID).deviceTemplate("")
 				.cacheable("true".equalsIgnoreCase(CACHEABLE) ? true : false).build();
 
 		NotificationModel modelNotification = new NotificationModel();
@@ -187,41 +185,44 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 		exchange.getIn().setBody(data);
 		return data;
 	}
-	
+
 	@PrometheusTimeMethod(name = "postProcess", help = "postProcess")
 	@Timed
 	public Map<String, Object> postProcess(Map<String, Object> data, Exchange exchange) throws Exception {
 		String error = "";
-		String postProcessScript = ((ApiOperation)data.get(ApiServiceInterface.API_OPERATION)).getPostProcess();
-		
-		if (postProcessScript!=null && !"".equals(postProcessScript)) {
+		String postProcessScript = ((ApiOperation) data.get(ApiServiceInterface.API_OPERATION)).getPostProcess();
+
+		if (postProcessScript != null && !"".equals(postProcessScript)) {
 			ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
 			this.invocable = (Invocable) engine;
 			try {
 
 				String scriptPostprocessFunction = "function postprocess(data){ " + postProcessScript + " }";
-				
-				ByteArrayInputStream scriptInputStream = new ByteArrayInputStream(scriptPostprocessFunction.getBytes(StandardCharsets.UTF_8));
-				
+
+				ByteArrayInputStream scriptInputStream = new ByteArrayInputStream(
+						scriptPostprocessFunction.getBytes(StandardCharsets.UTF_8));
+
 				engine.eval(new InputStreamReader(scriptInputStream));
-			
+
 				Invocable inv = (Invocable) engine;
-				
+
 				Object result;
 				result = inv.invokeFunction("postprocess", data.get(ApiServiceInterface.OUTPUT));
 				data.put(ApiServiceInterface.OUTPUT, result);
-			}catch(ScriptException e) {
+			} catch (ScriptException e) {
 				log.error("Execution logic for postprocess error", e);
-				error = "{\"result\":\"ERROR\", \"message\":\"Execution logic for Postprocess error\", \"details\":\"" + e.getCause().getMessage() + "\"}";
+				error = "{\"result\":\"ERROR\", \"message\":\"Execution logic for Postprocess error\", \"details\":\""
+						+ e.getCause().getMessage() + "\"}";
 				data.put(ApiServiceInterface.OUTPUT, error);
-			}catch (Exception e) {
+			} catch (Exception e) {
 				log.error("Unexpected error executing postprocess", e);
-				error = "{\"result\":\"ERROR\", \"message\":\"Execution logic for Postprocess error\", \"details\":\"" + e.getCause().getMessage() + "\"}";
+				error = "{\"result\":\"ERROR\", \"message\":\"Execution logic for Postprocess error\", \"details\":\""
+						+ e.getCause().getMessage() + "\"}";
 				data.put(ApiServiceInterface.OUTPUT, error);
 			}
-		
+
 		}
-				
+
 		return data;
 	}
 

@@ -69,19 +69,19 @@ public class InsertProcessor implements MessageTypeProcessor {
 		final Optional<IoTSession> session = securityPluginManager.getSession(insertMessage.getSessionKey());
 
 		String user = null;
-		String clientPlatformId = null;
-		String clientPlatformInstance = null;
+		String deviceTemplate = null;
+		String device = null;
 		if (session.isPresent()) {
 			user = session.get().getUserID();
-			clientPlatformId = session.get().getClientPlatform();
-			clientPlatformInstance = session.get().getDevice();
+			deviceTemplate = session.get().getClientPlatform();
+			device = session.get().getDevice();
 		}
 
 		final OperationModel model = OperationModel
 				.builder(insertMessage.getBody().getOntology(), OperationType.POST, user, Source.IOTBROKER)
 				.body(insertMessage.getBody().getData().toString()).queryType(QueryType.NATIVE)
-				.clientPlatformId(clientPlatformId).clientPlatformInstance(clientPlatformInstance)
-				.clientSession(insertMessage.getSessionKey()).clientConnection("").build();
+				.deviceTemplate(deviceTemplate).device(device).clientSession(insertMessage.getSessionKey())
+				.clientConnection("").build();
 
 		final NotificationModel modelNotification = new NotificationModel();
 		modelNotification.setOperationModel(model);

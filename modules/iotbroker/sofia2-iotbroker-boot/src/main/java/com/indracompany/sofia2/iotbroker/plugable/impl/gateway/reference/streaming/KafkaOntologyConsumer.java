@@ -74,7 +74,9 @@ public class KafkaOntologyConsumer {
 	}
 
 	// TODO
-	//@KafkaListener(topicPattern = "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory = "fooKafkaListenerContainerFactory")
+	// @KafkaListener(topicPattern =
+	// "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory
+	// = "fooKafkaListenerContainerFactory")
 	public void listenToParition(@Payload String message, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition,
 			@Header(KafkaHeaders.RECEIVED_TOPIC) String receivedTopic) {
 		log.info("Received Message: " + message + " from partition: " + partition + " received topic:" + receivedTopic);
@@ -103,10 +105,8 @@ public class KafkaOntologyConsumer {
 
 		if (executable) {
 			OperationType operationType = OperationType.INSERT;
-			OperationModel model = OperationModel
-					.builder(ontologyId, OperationType.valueOf(operationType.name()), user,
-							OperationModel.Source.IOTBROKER)
-					.body(message).clientPlatformId("").cacheable(false).build();
+			OperationModel model = OperationModel.builder(ontologyId, OperationType.valueOf(operationType.name()), user,
+					OperationModel.Source.IOTBROKER).body(message).deviceTemplate("").cacheable(false).build();
 
 			NotificationModel modelNotification = new NotificationModel();
 
@@ -120,8 +120,7 @@ public class KafkaOntologyConsumer {
 	@KafkaListener(topicPattern = "${sofia2.iotbroker.plugable.gateway.kafka.topic.pattern}", containerFactory = "kafkaListenerContainerFactoryBatch")
 	public void listenToParitionBatch(List<String> data,
 			@Header(KafkaHeaders.RECEIVED_PARTITION_ID) List<Integer> partitions,
-			@Header(KafkaHeaders.RECEIVED_TOPIC) String receivedTopic,
-			@Header(KafkaHeaders.OFFSET) List<Long> offsets,
+			@Header(KafkaHeaders.RECEIVED_TOPIC) String receivedTopic, @Header(KafkaHeaders.OFFSET) List<Long> offsets,
 			Acknowledgment ack) {
 
 		String user = "administrator";
@@ -129,17 +128,14 @@ public class KafkaOntologyConsumer {
 		for (int i = 0; i < data.size(); i++) {
 			log.info("received message='{}' with partition-offset='{}'", data.get(i),
 					partitions.get(i) + "-" + offsets.get(i));
-			
 
 			String message = data.get(i);
-			
+
 			String ontologyId = receivedTopic.replace(ontologyPrefix, "");
-			
+
 			OperationType operationType = OperationType.INSERT;
-			OperationModel model = OperationModel
-					.builder(ontologyId, OperationType.valueOf(operationType.name()), user,
-							OperationModel.Source.IOTBROKER)
-					.body(message).clientPlatformId("").cacheable(false).build();
+			OperationModel model = OperationModel.builder(ontologyId, OperationType.valueOf(operationType.name()), user,
+					OperationModel.Source.IOTBROKER).body(message).deviceTemplate("").cacheable(false).build();
 
 			NotificationModel modelNotification = new NotificationModel();
 
