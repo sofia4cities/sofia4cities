@@ -38,7 +38,7 @@ import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.indracompany.sofia2.commons.security.PasswordEncoder;
+import com.indracompany.sofia2.commons.security.BasicEncryption;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.persistence.ContextData;
@@ -50,6 +50,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OntologyDataServiceImpl implements OntologyDataService {
 
+	public enum EncryptionOperations {
+		encrypt, decrypt
+	}
+	
 	@Autowired
 	private OntologyRepository ontologyRepository;
 
@@ -58,6 +62,12 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	final JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 
 	final public static String ENCRYPT_PROPERTY = "encrypted";
+	
+	//TODO this is a basic functionality.
+	//TODO it has to be improved. For instance, initVector should be random.
+	//TODO review AES best practices to improve this class.
+	final static String key = "Bar12345Bar12345"; // 128 bit key
+    final static String initVector = "RandomInitVector"; // 16 bytes IV
 
 	public void checkOntologySchemaCompliance(final JsonNode data, final Ontology ontology)
 			throws DataSchemaValidationException {
@@ -140,7 +150,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 
 	}
 
-	String encryptData(String data, Ontology ontology) throws IOException {
+	String encryptionOperation(String data, Ontology ontology, EncryptionOperations operation) throws IOException {
 
 		if (ontology.isAllowsCypherFields()) {
 
@@ -149,7 +159,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			String path = "#";
 			String schemaPointer = "";
 
-			processProperties(jsonData, jsonSchema, jsonSchema, path, schemaPointer);
+			processProperties(jsonData, jsonSchema, jsonSchema, path, schemaPointer, operation);
 
 			return jsonData.toString();
 
@@ -160,7 +170,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 	}
 
 	private void processProperties(JsonNode allData, JsonNode schema, JsonNode rootSchema, String path,
-			String schemaPointer) {
+			String schemaPointer, EncryptionOperations operation) {
 
 		JsonNode properties = schema.path("properties");
 		Iterator<Entry<String, JsonNode>> elements = properties.fields();
@@ -169,20 +179,20 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			Entry<String, JsonNode> element = elements.next();
 			if (element != null) {
 				processProperty(allData, element.getKey(), element.getValue(), rootSchema,
-						path + "/" + element.getKey(), schemaPointer + "/" + "properties/" + element.getKey());
+						path + "/" + element.getKey(), schemaPointer + "/" + "properties/" + element.getKey(), operation);
 			}
 		}
 	}
 
 	private void processProperty(JsonNode allData, String elementKey, JsonNode elementValue, JsonNode rootSchema,
-			String path, String schemaPointer) {
+			String path, String schemaPointer, EncryptionOperations operation) {
 
 		JsonNode ref = elementValue.path("$ref");
 		if (!ref.isMissingNode()) {
 			String refString = ref.asText();
 			JsonNode referencedElement = getReferencedJsonNode(refString, rootSchema);
 			String newSchemaPointer = refString.substring(refString.lastIndexOf("#/")).substring(1);
-			processProperties(allData, referencedElement, rootSchema, path, newSchemaPointer);
+			processProperties(allData, referencedElement, rootSchema, path, newSchemaPointer, operation);
 		} else {
 			JsonNode oneOf = elementValue.path("oneOf");
 			if (!oneOf.isMissingNode()) {
@@ -199,7 +209,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 							if (report.isSuccess()) {
 								notFound = false;
 
-								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer);
+								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer, operation);
 							}
 						} catch (ProcessingException e) {
 							// if it is not the valid schema it must be ignored
@@ -229,7 +239,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 							JsonSchema schema = factory.getJsonSchema(rootSchema, schemaPointer);
 							ProcessingReport report = schema.validate(miniData);
 							if (report.isSuccess()) {
-								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer);
+								processProperty(allData, elementKey, miniSchema, rootSchema, path, schemaPointer, operation);
 							}
 						} catch (ProcessingException e) {
 							// if it is not the valid schema it must be ignored
@@ -240,18 +250,29 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 					JsonNode encrypt = elementValue.path(ENCRYPT_PROPERTY);
 					if (encrypt.asBoolean()) {
 						JsonNode data = getReferencedJsonNode(path, allData);
-						String dataToEncrypt = data.asText();
+						String dataToProcess = data.asText();
+						String dataProcessed = null;
 						try {
-							String encrypted = PasswordEncoder.getInstance().encodeSHA256(dataToEncrypt);
+							switch (operation) {
+							case encrypt:
+								dataProcessed = BasicEncryption.encrypt(key, initVector, dataToProcess);
+								break;
+							case decrypt:
+								dataProcessed = BasicEncryption.decrypt(key, initVector, dataToProcess);
+								break;
+								
+							default:
+								throw new IllegalArgumentException("Operation not soported");
+							}
 							String propertyPath = path.substring(0, path.lastIndexOf("/"));
 							JsonNode originalData = getReferencedJsonNode(propertyPath, allData);
-							((ObjectNode) originalData).put(elementKey, encrypted);
+							((ObjectNode) originalData).put(elementKey, dataProcessed);
 						} catch (final Exception e) {
 							log.error("Error in encrypting data: " + e.getMessage());
 							throw new RuntimeException(e);
 						}
 					} else {
-						processProperties(allData, elementValue, rootSchema, path, schemaPointer);
+						processProperties(allData, elementValue, rootSchema, path, schemaPointer, operation);
 					}
 				}
 			}
@@ -282,7 +303,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 				checkOntologySchemaCompliance(instance, ontology);
 				try {
 					String bodyWithDataContext = addContextData(operationModel, instance);
-					String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
+					String encryptedDataInBODY = encryptionOperation(bodyWithDataContext, ontology, EncryptionOperations.encrypt);
 					encryptedData.add(encryptedDataInBODY);
 				} catch (IOException e) {
 					throw new RuntimeException("Error working with JSON data", e);
@@ -292,7 +313,7 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 			checkOntologySchemaCompliance(dataNode, ontology);
 			try {
 				String bodyWithDataContext = addContextData(operationModel, null);
-				String encryptedDataInBODY = encryptData(bodyWithDataContext, ontology);
+				String encryptedDataInBODY = encryptionOperation(bodyWithDataContext, ontology, EncryptionOperations.encrypt);
 				encryptedData.add(encryptedDataInBODY);
 			} catch (IOException e) {
 				throw new RuntimeException("Error working with JSON data", e);
@@ -301,6 +322,20 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		}
 		return encryptedData;
 
+	}
+
+	@Override
+	public String decrypt(String data, String ontologyName, String user) throws OntologyDataUnauthorizedException, OntologyDataJsonProblemException {
+		final Ontology ontology = ontologyRepository.findByIdentification(ontologyName);
+		if (ontology.getUser().getUserId().equals(user)) {
+			try {
+				return encryptionOperation(data, ontology, EncryptionOperations.decrypt);
+			} catch (IOException e) {
+				throw new OntologyDataJsonProblemException("Error working with JSON data", e);
+			}
+		} else {
+			throw new OntologyDataUnauthorizedException("Only the owner can decrypt data");
+		}
 	}
 
 }

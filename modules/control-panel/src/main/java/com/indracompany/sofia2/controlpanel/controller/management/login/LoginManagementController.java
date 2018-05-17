@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.indracompany.sofia2.controlpanel.controller.management.ApiOpsRestServices;
 import com.indracompany.sofia2.controlpanel.controller.management.login.model.RequestLogin;
 import com.indracompany.sofia2.controlpanel.controller.management.model.ErrorServiceResponse;
 import com.indracompany.sofia2.controlpanel.controller.management.model.ResponseGeneric;
@@ -36,8 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Api(value="Post Login")
 @RestController
 @Slf4j
-@RequestMapping("api-ops")
-public class LoginManagementController  {
+public class LoginManagementController extends ApiOpsRestServices {
 	
 	@ApiOperation(value = "Login Management")
 	@PostMapping(OP_LOGIN)
@@ -67,13 +67,5 @@ public class LoginManagementController  {
 
 	}
 	
-	public ErrorServiceResponse processError(Exception e) {
-
-		ErrorServiceResponse response = new ErrorServiceResponse();
-
-		
-
-		return response;
-	}
 
 }

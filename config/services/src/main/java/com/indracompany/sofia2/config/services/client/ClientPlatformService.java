@@ -41,4 +41,6 @@ public interface ClientPlatformService {
 	void updateDevice(DeviceCreateDTO clientPlatform);
 
 	void createOntologyRelation(Ontology ontology, ClientPlatform clientPlatform);
+	
+	public List<Token> getTokensByClientPlatformId(String clientPlatformId);
 }

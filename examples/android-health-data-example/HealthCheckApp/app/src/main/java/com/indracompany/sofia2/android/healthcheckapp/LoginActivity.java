@@ -240,8 +240,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 Uri.Builder builder = new Uri.Builder()
                         .appendQueryParameter("grant_type", "password")
-                        .appendQueryParameter("username", mUsername)
-                        .appendQueryParameter("password", mPassword);
+                        .appendQueryParameter("username", "citizenHealth")
+                        .appendQueryParameter("password", "changeIt!");
                 String query = builder.build().getEncodedQuery();
 
                 OutputStream os = connection.getOutputStream();
@@ -253,10 +253,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 os.close();
 
                 connection.connect();
-
-                Intent mInt = new Intent(getApplicationContext(),MainActivity.class);
-                startActivity(mInt);
-                finish();
 
                 if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
                     final StringBuilder output = new StringBuilder("Request URL " + url);
