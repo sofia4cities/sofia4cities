@@ -380,8 +380,8 @@
 					                    </select>
 					                    <label class="description" th:text="#{apimanager.customsql.targetBD}"></label>
 					                    <select  id="id_customsql_targetBD" style="margin-right: 20px;margin-left: 10px;width: 15%;padding-right: 5px;display: inline-table;" class="element select small form-control" th:onchange="'javascript:checkformatresult();'">
-					                         <option value="BDTR" th:text="BDTR"  selected="selected"/>
-					                         <option value="BDH" th:text="BDH"/>
+					                         <option value="BDTR" th:text="#{apimanager.customsql.RTBD}"  selected="selected"/>
+					                         <option value="BDH" th:text="#{apimanager.customsql.HBD}"/>
 					                    </select>
 				                        <br/><br/>
 				                        <label style="margin-left: 20px;" class="description" th:text="#{apimanager.customsql.description}"></label>
@@ -391,13 +391,13 @@
 	            						<div class="portlet-title">
 											<div class="caption">
 												<!-- FORM TITLE -->
-												<span class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.customsql.postprocess}"> Post Process</span>
+												<span class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.customsql.showpostprocess}"> Post Process</span>
 											</div>									
 											<div class="tools">
-												<a href="" class="expand" data-original-title="" title="" onclick="refreshCodeMirror()"> </a>									
+												<a href="" id="portletToolPostProcess" class="expand" data-original-title="" title="" onclick="refreshCodeMirror()"> </a>									
 											</div>															
 										</div>
-										<div class="portlet-body" style="display: none; height: auto;">
+										<div id="portletBody" class="portlet-body" style="display: none; height: auto;">
 						                     <div class="row">
 												<textarea id="jsImportTextArea" name="id_postprocess_op_customsql"  th:required="true"  class="form-control"></textarea>
 						                     </div>
