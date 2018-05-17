@@ -121,7 +121,7 @@ public class DigitalTwinTypeController {
 		DigitalTwinType type = digitalTwinTypeService.getDigitalTwinTypeById(id);
 		if (type != null) {
 			model.addAttribute("digitaltwintype", type);
-			model.addAttribute("properties", digitalTwinTypeService.getPropertiesByDigitalId(id));
+			model.addAttribute("dproperties", digitalTwinTypeService.getPropertiesByDigitalId(id));
 			model.addAttribute("actions", digitalTwinTypeService.getActionsByDigitalId(id));
 			model.addAttribute("events", digitalTwinTypeService.getEventsByDigitalId(id));
 			model.addAttribute("logic", digitalTwinTypeService.getLogicByDigitalId(id));

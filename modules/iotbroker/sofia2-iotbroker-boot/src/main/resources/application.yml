@@ -33,6 +33,10 @@ spring:
     password: changeIt!
     client.metadata.user.name: ${spring.boot.admin.username}
     client.metadata.user.password: ${spring.boot.admin.password} 
+
+spring.elasticsearch.jest.uris: ${sofia2.database.elasticsearch.sql.connector.http.endpoint}
+spring.elasticsearch.jest.read-timeout: ${sofia2.database.elasticsearch.sql.connectionTimeout.millis}
+
     
 sofia2: #Config Sofia2 specific
   database.elasticsearch:

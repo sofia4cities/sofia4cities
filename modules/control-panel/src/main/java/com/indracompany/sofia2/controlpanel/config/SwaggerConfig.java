@@ -72,8 +72,8 @@ public class SwaggerConfig  {
 	private static final String CONTACT_URL = "https://www.sofia4cities.com";
 	private static final String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
 	
-
-    private ApiInfo apiInfo() {
+	@Bean
+    public ApiInfo apiInfo() {
         return new ApiInfoBuilder().title(INFO_TITLE).description(INFO_DESCRIPTION)
                 .termsOfServiceUrl(CONTACT_URL)
                 .contact(new Contact(CONTACT_NAME, CONTACT_URL, CONTACT_EMAIL))
@@ -89,7 +89,7 @@ public class SwaggerConfig  {
 
 	
 	@Bean
-	public Docket testApi() {
+	public Docket ManagementAPI() {
 
 		//Adding Header
 		ParameterBuilder aParameterBuilder = new ParameterBuilder();
@@ -99,16 +99,16 @@ public class SwaggerConfig  {
 		aParameters.add(aParameterBuilder.build());
 
 		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("sofia2-oauth2")
+				.groupName("management")
 				.select()
 				.apis(RequestHandlerSelectors.any())
-				.paths(buildPathSelectorTest())
+				.paths(buildPathSelectorManagement())
 				.build()
 				.globalOperationParameters(addRestParameters(aParameterBuilder,aParameters));
 	}
 
 	@SuppressWarnings("unchecked")
-	private Predicate<String> buildPathSelectorTest() {
+	private Predicate<String> buildPathSelectorManagement() {
 		return or (
 				regex("/oauth-api.*"),
 				regex("/oauth.*"),
@@ -116,6 +116,28 @@ public class SwaggerConfig  {
 				regex("/management.*"));
 	}
 	
+	
+	@Bean
+	public Docket ApiOpsAPI() {
+
+		//Adding Header
+		ParameterBuilder aParameterBuilder = new ParameterBuilder();
+		List<Parameter> aParameters = new ArrayList<Parameter>();
+		
+		return new Docket(DocumentationType.SWAGGER_2)
+				.groupName("api-ops")
+				.select()
+				.apis(RequestHandlerSelectors.any())
+				.paths(buildPathSelectorApiOps())
+				.build()
+				.globalOperationParameters(addRestParameters(aParameterBuilder,aParameters));
+	}
+
+	@SuppressWarnings("unchecked")
+	private Predicate<String> buildPathSelectorApiOps() {
+		return or (
+				regex("/api-ops.*"));
+	}
 
 	
 }

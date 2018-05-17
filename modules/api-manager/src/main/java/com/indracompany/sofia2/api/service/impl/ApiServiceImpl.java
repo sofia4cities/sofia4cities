@@ -13,13 +13,22 @@
  */
 package com.indracompany.sofia2.api.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -62,6 +71,8 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 	@Autowired
 	private RouterOperationsServiceFacade facade;
+	
+	private Invocable invocable;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -174,6 +185,43 @@ public class ApiServiceImpl extends ApiManagerService implements ApiServiceInter
 
 		data.put(ApiServiceInterface.OUTPUT, OUTPUT);
 		exchange.getIn().setBody(data);
+		return data;
+	}
+	
+	@PrometheusTimeMethod(name = "postProcess", help = "postProcess")
+	@Timed
+	public Map<String, Object> postProcess(Map<String, Object> data, Exchange exchange) throws Exception {
+		String error = "";
+		String postProcessScript = ((ApiOperation)data.get(ApiServiceInterface.API_OPERATION)).getPostProcess();
+		
+		if (postProcessScript!=null && !"".equals(postProcessScript)) {
+			ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+			this.invocable = (Invocable) engine;
+			try {
+
+				String scriptPostprocessFunction = "function postprocess(data){ " + postProcessScript + " }";
+				
+				ByteArrayInputStream scriptInputStream = new ByteArrayInputStream(scriptPostprocessFunction.getBytes(StandardCharsets.UTF_8));
+				
+				engine.eval(new InputStreamReader(scriptInputStream));
+			
+				Invocable inv = (Invocable) engine;
+				
+				Object result;
+				result = inv.invokeFunction("postprocess", data.get(ApiServiceInterface.OUTPUT));
+				data.put(ApiServiceInterface.OUTPUT, result);
+			}catch(ScriptException e) {
+				log.error("Execution logic for postprocess error", e);
+				error = "{\"result\":\"ERROR\", \"message\":\"Execution logic for Postprocess error\", \"details\":\"" + e.getCause().getMessage() + "\"}";
+				data.put(ApiServiceInterface.OUTPUT, error);
+			}catch (Exception e) {
+				log.error("Unexpected error executing postprocess", e);
+				error = "{\"result\":\"ERROR\", \"message\":\"Execution logic for Postprocess error\", \"details\":\"" + e.getCause().getMessage() + "\"}";
+				data.put(ApiServiceInterface.OUTPUT, error);
+			}
+		
+		}
+				
 		return data;
 	}
 

@@ -232,6 +232,8 @@ public class ApiManagerServiceImpl implements ApiManagerService {
 			String path=operationJson.getPath().replace("&amp;", "&");
 			operation.setPath(path);
 			
+			operation.setPostProcess(operationJson.getPostprocess());
+			
 			apiOperationRepository.save(operation);
 			
 			if (operationJson.getQuerystrings()!=null && operationJson.getQuerystrings().size()>0) {

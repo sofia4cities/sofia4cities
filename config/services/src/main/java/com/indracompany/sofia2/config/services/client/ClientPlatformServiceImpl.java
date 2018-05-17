@@ -322,5 +322,10 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 		return this.ontologyRepository
 				.findByIdentification((LOG_ONTOLOGY_PREFIX + client.getIdentification()).replaceAll(" ", ""));
 	}
+	
+	public List<Token> getTokensByClientPlatformId(String clientPlatformId) {
+		ClientPlatform clientPlatform = clientPlatformRepository.findById(clientPlatformId);
+		return tokenService.getTokens(clientPlatform);
+	}
 
 }

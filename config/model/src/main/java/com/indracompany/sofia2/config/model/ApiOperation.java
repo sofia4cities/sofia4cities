@@ -27,6 +27,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -104,5 +105,11 @@ public class ApiOperation extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String path;
+
+	@Column(name = "POST_PROCESS")
+	@Lob
+	@Getter
+	@Setter
+	private String postProcess;
 
 }

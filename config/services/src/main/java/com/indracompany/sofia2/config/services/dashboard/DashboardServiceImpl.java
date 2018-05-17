@@ -158,14 +158,15 @@ public class DashboardServiceImpl implements DashboardService {
 		}
 	}
 
+	@Override
 	public boolean hasUserViewPermission(String id, String userId) {
 		User user = userRepository.findByUserId(userId);
 
-		if (userId.equals(ANONYMOUSUSER) || user == null) {
+		if (dashboardRepository.findById(id).isPublic()) {
+			return true;
+		} else if (userId.equals(ANONYMOUSUSER) || user == null) {
 			return dashboardRepository.findById(id).isPublic();
-		}
-
-		if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
+		} else if (user.getRole().getId().equals(Role.Type.ROLE_ADMINISTRATOR.toString())) {
 			return true;
 		} else {
 			boolean propietary = dashboardRepository.findById(id).getUser().getUserId().equals(userId);
@@ -249,10 +250,7 @@ public class DashboardServiceImpl implements DashboardService {
 
 	@Override
 	public Dashboard getDashboardById(String id, String userId) {
-		if (hasUserViewPermission(id, userId)) {
-			return dashboardRepository.findById(id);
-		}
-		throw new DashboardServiceException("Cannot view Dashboard that does not exist or don't have permission");
+		return dashboardRepository.findById(id);
 	}
 
 	@Override

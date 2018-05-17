@@ -30,6 +30,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
+import com.indracompany.sofia2.config.services.ontologydata.OntologyDataServiceImpl.EncryptionOperations;
 import com.indracompany.sofia2.router.service.app.model.OperationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.OperationType;
 import com.indracompany.sofia2.router.service.app.model.OperationModel.QueryType;
@@ -126,7 +127,7 @@ public class OntologyDataServiceImplTest {
 		ontology.setIdentification(ontologyName);
 		ontology.setJsonSchema(TestResources.GOOD_JSON_SCHEMA);
 
-		String encryptedData = service.encryptData(TestResources.DATA_FOR_GOOD_JSON, ontology);
+		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology, EncryptionOperations.encrypt);
 
 		assertTrue("If ontology does not allow encryption, data should not be encrypted",
 				TestResources.DATA_FOR_GOOD_JSON.equals(encryptedData));
@@ -143,7 +144,7 @@ public class OntologyDataServiceImplTest {
 		ontology.setJsonSchema(TestResources.SMALL_SCHEMA_WITH_ENCRYPTION);
 		ontology.setAllowsCypherFields(true);
 
-		String encryptedData = service.encryptData(TestResources.DATA_FOR_GOOD_JSON, ontology);
+		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology, EncryptionOperations.encrypt);
 
 		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_GOOD_JSON);
 		JsonNode id = jsonData.findPath("id");
@@ -163,7 +164,7 @@ public class OntologyDataServiceImplTest {
 		ontology.setJsonSchema(TestResources.LONG_SCHEMA_WITH_ENCRYPTED);
 		ontology.setAllowsCypherFields(true);
 
-		String encryptedData = service.encryptData(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT, ontology);
+		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT, ontology, EncryptionOperations.encrypt);
 
 		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_LONG_SCHEMA_TO_ENCRYPT);
 		JsonNode name = jsonData.findPath("image").path("media").path("name");
@@ -184,5 +185,29 @@ public class OntologyDataServiceImplTest {
 				coordinates.toString().equals(encryptedCoordinates.toString()));
 		assertTrue("Feed.image.media.mime should not be encrypted", mime.toString().equals(encryptedMime.toString()));
 
+	}
+	
+	@Test
+	public void given_OneOntologyThatAllowsEncryptedDataAndOneEncryptedEntity_When_DecryptionOfDataIsRequested_Then_TheClearEntityIsReturned() throws IOException {
+		final String ontologyName = "one";
+		final Ontology ontology = new Ontology();
+		ontology.setId("1");
+		ontology.setIdentification(ontologyName);
+		ontology.setJsonSchema(TestResources.SMALL_SCHEMA_WITH_ENCRYPTION);
+		ontology.setAllowsCypherFields(true);
+
+		String encryptedData = service.encryptionOperation(TestResources.DATA_FOR_GOOD_JSON, ontology, EncryptionOperations.encrypt);
+
+		JsonNode jsonData = objectMapper.readTree(TestResources.DATA_FOR_GOOD_JSON);
+		JsonNode id = jsonData.findPath("id");
+		JsonNode jsonEncryptedData = objectMapper.readTree(encryptedData);
+		JsonNode encryptedId = jsonEncryptedData.findPath("id");
+
+		assertFalse("Data should be encrypted", id.toString().equals(encryptedId.toString()));
+		
+		String clearData = service.encryptionOperation(encryptedData, ontology, EncryptionOperations.decrypt);
+		
+		assertTrue("Data should be equal after encrytion and decryption process", clearData.equals(jsonData.toString()));
+		
 	}
 }

@@ -45,4 +45,7 @@ public interface ClientPlatformService {
 	Ontology createDeviceLogOntology(String clientIdentification);
 
 	Ontology getDeviceLogOntology(ClientPlatform client);
+
+	public List<Token> getTokensByClientPlatformId(String clientPlatformId);
+
 }

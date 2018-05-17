@@ -125,6 +125,7 @@
 		<!--THEMES -->
 		<module>themes/openplatform</module>
 		<module>themes/select4cities</module>
+		<module>themes/sofia2</module>
 
 		<!--MODULES-->
 		<module>modules/iotbroker</module>		

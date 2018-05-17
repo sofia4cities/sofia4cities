@@ -255,5 +255,11 @@
 				<controlpanel.theme>sofia2-select4cities-theme</controlpanel.theme>
 			</properties>
 		</profile>
+		<profile>
+			<id>sofia2</id>
+			<properties>
+				<controlpanel.theme>sofia2-sofia2-theme</controlpanel.theme>
+			</properties>
+		</profile>
 	</profiles>
 </project>

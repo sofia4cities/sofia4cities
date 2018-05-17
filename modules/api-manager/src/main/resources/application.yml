@@ -13,6 +13,22 @@ management.security.enabled: false
 #security.basic.enabled: false
     
 sofia2: #Config Sofia2 specific
+   iotbroker.plugable:
+      gateway:
+         kafka:
+            enable: false
+            host: localhost
+            port: 9092
+            partitions: 1
+            replication: 1
+            prefix: ontology_
+            group: ontologyGroup
+            topic.pattern: ontology.*
+            router.topic: router
+            consumer.consumersCount : 10
+            consumer.seekTo : beginning 
+            consumer.group : kafkaGroup
+            consumer.maxPollRecords : 5000
    database.elasticsearch:
       database: sofia2_s4c_es
       sql.maxHttpConnections: 10
@@ -47,6 +63,7 @@ sofia2: #Config Sofia2 specific
       quasar.connector.http.endpoint: http://localhost:18200/query/fs/ 
    router.avoidsslverification: true
    apimanager.audit.enabled: true
+
     
 spring: ## General Config  
    application.name: sofia2-api-manager
@@ -75,6 +92,8 @@ spring: ## General Config
       properties.hibernate.enable_lazy_load_no_trans: true
    jmx:
     enabled: true
+spring.elasticsearch.jest.uris: ${sofia2.database.elasticsearch.sql.connector.http.endpoint}
+spring.elasticsearch.jest.read-timeout: ${sofia2.database.elasticsearch.sql.connectionTimeout.millis}
 
 ## CXF      
 cxf:
