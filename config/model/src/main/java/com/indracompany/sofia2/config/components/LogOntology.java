@@ -20,9 +20,10 @@ public class LogOntology {
 	private String message;
 	private String status;
 	private Date timestamp;
+	private String commandId;
 
 	public LogOntology(String device, Point2D.Double location, String extraOptions, String level, String message,
-			String status, Date timestamp) {
+			String status, Date timestamp, String commandId) {
 		this.device = device;
 		this.location = location;
 		this.extraOptions = extraOptions;
@@ -30,6 +31,7 @@ public class LogOntology {
 		this.message = message;
 		this.status = status;
 		this.timestamp = timestamp;
+		this.commandId = commandId;
 	}
 
 }

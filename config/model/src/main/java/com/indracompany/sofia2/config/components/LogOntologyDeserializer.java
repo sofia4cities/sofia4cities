@@ -31,6 +31,7 @@ public class LogOntologyDeserializer extends StdDeserializer<LogOntology> {
 	private static final String LATITUDE = "latitude";
 	private static final String LONGITUDE = "longitude";
 	private static final String COORDINATES = "coordinates";
+	private static final String COMMANDID = "commandId";
 
 	public LogOntologyDeserializer() {
 		this(null);
@@ -64,7 +65,10 @@ public class LogOntologyDeserializer extends StdDeserializer<LogOntology> {
 		} catch (ParseException e) {
 			log.error("Could not parse date");
 		}
+		String commandId = null;
+		if (node.get(COMMANDID) != null)
+			commandId = node.get(COMMANDID).asText();
 
-		return new LogOntology(device, location, extraOptions, level, message, status, timestamp);
+		return new LogOntology(device, location, extraOptions, level, message, status, timestamp, commandId);
 	}
 }

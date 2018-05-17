@@ -106,9 +106,10 @@ public class ClientsApplication {
 		// clientSecure.log("Battery critical", 40.407816, -3.714255, STATUS_TYPE.ERROR,
 		// LOG_LEVEL.ERROR, timeout);
 
-		clientSecure.logCommand("Executed command ", 40.448277, -3.490684, STATUS_TYPE.OK, LOG_LEVEL.INFO, "command1",
-				timeout);
-		Thread.sleep(150000);
+		// clientSecure.logCommand("Executed command ", 40.448277, -3.490684,
+		// STATUS_TYPE.OK, LOG_LEVEL.INFO, "command1",
+		// timeout);
+		// Thread.sleep(150000);
 
 		// clientSecure.publish(ontology, jsonData, timeout);
 
@@ -122,6 +123,6 @@ public class ClientsApplication {
 
 	public static void generateLogMessage(MQTTClient client, int timeout, JsonNode responseMsg) {
 		client.logCommand("Executed command " + responseMsg.get("params").toString(), 40.448277, -3.490684,
-				STATUS_TYPE.OK, LOG_LEVEL.INFO, responseMsg.get("commandId").toString(), timeout);
+				STATUS_TYPE.OK, LOG_LEVEL.INFO, responseMsg.get("commandId").asText(), timeout);
 	}
 }

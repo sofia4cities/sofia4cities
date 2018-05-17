@@ -98,7 +98,7 @@
 								<ul class="nav nav-tabs pull-left">
 									<li id="tab-basic-info" class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="false"><i class="flaticon-info font-grey-gallery"></i>	<span class="caption-subject font-grey-gallery uppercase" th:text="#{device.management.template.basicinfo}"> Basic Info</span></a></li>
 									<li id="tab-log" class=""><a href="#tab_2" data-toggle="tab" aria-expanded="true"><i class="la la-database"></i> <span th:text="#{device.management.template.logs}" class="uppercase font-md" >Logs </span></a></li>
-									<li id="tab-status" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="font-grey-gallery"></i> <span class="uppercase font-md" th:text="#{device.management.template.status}" >Status</span></a></li>
+									<!-- <li id="tab-status" class=""><a href="#tab_3" data-toggle="tab" aria-expanded="true"><i class="font-grey-gallery"></i> <span class="uppercase font-md" th:text="#{device.management.template.status}" >Status</span></a></li>-->
 									<li id="tab-commands" class=""><a href="#tab_4" data-toggle="tab" aria-expanded="true"><i class="flaticon-settings font-grey-gallery"></i> <span class="uppercase font-md" th:text="#{device.management.template.commands}" >Commands</span></a></li>
 							
 								</ul>
@@ -193,14 +193,14 @@
 									</div>
 									<div class="tab-pane " id="tab_2">
 												<table id="logTable" class="table table-hover table-striped" dt:table="true"
-													dt:filterPlaceholder="none"
-													dt:paginationtype="full_numbers" >
+													dt:filterPlaceholder="none" dt:sortable="false"
+													>
 													<thead>
 														<tr class="cabecera-tabla">
 															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.message}" >Message</span></th>
 															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.status}" >Status</span></th>
 															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.level}" >Level</span></th>
-															<th class="titulo-columnas" ><i class="la la-credit-card"></i> <span th:text="#{device.management.timestamp}" >Timestamp</span></th>
+															<th class="titulo-columnas" ><i class="la la-calendar"></i> <span th:text="#{device.management.timestamp}" >Timestamp</span></th>
 															<th class="titulo-columnas"><i class="la la-wrench"></i> <span th:text="#{device.management.location}"> Location</span></th>
 														</tr>
 													</thead>
@@ -275,6 +275,42 @@
 												</div>
 											</div>																		
 										</div>	
+										<hr/>
+
+										<table id="commandLogTable" class="table table-hover table-striped" dt:table="true"
+													dt:filterPlaceholder="none" dt:sortable="false"
+													>
+													<thead>
+														<tr>
+															<th th:text="#{device.management.commandlogs}">COMMAND LOGS</th>
+														</tr>
+														<tr class="cabecera-tabla">
+															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.message}" >Message</span></th>
+															
+															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.status}" >Status</span></th>
+															
+															<th class="titulo-columnas" ><i class="la la-calendar"></i> <span th:text="#{device.management.timestamp}" >Timestamp</span></th>
+															<th class="titulo-columnas" ><i class="la identificator"></i> <span th:text="#{device.management.commandid}" >Command ID</span></th>
+														
+														</tr>
+													</thead>
+														<tbody th:remove="all-but-first">
+															<tr th:each="logInstance : ${logs}"  th:if="${logInstance.commandId != null}" pages:paginate="10">
+																<!-- Message -->
+																<td class="text-left no-wrap bold" th:text="${logInstance.message}"></td>
+																<!-- Status -->
+																<td class="text-left no-wrap bold" th:text="${logInstance.status}"></td>												
+																<!-- Timestamp -->
+																<td class="text-left no-wrap bold" th:text="${logInstance.timestamp}"></td>							
+																<!-- CommandID -->
+																<td class="text-left no-wrap bold" th:text="${logInstance.commandId}"></td>			
+																
+															</tr>
+														</tbody>
+														
+												</table>
+										
+										
 									</div>
 								</div>
 								

@@ -571,7 +571,11 @@ public class MQTTClient {
 		JsonNode jsonMessage = mapper.readTree(message);
 		String subsId = jsonMessage.get("body").get("subsciptionId").asText();
 		SubscriptionListener listener = this.subscriptions.get(subsId);
-		listener.onMessageArrived(message);
+		new Thread(new Runnable() {
+			public void run() {
+				listener.onMessageArrived(message);
+			}
+		}).start();
 
 	}
 
@@ -584,7 +588,11 @@ public class MQTTClient {
 		((ObjectNode) cmdMsg).put("command", command);
 		((ObjectNode) cmdMsg).set("params", params);
 		log.info(cmdMsg.toString());
-		listener.onMessageArrived(cmdMsg.toString());
+		new Thread(new Runnable() {
+			public void run() {
+				listener.onMessageArrived(cmdMsg.toString());
+			}
+		}).start();
 
 	}
 
