@@ -45,63 +45,60 @@
 		    <groupId>org.springframework</groupId>
 		    <artifactId>spring-jdbc</artifactId>
 		</dependency>
-		
 		<dependency>
-			<groupId>org.apache.hive</groupId>
+        	<groupId>org.apache.hive</groupId>
 			<artifactId>hive-jdbc</artifactId>
 			<version>1.1.0-cdh5.14.2</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.eclipse.jetty.aggregate</groupId>
-					<artifactId>*</artifactId>
+        	<exclusions>
+        	   <exclusion>
+                   <artifactId>slf4j-log4j12</artifactId>
+                   <groupId>org.slf4j</groupId>
+               </exclusion>
+        	
+        		<exclusion>
+			    	<groupId>org.eclipse.jetty</groupId>
+				    <artifactId>jetty-util</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
+			    	<groupId>org.eclipse.jetty.aggregate</groupId>
+				    <artifactId>jetty-all</artifactId>
 				</exclusion>
-				<!-- <exclusion>
-					<artifactId>log4j</artifactId>
-					<groupId>log4j</groupId>
-				</exclusion> -->
-				<exclusion>
-					<artifactId>servlet-api</artifactId>
-					<groupId>javax.servlet</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>derby</artifactId>
-					<groupId>org.apache.derby</groupId>
-				</exclusion>
- 				<exclusion>
+        		<exclusion>
+        			<groupId>tomcat</groupId>
+        			<artifactId>jasper-compiler</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>tomcat</groupId>
+        			<artifactId>jasper-runtime</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>org.apache.thrift</groupId>
+        			<artifactId>libfb303</artifactId>
+        		</exclusion>
+        		<exclusion>
         			<groupId>org.apache.hadoop</groupId>
         			<artifactId>hadoop-yarn-api</artifactId>
         		</exclusion>
-			</exclusions>
-		</dependency>		
-		<!--
-		<dependency>
-			<groupId>org.apache.hive</groupId>
-			<artifactId>hive-jdbc</artifactId>
-			<version>1.1.0-cdh5.14.2</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-codec</artifactId>
-					<groupId>commons-codec</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>httpcore</artifactId>
-					<groupId>org.apache.httpcomponents</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>commons-lang</artifactId>
-					<groupId>commons-lang</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-log4j12</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		
+        		<exclusion>
+        			<groupId>org.apache.hadoop</groupId>
+        			<artifactId>hadoop-yarn-server</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>org.apache.hadoop</groupId>
+        			<artifactId>hadoop-yarn-server-resourcemanager</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>org.apache.zookeeper</groupId>
+        			<artifactId>zookeeper</artifactId>
+        		</exclusion>
+        		<exclusion>
+        			<groupId>org.apache.httpcomponents</groupId>
+            		<artifactId>httpclient</artifactId>
+        		</exclusion>
+        	</exclusions>
+        </dependency>
+			
+		<!--		
 		<dependency>
 			<groupId>org.apache.hadoop</groupId>
 			<artifactId>hadoop-client</artifactId>
@@ -130,6 +127,11 @@
 		</dependency>
   -->
 	</dependencies>
-
+	<repositories>
+		<repository>
+		   <id>cloudera</id>
+		   <url>http://repository.cloudera.com/artifactory/cloudera-repos/</url>
+		</repository>
+	</repositories>
 
 </project>

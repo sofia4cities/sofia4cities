@@ -118,6 +118,7 @@
 		<module>persistence/interfaces</module>	
 		<module>persistence/mongodb-impl</module>		
 		<module>persistence/elasticsearch-impl</module>		
+		<module>persistence/hadoop-impl</module>	
 		<module>persistence/services</module>				
 		
 		<module>contributions/spring-boot-admin-server-ui</module>
