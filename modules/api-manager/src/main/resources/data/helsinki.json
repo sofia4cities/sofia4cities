@@ -123,6 +123,7 @@
          "operation":"GET",
          "path":"/getPopulation",
          "description":"Helsinki's Male, Female and Total Population",
+         "postProcess": "var dataArray = JSON.parse(data);var i;for (i = 0; i < dataArray.length; i++) {dataArray[i].order = i;}return (JSON.stringify(dataArray));",
          "queryParams":[
             {
                "name":"queryType",
