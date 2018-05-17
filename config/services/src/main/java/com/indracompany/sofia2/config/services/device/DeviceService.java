@@ -41,4 +41,6 @@ public interface DeviceService {
 	List<Device> getByClientPlatformId(ClientPlatform clientPlatform);
 
 	List<LogOntology> getLogInstances(String resultFromQueryTool) throws IOException;
+
+	List<String> getDeviceCommands(Device device);
 }

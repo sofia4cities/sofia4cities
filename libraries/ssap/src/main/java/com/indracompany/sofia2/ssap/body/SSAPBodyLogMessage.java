@@ -28,6 +28,15 @@ public class SSAPBodyLogMessage extends SSAPBodyMessage {
 	public SSAPStatusType status;
 	public JsonNode extraData;
 	public Point2D.Double coordinates;
+	public String commandId;
+
+	public String getCommandId() {
+		return commandId;
+	}
+
+	public void setCommandId(String commandId) {
+		this.commandId = commandId;
+	}
 
 	public Point2D.Double getCoordinates() {
 		return coordinates;

@@ -36,10 +36,12 @@ import com.indracompany.sofia2.config.model.Device;
 import com.indracompany.sofia2.config.model.Role;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.device.DeviceService;
-import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.config.services.user.UserService;
 import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 import com.indracompany.sofia2.persistence.services.QueryToolService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesService;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.Module;
+import com.indracompany.sofia2.resources.service.IntegrationResourcesServiceImpl.ServiceUrl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -53,13 +55,13 @@ public class DeviceManagerController {
 	@Autowired
 	private AppWebUtils utils;
 	@Autowired
-	private OntologyService ontologyService;
-	@Autowired
 	private DeviceService deviceService;
 	@Autowired
 	private UserService userService;
 	@Autowired
 	private QueryToolService queryToolService;
+	@Autowired
+	private IntegrationResourcesService intregationResourcesService;
 
 	@Autowired
 	private GraphDeviceUtil graphDeviceUtil;
@@ -111,9 +113,10 @@ public class DeviceManagerController {
 		String query = "select * from " + ontology + " as c where c.DeviceLog.device = \"" + device.getIdentification()
 				+ "\" ORDER BY c.contextData.timestampMillis Desc limit 50";
 		String result = this.queryToolService.querySQLAsJson(this.utils.getUserId(), ontology, query, 0);
-
+		model.addAttribute("commands", this.deviceService.getDeviceCommands(device));
 		model.addAttribute("query", query.replace(" limit 50", ""));
 		model.addAttribute("logs", this.deviceService.getLogInstances(result));
+		model.addAttribute("iotbrokerUrl", this.intregationResourcesService.getUrl(Module.iotbroker, ServiceUrl.base));
 		return "devices/management/info";
 	}
 

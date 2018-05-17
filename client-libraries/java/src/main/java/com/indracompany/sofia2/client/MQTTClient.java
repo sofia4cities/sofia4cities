@@ -33,6 +33,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.indracompany.sofia2.client.configuration.MQTTSecureConfiguration;
 import com.indracompany.sofia2.client.exception.MQTTException;
 import com.indracompany.sofia2.ssap.SSAPMessage;
@@ -63,13 +64,19 @@ public class MQTTClient {
 	private String topic = "/message";
 	private String topic_message = "/topic/message";
 	private String topic_subscription = "/topic/subscription";
+	private String topic_subscription_command = "/topic/command";
 	private MqttClient client;
 	private Map<String, SubscriptionListener> subscriptions = new HashMap<String, SubscriptionListener>();
 	private MQTTSecureConfiguration sslConfig;
+	private ObjectMapper mapper = new ObjectMapper();
 
 	public enum QUERY_TYPE {
 		NATIVE, SQL
-	};
+	}
+
+	public enum LOG_LEVEL {
+		ERROR, INFO, WARNING
+	}
 
 	public enum STATUS_TYPE {
 		OK, ERROR, WARNING, COMPLETED, EXECUTED, UP, DOWN, CRITICAL
@@ -89,33 +96,35 @@ public class MQTTClient {
 	 * Creates a MQTT session.
 	 *
 	 * @param token
-	 *            The token associated with the device/client
+	 *            The token associated with the device/template
 	 * @param clientPlatform
-	 *            The device/client identification
+	 *            The device template identification
 	 * @param clientPlatformInstance
-	 *            The instance of the device
+	 *            The identification of the device
 	 * @param timeout
 	 *            Time in seconds for waiting response from Broker
+	 * @param commandConfiguration
+	 *            A JSON object containing command configuration for this device
 	 * @return The session key for the session established between client and IoT
 	 *         Broker
 	 * @throws MQTTException
 	 */
 
 	@SuppressWarnings("unchecked")
-	public String connect(String token, String clientPlatform, String clientPlatformInstance, int timeout)
-			throws MQTTException {
-
-		// JOIN SSAP MESSAGE FOR SESSIONKEY
-		final SSAPMessage<SSAPBodyJoinMessage> join = new SSAPMessage<SSAPBodyJoinMessage>();
-		join.setDirection(SSAPMessageDirection.REQUEST);
-		join.setMessageType(SSAPMessageTypes.JOIN);
-		SSAPBodyJoinMessage body = new SSAPBodyJoinMessage();
-		body.setClientPlatform(clientPlatform);
-		body.setClientPlatformInstance(clientPlatformInstance);
-		body.setToken(token);
-		join.setBody(body);
+	public String connect(String token, String clientPlatform, String clientPlatformInstance, int timeout,
+			JsonNode commandConfiguration) throws MQTTException {
 
 		try {
+			// JOIN SSAP MESSAGE FOR SESSIONKEY
+			final SSAPMessage<SSAPBodyJoinMessage> join = new SSAPMessage<SSAPBodyJoinMessage>();
+			join.setDirection(SSAPMessageDirection.REQUEST);
+			join.setMessageType(SSAPMessageTypes.JOIN);
+			SSAPBodyJoinMessage body = new SSAPBodyJoinMessage();
+			body.setClientPlatform(clientPlatform);
+			body.setClientPlatformInstance(clientPlatformInstance);
+			body.setToken(token);
+			body.setDeviceConfiguration(commandConfiguration);
+			join.setBody(body);
 			// Connect client MQTT
 			this.client = new MqttClient(brokerURI, clientPlatform, persistence);
 			// Unsecure connection
@@ -135,7 +144,7 @@ public class MQTTClient {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
 					final String response = new String(message.getPayload());
-					// log.debug("Message arrived " + response);
+					log.info("Message arrived " + response);
 					completableFutureMessage.complete(response);
 					completableFutureMessage = new CompletableFuture<>();
 				}
@@ -176,11 +185,32 @@ public class MQTTClient {
 			throw new MQTTException("Error: " + e);
 		}
 
-		// if (this.sessionKey == null)
-		// log.info("Session key is null, either Token or ClientPlatform params are not
-		// valid");
-
 		return this.sessionKey;
+	}
+
+	/**
+	 * Publishes a message through MQTT session.
+	 * 
+	 * @param listener
+	 *            Listener that will handle messages related to the command
+	 *            subscription
+	 * 
+	 */
+	public void subscribeCommands(SubscriptionListener listener) {
+		try {
+			this.client.subscribe(topic_subscription_command + "/" + this.sessionKey, new IMqttMessageListener() {
+				@Override
+				public void messageArrived(String topic, MqttMessage message) throws Exception {
+					log.info("Command message available");
+					final String response = new String(message.getPayload());
+					delegateCommandMessage(response, listener);
+
+				}
+			});
+		} catch (MqttException e) {
+			log.error("Could not connect to MQTT broker");
+			throw new MQTTException("Could not connect to MQTT broker");
+		}
 	}
 
 	/**
@@ -206,14 +236,7 @@ public class MQTTClient {
 		subscription.setSessionKey(this.sessionKey);
 		final SSAPBodySubscribeMessage body = new SSAPBodySubscribeMessage();
 		body.setOntology(ontology);
-
-		switch (queryType) {
-		case NATIVE:
-			body.setQueryType(SSAPQueryType.NATIVE);
-		case SQL:
-			body.setQueryType(SSAPQueryType.SQL);
-		}
-
+		body.setQueryType(SSAPQueryType.valueOf(queryType.name()));
 		body.setQuery(query);
 		subscription.setBody(body);
 		subscription.setDirection(SSAPMessageDirection.REQUEST);
@@ -242,6 +265,7 @@ public class MQTTClient {
 
 				}
 			});
+
 		} catch (MqttException e) {
 			log.error("Could not connect to MQTT broker");
 			throw new MQTTException("Could not connect to MQTT broker");
@@ -316,18 +340,26 @@ public class MQTTClient {
 	/**
 	 * Publishes a message through MQTT session.
 	 *
-	 * @param ontology
-	 *            Ontology associated with the message
-	 * @param jsonData
-	 *            Ontology message payload
+	 * @param message
+	 *            Log message
+	 * @param latitude
+	 *            Latitude (geolocation)
+	 * @param longitude
+	 *            Longitude (geolocation)
+	 * @param status
+	 *            Status of the device
+	 * @param level
+	 *            Log level
+	 * @param commandId
+	 *            Identification of the command associated to this log message
 	 * @param timeout
 	 *            Time in seconds for waiting response from Broker
 	 * 
 	 */
 
 	@SuppressWarnings("unchecked")
-	public void log(String clientPlatform, String message, double latitude, double longitude, STATUS_TYPE status,
-			long timeout) {
+	public void logCommand(String message, double latitude, double longitude, STATUS_TYPE status, LOG_LEVEL level,
+			String commandId, int timeout) {
 		final SSAPMessage<SSAPBodyLogMessage> logMessage = new SSAPMessage<>();
 		final SSAPBodyLogMessage body = new SSAPBodyLogMessage();
 		logMessage.setDirection(SSAPMessageDirection.REQUEST);
@@ -336,36 +368,76 @@ public class MQTTClient {
 		Point2D.Double coordinates = new Point2D.Double(latitude, longitude);
 		coordinates.setLocation(coordinates);
 		body.setCoordinates(coordinates);
-		body.setLevel(SSAPLogLevel.INFO);
+		body.setLevel(SSAPLogLevel.valueOf(level.name()));
 		body.setMessage(message);
-		switch (status) {
-		case UP:
-			body.setStatus(SSAPStatusType.UP);
-			break;
-		case DOWN:
-			body.setStatus(SSAPStatusType.DOWN);
-			break;
-		case WARNING:
-			body.setStatus(SSAPStatusType.WARNING);
-			break;
-		case ERROR:
-			body.setStatus(SSAPStatusType.ERROR);
-			break;
-		case EXECUTED:
-			body.setStatus(SSAPStatusType.EXECUTED);
-			break;
-		case COMPLETED:
-			body.setStatus(SSAPStatusType.COMPLETED);
-			break;
-		case OK:
-			body.setStatus(SSAPStatusType.OK);
-			break;
-		case CRITICAL:
-			body.setStatus(SSAPStatusType.CRITICAL);
-			break;
+		body.setCommandId(commandId);
+		body.setStatus(SSAPStatusType.valueOf(status.name()));
+		logMessage.setBody(body);
 
+		final MqttMessage mqttLog = new MqttMessage();
+		try {
+			mqttLog.setPayload(SSAPJsonParser.getInstance().serialize(logMessage).getBytes());
+			this.client.publish(topic, mqttLog);
+			String response = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
+			SSAPMessage<SSAPBodyReturnMessage> responseSSAP = SSAPJsonParser.getInstance().deserialize(response);
+			if (responseSSAP.getBody().isOk())
+				log.info("Message published");
+			else {
+
+				throw new MQTTException("Could not publish message \nError Code: "
+						+ responseSSAP.getBody().getErrorCode() + ":\n" + responseSSAP.getBody().getError());
+			}
+		} catch (SSAPParseException e) {
+			log.error("Could not parse SSAP message");
+			throw new MQTTException("Could not parse SSAP message");
+		} catch (MqttException e) {
+			log.error("Could not connect to MQTT broker");
+			throw new MQTTException("Could not disconnect from MQTT broker");
+		} catch (InterruptedException e) {
+			log.error("Could not retrieve message from broker, interrupted thread");
+			throw new MQTTException("Could not retrieve message from broker, interrupted thread");
+		} catch (ExecutionException e) {
+			log.error("Could not get result from retrieved message at CompletableFuture object");
+			throw new MQTTException("Could not get result from retrieved message at CompletableFuture object");
+		} catch (TimeoutException e) {
+			log.error("Timeout, could not retrieve session key");
+			throw new MQTTException("Timeout, could not retrieve session key");
 		}
+	}
 
+	/**
+	 * Publishes a message through MQTT session.
+	 *
+	 * @param message
+	 *            Log message
+	 * @param latitude
+	 *            Latitude (geolocation)
+	 * @param longitude
+	 *            Longitude (geolocation)
+	 * @param status
+	 *            Status of the device
+	 * @param level
+	 *            Log level
+	 *
+	 * @param timeout
+	 *            Time in seconds for waiting response from Broker
+	 * 
+	 */
+
+	@SuppressWarnings("unchecked")
+	public void log(String message, double latitude, double longitude, STATUS_TYPE status, LOG_LEVEL level,
+			int timeout) {
+		final SSAPMessage<SSAPBodyLogMessage> logMessage = new SSAPMessage<>();
+		final SSAPBodyLogMessage body = new SSAPBodyLogMessage();
+		logMessage.setDirection(SSAPMessageDirection.REQUEST);
+		logMessage.setMessageType(SSAPMessageTypes.LOG);
+		logMessage.setSessionKey(this.sessionKey);
+		Point2D.Double coordinates = new Point2D.Double(latitude, longitude);
+		coordinates.setLocation(coordinates);
+		body.setCoordinates(coordinates);
+		body.setLevel(SSAPLogLevel.valueOf(level.name()));
+		body.setMessage(message);
+		body.setStatus(SSAPStatusType.valueOf(status.name()));
 		logMessage.setBody(body);
 
 		final MqttMessage mqttLog = new MqttMessage();
@@ -401,7 +473,7 @@ public class MQTTClient {
 
 	@SuppressWarnings("unchecked")
 	public void publish(String ontology, String jsonData, int timeout) {
-		ObjectMapper mapper = new ObjectMapper();
+
 		JsonNode data;
 		try {
 			data = mapper.readTree(jsonData);
@@ -496,11 +568,23 @@ public class MQTTClient {
 
 	private void delegateMessageFromSubscription(String message) throws JsonProcessingException, IOException {
 
-		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonMessage = mapper.readTree(message);
 		String subsId = jsonMessage.get("body").get("subsciptionId").asText();
 		SubscriptionListener listener = this.subscriptions.get(subsId);
 		listener.onMessageArrived(message);
+
+	}
+
+	private void delegateCommandMessage(String message, SubscriptionListener listener) throws IOException {
+		JsonNode cmdMsg = mapper.createObjectNode();
+		String command = mapper.readTree(message).get("body").get("command").asText();
+		JsonNode params = mapper.readTree(message).get("body").get("params");
+		String commandId = mapper.readTree(message).get("body").get("commandId").asText();
+		((ObjectNode) cmdMsg).put("commandId", commandId);
+		((ObjectNode) cmdMsg).put("command", command);
+		((ObjectNode) cmdMsg).set("params", params);
+		log.info(cmdMsg.toString());
+		listener.onMessageArrived(cmdMsg.toString());
 
 	}
 

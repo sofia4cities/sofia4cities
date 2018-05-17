@@ -15,13 +15,16 @@
 package com.indracompany.sofia2.config.services.device;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -105,6 +108,32 @@ public class DeviceServiceImpl implements DeviceService {
 			return null;
 		}
 
+	}
+
+	@Override
+	public List<String> getDeviceCommands(Device device) {
+		List<String> commandActions = new ArrayList<>();
+		if (!StringUtils.isEmpty(device.getJsonActions())) {
+			try {
+				JsonNode commands = mapper.readTree(device.getJsonActions());
+				if (!commands.isArray()) {
+					Iterator<String> fields = commands.fieldNames();
+					while (fields.hasNext()) {
+						commandActions.add(fields.next());
+					}
+				} else {
+					for (JsonNode command : commands) {
+						Iterator<String> fields = command.fieldNames();
+						while (fields.hasNext()) {
+							commandActions.add(fields.next());
+						}
+					}
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return commandActions;
 	}
 
 }

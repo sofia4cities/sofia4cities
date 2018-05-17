@@ -41,7 +41,6 @@ import com.indracompany.sofia2.ssap.body.SSAPBodyJoinMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyLogMessage;
 import com.indracompany.sofia2.ssap.body.SSAPBodyReturnMessage;
 import com.indracompany.sofia2.ssap.body.parent.SSAPBodyMessage;
-import com.indracompany.sofia2.ssap.enums.SSAPMessageTypes;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,16 +73,13 @@ public class DeviceManagerDelegate implements DeviceManager {
 			device.setClientPlatform(this.clientPlatformService.getByIdentification(session.getClientPlatform()));
 			device.setIdentification(session.getDevice());
 			device.setProtocol(info.getProtocol());
-			if (request.getMessageType().equals(SSAPMessageTypes.JOIN)) {
-				SSAPBodyJoinMessage body = (SSAPBodyJoinMessage) request.getBody();
-				device.setJsonActions(
-						body.getDeviceConfiguration() != null ? body.getDeviceConfiguration().toString() : null);
-			}
-
 		}
 
 		switch (request.getMessageType()) {
 		case JOIN:
+			SSAPBodyJoinMessage body = (SSAPBodyJoinMessage) request.getBody();
+			device.setJsonActions(body.getDeviceConfiguration() != null ? body.getDeviceConfiguration().toString()
+					: device.getJsonActions());
 			touchDevice(device, session, true, info, null, null);
 			break;
 		case LEAVE:
@@ -154,12 +150,13 @@ public class DeviceManagerDelegate implements DeviceManager {
 		double longitude = logMessage.getCoordinates() == null ? 0 : logMessage.getCoordinates().getX();
 		double latitude = logMessage.getCoordinates() == null ? 0 : logMessage.getCoordinates().getY();
 		return this.createLogInstance(device, logMessage.getStatus().name(), logMessage.getLevel().name(),
-				logMessage.getMessage(), logMessage.getExtraData().toString(), longitude, latitude);
+				logMessage.getMessage(), logMessage.getExtraData().toString(), longitude, latitude,
+				logMessage.getCommandId());
 
 	}
 
 	public JsonNode createLogInstance(Device device, String status, String level, String message, String extraOptions,
-			double longitude, double latitude) throws IOException {
+			double longitude, double latitude, String commandId) throws IOException {
 
 		JsonNode root = mapper.createObjectNode();
 		JsonNode properties = mapper.createObjectNode();
@@ -179,6 +176,9 @@ public class DeviceManagerDelegate implements DeviceManager {
 			((ObjectNode) coordinates).set("coordinates", subcoordinates);
 			((ObjectNode) coordinates).put("type", "Point");
 			((ObjectNode) properties).set("location", coordinates);
+		}
+		if (commandId != null) {
+			((ObjectNode) properties).put("commandId", commandId);
 		}
 		((ObjectNode) root).set("DeviceLog", properties);
 		return root;

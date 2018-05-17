@@ -30,7 +30,11 @@
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/datatable/datatables.bootstrap.css}"/>	
 		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.css}"/>
 		<!-- JSON EDITOR -->
-		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/json/jsoneditor.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/lib/codemirror.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neat.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/ambiance.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/material.css}"/>
+		<link rel="stylesheet" type="text/css" media="all" th:href="@{/static/vendor/codemirror/theme/neo.css}"/>
 		
 	</head>	
 	
@@ -253,7 +257,23 @@
 									</div>
 									<div class="tab-pane " id="tab_4">
 										<div class="row">
-																		
+											<div class="col-md-12">
+												<div th:each="command : ${commands}" class="row">													
+															<div class="col-md-3 col-sm-6 col-xs-12">
+															<div class="form-group">
+																		<label class="control-label bold" th:text="${command}"></label>
+																		<select th:id="'combo'+${command}" class="selectpicker form-control no-remove" data-live-search="true" data-width="100%"  th:onclick="'updateCodeMirror(\''+ ${command}+'\',this);'">
+																																			
+																		</select>		
+																		<br/>
+																		<textarea th:id="${command}" th:required="true"  class="form-control" rows="5" data-min-rows='5'></textarea>
+																		<div class="pull-right">
+																			<button th:onclick="'executeCommand(\''+ ${command}+'\');'"   type="button" class="btn btn-square btn-primary" th:value="#{device.management.execute}" ><span th:text="#{device.management.execute}"> Execute</span></button>
+																		</div>														
+																	</div>
+															</div>
+												</div>
+											</div>																		
 										</div>	
 									</div>
 								</div>
@@ -277,14 +297,14 @@
 	<!-- PLUGINS -->
 	<script th:src="@{/static/vendor/jquery/jquery.dataTables.min.js}"/>
 	<script th:src="@{/static/vendor/datatable/datatables.bootstrap.js}"/>	
-	<script th:src="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js}" type="text/javascript"></script>
-	
-	<!-- JSON EDITOR -->	
-	<script th:src="@{/static/vendor/json/jsoneditor.js}"/>
-	
-	<script th:src="@{/static/vendor/ace/ace.js}" charset="utf-8"/>
-	<script th:src="@{/static/vendor/ace/mode-json.js}"/>
-	<script th:src="@{/static/vendor/ace/theme-textmate.js}"/>
+	<script th:src="@{/static/vendor/bootstrap-tagsinput/bootstrap-tagsinput.min.js}" type="text/javascript"></script>	
+	<script th:src="@{/static/vendor/codemirror/lib/codemirror.js}"/>
+	<script th:src="@{/static/vendor/codemirror/mode/javascript/javascript.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/matchbrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/edit/closebrackets.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/selection/active-line.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/comment/comment.js}" />
+	<script th:src="@{/static/vendor/codemirror/addon/comment/continuecomment.js}" />
 	
 	<!-- TEMPLATE CONTROLLER  -->	
 		
@@ -292,14 +312,15 @@
 	<script  th:inline="javascript">
 	var showLog = 1; // console.log toggle
     //<![CDATA[ 
-	
-	
+	var codeMirrorActionsMap = new Map();
+	var commands = [[${commands}]];
+	var jsonActions = JSON.parse([[${device.jsonActions}]]);
+	var iotbrokerUrl = [[${iotbrokerUrl}]];
 	// DATATABLES LANGUAJE FROM PROPERTIES.	
 	datatable_lang = [[#{datatables_lang}]];	
 	var languageJson = JSON.parse(datatable_lang);
 	if ( languageJson ){ $.extend( true, $.fn.dataTable.defaults, { language: languageJson }); }
 
-	
 	
 	
 
@@ -333,9 +354,66 @@
 		// SHOW/HIDE DATATABLES COLUMN INIT 		
 		$('.dataTables_filter').append($('#dataTable-vis-toggle'));		
 		$('#dataTable-vis-toggle').removeClass('hide');
+		
+		loadCodeMirrors();
 			
 	
 	});
+	
+	var loadCodeMirrors = function(){
+		for (var i=commands.length-1; i>=0; i--){
+			 var actionJson = jsonActions[i];
+			 var cmd = actionJson[commands[i]];
+			 var keys = Object.keys(cmd);
+			 $.each(keys, function (j, keys) {
+				    $('#combo'+commands[i]).append($('<option>', { 
+				        value: cmd[keys],
+				        text : keys
+				    }));
+				});
+			 
+			 var myTextArea = document.getElementById(commands[i]);
+		        myCodeMirror = CodeMirror.fromTextArea(myTextArea, {
+		        	mode: "application/ld+json",
+		        	autoCloseBrackets: true,
+		            matchBrackets: true,
+		            styleActiveLine: true,
+		            theme:"material",
+		            lineWrapping: true
+
+		        });
+		        myCodeMirror.setSize("100%",150);
+		        var initValue = $('#combo'+commands[i]).val();
+		        var initCommand = commands[i];
+		        if(isNaN(Number(initValue)))  myCodeMirror.setValue("{\""+initCommand+"\" : \""+initValue+"\"}");
+		        else myCodeMirror.setValue("{\""+initCommand+"\" : 	"+initValue+"}");
+		        codeMirrorActionsMap.set(commands[i], myCodeMirror);
+
+		}
+		
+	}
+	var updateCodeMirror = function (command, input){
+		 var editor = codeMirrorActionsMap.get(command);
+		 if(isNaN(Number(input.value)))	 editor.setValue("{\""+command+"\" : \""+input.value+"\"}");
+		 else  editor.setValue("{\""+command+"\" : "+input.value+"}");
+		 editor.refresh();
+	}
+	
+	var executeCommand = function(command){
+		$.ajax({
+		    url: iotbrokerUrl+'/commandAsync/'+command,
+		    type: 'post',
+		    data: codeMirrorActionsMap.get(command).getValue(),
+		    headers: {
+		    	'Content-Type' : 'application/json',
+		    	'Authorization': [[${device.sessionKey}]]
+		    },
+		    dataType: 'json',
+		    success: function (data) {
+		        console.info(data);
+		    }
+		});
+	}
 	
 	//]]>
 	</script>	

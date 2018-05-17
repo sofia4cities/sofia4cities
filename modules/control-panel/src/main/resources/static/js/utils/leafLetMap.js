@@ -17,9 +17,30 @@ var setUpMap = function(id) {
 var updateMarkers = function(){
 	removeMarkers();
 	filteredDevices = new Array();
-	var elements = $('#devicesTable > tbody > tr');
-	for(var i= elements.length-1; i>=0 ; i--){
-		filteredDevices.push(elements[i].cells[0].firstChild.data);
+	var tagsFilter = $('#tagsFilter input').val();
+	var statusFilter = $('#statusFilter input').val();
+	if(tagsFilter != "" || statusFilter != ""){
+		var elements = $('#devicesTable > tbody > tr');
+		if(elements[0].cells.length == 1) filteredDevices.push("noDevicesMatched");
+//	for(var i= elements.length-1; i>=0 ; i--){
+//			filteredDevices.push(elements[i].cells[0].firstChild.data);
+//		}
+		for(var i= devices.length-1; i>=0 ; i--){
+			if(tagsFilter != "" && statusFilter != ""){
+				if(devices[i].tags.toLowerCase().indexOf(tagsFilter.toLowerCase()) > -1 && devices[i].status.toLowerCase().indexOf(statusFilter.toLowerCase()) > -1){
+					filteredDevices.push(devices[i].identification);
+				}
+			}else if(tagsFilter != ""){
+				if(devices[i].tags.toLowerCase().indexOf(tagsFilter.toLowerCase()) > -1){
+					filteredDevices.push(devices[i].identification);
+				}
+			}else if(statusFilter != ""){
+				if(devices[i].status.toLowerCase().indexOf(statusFilter.toLowerCase()) > -1){
+					filteredDevices.push(devices[i].identification);
+				}
+			}
+			
+		}
 	}
 	drawMarkers();	
 }
@@ -75,11 +96,14 @@ var drawMarkers = function (){
 					});
 				
 			}
-			var marker = L.marker([devices[i].location[0], devices[i].location[1]], {'icon' : iconCustom});
-			marker.bindPopup("<b><a target='_blank' href='/controlpanel/devices/management/show/"+devices[i].id+"'>"+devices[i].identification+"</a></b><br/>Status: "+devices[i].status+"<br>Connected: "+devices[i].connected+
-					"<br>Protocol: "+devices[i].protocol+"<br>Tags: "+devices[i].tags);
-			marker.addTo(mymap);
-			markers.push(marker);
+			if(devices[i].location != null){
+				var marker = L.marker([devices[i].location[0], devices[i].location[1]], {'icon' : iconCustom});
+				marker.bindPopup("<b><a target='_blank' href='/controlpanel/devices/management/show/"+devices[i].id+"'>"+devices[i].identification+"</a></b><br/>Status: "+devices[i].status+"<br>Connected: "+devices[i].connected+
+						"<br>Protocol: "+devices[i].protocol+"<br>Tags: "+devices[i].tags);
+				marker.addTo(mymap);
+				markers.push(marker);
+			}
+			
 		}
 	
 	}
