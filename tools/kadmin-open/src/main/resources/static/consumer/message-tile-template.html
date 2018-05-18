@@ -1,0 +1,25 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <button class="btn btn-default collapse-btn btn-sm" data-toggle="collapse" data-target="#<%= uuid %>">
+            <span class="glyphicon glyphicon-collapse-down"></span> Collapse
+        </button>
+        <button class="btn btn-default copy-btn btn-sm" data-clipboard-text='<%= rawMessage %>'>
+            <span class="glyphicon glyphicon-copy"></span> Copy
+        </button>
+        <div class="key-row">
+            Key: "<%= key %>"
+        </div>
+        <div class="time-row text-muted">
+            Consumed @<%= writeTimeText %>
+        </div>
+        <div class="time-row text-muted">
+            offset: <%= offset %>
+        </div>
+        <div class="time-row text-muted">
+            topic: <%= topic %>
+        </div>
+        <div id="<%= uuid %>" class="collapse in">
+            <pre><%= messageText %></pre>
+        </div>
+    </div>
+</div>

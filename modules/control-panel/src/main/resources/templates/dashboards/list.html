@@ -172,10 +172,10 @@
 																	<span  th:title="#{gen.view}" class="btn btn-sm blue-sharp sbold tooltips" data-container="body" data-placement="bottom" th:data-original-title="#{gen.view}" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/view/${dashboard.id}|} + '\');'"><i class="fa fa-eye"></i></span>																																																			
 																	
 																	<!-- Full EDIT -->
-																	<span  class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} " th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
+																	<span sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{gen.edit} " th:data-original-title="#{gen.edit} + ' FullScreen'" th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/editfull/${dashboard.id}|(form)} + '=' + '\');'"><i class="fa fa-book"></i></span>
 																	
 																	<!-- EDIT ACCESS-->
-																	<span th:if="${dashboard.userAccessType=='EDIT'}" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{dashboards.auth.title} " th:data-original-title="#{dashboards.auth.title} " th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/dashboardconf/${dashboard.id}|} + '\');'"><i class="fa fa-cog"></i></span>
+																	<span sec:authorize="hasAuthority('ROLE_ADMINISTRATOR') or hasAuthority('ROLE_DEVELOPER') or hasAuthority('ROLE_DATASCIENTIST')" th:if="${dashboard.userAccessType=='EDIT'}" class="btn btn-sm btn-warning sbold tooltips" data-container="body" data-placement="bottom" th:title="#{dashboards.auth.title} " th:data-original-title="#{dashboards.auth.title} " th:onclick="'javascript:navigateUrl(\'' + @{|/dashboards/dashboardconf/${dashboard.id}|} + '\');'"><i class="fa fa-cog"></i></span>
 																	
 																	
 																	<!-- URL -->
