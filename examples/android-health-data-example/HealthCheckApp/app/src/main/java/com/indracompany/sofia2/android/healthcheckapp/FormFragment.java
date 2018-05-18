@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,10 +42,12 @@ public class FormFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private MainActivity mActivity;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private String mAccessToken = "";
 
     EditText mHeightField;
     EditText mWeightField;
@@ -94,6 +97,8 @@ public class FormFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_form,
                 container, false);
 
+        mActivity = (MainActivity) getActivity();
+
         mHeightField = (EditText) view.findViewById(R.id.height);
         mWeightField = (EditText) view.findViewById(R.id.weight);
         mSysPressureField = (EditText) view.findViewById(R.id.sys_pressure);
@@ -101,20 +106,30 @@ public class FormFragment extends Fragment {
         mCommentField = (EditText) view.findViewById(R.id.comments);
 
 
-        Button mButton = (Button) view.findViewById(R.id.send_form_button);
+        Button mButton = (Button) view.findViewById(R.id.store_form_button);
         mButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                mPostTask = new PostToS4CAsyncTask(accessToken,
-                        mHeightField.getText().toString(),
-                        mWeightField.getText().toString(),
-                        mSysPressureField.getText().toString(),
-                        mDiaPressureField.getText().toString(),
-                        mCommentField.getText().toString()
-                        );
-                mPostTask.execute((Void) null);
+                if(mHeightField.getText().length()!=0 &&
+                        mWeightField.getText().length()!=0 &&
+                        mSysPressureField.getText().length()!=0 &&
+                        mDiaPressureField.getText().length()!=0 &&
+                        mCommentField.getText().length()!=0){
+
+                    mPostTask = new PostToS4CAsyncTask(mActivity.mAccessToken,
+                            mHeightField.getText().toString(),
+                            mWeightField.getText().toString(),
+                            mSysPressureField.getText().toString(),
+                            mDiaPressureField.getText().toString(),
+                            mCommentField.getText().toString()
+                    );
+                    mPostTask.execute((Void) null);
+                }
+                else{
+                    Toast.makeText(getActivity(),"Please fill-in all fields",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         return view;
@@ -160,18 +175,34 @@ public class FormFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public class PostToS4CAsyncTask extends AsyncTask<Void, Void, Boolean> {
+    public class PostToS4CAsyncTask extends AsyncTask<Void, Void, Integer> {
 
         private String mAccessToken = "";
+        private String mHeight = "";
+        private String mWeight = "";
+        private String mSys = "";
+        private String mDia = "";
+        private String mComments = "";
 
-        PostToS4CAsyncTask(String accessToken) {
+        PostToS4CAsyncTask(String accessToken,
+                           String height,
+                           String weight,
+                           String sys_press,
+                           String dia_press,
+                           String comments) {
             mAccessToken = accessToken;
+            mHeight = height;
+            mWeight = weight;
+            mSys = sys_press;
+            mDia = dia_press;
+            mComments = comments;
         }
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected Integer doInBackground(Void... voids) {
 
-            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/oauth/token";
+            String urlS ="http://s4citiespro.westeurope.cloudapp.azure.com/api-manager/server/api/v1/citizenInterface";
             URL url = null;
+            int responseCode = 500;
             try {
                 url = new URL(urlS);
             } catch (MalformedURLException e) {
@@ -187,13 +218,14 @@ public class FormFragment extends Fragment {
                 connection.setAllowUserInteraction(false);
                 connection.setUseCaches(false);
                 connection.setRequestProperty("Authorization", "Bearer "+mAccessToken);
+                connection.setRequestProperty("Content-Type","application/json");
 
                 JSONObject healthFrame = new JSONObject();
                 JSONObject citizenHealthData =  new JSONObject();
-                citizenHealthData.put("height",mHeight);
-                citizenHealthData.put("weight",mHeight);
-                citizenHealthData.put("sys_pressure",mHeight);
-                citizenHealthData.put("dia_pressure",mHeight);
+                citizenHealthData.put("height",Integer.parseInt(mHeight));
+                citizenHealthData.put("weight",Integer.parseInt(mWeight));
+                citizenHealthData.put("sys_pressure",Integer.parseInt(mSys));
+                citizenHealthData.put("dia_pressure",Integer.parseInt(mDia));
                 citizenHealthData.put("comments",mComments);
                 healthFrame.put("citizenHealthData",citizenHealthData);
 
@@ -208,6 +240,7 @@ public class FormFragment extends Fragment {
                 os.close();
 
                 connection.connect();
+                responseCode = connection.getResponseCode();
 
                 if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
                     final StringBuilder output = new StringBuilder("Request URL " + url);
@@ -220,7 +253,13 @@ public class FormFragment extends Fragment {
                     br.close();
                     connection.disconnect();
 
-                    JSONObject jsonJOIN = new JSONObject(responseOutput.toString());
+                    //Toast.makeText(mActivity.getBaseContext(),"Form stored successfully",Toast.LENGTH_SHORT);
+                }
+                else{
+                    int code = connection.getResponseCode();
+                    String msg = connection.getResponseMessage();
+                    String dummy = connection.getRequestMethod();
+                    //Toast.makeText(mActivity.getBaseContext(),"Connection ERROR",Toast.LENGTH_SHORT);
                 }
 
             }
@@ -235,7 +274,24 @@ public class FormFragment extends Fragment {
             }
 
             // TODO: register the new account here.
-            return true;
+            return responseCode;
+        }
+
+        @Override
+        protected void onPostExecute(Integer responseCode) {
+            super.onPostExecute(responseCode);
+            if(responseCode == HttpURLConnection.HTTP_OK){
+                mHeightField.setText("");
+                mWeightField.setText("");
+                mSysPressureField.setText("");
+                mDiaPressureField.setText("");
+                mCommentField.setText("");
+                mHeightField.requestFocus();
+                Toast.makeText(getActivity(),"Form stored successfully",Toast.LENGTH_SHORT).show();
+            }
+            else{
+                Toast.makeText(getActivity(),"ERROR: "+responseCode,Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -1519,22 +1520,24 @@ public class InitConfigDB {
 		log.info("init user token");
 		List<UserToken> tokens = this.userTokenRepository.findAll();
 		if (tokens.isEmpty()) {
-
-			try {
-				User user = this.userCDBRepository.findAll().get(0);
+			List<User> userList = this.userCDBRepository.findAll();
+			
+			for (Iterator<User> iterator = userList.iterator(); iterator.hasNext();) {
+				User user = (User) iterator.next();
+				
 				UserToken userToken = new UserToken();
 
-				userToken.setToken("acbca01b-da32-469e-945d-05bb6cd1552e");
+				userToken.setToken(UUID.randomUUID().toString().replaceAll("-", ""));
 				userToken.setUser(user);
 				userToken.setCreatedAt(Calendar.getInstance().getTime());
 
-				userTokenRepository.save(userToken);
-			} catch (Exception e) {
-				log.info("Could not create user token");
+				try {
+					userTokenRepository.save(userToken);
+				} catch (Exception e) {
+					log.info("Could not create user token for user " + user.getUserId());
+				}
 			}
-
 		}
-
 	}
 
 	public void init_User() {

@@ -100,11 +100,15 @@
 								<ul class="nav nav-tabs pull-left">
 									<li id="tab-datos" class="active">
 										<a href="#tab_1" data-toggle="tab" aria-expanded="false">
-											<i class="flaticon-network font-grey-gallery"></i>									
-											<!-- FORM TITLE -->
-											<span th:if="${api?.id} == null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.create}"> New Api</span>
-											<span th:if="${api?.id} != null" class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.template.edit} + ' ' + ${api.identification}"> Update API </span>
-										</a>
+											<i class="flaticon-network font-grey-gallery"></i> <!-- FORM TITLE -->
+											<span th:if="${api?.id} == null"
+											class="caption-subject font-grey-gallery uppercase"
+											th:text="#{apimanager.template.create}"> New Api</span> <span
+											th:if="${api?.id} != null"
+											class="caption-subject font-grey-gallery uppercase"
+											th:text="#{apimanager.template.edit} + ' ' + ${api.identification}">
+												Update API </span>
+									</a>
 									</li>																	
 									<li id="tab-authorizations" class="" ><a href="#tab_2" data-toggle="tab" th:classappend="${api?.id} == null ? disabled : ''" aria-expanded="true"><i class="la la-code"></i> <span class="uppercase font-md" th:text="#{apimanager.template.autorizations}" >AUTORIZACIONES </span></a></li>
 								</ul>
@@ -462,13 +466,15 @@
             						<div class="portlet-title">
 										<div class="caption">
 											<!-- FORM TITLE -->
-											<span class="caption-subject font-grey-gallery uppercase" th:text="#{apimanager.customsql.postprocess}"> Post Process</span>
-										</div>									
+											<span class="caption-subject font-grey-gallery uppercase"  th:text="#{apimanager.customsql.postprocess}"> Post Process</span>
+											<input id="postProcessCheckbox" type="checkbox" style="margin-left: 5px" value="" onclick="loadCodeMirror()"></input>
+										</div>
+															
 										<div class="tools">
-											<a href="" class="expand" data-original-title="" title="" onclick="refreshCodeMirror()"> </a>									
+											<a href="" id="portletToolPostProcess" class="expand" data-original-title="" title="" onclick="refreshCodeMirror()"> </a>									
 										</div>															
 									</div>
-									<div class="portlet-body" style="display: none; height: auto;">
+									<div id="portletBody" class="portlet-body" style="display: none; height: auto;">
 					                     <div class="row">
 											<textarea   id="jsImportTextArea" name="id_postprocess_op_customsql"  th:required="true"  class="form-control"></textarea>
 					                     </div>
@@ -584,6 +590,21 @@
 	$(document).ready(function(){
 		handleCodeMirror();
 	});
+	
+	function loadCodeMirror(){
+		var defaultExample = "// data is a string variable containing the query output \nvar dataArray = JSON.parse(data);\n\n// A string result must be returned\nreturn (JSON.stringify(dataArray));";
+		//$('#portletToolPostProcess').click();
+		if ($('#postProcessCheckbox').is(':checked')) {
+			myCodeMirrorJs.setValue(defaultExample);
+			$('#portletBody').is(':hidden') ? $('#portletToolPostProcess').click():null;
+		} else {
+			myCodeMirrorJs.setValue("");
+			$('#portletBody').is(':visible') ? $('#portletToolPostProcess').click():null;
+		}
+		//$('#portletBody').is(':hidden') ? $('#portletToolPostProcess').click() : $('#portletToolPostProcess').prop('checked', false);
+		//$('#portletBody').is(':visible') ? $('#portletToolPostProcess').prop('checked', true) : $('#portletToolPostProcess').click();
+		
+	}
 	
 	// LOAD DATA TO USE IN MENUCONTROLLER
 	// MENU CONTROLLER LOAD AND INIT ITSELF

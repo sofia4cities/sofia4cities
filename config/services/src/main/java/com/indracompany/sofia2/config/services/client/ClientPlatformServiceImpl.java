@@ -289,5 +289,10 @@ public class ClientPlatformServiceImpl implements ClientPlatformService {
 		
 	
 	}
+	
+	public List<Token> getTokensByClientPlatformId(String clientPlatformId) {
+		ClientPlatform clientPlatform = clientPlatformRepository.findById(clientPlatformId);
+		return tokenService.getTokens(clientPlatform);
+	}
 
 }
