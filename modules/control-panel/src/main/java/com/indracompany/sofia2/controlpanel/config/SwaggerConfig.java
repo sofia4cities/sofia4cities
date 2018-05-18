@@ -138,6 +138,29 @@ public class SwaggerConfig  {
 		return or (
 				regex("/api-ops.*"));
 	}
+	
+	@Bean
+	public Docket LoginOpsAPI() {
+
+		//Adding Header
+		ParameterBuilder aParameterBuilder = new ParameterBuilder();
+		List<Parameter> aParameters = new ArrayList<Parameter>();
+		
+		return new Docket(DocumentationType.SWAGGER_2)
+				.groupName("login")
+				.select()
+				.apis(RequestHandlerSelectors.any())
+				.paths(buildPathSelectorApiOpsLogin())
+				.build()
+				.globalOperationParameters(addRestParameters(aParameterBuilder,aParameters));
+	}
+
+	@SuppressWarnings("unchecked")
+	private Predicate<String> buildPathSelectorApiOpsLogin() {
+		return or (
+				regex("/api-ops/login.*"));
+	}
+
 
 	
 }
