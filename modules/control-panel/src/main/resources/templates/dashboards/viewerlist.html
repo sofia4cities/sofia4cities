@@ -109,12 +109,17 @@
 												
 													<a th:href="@{|/dashboards/view/${dashboard.id}|}"><div class="uppercase no-wrap text-truncate-md project-title" th:title="${dashboard.identification}" th:text="${dashboard.identification}" >Identification</div></a>
 													
-													<a th:href="@{|/dashboards/view/${dashboard.id}|}"><img  th:src="@{/img/} + 'APPLICATION.png'"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${dashboard.description},data-title=${dashboard.identification}" style="border:none!important;" /></a>
+													<a th:href="@{|/dashboards/view/${dashboard.id}|}">
+													<img   th:if=" ${!dashboard.hasImage}" th:src="@{/img/} + 'APPLICATION.png'"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${dashboard.description},data-title=${dashboard.identification}" style="border:none!important;" />
+													<img   th:if="${dashboard.hasImage}" th:src="@{/dashboards/} + ${dashboard.id + '/getImage'}"  class="img-responsive img-market thumbnail popovers" data-trigger="hover" data-placement="bottom" data-container="body" th:attr="data-content=${dashboard.description},data-title=${dashboard.identification}"  style="border:none!important;"/>
+													</a>
+													
+													
 													
 													
 												</div>
 												<div class="panel-body panel-project" style="display: none;">
-													<div th:if="${!dashboard.description.isEmpty()}" class="project-description" style="text-align: justify;padding: 10px;" th:title="${dashboard.description}">
+													<div th:if="${!dashboard.description.isEmpty()}" class="project-description" style="text-align: justify;padding: 10px;" th:title="${dashboard.identification}">
 														<span style="display:block; margin-bottom:15px;" th:text="${dashboard.description}">Description</span>
 														<div class="clearfix"></div>														
 													</div>
@@ -123,15 +128,11 @@
 												
 											</div>
 										</div>
-										<!-- FIN CONTENEDOR DE PROYECTO -->
+										
 										
 									
 										
-										<!-- ALERT filter: no-data -->
-										<div id="proyect-list-alert" class="alert alert-warning margin-both-10 alert-dismissable hide">
-											<button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
-											<i class="la la-warning font-lg"></i> <strong><span th:text="#{marketasset.template.list}">Markeplace Assets</span>: </strong> <span th:text="#{marketasset.filter.nodata}">No Assets with this Type.</span>
-										</div>	
+										
 									</div>
 									
 									

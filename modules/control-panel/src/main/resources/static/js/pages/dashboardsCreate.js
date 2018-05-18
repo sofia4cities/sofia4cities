@@ -13,8 +13,12 @@ var DashboardsCreateController = function() {
 	var currentLanguage = ''; // loaded from template.	
 	var internalLanguage = 'en';	
 	var mountableModel2 = $('#dashboard_autthorizations').find('tr.authorization-model')[0].outerHTML;
+	var reader = new FileReader();
 	
-	
+	reader.onload = function (e) {
+        $('#showedImgPreview').attr('src', e.target.result);
+       
+    }
 	// CONTROLLER PRIVATE FUNCTIONS	
 	
 	// REDIRECT URL
@@ -167,7 +171,16 @@ var DashboardsCreateController = function() {
             	    $('#identification_aux').val($('#identification').val());
             	    $('#description_aux').val( $('#description').val());             	    
             	    $('#authorizations_aux').val(JSON.stringify(tableToObj( document.getElementById('dashboard_autthorizations') )));            	
-            	    $('#checkboxPublic_aux').val( $('#checkboxPublic').prop('checked'));
+            	    $('#checkboxPublic_aux').val( $('#checkboxPublic').prop('checked'));     
+            	    $( "#image_aux" ).remove();
+            	    var x = $("#image"),
+            	      y = x.clone();
+	            	  x.attr("id", "image_aux");
+	            	  x.attr("name", "image");
+	            	  x.attr("class", "hide");
+	            	  y.insertAfter("#checkboxPublic_aux");
+            	    
+            	    
             	    success1.show();
 					error1.hide();					
 					formAux.submit();				
@@ -204,6 +217,19 @@ var DashboardsCreateController = function() {
 	    }
 	    return ret;
 	};
+	
+	
+	 function validateImgSize() {
+	        if ($('#image').prop('files') && $('#image').prop('files')[0].size>60*1024){
+	        	showGenericErrorDialog('Error', marketAssetCreateReg.marketAssetmanager_image_error);
+	        	$("#image").val(null);
+	        	$('#showedImg').val("");
+	         } else if ($('#image').prop('files')) {
+	        	 reader.readAsDataURL($("#image").prop('files')[0]);	        	 
+	         }
+	    }
+	
+	
 	
 	// CONTROLLER PUBLIC FUNCTIONS 
 	return{		
@@ -278,7 +304,12 @@ var DashboardsCreateController = function() {
 		deleteDashboard: function(dashboardId){
 			logControl ? console.log(LIB_TITLE + ': deleteDashboard()') : '';	
 			deleteDashboardConfirmation(dashboardId);			
-		}
+		},
+		// VALIDATE IMAGE SIZE
+		validateImageSize: function() {
+			logControl ? console.log(LIB_TITLE + ': validateImgSize()') : '';
+			validateImgSize();
+		},
 		
 	};
 }();
