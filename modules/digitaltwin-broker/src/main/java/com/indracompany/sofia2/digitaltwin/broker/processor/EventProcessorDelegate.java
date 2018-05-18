@@ -17,6 +17,10 @@ package com.indracompany.sofia2.digitaltwin.broker.processor;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.annotation.PostConstruct;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,14 +32,13 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
+import  com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.reference.ActionNotifier;
 import com.indracompany.sofia2.digitaltwin.broker.processor.model.EventResponseMessage;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel.EventType;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.RouterDigitalTwinService;
-
-import  com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.reference.ActionNotifier;
 
 @Component
 @EnableAutoConfiguration
@@ -50,6 +53,14 @@ public class EventProcessorDelegate implements EventProcessor{
 	
 	@Autowired
 	private List<ActionNotifier> eventNotifiers;
+	
+	private ExecutorService notifierExecutor;
+	
+	
+	@PostConstruct
+	public void init() {
+		notifierExecutor=Executors.newFixedThreadPool(10);
+	}
 
 	@Override
 	public EventResponseMessage register(String apiKey, JSONObject data) throws JSONException {
@@ -436,13 +447,24 @@ public class EventProcessorDelegate implements EventProcessor{
 	
 	private void notifyShadowSubscriptors(JSONObject message) {
 		for(ActionNotifier eventNotifier:eventNotifiers) {
-			eventNotifier.notifyShadowMessage(message);
+			notifierExecutor.execute(new Runnable() {
+				@Override
+				public void run() {
+					eventNotifier.notifyShadowMessage(message);
+				}
+			});
+			
 		}
 	}
 	
 	private void notifyCustomSubscriptors(JSONObject message) {
 		for(ActionNotifier eventNotifier:eventNotifiers) {
-			eventNotifier.notifyCustomMessage(message);
+			notifierExecutor.execute(new Runnable() {
+				@Override
+				public void run() {
+					eventNotifier.notifyCustomMessage(message);
+				}
+			});
 		}
 	}
 

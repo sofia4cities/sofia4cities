@@ -44,7 +44,7 @@ public class DigitalTwinWebsocketGatewayImpl implements DigitalTwinWebsocketGate
 	@MessageMapping("/custom")
 	public void custom(String message, MessageHeaders messageHeaders) {
 		try {
-			System.out.println(messageHeaders);
+			
 			String apiKey=((List)(((Map)messageHeaders.get("nativeHeaders")).get("Authorization"))).get(0).toString();
 			JSONObject objMessage = new JSONObject(message);
 			eventProcessor.custom(apiKey, objMessage);
