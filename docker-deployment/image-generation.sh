@@ -45,6 +45,20 @@ buildElasticDB()
 	docker build -t sofia2/elasticdb:$1 .
 }
 
+buildKafka() 
+{
+	echo "KAFKA image generation with Docker CLI: "
+	docker build -t sofia2/kafka-secured:$1 .
+}
+
+buildZookeeper() 
+{
+	echo "KAFKA image generation with Docker CLI: "
+	docker build -t sofia2/zookeeper-secured:$1 .
+}
+
+
+
 buildNginx()
 {
 	echo "NGINX image generation with Docker CLI: "
@@ -108,6 +122,16 @@ buildPersistence()
 	if [[ "$(docker images -q sofia2/elasticdb 2> /dev/null)" == "" ]]; then
 		cd $homepath/dockerfiles/elasticsearch
 		buildElasticDB latest
+	fi	
+
+	if [[ "$(docker images -q sofia2/kafka-secured 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/kafka-cluster/kafka
+		buildKafka latest
+	fi	
+
+		if [[ "$(docker images -q sofia2/zookeeper-secured 2> /dev/null)" == "" ]]; then
+		cd $homepath/dockerfiles/kafka-cluster/zookeeper
+		buildZookeeper latest
 	fi	
 	
 	if [[ "$(docker images -q sofia2/configinit 2> /dev/null)" == "" ]]; then

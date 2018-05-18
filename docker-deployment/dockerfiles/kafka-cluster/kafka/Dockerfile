@@ -8,7 +8,7 @@ LABEL module.maintainer "plataformasofia2@indra.es" \
 COPY kafka-server-start /usr/bin/kafka-server-start
 COPY server.properties /etc/kafka/server.properties
 COPY kafka_server.jaas /etc/kafka/kafka_server.jaas
-COPY authentication-0.0.1-SNAPSHOT.jar /usr/share/java/kafka/authentication-0.0.1-SNAPSHOT.jar
+COPY sofia2-kafka-login-5.2.0-SNAPSHOT.jar /usr/share/java/kafka/authentication-0.0.1-SNAPSHOT.jar
       
 EXPOSE 9093 9092   
 
