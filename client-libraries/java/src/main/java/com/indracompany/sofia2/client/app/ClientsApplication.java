@@ -61,7 +61,7 @@ public class ClientsApplication {
 		String token = "e7ef0742d09d4de5a3687f0cfdf7f626";
 		String clientPlatform = "Ticketing App";
 		String clientPlatformInstance = "Raspberry pi 3 : SOUTH HQ";
-		String ontology = "Ticket";
+		String ontology = "LOG_TicketingApp";
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode deviceConfig = mapper.readTree(
 				"[{\"action_power\":{\"shutdown\":0,\"start\":1,\"reboot\":2}},{\"action_light\":{\"on\":1,\"off\":0}}]");
@@ -93,8 +93,21 @@ public class ClientsApplication {
 					public void onMessageArrived(String message) {
 						try {
 							JsonNode cmdMsg = mapper.readTree(message);
-							clientSecure.log("Executed command " + cmdMsg.get("params").toString(), 40.448277,
-									-3.490684, STATUS_TYPE.OK, LOG_LEVEL.INFO, timeout);
+							System.out.println("["
+									+ cmdMsg.get("data").get(0).get("DeviceLog").get("location").get("coordinates")
+											.get("latitude").asDouble()
+									+ "," + cmdMsg.get("data").get(0).get("DeviceLog").get("location")
+											.get("coordinates").get("longitude").asDouble()
+									+ "]");
+							// clientSecure.log(cmdMsg.get("data").get(0).get("DeviceLog").get("message").asText(),
+							// cmdMsg.get("data").get(0).get("DeviceLog").get("location").get("coordinates")
+							// .get("latitude").asDouble(),
+							// cmdMsg.get("data").get(0).get("DeviceLog").get("location").get("coordinates")
+							// .get("longitude").asDouble(),
+							// STATUS_TYPE
+							// .valueOf(cmdMsg.get("data").get(0).get("DeviceLog").get("status").asText()),
+							// LOG_LEVEL.valueOf(cmdMsg.get("data").get(0).get("DeviceLog").get("level").asText()),
+							// timeout);
 						} catch (IOException e) {
 
 							e.printStackTrace();

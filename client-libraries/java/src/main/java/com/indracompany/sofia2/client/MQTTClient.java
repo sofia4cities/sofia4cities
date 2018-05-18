@@ -192,8 +192,9 @@ public class MQTTClient {
 	 * Publishes a message through MQTT session.
 	 * 
 	 * @param listener
-	 *            Listener that will handle messages related to the command
-	 *            subscription
+	 *            Callback listener that will handle command messages. Resulting
+	 *            message will have JSON structure, with parameters: Command,
+	 *            CommandId, Params
 	 * 
 	 */
 	public void subscribeCommands(SubscriptionListener listener) {
@@ -225,7 +226,9 @@ public class MQTTClient {
 	 * @param timeout
 	 *            Time in seconds for waiting subscription ACK
 	 * @param listener
-	 *            Listener that will handle messages related to the subscription
+	 *            Callback listener that will handle subscription messages.
+	 *            Resulting message will have JSON structure, with parameters:
+	 *            ontology and data.
 	 * @return The subscription ID
 	 */
 
@@ -259,8 +262,9 @@ public class MQTTClient {
 			this.client.subscribe(topic_subscription + "/" + this.sessionKey, new IMqttMessageListener() {
 				@Override
 				public void messageArrived(String topic, MqttMessage message) throws Exception {
-					log.info("Subscription message available");
+
 					final String response = new String(message.getPayload());
+					log.info("Subscription message available" + response);
 					delegateMessageFromSubscription(response);
 
 				}
@@ -381,7 +385,7 @@ public class MQTTClient {
 			String response = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> responseSSAP = SSAPJsonParser.getInstance().deserialize(response);
 			if (responseSSAP.getBody().isOk())
-				log.info("Message published");
+				log.debug("Log message published");
 			else {
 
 				throw new MQTTException("Could not publish message \nError Code: "
@@ -401,7 +405,7 @@ public class MQTTClient {
 			throw new MQTTException("Could not get result from retrieved message at CompletableFuture object");
 		} catch (TimeoutException e) {
 			log.error("Timeout, could not retrieve session key");
-			throw new MQTTException("Timeout, could not retrieve session key");
+			throw new MQTTException("Timeout");
 		}
 	}
 
@@ -447,7 +451,7 @@ public class MQTTClient {
 			String response = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 			SSAPMessage<SSAPBodyReturnMessage> responseSSAP = SSAPJsonParser.getInstance().deserialize(response);
 			if (responseSSAP.getBody().isOk())
-				log.info("Message published");
+				log.info("Log message published");
 			else {
 
 				throw new MQTTException("Could not publish message \nError Code: "
@@ -467,7 +471,7 @@ public class MQTTClient {
 			throw new MQTTException("Could not get result from retrieved message at CompletableFuture object");
 		} catch (TimeoutException e) {
 			log.error("Timeout, could not retrieve session key");
-			throw new MQTTException("Timeout, could not retrieve session key");
+			throw new MQTTException("Timeout");
 		}
 	}
 
@@ -491,7 +495,6 @@ public class MQTTClient {
 			mqttInsert.setPayload(SSAPJsonParser.getInstance().serialize(insert).getBytes());
 
 			this.client.publish(topic, mqttInsert);
-			log.info("Publishing message for insert to IoT broker...");
 
 			String insertResponse = completableFutureMessage.get(timeout, TimeUnit.SECONDS);
 
@@ -568,12 +571,14 @@ public class MQTTClient {
 
 	private void delegateMessageFromSubscription(String message) throws JsonProcessingException, IOException {
 
-		JsonNode jsonMessage = mapper.readTree(message);
-		String subsId = jsonMessage.get("body").get("subsciptionId").asText();
+		JsonNode indMsg = mapper.createObjectNode();
+		((ObjectNode) indMsg).put("ontology", mapper.readTree(message).get("body").get("ontology").asText());
+		((ObjectNode) indMsg).set("data", mapper.readTree(message).get("body").get("data"));
+		String subsId = mapper.readTree(message).get("body").get("subsciptionId").asText();
 		SubscriptionListener listener = this.subscriptions.get(subsId);
 		new Thread(new Runnable() {
 			public void run() {
-				listener.onMessageArrived(message);
+				listener.onMessageArrived(indMsg.toString());
 			}
 		}).start();
 

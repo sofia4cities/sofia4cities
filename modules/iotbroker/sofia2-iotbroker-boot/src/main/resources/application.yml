@@ -117,5 +117,5 @@ logging:
    file: ${spring.application.name}
    level:
       com.indra: DEBUG 
-      org.hibernate: DEBUG
+
   
