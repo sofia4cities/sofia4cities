@@ -18,14 +18,15 @@ function connect() {
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/action/custom/TurbineHelsinki', function (notification) {
+        stompClient.subscribe('/action/custom/SenseHatSpain', function (notification) {
         	//Joystick events
         	 var obj=JSON.parse(notification.body)
         	 
         	 $("#joystick").val(obj.event);
            
         });
-       stompClient.subscribe('/action/shadow/TurbineHelsinki', function (notification) {
+       stompClient.subscribe('/action/shadow/SenseHatSpain', function (notification) {
+    	   console.log(notification);
     	   //Temp/Hum/Atm events
            var obj=JSON.parse(notification.body)
            
@@ -46,19 +47,19 @@ function disconnect() {
 }
 
 function sendCustomLeftEvent() {
-    stompClient.send("/event/custom", {'Authorization': 'f0e50f5f8c754204a4ac601f29775c15'}, JSON.stringify({'id':'TurbineHelsinki','target':'TurbineHelsinki','event':'joystickEventLeft','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
+    stompClient.send("/event/custom", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','target':'SenseHatSpain','event':'joystickLeft','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
 }
 
 function sendCustomRightEvent() {
-    stompClient.send("/event/custom", {'Authorization': 'f0e50f5f8c754204a4ac601f29775c15'}, JSON.stringify({'id':'TurbineHelsinki','target':'TurbineHelsinki','event':'joystickEventRight','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
+    stompClient.send("/event/custom", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','target':'SenseHatSpain','event':'joystickRight','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
 }
 
 function sendCustomUpEvent() {
-    stompClient.send("/event/custom", {'Authorization': 'f0e50f5f8c754204a4ac601f29775c15'}, JSON.stringify({'id':'TurbineHelsinki','target':'TurbineHelsinki','event':'joystickEventUp','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
+    stompClient.send("/event/custom", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','target':'SenseHatSpain','event':'joystickUp','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
 }
 
 function sendCustomDownEvent() {
-    stompClient.send("/event/custom", {'Authorization': 'f0e50f5f8c754204a4ac601f29775c15'}, JSON.stringify({'id':'TurbineHelsinki','target':'TurbineHelsinki','event':'joystickEventDown','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
+    stompClient.send("/event/custom", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','target':'SenseHatSpain','event':'joystickDown','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
 }
 
 

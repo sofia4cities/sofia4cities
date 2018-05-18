@@ -27,6 +27,7 @@ import javax.script.ScriptException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,39 +35,42 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class ActionExecutor {
-	
+
 	@Autowired
 	private IDigitalTwinStatus digitalTwinStatus;
-	
-	
-	private Invocable invocable;
-	
+
+	@Autowired
+	private DigitalTwinApi twinApi;
+
+	private static Invocable invocable;
+
 	@PostConstruct
 	public void init() {
+		this.twinApi.init();
+
 		ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
 		this.invocable = (Invocable) engine;
 		try {
-			ClassLoader classLoader = getClass().getClassLoader();
+			ClassLoader classLoader = this.getClass().getClassLoader();
 			engine.eval(new InputStreamReader(classLoader.getResource("static/js/logic.js").openStream()));
-		
-		}catch(ScriptException e1) {
+
+		} catch (ScriptException e1) {
 			log.error("Execution logic for action", e1);
 		} catch (FileNotFoundException e) {
 			log.error("File logic.js not found.", e);
 		} catch (IOException e) {
 			log.error("File logic.js not found.", e);
-		}	
+		}
 	}
-	
-	
+
 	public void executeAction(String name) {
-		try {	
-			this.invocable.invokeFunction("onAction"+name.substring(0, 1).toUpperCase() + name.substring(1), 
+		try {
+			this.invocable.invokeFunction("onAction" + name.substring(0, 1).toUpperCase() + name.substring(1),
 					digitalTwinStatus.toMap());
-			
-		}catch(ScriptException e1) {
+
+		} catch (ScriptException e1) {
 			log.error("Execution logic for action " + name + " failed", e1);
-		}catch(NoSuchMethodException e2) {
+		} catch (NoSuchMethodException e2) {
 			log.error("Action " + name + " not found", e2);
 		}
 	}

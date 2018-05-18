@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.digitaltwin.event.manager.EventManager;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
+import com.indracompany.sofia2.raspberry.sensehat.sensehatlibrary.api.SenseHat;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,6 +79,11 @@ public class DigitalTwinApi {
 
 	public void sendCustomEvent(String eventName) {
 		eventManager.sendCustomEvent(digitalTwinStatus.toMap(), eventName);
+	}
+
+	public void showTextLedMatrix(String text) {
+		SenseHat senseHat = new SenseHat();
+		senseHat.ledMatrix.showMessage(text);
 	}
 
 }

@@ -322,6 +322,27 @@ var DigitalTwinCreateController = function() {
 		init: function(){
 			logControl ? console.log(LIB_TITLE + ': init()') : '';
 			
+			// PROTOTYPEs
+			// ARRAY PROTOTYPE FOR CHECK UNIQUE PROPERTIES.
+			Array.prototype.unique = function() {
+				return this.filter(function (value, index, self) { 
+					return self.indexOf(value) === index;
+				});
+			};
+			
+			// ARRAY PROTROTYPE FOR REMOVE ELEMENT (not object) BY VALUE
+			Array.prototype.remove = function() {
+				var what, a = arguments, L = a.length, ax;				
+				while (L && this.length) {
+					what = a[--L];				
+					while ((ax = this.indexOf(what)) !== -1) {
+						console.log('AX: ' + ax);
+						this.splice(ax, 1);
+					}
+				}
+				return this;
+			};
+			
 			$('#properties').mounTable(jsonProperties,{
 				model: '.mountable-model',
 				noDebug: false,
@@ -411,7 +432,7 @@ var DigitalTwinCreateController = function() {
 				logControl ? console.log('|---> Action-mode: UPDATE') : '';
 				
 				// if digitalTwinType has properties  we load it!.
-				propertiesJson = digitalTwinCreateJson.properties;			
+				propertiesJson = digitalTwinCreateJson.dproperties;			
 				if (propertiesJson.length > 0 ){
 					
 					// MOUNTING PROPERTIES ARRAY
