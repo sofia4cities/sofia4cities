@@ -74,6 +74,9 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
+     
+        
+        
         return new DefaultKafkaConsumerFactory<>(props);
     }
 

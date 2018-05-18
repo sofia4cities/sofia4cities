@@ -98,7 +98,7 @@
         <module>libraries/social</module>
         <module>libraries/flow-engine-services</module>
         <module>libraries/audit</module>
-        <module>libraries/streaming</module>
+        
 
 		<!--CONFIG -->
 		<module>config/model</module>
