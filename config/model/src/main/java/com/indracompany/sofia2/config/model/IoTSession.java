@@ -16,13 +16,13 @@ package com.indracompany.sofia2.config.model;
 
 import java.time.ZonedDateTime;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.cache.annotation.Cacheable;
 
 import com.indracompany.sofia2.config.model.base.AuditableEntityWithUUID;
 
@@ -32,7 +32,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "IOT_SESSION")
 @Configurable
-@Cacheable(true)
+@Cacheable
 public class IoTSession extends AuditableEntityWithUUID {
 
 	@Column(name = "SESSION_KEY", unique = true)

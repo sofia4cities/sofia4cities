@@ -27,12 +27,21 @@ var updateMarkers = function(){
 //		}
 		for(var i= devices.length-1; i>=0 ; i--){
 			if(tagsFilter != "" && statusFilter != ""){
-				if(devices[i].tags.toLowerCase().indexOf(tagsFilter.toLowerCase()) > -1 && devices[i].status.toLowerCase().indexOf(statusFilter.toLowerCase()) > -1){
-					filteredDevices.push(devices[i].identification);
+				if(devices[i].tags!=null){
+					if(devices[i].tags.toLowerCase().indexOf(tagsFilter.toLowerCase()) > -1 && devices[i].status.toLowerCase().indexOf(statusFilter.toLowerCase()) > -1){
+						filteredDevices.push(devices[i].identification);
+					}
+				}else{
+					if(devices[i].status.toLowerCase().indexOf(statusFilter.toLowerCase()) > -1){
+						filteredDevices.push(devices[i].identification);
+					}	
 				}
+				
 			}else if(tagsFilter != ""){
-				if(devices[i].tags.toLowerCase().indexOf(tagsFilter.toLowerCase()) > -1){
-					filteredDevices.push(devices[i].identification);
+				if(devices[i].tags!=null){
+					if(devices[i].tags.toLowerCase().indexOf(tagsFilter.toLowerCase()) > -1){
+						filteredDevices.push(devices[i].identification);
+					}
 				}
 			}else if(statusFilter != ""){
 				if(devices[i].status.toLowerCase().indexOf(statusFilter.toLowerCase()) > -1){
@@ -43,6 +52,7 @@ var updateMarkers = function(){
 		}
 	}
 	drawMarkers();	
+	
 }
 var removeMarkers = function(){
 	for(i=0;i<markers.length;i++) {
