@@ -1,7 +1,7 @@
 var mymap;
 var markers = new Array();
 var filteredDevices = new Array();
-var setUpMap = function(id) {
+var setUpMap = function(id, legendJson) {
 	
 	mymap = L.map(id).setView([devices[0].location[0], devices[0].location[1]],6);
 	L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -10,9 +10,26 @@ var setUpMap = function(id) {
 	    id: 'mapbox.streets',
 	    accessToken: 'pk.eyJ1IjoiZmpnY29ybmVqbyIsImEiOiJjamgxbm9nOW8wN2EwMnhsbm1nNnNvOXRsIn0.6RzVaJ2kUwaFNLJW4AzRQg'
 	}).addTo(mymap);
-	
+	var legend = L.control({position: 'topleft'});
+	legend.onAdd = function (map) {
+
+	    var div = L.DomUtil.create('div', 'info legend'),
+	        states = [legendJson.connected, legendJson.disconnected, legendJson.error,legendJson.warning],
+	        labels = ['/controlpanel/static/vendor/leaflet/images/marker-icon-green.png','/controlpanel/static/vendor/leaflet/images/marker-icon-grey.png', '/controlpanel/static/vendor/leaflet/images/marker-icon-red.png', '/controlpanel/static/vendor/leaflet/images/marker-icon-yellow.png'];
+
+	    // loop through our density intervals and generate a label with a colored square for each interval
+	    for (var i = 0; i < states.length; i++) {
+	        div.innerHTML +=
+	        	(" <img src="+ labels[i] +">") +states[i] + '<br>';
+	    }
+
+	    return div;
+	};
+
+	legend.addTo(mymap);
 	drawMarkers();
 	$('#map-portlet-body').hide();
+	
 } 
 var updateMarkers = function(){
 	removeMarkers();
@@ -76,7 +93,7 @@ var drawMarkers = function (){
 					  popupAnchor: [1, -34],
 					  shadowSize: [41, 41]
 					});
-			}else if(status == "ERROR"){
+			}else if(status == "ERROR" || status== "CRITICAL"){
 				iconCustom = new L.Icon({
 					  iconUrl: '/controlpanel/static/vendor/leaflet/images/marker-icon-red.png',
 					  shadowUrl: '/controlpanel/static/vendor/leaflet/images/marker-shadow.png',
@@ -86,9 +103,9 @@ var drawMarkers = function (){
 					  shadowSize: [41, 41]
 					});
 				
-			}else if(!connected){
+			}else if(connected){
 				iconCustom = new L.Icon({
-					  iconUrl: '/controlpanel/static/vendor/leaflet/images/marker-icon-grey.png',
+					  iconUrl: '/controlpanel/static/vendor/leaflet/images/marker-icon-green.png',
 					  shadowUrl: '/controlpanel/static/vendor/leaflet/images/marker-shadow.png',
 					  iconSize: [25, 41],
 					  iconAnchor: [12, 41],
@@ -97,7 +114,7 @@ var drawMarkers = function (){
 					});
 			}else{
 				iconCustom = new L.Icon({
-					  iconUrl: '/controlpanel/static/vendor/leaflet/images/marker-icon-green.png',
+					  iconUrl: '/controlpanel/static/vendor/leaflet/images/marker-icon-grey.png',
 					  shadowUrl: '/controlpanel/static/vendor/leaflet/images/marker-shadow.png',
 					  iconSize: [25, 41],
 					  iconAnchor: [12, 41],

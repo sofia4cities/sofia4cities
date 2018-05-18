@@ -42,7 +42,8 @@
 	th:href="@{/static/vendor/bootstrap-select/bootstrap-select.min.css}" />
 <link rel="stylesheet" type="text/css" media="all"
 	th:href="@{/static/vendor/leaflet/leaflet.css}" />
-
+<link rel="stylesheet" type="text/css" media="all"
+	th:href="@{/static/css/leafletMap.css}" />
 </head>
 
 <!-- page-sidebar-closed to start page with collapsed menu -->
@@ -514,9 +515,14 @@
 	
 	// MAIN WHEN LOAD
 	$(window).load(function(){  
-		
+		var jsonColors={
+			"connected": [[#{device.state.connected}]],
+			"disconnected": [[#{device.state.disconnected}]],
+			"error": [[#{device.state.error}]],
+			"warning": [[#{device.state.warning}]]
+		}
 		//Load map
-		setUpMap('devicesLocation');
+		setUpMap('devicesLocation', jsonColors);
 		//DATATABLE 
 		var oTable = $('#devicesTable').DataTable();
 		//oTable.column(4).visible(false);
