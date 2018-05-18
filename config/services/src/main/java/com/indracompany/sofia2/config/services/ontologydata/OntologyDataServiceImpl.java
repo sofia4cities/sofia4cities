@@ -125,14 +125,14 @@ public class OntologyDataServiceImpl implements OntologyDataService {
 		final String user = operationModel.getUser();
 		final String clientConnection = operationModel.getClientConnection();
 		final String deviceTemplate = operationModel.getDeviceTemplate();
-		final String clientPlatoformInstance = operationModel.getClientPlatoformInstance();
+		final String device = operationModel.getDevice();
 		final String clientSession = operationModel.getClientSession();
 
 		final String timezoneId = ZoneId.systemDefault().toString();
 		final String timestamp = Calendar.getInstance(TimeZone.getTimeZone(timezoneId)).getTime().toString();
 		final long timestampMillis = System.currentTimeMillis();
 		final ContextData contextData = ContextData.builder(user, timezoneId, timestamp, timestampMillis)
-				.clientConnection(clientConnection).deviceTemplate(deviceTemplate).device(clientPlatoformInstance)
+				.clientConnection(clientConnection).deviceTemplate(deviceTemplate).device(device)
 				.clientSession(clientSession).build();
 
 		final JsonNode jsonBody;

@@ -63,7 +63,7 @@ public class OperationModel implements Serializable {
 	private String deviceTemplate;
 	@Getter
 	@Setter
-	private String clientPlatoformInstance;
+	private String device;
 	@Getter
 	@Setter
 	private String clientSession;
@@ -84,7 +84,7 @@ public class OperationModel implements Serializable {
 				.append(", operationType=").append(operationType).append(", user=").append(user).append(", source=")
 				.append(source).append(", body=").append(body).append(", queryType=").append(queryType)
 				.append(", objectId=").append(objectId).append(", deviceTemplate=").append(deviceTemplate)
-				.append(", device=").append(clientPlatoformInstance).append(", clientSession=").append(clientSession)
+				.append(", device=").append(device).append(", clientSession=").append(clientSession)
 				.append(", clientConnection=").append(clientConnection).append(", cacheable=").append(cacheable)
 				.append("]").toString();
 	}
@@ -98,7 +98,7 @@ public class OperationModel implements Serializable {
 		this.queryType = builder.queryType;
 		this.objectId = builder.objectId;
 		this.deviceTemplate = builder.deviceTemplate;
-		this.clientPlatoformInstance = builder.device;
+		this.device = builder.device;
 		this.clientSession = builder.clientSession;
 		this.clientConnection = builder.clientConnection;
 		this.cacheable = builder.cacheable;
