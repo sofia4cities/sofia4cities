@@ -58,16 +58,23 @@ public class JavascriptLogicManager implements LogicManager {
 
 		} catch (ScriptException e1) {
 			log.error("Execution logic for action", e1);
+			this.invocable = null;
 		} catch (FileNotFoundException e) {
 			log.error("File logic.js not found.", e);
+			this.invocable = null;
 		} catch (IOException e) {
 			log.error("File logic.js not found.", e);
+			this.invocable = null;
 		}
 	}
 
 	@Override
 	public void invokeFunction(String name, Object... args) throws ScriptException, NoSuchMethodException {
-		this.invocable.invokeFunction(name, args);
+		if (null != this.invocable) {
+			this.invocable.invokeFunction(name, args);
+		} else {
+			log.error("Cannot invoke function, invocable is null");
+		}
 	}
 
 }

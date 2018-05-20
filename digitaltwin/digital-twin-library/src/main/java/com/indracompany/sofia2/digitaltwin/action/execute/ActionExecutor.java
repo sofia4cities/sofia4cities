@@ -14,6 +14,9 @@
  */
 package com.indracompany.sofia2.digitaltwin.action.execute;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import javax.script.ScriptException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,26 @@ public class ActionExecutor {
 	@Autowired
 	private LogicManager logicManager;
 
+	@Autowired(required = false)
+	private ActionJavaListener actionJavaListener;
+
+	private ExecutorService executor = Executors.newSingleThreadExecutor();
+
 	public void executeAction(String name) {
+
+		if (null != actionJavaListener) {
+			executor.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						actionJavaListener.executeAction(name);
+					} catch (Exception e) {
+						log.error("Error executing Java Action", e);
+					}
+				}
+			});
+		}
+
 		try {
 			log.info("Invoques Javascript function");
 			this.logicManager.invokeFunction("onAction" + name.substring(0, 1).toUpperCase() + name.substring(1),
@@ -45,6 +67,7 @@ public class ActionExecutor {
 		} catch (NoSuchMethodException e2) {
 			log.error("Action " + name + " not found", e2);
 		}
+
 	}
 
 }
