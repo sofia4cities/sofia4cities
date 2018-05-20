@@ -12,16 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.digitaltwin.event.manager;
+package com.indracompany.sofia2.digitaltwin.logic.api;
 
-import java.util.Map;
-
-public interface EventManager {
-
-	public void updateShadow(Map<String, Object> status);
+public interface DigitalTwinLogicAPI extends JavascriptAPI {
 
 	public void log(String trace);
 
-	public void sendCustomEvent(Map<String, Object> map, String eventName);
+	public void setStatusValue(String property, Object value);
+
+	public Object getStatusValue(String property);
+
+	public void sendUpdateShadow();
+
+	public void sendCustomEvent(String eventName);
 
 }

@@ -14,20 +14,12 @@
  */
 package com.indracompany.sofia2.digitaltwin.action.execute;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import javax.annotation.PostConstruct;
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi;
+import com.indracompany.sofia2.digitaltwin.logic.LogicManager;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,32 +32,12 @@ public class ActionExecutor {
 	private IDigitalTwinStatus digitalTwinStatus;
 
 	@Autowired
-	private DigitalTwinApi twinApi;
-
-	private static Invocable invocable;
-
-	@PostConstruct
-	public void init() {
-		this.twinApi.init();
-
-		ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-		this.invocable = (Invocable) engine;
-		try {
-			ClassLoader classLoader = this.getClass().getClassLoader();
-			engine.eval(new InputStreamReader(classLoader.getResource("static/js/logic.js").openStream()));
-
-		} catch (ScriptException e1) {
-			log.error("Execution logic for action", e1);
-		} catch (FileNotFoundException e) {
-			log.error("File logic.js not found.", e);
-		} catch (IOException e) {
-			log.error("File logic.js not found.", e);
-		}
-	}
+	private LogicManager logicManager;
 
 	public void executeAction(String name) {
 		try {
-			this.invocable.invokeFunction("onAction" + name.substring(0, 1).toUpperCase() + name.substring(1),
+			log.info("Invoques Javascript function");
+			this.logicManager.invokeFunction("onAction" + name.substring(0, 1).toUpperCase() + name.substring(1),
 					digitalTwinStatus.toMap());
 
 		} catch (ScriptException e1) {

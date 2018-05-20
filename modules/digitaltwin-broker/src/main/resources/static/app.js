@@ -13,20 +13,19 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/digitaltwinbroker/webservice');
+    var socket = new SockJS('/digitaltwinbroker/websocket');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/action/custom/SenseHatSpain', function (notification) {
+        stompClient.subscribe('/api/custom/SenseHatSpain', function (notification) {
         	//Joystick events
         	 var obj=JSON.parse(notification.body)
         	 
         	 $("#joystick").val(obj.event);
            
         });
-       stompClient.subscribe('/action/shadow/SenseHatSpain', function (notification) {
-    	   console.log(notification);
+       stompClient.subscribe('/api/shadow/SenseHatSpain', function (notification) {
     	   //Temp/Hum/Atm events
            var obj=JSON.parse(notification.body)
            
@@ -35,6 +34,16 @@ function connect() {
            $("#pressure").val(obj.status.pressure);
            
         });
+       stompClient.subscribe('/api/action/SenseHatSpain', function (notification) {
+    	 console.log(notification);
+    	 //Joystick events
+    	 var obj=JSON.parse(notification.body)
+      	 
+      	 $("#joystick").val(obj.name);
+      	
+        });
+       
+       
     });
 }
 
@@ -47,19 +56,19 @@ function disconnect() {
 }
 
 function sendCustomLeftEvent() {
-    stompClient.send("/event/custom", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','target':'SenseHatSpain','event':'joystickLeft','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
+    stompClient.send("/api/sendAction", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','name':'joystickLeft'}));
 }
 
 function sendCustomRightEvent() {
-    stompClient.send("/event/custom", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','target':'SenseHatSpain','event':'joystickRight','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
+    stompClient.send("/api/sendAction", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','name':'joystickRight'}));
 }
 
 function sendCustomUpEvent() {
-    stompClient.send("/event/custom", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','target':'SenseHatSpain','event':'joystickUp','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
+    stompClient.send("/api/sendAction", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','name':'joystickUp'}));
 }
 
 function sendCustomDownEvent() {
-    stompClient.send("/event/custom", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','target':'SenseHatSpain','event':'joystickDown','status':{'temperature':0.0,'humidity':0.0,'pressure':0.0}}));
+    stompClient.send("/api/sendAction", {'Authorization': '6e4f94e2df81435f8af135d8112a5492'}, JSON.stringify({'id':'SenseHatSpain','name':'joystickDown'}));
 }
 
 

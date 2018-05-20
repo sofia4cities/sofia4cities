@@ -12,16 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.digitaltwin.event.manager;
+package com.indracompany.sofia2.digitaltwin.logic;
 
-import java.util.Map;
+import javax.script.ScriptException;
 
-public interface EventManager {
+public interface LogicManager {
 
-	public void updateShadow(Map<String, Object> status);
-
-	public void log(String trace);
-
-	public void sendCustomEvent(Map<String, Object> map, String eventName);
+	public void invokeFunction(String name, Object... args) throws ScriptException, NoSuchMethodException;
 
 }

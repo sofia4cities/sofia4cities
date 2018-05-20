@@ -24,39 +24,68 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.reference.ActionNotifier;
-import com.indracompany.sofia2.digitaltwin.broker.processor.EventProcessor;
+import com.indracompany.sofia2.digitaltwin.broker.processor.ActionProcessor;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-public class DigitalTwinWebsocketGatewayImpl implements DigitalTwinWebsocketGateway, ActionNotifier {
+public class DigitalTwinWebsocketAPIImpl implements DigitalTwinWebsocketAPI {
 
 	@Autowired
-	private EventProcessor eventProcessor;
+	private ActionProcessor actionProcessor;
 
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
 
+	/**
+	 * Receives messages from Digital Twin Manager, to send to the real device
+	 */
 	@Override
-	@MessageMapping("/custom")
-	public void custom(String message, MessageHeaders messageHeaders) {
+	@MessageMapping("/sendAction")
+	public void sendAction(String message, MessageHeaders messageHeaders) {
 		try {
 
 			String apiKey = ((List) (((Map) messageHeaders.get("nativeHeaders")).get("Authorization"))).get(0)
 					.toString();
 			JSONObject objMessage = new JSONObject(message);
-			eventProcessor.custom(apiKey, objMessage);
+			actionProcessor.action(apiKey, objMessage);
 		} catch (Exception e) {
 			log.error("Error", e);
 		}
 	}
 
 	@Override
-	public void notifyActionMessage(JSONObject message) {
-		// TODO Auto-generated method stub
+	public void notifyShadowMessage(JSONObject message) {
+		try {
+			String sourceTwin = message.get("id").toString();
+			messagingTemplate.convertAndSend("/api/shadow/" + sourceTwin, message.toString());
 
+		} catch (Exception e) {
+			log.error("Error notifing message", e);
+		}
+	}
+
+	@Override
+	public void notifyCustomMessage(JSONObject message) {
+		try {
+			String sourceTwin = message.get("id").toString();
+			messagingTemplate.convertAndSend("/api/custom/" + sourceTwin, message.toString());
+
+		} catch (Exception e) {
+			log.error("Error notifing message", e);
+		}
+	}
+
+	@Override
+	public void notifyActionMessage(JSONObject message) {
+		try {
+			String sourceTwin = message.get("id").toString();
+			messagingTemplate.convertAndSend("/api/action/" + sourceTwin, message.toString());
+
+		} catch (Exception e) {
+			log.error("Error notifing message", e);
+		}
 	}
 
 }

@@ -18,6 +18,10 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.stereotype.Component;
+
 import com.indracompany.sofia2.digitaltwin.property.controller.OperationType;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
 
@@ -25,7 +29,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-//@Component
+@Component
 @Slf4j
 public class DigitalTwinStatus implements IDigitalTwinStatus {
 	@Getter
@@ -53,7 +57,7 @@ public class DigitalTwinStatus implements IDigitalTwinStatus {
 
 	private Map<String, Class> mapClass;
 
-	// @PostConstruct
+	@PostConstruct
 	public void init() {
 		// Init Operation types values
 		setOperationPressure(OperationType.OUT);

@@ -14,14 +14,21 @@
  */
 package com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.reference.rest;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.annotation.PostConstruct;
 
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,6 +43,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RestActionNotifier implements ActionNotifier {
 
+	private final int TIMEOUT = (int) TimeUnit.SECONDS.toMillis(10);
+
 	private RestTemplate restTemplate;
 
 	@Autowired
@@ -44,18 +53,14 @@ public class RestActionNotifier implements ActionNotifier {
 	@PostConstruct
 	public void init() {
 		this.restTemplate = new RestTemplate();
+		this.restTemplate.setRequestFactory(getRestTemplateRequestFactory());
 	}
 
 	@Override
-	public void notifyShadowMessage(JSONObject message) {
-
-	}
-
-	@Override
-	public void notifyCustomMessage(JSONObject message) {
+	public void notifyActionMessage(JSONObject message) {
 		try {
-			if (message.has("target")) {
-				String targetTwin = message.get("target").toString();
+			if (message.has("id")) {
+				String targetTwin = message.get("id").toString();
 
 				DigitalTwinDevice device = deviceRepo.findByIdentification(targetTwin);
 				if (null != device) {
@@ -63,7 +68,7 @@ public class RestActionNotifier implements ActionNotifier {
 							+ device.getContextPath() + "/actions";
 
 					ActionMessage actionMessage = new ActionMessage();
-					actionMessage.setName(message.get("event").toString());
+					actionMessage.setName(message.get("name").toString());
 
 					HttpEntity<ActionMessage> shadowEntity = new HttpEntity<ActionMessage>(actionMessage);
 
@@ -83,7 +88,15 @@ public class RestActionNotifier implements ActionNotifier {
 		} catch (Exception e) {
 			log.error("Error notifing shadow message", e);
 		}
+	}
 
+	private ClientHttpRequestFactory getRestTemplateRequestFactory() {
+		RequestConfig config = RequestConfig.custom().setSocketTimeout(TIMEOUT).setConnectTimeout(TIMEOUT)
+				.setConnectionRequestTimeout(TIMEOUT).build();
+
+		CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+
+		return new HttpComponentsClientHttpRequestFactory(client);
 	}
 
 }

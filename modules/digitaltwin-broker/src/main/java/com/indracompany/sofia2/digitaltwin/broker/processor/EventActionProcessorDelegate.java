@@ -32,7 +32,8 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.model.DigitalTwinDevice;
 import com.indracompany.sofia2.config.repository.DigitalTwinDeviceRepository;
-import  com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.reference.ActionNotifier;
+import com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.reference.ActionNotifier;
+import com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.reference.websocket.DigitalTwinWebsocketAPI;
 import com.indracompany.sofia2.digitaltwin.broker.processor.model.EventResponseMessage;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinCompositeModel;
 import com.indracompany.sofia2.router.service.app.model.DigitalTwinModel;
@@ -42,7 +43,7 @@ import com.indracompany.sofia2.router.service.app.service.RouterDigitalTwinServi
 
 @Component
 @EnableAutoConfiguration
-public class EventProcessorDelegate implements EventProcessor{
+public class EventActionProcessorDelegate implements EventProcessor, ActionProcessor {
 
 	@Autowired
 	private DigitalTwinDeviceRepository deviceRepo;
@@ -50,22 +51,24 @@ public class EventProcessorDelegate implements EventProcessor{
 	@Autowired
 	@Qualifier("routerDigitalTwinServiceImpl")
 	private RouterDigitalTwinService routerDigitalTwinService;
-	
+
 	@Autowired
-	private List<ActionNotifier> eventNotifiers;
-	
+	private List<ActionNotifier> actionNotifiers;
+
+	@Autowired
+	private DigitalTwinWebsocketAPI digitalTwinWebsocketApi;
+
 	private ExecutorService notifierExecutor;
-	
-	
+
 	@PostConstruct
 	public void init() {
-		notifierExecutor=Executors.newFixedThreadPool(10);
+		notifierExecutor = Executors.newFixedThreadPool(10);
 	}
 
 	@Override
 	public EventResponseMessage register(String apiKey, JSONObject data) throws JSONException {
-		
-		//TODO Validate data with model
+
+		// TODO Validate data with model
 
 		// Validation apikey
 		if (data.get("id") == null || data.get("endpoint") == null) {
@@ -129,8 +132,8 @@ public class EventProcessorDelegate implements EventProcessor{
 	@Override
 	public EventResponseMessage ping(String apiKey, JSONObject data) throws JSONException {
 
-		//TODO Validate data with model
-		
+		// TODO Validate data with model
+
 		// Validation apikey
 		if (data.get("id") == null) {
 			return new EventResponseMessage("id is required", HttpStatus.BAD_REQUEST);
@@ -173,8 +176,8 @@ public class EventProcessorDelegate implements EventProcessor{
 	@Override
 	public EventResponseMessage log(String apiKey, JSONObject data) throws JSONException {
 
-		//TODO Validate data with model
-		
+		// TODO Validate data with model
+
 		if (data.get("id") == null || data.get("log") == null) {
 			return new EventResponseMessage("id and log are required", HttpStatus.BAD_REQUEST);
 		}
@@ -216,8 +219,8 @@ public class EventProcessorDelegate implements EventProcessor{
 	@Override
 	public EventResponseMessage shadow(String apiKey, JSONObject data) throws JSONException {
 
-		//TODO Validate data with model
-		
+		// TODO Validate data with model
+
 		if (data.get("id") == null) {
 			return new EventResponseMessage("id is required", HttpStatus.BAD_REQUEST);
 		}
@@ -254,7 +257,7 @@ public class EventProcessorDelegate implements EventProcessor{
 			}
 
 			this.notifyShadowSubscriptors(data);
-			
+
 			return new EventResponseMessage(result.getMessage(), HttpStatus.OK);
 		} else {
 			return new EventResponseMessage("Token not valid", HttpStatus.UNAUTHORIZED);
@@ -264,8 +267,8 @@ public class EventProcessorDelegate implements EventProcessor{
 	@Override
 	public EventResponseMessage notebook(String apiKey, JSONObject data) throws JSONException {
 
-		//TODO Validate data with model
-		
+		// TODO Validate data with model
+
 		if (data.get("id") == null) {
 			return new EventResponseMessage("id is required", HttpStatus.BAD_REQUEST);
 		}
@@ -309,8 +312,8 @@ public class EventProcessorDelegate implements EventProcessor{
 	@Override
 	public EventResponseMessage flow(String apiKey, JSONObject data) throws JSONException {
 
-		//TODO Validate data with model
-		
+		// TODO Validate data with model
+
 		if (data.get("id") == null) {
 			return new EventResponseMessage("id is required", HttpStatus.BAD_REQUEST);
 		}
@@ -354,8 +357,8 @@ public class EventProcessorDelegate implements EventProcessor{
 	@Override
 	public EventResponseMessage rule(String apiKey, JSONObject data) throws JSONException {
 
-		//TODO Validate data with model
-		
+		// TODO Validate data with model
+
 		if (data.get("id") == null) {
 			return new EventResponseMessage("id is required", HttpStatus.BAD_REQUEST);
 		}
@@ -398,9 +401,9 @@ public class EventProcessorDelegate implements EventProcessor{
 
 	@Override
 	public EventResponseMessage custom(String apiKey, JSONObject data) throws JSONException {
-		
-		//TODO Validate data with model
-		
+
+		// TODO Validate data with model
+
 		if (data.get("id") == null) {
 			return new EventResponseMessage("id is required", HttpStatus.BAD_REQUEST);
 		}
@@ -436,36 +439,101 @@ public class EventProcessorDelegate implements EventProcessor{
 			if (!result.isStatus()) {
 				return new EventResponseMessage(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
 			}
-			
+
 			notifyCustomSubscriptors(data);
-			
+
 			return new EventResponseMessage(result.getMessage(), HttpStatus.OK);
 		} else {
 			return new EventResponseMessage("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
 	}
-	
-	private void notifyShadowSubscriptors(JSONObject message) {
-		for(ActionNotifier eventNotifier:eventNotifiers) {
-			notifierExecutor.execute(new Runnable() {
-				@Override
-				public void run() {
-					eventNotifier.notifyShadowMessage(message);
-				}
-			});
-			
+
+	@Override
+	public EventResponseMessage action(String apiKey, JSONObject data) throws JSONException {
+
+		// TODO Validate data with model
+
+		if (data.get("id") == null) {
+			return new EventResponseMessage("id is required", HttpStatus.BAD_REQUEST);
+		}
+
+		// Validation apikey
+		DigitalTwinDevice device = deviceRepo.findByIdentification(data.get("id").toString());
+
+		if (null == device) {
+			return new EventResponseMessage("Digital Twin not found", HttpStatus.NOT_FOUND);
+		}
+
+		if (apiKey.equals(device.getDigitalKey())) {
+
+			// Set last updated
+			device.setUpdatedAt(new Date());
+			deviceRepo.save(device);
+
+			DigitalTwinModel model = new DigitalTwinModel();
+			DigitalTwinCompositeModel compositeModel = new DigitalTwinCompositeModel();
+
+			model.setActionName(data.getString("name"));
+			model.setDeviceId(device.getId());
+			model.setDeviceName(device.getIdentification());
+			model.setType(device.getTypeId().getName());
+			if (data.has("status")) {
+				model.setStatus(data.get("status").toString());
+			}
+
+			compositeModel.setDigitalTwinModel(model);
+			compositeModel.setTimestamp(new Timestamp(System.currentTimeMillis()));
+
+			OperationResultModel result = routerDigitalTwinService.insertAction(compositeModel);
+			if (!result.isStatus()) {
+				return new EventResponseMessage(result.getMessage(), HttpStatus.valueOf(result.getErrorCode()));
+			}
+
+			notifyActionSubscriptors(data);
+
+			return new EventResponseMessage(result.getMessage(), HttpStatus.OK);
+		} else {
+			return new EventResponseMessage("Token not valid", HttpStatus.UNAUTHORIZED);
 		}
 	}
-	
+
+	private void notifyShadowSubscriptors(JSONObject message) {
+		notifierExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				digitalTwinWebsocketApi.notifyShadowMessage(message);
+			}
+		});
+
+	}
+
 	private void notifyCustomSubscriptors(JSONObject message) {
-		for(ActionNotifier eventNotifier:eventNotifiers) {
+		notifierExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				digitalTwinWebsocketApi.notifyCustomMessage(message);
+			}
+		});
+	}
+
+	private void notifyActionSubscriptors(JSONObject message) {
+		// Notify to Gateways
+		for (ActionNotifier actionNotifier : actionNotifiers) {
 			notifierExecutor.execute(new Runnable() {
 				@Override
 				public void run() {
-					eventNotifier.notifyCustomMessage(message);
+					actionNotifier.notifyActionMessage(message);
 				}
 			});
 		}
+
+		// Notify to Digital Twin Websocket API
+		notifierExecutor.execute(new Runnable() {
+			@Override
+			public void run() {
+				digitalTwinWebsocketApi.notifyActionMessage(message);
+			}
+		});
 	}
 
 }

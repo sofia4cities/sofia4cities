@@ -12,7 +12,9 @@ device:
    rest:
      local:
         schema: http
-        ip: 192.168.1.10
+        network:
+            interface: eth0
+            ipv6: false
      basepath: /sensehat
    register.fail.retry.seconds: 60
    ping.interval.seconds: 10
@@ -20,5 +22,6 @@ device:
    broker.rest:
       enable: true
       swaggerhost: localhost:10000
-
-sofia2.digitaltwin.broker.rest: http://192.168.1.6:19300/digitaltwinbroker
+      
+      
+sofia2.digitaltwin.broker.rest: http://169.254.48.130:19300/digitaltwinbroker

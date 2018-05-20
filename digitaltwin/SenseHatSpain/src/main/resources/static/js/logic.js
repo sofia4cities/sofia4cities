@@ -1,30 +1,46 @@
 var digitalTwinApi = Java.type('com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi').getInstance();
-var hola='hola';
+var senseHatApi = Java.type('com.indracompany.sofia2.raspberry.sensehat.digitaltwin.api.SenseHatApi').getInstance();
+
 function init(){
+	
+	senseHatApi.setJoystickUpListener('joystickEventUp');
+	senseHatApi.setJoystickDownListener('joystickEventDown')
+	senseHatApi.setJoystickLeftListener('joystickEventLeft');
+	senseHatApi.setJoystickRightListener('joystickEventRight');
+	senseHatApi.setJoystickMiddleListener('joystickEventMiddle');
 	
 	digitalTwinApi.log('Init SenseHatSpain shadow');
 	
-    digitalTwinApi.setStatusValue('temperature', 0.0);
-    digitalTwinApi.setStatusValue('humidity', 0.0);
-    digitalTwinApi.setStatusValue('pressure', 0.0);
+	var sensorPress = senseHatApi.getPressure();
+	var sensorTemp = senseHatApi.getTemperature();
+	var sensorHum = senseHatApi.getHumidity();
+	
+	digitalTwinApi.setStatusValue('pressure', sensorPress);
+	digitalTwinApi.setStatusValue('temperature', sensorTemp);
+    digitalTwinApi.setStatusValue('humidity', sensorHum);
     
     var temp = digitalTwinApi.getStatusValue('temperature');
     var hum = digitalTwinApi.getStatusValue('humidity');
     var pressure = digitalTwinApi.getStatusValue('pressure');
     
-    digitalTwinApi.log('Temperature: ' + temp + " - Humidity: " + hum + " - Pressure: "+ pressure);
+    digitalTwinApi.log('Temperature: ' + temp + ' - Humidity: ' + hum + ' - Pressure: '+ pressure);
     
     digitalTwinApi.sendUpdateShadow();
     
     digitalTwinApi.log('Send Update Shadow');
 }
+
 function main(){
 	
 	digitalTwinApi.log('New main execution');
 	
-	digitalTwinApi.setStatusValue('temperature', 0.0);
-    digitalTwinApi.setStatusValue('humidity', 0.0);
-    digitalTwinApi.setStatusValue('pressure', 0.0);
+	var sensorPress = senseHatApi.getPressure();
+	var sensorTemp = senseHatApi.getTemperature();
+	var sensorHum = senseHatApi.getHumidity();
+	
+	digitalTwinApi.setStatusValue('pressure', sensorPress);
+	digitalTwinApi.setStatusValue('temperature', sensorTemp);
+    digitalTwinApi.setStatusValue('humidity', sensorHum);
     
     digitalTwinApi.sendUpdateShadow();
     
@@ -34,50 +50,51 @@ function main(){
 var joystickEventLeft=function(event){
 	digitalTwinApi.log('Received joystick event to the left');
 	digitalTwinApi.sendCustomEvent('joystickEventLeft');
-	digitalTwinApi.showTextLedMatrix(event);
+	senseHatApi.showTextLedMatrix(event);
 }
 
 var joystickEventRight=function(event){
 	digitalTwinApi.log('Received joystick event to the right');
 	digitalTwinApi.sendCustomEvent('joystickEventRight');
-	digitalTwinApi.showTextLedMatrix(event);
+	senseHatApi.showTextLedMatrix(event);
 }
 
 var joystickEventUp=function(event){
 	digitalTwinApi.log('Received joystick event up');
 	digitalTwinApi.sendCustomEvent('joystickEventUp');
-	digitalTwinApi.showTextLedMatrix(event);
+	senseHatApi.showTextLedMatrix(event);
 }
 
 var joystickEventDown=function(event){
 	digitalTwinApi.log('Received joystick event down');
 	digitalTwinApi.sendCustomEvent('joystickEventDown');
-	digitalTwinApi.showTextLedMatrix(event);
+	senseHatApi.showTextLedMatrix(event);
 }
 
 var joystickEventMiddle=function(event){
 	digitalTwinApi.log('Received joystick event to the middle');
 	digitalTwinApi.sendCustomEvent('joystickEventMiddle');
-	digitalTwinApi.showTextLedMatrix(event);
+	senseHatApi.showTextLedMatrix(event);
 }
+
 
 var onActionJoystickRight=function(data){
 	digitalTwinApi.log('Received joystick action to the right');
-	digitalTwinApi.showTextLedMatrix('Right');
+	senseHatApi.showTextLedMatrix('Right');
 }
 function onActionJoystickLeft(data){
 	digitalTwinApi.log('Received joystick action to the left');
-	digitalTwinApi.showTextLedMatrix('Left');
+	senseHatApi.showTextLedMatrix('Left');
 }
 var onActionJoystickUp=function(data){ 
 	digitalTwinApi.log('Received joystick action up');
-	digitalTwinApi.showTextLedMatrix('Up');
+	senseHatApi.showTextLedMatrix('Up');
 }
 var onActionJoystickDown=function(data){ 
 	digitalTwinApi.log('Received joystick action down');
-	digitalTwinApi.showTextLedMatrix('Down');
+	senseHatApi.showTextLedMatrix('Down');
 }
 var onActionJoystickMiddle=function(data){ 
 	digitalTwinApi.log('Received joystick action to the middle');
-	digitalTwinApi.showTextLedMatrix('Middle');
+	senseHatApi.showTextLedMatrix('Middle');
 }
