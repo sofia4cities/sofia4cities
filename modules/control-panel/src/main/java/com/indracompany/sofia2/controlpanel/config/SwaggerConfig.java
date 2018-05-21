@@ -40,14 +40,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-	private static final String INFO_VERSION = "Apache 2.0 License";
-	private static final String INFO_TITLE = "Sofia2Cities Control Panel Management";
-	private static final String INFO_DESCRIPTION = "Select4Cities ";
+	private static final String INFO_VERSION = "";
+	private static final String INFO_TITLE = "onesait Platform";
+	private static final String INFO_DESCRIPTION = "onesait Platform Control Panel Management";
 
-	private static final String LICENSE_NAME = "1.0.0";
+	private static final String LICENSE_NAME = "Apache2 License";
 	private static final String LICENSE_URL = "http://www.apache.org/licenses/LICENSE-2.0.html";
 
-	private static final String CONTACT_NAME = "The Sofia2 Select4Cities Team";
+	private static final String CONTACT_NAME = "onesait Platform Team";
 	private static final String CONTACT_URL = "https://www.sofia4cities.com";
 	private static final String CONTACT_EMAIL = "select4citiesminsait@gmail.com";
 
