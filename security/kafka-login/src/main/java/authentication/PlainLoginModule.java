@@ -14,6 +14,8 @@ public class PlainLoginModule implements LoginModule {
 	private static final String USERNAME_CONFIG = "username";
 	private static final String PASSWORD_CONFIG = "password";
 
+	public static String URL = "";
+
 	static {
 		PlainSaslServerProvider.initialize();
 	}
@@ -21,6 +23,15 @@ public class PlainLoginModule implements LoginModule {
 	@Override
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState,
 			Map<String, ?> options) {
+
+		System.out.println("PlainModule Initialize");
+		System.out.println(options.toString());
+		String url = (String) options.get("url");
+		if (url != null) {
+			System.out.println(url);
+			PlainLoginModule.URL = url;
+		}
+
 		String username = (String) options.get(USERNAME_CONFIG);
 		if (username != null)
 			subject.getPublicCredentials().add(username);

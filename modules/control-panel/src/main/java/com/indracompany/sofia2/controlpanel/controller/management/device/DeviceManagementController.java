@@ -28,7 +28,6 @@ import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.controlpanel.controller.management.ApiOpsRestServices;
-import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,8 +43,6 @@ public class DeviceManagementController extends ApiOpsRestServices {
 	ClientPlatformService clientPlatformService;
 	@Autowired
 	ApiManagerService apiManagerService;
-	@Autowired
-	AppWebUtils utils;
 
 	@ApiOperation(value = "validate clientPlatform id with token")
 	@RequestMapping(value = "/validate/device/{clientPlatformId}/token/{token}", method = RequestMethod.GET)
