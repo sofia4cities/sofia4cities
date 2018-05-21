@@ -12,48 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.impala;
+package com.indracompany.sofia2.persistence.hadoop.missing;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
-import com.indracompany.sofia2.persistence.hadoop.resultset.DefaultResultSetExtractor;
-import com.indracompany.sofia2.persistence.hadoop.util.QueryProcessor;
 import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Repository
-@ConditionalOnBean(name = { NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME })
-public class ImpalaQueryAsTextDBRepository implements QueryAsTextDBRepository {
-
-	@Autowired
-	@Qualifier(NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME)
-	private JdbcTemplate jdbcTemplate;
-
-	@Autowired
-	private QueryProcessor hivePricessor;
+public class DefaultQueryAsTextDBRepository implements QueryAsTextDBRepository {
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		return jdbcTemplate.query(hivePricessor.parse(query), new DefaultResultSetExtractor());
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query) throws DBPersistenceException {
-		return queryNativeAsJson(ontology, query, -1, -1);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public String querySQLAsJson(String ontology, String query, int offset) throws DBPersistenceException {
-		return queryNativeAsJson(ontology, query, offset, -1);
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

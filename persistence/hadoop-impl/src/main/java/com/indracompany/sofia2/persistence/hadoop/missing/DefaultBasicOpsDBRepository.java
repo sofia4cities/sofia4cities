@@ -12,21 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.hive;
+package com.indracompany.sofia2.persistence.hadoop.missing;
 
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
 import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.util.BulkWriteResult;
 
 @Repository
-@ConditionalOnBean(name = NameBeanConst.HIVE_TEMPLATE_JDBC_BEAN_NAME)
-public class HiveBasicOpsDBRepository implements BasicOpsDBRepository {
+public class DefaultBasicOpsDBRepository implements BasicOpsDBRepository {
 
 	@Override
 	public String insert(String ontology, String schema, String instance) throws DBPersistenceException {

@@ -12,29 +12,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.hive.table;
+package com.indracompany.sofia2.persistence.hadoop.config.condition;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
-public class HiveColumn {
+public class HadoopDisabledCondition implements Condition {
 
-	@Getter
-	@Setter
-	private String name;
+	@Override
+	public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 
-	@Getter
-	@Setter
-	private String columnType;
+		String key = "sofia2.database.hadoop.enabled";
 
-	public HiveColumn() {
-		super();
-	}
+		if (!context.getEnvironment().containsProperty(key)) {
+			return true;
+		} else {
+			return !context.getEnvironment().getProperty(key, Boolean.class);
+		}
 
-	public HiveColumn(String name, String columnType) {
-		super();
-		this.name = name;
-		this.columnType = columnType;
 	}
 
 }

@@ -15,8 +15,10 @@
 package com.indracompany.sofia2.persistence.hadoop.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
+import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
 import com.indracompany.sofia2.persistence.hadoop.hdfs.HdfsConst;
 
 import lombok.Getter;
@@ -24,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @Slf4j
+@Conditional(HadoopEnabledCondition.class)
 public class HdfsConfiguration {
 
 	@Getter

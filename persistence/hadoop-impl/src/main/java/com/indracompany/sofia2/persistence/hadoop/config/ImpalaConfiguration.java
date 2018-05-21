@@ -19,22 +19,25 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
+import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @Slf4j
-@ConditionalOnExpression("${sofia2.database.hadoop.enabled:false}")
+@Conditional(HadoopEnabledCondition.class)
 public class ImpalaConfiguration {
 
 	@Value("${sofia2.database.impala.url}")
 	private String url;
 
-	@Bean(name = "impalaDatasource")
+	@Bean(name = NameBeanConst.IMPALA_DATASOURCE_BEAN_NAME)
 	public DataSource dataSource() {
 
 		BasicDataSource dataSource = new BasicDataSource();
@@ -69,8 +72,8 @@ public class ImpalaConfiguration {
 		return dataSource;
 	}
 
-	@Bean(name = "impalaJdbcTemplate")
-	public JdbcTemplate hiveJdbcTemplate(@Qualifier("impalaDatasource") DataSource dataSource) {
+	@Bean(name = NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME)
+	public JdbcTemplate hiveJdbcTemplate(@Qualifier(NameBeanConst.IMPALA_DATASOURCE_BEAN_NAME) DataSource dataSource) {
 		return new JdbcTemplate(dataSource);
 	}
 

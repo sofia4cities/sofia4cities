@@ -27,6 +27,7 @@ import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.common.DescribeColumnData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
+import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
 import com.indracompany.sofia2.persistence.hadoop.common.CommonQuery;
 import com.indracompany.sofia2.persistence.hadoop.rowmapper.ImpalaDescribeColumnRowMapper;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
@@ -35,13 +36,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
-@ConditionalOnBean(name = { "impalaJdbcTemplate" })
+@ConditionalOnBean(name = { NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME })
 public class ImpalaManageDBRepository implements ManageDBRepository {
 
 	private final String INVALIDATE_METADATA = "invalidate metadata %s";
 
 	@Autowired
-	@Qualifier("impalaJdbcTemplate")
+	@Qualifier(NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME)
 	private JdbcTemplate impalaJdbcTemplate;
 
 	public void invalidateMetadata(String name) {

@@ -14,7 +14,7 @@
  */
 package com.indracompany.sofia2.persistence.factory;
 
-import static com.indracompany.sofia2.persistence.hadoop.NameBeanConst.KUDU_MANAGE_DB_REPO_BEAN_NAME;
+import static com.indracompany.sofia2.persistence.hadoop.NameBeanConst.KUDU_BASIC_OPS_BEAN_NAME;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,42 +23,42 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.config.model.Ontology;
 import com.indracompany.sofia2.config.model.Ontology.RtdbDatasource;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
-import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchManageDBRepository;
+import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
-import com.indracompany.sofia2.persistence.mongodb.MongoNativeManageDBRepository;
+import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
+import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 
 @Component
-public class ManageDBRepositoryFactory {
+public class BasicOpsDBRepositoryFactory {
 
 	@Autowired
-	private MongoNativeManageDBRepository mongoManage;
+	private ElasticSearchBasicOpsDBRepository elasticBasicOps;
 
 	@Autowired
-	private ElasticSearchManageDBRepository elasticManage;
-
-	@Autowired
-	@Qualifier(KUDU_MANAGE_DB_REPO_BEAN_NAME)
-	private ManageDBRepository kuduManageDBRepository;
+	private MongoBasicOpsDBRepository mongoBasicOps;
 
 	@Autowired
 	private OntologyRepository ontologyRepository;
 
-	public ManageDBRepository getInstance(String ontologyId) throws DBPersistenceException {
+	@Autowired
+	@Qualifier(KUDU_BASIC_OPS_BEAN_NAME)
+	private BasicOpsDBRepository kuduBasicOpsDBRepository;
+
+	public BasicOpsDBRepository getInstance(String ontologyId) throws DBPersistenceException {
 		Ontology ds = ontologyRepository.findByIdentification(ontologyId);
 		RtdbDatasource dataSource = ds.getRtdbDatasource();
 		return getInstance(dataSource);
 	}
 
-	public ManageDBRepository getInstance(RtdbDatasource dataSource) throws DBPersistenceException {
-		if (dataSource.equals(RtdbDatasource.Mongo))
-			return mongoManage;
-		else if (dataSource.equals(RtdbDatasource.ElasticSearch))
-			return elasticManage;
-		else if (dataSource.equals(RtdbDatasource.Kudu)) {
-			return kuduManageDBRepository;
+	public BasicOpsDBRepository getInstance(RtdbDatasource dataSource) throws DBPersistenceException {
+		if (RtdbDatasource.Mongo.equals(dataSource))
+			return mongoBasicOps;
+		else if (RtdbDatasource.ElasticSearch.equals(dataSource))
+			return elasticBasicOps;
+		else if (RtdbDatasource.Kudu.equals(dataSource)) {
+			return kuduBasicOpsDBRepository;
 		} else
-			return mongoManage;
+			return mongoBasicOps;
 	}
 
 }

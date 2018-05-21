@@ -23,10 +23,10 @@ public class QueryProcessor {
 
 		String parsedQuery = query.toLowerCase();
 
-		parsedQuery = parsedQuery.replace("geometry.coordinates.0", HiveFieldType.LATITUDE_FIELD);
-		parsedQuery = parsedQuery.replace("geometry.coordinates.1", HiveFieldType.LONGITUDE_FIELD);
-		parsedQuery = parsedQuery.replace("geometry",
-				HiveFieldType.LATITUDE_FIELD + ", " + HiveFieldType.LONGITUDE_FIELD);
+		parsedQuery = parsedQuery.replace(".coordinates.0", HiveFieldType.LATITUDE_FIELD);
+		parsedQuery = parsedQuery.replace(".coordinates.1", HiveFieldType.LONGITUDE_FIELD);
+		// parsedQuery = parsedQuery.replace("geometry",
+		// HiveFieldType.LATITUDE_FIELD + ", " + HiveFieldType.LONGITUDE_FIELD);
 
 		if (parsedQuery.endsWith("as c")) {
 			parsedQuery = parsedQuery.replace("as c", "");

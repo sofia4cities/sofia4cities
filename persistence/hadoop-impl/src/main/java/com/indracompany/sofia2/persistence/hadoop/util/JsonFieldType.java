@@ -27,6 +27,8 @@ public class JsonFieldType {
 	public static final String BOOLEAN_FIELD = "boolean";
 	public static final String STRING_FIELD = "string";
 	public static final String GEOMETRY = "geometry";
+	public static final String PRIMARY_ID_FIELD = "_id";
+	public static final String CONTEXT_DATA_FIELD = "contextdata";
 
 	public static final List<String> PRIMITIVE_TYPES = Arrays.asList(STRING_FIELD, NUMBER_FIELD, INTEGER_FIELD,
 			BOOLEAN_FIELD);

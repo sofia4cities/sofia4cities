@@ -12,38 +12,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.impala;
+package com.indracompany.sofia2.persistence.hadoop.kudu;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
-import com.indracompany.sofia2.persistence.hadoop.resultset.DefaultResultSetExtractor;
+import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
+import com.indracompany.sofia2.persistence.hadoop.resultset.KuduResultSetExtractor;
 import com.indracompany.sofia2.persistence.hadoop.util.QueryProcessor;
 import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Repository
-@ConditionalOnBean(name = { NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME })
-public class ImpalaQueryAsTextDBRepository implements QueryAsTextDBRepository {
+@Repository(NameBeanConst.KUDU_QUERY_REPO_BEAN_NAME)
+@Conditional(HadoopEnabledCondition.class)
+public class KuduQueryAsTextDBRepository implements QueryAsTextDBRepository {
 
 	@Autowired
 	@Qualifier(NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME)
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	private QueryProcessor hivePricessor;
+	private QueryProcessor queryProcessor;
+
+	@PostConstruct
+	public void sss() {
+		log.info("dadasdasd");
+	}
 
 	@Override
 	public String queryNativeAsJson(String ontology, String query, int offset, int limit)
 			throws DBPersistenceException {
-		return jdbcTemplate.query(hivePricessor.parse(query), new DefaultResultSetExtractor());
+		return jdbcTemplate.query(queryProcessor.parse(query), new KuduResultSetExtractor());
 	}
 
 	@Override

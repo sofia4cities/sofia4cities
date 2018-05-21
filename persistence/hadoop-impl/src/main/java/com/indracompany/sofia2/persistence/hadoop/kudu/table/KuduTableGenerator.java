@@ -12,7 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.hive.table;
+package com.indracompany.sofia2.persistence.hadoop.kudu.table;
+
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_CLIENT_SESSION;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_TIMEZONE_ID;
+import static com.indracompany.sofia2.persistence.hadoop.common.ContextDataNameFields.CONTEXT_DATA_FIELD_USER;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,6 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
+import com.indracompany.sofia2.persistence.hadoop.common.GeometryType;
+import com.indracompany.sofia2.persistence.hadoop.hive.table.HiveColumn;
 import com.indracompany.sofia2.persistence.hadoop.util.HiveFieldType;
 import com.indracompany.sofia2.persistence.hadoop.util.JsonFieldType;
 
@@ -29,16 +40,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-public class HiveTableGenerator {
+public class KuduTableGenerator {
 
-	// https://github.com/hortonworks/hive-json/tree/master/src/main/java/org/apache/hadoop/hive/json
+	public KuduTable builTable(String ontologyName, String schema) {
 
-	public HiveTable buildHiveTable(String ontologyName, String schema, String hdfsWorkingDirectory) {
-
-		log.debug("generate hive table for ontology " + ontologyName);
+		log.debug("generate kudu table for ontology " + ontologyName);
 
 		JSONObject props = getProperties(schema);
-		return build(ontologyName, props, hdfsWorkingDirectory);
+		return build(ontologyName, props);
 	}
 
 	public JSONObject getProperties(String schema) {
@@ -66,13 +75,15 @@ public class HiveTableGenerator {
 		return properties;
 	}
 
-	public HiveTable build(String name, JSONObject props, String hdfsWorkingDirectory) {
-		HiveTable table = new HiveTable();
+	public KuduTable build(String name, JSONObject props) {
+		KuduTable table = new KuduTable();
 		table.setName(name);
-		table.setHdfsDir(hdfsWorkingDirectory);
 
 		@SuppressWarnings("unchecked")
 		Iterator<String> it = props.keys();
+
+		table.getColumns().add(getPrimaryId());
+		table.getColumns().addAll(getContexDataFields());
 
 		while (it.hasNext()) {
 			String key = it.next();
@@ -108,10 +119,9 @@ public class HiveTableGenerator {
 				JSONArray enume = o.getJSONObject(JsonFieldType.PROPERTIES_FIELD)
 						.getJSONObject(JsonFieldType.TYPE_FIELD).getJSONArray("enum");
 				String point = enume.getString(0);
-				if ("Point".equalsIgnoreCase(point)) {
 
-					result = true;
-				}
+				result = GeometryType.Point.name().equalsIgnoreCase(point);
+
 			}
 		} catch (Exception e) {
 			log.error("error checking if a object is a geometry");
@@ -146,13 +156,13 @@ public class HiveTableGenerator {
 		if (isGeometry(o)) {
 
 			HiveColumn latitude = new HiveColumn();
-			latitude.setName(HiveFieldType.LATITUDE_FIELD);
-			latitude.setColumnType("float");
+			latitude.setName(key + HiveFieldType.LATITUDE_FIELD);
+			latitude.setColumnType("double");
 			columns.add(latitude);
 
 			HiveColumn longitude = new HiveColumn();
-			longitude.setName(HiveFieldType.LONGITUDE_FIELD);
-			longitude.setColumnType("float");
+			longitude.setName(key + HiveFieldType.LONGITUDE_FIELD);
+			longitude.setColumnType("double");
 			columns.add(longitude);
 
 		} else if (isTimestamp(o)) {
@@ -185,4 +195,25 @@ public class HiveTableGenerator {
 		return result;
 	}
 
+	public HiveColumn getPrimaryId() {
+		return new HiveColumn(JsonFieldType.PRIMARY_ID_FIELD, HiveFieldType.STRING_FIELD);
+	}
+
+	public List<HiveColumn> getContexDataFields() {
+
+		List<HiveColumn> columns = new ArrayList<>();
+
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_PLATFORM, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_PLATFORM_INSTANCE, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_PLATFORM_CONNECTION, HiveFieldType.STRING_FIELD));
+
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_CLIENT_SESSION, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_USER, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMEZONE_ID, HiveFieldType.STRING_FIELD));
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP, HiveFieldType.STRING_FIELD));
+
+		columns.add(new HiveColumn(CONTEXT_DATA_FIELD_TIMESTAMP_MILLIS, HiveFieldType.BIGINT_FIELD));
+
+		return columns;
+	}
 }

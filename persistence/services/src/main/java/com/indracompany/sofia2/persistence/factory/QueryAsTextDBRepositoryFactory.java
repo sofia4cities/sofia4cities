@@ -14,9 +14,12 @@
  */
 package com.indracompany.sofia2.persistence.factory;
 
+import static com.indracompany.sofia2.persistence.hadoop.NameBeanConst.KUDU_QUERY_REPO_BEAN_NAME;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.config.model.ClientPlatform;
@@ -26,7 +29,6 @@ import com.indracompany.sofia2.config.services.client.ClientPlatformService;
 import com.indracompany.sofia2.config.services.ontology.OntologyService;
 import com.indracompany.sofia2.persistence.elasticsearch.ElasticSearchQueryAsTextDBRepository;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.hadoop.impala.ImpalaQueryAsTextDBRepository;
 import com.indracompany.sofia2.persistence.interfaces.QueryAsTextDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.services.QueryAsTextMongoDBImpl;
 
@@ -40,7 +42,8 @@ public class QueryAsTextDBRepositoryFactory {
 	private ElasticSearchQueryAsTextDBRepository queryElasticSearch;
 
 	@Autowired
-	private ImpalaQueryAsTextDBRepository impalaQueryAsTextDBRepository;
+	@Qualifier(KUDU_QUERY_REPO_BEAN_NAME)
+	private QueryAsTextDBRepository kuduQueryAsTextDBRepository;
 
 	@Autowired
 	private OntologyService ontologyService;
@@ -74,8 +77,8 @@ public class QueryAsTextDBRepositoryFactory {
 			return queryMongo;
 		else if (dataSource.equals(RtdbDatasource.ElasticSearch))
 			return queryElasticSearch;
-		else if (dataSource.equals(RtdbDatasource.Hadoop))
-			return impalaQueryAsTextDBRepository;
+		else if (dataSource.equals(RtdbDatasource.Kudu))
+			return kuduQueryAsTextDBRepository;
 		else
 			return queryMongo;
 	}

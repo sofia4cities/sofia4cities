@@ -12,23 +12,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.util;
+package com.indracompany.sofia2.persistence.hadoop.common;
 
-public class HiveFieldType {
+public class Geometry {
 
-	public static final String LONGITUDE_FIELD = "_longitude";
-	public static final String LATITUDE_FIELD = "_latitude";
-	public static final String TIMESTAMP_FIELD = "timestamp";
+	private Double[] coordinates;
+	private GeometryType type;
 
-	public static final String INTEGER_FIELD = "int";
-	public static final String BOOLEAN_FIELD = "boolean";
-	public static final String STRING_FIELD = "string";
-	public static final String FLOAT_FIELD = "float";
-	public static final String BIGINT_FIELD = "bigint";
-	public static final String DOUBLE_FIELD = "double";
-
-	private HiveFieldType() {
+	public Geometry() {
 		super();
+		this.coordinates = new Double[2];
 	}
 
+	public Double[] getCoordinates() {
+		return coordinates;
+	}
+
+	public void setCoordinates(Double[] coordinates) {
+		this.coordinates = coordinates;
+	}
+
+	public GeometryType getType() {
+		return type;
+	}
+
+	public void setType(GeometryType type) {
+		this.type = type;
+	}
 }

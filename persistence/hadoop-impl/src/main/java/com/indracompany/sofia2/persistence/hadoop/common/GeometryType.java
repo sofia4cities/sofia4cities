@@ -12,29 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.hive.table;
+package com.indracompany.sofia2.persistence.hadoop.common;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HiveColumn {
+public enum GeometryType {
 
-	@Getter
-	@Setter
+	@JsonProperty("Point")
+	Point("Point");
+
 	private String name;
 
-	@Getter
-	@Setter
-	private String columnType;
-
-	public HiveColumn() {
-		super();
-	}
-
-	public HiveColumn(String name, String columnType) {
-		super();
+	private GeometryType(String name) {
 		this.name = name;
-		this.columnType = columnType;
 	}
 
+	public String getName() {
+		return name;
+	}
 }

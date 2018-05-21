@@ -12,15 +12,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.hive;
+package com.indracompany.sofia2.persistence.hadoop.kudu;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -28,33 +27,28 @@ import org.springframework.stereotype.Repository;
 import com.indracompany.sofia2.persistence.common.DescribeColumnData;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
 import com.indracompany.sofia2.persistence.hadoop.NameBeanConst;
-import com.indracompany.sofia2.persistence.hadoop.common.CommonQuery;
-import com.indracompany.sofia2.persistence.hadoop.config.HdfsConfiguration;
-import com.indracompany.sofia2.persistence.hadoop.hive.table.HiveTable;
-import com.indracompany.sofia2.persistence.hadoop.hive.table.HiveTableGenerator;
-import com.indracompany.sofia2.persistence.hadoop.impala.ImpalaManageDBRepository;
-import com.indracompany.sofia2.persistence.hadoop.rowmapper.HiveDescribeColumnRowMapper;
+import com.indracompany.sofia2.persistence.hadoop.config.condition.HadoopEnabledCondition;
+import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTable;
+import com.indracompany.sofia2.persistence.hadoop.kudu.table.KuduTableGenerator;
 import com.indracompany.sofia2.persistence.interfaces.ManageDBRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
-@ConditionalOnBean(name = { NameBeanConst.HIVE_TEMPLATE_JDBC_BEAN_NAME, NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME })
-public class HiveManageDBRepository implements ManageDBRepository {
+@Conditional(HadoopEnabledCondition.class)
+public class KuduManageDBRepository implements ManageDBRepository {
 
 	@Autowired
-	@Qualifier(NameBeanConst.HIVE_TEMPLATE_JDBC_BEAN_NAME)
-	private JdbcTemplate hiveJdbcTemplate;
+	@Qualifier("impalaManageDBRepository")
+	private ManageDBRepository impalaManageDBRepository;
 
 	@Autowired
-	private ImpalaManageDBRepository impalaManageDBRepository;
+	private KuduTableGenerator kuduTableGenerator;
 
 	@Autowired
-	private HiveTableGenerator hiveTableGenerator;
-
-	@Autowired
-	private HdfsConfiguration hdfsConfiguration;
+	@Qualifier(NameBeanConst.IMPALA_TEMPLATE_JDBC_BEAN_NAME)
+	private JdbcTemplate jdbcTemplate;
 
 	@Override
 	public Map<String, Boolean> getStatusDatabase() throws DBPersistenceException {
@@ -64,52 +58,23 @@ public class HiveManageDBRepository implements ManageDBRepository {
 
 	@Override
 	public String createTable4Ontology(String ontology, String schema) throws DBPersistenceException {
+
 		try {
-			log.debug("create hive table for ontology " + ontology);
-			HiveTable table = hiveTableGenerator.buildHiveTable(ontology, schema,
-					hdfsConfiguration.getAbsolutePath(hdfsConfiguration.getOntologiesFolder(), ontology));
-			hiveJdbcTemplate.execute(table.build());
-			log.debug("hive table created successfully");
-			impalaManageDBRepository.invalidateMetadata(table.getName());
-			log.debug("impala invalidated metadata");
+			log.debug("create kudu table for ontology " + ontology);
+			KuduTable table = kuduTableGenerator.builTable(ontology, schema);
+			jdbcTemplate.execute(table.build());
+			log.debug("kudu table created successfully");
 		} catch (DataAccessException e) {
-			log.error("error creating hive table for ontology " + ontology, e);
+			log.error("error creating kudu table for ontology " + ontology, e);
 			throw new DBPersistenceException(e);
 		}
+
 		return ontology;
 	}
 
 	@Override
-	public List<DescribeColumnData> describeTable(String name) {
-
-		List<DescribeColumnData> descriptors = new ArrayList<>();
-
-		try {
-
-			String sql = String.format(CommonQuery.DESCRIBE_TABLE, name);
-			descriptors = hiveJdbcTemplate.query(sql, new HiveDescribeColumnRowMapper());
-
-		} catch (DataAccessException e) {
-			log.error("error describe hive table " + name, e);
-			throw new DBPersistenceException(e);
-		}
-
-		return descriptors;
-	}
-
-	@Override
 	public List<String> getListOfTables() throws DBPersistenceException {
-
-		List<String> tables = null;
-
-		try {
-			tables = hiveJdbcTemplate.queryForList(CommonQuery.LIST_TABLES, String.class);
-		} catch (DataAccessException e) {
-			log.error("error getting all hive tables ", e);
-			throw new DBPersistenceException(e);
-		}
-
-		return tables;
+		return impalaManageDBRepository.getListOfTables();
 	}
 
 	@Override
@@ -176,6 +141,11 @@ public class HiveManageDBRepository implements ManageDBRepository {
 	public long deleteAfterExport(String ontology, String query) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public List<DescribeColumnData> describeTable(String name) {
+		return impalaManageDBRepository.describeTable(name);
 	}
 
 }

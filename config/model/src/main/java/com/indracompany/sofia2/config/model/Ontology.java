@@ -55,7 +55,7 @@ public class Ontology extends AuditableEntityWithUUID {
 	private static final long serialVersionUID = 1L;
 
 	public enum RtdbDatasource {
-		Mongo, ElasticSearch, Hadoop
+		Mongo, ElasticSearch, Kudu
 	}
 
 	public enum RtdbCleanLapse {

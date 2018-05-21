@@ -110,7 +110,7 @@ public class DeleteProcessorTest {
 		// mockOntologies.createOntology(Person.class);
 
 		subject = PojoGenerator.generatePerson();
-		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(),
+		final String subjectInsertResult = repository.insert(Person.class.getSimpleName(), "",
 				objectMapper.writeValueAsString(subject));
 		// subjectId =
 		// objectMapper.readTree(subjectInsertResult).at("/_id/$oid").asText();

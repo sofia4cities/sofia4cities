@@ -38,11 +38,11 @@ public class HadoopService {
 	private JsonGeneratorFromHive jsonGenerator;
 
 	public List<String> getHiveTables() {
-		return manageDBPersistenceServiceFacade.getListOfTables(RtdbDatasource.Hadoop);
+		return manageDBPersistenceServiceFacade.getListOfTables(RtdbDatasource.Kudu);
 	}
 
 	public List<DescribeColumnData> describe(String name) {
-		List<DescribeColumnData> columns = manageDBPersistenceServiceFacade.describeTable(RtdbDatasource.Hadoop, name);
+		List<DescribeColumnData> columns = manageDBPersistenceServiceFacade.describeTable(RtdbDatasource.Kudu, name);
 		return columns;
 	}
 

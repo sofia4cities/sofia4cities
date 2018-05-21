@@ -12,17 +12,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.persistence.hadoop.hive.table;
+package com.indracompany.sofia2.persistence.hadoop.kudu.table;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.indracompany.sofia2.persistence.hadoop.hdfs.HdfsConst;
+import com.indracompany.sofia2.persistence.hadoop.hive.table.HiveColumn;
+import com.indracompany.sofia2.persistence.hadoop.util.JsonFieldType;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class HiveTable {
+public class KuduTable {
 
 	@Getter
 	@Setter
@@ -32,20 +33,17 @@ public class HiveTable {
 	@Setter
 	private List<HiveColumn> columns = new ArrayList<>();
 
-	@Getter
-	@Setter
-	private String hdfsDir;
-
 	public String build() {
 		StringBuilder sentence = new StringBuilder();
 
-		sentence.append("CREATE EXTERNAL TABLE IF NOT EXISTS ");
+		sentence.append("CREATE TABLE IF NOT EXISTS ");
 		sentence.append(name);
 		sentence.append(" (");
 
-		if (columns != null) {
+		if (columns != null && !columns.isEmpty()) {
 			int numOfColumns = columns.size();
 			int i = 0;
+
 			for (HiveColumn column : columns) {
 				sentence.append(column.getName()).append(" ").append(column.getColumnType());
 				if (i < numOfColumns - 1) {
@@ -54,14 +52,14 @@ public class HiveTable {
 				i++;
 			}
 		}
-
-		sentence.append(") ROW FORMAT DELIMITED FIELDS TERMINATED BY '");
-		sentence.append(HdfsConst.SEPARATOR_FIELD);
-		sentence.append("' LINES TERMINATED BY '\n' STORED AS TEXTFILE LOCATION '");
-		sentence.append(hdfsDir);
-		sentence.append("'");
-
-		// drop sentence
+		sentence.append(",\n PRIMARY KEY (" + JsonFieldType.PRIMARY_ID_FIELD + ")");
+		sentence.append(") PARTITION BY HASH(" + JsonFieldType.PRIMARY_ID_FIELD + ") PARTITIONS 2");
+		sentence.append(" STORED AS KUDU ");
+		sentence.append("TBLPROPERTIES(");
+		sentence.append("'kudu.master_addresses' = 'localhost:7051',");
+		sentence.append("'kudu.table_name' = '" + name + "',");
+		sentence.append("'kudu.num_tablet_replicas' = '1'");
+		sentence.append(");");
 
 		return sentence.toString();
 	}
