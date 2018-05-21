@@ -17,9 +17,11 @@ package com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.referen
 import org.json.JSONObject;
 
 public interface ActionNotifier {
-	
-	public void notifyShadowMessage(JSONObject message);
-	
-	public void notifyCustomMessage(JSONObject message);
-	
+
+	// public void notifyShadowMessage(JSONObject message);
+	//
+	// public void notifyCustomMessage(JSONObject message);
+
+	public void notifyActionMessage(JSONObject message);
+
 }

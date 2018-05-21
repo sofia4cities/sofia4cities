@@ -55,11 +55,11 @@
 		    <version>4.5</version>
 		</dependency>
 		<!-- SenseHat library -->
-		<dependency>
+		<!-- dependency>
 			<groupId>com.indracompany.sofia2</groupId>
 			<artifactId>sensehat-python-library</artifactId>
 			<version>0.0.1</version>
-		</dependency>
+		</dependency-->
 		
 	</dependencies>
 </project>

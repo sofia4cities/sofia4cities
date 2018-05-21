@@ -12,16 +12,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.digitaltwin.event.manager;
+package com.indracompany.sofia2.digitaltwin.broker.plugable.impl.gateway.reference.websocket;
 
-import java.util.Map;
+import org.json.JSONObject;
+import org.springframework.messaging.MessageHeaders;
 
-public interface EventManager {
+public interface DigitalTwinWebsocketAPI {
 
-	public void updateShadow(Map<String, Object> status);
+	public void sendAction(String message, MessageHeaders messageHeaders);
 
-	public void log(String trace);
+	public void notifyShadowMessage(JSONObject message);
 
-	public void sendCustomEvent(Map<String, Object> map, String eventName);
+	public void notifyCustomMessage(JSONObject message);
+
+	public void notifyActionMessage(JSONObject message);
 
 }

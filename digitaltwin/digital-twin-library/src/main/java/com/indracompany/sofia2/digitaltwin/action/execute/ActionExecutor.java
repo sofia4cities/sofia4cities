@@ -14,20 +14,15 @@
  */
 package com.indracompany.sofia2.digitaltwin.action.execute;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import javax.annotation.PostConstruct;
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.indracompany.sofia2.digitaltwin.logic.api.DigitalTwinApi;
+import com.indracompany.sofia2.digitaltwin.logic.LogicManager;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,32 +35,31 @@ public class ActionExecutor {
 	private IDigitalTwinStatus digitalTwinStatus;
 
 	@Autowired
-	private DigitalTwinApi twinApi;
+	private LogicManager logicManager;
 
-	private static Invocable invocable;
+	@Autowired(required = false)
+	private ActionJavaListener actionJavaListener;
 
-	@PostConstruct
-	public void init() {
-		this.twinApi.init();
-
-		ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-		this.invocable = (Invocable) engine;
-		try {
-			ClassLoader classLoader = this.getClass().getClassLoader();
-			engine.eval(new InputStreamReader(classLoader.getResource("static/js/logic.js").openStream()));
-
-		} catch (ScriptException e1) {
-			log.error("Execution logic for action", e1);
-		} catch (FileNotFoundException e) {
-			log.error("File logic.js not found.", e);
-		} catch (IOException e) {
-			log.error("File logic.js not found.", e);
-		}
-	}
+	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	public void executeAction(String name) {
+
+		if (null != actionJavaListener) {
+			executor.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						actionJavaListener.executeAction(name);
+					} catch (Exception e) {
+						log.error("Error executing Java Action", e);
+					}
+				}
+			});
+		}
+
 		try {
-			this.invocable.invokeFunction("onAction" + name.substring(0, 1).toUpperCase() + name.substring(1),
+			log.info("Invoques Javascript function");
+			this.logicManager.invokeFunction("onAction" + name.substring(0, 1).toUpperCase() + name.substring(1),
 					digitalTwinStatus.toMap());
 
 		} catch (ScriptException e1) {
@@ -73,6 +67,7 @@ public class ActionExecutor {
 		} catch (NoSuchMethodException e2) {
 			log.error("Action " + name + " not found", e2);
 		}
+
 	}
 
 }

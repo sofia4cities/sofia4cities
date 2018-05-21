@@ -21,8 +21,6 @@ import org.springframework.stereotype.Component;
 
 import com.indracompany.sofia2.digitaltwin.event.manager.EventManager;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
-import com.indracompany.sofia2.raspberry.sensehat.sensehatlibrary.api.SenseHat;
-import com.indracompany.sofia2.raspberry.sensehat.sensehatlibrary.api.dto.Color;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class DigitalTwinApi {
+public class DigitalTwinApi implements DigitalTwinLogicAPI {
 
 	@Autowired
 	private EventManager eventManager;
@@ -45,6 +43,7 @@ public class DigitalTwinApi {
 	private static DigitalTwinApi instance;
 
 	@PostConstruct
+	@Override
 	public void init() {
 		instance = this;
 	}
@@ -53,10 +52,12 @@ public class DigitalTwinApi {
 		return instance;
 	}
 
+	@Override
 	public void log(String trace) {
 		eventManager.log(trace);
 	}
 
+	@Override
 	public void setStatusValue(String property, Object value) {
 		try {
 			digitalTwinStatus.setProperty(property, value);
@@ -65,6 +66,7 @@ public class DigitalTwinApi {
 		}
 	}
 
+	@Override
 	public Object getStatusValue(String property) {
 		try {
 			return digitalTwinStatus.getProperty(property);
@@ -74,29 +76,14 @@ public class DigitalTwinApi {
 		}
 	}
 
+	@Override
 	public void sendUpdateShadow() {
 		eventManager.updateShadow(digitalTwinStatus.toMap());
 	}
 
+	@Override
 	public void sendCustomEvent(String eventName) {
 		eventManager.sendCustomEvent(digitalTwinStatus.toMap(), eventName);
-	}
-
-	public void showTextLedMatrix(String text) {
-		SenseHat senseHat = new SenseHat();
-		senseHat.ledMatrix.showMessage(text);
-	}
-
-	public void showColorLedMatrix(String color) {
-		SenseHat senseHat = new SenseHat();
-		if (color.equals("red")) {
-			senseHat.ledMatrix.clear(Color.RED);
-		} else if (color.equals("green")) {
-			senseHat.ledMatrix.clear(Color.GREEN);
-		} else if (color.equals("blue")) {
-			senseHat.ledMatrix.clear(Color.BLUE);
-		}
-
 	}
 
 }

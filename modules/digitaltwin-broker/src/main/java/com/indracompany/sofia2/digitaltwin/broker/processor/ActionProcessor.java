@@ -12,16 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.indracompany.sofia2.digitaltwin.event.manager;
+package com.indracompany.sofia2.digitaltwin.broker.processor;
 
-import java.util.Map;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public interface EventManager {
+import com.indracompany.sofia2.digitaltwin.broker.processor.model.EventResponseMessage;
 
-	public void updateShadow(Map<String, Object> status);
+public interface ActionProcessor {
 
-	public void log(String trace);
-
-	public void sendCustomEvent(Map<String, Object> map, String eventName);
+	public EventResponseMessage action(String apiKey, JSONObject data) throws JSONException;
 
 }

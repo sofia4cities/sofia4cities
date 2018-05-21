@@ -43,6 +43,7 @@ public class ActionRestController {
 	@RequestMapping(method = RequestMethod.POST)
 	public void executeAction(@RequestBody String action, HttpServletRequest request) {
 		try {
+			log.info("Received action request");
 			JSONObject actionJSON = new JSONObject(action);
 			String idTransaction = request.getHeader("Transaction-Id");
 			String actionName = actionJSON.getString("name");

@@ -18,10 +18,10 @@ import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
-public class DigitalTwinModel implements Serializable{
+public class DigitalTwinModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public static enum EventType {
 		PING, LOG, NOTEBOOK, FLOW, RULE, SHADOW, REGISTER, CUSTOM, PIPELINE;
 	}
@@ -29,44 +29,48 @@ public class DigitalTwinModel implements Serializable{
 	@Getter
 	@Setter
 	private String deviceId;
-	
+
 	@Getter
 	@Setter
 	private String deviceName;
-	
+
 	@Getter
 	@Setter
 	private String type;
-	
+
 	@Getter
 	@Setter
-	private  EventType event;
-	
+	private EventType event;
+
 	@Getter
 	@Setter
-	private  String eventName;
-	
+	private String eventName;
+
 	@Getter
 	@Setter
-	private  String status;
-	
+	private String status;
+
 	@Getter
 	@Setter
-	private  String processId;
-	
+	private String processId;
+
 	@Getter
 	@Setter
-	private  String log;
-	
+	private String log;
+
 	@Getter
 	@Setter
 	private String endpoint;
 
+	@Getter
+	@Setter
+	private String actionName;
+
 	@Override
 	public String toString() {
 		return "DigitalTwinModel [deviceId=" + deviceId + ", type=" + type + ", event=" + event + ", status=" + status
-				+ ", processId=" + processId + ", log=" + log + ", endpoint=" + endpoint + ", eventName" + eventName+"]";
+				+ ", processId=" + processId + ", log=" + log + ", endpoint=" + endpoint + ", eventName" + eventName
+				+ "]";
 	}
-	
-	
+
 }
