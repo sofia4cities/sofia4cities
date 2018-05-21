@@ -18,14 +18,6 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/marketasset/list"
-				},
-			    {
-					"title": {
-						"EN": "My Web Projects",
-						"ES": "Mis Proyectos Web"
-					},
-					"icon": "",
-					"url": "/controlpanel/webprojects/list"
 				}
 			]
 		},
@@ -41,8 +33,8 @@
 		},
 		{
 			"title": {
-				"EN": "DATA MODELLING",
-				"ES": "MODELADO DE DATOS"
+				"EN": "DEVELOPMENT",
+				"ES": "DEVELOPMENT"
 			},
 			"icon": "flaticon-network",
 			"url": "",
@@ -54,51 +46,15 @@
 					},
 					"icon": "",
 					"url": "/controlpanel/ontologies/list"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "DEVICES",
-				"ES": "DISPOSITIVOS"
-			},
-			"icon": "flaticon-share",
-			"url": "",
-			"submenu": [
-				{
-					"title": {
-						"EN": "My Devices",
-						"ES": "Mis Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/devices/list"
 				},
 				{
 					"title": {
-						"EN": "My Simulations",
-						"ES": "Mis Simulaciones"
+						"EN": "Data Import Tools",
+						"ES": "Herramientas de importación"
 					},
 					"icon": "",
-					"url": "/controlpanel/devicesimulation/list"
+					"url": "/controlpanel/jsontool/tools"
 				},
-				{
-					"title": {
-						"EN": "Status of My Devices",
-						"ES": "Estado de mis Dispositivos"
-					},
-					"icon": "",
-					"url": "/controlpanel/devices/management/show"
-				}
-			]
-		},
-		{
-			"title": {
-				"EN": "INGEST & PROCESS",
-				"ES": "INGESTA Y PROCESADO"
-			},
-			"icon": "flaticon-car",
-			"url": "",
-			"submenu": [	
 				{
 					"title": {
 						"EN": "My DataFlows",
@@ -109,11 +65,19 @@
 				},
 				{
 					"title": {
-						"EN": "My Twitter Listenings",
-						"ES": "Mis Escuchas en Twitter"
+						"EN": "My APIs",
+						"ES": "Mis APIs"
 					},
 					"icon": "",
-					"url": "/controlpanel/twitter/scheduledsearch/list"
+					"url": "/controlpanel/apimanager/list"
+				},
+			    {
+					"title": {
+						"EN": "My Web Projects",
+						"ES": "Mis Proyectos Web"
+					},
+					"icon": "",
+					"url": "/controlpanel/webprojects/list"
 				}
 			]
 		},
@@ -161,27 +125,35 @@
 		},
 		{
 			"title": {
-				"EN": "API MANAGER",
-				"ES": "API MANAGER"
+				"EN": "DEVICES",
+				"ES": "DISPOSITIVOS"
 			},
-			"icon": "flaticon-multimedia",
+			"icon": "flaticon-share",
 			"url": "",
 			"submenu": [
 				{
 					"title": {
-						"EN": "My APIs",
-						"ES": "Mis APIs"
+						"EN": "My Devices",
+						"ES": "Mis Dispositivos"
 					},
 					"icon": "",
-					"url": "/controlpanel/apimanager/list"
+					"url": "/controlpanel/devices/list"
 				},
 				{
 					"title": {
-						"EN": "My API-Tokens",
-						"ES": "Mis API-Tokens"
+						"EN": "My Simulations",
+						"ES": "Mis Simulaciones"
 					},
 					"icon": "",
-					"url": "/controlpanel/apimanager/token/list"
+					"url": "/controlpanel/devicesimulation/list"
+				},
+				{
+					"title": {
+						"EN": "Status of My Devices",
+						"ES": "Estado de mis Dispositivos"
+					},
+					"icon": "",
+					"url": "/controlpanel/devices/management/show"
 				}
 			]
 		},
@@ -253,11 +225,19 @@
 				},
 				{
 					"title": {
-						"EN": "Data Import Tools",
-						"ES": "Herramientas de importación"
+						"EN": "ControlPanel Rest APIs",
+						"ES": "APIs Rest ControlPanel"
 					},
 					"icon": "",
-					"url": "/controlpanel/jsontool/tools"
+					"url": "/controlpanel/swagger-ui.html"
+				},				
+				{
+					"title": {
+						"EN": "IoTBroker Rest Gateway",
+						"ES": "IoTBroker Rest Gateway"
+					},
+					"icon": "",
+					"url": "/iotbroker/swagger-ui.html"
 				}
 			]
 		}
