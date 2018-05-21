@@ -1,7 +1,7 @@
 ## How to execute the platform in your computer
 #######################
 
-(NOTE: This document refers to Gitlab, if you are using Gitlab then you need to change repository info: https://sofia2-devops.westeurope.cloudapp.azure.com/gitlab/sofia2-projects/sofia2-s4c/)
+(NOTE: This document refers to Github, if you are using Gitlab then you need to change repository info: https://sofia2-devops.westeurope.cloudapp.azure.com/gitlab/sofia2-projects/sofia2-s4c/)
 
 ### 1. How to install Dev Environment in Windows
 This paragraph show you how to install the platform development environment in a Windows computer. This env has all the tools needed to execute the platform (JDK, Maven, MySQL, Mongo,...) so simplifies you develop with the platform.
