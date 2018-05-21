@@ -13,7 +13,7 @@ public class Color {
 	public static Color GREEN = Color.of(0, 255, 0);
 	public static Color BLUE = Color.of(0, 0, 255);
 
-	private Color(Integer r, Integer g, Integer b) {
+	public Color(Integer r, Integer g, Integer b) {
 		this.r = String.valueOf(r);
 		this.g = String.valueOf(g);
 		this.b = String.valueOf(b);

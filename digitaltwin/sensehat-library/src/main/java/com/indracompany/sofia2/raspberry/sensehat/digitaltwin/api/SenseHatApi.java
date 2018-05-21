@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.digitaltwin.logic.LogicManager;
 import com.indracompany.sofia2.digitaltwin.logic.api.JavascriptAPI;
 import com.indracompany.sofia2.raspberry.sensehat.sensehatlibrary.api.SenseHat;
+import com.indracompany.sofia2.raspberry.sensehat.sensehatlibrary.api.dto.Color;
 import com.indracompany.sofia2.raspberry.sensehat.sensehatlibrary.api.dto.joystick.Direction;
 
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +78,18 @@ public class SenseHatApi implements JavascriptAPI {
 
 	public void showTextLedMatrix(String text) {
 		SenseHat senseHat = new SenseHat();
-		senseHat.ledMatrix.showMessage(text);
+		Color e = new Color(0, 0, 0);
+		Color w = new Color(150, 150, 150);
+
+		if (text.equalsIgnoreCase("Right")) {
+
+			Color[] pixels = new Color[] { e, e, e, w, w, e, e, e, e, e, w, w, w, w, e, e, e, w, e, w, w, e, w, e, w, e,
+					e, w, w, e, e, w, e, e, e, w, w, e, e, e, e, e, e, w, w, e, e, e, e, e, e, w, w, e, e, e, e, e, e,
+					w, w, e, e, e };
+			senseHat.ledMatrix.setPixels(pixels);
+		} else {
+			senseHat.ledMatrix.showMessage(text);
+		}
 	}
 
 	public void setJoystickUpListener(String functionListener) {

@@ -85,5 +85,4 @@ public class DigitalTwinApi implements DigitalTwinLogicAPI {
 	public void sendCustomEvent(String eventName) {
 		eventManager.sendCustomEvent(digitalTwinStatus.toMap(), eventName);
 	}
-
 }

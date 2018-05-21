@@ -24,4 +24,4 @@ device:
       swaggerhost: localhost:10000
       
       
-sofia2.digitaltwin.broker.rest: http://169.254.48.130:19300/digitaltwinbroker
+sofia2.digitaltwin.broker.rest: http://192.168.1.6:19300/digitaltwinbroker

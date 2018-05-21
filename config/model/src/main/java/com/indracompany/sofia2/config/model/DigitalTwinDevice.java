@@ -70,11 +70,11 @@ public class DigitalTwinDevice extends AuditableEntityWithUUID {
 	@NotNull
 	private String DigitalKey;
 
-	@Column(name = "IP", length = 512, nullable = false)
+	@Column(name = "INTERFACE", length = 512, nullable = false)
 	@Getter
 	@Setter
 	@NotNull
-	private String ip;
+	private String interface;
 
 	@Column(name = "PORT", nullable = false)
 	@Getter
