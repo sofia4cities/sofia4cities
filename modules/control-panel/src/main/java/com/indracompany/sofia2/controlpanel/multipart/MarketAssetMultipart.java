@@ -18,9 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetPaymentMode;
@@ -32,137 +29,149 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class MarketAssetMultipart {
-	
+
 	@Getter
 	@Setter
 	private String identification;
-	
+
 	@Getter
 	@Setter
 	private User user;
-	
+
 	@Getter
 	@Setter
 	private boolean isPublic;
-	
+
 	@Getter
 	@Setter
 	private MarketAssetState state;
-	
+
 	@Getter
 	@Setter
 	private MarketAssetType marketAssetType;
-	
+
 	@Getter
 	@Setter
 	private MarketAssetPaymentMode paymentMode;
-	
+
 	@Getter
 	@Setter
 	private String jsonDesc;
-	
+
 	@Getter
-	@Setter 
+	@Setter
 	private Date createdAt;
-	
+
 	@Getter
-	@Setter  
+	@Setter
 	private Date updatedAt;
-	
-	
 
 	@Getter
 	private MultipartFile image;
-	
+
 	public void setImage(MultipartFile image) {
 		this.image = image;
 	}
-	
+
 	public void setImage() {
-		this.image = new MultipartFile() {		
+		this.image = new MultipartFile() {
 			@Override
 			public void transferTo(File dest) throws IOException, IllegalStateException {
 			}
+
 			@Override
 			public boolean isEmpty() {
 				return false;
 			}
+
 			@Override
 			public long getSize() {
 				return 0;
 			}
+
 			@Override
 			public String getOriginalFilename() {
 				return null;
 			}
+
 			@Override
 			public String getName() {
 				return null;
 			}
+
 			@Override
 			public InputStream getInputStream() throws IOException {
 				return null;
 			}
+
 			@Override
 			public String getContentType() {
 				return null;
 			}
+
 			@Override
 			public byte[] getBytes() throws IOException {
 				return new byte[0];
 			}
 		};
 	}
-	
+
 	@Getter
 	@Setter
 	private String imageType;
-	
+
 	@Getter
 	private MultipartFile content;
 
 	public void setContent(MultipartFile content) {
 		this.content = content;
 	}
-	
+
 	public void setContent() {
-		this.content = new MultipartFile() {		
+		this.content = new MultipartFile() {
 			@Override
 			public void transferTo(File dest) throws IOException, IllegalStateException {
 			}
+
 			@Override
 			public boolean isEmpty() {
 				return false;
 			}
+
 			@Override
 			public long getSize() {
 				return 0;
 			}
+
 			@Override
 			public String getOriginalFilename() {
 				return null;
 			}
+
 			@Override
 			public String getName() {
 				return null;
 			}
+
 			@Override
 			public InputStream getInputStream() throws IOException {
 				return null;
 			}
+
 			@Override
 			public String getContentType() {
 				return null;
 			}
+
 			@Override
 			public byte[] getBytes() throws IOException {
 				return new byte[0];
 			}
 		};
 	}
-	
+
 	@Getter
 	@Setter
 	private String contentId;
-	
+
 }

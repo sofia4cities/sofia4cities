@@ -23,38 +23,37 @@ import com.indracompany.sofia2.config.repository.GadgetDatasourceRepository;
 import com.indracompany.sofia2.dto.socket.InputMessage;
 import com.indracompany.sofia2.security.AppWebUtils;
 import com.indracompany.sofia2.solver.SolverInterface;
-import com.indracompany.sofia2.solver.SolverQuasarImpl;
 
 @Service
-public class SolverServiceImpl implements SolverService{
-	
+public class SolverServiceImpl implements SolverService {
+
 	@Autowired
 	GadgetDatasourceRepository gdr;
-	
+
 	@Autowired
 	AppWebUtils utils;
-	
+
 	@Autowired
 	@Qualifier("QuasarSolver")
 	SolverInterface quasarSolver;
-	
+
 	@Override
 	public String solveDatasource(InputMessage im) {
 		GadgetDatasource gd = gdr.findByIdentification(im.getDs());
-		
-		if(gd==null) {
+
+		if (gd == null) {
 			return "Not found: 404 for user " + utils.getUserId() + " datasource: " + im.getDs();
 		}
-		
-		if(!gd.getUser().getUserId().equals(utils.getUserId()) && !utils.isAdministrator()) {
+
+		if (!gd.getUser().getUserId().equals(utils.getUserId()) && !utils.isAdministrator()) {
 			return "Permision denied: 403 for user " + utils.getUserId() + " datasource: " + im.getDs();
 		}
-		
-		
-		switch(gd.getMode()) {
-			case "query":
-				return quasarSolver.buildQueryAndSolve(gd.getQuery(), gd.getMaxvalues(), im.getFilter(), im.getProject(), im.getGroup());
-			//More types of solver...
+
+		switch (gd.getMode()) {
+		case "query":
+			return quasarSolver.buildQueryAndSolve(gd.getQuery(), gd.getMaxvalues(), im.getFilter(), im.getProject(),
+					im.getGroup());
+		// More types of solver...
 		}
 		return null;
 	}

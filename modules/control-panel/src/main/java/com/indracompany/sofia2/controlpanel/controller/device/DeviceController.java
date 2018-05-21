@@ -230,7 +230,7 @@ public class DeviceController {
 			on.put("id", cpo.getOntology().getIdentification());
 			on.put("access", cpo.getAccess());
 
-			for (Iterator iterator = ontologies.iterator(); iterator.hasNext();) {
+			for (Iterator<Ontology> iterator = ontologies.iterator(); iterator.hasNext();) {
 				Ontology ontology = (Ontology) iterator.next();
 				if (ontology.getIdentification().equals(cpo.getOntology().getIdentification())) {
 					iterator.remove();

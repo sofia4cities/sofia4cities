@@ -20,30 +20,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.indracompany.sofia2.router.service.app.model.NotificationCompositeModel;
-import com.indracompany.sofia2.router.service.app.model.NotificationModel;
 import com.indracompany.sofia2.router.service.app.model.OperationResultModel;
 import com.indracompany.sofia2.router.service.app.service.advice.AdviceServiceImpl;
 
 public class Application {
 
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
+	private static final Logger log = LoggerFactory.getLogger(Application.class);
 
-    public static void main(String args[]) throws KeyManagementException, NoSuchAlgorithmException {
-        
-    	OperationResultModel input = new OperationResultModel();
-    	NotificationCompositeModel model = new NotificationCompositeModel();
-      
-        
-        RouterClient<NotificationCompositeModel,OperationResultModel> routerClient= new AdviceServiceImpl();
-		RouterClientGateway<NotificationCompositeModel,OperationResultModel> gateway = new RouterClientGateway<NotificationCompositeModel,OperationResultModel>
-				(
-				RouterClientGateway.setupDefault("PEPE","PEPE"),
-				routerClient);
+	public static void main(String args[]) throws KeyManagementException, NoSuchAlgorithmException {
+
+		OperationResultModel input = new OperationResultModel();
+		NotificationCompositeModel model = new NotificationCompositeModel();
+
+		RouterClient<NotificationCompositeModel, OperationResultModel> routerClient = new AdviceServiceImpl();
+		RouterClientGateway<NotificationCompositeModel, OperationResultModel> gateway = new RouterClientGateway<NotificationCompositeModel, OperationResultModel>(
+				RouterClientGateway.setupDefault("PEPE", "PEPE"), routerClient);
 		gateway.setFallback(input);
 		input = gateway.execute(model);
-		
-		
-		
-    }
+
+	}
 
 }

@@ -13,12 +13,7 @@
  */
 package com.indracompany.sofia2.controlpanel.helper.market;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
-
-import org.springframework.web.multipart.MultipartFile;
 
 import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetPaymentMode;
 import com.indracompany.sofia2.config.model.MarketAsset.MarketAssetState;
@@ -29,63 +24,63 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class MarketAssetDTO {
-	
+
 	@Getter
 	@Setter
 	private String id;
-	
+
 	@Getter
 	@Setter
 	private String identification;
-	
+
 	@Getter
 	@Setter
 	private User user;
-	
+
 	@Getter
 	@Setter
 	private boolean isPublic;
-	
+
 	@Getter
 	@Setter
 	private MarketAssetState state;
-	
+
 	@Getter
 	@Setter
 	private MarketAssetType marketAssetType;
-	
+
 	@Getter
 	@Setter
 	private MarketAssetPaymentMode paymentMode;
-	
+
 	@Getter
 	@Setter
 	private String title;
-	
+
 	@Getter
 	@Setter
 	private String description;
-	
+
 	@Getter
 	@Setter
 	private String technologies;
-	
+
 	@Getter
 	@Setter
 	private String jsonDesc;
-	
+
 	@Getter
-	@Setter 
+	@Setter
 	private Date createdAt;
-	
+
 	@Getter
-	@Setter  
+	@Setter
 	private Date updatedAt;
-	
+
 	@Getter
-	@Setter  
+	@Setter
 	private String rejectionReason;
-	
+
 	@Getter
 	@Setter
 	byte[] image;
