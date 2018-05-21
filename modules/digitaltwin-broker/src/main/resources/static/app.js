@@ -23,7 +23,27 @@ function connect() {
         	 var obj=JSON.parse(notification.body)
         	 
         	 $("#joystick").val(obj.event);
-           
+        	 if(obj.event=="joystickEventUp"){
+        		 $("#sendUp").css("background-color", "red");
+        		 $("#sendDown").css("background-color", "");
+        		 $("#sendLeft").css("background-color", "");
+        		 $("#sendRight").css("background-color", "");
+        	 }if(obj.event=="joystickEventDown"){
+        		 $("#sendDown").css("background-color", "red");
+        		 $("#sendUp").css("background-color", "");
+        		 $("#sendLeft").css("background-color", "");
+        		 $("#sendRight").css("background-color", "");
+        	 }if(obj.event=="joystickEventLeft"){
+        		 $("#sendLeft").css("background-color", "red");
+        		 $("#sendDown").css("background-color", "");
+        		 $("#sendUp").css("background-color", "");
+        		 $("#sendRight").css("background-color", "");
+        	 }if(obj.event=="joystickEventRight"){
+        		 $("#sendRight").css("background-color", "red");
+        		 $("#sendDown").css("background-color", "");
+        		 $("#sendLeft").css("background-color", "");
+        		 $("#sendUp").css("background-color", "");
+        	 }
         });
        stompClient.subscribe('/action/shadow/SenseHatSpain', function (notification) {
     	   console.log(notification);

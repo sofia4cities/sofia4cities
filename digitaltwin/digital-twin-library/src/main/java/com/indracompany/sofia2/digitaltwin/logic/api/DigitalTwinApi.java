@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import com.indracompany.sofia2.digitaltwin.event.manager.EventManager;
 import com.indracompany.sofia2.digitaltwin.status.IDigitalTwinStatus;
 import com.indracompany.sofia2.raspberry.sensehat.sensehatlibrary.api.SenseHat;
+import com.indracompany.sofia2.raspberry.sensehat.sensehatlibrary.api.dto.Color;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -84,6 +85,18 @@ public class DigitalTwinApi {
 	public void showTextLedMatrix(String text) {
 		SenseHat senseHat = new SenseHat();
 		senseHat.ledMatrix.showMessage(text);
+	}
+
+	public void showColorLedMatrix(String color) {
+		SenseHat senseHat = new SenseHat();
+		if (color.equals("red")) {
+			senseHat.ledMatrix.clear(Color.RED);
+		} else if (color.equals("green")) {
+			senseHat.ledMatrix.clear(Color.GREEN);
+		} else if (color.equals("blue")) {
+			senseHat.ledMatrix.clear(Color.BLUE);
+		}
+
 	}
 
 }

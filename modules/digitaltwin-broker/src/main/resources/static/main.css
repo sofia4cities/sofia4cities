@@ -3,7 +3,7 @@ body {
 }
 
 #main-content {
-    max-width: 940px;
+    max-width: 100%;
     padding: 2em 3em;
     margin: 0 auto 20px;
     background-color: #fff;
@@ -11,4 +11,28 @@ body {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+}
+
+#sendLeft{
+	position: absolute;
+    top: 238px;
+    left: 277px;
+}
+
+#sendRight{
+	position: absolute;
+    top: 238px;
+    left: 341px;
+}
+
+#sendUp{
+	position: absolute;
+    top: 204px;
+    left: 308px;
+}
+
+#sendDown{
+	position: absolute;
+    top: 272px;
+    left: 309px;
 }
