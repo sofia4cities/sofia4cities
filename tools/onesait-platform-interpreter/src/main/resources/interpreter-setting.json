@@ -1,0 +1,44 @@
+[
+  {
+    "group": "onesaitplatform",
+    "name": "onesaitplatform",
+    "className": "org.apache.zeppelin.onesaitplatform.OnesaitPlatformInterpreter",
+    "properties": {
+      "onesaitplatform.server.host": {
+        "envName": null,
+        "propertyName": "onesaitplatform.server.host",
+        "defaultValue": "s4citiespro.westeurope.cloudapp.azure.com",
+        "description": "Onesait Platform server host to connect to",
+        "type": "textarea"
+      },
+      "onesaitplatform.server.port": {
+        "envName": null,
+        "propertyName": "onesaitplatform.server.port",
+        "defaultValue": "80",
+        "description": "Onesait Platform server port to connect to",
+        "type": "textarea"
+      },
+      "onesaitplatform.server.restpath": {
+        "envName": null,
+        "propertyName": "onesaitplatform.server.restpath",
+        "defaultValue": "/iotbroker",
+        "description": "Onesait Platform Iot Broker path to connect to",
+        "type": "textarea"
+      },
+      "onesaitplatform.result.limit": {
+        "envName": null,
+        "propertyName": "onesaitplatform.result.limit",
+        "defaultValue": "1000",
+        "description": "Limit of instanced displayed in a table",
+        "type": "number"
+      },
+      "onesaitplatform.execution.timeout": {
+        "envName": null,
+        "propertyName": "onesaitplatform.execution.timeout",
+        "defaultValue": "60000",
+        "description": "Onesait Platform execution timeout",
+        "type": "number"
+      }
+    }
+  }
+]
