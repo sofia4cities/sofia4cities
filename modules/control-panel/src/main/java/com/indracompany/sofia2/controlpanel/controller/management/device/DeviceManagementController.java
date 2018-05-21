@@ -25,42 +25,83 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.indracompany.sofia2.config.model.Token;
+import com.indracompany.sofia2.config.model.UserApi;
+import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
-import com.indracompany.sofia2.controlpanel.controller.management.ApiOpsRestServices;
+import com.indracompany.sofia2.controlpanel.controller.apimanager.UserApiDTO;
+import com.indracompany.sofia2.controlpanel.controller.management.ManagementRestServices;
+import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 
-@Api(value="Device Management")
+@Api(value = "Device Management")
 @RestController
 @Slf4j
-public class DeviceManagementController extends ApiOpsRestServices {
-	
+public class DeviceManagementController extends ManagementRestServices {
+
 	@Autowired
 	ClientPlatformService clientPlatformService;
-	
-	@ApiOperation(value = "validate clientPlatform id with token")
-	@RequestMapping(value="/validate/device/{clientPlatformId}/token/{token}", method=RequestMethod.GET)
-	public ResponseEntity<?> list(
-			@ApiParam(value = "ClientPlatform Id  ", required = true) @PathVariable("clientPlatformId") String clientPlatformId,
-			@ApiParam(value = "Token", required=true) @PathVariable(name="token") String token) {
+	@Autowired
+	ApiManagerService apiManagerService;
+	@Autowired
+	AppWebUtils utils;
 
-	
+	@ApiOperation(value = "validate clientPlatform id with token")
+	@RequestMapping(value = "/validate/device/{clientPlatformId}/token/{token}", method = RequestMethod.GET)
+	public ResponseEntity<?> validate(
+			@ApiParam(value = "ClientPlatform Id  ", required = true) @PathVariable("clientPlatformId") String clientPlatformId,
+			@ApiParam(value = "Token", required = true) @PathVariable(name = "token") String token) {
+
 		List<Token> tokens = clientPlatformService.getTokensByClientPlatformId(clientPlatformId);
-		
-		if (tokens==null || tokens.size()==0) return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
-		
-		Token result = tokens.stream()                        
-	                .filter(x -> token.equals(x.getToken()))       
-	                .findAny()                                     
-	                .orElse(null);   
-		
-		if (result==null) return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
-		else return new ResponseEntity<>("VALID", HttpStatus.OK);
-		
-	
+
+		if (tokens == null || tokens.size() == 0)
+			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+
+		Token result = tokens.stream().filter(x -> token.equals(x.getToken())).findAny().orElse(null);
+
+		if (result == null)
+			return new ResponseEntity<>("NOT_VALID", HttpStatus.OK);
+		else
+			return new ResponseEntity<>("VALID", HttpStatus.OK);
+
 	}
 
+	@ApiOperation(value = "Authorize user for api")
+	@RequestMapping(value = "/authorize/api/{apiId}/user/{userId}", method = RequestMethod.GET)
+	public ResponseEntity<?> authorize(
+			@ApiParam(value = "Api Id  ", required = true) @PathVariable("apiId") String apiId,
+			@ApiParam(value = "User", required = true) @PathVariable(name = "userId") String userId) {
+
+		List<com.indracompany.sofia2.config.model.Api> apis = this.apiManagerService.loadAPISByFilter(apiId, "",
+				utils.getUserId(), utils.getUserId());
+		UserApi userApi = null;
+		if (!apis.isEmpty()) {
+			for (com.indracompany.sofia2.config.model.Api api : apis) {
+				userApi = this.apiManagerService.updateAuthorization(api.getId(), userId);
+			}
+			if (userApi != null) {
+				UserApiDTO userApiDTO = new UserApiDTO(userApi);
+				return new ResponseEntity<UserApiDTO>(userApiDTO, HttpStatus.CREATED);
+			}
+		}
+		return new ResponseEntity<UserApiDTO>(HttpStatus.BAD_REQUEST);
+
+	}
+
+	@ApiOperation(value = "Authorize user for api")
+	@RequestMapping(value = "/deauthorize/api/{apiId}/user/{userId}", method = RequestMethod.GET)
+	public ResponseEntity<?> deauthorize(
+			@ApiParam(value = "Api Id ", required = true) @PathVariable("apiId") String apiId,
+			@ApiParam(value = "User", required = true) @PathVariable(name = "userId") String userId) {
+		if (!this.apiManagerService.loadAPISByFilter(apiId, "", this.utils.getUserId(), this.utils.getUserId())
+				.isEmpty()) {
+			this.apiManagerService.removeAuthorizationByApiAndUser(apiId, userId);
+			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
+		} else
+			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+
+	}
 }
