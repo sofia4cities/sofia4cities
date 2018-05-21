@@ -15,7 +15,6 @@ package com.indracompany.sofia2.config.model;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -93,7 +92,7 @@ public class TwitterListening extends AuditableEntityWithUUID {
 	@Getter
 	@Setter
 	private String cron;
-	
+
 	@Column(name = "JOB_NAME", length = 512)
 	@Getter
 	@Setter
