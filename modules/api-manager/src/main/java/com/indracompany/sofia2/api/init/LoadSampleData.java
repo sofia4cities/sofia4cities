@@ -34,7 +34,6 @@ import com.indracompany.sofia2.config.model.User;
 import com.indracompany.sofia2.config.repository.OntologyRepository;
 import com.indracompany.sofia2.config.repository.UserRepository;
 import com.indracompany.sofia2.persistence.exceptions.DBPersistenceException;
-import com.indracompany.sofia2.persistence.interfaces.BasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.MongoBasicOpsDBRepository;
 import com.indracompany.sofia2.persistence.mongodb.template.MongoDbTemplateImpl;
 
@@ -46,7 +45,7 @@ public class LoadSampleData implements ApplicationRunner {
 
 	@Autowired
 	private ApiFIQL apiFIQL;
-	
+
 	@Autowired
 	MongoDbTemplateImpl connect;
 
@@ -55,35 +54,36 @@ public class LoadSampleData implements ApplicationRunner {
 
 	@Autowired
 	MongoTemplate nativeTemplate;
-	
+
 	@Autowired
 	OntologyRepository ontologyRepository;
-	
+
 	@Autowired
 	UserRepository userCDBRepository;
-	
+
 	static final String ONT_NAME = "product";
 	static final String APINAME = "APIPRODUCT";
 	static final String DATABASE = "sofia2_s4c";
 	static User userCollaborator = null;
 	static User userAdministrator = null;
 
-	
 	String refOid = "";
-	
+
 	ObjectMapper mapper = new ObjectMapper();
-	
+
 	@Override
 	public void run(ApplicationArguments arg0) {
 		init_Ontology();
 		try {
 			loadDataForMongo();
-		} catch (Exception e) {}
-		
+		} catch (Exception e) {
+		}
+
 		try {
 			loadDataFromJson();
-		} catch (Exception e) {}
-		
+		} catch (Exception e) {
+		}
+
 	}
 
 	private User getUserDeveloper() {
@@ -102,37 +102,35 @@ public class LoadSampleData implements ApplicationRunner {
 		String token = "acbca01b-da32-469e-945d-05bb6cd1552e";
 		try {
 			Api theApi = apiService.findApi(APINAME, token);
-			
+
 			List<Ontology> ontologies = this.ontologyRepository.findByIdentificationIgnoreCase(ONT_NAME);
 			if (!ontologies.isEmpty()) {
 				theApi.setOntology(ontologies.get(0));
 			}
-			
-			
+
 		} catch (Exception e) {
 			File in = new ClassPathResource("data/data.json").getFile();
-			
+
 			ApiDTO api = mapper.readValue(in, ApiDTO.class);
 			List<Ontology> ontologies = this.ontologyRepository.findByIdentificationIgnoreCase(ONT_NAME);
 			if (!ontologies.isEmpty()) {
 				api.setOntologyId(ontologies.get(0).getId());
 				api.setIdentification(APINAME);
-				
+
 			}
 			apiService.createApi(api, token);
 			ApiDTO out = apiFIQL.toApiDTO(apiService.findApi(APINAME, token));
-			
+
 			System.out.println(out);
 		}
 
 	}
-	
+
 	public void init_Ontology() {
 
-	
 		List<Ontology> ontologies = this.ontologyRepository.findByIdentificationIgnoreCase(ONT_NAME);
 		if (ontologies.isEmpty()) {
-			
+
 			Ontology ontology = new Ontology();
 			ontology.setJsonSchema("{}");
 			ontology.setIdentification(ONT_NAME);
@@ -147,29 +145,26 @@ public class LoadSampleData implements ApplicationRunner {
 		}
 
 	}
-	
-	
-	
+
 	private void loadDataForMongo() throws DBPersistenceException, JsonProcessingException {
-		
+
 		Product data = PojoFactoryLoadData.createProduct("name1");
 		ObjectMapper mapper = new ObjectMapper();
-		
+
 		System.out.println(mapper.writeValueAsString(data));
-		
+
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 		int init = 17;
 		int end = refOid.indexOf("\"}}");
 		refOid = refOid.substring(init, end);
 		// 2º
-		data =  PojoFactoryLoadData.createProduct("admin");
+		data = PojoFactoryLoadData.createProduct("admin");
 		mapper = new ObjectMapper();
 		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
 		// 3º
-		data =  PojoFactoryLoadData.createProduct("other");
+		data = PojoFactoryLoadData.createProduct("other");
 		mapper = new ObjectMapper();
-		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));	
-			
-		
+		refOid = repository.insert(ONT_NAME, mapper.writeValueAsString(data));
+
 	}
 }

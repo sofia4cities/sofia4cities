@@ -15,10 +15,7 @@ package com.indracompany.sofia2.router.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import io.swagger.annotations.Contact;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -28,34 +25,27 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig  {
-	
+public class SwaggerConfig {
+
 	private String title = "Router Rest API";
 	private String description;
 	private String version;
 	private String termsOfServiceUrl;
-	
+
 	private String license;
 	private String licenseUrl;
 	private String contact;
-	
 
-	
 	@Bean
-    public Docket api() { 
+	public Docket api() {
 
-		return new Docket(DocumentationType.SWAGGER_2)  
-          .select()                                  
-          .apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.router.controller"))     
-          .paths(PathSelectors.any())     
-          .build()
-          .apiInfo(apiInfo());                                           
-    }
-	
-    private ApiInfo apiInfo() {
-        return new ApiInfo(title, description, version, termsOfServiceUrl, contact, license, licenseUrl);
-      }
-	
+		return new Docket(DocumentationType.SWAGGER_2).select()
+				.apis(RequestHandlerSelectors.basePackage("com.indracompany.sofia2.router.controller"))
+				.paths(PathSelectors.any()).build().apiInfo(apiInfo());
+	}
 
+	private ApiInfo apiInfo() {
+		return new ApiInfo(title, description, version, termsOfServiceUrl, contact, license, licenseUrl);
+	}
 
 }

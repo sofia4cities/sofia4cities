@@ -7,7 +7,6 @@ server: ## Config Web Server
       access_log_enabled: true
       basedir: target/tomcat
 
-
 # all access to actuator endpoints without security
 management.security.enabled: false
 #security.basic.enabled: false
