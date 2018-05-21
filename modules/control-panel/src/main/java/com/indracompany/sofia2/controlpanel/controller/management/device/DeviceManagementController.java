@@ -15,11 +15,14 @@
 package com.indracompany.sofia2.controlpanel.controller.management.device;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,9 +31,9 @@ import com.indracompany.sofia2.config.model.Token;
 import com.indracompany.sofia2.config.model.UserApi;
 import com.indracompany.sofia2.config.services.apimanager.ApiManagerService;
 import com.indracompany.sofia2.config.services.client.ClientPlatformService;
+import com.indracompany.sofia2.config.services.oauth.JWTService;
 import com.indracompany.sofia2.controlpanel.controller.apimanager.UserApiDTO;
 import com.indracompany.sofia2.controlpanel.controller.management.ManagementRestServices;
-import com.indracompany.sofia2.controlpanel.utils.AppWebUtils;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -46,8 +49,8 @@ public class DeviceManagementController extends ManagementRestServices {
 	ClientPlatformService clientPlatformService;
 	@Autowired
 	ApiManagerService apiManagerService;
-	@Autowired
-	AppWebUtils utils;
+	@Autowired(required = false)
+	JWTService jwtService;
 
 	@ApiOperation(value = "validate clientPlatform id with token")
 	@RequestMapping(value = "/validate/device/{clientPlatformId}/token/{token}", method = RequestMethod.GET)
@@ -70,13 +73,18 @@ public class DeviceManagementController extends ManagementRestServices {
 	}
 
 	@ApiOperation(value = "Authorize user for api")
-	@RequestMapping(value = "/authorize/api/{apiId}/user/{userId}", method = RequestMethod.GET)
+	@PostMapping(value = "/authorize/api/{apiId}/user/{userId}")
 	public ResponseEntity<?> authorize(
 			@ApiParam(value = "Api Id  ", required = true) @PathVariable("apiId") String apiId,
-			@ApiParam(value = "User", required = true) @PathVariable(name = "userId") String userId) {
+			@ApiParam(value = "User", required = true) @PathVariable(name = "userId") String userId,
+			@RequestHeader("Authorization") String authorization) {
 
-		List<com.indracompany.sofia2.config.model.Api> apis = this.apiManagerService.loadAPISByFilter(apiId, "",
-				utils.getUserId(), utils.getUserId());
+		String loggedUser = this.jwtService.getAuthentication(authorization.split(" ")[1]).getName();
+		List<com.indracompany.sofia2.config.model.Api> apis = this.apiManagerService
+				.loadAPISByFilter(apiId, "", loggedUser, loggedUser).stream()
+				.filter(a -> a.getUser().getUserId().equals(loggedUser) && a.getId().equals(apiId))
+				.collect(Collectors.toList());
+
 		UserApi userApi = null;
 		if (!apis.isEmpty()) {
 			for (com.indracompany.sofia2.config.model.Api api : apis) {
@@ -92,12 +100,17 @@ public class DeviceManagementController extends ManagementRestServices {
 	}
 
 	@ApiOperation(value = "Authorize user for api")
-	@RequestMapping(value = "/deauthorize/api/{apiId}/user/{userId}", method = RequestMethod.GET)
+	@PostMapping(value = "/deauthorize/api/{apiId}/user/{userId}")
 	public ResponseEntity<?> deauthorize(
 			@ApiParam(value = "Api Id ", required = true) @PathVariable("apiId") String apiId,
-			@ApiParam(value = "User", required = true) @PathVariable(name = "userId") String userId) {
-		if (!this.apiManagerService.loadAPISByFilter(apiId, "", this.utils.getUserId(), this.utils.getUserId())
-				.isEmpty()) {
+			@ApiParam(value = "User", required = true) @PathVariable(name = "userId") String userId,
+			@RequestHeader("Authorization") String authorization) {
+		String loggedUser = this.jwtService.getAuthentication(authorization.split(" ")[1]).getName();
+		List<com.indracompany.sofia2.config.model.Api> apis = this.apiManagerService
+				.loadAPISByFilter(apiId, "", loggedUser, loggedUser).stream()
+				.filter(a -> a.getUser().getUserId().equals(loggedUser) && a.getId().equals(apiId))
+				.collect(Collectors.toList());
+		if (!apis.isEmpty()) {
 			this.apiManagerService.removeAuthorizationByApiAndUser(apiId, userId);
 			return new ResponseEntity<String>("{\"status\" : \"ok\"}", HttpStatus.OK);
 		} else
