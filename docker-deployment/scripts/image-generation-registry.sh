@@ -273,13 +273,13 @@ if [[ "$ONLYPERSISTENCE" = true ]]; then
 	fi
 	
 	if [[ "$(docker images -q sofia2/kafka-secured 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/kafka-cluster/kafka
-		buildKafka latest
+		cd $homepath/../dockerfiles/kafka-cluster/kafka
+		#buildKafka latest
 	fi	
 
 		if [[ "$(docker images -q sofia2/zookeeper-secured 2> /dev/null)" == "" ]]; then
-		cd $homepath/dockerfiles/kafka-cluster/zookeeper
-		buildZookeeper latest
+		cd $homepath/../dockerfiles/kafka-cluster/zookeeper
+		#buildZookeeper latest
 	fi	
 	
 	if [[ "$(docker images -q $USERNAME/nginx 2> /dev/null)" == "" ]]; then
